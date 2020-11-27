@@ -16,6 +16,13 @@ import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        /** @requires ColorSeriesMixin */
+        translateColors(): void;
+    }
+}
+
 /**
  * Internal types
  * @private

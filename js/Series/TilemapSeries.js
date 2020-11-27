@@ -11,16 +11,32 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, HeatmapSeries = _a.heatmap, ScatterSeries = _a.scatter;
 import ColorSeriesModule from '../Mixins/ColorSeries.js';
 var colorPointMixin = ColorSeriesModule.colorPointMixin;
 import H from '../Core/Globals.js';
+var noop = H.noop;
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick;
-/**
- * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
- */
-''; // detach doclets above
+var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, merge = U.merge, pick = U.pick;
+/* *
+ *
+ *  Composition
+ *
+ * */
 /**
  * Utility func to get padding definition from tile size division
  * @private
@@ -43,7 +59,7 @@ function tilePaddingFromTileSize(series, xDiv, yDiv) {
 H.tileShapeTypes = {
     // Hexagon shape type.
     hexagon: {
-        alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
+        alignDataLabel: ScatterSeries.prototype.alignDataLabel,
         getSeriesPadding: function (series) {
             return tilePaddingFromTileSize(series, 3, 2);
         },
@@ -120,7 +136,7 @@ H.tileShapeTypes = {
     },
     // Diamond shape type.
     diamond: {
-        alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
+        alignDataLabel: ScatterSeries.prototype.alignDataLabel,
         getSeriesPadding: function (series) {
             return tilePaddingFromTileSize(series, 2, 2);
         },
@@ -188,12 +204,12 @@ H.tileShapeTypes = {
     },
     // Circle shape type.
     circle: {
-        alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
+        alignDataLabel: ScatterSeries.prototype.alignDataLabel,
         getSeriesPadding: function (series) {
             return tilePaddingFromTileSize(series, 2, 2);
         },
         haloPath: function (size) {
-            return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
+            return ScatterSeries.prototype.pointClass.prototype.haloPath
                 .call(this, size + (size && this.radius));
         },
         translate: function () {
@@ -264,11 +280,10 @@ H.tileShapeTypes = {
     },
     // Square shape type.
     square: {
-        alignDataLabel: H.seriesTypes.heatmap.prototype.alignDataLabel,
-        translate: H.seriesTypes.heatmap.prototype.translate,
-        getSeriesPadding: function () {
-        },
-        haloPath: H.seriesTypes.heatmap.prototype.pointClass.prototype.haloPath
+        alignDataLabel: HeatmapSeries.prototype.alignDataLabel,
+        translate: HeatmapSeries.prototype.translate,
+        getSeriesPadding: noop,
+        haloPath: HeatmapSeries.prototype.pointClass.prototype.haloPath
     }
 };
 /* eslint-disable no-invalid-this */
@@ -306,6 +321,11 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function () {
         axis.len += lengthPadding;
     }
 });
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * @private
  * @class
@@ -313,127 +333,55 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function () {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('tilemap', 'heatmap'
-/**
- * A tilemap series is a type of heatmap where the tile shapes are
- * configurable.
- *
- * @sample highcharts/demo/honeycomb-usa/
- *         Honeycomb tilemap, USA
- * @sample maps/plotoptions/honeycomb-brazil/
- *         Honeycomb tilemap, Brazil
- * @sample maps/plotoptions/honeycomb-china/
- *         Honeycomb tilemap, China
- * @sample maps/plotoptions/honeycomb-europe/
- *         Honeycomb tilemap, Europe
- * @sample maps/demo/circlemap-africa/
- *         Circlemap tilemap, Africa
- * @sample maps/demo/diamondmap
- *         Diamondmap tilemap
- *
- * @extends      plotOptions.heatmap
- * @since        6.0.0
- * @excluding    jitter, joinBy, shadow, allAreas, mapData, marker, data,
- *               dataSorting, boostThreshold, boostBlending
- * @product      highcharts highmaps
- * @requires     modules/tilemap.js
- * @optionparent plotOptions.tilemap
- */
-, {
-    // Remove marker from tilemap default options, as it was before
-    // heatmap refactoring.
-    marker: null,
-    states: {
-        hover: {
-            halo: {
-                enabled: true,
-                size: 2,
-                opacity: 0.5,
-                attributes: {
-                    zIndex: 3
-                }
-            }
-        }
-    },
+var TilemapSeries = /** @class */ (function (_super) {
+    __extends(TilemapSeries, _super);
+    function TilemapSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        _this.tileShape = void 0;
+        return _this;
+        /* eslint-enable valid-jsdoc */
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
     /**
-     * The padding between points in the tilemap.
-     *
-     * @sample maps/plotoptions/tilemap-pointpadding
-     *         Point padding on tiles
+     * Use the shape's defined data label alignment function.
+     * @private
      */
-    pointPadding: 2,
-    /**
-     * The column size - how many X axis units each column in the tilemap
-     * should span. Works as in [Heatmaps](#plotOptions.heatmap.colsize).
-     *
-     * @sample {highcharts} maps/demo/heatmap/
-     *         One day
-     * @sample {highmaps} maps/demo/heatmap/
-     *         One day
-     *
-     * @type      {number}
-     * @default   1
-     * @product   highcharts highmaps
-     * @apioption plotOptions.tilemap.colsize
-     */
-    /**
-     * The row size - how many Y axis units each tilemap row should span.
-     * Analogous to [colsize](#plotOptions.tilemap.colsize).
-     *
-     * @sample {highcharts} maps/demo/heatmap/
-     *         1 by default
-     * @sample {highmaps} maps/demo/heatmap/
-     *         1 by default
-     *
-     * @type      {number}
-     * @default   1
-     * @product   highcharts highmaps
-     * @apioption plotOptions.tilemap.rowsize
-     */
-    /**
-     * The shape of the tiles in the tilemap. Possible values are `hexagon`,
-     * `circle`, `diamond`, and `square`.
-     *
-     * @sample maps/demo/circlemap-africa
-     *         Circular tile shapes
-     * @sample maps/demo/diamondmap
-     *         Diamond tile shapes
-     *
-     * @type {Highcharts.TilemapShapeValue}
-     */
-    tileShape: 'hexagon'
-}, {
-    // Use drawPoints, markerAttribs, pointAttribs methods from the old
-    // heatmap implementation.
-    // TODO: Consider standarizing heatmap and tilemap into more
-    // consistent form.
-    markerAttribs: H.seriesTypes.scatter.prototype.markerAttribs,
-    pointAttribs: H.seriesTypes.column.prototype.pointAttribs,
-    // Revert the noop on getSymbol.
-    getSymbol: H.noop,
-    drawPoints: function () {
+    TilemapSeries.prototype.alignDataLabel = function () {
+        return this.tileShape.alignDataLabel.apply(this, Array.prototype.slice.call(arguments));
+    };
+    TilemapSeries.prototype.drawPoints = function () {
         var _this = this;
         // In styled mode, use CSS, otherwise the fill used in the style
         // sheet will take precedence over the fill attribute.
-        H.seriesTypes.column.prototype.drawPoints.call(this);
+        ColumnSeries.prototype.drawPoints.call(this);
         this.points.forEach(function (point) {
             point.graphic &&
                 point.graphic[_this.chart.styledMode ? 'css' : 'animate'](_this.colorAttribs(point));
         });
-    },
-    // Set tile shape object on series
-    setOptions: function () {
-        // Call original function
-        var ret = H.seriesTypes.heatmap.prototype.setOptions.apply(this, Array.prototype.slice.call(arguments));
-        this.tileShape = H.tileShapeTypes[ret.tileShape];
-        return ret;
-    },
-    // Use the shape's defined data label alignment function
-    alignDataLabel: function () {
-        return this.tileShape.alignDataLabel.apply(this, Array.prototype.slice.call(arguments));
-    },
-    // Get metrics for padding of axis for this series
-    getSeriesPixelPadding: function (axis) {
+    };
+    /**
+     * Get metrics for padding of axis for this series.
+     * @private
+     */
+    TilemapSeries.prototype.getSeriesPixelPadding = function (axis) {
         var isX = axis.isXAxis, padding = this.tileShape.getSeriesPadding(this), coord1, coord2;
         // If the shape type does not require padding, return no-op padding
         if (!padding) {
@@ -458,23 +406,188 @@ BaseSeries.seriesType('tilemap', 'heatmap'
             // and max.
             axisLengthFactor: isX ? 2 : 1.1
         };
-    },
-    // Use translate from tileShape
-    translate: function () {
+    };
+    /**
+     * Set tile shape object on series.
+     * @private
+     */
+    TilemapSeries.prototype.setOptions = function () {
+        // Call original function
+        var ret = _super.prototype.setOptions.apply(this, Array.prototype.slice.call(arguments));
+        this.tileShape = H.tileShapeTypes[ret.tileShape];
+        return ret;
+    };
+    /**
+     * Use translate from tileShape.
+     * @private
+     */
+    TilemapSeries.prototype.translate = function () {
         return this.tileShape.translate.apply(this, Array.prototype.slice.call(arguments));
+    };
+    /**
+     * A tilemap series is a type of heatmap where the tile shapes are
+     * configurable.
+     *
+     * @sample highcharts/demo/honeycomb-usa/
+     *         Honeycomb tilemap, USA
+     * @sample maps/plotoptions/honeycomb-brazil/
+     *         Honeycomb tilemap, Brazil
+     * @sample maps/plotoptions/honeycomb-china/
+     *         Honeycomb tilemap, China
+     * @sample maps/plotoptions/honeycomb-europe/
+     *         Honeycomb tilemap, Europe
+     * @sample maps/demo/circlemap-africa/
+     *         Circlemap tilemap, Africa
+     * @sample maps/demo/diamondmap
+     *         Diamondmap tilemap
+     *
+     * @extends      plotOptions.heatmap
+     * @since        6.0.0
+     * @excluding    jitter, joinBy, shadow, allAreas, mapData, marker, data,
+     *               dataSorting, boostThreshold, boostBlending
+     * @product      highcharts highmaps
+     * @requires     modules/tilemap.js
+     * @optionparent plotOptions.tilemap
+     */
+    TilemapSeries.defaultOptions = merge(HeatmapSeries.defaultOptions, {
+        // Remove marker from tilemap default options, as it was before
+        // heatmap refactoring.
+        marker: null,
+        states: {
+            hover: {
+                halo: {
+                    enabled: true,
+                    size: 2,
+                    opacity: 0.5,
+                    attributes: {
+                        zIndex: 3
+                    }
+                }
+            }
+        },
+        /**
+         * The padding between points in the tilemap.
+         *
+         * @sample maps/plotoptions/tilemap-pointpadding
+         *         Point padding on tiles
+         */
+        pointPadding: 2,
+        /**
+         * The column size - how many X axis units each column in the tilemap
+         * should span. Works as in [Heatmaps](#plotOptions.heatmap.colsize).
+         *
+         * @sample {highcharts} maps/demo/heatmap/
+         *         One day
+         * @sample {highmaps} maps/demo/heatmap/
+         *         One day
+         *
+         * @type      {number}
+         * @default   1
+         * @product   highcharts highmaps
+         * @apioption plotOptions.tilemap.colsize
+         */
+        /**
+         * The row size - how many Y axis units each tilemap row should span.
+         * Analogous to [colsize](#plotOptions.tilemap.colsize).
+         *
+         * @sample {highcharts} maps/demo/heatmap/
+         *         1 by default
+         * @sample {highmaps} maps/demo/heatmap/
+         *         1 by default
+         *
+         * @type      {number}
+         * @default   1
+         * @product   highcharts highmaps
+         * @apioption plotOptions.tilemap.rowsize
+         */
+        /**
+         * The shape of the tiles in the tilemap. Possible values are `hexagon`,
+         * `circle`, `diamond`, and `square`.
+         *
+         * @sample maps/demo/circlemap-africa
+         *         Circular tile shapes
+         * @sample maps/demo/diamondmap
+         *         Diamond tile shapes
+         *
+         * @type {Highcharts.TilemapShapeValue}
+         */
+        tileShape: 'hexagon'
+    });
+    return TilemapSeries;
+}(HeatmapSeries));
+extend(TilemapSeries.prototype, {
+    // Use drawPoints, markerAttribs, pointAttribs methods from the old
+    // heatmap implementation.
+    // TODO: Consider standarizing heatmap and tilemap into more
+    // consistent form.
+    markerAttribs: ScatterSeries.prototype.markerAttribs,
+    pointAttribs: ColumnSeries.prototype.pointAttribs,
+    // Revert the noop on getSymbol.
+    getSymbol: noop
+});
+/* *
+ *
+ *  Class
+ *
+ * */
+var TilemapPoint = /** @class */ (function (_super) {
+    __extends(TilemapPoint, _super);
+    function TilemapPoint() {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.options = void 0;
+        _this.radius = void 0;
+        _this.series = void 0;
+        _this.tileEdges = void 0;
+        return _this;
+        /* eslint-enable valid-jsdoc */
     }
-}, extend({
-    // eslint-disable-next-line valid-jsdoc
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
     /**
      * @private
      * @function Highcharts.Point#haloPath
      *
      * @return {Highcharts.SVGElement|Highcharts.SVGPathArray|Array<Highcharts.SVGElement>}
      */
-    haloPath: function () {
+    TilemapPoint.prototype.haloPath = function () {
         return this.series.tileShape.haloPath.apply(this, Array.prototype.slice.call(arguments));
-    }
-}, colorPointMixin));
+    };
+    return TilemapPoint;
+}(HeatmapSeries.prototype.pointClass));
+extend(TilemapPoint.prototype, {
+    setVisible: colorPointMixin.setVisible
+});
+TilemapSeries.prototype.pointClass = TilemapPoint;
+BaseSeries.registerSeriesType('tilemap', TilemapSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default TilemapSeries;
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+/**
+ * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
+ */
+''; // detach doclets above
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

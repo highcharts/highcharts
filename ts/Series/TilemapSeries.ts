@@ -13,28 +13,48 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type Axis from '../Core/Axis/Axis';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type HeatmapPointOptions from './Heatmap/HeatmapPointOptions';
-import type HeatmapSeries from './Heatmap/HeatmapSeries';
 import type HeatmapSeriesOptions from './Heatmap/HeatmapSeriesOptions';
 import type Point from '../Core/Series/Point';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        heatmap: HeatmapSeries,
+        scatter: ScatterSeries
+    }
+} = BaseSeries;
 import ColorSeriesModule from '../Mixins/ColorSeries.js';
 const {
     colorPointMixin
 } = ColorSeriesModule;
 import H from '../Core/Globals.js';
+const { noop } = H;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     clamp,
     extend,
+    merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Axis/Types' {
     interface AxisLike {
@@ -60,28 +80,6 @@ declare module '../Core/Series/SeriesOptions' {
  */
 declare global {
     namespace Highcharts {
-        class TilemapPoint extends HeatmapSeries.prototype.pointClass implements ColorPoint {
-            public option: TilemapPointOptions;
-            public pointPadding?: number;
-            public radius: number;
-            public series: TilemapSeries;
-            public setVisible: ColorPointMixin['setVisible'];
-            public tileEdges: Dictionary<number>;
-            public haloPath(): SVGPath;
-        }
-        class TilemapSeries extends HeatmapSeries implements ColorSeries {
-            public alignDataLabel: TilemapShapeObject['alignDataLabel'];
-            public data: Array<TilemapPoint>;
-            public options: TilemapSeriesOptions;
-            public pointClass: typeof TilemapPoint;
-            public points: Array<TilemapPoint>;
-            public tileShape: TilemapShapeObject;
-            public translateColors: ColorSeries['translateColors'];
-            public drawPoints(): void;
-            public getSeriesPixelPadding(axis: Axis): Record<string, number>;
-            public setOptions(): TilemapSeriesOptions;
-            public translate(): void;
-        }
         interface TilemapPaddingObject {
             xPad: number;
             yPad: number;
@@ -89,7 +87,7 @@ declare global {
         interface TilemapPointOptions extends HeatmapPointOptions {
         }
         interface TilemapSeriesOptions extends HeatmapSeriesOptions {
-            state?: SeriesStatesOptions<HeatmapSeries>;
+            state?: SeriesStatesOptions<TilemapSeries>;
             tileShape?: TilemapShapeValue;
         }
         interface TilemapShapeObject {
@@ -113,20 +111,11 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        tilemap: typeof Highcharts.TilemapSeries;
-    }
-}
-
-/**
- * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
- */
-
-''; // detach doclets above
+/* *
+ *
+ *  Composition
+ *
+ * */
 
 /**
  * Utility func to get padding definition from tile size division
@@ -140,7 +129,7 @@ declare module '../Core/Series/SeriesType' {
  * @return {Highcharts.TilemapPaddingObject}
  */
 function tilePaddingFromTileSize(
-    series: Highcharts.TilemapSeries,
+    series: TilemapSeries,
     xDiv: number,
     yDiv: number
 ): Highcharts.TilemapPaddingObject {
@@ -157,14 +146,14 @@ H.tileShapeTypes = {
 
     // Hexagon shape type.
     hexagon: {
-        alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
+        alignDataLabel: ScatterSeries.prototype.alignDataLabel,
         getSeriesPadding: function (
-            series: Highcharts.TilemapSeries
+            series: TilemapSeries
         ): Highcharts.TilemapPaddingObject {
             return tilePaddingFromTileSize(series, 3, 2);
         },
         haloPath: function (
-            this: Highcharts.TilemapPoint,
+            this: TilemapPoint,
             size: number
         ): SVGPath {
             if (!size) {
@@ -182,7 +171,7 @@ H.tileShapeTypes = {
                 ['Z']
             ];
         },
-        translate: function (this: Highcharts.TilemapSeries): void {
+        translate: function (this: TilemapSeries): void {
             var series = this,
                 options = series.options,
                 xAxis = series.xAxis,
@@ -194,9 +183,7 @@ H.tileShapeTypes = {
 
             series.generatePoints();
 
-            series.points.forEach(function (
-                point: Highcharts.TilemapPoint
-            ): void {
+            series.points.forEach(function (point): void {
                 var x1 = clamp(
                         Math.floor(
                             xAxis.len -
@@ -336,17 +323,16 @@ H.tileShapeTypes = {
         }
     },
 
-
     // Diamond shape type.
     diamond: {
-        alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
+        alignDataLabel: ScatterSeries.prototype.alignDataLabel,
         getSeriesPadding: function (
-            series: Highcharts.TilemapSeries
+            series: TilemapSeries
         ): Highcharts.TilemapPaddingObject {
             return tilePaddingFromTileSize(series, 2, 2);
         },
         haloPath: function (
-            this: Highcharts.TilemapPoint,
+            this: TilemapPoint,
             size: number
         ): SVGPath {
             if (!size) {
@@ -362,7 +348,7 @@ H.tileShapeTypes = {
                 ['Z']
             ];
         },
-        translate: function (this: Highcharts.TilemapSeries): void {
+        translate: function (this: TilemapSeries): void {
             var series = this,
                 options = series.options,
                 xAxis = series.xAxis,
@@ -374,9 +360,7 @@ H.tileShapeTypes = {
 
             series.generatePoints();
 
-            series.points.forEach(function (
-                point: Highcharts.TilemapPoint
-            ): void {
+            series.points.forEach(function (point): void {
                 var x1 = clamp(
                         Math.round(
                             xAxis.len -
@@ -497,26 +481,25 @@ H.tileShapeTypes = {
         }
     },
 
-
     // Circle shape type.
     circle: {
-        alignDataLabel: H.seriesTypes.scatter.prototype.alignDataLabel,
+        alignDataLabel: ScatterSeries.prototype.alignDataLabel,
         getSeriesPadding: function (
-            series: Highcharts.TilemapSeries
+            series: TilemapSeries
         ): Highcharts.TilemapPaddingObject {
             return tilePaddingFromTileSize(series, 2, 2);
         },
         haloPath: function (
-            this: Highcharts.TilemapPoint,
+            this: TilemapPoint,
             size: number
         ): SVGPath { // eslint-disable-line @typescript-eslint/indent
-            return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
+            return ScatterSeries.prototype.pointClass.prototype.haloPath
                 .call(
                     this,
                     size + (size && this.radius)
                 );
         },
-        translate: function (this: Highcharts.TilemapSeries): void {
+        translate: function (this: TilemapSeries): void {
             var series = this,
                 options = series.options,
                 xAxis = series.xAxis,
@@ -532,9 +515,7 @@ H.tileShapeTypes = {
 
             series.generatePoints();
 
-            series.points.forEach(function (
-                point: Highcharts.TilemapPoint
-            ): void {
+            series.points.forEach(function (point): void {
                 var x = clamp(
                         Math.round(
                             xAxis.len -
@@ -659,15 +640,12 @@ H.tileShapeTypes = {
         }
     },
 
-
     // Square shape type.
     square: {
-        alignDataLabel: H.seriesTypes.heatmap.prototype.alignDataLabel,
-        translate: H.seriesTypes.heatmap.prototype.translate,
-        getSeriesPadding: function (): void {
-
-        } as any,
-        haloPath: H.seriesTypes.heatmap.prototype.pointClass.prototype.haloPath
+        alignDataLabel: HeatmapSeries.prototype.alignDataLabel,
+        translate: HeatmapSeries.prototype.translate,
+        getSeriesPadding: noop as any,
+        haloPath: HeatmapSeries.prototype.pointClass.prototype.haloPath
     }
 };
 
@@ -685,11 +663,11 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
     var axis = this,
         // Find which series' padding to use
         seriesPadding = axis.series
-            .map(function (series): Highcharts.Dictionary<number>|undefined {
+            .map(function (series): Record<string, number>|undefined {
                 return series.getSeriesPixelPadding &&
                     series.getSeriesPixelPadding(axis);
             })
-            .reduce(function (a, b): Highcharts.Dictionary<number>|undefined {
+            .reduce(function (a, b): Record<string, number>|undefined {
                 return (a && (a.padding as any)) > (b && (b.padding as any)) ?
                     a :
                     b;
@@ -714,6 +692,12 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
     }
 });
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * @private
  * @class
@@ -721,7 +705,13 @@ addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.TilemapSeries>('tilemap', 'heatmap'
+class TilemapSeries extends HeatmapSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * A tilemap series is a type of heatmap where the tile shapes are
@@ -748,7 +738,7 @@ BaseSeries.seriesType<typeof Highcharts.TilemapSeries>('tilemap', 'heatmap'
      * @requires     modules/tilemap.js
      * @optionparent plotOptions.tilemap
      */
-    , { // Default options
+    public static defaultOptions: Highcharts.TilemapSeriesOptions = merge(HeatmapSeries.defaultOptions, {
         // Remove marker from tilemap default options, as it was before
         // heatmap refactoring.
         marker: null as any,
@@ -823,137 +813,260 @@ BaseSeries.seriesType<typeof Highcharts.TilemapSeries>('tilemap', 'heatmap'
          */
         tileShape: 'hexagon'
 
-    }, { // Prototype functions
-        // Use drawPoints, markerAttribs, pointAttribs methods from the old
-        // heatmap implementation.
-        // TODO: Consider standarizing heatmap and tilemap into more
-        // consistent form.
-        markerAttribs: H.seriesTypes.scatter.prototype.markerAttribs,
-        pointAttribs: H.seriesTypes.column.prototype.pointAttribs,
-        // Revert the noop on getSymbol.
-        getSymbol: H.noop as any,
-        drawPoints: function (
-            this: Highcharts.TilemapSeries
-        ): void {
-            // In styled mode, use CSS, otherwise the fill used in the style
-            // sheet will take precedence over the fill attribute.
-            H.seriesTypes.column.prototype.drawPoints.call(this);
-            this.points.forEach(
-                (point: Highcharts.TilemapPoint): void => {
-                    point.graphic &&
-                        (point.graphic as any)[
-                            this.chart.styledMode ? 'css' : 'animate'
-                        ](this.colorAttribs(point));
-                }
-            );
-        },
-        // Set tile shape object on series
-        setOptions: function (
-            this: Highcharts.TilemapSeries
-        ): Highcharts.TilemapSeriesOptions {
-        // Call original function
-            var ret: Highcharts.TilemapSeriesOptions =
-                H.seriesTypes.heatmap.prototype.setOptions.apply(
-                    this,
-                    Array.prototype.slice.call(arguments) as any
-                );
+    } as Highcharts.TilemapSeriesOptions);
 
-            this.tileShape = H.tileShapeTypes[ret.tileShape as any];
-            return ret;
-        },
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-        // Use the shape's defined data label alignment function
-        alignDataLabel: function (
-            this: Highcharts.TilemapSeries
-        ): void {
-            return this.tileShape.alignDataLabel.apply(
-                this,
-                Array.prototype.slice.call(arguments) as any
-            );
-        },
+    public data: Array<TilemapPoint> = void 0 as any;
 
-        // Get metrics for padding of axis for this series
-        getSeriesPixelPadding: function (
-            this: Highcharts.TilemapSeries,
-            axis: Highcharts.Axis
-        ): Highcharts.Dictionary<number> {
-            var isX = axis.isXAxis,
-                padding = this.tileShape.getSeriesPadding(this),
-                coord1,
-                coord2;
+    public options: Highcharts.TilemapSeriesOptions = void 0 as any;
 
-            // If the shape type does not require padding, return no-op padding
-            if (!padding) {
-                return {
-                    padding: 0,
-                    axisLengthFactor: 1
-                };
+    public points: Array<TilemapPoint> = void 0 as any;
+
+    public tileShape: Highcharts.TilemapShapeObject = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Use the shape's defined data label alignment function.
+     * @private
+     */
+    public alignDataLabel(): void {
+        return this.tileShape.alignDataLabel.apply(
+            this,
+            Array.prototype.slice.call(arguments) as any
+        );
+    }
+
+    public drawPoints(): void {
+        // In styled mode, use CSS, otherwise the fill used in the style
+        // sheet will take precedence over the fill attribute.
+        ColumnSeries.prototype.drawPoints.call(this);
+        this.points.forEach(
+            (point: TilemapPoint): void => {
+                point.graphic &&
+                    (point.graphic as any)[
+                        this.chart.styledMode ? 'css' : 'animate'
+                    ](this.colorAttribs(point));
             }
+        );
+    }
 
-            // Use translate to compute how far outside the points we
-            // draw, and use this difference as padding.
-            coord1 = Math.round(
-                axis.translate(
-                    isX ?
-                        padding.xPad * 2 :
-                        padding.yPad,
-                    0 as any,
-                    1 as any,
-                    0 as any,
-                    1 as any
-                ) as any
-            );
-            coord2 = Math.round(
-                axis.translate(
-                    isX ? padding.xPad : 0,
-                    0 as any,
-                    1 as any,
-                    0 as any,
-                    1 as any
-                ) as any
-            );
+    /**
+     * Get metrics for padding of axis for this series.
+     * @private
+     */
+    public getSeriesPixelPadding(axis: Axis): Record<string, number> {
+        var isX = axis.isXAxis,
+            padding = this.tileShape.getSeriesPadding(this),
+            coord1,
+            coord2;
 
+        // If the shape type does not require padding, return no-op padding
+        if (!padding) {
             return {
-                padding: Math.abs(coord1 - coord2) || 0,
-
-                // Offset the yAxis length to compensate for shift. Setting the
-                // length factor to 2 would add the same margin to max as min.
-                // Now we only add a slight bit of the min margin to max, as we
-                // don't actually draw outside the max bounds. For the xAxis we
-                // draw outside on both sides so we add the same margin to min
-                // and max.
-                axisLengthFactor: isX ? 2 : 1.1
+                padding: 0,
+                axisLengthFactor: 1
             };
-        },
-
-        // Use translate from tileShape
-        translate: function (this: Highcharts.TilemapSeries): void {
-            return this.tileShape.translate.apply(
-                this,
-                Array.prototype.slice.call(arguments) as any
-            );
         }
 
-    }, extend({
+        // Use translate to compute how far outside the points we
+        // draw, and use this difference as padding.
+        coord1 = Math.round(
+            axis.translate(
+                isX ?
+                    padding.xPad * 2 :
+                    padding.yPad,
+                0 as any,
+                1 as any,
+                0 as any,
+                1 as any
+            ) as any
+        );
+        coord2 = Math.round(
+            axis.translate(
+                isX ? padding.xPad : 0,
+                0 as any,
+                1 as any,
+                0 as any,
+                1 as any
+            ) as any
+        );
 
-        // eslint-disable-next-line valid-jsdoc
-        /**
-         * @private
-         * @function Highcharts.Point#haloPath
-         *
-         * @return {Highcharts.SVGElement|Highcharts.SVGPathArray|Array<Highcharts.SVGElement>}
-         */
-        haloPath: function (
-            this: Highcharts.TilemapPoint
-        ): SVGPath { // eslint-disable-line @typescript-eslint/indent
-            return this.series.tileShape.haloPath.apply(
-                this,
-                Array.prototype.slice.call(arguments) as any
-            );
-        }
-    },
-    colorPointMixin)
-);
+        return {
+            padding: Math.abs(coord1 - coord2) || 0,
+
+            // Offset the yAxis length to compensate for shift. Setting the
+            // length factor to 2 would add the same margin to max as min.
+            // Now we only add a slight bit of the min margin to max, as we
+            // don't actually draw outside the max bounds. For the xAxis we
+            // draw outside on both sides so we add the same margin to min
+            // and max.
+            axisLengthFactor: isX ? 2 : 1.1
+        };
+    }
+
+    /**
+     * Set tile shape object on series.
+     * @private
+     */
+    public setOptions(): Highcharts.TilemapSeriesOptions {
+        // Call original function
+        var ret: Highcharts.TilemapSeriesOptions = super.setOptions.apply(
+            this,
+            Array.prototype.slice.call(arguments) as any
+        );
+
+        this.tileShape = H.tileShapeTypes[ret.tileShape as any];
+        return ret;
+    }
+
+    /**
+     * Use translate from tileShape.
+     * @private
+     */
+    public translate(): void {
+        return this.tileShape.translate.apply(
+            this,
+            Array.prototype.slice.call(arguments) as any
+        );
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface TilemapSeries {
+    pointClass: typeof TilemapPoint;
+}
+extend(TilemapSeries.prototype, { // Prototype functions
+    // Use drawPoints, markerAttribs, pointAttribs methods from the old
+    // heatmap implementation.
+    // TODO: Consider standarizing heatmap and tilemap into more
+    // consistent form.
+    markerAttribs: ScatterSeries.prototype.markerAttribs,
+    pointAttribs: ColumnSeries.prototype.pointAttribs,
+    // Revert the noop on getSymbol.
+    getSymbol: noop
+});
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class TilemapPoint extends HeatmapSeries.prototype.pointClass {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public options: Highcharts.TilemapPointOptions = void 0 as any;
+
+    public pointPadding?: number;
+
+    public radius: number = void 0 as any;
+
+    public series: TilemapSeries = void 0 as any;
+
+    public tileEdges: Record<string, number> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * @private
+     * @function Highcharts.Point#haloPath
+     *
+     * @return {Highcharts.SVGElement|Highcharts.SVGPathArray|Array<Highcharts.SVGElement>}
+     */
+    public haloPath(): SVGPath {
+        return this.series.tileShape.haloPath.apply(
+            this,
+            Array.prototype.slice.call(arguments) as any
+        );
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface TilemapPoint {
+    setVisible: typeof colorPointMixin.setVisible;
+}
+extend(TilemapPoint.prototype, {
+    setVisible: colorPointMixin.setVisible
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        tilemap: typeof TilemapSeries;
+    }
+}
+TilemapSeries.prototype.pointClass = TilemapPoint;
+BaseSeries.registerSeriesType('tilemap', TilemapSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default TilemapSeries;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
+ */
+
+''; // detach doclets above
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `tilemap` series. If the [type](#series.tilemap.type) option is
