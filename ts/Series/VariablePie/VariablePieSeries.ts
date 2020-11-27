@@ -37,15 +37,6 @@ const {
     pick
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-    }
-}
-
 /* *
  *
  *  Class

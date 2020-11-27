@@ -1487,9 +1487,13 @@ var LineSeries = /** @class */ (function () {
             }
             // Set the the plotY value, reset it for redraws
             // #3201
-            point.plotY = ((typeof yValue === 'number' && yValue !== Infinity) ?
-                limitedRange(yAxis.translate(yValue, 0, 1, 0, 1)) :
-                void 0);
+            point.plotY = void 0;
+            if (isNumber(yValue)) {
+                var translated = yAxis.translate(yValue, false, true, false, true);
+                if (typeof translated !== 'undefined') {
+                    point.plotY = limitedRange(translated);
+                }
+            }
             point.isInside = this.isPointInside(point);
             // Set client related positions for mouse tracking
             point.clientX = dynamicallyPlaced ?
@@ -2691,7 +2695,7 @@ var LineSeries = /** @class */ (function () {
             factor = axis.reversed ? -0.5 : 0.5; // #11955
         }
         return isNumber(factor) ?
-            factor * pick(pointRange, axis.pointRange) :
+            factor * (pointRange || axis.pointRange) :
             0;
     };
     /**

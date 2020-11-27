@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/PPOIndicator.js';
+import '../../Stock/Indicators/PPO/PPOIndicator.js';

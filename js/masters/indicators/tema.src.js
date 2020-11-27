@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/TEMAIndicator.js';
+import '../../Stock/Indicators/TEMA/TEMAIndicator.js';

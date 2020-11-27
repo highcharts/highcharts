@@ -49,3 +49,49 @@ QUnit.test('Update flag (#4222)', function (assert) {
         'Updated text'
     );
 });
+
+QUnit.test('#14649: Dynamically updated visual attributes', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'line'
+        },
+        series: [{
+            id: 'data',
+            data: [[1, 1], [2, 3], [3, 5]]
+        }, {
+            type: 'flags',
+            data: [{
+                x: 1,
+                fillColor: 'green'
+            }, {
+                x: 3,
+                fillColor: 'red'
+            }],
+            onSeries: 'data',
+            shape: 'circle'
+        }]
+    });
+
+    chart.series[1].setData([{
+        x: 1,
+        fillColor: 'blue'
+    }, {
+        x: 3,
+        fillColor: 'red'
+    }]);
+
+    assert.strictEqual(
+        chart.series[1].points[0].graphic.attr('fill'),
+        'blue',
+        'Graphic fill should be updated');
+
+    chart.series[1].points[1].update({
+        fillColor: 'pink'
+    });
+
+    assert.strictEqual(
+        chart.series[1].points[1].graphic.attr('fill'),
+        'pink',
+        'Graphic fill should be updated'
+    );
+});

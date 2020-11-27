@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 QUnit.test('X-Range', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -540,5 +541,206 @@ QUnit.test('#13811: partialFill application order', function (assert) {
         chart.series[0].points[2].graphic.partRect.attr('fill'),
         'red',
         'Series.partialFill should still work'
+    );
+});
+
+QUnit.test('XRange series and tooltip position', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        yAxis: {
+            categories: ["First", "Second"]
+        },
+        series: [{
+            data: [{
+                x: 0,
+                x2: 5,
+                y: 0
+            }, {
+                x: 5,
+                x2: 10,
+                y: 1
+            }]
+        }, {
+            data: [{
+                x: 5,
+                x2: 10,
+                y: 0
+            }, {
+                x: 0,
+                x2: 5,
+                y: 1
+            }]
+        }]
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    var labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    var pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        pointGraphicBox.left + pointGraphicBox.width / 2,
+        2,
+        'No inverted chart, no reversed xAxis, no reversed yAxis'
+    );
+
+    chart.update({
+        yAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        pointGraphicBox.left + pointGraphicBox.width / 2,
+        2,
+        'No inverted chart, no reversed xAxis, reversed yAxis'
+    );
+
+    chart.update({
+        xAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        pointGraphicBox.left + pointGraphicBox.width / 2,
+        2,
+        'No inverted chart, reversed xAxis, no reversed yAxis'
+    );
+
+    chart.update({
+        xAxis: {
+            reversed: true
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.left + labelBox.width / 2,
+        pointGraphicBox.left + pointGraphicBox.width / 2,
+        2,
+        'No inverted chart, reversed xAxis, reversed yAxis'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        xAxis: {
+            reversed: true
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.top + labelBox.height / 2,
+        pointGraphicBox.top + pointGraphicBox.height / 2,
+        2.001,
+        'Inverted chart, reversed xAxis, reversed yAxis'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.top + labelBox.height / 2,
+        pointGraphicBox.top + pointGraphicBox.height / 2,
+        2.001,
+        'Inverted chart, no reversed xAxis, no reversed yAxis'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        xAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.top + labelBox.height / 2,
+        pointGraphicBox.top + pointGraphicBox.height / 2,
+        2.001,
+        'Inverted chart, reversed xAxis, no reversed yAxis'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        },
+        yAxis: {
+            reversed: true
+        }
+    });
+
+    chart.tooltip.refresh(chart.series[0].points[0]);
+
+    labelBox = chart.tooltip.label.element.getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
+
+    //Precision up to 2 pixels
+    assert.close(
+        labelBox.top + labelBox.height / 2,
+        pointGraphicBox.top + pointGraphicBox.height / 2,
+        2.001,
+        'Inverted chart, no reversed xAxis, reversed yAxis'
     );
 });
