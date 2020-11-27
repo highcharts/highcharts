@@ -333,6 +333,13 @@ extend(defaultOptions, {
          * The date format in the input boxes when not selected for editing.
          * Defaults to `%b %e, %Y`.
          *
+         * This is used to determine which type of input to show,
+         * `datetime-local`, `date` or `time` and falling back to `text` when
+         * the browser does not support the input type or the format contains
+         * milliseconds.
+         *
+         * @sample {highstock} stock/rangeselector/input-type/
+         *         Input types
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
          *
@@ -343,6 +350,10 @@ extend(defaultOptions, {
          * and return a valid JavaScript time as milliseconds since 1970.
          * The first argument passed is a value to parse,
          * second is a boolean indicating use of the UTC time.
+         *
+         * This will only get called for inputs of type `text`. Since v8.2.3,
+         * the input type is dynamically determined based on the granularity
+         * of the `inputDateFormat` and the browser support.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
@@ -355,6 +366,10 @@ extend(defaultOptions, {
          * The date format in the input boxes when they are selected for
          * editing. This must be a format that is recognized by JavaScript
          * Date.parse.
+         *
+         * This will only be used for inputs of type `text`. Since v8.2.3,
+         * the input type is dynamically determined based on the granularity
+         * of the `inputDateFormat` and the browser support.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
@@ -818,6 +833,24 @@ var RangeSelector = /** @class */ (function () {
             rangeOptions._offsetMax - rangeOptions._offsetMin;
     };
     /**
+     * Get the unix timestamp of a HTML input for the dates
+     *
+     * @private
+     * @function Highcharts.RangeSelector#getInputValue
+     * @param {string} name
+     * @return {number}
+     */
+    RangeSelector.prototype.getInputValue = function (name) {
+        var input = name === 'min' ? this.minInput : this.maxInput;
+        var options = this.chart.options.rangeSelector;
+        var time = this.chart.time;
+        if (input) {
+            return ((input.type === 'text' && options.inputDateParser) ||
+                this.defaultInputDateParser)(input.value, time.useUTC, time);
+        }
+        return 0;
+    };
+    /**
      * Set the internal and displayed value of a HTML input for the dates
      *
      * @private
@@ -833,16 +866,43 @@ var RangeSelector = /** @class */ (function () {
             var updatedTime = defined(hcTimeAttr) ? Number(hcTimeAttr) : void 0;
             if (defined(inputTime)) {
                 var previousTime = updatedTime;
-                if (previousTime) {
+                if (defined(previousTime)) {
                     input.setAttribute('data-hc-time-previous', previousTime);
                 }
                 input.setAttribute('data-hc-time', inputTime);
                 updatedTime = inputTime;
             }
-            input.value = time.dateFormat(options.inputEditDateFormat, updatedTime);
+            input.value = time.dateFormat(this.inputTypeFormats[input.type] || options.inputEditDateFormat, updatedTime);
             this[name + 'DateBox'].attr({
                 text: time.dateFormat(options.inputDateFormat, updatedTime)
             });
+        }
+    };
+    /**
+     * Set the min and max value of a HTML input for the dates
+     *
+     * @private
+     * @function Highcharts.RangeSelector#setInputExtremes
+     * @param {string} name
+     * @param {number} min
+     * @param {number} max
+     * @return {void}
+     */
+    RangeSelector.prototype.setInputExtremes = function (name, min, max) {
+        var input = name === 'min' ? this.minInput : this.maxInput;
+        if (input) {
+            var format = this.inputTypeFormats[input.type];
+            var time = this.chart.time;
+            if (format) {
+                var newMin = time.dateFormat(format, min);
+                if (input.min !== newMin) {
+                    input.min = newMin;
+                }
+                var newMax = time.dateFormat(format, max);
+                if (input.max !== newMax) {
+                    input.max = newMax;
+                }
+            }
         }
     };
     /**
@@ -852,14 +912,30 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.showInput = function (name) {
-        var inputGroup = this.inputGroup, dateBox = this[name + 'DateBox'];
-        css(this[name + 'Input'], {
-            left: (inputGroup.translateX + dateBox.x) + 'px',
-            top: inputGroup.translateY + 'px',
-            width: (dateBox.width - 2) + 'px',
-            height: (dateBox.height - 2) + 'px',
+        var dateBox = this[name + 'DateBox'], input = this[name + 'Input'], isTextInput = input.type === 'text';
+        var _a = this.inputGroup, translateX = _a.translateX, translateY = _a.translateY;
+        css(input, {
+            width: isTextInput ? ((dateBox.width - 2) + 'px') : 'auto',
+            height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
             border: '2px solid silver'
         });
+        if (isTextInput) {
+            css(input, {
+                left: (translateX + dateBox.x) + 'px',
+                top: translateY + 'px'
+            });
+            // Inputs of types date, time or datetime-local should be centered on
+            // top of the dateBox
+        }
+        else {
+            css(input, {
+                left: Math.min(Math.round(dateBox.x +
+                    translateX -
+                    (input.offsetWidth - dateBox.width) / 2), this.chart.chartWidth - input.offsetWidth) + 'px',
+                top: (translateY - (input.offsetHeight - dateBox.height) / 2) +
+                    'px'
+            });
+        }
     };
     /**
      * @private
@@ -869,11 +945,11 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.hideInput = function (name) {
         css(this[name + 'Input'], {
+            top: '-9999em',
             border: 0,
             width: '1px',
             height: '1px'
         });
-        this.setInputValue(name);
     };
     /**
      * @private
@@ -905,7 +981,7 @@ var RangeSelector = /** @class */ (function () {
             date = Date.UTC(pInt(parts[0]), pInt(parts[1]) - 1, pInt(parts[2]));
         }
         if (time && useUTC) {
-            date += time.getTimezoneOffset(date) * 60 * 1000;
+            date += time.getTimezoneOffset(date);
         }
         return date;
     };
@@ -918,17 +994,16 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.drawInput = function (name) {
-        var _a = this, chart = _a.chart, defaultInputDateParser = _a.defaultInputDateParser, div = _a.div, inputGroup = _a.inputGroup;
+        var _a = this, chart = _a.chart, div = _a.div, inputGroup = _a.inputGroup;
         var rangeSelector = this, chartStyle = chart.renderer.style || {}, renderer = chart.renderer, options = chart.options.rangeSelector, lang = defaultOptions.lang, isMin = name === 'min', input, label, dateBox;
         /**
          * @private
          */
         function updateExtremes() {
-            var inputValue = input.value, value, chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
+            var value = rangeSelector.getInputValue(name), chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
                 chart.scroller.xAxis :
                 chartAxis, dataMin = dataAxis.dataMin, dataMax = dataAxis.dataMax;
             var maxInput = rangeSelector.maxInput, minInput = rangeSelector.minInput;
-            value = (options.inputDateParser || defaultInputDateParser)(inputValue, chart.time.useUTC, chart.time);
             if (value !== Number(input.getAttribute('data-hc-time-previous')) &&
                 isNumber(value)) {
                 input.setAttribute('data-hc-time-previous', value);
@@ -995,10 +1070,8 @@ var RangeSelector = /** @class */ (function () {
         this[name + 'Input'] = input = createElement('input', {
             name: name,
             className: 'highcharts-range-selector',
-            type: 'text'
-        }, {
-            top: chart.plotTop + 'px' // prevent jump on focus in Firefox
-        }, div);
+            type: preferredInputType(options.inputDateFormat || '%b %e, %Y')
+        }, void 0, div);
         if (!chart.styledMode) {
             // Styles
             label.css(merge(chartStyle, options.labelStyle));
@@ -1008,6 +1081,7 @@ var RangeSelector = /** @class */ (function () {
             css(input, extend({
                 position: 'absolute',
                 border: 0,
+                boxShadow: '0 0 15px rgba(0,0,0,0.3)',
                 width: '1px',
                 height: '1px',
                 padding: 0,
@@ -1031,15 +1105,30 @@ var RangeSelector = /** @class */ (function () {
             }
             // #10404 - move hide and blur outside focus
             rangeSelector.hideInput(name);
+            rangeSelector.setInputValue(name);
             input.blur(); // #4606
         };
+        var keyDown = false;
         // handle changes in the input boxes
-        input.onchange = updateExtremes;
+        input.onchange = function () {
+            updateExtremes();
+            // Blur input when clicking date input calendar
+            if (!keyDown) {
+                rangeSelector.hideInput(name);
+                input.blur();
+            }
+        };
         input.onkeypress = function (event) {
             // IE does not fire onchange on enter
             if (event.keyCode === 13) {
                 updateExtremes();
             }
+        };
+        input.onkeydown = function () {
+            keyDown = true;
+        };
+        input.onkeyup = function () {
+            keyDown = false;
         };
     };
     /**
@@ -1135,6 +1224,12 @@ var RangeSelector = /** @class */ (function () {
             // Set or reset the input values
             this.setInputValue('min', min);
             this.setInputValue('max', max);
+            var unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || chart.xAxis[0] || {};
+            if (defined(unionExtremes.dataMin) && defined(unionExtremes.dataMax)) {
+                var minRange = chart.xAxis[0].minRange || 0;
+                this.setInputExtremes('min', unionExtremes.dataMin, Math.min(unionExtremes.dataMax, this.getInputValue('max')) - minRange);
+                this.setInputExtremes('max', Math.max(unionExtremes.dataMin, this.getInputValue('min')) + minRange, unionExtremes.dataMax);
+            }
         }
         this.alignElements();
         this.rendered = true;
@@ -1513,6 +1608,44 @@ RangeSelector.prototype.defaultButtons = [{
         text: 'All',
         title: 'View all'
     }];
+/**
+ * The date formats to use when setting min, max and value on date inputs
+ */
+RangeSelector.prototype.inputTypeFormats = {
+    'datetime-local': '%Y-%m-%dT%H:%M:%S',
+    'date': '%Y-%m-%d',
+    'time': '%H:%M:%S'
+};
+/**
+ * Get the preferred input type based on a date format string.
+ *
+ * @private
+ * @function preferredInputType
+ * @param {string} format
+ * @return {string}
+ */
+function preferredInputType(format) {
+    var ms = format.indexOf('%L') !== -1;
+    if (ms) {
+        return 'text';
+    }
+    var date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y'].some(function (char) {
+        return format.indexOf('%' + char) !== -1;
+    });
+    var time = ['H', 'k', 'I', 'l', 'M', 'S'].some(function (char) {
+        return format.indexOf('%' + char) !== -1;
+    });
+    if (date && time) {
+        return 'datetime-local';
+    }
+    if (date) {
+        return 'date';
+    }
+    if (time) {
+        return 'time';
+    }
+    return 'text';
+}
 /**
  * Get the axis min value based on the range option and the current max. For
  * stock charts this is extended via the {@link RangeSelector} so that if the
