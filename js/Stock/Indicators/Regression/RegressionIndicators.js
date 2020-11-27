@@ -26,6 +26,9 @@ var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var isArray = U.isArray, extend = U.extend, merge = U.merge;
 /**
+ * LinearRegressionIndicator
+ */
+/**
  * Linear regression series type.
  *
  * @private
@@ -228,7 +231,57 @@ extend(LinearRegressionIndicator.prototype, {
         return indicatorData;
     }
 });
+/**
+ * LinearRegressionAngleIndicator
+ */
+/**
+ * A linear regression series. If the [type](#series.linearregression.type)
+ * option is not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.linearregression
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding dataParser,dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
+ * @apioption series.linearregression
+ */
+/* ************************************************************************** */
+/**
+ * The Linear Regression Slope series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.linearRegressionSlope
+ *
+ * @augments Highcharts.Series
+ */
+var LinearRegressionSlopesIndicator = /** @class */ (function (_super) {
+    __extends(LinearRegressionSlopesIndicator, _super);
+    function LinearRegressionSlopesIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    LinearRegressionSlopesIndicator.defaultOptions = LinearRegressionIndicator.defaultOptions;
+    return LinearRegressionSlopesIndicator;
+}(LinearRegressionIndicator));
+;
+var LinearRegressionSlopesIndicatorPoint = /** @class */ (function (_super) {
+    __extends(LinearRegressionSlopesIndicatorPoint, _super);
+    function LinearRegressionSlopesIndicatorPoint() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.series = void 0;
+        return _this;
+    }
+    return LinearRegressionSlopesIndicatorPoint;
+}(LinearRegressionIndicatorPoint));
+extend(LinearRegressionSlopesIndicator.prototype, {
+    nameBase: 'Linear Regression Slope Indicator',
+    getEndPointY: function (lineParameters) {
+        return lineParameters.slope;
+    }
+});
 BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
+BaseSeries.registerSeriesType('linearRegressionSlope', LinearRegressionSlopesIndicator);
 /* *
  *
  *  Default Export
