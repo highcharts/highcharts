@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/ZigzagIndicator.js';
+import '../../Stock/Indicators/Zigzag/ZigzagIndicator.js';

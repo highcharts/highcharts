@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/ROCIndicator.js';
+import '../../Stock/Indicators/ROC/ROCIndicator.js';

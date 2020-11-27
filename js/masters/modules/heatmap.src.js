@@ -10,4 +10,4 @@
 'use strict';
 import '../../Core/Axis/ColorAxis.js';
 import '../../Mixins/ColorMapSeries.js';
-import '../../Series/HeatmapSeries.js';
+import '../../Series/Heatmap/HeatmapSeries.js';

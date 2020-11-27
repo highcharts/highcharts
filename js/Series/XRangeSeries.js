@@ -254,7 +254,8 @@ BaseSeries.seriesType('xrange', 'column'
      * @param {Highcharts.Point} point
      */
     translatePoint: function (point) {
-        var series = this, xAxis = series.xAxis, yAxis = series.yAxis, metrics = series.columnMetrics, options = series.options, minPointLength = options.minPointLength || 0, plotX = point.plotX, posX = pick(point.x2, point.x + (point.len || 0)), plotX2 = xAxis.translate(posX, 0, 0, 0, 1), length = Math.abs(plotX2 - plotX), widthDifference, shapeArgs, partialFill, inverted = this.chart.inverted, borderWidth = pick(options.borderWidth, 1), crisper = borderWidth % 2 / 2, yOffset = metrics.offset, pointHeight = Math.round(metrics.width), dlLeft, dlRight, dlWidth, clipRectWidth, tooltipYOffset;
+        var _a, _b;
+        var series = this, xAxis = series.xAxis, yAxis = series.yAxis, metrics = series.columnMetrics, options = series.options, minPointLength = options.minPointLength || 0, oldColWidth = ((_a = point.shapeArgs) === null || _a === void 0 ? void 0 : _a.width) / 2, seriesXOffset = series.pointXOffset = metrics.offset, plotX = point.plotX, posX = pick(point.x2, point.x + (point.len || 0)), plotX2 = xAxis.translate(posX, 0, 0, 0, 1), length = Math.abs(plotX2 - plotX), widthDifference, shapeArgs, partialFill, inverted = this.chart.inverted, borderWidth = pick(options.borderWidth, 1), crisper = borderWidth % 2 / 2, yOffset = metrics.offset, pointHeight = Math.round(metrics.width), dlLeft, dlRight, dlWidth, clipRectWidth, tooltipYOffset;
         if (minPointLength) {
             widthDifference = minPointLength - length;
             if (widthDifference < 0) {
@@ -283,6 +284,16 @@ BaseSeries.seriesType('xrange', 'column'
             height: pointHeight,
             r: series.options.borderRadius
         };
+        // Move tooltip to default position
+        if (!inverted) {
+            point.tooltipPos[0] -= oldColWidth +
+                seriesXOffset -
+                ((_b = point.shapeArgs) === null || _b === void 0 ? void 0 : _b.width) / 2;
+        }
+        else {
+            point.tooltipPos[1] += seriesXOffset +
+                oldColWidth;
+        }
         // Align data labels inside the shape and inside the plot area
         dlLeft = point.shapeArgs.x;
         dlRight = dlLeft + point.shapeArgs.width;
@@ -305,9 +316,13 @@ BaseSeries.seriesType('xrange', 'column'
         var yIndex = !inverted ? 1 : 0;
         tooltipYOffset = series.columnMetrics ?
             series.columnMetrics.offset : -metrics.width / 2;
-        // Limit position by the correct axis size (#9727)
-        tooltipPos[xIndex] = clamp(tooltipPos[xIndex] + ((!inverted ? 1 : -1) * (xAxis.reversed ? -1 : 1) *
-            (length / 2)), 0, xAxis.len - 1);
+        // Centering tooltip position (#14147)
+        if (!inverted) {
+            tooltipPos[xIndex] += (xAxis.reversed ? -1 : 0) * point.shapeArgs.width;
+        }
+        else {
+            tooltipPos[xIndex] += point.shapeArgs.width / 2;
+        }
         tooltipPos[yIndex] = clamp(tooltipPos[yIndex] + ((inverted ? -1 : 1) * tooltipYOffset), 0, yAxis.len - 1);
         // Add a partShapeArgs to the point, based on the shapeArgs property
         partialFill = point.partialFill;

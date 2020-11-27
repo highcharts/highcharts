@@ -7,7 +7,12 @@
  * */
 
 'use strict';
-
+import type TEMAIndicator from './TEMA/TEMAIndicator';
+import type {
+    TEMAOptions,
+    TEMAParamsOptions
+} from './TEMA/TEMAOptions';
+import type TEMAPoint from './TEMA/TEMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
@@ -27,24 +32,24 @@ declare global {
             public getTemaPoint(
                 xVal: Array<number>,
                 tripledPeriod: number,
-                EMAlevels: EMAIndicatorLevelsObject,
+                EMAlevels: TEMAIndicator.EMALevelsObject,
                 i: number
-            ): ([number, (number|null)]|undefined);
+            ): [number, number]
             public options: TRIXIndicatorOptions;
             public pointClass: typeof TRIXIndicatorPoint;
             public points: Array<TRIXIndicatorPoint>;
         }
 
         interface TRIXIndicatorParamsOptions
-            extends TEMAIndicatorParamsOptions {
+            extends TEMAParamsOptions {
             // for inheritance
         }
 
-        class TRIXIndicatorPoint extends TEMAIndicatorPoint {
+        class TRIXIndicatorPoint extends TEMAPoint {
             public series: TRIXIndicator;
         }
 
-        interface TRIXIndicatorOptions extends TEMAIndicatorOptions {
+        interface TRIXIndicatorOptions extends TEMAOptions {
             params?: TRIXIndicatorParamsOptions;
         }
     }
@@ -52,7 +57,7 @@ declare global {
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        tema: typeof Highcharts.TRIXIndicator;
+        trix: typeof Highcharts.TRIXIndicator;
     }
 }
 
@@ -114,7 +119,7 @@ BaseSeries.seriesType<typeof Highcharts.TRIXIndicator>(
         getTemaPoint: function (
             xVal: Array<number>,
             tripledPeriod: number,
-            EMAlevels: Highcharts.EMAIndicatorLevelsObject,
+            EMAlevels: TEMAIndicator.EMALevelsObject,
             i: number
         ): ([number, (number|null)]|undefined) {
             if (i > tripledPeriod) {
