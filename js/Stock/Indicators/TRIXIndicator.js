@@ -36,8 +36,31 @@ var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
 var TRIXIndicator = /** @class */ (function (_super) {
     __extends(TRIXIndicator, _super);
     function TRIXIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    TRIXIndicator.prototype.init = function () {
+        var args = arguments, ctx = this;
+        RequiredIndicatorMixin.isParentLoaded(BaseSeries.seriesTypes.tema, 'tema', ctx.type, function (indicator) {
+            indicator.prototype.init.apply(ctx, args);
+            return;
+        });
+    };
+    // TRIX is calculated using TEMA so we just extend getTemaPoint method.
+    TRIXIndicator.prototype.getTemaPoint = function (xVal, tripledPeriod, EMAlevels, i) {
+        if (i > tripledPeriod) {
+            var TRIXPoint = [
+                xVal[i - 3],
+                EMAlevels.prevLevel3 !== 0 ?
+                    correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
+                        EMAlevels.prevLevel3 * 100 : null
+            ];
+        }
+        return TRIXPoint;
+    };
     /**
      * Triple exponential average (TRIX) oscillator. This series requires
      * `linkedTo` option to be set.
@@ -60,27 +83,6 @@ var TRIXIndicator = /** @class */ (function (_super) {
     TRIXIndicator.defaultOptions = merge(TEMAIndicator.defaultOptions);
     return TRIXIndicator;
 }(TEMAIndicator));
-extend(TRIXIndicator.prototype, {
-    init: function () {
-        var args = arguments, ctx = this;
-        RequiredIndicatorMixin.isParentLoaded(BaseSeries.seriesTypes.tema, 'tema', ctx.type, function (indicator) {
-            indicator.prototype.init.apply(ctx, args);
-            return;
-        });
-    },
-    // TRIX is calculated using TEMA so we just extend getTemaPoint method.
-    getTemaPoint: function (xVal, tripledPeriod, EMAlevels, i) {
-        if (i > tripledPeriod) {
-            var TRIXPoint = [
-                xVal[i - 3],
-                EMAlevels.prevLevel3 !== 0 ?
-                    correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
-                        EMAlevels.prevLevel3 * 100 : null
-            ];
-        }
-        return TRIXPoint;
-    }
-});
 BaseSeries.registerSeriesType('trix', TRIXIndicator);
 /* *
  *
