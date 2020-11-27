@@ -351,7 +351,9 @@ extend(defaultOptions, {
          * The first argument passed is a value to parse,
          * second is a boolean indicating use of the UTC time.
          *
-         * This will only get called for inputs of type `text`.
+         * This will only get called for inputs of type `text`. Since v8.2.3,
+         * the input type is dynamically determined based on the granularity
+         * of the `inputDateFormat` and the browser support.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
@@ -365,7 +367,9 @@ extend(defaultOptions, {
          * editing. This must be a format that is recognized by JavaScript
          * Date.parse.
          *
-         * This will only be used for inputs of type `text`.
+         * This will only be used for inputs of type `text`. Since v8.2.3,
+         * the input type is dynamically determined based on the granularity
+         * of the `inputDateFormat` and the browser support.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
