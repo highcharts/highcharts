@@ -18,33 +18,24 @@
  *
  * */
 
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
-import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/StackingAxis';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import Axis from '../../Core/Axis/Axis.js';
+import type VariwideSeriesOptions from './VariwideSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-
 } = BaseSeries;
-import H from '../../Core/Globals.js';
+import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     extend,
-    isNumber,
     merge,
-    pick,
-    wrap
+    pick
 } = U;
 
 import '../Area/AreaSeries.js';
+import './VariwideComposition.js';
 
 /* *
  *
@@ -58,28 +49,10 @@ declare module '../../Core/Series/PointLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Axis {
-            variwide?: boolean;
-            zData?: Array<number>;
-        }
-        interface Tick {
-            postTranslate(
-                xy: PositionObject,
-                xOrY: keyof PositionObject,
-                index: number
-            ): void;
-        }
-        interface VariwidePointOptions extends ColumnPointOptions {
-        }
-        interface VariwideSeriesOptions extends ColumnSeriesOptions {
-            states?: SeriesStatesOptions<VariwideSeries>;
-        }
+declare module '../../Core/Axis/Types' {
+    interface AxisLike {
+        variwide?: boolean;
+        zData?: Array<number>;
     }
 }
 
@@ -123,7 +96,7 @@ class VariwideSeries extends ColumnSeries {
      * @requires     modules/variwide
      * @optionparent plotOptions.variwide
      */
-    public static defaultOptions: Highcharts.VariwideSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: VariwideSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * In a variwide chart, the point padding is 0 in order to express the
          * horizontal stacking of items.
@@ -142,7 +115,7 @@ class VariwideSeries extends ColumnSeries {
      *
      * */
     public data: Array<VariwidePoint> = void 0 as any;
-    public options: Highcharts.VariwideSeriesOptions = void 0 as any;
+    public options: VariwideSeriesOptions = void 0 as any;
 
     /* *
      *
@@ -376,46 +349,9 @@ interface VariwideSeries {
 extend(VariwideSeries.prototype, {
     irregularWidths: true,
     pointArrayMap: ['y', 'z'],
-    parallelArrays: ['x', 'y', 'z']
+    parallelArrays: ['x', 'y', 'z'],
+    pointClass: VariwidePoint
 });
-
-/* *
- *
- * VariwidePoint class
- *
- * */
-class VariwidePoint extends ColumnSeries.prototype.pointClass {
-
-    /* *
-     *
-     * Properites
-     *
-     * */
-    public options: Highcharts.VariwidePointOptions = void 0 as any;
-    public series: VariwideSeries = void 0 as any;
-
-    /* *
-     *
-     * Functions
-     *
-     * */
-    public isValid(): boolean {
-        return isNumber(this.y) && isNumber(this.z);
-    }
-
-}
-
-/* *
- *
- * Prototype properties
- *
- * */
-interface VariwidePoint {
-    crosshairWidth: number;
-    isValid: () => boolean;
-}
-
-VariwideSeries.prototype.pointClass = VariwidePoint;
 
 /* *
  *
@@ -436,114 +372,6 @@ BaseSeries.registerSeriesType('variwide', VariwideSeries);
  *
  * */
 export default VariwideSeries;
-
-H.Tick.prototype.postTranslate = function (
-    xy: PositionObject,
-    xOrY: keyof PositionObject,
-    index: number
-): void {
-    var axis = this.axis,
-        pos = xy[xOrY] - axis.pos;
-
-    if (!axis.horiz) {
-        pos = axis.len - pos;
-    }
-    pos = (axis.series[0] as any).postTranslate(index, pos);
-
-    if (!axis.horiz) {
-        pos = axis.len - pos;
-    }
-    xy[xOrY] = axis.pos + pos;
-};
-
-/* eslint-disable no-invalid-this */
-
-// Same width as the category (#8083)
-addEvent(Axis, 'afterDrawCrosshair', function (
-    e: {
-        point: VariwidePoint;
-    }
-): void {
-    if (this.variwide && this.cross) {
-        this.cross.attr(
-            'stroke-width',
-            (e.point && e.point.crosshairWidth) as any
-        );
-    }
-});
-
-// On a vertical axis, apply anti-collision logic to the labels.
-addEvent(Axis, 'afterRender', function (): void {
-    var axis = this;
-
-    if (!this.horiz && this.variwide) {
-        this.chart.labelCollectors.push(
-            function (): Array<SVGElement> {
-                return axis.tickPositions
-                    .filter(function (pos: number): boolean {
-                        return axis.ticks[pos].label as any;
-                    })
-                    .map(function (
-                        pos: number,
-                        i: number
-                    ): SVGElement {
-                        var label: SVGElement =
-                            axis.ticks[pos].label as any;
-
-                        label.labelrank = (axis.zData as any)[i];
-                        return label;
-                    });
-            }
-        );
-    }
-});
-
-addEvent(H.Tick, 'afterGetPosition', function (
-    e: {
-        pos: PositionObject;
-        xOrY: keyof PositionObject;
-    }
-): void {
-    var axis = this.axis,
-        xOrY: keyof PositionObject = axis.horiz ? 'x' : 'y';
-
-    if (axis.variwide) {
-        (this as any)[xOrY + 'Orig'] = e.pos[xOrY];
-        this.postTranslate(e.pos, xOrY, this.pos);
-    }
-});
-
-wrap(H.Tick.prototype, 'getLabelPosition', function (
-    this: Highcharts.Tick,
-    proceed: Function,
-    x: number,
-    y: number,
-    label: SVGElement,
-    horiz: boolean,
-    labelOptions: DataLabelOptions,
-    tickmarkOffset: number,
-    index: number
-): PositionObject {
-    var args = Array.prototype.slice.call(arguments, 1),
-        xy: PositionObject,
-        xOrY: keyof PositionObject = horiz ? 'x' : 'y';
-
-    // Replace the x with the original x
-    if (
-        this.axis.variwide &&
-        typeof (this as any)[xOrY + 'Orig'] === 'number'
-    ) {
-        args[horiz ? 0 : 1] = (this as any)[xOrY + 'Orig'];
-    }
-
-    xy = proceed.apply(this, args);
-
-    // Post-translate
-    if (this.axis.variwide && this.axis.categories) {
-        this.postTranslate(xy, xOrY, index);
-    }
-    return xy;
-});
 
 /* *
  *
