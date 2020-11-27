@@ -6,12 +6,24 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var TEMAIndicator = BaseSeries.seriesTypes.tema;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat;
-// im port './TEMAIndicator.js';
-var TEMA = BaseSeries.seriesTypes.tema;
+var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
 /**
  * The TRIX series type.
  *
@@ -21,34 +33,37 @@ var TEMA = BaseSeries.seriesTypes.tema;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('trix', 'tema', 
-/**
- * Triple exponential average (TRIX) oscillator. This series requires
- * `linkedTo` option to be set.
- *
- * Requires https://code.highcharts.com/stock/indicators/ema.js
- * and https://code.highcharts.com/stock/indicators/tema.js.
- *
- * @sample {highstock} stock/indicators/trix
- *         TRIX indicator
- *
- * @extends      plotOptions.tema
- * @since        7.0.0
- * @product      highstock
- * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
- *               navigatorOptions, pointInterval, pointIntervalUnit,
- *               pointPlacement, pointRange, pointStart, showInNavigator,
- *               stacking
- * @optionparent plotOptions.trix
- */
-{}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+var TRIXIndicator = /** @class */ (function (_super) {
+    __extends(TRIXIndicator, _super);
+    function TRIXIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /**
+     * Triple exponential average (TRIX) oscillator. This series requires
+     * `linkedTo` option to be set.
+     *
+     * Requires https://code.highcharts.com/stock/indicators/ema.js
+     * and https://code.highcharts.com/stock/indicators/tema.js.
+     *
+     * @sample {highstock} stock/indicators/trix
+     *         TRIX indicator
+     *
+     * @extends      plotOptions.tema
+     * @since        7.0.0
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, compare, compareBase, joinBy, keys,
+     *               navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking
+     * @optionparent plotOptions.trix
+     */
+    TRIXIndicator.defaultOptions = merge(TEMAIndicator.defaultOptions);
+    return TRIXIndicator;
+}(TEMAIndicator));
+extend(TRIXIndicator.prototype, {
     init: function () {
         var args = arguments, ctx = this;
-        RequiredIndicatorMixin.isParentLoaded(TEMA, 'tema', ctx.type, function (indicator) {
+        RequiredIndicatorMixin.isParentLoaded(BaseSeries.seriesTypes.tema, 'tema', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });
@@ -66,6 +81,13 @@ BaseSeries.seriesType('trix', 'tema',
         return TRIXPoint;
     }
 });
+BaseSeries.registerSeriesType('trix', TRIXIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default TRIXIndicator;
 /**
  * A `TRIX` series. If the [type](#series.tema.type) option is not specified, it
  * is inherited from [chart.type](#chart.type).

@@ -7,17 +7,24 @@
  * */
 
 'use strict';
-import type TEMAIndicator from './TEMA/TEMAIndicator';
 import type {
     TEMAOptions,
     TEMAParamsOptions
 } from './TEMA/TEMAOptions';
 import type TEMAPoint from './TEMA/TEMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        tema: TEMAIndicator
+    }
+} = BaseSeries;
+import type TEMAIndicatorType from './TEMA/TEMAIndicator';
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
 import U from '../../Core/Utilities.js';
 const {
-    correctFloat
+    correctFloat,
+    extend,
+    merge
 } = U;
 
 /**
@@ -26,19 +33,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class TRIXIndicator extends TEMAIndicator {
-            public data: Array<TRIXIndicatorPoint>;
-            public init(): void;
-            public getTemaPoint(
-                xVal: Array<number>,
-                tripledPeriod: number,
-                EMAlevels: TEMAIndicator.EMALevelsObject,
-                i: number
-            ): [number, number]
-            public options: TRIXIndicatorOptions;
-            public pointClass: typeof TRIXIndicatorPoint;
-            public points: Array<TRIXIndicatorPoint>;
-        }
 
         interface TRIXIndicatorParamsOptions
             extends TEMAParamsOptions {
@@ -55,16 +49,6 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        trix: typeof Highcharts.TRIXIndicator;
-    }
-}
-
-// im port './TEMAIndicator.js';
-
-var TEMA = BaseSeries.seriesTypes.tema;
-
 /**
  * The TRIX series type.
  *
@@ -74,9 +58,7 @@ var TEMA = BaseSeries.seriesTypes.tema;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.TRIXIndicator>(
-    'trix',
-    'tema',
+class TRIXIndicator extends TEMAIndicator {
     /**
      * Triple exponential average (TRIX) oscillator. This series requires
      * `linkedTo` option to be set.
@@ -96,45 +78,72 @@ BaseSeries.seriesType<typeof Highcharts.TRIXIndicator>(
      *               stacking
      * @optionparent plotOptions.trix
      */
-    {},
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        init: function (this: Highcharts.TRIXIndicator): void {
-            var args = arguments,
-                ctx = this;
+    public static defaultOptions: Highcharts.TRIXIndicatorOptions = merge(TEMAIndicator.defaultOptions)
+}
 
-            RequiredIndicatorMixin.isParentLoaded(
-                (TEMA as any),
-                'tema',
-                ctx.type,
-                function (indicator: Highcharts.Indicator): undefined {
-                    indicator.prototype.init.apply(ctx, args);
-                    return;
-                }
-            );
-        },
-        // TRIX is calculated using TEMA so we just extend getTemaPoint method.
-        getTemaPoint: function (
-            xVal: Array<number>,
-            tripledPeriod: number,
-            EMAlevels: TEMAIndicator.EMALevelsObject,
-            i: number
-        ): ([number, (number|null)]|undefined) {
-            if (i > tripledPeriod) {
-                var TRIXPoint: ([number, (number|null)]|undefined) = [
-                    xVal[i - 3],
-                    EMAlevels.prevLevel3 !== 0 ?
-                        correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
-                        EMAlevels.prevLevel3 * 100 : null
-                ];
+interface TRIXIndicator{
+    data: Array<Highcharts.TRIXIndicatorPoint>;
+    init(): void;
+    getTemaPoint(
+        xVal: Array<number>,
+        tripledPeriod: number,
+        EMAlevels: TEMAIndicatorType.EMALevelsObject,
+        i: number
+    ): [number, number];
+    options: Highcharts.TRIXIndicatorOptions;
+    pointClass: typeof Highcharts.TRIXIndicatorPoint;
+    points: Array<Highcharts.TRIXIndicatorPoint>;
+}
+extend(TRIXIndicator.prototype, {
+    init: function (this: TRIXIndicator): void {
+        var args = arguments,
+            ctx = this;
+
+        RequiredIndicatorMixin.isParentLoaded(
+            (BaseSeries.seriesTypes.tema as any),
+            'tema',
+            ctx.type,
+            function (indicator: Highcharts.Indicator): undefined {
+                indicator.prototype.init.apply(ctx, args);
+                return;
             }
-
-            return TRIXPoint;
+        );
+    },
+    // TRIX is calculated using TEMA so we just extend getTemaPoint method.
+    getTemaPoint: function (
+        xVal: Array<number>,
+        tripledPeriod: number,
+        EMAlevels: TEMAIndicatorType.EMALevelsObject,
+        i: number
+    ): ([number, (number|null)]|undefined) {
+        if (i > tripledPeriod) {
+            var TRIXPoint: ([number, (number|null)]|undefined) = [
+                xVal[i - 3],
+                EMAlevels.prevLevel3 !== 0 ?
+                    correctFloat(EMAlevels.level3 - EMAlevels.prevLevel3) /
+                    EMAlevels.prevLevel3 * 100 : null
+            ];
         }
+
+        return TRIXPoint;
     }
-);
+});
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        trix: typeof TRIXIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('trix', TRIXIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default TRIXIndicator;
 
 /**
  * A `TRIX` series. If the [type](#series.tema.type) option is not specified, it
