@@ -28,7 +28,6 @@ var ColumnSeries = BaseSeries.seriesTypes.column;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
-import '../Area/AreaSeries.js';
 import './VariwideComposition.js';
 /* *
  *
@@ -53,6 +52,10 @@ var VariwideSeries = /** @class */ (function (_super) {
          * */
         _this.data = void 0;
         _this.options = void 0;
+        _this.points = void 0;
+        _this.relZ = void 0;
+        _this.totalZ = void 0;
+        _this.zData = void 0;
         return _this;
     }
     /* *

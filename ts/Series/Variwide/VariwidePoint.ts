@@ -16,19 +16,31 @@
  *
  * */
 import type VariwidePointOptions from './VariwidePointOptions';
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = BaseSeries;
 import VariwideSeries from './VariwideSeries.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;
 
 /* *
  *
- * Class
+ *  Declarations
  *
  * */
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        crosshairWidth?: VariwidePoint['crosshairWidth'];
+    }
+}
+
 /* *
  *
- * VariwidePoint class
+ * Class
  *
  * */
 class VariwidePoint extends ColumnSeries.prototype.pointClass {
@@ -38,6 +50,7 @@ class VariwidePoint extends ColumnSeries.prototype.pointClass {
      * Properites
      *
      * */
+    public crosshairWidth: number = void 0 as any;
     public options: VariwidePointOptions = void 0 as any;
     public series: VariwideSeries = void 0 as any;
 
@@ -51,17 +64,6 @@ class VariwidePoint extends ColumnSeries.prototype.pointClass {
     }
 
 }
-
-/* *
- *
- * Prototype properties
- *
- * */
-interface VariwidePoint {
-    crosshairWidth: number;
-    isValid: () => boolean;
-}
-
 
 /* *
  *
