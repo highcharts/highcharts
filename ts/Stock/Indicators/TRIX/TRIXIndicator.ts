@@ -8,46 +8,23 @@
 
 'use strict';
 import type {
-    TEMAOptions,
-    TEMAParamsOptions
-} from './TEMA/TEMAOptions';
-import type TEMAPoint from './TEMA/TEMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    TRIXOptions,
+    TRIXParamsOptions
+} from './TRIXOptions';
+import type TRIXPoint from './TRIXPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         tema: TEMAIndicator
     }
 } = BaseSeries;
-import type TEMAIndicatorType from './TEMA/TEMAIndicator';
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
-    extend,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-
-        interface TRIXIndicatorParamsOptions
-            extends TEMAParamsOptions {
-            // for inheritance
-        }
-
-        class TRIXIndicatorPoint extends TEMAPoint {
-            public series: TRIXIndicator;
-        }
-
-        interface TRIXIndicatorOptions extends TEMAOptions {
-            params?: TRIXIndicatorParamsOptions;
-        }
-    }
-}
 
 /**
  * The TRIX series type.
@@ -78,11 +55,11 @@ class TRIXIndicator extends TEMAIndicator {
      *               stacking
      * @optionparent plotOptions.trix
      */
-    public static defaultOptions: Highcharts.TRIXIndicatorOptions = merge(TEMAIndicator.defaultOptions)
+    public static defaultOptions: TRIXOptions = merge(TEMAIndicator.defaultOptions)
 
-    public data: Array<Highcharts.TRIXIndicatorPoint> = void 0 as any;
-    public options: Highcharts.TRIXIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.TRIXIndicatorPoint> = void 0 as any;
+    public data: Array<TRIXPoint> = void 0 as any;
+    public options: TRIXOptions = void 0 as any;
+    public points: Array<TRIXPoint> = void 0 as any;
 
     public init(this: TRIXIndicator): void {
         var args = arguments,
@@ -120,10 +97,10 @@ class TRIXIndicator extends TEMAIndicator {
 }
 
 interface TRIXIndicator {
-    pointClass: typeof Highcharts.TRIXIndicatorPoint;
+    pointClass: typeof TRIXPoint;
 }
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         trix: typeof TRIXIndicator;
     }
