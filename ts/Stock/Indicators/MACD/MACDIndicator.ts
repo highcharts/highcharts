@@ -19,6 +19,8 @@ const {
 } = BaseSeries;
 import type {
     MACDOptions,
+    MACDGappedExtensionObject,
+    MACDZonesOptions,
     MACDParamsOptions
 } from './MACDOptions';
 import type MACDPoint from './MACDPoint';
@@ -165,54 +167,24 @@ class MACDIndicator extends SMAIndicator {
         },
         minPointLength: 0
     } as MACDOptions);
-}
 
-interface MACDIndicator {
-    applyZones(): void;
-    crispCol: ColumnSeries['crispCol'];
-    currentLineZone: (string|null);
-    data: Array<MACDPoint>;
-    destroy(): void;
-    drawGraph(): void;
-    drawPoints: ColumnSeries['drawPoints'];
-    getColumnMetrics: ColumnSeries['getColumnMetrics'];
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: MACDParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    getZonesGraphs(
-        props: Array<Array<string>>
-    ): Array<Array<string>>;
-    graphmacd: (Highcharts.SVGElement|undefined);
-    graphsignal: (Highcharts.SVGElement|undefined);
-    init(): void;
-    macdZones: Highcharts.MACDIndicatorZonesOptions;
-    nameComponents: Array<string>;
-    options: Highcharts.MACDIndicatorOptions;
-    parallelArrays: Array<string>;
-    pointArrayMap: Array<string>;
-    pointClass: typeof Highcharts.MACDIndicatorPoint;
-    points: Array<Highcharts.MACDIndicatorPoint>;
-    pointValKey: string;
-    requiredIndicators: Array<string>;
-    signalZones: Highcharts.MACDIndicatorZonesOptions;
-    toYData(point: Point): Array<number>;
-    translate(): void;
-}
+    /**
+     *
+     * Properties
+     *
+     */
 
-extend(MACDIndicator.prototype, {
-    nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
-    requiredIndicators: ['ema'],
-    // "y" value is treated as Histogram data
-    pointArrayMap: ['y', 'signal', 'MACD'],
-    parallelArrays: ['x', 'y', 'signal', 'MACD'],
-    pointValKey: 'y',
-    // Columns support:
-    markerAttribs: (noop as any),
-    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    crispCol: H.seriesTypes.column.prototype.crispCol,
-    // Colors and lines:
-    init: function (
+    public data: Array<MACDPoint> = void 0 as any;
+    public options: MACDOptions = void 0 as any;
+    public points: Array<MACDPoint> = void 0 as any;
+
+    /**
+     *
+     * Functions
+     *
+     */
+
+    init(
         this: MACDIndicator
     ): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -248,13 +220,15 @@ extend(MACDIndicator.prototype, {
             };
             this.resetZones = true;
         }
-    },
-    toYData: function (
+    }
+
+    toYData(
         point: MACDPoint
     ): Array<number> {
         return [point.y, point.signal, point.MACD];
-    },
-    translate: function (this: MACDIndicator): void {
+    }
+
+    translate(this: MACDIndicator): void {
         var indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];
 
@@ -275,17 +249,18 @@ extend(MACDIndicator.prototype, {
                 );
             }
         );
-    },
-    destroy: function (this: MACDIndicator): void {
+    }
+
+    destroy(this: MACDIndicator): void {
         // this.graph is null due to removing two times the same SVG element
         this.graph = (null as any);
         this.graphmacd = this.graphmacd && this.graphmacd.destroy();
         this.graphsignal = this.graphsignal && this.graphsignal.destroy();
 
         BaseSeries.seriesTypes.sma.prototype.destroy.apply(this, arguments);
-    },
-    drawPoints: H.seriesTypes.column.prototype.drawPoints,
-    drawGraph: function (this: MACDIndicator): void {
+    }
+
+    drawGraph(this: MACDIndicator): void {
         var indicator = this,
             mainLinePoints: Array<(
                 MACDPoint
@@ -294,7 +269,7 @@ extend(MACDIndicator.prototype, {
             mainLineOptions: MACDOptions =
             indicator.options,
             histogramZones: Array<(SeriesZonesOptions)> = indicator.zones,
-            gappedExtend: Highcharts.MACDIndicatorGappedExtensionObject = {
+            gappedExtend: MACDGappedExtensionObject = {
                 options: {
                     gapSize: mainLineOptions.gapSize
                 }
@@ -349,8 +324,9 @@ extend(MACDIndicator.prototype, {
         indicator.zones = histogramZones;
         indicator.currentLineZone = null;
         // indicator.graph = null;
-    },
-    getZonesGraphs: function (
+    }
+
+    getZonesGraphs(
         this: MACDIndicator,
         props: Array<Array<string>>
     ): Array<Array<string>> {
@@ -373,8 +349,9 @@ extend(MACDIndicator.prototype, {
         }
 
         return currentZones;
-    },
-    applyZones: function (
+    }
+
+    applyZones(
         this: MACDIndicator
     ): void {
         // Histogram zones are handled by drawPoints method
@@ -391,10 +368,11 @@ extend(MACDIndicator.prototype, {
         }
 
         this.zones = histogramZones;
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
+    }
+
+    getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.MACDIndicatorParamsOptions
+        params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var j = 0,
             MACD: Array<Array<(number|null)>> = [],
@@ -499,12 +477,44 @@ extend(MACDIndicator.prototype, {
             yData: yMACD
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+interface MACDIndicator {
+    crispCol: ColumnSeries['crispCol'];
+    currentLineZone: (string|null);
+    getColumnMetrics: ColumnSeries['getColumnMetrics'];
+    graphmacd: (Highcharts.SVGElement|undefined);
+    graphsignal: (Highcharts.SVGElement|undefined);
+    macdZones: MACDZonesOptions;
+    nameComponents: Array<string>;
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointClass: typeof MACDPoint;
+    pointValKey: string;
+    requiredIndicators: Array<string>;
+    signalZones: MACDZonesOptions;
+}
+
+extend(MACDIndicator.prototype, {
+    nameComponents: ['longPeriod', 'shortPeriod', 'signalPeriod'],
+    requiredIndicators: ['ema'],
+    // "y" value is treated as Histogram data
+    pointArrayMap: ['y', 'signal', 'MACD'],
+    parallelArrays: ['x', 'y', 'signal', 'MACD'],
+    pointValKey: 'y',
+    // Columns support:
+    markerAttribs: (noop as any),
+    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
+    crispCol: H.seriesTypes.column.prototype.crispCol,
+    drawPoints: H.seriesTypes.column.prototype.drawPoints
 });
+
 /* *
  *
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         macd: typeof MACDIndicator;
@@ -512,11 +522,13 @@ declare module '../../../Core/Series/SeriesType' {
 }
 
 BaseSeries.registerSeriesType('macd', MACDIndicator);
+
 /* *
  *
  *  Default Export
  *
  * */
+
 export default MACDIndicator;
 
 /**

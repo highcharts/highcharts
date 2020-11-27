@@ -28,7 +28,7 @@ import type {
 *
 * */
 
-export interface MACDIGappedExtensionObject {
+export interface MACDGappedExtensionObject {
     options?: MACDGappedExtensionOptions;
 }
 
