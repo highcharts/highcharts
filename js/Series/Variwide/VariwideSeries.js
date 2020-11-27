@@ -23,13 +23,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import Axis from '../../Core/Axis/Axis.js';
 import BaseSeries from '../../Core/Series/Series.js';
 var ColumnSeries = BaseSeries.seriesTypes.column;
-import H from '../../Core/Globals.js';
+import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;
+var extend = U.extend, merge = U.merge, pick = U.pick;
 import '../Area/AreaSeries.js';
+import './VariwideComposition.js';
 /* *
  *
  *  Class
@@ -217,37 +217,9 @@ var VariwideSeries = /** @class */ (function (_super) {
 extend(VariwideSeries.prototype, {
     irregularWidths: true,
     pointArrayMap: ['y', 'z'],
-    parallelArrays: ['x', 'y', 'z']
+    parallelArrays: ['x', 'y', 'z'],
+    pointClass: VariwidePoint
 });
-/* *
- *
- * VariwidePoint class
- *
- * */
-var VariwidePoint = /** @class */ (function (_super) {
-    __extends(VariwidePoint, _super);
-    function VariwidePoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        /* *
-         *
-         * Properites
-         *
-         * */
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-    }
-    /* *
-     *
-     * Functions
-     *
-     * */
-    VariwidePoint.prototype.isValid = function () {
-        return isNumber(this.y) && isNumber(this.z);
-    };
-    return VariwidePoint;
-}(ColumnSeries.prototype.pointClass));
-VariwideSeries.prototype.pointClass = VariwidePoint;
 BaseSeries.registerSeriesType('variwide', VariwideSeries);
 /* *
  *
@@ -255,62 +227,6 @@ BaseSeries.registerSeriesType('variwide', VariwideSeries);
  *
  * */
 export default VariwideSeries;
-H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
-    var axis = this.axis, pos = xy[xOrY] - axis.pos;
-    if (!axis.horiz) {
-        pos = axis.len - pos;
-    }
-    pos = axis.series[0].postTranslate(index, pos);
-    if (!axis.horiz) {
-        pos = axis.len - pos;
-    }
-    xy[xOrY] = axis.pos + pos;
-};
-/* eslint-disable no-invalid-this */
-// Same width as the category (#8083)
-addEvent(Axis, 'afterDrawCrosshair', function (e) {
-    if (this.variwide && this.cross) {
-        this.cross.attr('stroke-width', (e.point && e.point.crosshairWidth));
-    }
-});
-// On a vertical axis, apply anti-collision logic to the labels.
-addEvent(Axis, 'afterRender', function () {
-    var axis = this;
-    if (!this.horiz && this.variwide) {
-        this.chart.labelCollectors.push(function () {
-            return axis.tickPositions
-                .filter(function (pos) {
-                return axis.ticks[pos].label;
-            })
-                .map(function (pos, i) {
-                var label = axis.ticks[pos].label;
-                label.labelrank = axis.zData[i];
-                return label;
-            });
-        });
-    }
-});
-addEvent(H.Tick, 'afterGetPosition', function (e) {
-    var axis = this.axis, xOrY = axis.horiz ? 'x' : 'y';
-    if (axis.variwide) {
-        this[xOrY + 'Orig'] = e.pos[xOrY];
-        this.postTranslate(e.pos, xOrY, this.pos);
-    }
-});
-wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index) {
-    var args = Array.prototype.slice.call(arguments, 1), xy, xOrY = horiz ? 'x' : 'y';
-    // Replace the x with the original x
-    if (this.axis.variwide &&
-        typeof this[xOrY + 'Orig'] === 'number') {
-        args[horiz ? 0 : 1] = this[xOrY + 'Orig'];
-    }
-    xy = proceed.apply(this, args);
-    // Post-translate
-    if (this.axis.variwide && this.axis.categories) {
-        this.postTranslate(xy, xOrY, index);
-    }
-    return xy;
-});
 /* *
  *
  * API Options
