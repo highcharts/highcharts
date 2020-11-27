@@ -118,6 +118,10 @@ class LollipopSeries extends DumbbellSeries {
     public options: LollipopSeriesOptions = void 0 as any;
     public points: Array<LollipopPoint> = void 0 as any;
 
+    public toYData(point: LollipopPoint): Array<number> {
+        return [pick(point.y, point.low)];
+    }
+
 }
 
 /* *
@@ -139,9 +143,6 @@ interface LollipopSeries {
 extend(LollipopSeries.prototype, {
     pointArrayMap: ['y'],
     pointValKey: 'y',
-    toYData: function (point: LollipopPoint): Array<number> {
-        return [pick(point.y, point.low)];
-    },
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,

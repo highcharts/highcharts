@@ -60,6 +60,9 @@ var LollipopSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+    LollipopSeries.prototype.toYData = function (point) {
+        return [pick(point.y, point.low)];
+    };
     /**
      * The lollipop series is a carteseian series with a line anchored from
      * the x axis and a dot at the end to mark the value.
@@ -109,9 +112,6 @@ var LollipopSeries = /** @class */ (function (_super) {
 extend(LollipopSeries.prototype, {
     pointArrayMap: ['y'],
     pointValKey: 'y',
-    toYData: function (point) {
-        return [pick(point.y, point.low)];
-    },
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,
