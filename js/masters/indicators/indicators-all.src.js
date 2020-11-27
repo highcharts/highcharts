@@ -39,7 +39,7 @@ import '../../Stock/Indicators/PPOIndicator.js';
 import '../../Stock/Indicators/PC/PCIndicator.js';
 import '../../Stock/Indicators/PriceEnvelopesIndicator.js';
 import '../../Stock/Indicators/PSAR/PSARIndicator.js';
-import '../../Stock/Indicators/ROCIndicator.js';
+import '../../Stock/Indicators/ROC/ROCIndicator.js';
 import '../../Stock/Indicators/RSI/RSIIndicator.js';
 import '../../Stock/Indicators/StochasticIndicator.js';
 import '../../Stock/Indicators/SlowStochasticIndicator.js';
