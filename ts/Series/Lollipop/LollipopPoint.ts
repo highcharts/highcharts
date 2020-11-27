@@ -23,11 +23,19 @@ const {
     seriesTypes: {
         area: {
             prototype: areaProto
+        },
+        dumbbell: {
+            prototype: {
+                pointClass: DumbbellPoint
+            }
+        },
+        line: {
+            prototype: {
+                pointClass: Point
+            }
         }
     }
 } = BaseSeries;
-import DumbbellPoint from '../Dumbbell/DumbbellPoint.js';
-import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
     isObject,
@@ -63,7 +71,7 @@ extend(LollipopPoint.prototype, {
         series: LollipopSeries,
         options: LollipopPointOptions,
         x?: number
-    ): Point {
+    ): typeof Point.prototype {
         if (isObject(options) && 'low' in options) {
             options.y = options.low;
             delete options.low;

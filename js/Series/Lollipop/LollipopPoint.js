@@ -22,9 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var areaProto = BaseSeries.seriesTypes.area.prototype;
-import DumbbellPoint from '../Dumbbell/DumbbellPoint.js';
-import Point from '../../Core/Series/Point.js';
+var _a = BaseSeries.seriesTypes, areaProto = _a.area.prototype, DumbbellPoint = _a.dumbbell.prototype.pointClass, Point = _a.line.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 var isObject = U.isObject, extend = U.extend;
 /* *
