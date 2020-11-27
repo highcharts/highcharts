@@ -37,7 +37,7 @@ import '../../Stock/Indicators/NATR/NATRIndicator.js';
 import '../../Stock/Indicators/PivotPointsIndicator.js';
 import '../../Stock/Indicators/PPO/PPOIndicator.js';
 import '../../Stock/Indicators/PC/PCIndicator.js';
-import '../../Stock/Indicators/PriceEnvelopesIndicator.js';
+import '../../Stock/Indicators/PriceEnvelopes/PriceEnvelopesIndicator.js';
 import '../../Stock/Indicators/PSAR/PSARIndicator.js';
 import '../../Stock/Indicators/ROC/ROCIndicator.js';
 import '../../Stock/Indicators/RSI/RSIIndicator.js';
