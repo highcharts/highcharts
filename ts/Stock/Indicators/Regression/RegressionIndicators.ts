@@ -55,33 +55,10 @@ declare global {
             // for inheritance
         }
 
-        /*
-        
-        class LinearRegressionAngleIndicator
-            extends LinearRegressionIndicator {
-            public data: Array<LinearRegressionAngleIndicatorPoint>;
-            public getEndPointY(
-                lineParameters: RegressionLineParametersObject
-            ): number;
-            public nameBase: string;
-            public options: LinearRegressionAngleIndicatorOptions;
-            public pointClass: typeof LinearRegressionAngleIndicatorPoint;
-            public points: Array<LinearRegressionAngleIndicatorPoint>;
-            public slopeToAngle(slope: number): number;
-        }
-        */
-
         interface LinearRegressionAngleIndicatorOptions
             extends LinearRegressionIndicatorOptions {
             tooltip?: TooltipOptions;
         }
-
-        /*
-        class LinearRegressionAngleIndicatorPoint
-            extends LinearRegressionIndicatorPoint {
-            public series: LinearRegressionAngleIndicator;
-        }
-        */
 
         interface RegressionLineParametersObject {
             slope: number;
@@ -557,6 +534,76 @@ extend(LinearRegressionInterceptIndicator.prototype, {
 });
 
 /**
+ * The Linear Regression Angle series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.linearRegressionAngle
+ *
+ * @augments Highcharts.Series
+ */
+class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
+    /**
+     * Linear regression angle indicator. This series requires `linkedTo`
+     * option to be set.
+     *
+     * @sample {highstock} stock/indicators/linear-regression-angle
+     *         Linear intercept angle indicator
+     *
+     * @extends      plotOptions.linearregression
+     * @since        7.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/regressions
+     * @optionparent plotOptions.linearregressionangle
+     */
+    public static defaultOptions: Highcharts.LinearRegressionIndicatorParamsOptions = merge(
+        SMAIndicator.defaultOptions, {
+        tooltip: { // add a degree symbol
+            pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+            '{series.name}: <b>{point.y}°</b><br/>'
+        }
+    } as Highcharts.LinearRegressionIndicatorParamsOptions);
+};
+
+class LinearRegressionAngleIndicatorPoint extends LinearRegressionIndicatorPoint {
+    public series: LinearRegressionAngleIndicator = void 0 as any;
+}
+
+extend(LinearRegressionAngleIndicator.prototype, {
+    nameBase: 'Linear Regression Angle Indicator',
+    /**
+    * Convert a slope of a line to angle (in degrees) between
+    * the line and x axis
+    * @private
+    * @param {number} slope of the straight line function
+    * @return {number} angle in degrees
+    */
+    slopeToAngle: function (slope: number): number {
+        return Math.atan(slope) * (180 / Math.PI); // rad to deg
+    },
+
+    getEndPointY: function (
+        this: LinearRegressionAngleIndicator,
+        lineParameters: Highcharts.RegressionLineParametersObject
+    ): number {
+        return this.slopeToAngle(lineParameters.slope);
+    }
+});
+
+interface LinearRegressionAngleIndicator extends LinearRegressionIndicator {
+    data: Array<LinearRegressionAngleIndicatorPoint>;
+    getEndPointY(
+        lineParameters: Highcharts.RegressionLineParametersObject
+    ): number;
+    nameBase: string;
+    options: Highcharts.LinearRegressionAngleIndicatorOptions;
+    pointClass: typeof LinearRegressionAngleIndicatorPoint;
+    points: Array<LinearRegressionAngleIndicatorPoint>;
+    slopeToAngle(slope: number): number;
+}
+
+/**
  * 
  * Register
  * 
@@ -565,9 +612,7 @@ extend(LinearRegressionInterceptIndicator.prototype, {
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearRegression: typeof LinearRegressionIndicator;
-        /*
         linearRegressionAngle: typeof LinearRegressionAngleIndicator;
-        */
         linearRegressionIntercept: typeof LinearRegressionInterceptIndicator;
         linearRegressionSlope: typeof LinearRegressionSlopesIndicator;
     }
@@ -576,6 +621,9 @@ declare module '../../../Core/Series/SeriesType' {
 BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
 BaseSeries.registerSeriesType('linearRegressionSlope', LinearRegressionSlopesIndicator);
 BaseSeries.registerSeriesType('linearRegressionIntercept', LinearRegressionInterceptIndicator);
+BaseSeries.registerSeriesType('linearRegressionAngle', LinearRegressionAngleIndicator);
+
+
 /* *
  *
  *  Default Export
