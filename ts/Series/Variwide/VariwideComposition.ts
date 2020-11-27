@@ -38,6 +38,10 @@ const {
  * */
 
 declare module '../../Core/Axis/Types' {
+    interface AxisLike {
+        variwide?: boolean;
+        zData?: Array<number>;
+    }
     interface TickLike {
         postTranslate(
             xy: PositionObject,
@@ -47,6 +51,11 @@ declare module '../../Core/Axis/Types' {
     }
 }
 
+/* *
+ *
+ * Composition
+ *
+ * */
 
 Tick.prototype.postTranslate = function (
     xy: PositionObject,

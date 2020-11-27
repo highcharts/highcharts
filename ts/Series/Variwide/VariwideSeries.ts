@@ -34,27 +34,8 @@ const {
     pick
 } = U;
 
-import '../Area/AreaSeries.js';
 import './VariwideComposition.js';
 
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        crosshairWidth?: VariwidePoint['crosshairWidth'];
-    }
-}
-
-declare module '../../Core/Axis/Types' {
-    interface AxisLike {
-        variwide?: boolean;
-        zData?: Array<number>;
-    }
-}
 
 /* *
  *
@@ -116,6 +97,10 @@ class VariwideSeries extends ColumnSeries {
      * */
     public data: Array<VariwidePoint> = void 0 as any;
     public options: VariwideSeriesOptions = void 0 as any;
+    public points: Array<VariwidePoint> = void 0 as any;
+    public relZ: Array<number> = void 0 as any;
+    public totalZ: number = void 0 as any;
+    public zData?: Array<number> = void 0 as any;
 
     /* *
      *
@@ -334,17 +319,6 @@ interface VariwideSeries {
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof VariwidePoint;
-    points: Array<VariwidePoint>;
-    relZ: Array<number>;
-    totalZ: number;
-    zData?: Array<number>;
-    correctStackLabels(): void;
-    postTranslate(
-        index: number,
-        x: number,
-        point?: VariwidePoint
-    ): number;
-
 }
 extend(VariwideSeries.prototype, {
     irregularWidths: true,
