@@ -26,9 +26,6 @@ var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var isArray = U.isArray, extend = U.extend, merge = U.merge;
 /**
- * LinearRegressionIndicator
- */
-/**
  * Linear regression series type.
  *
  * @private
@@ -40,8 +37,126 @@ var isArray = U.isArray, extend = U.extend, merge = U.merge;
 var LinearRegressionIndicator = /** @class */ (function (_super) {
     __extends(LinearRegressionIndicator, _super);
     function LinearRegressionIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    /**
+     * Return the slope and intercept of a straight line function.
+     * @private
+     * @param {Highcharts.LinearRegressionIndicator} this indicator to use
+     * @param {Array<number>} xData -  list of all x coordinates in a period
+     * @param {Array<number>} yData - list of all y coordinates in a period
+     * @return {Highcharts.RegressionLineParametersObject}
+     *          object that contains the slope and the intercept
+     *          of a straight line function
+     */
+    LinearRegressionIndicator.prototype.getRegressionLineParameters = function (xData, yData) {
+        // least squares method
+        var yIndex = this.options.params.index, getSingleYValue = function (yValue, yIndex) {
+            return isArray(yValue) ? yValue[yIndex] : yValue;
+        }, xSum = xData.reduce(function (accX, val) {
+            return val + accX;
+        }, 0), ySum = yData.reduce(function (accY, val) {
+            return getSingleYValue(val, yIndex) + accY;
+        }, 0), xMean = xSum / xData.length, yMean = ySum / yData.length, xError, yError, formulaNumerator = 0, formulaDenominator = 0, i, slope;
+        for (i = 0; i < xData.length; i++) {
+            xError = xData[i] - xMean;
+            yError = getSingleYValue(yData[i], yIndex) - yMean;
+            formulaNumerator += xError * yError;
+            formulaDenominator += Math.pow(xError, 2);
+        }
+        slope = formulaDenominator ?
+            formulaNumerator / formulaDenominator : 0; // don't divide by 0
+        return {
+            slope: slope,
+            intercept: yMean - slope * xMean
+        };
+    };
+    /**
+     * Return the y value on a straight line.
+     * @private
+     * @param {Highcharts.RegressionLineParametersObject} lineParameters
+     *          object that contains the slope and the intercept
+     *          of a straight line function
+     * @param {number} endPointX - x coordinate of the point
+     * @return {number} - y value of the point that lies on the line
+     */
+    LinearRegressionIndicator.prototype.getEndPointY = function (lineParameters, endPointX) {
+        return lineParameters.slope * endPointX + lineParameters.intercept;
+    };
+    /**
+     * Transform the coordinate system so that x values start at 0 and
+     * apply xAxisUnit.
+     * @private
+     * @param {Array<number>} xData - list of all x coordinates in a period
+     * @param {number} xAxisUnit - option (see the API)
+     * @return {Array<number>} - array of transformed x data
+     */
+    LinearRegressionIndicator.prototype.transformXData = function (xData, xAxisUnit) {
+        var xOffset = xData[0];
+        return xData.map(function (xValue) {
+            return (xValue - xOffset) / xAxisUnit;
+        });
+    };
+    /**
+     * Find the closest distance between points in the base series.
+     * @private
+     * @param {Array<number>} xData list of all x coordinates in the base series
+     * @return {number} - closest distance between points in the base series
+     */
+    LinearRegressionIndicator.prototype.findClosestDistance = function (xData) {
+        var distance, closestDistance, i;
+        for (i = 1; i < xData.length - 1; i++) {
+            distance = xData[i] - xData[i - 1];
+            if (distance > 0 &&
+                (typeof closestDistance === 'undefined' ||
+                    distance < closestDistance)) {
+                closestDistance = distance;
+            }
+        }
+        return closestDistance;
+    };
+    // Required to be implemented - starting point for indicator's logic
+    LinearRegressionIndicator.prototype.getValues = function (baseSeries, regressionSeriesParams) {
+        var xData = baseSeries.xData, yData = baseSeries.yData, period = regressionSeriesParams.period, lineParameters, i, periodStart, periodEnd, 
+        // format required to be returned
+        indicatorData = {
+            xData: [],
+            yData: [],
+            values: []
+        }, endPointX, endPointY, periodXData, periodYData, periodTransformedXData, xAxisUnit = this.options.params.xAxisUnit ||
+            this.findClosestDistance(xData);
+        // Iteration logic: x value of the last point within the period
+        // (end point) is used to represent the y value (regression)
+        // of the entire period.
+        for (i = period - 1; i <= xData.length - 1; i++) {
+            periodStart = i - period + 1; // adjusted for slice() function
+            periodEnd = i + 1; // (as above)
+            endPointX = xData[i];
+            periodXData = xData.slice(periodStart, periodEnd);
+            periodYData = yData.slice(periodStart, periodEnd);
+            periodTransformedXData = this.transformXData(periodXData, xAxisUnit);
+            lineParameters = this.getRegressionLineParameters(periodTransformedXData, periodYData);
+            endPointY = this.getEndPointY(lineParameters, periodTransformedXData[periodTransformedXData.length - 1]);
+            // @todo this is probably not used anywhere
+            indicatorData.values.push({
+                regressionLineParameters: lineParameters,
+                x: endPointX,
+                y: endPointY
+            });
+            indicatorData.xData.push(endPointX);
+            indicatorData.yData.push(endPointY);
+        }
+        return indicatorData;
+    };
     /**
      * Linear regression indicator. This series requires `linkedTo` option to be
      * set.
@@ -119,117 +234,7 @@ var LinearRegressionIndicatorPoint = /** @class */ (function (_super) {
     return LinearRegressionIndicatorPoint;
 }(SMAIndicator.prototype.pointClass));
 extend(LinearRegressionIndicator.prototype, {
-    nameBase: 'Linear Regression Indicator',
-    /**
-     * Return the slope and intercept of a straight line function.
-     * @private
-     * @param {Highcharts.LinearRegressionIndicator} this indicator to use
-     * @param {Array<number>} xData -  list of all x coordinates in a period
-     * @param {Array<number>} yData - list of all y coordinates in a period
-     * @return {Highcharts.RegressionLineParametersObject}
-     *          object that contains the slope and the intercept
-     *          of a straight line function
-     */
-    getRegressionLineParameters: function (xData, yData) {
-        // least squares method
-        var yIndex = this.options.params.index, getSingleYValue = function (yValue, yIndex) {
-            return isArray(yValue) ? yValue[yIndex] : yValue;
-        }, xSum = xData.reduce(function (accX, val) {
-            return val + accX;
-        }, 0), ySum = yData.reduce(function (accY, val) {
-            return getSingleYValue(val, yIndex) + accY;
-        }, 0), xMean = xSum / xData.length, yMean = ySum / yData.length, xError, yError, formulaNumerator = 0, formulaDenominator = 0, i, slope;
-        for (i = 0; i < xData.length; i++) {
-            xError = xData[i] - xMean;
-            yError = getSingleYValue(yData[i], yIndex) - yMean;
-            formulaNumerator += xError * yError;
-            formulaDenominator += Math.pow(xError, 2);
-        }
-        slope = formulaDenominator ?
-            formulaNumerator / formulaDenominator : 0; // don't divide by 0
-        return {
-            slope: slope,
-            intercept: yMean - slope * xMean
-        };
-    },
-    /**
-     * Return the y value on a straight line.
-     * @private
-     * @param {Highcharts.RegressionLineParametersObject} lineParameters
-     *          object that contains the slope and the intercept
-     *          of a straight line function
-     * @param {number} endPointX - x coordinate of the point
-     * @return {number} - y value of the point that lies on the line
-     */
-    getEndPointY: function (lineParameters, endPointX) {
-        return lineParameters.slope * endPointX + lineParameters.intercept;
-    },
-    /**
-     * Transform the coordinate system so that x values start at 0 and
-     * apply xAxisUnit.
-     * @private
-     * @param {Array<number>} xData - list of all x coordinates in a period
-     * @param {number} xAxisUnit - option (see the API)
-     * @return {Array<number>} - array of transformed x data
-     */
-    transformXData: function (xData, xAxisUnit) {
-        var xOffset = xData[0];
-        return xData.map(function (xValue) {
-            return (xValue - xOffset) / xAxisUnit;
-        });
-    },
-    /**
-     * Find the closest distance between points in the base series.
-     * @private
-     * @param {Array<number>} xData
-                list of all x coordinates in the base series
-        * @return {number} - closest distance between points in the base series
-        */
-    findClosestDistance: function (xData) {
-        var distance, closestDistance, i;
-        for (i = 1; i < xData.length - 1; i++) {
-            distance = xData[i] - xData[i - 1];
-            if (distance > 0 &&
-                (typeof closestDistance === 'undefined' ||
-                    distance < closestDistance)) {
-                closestDistance = distance;
-            }
-        }
-        return closestDistance;
-    },
-    // Required to be implemented - starting point for indicator's logic
-    getValues: function (baseSeries, regressionSeriesParams) {
-        var xData = baseSeries.xData, yData = baseSeries.yData, period = regressionSeriesParams.period, lineParameters, i, periodStart, periodEnd, 
-        // format required to be returned
-        indicatorData = {
-            xData: [],
-            yData: [],
-            values: []
-        }, endPointX, endPointY, periodXData, periodYData, periodTransformedXData, xAxisUnit = this.options.params.xAxisUnit ||
-            this.findClosestDistance(xData);
-        // Iteration logic: x value of the last point within the period
-        // (end point) is used to represent the y value (regression)
-        // of the entire period.
-        for (i = period - 1; i <= xData.length - 1; i++) {
-            periodStart = i - period + 1; // adjusted for slice() function
-            periodEnd = i + 1; // (as above)
-            endPointX = xData[i];
-            periodXData = xData.slice(periodStart, periodEnd);
-            periodYData = yData.slice(periodStart, periodEnd);
-            periodTransformedXData = this.transformXData(periodXData, xAxisUnit);
-            lineParameters = this.getRegressionLineParameters(periodTransformedXData, periodYData);
-            endPointY = this.getEndPointY(lineParameters, periodTransformedXData[periodTransformedXData.length - 1]);
-            // @todo this is probably not used anywhere
-            indicatorData.values.push({
-                regressionLineParameters: lineParameters,
-                x: endPointX,
-                y: endPointY
-            });
-            indicatorData.xData.push(endPointX);
-            indicatorData.yData.push(endPointY);
-        }
-        return indicatorData;
-    }
+    nameBase: 'Linear Regression Indicator'
 });
 /**
  * LinearRegressionSlopeIndicator
@@ -246,7 +251,6 @@ extend(LinearRegressionIndicator.prototype, {
  * @requires  stock/indicators/regressions
  * @apioption series.linearregression
  */
-/* ************************************************************************** */
 /**
  * The Linear Regression Slope series type.
  *
@@ -259,12 +263,32 @@ extend(LinearRegressionIndicator.prototype, {
 var LinearRegressionSlopesIndicator = /** @class */ (function (_super) {
     __extends(LinearRegressionSlopesIndicator, _super);
     function LinearRegressionSlopesIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /**
+         * Linear regression slope indicator. This series requires `linkedTo`
+         * option to be set.
+         *
+         * @sample {highstock} stock/indicators/linear-regression-slope
+         *         Linear regression slope indicator
+         *
+         * @extends      plotOptions.linearregression
+         * @since        7.0.0
+         * @product      highstock
+         * @requires     stock/indicators/indicators
+         * @requires     stock/indicators/regressions
+         * @optionparent plotOptions.linearregressionslope
+         */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    LinearRegressionSlopesIndicator.prototype.getEndPointY = function (lineParameters) {
+        return lineParameters.slope;
+    };
     LinearRegressionSlopesIndicator.defaultOptions = LinearRegressionIndicator.defaultOptions;
     return LinearRegressionSlopesIndicator;
 }(LinearRegressionIndicator));
-;
 /**
  * A linear regression slope series. If the
  * [type](#series.linearregressionslope.type) option is not specified, it is
@@ -288,16 +312,8 @@ var LinearRegressionSlopesIndicatorPoint = /** @class */ (function (_super) {
     return LinearRegressionSlopesIndicatorPoint;
 }(LinearRegressionIndicatorPoint));
 extend(LinearRegressionSlopesIndicator.prototype, {
-    nameBase: 'Linear Regression Slope Indicator',
-    getEndPointY: function (lineParameters) {
-        return lineParameters.slope;
-    }
+    nameBase: 'Linear Regression Slope Indicator'
 });
-/**
- *
- * Intercept
- *
- */
 /**
  * The Linear Regression Intercept series type.
  *
@@ -310,12 +326,32 @@ extend(LinearRegressionSlopesIndicator.prototype, {
 var LinearRegressionInterceptIndicator = /** @class */ (function (_super) {
     __extends(LinearRegressionInterceptIndicator, _super);
     function LinearRegressionInterceptIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /**
+         * Linear regression intercept indicator. This series requires `linkedTo`
+         * option to be set.
+         *
+         * @sample {highstock} stock/indicators/linear-regression-intercept
+         *         Linear intercept slope indicator
+         *
+         * @extends      plotOptions.linearregression
+         * @since        7.0.0
+         * @product      highstock
+         * @requires     stock/indicators/indicators
+         * @requires     stock/indicators/regressions
+         * @optionparent plotOptions.linearregressionintercept
+         */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
+    LinearRegressionInterceptIndicator.prototype.getEndPointY = function (lineParameters) {
+        return lineParameters.intercept;
+    };
     LinearRegressionInterceptIndicator.defaultOptions = LinearRegressionIndicator.defaultOptions;
     return LinearRegressionInterceptIndicator;
 }(LinearRegressionIndicator));
-;
 var LinearRegressionInterceptIndicatorPoint = /** @class */ (function (_super) {
     __extends(LinearRegressionInterceptIndicatorPoint, _super);
     function LinearRegressionInterceptIndicatorPoint() {
@@ -325,12 +361,8 @@ var LinearRegressionInterceptIndicatorPoint = /** @class */ (function (_super) {
     }
     return LinearRegressionInterceptIndicatorPoint;
 }(LinearRegressionIndicatorPoint));
-;
 extend(LinearRegressionInterceptIndicator.prototype, {
-    nameBase: 'Linear Regression Intercept Indicator',
-    getEndPointY: function (lineParameters) {
-        return lineParameters.intercept;
-    }
+    nameBase: 'Linear Regression Intercept Indicator'
 });
 /**
  * The Linear Regression Angle series type.
@@ -344,22 +376,39 @@ extend(LinearRegressionInterceptIndicator.prototype, {
 var LinearRegressionAngleIndicator = /** @class */ (function (_super) {
     __extends(LinearRegressionAngleIndicator, _super);
     function LinearRegressionAngleIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /**
+         * Linear regression angle indicator. This series requires `linkedTo`
+         * option to be set.
+         *
+         * @sample {highstock} stock/indicators/linear-regression-angle
+         *         Linear intercept angle indicator
+         *
+         * @extends      plotOptions.linearregression
+         * @since        7.0.0
+         * @product      highstock
+         * @requires     stock/indicators/indicators
+         * @requires     stock/indicators/regressions
+         * @optionparent plotOptions.linearregressionangle
+         */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
     /**
-     * Linear regression angle indicator. This series requires `linkedTo`
-     * option to be set.
-     *
-     * @sample {highstock} stock/indicators/linear-regression-angle
-     *         Linear intercept angle indicator
-     *
-     * @extends      plotOptions.linearregression
-     * @since        7.0.0
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
-     * @optionparent plotOptions.linearregressionangle
-     */
+    * Convert a slope of a line to angle (in degrees) between
+    * the line and x axis
+    * @private
+    * @param {number} slope of the straight line function
+    * @return {number} angle in degrees
+    */
+    LinearRegressionAngleIndicator.prototype.slopeToAngle = function (slope) {
+        return Math.atan(slope) * (180 / Math.PI); // rad to deg
+    };
+    LinearRegressionAngleIndicator.prototype.getEndPointY = function (lineParameters) {
+        return this.slopeToAngle(lineParameters.slope);
+    };
     LinearRegressionAngleIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
         tooltip: {
             pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
@@ -368,7 +417,6 @@ var LinearRegressionAngleIndicator = /** @class */ (function (_super) {
     });
     return LinearRegressionAngleIndicator;
 }(LinearRegressionIndicator));
-;
 var LinearRegressionAngleIndicatorPoint = /** @class */ (function (_super) {
     __extends(LinearRegressionAngleIndicatorPoint, _super);
     function LinearRegressionAngleIndicatorPoint() {
@@ -379,20 +427,7 @@ var LinearRegressionAngleIndicatorPoint = /** @class */ (function (_super) {
     return LinearRegressionAngleIndicatorPoint;
 }(LinearRegressionIndicatorPoint));
 extend(LinearRegressionAngleIndicator.prototype, {
-    nameBase: 'Linear Regression Angle Indicator',
-    /**
-    * Convert a slope of a line to angle (in degrees) between
-    * the line and x axis
-    * @private
-    * @param {number} slope of the straight line function
-    * @return {number} angle in degrees
-    */
-    slopeToAngle: function (slope) {
-        return Math.atan(slope) * (180 / Math.PI); // rad to deg
-    },
-    getEndPointY: function (lineParameters) {
-        return this.slopeToAngle(lineParameters.slope);
-    }
+    nameBase: 'Linear Regression Angle Indicator'
 });
 BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
 BaseSeries.registerSeriesType('linearRegressionSlope', LinearRegressionSlopesIndicator);
