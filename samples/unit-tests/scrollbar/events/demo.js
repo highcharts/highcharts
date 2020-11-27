@@ -142,8 +142,8 @@ QUnit.test('Scrollbar.liveRedraw option', function (assert) {
 });
 
 QUnit.test('#14193: Scrollbar touch', assert => {
-    const touch = Highcharts.isTouchDevice;
-    Highcharts.isTouchDevice = true;
+    const { hasTouch, isTouchDevice } = Highcharts;
+    Highcharts.hasTouch = Highcharts.isTouchDevice = true;
 
     const chart = Highcharts.chart('container', {
         xAxis: {
@@ -180,5 +180,6 @@ QUnit.test('#14193: Scrollbar touch', assert => {
 
     assert.ok(axis.min > min, 'Extremes should have changed');
 
-    Highcharts.isTouchDevice = touch;
+    Highcharts.hasTouch = hasTouch;
+    Highcharts.isTouchDevice = isTouchDevice;
 });
