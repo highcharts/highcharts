@@ -103,37 +103,24 @@ class AOIndicator extends SMAIndicator {
             }
         }
     } as AOOptions);
-}
 
-interface AOIndicator {
-    data: Array<AOPoint>;
-    nameBase: string;
-    nameComponents: Array<string>;
-    options: AOOptions;
-    pointClass: typeof AOPoint;
-    points: Array<AOPoint>;
-    crispCol: ColumnSeries['crispCol'];
-    drawGraph(): void;
-    drawPoints: ColumnSeries['drawPoints'];
-    getColumnMetrics: ColumnSeries['getColumnMetrics'];
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    translate: ColumnSeries['translate'];
-}
+    /**
+     *
+     * Properties
+     *
+     */
 
-extend(AOIndicator.prototype, {
-    nameBase: 'AO',
-    nameComponents: (false as any),
+    public data: Array<AOPoint> = void 0 as any;
+    public options: AOOptions = void 0 as any;
+    public points: Array<AOPoint> = void 0 as any;
 
-    // Columns support:
-    markerAttribs: (noop as any),
-    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    crispCol: H.seriesTypes.column.prototype.crispCol,
-    translate: H.seriesTypes.column.prototype.translate,
-    drawPoints: H.seriesTypes.column.prototype.drawPoints,
+    /**
+     *
+     * Functions
+     *
+     */
 
-    drawGraph: function (this: AOIndicator): void {
+    public drawGraph(this: AOIndicator): void {
         var indicator = this,
             options = indicator.options,
             points = indicator.points,
@@ -158,9 +145,9 @@ extend(AOIndicator.prototype, {
                 }
             }
         }
-    },
+    }
 
-    getValues: function<TLinkedSeries extends LineSeries> (
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var shortPeriod = 5,
@@ -241,6 +228,28 @@ extend(AOIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+interface AOIndicator {
+    nameBase: string;
+    nameComponents: Array<string>;
+    pointClass: typeof AOPoint;
+    crispCol: ColumnSeries['crispCol'];
+    drawPoints: ColumnSeries['drawPoints'];
+    getColumnMetrics: ColumnSeries['getColumnMetrics'];
+    translate: ColumnSeries['translate'];
+}
+
+extend(AOIndicator.prototype, {
+    nameBase: 'AO',
+    nameComponents: (false as any),
+
+    // Columns support:
+    markerAttribs: (noop as any),
+    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
+    crispCol: H.seriesTypes.column.prototype.crispCol,
+    translate: H.seriesTypes.column.prototype.translate,
+    drawPoints: H.seriesTypes.column.prototype.drawPoints
 });
 
 /* *
