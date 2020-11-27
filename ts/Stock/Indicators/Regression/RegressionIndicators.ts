@@ -50,36 +50,13 @@ declare global {
             // for inheritance
         }
 
-        /*
-        class LinearRegressionSlopesIndicatorPoint
-            extends LinearRegressionIndicatorPoint {
-            public series: LinearRegressionSlopesIndicator;
-        }
-
-        class LinearRegressionInterceptIndicator
-            extends LinearRegressionIndicator {
-            public data: Array<LinearRegressionInterceptIndicatorPoint>;
-            public getEndPointY(
-                lineParameters: RegressionLineParametersObject
-            ): number;
-            public nameBase: string;
-            public options: LinearRegressionInterceptIndicatorOptions;
-            public pointClass: typeof LinearRegressionInterceptIndicatorPoint;
-            public points: Array<LinearRegressionInterceptIndicatorPoint>;
-        }
-        */
-
         interface LinearRegressionInterceptIndicatorOptions
             extends LinearRegressionIndicatorOptions {
             // for inheritance
         }
 
         /*
-        class LinearRegressionInterceptIndicatorPoint
-            extends LinearRegressionIndicatorPoint {
-            public series: LinearRegressionInterceptIndicator;
-        }
-
+        
         class LinearRegressionAngleIndicator
             extends LinearRegressionIndicator {
             public data: Array<LinearRegressionAngleIndicatorPoint>;
@@ -425,7 +402,7 @@ extend(LinearRegressionIndicator.prototype, {
 });
 
 /**
- * LinearRegressionAngleIndicator
+ * LinearRegressionSlopeIndicator
  */
 
 /**
@@ -469,6 +446,19 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      * @optionparent plotOptions.linearregressionslope
      */
 };
+/**
+ * A linear regression slope series. If the
+ * [type](#series.linearregressionslope.type) option is not specified, it is
+ * inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.linearregressionslope
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding dataParser,dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
+ * @apioption series.linearregressionslope
+ */
 
 class LinearRegressionSlopesIndicatorPoint extends LinearRegressionIndicatorPoint {
     public series: LinearRegressionSlopesIndicator = void 0 as any;
@@ -496,6 +486,78 @@ extend(LinearRegressionSlopesIndicator.prototype, {
 
 /**
  * 
+ * Intercept
+ * 
+ */
+
+/**
+ * The Linear Regression Intercept series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.linearRegressionIntercept
+ *
+ * @augments Highcharts.Series
+ */
+
+class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
+    public static defaultOptions: Highcharts.LinearRegressionIndicatorParamsOptions = LinearRegressionIndicator.defaultOptions as Highcharts.LinearRegressionIndicatorOptions;
+      /**
+     * Linear regression intercept indicator. This series requires `linkedTo`
+     * option to be set.
+     *
+     * @sample {highstock} stock/indicators/linear-regression-intercept
+     *         Linear intercept slope indicator
+     *
+     * @extends      plotOptions.linearregression
+     * @since        7.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/regressions
+     * @optionparent plotOptions.linearregressionintercept
+     */
+};
+
+class LinearRegressionInterceptIndicatorPoint extends LinearRegressionIndicatorPoint {
+    public series: LinearRegressionInterceptIndicator = void 0 as any;
+}
+
+/**
+ * A linear regression intercept series. If the
+ * [type](#series.linearregressionintercept.type) option is not specified, it is
+ * inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.linearregressionintercept
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding dataParser,dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
+ * @apioption series.linearregressionintercept
+ */
+
+interface LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
+    data: Array<LinearRegressionInterceptIndicatorPoint>;
+    getEndPointY(
+        lineParameters: Highcharts.RegressionLineParametersObject
+    ): number;
+    nameBase: string;
+    options: Highcharts.LinearRegressionInterceptIndicatorOptions;
+    pointClass: typeof LinearRegressionInterceptIndicatorPoint;
+    points: Array<LinearRegressionInterceptIndicatorPoint>;
+};
+
+extend(LinearRegressionInterceptIndicator.prototype, {
+    nameBase: 'Linear Regression Intercept Indicator',
+    getEndPointY: function (
+        lineParameters: Highcharts.RegressionLineParametersObject
+    ): number {
+        return lineParameters.intercept;
+    }
+});
+
+/**
+ * 
  * Register
  * 
  */
@@ -505,14 +567,15 @@ declare module '../../../Core/Series/SeriesType' {
         linearRegression: typeof LinearRegressionIndicator;
         /*
         linearRegressionAngle: typeof LinearRegressionAngleIndicator;
-        linearRegressionIntercept: typeof LinearRegressionInterceptIndicator;
         */
+        linearRegressionIntercept: typeof LinearRegressionInterceptIndicator;
         linearRegressionSlope: typeof LinearRegressionSlopesIndicator;
     }
 }
 
 BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
 BaseSeries.registerSeriesType('linearRegressionSlope', LinearRegressionSlopesIndicator);
+BaseSeries.registerSeriesType('linearRegressionIntercept', LinearRegressionInterceptIndicator);
 /* *
  *
  *  Default Export
