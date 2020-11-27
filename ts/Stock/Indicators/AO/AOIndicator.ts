@@ -8,19 +8,19 @@
 
 'use strict';
 
-import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        sma: SMAIndicator
+        sma: SMAIndicator,
+        column: ColumnSeries
     }
 } = BaseSeries;
 import type {
     AOOptions
 } from './AOOptions';
 import type AOPoint from './AOPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
 import U from '../../../Core/Utilities.js';
@@ -234,10 +234,10 @@ interface AOIndicator {
     nameBase: string;
     nameComponents: Array<string>;
     pointClass: typeof AOPoint;
-    crispCol: ColumnSeries['crispCol'];
-    drawPoints: ColumnSeries['drawPoints'];
-    getColumnMetrics: ColumnSeries['getColumnMetrics'];
-    translate: ColumnSeries['translate'];
+    crispCol: typeof ColumnSeries.prototype['crispCol'];
+    drawPoints: typeof ColumnSeries.prototype['drawPoints'];
+    getColumnMetrics: typeof ColumnSeries.prototype['getColumnMetrics'];
+    translate: typeof ColumnSeries.prototype['translate'];
 }
 
 extend(AOIndicator.prototype, {
@@ -246,10 +246,10 @@ extend(AOIndicator.prototype, {
 
     // Columns support:
     markerAttribs: (noop as any),
-    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    crispCol: H.seriesTypes.column.prototype.crispCol,
-    translate: H.seriesTypes.column.prototype.translate,
-    drawPoints: H.seriesTypes.column.prototype.drawPoints
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
+    crispCol: ColumnSeries.prototype.crispCol,
+    translate: ColumnSeries.prototype.translate,
+    drawPoints: ColumnSeries.prototype.drawPoints
 });
 
 /* *

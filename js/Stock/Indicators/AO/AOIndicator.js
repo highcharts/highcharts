@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var SMAIndicator = BaseSeries.seriesTypes.sma;
 import BaseSeries from '../../../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, SMAIndicator = _a.sma, ColumnSeries = _a.column;
 import H from '../../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../../Core/Utilities.js';
@@ -178,10 +178,10 @@ extend(AOIndicator.prototype, {
     nameComponents: false,
     // Columns support:
     markerAttribs: noop,
-    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    crispCol: H.seriesTypes.column.prototype.crispCol,
-    translate: H.seriesTypes.column.prototype.translate,
-    drawPoints: H.seriesTypes.column.prototype.drawPoints
+    getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
+    crispCol: ColumnSeries.prototype.crispCol,
+    translate: ColumnSeries.prototype.translate,
+    drawPoints: ColumnSeries.prototype.drawPoints
 });
 BaseSeries.registerSeriesType('ao', AOIndicator);
 /* *
