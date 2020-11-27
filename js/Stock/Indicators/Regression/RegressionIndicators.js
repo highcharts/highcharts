@@ -325,15 +325,79 @@ var LinearRegressionInterceptIndicatorPoint = /** @class */ (function (_super) {
     }
     return LinearRegressionInterceptIndicatorPoint;
 }(LinearRegressionIndicatorPoint));
+;
 extend(LinearRegressionInterceptIndicator.prototype, {
     nameBase: 'Linear Regression Intercept Indicator',
     getEndPointY: function (lineParameters) {
         return lineParameters.intercept;
     }
 });
+/**
+ * The Linear Regression Angle series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.linearRegressionAngle
+ *
+ * @augments Highcharts.Series
+ */
+var LinearRegressionAngleIndicator = /** @class */ (function (_super) {
+    __extends(LinearRegressionAngleIndicator, _super);
+    function LinearRegressionAngleIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /**
+     * Linear regression angle indicator. This series requires `linkedTo`
+     * option to be set.
+     *
+     * @sample {highstock} stock/indicators/linear-regression-angle
+     *         Linear intercept angle indicator
+     *
+     * @extends      plotOptions.linearregression
+     * @since        7.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/regressions
+     * @optionparent plotOptions.linearregressionangle
+     */
+    LinearRegressionAngleIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
+                '{series.name}: <b>{point.y}°</b><br/>'
+        }
+    });
+    return LinearRegressionAngleIndicator;
+}(LinearRegressionIndicator));
+;
+var LinearRegressionAngleIndicatorPoint = /** @class */ (function (_super) {
+    __extends(LinearRegressionAngleIndicatorPoint, _super);
+    function LinearRegressionAngleIndicatorPoint() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.series = void 0;
+        return _this;
+    }
+    return LinearRegressionAngleIndicatorPoint;
+}(LinearRegressionIndicatorPoint));
+extend(LinearRegressionAngleIndicator.prototype, {
+    nameBase: 'Linear Regression Angle Indicator',
+    /**
+    * Convert a slope of a line to angle (in degrees) between
+    * the line and x axis
+    * @private
+    * @param {number} slope of the straight line function
+    * @return {number} angle in degrees
+    */
+    slopeToAngle: function (slope) {
+        return Math.atan(slope) * (180 / Math.PI); // rad to deg
+    },
+    getEndPointY: function (lineParameters) {
+        return this.slopeToAngle(lineParameters.slope);
+    }
+});
 BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
 BaseSeries.registerSeriesType('linearRegressionSlope', LinearRegressionSlopesIndicator);
 BaseSeries.registerSeriesType('linearRegressionIntercept', LinearRegressionInterceptIndicator);
+BaseSeries.registerSeriesType('linearRegressionAngle', LinearRegressionAngleIndicator);
 /* *
  *
  *  Default Export
