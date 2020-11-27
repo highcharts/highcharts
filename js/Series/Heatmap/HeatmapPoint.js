@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ScatterSeries = _a.scatter;
+var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ScatterPoint = _a.scatter.prototype.pointClass;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin;
 import U from '../../Core/Utilities.js';
@@ -43,9 +43,9 @@ var HeatmapPoint = /** @class */ (function (_super) {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.options = void 0;
         _this.series = void 0;
-        _this.value = null;
-        _this.x = NaN;
-        _this.y = NaN;
+        _this.value = void 0;
+        _this.x = void 0;
+        _this.y = void 0;
         return _this;
         /* eslint-enable valid-jsdoc */
     }
@@ -135,7 +135,7 @@ var HeatmapPoint = /** @class */ (function (_super) {
             this.value !== -Infinity);
     };
     return HeatmapPoint;
-}(ScatterSeries.prototype.pointClass));
+}(ScatterPoint));
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
     setState: colorMapPointMixin.setState
