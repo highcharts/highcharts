@@ -45,20 +45,6 @@ declare global {
             tooltip?: TooltipOptions;
         }
 
-        /*
-        class LinearRegressionSlopesIndicator
-            extends LinearRegressionIndicator {
-            public data: Array<LinearRegressionSlopesIndicatorPoint>;
-            public getEndPointY(
-                lineParameters: RegressionLineParametersObject
-            ): number;
-            public nameBase: string;
-            public options: LinearRegressionSlopesIndicatorOptions;
-            public pointClass: typeof LinearRegressionSlopesIndicatorPoint;
-            public points: Array<LinearRegressionSlopesIndicatorPoint>;
-        }
-        */
-
         interface LinearRegressionSlopesIndicatorOptions
             extends LinearRegressionIndicatorOptions {
             // for inheritance
@@ -126,6 +112,10 @@ declare global {
         }
     }
 }
+
+/**
+ * LinearRegressionIndicator
+ */
 
 /**
  * Linear regression series type.
@@ -208,6 +198,7 @@ class LinearRegressionIndicator extends SMAIndicator {
 class LinearRegressionIndicatorPoint extends SMAIndicator.prototype.pointClass {
     public series: LinearRegressionIndicator = void 0 as any;
 }
+
 /* *
  *
  *  Prototype Properties
@@ -433,19 +424,95 @@ extend(LinearRegressionIndicator.prototype, {
     }
 });
 
+/**
+ * LinearRegressionAngleIndicator
+ */
+
+/**
+ * A linear regression series. If the [type](#series.linearregression.type)
+ * option is not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.linearregression
+ * @since     7.0.0
+ * @product   highstock
+ * @excluding dataParser,dataURL
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/regressions
+ * @apioption series.linearregression
+ */
+
+/* ************************************************************************** */
+
+/**
+ * The Linear Regression Slope series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.linearRegressionSlope
+ *
+ * @augments Highcharts.Series
+ */
+class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
+    public static defaultOptions: Highcharts.LinearRegressionIndicatorParamsOptions = LinearRegressionIndicator.defaultOptions as Highcharts.LinearRegressionIndicatorOptions;
+    /**
+     * Linear regression slope indicator. This series requires `linkedTo`
+     * option to be set.
+     *
+     * @sample {highstock} stock/indicators/linear-regression-slope
+     *         Linear regression slope indicator
+     *
+     * @extends      plotOptions.linearregression
+     * @since        7.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/regressions
+     * @optionparent plotOptions.linearregressionslope
+     */
+};
+
+class LinearRegressionSlopesIndicatorPoint extends LinearRegressionIndicatorPoint {
+    public series: LinearRegressionSlopesIndicator = void 0 as any;
+}
+
+interface LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
+    data: Array<LinearRegressionSlopesIndicatorPoint>;
+    getEndPointY(
+        lineParameters: Highcharts.RegressionLineParametersObject
+    ): number;
+    nameBase: string;
+    options: Highcharts.LinearRegressionSlopesIndicatorOptions;
+    pointClass: typeof LinearRegressionSlopesIndicatorPoint;
+    points: Array<LinearRegressionSlopesIndicatorPoint>;
+}
+
+extend(LinearRegressionSlopesIndicator.prototype, {
+    nameBase: 'Linear Regression Slope Indicator',
+    getEndPointY (
+        lineParameters: Highcharts.RegressionLineParametersObject
+    ): number {
+        return lineParameters.slope;
+    }
+});
+
+/**
+ * 
+ * Register
+ * 
+ */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearRegression: typeof LinearRegressionIndicator;
         /*
         linearRegressionAngle: typeof LinearRegressionAngleIndicator;
         linearRegressionIntercept: typeof LinearRegressionInterceptIndicator;
-        linearRegressionSlope: typeof LinearRegressionSlopesIndicator;
         */
+        linearRegressionSlope: typeof LinearRegressionSlopesIndicator;
     }
 }
 
 BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
-
+BaseSeries.registerSeriesType('linearRegressionSlope', LinearRegressionSlopesIndicator);
 /* *
  *
  *  Default Export
