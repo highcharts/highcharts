@@ -25,7 +25,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var HeatmapSeries = BaseSeries.seriesTypes.heatmap;
+var HeatmapPoint = BaseSeries.seriesTypes.heatmap.prototype.pointClass;
 import ColorSeriesModule from '../../Mixins/ColorSeries.js';
 var colorPointMixin = ColorSeriesModule.colorPointMixin;
 import U from '../../Core/Utilities.js';
@@ -67,7 +67,7 @@ var TilemapPoint = /** @class */ (function (_super) {
         return this.series.tileShape.haloPath.apply(this, Array.prototype.slice.call(arguments));
     };
     return TilemapPoint;
-}(HeatmapSeries.prototype.pointClass));
+}(HeatmapPoint));
 extend(TilemapPoint.prototype, {
     setVisible: colorPointMixin.setVisible
 });

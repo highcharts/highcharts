@@ -25,7 +25,11 @@ import type TilemapSeries from './TilemapSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        heatmap: HeatmapSeries
+        heatmap: {
+            prototype: {
+                pointClass: HeatmapPoint
+            }
+        }
     }
 } = BaseSeries;
 import ColorSeriesModule from '../../Mixins/ColorSeries.js';
@@ -41,7 +45,7 @@ const {
  *
  * */
 
-class TilemapPoint extends HeatmapSeries.prototype.pointClass {
+class TilemapPoint extends HeatmapPoint {
 
     /* *
      *
