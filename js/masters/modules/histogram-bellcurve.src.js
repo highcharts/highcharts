@@ -10,4 +10,4 @@
  */
 'use strict';
 import '../../Series/HistogramSeries.js';
-import '../../Series/BellcurveSeries.js';
+import '../../Series/Bellcurve/BellcurveSeries.js';

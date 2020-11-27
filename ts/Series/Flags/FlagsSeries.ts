@@ -432,20 +432,7 @@ class FlagsSeries extends ColumnSeries {
                         null as any,
                         null as any,
                         options.useHTML
-                    );
-
-                    if (!chart.styledMode) {
-                        graphic
-                            .attr(series.pointAttribs(point))
-                            .css(merge(options.style as any, point.style));
-                    }
-
-                    graphic.attr({
-                        align: centered ? 'center' : 'left',
-                        width: options.width,
-                        height: options.height,
-                        'text-align': options.textAlign
-                    })
+                    )
                         .addClass('highcharts-point')
                         .add(series.markerGroup);
 
@@ -454,11 +441,21 @@ class FlagsSeries extends ColumnSeries {
                         point.graphic.div.point = point;
                     }
 
-                    if (!chart.styledMode) {
-                        graphic.shadow(options.shadow);
-                    }
-
                     graphic.isNew = true;
+                }
+
+                graphic.attr({
+                    align: centered ? 'center' : 'left',
+                    width: options.width,
+                    height: options.height,
+                    'text-align': options.textAlign
+                });
+
+                if (!chart.styledMode) {
+                    graphic
+                        .attr(series.pointAttribs(point))
+                        .css(merge(options.style as any, point.style))
+                        .shadow(options.shadow);
                 }
 
                 if ((plotX as any) > 0) { // #3119

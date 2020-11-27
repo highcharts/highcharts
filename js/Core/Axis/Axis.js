@@ -3054,8 +3054,11 @@ var Axis = /** @class */ (function () {
     *
     */
     Axis.prototype.hasVerticalPanning = function () {
-        var _a, _b;
-        return /y/.test(((_b = (_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.panning) === null || _b === void 0 ? void 0 : _b.type) || '');
+        var _a;
+        var panningOptions = (_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.panning;
+        return Boolean(panningOptions &&
+            panningOptions.enabled && // #14624
+            /y/.test(panningOptions.type));
     };
     /**
     * Check whether the given value is a positive valid axis value.

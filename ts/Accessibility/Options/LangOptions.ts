@@ -97,6 +97,7 @@ declare global {
         interface LangAccessibilityRangeSelectorOptions {
             maxInputLabel: string;
             minInputLabel: string;
+            clickButtonAnnouncement: string;
         }
         interface LangAccessibilityAnnotationOptions {
             heading: string;
@@ -299,7 +300,8 @@ var langOptions: Highcharts.LangOptions = {
          */
         rangeSelector: {
             minInputLabel: 'Select start date.',
-            maxInputLabel: 'Select end date.'
+            maxInputLabel: 'Select end date.',
+            clickButtonAnnouncement: 'Viewing {axisRangeDescription}'
         },
 
         /**

@@ -38,6 +38,7 @@ declare global {
         interface A11yChartUtilities {
             getChartTitle(chart: Chart): string;
             getAxisDescription(axis: Axis): string;
+            getAxisRangeDescription(axis: Axis): string;
             getPointFromXY(
                 series: Array<LineSeries>,
                 x: number,
@@ -76,6 +77,7 @@ function getChartTitle(chart: Highcharts.AccessibilityChart): string {
 
 
 /**
+ * Return string with the axis name/title.
  * @param {Highcharts.Axis} axis
  * @return {string}
  */
@@ -90,6 +92,126 @@ function getAxisDescription(axis: Highcharts.Axis): string {
             axis.dateTime && 'Time' ||
             'values'
         )
+    );
+}
+
+
+/**
+ * Return string with text description of the axis range.
+ * @param {Highcharts.Axis} axis The axis to get range desc of.
+ * @return {string} A string with the range description for the axis.
+ */
+function getAxisRangeDescription(axis: Highcharts.Axis): string {
+    const axisOptions = axis.options || {};
+
+    // Handle overridden range description
+    if (
+        axisOptions.accessibility &&
+        typeof axisOptions.accessibility.rangeDescription !== 'undefined'
+    ) {
+        return axisOptions.accessibility.rangeDescription;
+    }
+
+    // Handle category axes
+    if (axis.categories) {
+        return getCategoryAxisRangeDesc(axis);
+    }
+
+    // Use time range, not from-to?
+    if (axis.dateTime && (axis.min === 0 || axis.dataMin === 0)) {
+        return getAxisTimeLengthDesc(axis);
+    }
+
+    // Just use from and to.
+    // We have the range and the unit to use, find the desc format
+    return getAxisFromToDescription(axis);
+}
+
+
+/**
+ * Describe the range of a category axis.
+ * @param {Highcharts.Axis} axis
+ * @return {string}
+ */
+function getCategoryAxisRangeDesc(axis: Highcharts.Axis): string {
+    const chart = axis.chart;
+
+    if (axis.dataMax && axis.dataMin) {
+        return chart.langFormat(
+            'accessibility.axis.rangeCategories',
+            {
+                chart: chart,
+                axis: axis,
+                numCategories: axis.dataMax - axis.dataMin + 1
+            }
+        );
+    }
+
+    return '';
+}
+
+
+/**
+ * Describe the length of the time window shown on an axis.
+ * @param {Highcharts.Axis} axis
+ * @return {string}
+ */
+function getAxisTimeLengthDesc(axis: Highcharts.Axis): string {
+    const chart = axis.chart;
+    const range: Highcharts.Dictionary<number> = {};
+    let rangeUnit = 'Seconds';
+
+    range.Seconds = ((axis.max || 0) - (axis.min || 0)) / 1000;
+    range.Minutes = range.Seconds / 60;
+    range.Hours = range.Minutes / 60;
+    range.Days = range.Hours / 24;
+
+    ['Minutes', 'Hours', 'Days'].forEach(function (unit: string): void {
+        if (range[unit] > 2) {
+            rangeUnit = unit;
+        }
+    });
+
+    const rangeValue: string = range[rangeUnit].toFixed(
+        rangeUnit !== 'Seconds' &&
+        rangeUnit !== 'Minutes' ? 1 : 0 // Use decimals for days/hours
+    );
+
+    // We have the range and the unit to use, find the desc format
+    return chart.langFormat(
+        'accessibility.axis.timeRange' + rangeUnit,
+        {
+            chart: chart,
+            axis: axis,
+            range: rangeValue.replace('.0', '')
+        }
+    );
+}
+
+
+/**
+ * Describe an axis from-to range.
+ * @param {Highcharts.Axis} axis
+ * @return {string}
+ */
+function getAxisFromToDescription(axis: Highcharts.Axis): string {
+    const chart = axis.chart;
+    const dateRangeFormat = chart.options?.accessibility
+        ?.screenReaderSection.axisRangeDateFormat || '';
+    const format = function (axisKey: string): string {
+        return axis.dateTime ? chart.time.dateFormat(
+            dateRangeFormat, (axis as any)[axisKey]
+        ) : (axis as any)[axisKey];
+    };
+
+    return chart.langFormat(
+        'accessibility.axis.rangeFromTo',
+        {
+            chart: chart,
+            axis: axis,
+            rangeFrom: format('min'),
+            rangeTo: format('max')
+        }
     );
 }
 
@@ -279,6 +401,7 @@ function scrollToPoint(point: Point): void {
 const ChartUtilities: Highcharts.A11yChartUtilities = {
     getChartTitle,
     getAxisDescription,
+    getAxisRangeDescription,
     getPointFromXY,
     getSeriesFirstPointElement,
     getSeriesFromName,

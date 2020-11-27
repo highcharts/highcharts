@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/WindbarbSeries.js';
+import '../../Series/Windbarb/WindbarbSeries.js';
