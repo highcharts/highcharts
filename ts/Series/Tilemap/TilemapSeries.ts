@@ -19,15 +19,15 @@
  *
  * */
 
-import type Axis from '../Core/Axis/Axis';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type HeatmapPointOptions from './Heatmap/HeatmapPointOptions';
-import type HeatmapSeriesOptions from './Heatmap/HeatmapSeriesOptions';
-import type Point from '../Core/Series/Point';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+import type Axis from '../../Core/Axis/Axis';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type HeatmapPointOptions from '../Heatmap/HeatmapPointOptions';
+import type HeatmapSeriesOptions from '../Heatmap/HeatmapSeriesOptions';
+import type Point from '../../Core/Series/Point';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
@@ -35,13 +35,13 @@ const {
         scatter: ScatterSeries
     }
 } = BaseSeries;
-import ColorSeriesModule from '../Mixins/ColorSeries.js';
+import ColorSeriesModule from '../../Mixins/ColorSeries.js';
 const {
     colorPointMixin
 } = ColorSeriesModule;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     clamp,
@@ -56,19 +56,19 @@ const {
  *
  * */
 
-declare module '../Core/Axis/Types' {
+declare module '../../Core/Axis/Types' {
     interface AxisLike {
         recomputingForTilemap?: boolean;
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         getSeriesPixelPadding?(axis: Axis): Record<string, number>;
     }
 }
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateHoverHaloOptions {
         enabled?: boolean;
     }
@@ -1034,7 +1034,7 @@ extend(TilemapPoint.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tilemap: typeof TilemapSeries;
     }
