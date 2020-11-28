@@ -20,27 +20,27 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type Chart from '../Core/Chart/Chart';
-import type Position3DObject from '../Core/Renderer/Position3DObject';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type { SVGElement3DLikeCuboid } from '../Core/Renderer/SVG/SVGElement3DLike';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGPath3D from '../Core/Renderer/SVG/SVGPath3D';
-import BaseSeries from '../Core/Series/Series.js';
+import type ColorType from '../../Core/Color/ColorType';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type Chart from '../../Core/Chart/Chart';
+import type Position3DObject from '../../Core/Renderer/Position3DObject';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { SVGElement3DLikeCuboid } from '../../Core/Renderer/SVG/SVGElement3DLike';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = BaseSeries;
-import Color from '../Core/Color/Color.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const {
     charts,
     deg2rad,
@@ -49,10 +49,10 @@ const {
         prototype: RendererProto
     }
 } = H;
-import Math3D from '../Extensions/Math3D.js';
+import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
-import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../Core/Utilities.js';
+import _SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     merge,
@@ -65,7 +65,7 @@ const {
  *
  * */
 
-declare module '../Core/Renderer/SVG/SVGElement3DLike' {
+declare module '../../Core/Renderer/SVG/SVGElement3DLike' {
     interface SVGElement3DLike {
         cylinder?: Highcharts.CylinderMethodsObject;
     }
@@ -116,18 +116,18 @@ declare global {
     }
 }
 
+/* *
+ *
+ *  Composition
+ *
+ * */
+
 const cuboidPath = RendererProto.cuboidPath;
 
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
 const isSimplified = (path: SVGPath): boolean =>
     !path.some((seg): boolean => seg[0] === 'C');
-
-/* *
- *
- *  Composition
- *
- * */
 
 // cylinder extends cuboid
 const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
@@ -519,7 +519,7 @@ extend(CylinderPoint.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         cylinder: typeof CylinderSeries;
     }

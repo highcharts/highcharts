@@ -25,27 +25,27 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var ColumnSeries = BaseSeries.seriesTypes.column;
-import Color from '../Core/Color/Color.js';
+import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 var charts = H.charts, deg2rad = H.deg2rad, RendererProto = H.Renderer.prototype;
-import Math3D from '../Extensions/Math3D.js';
+import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
+/* *
+ *
+ *  Composition
+ *
+ * */
 var cuboidPath = RendererProto.cuboidPath;
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
 var isSimplified = function (path) {
     return !path.some(function (seg) { return seg[0] === 'C'; });
 };
-/* *
- *
- *  Composition
- *
- * */
 // cylinder extends cuboid
 var cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
