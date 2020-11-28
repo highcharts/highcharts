@@ -20,24 +20,24 @@
  *
  * */
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColorType from '../Core/Color/ColorType';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColorType from '../../Core/Color/ColorType';
 import type {
     DataLabelFormatterCallback,
     DataLabelOptions
-} from '../Core/Series/DataLabelOptions';
-import type LinePointOptions from './Line/LinePointOptions';
-import type LineSeriesOptions from './Line/LineSeriesOptions';
-import type Point from '../Core/Series/Point';
+} from '../../Core/Series/DataLabelOptions';
+import type LinePointOptions from '../Line/LinePointOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type Point from '../../Core/Series/Point';
 import type {
     PointMarkerOptions,
     PointStatesOptions
-} from '../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+} from '../../Core/Series/PointOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         line: LineSeries,
@@ -48,11 +48,11 @@ const {
         }
     }
 } = BaseSeries;
-import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import palette from '../Core/Color/Palette.js';
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import U from '../Core/Utilities.js';
+import H from '../../Core/Globals.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import palette from '../../Core/Color/Palette.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,
@@ -914,7 +914,7 @@ class TimelinePoint extends LineSeries.prototype.pointClass {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         timeline: typeof TimelineSeries;
     }
