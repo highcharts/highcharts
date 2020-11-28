@@ -59,3 +59,31 @@ QUnit.test('Outside tooltip should inherit chart style', function (assert) {
         'Tooltip container should inherit chart style'
     );
 });
+
+QUnit.test('Outside tooltip update', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 400,
+            height: 400,
+            style: {
+                fontFamily: 'Papyrus'
+            }
+        },
+        tooltip: {
+            outside: true
+        },
+        series: [{
+            data: [1, 3, 2, 4]
+        }]
+    });
+
+    chart.series[0].points[0].onMouseOver();
+
+    chart.update({
+        tooltip: {
+            outside: false
+        }
+    });
+
+    assert.strictEqual(chart.tooltip.container, undefined, 'Container should be undefined after updating outside to false');
+});
