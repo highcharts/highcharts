@@ -29,7 +29,7 @@ import BaseSeries from '../../Core/Series/Series.js';
 var ColumnSeries = BaseSeries.seriesTypes.column;
 import CylinderPoint from './CylinderPoint.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge;
+var extend = U.extend, merge = U.merge;
 import './CylinderComposition.js';
 /* *
  *
@@ -85,7 +85,9 @@ var CylinderSeries = /** @class */ (function (_super) {
     CylinderSeries.defaultOptions = merge(ColumnSeries.defaultOptions);
     return CylinderSeries;
 }(ColumnSeries));
-CylinderSeries.prototype.pointClass = CylinderPoint;
+extend(CylinderSeries.prototype, {
+    pointClass: CylinderPoint
+});
 BaseSeries.registerSeriesType('cylinder', CylinderSeries);
 /* *
  *

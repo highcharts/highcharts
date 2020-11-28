@@ -20,14 +20,7 @@
  *
  * */
 
-import type Chart from '../../Core/Chart/Chart';
-import type ColorType from '../../Core/Color/ColorType';
 import type CylinderSeriesOptions from './CylinderSeriesOptions';
-import type PositionObject from '../../Core/Renderer/PositionObject';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type { SVGElement3DLikeCuboid } from '../../Core/Renderer/SVG/SVGElement3DLike';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -35,9 +28,11 @@ const {
     }
 } = BaseSeries;
 import CylinderPoint from './CylinderPoint.js';
-import _SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const {
+    extend,
+    merge
+} = U;
 import './CylinderComposition.js';
 
 /* *
@@ -106,6 +101,9 @@ class CylinderSeries extends ColumnSeries {
 interface CylinderSeries {
     pointClass: typeof CylinderPoint;
 }
+extend(CylinderSeries.prototype, {
+    pointClass: CylinderPoint
+});
 
 /* *
  *
@@ -118,7 +116,6 @@ declare module '../../Core/Series/SeriesType' {
         cylinder: typeof CylinderSeries;
     }
 }
-CylinderSeries.prototype.pointClass = CylinderPoint;
 BaseSeries.registerSeriesType('cylinder', CylinderSeries);
 
 /* *

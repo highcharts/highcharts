@@ -32,7 +32,6 @@ const {
         }
     }
 } = BaseSeries;
-import _SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 
