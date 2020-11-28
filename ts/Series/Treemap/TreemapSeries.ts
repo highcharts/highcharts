@@ -21,28 +21,28 @@
 import type {
     AlignValue,
     VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type Chart from '../Core/Chart/Chart';
-import type ColorType from '../Core/Color/ColorType';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type DataExtremesObject from '../Core/Series/DataExtremesObject';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type PiePoint from './Pie/PiePoint';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
+} from '../../Core/Renderer/AlignObject';
+import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type Chart from '../../Core/Chart/Chart';
+import type ColorType from '../../Core/Color/ColorType';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type PiePoint from '../Pie/PiePoint';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
 import type {
     SeriesOptions,
     SeriesStateHoverOptions,
     SeriesStatesOptions
-} from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../Core/Series/Series.js';
+} from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
@@ -52,22 +52,22 @@ const {
         scatter: ScatterSeries
     }
 } = BaseSeries;
-import Color from '../Core/Color/Color.js';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
-import DrawPointMixin from '../Mixins/DrawPoint.js';
-import H from '../Core/Globals.js';
+import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import palette from '../Core/Color/Palette.js';
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import palette from '../../Core/Color/Palette.js';
+import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 const {
     getColor,
     getLevelOptions,
     updateRootId
 } = TreeSeriesMixin;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     correctFloat,
@@ -91,7 +91,7 @@ const {
  *
  * */
 
-declare module '../Core/Series/SeriesOptions' {
+declare module '../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         cropThreshold?: number;
     }
@@ -215,6 +215,49 @@ declare global {
         );
     }
 }
+
+/* *
+ *
+ *  Composition
+ *
+ * */
+
+/* eslint-disable no-invalid-this */
+
+addEvent(LineSeries, 'afterBindAxes', function (): void {
+    var series = this,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis,
+        treeAxis;
+
+    if (xAxis && yAxis) {
+        if (series.is('treemap')) {
+            treeAxis = {
+                endOnTick: false,
+                gridLineWidth: 0,
+                lineWidth: 0,
+                min: 0,
+                dataMin: 0,
+                minPadding: 0,
+                max: AXIS_MAX,
+                dataMax: AXIS_MAX,
+                maxPadding: 0,
+                startOnTick: false,
+                title: null,
+                tickPositions: []
+            };
+
+            extend(yAxis.options, treeAxis);
+            extend(xAxis.options, treeAxis);
+            treemapAxisDefaultValues = true;
+
+        } else if (treemapAxisDefaultValues) {
+            yAxis.setOptions(yAxis.userOptions);
+            xAxis.setOptions(xAxis.userOptions);
+            treemapAxisDefaultValues = false;
+        }
+    }
+});
 
 /* *
  *
@@ -2308,54 +2351,11 @@ extend(TreemapPoint.prototype, {
 
 /* *
  *
- *  Composition
- *
- * */
-
-/* eslint-disable no-invalid-this */
-
-addEvent(LineSeries, 'afterBindAxes', function (): void {
-    var series = this,
-        xAxis = series.xAxis,
-        yAxis = series.yAxis,
-        treeAxis;
-
-    if (xAxis && yAxis) {
-        if (series.is('treemap')) {
-            treeAxis = {
-                endOnTick: false,
-                gridLineWidth: 0,
-                lineWidth: 0,
-                min: 0,
-                dataMin: 0,
-                minPadding: 0,
-                max: AXIS_MAX,
-                dataMax: AXIS_MAX,
-                maxPadding: 0,
-                startOnTick: false,
-                title: null,
-                tickPositions: []
-            };
-
-            extend(yAxis.options, treeAxis);
-            extend(xAxis.options, treeAxis);
-            treemapAxisDefaultValues = true;
-
-        } else if (treemapAxisDefaultValues) {
-            yAxis.setOptions(yAxis.userOptions);
-            xAxis.setOptions(xAxis.userOptions);
-            treemapAxisDefaultValues = false;
-        }
-    }
-});
-
-/* *
- *
  *  Registry
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         treemap: typeof TreemapSeries;
     }
