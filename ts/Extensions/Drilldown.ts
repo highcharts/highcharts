@@ -869,7 +869,7 @@ Chart.prototype.showDrillUpButton = function (): void {
         attr,
         states;
 
-    if (!this.drillUpButton) {
+    if (!this.drillUpButton && !chart.options.drilldown?.breadcrumbs?.enabled) {
         attr = buttonOptions.theme;
         states = attr && attr.states;
 
@@ -895,7 +895,7 @@ Chart.prototype.showDrillUpButton = function (): void {
                 false,
                 buttonOptions.relativeTo || 'plotBox'
             );
-    } else {
+    } else if (this.drillUpButton) {
         this.drillUpButton.attr({
             text: backText
         })
@@ -1018,9 +1018,9 @@ Chart.prototype.drillUp = function (): void {
 
     this.redraw();
 
-    if (this.drilldownLevels.length === 0) {
+    if (this.drilldownLevels.length === 0 && !chart.options.drilldown?.breadcrumbs?.enabled) {
         this.drillUpButton = (this.drillUpButton as any).destroy();
-    } else {
+    } else if (this.drillUpButton) {
         (this.drillUpButton as any).attr({
             text: this.getDrilldownBackText()
         })
