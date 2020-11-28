@@ -29,27 +29,6 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        takeOrdinalPosition?: boolean;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-    }
-}
-
-/* *
- *
  *  Class
  *
  * */
