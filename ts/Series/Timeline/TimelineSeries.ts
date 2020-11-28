@@ -21,13 +21,12 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColorType from '../../Core/Color/ColorType';
 import type {
-    DataLabelFormatterCallback,
-    DataLabelOptions
-} from '../../Core/Series/DataLabelOptions';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
+    TimelineDataLabelContextObject,
+    TimelineDataLabelOptions
+} from './TimelineDataLabelOptions';
+import type TimelinePointOptions from './TimelinePointOptions';
+import type TimelineSeriesOptions from './TimelineSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type {
     PointMarkerOptions,
@@ -36,22 +35,18 @@ import type {
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        line: LineSeries,
-        pie: {
-            prototype: {
-                pointClass: PiePoint
-            }
-        }
+        line: LineSeries
     }
 } = BaseSeries;
 import H from '../../Core/Globals.js';
+const { TrackerMixin } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import TimelinePoint from './TimelinePoint.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -59,68 +54,9 @@ const {
     arrayMin,
     defined,
     extend,
-    isNumber,
     merge,
-    objectEach,
     pick
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface TimelineDataLabelsFormatterCallbackFunction
-            extends DataLabelFormatterCallback
-        {
-            (
-                this: (
-                    Point.PointLabelObject|
-                    TimelineDataLabelsFormatterContextObject
-                )
-            ): string;
-        }
-        interface TimelineDataLabelsFormatterContextObject
-            extends Point.PointLabelObject
-        {
-            key?: string;
-            point: TimelinePoint;
-            series: TimelineSeries;
-        }
-        interface TimelineDataLabelsOptionsObject extends DataLabelOptions
-        {
-            alternate?: boolean;
-            connectorColor?: ColorType;
-            connectorWidth?: number;
-            distance?: number;
-            formatter?: TimelineDataLabelsFormatterCallbackFunction;
-            width?: number;
-        }
-        interface TimelinePointOptions extends LinePointOptions {
-            dataLabels?: TimelineDataLabelsOptionsObject;
-            isNull?: boolean;
-            radius?: number;
-            visible?: boolean;
-        }
-        interface TimelineSeriesOptions extends LineSeriesOptions {
-            data?: Array<TimelinePointOptions>;
-            dataLabels?: TimelineDataLabelsOptionsObject;
-            ignoreHiddenPoint?: boolean;
-            radius?: number;
-            radiusPlus?: number;
-            states?: SeriesStatesOptions<TimelineSeries>;
-        }
-    }
-}
-
-var TrackerMixin = H.TrackerMixin;
 
 /* *
  *
@@ -168,7 +104,7 @@ class TimelineSeries extends LineSeries {
      * @requires     modules/timeline
      * @optionparent plotOptions.timeline
      */
-    public static defaultOptions: Highcharts.TimelineSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: TimelineSeriesOptions = merge(LineSeries.defaultOptions, {
         colorByPoint: true,
         stickyTracking: false,
         ignoreHiddenPoint: true,
@@ -265,10 +201,7 @@ class TimelineSeries extends LineSeries {
              * }
              */
             formatter: function (
-                this: (
-                    Point.PointLabelObject|
-                    Highcharts.TimelineDataLabelsFormatterContextObject
-                )
+                this: (Point.PointLabelObject|TimelineDataLabelContextObject)
             ): string {
                 var format;
 
@@ -317,7 +250,7 @@ class TimelineSeries extends LineSeries {
         },
         showInLegend: false,
         colorKey: 'x'
-    } as Highcharts.TimelineSeriesOptions);
+    } as TimelineSeriesOptions);
 
     /* *
      *
@@ -327,13 +260,13 @@ class TimelineSeries extends LineSeries {
 
     public data: Array<TimelinePoint> = void 0 as any;
 
-    public options: Highcharts.TimelineSeriesOptions = void 0 as any;
+    public options: TimelineSeriesOptions = void 0 as any;
 
     public points: Array<TimelinePoint> = void 0 as any;
 
-    public userOptions: Highcharts.TimelineSeriesOptions = void 0 as any;
+    public userOptions: TimelineSeriesOptions = void 0 as any;
 
-    public visibilityMap: Array<(boolean|TimelinePoint|Highcharts.TimelinePointOptions)> = void 0 as any;
+    public visibilityMap: Array<(boolean|TimelinePoint|TimelinePointOptions)> = void 0 as any;
 
     public visiblePointsCount?: number;
 
@@ -350,17 +283,12 @@ class TimelineSeries extends LineSeries {
     public alignDataLabel(
         point: TimelinePoint,
         dataLabel: SVGElement,
-        _options: Highcharts.TimelineDataLabelsOptionsObject,
+        _options: TimelineDataLabelOptions,
         _alignTo: BBoxObject
     ): void {
         var series = this,
             isInverted = series.chart.inverted,
-            visiblePoints = series.visibilityMap.filter(function (
-                point: (
-                    boolean|TimelinePoint|
-                    Highcharts.TimelinePointOptions
-                )
-            ): boolean {
+            visiblePoints = series.visibilityMap.filter(function (point): boolean {
                 return point as any;
             }),
             visiblePointsCount: number = series.visiblePointsCount as any,
@@ -368,8 +296,7 @@ class TimelineSeries extends LineSeries {
             isFirstOrLast = (
                 !pointIndex || pointIndex === visiblePointsCount - 1
             ),
-            dataLabelsOptions: Highcharts.TimelineDataLabelsOptionsObject =
-                series.options.dataLabels as any,
+            dataLabelsOptions: TimelineDataLabelOptions = series.options.dataLabels as any,
             userDLOptions = point.userDLOptions || {},
             // Define multiplier which is used to calculate data label
             // width. If data labels are alternate, they have two times more
@@ -436,11 +363,10 @@ class TimelineSeries extends LineSeries {
 
     public distributeDL(): void {
         var series = this,
-            dataLabelsOptions: Highcharts.TimelineDataLabelsOptionsObject =
-                series.options.dataLabels as any,
+            dataLabelsOptions: TimelineDataLabelOptions = series.options.dataLabels as any,
             options,
             pointDLOptions,
-            newOptions: Highcharts.TimelineDataLabelsOptionsObject = {},
+            newOptions: TimelineDataLabelOptions = {} as any,
             visibilityIndex = 1,
             distance: number = dataLabelsOptions.distance as any;
 
@@ -451,8 +377,8 @@ class TimelineSeries extends LineSeries {
 
                 if (!series.hasRendered) {
                     point.userDLOptions =
-                        merge<Highcharts.TimelineDataLabelsOptionsObject>(
-                            {},
+                        merge(
+                            {} as TimelineDataLabelContextObject,
                             pointDLOptions
                         );
                 }
@@ -478,18 +404,13 @@ class TimelineSeries extends LineSeries {
         });
     }
 
-    public getVisibilityMap(): Array<(boolean|TimelinePoint|Highcharts.TimelinePointOptions)> {
+    public getVisibilityMap(): Array<(boolean|TimelinePoint|TimelinePointOptions)> {
         var series = this,
             map = (series.data.length ?
                 series.data : (series.userOptions.data as any)
             ).map(function (
-                point: (
-                    TimelinePoint|
-                    Highcharts.TimelinePointOptions
-                )
-            ): (boolean|TimelinePoint|
-                Highcharts.TimelinePointOptions
-                ) {
+                point: (TimelinePoint|TimelinePointOptions)
+            ): (boolean|TimelinePoint|TimelinePointOptions) {
                 return (
                     point &&
                     point.visible !== false &&
@@ -712,201 +633,9 @@ extend(TimelineSeries.prototype, {
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     // Use a group of trackers from TrackerMixin
     drawTracker: TrackerMixin.drawTrackerPoint,
+    pointClass: TimelinePoint,
     trackerGroups: ['markerGroup', 'dataLabelsGroup']
 });
-
-/* *
- *
- *  Class
- *
- * */
-
-class TimelinePoint extends LineSeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public label?: string;
-
-    public options: Highcharts.TimelinePointOptions = void 0 as any;
-
-    public series: TimelineSeries = void 0 as any;
-
-    public userDLOptions?: Highcharts.TimelineDataLabelsOptionsObject;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    public alignConnector(): void {
-        var point = this,
-            series = point.series,
-            connector: SVGElement = point.connector as any,
-            dl: SVGElement = point.dataLabel as any,
-            dlOptions = (point.dataLabel as any).options = merge(
-                series.options.dataLabels,
-                point.options.dataLabels
-            ),
-            chart = point.series.chart,
-            bBox = connector.getBBox(),
-            plotPos = {
-                x: bBox.x + dl.translateX,
-                y: bBox.y + dl.translateY
-            },
-            isVisible;
-
-        // Include a half of connector width in order to run animation,
-        // when connectors are aligned to the plot area edge.
-        if (chart.inverted) {
-            plotPos.y -= dl.options.connectorWidth / 2;
-        } else {
-            plotPos.x += dl.options.connectorWidth / 2;
-        }
-
-        isVisible = chart.isInsidePlot(
-            plotPos.x, plotPos.y
-        );
-
-        connector[isVisible ? 'animate' : 'attr']({
-            d: point.getConnectorPath()
-        });
-
-        if (!series.chart.styledMode) {
-            connector.attr({
-                stroke: dlOptions.connectorColor || point.color,
-                'stroke-width': dlOptions.connectorWidth,
-                opacity: dl[
-                    defined(dl.newOpacity) ? 'newOpacity' : 'opacity'
-                ]
-            });
-        }
-    }
-
-    public drawConnector(): void {
-        var point = this,
-            series = point.series;
-
-        if (!point.connector) {
-            point.connector = series.chart.renderer
-                .path(point.getConnectorPath())
-                .attr({
-                    zIndex: -1
-                })
-                .add(point.dataLabel);
-        }
-
-        if (point.series.chart.isInsidePlot( // #10507
-            (point.dataLabel as any).x, (point.dataLabel as any).y
-        )) {
-            point.alignConnector();
-        }
-    }
-
-    public getConnectorPath(): SVGPath {
-        var point = this,
-            chart = point.series.chart,
-            xAxisLen = point.series.xAxis.len,
-            inverted = chart.inverted,
-            direction = inverted ? 'x2' : 'y2',
-            dl: SVGElement = point.dataLabel as any,
-            targetDLPos = dl.targetPosition,
-            coords: Record<string, (number|string)> = {
-                x1: point.plotX as any,
-                y1: point.plotY as any,
-                x2: point.plotX as any,
-                y2: isNumber(targetDLPos.y) ? targetDLPos.y : dl.y
-            },
-            negativeDistance = (
-                (dl.alignAttr || dl)[direction[0]] <
-                    point.series.yAxis.len / 2
-            ),
-            path: SVGPath;
-
-        // Recalculate coords when the chart is inverted.
-        if (inverted) {
-            coords = {
-                x1: point.plotY as any,
-                y1: xAxisLen - (point.plotX as any),
-                x2: targetDLPos.x || dl.x,
-                y2: xAxisLen - (point.plotX as any)
-            };
-        }
-
-        // Subtract data label width or height from expected coordinate so
-        // that the connector would start from the appropriate edge.
-        if (negativeDistance) {
-            coords[direction] += dl[inverted ? 'width' : 'height'];
-        }
-
-        // Change coordinates so that they will be relative to data label.
-        objectEach(coords, function (
-            _coord: (number|string),
-            i: string
-        ): void {
-            (coords[i] as any) -= (dl.alignAttr || dl)[i[0]];
-        });
-
-        path = chart.renderer.crispLine(
-            [
-                ['M', coords.x1, coords.y1],
-                ['L', coords.x2, coords.y2]
-            ] as SVGPath,
-            dl.options.connectorWidth
-        );
-
-        return path;
-    }
-
-    public init(): TimelinePoint {
-        var point: TimelinePoint = super.init.apply(this, arguments) as any;
-
-        point.name = pick(point.name, 'Event');
-        point.y = 1;
-
-        return point;
-    }
-
-    public isValid(): boolean {
-        return this.options.y !== null;
-    }
-
-    public setState(): void {
-        var proceed = super.setState;
-
-        // Prevent triggering the setState method on null points.
-        if (!this.isNull) {
-            proceed.apply(this, arguments);
-        }
-    }
-
-    public setVisible(
-        visible: boolean,
-        redraw?: boolean
-    ): void {
-        var point = this,
-            series = point.series;
-
-        redraw = pick(redraw, series.options.ignoreHiddenPoint);
-
-        PiePoint.prototype.setVisible.call(point, visible, false);
-        // Process new data
-        series.processData();
-
-        if (redraw) {
-            series.chart.redraw();
-        }
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-}
 
 /* *
  *
@@ -919,7 +648,6 @@ declare module '../../Core/Series/SeriesType' {
         timeline: typeof TimelineSeries;
     }
 }
-TimelineSeries.prototype.pointClass = TimelinePoint;
 BaseSeries.registerSeriesType('timeline', TimelineSeries);
 
 /* *
