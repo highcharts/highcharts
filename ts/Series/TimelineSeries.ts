@@ -26,9 +26,9 @@ import type {
     DataLabelFormatterCallback,
     DataLabelOptions
 } from '../Core/Series/DataLabelOptions';
-import type LinePoint from './Line/LinePoint';
 import type LinePointOptions from './Line/LinePointOptions';
 import type LineSeriesOptions from './Line/LineSeriesOptions';
+import type Point from '../Core/Series/Point';
 import type {
     PointMarkerOptions,
     PointStatesOptions
@@ -39,13 +39,18 @@ import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
-    seriesTypes
+    seriesTypes: {
+        line: LineSeries,
+        pie: {
+            prototype: {
+                pointClass: PiePoint
+            }
+        }
+    }
 } = BaseSeries;
 import H from '../Core/Globals.js';
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import palette from '../Core/Color/Palette.js';
-import Point from '../Core/Series/Point.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
 const {
@@ -72,19 +77,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class TimelinePoint extends LinePoint {
-            public isValid: () => boolean;
-            public label?: string;
-            public options: TimelinePointOptions;
-            public series: TimelineSeries;
-            public userDLOptions?: TimelineDataLabelsOptionsObject;
-            public alignConnector(): void;
-            public drawConnector(): void;
-            public getConnectorPath(): SVGPath;
-            public init(): this;
-            public setState(): void;
-            public setVisible(vis: boolean, redraw?: boolean): void;
-        }
         interface TimelineDataLabelsFormatterCallbackFunction
             extends DataLabelFormatterCallback
         {
@@ -339,162 +331,33 @@ class TimelineSeries extends LineSeries {
 
     public points: Array<TimelinePoint> = void 0 as any;
 
-}
+    public userOptions: Highcharts.TimelineSeriesOptions = void 0 as any;
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    public visibilityMap: Array<(boolean|TimelinePoint|Highcharts.TimelinePointOptions)> = void 0 as any;
 
-interface TimelineSeries {
-    drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
-    drawTracker: Highcharts.TrackerMixin['drawTrackerPoint'];
-    pointClass: typeof TimelinePoint;
-    trackerGroups: Array<string>;
-    userOptions: Highcharts.TimelineSeriesOptions;
-    visibilityMap: Array<(
-        boolean|TimelinePoint|Highcharts.TimelinePointOptions
-    )>;
-    visiblePointsCount?: number;
-    yData?: Array<number>;
-    alignDataLabel(
+    public visiblePointsCount?: number;
+
+    public yData?: Array<number>;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    public alignDataLabel(
         point: TimelinePoint,
         dataLabel: SVGElement,
-        options: Highcharts.TimelineDataLabelsOptionsObject,
-        alignTo: BBoxObject
-    ): void;
-    bindAxes(): void;
-    distributeDL(): void;
-    generatePoints(): void;
-    getVisibilityMap(): Array<(
-        boolean|TimelinePoint|Highcharts.TimelinePointOptions
-    )>;
-    getXExtremes(xData: Array<number>): Highcharts.RangeObject;
-    init(): void;
-    markerAttribs(
-        point: TimelinePoint,
-        state?: string
-    ): SVGAttributes;
-    processData(): undefined;
-}
-extend(TimelineSeries.prototype, {
-    trackerGroups: ['markerGroup', 'dataLabelsGroup'],
-    // Use a simple symbol from LegendSymbolMixin
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-    // Use a group of trackers from TrackerMixin
-    drawTracker: TrackerMixin.drawTrackerPoint,
-    init: function (this: TimelineSeries): void {
-        var series = this;
-
-        LineSeries.prototype.init.apply(series, arguments);
-
-        series.eventsToUnbind.push(addEvent(series, 'afterTranslate', function (): void {
-            var lastPlotX: (number|undefined),
-                closestPointRangePx = Number.MAX_VALUE;
-
-            series.points.forEach(function (
-                point: Highcharts.TimelinePoint
-            ): void {
-                // Set the isInside parameter basing also on the real point
-                // visibility, in order to avoid showing hidden points
-                // in drawPoints method.
-                point.isInside = point.isInside && point.visible;
-
-                // New way of calculating closestPointRangePx value, which
-                // respects the real point visibility is needed.
-                if (point.visible && !point.isNull) {
-                    if (defined(lastPlotX)) {
-                        closestPointRangePx = Math.min(
-                            closestPointRangePx,
-                            Math.abs((point.plotX as any) - lastPlotX)
-                        );
-                    }
-                    lastPlotX = point.plotX;
-                }
-            });
-            series.closestPointRangePx = closestPointRangePx;
-        }));
-
-        // Distribute data labels before rendering them. Distribution is
-        // based on the 'dataLabels.distance' and 'dataLabels.alternate'
-        // property.
-        series.eventsToUnbind.push(addEvent(series, 'drawDataLabels', function (): void {
-            // Distribute data labels basing on defined algorithm.
-            series.distributeDL(); // @todo use this scope for series
-        }));
-
-        series.eventsToUnbind.push(addEvent(series, 'afterDrawDataLabels', function (): void {
-            var dataLabel; // @todo use this scope for series
-
-            // Draw or align connector for each point.
-            series.points.forEach(function (
-                point: Highcharts.TimelinePoint
-            ): void {
-                dataLabel = point.dataLabel;
-
-                if (dataLabel) {
-                    // Within this wrap method is necessary to save the
-                    // current animation params, because the data label
-                    // target position (after animation) is needed to align
-                    // connectors.
-                    dataLabel.animate = function (
-                        this: SVGElement,
-                        params: SVGAttributes
-                    ): SVGElement {
-                        if (this.targetPosition) {
-                            this.targetPosition = params;
-                        }
-                        return SVGElement.prototype.animate.apply(
-                            this,
-                            arguments
-                        );
-                    };
-
-                    // Initialize the targetPosition field within data label
-                    // object. It's necessary because there is need to know
-                    // expected position of specific data label, when
-                    // aligning connectors. This field is overrided inside
-                    // of SVGElement.animate() wrapped  method.
-                    if (!dataLabel.targetPosition) {
-                        dataLabel.targetPosition = {};
-                    }
-
-                    return point.drawConnector();
-                }
-            });
-        }));
-
-        series.eventsToUnbind.push(addEvent(
-            series.chart,
-            'afterHideOverlappingLabel',
-            function (): void {
-                series.points.forEach(function (
-                    p: Highcharts.TimelinePoint
-                ): void {
-                    if (
-                        p.connector &&
-                        p.dataLabel &&
-                        p.dataLabel.oldOpacity !== p.dataLabel.newOpacity
-                    ) {
-                        p.alignConnector();
-                    }
-                });
-            }
-        ));
-    },
-    alignDataLabel: function (
-        this: TimelineSeries,
-        point: Highcharts.TimelinePoint,
-        dataLabel: SVGElement,
-        options: Highcharts.TimelineDataLabelsOptionsObject,
-        alignTo: BBoxObject
+        _options: Highcharts.TimelineDataLabelsOptionsObject,
+        _alignTo: BBoxObject
     ): void {
         var series = this,
             isInverted = series.chart.inverted,
             visiblePoints = series.visibilityMap.filter(function (
                 point: (
-                    boolean|Highcharts.TimelinePoint|
+                    boolean|TimelinePoint|
                     Highcharts.TimelinePointOptions
                 )
             ): boolean {
@@ -555,89 +418,23 @@ extend(TimelineSeries.prototype, {
                 dataLabel.shadow(dataLabelsOptions.shadow);
             }
         }
-        LineSeries.prototype.alignDataLabel.apply(series, arguments);
-    },
-    processData: function (this: TimelineSeries): undefined {
-        var series = this,
-            visiblePoints = 0,
-            i: (number|undefined);
+        super.alignDataLabel.apply(series, arguments);
+    }
 
-        series.visibilityMap = series.getVisibilityMap();
-
-        // Calculate currently visible points.
-        series.visibilityMap.forEach(function (
-            point: (
-                boolean|Highcharts.TimelinePoint|
-                Highcharts.TimelinePointOptions
-            )
-        ): void {
-            if (point) {
-                visiblePoints++;
-            }
-        });
-
-        series.visiblePointsCount = visiblePoints;
-
-        for (i = 0; i < (series.xData as any).length; i++) {
-            (series.yData as any)[i] = 1;
-        }
-
-        LineSeries.prototype.processData.call(this, arguments as any);
-
-        return;
-    },
-    getXExtremes: function (
-        this: TimelineSeries,
-        xData: Array<number>
-    ): Highcharts.RangeObject {
-        var series = this,
-            filteredData = xData.filter(function (
-                x: number,
-                i: number
-            ): boolean {
-                return series.points[i].isValid() &&
-                    series.points[i].visible;
-            });
-
-        return {
-            min: arrayMin(filteredData),
-            max: arrayMax(filteredData)
-        };
-    },
-    generatePoints: function (this: TimelineSeries): void {
+    public bindAxes(): void {
         var series = this;
 
-        LineSeries.prototype.generatePoints.apply(series);
-        series.points.forEach(function (point, i): void {
-            point.applyOptions({
-                x: (series.xData as any)[i]
-            }, (series.xData as any)[i]);
+        super.bindAxes.call(series);
+
+        ['xAxis', 'yAxis'].forEach(function (axis): void {
+            // Initially set the linked xAxis type to category.
+            if (axis === 'xAxis' && !series[axis].userOptions.type) {
+                series[axis].categories = series[axis].hasNames = true as any;
+            }
         });
-    },
-    getVisibilityMap: function (
-        this: TimelineSeries
-    ): Array<(boolean|Highcharts.TimelinePoint|
-        Highcharts.TimelinePointOptions)> {
-        var series = this,
-            map = (series.data.length ?
-                series.data : (series.userOptions.data as any)
-            ).map(function (
-                point: (
-                    Highcharts.TimelinePoint|
-                    Highcharts.TimelinePointOptions
-                )
-            ): (boolean|Highcharts.TimelinePoint|
-                Highcharts.TimelinePointOptions
-                ) {
-                return (
-                    point &&
-                    point.visible !== false &&
-                    !point.isNull
-                ) ? point : false;
-            });
-        return map;
-    },
-    distributeDL: function (this: TimelineSeries): void {
+    }
+
+    public distributeDL(): void {
         var series = this,
             dataLabelsOptions: Highcharts.TimelineDataLabelsOptionsObject =
                 series.options.dataLabels as any,
@@ -647,9 +444,7 @@ extend(TimelineSeries.prototype, {
             visibilityIndex = 1,
             distance: number = dataLabelsOptions.distance as any;
 
-        series.points.forEach(function (
-            point: Highcharts.TimelinePoint
-        ): void {
+        series.points.forEach(function (point): void {
             if (point.visible && !point.isNull) {
                 options = point.options;
                 pointDLOptions = point.options.dataLabels;
@@ -670,10 +465,152 @@ extend(TimelineSeries.prototype, {
                 visibilityIndex++;
             }
         });
-    },
-    markerAttribs: function (
-        this: TimelineSeries,
-        point: Highcharts.TimelinePoint,
+    }
+
+    public generatePoints(): void {
+        var series = this;
+
+        super.generatePoints.apply(series);
+        series.points.forEach(function (point, i): void {
+            point.applyOptions({
+                x: (series.xData as any)[i]
+            }, (series.xData as any)[i]);
+        });
+    }
+
+    public getVisibilityMap(): Array<(boolean|TimelinePoint|Highcharts.TimelinePointOptions)> {
+        var series = this,
+            map = (series.data.length ?
+                series.data : (series.userOptions.data as any)
+            ).map(function (
+                point: (
+                    TimelinePoint|
+                    Highcharts.TimelinePointOptions
+                )
+            ): (boolean|TimelinePoint|
+                Highcharts.TimelinePointOptions
+                ) {
+                return (
+                    point &&
+                    point.visible !== false &&
+                    !point.isNull
+                ) ? point : false;
+            });
+        return map;
+    }
+
+    public getXExtremes(xData: Array<number>): Highcharts.RangeObject {
+        var series = this,
+            filteredData = xData.filter(function (
+                x: number,
+                i: number
+            ): boolean {
+                return series.points[i].isValid() &&
+                    series.points[i].visible;
+            });
+
+        return {
+            min: arrayMin(filteredData),
+            max: arrayMax(filteredData)
+        };
+    }
+
+    public init(): void {
+        var series = this;
+
+        super.init.apply(series, arguments);
+
+        series.eventsToUnbind.push(addEvent(series, 'afterTranslate', function (): void {
+            var lastPlotX: (number|undefined),
+                closestPointRangePx = Number.MAX_VALUE;
+
+            series.points.forEach(function (point): void {
+                // Set the isInside parameter basing also on the real point
+                // visibility, in order to avoid showing hidden points
+                // in drawPoints method.
+                point.isInside = point.isInside && point.visible;
+
+                // New way of calculating closestPointRangePx value, which
+                // respects the real point visibility is needed.
+                if (point.visible && !point.isNull) {
+                    if (defined(lastPlotX)) {
+                        closestPointRangePx = Math.min(
+                            closestPointRangePx,
+                            Math.abs((point.plotX as any) - lastPlotX)
+                        );
+                    }
+                    lastPlotX = point.plotX;
+                }
+            });
+            series.closestPointRangePx = closestPointRangePx;
+        }));
+
+        // Distribute data labels before rendering them. Distribution is
+        // based on the 'dataLabels.distance' and 'dataLabels.alternate'
+        // property.
+        series.eventsToUnbind.push(addEvent(series, 'drawDataLabels', function (): void {
+            // Distribute data labels basing on defined algorithm.
+            series.distributeDL(); // @todo use this scope for series
+        }));
+
+        series.eventsToUnbind.push(addEvent(series, 'afterDrawDataLabels', function (): void {
+            var dataLabel; // @todo use this scope for series
+
+            // Draw or align connector for each point.
+            series.points.forEach(function (point): void {
+                dataLabel = point.dataLabel;
+
+                if (dataLabel) {
+                    // Within this wrap method is necessary to save the
+                    // current animation params, because the data label
+                    // target position (after animation) is needed to align
+                    // connectors.
+                    dataLabel.animate = function (
+                        this: SVGElement,
+                        params: SVGAttributes
+                    ): SVGElement {
+                        if (this.targetPosition) {
+                            this.targetPosition = params;
+                        }
+                        return SVGElement.prototype.animate.apply(
+                            this,
+                            arguments
+                        );
+                    };
+
+                    // Initialize the targetPosition field within data label
+                    // object. It's necessary because there is need to know
+                    // expected position of specific data label, when
+                    // aligning connectors. This field is overrided inside
+                    // of SVGElement.animate() wrapped  method.
+                    if (!dataLabel.targetPosition) {
+                        dataLabel.targetPosition = {};
+                    }
+
+                    return point.drawConnector();
+                }
+            });
+        }));
+
+        series.eventsToUnbind.push(addEvent(
+            series.chart,
+            'afterHideOverlappingLabel',
+            function (): void {
+                series.points.forEach(function (p): void {
+                    if (
+                        p.connector &&
+                        p.dataLabel &&
+                        p.dataLabel.oldOpacity !== p.dataLabel.newOpacity
+                    ) {
+                        p.alignConnector();
+                    }
+                });
+            }
+        ));
+    }
+
+    public markerAttribs(
+        point: TimelinePoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         var series = this,
@@ -683,7 +620,7 @@ extend(TimelineSeries.prototype, {
             symbol = (
                 pointMarkerOptions.symbol || seriesMarkerOptions.symbol
             ),
-            pointStateOptions: PointStatesOptions<Highcharts.TimelinePoint>,
+            pointStateOptions: PointStatesOptions<TimelinePoint>,
             width = pick<number|undefined, number|undefined, number>(
                 pointMarkerOptions.width,
                 seriesMarkerOptions.width,
@@ -699,8 +636,7 @@ extend(TimelineSeries.prototype, {
         // Call default markerAttribs method, when the xAxis type
         // is set to datetime.
         if (series.xAxis.dateTime) {
-            return seriesTypes.line.prototype.markerAttribs
-                .call(this, point, state);
+            return super.markerAttribs.call(this, point, state);
         }
 
         // Handle hover and select states
@@ -728,19 +664,55 @@ extend(TimelineSeries.prototype, {
 
         return attribs;
 
-    },
-    bindAxes: function (this: TimelineSeries): void {
-        var series = this;
+    }
 
-        LineSeries.prototype.bindAxes.call(series);
+    public processData(): undefined {
+        var series = this,
+            visiblePoints = 0,
+            i: (number|undefined);
 
-        ['xAxis', 'yAxis'].forEach(function (axis: string): void {
-            // Initially set the linked xAxis type to category.
-            if (axis === 'xAxis' && !series[axis].userOptions.type) {
-                series[axis].categories = series[axis].hasNames = true as any;
+        series.visibilityMap = series.getVisibilityMap();
+
+        // Calculate currently visible points.
+        series.visibilityMap.forEach(function (point): void {
+            if (point) {
+                visiblePoints++;
             }
         });
+
+        series.visiblePointsCount = visiblePoints;
+
+        for (i = 0; i < (series.xData as any).length; i++) {
+            (series.yData as any)[i] = 1;
+        }
+
+        super.processData.call(this, arguments as any);
+
+        return;
     }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface TimelineSeries {
+    drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
+    drawTracker: Highcharts.TrackerMixin['drawTrackerPoint'];
+    pointClass: typeof TimelinePoint;
+    trackerGroups: Array<string>;
+}
+extend(TimelineSeries.prototype, {
+    // Use a simple symbol from LegendSymbolMixin
+    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    // Use a group of trackers from TrackerMixin
+    drawTracker: TrackerMixin.drawTrackerPoint,
+    trackerGroups: ['markerGroup', 'dataLabelsGroup']
 });
 
 /* *
@@ -765,69 +737,79 @@ class TimelinePoint extends LineSeries.prototype.pointClass {
 
     public userDLOptions?: Highcharts.TimelineDataLabelsOptionsObject;
 
-}
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* eslint-disable valid-jsdoc */
 
+    public alignConnector(): void {
+        var point = this,
+            series = point.series,
+            connector: SVGElement = point.connector as any,
+            dl: SVGElement = point.dataLabel as any,
+            dlOptions = (point.dataLabel as any).options = merge(
+                series.options.dataLabels,
+                point.options.dataLabels
+            ),
+            chart = point.series.chart,
+            bBox = connector.getBBox(),
+            plotPos = {
+                x: bBox.x + dl.translateX,
+                y: bBox.y + dl.translateY
+            },
+            isVisible;
 
-interface TimelinePoint {
-    isValid(): boolean;
-    alignConnector(): void;
-    drawConnector(): void;
-    getConnectorPath(): SVGPath;
-    init(): this;
-    setState(): void;
-    setVisible(vis: boolean, redraw?: boolean): void;
-}
-extend(TimelinePoint.prototype, {
-    init: function (
-        this: Highcharts.TimelinePoint
-    ): Highcharts.TimelinePoint {
-        var point: Highcharts.TimelinePoint =
-            Point.prototype.init.apply(this, arguments) as any;
+        // Include a half of connector width in order to run animation,
+        // when connectors are aligned to the plot area edge.
+        if (chart.inverted) {
+            plotPos.y -= dl.options.connectorWidth / 2;
+        } else {
+            plotPos.x += dl.options.connectorWidth / 2;
+        }
 
-        point.name = pick(point.name, 'Event');
-        point.y = 1;
+        isVisible = chart.isInsidePlot(
+            plotPos.x, plotPos.y
+        );
 
-        return point;
-    },
-    isValid: function (this: Highcharts.TimelinePoint): boolean {
-        return this.options.y !== null;
-    },
-    setVisible: function (
-        this: Highcharts.TimelinePoint,
-        vis: boolean,
-        redraw?: boolean
-    ): void {
+        connector[isVisible ? 'animate' : 'attr']({
+            d: point.getConnectorPath()
+        });
+
+        if (!series.chart.styledMode) {
+            connector.attr({
+                stroke: dlOptions.connectorColor || point.color,
+                'stroke-width': dlOptions.connectorWidth,
+                opacity: dl[
+                    defined(dl.newOpacity) ? 'newOpacity' : 'opacity'
+                ]
+            });
+        }
+    }
+
+    public drawConnector(): void {
         var point = this,
             series = point.series;
 
-        redraw = pick(redraw, series.options.ignoreHiddenPoint);
-
-        seriesTypes.pie.prototype.pointClass.prototype
-            .setVisible.call(point, vis, false);
-        // Process new data
-        series.processData();
-
-        if (redraw) {
-            series.chart.redraw();
+        if (!point.connector) {
+            point.connector = series.chart.renderer
+                .path(point.getConnectorPath())
+                .attr({
+                    zIndex: -1
+                })
+                .add(point.dataLabel);
         }
-    },
-    setState: function (this: Highcharts.TimelinePoint): void {
-        var proceed = LineSeries.prototype.pointClass.prototype.setState;
 
-        // Prevent triggering the setState method on null points.
-        if (!this.isNull) {
-            proceed.apply(this, arguments);
+        if (point.series.chart.isInsidePlot( // #10507
+            (point.dataLabel as any).x, (point.dataLabel as any).y
+        )) {
+            point.alignConnector();
         }
-    },
-    getConnectorPath: function (
-        this: Highcharts.TimelinePoint
-    ): SVGPath {
+    }
+
+    public getConnectorPath(): SVGPath {
         var point = this,
             chart = point.series.chart,
             xAxisLen = point.series.xAxis.len,
@@ -835,7 +817,7 @@ extend(TimelinePoint.prototype, {
             direction = inverted ? 'x2' : 'y2',
             dl: SVGElement = point.dataLabel as any,
             targetDLPos = dl.targetPosition,
-            coords: Highcharts.Dictionary<(number|string)> = {
+            coords: Record<string, (number|string)> = {
                 x1: point.plotX as any,
                 y1: point.plotY as any,
                 x2: point.plotX as any,
@@ -880,71 +862,51 @@ extend(TimelinePoint.prototype, {
         );
 
         return path;
-    },
-    drawConnector: function (this: Highcharts.TimelinePoint): void {
+    }
+
+    public init(): TimelinePoint {
+        var point: TimelinePoint = super.init.apply(this, arguments) as any;
+
+        point.name = pick(point.name, 'Event');
+        point.y = 1;
+
+        return point;
+    }
+
+    public isValid(): boolean {
+        return this.options.y !== null;
+    }
+
+    public setState(): void {
+        var proceed = super.setState;
+
+        // Prevent triggering the setState method on null points.
+        if (!this.isNull) {
+            proceed.apply(this, arguments);
+        }
+    }
+
+    public setVisible(
+        visible: boolean,
+        redraw?: boolean
+    ): void {
         var point = this,
             series = point.series;
 
-        if (!point.connector) {
-            point.connector = series.chart.renderer
-                .path(point.getConnectorPath())
-                .attr({
-                    zIndex: -1
-                })
-                .add(point.dataLabel);
-        }
+        redraw = pick(redraw, series.options.ignoreHiddenPoint);
 
-        if (point.series.chart.isInsidePlot( // #10507
-            (point.dataLabel as any).x, (point.dataLabel as any).y
-        )) {
-            point.alignConnector();
-        }
-    },
-    alignConnector: function (this: Highcharts.TimelinePoint): void {
-        var point = this,
-            series = point.series,
-            connector: SVGElement = point.connector as any,
-            dl: SVGElement = point.dataLabel as any,
-            dlOptions = (point.dataLabel as any).options = merge(
-                series.options.dataLabels,
-                point.options.dataLabels
-            ),
-            chart = point.series.chart,
-            bBox = connector.getBBox(),
-            plotPos = {
-                x: bBox.x + dl.translateX,
-                y: bBox.y + dl.translateY
-            },
-            isVisible;
+        PiePoint.prototype.setVisible.call(point, visible, false);
+        // Process new data
+        series.processData();
 
-        // Include a half of connector width in order to run animation,
-        // when connectors are aligned to the plot area edge.
-        if (chart.inverted) {
-            plotPos.y -= dl.options.connectorWidth / 2;
-        } else {
-            plotPos.x += dl.options.connectorWidth / 2;
-        }
-
-        isVisible = chart.isInsidePlot(
-            plotPos.x, plotPos.y
-        );
-
-        connector[isVisible ? 'animate' : 'attr']({
-            d: point.getConnectorPath()
-        });
-
-        if (!series.chart.styledMode) {
-            connector.attr({
-                stroke: dlOptions.connectorColor || point.color,
-                'stroke-width': dlOptions.connectorWidth,
-                opacity: dl[
-                    defined(dl.newOpacity) ? 'newOpacity' : 'opacity'
-                ]
-            });
+        if (redraw) {
+            series.chart.redraw();
         }
     }
-});
 
+    /* eslint-enable valid-jsdoc */
+
+}
 
 /* *
  *
