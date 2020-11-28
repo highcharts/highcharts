@@ -87,14 +87,15 @@ class DEMAIndicator extends EMAIndicator {
         SMA: number,
         index?: number,
         i?: number,
-        xVal?: Array<number>
+        xVal?: Array<number>,
+        linkSeries: TLinkedSeries,     
     ): [number, number] {
 
         return EMAIndicator.prototype.calculateEma(
             xVal || [],
             yVal,
             typeof i === 'undefined' ? 1 : i,
-            (this.chart.series[0] as any).EMApercent,
+            (this.chart.series[linkSeries.index] as any).EMApercent,
             prevEMA,
             typeof index === 'undefined' ? -1 : index,
             SMA
@@ -162,7 +163,9 @@ class DEMAIndicator extends EMAIndicator {
                     prevEMA,
                     SMA,
                     index,
-                    i
+                    i,
+                    undefined,
+                    series
                 )[1];
                 EMAvalues.push(EMA);
             }
@@ -181,7 +184,11 @@ class DEMAIndicator extends EMAIndicator {
                 EMAlevel2 = this.getEMA(
                     [EMA],
                     prevEMAlevel2,
-                    SMA
+                    SMA,
+                    undefined,
+                    undefined,
+                    undefined,
+                    series
                 )[1];
                 DEMAPoint = [
                     xVal[i - 2],
