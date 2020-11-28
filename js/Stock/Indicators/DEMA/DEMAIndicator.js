@@ -50,6 +50,7 @@ var DEMAIndicator = /** @class */ (function (_super) {
         });
     };
     DEMAIndicator.prototype.getEMA = function (yVal, prevEMA, SMA, index, i, xVal) {
+        //todo: the linkedTo series can be others index, hardcode 0 this.chart.series[0] will cause issue if the linkedTo not 1st series
         return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.chart.series[0].EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
     };
     DEMAIndicator.prototype.getValues = function (series, params) {
