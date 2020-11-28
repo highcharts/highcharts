@@ -49,8 +49,9 @@ var DEMAIndicator = /** @class */ (function (_super) {
             return;
         });
     };
-    DEMAIndicator.prototype.getEMA = function (yVal, prevEMA, SMA, index, i, xVal) {
-        return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.chart.series[0].EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
+    DEMAIndicator.prototype.getEMA = function (yVal, prevEMA, SMA, index, i, xVal, linkSeries) {
+        //the linkedTo series can be others index, hardcode 0 this.chart.series[0] will cause issue if the linkedTo not 1st series
+        return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.chart.series[linkSeries.index].EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
     };
     DEMAIndicator.prototype.getValues = function (series, params) {
         var period = params.period, doubledPeriod = 2 * period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, index = -1, accumulatePeriodPoints = 0, SMA = 0, DEMA = [], xDataDema = [], yDataDema = [], EMA = 0, 
@@ -78,7 +79,7 @@ var DEMAIndicator = /** @class */ (function (_super) {
         // Calculate value one-by-one for each period in visible data
         for (i = period; i < yValLen + 2; i++) {
             if (i < yValLen + 1) {
-                EMA = this.getEMA(yVal, prevEMA, SMA, index, i)[1];
+                EMA = this.getEMA(yVal, prevEMA, SMA, index, i, series)[1];
                 EMAvalues.push(EMA);
             }
             prevEMA = EMA;
@@ -93,7 +94,7 @@ var DEMAIndicator = /** @class */ (function (_super) {
                     SMA = accumulatePeriodPoints / period;
                 }
                 EMA = EMAvalues[i - period - 1];
-                EMAlevel2 = this.getEMA([EMA], prevEMAlevel2, SMA)[1];
+                EMAlevel2 = this.getEMA([EMA], prevEMAlevel2, SMA, undefined, undefined, series)[1];
                 DEMAPoint = [
                     xVal[i - 2],
                     correctFloat(2 * EMA - EMAlevel2)
