@@ -25,13 +25,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PiePoint = _a.pie.prototype.pointClass;
-import H from '../Core/Globals.js';
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import palette from '../Core/Color/Palette.js';
-import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
-import U from '../Core/Utilities.js';
+import H from '../../Core/Globals.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import palette from '../../Core/Color/Palette.js';
+import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 var TrackerMixin = H.TrackerMixin;
 /* *
