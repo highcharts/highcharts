@@ -210,8 +210,6 @@ declare module '../Core/Series/SeriesType' {
     }
 }
 
-import './TreemapSeries.js';
-
 var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
