@@ -21,7 +21,7 @@ import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type TreemapSeries from './TreemapSeries';
+import type TreemapSeries from './Treemap/TreemapSeries';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';

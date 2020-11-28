@@ -23,21 +23,56 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, HeatmapSeries = _a.heatmap, LineSeries = _a.line, PieSeries = _a.pie, ScatterSeries = _a.scatter;
-import Color from '../Core/Color/Color.js';
+import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
-import ColorMapMixin from '../Mixins/ColorMapSeries.js';
+import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
-import DrawPointMixin from '../Mixins/DrawPoint.js';
-import H from '../Core/Globals.js';
+import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import palette from '../Core/Color/Palette.js';
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import palette from '../../Core/Color/Palette.js';
+import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, updateRootId = TreeSeriesMixin.updateRootId;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
+/* *
+ *
+ *  Composition
+ *
+ * */
+/* eslint-disable no-invalid-this */
+addEvent(LineSeries, 'afterBindAxes', function () {
+    var series = this, xAxis = series.xAxis, yAxis = series.yAxis, treeAxis;
+    if (xAxis && yAxis) {
+        if (series.is('treemap')) {
+            treeAxis = {
+                endOnTick: false,
+                gridLineWidth: 0,
+                lineWidth: 0,
+                min: 0,
+                dataMin: 0,
+                minPadding: 0,
+                max: AXIS_MAX,
+                dataMax: AXIS_MAX,
+                maxPadding: 0,
+                startOnTick: false,
+                title: null,
+                tickPositions: []
+            };
+            extend(yAxis.options, treeAxis);
+            extend(xAxis.options, treeAxis);
+            treemapAxisDefaultValues = true;
+        }
+        else if (treemapAxisDefaultValues) {
+            yAxis.setOptions(yAxis.userOptions);
+            xAxis.setOptions(xAxis.userOptions);
+            treemapAxisDefaultValues = false;
+        }
+    }
+});
 /* *
  *
  *  Utilities
@@ -1545,41 +1580,6 @@ var TreemapPoint = /** @class */ (function (_super) {
 extend(TreemapPoint.prototype, {
     draw: DrawPointMixin.drawPoint,
     setVisible: PieSeries.prototype.pointClass.prototype.setVisible
-});
-/* *
- *
- *  Composition
- *
- * */
-/* eslint-disable no-invalid-this */
-addEvent(LineSeries, 'afterBindAxes', function () {
-    var series = this, xAxis = series.xAxis, yAxis = series.yAxis, treeAxis;
-    if (xAxis && yAxis) {
-        if (series.is('treemap')) {
-            treeAxis = {
-                endOnTick: false,
-                gridLineWidth: 0,
-                lineWidth: 0,
-                min: 0,
-                dataMin: 0,
-                minPadding: 0,
-                max: AXIS_MAX,
-                dataMax: AXIS_MAX,
-                maxPadding: 0,
-                startOnTick: false,
-                title: null,
-                tickPositions: []
-            };
-            extend(yAxis.options, treeAxis);
-            extend(xAxis.options, treeAxis);
-            treemapAxisDefaultValues = true;
-        }
-        else if (treemapAxisDefaultValues) {
-            yAxis.setOptions(yAxis.userOptions);
-            xAxis.setOptions(xAxis.userOptions);
-            treemapAxisDefaultValues = false;
-        }
-    }
 });
 TreemapSeries.prototype.pointClass = TreemapPoint;
 BaseSeries.registerSeriesType('treemap', TreemapSeries);
