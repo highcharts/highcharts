@@ -30,7 +30,6 @@ var color = Color.parse;
 import ColorMapMixin from '../Mixins/ColorMapSeries.js';
 var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import DrawPointMixin from '../Mixins/DrawPoint.js';
-var drawPoint = DrawPointMixin.drawPoint;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
@@ -93,13 +92,345 @@ var TreemapSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.points = void 0;
         return _this;
-        /* *
-         *
-         *  Function
-         *
-         * */
-        /* eslint-disable valid-jsdoc */
+        /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Function
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    TreemapSeries.prototype.buildNode = function (id, i, level, list, parent) {
+        var series = this, children = [], point = series.points[i], height = 0, node, child;
+        // Actions
+        ((list[id] || [])).forEach(function (i) {
+            child = series.buildNode(series.points[i].id, i, (level + 1), list, id);
+            height = Math.max(child.height + 1, height);
+            children.push(child);
+        });
+        node = {
+            id: id,
+            i: i,
+            children: children,
+            height: height,
+            level: level,
+            parent: parent,
+            visible: false // @todo move this to better location
+        };
+        series.nodeMap[node.id] = node;
+        if (point) {
+            point.node = node;
+        }
+        return node;
+    };
+    /**
+     * Recursive function which calculates the area for all children of a
+     * node.
+     *
+     * @private
+     * @function Highcharts.Series#calculateChildrenAreas
+     *
+     * @param {object} node
+     *        The node which is parent to the children.
+     *
+     * @param {object} area
+     *        The rectangular area of the parent.
+     */
+    TreemapSeries.prototype.calculateChildrenAreas = function (parent, area) {
+        var series = this, options = series.options, mapOptionsToLevel = series.mapOptionsToLevel, level = mapOptionsToLevel[parent.level + 1], algorithm = pick((series[(level && level.layoutAlgorithm)] &&
+            level.layoutAlgorithm), options.layoutAlgorithm), alternate = options.alternateStartingDirection, childrenValues = [], children;
+        // Collect all children which should be included
+        children = parent.children.filter(function (n) {
+            return !n.ignore;
+        });
+        if (level && level.layoutStartingDirection) {
+            area.direction = level.layoutStartingDirection === 'vertical' ?
+                0 :
+                1;
+        }
+        childrenValues = series[algorithm](area, children);
+        children.forEach(function (child, index) {
+            var values = childrenValues[index];
+            child.values = merge(values, {
+                val: child.childrenTotal,
+                direction: (alternate ? 1 - area.direction : area.direction)
+            });
+            child.pointValues = merge(values, {
+                x: (values.x / series.axisRatio),
+                // Flip y-values to avoid visual regression with csvCoord in
+                // Axis.translate at setPointValues. #12488
+                y: AXIS_MAX - values.y - values.height,
+                width: (values.width / series.axisRatio)
+            });
+            // If node has children, then call method recursively
+            if (child.children.length) {
+                series.calculateChildrenAreas(child, child.values);
+            }
+        });
+    };
+    /**
+     * Creates an object map from parent id to childrens index.
+     *
+     * @private
+     * @function Highcharts.Series#getListOfParents
+     *
+     * @param {Highcharts.SeriesTreemapDataOptions} [data]
+     *        List of points set in options.
+     *
+     * @param {Array<string>} [existingIds]
+     *        List of all point ids.
+     *
+     * @return {object}
+     *         Map from parent id to children index in data.
+     */
+    TreemapSeries.prototype.getListOfParents = function (data, existingIds) {
+        var arr = isArray(data) ? data : [], ids = isArray(existingIds) ? existingIds : [], listOfParents = arr.reduce(function (prev, curr, i) {
+            var parent = pick(curr.parent, '');
+            if (typeof prev[parent] === 'undefined') {
+                prev[parent] = [];
+            }
+            prev[parent].push(i);
+            return prev;
+        }, {
+            '': [] // Root of tree
+        });
+        // If parent does not exist, hoist parent to root of tree.
+        eachObject(listOfParents, function (children, parent, list) {
+            if ((parent !== '') && (ids.indexOf(parent) === -1)) {
+                children.forEach(function (child) {
+                    list[''].push(child);
+                });
+                delete list[parent];
+            }
+        });
+        return listOfParents;
+    };
+    /**
+     * Creates a tree structured object from the series points.
+     * @private
+     */
+    TreemapSeries.prototype.getTree = function () {
+        var series = this, allIds = this.data.map(function (d) {
+            return d.id;
+        }), parentList = series.getListOfParents(this.data, allIds);
+        series.nodeMap = {};
+        return series.buildNode('', -1, 0, parentList);
+    };
+    /**
+     * Define hasData function for non-cartesian series. Returns true if the
+     * series has points at all.
+     * @private
+     */
+    TreemapSeries.prototype.hasData = function () {
+        return !!this.processedXData.length; // != 0
+    };
+    TreemapSeries.prototype.init = function (chart, options) {
+        var series = this, setOptionsEvent;
+        // If color series logic is loaded, add some properties
+        if (colorMapSeriesMixin) {
+            this.colorAttribs = colorMapSeriesMixin.colorAttribs;
+        }
+        setOptionsEvent = addEvent(series, 'setOptions', function (event) {
+            var options = event.userOptions;
+            if (defined(options.allowDrillToNode) &&
+                !defined(options.allowTraversingTree)) {
+                options.allowTraversingTree = options.allowDrillToNode;
+                delete options.allowDrillToNode;
+            }
+            if (defined(options.drillUpButton) &&
+                !defined(options.traverseUpButton)) {
+                options.traverseUpButton = options.drillUpButton;
+                delete options.drillUpButton;
+            }
+        });
+        LineSeries.prototype.init.call(series, chart, options);
+        // Treemap's opacity is a different option from other series
+        delete series.opacity;
+        // Handle deprecated options.
+        series.eventsToUnbind.push(setOptionsEvent);
+        if (series.options.allowTraversingTree) {
+            series.eventsToUnbind.push(addEvent(series, 'click', series.onClickDrillToNode));
+        }
+    };
+    /**
+     * Set the node's color recursively, from the parent down.
+     * @private
+     */
+    TreemapSeries.prototype.setColorRecursive = function (node, parentColor, colorIndex, index, siblings) {
+        var series = this, chart = series && series.chart, colors = chart && chart.options && chart.options.colors, colorInfo, point;
+        if (node) {
+            colorInfo = getColor(node, {
+                colors: colors,
+                index: index,
+                mapOptionsToLevel: series.mapOptionsToLevel,
+                parentColor: parentColor,
+                parentColorIndex: colorIndex,
+                series: series,
+                siblings: siblings
+            });
+            point = series.points[node.i];
+            if (point) {
+                point.color = colorInfo.color;
+                point.colorIndex = colorInfo.colorIndex;
+            }
+            // Do it all again with the children
+            (node.children || []).forEach(function (child, i) {
+                series.setColorRecursive(child, colorInfo.color, colorInfo.colorIndex, i, node.children.length);
+            });
+        }
+    };
+    TreemapSeries.prototype.setPointValues = function () {
+        var series = this;
+        var points = series.points, xAxis = series.xAxis, yAxis = series.yAxis;
+        var styledMode = series.chart.styledMode;
+        // Get the crisp correction in classic mode. For this to work in
+        // styled mode, we would need to first add the shape (without x,
+        // y, width and height), then read the rendered stroke width
+        // using point.graphic.strokeWidth(), then modify and apply the
+        // shapeArgs. This applies also to column series, but the
+        // downside is performance and code complexity.
+        var getCrispCorrection = function (point) { return (styledMode ?
+            0 :
+            ((series.pointAttribs(point)['stroke-width'] || 0) % 2) / 2); };
+        points.forEach(function (point) {
+            var _a = point.node, values = _a.pointValues, visible = _a.visible;
+            // Points which is ignored, have no values.
+            if (values && visible) {
+                var height = values.height, width = values.width, x = values.x, y = values.y;
+                var crispCorr = getCrispCorrection(point);
+                var x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
+                var x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
+                var y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
+                var y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
+                // Set point values
+                point.shapeArgs = {
+                    x: Math.min(x1, x2),
+                    y: Math.min(y1, y2),
+                    width: Math.abs(x2 - x1),
+                    height: Math.abs(y2 - y1)
+                };
+                point.plotX =
+                    point.shapeArgs.x + (point.shapeArgs.width / 2);
+                point.plotY =
+                    point.shapeArgs.y + (point.shapeArgs.height / 2);
+            }
+            else {
+                // Reset visibility
+                delete point.plotX;
+                delete point.plotY;
+            }
+        });
+    };
+    TreemapSeries.prototype.setTreeValues = function (tree) {
+        var series = this, options = series.options, idRoot = series.rootNode, mapIdToNode = series.nodeMap, nodeRoot = mapIdToNode[idRoot], levelIsConstant = (isBoolean(options.levelIsConstant) ?
+            options.levelIsConstant :
+            true), childrenTotal = 0, children = [], val, point = series.points[tree.i];
+        // First give the children some values
+        tree.children.forEach(function (child) {
+            child = series.setTreeValues(child);
+            children.push(child);
+            if (!child.ignore) {
+                childrenTotal += child.val;
+            }
+        });
+        // Sort the children
+        stableSort(children, function (a, b) {
+            return (a.sortIndex || 0) - (b.sortIndex || 0);
+        });
+        // Set the values
+        val = pick(point && point.options.value, childrenTotal);
+        if (point) {
+            point.value = val;
+        }
+        extend(tree, {
+            children: children,
+            childrenTotal: childrenTotal,
+            // Ignore this node if point is not visible
+            ignore: !(pick(point && point.visible, true) && (val > 0)),
+            isLeaf: tree.visible && !childrenTotal,
+            levelDynamic: (tree.level - (levelIsConstant ? 0 : nodeRoot.level)),
+            name: pick(point && point.name, ''),
+            sortIndex: pick(point && point.sortIndex, -val),
+            val: val
+        });
+        return tree;
+    };
+    TreemapSeries.prototype.translate = function () {
+        var series = this, options = series.options, 
+        // NOTE: updateRootId modifies series.
+        rootId = updateRootId(series), rootNode, pointValues, seriesArea, tree, val;
+        // Call prototype function
+        LineSeries.prototype.translate.call(series);
+        // @todo Only if series.isDirtyData is true
+        tree = series.tree = series.getTree();
+        rootNode = series.nodeMap[rootId];
+        series.renderTraverseUpButton(rootId);
+        series.mapOptionsToLevel = getLevelOptions({
+            from: rootNode.level + 1,
+            levels: options.levels,
+            to: tree.height,
+            defaults: {
+                levelIsConstant: series.options.levelIsConstant,
+                colorByPoint: options.colorByPoint
+            }
+        });
+        if (rootId !== '' &&
+            (!rootNode || !rootNode.children.length)) {
+            series.setRootNode('', false);
+            rootId = series.rootNode;
+            rootNode = series.nodeMap[rootId];
+        }
+        // Parents of the root node is by default visible
+        recursive(series.nodeMap[series.rootNode], function (node) {
+            var next = false, p = node.parent;
+            node.visible = true;
+            if (p || p === '') {
+                next = series.nodeMap[p];
+            }
+            return next;
+        });
+        // Children of the root node is by default visible
+        recursive(series.nodeMap[series.rootNode].children, function (children) {
+            var next = false;
+            children.forEach(function (child) {
+                child.visible = true;
+                if (child.children.length) {
+                    next = (next || []).concat(child.children);
+                }
+            });
+            return next;
+        });
+        series.setTreeValues(tree);
+        // Calculate plotting values.
+        series.axisRatio = (series.xAxis.len / series.yAxis.len);
+        series.nodeMap[''].pointValues = pointValues = {
+            x: 0,
+            y: 0,
+            width: AXIS_MAX,
+            height: AXIS_MAX
+        };
+        series.nodeMap[''].values = seriesArea = merge(pointValues, {
+            width: (pointValues.width * series.axisRatio),
+            direction: (options.layoutStartingDirection === 'vertical' ? 0 : 1),
+            val: tree.val
+        });
+        series.calculateChildrenAreas(tree, seriesArea);
+        // Logic for point colors
+        if (!series.colorAxis &&
+            !options.colorByPoint) {
+            series.setColorRecursive(series.tree);
+        }
+        // Update axis extremes according to the root node.
+        if (options.allowTraversingTree) {
+            val = rootNode.pointValues;
+            series.xAxis.setExtremes(val.x, val.x + val.width, false);
+            series.yAxis.setExtremes(val.y, val.y + val.height, false);
+            series.xAxis.setScale();
+            series.yAxis.setScale();
+        }
+        // Assign values to points.
+        series.setPointValues();
+    };
     /**
      * A treemap displays hierarchical data using nested rectangles. The data
      * can be laid out in varying ways depending on options.
@@ -576,252 +907,6 @@ extend(TreemapSeries.prototype, {
     colorKey: 'colorValue',
     trackerGroups: ['group', 'dataLabelsGroup'],
     /* eslint-disable no-invalid-this, valid-jsdoc */
-    /**
-     * Creates an object map from parent id to childrens index.
-     *
-     * @private
-     * @function Highcharts.Series#getListOfParents
-     *
-     * @param {Highcharts.SeriesTreemapDataOptions} [data]
-     *        List of points set in options.
-     *
-     * @param {Array<string>} [existingIds]
-     *        List of all point ids.
-     *
-     * @return {object}
-     *         Map from parent id to children index in data.
-     */
-    getListOfParents: function (data, existingIds) {
-        var arr = isArray(data) ? data : [], ids = isArray(existingIds) ? existingIds : [], listOfParents = arr.reduce(function (prev, curr, i) {
-            var parent = pick(curr.parent, '');
-            if (typeof prev[parent] === 'undefined') {
-                prev[parent] = [];
-            }
-            prev[parent].push(i);
-            return prev;
-        }, {
-            '': [] // Root of tree
-        });
-        // If parent does not exist, hoist parent to root of tree.
-        eachObject(listOfParents, function (children, parent, list) {
-            if ((parent !== '') && (ids.indexOf(parent) === -1)) {
-                children.forEach(function (child) {
-                    list[''].push(child);
-                });
-                delete list[parent];
-            }
-        });
-        return listOfParents;
-    },
-    // Creates a tree structured object from the series points
-    getTree: function () {
-        var series = this, allIds = this.data.map(function (d) {
-            return d.id;
-        }), parentList = series.getListOfParents(this.data, allIds);
-        series.nodeMap = {};
-        return series.buildNode('', -1, 0, parentList);
-    },
-    // Define hasData function for non-cartesian series.
-    // Returns true if the series has points at all.
-    hasData: function () {
-        return !!this.processedXData.length; // != 0
-    },
-    init: function (chart, options) {
-        var series = this, setOptionsEvent;
-        // If color series logic is loaded, add some properties
-        if (colorMapSeriesMixin) {
-            this.colorAttribs = colorMapSeriesMixin.colorAttribs;
-        }
-        setOptionsEvent = addEvent(series, 'setOptions', function (event) {
-            var options = event.userOptions;
-            if (defined(options.allowDrillToNode) &&
-                !defined(options.allowTraversingTree)) {
-                options.allowTraversingTree = options.allowDrillToNode;
-                delete options.allowDrillToNode;
-            }
-            if (defined(options.drillUpButton) &&
-                !defined(options.traverseUpButton)) {
-                options.traverseUpButton = options.drillUpButton;
-                delete options.drillUpButton;
-            }
-        });
-        LineSeries.prototype.init.call(series, chart, options);
-        // Treemap's opacity is a different option from other series
-        delete series.opacity;
-        // Handle deprecated options.
-        series.eventsToUnbind.push(setOptionsEvent);
-        if (series.options.allowTraversingTree) {
-            series.eventsToUnbind.push(addEvent(series, 'click', series.onClickDrillToNode));
-        }
-    },
-    buildNode: function (id, i, level, list, parent) {
-        var series = this, children = [], point = series.points[i], height = 0, node, child;
-        // Actions
-        ((list[id] || [])).forEach(function (i) {
-            child = series.buildNode(series.points[i].id, i, (level + 1), list, id);
-            height = Math.max(child.height + 1, height);
-            children.push(child);
-        });
-        node = {
-            id: id,
-            i: i,
-            children: children,
-            height: height,
-            level: level,
-            parent: parent,
-            visible: false // @todo move this to better location
-        };
-        series.nodeMap[node.id] = node;
-        if (point) {
-            point.node = node;
-        }
-        return node;
-    },
-    setTreeValues: function (tree) {
-        var series = this, options = series.options, idRoot = series.rootNode, mapIdToNode = series.nodeMap, nodeRoot = mapIdToNode[idRoot], levelIsConstant = (isBoolean(options.levelIsConstant) ?
-            options.levelIsConstant :
-            true), childrenTotal = 0, children = [], val, point = series.points[tree.i];
-        // First give the children some values
-        tree.children.forEach(function (child) {
-            child = series.setTreeValues(child);
-            children.push(child);
-            if (!child.ignore) {
-                childrenTotal += child.val;
-            }
-        });
-        // Sort the children
-        stableSort(children, function (a, b) {
-            return (a.sortIndex || 0) - (b.sortIndex || 0);
-        });
-        // Set the values
-        val = pick(point && point.options.value, childrenTotal);
-        if (point) {
-            point.value = val;
-        }
-        extend(tree, {
-            children: children,
-            childrenTotal: childrenTotal,
-            // Ignore this node if point is not visible
-            ignore: !(pick(point && point.visible, true) && (val > 0)),
-            isLeaf: tree.visible && !childrenTotal,
-            levelDynamic: (tree.level - (levelIsConstant ? 0 : nodeRoot.level)),
-            name: pick(point && point.name, ''),
-            sortIndex: pick(point && point.sortIndex, -val),
-            val: val
-        });
-        return tree;
-    },
-    /**
-     * Recursive function which calculates the area for all children of a
-     * node.
-     *
-     * @private
-     * @function Highcharts.Series#calculateChildrenAreas
-     *
-     * @param {object} node
-     *        The node which is parent to the children.
-     *
-     * @param {object} area
-     *        The rectangular area of the parent.
-     */
-    calculateChildrenAreas: function (parent, area) {
-        var series = this, options = series.options, mapOptionsToLevel = series.mapOptionsToLevel, level = mapOptionsToLevel[parent.level + 1], algorithm = pick((series[(level && level.layoutAlgorithm)] &&
-            level.layoutAlgorithm), options.layoutAlgorithm), alternate = options.alternateStartingDirection, childrenValues = [], children;
-        // Collect all children which should be included
-        children = parent.children.filter(function (n) {
-            return !n.ignore;
-        });
-        if (level && level.layoutStartingDirection) {
-            area.direction = level.layoutStartingDirection === 'vertical' ?
-                0 :
-                1;
-        }
-        childrenValues = series[algorithm](area, children);
-        children.forEach(function (child, index) {
-            var values = childrenValues[index];
-            child.values = merge(values, {
-                val: child.childrenTotal,
-                direction: (alternate ? 1 - area.direction : area.direction)
-            });
-            child.pointValues = merge(values, {
-                x: (values.x / series.axisRatio),
-                // Flip y-values to avoid visual regression with csvCoord in
-                // Axis.translate at setPointValues. #12488
-                y: AXIS_MAX - values.y - values.height,
-                width: (values.width / series.axisRatio)
-            });
-            // If node has children, then call method recursively
-            if (child.children.length) {
-                series.calculateChildrenAreas(child, child.values);
-            }
-        });
-    },
-    setPointValues: function () {
-        var series = this;
-        var points = series.points, xAxis = series.xAxis, yAxis = series.yAxis;
-        var styledMode = series.chart.styledMode;
-        // Get the crisp correction in classic mode. For this to work in
-        // styled mode, we would need to first add the shape (without x,
-        // y, width and height), then read the rendered stroke width
-        // using point.graphic.strokeWidth(), then modify and apply the
-        // shapeArgs. This applies also to column series, but the
-        // downside is performance and code complexity.
-        var getCrispCorrection = function (point) { return (styledMode ?
-            0 :
-            ((series.pointAttribs(point)['stroke-width'] || 0) % 2) / 2); };
-        points.forEach(function (point) {
-            var _a = point.node, values = _a.pointValues, visible = _a.visible;
-            // Points which is ignored, have no values.
-            if (values && visible) {
-                var height = values.height, width = values.width, x = values.x, y = values.y;
-                var crispCorr = getCrispCorrection(point);
-                var x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
-                var x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
-                var y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
-                var y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
-                // Set point values
-                point.shapeArgs = {
-                    x: Math.min(x1, x2),
-                    y: Math.min(y1, y2),
-                    width: Math.abs(x2 - x1),
-                    height: Math.abs(y2 - y1)
-                };
-                point.plotX =
-                    point.shapeArgs.x + (point.shapeArgs.width / 2);
-                point.plotY =
-                    point.shapeArgs.y + (point.shapeArgs.height / 2);
-            }
-            else {
-                // Reset visibility
-                delete point.plotX;
-                delete point.plotY;
-            }
-        });
-    },
-    // Set the node's color recursively, from the parent down.
-    setColorRecursive: function (node, parentColor, colorIndex, index, siblings) {
-        var series = this, chart = series && series.chart, colors = chart && chart.options && chart.options.colors, colorInfo, point;
-        if (node) {
-            colorInfo = getColor(node, {
-                colors: colors,
-                index: index,
-                mapOptionsToLevel: series.mapOptionsToLevel,
-                parentColor: parentColor,
-                parentColorIndex: colorIndex,
-                series: series,
-                siblings: siblings
-            });
-            point = series.points[node.i];
-            if (point) {
-                point.color = colorInfo.color;
-                point.colorIndex = colorInfo.colorIndex;
-            }
-            // Do it all again with the children
-            (node.children || []).forEach(function (child, i) {
-                series.setColorRecursive(child, colorInfo.color, colorInfo.colorIndex, i, node.children.length);
-            });
-        }
-    },
     algorithmGroup: function (h, w, d, p) {
         this.height = h;
         this.width = w;
@@ -1001,82 +1086,6 @@ extend(TreemapSeries.prototype, {
     },
     stripes: function (parent, children) {
         return this.algorithmFill(false, parent, children);
-    },
-    translate: function () {
-        var series = this, options = series.options, 
-        // NOTE: updateRootId modifies series.
-        rootId = updateRootId(series), rootNode, pointValues, seriesArea, tree, val;
-        // Call prototype function
-        LineSeries.prototype.translate.call(series);
-        // @todo Only if series.isDirtyData is true
-        tree = series.tree = series.getTree();
-        rootNode = series.nodeMap[rootId];
-        series.renderTraverseUpButton(rootId);
-        series.mapOptionsToLevel = getLevelOptions({
-            from: rootNode.level + 1,
-            levels: options.levels,
-            to: tree.height,
-            defaults: {
-                levelIsConstant: series.options.levelIsConstant,
-                colorByPoint: options.colorByPoint
-            }
-        });
-        if (rootId !== '' &&
-            (!rootNode || !rootNode.children.length)) {
-            series.setRootNode('', false);
-            rootId = series.rootNode;
-            rootNode = series.nodeMap[rootId];
-        }
-        // Parents of the root node is by default visible
-        recursive(series.nodeMap[series.rootNode], function (node) {
-            var next = false, p = node.parent;
-            node.visible = true;
-            if (p || p === '') {
-                next = series.nodeMap[p];
-            }
-            return next;
-        });
-        // Children of the root node is by default visible
-        recursive(series.nodeMap[series.rootNode].children, function (children) {
-            var next = false;
-            children.forEach(function (child) {
-                child.visible = true;
-                if (child.children.length) {
-                    next = (next || []).concat(child.children);
-                }
-            });
-            return next;
-        });
-        series.setTreeValues(tree);
-        // Calculate plotting values.
-        series.axisRatio = (series.xAxis.len / series.yAxis.len);
-        series.nodeMap[''].pointValues = pointValues = {
-            x: 0,
-            y: 0,
-            width: AXIS_MAX,
-            height: AXIS_MAX
-        };
-        series.nodeMap[''].values = seriesArea = merge(pointValues, {
-            width: (pointValues.width * series.axisRatio),
-            direction: (options.layoutStartingDirection === 'vertical' ? 0 : 1),
-            val: tree.val
-        });
-        series.calculateChildrenAreas(tree, seriesArea);
-        // Logic for point colors
-        if (!series.colorAxis &&
-            !options.colorByPoint) {
-            series.setColorRecursive(series.tree);
-        }
-        // Update axis extremes according to the root node.
-        if (options.allowTraversingTree) {
-            val = rootNode.pointValues;
-            series.xAxis.setExtremes(val.x, val.x + val.width, false);
-            series.yAxis.setExtremes(val.y, val.y + val.height, false);
-            series.xAxis.setScale();
-            series.yAxis.setScale();
-        }
-        // Assign values to points.
-        series.setPointValues();
     },
     /**
      * Extend drawDataLabels with logic to handle custom options related to
@@ -1448,17 +1457,21 @@ var TreemapPoint = /** @class */ (function (_super) {
          *
          * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.name = void 0;
+        _this.node = void 0;
         _this.options = void 0;
         _this.series = void 0;
+        _this.value = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
-    return TreemapPoint;
-}(ScatterSeries.prototype.pointClass));
-extend(TreemapPoint.prototype, {
-    draw: drawPoint,
-    setVisible: PieSeries.prototype.pointClass.prototype.setVisible,
-    /* eslint-disable no-invalid-this, valid-jsdoc */
-    getClassName: function () {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    TreemapPoint.prototype.getClassName = function () {
         var className = LineSeries.prototype.pointClass.prototype.getClassName.call(this), series = this.series, options = series.options;
         // Above the current level
         if (this.node.level <= series.nodeMap[series.rootNode].level) {
@@ -1472,7 +1485,7 @@ extend(TreemapPoint.prototype, {
             className += ' highcharts-internal-node';
         }
         return className;
-    },
+    };
     /**
      * A tree point is valid if it has han id too, assume it may be a parent
      * item.
@@ -1480,10 +1493,10 @@ extend(TreemapPoint.prototype, {
      * @private
      * @function Highcharts.Point#isValid
      */
-    isValid: function () {
+    TreemapPoint.prototype.isValid = function () {
         return Boolean(this.id || isNumber(this.value));
-    },
-    setState: function (state) {
+    };
+    TreemapPoint.prototype.setState = function (state) {
         LineSeries.prototype.pointClass.prototype.setState.call(this, state);
         // Graphic does not exist when point is not visible.
         if (this.graphic) {
@@ -1491,16 +1504,22 @@ extend(TreemapPoint.prototype, {
                 zIndex: state === 'hover' ? 1 : 0
             });
         }
-    },
-    shouldDraw: function () {
+    };
+    TreemapPoint.prototype.shouldDraw = function () {
         return isNumber(this.plotY) && this.y !== null;
-    }
+    };
+    return TreemapPoint;
+}(ScatterSeries.prototype.pointClass));
+extend(TreemapPoint.prototype, {
+    draw: DrawPointMixin.drawPoint,
+    setVisible: PieSeries.prototype.pointClass.prototype.setVisible
 });
 /* *
  *
  *  Composition
  *
  * */
+/* eslint-disable no-invalid-this */
 addEvent(LineSeries, 'afterBindAxes', function () {
     var series = this, xAxis = series.xAxis, yAxis = series.yAxis, treeAxis;
     if (xAxis && yAxis) {

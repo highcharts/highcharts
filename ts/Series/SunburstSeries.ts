@@ -59,7 +59,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class SunburstPoint extends TreemapPoint {
+        class SunburstPoint extends TreemapSeries.prototype.pointClass {
             public dataLabelPath?: SVGElement;
             public innerArcLength?: number;
             public outerArcLength?: number;
