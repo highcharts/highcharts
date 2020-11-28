@@ -37,7 +37,7 @@ var chart1 = Highcharts.chart({
     }, {
         name: 'John',
         data: [5, 7, 3]
-    }[
+    }]
 });
 ```
     
