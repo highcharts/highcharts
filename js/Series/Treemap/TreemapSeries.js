@@ -29,154 +29,18 @@ import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
+import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
+import TreemapPoint from './TreemapPoint.js';
+import TreemapUtilities from './TreemapUtilities.js';
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, updateRootId = TreeSeriesMixin.updateRootId;
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
-/* *
- *
- *  Composition
- *
- * */
-/* eslint-disable no-invalid-this */
-addEvent(LineSeries, 'afterBindAxes', function () {
-    var series = this, xAxis = series.xAxis, yAxis = series.yAxis, treeAxis;
-    if (xAxis && yAxis) {
-        if (series.is('treemap')) {
-            treeAxis = {
-                endOnTick: false,
-                gridLineWidth: 0,
-                lineWidth: 0,
-                min: 0,
-                dataMin: 0,
-                minPadding: 0,
-                max: AXIS_MAX,
-                dataMax: AXIS_MAX,
-                maxPadding: 0,
-                startOnTick: false,
-                title: null,
-                tickPositions: []
-            };
-            extend(yAxis.options, treeAxis);
-            extend(xAxis.options, treeAxis);
-            treemapAxisDefaultValues = true;
-        }
-        else if (treemapAxisDefaultValues) {
-            yAxis.setOptions(yAxis.userOptions);
-            xAxis.setOptions(xAxis.userOptions);
-            treemapAxisDefaultValues = false;
-        }
-    }
-});
-/* *
- *
- *  Utilities
- *
- * */
-/* eslint-disable no-invalid-this */
-var AXIS_MAX = 100;
-// @todo Similar to eachObject, this function is likely redundant
-var isBoolean = function (x) {
-    return typeof x === 'boolean';
-}, 
-// @todo Similar to recursive, this function is likely redundant
-eachObject = function (list, func, context) {
-    context = context || this;
-    objectEach(list, function (val, key) {
-        func.call(context, val, key, list);
-    });
-}, 
-// @todo find correct name for this function.
-// @todo Similar to reduce, this function is likely redundant
-recursive = function (item, func, context) {
-    var next;
-    context = context || this;
-    next = func.call(context, item);
-    if (next !== false) {
-        recursive(next, func, context);
-    }
-}, treemapAxisDefaultValues = false;
-/* eslint-enable no-invalid-this */
-/* *
- *
- *  Class
- *
- * */
-var TreemapAlgorithmGroup = /** @class */ (function () {
-    /* *
-     *
-     *  Constructor
-     *
-     * */
-    function TreemapAlgorithmGroup(h, w, d, p) {
-        this.height = h;
-        this.width = w;
-        this.plot = p;
-        this.direction = d;
-        this.startDirection = d;
-        this.total = 0;
-        this.nW = 0;
-        this.lW = 0;
-        this.nH = 0;
-        this.lH = 0;
-        this.elArr = [];
-        this.lP = {
-            total: 0,
-            lH: 0,
-            nH: 0,
-            lW: 0,
-            nW: 0,
-            nR: 0,
-            lR: 0,
-            aspectRatio: function (w, h) {
-                return Math.max((w / h), (h / w));
-            }
-        };
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    TreemapAlgorithmGroup.prototype.addElement = function (el) {
-        this.lP.total = this.elArr[this.elArr.length - 1];
-        this.total = this.total + el;
-        if (this.direction === 0) {
-            // Calculate last point old aspect ratio
-            this.lW = this.nW;
-            this.lP.lH = this.lP.total / this.lW;
-            this.lP.lR = this.lP.aspectRatio(this.lW, this.lP.lH);
-            // Calculate last point new aspect ratio
-            this.nW = this.total / this.height;
-            this.lP.nH = this.lP.total / this.nW;
-            this.lP.nR = this.lP.aspectRatio(this.nW, this.lP.nH);
-        }
-        else {
-            // Calculate last point old aspect ratio
-            this.lH = this.nH;
-            this.lP.lW = this.lP.total / this.lH;
-            this.lP.lR = this.lP.aspectRatio(this.lP.lW, this.lH);
-            // Calculate last point new aspect ratio
-            this.nH = this.total / this.width;
-            this.lP.nW = this.lP.total / this.nH;
-            this.lP.nR = this.lP.aspectRatio(this.lP.nW, this.nH);
-        }
-        this.elArr.push(el);
-    };
-    TreemapAlgorithmGroup.prototype.reset = function () {
-        this.nW = 0;
-        this.lW = 0;
-        this.elArr = [];
-        this.total = 0;
-    };
-    return TreemapAlgorithmGroup;
-}());
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, stableSort = U.stableSort;
+import './TreemapComposition.js';
 /* *
  *
  *  Class
@@ -415,7 +279,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 x: (values.x / series.axisRatio),
                 // Flip y-values to avoid visual regression with csvCoord in
                 // Axis.translate at setPointValues. #12488
-                y: AXIS_MAX - values.y - values.height,
+                y: TreemapUtilities.AXIS_MAX - values.y - values.height,
                 width: (values.width / series.axisRatio)
             });
             // If node has children, then call method recursively
@@ -612,7 +476,7 @@ var TreemapSeries = /** @class */ (function (_super) {
             '': [] // Root of tree
         });
         // If parent does not exist, hoist parent to root of tree.
-        eachObject(listOfParents, function (children, parent, list) {
+        TreemapUtilities.eachObject(listOfParents, function (children, parent, list) {
             if ((parent !== '') && (ids.indexOf(parent) === -1)) {
                 children.forEach(function (child) {
                     list[''].push(child);
@@ -907,7 +771,7 @@ var TreemapSeries = /** @class */ (function (_super) {
         this.options.inactiveOtherPoints = false;
     };
     TreemapSeries.prototype.setTreeValues = function (tree) {
-        var series = this, options = series.options, idRoot = series.rootNode, mapIdToNode = series.nodeMap, nodeRoot = mapIdToNode[idRoot], levelIsConstant = (isBoolean(options.levelIsConstant) ?
+        var series = this, options = series.options, idRoot = series.rootNode, mapIdToNode = series.nodeMap, nodeRoot = mapIdToNode[idRoot], levelIsConstant = (TreemapUtilities.isBoolean(options.levelIsConstant) ?
             options.levelIsConstant :
             true), childrenTotal = 0, children = [], val, point = series.points[tree.i];
         // First give the children some values
@@ -978,7 +842,7 @@ var TreemapSeries = /** @class */ (function (_super) {
             rootNode = series.nodeMap[rootId];
         }
         // Parents of the root node is by default visible
-        recursive(series.nodeMap[series.rootNode], function (node) {
+        TreemapUtilities.recursive(series.nodeMap[series.rootNode], function (node) {
             var next = false, p = node.parent;
             node.visible = true;
             if (p || p === '') {
@@ -987,7 +851,7 @@ var TreemapSeries = /** @class */ (function (_super) {
             return next;
         });
         // Children of the root node is by default visible
-        recursive(series.nodeMap[series.rootNode].children, function (children) {
+        TreemapUtilities.recursive(series.nodeMap[series.rootNode].children, function (children) {
             var next = false;
             children.forEach(function (child) {
                 child.visible = true;
@@ -1003,8 +867,8 @@ var TreemapSeries = /** @class */ (function (_super) {
         series.nodeMap[''].pointValues = pointValues = {
             x: 0,
             y: 0,
-            width: AXIS_MAX,
-            height: AXIS_MAX
+            width: TreemapUtilities.AXIS_MAX,
+            height: TreemapUtilities.AXIS_MAX
         };
         series.nodeMap[''].values = seriesArea = merge(pointValues, {
             width: (pointValues.width * series.axisRatio),
@@ -1491,7 +1355,6 @@ var TreemapSeries = /** @class */ (function (_super) {
                 shadow: false
             }
         }
-        // Prototype members
     });
     return TreemapSeries;
 }(ScatterSeries));
@@ -1505,83 +1368,12 @@ extend(TreemapSeries.prototype, {
     optionalAxis: 'colorAxis',
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
     pointArrayMap: ['value'],
+    pointClass: TreemapPoint,
     trackerGroups: ['group', 'dataLabelsGroup'],
     utils: {
-        recursive: recursive
+        recursive: TreemapUtilities.recursive
     }
 });
-/* *
- *
- *  Class
- *
- * */
-var TreemapPoint = /** @class */ (function (_super) {
-    __extends(TreemapPoint, _super);
-    function TreemapPoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.name = void 0;
-        _this.node = void 0;
-        _this.options = void 0;
-        _this.series = void 0;
-        _this.value = void 0;
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    TreemapPoint.prototype.getClassName = function () {
-        var className = LineSeries.prototype.pointClass.prototype.getClassName.call(this), series = this.series, options = series.options;
-        // Above the current level
-        if (this.node.level <= series.nodeMap[series.rootNode].level) {
-            className += ' highcharts-above-level';
-        }
-        else if (!this.node.isLeaf &&
-            !pick(options.interactByLeaf, !options.allowTraversingTree)) {
-            className += ' highcharts-internal-node-interactive';
-        }
-        else if (!this.node.isLeaf) {
-            className += ' highcharts-internal-node';
-        }
-        return className;
-    };
-    /**
-     * A tree point is valid if it has han id too, assume it may be a parent
-     * item.
-     *
-     * @private
-     * @function Highcharts.Point#isValid
-     */
-    TreemapPoint.prototype.isValid = function () {
-        return Boolean(this.id || isNumber(this.value));
-    };
-    TreemapPoint.prototype.setState = function (state) {
-        LineSeries.prototype.pointClass.prototype.setState.call(this, state);
-        // Graphic does not exist when point is not visible.
-        if (this.graphic) {
-            this.graphic.attr({
-                zIndex: state === 'hover' ? 1 : 0
-            });
-        }
-    };
-    TreemapPoint.prototype.shouldDraw = function () {
-        return isNumber(this.plotY) && this.y !== null;
-    };
-    return TreemapPoint;
-}(ScatterSeries.prototype.pointClass));
-extend(TreemapPoint.prototype, {
-    draw: DrawPointMixin.drawPoint,
-    setVisible: PieSeries.prototype.pointClass.prototype.setVisible
-});
-TreemapSeries.prototype.pointClass = TreemapPoint;
 BaseSeries.registerSeriesType('treemap', TreemapSeries);
 /* *
  *

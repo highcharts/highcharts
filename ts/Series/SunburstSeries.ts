@@ -21,7 +21,15 @@ import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import type TreemapPoint from './Treemap/TreemapPoint';
+import type TreemapPointOptions from './Treemap/TreemapPointOptions';
 import type TreemapSeries from './Treemap/TreemapSeries';
+import type {
+    TreemapSeriesLevelsColorVariationOptions,
+    TreemapSeriesLevelsOptions,
+    TreemapSeriesOptions
+} from './Treemap/TreemapSeriesOptions';
+import type TreemapUtilities from './Treemap/TreemapUtilities';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
@@ -59,7 +67,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class SunburstPoint extends TreemapSeries.prototype.pointClass {
+        class SunburstPoint extends TreemapPoint {
             public dataLabelPath?: SVGElement;
             public innerArcLength?: number;
             public outerArcLength?: number;
@@ -123,7 +131,7 @@ declare global {
             point: SunburstPoint;
             shapeArgs: SunburstNodeValuesObject;
         }
-        interface SunburstNodeObject extends TreemapNodeObject {
+        interface SunburstNodeObject extends TreemapSeries.NodeObject {
             children: Array<SunburstNodeObject>;
             childrenTotal: number;
             color: ColorType;
@@ -138,7 +146,7 @@ declare global {
         interface SunburstNodeValuesObject
             extends
             RadianAngles,
-            TreemapNodeValuesObject,
+            TreemapSeries.NodeValuesObject,
             TreeValuesOptionsObject<SunburstSeries>
         {
             color: ColorType;
@@ -151,10 +159,7 @@ declare global {
         }
         interface SunburstPointOptions extends TreemapPointOptions {
         }
-        interface SunburstSeriesLevelsColorVariationOptions
-            extends
-            TreemapSeriesLevelsColorVariationOptions
-        {
+        interface SunburstSeriesLevelsColorVariationOptions extends TreemapSeriesLevelsColorVariationOptions {
             key?: string;
             to?: number;
         }
@@ -191,12 +196,13 @@ declare global {
             startAngle?: number;
             states?: SeriesStatesOptions<SunburstSeries>;
         }
-        interface SunburstSeriesUtilsObject extends TreemapSeriesUtilsObject {
+        interface SunburstSeriesUtilsObject {
             calculateLevelSizes(
                 levelOptions: SunburstSeriesLevelsOptions,
                 params: Dictionary<number>
             ): (SunburstSeriesLevelsOptions|undefined);
             range(from: unknown, to: unknown): Array<number>;
+            recursive: typeof TreemapUtilities.recursive;
         }
         type SunburstDataLabelsRotationValue = (
             'auto'|'perpendicular'|'parallel'|'circular'
