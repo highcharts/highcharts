@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2017 Sebastian Bochan
+ *  (c) 2010-2020 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -18,19 +18,23 @@
 
 import type LinePoint from './Line/LinePoint';
 import type LinePointOptions from './Line/LinePointOptions';
-import type LineSeries from './Line/LineSeries';
 import type LineSeriesOptions from './Line/LineSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        line: LineSeries
+    }
+} = BaseSeries;
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
 const {
     correctFloat,
-    merge
+    merge,
+    extend
 } = U;
 
 import '../Core/Options.js';
-import '../Series/Line/LineSeries.js';
 
 /* *
  *
@@ -78,15 +82,6 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        pareto: typeof Highcharts.ParetoSeries;
-    }
-}
-
 /* *
  *
  *  Class
@@ -102,8 +97,8 @@ declare module '../Core/Series/SeriesType' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.ParetoSeries>('pareto', 'line'
 
+class ParetoSeries extends LineSeries {
     /**
      * A pareto diagram is a type of chart that contains both bars and a line
      * graph, where individual values are represented in descending order by
@@ -126,16 +121,28 @@ BaseSeries.seriesType<typeof Highcharts.ParetoSeries>('pareto', 'line'
      * @requires     modules/pareto
      * @optionparent plotOptions.pareto
      */
-    , {
-        /**
-         * Higher zIndex than column series to draw line above shapes.
-         */
-        zIndex: 3
-    },
+    public static defaultOptions: Highcharts.ParetoSeriesOptions = merge(
+        LineSeries.defaultOptions,
+        {
+            /**
+             * Higher zIndex than column series to draw line above shapes.
+             */
+            zIndex: 3
+        } as Highcharts.ParetoSeriesOptions
+    );
+}
 
-    /* eslint-disable no-invalid-this, valid-jsdoc */
 
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+extend(ParetoSeries.prototype,
     merge(DerivedSeriesMixin, {
+
+        /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * Calculate sum and return percent points.
          *
@@ -216,6 +223,29 @@ BaseSeries.seriesType<typeof Highcharts.ParetoSeries>('pareto', 'line'
 
     /* eslint-enable no-invalid-this, valid-jsdoc */
 );
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+/**
+ * @private
+ */
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        pareto: typeof Highcharts.ParetoSeries;
+    }
+}
+BaseSeries.registerSeriesType('pareto', ParetoSeries);
+
+/* *
+ *
+ *  Default export
+ *
+ * */
+
+export default ParetoSeries;
 
 /**
  * A `pareto` series. If the [type](#series.pareto.type) option is not
