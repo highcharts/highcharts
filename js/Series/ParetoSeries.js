@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2017 Sebastian Bochan
+ *  (c) 2010-2020 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -8,12 +8,25 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
+var LineSeries = BaseSeries.seriesTypes.line;
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
-var correctFloat = U.correctFloat, merge = U.merge;
+var correctFloat = U.correctFloat, merge = U.merge, extend = U.extend;
 import '../Core/Options.js';
-import '../Series/Line/LineSeries.js';
 /* *
  *
  *  Class
@@ -28,37 +41,48 @@ import '../Series/Line/LineSeries.js';
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('pareto', 'line'
-/**
- * A pareto diagram is a type of chart that contains both bars and a line
- * graph, where individual values are represented in descending order by
- * bars, and the cumulative total is represented by the line.
- *
- * @sample {highcharts} highcharts/demo/pareto/
- *         Pareto diagram
- *
- * @extends      plotOptions.line
- * @since        6.0.0
- * @product      highcharts
- * @excluding    allAreas, boostThreshold, borderColor, borderRadius,
- *               borderWidth, crisp, colorAxis, depth, data, dragDrop,
- *               edgeColor, edgeWidth, findNearestPointBy, gapSize, gapUnit,
- *               grouping, groupPadding, groupZPadding, maxPointWidth, keys,
- *               negativeColor, pointInterval, pointIntervalUnit,
- *               pointPadding, pointPlacement, pointRange, pointStart,
- *               pointWidth, shadow, step, softThreshold, stacking,
- *               threshold, zoneAxis, zones, boostBlending
- * @requires     modules/pareto
- * @optionparent plotOptions.pareto
- */
-, {
+var ParetoSeries = /** @class */ (function (_super) {
+    __extends(ParetoSeries, _super);
+    function ParetoSeries() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
     /**
-     * Higher zIndex than column series to draw line above shapes.
+     * A pareto diagram is a type of chart that contains both bars and a line
+     * graph, where individual values are represented in descending order by
+     * bars, and the cumulative total is represented by the line.
+     *
+     * @sample {highcharts} highcharts/demo/pareto/
+     *         Pareto diagram
+     *
+     * @extends      plotOptions.line
+     * @since        6.0.0
+     * @product      highcharts
+     * @excluding    allAreas, boostThreshold, borderColor, borderRadius,
+     *               borderWidth, crisp, colorAxis, depth, data, dragDrop,
+     *               edgeColor, edgeWidth, findNearestPointBy, gapSize, gapUnit,
+     *               grouping, groupPadding, groupZPadding, maxPointWidth, keys,
+     *               negativeColor, pointInterval, pointIntervalUnit,
+     *               pointPadding, pointPlacement, pointRange, pointStart,
+     *               pointWidth, shadow, step, softThreshold, stacking,
+     *               threshold, zoneAxis, zones, boostBlending
+     * @requires     modules/pareto
+     * @optionparent plotOptions.pareto
      */
-    zIndex: 3
-}, 
-/* eslint-disable no-invalid-this, valid-jsdoc */
-merge(DerivedSeriesMixin, {
+    ParetoSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+        /**
+         * Higher zIndex than column series to draw line above shapes.
+         */
+        zIndex: 3
+    });
+    return ParetoSeries;
+}(LineSeries));
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+extend(ParetoSeries.prototype, merge(DerivedSeriesMixin, {
+    /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Calculate sum and return percent points.
      *
@@ -115,6 +139,13 @@ merge(DerivedSeriesMixin, {
 })
 /* eslint-enable no-invalid-this, valid-jsdoc */
 );
+BaseSeries.registerSeriesType('pareto', ParetoSeries);
+/* *
+ *
+ *  Default export
+ *
+ * */
+export default ParetoSeries;
 /**
  * A `pareto` series. If the [type](#series.pareto.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
