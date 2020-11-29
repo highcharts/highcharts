@@ -43,7 +43,23 @@ var correctFloat = U.correctFloat, merge = U.merge, extend = U.extend;
 var ParetoSeries = /** @class */ (function (_super) {
     __extends(ParetoSeries, _super);
     function ParetoSeries() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Static properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.points = void 0;
+        _this.options = void 0;
+        _this.hasDerivedData = void 0;
+        _this.initialised = void 0;
+        return _this;
     }
     /**
      * A pareto diagram is a type of chart that contains both bars and a line
@@ -75,11 +91,6 @@ var ParetoSeries = /** @class */ (function (_super) {
     });
     return ParetoSeries;
 }(LineSeries));
-/* *
- *
- *  Prototype properties
- *
- * */
 extend(ParetoSeries.prototype, merge(DerivedSeriesMixin, {
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
