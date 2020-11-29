@@ -16,10 +16,8 @@
  *
  * */
 
-import type LinePoint from '../Line/LinePoint';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type ParetoPoint from './ParetoPoint';
+import type ParetoSeriesOptions from './ParetoSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -33,52 +31,6 @@ const {
     merge,
     extend
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class ParetoPoint extends LinePoint {
-            public options: ParetoPointOptions;
-            public series: ParetoSeries;
-        }
-        class ParetoSeries extends LineSeries implements DerivedSeries {
-            public addBaseSeriesEvents: (
-                DerivedSeriesMixin['addBaseSeriesEvents']
-            );
-            public addEvents: DerivedSeriesMixin['addEvents'];
-            public data: Array<ParetoPoint>;
-            public eventRemovers: DerivedSeries['eventRemovers'];
-            public hasDerivedData: DerivedSeries['hasDerivedData'];
-            public init: DerivedSeriesMixin['init'];
-            public initialised: DerivedSeries['initialised'];
-            public options: ParetoSeriesOptions;
-            public pointClass: typeof ParetoPoint;
-            public points: Array<ParetoPoint>;
-            public setBaseSeries: DerivedSeriesMixin['setBaseSeries'];
-            public setDerivedData: DerivedSeries['setDerivedData'];
-            public sumPointsPercents<T extends (boolean|undefined)> (
-                yValues: Array<number>,
-                xValues: Array<number>,
-                sum: number,
-                isSum?: T
-            ): (T extends true ? number : Array<Array<number>>);
-        }
-        interface ParetoPointOptions extends LinePointOptions {
-        }
-        interface ParetoSeriesOptions extends LineSeriesOptions {
-            states?: SeriesStatesOptions<ParetoSeries>;
-        }
-    }
-}
 
 /* *
  *
@@ -97,6 +49,13 @@ declare global {
  */
 
 class ParetoSeries extends LineSeries {
+
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+
     /**
      * A pareto diagram is a type of chart that contains both bars and a line
      * graph, where individual values are represented in descending order by
@@ -119,15 +78,28 @@ class ParetoSeries extends LineSeries {
      * @requires     modules/pareto
      * @optionparent plotOptions.pareto
      */
-    public static defaultOptions: Highcharts.ParetoSeriesOptions = merge(
+    public static defaultOptions: ParetoSeriesOptions = merge(
         LineSeries.defaultOptions,
         {
             /**
              * Higher zIndex than column series to draw line above shapes.
              */
             zIndex: 3
-        } as Highcharts.ParetoSeriesOptions
+        } as ParetoSeriesOptions
     );
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<ParetoPoint> = void 0 as any;
+    public points: Array<ParetoPoint> = void 0 as any;
+    public options: ParetoSeriesOptions = void 0 as any;
+
+    public hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'] = void 0 as any;
+    public initialised: Highcharts.DerivedSeries['initialised'] = void 0 as any;
 }
 
 
@@ -136,6 +108,29 @@ class ParetoSeries extends LineSeries {
  *  Prototype properties
  *
  * */
+
+interface ParetoSeries {
+    addBaseSeriesEvents: typeof DerivedSeriesMixin['addBaseSeriesEvents'];
+
+    addEvents: typeof DerivedSeriesMixin['addEvents'];
+
+    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
+
+    init: typeof DerivedSeriesMixin['init'];
+
+    pointClass: typeof ParetoPoint;
+
+    setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
+
+    setDerivedData: Highcharts.DerivedSeries['setDerivedData'];
+
+    sumPointsPercents<T extends (boolean | undefined)>(
+        yValues: Array<number>,
+        xValues: Array<number>,
+        sum: number,
+        isSum?: T
+    ): (T extends true ? number : Array<Array<number>>);
+}
 
 extend(ParetoSeries.prototype,
     merge(DerivedSeriesMixin, {
@@ -148,7 +143,7 @@ extend(ParetoSeries.prototype,
          * @function Highcharts.Series#setDerivedData
          * @requires modules/pareto
          */
-        setDerivedData: (function (this: Highcharts.ParetoSeries): void {
+        setDerivedData: (function (this: ParetoSeries): void {
             var xValues = (this.baseSeries as any).xData,
                 yValues = (this.baseSeries as any).yData,
                 sum = this.sumPointsPercents(
@@ -187,7 +182,7 @@ extend(ParetoSeries.prototype,
          * @requires modules/pareto
          */
         sumPointsPercents: function<T extends (boolean|undefined)> (
-            this: Highcharts.ParetoSeries,
+            this: ParetoSeries,
             yValues: Array<number>,
             xValues: Array<number>,
             sum: number,
@@ -232,7 +227,7 @@ extend(ParetoSeries.prototype,
  */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        pareto: typeof Highcharts.ParetoSeries;
+        pareto: typeof ParetoSeries;
     }
 }
 BaseSeries.registerSeriesType('pareto', ParetoSeries);
