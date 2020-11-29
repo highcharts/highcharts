@@ -35,23 +35,33 @@ const {
     }
 } = BaseSeries;
 
+import U from '../../Core/Utilities.js';
+const { extend } = U;
+
 /* *
  *
- *  Declarations
+ *  Class
  *
  * */
 
-interface ColumnRangePoint {
-    barX: typeof ColumnPoint.prototype['barX'];
-    pointWidth: typeof ColumnPoint.prototype['pointWidth'];
-    shapeArgs: SVGAttributes;
-    shapeType: typeof ColumnPoint.prototype['shapeType'];
-}
 class ColumnRangePoint extends AreaRangePoint {
     public series: ColumnRangeSeries = void 0 as any;
     public options: ColumnRangePointOptions = void 0 as any;
-    public setState = ColumnPoint.prototype.setState;
+    public barX: typeof ColumnPoint.prototype['barX'] = void 0 as any;
+    public pointWidth: typeof ColumnPoint.prototype['pointWidth'] = void 0 as any;
+    public shapeArgs: SVGAttributes = void 0 as any;
+    public shapeType: typeof ColumnPoint.prototype['shapeType'] = void 0 as any;
 }
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+extend(ColumnRangePoint.prototype, {
+    setState: ColumnPoint.prototype.setState
+});
 
 /* *
  *

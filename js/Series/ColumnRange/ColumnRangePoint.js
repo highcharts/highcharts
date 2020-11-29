@@ -23,17 +23,35 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnPoint = _a.column.prototype.pointClass, AreaRangePoint = _a.arearange.prototype.pointClass;
+import U from '../../Core/Utilities.js';
+var extend = U.extend;
+/* *
+ *
+ *  Class
+ *
+ * */
 var ColumnRangePoint = /** @class */ (function (_super) {
     __extends(ColumnRangePoint, _super);
     function ColumnRangePoint() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.series = void 0;
         _this.options = void 0;
-        _this.setState = ColumnPoint.prototype.setState;
+        _this.barX = void 0;
+        _this.pointWidth = void 0;
+        _this.shapeArgs = void 0;
+        _this.shapeType = void 0;
         return _this;
     }
     return ColumnRangePoint;
 }(AreaRangePoint));
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+extend(ColumnRangePoint.prototype, {
+    setState: ColumnPoint.prototype.setState
+});
 /* *
  *
  *  Default export
