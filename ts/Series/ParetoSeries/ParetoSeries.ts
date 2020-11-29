@@ -16,25 +16,23 @@
  *
  * */
 
-import type LinePoint from './Line/LinePoint';
-import type LinePointOptions from './Line/LinePointOptions';
-import type LineSeriesOptions from './Line/LineSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
+import type LinePoint from '../Line/LinePoint';
+import type LinePointOptions from '../Line/LinePointOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
 } = BaseSeries;
-import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
-import U from '../Core/Utilities.js';
+import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import U from '../../Core/Utilities.js';
 const {
     correctFloat,
     merge,
     extend
 } = U;
-
-import '../Core/Options.js';
 
 /* *
  *
@@ -232,7 +230,7 @@ extend(ParetoSeries.prototype,
 /**
  * @private
  */
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         pareto: typeof Highcharts.ParetoSeries;
     }
