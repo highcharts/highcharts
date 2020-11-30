@@ -5,34 +5,38 @@ QUnit.test('Chart update with map', assert => {
             borderWidth: 1
         },
 
-        series: [{
-            data: [
-                ['is', 1],
-                ['no', 1],
-                ['se', 1]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    ['is', 1],
+                    ['no', 1],
+                    ['se', 1]
+                ]
+            }
+        ]
     };
 
     const options2 = {
-        series: [{
-            data: [
-                ['is', 1]
-            ]
-        }]
+        series: [
+            {
+                data: [['is', 1]]
+            }
+        ]
     };
 
     const chart = Highcharts.mapChart('container', options1);
 
     const getAttribs = attr => ({
-        iceland: chart.container.querySelector('.highcharts-key-is')
+        iceland: chart.container
+            .querySelector('.highcharts-key-is')
             .getAttribute(attr),
-        norway: chart.container.querySelector('.highcharts-key-no')
+        norway: chart.container
+            .querySelector('.highcharts-key-no')
             .getAttribute(attr),
-        germany: chart.container.querySelector('.highcharts-key-de')
+        germany: chart.container
+            .querySelector('.highcharts-key-de')
             .getAttribute(attr)
     });
-
 
     const originalPaths = getAttribs('d');
 

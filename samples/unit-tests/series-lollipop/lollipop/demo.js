@@ -1,19 +1,21 @@
 QUnit.test('Lollipop offset affection.', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'lollipop'
         },
-        series: [{
-            data: [{
-                low: 2
-            }]
-        }, {
-            type: "errorbar",
-            data: [
-                [2, 3]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        low: 2
+                    }
+                ]
+            },
+            {
+                type: 'errorbar',
+                data: [[2, 3]]
+            }
+        ]
     });
 
     assert.close(
@@ -22,5 +24,4 @@ QUnit.test('Lollipop offset affection.', function (assert) {
         2,
         'Lollipop and Errorbar connectors should be in the same place.'
     );
-
 });

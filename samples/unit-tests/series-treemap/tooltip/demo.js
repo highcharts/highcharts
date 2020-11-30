@@ -1,12 +1,16 @@
 QUnit.test('pointFormat', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                type: 'treemap',
-                data: [{
-                    name: 'Peter',
-                    value: 2
-                }]
-            }]
+            series: [
+                {
+                    type: 'treemap',
+                    data: [
+                        {
+                            name: 'Peter',
+                            value: 2
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[0],

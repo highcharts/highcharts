@@ -1,10 +1,10 @@
 QUnit.module('Series.getValidPoints', () => {
-
     function getData() {
         var arr = [];
         for (var x = 0; x < 10; x++) {
             for (var y = 0; y < 10; y++) {
-                if (x === 5 && y === 5) { // one null
+                if (x === 5 && y === 5) {
+                    // one null
                     arr.push([x, null]);
                 } else {
                     arr.push([x, y]);
@@ -35,9 +35,11 @@ QUnit.module('Series.getValidPoints', () => {
                     min: 0.1,
                     max: 8.9
                 },
-                series: [{
-                    data: getData()
-                }]
+                series: [
+                    {
+                        data: getData()
+                    }
+                ]
             });
 
             assert.strictEqual(
@@ -63,5 +65,4 @@ QUnit.module('Series.getValidPoints', () => {
 
     test(false);
     test(true);
-
 });

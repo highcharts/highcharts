@@ -1,5 +1,4 @@
 QUnit.test('RangeSelector enabled', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
         chart: {
             width: 400
@@ -8,9 +7,11 @@ QUnit.test('RangeSelector enabled', function (assert) {
             enabled: false
         },
 
-        series: [{
-            data: [1, 2, 10, 10]
-        }]
+        series: [
+            {
+                data: [1, 2, 10, 10]
+            }
+        ]
     });
 
     chart.update({
@@ -19,9 +20,5 @@ QUnit.test('RangeSelector enabled', function (assert) {
         }
     });
 
-    assert.strictEqual(
-        chart.rangeSelector !== undefined,
-        true,
-        'enabled'
-    );
+    assert.strictEqual(chart.rangeSelector !== undefined, true, 'enabled');
 });

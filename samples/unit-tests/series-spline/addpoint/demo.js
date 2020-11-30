@@ -1,5 +1,4 @@
 QUnit.test('AddPoint animation param (#5665)', function (assert) {
-
     var clock = TestUtilities.lolexInstall();
     var interval,
         done = assert.async(),
@@ -13,15 +12,25 @@ QUnit.test('AddPoint animation param (#5665)', function (assert) {
                 type: 'spline',
                 events: {
                     load: function () {
-                        interval = setInterval(function () {
-                            this.series[0].addPoint(Math.random(), true, true, false);
-                        }.bind(this), 400);
+                        interval = setInterval(
+                            function () {
+                                this.series[0].addPoint(
+                                    Math.random(),
+                                    true,
+                                    true,
+                                    false
+                                );
+                            }.bind(this),
+                            400
+                        );
                     }
                 }
             },
-            series: [{
-                data: [10, 10, 10, 10]
-            }]
+            series: [
+                {
+                    data: [10, 10, 10, 10]
+                }
+            ]
         });
 
     setTimeout(function () {

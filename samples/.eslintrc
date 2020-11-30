@@ -28,7 +28,8 @@ rules:
     max-len: [
         "error",
         {
-            "ignoreUrls": true
+            "ignoreComments": true,
+            "ignoreStrings": true
         }
     ]
     new-cap: 0                  # The ill-named Color object. Fix in HC5

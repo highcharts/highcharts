@@ -1,41 +1,54 @@
-QUnit.test("Ellipsis should be reset after zoom (#4678)", function (assert) {
-    var chart = $('#container').highcharts({
-        chart: {
-            type: 'bar',
-            zoomType: 'x',
-            animation: false
-        },
+QUnit.test('Ellipsis should be reset after zoom (#4678)', function (assert) {
+    var chart = $('#container')
+        .highcharts({
+            chart: {
+                type: 'bar',
+                zoomType: 'x',
+                animation: false
+            },
 
-        xAxis: {
-            categories: [
-                'Jan Jan Jan ',
-                'Feb Feb Feb ',
-                'Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar ',
-                'Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr ',
-                'May May May May May May May May May May May May ',
-                'Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun ',
-                'Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul ',
-                'Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug ',
-                'Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep ',
-                'Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct ',
-                'Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov ',
-                'Dec Dec Dec Dec Dec Dec Dec Dec Dec Dec Dec Dec '
-            ],
-            labels: {
-                style: {
-                    fontFamily: 'monospace'
+            xAxis: {
+                categories: [
+                    'Jan Jan Jan ',
+                    'Feb Feb Feb ',
+                    'Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar ',
+                    'Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr ',
+                    'May May May May May May May May May May May May ',
+                    'Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun ',
+                    'Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul ',
+                    'Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug ',
+                    'Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep ',
+                    'Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct ',
+                    'Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov ',
+                    'Dec Dec Dec Dec Dec Dec Dec Dec Dec Dec Dec Dec '
+                ],
+                labels: {
+                    style: {
+                        fontFamily: 'monospace'
+                    }
                 }
-            }
-        },
+            },
 
-        series: [{
-            data: [
-                29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-                135.6, 148.5, 216.4, 194.1, 95.6, 54.4
+            series: [
+                {
+                    data: [
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ]
+                }
             ]
-        }]
-    }).highcharts();
-
+        })
+        .highcharts();
 
     assert.strictEqual(
         typeof chart.xAxis[0].ticks[0].label.getBBox().height,
@@ -63,17 +76,14 @@ QUnit.test("Ellipsis should be reset after zoom (#4678)", function (assert) {
         chart.xAxis[0].ticks[11].label.getBBox().height,
         'Same height labels'
     );
-
-
 });
 
 QUnit.test(
     '#5034: No ellipsis for multiline labels where there is room',
     function (assert) {
         var chart = Highcharts.chart('container', {
-
             chart: {
-                type: "bar",
+                type: 'bar',
                 width: 450
             },
             xAxis: {
@@ -83,15 +93,16 @@ QUnit.test(
                     'Cat3 bla bla bla bla bla bla bla'
                 ]
             },
-            series: [{
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
         });
-
 
         assert.ok(
             chart.xAxis[0].ticks[1].label.getBBox().height >
-            chart.xAxis[0].ticks[0].label.getBBox().height,
+                chart.xAxis[0].ticks[0].label.getBBox().height,
             'Second label is multiple lines'
         );
 

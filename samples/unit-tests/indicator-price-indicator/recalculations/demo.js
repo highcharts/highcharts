@@ -5,7 +5,7 @@ var correctFloat = Highcharts.correctFloat,
 
         for (i = 0; i < 1000; i++) {
             data.push([
-                (+new Date()) + i * 3600,
+                +new Date() + i * 3600,
                 153 + correctFloat(Math.random(0, 1), 2),
                 153 + correctFloat(Math.random(0, 1), 2),
                 153 + correctFloat(Math.random(0, 1), 2),
@@ -17,30 +17,31 @@ var correctFloat = Highcharts.correctFloat,
     };
 
 QUnit.test('Price indicator.', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
             xAxis: {
                 min: 1184663400000,
                 max: 1284663400000
             },
-            series: [{
-                lastPrice: {
-                    enabled: true,
-                    color: 'red'
-                },
-                lastVisiblePrice: {
-                    enabled: true,
-                    label: {
-                        enabled: true
-                    }
-                },
-                type: 'candlestick',
-                data: [
-                    [1484663400000, 118.34, 120.24, 118.22, 120],
-                    [1484749800000, 120, 120.5, 119.71, 119.99],
-                    [1484836200000, 119.4, 120.09, 119.37, 119.78]
-                ]
-            }]
+            series: [
+                {
+                    lastPrice: {
+                        enabled: true,
+                        color: 'red'
+                    },
+                    lastVisiblePrice: {
+                        enabled: true,
+                        label: {
+                            enabled: true
+                        }
+                    },
+                    type: 'candlestick',
+                    data: [
+                        [1484663400000, 118.34, 120.24, 118.22, 120],
+                        [1484749800000, 120, 120.5, 119.71, 119.99],
+                        [1484836200000, 119.4, 120.09, 119.37, 119.78]
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
 
@@ -52,28 +53,29 @@ QUnit.test('Price indicator.', function (assert) {
 });
 
 QUnit.test('Datagrouping and setExtremes.', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
             rangeSelector: {
                 selected: 5
             },
-            series: [{
-                type: 'candlestick',
-                dataGrouping: {
-                    enabled: true
-                },
-                lastVisiblePrice: {
-                    enabled: true,
-                    label: {
+            series: [
+                {
+                    type: 'candlestick',
+                    dataGrouping: {
                         enabled: true
-                    }
-                },
-                lastPrice: {
-                    enabled: true,
-                    color: 'red'
-                },
-                data: getData()
-            }]
+                    },
+                    lastVisiblePrice: {
+                        enabled: true,
+                        label: {
+                            enabled: true
+                        }
+                    },
+                    lastPrice: {
+                        enabled: true,
+                        color: 'red'
+                    },
+                    data: getData()
+                }
+            ]
         }),
         series = chart.series[0];
 
@@ -95,50 +97,53 @@ QUnit.test('Datagrouping and setExtremes.', function (assert) {
     );
 });
 
-
-QUnit.test('CurrentPriceIndicator && yAxis crosshair label #11480.', function (assert) {
-
-    var chart = Highcharts.stockChart('container', {
-        xAxis: {
-            crosshair: {
-                snap: false,
-                label: {
-                    enabled: true
-                }
-            }
-        },
-        yAxis: {
-            crosshair: {
-                snap: false,
-                label: {
-                    enabled: true
-                }
-            }
-        },
-        series: [{
-            lastVisiblePrice: {
-                enabled: true,
-                label: {
-                    enabled: true
+QUnit.test(
+    'CurrentPriceIndicator && yAxis crosshair label #11480.',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            xAxis: {
+                crosshair: {
+                    snap: false,
+                    label: {
+                        enabled: true
+                    }
                 }
             },
-            data: getData()
-        }]
-    });
+            yAxis: {
+                crosshair: {
+                    snap: false,
+                    label: {
+                        enabled: true
+                    }
+                }
+            },
+            series: [
+                {
+                    lastVisiblePrice: {
+                        enabled: true,
+                        label: {
+                            enabled: true
+                        }
+                    },
+                    data: getData()
+                }
+            ]
+        });
 
-    var min = chart.xAxis[0].min,
-        max = min + 100 * 3600,
-        max1 = min + 200 * 3600,
-        controller = new TestController(chart);
+        var min = chart.xAxis[0].min,
+            max = min + 100 * 3600,
+            max1 = min + 200 * 3600,
+            controller = new TestController(chart);
 
-    controller.moveTo(300, 200);
+        controller.moveTo(300, 200);
 
-    chart.xAxis[0].setExtremes(min, max);
-    chart.xAxis[0].setExtremes(min, max1);
+        chart.xAxis[0].setExtremes(min, max);
+        chart.xAxis[0].setExtremes(min, max1);
 
-    assert.strictEqual(
-        chart.series[0].crossLabel.added,
-        true,
-        'Label shouldn\t be deleted #11480'
-    );
-});
+        assert.strictEqual(
+            chart.series[0].crossLabel.added,
+            true,
+            'Label shouldn\t be deleted #11480'
+        );
+    }
+);

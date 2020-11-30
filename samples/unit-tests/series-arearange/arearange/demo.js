@@ -1,5 +1,4 @@
 QUnit.test('Range series data labels(#4421)', function (assert) {
-
     var data = [],
         i;
     for (i = 0; i < 100; i++) {
@@ -13,13 +12,14 @@ QUnit.test('Range series data labels(#4421)', function (assert) {
         rangeSelector: {
             selected: 0
         },
-        series: [{
-            data: data,
-            dataLabels: {
-                enabled: true
+        series: [
+            {
+                data: data,
+                dataLabels: {
+                    enabled: true
+                }
             }
-        }]
-
+        ]
     });
 
     var chart = $('#container').highcharts();
@@ -34,47 +34,49 @@ QUnit.test('Range series data labels(#4421)', function (assert) {
         0,
         'Second label hidden'
     );
-
 });
 
-QUnit.test('Area range with compare (#4922) and NaN (#11513)', function (assert) {
-    var chart = Highcharts.stockChart('container', {
+QUnit.test(
+    'Area range with compare (#4922) and NaN (#11513)',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            chart: {
+                type: 'arearange'
+            },
 
-        chart: {
-            type: 'arearange'
-        },
+            plotOptions: {
+                series: {
+                    compare: 'percent'
+                }
+            },
 
-        plotOptions: {
-            series: {
-                compare: 'percent'
-            }
-        },
-
-        series: [{
-            data: [
-                [0, NaN, NaN], // #11513
-                [0, 3, 4],
-                [1, 4, 6],
-                [2, 2, 3]
+            series: [
+                {
+                    data: [
+                        [0, NaN, NaN], // #11513
+                        [0, 3, 4],
+                        [1, 4, 6],
+                        [2, 2, 3]
+                    ]
+                }
             ]
-        }]
-    });
+        });
 
-    assert.strictEqual(
-        typeof chart.yAxis[0].min,
-        'number',
-        'The Y axis extremes should be valid (#11513)'
-    );
+        assert.strictEqual(
+            typeof chart.yAxis[0].min,
+            'number',
+            'The Y axis extremes should be valid (#11513)'
+        );
 
-    assert.ok(
-        typeof chart.series[0].graph.element.getAttribute('d'),
-        'string',
-        'We have a graph'
-    );
-    assert.ok(
-        typeof chart.series[0].area.element.getAttribute('d'),
-        'string',
-        'We have an area'
-    );
-
-});
+        assert.ok(
+            typeof chart.series[0].graph.element.getAttribute('d'),
+            'string',
+            'We have a graph'
+        );
+        assert.ok(
+            typeof chart.series[0].area.element.getAttribute('d'),
+            'string',
+            'We have an area'
+        );
+    }
+);
