@@ -54,19 +54,6 @@ declare global {
             options: SolidGaugePointOptions;
             series: SolidGaugeSeries;
         }
-        class SolidGaugeSeries extends GaugeSeries {
-            public axis: SolidGaugeAxis;
-            public data: Array<SolidGaugePoint>;
-            public options: SolidGaugeSeriesOptions;
-            public pointClass: typeof SolidGaugePoint;
-            public points: Array<SolidGaugePoint>;
-            public startAngleRad: SolidGaugeSeries['thresholdAngleRad'];
-            public thresholdAngleRad: number;
-            public yAxis: SolidGaugeAxis;
-            public animate(init?: boolean): void;
-            public drawPoints(): void;
-            public translate(): void;
-        }
         interface SolidGaugePointOptions extends GaugePointOptions {
             innerRadius?: (number|string);
             radius?: (number|string);
@@ -83,15 +70,6 @@ declare global {
         interface SymbolOptionsObject {
             rounded?: boolean;
         }
-    }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        solidgauge: typeof Highcharts.SolidGaugeSeries;
     }
 }
 
@@ -452,189 +430,262 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
 
 };
 
-// The solidgauge series type
-BaseSeries.seriesType<typeof Highcharts.SolidGaugeSeries>(
-    'solidgauge',
-    'gauge',
-    solidGaugeOptions,
-    {
-        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-        // Extend the translate function to extend the Y axis with the necessary
-        // decoration (#5895).
-        translate: function (this: Highcharts.SolidGaugeSeries): void {
-            var axis = this.yAxis;
 
-            SolidGaugeAxis.init(axis);
+/* *
+ *
+ *  Class
+ *
+ * */
 
-            // Prepare data classes
-            if (!axis.dataClasses && axis.options.dataClasses) {
-                axis.initDataClasses(axis.options);
-            }
-            axis.initStops(axis.options);
+class SolidGaugeSeries extends GaugeSeries {
 
-            // Generate points and inherit data label position
-            H.seriesTypes.gauge.prototype.translate.call(this);
-        },
+    /* *
+     *
+     *  Static properties
+     *
+     * */
 
-        // Draw the points where each point is one needle.
-        drawPoints: function (this: Highcharts.SolidGaugeSeries): void {
-            var series = this,
-                yAxis = series.yAxis,
-                center = yAxis.center,
-                options = series.options,
-                renderer = series.chart.renderer,
-                overshoot = options.overshoot,
-                overshootVal = isNumber(overshoot) ?
-                    overshoot / 180 * Math.PI :
-                    0,
-                thresholdAngleRad: (number|undefined);
+    public static defaultOptions: Highcharts.SolidGaugeSeriesOptions = merge(GaugeSeries.defaultOptions,
+        solidGaugeOptions as Highcharts.SolidGaugeSeriesOptions);
 
-            // Handle the threshold option
-            if (isNumber(options.threshold)) {
-                thresholdAngleRad = yAxis.startAngleRad + (yAxis.translate(
-                    options.threshold,
-                    null,
-                    null,
-                    null,
-                    true
-                ) as any);
-            }
-            this.thresholdAngleRad = pick(
-                thresholdAngleRad, yAxis.startAngleRad
-            );
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.SolidGaugePoint> = void 0 as any;
+    public points: Array<Highcharts.SolidGaugePoint> = void 0 as any;
+    public options: Highcharts.SolidGaugeSeriesOptions = void 0 as any;
+
+    public axis: SolidGaugeAxis = void 0 as any;
+    public yAxis: SolidGaugeAxis = void 0 as any;
+    public startAngleRad: SolidGaugeSeries['thresholdAngleRad'] = void 0 as any;
+    public thresholdAngleRad: number = void 0 as any;
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+}
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+interface SolidGaugeSeries extends GaugeSeries {
+    pointClass: typeof Highcharts.SolidGaugePoint;
+    animate(init?: boolean): void;
+    drawPoints(): void;
+    translate(): void;
+}
+extend(SolidGaugeSeries.prototype, {
+    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    // Extend the translate function to extend the Y axis with the necessary
+    // decoration (#5895).
+    translate: function (this: SolidGaugeSeries): void {
+        var axis = this.yAxis;
+
+        SolidGaugeAxis.init(axis);
+
+        // Prepare data classes
+        if (!axis.dataClasses && axis.options.dataClasses) {
+            axis.initDataClasses(axis.options);
+        }
+        axis.initStops(axis.options);
+
+        // Generate points and inherit data label position
+        H.seriesTypes.gauge.prototype.translate.call(this);
+    },
+
+    // Draw the points where each point is one needle.
+    drawPoints: function (this: SolidGaugeSeries): void {
+        var series = this,
+            yAxis = series.yAxis,
+            center = yAxis.center,
+            options = series.options,
+            renderer = series.chart.renderer,
+            overshoot = options.overshoot,
+            overshootVal = isNumber(overshoot) ?
+                overshoot / 180 * Math.PI :
+                0,
+            thresholdAngleRad: (number | undefined);
+
+        // Handle the threshold option
+        if (isNumber(options.threshold)) {
+            thresholdAngleRad = yAxis.startAngleRad + (yAxis.translate(
+                options.threshold,
+                null,
+                null,
+                null,
+                true
+            ) as any);
+        }
+        this.thresholdAngleRad = pick(
+            thresholdAngleRad, yAxis.startAngleRad
+        );
 
 
-            series.points.forEach(function (
-                point: Highcharts.SolidGaugePoint
-            ): void {
-                // #10630 null point should not be draw
-                if (!point.isNull) { // condition like in pie chart
-                    var graphic = point.graphic,
-                        rotation = (yAxis.startAngleRad +
-                            (yAxis.translate(
-                                point.y as any,
-                                null,
-                                null,
-                                null,
-                                true
-                            ) as any)),
-                        radius = ((
-                            pInt(
-                                pick(
-                                    point.options.radius,
-                                    options.radius,
-                                    100
-                                )
-                            ) * center[2]
-                        ) / 200),
-                        innerRadius = ((
-                            pInt(
-                                pick(
-                                    point.options.innerRadius,
-                                    options.innerRadius,
-                                    60
-                                )
-                            ) * center[2]
-                        ) / 200),
-                        shapeArgs: (SVGAttributes|undefined),
-                        d: (string|SVGPath|undefined),
-                        toColor = yAxis.toColor(point.y as any, point),
-                        axisMinAngle = Math.min(
-                            yAxis.startAngleRad,
-                            yAxis.endAngleRad
-                        ),
-                        axisMaxAngle = Math.max(
-                            yAxis.startAngleRad,
-                            yAxis.endAngleRad
-                        ),
-                        minAngle,
-                        maxAngle;
+        series.points.forEach(function (
+            point: Highcharts.SolidGaugePoint
+        ): void {
+            // #10630 null point should not be draw
+            if (!point.isNull) { // condition like in pie chart
+                var graphic = point.graphic,
+                    rotation = (yAxis.startAngleRad +
+                        (yAxis.translate(
+                            point.y as any,
+                            null,
+                            null,
+                            null,
+                            true
+                        ) as any)),
+                    radius = ((
+                        pInt(
+                            pick(
+                                point.options.radius,
+                                options.radius,
+                                100
+                            )
+                        ) * center[2]
+                    ) / 200),
+                    innerRadius = ((
+                        pInt(
+                            pick(
+                                point.options.innerRadius,
+                                options.innerRadius,
+                                60
+                            )
+                        ) * center[2]
+                    ) / 200),
+                    shapeArgs: (SVGAttributes | undefined),
+                    d: (string | SVGPath | undefined),
+                    toColor = yAxis.toColor(point.y as any, point),
+                    axisMinAngle = Math.min(
+                        yAxis.startAngleRad,
+                        yAxis.endAngleRad
+                    ),
+                    axisMaxAngle = Math.max(
+                        yAxis.startAngleRad,
+                        yAxis.endAngleRad
+                    ),
+                    minAngle,
+                    maxAngle;
 
-                    if (toColor === 'none') { // #3708
-                        toColor = point.color || series.color || 'none';
+                if (toColor === 'none') { // #3708
+                    toColor = point.color || series.color || 'none';
+                }
+                if (toColor !== 'none') {
+                    point.color = toColor;
+                }
+
+                // Handle overshoot and clipping to axis max/min
+                rotation = clamp(
+                    rotation,
+                    axisMinAngle - overshootVal,
+                    axisMaxAngle + overshootVal
+                );
+
+                // Handle the wrap option
+                if (options.wrap === false) {
+                    rotation = clamp(rotation, axisMinAngle, axisMaxAngle);
+                }
+
+                minAngle = Math.min(rotation, series.thresholdAngleRad);
+                maxAngle = Math.max(rotation, series.thresholdAngleRad);
+
+                if (maxAngle - minAngle > 2 * Math.PI) {
+                    maxAngle = minAngle + 2 * Math.PI;
+                }
+
+                point.shapeArgs = shapeArgs = {
+                    x: center[0],
+                    y: center[1],
+                    r: radius,
+                    innerR: innerRadius,
+                    start: minAngle,
+                    end: maxAngle,
+                    rounded: options.rounded
+                };
+                point.startR = radius; // For PieSeries.animate
+
+                if (graphic) {
+                    d = shapeArgs.d;
+                    graphic.animate(extend({ fill: toColor }, shapeArgs));
+                    if (d) {
+                        shapeArgs.d = d; // animate alters it
                     }
-                    if (toColor !== 'none') {
-                        point.color = toColor;
-                    }
+                } else {
+                    point.graphic = graphic = renderer.arc(shapeArgs)
+                        .attr({
+                            fill: toColor,
+                            'sweep-flag': 0
+                        })
+                        .add(series.group);
+                }
 
-                    // Handle overshoot and clipping to axis max/min
-                    rotation = clamp(
-                        rotation,
-                        axisMinAngle - overshootVal,
-                        axisMaxAngle + overshootVal
-                    );
-
-                    // Handle the wrap option
-                    if (options.wrap === false) {
-                        rotation = clamp(rotation, axisMinAngle, axisMaxAngle);
-                    }
-
-                    minAngle = Math.min(rotation, series.thresholdAngleRad);
-                    maxAngle = Math.max(rotation, series.thresholdAngleRad);
-
-                    if (maxAngle - minAngle > 2 * Math.PI) {
-                        maxAngle = minAngle + 2 * Math.PI;
-                    }
-
-                    point.shapeArgs = shapeArgs = {
-                        x: center[0],
-                        y: center[1],
-                        r: radius,
-                        innerR: innerRadius,
-                        start: minAngle,
-                        end: maxAngle,
-                        rounded: options.rounded
-                    };
-                    point.startR = radius; // For PieSeries.animate
-
-                    if (graphic) {
-                        d = shapeArgs.d;
-                        graphic.animate(extend({ fill: toColor }, shapeArgs));
-                        if (d) {
-                            shapeArgs.d = d; // animate alters it
-                        }
-                    } else {
-                        point.graphic = graphic = renderer.arc(shapeArgs)
-                            .attr({
-                                fill: toColor,
-                                'sweep-flag': 0
-                            })
-                            .add(series.group);
-                    }
-
-                    if (!series.chart.styledMode) {
-                        if (options.linecap !== 'square') {
-                            graphic.attr({
-                                'stroke-linecap': 'round',
-                                'stroke-linejoin': 'round'
-                            });
-                        }
+                if (!series.chart.styledMode) {
+                    if (options.linecap !== 'square') {
                         graphic.attr({
-                            stroke: options.borderColor || 'none',
-                            'stroke-width': options.borderWidth || 0
+                            'stroke-linecap': 'round',
+                            'stroke-linejoin': 'round'
                         });
                     }
-
-                    if (graphic) {
-                        graphic.addClass(point.getClassName(), true);
-                    }
+                    graphic.attr({
+                        stroke: options.borderColor || 'none',
+                        'stroke-width': options.borderWidth || 0
+                    });
                 }
-            });
-        },
 
-        // Extend the pie slice animation by animating from start angle and up.
-        animate: function (
-            this: Highcharts.SolidGaugeSeries,
-            init?: boolean
-        ): void {
-
-            if (!init) {
-                this.startAngleRad = this.thresholdAngleRad;
-                H.seriesTypes.pie.prototype.animate.call(this, init);
+                if (graphic) {
+                    graphic.addClass(point.getClassName(), true);
+                }
             }
+        });
+    },
+
+    // Extend the pie slice animation by animating from start angle and up.
+    animate: function (
+        this: SolidGaugeSeries,
+        init?: boolean
+    ): void {
+
+        if (!init) {
+            this.startAngleRad = this.thresholdAngleRad;
+            H.seriesTypes.pie.prototype.animate.call(this, init);
         }
     }
-);
+});
+
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+
+/**
+ * @private
+ */
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        solidgauge: typeof SolidGaugeSeries;
+    }
+}
+
+BaseSeries.registerSeriesType('solidgauge', SolidGaugeSeries);
+
+/* *
+ *
+ *  Default export
+ *
+ * */
+
+export default SolidGaugeSeries;
 
 /**
  * A `solidgauge` series. If the [type](#series.solidgauge.type) option is not
@@ -720,5 +771,3 @@ BaseSeries.seriesType<typeof Highcharts.SolidGaugeSeries>(
  */
 
 ''; // adds doclets above to transpiled file
-
-export default SolidGaugeAxis;

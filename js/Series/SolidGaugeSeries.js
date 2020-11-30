@@ -10,6 +10,19 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
 import GaugeSeries from './Gauge/GaugeSeries.js';
 import Color from '../Core/Color/Color.js';
@@ -269,8 +282,41 @@ var solidGaugeOptions = {
         y: 0
     }
 };
-// The solidgauge series type
-BaseSeries.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
+var SolidGaugeSeries = /** @class */ (function (_super) {
+    __extends(SolidGaugeSeries, _super);
+    function SolidGaugeSeries() {
+        /* *
+         *
+         *  Static properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.points = void 0;
+        _this.options = void 0;
+        _this.axis = void 0;
+        _this.yAxis = void 0;
+        return _this;
+        /* *
+         *
+         *  Functions
+         *
+         * */
+    }
+    SolidGaugeSeries.defaultOptions = merge(GaugeSeries.defaultOptions, solidGaugeOptions);
+    return SolidGaugeSeries;
+}(GaugeSeries));
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+extend(SolidGaugeSeries.prototype, {
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
@@ -368,6 +414,13 @@ BaseSeries.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
         }
     }
 });
+BaseSeries.registerSeriesType('solidgauge', SolidGaugeSeries);
+/* *
+ *
+ *  Default export
+ *
+ * */
+export default SolidGaugeSeries;
 /**
  * A `solidgauge` series. If the [type](#series.solidgauge.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
@@ -448,4 +501,3 @@ BaseSeries.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * @apioption series.solidgauge.data.radius
  */
 ''; // adds doclets above to transpiled file
-export default SolidGaugeAxis;
