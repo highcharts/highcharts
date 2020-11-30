@@ -119,6 +119,12 @@ import '../Extensions/CurrentDateIndication.js';
 import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * @private
  * @class
@@ -227,55 +233,13 @@ class GanttSeries extends XRangeSeries {
 
     public points: Array<GanttPoint> = void 0 as any;
 
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface GanttSeries{
-    keyboardMoveVertical: boolean;
-    pointClass: typeof GanttPoint;
-}
-extend(GanttSeries.prototype, { // props - series member overrides
-
-    // Keyboard navigation, don't use nearest vertical mode
-    keyboardMoveVertical: false,
-
-    pointArrayMap: ['start', 'end', 'y'],
-
-    setData: LineSeries.prototype.setData,
-
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
-
-    /**
-     * Handle milestones, as they have no x2.
-     * @private
-     */
-    translatePoint: function (
-        this: Highcharts.GanttSeries,
-        point: Highcharts.GanttPoint
-    ): void {
-        var series = this,
-            shapeArgs: SVGAttributes,
-            size: number;
-
-        XRangeSeries.prototype.translatePoint.call(series, point);
-
-        if (point.options.milestone) {
-            shapeArgs = point.shapeArgs as any;
-            size = shapeArgs.height;
-            point.shapeArgs = {
-                x: shapeArgs.x - (size / 2),
-                y: shapeArgs.y,
-                width: size,
-                height: size
-            };
-        }
-    },
 
     /**
      * Draws a single point in the series.
@@ -296,8 +260,7 @@ extend(GanttSeries.prototype, { // props - series member overrides
      *
      * @return {void}
      */
-    drawPoint: function (
-        this: Highcharts.GanttSeries,
+    public drawPoint(
         point: Highcharts.GanttPoint,
         verb: string
     ): void {
@@ -342,15 +305,12 @@ extend(GanttSeries.prototype, { // props - series member overrides
         } else {
             XRangeSeries.prototype.drawPoint.call(series, point, verb);
         }
-    },
+    }
 
     /**
      * @private
      */
-    setGanttPointAliases: function (
-        this: Highcharts.GanttSeriesOptions,
-        options: Highcharts.GanttPointOptions
-    ): void {
+    public setGanttPointAliases(options: Highcharts.GanttPointOptions): void {
         /**
          * Add a value to options if the value exists.
          * @private
@@ -368,7 +328,51 @@ extend(GanttSeries.prototype, { // props - series member overrides
         );
     }
 
+    /**
+     * Handle milestones, as they have no x2.
+     * @private
+     */
+    public translatePoint(point: GanttPoint): void {
+        var series = this,
+            shapeArgs: SVGAttributes,
+            size: number;
+
+        XRangeSeries.prototype.translatePoint.call(series, point);
+
+        if (point.options.milestone) {
+            shapeArgs = point.shapeArgs as any;
+            size = shapeArgs.height;
+            point.shapeArgs = {
+                x: shapeArgs.x - (size / 2),
+                y: shapeArgs.y,
+                width: size,
+                height: size
+            };
+        }
+    }
+
     /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface GanttSeries{
+    keyboardMoveVertical: boolean;
+    pointClass: typeof GanttPoint;
+}
+extend(GanttSeries.prototype, { // props - series member overrides
+
+    // Keyboard navigation, don't use nearest vertical mode
+    keyboardMoveVertical: false,
+
+    pointArrayMap: ['start', 'end', 'y'],
+
+    setData: LineSeries.prototype.setData
 
 });
 
@@ -398,16 +402,11 @@ class GanttPoint extends XRangeSeries.prototype.pointClass {
 
     public start?: number;
 
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-extend(GanttPoint.prototype, {
-    // pointProps - point member overrides. We inherit from parent as well.
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /* eslint-disable valid-jsdoc */
 
@@ -427,21 +426,20 @@ extend(GanttPoint.prototype, {
      * @return {Highcharts.Point}
      *         The Point instance
      */
-    applyOptions: function (
-        this: Highcharts.GanttPoint,
+    public applyOptions(
         options: Highcharts.GanttPointOptions,
         x: number
-    ): Highcharts.GanttPoint {
+    ): GanttPoint {
         var point = this,
-            ganttPoint;
+            ganttPoint: GanttPoint;
 
-        ganttPoint = XRangeSeries.prototype.pointClass.prototype.applyOptions
-            .call(point, options, x) as Highcharts.GanttPoint;
+        ganttPoint = XRangeSeries.prototype.pointClass.prototype.applyOptions.call(point, options, x) as any;
         H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint as Highcharts.GanttPointOptions);
 
         return ganttPoint;
-    },
-    isValid: function (this: Highcharts.GanttPoint): boolean {
+    }
+
+    public isValid(): boolean {
         return (
             (
                 typeof this.start === 'number' ||
@@ -457,7 +455,7 @@ extend(GanttPoint.prototype, {
 
     /* eslint-enable valid-jsdoc */
 
-});
+}
 
 /* *
  *
