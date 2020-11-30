@@ -16,30 +16,30 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type LinePoint from './Line/LinePoint';
-import type LinePointOptions from './Line/LinePointOptions';
-import type LineSeriesOptions from './Line/LineSeriesOptions';
+import type ColorType from '../../Core/Color/ColorType';
+import type LinePoint from '../Line/LinePoint';
+import type LinePointOptions from '../Line/LinePointOptions';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
 import type {
     PointOptions,
     PointShortOptions
-} from '../Core/Series/PointOptions';
-import type RadialAxis from '../Core/Axis/RadialAxis';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+} from '../../Core/Series/PointOptions';
+import type RadialAxis from '../../Core/Axis/RadialAxis';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
 } = BaseSeries;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const { TrackerMixin, noop } = H;
-import palette from '../Core/Color/Palette.js';
-import U from '../Core/Utilities.js';
+import palette from '../../Core/Color/Palette.js';
+import U from '../../Core/Utilities.js';
 const {
     clamp,
     isNumber,
@@ -56,13 +56,13 @@ const {
  *
  * */
 
-declare module '../Core/Chart/ChartLike'{
+declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         angular?: boolean;
     }
 }
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         fixedBox?: boolean;
         forceDL?: boolean;
@@ -712,7 +712,7 @@ GaugeSeries.prototype.pointClass = GaugePoint;
 /**
  * @private
  */
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         gauge: typeof Highcharts.GaugeSeries;
     }

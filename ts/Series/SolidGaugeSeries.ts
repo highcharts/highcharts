@@ -92,7 +92,7 @@ declare module '../Core/Series/SeriesType' {
 }
 
 import '../Core/Options.js';
-import '../Series/GaugeSeries.js';
+import './Gauge/GaugeSeries.js';
 
 /**
  * Additional options, depending on the actual symbol drawn.
