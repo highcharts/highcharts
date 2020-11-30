@@ -19,21 +19,19 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type ColorString from '../../Core/Color/ColorString';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type {
+    OrganizationDataLabelFormatterContext,
+    OrganizationDataLabelOptions
+} from './OrganizationDataLabelOptions';
+import type OrganizationPointOptions from './OrganizationPointOptions';
+import type {
+    OrganizationSeriesLevelOptions,
+    OrganizationSeriesOptions
+} from './OrganizationSeriesOptions';
 import type Point from '../../Core/Series/Point';
-import type {
-    SankeyDataLabelFormatterContext,
-    SankeyDataLabelOptions
-} from '../Sankey/SankeyDataLabelOptions';
-import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
-import type {
-    SankeySeriesLevelOptions,
-    SankeySeriesNodeOptions,
-    SankeySeriesOptions
-} from '../Sankey/SankeySeriesOptions';
+import type { SankeyDataLabelFormatterContext } from '../Sankey/SankeyDataLabelOptions';
 import type SankeySeriesType from '../Sankey/SankeySeries';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -41,10 +39,10 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        column: ColumnSeries,
         sankey: SankeySeries
     }
 } = BaseSeries;
+import OrganizationPoint from './OrganizationPoint.js';
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -54,108 +52,6 @@ const {
     pick,
     wrap
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class OrganizationPoint extends SankeySeries.prototype.pointClass implements NodesPoint {
-            public fromNode: OrganizationPoint;
-            public image?: OrganizationSeriesNodeOptions['image'];
-            public linksFrom: Array<OrganizationPoint>;
-            public linksTo: Array<OrganizationPoint>;
-            public nodeHeight?: number;
-            public options: OrganizationPointOptions;
-            public toNode: OrganizationPoint;
-            public series: OrganizationSeries;
-        }
-        class OrganizationSeries extends SankeySeries implements NodesSeries {
-            public data: Array<OrganizationPoint>;
-            public options: OrganizationSeriesOptions;
-            public pointClass: typeof OrganizationPoint;
-            public points: Array<OrganizationPoint>;
-            public alignDataLabel(
-                point: OrganizationPoint,
-                dataLabel: SVGElement,
-                options: OrganizationDataLabelsOptionsObject
-            ): void;
-            public createNode(id: string): OrganizationPoint;
-            public createNodeColumn(): OrganizationColumnArray;
-            public curvedPath(
-                path: SVGPath,
-                r: number
-            ): SVGPath;
-            public pointAttribs(
-                point: OrganizationPoint,
-                state?: StatesOptionsKey
-            ): SVGAttributes;
-            public translateLink(point: OrganizationPoint): void;
-            public translateNode(
-                node: OrganizationPoint,
-                column: OrganizationColumnArray
-            ): void;
-        }
-        interface OrganizationColumnArray<T = Highcharts.OrganizationPoint> extends SankeySeriesType.ColumnArray<T>
-        {
-            offset(node: T, factor: number): (Dictionary<number>|undefined);
-        }
-        interface OrganizationDataLabelsOptionsObject extends SankeyDataLabelOptions
-        {
-            nodeFormatter?: OrganizationDataLabelsFormatterCallbackFunction;
-        }
-        interface OrganizationDataLabelsFormatterCallbackFunction {
-            (
-                this: (
-                    OrganizationDataLabelsFormatterContextObject|
-                    SankeyDataLabelFormatterContext|
-                    Point.PointLabelObject
-                )
-            ): (string|undefined);
-        }
-        interface OrganizationDataLabelsFormatterContextObject extends SankeyDataLabelFormatterContext
-        {
-            point: OrganizationPoint;
-            series: OrganizationSeries;
-        }
-        interface OrganizationPointOptions extends SankeyPointOptions {
-            dataLabels?: (
-                OrganizationDataLabelsOptionsObject|
-                Array<OrganizationDataLabelsOptionsObject>
-            );
-            offset?: (number|string);
-        }
-        interface OrganizationSeriesLevelsOptions extends SankeySeriesLevelOptions
-        {
-            states: SeriesStatesOptions<OrganizationSeries>;
-        }
-        interface OrganizationSeriesNodeOptions extends SankeySeriesNodeOptions
-        {
-            description?: string;
-            image?: string;
-            layout?: OrganizationNodesLayoutValue;
-            title?: string;
-        }
-        interface OrganizationSeriesOptions extends SankeySeriesOptions {
-            dataLabels?: OrganizationDataLabelsOptionsObject;
-            hangingIndent?: number;
-            levels?: Array<OrganizationSeriesLevelsOptions>;
-            linkColor?: ColorString;
-            linkLineWidth?: number;
-            linkRadius?: number;
-            nodes?: Array<OrganizationSeriesNodeOptions>;
-            states?: SeriesStatesOptions<OrganizationSeries>;
-        }
-        type OrganizationNodesLayoutValue = ('normal'|'hanging');
-    }
-}
 
 /* *
  *
@@ -199,7 +95,7 @@ class OrganizationSeries extends SankeySeries {
      * @requires     modules/organization
      * @optionparent plotOptions.organization
      */
-    public static defaultOptions: Highcharts.OrganizationSeriesOptions = merge(SankeySeries.defaultOptions, {
+    public static defaultOptions: OrganizationSeriesOptions = merge(SankeySeries.defaultOptions, {
         /**
          * The border color of the node cards.
          *
@@ -251,7 +147,7 @@ class OrganizationSeries extends SankeySeries {
             nodeFormatter: function (
                 this: (
                     Point.PointLabelObject|
-                    Highcharts.OrganizationDataLabelsFormatterContextObject|
+                    OrganizationDataLabelFormatterContext|
                     SankeyDataLabelFormatterContext
                 )
             ): string {
@@ -386,7 +282,7 @@ class OrganizationSeries extends SankeySeries {
         tooltip: {
             nodeFormat: '{point.name}<br>{point.title}<br>{point.description}'
         }
-    } as Highcharts.OrganizationSeriesOptions);
+    } as OrganizationSeriesOptions);
 
     /* *
      *
@@ -476,11 +372,11 @@ class OrganizationSeries extends SankeySeries {
      *
      * */
 
-    public data: Array<Highcharts.OrganizationPoint> = void 0 as any;
+    public data: Array<OrganizationPoint> = void 0 as any;
 
-    public options: Highcharts.OrganizationSeriesOptions = void 0 as any;
+    public options: OrganizationSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.OrganizationPoint> = void 0 as any;
+    public points: Array<OrganizationPoint> = void 0 as any;
 
     /* *
      *
@@ -491,9 +387,9 @@ class OrganizationSeries extends SankeySeries {
     /* eslint-disable valid-jsdoc */
 
     public alignDataLabel(
-        point: Highcharts.OrganizationPoint,
+        point: OrganizationPoint,
         dataLabel: SVGElement,
-        options: Highcharts.OrganizationDataLabelsOptionsObject
+        options: OrganizationDataLabelOptions
     ): void {
         // Align the data label to the point graphic
         if (options.useHTML) {
@@ -547,8 +443,8 @@ class OrganizationSeries extends SankeySeries {
         super.alignDataLabel.apply(this, arguments);
     }
 
-    public createNode(id: string): Highcharts.OrganizationPoint {
-        var node: Highcharts.OrganizationPoint = super.createNode.call(this, id) as any;
+    public createNode(id: string): OrganizationPoint {
+        var node: OrganizationPoint = super.createNode.call(this, id) as any;
 
         // All nodes in an org chart are equal width
         node.getSum = function (): number {
@@ -559,16 +455,15 @@ class OrganizationSeries extends SankeySeries {
 
     }
 
-    public createNodeColumn(): Highcharts.OrganizationColumnArray {
-        var column: Highcharts.OrganizationColumnArray =
-            SankeySeries.prototype.createNodeColumn.call(this) as any;
+    public createNodeColumn(): OrganizationSeries.ColumnArray {
+        var column: OrganizationSeries.ColumnArray = super.createNodeColumn.call(this) as any;
 
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent
         wrap(column, 'offset', function (
-            this: Highcharts.OrganizationPoint,
+            this: OrganizationPoint,
             proceed: SankeySeriesType.ColumnArray['offset'],
-            node: Highcharts.OrganizationPoint,
+            node: OrganizationPoint,
             factor: number
         ): (Highcharts.Dictionary<number>|undefined) {
             var offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
@@ -587,21 +482,21 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public pointAttribs(
-        point: Highcharts.OrganizationPoint,
+        point: OrganizationPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         var series = this,
             attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
             level = point.isNode ? point.level : point.fromNode.level,
-            levelOptions: Highcharts.OrganizationSeriesLevelsOptions =
+            levelOptions: OrganizationSeriesLevelOptions =
                 (series.mapOptionsToLevel as any)[level || 0] || {},
             options = point.options,
-            stateOptions: Highcharts.OrganizationSeriesOptions = (
+            stateOptions: OrganizationSeriesOptions = (
                 levelOptions.states && (levelOptions.states as any)[state as any]
             ) || {},
             values: (
-                Highcharts.OrganizationPointOptions &
-                Highcharts.OrganizationSeriesOptions
+                OrganizationPointOptions &
+                OrganizationSeriesOptions
             ) = ['borderRadius', 'linkColor', 'linkLineWidth']
                 .reduce(function (
                     obj: Highcharts.Dictionary<unknown>,
@@ -628,7 +523,7 @@ class OrganizationSeries extends SankeySeries {
         return attribs;
     }
 
-    public translateLink(point: Highcharts.OrganizationPoint): void {
+    public translateLink(point: OrganizationPoint): void {
         var fromNode = point.fromNode,
             toNode = point.toNode,
             crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
@@ -715,8 +610,8 @@ class OrganizationSeries extends SankeySeries {
     }
 
     public translateNode(
-        node: Highcharts.OrganizationPoint,
-        column: Highcharts.OrganizationColumnArray
+        node: OrganizationPoint,
+        column: OrganizationSeries.ColumnArray
     ): void {
         SankeySeries.prototype.translateNode.call(this, node, column);
 
@@ -743,11 +638,23 @@ class OrganizationSeries extends SankeySeries {
  * */
 
 interface OrganizationSeries {
-    pointClass: typeof Highcharts.OrganizationPoint;
+    pointClass: typeof OrganizationPoint;
 }
 extend(OrganizationSeries.prototype, {
-
+    pointClass: OrganizationPoint
 });
+
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
+namespace OrganizationSeries {
+    export interface ColumnArray<T = OrganizationPoint> extends SankeySeriesType.ColumnArray<T> {
+        offset(node: T, factor: number): (Record<string, number>|undefined);
+    }
+}
 
 /* *
  *
@@ -757,7 +664,7 @@ extend(OrganizationSeries.prototype, {
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        organization: typeof Highcharts.OrganizationSeries;
+        organization: typeof OrganizationSeries;
     }
 }
 BaseSeries.registerSeriesType('organization', OrganizationSeries);
