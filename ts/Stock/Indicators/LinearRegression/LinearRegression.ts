@@ -17,9 +17,6 @@ import type {
     LinearRegressionParamsOptions,
     RegressionLineParametersObject
 } from './LinearRegressionOptions';
-import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';
-import type LinearRegressionInterceptPoint from './LinearRegressionInterceptPoint';
-import type LinearRegressionSlopesPoint from './LinearRegressionSlopesPoint';
 import type LinearRegressionPoint from './LinearRegressionPoint';
 import BaseSeries from '../../../Core/Series/Series.js';
 const {
@@ -33,6 +30,12 @@ const {
     extend,
     merge
 } = U;
+
+/* *
+ *
+ * Class
+ *
+ * */
 
 /**
  * Linear regression series type.
@@ -62,32 +65,33 @@ class LinearRegressionIndicator extends SMAIndicator {
         SMAIndicator.defaultOptions, {
             params: {
                 /**
-                 * Unit (in milliseconds) for the x axis distances used to compute
-                 * the regression line paramters (slope & intercept) for every
-                 * range. In Highstock the x axis values are always represented in
-                 * milliseconds which may cause that distances between points are
-                 * "big" integer numbers.
+                 * Unit (in milliseconds) for the x axis distances used to
+                 * compute the regression line paramters (slope & intercept) for
+                 * every range. In Highstock the x axis values are always
+                 * represented in milliseconds which may cause that distances
+                 * between points are "big" integer numbers.
                  *
-                 * Highstock's linear regression algorithm (least squares method)
-                 * will utilize these "big" integers for finding the slope and the
-                 * intercept of the regression line for each period. In consequence,
-                 * this value may be a very "small" decimal number that's hard to
-                 * interpret by a human.
+                 * Highstock's linear regression algorithm (least squares
+                 * method) will utilize these "big" integers for finding the
+                 * slope and the intercept of the regression line for each
+                 * period. In consequence, this value may be a very "small"
+                 * decimal number that's hard to interpret by a human.
                  *
                  * For instance: `xAxisUnit` equealed to `86400000` ms (1 day)
-                 * forces the algorithm to treat `86400000` as `1` while computing
-                 * the slope and the intercept. This may enchance the legiblitity of
-                 * the indicator's values.
+                 * forces the algorithm to treat `86400000` as `1` while
+                 * computing the slope and the intercept. This may enchance the
+                 * legiblitity of the indicator's values.
                  *
-                 * Default value is the closest distance between two data points.
+                 * Default value is the closest distance between two data
+                 * points.
                  *
                  * @sample {highstock} stock/plotoptions/linear-regression-xaxisunit
                  *         xAxisUnit set to 1 minute
                  *
                  * @example
-                 * // In Liniear Regression Slope Indicator series `xAxisUnit` is
-                 * // `86400000` (1 day) and period is `3`. There're 3 points in the
-                 * // base series:
+                 * // In Liniear Regression Slope Indicator series `xAxisUnit`is
+                 * // `86400000` (1 day) and period is `3`. There're 3 points in
+                 * // the base series:
                  *
                  * data: [
                  *   [Date.UTC(2020, 0, 1), 1],
@@ -95,11 +99,11 @@ class LinearRegressionIndicator extends SMAIndicator {
                  *   [Date.UTC(2020, 0, 3), 5]
                  * ]
                  *
-                 * // This will produce one point in the indicator series that has a
-                 * // `y` value of `2` (slope of the regression line). If we change
-                 * // the `xAxisUnit` to `1` (ms) the value of the indicator's point
-                 * // will be `2.3148148148148148e-8` which is harder to interpert
-                 * // for a human.
+                 * // This will produce one point in the indicator series that
+                 * // has a `y` value of `2` (slope of the regression line). If
+                 * // we change the `xAxisUnit` to `1` (ms) the value of the
+                 * // indicator's point will be `2.3148148148148148e-8` which is
+                 * // harder to interpert for a human.
                  *
                  * @type    {number}
                  * @product highstock
@@ -116,9 +120,16 @@ class LinearRegressionIndicator extends SMAIndicator {
      *  Properties
      *
      * */
+
     public data: Array<LinearRegressionPoint> = void 0 as any;
     public options: LinearRegressionOptions = void 0 as any;
     public points: Array<LinearRegressionPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Return the slope and intercept of a straight line function.
@@ -322,233 +333,20 @@ extend(LinearRegressionIndicator.prototype, {
     nameBase: 'Linear Regression Indicator'
 });
 
-/**
- * LinearRegressionSlopeIndicator
- */
-
-/**
- * A linear regression series. If the [type](#series.linearregression.type)
- * option is not specified, it is inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.linearregression
- * @since     7.0.0
- * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
- * @apioption series.linearregression
- */
-
-/**
- * The Linear Regression Slope series type.
- *
- * @private
- * @class
- * @name Highcharts.seriesTypes.linearRegressionSlope
- *
- * @augments Highcharts.Series
- */
-class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
-    public static defaultOptions: LinearRegressionParamsOptions = LinearRegressionIndicator.defaultOptions as LinearRegressionOptions;
-    /**
-     * Linear regression slope indicator. This series requires `linkedTo`
-     * option to be set.
-     *
-     * @sample {highstock} stock/indicators/linear-regression-slope
-     *         Linear regression slope indicator
-     *
-     * @extends      plotOptions.linearregression
-     * @since        7.0.0
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
-     * @optionparent plotOptions.linearregressionslope
-     */
-    public data: Array<LinearRegressionSlopesPoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionSlopesPoint> = void 0 as any;
-
-    public getEndPointY(
-        lineParameters: RegressionLineParametersObject
-    ): number {
-        return lineParameters.slope;
-    }
-}
-/**
- * A linear regression slope series. If the
- * [type](#series.linearregressionslope.type) option is not specified, it is
- * inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.linearregressionslope
- * @since     7.0.0
- * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
- * @apioption series.linearregressionslope
- */
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-interface LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
-    pointClass: typeof LinearRegressionSlopesPoint;
-}
-
-extend(LinearRegressionSlopesIndicator.prototype, {
-    nameBase: 'Linear Regression Slope Indicator'
-});
-
-/**
- * The Linear Regression Intercept series type.
- *
- * @private
- * @class
- * @name Highcharts.seriesTypes.linearRegressionIntercept
- *
- * @augments Highcharts.Series
- */
-
-class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
-    public static defaultOptions: LinearRegressionParamsOptions = LinearRegressionIndicator.defaultOptions as LinearRegressionOptions;
-    /**
-     * Linear regression intercept indicator. This series requires `linkedTo`
-     * option to be set.
-     *
-     * @sample {highstock} stock/indicators/linear-regression-intercept
-     *         Linear intercept slope indicator
-     *
-     * @extends      plotOptions.linearregression
-     * @since        7.0.0
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
-     * @optionparent plotOptions.linearregressionintercept
-     */
-    public data: Array<LinearRegressionInterceptPoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionInterceptPoint> = void 0 as any;
-
-    public getEndPointY(
-        lineParameters: RegressionLineParametersObject
-    ): number {
-        return lineParameters.intercept;
-    }
-}
-
-/**
- * A linear regression intercept series. If the
- * [type](#series.linearregressionintercept.type) option is not specified, it is
- * inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.linearregressionintercept
- * @since     7.0.0
- * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
- * @apioption series.linearregressionintercept
- */
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-interface LinearRegressionInterceptIndicator {
-    pointClass: typeof LinearRegressionInterceptPoint;
-}
-
-extend(LinearRegressionInterceptIndicator.prototype, {
-    nameBase: 'Linear Regression Intercept Indicator'
-});
-
-/**
- * The Linear Regression Angle series type.
- *
- * @private
- * @class
- * @name Highcharts.seriesTypes.linearRegressionAngle
- *
- * @augments Highcharts.Series
- */
-class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
-    public static defaultOptions: LinearRegressionParamsOptions = merge(
-        SMAIndicator.defaultOptions, {
-            tooltip: { // add a degree symbol
-                pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
-                '{series.name}: <b>{point.y}°</b><br/>'
-            }
-        } as LinearRegressionParamsOptions);
-    /**
-     * Linear regression angle indicator. This series requires `linkedTo`
-     * option to be set.
-     *
-     * @sample {highstock} stock/indicators/linear-regression-angle
-     *         Linear intercept angle indicator
-     *
-     * @extends      plotOptions.linearregression
-     * @since        7.0.0
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
-     * @optionparent plotOptions.linearregressionangle
-     */
-    public data: Array<LinearRegressionSlopesPoint> = void 0 as any;
-    public options: LinearRegressionOptions = void 0 as any;
-    public points: Array<LinearRegressionSlopesPoint> = void 0 as any;
-
-    /**
-    * Convert a slope of a line to angle (in degrees) between
-    * the line and x axis
-    * @private
-    * @param {number} slope of the straight line function
-    * @return {number} angle in degrees
-    */
-    public slopeToAngle(
-        slope: number
-    ): number {
-        return Math.atan(slope) * (180 / Math.PI); // rad to deg
-    }
-
-    public getEndPointY(
-        this: LinearRegressionAngleIndicator,
-        lineParameters: RegressionLineParametersObject
-    ): number {
-        return this.slopeToAngle(lineParameters.slope);
-    }
-}
-
-extend(LinearRegressionAngleIndicator.prototype, {
-    nameBase: 'Linear Regression Angle Indicator'
-});
-
-interface LinearRegressionAngleIndicator extends LinearRegressionIndicator {
-    pointClass: typeof LinearRegressionAnglePoint;
-}
 
 /**
  *
- * Register
+ * Registry
  *
  */
 
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         linearRegression: typeof LinearRegressionIndicator;
-        linearRegressionAngle: typeof LinearRegressionAngleIndicator;
-        linearRegressionIntercept: typeof LinearRegressionInterceptIndicator;
-        linearRegressionSlope: typeof LinearRegressionSlopesIndicator;
     }
 }
 
 BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
-BaseSeries.registerSeriesType('linearRegressionSlope', LinearRegressionSlopesIndicator);
-BaseSeries.registerSeriesType('linearRegressionIntercept', LinearRegressionInterceptIndicator);
-BaseSeries.registerSeriesType('linearRegressionAngle', LinearRegressionAngleIndicator);
-
 
 /* *
  *
@@ -559,17 +357,17 @@ BaseSeries.registerSeriesType('linearRegressionAngle', LinearRegressionAngleIndi
 export default LinearRegressionIndicator;
 
 /**
- * A linear regression intercept series. If the
- * [type](#series.linearregressionangle.type) option is not specified, it is
+ * A linear regression series. If the
+ * [type](#series.linearregression.type) option is not specified, it is
  * inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.linearregressionangle
+ * @extends   series,plotOptions.linearregression
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/regressions
- * @apioption series.linearregressionangle
+ * @apioption series.linearregression
  */
 
 ''; // to include the above in the js output

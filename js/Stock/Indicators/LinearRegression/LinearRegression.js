@@ -25,6 +25,11 @@ import BaseSeries from '../../../Core/Series/Series.js';
 var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var isArray = U.isArray, extend = U.extend, merge = U.merge;
+/* *
+ *
+ * Class
+ *
+ * */
 /**
  * Linear regression series type.
  *
@@ -48,6 +53,11 @@ var LinearRegressionIndicator = /** @class */ (function (_super) {
         _this.points = void 0;
         return _this;
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Return the slope and intercept of a straight line function.
      * @private
@@ -227,12 +237,17 @@ var LinearRegressionIndicator = /** @class */ (function (_super) {
 extend(LinearRegressionIndicator.prototype, {
     nameBase: 'Linear Regression Indicator'
 });
+BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default LinearRegressionIndicator;
 /**
- * LinearRegressionSlopeIndicator
- */
-/**
- * A linear regression series. If the [type](#series.linearregression.type)
- * option is not specified, it is inherited from [chart.type](#chart.type).
+ * A linear regression series. If the
+ * [type](#series.linearregression.type) option is not specified, it is
+ * inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.linearregression
  * @since     7.0.0
@@ -241,166 +256,5 @@ extend(LinearRegressionIndicator.prototype, {
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/regressions
  * @apioption series.linearregression
- */
-/**
- * The Linear Regression Slope series type.
- *
- * @private
- * @class
- * @name Highcharts.seriesTypes.linearRegressionSlope
- *
- * @augments Highcharts.Series
- */
-var LinearRegressionSlopesIndicator = /** @class */ (function (_super) {
-    __extends(LinearRegressionSlopesIndicator, _super);
-    function LinearRegressionSlopesIndicator() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        /**
-         * Linear regression slope indicator. This series requires `linkedTo`
-         * option to be set.
-         *
-         * @sample {highstock} stock/indicators/linear-regression-slope
-         *         Linear regression slope indicator
-         *
-         * @extends      plotOptions.linearregression
-         * @since        7.0.0
-         * @product      highstock
-         * @requires     stock/indicators/indicators
-         * @requires     stock/indicators/regressions
-         * @optionparent plotOptions.linearregressionslope
-         */
-        _this.data = void 0;
-        _this.options = void 0;
-        _this.points = void 0;
-        return _this;
-    }
-    LinearRegressionSlopesIndicator.prototype.getEndPointY = function (lineParameters) {
-        return lineParameters.slope;
-    };
-    LinearRegressionSlopesIndicator.defaultOptions = LinearRegressionIndicator.defaultOptions;
-    return LinearRegressionSlopesIndicator;
-}(LinearRegressionIndicator));
-extend(LinearRegressionSlopesIndicator.prototype, {
-    nameBase: 'Linear Regression Slope Indicator'
-});
-/**
- * The Linear Regression Intercept series type.
- *
- * @private
- * @class
- * @name Highcharts.seriesTypes.linearRegressionIntercept
- *
- * @augments Highcharts.Series
- */
-var LinearRegressionInterceptIndicator = /** @class */ (function (_super) {
-    __extends(LinearRegressionInterceptIndicator, _super);
-    function LinearRegressionInterceptIndicator() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        /**
-         * Linear regression intercept indicator. This series requires `linkedTo`
-         * option to be set.
-         *
-         * @sample {highstock} stock/indicators/linear-regression-intercept
-         *         Linear intercept slope indicator
-         *
-         * @extends      plotOptions.linearregression
-         * @since        7.0.0
-         * @product      highstock
-         * @requires     stock/indicators/indicators
-         * @requires     stock/indicators/regressions
-         * @optionparent plotOptions.linearregressionintercept
-         */
-        _this.data = void 0;
-        _this.options = void 0;
-        _this.points = void 0;
-        return _this;
-    }
-    LinearRegressionInterceptIndicator.prototype.getEndPointY = function (lineParameters) {
-        return lineParameters.intercept;
-    };
-    LinearRegressionInterceptIndicator.defaultOptions = LinearRegressionIndicator.defaultOptions;
-    return LinearRegressionInterceptIndicator;
-}(LinearRegressionIndicator));
-extend(LinearRegressionInterceptIndicator.prototype, {
-    nameBase: 'Linear Regression Intercept Indicator'
-});
-/**
- * The Linear Regression Angle series type.
- *
- * @private
- * @class
- * @name Highcharts.seriesTypes.linearRegressionAngle
- *
- * @augments Highcharts.Series
- */
-var LinearRegressionAngleIndicator = /** @class */ (function (_super) {
-    __extends(LinearRegressionAngleIndicator, _super);
-    function LinearRegressionAngleIndicator() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        /**
-         * Linear regression angle indicator. This series requires `linkedTo`
-         * option to be set.
-         *
-         * @sample {highstock} stock/indicators/linear-regression-angle
-         *         Linear intercept angle indicator
-         *
-         * @extends      plotOptions.linearregression
-         * @since        7.0.0
-         * @product      highstock
-         * @requires     stock/indicators/indicators
-         * @requires     stock/indicators/regressions
-         * @optionparent plotOptions.linearregressionangle
-         */
-        _this.data = void 0;
-        _this.options = void 0;
-        _this.points = void 0;
-        return _this;
-    }
-    /**
-    * Convert a slope of a line to angle (in degrees) between
-    * the line and x axis
-    * @private
-    * @param {number} slope of the straight line function
-    * @return {number} angle in degrees
-    */
-    LinearRegressionAngleIndicator.prototype.slopeToAngle = function (slope) {
-        return Math.atan(slope) * (180 / Math.PI); // rad to deg
-    };
-    LinearRegressionAngleIndicator.prototype.getEndPointY = function (lineParameters) {
-        return this.slopeToAngle(lineParameters.slope);
-    };
-    LinearRegressionAngleIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
-                '{series.name}: <b>{point.y}°</b><br/>'
-        }
-    });
-    return LinearRegressionAngleIndicator;
-}(LinearRegressionIndicator));
-extend(LinearRegressionAngleIndicator.prototype, {
-    nameBase: 'Linear Regression Angle Indicator'
-});
-BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
-BaseSeries.registerSeriesType('linearRegressionSlope', LinearRegressionSlopesIndicator);
-BaseSeries.registerSeriesType('linearRegressionIntercept', LinearRegressionInterceptIndicator);
-BaseSeries.registerSeriesType('linearRegressionAngle', LinearRegressionAngleIndicator);
-/* *
- *
- *  Default Export
- *
- * */
-export default LinearRegressionIndicator;
-/**
- * A linear regression intercept series. If the
- * [type](#series.linearregressionangle.type) option is not specified, it is
- * inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.linearregressionangle
- * @since     7.0.0
- * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
- * @apioption series.linearregressionangle
  */
 ''; // to include the above in the js output
