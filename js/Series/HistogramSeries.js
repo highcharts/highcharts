@@ -9,10 +9,24 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
+var ColumnSeries = BaseSeries.seriesTypes.column;
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach;
 import './Column/ColumnSeries.js';
 /* ************************************************************************** *
  *  HISTOGRAM
@@ -47,6 +61,11 @@ function fitToBinLeftClosed(bins) {
         return bins[--i];
     };
 }
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * Histogram class
  * @private
@@ -54,55 +73,72 @@ function fitToBinLeftClosed(bins) {
  * @name Highcharts.seriesTypes.histogram
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('histogram', 'column', 
-/**
- * A histogram is a column series which represents the distribution of the
- * data set in the base series. Histogram splits data into bins and shows
- * their frequencies.
- *
- * @sample {highcharts} highcharts/demo/histogram/
- *         Histogram
- *
- * @extends      plotOptions.column
- * @excluding    boostThreshold, dragDrop, pointInterval, pointIntervalUnit,
- *               stacking, boostBlending
- * @product      highcharts
- * @since        6.0.0
- * @requires     modules/histogram
- * @optionparent plotOptions.histogram
- */
-{
-    /**
-     * A preferable number of bins. It is a suggestion, so a histogram may
-     * have a different number of bins. By default it is set to the square
-     * root of the base series' data length. Available options are:
-     * `square-root`, `sturges`, `rice`. You can also define a function
-     * which takes a `baseSeries` as a parameter and should return a
-     * positive integer.
-     *
-     * @type {"square-root"|"sturges"|"rice"|number|function}
-     */
-    binsNumber: 'square-root',
-    /**
-     * Width of each bin. By default the bin's width is calculated as
-     * `(max - min) / number of bins`. This option takes precedence over
-     * [binsNumber](#plotOptions.histogram.binsNumber).
-     *
-     * @type {number}
-     */
-    binWidth: void 0,
-    pointPadding: 0,
-    groupPadding: 0,
-    grouping: false,
-    pointPlacement: 'between',
-    tooltip: {
-        headerFormat: '',
-        pointFormat: ('<span style="font-size: 10px">{point.x} - {point.x2}' +
-            '</span><br/>' +
-            '<span style="color:{point.color}">\u25CF</span>' +
-            ' {series.name} <b>{point.y}</b><br/>')
+var HistogramSeries = /** @class */ (function (_super) {
+    __extends(HistogramSeries, _super);
+    function HistogramSeries() {
+        /* *
+         *
+         *  Static Properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        _this.userOptions = void 0;
+        return _this;
     }
-}, merge(DerivedSeriesMixin, {
+    /**
+     * A histogram is a column series which represents the distribution of the
+     * data set in the base series. Histogram splits data into bins and shows
+     * their frequencies.
+     *
+     * @sample {highcharts} highcharts/demo/histogram/
+     *         Histogram
+     *
+     * @extends      plotOptions.column
+     * @excluding    boostThreshold, dragDrop, pointInterval, pointIntervalUnit,
+     *               stacking, boostBlending
+     * @product      highcharts
+     * @since        6.0.0
+     * @requires     modules/histogram
+     * @optionparent plotOptions.histogram
+     */
+    HistogramSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+        /**
+         * A preferable number of bins. It is a suggestion, so a histogram may
+         * have a different number of bins. By default it is set to the square
+         * root of the base series' data length. Available options are:
+         * `square-root`, `sturges`, `rice`. You can also define a function
+         * which takes a `baseSeries` as a parameter and should return a
+         * positive integer.
+         *
+         * @type {"square-root"|"sturges"|"rice"|number|function}
+         */
+        binsNumber: 'square-root',
+        /**
+         * Width of each bin. By default the bin's width is calculated as
+         * `(max - min) / number of bins`. This option takes precedence over
+         * [binsNumber](#plotOptions.histogram.binsNumber).
+         *
+         * @type {number}
+         */
+        binWidth: void 0,
+        pointPadding: 0,
+        groupPadding: 0,
+        grouping: false,
+        pointPlacement: 'between',
+        tooltip: {
+            headerFormat: '',
+            pointFormat: ('<span style="font-size: 10px">{point.x} - {point.x2}' +
+                '</span><br/>' +
+                '<span style="color:{point.color}">\u25CF</span>' +
+                ' {series.name} <b>{point.y}</b><br/>')
+        }
+    });
+    return HistogramSeries;
+}(ColumnSeries));
+extend(HistogramSeries.prototype, merge(DerivedSeriesMixin, {
     setDerivedData: function () {
         var yData = this.baseSeries.yData;
         if (!yData.length) {
@@ -175,6 +211,18 @@ BaseSeries.seriesType('histogram', 'column',
                 binsNumberFormulas['square-root'](this.baseSeries)));
     }
 }));
+BaseSeries.registerSeriesType('histogram', HistogramSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default HistogramSeries;
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * A `histogram` series. If the [type](#series.histogram.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).

@@ -19,17 +19,22 @@
 
 import type ColumnPoint from './Column/ColumnPoint';
 import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeries from './Column/ColumnSeries';
 import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
 import type LineSeries from './Line/LineSeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = BaseSeries;
 import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
 import U from '../Core/Utilities.js';
 const {
     arrayMax,
     arrayMin,
     correctFloat,
+    extend,
     isNumber,
     merge,
     objectEach
@@ -53,28 +58,6 @@ declare global {
             public options: HistogramPointOptions;
             public series: HistogramSeries;
         }
-        class HistogramSeries extends ColumnSeries implements DerivedSeries {
-            public addBaseSeriesEvents: DerivedSeriesMixin['addBaseSeriesEvents'];
-            public addEvents: DerivedSeriesMixin['addEvents'];
-            public binWidth?: number;
-            public data: Array<HistogramPoint>;
-            public eventRemovers: DerivedSeries['eventRemovers'];
-            public hasDerivedData: DerivedSeries['hasDerivedData'];
-            public init: DerivedSeriesMixin['init'];
-            public initialised: DerivedSeries['initialised'];
-            public options: HistogramSeriesOptions;
-            public pointClass: typeof HistogramPoint;
-            public points: Array<HistogramPoint>;
-            public setBaseSeries: DerivedSeriesMixin['setBaseSeries'];
-            public setDerivedData: DerivedSeriesMixin['setDerivedData'];
-            public userOptions: HistogramSeriesOptions;
-            public binsNumber(): number;
-            public derivedData(
-                baseData: Array<number>,
-                binsNumber: number,
-                binWidth: number
-            ): Array<HistogramPointOptions>;
-        }
         interface HistogramPointOptions extends ColumnPointOptions {
             x2?: number;
         }
@@ -87,14 +70,6 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        histogram: typeof Highcharts.HistogramSeries;
-    }
-}
 
 /* ************************************************************************** *
  *  HISTOGRAM
@@ -139,6 +114,12 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
     };
 }
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * Histogram class
  * @private
@@ -146,9 +127,14 @@ function fitToBinLeftClosed(bins: Array<number>): Function {
  * @name Highcharts.seriesTypes.histogram
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
-    'histogram',
-    'column',
+class HistogramSeries extends ColumnSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * A histogram is a column series which represents the distribution of the
      * data set in the base series. Histogram splits data into bins and shows
@@ -165,7 +151,7 @@ BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
      * @requires     modules/histogram
      * @optionparent plotOptions.histogram
      */
-    {
+    public static defaultOptions: Highcharts.HistogramSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * A preferable number of bins. It is a suggestion, so a histogram may
          * have a different number of bins. By default it is set to the square
@@ -200,130 +186,197 @@ BaseSeries.seriesType<typeof Highcharts.HistogramSeries>(
             )
         }
 
-    },
-    merge(DerivedSeriesMixin, {
-        setDerivedData: function (this: Highcharts.HistogramSeries): void {
-            var yData = (this.baseSeries as any).yData;
+    } as Highcharts.HistogramSeriesOptions);
 
-            if (!yData.length) {
-                return;
-            }
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-            var data = this.derivedData(
-                yData,
-                this.binsNumber(),
-                this.options.binWidth as any
-            );
+    public binWidth?: number;
 
-            this.setData(data, false);
-        },
+    public data: Array<Highcharts.HistogramPoint> = void 0 as any;
 
-        derivedData: function (
-            this: Highcharts.HistogramSeries,
-            baseData: Array<number>,
-            binsNumber: number,
-            binWidth: number
-        ): Array<Highcharts.HistogramPointOptions> {
-            var series = this,
-                max = correctFloat(arrayMax(baseData)),
-                // Float correction needed, because first frequency value is not
-                // corrected when generating frequencies (within for loop).
-                min = correctFloat(arrayMin(baseData)),
-                frequencies: Array<number> = [],
-                bins: Highcharts.Dictionary<number> = {},
-                data: Array<Highcharts.HistogramPointOptions> = [],
-                x: number,
-                fitToBin: Function;
+    public options: Highcharts.HistogramSeriesOptions = void 0 as any;
 
-            binWidth = series.binWidth = (
-                correctFloat(
-                    isNumber(binWidth) ?
-                        (binWidth || 1) :
-                        (max - min) / binsNumber
-                )
-            );
+    public points: Array<Highcharts.HistogramPoint> = void 0 as any;
 
-            // #12077 negative pointRange causes wrong calculations,
-            // browser hanging.
-            series.options.pointRange = Math.max(binWidth, 0);
+    public userOptions: Highcharts.HistogramSeriesOptions = void 0 as any;
+}
 
-            // If binWidth is 0 then max and min are equaled,
-            // increment the x with some positive value to quit the loop
-            for (
-                x = min;
-                // This condition is needed because of the margin of error while
-                // operating on decimal numbers. Without that, additional bin
-                // was sometimes noticeable on the graph, because of too small
-                // precision of float correction.
-                x < max &&
-                    (
-                        series.userOptions.binWidth ||
-                        correctFloat(max - x) >= binWidth ||
-                        // #13069 - Every add and subtract operation should
-                        // be corrected, due to general problems with
-                        // operations on float numbers in JS.
-                        correctFloat(
-                            correctFloat(min + (frequencies.length * binWidth)) -
-                            x
-                        ) <= 0
-                    );
-                x = correctFloat(x + binWidth)
-            ) {
-                frequencies.push(x);
-                bins[x] = 0;
-            }
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-            if (bins[min] !== 0) {
-                frequencies.push(min);
-                bins[min] = 0;
-            }
+interface HistogramSeries {
+    addBaseSeriesEvents: Highcharts.DerivedSeriesMixin['addBaseSeriesEvents'];
+    addEvents: Highcharts.DerivedSeriesMixin['addEvents'];
+    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
+    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
+    init: Highcharts.DerivedSeriesMixin['init'];
+    initialised: Highcharts.DerivedSeries['initialised'];
+    pointClass: typeof Highcharts.HistogramPoint;
+    setBaseSeries: Highcharts.DerivedSeriesMixin['setBaseSeries'];
+    setDerivedData: Highcharts.DerivedSeriesMixin['setDerivedData'];
+    binsNumber(): number;
+    derivedData(
+        baseData: Array<number>,
+        binsNumber: number,
+        binWidth: number
+    ): Array<Highcharts.HistogramPointOptions>;
+}
+extend(HistogramSeries.prototype, merge(DerivedSeriesMixin, {
+    setDerivedData: function (this: HistogramSeries): void {
+        var yData = (this.baseSeries as any).yData;
 
-            fitToBin = fitToBinLeftClosed(
-                (frequencies as any).map(function (elem: string): number {
-                    return parseFloat(elem);
-                })
-            );
-
-            baseData.forEach(function (y: number): void {
-                var x = correctFloat(fitToBin(y));
-
-                bins[x]++;
-            });
-
-            objectEach(bins, function (frequency: number, x: string): void {
-                data.push({
-                    x: Number(x),
-                    y: frequency,
-                    x2: correctFloat(Number(x) + binWidth)
-                });
-            });
-
-            data.sort(function (a, b): number {
-                return (a.x as any) - (b.x as any);
-            });
-
-            data[data.length - 1].x2 = max;
-
-            return data;
-        },
-
-        binsNumber: function (this: Highcharts.HistogramSeries): number {
-            var binsNumberOption = this.options.binsNumber;
-            var binsNumber = binsNumberFormulas[binsNumberOption as any] ||
-                // #7457
-                (typeof binsNumberOption === 'function' && binsNumberOption);
-
-            return Math.ceil(
-                (binsNumber && binsNumber(this.baseSeries)) ||
-                (
-                    isNumber(binsNumberOption) ?
-                        binsNumberOption :
-                        binsNumberFormulas['square-root'](this.baseSeries)
-                )
-            );
+        if (!yData.length) {
+            return;
         }
-    })
-);
+
+        var data = this.derivedData(
+            yData,
+            this.binsNumber(),
+            this.options.binWidth as any
+        );
+
+        this.setData(data, false);
+    },
+
+    derivedData: function (
+        this: HistogramSeries,
+        baseData: Array<number>,
+        binsNumber: number,
+        binWidth: number
+    ): Array<Highcharts.HistogramPointOptions> {
+        var series = this,
+            max = correctFloat(arrayMax(baseData)),
+            // Float correction needed, because first frequency value is not
+            // corrected when generating frequencies (within for loop).
+            min = correctFloat(arrayMin(baseData)),
+            frequencies: Array<number> = [],
+            bins: Highcharts.Dictionary<number> = {},
+            data: Array<Highcharts.HistogramPointOptions> = [],
+            x: number,
+            fitToBin: Function;
+
+        binWidth = series.binWidth = (
+            correctFloat(
+                isNumber(binWidth) ?
+                    (binWidth || 1) :
+                    (max - min) / binsNumber
+            )
+        );
+
+        // #12077 negative pointRange causes wrong calculations,
+        // browser hanging.
+        series.options.pointRange = Math.max(binWidth, 0);
+
+        // If binWidth is 0 then max and min are equaled,
+        // increment the x with some positive value to quit the loop
+        for (
+            x = min;
+            // This condition is needed because of the margin of error while
+            // operating on decimal numbers. Without that, additional bin
+            // was sometimes noticeable on the graph, because of too small
+            // precision of float correction.
+            x < max &&
+                (
+                    series.userOptions.binWidth ||
+                    correctFloat(max - x) >= binWidth ||
+                    // #13069 - Every add and subtract operation should
+                    // be corrected, due to general problems with
+                    // operations on float numbers in JS.
+                    correctFloat(
+                        correctFloat(min + (frequencies.length * binWidth)) -
+                        x
+                    ) <= 0
+                );
+            x = correctFloat(x + binWidth)
+        ) {
+            frequencies.push(x);
+            bins[x] = 0;
+        }
+
+        if (bins[min] !== 0) {
+            frequencies.push(min);
+            bins[min] = 0;
+        }
+
+        fitToBin = fitToBinLeftClosed(
+            (frequencies as any).map(function (elem: string): number {
+                return parseFloat(elem);
+            })
+        );
+
+        baseData.forEach(function (y: number): void {
+            var x = correctFloat(fitToBin(y));
+
+            bins[x]++;
+        });
+
+        objectEach(bins, function (frequency: number, x: string): void {
+            data.push({
+                x: Number(x),
+                y: frequency,
+                x2: correctFloat(Number(x) + binWidth)
+            });
+        });
+
+        data.sort(function (a, b): number {
+            return (a.x as any) - (b.x as any);
+        });
+
+        data[data.length - 1].x2 = max;
+
+        return data;
+    },
+
+    binsNumber: function (this: HistogramSeries): number {
+        var binsNumberOption = this.options.binsNumber;
+        var binsNumber = binsNumberFormulas[binsNumberOption as any] ||
+            // #7457
+            (typeof binsNumberOption === 'function' && binsNumberOption);
+
+        return Math.ceil(
+            (binsNumber && binsNumber(this.baseSeries)) ||
+            (
+                isNumber(binsNumberOption) ?
+                    binsNumberOption :
+                    binsNumberFormulas['square-root'](this.baseSeries)
+            )
+        );
+    }
+}));
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        histogram: typeof HistogramSeries;
+    }
+}
+BaseSeries.registerSeriesType('histogram', HistogramSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default HistogramSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `histogram` series. If the [type](#series.histogram.type) option is not
