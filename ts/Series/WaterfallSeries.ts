@@ -444,35 +444,34 @@ class WaterfallSeries extends ColumnSeries {
      * Properties
      *
      * */
+
+    public chart: Highcharts.WaterfallChart = void 0 as any;
+
     public data: Array<WaterfallPoint> = void 0 as any;
+
     public options: Highcharts.WaterfallSeriesOptions = void 0 as any;
+
     public points: Array<WaterfallPoint> = void 0 as any;
-}
 
-interface WaterfallSeries {
-    chart: Highcharts.WaterfallChart;
-    pointClass: typeof WaterfallPoint;
-    pointValKey: string;
-    showLine: boolean;
-    stackedYNeg: Array<number>;
-    stackedYPos: Array<number>;
-    stackKey: 'waterfall';
-    xData: Array<number>;
-    yAxis: WaterfallAxis;
-    yData: Array<any>;
-    getCrispPath(): SVGPath;
+    public stackedYNeg: Array<number> = void 0 as any;
 
-}
+    public stackedYPos: Array<number> = void 0 as any;
 
-extend(WaterfallSeries.prototype, {
-    pointValKey: 'y',
+    public stackKey: 'waterfall' = void 0 as any;
 
-    // Property needed to prevent lines between the columns from disappearing
-    // when negativeColor is used.
-    showLine: true,
+    public xData: Array<number> = void 0 as any;
 
+    public yAxis: WaterfallAxis = void 0 as any;
+
+    public yData: Array<any> = void 0 as any;
+
+    /* *
+     *
+     * Functions
+     *
+     * */
     // After generating points, set y-values for all sums.
-    generatePoints: function (this: WaterfallSeries): void {
+    public generatePoints(): void {
         var point,
             len,
             i,
@@ -490,10 +489,10 @@ extend(WaterfallSeries.prototype, {
                 point.y = correctFloat(y);
             }
         }
-    },
+    }
 
     // Translate data points from raw values
-    translate: function (this: WaterfallSeries): void {
+    public translate(): void {
         var series = this,
             options = series.options,
             yAxis = series.yAxis,
@@ -771,12 +770,11 @@ extend(WaterfallSeries.prototype, {
                 (point.tooltipPos as any)[1] = tooltipY;
             }
         }
-    },
+    }
 
     // Call default processData then override yData to reflect waterfall's
     // extremes on yAxis
-    processData: function (
-        this: WaterfallSeries,
+    public processData(
         force?: boolean
     ): undefined {
         var series = this,
@@ -825,13 +823,11 @@ extend(WaterfallSeries.prototype, {
         }
 
         return;
-    },
+    }
+
 
     // Return y value or string if point is sum
-    toYData: function (
-        this: WaterfallSeries,
-        pt: Highcharts.WaterfallPoint
-    ): any {
+    public toYData(pt: Highcharts.WaterfallPoint): any {
         if (pt.isSum) {
             return 'sum';
         }
@@ -839,10 +835,9 @@ extend(WaterfallSeries.prototype, {
             return 'intermediateSum';
         }
         return pt.y;
-    },
+    }
 
-    updateParallelArrays: function (
-        this: WaterfallSeries,
+    public updateParallelArrays(
         point: Point,
         i: (number|string)
     ): void {
@@ -855,11 +850,10 @@ extend(WaterfallSeries.prototype, {
         if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
             this.yData[0] = null;
         }
-    },
+    }
 
     // Postprocess mapping between options and SVG attributes
-    pointAttribs: function (
-        this: WaterfallSeries,
+    public pointAttribs(
         point: Highcharts.WaterfallPoint,
         state: StatesOptionsKey
     ): SVGAttributes {
@@ -883,18 +877,18 @@ extend(WaterfallSeries.prototype, {
         delete attr.dashstyle;
 
         return attr;
-    },
+    }
 
     // Return an empty path initially, because we need to know the stroke-width
     // in order to set the final path.
-    getGraphPath: function (
+    public getGraphPath(
         this: WaterfallSeries
     ): SVGPath {
         return [['M', 0, 0]];
-    },
+    }
 
     // Draw columns' connector lines
-    getCrispPath: function (
+    public getCrispPath(
         this: WaterfallSeries
     ): SVGPath {
 
@@ -982,19 +976,19 @@ extend(WaterfallSeries.prototype, {
 
         }
         return path;
-    },
+    }
 
     // The graph is initially drawn with an empty definition, then updated with
     // crisp rendering.
-    drawGraph: function (this: WaterfallSeries): void {
+    public drawGraph(): void {
         LineSeries.prototype.drawGraph.call(this);
         (this.graph as any).attr({
             d: this.getCrispPath()
         });
-    },
+    }
 
     // Waterfall has stacking along the x-values too.
-    setStackedPoints: function (this: WaterfallSeries): void {
+    public setStackedPoints(): void {
         var series = this,
             options = series.options,
             waterfallStacks = series.yAxis.waterfall.stacks,
@@ -1148,13 +1142,11 @@ extend(WaterfallSeries.prototype, {
             }
             waterfallStacks.alreadyChanged.push(stackKey);
         }
-    },
+    }
 
     // Extremes for a non-stacked series are recorded in processData.
     // In case of stacking, use Series.stackedYData to calculate extremes.
-    getExtremes: function (
-        this: WaterfallSeries
-    ): DataExtremesObject {
+    public getExtremes(): DataExtremesObject {
         var stacking = this.options.stacking,
             yAxis,
             waterfallStacks,
@@ -1200,25 +1192,48 @@ extend(WaterfallSeries.prototype, {
         };
     }
 
+}
+
+interface WaterfallSeries {
+    pointClass: typeof WaterfallPoint;
+    pointValKey: string;
+    showLine: boolean;
+}
+
+extend(WaterfallSeries.prototype, {
+    pointValKey: 'y',
+    // Property needed to prevent lines between the columns from disappearing
+    // when negativeColor is used.
+    showLine: true
 });
 
 class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
-}
+    /* *
+     *
+     * Properties
+     *
+     * */
+    public below?: boolean;
 
-interface WaterfallPoint {
-    below?: boolean;
-    isIntermediateSum?: boolean;
-    isSum?: boolean;
-    minPointLengthOffset?: number;
-    options: Highcharts.WaterfallPointOptions;
-    series: WaterfallSeries;
-    y: any;
+    public isIntermediateSum?: boolean;
 
-}
+    public isSum?: boolean;
 
-extend(Highcharts.WaterfallPoint, {
-    getClassName: function (this: Highcharts.WaterfallPoint): string {
+    public minPointLengthOffset?: number;
+
+    public options: Highcharts.WaterfallPointOptions = void 0 as any;
+
+    public series: WaterfallSeries = void 0 as any;
+
+    public y: any;
+
+    /* *
+     *
+     * Functions
+     *
+     * */
+    public getClassName(): string {
         var className = Point.prototype.getClassName.call(this);
 
         if (this.isSum) {
@@ -1227,17 +1242,16 @@ extend(Highcharts.WaterfallPoint, {
             className += ' highcharts-intermediate-sum';
         }
         return className;
-    },
+    }
     // Pass the null test in ColumnSeries.translate.
-    isValid: function (this: Highcharts.WaterfallPoint): boolean {
+    public isValid(): boolean {
         return (
             isNumber(this.y) ||
             this.isSum ||
             Boolean(this.isIntermediateSum)
         );
     }
-
-});
+}
 
 /* *
  *
