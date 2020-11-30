@@ -11,7 +11,7 @@
  */
 'use strict';
 import '../../Series/XRange/XRangeSeries.js';
-import '../../Series/GanttSeries.js';
+import '../../Series/Gantt/GanttSeries.js';
 import '../../Core/Chart/GanttChart.js';
 import '../../Core/Scrollbar.js';
 import '../../Extensions/RangeSelector.js';

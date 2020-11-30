@@ -18,27 +18,25 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
-import type ColorType from '../Core/Color/ColorType';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type XRangePoint from '../Series/XRange/XRangePoint';
+import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type ColorType from '../../Core/Color/ColorType';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type XRangePoint from '../../Series/XRange/XRangePoint';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
-} from '../Series/XRange/XRangePointOptions';
-import type XRangeSeriesOptions from '../Series/XRange/XRangeSeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
+} from '../../Series/XRange/XRangePointOptions';
+import type XRangeSeriesOptions from '../../Series/XRange/XRangeSeriesOptions';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         line: LineSeries,
         xrange: XRangeSeries
     }
 } = BaseSeries;
-import H from '../Core/Globals.js';
-import '../Core/Axis/TreeGridAxis.js';
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     isNumber,
@@ -73,17 +71,6 @@ declare global {
             ): GanttPoint;
             public isValid: () => boolean;
         }
-        class GanttSeries extends XRangeSeries {
-            public data: Array<GanttPoint>;
-            public keyboardMoveVertical: boolean;
-            public options: GanttSeriesOptions;
-            public pointArrayMap: Array<string>;
-            public pointClass: typeof GanttPoint;
-            public points: Array<GanttPoint>;
-            public drawPoint(point: GanttPoint, verb: string): void;
-            public setGanttPointAliases(options: GanttPointOptions): void;
-            public translatePoint(point: GanttPoint): void;
-        }
         interface GanttAnimationOptionsObject extends Partial<AnimationOptionsObject> {
             reversed?: boolean;
         }
@@ -115,9 +102,10 @@ declare global {
     }
 }
 
-import '../Extensions/CurrentDateIndication.js';
-import '../Extensions/StaticScale.js';
-import '../Gantt/Pathfinder.js';
+import '../../Core/Axis/TreeGridAxis.js';
+import '../../Extensions/CurrentDateIndication.js';
+import '../../Extensions/StaticScale.js';
+import '../../Gantt/Pathfinder.js';
 
 /* *
  *
@@ -155,8 +143,8 @@ class GanttSeries extends XRangeSeries {
             headerFormat:
                 '<span style="font-size: 10px">{series.name}</span><br/>',
             pointFormat: null as any,
-            pointFormatter: function (): string {
-                var point: Highcharts.GanttPoint = this as any,
+            pointFormatter: function (this: GanttPoint): string {
+                var point = this,
                     series = point.series,
                     tooltip = series.chart.tooltip,
                     xAxis = series.xAxis,
@@ -257,11 +245,9 @@ class GanttSeries extends XRangeSeries {
      *
      * @param {"animate"|"attr"} verb
      *        'animate' (animates changes) or 'attr' (sets options)
-     *
-     * @return {void}
      */
     public drawPoint(
-        point: Highcharts.GanttPoint,
+        point: GanttPoint,
         verb: string
     ): void {
         var series = this,
@@ -433,8 +419,8 @@ class GanttPoint extends XRangeSeries.prototype.pointClass {
         var point = this,
             ganttPoint: GanttPoint;
 
-        ganttPoint = XRangeSeries.prototype.pointClass.prototype.applyOptions.call(point, options, x) as any;
-        H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint as Highcharts.GanttPointOptions);
+        ganttPoint = super.applyOptions.call(point, options, x) as any;
+        GanttSeries.prototype.setGanttPointAliases(ganttPoint as Highcharts.GanttPointOptions);
 
         return ganttPoint;
     }
@@ -463,9 +449,9 @@ class GanttPoint extends XRangeSeries.prototype.pointClass {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        gantt: typeof Highcharts.GanttSeries;
+        gantt: typeof GanttSeries;
     }
 }
 GanttSeries.prototype.pointClass = GanttPoint;

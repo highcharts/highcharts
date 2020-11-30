@@ -13,6 +13,7 @@
 
 import type AxisTypes from './Types';
 import type Chart from '../Chart/Chart';
+import type GanttSeries from '../../Series/Gantt/GanttSeries';
 import type {
     PointOptions,
     PointShortOptions
@@ -88,7 +89,7 @@ interface TreeGridAxis extends Axis {
     max: number;
     min: number;
     options: TreeGridAxis.Options;
-    series: Array<Highcharts.GanttSeries>;
+    series: Array<GanttSeries>;
     treeGrid: TreeGridAxis.Additions;
 }
 
@@ -431,9 +432,7 @@ namespace TreeGridAxis {
                 // Also check if mapOfPosToGridNode exists. #10887
                 isDirty = (
                     !axis.treeGrid.mapOfPosToGridNode ||
-                    axis.series.some(function (
-                        series: Highcharts.GanttSeries
-                    ): (boolean|undefined) {
+                    axis.series.some(function (series): (boolean|undefined) {
                         return !series.hasRendered ||
                             series.isDirtyData ||
                             series.isDirty;
@@ -442,10 +441,7 @@ namespace TreeGridAxis {
 
                 if (isDirty) {
                     // Concatenate data from all series assigned to this axis.
-                    data = axis.series.reduce(function (
-                        arr: Array<PointOptions>,
-                        s: Highcharts.GanttSeries
-                    ): Array<PointOptions> {
+                    data = axis.series.reduce(function (arr, s): Array<PointOptions> {
                         if (s.visible) {
                             // Push all data to array
                             (s.options.data || []).forEach(function (data): void {
@@ -470,7 +466,7 @@ namespace TreeGridAxis {
                             }
                         }
                         return arr;
-                    }, []);
+                    }, [] as Array<PointOptions>);
 
                     // If max is higher than set data - add a
                     // dummy data to render categories #10779

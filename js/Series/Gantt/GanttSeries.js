@@ -23,15 +23,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, LineSeries = _a.line, XRangeSeries = _a.xrange;
-import H from '../Core/Globals.js';
-import '../Core/Axis/TreeGridAxis.js';
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
-import '../Extensions/CurrentDateIndication.js';
-import '../Extensions/StaticScale.js';
-import '../Gantt/Pathfinder.js';
+import '../../Core/Axis/TreeGridAxis.js';
+import '../../Extensions/CurrentDateIndication.js';
+import '../../Extensions/StaticScale.js';
+import '../../Gantt/Pathfinder.js';
 /* *
  *
  *  Class
@@ -81,8 +80,6 @@ var GanttSeries = /** @class */ (function (_super) {
      *
      * @param {"animate"|"attr"} verb
      *        'animate' (animates changes) or 'attr' (sets options)
-     *
-     * @return {void}
      */
     GanttSeries.prototype.drawPoint = function (point, verb) {
         var series = this, seriesOpts = series.options, renderer = series.chart.renderer, shapeArgs = point.shapeArgs, plotY = point.plotY, graphic = point.graphic, state = point.selected && 'select', cutOff = seriesOpts.stacking && !seriesOpts.borderRadius, diamondShape;
@@ -260,8 +257,8 @@ var GanttPoint = /** @class */ (function (_super) {
      */
     GanttPoint.prototype.applyOptions = function (options, x) {
         var point = this, ganttPoint;
-        ganttPoint = XRangeSeries.prototype.pointClass.prototype.applyOptions.call(point, options, x);
-        H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint);
+        ganttPoint = _super.prototype.applyOptions.call(point, options, x);
+        GanttSeries.prototype.setGanttPointAliases(ganttPoint);
         return ganttPoint;
     };
     GanttPoint.prototype.isValid = function () {
