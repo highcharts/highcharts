@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/OrganizationSeries.js';
+import '../../Series/Organization/OrganizationSeries.js';
