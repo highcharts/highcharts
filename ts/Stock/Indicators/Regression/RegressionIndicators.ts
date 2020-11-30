@@ -13,9 +13,14 @@
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from '../SMA/SMAOptions';
+    LinearRegressionOptions,
+    LinearRegressionParamsOptions,
+    RegressionLineParametersObject
+} from './LinearRegressionOptions';
+import type LinearRegressionAnglePoint from './LinearRegressionAnglePoint';
+import type LinearRegressionInterceptPoint from './LinearRegressionInterceptPoint';
+import type LinearRegressionSlopesPoint from './LinearRegressionSlopesPoint';
+import type LinearRegressionPoint from './LinearRegressionPoint';
 import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -28,44 +33,6 @@ const {
     extend,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface LinearRegressionIndicatorParamsOptions
-            extends SMAParamsOptions {
-            xAxisUnit?: number;
-        }
-
-        interface LinearRegressionIndicatorOptions extends SMAOptions {
-            params?: LinearRegressionIndicatorParamsOptions;
-            tooltip?: TooltipOptions;
-        }
-
-        interface LinearRegressionSlopesIndicatorOptions
-            extends LinearRegressionIndicatorOptions {
-            // for inheritance
-        }
-
-        interface LinearRegressionInterceptIndicatorOptions
-            extends LinearRegressionIndicatorOptions {
-            // for inheritance
-        }
-
-        interface LinearRegressionAngleIndicatorOptions
-            extends LinearRegressionIndicatorOptions {
-            tooltip?: TooltipOptions;
-        }
-
-        interface RegressionLineParametersObject {
-            slope: number;
-            intercept: number;
-        }
-    }
-}
 
 /**
  * Linear regression series type.
@@ -91,7 +58,7 @@ class LinearRegressionIndicator extends SMAIndicator {
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregression
      */
-    public static defaultOptions: Highcharts.LinearRegressionIndicatorParamsOptions = merge(
+    public static defaultOptions: LinearRegressionParamsOptions = merge(
         SMAIndicator.defaultOptions, {
             params: {
                 /**
@@ -142,16 +109,16 @@ class LinearRegressionIndicator extends SMAIndicator {
             tooltip: {
                 valueDecimals: 4
             }
-        } as Highcharts.LinearRegressionIndicatorParamsOptions);
+        } as LinearRegressionParamsOptions);
 
     /* *
      *
      *  Properties
      *
      * */
-    public data: Array<LinearRegressionIndicatorPoint> = void 0 as any;
-    public options: Highcharts.LinearRegressionIndicatorOptions = void 0 as any;
-    public points: Array<LinearRegressionIndicatorPoint> = void 0 as any;
+    public data: Array<LinearRegressionPoint> = void 0 as any;
+    public options: LinearRegressionOptions = void 0 as any;
+    public points: Array<LinearRegressionPoint> = void 0 as any;
 
     /**
      * Return the slope and intercept of a straight line function.
@@ -167,7 +134,7 @@ class LinearRegressionIndicator extends SMAIndicator {
         this: LinearRegressionIndicator,
         xData: Array<number>,
         yData: Array<number>
-    ): Highcharts.RegressionLineParametersObject {
+    ): RegressionLineParametersObject {
         // least squares method
         var yIndex: number = (this.options.params as any).index,
             getSingleYValue = function (
@@ -223,7 +190,7 @@ class LinearRegressionIndicator extends SMAIndicator {
      * @return {number} - y value of the point that lies on the line
      */
     public getEndPointY(
-        lineParameters: Highcharts.RegressionLineParametersObject,
+        lineParameters: RegressionLineParametersObject,
         endPointX: number
     ): number {
         return lineParameters.slope * endPointX + lineParameters.intercept;
@@ -282,12 +249,12 @@ class LinearRegressionIndicator extends SMAIndicator {
         this: LinearRegressionIndicator,
         baseSeries: TLinkedSeries,
         regressionSeriesParams:
-        Highcharts.LinearRegressionIndicatorParamsOptions
+        LinearRegressionParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
         var xData: Array<number> = (baseSeries.xData as any),
             yData: Array<number> = (baseSeries.yData as any),
             period: number = (regressionSeriesParams.period as any),
-            lineParameters: Highcharts.RegressionLineParametersObject,
+            lineParameters: RegressionLineParametersObject,
             i: number,
             periodStart: number,
             periodEnd: number,
@@ -342,17 +309,13 @@ class LinearRegressionIndicator extends SMAIndicator {
     }
 }
 
-class LinearRegressionIndicatorPoint extends SMAIndicator.prototype.pointClass {
-    public series: LinearRegressionIndicator = void 0 as any;
-}
-
 /* *
  *
  *  Prototype Properties
  *
  * */
 interface LinearRegressionIndicator {
-    pointClass: typeof LinearRegressionIndicatorPoint;
+    pointClass: typeof LinearRegressionPoint;
 }
 
 extend(LinearRegressionIndicator.prototype, {
@@ -386,7 +349,7 @@ extend(LinearRegressionIndicator.prototype, {
  * @augments Highcharts.Series
  */
 class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
-    public static defaultOptions: Highcharts.LinearRegressionIndicatorParamsOptions = LinearRegressionIndicator.defaultOptions as Highcharts.LinearRegressionIndicatorOptions;
+    public static defaultOptions: LinearRegressionParamsOptions = LinearRegressionIndicator.defaultOptions as LinearRegressionOptions;
     /**
      * Linear regression slope indicator. This series requires `linkedTo`
      * option to be set.
@@ -401,12 +364,12 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionslope
      */
-    public data: Array<LinearRegressionSlopesIndicatorPoint> = void 0 as any;
-    public options: Highcharts.LinearRegressionIndicatorOptions = void 0 as any;
-    public points: Array<LinearRegressionSlopesIndicatorPoint> = void 0 as any;
+    public data: Array<LinearRegressionSlopesPoint> = void 0 as any;
+    public options: LinearRegressionOptions = void 0 as any;
+    public points: Array<LinearRegressionSlopesPoint> = void 0 as any;
 
     public getEndPointY(
-        lineParameters: Highcharts.RegressionLineParametersObject
+        lineParameters: RegressionLineParametersObject
     ): number {
         return lineParameters.slope;
     }
@@ -425,17 +388,13 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
  * @apioption series.linearregressionslope
  */
 
-class LinearRegressionSlopesIndicatorPoint extends LinearRegressionIndicatorPoint {
-    public series: LinearRegressionSlopesIndicator = void 0 as any;
-}
-
 /* *
  *
  *  Prototype Properties
  *
  * */
 interface LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
-    pointClass: typeof LinearRegressionSlopesIndicatorPoint;
+    pointClass: typeof LinearRegressionSlopesPoint;
 }
 
 extend(LinearRegressionSlopesIndicator.prototype, {
@@ -453,7 +412,7 @@ extend(LinearRegressionSlopesIndicator.prototype, {
  */
 
 class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
-    public static defaultOptions: Highcharts.LinearRegressionIndicatorParamsOptions = LinearRegressionIndicator.defaultOptions as Highcharts.LinearRegressionIndicatorOptions;
+    public static defaultOptions: LinearRegressionParamsOptions = LinearRegressionIndicator.defaultOptions as LinearRegressionOptions;
     /**
      * Linear regression intercept indicator. This series requires `linkedTo`
      * option to be set.
@@ -468,19 +427,15 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionintercept
      */
-    public data: Array<LinearRegressionInterceptIndicatorPoint> = void 0 as any;
-    public options: Highcharts.LinearRegressionIndicatorOptions = void 0 as any;
-    public points: Array<LinearRegressionInterceptIndicatorPoint> = void 0 as any;
+    public data: Array<LinearRegressionInterceptPoint> = void 0 as any;
+    public options: LinearRegressionOptions = void 0 as any;
+    public points: Array<LinearRegressionInterceptPoint> = void 0 as any;
 
     public getEndPointY(
-        lineParameters: Highcharts.RegressionLineParametersObject
+        lineParameters: RegressionLineParametersObject
     ): number {
         return lineParameters.intercept;
     }
-}
-
-class LinearRegressionInterceptIndicatorPoint extends LinearRegressionIndicatorPoint {
-    public series: LinearRegressionInterceptIndicator = void 0 as any;
 }
 
 /**
@@ -503,7 +458,7 @@ class LinearRegressionInterceptIndicatorPoint extends LinearRegressionIndicatorP
  *
  * */
 interface LinearRegressionInterceptIndicator {
-    pointClass: typeof LinearRegressionInterceptIndicatorPoint;
+    pointClass: typeof LinearRegressionInterceptPoint;
 }
 
 extend(LinearRegressionInterceptIndicator.prototype, {
@@ -520,13 +475,13 @@ extend(LinearRegressionInterceptIndicator.prototype, {
  * @augments Highcharts.Series
  */
 class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
-    public static defaultOptions: Highcharts.LinearRegressionIndicatorParamsOptions = merge(
+    public static defaultOptions: LinearRegressionParamsOptions = merge(
         SMAIndicator.defaultOptions, {
             tooltip: { // add a degree symbol
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +
                 '{series.name}: <b>{point.y}°</b><br/>'
             }
-        } as Highcharts.LinearRegressionIndicatorParamsOptions);
+        } as LinearRegressionParamsOptions);
     /**
      * Linear regression angle indicator. This series requires `linkedTo`
      * option to be set.
@@ -541,9 +496,9 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @requires     stock/indicators/regressions
      * @optionparent plotOptions.linearregressionangle
      */
-    public data: Array<LinearRegressionSlopesIndicatorPoint> = void 0 as any;
-    public options: Highcharts.LinearRegressionIndicatorOptions = void 0 as any;
-    public points: Array<LinearRegressionSlopesIndicatorPoint> = void 0 as any;
+    public data: Array<LinearRegressionSlopesPoint> = void 0 as any;
+    public options: LinearRegressionOptions = void 0 as any;
+    public points: Array<LinearRegressionSlopesPoint> = void 0 as any;
 
     /**
     * Convert a slope of a line to angle (in degrees) between
@@ -560,14 +515,10 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
 
     public getEndPointY(
         this: LinearRegressionAngleIndicator,
-        lineParameters: Highcharts.RegressionLineParametersObject
+        lineParameters: RegressionLineParametersObject
     ): number {
         return this.slopeToAngle(lineParameters.slope);
     }
-}
-
-class LinearRegressionAngleIndicatorPoint extends LinearRegressionIndicatorPoint {
-    public series: LinearRegressionAngleIndicator = void 0 as any;
 }
 
 extend(LinearRegressionAngleIndicator.prototype, {
@@ -575,7 +526,7 @@ extend(LinearRegressionAngleIndicator.prototype, {
 });
 
 interface LinearRegressionAngleIndicator extends LinearRegressionIndicator {
-    pointClass: typeof LinearRegressionAngleIndicatorPoint;
+    pointClass: typeof LinearRegressionAnglePoint;
 }
 
 /**
