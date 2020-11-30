@@ -14,7 +14,7 @@ import '../Series/AreaRange/AreaRangeSeries.js';
 import '../Series/AreaSplineRange/AreaSplineRangeSeries.js';
 import '../Series/ColumnRangeSeries.js';
 import '../Series/ColumnPyramid/ColumnPyramidSeries.js';
-import '../Series/GaugeSeries.js';
+import '../Series/Gauge/GaugeSeries.js';
 import '../Series/BoxPlot/BoxPlotSeries.js';
 import '../Series/ErrorBar/ErrorBarSeries.js';
 import '../Series/WaterfallSeries.js';

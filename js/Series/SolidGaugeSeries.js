@@ -19,7 +19,7 @@ import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
 import '../Core/Options.js';
-import '../Series/GaugeSeries.js';
+import './Gauge/GaugeSeries.js';
 /**
  * Additional options, depending on the actual symbol drawn.
  *
