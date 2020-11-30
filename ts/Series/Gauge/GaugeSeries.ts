@@ -16,18 +16,13 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type LinePoint from '../Line/LinePoint';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type GaugeSeriesOptions from './GaugeSeriesOptions';
+import type GaugeSeriesDialOptions from './GaugeSeriesDialOptions';
 import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
 import type RadialAxis from '../../Core/Axis/RadialAxis';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -36,6 +31,7 @@ const {
         line: LineSeries
     }
 } = BaseSeries;
+import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
 const { TrackerMixin, noop } = H;
 import palette from '../../Core/Color/Palette.js';
@@ -69,74 +65,22 @@ declare module '../../Core/Series/SeriesLike' {
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class GaugePoint extends LinePoint {
-            public dial?: SVGElement;
-            public option: GaugePointOptions;
-            public series: GaugeSeries;
-            public shapeArgs: SVGAttributes;
-            public setState(state?: string): void;
-        }
-        class GaugeSeries extends LineSeries {
-            public angular: boolean;
-            public data: Array<GaugePoint>;
-            public drawTracker: TrackerMixin['drawTrackerPoint'];
-            public fixedBox: boolean;
-            public forceDL: boolean;
-            public options: GaugeSeriesOptions;
-            public pointClass: typeof GaugePoint;
-            public points: Array<GaugePoint>;
-            public yAxis: RadialAxis;
-            public animate(init?: boolean): void;
-            public drawPoints(): void;
-            public hasData(): boolean;
-            public render(): void;
-            public setData(
-                data: Array<(PointOptions|PointShortOptions)>,
-                redraw?: boolean
-            ): void;
-            public translate(): void;
-        }
-        interface GaugePointOptions extends LinePointOptions {
-        }
-        interface GaugeSeriesDialOptions {
-            backgroundColor?: ColorType;
-            baseLength?: string;
-            baseWidth?: number;
-            borderColor?: ColorType;
-            borderWidth?: number;
-            path?: SVGPath;
-            radius?: string;
-            rearLength?: string;
-            topWidth?: number;
-        }
-        interface GaugeSeriesOptions extends LineSeriesOptions {
-            dial?: GaugeSeriesDialOptions;
-            overshoot?: number;
-            pivot?: GaugeSeriesPivotOptions;
-            states?: SeriesStatesOptions<GaugeSeries>;
-            wrap?: boolean;
-        }
-        interface GaugeSeriesPivotOptions {
-            backgroundColor?: ColorType;
-            borderColor?: ColorType;
-            borderWidth?: number;
-            radius?: number;
-        }
-    }
-}
-
 /* *
  *
  *  Class
  *
  * */
 
+/**
+ *
+ * The `gauge` series type
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.map
+ *
+ * @augments Highcharts.Series
+ */
 class GaugeSeries extends LineSeries {
 
     /* *
@@ -145,7 +89,26 @@ class GaugeSeries extends LineSeries {
      *
      * */
 
-    public static defaultOptions: Highcharts.GaugeSeriesOptions = merge(LineSeries.defaultOptions,
+    /**
+     * Gauges are circular plots displaying one or more values with a dial
+     * pointing to values along the perimeter.
+     *
+     * @sample highcharts/demo/gauge-speedometer/
+     *         Gauge chart
+     *
+     * @extends      plotOptions.line
+     * @excluding    animationLimit, boostThreshold, colorAxis, colorKey,
+     *               connectEnds, connectNulls, cropThreshold, dashStyle,
+     *               dragDrop, findNearestPointBy, getExtremesFromAll, marker,
+     *               negativeColor, pointPlacement, shadow, softThreshold,
+     *               stacking, states, step, threshold, turboThreshold, xAxis,
+     *               zoneAxis, zones, dataSorting, boostBlending
+     * @product      highcharts
+     * @requires     highcharts-more
+     * @optionparent plotOptions.gauge
+     */
+    public static defaultOptions: GaugeSeriesOptions = merge(
+        LineSeries.defaultOptions,
         {
             /**
              * When this option is `true`, the dial will wrap around the axes.
@@ -407,7 +370,7 @@ class GaugeSeries extends LineSeries {
             showInLegend: false
 
             // Prototype members
-        } as Highcharts.GaugeSeriesOptions);
+        } as GaugeSeriesOptions);
 
     /* *
      *
@@ -415,12 +378,15 @@ class GaugeSeries extends LineSeries {
      *
      * */
 
-    public data = void 0 as any;
-    public points = void 0 as any;
-    public options: Highcharts.GaugeSeriesOptions = void 0 as any;
+    public data: Array<GaugePoint> = void 0 as any;
+    public points: Array<GaugePoint> = void 0 as any;
+    public options: GaugeSeriesOptions = void 0 as any;
 
     public yAxis: RadialAxis = void 0 as any;
     public pivot?: SVGElement;
+    public fixedBox: boolean = true;
+    public forceDL: boolean = true;
+
     /* *
      *
      *  Functions
@@ -442,9 +408,9 @@ class GaugeSeries extends LineSeries {
 
         series.generatePoints();
 
-        series.points.forEach(function (point: Highcharts.GaugePoint): void {
+        series.points.forEach(function (point: GaugePoint): void {
 
-            var dialOptions: Highcharts.GaugeSeriesDialOptions =
+            var dialOptions: GaugeSeriesDialOptions =
                     merge(options.dial, point.dial) as any,
                 radius = (
                     (pInt(pick(dialOptions.radius, '80%')) * center[2]) /
@@ -515,7 +481,7 @@ class GaugeSeries extends LineSeries {
             pivotOptions = options.pivot,
             renderer = chart.renderer;
 
-        series.points.forEach(function (point: Highcharts.GaugePoint): void {
+        series.points.forEach(function (point: GaugePoint): void {
 
             var graphic = point.graphic,
                 shapeArgs = point.shapeArgs,
@@ -586,7 +552,7 @@ class GaugeSeries extends LineSeries {
 
         if (!init) {
             series.points.forEach(function (
-                point: Highcharts.GaugePoint
+                point: GaugePoint
             ): void {
                 var graphic = point.graphic;
 
@@ -654,6 +620,17 @@ class GaugeSeries extends LineSeries {
  *
  * */
 
+interface GaugeSeries {
+    angular: boolean;
+    directTouch: boolean;
+    drawGraph: typeof LineSeries.prototype.drawGraph;
+    drawTracker: typeof TrackerMixin['drawTrackerPoint'];
+    fixedBox: boolean;
+    forceDL: boolean;
+    noSharedTooltip: boolean;
+    pointClass: typeof GaugePoint;
+}
+
 extend(GaugeSeries.prototype, {
     // chart.angular will be set to true when a gauge series is present,
     // and this will be used on the axes
@@ -665,44 +642,9 @@ extend(GaugeSeries.prototype, {
     noSharedTooltip: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
     // If the tracking module is loaded, add the point tracker
-    drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
+    drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint,
+    pointClass: GaugePoint
 });
-
-class GaugePoint extends LineSeries.prototype.pointClass {
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Don't do any hover colors or anything
-     * @private
-     */
-    public setState(state?: StatesOptionsKey): void {
-        this.state = state;
-    }
-
-    /* eslint-enable valid-jsdoc */
-}
-GaugeSeries.prototype.pointClass = GaugePoint;
-
-/**
- * Gauges are circular plots displaying one or more values with a dial pointing
- * to values along the perimeter.
- *
- * @sample highcharts/demo/gauge-speedometer/
- *         Gauge chart
- *
- * @extends      plotOptions.line
- * @excluding    animationLimit, boostThreshold, colorAxis, colorKey,
- *               connectEnds, connectNulls, cropThreshold, dashStyle, dragDrop,
- *               findNearestPointBy, getExtremesFromAll, marker, negativeColor,
- *               pointPlacement, shadow, softThreshold, stacking, states, step,
- *               threshold, turboThreshold, xAxis, zoneAxis, zones, dataSorting,
- *               boostBlending
- * @product      highcharts
- * @requires     highcharts-more
- * @optionparent plotOptions.gauge
- */
-
-
 /* *
  *
  *  Registry
@@ -714,7 +656,7 @@ GaugeSeries.prototype.pointClass = GaugePoint;
  */
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        gauge: typeof Highcharts.GaugeSeries;
+        gauge: typeof GaugeSeries;
     }
 }
 
@@ -727,6 +669,12 @@ BaseSeries.registerSeriesType('gauge', GaugeSeries);
  * */
 
 export default GaugeSeries;
+
+/* *
+ *
+ *  API options
+ *
+ * */
 
 /**
  * A `gauge` series. If the [type](#series.gauge.type) option is not
