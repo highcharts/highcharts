@@ -31,87 +31,27 @@ import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 var getCenter = CenteredSeriesMixin.getCenter, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
+import SunburstPoint from './SunburstPoint.js';
+import SunburstUtilities from './SunburstUtilities.js';
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, setTreeValues = TreeSeriesMixin.setTreeValues, updateRootId = TreeSeriesMixin.updateRootId;
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
-var isBoolean = function (x) {
+var error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
+/* *
+ *
+ *  Constants
+ *
+ * */
+var rad2deg = 180 / Math.PI;
+/* *
+ *
+ *  Functions
+ *
+ * */
+// eslint-disable-next-line require-jsdoc
+function isBoolean(x) {
     return typeof x === 'boolean';
-}, rad2deg = 180 / Math.PI;
-// TODO introduce step, which should default to 1.
-var range = function range(from, to) {
-    var result = [], i;
-    if (isNumber(from) && isNumber(to) && from <= to) {
-        for (i = from; i <= to; i++) {
-            result.push(i);
-        }
-    }
-    return result;
-};
-/**
- * @private
- * @function calculateLevelSizes
- *
- * @param {object} levelOptions
- * Map of level to its options.
- *
- * @param {Highcharts.Dictionary<number>} params
- * Object containing number parameters `innerRadius` and `outerRadius`.
- *
- * @return {Highcharts.SunburstSeriesLevelsOptions|undefined}
- * Returns the modified options, or undefined.
- */
-var calculateLevelSizes = function calculateLevelSizes(levelOptions, params) {
-    var result, p = isObject(params) ? params : {}, totalWeight = 0, diffRadius, levels, levelsNotIncluded, remainingSize, from, to;
-    if (isObject(levelOptions)) {
-        result = merge({}, levelOptions);
-        from = isNumber(p.from) ? p.from : 0;
-        to = isNumber(p.to) ? p.to : 0;
-        levels = range(from, to);
-        levelsNotIncluded = Object.keys(result).filter(function (k) {
-            return levels.indexOf(+k) === -1;
-        });
-        diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
-        // Convert percentage to pixels.
-        // Calculate the remaining size to divide between "weight" levels.
-        // Calculate total weight to use in convertion from weight to pixels.
-        levels.forEach(function (level) {
-            var options = result[level], unit = options.levelSize.unit, value = options.levelSize.value;
-            if (unit === 'weight') {
-                totalWeight += value;
-            }
-            else if (unit === 'percentage') {
-                options.levelSize = {
-                    unit: 'pixels',
-                    value: (value / 100) * diffRadius
-                };
-                remainingSize -= options.levelSize.value;
-            }
-            else if (unit === 'pixels') {
-                remainingSize -= value;
-            }
-        });
-        // Convert weight to pixels.
-        levels.forEach(function (level) {
-            var options = result[level], weight;
-            if (options.levelSize.unit === 'weight') {
-                weight = options.levelSize.value;
-                result[level].levelSize = {
-                    unit: 'pixels',
-                    value: (weight / totalWeight) * remainingSize
-                };
-            }
-        });
-        // Set all levels not included in interval [from,to] to have 0 pixels.
-        levelsNotIncluded.forEach(function (level) {
-            result[level].levelSize = {
-                value: 0,
-                unit: 'pixels'
-            };
-        });
-    }
-    return result;
-};
+}
 /**
  * Find a set of coordinates given a start coordinates, an angle, and a
  * distance.
@@ -140,7 +80,8 @@ var getEndPoint = function getEndPoint(x, y, angle, distance) {
         y: y + (Math.sin(angle) * distance)
     };
 };
-var getDlOptions = function getDlOptions(params) {
+// eslint-disable-next-line require-jsdoc
+function getDlOptions(params) {
     // Set options to new object to avoid problems with scope
     var point = params.point, shape = isObject(params.shapeArgs) ? params.shapeArgs : {}, optionsPoint = (isObject(params.optionsPoint) ?
         params.optionsPoint.dataLabels :
@@ -252,8 +193,9 @@ var getDlOptions = function getDlOptions(params) {
         options.rotation = 0.001;
     }
     return options;
-};
-var getAnimation = function getAnimation(shape, params) {
+}
+// eslint-disable-next-line require-jsdoc
+function getAnimation(shape, params) {
     var point = params.point, radians = params.radians, innerR = params.innerR, idRoot = params.idRoot, idPreviousRoot = params.idPreviousRoot, shapeExisting = params.shapeExisting, shapeRoot = params.shapeRoot, shapePreviousRoot = params.shapePreviousRoot, visible = params.visible, from = {}, to = {
         end: shape.end,
         start: shape.start,
@@ -313,8 +255,9 @@ var getAnimation = function getAnimation(shape, params) {
         from: from,
         to: to
     };
-};
-var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
+}
+// eslint-disable-next-line require-jsdoc
+function getDrillId(point, idRoot, mapIdToNode) {
     var drillId, node = point.node, nodeRoot;
     if (!node.isLeaf) {
         // When it is the root node, the drillId should be set to parent.
@@ -327,15 +270,9 @@ var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
         }
     }
     return drillId;
-};
-var getLevelFromAndTo = function getLevelFromAndTo(_a) {
-    var level = _a.level, height = _a.height;
-    //  Never displays level below 1
-    var from = level > 0 ? level : 1;
-    var to = level + height;
-    return { from: from, to: to };
-};
-var cbSetTreeValuesBefore = function before(node, options) {
+}
+// eslint-disable-next-line require-jsdoc
+function cbSetTreeValuesBefore(node, options) {
     var mapIdToNode = options.mapIdToNode, nodeParent = mapIdToNode[node.parent], series = options.series, chart = series.chart, points = series.points, point = points[node.i], colors = (series.options.colors || chart && chart.options.colors), colorInfo = getColor(node, {
         colors: colors,
         colorIndex: series.colorIndex,
@@ -355,7 +292,12 @@ var cbSetTreeValuesBefore = function before(node, options) {
         node.sliced = (node.id !== options.idRoot) ? point.sliced : false;
     }
     return node;
-};
+}
+/* *
+ *
+ *  Class
+ *
+ * */
 var SunburstSeries = /** @class */ (function (_super) {
     __extends(SunburstSeries, _super);
     function SunburstSeries() {
@@ -601,7 +543,7 @@ var SunburstSeries = /** @class */ (function (_super) {
         nodeRoot = mapIdToNode[rootId];
         idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
         nodeTop = mapIdToNode[idTop];
-        var _a = getLevelFromAndTo(nodeRoot), from = _a.from, to = _a.to;
+        var _a = SunburstUtilities.getLevelFromAndTo(nodeRoot), from = _a.from, to = _a.to;
         mapOptionsToLevel = getLevelOptions({
             from: from,
             levels: series.options.levels,
@@ -616,7 +558,7 @@ var SunburstSeries = /** @class */ (function (_super) {
         });
         // NOTE consider doing calculateLevelSizes in a callback to
         // getLevelOptions
-        mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
+        mapOptionsToLevel = SunburstUtilities.calculateLevelSizes(mapOptionsToLevel, {
             diffRadius: diffRadius,
             from: from,
             to: to
@@ -904,88 +846,16 @@ var SunburstSeries = /** @class */ (function (_super) {
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop,
     pointAttribs: ColumnSeries.prototype.pointAttribs,
-    utils: {
-        calculateLevelSizes: calculateLevelSizes,
-        getLevelFromAndTo: getLevelFromAndTo,
-        range: range
-    }
+    utils: SunburstUtilities
 });
-/* *
- *
- *  Class
- *
- * */
-var SunburstPoint = /** @class */ (function (_super) {
-    __extends(SunburstPoint, _super);
-    function SunburstPoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.node = void 0;
-        _this.options = void 0;
-        _this.series = void 0;
-        _this.shapeExisting = void 0;
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    SunburstPoint.prototype.getDataLabelPath = function (label) {
-        var renderer = this.series.chart.renderer, shapeArgs = this.shapeExisting, start = shapeArgs.start, end = shapeArgs.end, angle = start + (end - start) / 2, // arc middle value
-        upperHalf = angle < 0 &&
-            angle > -Math.PI ||
-            angle > Math.PI, r = (shapeArgs.r + (label.options.distance || 0)), moreThanHalf;
-        // Check if point is a full circle
-        if (start === -Math.PI / 2 &&
-            correctFloat(end) === correctFloat(Math.PI * 1.5)) {
-            start = -Math.PI + Math.PI / 360;
-            end = -Math.PI / 360;
-            upperHalf = true;
-        }
-        // Check if dataLabels should be render in the
-        // upper half of the circle
-        if (end - start > Math.PI) {
-            upperHalf = false;
-            moreThanHalf = true;
-        }
-        if (this.dataLabelPath) {
-            this.dataLabelPath = this.dataLabelPath.destroy();
-        }
-        this.dataLabelPath = renderer
-            .arc({
-            open: true,
-            longArc: moreThanHalf ? 1 : 0
-        })
-            // Add it inside the data label group so it gets destroyed
-            // with the label
-            .add(label);
-        this.dataLabelPath.attr({
-            start: (upperHalf ? start : end),
-            end: (upperHalf ? end : start),
-            clockwise: +upperHalf,
-            x: shapeArgs.x,
-            y: shapeArgs.y,
-            r: (r + shapeArgs.innerR) / 2
-        });
-        return this.dataLabelPath;
-    };
-    SunburstPoint.prototype.isValid = function () {
-        return true;
-    };
-    SunburstPoint.prototype.shouldDraw = function () {
-        return !this.isNull;
-    };
-    return SunburstPoint;
-}(TreemapSeries.prototype.pointClass));
 SunburstSeries.prototype.pointClass = SunburstPoint;
 BaseSeries.registerSeriesType('sunburst', SunburstSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default SunburstSeries;
 /* *
  *
  *  API Options

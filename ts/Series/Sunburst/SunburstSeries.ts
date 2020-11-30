@@ -25,15 +25,10 @@ import type ColorType from '../../Core/Color/ColorType';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SunburstDataLabelOptions from './SunburstDataLabelOptions';
+import type SunburstPointOptions from './SunburstPointOptions';
+import type SunburstSeriesOptions from './SunburstSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type TreemapPoint from '../Treemap/TreemapPoint';
-import type TreemapPointOptions from '../Treemap/TreemapPointOptions';
-import type {
-    TreemapSeriesLevelsColorVariationOptions,
-    TreemapSeriesLevelsOptions,
-    TreemapSeriesOptions
-} from '../Treemap/TreemapSeriesOptions';
 import type TreemapSeriesType from '../Treemap/TreemapSeries';
 import type TreemapUtilities from '../Treemap/TreemapUtilities';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -51,6 +46,8 @@ const {
 } = CenteredSeriesMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
+import SunburstPoint from './SunburstPoint.js';
+import SunburstUtilities from './SunburstUtilities.js';
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 const {
     getColor,
@@ -60,7 +57,6 @@ const {
 } = TreeSeriesMixin;
 import U from '../../Core/Utilities.js';
 const {
-    correctFloat,
     error,
     extend,
     isNumber,
@@ -70,229 +66,24 @@ const {
     splat
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class SunburstPoint extends TreemapPoint {
-            public dataLabelPath?: SVGElement;
-            public innerArcLength?: number;
-            public outerArcLength?: number;
-            public node: SunburstNodeObject;
-            public options: SunburstPointOptions;
-            public series: SunburstSeries;
-            public shapeExisting: SunburstNodeValuesObject;
-            public sliced?: boolean;
-            public getDataLabelPath(label: SVGElement): SVGElement;
-        }
-        interface SunburstAnimationParams {
-            center: PositionObject;
-            idPreviousRoot?: string;
-            idRoot: string;
-            innerR: number;
-            point: SunburstPoint;
-            radians: RadianAngles;
-            shapeExisting: SunburstNodeValuesObject;
-            shapePreviousRoot?: SunburstNodeValuesObject;
-            shapeRoot?: SunburstNodeValuesObject;
-            visible: boolean;
-        }
-        interface SunburstDataLabelsOptionsObject extends DataLabelOptions {
-            allowOverlap?: boolean;
-            rotationMode?: SunburstDataLabelsRotationValue;
-        }
-        interface SunburstDlOptionsParams {
-            level: SunburstSeriesOptions;
-            optionsPoint: SunburstPointOptions;
-            point: SunburstPoint;
-            shapeArgs: SunburstNodeValuesObject;
-        }
-        interface SunburstNodeObject extends TreemapSeriesType.NodeObject {
-            children: Array<SunburstNodeObject>;
-            childrenTotal: number;
-            color: ColorType;
-            colorIndex: number;
-            height: number;
-            parent: string;
-            shapeArgs?: SunburstNodeValuesObject;
-            sliced?: boolean;
-            val: number;
-            values?: SunburstNodeValuesObject;
-        }
-        interface SunburstNodeValuesObject
-            extends
-            RadianAngles,
-            TreemapSeriesType.NodeValuesObject,
-            TreeValuesOptionsObject<SunburstSeries>
-        {
-            color: ColorType;
-            mapOptionsToLevel: SunburstSeriesOptions['levels'];
-            index: number;
-            innerR: number;
-            r: number;
-            radius: number;
-            siblings: number;
-        }
-        interface SunburstPointOptions extends TreemapPointOptions {
-        }
-        interface SunburstSeriesLevelsColorVariationOptions extends TreemapSeriesLevelsColorVariationOptions {
-            key?: string;
-            to?: number;
-        }
-        interface SunburstSeriesLevelsOptions
-            extends
-            TreemapSeriesLevelsOptions
-        {
-            borderColor?: ColorString;
-            borderDashStyle?: DashStyleValue;
-            borderWidth?: number;
-            color?: ColorType;
-            colorVariation?: SunburstSeriesLevelsColorVariationOptions;
-            dataLabels?: SunburstDataLabelsOptionsObject;
-            levelSize?: unknown;
-            rotation?: number;
-            rotationMode?: string;
-        }
-        interface SunburstSeriesLevelSizeOptions {
-            unit?: string;
-            value?: number;
-        }
-        interface SunburstSeriesOptions extends TreemapSeriesOptions {
-            center?: Array<(number|string|null)>;
-            dataLabels?: (
-                SunburstDataLabelsOptionsObject|
-                Array<SunburstDataLabelsOptionsObject>
-            );
-            endAngle?: number;
-            levels?: Array<SunburstSeriesLevelsOptions>;
-            levelSize?: SunburstSeriesLevelSizeOptions;
-            mapIdToNode?: SunburstSeries['nodeMap'];
-            rootId?: string;
-            slicedOffset?: number;
-            startAngle?: number;
-            states?: SeriesStatesOptions<SunburstSeries>;
-        }
-        interface SunburstSeriesUtilsObject {
-            calculateLevelSizes(
-                levelOptions: SunburstSeriesLevelsOptions,
-                params: Dictionary<number>
-            ): (SunburstSeriesLevelsOptions|undefined);
-            range(from: unknown, to: unknown): Array<number>;
-            recursive: typeof TreemapUtilities.recursive;
-        }
-        type SunburstDataLabelsRotationValue = (
-            'auto'|'perpendicular'|'parallel'|'circular'
-        );
-    }
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const rad2deg = 180 / Math.PI;
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+// eslint-disable-next-line require-jsdoc
+function isBoolean(x: unknown): x is boolean {
+    return typeof x === 'boolean';
 }
-
-var isBoolean = function (x: unknown): x is boolean {
-        return typeof x === 'boolean';
-    },
-    rad2deg = 180 / Math.PI;
-
-// TODO introduce step, which should default to 1.
-var range = function range(from: unknown, to: unknown): Array<number> {
-    var result: Array<number> = [],
-        i: number;
-
-    if (isNumber(from) && isNumber(to) && from <= to) {
-        for (i = from; i <= to; i++) {
-            result.push(i);
-        }
-    }
-    return result;
-};
-
-/**
- * @private
- * @function calculateLevelSizes
- *
- * @param {object} levelOptions
- * Map of level to its options.
- *
- * @param {Highcharts.Dictionary<number>} params
- * Object containing number parameters `innerRadius` and `outerRadius`.
- *
- * @return {Highcharts.SunburstSeriesLevelsOptions|undefined}
- * Returns the modified options, or undefined.
- */
-var calculateLevelSizes = function calculateLevelSizes(
-    levelOptions: Highcharts.SunburstSeriesLevelsOptions,
-    params: Highcharts.Dictionary<number>
-): (Highcharts.SunburstSeriesLevelsOptions|undefined) {
-    var result: (Highcharts.SunburstSeriesLevelsOptions|undefined),
-        p = isObject(params) ? params : {},
-        totalWeight = 0,
-        diffRadius: number,
-        levels: Array<number>,
-        levelsNotIncluded,
-        remainingSize: number,
-        from,
-        to;
-
-    if (isObject(levelOptions)) {
-        result = merge<Highcharts.SunburstSeriesLevelsOptions>(
-            {},
-            levelOptions
-        );
-        from = isNumber(p.from) ? p.from : 0;
-        to = isNumber(p.to) ? p.to : 0;
-        levels = range(from, to);
-        levelsNotIncluded = Object.keys(result).filter(function (
-            k: string
-        ): boolean {
-            return levels.indexOf(+k) === -1;
-        });
-        diffRadius = remainingSize = isNumber(p.diffRadius) ? p.diffRadius : 0;
-
-        // Convert percentage to pixels.
-        // Calculate the remaining size to divide between "weight" levels.
-        // Calculate total weight to use in convertion from weight to pixels.
-        levels.forEach(function (level: number): void {
-            var options = (result as any)[level],
-                unit = options.levelSize.unit,
-                value = options.levelSize.value;
-
-            if (unit === 'weight') {
-                totalWeight += value;
-            } else if (unit === 'percentage') {
-                options.levelSize = {
-                    unit: 'pixels',
-                    value: (value / 100) * diffRadius
-                };
-                remainingSize -= options.levelSize.value;
-            } else if (unit === 'pixels') {
-                remainingSize -= value;
-            }
-        });
-
-        // Convert weight to pixels.
-        levels.forEach(function (level: number): void {
-            var options = (result as any)[level],
-                weight;
-
-            if (options.levelSize.unit === 'weight') {
-                weight = options.levelSize.value;
-                (result as any)[level].levelSize = {
-                    unit: 'pixels',
-                    value: (weight / totalWeight) * remainingSize
-                };
-            }
-        });
-
-        // Set all levels not included in interval [from,to] to have 0 pixels.
-        levelsNotIncluded.forEach(function (level: string): void {
-            (result as any)[level].levelSize = {
-                value: 0,
-                unit: 'pixels'
-            };
-        });
-    }
-    return result;
-};
 
 /**
  * Find a set of coordinates given a start coordinates, an angle, and a
@@ -328,12 +119,11 @@ var getEndPoint = function getEndPoint(
     };
 };
 
-var getDlOptions = function getDlOptions(
-    params: Highcharts.SunburstDlOptionsParams
-): Highcharts.SunburstDataLabelsOptionsObject {
+// eslint-disable-next-line require-jsdoc
+function getDlOptions(params: SunburstSeries.DlOptionsParams): SunburstDataLabelOptions {
     // Set options to new object to avoid problems with scope
     var point = params.point,
-        shape: Partial<Highcharts.SunburstNodeValuesObject> =
+        shape: Partial<SunburstSeries.NodeValuesObject> =
             isObject(params.shapeArgs) ? params.shapeArgs : {},
         optionsPoint = (
             isObject(params.optionsPoint) ?
@@ -347,7 +137,7 @@ var getDlOptions = function getDlOptions(
                 params.level.dataLabels :
                 {}
         )[0],
-        options = merge<Highcharts.SunburstDataLabelsOptionsObject>({
+        options = merge<SunburstDataLabelOptions>({
             style: {}
         }, optionsLevel, optionsPoint),
         rotationRad: (number|undefined),
@@ -480,11 +270,12 @@ var getDlOptions = function getDlOptions(
         options.rotation = 0.001;
     }
     return options;
-};
+}
 
-var getAnimation = function getAnimation(
-    shape: Highcharts.SunburstNodeValuesObject,
-    params: Highcharts.SunburstAnimationParams
+// eslint-disable-next-line require-jsdoc
+function getAnimation(
+    shape: SunburstSeries.NodeValuesObject,
+    params: SunburstSeries.AnimationParams
 ): Highcharts.Dictionary<Highcharts.Dictionary<number>> {
     var point = params.point,
         radians = params.radians,
@@ -553,12 +344,13 @@ var getAnimation = function getAnimation(
         from: from,
         to: to
     };
-};
+}
 
-var getDrillId = function getDrillId(
-    point: Highcharts.SunburstPoint,
+// eslint-disable-next-line require-jsdoc
+function getDrillId(
+    point: SunburstPoint,
     idRoot: string,
-    mapIdToNode: Highcharts.Dictionary<Highcharts.SunburstNodeObject>
+    mapIdToNode: Record<string, SunburstSeries.NodeObject>
 ): (string|undefined) {
     var drillId,
         node = point.node,
@@ -574,22 +366,14 @@ var getDrillId = function getDrillId(
         }
     }
     return drillId;
-};
+}
 
-const getLevelFromAndTo = function getLevelFromAndTo(
-    { level, height }: Highcharts.SunburstNodeObject
-): { from: number; to: number } {
-    //  Never displays level below 1
-    const from = level > 0 ? level : 1;
-    const to = level + height;
-    return { from, to };
-};
-
-var cbSetTreeValuesBefore = function before(
-    node: Highcharts.SunburstNodeObject,
-    options: Highcharts.SunburstNodeValuesObject
-): Highcharts.SunburstNodeObject {
-    var mapIdToNode: Highcharts.Dictionary<Highcharts.SunburstNodeObject> =
+// eslint-disable-next-line require-jsdoc
+function cbSetTreeValuesBefore(
+    node: SunburstSeries.NodeObject,
+    options: SunburstSeries.NodeValuesObject
+): SunburstSeries.NodeObject {
+    var mapIdToNode: Highcharts.Dictionary<SunburstSeries.NodeObject> =
             options.mapIdToNode as any,
         nodeParent = mapIdToNode[node.parent],
         series = options.series,
@@ -617,7 +401,13 @@ var cbSetTreeValuesBefore = function before(
         node.sliced = (node.id !== options.idRoot) ? point.sliced : false;
     }
     return node;
-};
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 class SunburstSeries extends TreemapSeries {
 
@@ -645,7 +435,7 @@ class SunburstSeries extends TreemapSeries {
      * @optionparent plotOptions.sunburst
      * @private
      */
-    public static defaultOptions: Highcharts.SunburstSeriesOptions = merge(TreemapSeries.defaultOptions, {
+    public static defaultOptions: SunburstSeriesOptions = merge(TreemapSeries.defaultOptions, {
 
         /**
          * Set options on specific levels. Takes precedence over series options,
@@ -896,7 +686,7 @@ class SunburstSeries extends TreemapSeries {
          * @since 6.0.4
          */
         slicedOffset: 10
-    } as Highcharts.SunburstSeriesOptions);
+    } as SunburstSeriesOptions);
 
     /* *
      *
@@ -908,19 +698,19 @@ class SunburstSeries extends TreemapSeries {
 
     public data: Array<SunburstPoint> = void 0 as any;
 
-    public mapOptionsToLevel: Record<string, Highcharts.SunburstSeriesOptions> = void 0 as any;
+    public mapOptionsToLevel: Record<string, SunburstSeriesOptions> = void 0 as any;
 
-    public nodeMap: Record<string, Highcharts.SunburstNodeObject> = void 0 as any;
+    public nodeMap: Record<string, SunburstSeries.NodeObject> = void 0 as any;
 
-    public options: Highcharts.SunburstSeriesOptions = void 0 as any;
+    public options: SunburstSeriesOptions = void 0 as any;
 
     public points: Array<SunburstPoint> = void 0 as any;
 
-    public shapeRoot?: Highcharts.SunburstNodeValuesObject = void 0 as any;
+    public shapeRoot?: SunburstSeries.NodeValuesObject = void 0 as any;
 
     public startAndEndRadians: Highcharts.RadianAngles = void 0 as any;
 
-    public tree: Highcharts.SunburstNodeObject = void 0 as any;
+    public tree: SunburstSeries.NodeObject = void 0 as any;
 
     /* *
      *
@@ -931,7 +721,7 @@ class SunburstSeries extends TreemapSeries {
     /* eslint-disable valid-jsdoc */
 
     public alignDataLabel(
-        _point: Highcharts.SunburstPoint,
+        _point: SunburstPoint,
         _dataLabel: SVGElement,
         labelOptions: DataLabelOptions
     ): void {
@@ -1040,8 +830,8 @@ class SunburstSeries extends TreemapSeries {
         points.forEach(function (point): void {
             var node = point.node,
                 level = mapOptionsToLevel[node.level],
-                shapeExisting: Highcharts.SunburstNodeValuesObject = point.shapeExisting || ({} as any),
-                shape: Highcharts.SunburstNodeValuesObject =
+                shapeExisting: SunburstSeries.NodeValuesObject = point.shapeExisting || ({} as any),
+                shape: SunburstSeries.NodeValuesObject =
                     node.shapeArgs || ({} as any),
                 animationInfo,
                 onComplete,
@@ -1125,10 +915,10 @@ class SunburstSeries extends TreemapSeries {
      * @private
      */
     public layoutAlgorithm(
-        parent: Highcharts.SunburstNodeValuesObject,
-        children: Array<Highcharts.SunburstNodeObject>,
-        options: Highcharts.SunburstSeriesOptions
-    ): Array<Highcharts.SunburstNodeValuesObject> {
+        parent: SunburstSeries.NodeValuesObject,
+        children: Array<SunburstSeries.NodeObject>,
+        options: SunburstSeriesOptions
+    ): Array<SunburstSeries.NodeValuesObject> {
         var startAngle = parent.start,
             range = parent.end - startAngle,
             total = parent.val,
@@ -1149,15 +939,12 @@ class SunburstSeries extends TreemapSeries {
                 options.slicedOffset :
                 0;
 
-        return (children || []).reduce(function (
-            arr: Array<Highcharts.SunburstNodeValuesObject>,
-            child: Highcharts.SunburstNodeObject
-        ): Array<Highcharts.SunburstNodeValuesObject> {
+        return (children || []).reduce(function (arr, child): Array<SunburstSeries.NodeValuesObject> {
             var percentage = (1 / total) * child.val,
                 radians = percentage * range,
                 radiansCenter = startAngle + (radians / 2),
                 offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
-                values: Highcharts.SunburstNodeValuesObject = {
+                values: SunburstSeries.NodeValuesObject = {
                     x: child.sliced ? offsetPosition.x : x,
                     y: child.sliced ? offsetPosition.y : y,
                     innerR: innerRadius,
@@ -1170,7 +957,7 @@ class SunburstSeries extends TreemapSeries {
             arr.push(values);
             startAngle = values.end;
             return arr;
-        }, []);
+        }, [] as Array<SunburstSeries.NodeValuesObject>);
     }
 
     /**
@@ -1178,28 +965,23 @@ class SunburstSeries extends TreemapSeries {
      * @private
      */
     public setShapeArgs(
-        parent: Highcharts.SunburstNodeObject,
-        parentValues: Highcharts.SunburstNodeValuesObject,
+        parent: SunburstSeries.NodeObject,
+        parentValues: SunburstSeries.NodeValuesObject,
         mapOptionsToLevel: (
-            Highcharts.Dictionary<Highcharts.SunburstSeriesOptions>
+            Highcharts.Dictionary<SunburstSeriesOptions>
         )
     ): void {
-        var childrenValues: Array<Highcharts.SunburstNodeValuesObject> = [],
+        var childrenValues: Array<SunburstSeries.NodeValuesObject> = [],
             level = parent.level + 1,
             options = mapOptionsToLevel[level],
             // Collect all children which should be included
-            children = parent.children.filter(function (
-                n: Highcharts.SunburstNodeObject
-            ): boolean {
+            children = parent.children.filter(function (n): boolean {
                 return n.visible;
             }),
             twoPi = 6.28; // Two times Pi.
 
         childrenValues = this.layoutAlgorithm(parentValues, children, options);
-        children.forEach(function (
-            child: Highcharts.SunburstNodeObject,
-            index: number
-        ): void {
+        children.forEach(function (child, index): void {
             var values = childrenValues[index],
                 angle = values.start + ((values.end - values.start) / 2),
                 radius = values.innerR + ((values.r - values.innerR) / 2),
@@ -1258,15 +1040,13 @@ class SunburstSeries extends TreemapSeries {
             // NOTE: updateRootId modifies series.
             rootId = updateRootId(series),
             mapIdToNode = series.nodeMap,
-            mapOptionsToLevel: (
-                Highcharts.Dictionary<Highcharts.SunburstSeriesOptions>
-            ),
+            mapOptionsToLevel: Record<string, SunburstSeriesOptions>,
             idTop,
             nodeRoot = mapIdToNode && mapIdToNode[rootId],
             nodeTop,
-            tree: Highcharts.SunburstNodeObject,
-            values: Highcharts.SunburstNodeValuesObject,
-            nodeIds: Highcharts.Dictionary<boolean> = {};
+            tree: SunburstSeries.NodeObject,
+            values: SunburstSeries.NodeValuesObject,
+            nodeIds: Record<string, boolean> = {};
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
@@ -1280,7 +1060,7 @@ class SunburstSeries extends TreemapSeries {
         nodeRoot = mapIdToNode[rootId];
         idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
         nodeTop = mapIdToNode[idTop];
-        const { from, to } = getLevelFromAndTo(nodeRoot);
+        const { from, to } = SunburstUtilities.getLevelFromAndTo(nodeRoot);
         mapOptionsToLevel = getLevelOptions<SunburstSeries>({
             from,
             levels: series.options.levels,
@@ -1295,7 +1075,7 @@ class SunburstSeries extends TreemapSeries {
         }) as any;
         // NOTE consider doing calculateLevelSizes in a callback to
         // getLevelOptions
-        mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel as any, {
+        mapOptionsToLevel = SunburstUtilities.calculateLevelSizes(mapOptionsToLevel as any, {
             diffRadius,
             from,
             to
@@ -1324,7 +1104,7 @@ class SunburstSeries extends TreemapSeries {
         series.mapOptionsToLevel = mapOptionsToLevel;
 
         // #10669 - verify if all nodes have unique ids
-        series.data.forEach(function (child: Highcharts.SunburstPoint): void {
+        series.data.forEach(function (child): void {
             if (nodeIds[child.id]) {
                 error(31, false, series.chart);
             }
@@ -1349,121 +1129,65 @@ class SunburstSeries extends TreemapSeries {
 interface SunburstSeries {
     pointAttribs: typeof LineSeries.prototype.pointAttribs;
     pointClass: typeof SunburstPoint;
-    utils: Highcharts.SunburstSeriesUtilsObject;
+    utils: typeof SunburstUtilities;
 }
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop as any, // drawDataLabels is called in drawPoints
     pointAttribs: ColumnSeries.prototype.pointAttribs,
-    utils: {
-        calculateLevelSizes,
-        getLevelFromAndTo,
-        range
-    } as any
+    utils: SunburstUtilities
 });
 
 /* *
  *
- *  Class
+ *  Class Namespace
  *
  * */
 
-class SunburstPoint extends TreemapSeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public dataLabelPath?: SVGElement;
-
-    public innerArcLength?: number;
-
-    public outerArcLength?: number;
-
-    public node: Highcharts.SunburstNodeObject = void 0 as any;
-
-    public options: Highcharts.SunburstPointOptions = void 0 as any;
-
-    public series: SunburstSeries = void 0 as any;
-
-    public shapeExisting: Highcharts.SunburstNodeValuesObject = void 0 as any;
-
-    public sliced?: boolean;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    public getDataLabelPath(
-        this: Highcharts.SunburstPoint,
-        label: SVGElement
-    ): SVGElement {
-        var renderer = this.series.chart.renderer,
-            shapeArgs = this.shapeExisting,
-            start = shapeArgs.start,
-            end = shapeArgs.end,
-            angle = start + (end - start) / 2, // arc middle value
-            upperHalf = angle < 0 &&
-                angle > -Math.PI ||
-                angle > Math.PI,
-            r = (shapeArgs.r + (label.options.distance || 0)),
-            moreThanHalf;
-
-        // Check if point is a full circle
-        if (
-            start === -Math.PI / 2 &&
-            correctFloat(end) === correctFloat(Math.PI * 1.5)
-        ) {
-            start = -Math.PI + Math.PI / 360;
-            end = -Math.PI / 360;
-            upperHalf = true;
-        }
-        // Check if dataLabels should be render in the
-        // upper half of the circle
-        if (end - start > Math.PI) {
-            upperHalf = false;
-            moreThanHalf = true;
-        }
-
-        if (this.dataLabelPath) {
-            this.dataLabelPath = this.dataLabelPath.destroy();
-        }
-
-        this.dataLabelPath = renderer
-            .arc({
-                open: true,
-                longArc: moreThanHalf ? 1 : 0
-            })
-            // Add it inside the data label group so it gets destroyed
-            // with the label
-            .add(label);
-
-        this.dataLabelPath.attr({
-            start: (upperHalf ? start : end),
-            end: (upperHalf ? end : start),
-            clockwise: +upperHalf,
-            x: shapeArgs.x,
-            y: shapeArgs.y,
-            r: (r + shapeArgs.innerR) / 2
-        });
-        return this.dataLabelPath;
+namespace SunburstSeries {
+    export interface AnimationParams {
+        center: PositionObject;
+        idPreviousRoot?: string;
+        idRoot: string;
+        innerR: number;
+        point: SunburstPoint;
+        radians: Highcharts.RadianAngles;
+        shapeExisting: NodeValuesObject;
+        shapePreviousRoot?: NodeValuesObject;
+        shapeRoot?: NodeValuesObject;
+        visible: boolean;
     }
-
-    public isValid(this: Highcharts.SunburstPoint): boolean {
-        return true;
+    export interface DlOptionsParams {
+        level: SunburstSeriesOptions;
+        optionsPoint: SunburstPointOptions;
+        point: SunburstPoint;
+        shapeArgs: NodeValuesObject;
     }
-
-    public shouldDraw(this: Highcharts.SunburstPoint): boolean {
-        return !this.isNull;
+    export interface NodeObject extends TreemapSeriesType.NodeObject {
+        children: Array<NodeObject>;
+        childrenTotal: number;
+        color: ColorType;
+        colorIndex: number;
+        height: number;
+        parent: string;
+        shapeArgs?: NodeValuesObject;
+        sliced?: boolean;
+        val: number;
+        values?: NodeValuesObject;
     }
-
-    /* eslint-enable valid-jsdoc */
-
+    export interface NodeValuesObject
+        extends
+        Highcharts.RadianAngles,
+        TreemapSeriesType.NodeValuesObject,
+        Highcharts.TreeValuesOptionsObject<SunburstSeries>
+    {
+        color: ColorType;
+        mapOptionsToLevel: SunburstSeriesOptions['levels'];
+        index: number;
+        innerR: number;
+        r: number;
+        radius: number;
+        siblings: number;
+    }
 }
 
 /* *
@@ -1479,6 +1203,14 @@ declare module '../../Core/Series/SeriesType' {
 }
 SunburstSeries.prototype.pointClass = SunburstPoint;
 BaseSeries.registerSeriesType('sunburst', SunburstSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default SunburstSeries;
 
 /* *
  *
