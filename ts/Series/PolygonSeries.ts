@@ -13,7 +13,6 @@
 import type ColorType from '../Core/Color/ColorType';
 import type ScatterPoint from './Scatter/ScatterPoint';
 import type ScatterPointOptions from './Scatter/ScatterPointOptions';
-import type ScatterSeries from './Scatter/ScatterSeries';
 import type ScatterSeriesOptions from './Scatter/ScatterSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -23,6 +22,12 @@ import H from '../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './Line/LineSeries.js';
+import ScatterSeries from './Scatter/ScatterSeries.js';
+import U from '../Core/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -34,14 +39,6 @@ declare global {
             public options: PolygonPointOptions;
             public series: PolygonSeries;
         }
-        class PolygonSeries extends ScatterSeries {
-            public areaPath?: SVGPath;
-            public data: Array<PolygonPoint>;
-            public options: PolygonSeriesOptions;
-            public pointClass: typeof PolygonPoint;
-            public points: Array<PolygonPoint>;
-            public type: string;
-        }
         interface PolygonPointOptions extends ScatterPointOptions {
         }
         interface PolygonSeriesOptions extends ScatterSeriesOptions {
@@ -49,15 +46,6 @@ declare global {
             states?: SeriesStatesOptions<PolygonSeries>;
             trackByArea?: boolean;
         }
-    }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        polygon: typeof Highcharts.PolygonSeries;
     }
 }
 
@@ -83,27 +71,51 @@ import './Scatter/ScatterSeries.js';
  * @requires     highcharts-more
  * @optionparent plotOptions.polygon
  */
-BaseSeries.seriesType<typeof Highcharts.PolygonSeries>('polygon', 'scatter', {
-    marker: {
-        enabled: false,
-        states: {
-            hover: {
-                enabled: false
-            }
-        }
-    },
-    stickyTracking: false,
-    tooltip: {
-        followPointer: true,
-        pointFormat: ''
-    },
-    trackByArea: true
+class PolygonSeries extends ScatterSeries {
 
-// Prototype members
-}, {
+    /* *
+     *
+     * Static properties
+     *
+     * */
+    public static defaultOptions: Highcharts.PolygonSeriesOptions = merge(ScatterSeries.defaultOptions, {
+        marker: {
+            enabled: false,
+            states: {
+                hover: {
+                    enabled: false
+                }
+            }
+        },
+        stickyTracking: false,
+        tooltip: {
+            followPointer: true,
+            pointFormat: ''
+        },
+        trackByArea: true
+    });
+
+    /* *
+     *
+     * Properties
+     *
+     * */
+    public data: Array<Highcharts.PolygonPoint> = void 0 as any;
+    public options: Highcharts.PolygonSeriesOptions = void 0 as any;
+    public points: Array<Highcharts.PolygonPoint> = void 0 as any;
+
+}
+
+interface PolygonSeries {
+    areaPath?: SVGPath;
+    pointClass: typeof Highcharts.PolygonPoint;
+    type: string;
+
+}
+extend(PolygonSeries.prototype, {
     type: 'polygon',
     getGraphPath: function (
-        this: Highcharts.PolygonSeries
+        this: PolygonSeries
     ): SVGPath {
 
         var graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
@@ -118,7 +130,7 @@ BaseSeries.seriesType<typeof Highcharts.PolygonSeries>('polygon', 'scatter', {
         this.areaPath = graphPath;
         return graphPath;
     },
-    drawGraph: function (this: Highcharts.PolygonSeries): void {
+    drawGraph: function (this: PolygonSeries): void {
         // Hack into the fill logic in area.drawGraph
         this.options.fillColor = this.color;
         seriesTypes.area.prototype.drawGraph.call(this);
@@ -128,7 +140,32 @@ BaseSeries.seriesType<typeof Highcharts.PolygonSeries>('polygon', 'scatter', {
     setStackedPoints: noop as any // No stacking points on polygons (#5310)
 });
 
+/* *
+ *
+ * Registry
+ *
+ * */
 
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        polygon: typeof PolygonSeries;
+    }
+}
+
+BaseSeries.registerSeriesType('polygon', PolygonSeries);
+
+/* *
+ *
+ * Export
+ *
+ * */
+export default PolygonSeries;
+
+/* *
+ *
+ * API Options
+ *
+ * */
 /**
  * A `polygon` series. If the [type](#series.polygon.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
