@@ -6,8 +6,10 @@ let itemChart;
 	let plotLineColor= 'transparent';//'#33797C';
 	let dashStyle = 'dot';
 	let plotLineZ = 3;
-		
 
+	let imagePath = 'https://raw.githubusercontent.com/highcharts/highcharts/c2581dc1a677d2bb0d715536c788fa98e81f0179/samples/graphics/xmas-card-2020/*';
+		
+	//let imagePath = '../../../graphics/xmas-card-2020/'
 	Math.easeOutQuint= function(pos) {
 	    return (Math.pow((pos-1), 5) +1);
 	}
@@ -384,7 +386,7 @@ let itemChart;
 			type:'scatter',
 			marker:{
 				enabled:true,
-				symbol:'url(img/santa.svg)',
+				symbol:'url(' + imagePath + 'santa.svg)',
 				height:30,
 				width:30
 			},
@@ -468,72 +470,72 @@ let itemChart;
 		    data: [
 
 				{x:1.49,y:0.26,marker:{
-	    			symbol:'url(img/pines.svg)',
+	    			symbol:'url(' + imagePath + 'pines.svg)',
 	    			width:30,
 	    			height:40
 	    		},},
 	    		{x:2,y:0,marker:{
-	    			symbol:'url(img/red-house.svg)',
+	    			symbol:'url(' + imagePath + 'red-house.svg)',
 	    			width:37,
 	    			height:30
 	    		}},
 	    		{x:2.6,y:0,marker:{
-	    			symbol:'url(img/pines.svg)',
+	    			symbol:'url(' + imagePath + 'pines.svg)',
 	    			width:40,
 	    			height:50
 	    		}},
 	    		{x:2.78,y:0.4,marker:{
-	    			symbol:'url(img/hill.svg)',
+	    			symbol:'url(' + imagePath + 'hill.svg)',
 	    			width:100,
 	    			height:100
 	    		}},
 				{x:3.12,y:-0.54,marker:{
 	    			
-	    			symbol:'url(img/pond-skate.svg)',
+	    			symbol:'url(' + imagePath + 'pond-skate.svg)',
 	    			width:171,
 	    			height:120
 	    		}},
 				{x:4.34,y:-0.3,marker:{
 	    			
-	    			symbol:'url(img/car-tree.svg)',
+	    			symbol:'url(' + imagePath + 'car-tree.svg)',
 	    			width:40,
 	    			height:20
 	    		}},
 	    		{x:5,y:0.44,marker:{
-    			symbol:'url(img/hill2.svg)',
+    			symbol:'url(' + imagePath + 'hill2.svg)',
     			width:140,
     			height:180
     			}},
     		 	{x:6.3,y:0.4},
 			 	{x:6.9,y:0.15,marker:{
-    				symbol:'url(img/pines.svg)',
+    				symbol:'url(' + imagePath + 'pines.svg)',
     				width:30,
     				height:40
     			}},
 			 	{x:7.57,y:-0.23,marker:{
-	    			symbol:'url(img/people.svg)',
+	    			symbol:'url(' + imagePath + 'people.svg)',
 	    			width:171,
 	    			height:130
 	    		}},
 			 	{x:8.14,y:-0.33,marker:{fillColor:'transparent'}},
 				{x:9,y:-0.32,marker:{
 	    			
-	    			symbol:'url(img/tree-cluster.svg)',
+	    			symbol:'url(' + imagePath + 'tree-cluster.svg)',
 	    			width:100,
 	    			height:140
 	    		}},
 				{x:9.1,y:0,marker:{
-	    			symbol:'url(img/pines.svg)',
+	    			symbol:'url(' + imagePath + 'pines.svg)',
 	    			width:40,
 	    			height:50
 	    		}},
 	    		{x:9.3,y:0.29,marker:{
-	    			symbol:'url(img/horse.svg)',
+	    			symbol:'url(' + imagePath + 'horse.svg)',
 	    			width:40,
 	    			height:30
 	    		}},
 				 {x:9.52,y:0.53,marker:{
-	    			symbol:'url(img/hill.svg)',
+	    			symbol:'url(' + imagePath + 'hill.svg)',
 	    			width:100,
 	    			height:80
 	    		}},
@@ -648,64 +650,64 @@ let itemChart;
 			zIndex:6,
 			keys: ['name', 'y', 'color', 'label'],
 			data: [
-				{name:'white star',y: 2, marker:{symbol:'url(img/white-star-big.svg)',radius:20}},
-				{name:'red star',y:2, color:'#64A12D', marker:{symbol:'url(img/red-star.svg)',radius:20}},
+				{name:'white star',y: 2, marker:{symbol:'url(' + imagePath + 'white-star-big.svg)',radius:20}},
+				{name:'red star',y:2, color:'#64A12D', marker:{symbol:'url(' + imagePath + 'red-star.svg)',radius:20}},
 				{name:'white dot',y:1, color:'#fff'},
-				{name:'big blue star',y:2,  marker:{symbol:'url(img/blue-star-big.svg)',radius:20}},
+				{name:'big blue star',y:2,  marker:{symbol:'url(' + imagePath + 'blue-star-big.svg)',radius:20}},
 				{name:'green dot',y:1, color:Highcharts.getOptions().colors[4]},
-				{name:'big green flake',y:2, marker:{symbol:'url(img/green-flake-big.svg)',radius:20}},
+				{name:'big green flake',y:2, marker:{symbol:'url(' + imagePath + 'green-flake-big.svg)',radius:20}},
 				{name:'red dot',y:1, color:Highcharts.getOptions().colors[5]},
-				{name:'big white flake',y:2, marker:{symbol:'url(img/green-flake-big.svg)',radius:20}},
-				{name:'big blueflake',y:2, marker:{symbol:'url(img/blue-flake-big.svg)',radius:20}},
+				{name:'big white flake',y:2, marker:{symbol:'url(' + imagePath + 'green-flake-big.svg)',radius:20}},
+				{name:'big blueflake',y:2, marker:{symbol:'url(' + imagePath + 'blue-flake-big.svg)',radius:20}},
 				{name:'purple dot',y:1, color:Highcharts.getOptions().colors[4]},
 				//10
-				{name:'green star 1',y:1, marker:{symbol:'url(img/green-star.svg)',radius:20}},
+				{name:'green star 1',y:1, marker:{symbol:'url(' + imagePath + 'green-star.svg)',radius:20}},
 				//11
-				{name:'sun disk',y:1, marker:{symbol:'url(img/sun-disk.svg)',radius:20}},
+				{name:'sun disk',y:1, marker:{symbol:'url(' + imagePath + 'sun-disk.svg)',radius:20}},
 				{name:'orange dot',y:1, color:Highcharts.getOptions().colors[3]},
-				{name:'red flake',y:2, marker:{symbol:'url(img/red-flake.svg)',radius:20}},
-				{name:'white star',y:2, marker:{symbol:'url(img/blue-star-big.svg)',radius:20}},
-				{name:'red star',y:2, color:'#64A12D', marker:{symbol:'url(img/red-star.svg)',radius:20}},
+				{name:'red flake',y:2, marker:{symbol:'url(' + imagePath + 'red-flake.svg)',radius:20}},
+				{name:'white star',y:2, marker:{symbol:'url(' + imagePath + 'blue-star-big.svg)',radius:20}},
+				{name:'red star',y:2, color:'#64A12D', marker:{symbol:'url(' + imagePath + 'red-star.svg)',radius:20}},
 				{name:'white dot',y:1, color:'#fff'},
-				{name:'big blue star',y:2,  marker:{symbol:'url(img/blue-star-big.svg)',radius:20}},
+				{name:'big blue star',y:2,  marker:{symbol:'url(' + imagePath + 'blue-star-big.svg)',radius:20}},
 				{name:'green dot',y:1, color:Highcharts.getOptions().colors[4]},
-				{name:'big green flake 1',y:2, marker:{symbol:'url(img/green-flake-big.svg)',radius:20}},
+				{name:'big green flake 1',y:2, marker:{symbol:'url(' + imagePath + 'green-flake-big.svg)',radius:20}},
 				{name:'red dot',y:1, color:Highcharts.getOptions().colors[5]},
-				{name:'big green flake 2',y:2, marker:{symbol:'url(img/green-flake-big.svg)',radius:20}},
-				{name:'big blueflake',y:2, marker:{symbol:'url(img/blue-flake-big.svg)',radius:20}},
+				{name:'big green flake 2',y:2, marker:{symbol:'url(' + imagePath + 'green-flake-big.svg)',radius:20}},
+				{name:'big blueflake',y:2, marker:{symbol:'url(' + imagePath + 'blue-flake-big.svg)',radius:20}},
 				{name:'purple dot',y:1, color:Highcharts.getOptions().colors[4]},
-				{name:'green star 2',y:2, marker:{symbol:'url(img/green-star.svg)',radius:20}},
-				{name:'big red star',y:2, marker:{symbol:'url(img/red-star-big.svg)',radius:20}},
+				{name:'green star 2',y:2, marker:{symbol:'url(' + imagePath + 'green-star.svg)',radius:20}},
+				{name:'big red star',y:2, marker:{symbol:'url(' + imagePath + 'red-star-big.svg)',radius:20}},
 				{name:'orange dot',y:1, color:Highcharts.getOptions().colors[3]},
-				{name:'red flake',y:2, marker:{symbol:'url(img/red-flake.svg)',radius:20}},
-				{name:'white star',y:2, marker:{symbol:'url(img/red-star-big.svg)',radius:20}},
-				{name:'red star',y:2, color:'#64A12D', marker:{symbol:'url(img/red-star.svg)',radius:20}},
+				{name:'red flake',y:2, marker:{symbol:'url(' + imagePath + 'red-flake.svg)',radius:20}},
+				{name:'white star',y:2, marker:{symbol:'url(' + imagePath + 'red-star-big.svg)',radius:20}},
+				{name:'red star',y:2, color:'#64A12D', marker:{symbol:'url(' + imagePath + 'red-star.svg)',radius:20}},
 				{name:'white dot',y:1, color:'#fff'},
-				{name:'big blue star',y:2,  marker:{symbol:'url(img/blue-star-big.svg)',radius:20}},
+				{name:'big blue star',y:2,  marker:{symbol:'url(' + imagePath + 'blue-star-big.svg)',radius:20}},
 				{name:'green dot',y:1, color:Highcharts.getOptions().colors[4]},
-				{name:'big green flake 3',y:2, marker:{symbol:'url(img/green-flake-big.svg)',radius:20}},
+				{name:'big green flake 3',y:2, marker:{symbol:'url(' + imagePath + 'green-flake-big.svg)',radius:20}},
 				{name:'red dot',y:1, color:Highcharts.getOptions().colors[5]},
-				{name:'big green flake 4',y:2, marker:{symbol:'url(img/green-flake-big.svg)',radius:20}},
-				{name:'big blueflake',y:2, marker:{symbol:'url(img/blue-flake-big.svg)',radius:20}},
+				{name:'big green flake 4',y:2, marker:{symbol:'url(' + imagePath + 'green-flake-big.svg)',radius:20}},
+				{name:'big blueflake',y:2, marker:{symbol:'url(' + imagePath + 'blue-flake-big.svg)',radius:20}},
 				{name:'purple dot',y:1, color:Highcharts.getOptions().colors[4]},
-				{name:'green star 2',y:2, marker:{symbol:'url(img/green-star.svg)',radius:20}},
-				{name:'big red star',y:2, marker:{symbol:'url(img/red-star-big.svg)',radius:20}},
+				{name:'green star 2',y:2, marker:{symbol:'url(' + imagePath + 'green-star.svg)',radius:20}},
+				{name:'big red star',y:2, marker:{symbol:'url(' + imagePath + 'red-star-big.svg)',radius:20}},
 				{name:'orange dot',y:1, color:Highcharts.getOptions().colors[3]},
-				{name:'red flake',y:2, marker:{symbol:'url(img/red-flake.svg)',radius:20}},
-				{name:'white star',y:2, marker:{symbol:'url(img/blue-star-big.svg)',radius:20}},
-				{name:'red star',y:2, color:'#64A12D', marker:{symbol:'url(img/red-star.svg)',radius:20}},
+				{name:'red flake',y:2, marker:{symbol:'url(' + imagePath + 'red-flake.svg)',radius:20}},
+				{name:'white star',y:2, marker:{symbol:'url(' + imagePath + 'blue-star-big.svg)',radius:20}},
+				{name:'red star',y:2, color:'#64A12D', marker:{symbol:'url(' + imagePath + 'red-star.svg)',radius:20}},
 				{name:'white dot',y:1, color:'#fff'},
-				{name:'big blue star',y:2,  marker:{symbol:'url(img/blue-star-big.svg)',radius:20}},
+				{name:'big blue star',y:2,  marker:{symbol:'url(' + imagePath + 'blue-star-big.svg)',radius:20}},
 				{name:'green dot',y:1, color:Highcharts.getOptions().colors[4]},
-				{name:'big green flake',y:2, marker:{symbol:'url(img/green-flake-big.svg)',radius:20}},
+				{name:'big green flake',y:2, marker:{symbol:'url(' + imagePath + 'green-flake-big.svg)',radius:20}},
 				{name:'red dot',y:1, color:Highcharts.getOptions().colors[5]},
-				{name:'big white flake',y:2, marker:{symbol:'url(img/green-flake-big.svg)',radius:20}},
-				{name:'big blueflake',y:2, marker:{symbol:'url(img/blue-flake-big.svg)',radius:20}},
+				{name:'big white flake',y:2, marker:{symbol:'url(' + imagePath + 'green-flake-big.svg)',radius:20}},
+				{name:'big blueflake',y:2, marker:{symbol:'url(' + imagePath + 'blue-flake-big.svg)',radius:20}},
 				{name:'purple dot',y:1, color:Highcharts.getOptions().colors[4]},
-				{name:'green star',y:2, marker:{symbol:'url(img/green-star.svg)',radius:20}},
-				{name:'big red star',y:2, marker:{symbol:'url(img/red-star-big.svg)',radius:20}},
+				{name:'green star',y:2, marker:{symbol:'url(' + imagePath + 'green-star.svg)',radius:20}},
+				{name:'big red star',y:2, marker:{symbol:'url(' + imagePath + 'red-star-big.svg)',radius:20}},
 				{name:'orange dot',y:1, color:Highcharts.getOptions().colors[3]},
-				{name:'red flake',y:2, marker:{symbol:'url(img/red-flake.svg)',radius:20}},
+				{name:'red flake',y:2, marker:{symbol:'url(' + imagePath + 'red-flake.svg)',radius:20}},
 
 			],
 			// Circular options
@@ -1174,7 +1176,7 @@ function ski(direction){
 	if(direction=='forward'){
 		itemChart.series[5].points[0].update({
 			marker:{
-				symbol:'url(img/santa.svg)',
+				symbol:'url(' + imagePath + 'santa.svg)',
 				height:30,
 				width:30
 			}
@@ -1188,7 +1190,7 @@ function ski(direction){
 	}else{
 		itemChart.series[5].points[0].update({
 			marker:{
-				symbol:'url(img/santa-b.svg)',
+				symbol:'url(' + imagePath + 'santa-b.svg)',
 				height:30,
 				width:30
 			}
