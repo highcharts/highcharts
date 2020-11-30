@@ -28,6 +28,7 @@ import type RadialAxis from '../Core/Axis/RadialAxis';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
@@ -88,7 +89,6 @@ declare global {
             public fixedBox: boolean;
             public forceDL: boolean;
             public options: GaugeSeriesOptions;
-            public pivot?: SVGElement;
             public pointClass: typeof GaugePoint;
             public points: Array<GaugePoint>;
             public yAxis: RadialAxis;
@@ -419,30 +419,13 @@ class GaugeSeries extends LineSeries {
     public points = void 0 as any;
     public options: Highcharts.GaugeSeriesOptions = void 0 as any;
 
+    public yAxis: RadialAxis = void 0 as any;
+    public pivot?: SVGElement;
     /* *
      *
      *  Functions
      *
      * */
-
-}
-
-/* *
- *
- *  Prototype properties
- *
- * */
-
-extend(GaugeSeries.prototype, {
-    // chart.angular will be set to true when a gauge series is present,
-    // and this will be used on the axes
-    angular: true,
-    directTouch: true, // #5063
-    drawGraph: noop as any,
-    fixedBox: true,
-    forceDL: true,
-    noSharedTooltip: true,
-    trackerGroups: ['group', 'dataLabelsGroup'],
 
     /* eslint-disable valid-jsdoc */
 
@@ -450,7 +433,7 @@ extend(GaugeSeries.prototype, {
      * Calculate paths etc
      * @private
      */
-    translate: function (this: Highcharts.GaugeSeries): void {
+    public translate(): void {
 
         var series = this,
             yAxis = series.yAxis,
@@ -516,13 +499,13 @@ extend(GaugeSeries.prototype, {
             point.plotX = center[0];
             point.plotY = center[1];
         });
-    },
+    }
 
     /**
      * Draw the points where each point is one needle
      * @private
      */
-    drawPoints: function (this: Highcharts.GaugeSeries): void {
+    public drawPoints(): void {
 
         var series = this,
             chart = series.chart,
@@ -592,13 +575,13 @@ extend(GaugeSeries.prototype, {
                 });
             }
         }
-    },
+    }
 
     /**
      * Animate the arrow up from startAngle
      * @private
      */
-    animate: function (this: Highcharts.GaugeSeries, init?: boolean): void {
+    public animate(init?: boolean): void {
         var series = this;
 
         if (!init) {
@@ -620,12 +603,12 @@ extend(GaugeSeries.prototype, {
                 }
             });
         }
-    },
+    }
 
     /**
      * @private
      */
-    render: function (this: Highcharts.GaugeSeries): void {
+    public render(): void {
         this.group = this.plotGroup(
             'group',
             'series',
@@ -635,15 +618,13 @@ extend(GaugeSeries.prototype, {
         );
         LineSeries.prototype.render.call(this);
         this.group.clip(this.chart.clipRect);
-    },
-
+    }
     /**
      * Extend the basic setData method by running processData and generatePoints
      * immediately, in order to access the points from the legend.
      * @private
      */
-    setData: function (
-        this: Highcharts.GaugeSeries,
+    public setData(
         data: Array<(PointOptions|PointShortOptions)>,
         redraw?: boolean
     ): void {
@@ -653,43 +634,54 @@ extend(GaugeSeries.prototype, {
         if (pick(redraw, true)) {
             this.chart.redraw();
         }
-    },
+    }
 
     /**
      * Define hasData function for non-cartesian series.
      * Returns true if the series has points at all.
      * @private
      */
-    hasData: function (this: Highcharts.GaugeSeries): boolean {
+    public hasData(): boolean {
         return !!this.points.length; // != 0
-    },
-
-    // If the tracking module is loaded, add the point tracker
-    drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
+    }
 
     /* eslint-enable valid-jsdoc */
+}
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+extend(GaugeSeries.prototype, {
+    // chart.angular will be set to true when a gauge series is present,
+    // and this will be used on the axes
+    angular: true,
+    directTouch: true, // #5063
+    drawGraph: noop as any,
+    fixedBox: true,
+    forceDL: true,
+    noSharedTooltip: true,
+    trackerGroups: ['group', 'dataLabelsGroup'],
+    // If the tracking module is loaded, add the point tracker
+    drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 });
 
 class GaugePoint extends LineSeries.prototype.pointClass {
-
-}
-GaugeSeries.prototype.pointClass = GaugePoint;
-extend(GaugePoint.prototype, {
-    // Point members
-
     /* eslint-disable valid-jsdoc */
 
     /**
      * Don't do any hover colors or anything
      * @private
      */
-    setState: function (this: Highcharts.GaugePoint, state?: StatesOptionsKey): void {
+    public setState(state?: StatesOptionsKey): void {
         this.state = state;
     }
 
     /* eslint-enable valid-jsdoc */
-
-});
+}
+GaugeSeries.prototype.pointClass = GaugePoint;
 
 /**
  * Gauges are circular plots displaying one or more values with a dial pointing
