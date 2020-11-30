@@ -23,6 +23,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import BaseSeries from '../../Core/Series/Series.js';
 var LineSeries = BaseSeries.seriesTypes.line;
+import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
 var TrackerMixin = H.TrackerMixin, noop = H.noop;
 import palette from '../../Core/Color/Palette.js';
@@ -33,6 +34,16 @@ var clamp = U.clamp, isNumber = U.isNumber, extend = U.extend, merge = U.merge, 
  *  Class
  *
  * */
+/**
+ *
+ * The `gauge` series type
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.map
+ *
+ * @augments Highcharts.Series
+ */
 var GaugeSeries = /** @class */ (function (_super) {
     __extends(GaugeSeries, _super);
     function GaugeSeries() {
@@ -51,6 +62,8 @@ var GaugeSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         _this.options = void 0;
         _this.yAxis = void 0;
+        _this.fixedBox = true;
+        _this.forceDL = true;
         return _this;
         /* eslint-enable valid-jsdoc */
     }
@@ -212,6 +225,24 @@ var GaugeSeries = /** @class */ (function (_super) {
     GaugeSeries.prototype.hasData = function () {
         return !!this.points.length; // != 0
     };
+    /**
+     * Gauges are circular plots displaying one or more values with a dial
+     * pointing to values along the perimeter.
+     *
+     * @sample highcharts/demo/gauge-speedometer/
+     *         Gauge chart
+     *
+     * @extends      plotOptions.line
+     * @excluding    animationLimit, boostThreshold, colorAxis, colorKey,
+     *               connectEnds, connectNulls, cropThreshold, dashStyle,
+     *               dragDrop, findNearestPointBy, getExtremesFromAll, marker,
+     *               negativeColor, pointPlacement, shadow, softThreshold,
+     *               stacking, states, step, threshold, turboThreshold, xAxis,
+     *               zoneAxis, zones, dataSorting, boostBlending
+     * @product      highcharts
+     * @requires     highcharts-more
+     * @optionparent plotOptions.gauge
+     */
     GaugeSeries.defaultOptions = merge(LineSeries.defaultOptions, {
         /**
          * When this option is `true`, the dial will wrap around the axes.
@@ -457,11 +488,6 @@ var GaugeSeries = /** @class */ (function (_super) {
     });
     return GaugeSeries;
 }(LineSeries));
-/* *
- *
- *  Prototype properties
- *
- * */
 extend(GaugeSeries.prototype, {
     // chart.angular will be set to true when a gauge series is present,
     // and this will be used on the axes
@@ -473,24 +499,9 @@ extend(GaugeSeries.prototype, {
     noSharedTooltip: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
     // If the tracking module is loaded, add the point tracker
-    drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
+    drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint,
+    pointClass: GaugePoint
 });
-var GaugePoint = /** @class */ (function (_super) {
-    __extends(GaugePoint, _super);
-    function GaugePoint() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Don't do any hover colors or anything
-     * @private
-     */
-    GaugePoint.prototype.setState = function (state) {
-        this.state = state;
-    };
-    return GaugePoint;
-}(LineSeries.prototype.pointClass));
-GaugeSeries.prototype.pointClass = GaugePoint;
 BaseSeries.registerSeriesType('gauge', GaugeSeries);
 /* *
  *
@@ -498,6 +509,11 @@ BaseSeries.registerSeriesType('gauge', GaugeSeries);
  *
  * */
 export default GaugeSeries;
+/* *
+ *
+ *  API options
+ *
+ * */
 /**
  * A `gauge` series. If the [type](#series.gauge.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
