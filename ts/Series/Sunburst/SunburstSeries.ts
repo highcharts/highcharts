@@ -20,9 +20,7 @@
  *
  * */
 
-import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
-import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SunburstDataLabelOptions from './SunburstDataLabelOptions';
@@ -30,7 +28,6 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeriesOptions from './SunburstSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TreemapSeriesType from '../Treemap/TreemapSeries';
-import type TreemapUtilities from '../Treemap/TreemapUtilities';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -1134,6 +1131,7 @@ interface SunburstSeries {
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop as any, // drawDataLabels is called in drawPoints
     pointAttribs: ColumnSeries.prototype.pointAttribs,
+    pointClass: SunburstPoint,
     utils: SunburstUtilities
 });
 
@@ -1201,7 +1199,6 @@ declare module '../../Core/Series/SeriesType' {
         sunburst: typeof SunburstSeries;
     }
 }
-SunburstSeries.prototype.pointClass = SunburstPoint;
 BaseSeries.registerSeriesType('sunburst', SunburstSeries);
 
 /* *

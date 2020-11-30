@@ -846,9 +846,9 @@ var SunburstSeries = /** @class */ (function (_super) {
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop,
     pointAttribs: ColumnSeries.prototype.pointAttribs,
+    pointClass: SunburstPoint,
     utils: SunburstUtilities
 });
-SunburstSeries.prototype.pointClass = SunburstPoint;
 BaseSeries.registerSeriesType('sunburst', SunburstSeries);
 /* *
  *
