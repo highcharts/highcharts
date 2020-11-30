@@ -468,25 +468,9 @@ class SolidGaugeSeries extends GaugeSeries {
      *
      * */
 
-}
-
-/* *
- *
- *  Prototype properties
- *
- * */
-
-interface SolidGaugeSeries extends GaugeSeries {
-    pointClass: typeof Highcharts.SolidGaugePoint;
-    animate(init?: boolean): void;
-    drawPoints(): void;
-    translate(): void;
-}
-extend(SolidGaugeSeries.prototype, {
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
-    translate: function (this: SolidGaugeSeries): void {
+    public translate(): void {
         var axis = this.yAxis;
 
         SolidGaugeAxis.init(axis);
@@ -499,10 +483,10 @@ extend(SolidGaugeSeries.prototype, {
 
         // Generate points and inherit data label position
         H.seriesTypes.gauge.prototype.translate.call(this);
-    },
+    }
 
     // Draw the points where each point is one needle.
-    drawPoints: function (this: SolidGaugeSeries): void {
+    public drawPoints(): void {
         var series = this,
             yAxis = series.yAxis,
             center = yAxis.center,
@@ -645,19 +629,29 @@ extend(SolidGaugeSeries.prototype, {
                 }
             }
         });
-    },
+    }
 
     // Extend the pie slice animation by animating from start angle and up.
-    animate: function (
-        this: SolidGaugeSeries,
-        init?: boolean
-    ): void {
-
+    animate(init?: boolean): void {
         if (!init) {
             this.startAngleRad = this.thresholdAngleRad;
             H.seriesTypes.pie.prototype.animate.call(this, init);
         }
     }
+}
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+interface SolidGaugeSeries extends GaugeSeries {
+    pointClass: typeof Highcharts.SolidGaugePoint;
+    drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
+}
+extend(SolidGaugeSeries.prototype, {
+    drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 
 

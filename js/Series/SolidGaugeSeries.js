@@ -282,6 +282,11 @@ var solidGaugeOptions = {
         y: 0
     }
 };
+/* *
+ *
+ *  Class
+ *
+ * */
 var SolidGaugeSeries = /** @class */ (function (_super) {
     __extends(SolidGaugeSeries, _super);
     function SolidGaugeSeries() {
@@ -301,26 +306,18 @@ var SolidGaugeSeries = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.axis = void 0;
         _this.yAxis = void 0;
+        _this.startAngleRad = void 0;
+        _this.thresholdAngleRad = void 0;
         return _this;
-        /* *
-         *
-         *  Functions
-         *
-         * */
     }
-    SolidGaugeSeries.defaultOptions = merge(GaugeSeries.defaultOptions, solidGaugeOptions);
-    return SolidGaugeSeries;
-}(GaugeSeries));
-/* *
- *
- *  Prototype properties
- *
- * */
-extend(SolidGaugeSeries.prototype, {
-    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    /* *
+     *
+     *  Functions
+     *
+     * */
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
-    translate: function () {
+    SolidGaugeSeries.prototype.translate = function () {
         var axis = this.yAxis;
         SolidGaugeAxis.init(axis);
         // Prepare data classes
@@ -330,9 +327,9 @@ extend(SolidGaugeSeries.prototype, {
         axis.initStops(axis.options);
         // Generate points and inherit data label position
         H.seriesTypes.gauge.prototype.translate.call(this);
-    },
+    };
     // Draw the points where each point is one needle.
-    drawPoints: function () {
+    SolidGaugeSeries.prototype.drawPoints = function () {
         var series = this, yAxis = series.yAxis, center = yAxis.center, options = series.options, renderer = series.chart.renderer, overshoot = options.overshoot, overshootVal = isNumber(overshoot) ?
             overshoot / 180 * Math.PI :
             0, thresholdAngleRad;
@@ -405,14 +402,19 @@ extend(SolidGaugeSeries.prototype, {
                 }
             }
         });
-    },
+    };
     // Extend the pie slice animation by animating from start angle and up.
-    animate: function (init) {
+    SolidGaugeSeries.prototype.animate = function (init) {
         if (!init) {
             this.startAngleRad = this.thresholdAngleRad;
             H.seriesTypes.pie.prototype.animate.call(this, init);
         }
-    }
+    };
+    SolidGaugeSeries.defaultOptions = merge(GaugeSeries.defaultOptions, solidGaugeOptions);
+    return SolidGaugeSeries;
+}(GaugeSeries));
+extend(SolidGaugeSeries.prototype, {
+    drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 BaseSeries.registerSeriesType('solidgauge', SolidGaugeSeries);
 /* *
