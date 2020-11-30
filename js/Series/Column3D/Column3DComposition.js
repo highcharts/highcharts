@@ -246,10 +246,8 @@ wrap(columnProto, 'setVisible', function (proceed, vis) {
     }
     proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 });
-columnProto.handle3dGrouping = true;
-addEvent(LineSeries, 'afterInit', function () {
-    if (this.chart.is3d() &&
-        this.handle3dGrouping) {
+addEvent(ColumnSeries, 'afterInit', function () {
+    if (this.chart.is3d()) {
         var series = this, seriesOptions = this.options, grouping = seriesOptions.grouping, stacking = seriesOptions.stacking, reversedStacks = pick(this.yAxis.options.reversedStacks, true), z = 0;
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {

@@ -10,8 +10,5 @@ QUnit.test('setDerivedData', assert => {
      * setDerivedData should work properly with an empty yData. #11388.
      */
     setDerivedData.call(ctx);
-    assert.ok(
-        true,
-        'Should not error when called with empty yData.'
-    );
+    assert.ok(true, 'Should not error when called with empty yData.');
 });

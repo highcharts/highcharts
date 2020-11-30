@@ -42,7 +42,6 @@ var DumbbellPoint = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.connector = void 0;
         _this.pointWidth = void 0;
-        _this.pointSetState = _super.prototype.setState;
         return _this;
     }
     /* *
@@ -87,6 +86,9 @@ var DumbbellPoint = /** @class */ (function (_super) {
     };
     return DumbbellPoint;
 }(AreaRangePoint));
+extend(DumbbellPoint.prototype, {
+    pointSetState: AreaRangePoint.prototype.setState
+});
 /* *
  *
  *  Default export

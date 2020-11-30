@@ -1131,11 +1131,21 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
         // methods and properties from the new type prototype (#2270,
         // #3719).
         series.remove(false, null, false, true);
+        var ownEvents = Object.hasOwnProperty.call(series, 'hcEvents') &&
+            series.hcEvents;
         for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
             series[n] = void 0;
         }
         if (seriesTypes[newType || initialType]) {
             extend(series, seriesTypes[newType || initialType].prototype);
+            // The events are tied to the prototype chain, don't copy if they're
+            // not the series' own
+            if (ownEvents) {
+                series.hcEvents = ownEvents;
+            }
+            else {
+                delete series.hcEvents;
+            }
         }
         else {
             error(17, true, chart, { missingModuleFor: (newType || initialType) });

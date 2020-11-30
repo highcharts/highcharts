@@ -12,7 +12,7 @@ import '../Extensions/Pane.js';
 import '../Core/Axis/RadialAxis.js';
 import '../Series/AreaRange/AreaRangeSeries.js';
 import '../Series/AreaSplineRange/AreaSplineRangeSeries.js';
-import '../Series/ColumnRangeSeries.js';
+import '../Series/ColumnRange/ColumnRangeSeries.js';
 import '../Series/ColumnPyramid/ColumnPyramidSeries.js';
 import '../Series/GaugeSeries.js';
 import '../Series/BoxPlot/BoxPlotSeries.js';

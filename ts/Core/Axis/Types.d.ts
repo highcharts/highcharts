@@ -73,3 +73,12 @@ export interface AxisLike {
 export interface AxisTypeRegistry extends Record<string, Axis> {
     Axis: Axis;
 }
+
+/**
+ *
+ * Helper interface for Tick.
+ *
+ */
+export interface TickLike {
+    // Nothing here
+}

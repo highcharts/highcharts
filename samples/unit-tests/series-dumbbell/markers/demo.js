@@ -1,34 +1,43 @@
 QUnit.test('Markers and zones for dumbbell.', function (assert) {
-
     var chart = Highcharts.chart('container', {
-
         chart: {
             type: 'dumbbell',
             width: 600
         },
 
-        series: [{
-            data: [
-                [0, 10],
-                [10, 20],
-                { low: 30, high: 35, lowColor: '#ff69b4', connectorColor: '#000000' },
-                [30, 31]
-            ],
-            zones: [{
-                value: 15,
-                color: '#ff0000'
-            }, {
-                value: 25,
-                color: '#ffff00'
-            }, {
-                color: '#d3d3d3'
-            }],
-            marker: {
-                enabled: true
-            },
-            color: '#0000ff',
-            lowColor: '#00ff00'
-        }]
+        series: [
+            {
+                data: [
+                    [0, 10],
+                    [10, 20],
+                    {
+                        low: 30,
+                        high: 35,
+                        lowColor: '#ff69b4',
+                        connectorColor: '#000000'
+                    },
+                    [30, 31]
+                ],
+                zones: [
+                    {
+                        value: 15,
+                        color: '#ff0000'
+                    },
+                    {
+                        value: 25,
+                        color: '#ffff00'
+                    },
+                    {
+                        color: '#d3d3d3'
+                    }
+                ],
+                marker: {
+                    enabled: true
+                },
+                color: '#0000ff',
+                lowColor: '#00ff00'
+            }
+        ]
     });
 
     assert.deepEqual(
@@ -40,26 +49,10 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
             ];
         }),
         [
-            [
-                "#ff0000",
-                "#00ff00",
-                "#ff0000"
-            ],
-            [
-                "#ffff00",
-                "#00ff00",
-                "#ffff00"
-            ],
-            [
-                "#d3d3d3",
-                "#ff69b4",
-                "#000000"
-            ],
-            [
-                "#d3d3d3",
-                "#00ff00",
-                "#d3d3d3"
-            ]
+            ['#ff0000', '#00ff00', '#ff0000'],
+            ['#ffff00', '#00ff00', '#ffff00'],
+            ['#d3d3d3', '#ff69b4', '#000000'],
+            ['#d3d3d3', '#00ff00', '#d3d3d3']
         ],
         'Upper and lower markers with connector should individually respect all the colors settings.'
     );
@@ -109,42 +102,45 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
         chart.series[0].options.marker.fillColor,
         'After mouseOut (without any state), the upper marker should have a correct color.'
     );
-
 });
 
 QUnit.test('setData() and marker update for dumbbell.', function (assert) {
-
     var chart = Highcharts.chart('container', {
-
         chart: {
             type: 'dumbbell',
             width: 600
         },
 
-        series: [{
-            data: [
-                [0, 10],
-                [10, 20],
-                [30, 35],
-                [30, 31]
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    [0, 10],
+                    [10, 20],
+                    [30, 35],
+                    [30, 31]
+                ]
+            }
+        ]
     });
 
-    chart.series[0].setData([[50, 60], [50, 60], [50, 60]]);
+    chart.series[0].setData([
+        [50, 60],
+        [50, 60],
+        [50, 60]
+    ]);
 
     Highcharts.each(chart.series[0].points, function (point) {
         assert.ok(
             point.lowerGraphic !== undefined,
-            'Bottom marker for point: x=' + (point.x) + ' exists.'
+            'Bottom marker for point: x=' + point.x + ' exists.'
         );
         assert.ok(
             point.upperGraphic !== undefined,
-            'Top marker for point: x=' + (point.x) + ' exists.'
+            'Top marker for point: x=' + point.x + ' exists.'
         );
         assert.ok(
             point.connector !== undefined,
-            'Connector for point: x=' + (point.x) + ' exists.'
+            'Connector for point: x=' + point.x + ' exists.'
         );
     });
 
@@ -171,5 +167,4 @@ QUnit.test('setData() and marker update for dumbbell.', function (assert) {
             'After series.lowColor update, all the lowerGraphics should have a correct color.'
         );
     });
-
 });

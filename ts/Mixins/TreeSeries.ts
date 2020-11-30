@@ -11,6 +11,8 @@ import type ColorType from '../Core/Color/ColorType';
 import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type PointOptions from '../Core/Series/PointOptions';
+import type TreemapSeries from '../Series/Treemap/TreemapSeries';
+import type TreemapSeriesOptions from '../Series/Treemap/TreemapSeriesOptions';
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
 const {
@@ -163,12 +165,12 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
  * @private
  */
 const getColor = function getColor(
-    node: Highcharts.TreemapNodeObject,
+    node: TreemapSeries.NodeObject,
     options: {
         colorIndex?: number;
         colors: Array<ColorString>;
         index: number;
-        mapOptionsToLevel: Array<Highcharts.TreemapSeriesOptions>;
+        mapOptionsToLevel: Array<TreemapSeriesOptions>;
         parentColor: ColorString;
         parentColorIndex: number;
         series: LineSeries;

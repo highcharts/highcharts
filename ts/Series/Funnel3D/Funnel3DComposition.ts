@@ -347,7 +347,7 @@ RendererProto.elements3d.funnel3d = merge(RendererProto.elements3d.cuboid, {
     }
 });
 
-H.Renderer.prototype.funnel3d = function (
+RendererProto.funnel3d = function (
     this: SVGRenderer,
     shapeArgs: SVGAttributes
 ): SVGElement {
@@ -402,7 +402,7 @@ H.Renderer.prototype.funnel3d = function (
  * Generates paths and zIndexes.
  * @private
  */
-H.Renderer.prototype.funnel3dPath = function (
+RendererProto.funnel3dPath = function (
     this: SVGRenderer,
     shapeArgs: SVGAttributes
 ): Highcharts.Funnel3dPathsObject {

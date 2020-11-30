@@ -1,21 +1,23 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
-        series: [{
-            id: 'main',
-            type: 'candlestick',
-            data: [
-                [0, 10, 11, 9, 10],
-                [1, 10, 20, 10, 15],
-                [2, 15, 25, 10, 20],
-                [3, 20, 21, 1, 5],
-                [4, 5, 21, 5, 10],
-                [5, 10, 11, 1, 10]
-            ]
-        }, {
-            type: 'zigzag',
-            linkedTo: 'main'
-        }]
+        series: [
+            {
+                id: 'main',
+                type: 'candlestick',
+                data: [
+                    [0, 10, 11, 9, 10],
+                    [1, 10, 20, 10, 15],
+                    [2, 15, 25, 10, 20],
+                    [3, 20, 21, 1, 5],
+                    [4, 5, 21, 5, 10],
+                    [5, 10, 11, 1, 10]
+                ]
+            },
+            {
+                type: 'zigzag',
+                linkedTo: 'main'
+            }
+        ]
     });
 
     assert.strictEqual(

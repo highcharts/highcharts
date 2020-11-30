@@ -1,7 +1,5 @@
-QUnit.test("Keep the cache size down (#4681)", function (assert) {
-    var ren,
-        i,
-        label;
+QUnit.test('Keep the cache size down (#4681)', function (assert) {
+    var ren, i, label;
 
     ren = new Highcharts.Renderer(
         document.getElementById('container'),
@@ -10,7 +8,8 @@ QUnit.test("Keep the cache size down (#4681)", function (assert) {
     );
 
     for (i = 0; i < 1000; i++) {
-        label = ren.text('This is label no. ' + i)
+        label = ren
+            .text('This is label no. ' + i)
             .attr({
                 x: i,
                 y: i
@@ -20,11 +19,9 @@ QUnit.test("Keep the cache size down (#4681)", function (assert) {
         label.getBBox();
     }
 
-
     assert.strictEqual(
         Object.keys(ren.cache).length <= 251,
         true,
         'Keep below limit'
     );
-
 });

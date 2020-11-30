@@ -1,14 +1,19 @@
 QUnit.test('visibility', assert => {
-    const { series: [series1, series2] } = Highcharts.chart('container', {
+    const {
+        series: [series1, series2]
+    } = Highcharts.chart('container', {
         yAxis: {
             min: 2,
             max: 5
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }, {
-            data: [3, 2, 1, 4]
-        }],
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            },
+            {
+                data: [3, 2, 1, 4]
+            }
+        ],
         tooltip: {
             shared: true
         }
@@ -24,7 +29,6 @@ QUnit.test('visibility', assert => {
         undefined,
         'Should have no halo on Series 2 before hover'
     );
-
 
     series1.points[2].onMouseOver();
     assert.ok(
@@ -49,13 +53,15 @@ QUnit.test('Halo with boost module, #12870', assert => {
             min: -5,
             max: 5
         },
-        series: [{
-            boostThreshold: 1,
-            marker: {
-                radius: 75
-            },
-            data: [2]
-        }]
+        series: [
+            {
+                boostThreshold: 1,
+                marker: {
+                    radius: 75
+                },
+                data: [2]
+            }
+        ]
     });
 
     const series = chart.series[0];

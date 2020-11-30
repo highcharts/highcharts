@@ -71,7 +71,6 @@ declare module '../../Core/Series/PointLike' {
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
-        handle3dGrouping: boolean;
         z: number;
         /** @requires Series/Column3DSeries */
         translate3dShapes(): void;
@@ -405,12 +404,8 @@ wrap(
     }
 );
 
-columnProto.handle3dGrouping = true;
-addEvent(LineSeries, 'afterInit', function (): void {
-    if (
-        this.chart.is3d() &&
-        (this as ColumnSeries).handle3dGrouping
-    ) {
+addEvent(ColumnSeries, 'afterInit', function (): void {
+    if (this.chart.is3d()) {
         var series = this as ColumnSeries,
             seriesOptions: ColumnSeriesOptions = this.options,
             grouping = seriesOptions.grouping,

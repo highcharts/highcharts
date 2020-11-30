@@ -8,13 +8,29 @@ QUnit.test('Accessible data table', function (assert) {
                     keys: ['y', 'name']
                 }
             },
-            series: [{
-                data: [[1, 'bob'], [2, 'bob'], [3, 'bob']]
-            }, {
-                data: [[4, '1'], [5, '1'], [6, '1']]
-            }, {
-                data: [[7, 'john'], [8, 'john'], [9, 'extra']]
-            }]
+            series: [
+                {
+                    data: [
+                        [1, 'bob'],
+                        [2, 'bob'],
+                        [3, 'bob']
+                    ]
+                },
+                {
+                    data: [
+                        [4, '1'],
+                        [5, '1'],
+                        [6, '1']
+                    ]
+                },
+                {
+                    data: [
+                        [7, 'john'],
+                        [8, 'john'],
+                        [9, 'extra']
+                    ]
+                }
+            ]
         });
 
     chart.viewData();
@@ -30,20 +46,33 @@ QUnit.test('Accessible data table', function (assert) {
     Highcharts.each(head.children, function (row) {
         Highcharts.each(row.children, function (cell) {
             if (cell.innerHTML) {
-                assert.strictEqual(cell.getAttribute('scope'), 'col',
-                    'Header cell has col scope');
-                assert.strictEqual(cell.tagName, 'TH',
-                    'Header cell is th');
+                assert.strictEqual(
+                    cell.getAttribute('scope'),
+                    'col',
+                    'Header cell has col scope'
+                );
+                assert.strictEqual(cell.tagName, 'TH', 'Header cell is th');
             }
         });
     });
 
     assert.ok(body, 'Data table has body');
-    assert.strictEqual(body.children.length, 3, 'Data table body has three rows');
+    assert.strictEqual(
+        body.children.length,
+        3,
+        'Data table body has three rows'
+    );
 
     Highcharts.each(body.children, function (row) {
-        assert.strictEqual(row.firstChild.tagName, 'TH', 'First cell is heading');
-        assert.strictEqual(row.firstChild.getAttribute('scope'), 'row',
-            'First cell has scope');
+        assert.strictEqual(
+            row.firstChild.tagName,
+            'TH',
+            'First cell is heading'
+        );
+        assert.strictEqual(
+            row.firstChild.getAttribute('scope'),
+            'row',
+            'First cell has scope'
+        );
     });
 });
