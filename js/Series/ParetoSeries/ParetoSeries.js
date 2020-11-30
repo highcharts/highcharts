@@ -107,6 +107,17 @@ var ParetoSeries = /** @class */ (function (_super) {
         return (isSum ? sumY : percentPoints);
     };
     /**
+     * Calculate sum and return percent points.
+     *
+     * @private
+     * @function Highcharts.Series#setDerivedData
+     * @requires modules/pareto
+     */
+    ParetoSeries.prototype.setDerivedData = function () {
+        var xValues = this.baseSeries.xData, yValues = this.baseSeries.yData, sum = this.sumPointsPercents(yValues, xValues, null, true);
+        this.setData(this.sumPointsPercents(yValues, xValues, sum, false), false);
+    };
+    /**
      * A pareto diagram is a type of chart that contains both bars and a line
      * graph, where individual values are represented in descending order by
      * bars, and the cumulative total is represented by the line.
@@ -142,20 +153,7 @@ extend(ParetoSeries.prototype, {
     destroy: DerivedSeriesMixin.destroy,
     hasDerivedData: DerivedSeriesMixin.hasDerivedData,
     init: DerivedSeriesMixin.init,
-    setBaseSeries: DerivedSeriesMixin.setBaseSeries,
-    /* eslint-disable no-invalid-this, valid-jsdoc */
-    /**
-     * Calculate sum and return percent points.
-     *
-     * @private
-     * @function Highcharts.Series#setDerivedData
-     * @requires modules/pareto
-     */
-    setDerivedData: function () {
-        var xValues = this.baseSeries.xData, yValues = this.baseSeries.yData, sum = this.sumPointsPercents(yValues, xValues, null, true);
-        this.setData(this.sumPointsPercents(yValues, xValues, sum, false), false);
-    }
-    /* eslint-enable no-invalid-this, valid-jsdoc */
+    setBaseSeries: DerivedSeriesMixin.setBaseSeries
 });
 BaseSeries.registerSeriesType('pareto', ParetoSeries);
 /* *

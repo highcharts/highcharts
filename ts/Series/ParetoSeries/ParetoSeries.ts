@@ -157,6 +157,29 @@ class ParetoSeries extends LineSeries {
             T extends true ? number : Array<Array<number>>
         );
     }
+
+    /**
+     * Calculate sum and return percent points.
+     *
+     * @private
+     * @function Highcharts.Series#setDerivedData
+     * @requires modules/pareto
+     */
+    public setDerivedData(): void {
+        var xValues = (this.baseSeries as any).xData,
+            yValues = (this.baseSeries as any).yData,
+            sum = this.sumPointsPercents(
+                yValues,
+                xValues,
+                null as any,
+                true
+            );
+
+        this.setData(
+            this.sumPointsPercents(yValues, xValues, sum, false),
+            false
+        );
+    }
 }
 
 /* *
@@ -178,8 +201,6 @@ interface ParetoSeries {
 
     setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
 
-    setDerivedData: Highcharts.DerivedSeries['setDerivedData'];
-
     hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
 
     initialised: Highcharts.DerivedSeries['initialised'];
@@ -191,31 +212,7 @@ extend(ParetoSeries.prototype, {
     destroy: DerivedSeriesMixin.destroy,
     hasDerivedData: DerivedSeriesMixin.hasDerivedData,
     init: DerivedSeriesMixin.init,
-    setBaseSeries: DerivedSeriesMixin.setBaseSeries,
-    /* eslint-disable no-invalid-this, valid-jsdoc */
-    /**
-     * Calculate sum and return percent points.
-     *
-     * @private
-     * @function Highcharts.Series#setDerivedData
-     * @requires modules/pareto
-     */
-    setDerivedData: (function (this: ParetoSeries): void {
-        var xValues = (this.baseSeries as any).xData,
-            yValues = (this.baseSeries as any).yData,
-            sum = this.sumPointsPercents(
-                yValues,
-                xValues,
-                null as any,
-                true
-            );
-
-        this.setData(
-            this.sumPointsPercents(yValues, xValues, sum, false),
-            false
-        );
-    } as any)
-    /* eslint-enable no-invalid-this, valid-jsdoc */
+    setBaseSeries: DerivedSeriesMixin.setBaseSeries
 }
 );
 
