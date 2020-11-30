@@ -12,6 +12,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
 import type ColorType from '../Core/Color/ColorType';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
@@ -24,12 +30,17 @@ import type {
 } from '../Series/XRange/XRangePointOptions';
 import type XRangeSeriesOptions from '../Series/XRange/XRangeSeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+const {
+    seriesTypes: {
+        line: LineSeries,
+        xrange: XRangeSeries
+    }
+} = BaseSeries;
 import H from '../Core/Globals.js';
-import LineSeries from './Line/LineSeries.js';
 import '../Core/Axis/TreeGridAxis.js';
 import U from '../Core/Utilities.js';
 const {
+    extend,
     isNumber,
     merge,
     pick,
@@ -104,21 +115,9 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        gantt: typeof Highcharts.GanttSeries;
-    }
-}
-
 import '../Extensions/CurrentDateIndication.js';
 import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
-import XRangeSeries from './XRange/XRangeSeries.js';
-
-var parent = seriesTypes.xrange;
 
 /**
  * @private
@@ -127,7 +126,7 @@ var parent = seriesTypes.xrange;
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
+class GanttSeries extends XRangeSeries {
 
     /**
      * A `gantt` series. If the [type](#series.gantt.type) option is not specified,
@@ -138,7 +137,7 @@ BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
      * @requires     highcharts-gantt
      * @optionparent plotOptions.gantt
      */
-    , {
+    public static defaultOptions: Highcharts.GanttSeriesOptions = merge(XRangeSeries.defaultOptions, {
         // options - default options merged with parent
 
         grouping: false,
@@ -214,190 +213,279 @@ BaseSeries.seriesType<typeof Highcharts.GanttSeries>('gantt', 'xrange'
                 align: 'right' as 'right'
             }
         }
-    }, { // props - series member overrides
+    } as Highcharts.GanttSeriesOptions);
 
-        pointArrayMap: ['start', 'end', 'y'],
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
-        // Keyboard navigation, don't use nearest vertical mode
-        keyboardMoveVertical: false,
+    public data: Array<GanttPoint> = void 0 as any;
 
-        /* eslint-disable valid-jsdoc */
+    public options: Highcharts.GanttSeriesOptions = void 0 as any;
 
-        /**
-         * Handle milestones, as they have no x2.
-         * @private
-         */
-        translatePoint: function (
-            this: Highcharts.GanttSeries,
-            point: Highcharts.GanttPoint
-        ): void {
-            var series = this,
-                shapeArgs: SVGAttributes,
-                size: number;
+    public points: Array<GanttPoint> = void 0 as any;
 
-            parent.prototype.translatePoint.call(series, point);
+}
 
-            if (point.options.milestone) {
-                shapeArgs = point.shapeArgs as any;
-                size = shapeArgs.height;
-                point.shapeArgs = {
-                    x: shapeArgs.x - (size / 2),
-                    y: shapeArgs.y,
-                    width: size,
-                    height: size
-                };
-            }
-        },
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-        /**
-         * Draws a single point in the series.
-         *
-         * This override draws the point as a diamond if point.options.milestone
-         * is true, and uses the original drawPoint() if it is false or not set.
-         *
-         * @requires highcharts-gantt
-         *
-         * @private
-         * @function Highcharts.seriesTypes.gantt#drawPoint
-         *
-         * @param {Highcharts.Point} point
-         *        An instance of Point in the series
-         *
-         * @param {"animate"|"attr"} verb
-         *        'animate' (animates changes) or 'attr' (sets options)
-         *
-         * @return {void}
-         */
-        drawPoint: function (
-            this: Highcharts.GanttSeries,
-            point: Highcharts.GanttPoint,
-            verb: string
-        ): void {
-            var series = this,
-                seriesOpts = series.options,
-                renderer = series.chart.renderer,
-                shapeArgs: SVGAttributes = point.shapeArgs as any,
-                plotY = point.plotY,
-                graphic = point.graphic,
-                state = point.selected && 'select',
-                cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
-                diamondShape: SVGPath;
+interface GanttSeries{
+    keyboardMoveVertical: boolean;
+    pointClass: typeof GanttPoint;
+}
+extend(GanttSeries.prototype, { // props - series member overrides
 
-            if (point.options.milestone) {
-                if (isNumber(plotY) && point.y !== null && point.visible !== false) {
-                    diamondShape = renderer.symbols.diamond(
-                        shapeArgs.x,
-                        shapeArgs.y,
-                        shapeArgs.width,
-                        shapeArgs.height
-                    );
+    // Keyboard navigation, don't use nearest vertical mode
+    keyboardMoveVertical: false,
 
-                    if (graphic) {
-                        graphic[verb]({
-                            d: diamondShape
-                        });
-                    } else {
-                        point.graphic = graphic = renderer.path(diamondShape)
-                            .addClass(point.getClassName(), true)
-                            .add(point.group || series.group);
-                    }
+    pointArrayMap: ['start', 'end', 'y'],
 
-                    // Presentational
-                    if (!series.chart.styledMode) {
-                        (point.graphic as any)
-                            .attr(series.pointAttribs(point, state as any))
-                            .shadow(seriesOpts.shadow, null, cutOff);
-                    }
-                } else if (graphic) {
-                    point.graphic = graphic.destroy(); // #1269
-                }
-            } else {
-                parent.prototype.drawPoint.call(series, point, verb);
-            }
-        },
+    setData: LineSeries.prototype.setData,
 
-        setData: LineSeries.prototype.setData,
 
-        /**
-         * @private
-         */
-        setGanttPointAliases: function (
-            this: Highcharts.GanttSeriesOptions,
-            options: Highcharts.GanttPointOptions
-        ): void {
-            /**
-             * Add a value to options if the value exists.
-             * @private
-             */
-            function addIfExists(prop: string, val: unknown): void {
-                if (typeof val !== 'undefined') {
-                    (options as any)[prop] = val;
-                }
-            }
+    /* eslint-disable valid-jsdoc */
 
-            addIfExists('x', pick(options.start, options.x));
-            addIfExists('x2', pick(options.end, options.x2));
-            addIfExists(
-                'partialFill', pick(options.completed, options.partialFill)
-            );
+    /**
+     * Handle milestones, as they have no x2.
+     * @private
+     */
+    translatePoint: function (
+        this: Highcharts.GanttSeries,
+        point: Highcharts.GanttPoint
+    ): void {
+        var series = this,
+            shapeArgs: SVGAttributes,
+            size: number;
+
+        XRangeSeries.prototype.translatePoint.call(series, point);
+
+        if (point.options.milestone) {
+            shapeArgs = point.shapeArgs as any;
+            size = shapeArgs.height;
+            point.shapeArgs = {
+                x: shapeArgs.x - (size / 2),
+                y: shapeArgs.y,
+                width: size,
+                height: size
+            };
         }
-
-        /* eslint-enable valid-jsdoc */
-
     },
-    merge<Highcharts.GanttPoint>(parent.prototype.pointClass.prototype as any, {
-        // pointProps - point member overrides. We inherit from parent as well.
 
-        /* eslint-disable valid-jsdoc */
+    /**
+     * Draws a single point in the series.
+     *
+     * This override draws the point as a diamond if point.options.milestone
+     * is true, and uses the original drawPoint() if it is false or not set.
+     *
+     * @requires highcharts-gantt
+     *
+     * @private
+     * @function Highcharts.seriesTypes.gantt#drawPoint
+     *
+     * @param {Highcharts.Point} point
+     *        An instance of Point in the series
+     *
+     * @param {"animate"|"attr"} verb
+     *        'animate' (animates changes) or 'attr' (sets options)
+     *
+     * @return {void}
+     */
+    drawPoint: function (
+        this: Highcharts.GanttSeries,
+        point: Highcharts.GanttPoint,
+        verb: string
+    ): void {
+        var series = this,
+            seriesOpts = series.options,
+            renderer = series.chart.renderer,
+            shapeArgs: SVGAttributes = point.shapeArgs as any,
+            plotY = point.plotY,
+            graphic = point.graphic,
+            state = point.selected && 'select',
+            cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
+            diamondShape: SVGPath;
 
+        if (point.options.milestone) {
+            if (isNumber(plotY) && point.y !== null && point.visible !== false) {
+                diamondShape = renderer.symbols.diamond(
+                    shapeArgs.x,
+                    shapeArgs.y,
+                    shapeArgs.width,
+                    shapeArgs.height
+                );
+
+                if (graphic) {
+                    graphic[verb]({
+                        d: diamondShape
+                    });
+                } else {
+                    point.graphic = graphic = renderer.path(diamondShape)
+                        .addClass(point.getClassName(), true)
+                        .add(point.group || series.group);
+                }
+
+                // Presentational
+                if (!series.chart.styledMode) {
+                    (point.graphic as any)
+                        .attr(series.pointAttribs(point, state as any))
+                        .shadow(seriesOpts.shadow, null, cutOff);
+                }
+            } else if (graphic) {
+                point.graphic = graphic.destroy(); // #1269
+            }
+        } else {
+            XRangeSeries.prototype.drawPoint.call(series, point, verb);
+        }
+    },
+
+    /**
+     * @private
+     */
+    setGanttPointAliases: function (
+        this: Highcharts.GanttSeriesOptions,
+        options: Highcharts.GanttPointOptions
+    ): void {
         /**
-         * Applies the options containing the x and y data and possible some
-         * extra properties. This is called on point init or from point.update.
-         *
+         * Add a value to options if the value exists.
          * @private
-         * @function Highcharts.Point#applyOptions
-         *
-         * @param {object} options
-         *        The point options
-         *
-         * @param {number} x
-         *        The x value
-         *
-         * @return {Highcharts.Point}
-         *         The Point instance
          */
-        applyOptions: function (
-            this: Highcharts.GanttPoint,
-            options: Highcharts.GanttPointOptions,
-            x: number
-        ): Highcharts.GanttPoint {
-            var point = this,
-                ganttPoint;
-
-            ganttPoint = parent.prototype.pointClass.prototype.applyOptions
-                .call(point, options, x) as Highcharts.GanttPoint;
-            H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint as Highcharts.GanttPointOptions);
-
-            return ganttPoint;
-        },
-        isValid: function (this: Highcharts.GanttPoint): boolean {
-            return (
-                (
-                    typeof this.start === 'number' ||
-                    typeof this.x === 'number'
-                ) &&
-                (
-                    typeof this.end === 'number' ||
-                    typeof this.x2 === 'number' ||
-                    (this.milestone as any)
-                )
-            );
+        function addIfExists(prop: string, val: unknown): void {
+            if (typeof val !== 'undefined') {
+                (options as any)[prop] = val;
+            }
         }
 
-        /* eslint-enable valid-jsdoc */
+        addIfExists('x', pick(options.start, options.x));
+        addIfExists('x2', pick(options.end, options.x2));
+        addIfExists(
+            'partialFill', pick(options.completed, options.partialFill)
+        );
+    }
 
-    })
-);
+    /* eslint-enable valid-jsdoc */
+
+});
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class GanttPoint extends XRangeSeries.prototype.pointClass {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public collapsed?: boolean;
+
+    public end?: number;
+
+    public milestone?: boolean;
+
+    public options: Highcharts.GanttPointOptions = void 0 as any;
+
+    public series: GanttSeries = void 0 as any;
+
+    public start?: number;
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+extend(GanttPoint.prototype, {
+    // pointProps - point member overrides. We inherit from parent as well.
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Applies the options containing the x and y data and possible some
+     * extra properties. This is called on point init or from point.update.
+     *
+     * @private
+     * @function Highcharts.Point#applyOptions
+     *
+     * @param {object} options
+     *        The point options
+     *
+     * @param {number} x
+     *        The x value
+     *
+     * @return {Highcharts.Point}
+     *         The Point instance
+     */
+    applyOptions: function (
+        this: Highcharts.GanttPoint,
+        options: Highcharts.GanttPointOptions,
+        x: number
+    ): Highcharts.GanttPoint {
+        var point = this,
+            ganttPoint;
+
+        ganttPoint = XRangeSeries.prototype.pointClass.prototype.applyOptions
+            .call(point, options, x) as Highcharts.GanttPoint;
+        H.seriesTypes.gantt.prototype.setGanttPointAliases(ganttPoint as Highcharts.GanttPointOptions);
+
+        return ganttPoint;
+    },
+    isValid: function (this: Highcharts.GanttPoint): boolean {
+        return (
+            (
+                typeof this.start === 'number' ||
+                typeof this.x === 'number'
+            ) &&
+            (
+                typeof this.end === 'number' ||
+                typeof this.x2 === 'number' ||
+                (this.milestone as any)
+            )
+        );
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        gantt: typeof Highcharts.GanttSeries;
+    }
+}
+GanttSeries.prototype.pointClass = GanttPoint;
+BaseSeries.registerSeriesType('gantt', GanttSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default GanttSeries;
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `gantt` series.

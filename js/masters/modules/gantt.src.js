@@ -10,6 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import '../../Series/XRange/XRangeSeries.js';
 import '../../Series/GanttSeries.js';
 import '../../Core/Chart/GanttChart.js';
 import '../../Core/Scrollbar.js';
