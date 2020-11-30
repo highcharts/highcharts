@@ -8,12 +8,28 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import LineSeries from './Line/LineSeries.js';
+import ScatterSeries from './Scatter/ScatterSeries.js';
+import U from '../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 import '../Core/Options.js';
 import '../Core/Legend.js';
 import './Scatter/ScatterSeries.js';
@@ -35,23 +51,44 @@ import './Scatter/ScatterSeries.js';
  * @requires     highcharts-more
  * @optionparent plotOptions.polygon
  */
-BaseSeries.seriesType('polygon', 'scatter', {
-    marker: {
-        enabled: false,
-        states: {
-            hover: {
-                enabled: false
+var PolygonSeries = /** @class */ (function (_super) {
+    __extends(PolygonSeries, _super);
+    function PolygonSeries() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         * Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+    /* *
+     *
+     * Static properties
+     *
+     * */
+    PolygonSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
+        marker: {
+            enabled: false,
+            states: {
+                hover: {
+                    enabled: false
+                }
             }
-        }
-    },
-    stickyTracking: false,
-    tooltip: {
-        followPointer: true,
-        pointFormat: ''
-    },
-    trackByArea: true
-    // Prototype members
-}, {
+        },
+        stickyTracking: false,
+        tooltip: {
+            followPointer: true,
+            pointFormat: ''
+        },
+        trackByArea: true
+    });
+    return PolygonSeries;
+}(ScatterSeries));
+extend(PolygonSeries.prototype, {
     type: 'polygon',
     getGraphPath: function () {
         var graphPath = LineSeries.prototype.getGraphPath.call(this), i = graphPath.length + 1;
@@ -73,6 +110,18 @@ BaseSeries.seriesType('polygon', 'scatter', {
     drawTracker: LineSeries.prototype.drawTracker,
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });
+BaseSeries.registerSeriesType('polygon', PolygonSeries);
+/* *
+ *
+ * Export
+ *
+ * */
+export default PolygonSeries;
+/* *
+ *
+ * API Options
+ *
+ * */
 /**
  * A `polygon` series. If the [type](#series.polygon.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
