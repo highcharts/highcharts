@@ -49,6 +49,9 @@ import '../../Stock/Indicators/VWAP/VWAPIndicator.js';
 import '../../Stock/Indicators/WilliamsRIndicator.js';
 import '../../Stock/Indicators/WMAIndicator.js';
 import '../../Stock/Indicators/Zigzag/ZigzagIndicator.js';
-import '../../Stock/Indicators/Regression/RegressionIndicators.js';
+import '../../Stock/Indicators/LinearRegression/LinearRegression.js';
+import '../../Stock/Indicators/LinearRegressionAngle/LinearRegressionAngle.js';
+import
+'../../Stock/Indicators/LinearRegressionIntercept/LinearRegressionIntercept.js';
 import '../../Stock/Indicators/ABands/ABandsIndicator.js';
 import '../../Stock/Indicators/TrendLineIndicator.js';
