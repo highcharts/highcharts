@@ -10,11 +10,8 @@
 
 'use strict';
 
-import type ColorType from '../../Core/Color/ColorType';
-import type ScatterPoint from '../Scatter/ScatterPoint';
-import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
-import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type PolygonPoint from './PolygonPoint';
+import type PolygonSeriesOptions from './PolygonSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
@@ -28,26 +25,6 @@ const {
     extend,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class PolygonPoint extends ScatterPoint {
-            public options: PolygonPointOptions;
-            public series: PolygonSeries;
-        }
-        interface PolygonPointOptions extends ScatterPointOptions {
-        }
-        interface PolygonSeriesOptions extends ScatterSeriesOptions {
-            fillColor?: ColorType;
-            states?: SeriesStatesOptions<PolygonSeries>;
-            trackByArea?: boolean;
-        }
-    }
-}
 
 import '../../Core/Options.js';
 import '../../Core/Legend.js';
@@ -78,7 +55,7 @@ class PolygonSeries extends ScatterSeries {
      * Static properties
      *
      * */
-    public static defaultOptions: Highcharts.PolygonSeriesOptions = merge(ScatterSeries.defaultOptions, {
+    public static defaultOptions: PolygonSeriesOptions = merge(ScatterSeries.defaultOptions, {
         marker: {
             enabled: false,
             states: {
@@ -101,9 +78,9 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
     public areaPath?: SVGPath;
-    public data: Array<Highcharts.PolygonPoint> = void 0 as any;
-    public options: Highcharts.PolygonSeriesOptions = void 0 as any;
-    public points: Array<Highcharts.PolygonPoint> = void 0 as any;
+    public data: Array<PolygonPoint> = void 0 as any;
+    public options: PolygonSeriesOptions = void 0 as any;
+    public points: Array<PolygonPoint> = void 0 as any;
 
     /* *
      *
@@ -131,7 +108,7 @@ class PolygonSeries extends ScatterSeries {
 }
 
 interface PolygonSeries {
-    pointClass: typeof Highcharts.PolygonPoint;
+    pointClass: typeof PolygonPoint;
     type: string;
 }
 
