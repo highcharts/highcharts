@@ -184,32 +184,33 @@ var LinearRegressionIndicator = /** @class */ (function (_super) {
     LinearRegressionIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             /**
-             * Unit (in milliseconds) for the x axis distances used to compute
-             * the regression line paramters (slope & intercept) for every
-             * range. In Highstock the x axis values are always represented in
-             * milliseconds which may cause that distances between points are
-             * "big" integer numbers.
+             * Unit (in milliseconds) for the x axis distances used to
+             * compute the regression line paramters (slope & intercept) for
+             * every range. In Highstock the x axis values are always
+             * represented in milliseconds which may cause that distances
+             * between points are "big" integer numbers.
              *
-             * Highstock's linear regression algorithm (least squares method)
-             * will utilize these "big" integers for finding the slope and the
-             * intercept of the regression line for each period. In consequence,
-             * this value may be a very "small" decimal number that's hard to
-             * interpret by a human.
+             * Highstock's linear regression algorithm (least squares
+             * method) will utilize these "big" integers for finding the
+             * slope and the intercept of the regression line for each
+             * period. In consequence, this value may be a very "small"
+             * decimal number that's hard to interpret by a human.
              *
              * For instance: `xAxisUnit` equealed to `86400000` ms (1 day)
-             * forces the algorithm to treat `86400000` as `1` while computing
-             * the slope and the intercept. This may enchance the legiblitity of
-             * the indicator's values.
+             * forces the algorithm to treat `86400000` as `1` while
+             * computing the slope and the intercept. This may enchance the
+             * legiblitity of the indicator's values.
              *
-             * Default value is the closest distance between two data points.
+             * Default value is the closest distance between two data
+             * points.
              *
              * @sample {highstock} stock/plotoptions/linear-regression-xaxisunit
              *         xAxisUnit set to 1 minute
              *
              * @example
-             * // In Liniear Regression Slope Indicator series `xAxisUnit` is
-             * // `86400000` (1 day) and period is `3`. There're 3 points in the
-             * // base series:
+             * // In Liniear Regression Slope Indicator series `xAxisUnit`is
+             * // `86400000` (1 day) and period is `3`. There're 3 points in
+             * // the base series:
              *
              * data: [
              *   [Date.UTC(2020, 0, 1), 1],
@@ -217,11 +218,11 @@ var LinearRegressionIndicator = /** @class */ (function (_super) {
              *   [Date.UTC(2020, 0, 3), 5]
              * ]
              *
-             * // This will produce one point in the indicator series that has a
-             * // `y` value of `2` (slope of the regression line). If we change
-             * // the `xAxisUnit` to `1` (ms) the value of the indicator's point
-             * // will be `2.3148148148148148e-8` which is harder to interpert
-             * // for a human.
+             * // This will produce one point in the indicator series that
+             * // has a `y` value of `2` (slope of the regression line). If
+             * // we change the `xAxisUnit` to `1` (ms) the value of the
+             * // indicator's point will be `2.3148148148148148e-8` which is
+             * // harder to interpert for a human.
              *
              * @type    {number}
              * @product highstock
