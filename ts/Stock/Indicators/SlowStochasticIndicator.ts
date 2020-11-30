@@ -91,17 +91,8 @@ class SlowStochasticIndicator extends StochasticIndicator {
             periods: [14, 3, 3]
         }
     } as Highcharts.SlowStochasticIndicatorOptions)
-}
-interface SlowStochasticIndicator {
-    nameBase: string;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.SlowStochasticIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-}
-extend(SlowStochasticIndicator.prototype, {
-    nameBase: 'Slow Stochastic',
-    init: function (this: SlowStochasticIndicator): void {
+
+    public init(): void {
         const args = arguments,
             ctx = this;
 
@@ -114,9 +105,9 @@ extend(SlowStochasticIndicator.prototype, {
                 return;
             }
         );
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
-        this: SlowStochasticIndicator,
+    }
+
+    public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.SlowStochasticIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -180,6 +171,13 @@ extend(SlowStochasticIndicator.prototype, {
         return slowValues as
             IndicatorValuesObject<TLinkedSeries>;
     }
+}
+
+interface SlowStochasticIndicator {
+    nameBase: string;
+}
+extend(SlowStochasticIndicator.prototype, {
+    nameBase: 'Slow Stochastic'
 });
 
 declare module '../../Core/Series/SeriesType' {
