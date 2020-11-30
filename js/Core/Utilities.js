@@ -1709,18 +1709,17 @@ objectEach({
  *         A callback function to remove the added event.
  */
 var addEvent = H.addEvent = function (el, type, fn, options) {
-    if (options === void 0) { options = {}; }
     /* eslint-enable valid-jsdoc */
-    var events, addEventListener = (el.addEventListener || H.addEventListenerPolyfill);
-    // If we're setting events directly on the constructor, use a separate
-    // collection, `protoEvents` to distinguish it from the item events in
-    // `hcEvents`.
-    if (typeof el === 'function' && el.prototype) {
-        events = el.prototype.protoEvents = el.prototype.protoEvents || {};
+    if (options === void 0) { options = {}; }
+    // Add hcEvents to either the prototype (in case we're running addEvent on a
+    // class) or the instance. If hasOwnProperty('hcEvents') is false, it is
+    // inherited down the prototype chain, in which case we need to set the
+    // property on this instance (which may itself be a prototype).
+    var owner = typeof el === 'function' && el.prototype || el;
+    if (!Object.hasOwnProperty.call(owner, 'hcEvents')) {
+        owner.hcEvents = {};
     }
-    else {
-        events = el.hcEvents = el.hcEvents || {};
-    }
+    var events = owner.hcEvents;
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
     if (H.Point && // without H a dependency loop occurs
@@ -1732,6 +1731,7 @@ var addEvent = H.addEvent = function (el, type, fn, options) {
     // Handle DOM events
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
+    var addEventListener = (el.addEventListener || H.addEventListenerPolyfill);
     if (addEventListener) {
         addEventListener.call(el, type, fn, H.supportsPassiveEvents ? {
             passive: options.passive === void 0 ?
@@ -1748,9 +1748,7 @@ var addEvent = H.addEvent = function (el, type, fn, options) {
     };
     events[type].push(eventObject);
     // Order the calls
-    events[type].sort(function (a, b) {
-        return a.order - b.order;
-    });
+    events[type].sort(function (a, b) { return a.order - b.order; });
     // Return a function that can be called to remove this event.
     return function () {
         removeEvent(el, type, fn);
@@ -1777,7 +1775,6 @@ var addEvent = H.addEvent = function (el, type, fn, options) {
  */
 var removeEvent = H.removeEvent = function removeEvent(el, type, fn) {
     /* eslint-enable valid-jsdoc */
-    var events;
     /**
      * @private
      * @param {string} type - event type
@@ -1816,29 +1813,27 @@ var removeEvent = H.removeEvent = function removeEvent(el, type, fn) {
             }
         });
     }
-    ['protoEvents', 'hcEvents'].forEach(function (coll, i) {
-        var eventElem = i ? el : el.prototype;
-        var eventCollection = eventElem && eventElem[coll];
-        if (eventCollection) {
-            if (type) {
-                events = (eventCollection[type] || []);
-                if (fn) {
-                    eventCollection[type] = events.filter(function (obj) {
-                        return fn !== obj.fn;
-                    });
-                    removeOneEvent(type, fn);
-                }
-                else {
-                    removeAllEvents(eventCollection);
-                    eventCollection[type] = [];
-                }
+    var owner = typeof el === 'function' && el.prototype || el;
+    if (Object.hasOwnProperty.call(owner, 'hcEvents')) {
+        var events = owner.hcEvents;
+        if (type) {
+            var typeEvents = (events[type] || []);
+            if (fn) {
+                events[type] = typeEvents.filter(function (obj) {
+                    return fn !== obj.fn;
+                });
+                removeOneEvent(type, fn);
             }
             else {
-                removeAllEvents(eventCollection);
-                eventElem[coll] = {};
+                removeAllEvents(events);
+                events[type] = [];
             }
         }
-    });
+        else {
+            removeAllEvents(events);
+            delete owner.hcEvents;
+        }
+    }
 };
 /* eslint-disable valid-jsdoc */
 /**
@@ -1879,7 +1874,7 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
             el.fireEvent(type, e);
         }
     }
-    else {
+    else if (el.hcEvents) {
         if (!eventArguments.target) {
             // We're running a custom event
             extend(eventArguments, {
@@ -1898,28 +1893,36 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
                 type: type
             });
         }
-        var fireInOrder = function (protoEvents, hcEvents) {
-            if (protoEvents === void 0) { protoEvents = []; }
-            if (hcEvents === void 0) { hcEvents = []; }
-            var iA = 0;
-            var iB = 0;
-            var length = protoEvents.length + hcEvents.length;
-            for (i = 0; i < length; i++) {
-                var obj = (!protoEvents[iA] ?
-                    hcEvents[iB++] :
-                    !hcEvents[iB] ?
-                        protoEvents[iA++] :
-                        protoEvents[iA].order <= hcEvents[iB].order ?
-                            protoEvents[iA++] :
-                            hcEvents[iB++]);
-                // If the event handler return false, prevent the default
-                // handler from executing
-                if (obj.fn.call(el, eventArguments) === false) {
-                    eventArguments.preventDefault();
+        var events = [];
+        var object = el;
+        var multilevel = false;
+        // Recurse up the inheritance chain and collect hcEvents set as own
+        // objects on the prototypes.
+        while (object.hcEvents) {
+            if (Object.hasOwnProperty.call(object, 'hcEvents') &&
+                object.hcEvents[type]) {
+                if (events.length) {
+                    multilevel = true;
                 }
+                events.unshift.apply(events, object.hcEvents[type]);
             }
-        };
-        fireInOrder(el.protoEvents && el.protoEvents[type], el.hcEvents && el.hcEvents[type]);
+            object = Object.getPrototypeOf(object);
+        }
+        // For performance reasons, only sort the event handlers in case we are
+        // dealing with multiple levels in the prototype chain. Otherwise, the
+        // events are already sorted in the addEvent function.
+        if (multilevel) {
+            // Order the calls
+            events.sort(function (a, b) { return a.order - b.order; });
+        }
+        // Call the collected event handlers
+        events.forEach(function (obj) {
+            // If the event handler returns false, prevent the default handler
+            // from executing
+            if (obj.fn.call(el, eventArguments) === false) {
+                eventArguments.preventDefault();
+            }
+        });
     }
     // Run the default if not prevented
     if (defaultFunction && !eventArguments.defaultPrevented) {

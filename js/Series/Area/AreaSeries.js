@@ -175,7 +175,7 @@ var AreaSeries = /** @class */ (function (_super) {
             }
             isNull = points[i].isNull;
             plotX = pick(points[i].rectPlotX, points[i].plotX);
-            yBottom = stacking ? points[i].yBottom : translatedThreshold;
+            yBottom = stacking ? pick(points[i].yBottom, translatedThreshold) : translatedThreshold;
             if (!isNull || connectNulls) {
                 if (!connectNulls) {
                     addDummyPoints(i, i - 1, 'left');

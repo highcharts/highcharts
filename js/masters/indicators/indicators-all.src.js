@@ -14,7 +14,7 @@
 
 import '../../Stock/Indicators/SMA/SMAIndicator.js';
 import '../../Stock/Indicators/AD/ADIndicator.js';
-import '../../Stock/Indicators/AOIndicator.js';
+import '../../Stock/Indicators/AO/AOIndicator.js';
 import '../../Stock/Indicators/Aroon/AroonIndicator.js';
 import '../../Stock/Indicators/AroonOscillator/AroonOscillatorIndicator.js';
 import '../../Stock/Indicators/ATR/ATRIndicator.js';
@@ -26,7 +26,7 @@ import '../../Stock/Indicators/EMA/EMAIndicator.js';
 import '../../Stock/Indicators/Chaikin/ChaikinIndicator.js';
 import '../../Stock/Indicators/DEMA/DEMAIndicator.js';
 import '../../Stock/Indicators/TEMA/TEMAIndicator.js';
-import '../../Stock/Indicators/TRIXIndicator.js';
+import '../../Stock/Indicators/TRIX/TRIXIndicator.js';
 import '../../Stock/Indicators/APO/APOIndicator.js';
 import '../../Stock/Indicators/IKHIndicator.js';
 import '../../Stock/Indicators/KeltnerChannels/KeltnerChannelsIndicator.js';

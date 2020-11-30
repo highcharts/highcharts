@@ -11,7 +11,6 @@
 'use strict';
 
 import type {
-    AlignObject,
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
@@ -153,6 +152,7 @@ declare global {
             public destroy(): void;
             public drawInput(name: ('min'|'max')): void;
             public getHeight(): number;
+            public getInputValue(name: string): number;
             public getPosition(): Dictionary<number>;
             public getYTDExtremes(
                 dataMax: number,
@@ -162,6 +162,7 @@ declare global {
             public hideInput(name: string): void;
             public init(chart: Chart): void;
             public render(min?: number, max?: number): void;
+            public setInputExtremes(name: string, min: number, max: number): void;
             public setInputValue(name: string, inputTime?: number): void;
             public setSelected(selected: number): void;
             public showInput(name: string): void;
@@ -515,6 +516,13 @@ extend(defaultOptions, {
          * The date format in the input boxes when not selected for editing.
          * Defaults to `%b %e, %Y`.
          *
+         * This is used to determine which type of input to show,
+         * `datetime-local`, `date` or `time` and falling back to `text` when
+         * the browser does not support the input type or the format contains
+         * milliseconds.
+         *
+         * @sample {highstock} stock/rangeselector/input-type/
+         *         Input types
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
          *
@@ -526,6 +534,10 @@ extend(defaultOptions, {
          * and return a valid JavaScript time as milliseconds since 1970.
          * The first argument passed is a value to parse,
          * second is a boolean indicating use of the UTC time.
+         *
+         * This will only get called for inputs of type `text`. Since v8.2.3,
+         * the input type is dynamically determined based on the granularity
+         * of the `inputDateFormat` and the browser support.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
@@ -539,6 +551,10 @@ extend(defaultOptions, {
          * The date format in the input boxes when they are selected for
          * editing. This must be a format that is recognized by JavaScript
          * Date.parse.
+         *
+         * This will only be used for inputs of type `text`. Since v8.2.3,
+         * the input type is dynamically determined based on the granularity
+         * of the `inputDateFormat` and the browser support.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
@@ -1182,6 +1198,28 @@ class RangeSelector {
     }
 
     /**
+     * Get the unix timestamp of a HTML input for the dates
+     *
+     * @private
+     * @function Highcharts.RangeSelector#getInputValue
+     * @param {string} name
+     * @return {number}
+     */
+    public getInputValue(name: string): number {
+        const input = name === 'min' ? this.minInput : this.maxInput;
+        const options = this.chart.options.rangeSelector as Highcharts.RangeSelectorOptions;
+        const time = this.chart.time;
+
+        if (input) {
+            return (
+                (input.type === 'text' && options.inputDateParser) ||
+                this.defaultInputDateParser
+            )(input.value, time.useUTC, time);
+        }
+        return 0;
+    }
+
+    /**
      * Set the internal and displayed value of a HTML input for the dates
      *
      * @private
@@ -1199,13 +1237,12 @@ class RangeSelector {
             input = name === 'min' ? this.minInput : this.maxInput;
 
         if (input) {
-
             const hcTimeAttr = input.getAttribute('data-hc-time');
             let updatedTime = defined(hcTimeAttr) ? Number(hcTimeAttr) : void 0;
 
             if (defined(inputTime)) {
                 const previousTime = updatedTime;
-                if (previousTime) {
+                if (defined(previousTime)) {
                     input.setAttribute('data-hc-time-previous', previousTime);
                 }
                 input.setAttribute('data-hc-time', inputTime);
@@ -1213,7 +1250,7 @@ class RangeSelector {
             }
 
             input.value = time.dateFormat(
-                options.inputEditDateFormat,
+                this.inputTypeFormats[input.type] || options.inputEditDateFormat,
                 updatedTime
             );
             (this as any)[name + 'DateBox'].attr({
@@ -1226,22 +1263,78 @@ class RangeSelector {
     }
 
     /**
+     * Set the min and max value of a HTML input for the dates
+     *
+     * @private
+     * @function Highcharts.RangeSelector#setInputExtremes
+     * @param {string} name
+     * @param {number} min
+     * @param {number} max
+     * @return {void}
+     */
+    public setInputExtremes(
+        name: string,
+        min: number,
+        max: number
+    ): void {
+        const input = name === 'min' ? this.minInput : this.maxInput;
+        if (input) {
+            const format = this.inputTypeFormats[input.type];
+            const time = this.chart.time;
+
+            if (format) {
+                const newMin = time.dateFormat(format, min);
+                if (input.min !== newMin) {
+                    input.min = newMin;
+                }
+                const newMax = time.dateFormat(format, max);
+                if (input.max !== newMax) {
+                    input.max = newMax;
+                }
+            }
+        }
+    }
+
+    /**
      * @private
      * @function Highcharts.RangeSelector#showInput
      * @param {string} name
      * @return {void}
      */
     public showInput(name: string): void {
-        var inputGroup = this.inputGroup,
-            dateBox = (this as any)[name + 'DateBox'];
+        var dateBox = (this as any)[name + 'DateBox'],
+            input = (this as any)[name + 'Input'],
+            isTextInput = input.type === 'text';
+        const { translateX, translateY } = this.inputGroup as any;
 
-        css((this as any)[name + 'Input'], {
-            left: ((inputGroup as any).translateX + dateBox.x) + 'px',
-            top: (inputGroup as any).translateY + 'px',
-            width: (dateBox.width - 2) + 'px',
-            height: (dateBox.height - 2) + 'px',
+        css(input, {
+            width: isTextInput ? ((dateBox.width - 2) + 'px') : 'auto',
+            height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
             border: '2px solid silver'
         });
+
+        if (isTextInput) {
+            css(input, {
+                left: (translateX + dateBox.x) + 'px',
+                top: translateY + 'px'
+            });
+
+        // Inputs of types date, time or datetime-local should be centered on
+        // top of the dateBox
+        } else {
+            css(input, {
+                left: Math.min(
+                    Math.round(
+                        dateBox.x +
+                        translateX -
+                        (input.offsetWidth - dateBox.width) / 2
+                    ),
+                    this.chart.chartWidth - input.offsetWidth
+                ) + 'px',
+                top: (translateY - (input.offsetHeight - dateBox.height) / 2) +
+                    'px'
+            });
+        }
     }
 
     /**
@@ -1252,11 +1345,11 @@ class RangeSelector {
      */
     public hideInput(name: string): void {
         css((this as any)[name + 'Input'], {
+            top: '-9999em',
             border: 0,
             width: '1px',
             height: '1px'
         });
-        this.setInputValue(name);
     }
 
     /**
@@ -1294,7 +1387,7 @@ class RangeSelector {
         }
 
         if (time && useUTC) {
-            date += time.getTimezoneOffset(date) * 60 * 1000;
+            date += time.getTimezoneOffset(date);
         }
 
         return date;
@@ -1311,7 +1404,6 @@ class RangeSelector {
     public drawInput(name: ('min'|'max')): void {
         const {
             chart,
-            defaultInputDateParser,
             div,
             inputGroup
         } = this;
@@ -1331,8 +1423,7 @@ class RangeSelector {
          * @private
          */
         function updateExtremes(): void {
-            var inputValue = input.value as any,
-                value: (number|Highcharts.RangeSelectorParseCallbackFunction|undefined),
+            var value: number | undefined = rangeSelector.getInputValue(name),
                 chartAxis = chart.xAxis[0],
                 dataAxis = chart.scroller && chart.scroller.xAxis ?
                     chart.scroller.xAxis :
@@ -1341,12 +1432,6 @@ class RangeSelector {
                 dataMax = dataAxis.dataMax;
 
             const { maxInput, minInput } = rangeSelector;
-
-            value = (options.inputDateParser || defaultInputDateParser)(
-                inputValue,
-                chart.time.useUTC,
-                chart.time
-            );
 
             if (
                 value !== Number(input.getAttribute('data-hc-time-previous')) &&
@@ -1431,10 +1516,8 @@ class RangeSelector {
         (this as any)[name + 'Input'] = input = createElement('input', {
             name: name,
             className: 'highcharts-range-selector',
-            type: 'text'
-        }, {
-            top: chart.plotTop + 'px' // prevent jump on focus in Firefox
-        }, div) as any;
+            type: preferredInputType(options.inputDateFormat || '%b %e, %Y')
+        }, void 0, div) as any;
 
         if (!chart.styledMode) {
             // Styles
@@ -1447,6 +1530,7 @@ class RangeSelector {
             css(input, extend<CSSObject>({
                 position: 'absolute',
                 border: 0,
+                boxShadow: '0 0 15px rgba(0,0,0,0.3)',
                 width: '1px', // Chrome needs a pixel to see it
                 height: '1px',
                 padding: 0,
@@ -1458,11 +1542,12 @@ class RangeSelector {
         }
 
         // Blow up the input box
-        input.onfocus = function (): void {
+        input.onfocus = (): void => {
             rangeSelector.showInput(name);
         };
+
         // Hide away the input box
-        input.onblur = function (): void {
+        input.onblur = (): void => {
             // update extermes only when inputs are active
             if (input === H.doc.activeElement) { // Only when focused
                 // Update also when no `change` event is triggered, like when
@@ -1471,17 +1556,36 @@ class RangeSelector {
             }
             // #10404 - move hide and blur outside focus
             rangeSelector.hideInput(name);
+            rangeSelector.setInputValue(name);
             input.blur(); // #4606
         };
 
-        // handle changes in the input boxes
-        input.onchange = updateExtremes;
+        let keyDown = false;
 
-        input.onkeypress = function (event: KeyboardEvent): void {
+        // handle changes in the input boxes
+        input.onchange = (): void => {
+            updateExtremes();
+
+            // Blur input when clicking date input calendar
+            if (!keyDown) {
+                rangeSelector.hideInput(name);
+                input.blur();
+            }
+        };
+
+        input.onkeypress = (event: KeyboardEvent): void => {
             // IE does not fire onchange on enter
             if (event.keyCode === 13) {
                 updateExtremes();
             }
+        };
+
+        input.onkeydown = (): void => {
+            keyDown = true;
+        };
+
+        input.onkeyup = (): void => {
+            keyDown = false;
         };
     }
 
@@ -1615,6 +1719,25 @@ class RangeSelector {
             // Set or reset the input values
             this.setInputValue('min', min);
             this.setInputValue('max', max);
+
+            const unionExtremes = (
+                chart.scroller && chart.scroller.getUnionExtremes()
+            ) || chart.xAxis[0] || {};
+
+            if (defined(unionExtremes.dataMin) && defined(unionExtremes.dataMax)) {
+                const minRange = chart.xAxis[0].minRange || 0;
+
+                this.setInputExtremes(
+                    'min',
+                    unionExtremes.dataMin,
+                    Math.min(unionExtremes.dataMax, this.getInputValue('max')) - minRange
+                );
+                this.setInputExtremes(
+                    'max',
+                    Math.max(unionExtremes.dataMin, this.getInputValue('min')) + minRange,
+                    unionExtremes.dataMax
+                );
+            }
         }
 
         this.alignElements();
@@ -1820,7 +1943,6 @@ class RangeSelector {
             }
 
             if (inputGroup) {
-
                 // Detect collision between the input group and exporting button
                 const xOffsetForExportButton = getXOffsetForExportButton(
                     inputGroup,
@@ -2140,6 +2262,7 @@ class RangeSelector {
  */
 interface RangeSelector {
     defaultButtons: Array<Highcharts.RangeSelectorButtonsOptions>;
+    inputTypeFormats: Record<string, string>;
 }
 
 /**
@@ -2174,6 +2297,49 @@ RangeSelector.prototype.defaultButtons = [{
     text: 'All',
     title: 'View all'
 }];
+
+/**
+ * The date formats to use when setting min, max and value on date inputs
+ */
+RangeSelector.prototype.inputTypeFormats = {
+    'datetime-local': '%Y-%m-%dT%H:%M:%S',
+    'date': '%Y-%m-%d',
+    'time': '%H:%M:%S'
+};
+
+/**
+ * Get the preferred input type based on a date format string.
+ *
+ * @private
+ * @function preferredInputType
+ * @param {string} format
+ * @return {string}
+ */
+function preferredInputType(format: string): string {
+    const ms = format.indexOf('%L') !== -1;
+
+    if (ms) {
+        return 'text';
+    }
+
+    const date = ['a', 'A', 'd', 'e', 'w', 'b', 'B', 'm', 'o', 'y', 'Y'].some((char: string): boolean =>
+        format.indexOf('%' + char) !== -1
+    );
+    const time = ['H', 'k', 'I', 'l', 'M', 'S'].some((char: string): boolean =>
+        format.indexOf('%' + char) !== -1
+    );
+
+    if (date && time) {
+        return 'datetime-local';
+    }
+    if (date) {
+        return 'date';
+    }
+    if (time) {
+        return 'time';
+    }
+    return 'text';
+}
 
 /**
  * Get the axis min value based on the range option and the current max. For

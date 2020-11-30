@@ -152,8 +152,7 @@ interface ScrollbarEventCallbackFunction {
 import O from './Options.js';
 const { defaultOptions } = O;
 
-var hasTouch = H.hasTouch,
-    isTouchDevice = H.isTouchDevice;
+const isTouchDevice = H.isTouchDevice;
 
 /**
  * When we have vertical scrollbar, rifles and arrow in buttons should be
@@ -559,7 +558,7 @@ class Scrollbar {
         ];
 
         // Touch events
-        if (hasTouch) {
+        if (H.hasTouch) {
             _events.push(
                 [bar, 'touchstart', mouseDownHandler],
                 [bar.ownerDocument, 'touchmove', mouseMoveHandler],
