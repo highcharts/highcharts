@@ -7,32 +7,52 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
-import H from '../Core/Globals.js';
-var noop = H.noop;
-import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
-import LineSeries from './Line/LineSeries.js';
-import ScatterSeries from './Scatter/ScatterSeries.js';
-import U from '../Core/Utilities.js';
-var extend = U.extend, merge = U.merge;
-import '../Core/Options.js';
-import '../Core/Legend.js';
-import './Scatter/ScatterSeries.js';
+
+import type ColorType from '../../Core/Color/ColorType';
+import type ScatterPoint from '../Scatter/ScatterPoint';
+import type ScatterPointOptions from '../Scatter/ScatterPointOptions';
+import type ScatterSeriesOptions from '../Scatter/ScatterSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
+const { seriesTypes } = BaseSeries;
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../Line/LineSeries.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import U from '../../Core/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class PolygonPoint extends ScatterPoint {
+            public options: PolygonPointOptions;
+            public series: PolygonSeries;
+        }
+        interface PolygonPointOptions extends ScatterPointOptions {
+        }
+        interface PolygonSeriesOptions extends ScatterSeriesOptions {
+            fillColor?: ColorType;
+            states?: SeriesStatesOptions<PolygonSeries>;
+            trackByArea?: boolean;
+        }
+    }
+}
+
+import '../../Core/Options.js';
+import '../../Core/Legend.js';
+import '../Scatter/ScatterSeries.js';
+
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
  * coordinate system. A fill is applied with the `color` option, and
@@ -51,42 +71,14 @@ import './Scatter/ScatterSeries.js';
  * @requires     highcharts-more
  * @optionparent plotOptions.polygon
  */
-var PolygonSeries = /** @class */ (function (_super) {
-    __extends(PolygonSeries, _super);
-    function PolygonSeries() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.data = void 0;
-        _this.options = void 0;
-        _this.points = void 0;
-        return _this;
-    }
-    /* *
-     *
-     * Functions
-     *
-     * */
-    PolygonSeries.prototype.getGraphPath = function () {
-        var graphPath = LineSeries.prototype.getGraphPath.call(this), i = graphPath.length + 1;
-        // Close all segments
-        while (i--) {
-            if ((i === graphPath.length || graphPath[i][0] === 'M') && i > 0) {
-                graphPath.splice(i, 0, ['Z']);
-            }
-        }
-        this.areaPath = graphPath;
-        return graphPath;
-    };
-    PolygonSeries.prototype.drawGraph = function () {
-        // Hack into the fill logic in area.drawGraph
-        this.options.fillColor = this.color;
-        seriesTypes.area.prototype.drawGraph.call(this);
-    };
+class PolygonSeries extends ScatterSeries {
+
     /* *
      *
      * Static properties
      *
      * */
-    PolygonSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
+    public static defaultOptions: Highcharts.PolygonSeriesOptions = merge(ScatterSeries.defaultOptions, {
         marker: {
             enabled: false,
             states: {
@@ -102,21 +94,75 @@ var PolygonSeries = /** @class */ (function (_super) {
         },
         trackByArea: true
     });
-    return PolygonSeries;
-}(ScatterSeries));
+
+    /* *
+     *
+     * Properties
+     *
+     * */
+    public areaPath?: SVGPath;
+    public data: Array<Highcharts.PolygonPoint> = void 0 as any;
+    public options: Highcharts.PolygonSeriesOptions = void 0 as any;
+    public points: Array<Highcharts.PolygonPoint> = void 0 as any;
+
+    /* *
+     *
+     * Functions
+     *
+     * */
+    public getGraphPath(): SVGPath {
+        var graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
+            i = graphPath.length + 1;
+
+        // Close all segments
+        while (i--) {
+            if ((i === graphPath.length || graphPath[i][0] === 'M') && i > 0) {
+                graphPath.splice(i, 0, ['Z']);
+            }
+        }
+        this.areaPath = graphPath;
+        return graphPath;
+    }
+    public drawGraph(): void {
+        // Hack into the fill logic in area.drawGraph
+        this.options.fillColor = this.color;
+        seriesTypes.area.prototype.drawGraph.call(this);
+    }
+}
+
+interface PolygonSeries {
+    pointClass: typeof Highcharts.PolygonPoint;
+    type: string;
+}
+
 extend(PolygonSeries.prototype, {
     type: 'polygon',
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     drawTracker: LineSeries.prototype.drawTracker,
-    setStackedPoints: noop // No stacking points on polygons (#5310)
+    setStackedPoints: noop as any // No stacking points on polygons (#5310)
 });
+
+/* *
+ *
+ * Registry
+ *
+ * */
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        polygon: typeof PolygonSeries;
+    }
+}
+
 BaseSeries.registerSeriesType('polygon', PolygonSeries);
+
 /* *
  *
  * Export
  *
  * */
 export default PolygonSeries;
+
 /* *
  *
  * API Options
@@ -132,6 +178,7 @@ export default PolygonSeries;
  * @requires  highcharts-more
  * @apioption series.polygon
  */
+
 /**
  * An array of data points for the series. For the `polygon` series
  * type, points can be given in the following ways:
@@ -191,4 +238,5 @@ export default PolygonSeries;
  * @product   highcharts highstock
  * @apioption series.polygon.data
  */
+
 ''; // adds doclets above to transpiled file
