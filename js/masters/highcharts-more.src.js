@@ -17,7 +17,7 @@ import '../Series/ColumnPyramid/ColumnPyramidSeries.js';
 import '../Series/GaugeSeries.js';
 import '../Series/BoxPlot/BoxPlotSeries.js';
 import '../Series/ErrorBar/ErrorBarSeries.js';
-import '../Series/WaterfallSeries.js';
+import '../Series/Waterfall/WaterfallSeries.js';
 import '../Series/PolygonSeries.js';
 import '../Series/Bubble/BubbleSeries.js';
 import '../Series/PackedBubble/PackedBubbleSeries.js';

@@ -10,29 +10,29 @@
 
 'use strict';
 
-import type ColorType from '../Core/Color/ColorType';
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type DataExtremesObject from '../Core/Series/DataExtremesObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
+import type ColorType from '../../Core/Color/ColorType';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import Axis from '../../Core/Axis/Axis.js';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
 } = BaseSeries;
-import Chart from '../Core/Chart/Chart.js';
-import palette from '../Core/Color/Palette.js';
-import Point from '../Core/Series/Point.js';
-import StackItem from '../Extensions/Stacking.js';
-import U from '../Core/Utilities.js';
+import Chart from '../../Core/Chart/Chart.js';
+import palette from '../../Core/Color/Palette.js';
+import Point from '../../Core/Series/Point.js';
+import StackItem from '../../Extensions/Stacking.js';
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     arrayMax,
@@ -45,7 +45,7 @@ const {
     pick
 } = U;
 
-declare module '../Core/Series/SeriesLike' {
+declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         showLine?: WaterfallSeries['showLine'];
     }
@@ -110,7 +110,7 @@ declare global {
     }
 }
 
-import '../Core/Options.js';
+import '../../Core/Options.js';
 
 /**
  * Returns true if the key is a direct property of the object.
@@ -128,7 +128,7 @@ function ownProp(obj: unknown, key: string): boolean {
 /**
  * @private
  */
-declare module '../Core/Axis/Types' {
+declare module '../../Core/Axis/Types' {
     interface AxisComposition {
         waterfall?: WaterfallAxis['waterfall'];
     }
@@ -1260,7 +1260,7 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
  * */
 BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         waterfall: typeof WaterfallSeries;
     }

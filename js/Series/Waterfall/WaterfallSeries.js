@@ -21,16 +21,16 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
+import Axis from '../../Core/Axis/Axis.js';
+import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
-import Chart from '../Core/Chart/Chart.js';
-import palette from '../Core/Color/Palette.js';
-import Point from '../Core/Series/Point.js';
-import StackItem from '../Extensions/Stacking.js';
-import U from '../Core/Utilities.js';
+import Chart from '../../Core/Chart/Chart.js';
+import palette from '../../Core/Color/Palette.js';
+import Point from '../../Core/Series/Point.js';
+import StackItem from '../../Extensions/Stacking.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import '../Core/Options.js';
+import '../../Core/Options.js';
 /**
  * Returns true if the key is a direct property of the object.
  * @private
