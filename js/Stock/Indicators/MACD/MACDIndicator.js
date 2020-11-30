@@ -19,9 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var _a = BaseSeries.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema;
 import BaseSeries from '../../../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+var _a = BaseSeries.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema, ColumnSeries = _a.column;
 import H from '../../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../../Core/Utilities.js';

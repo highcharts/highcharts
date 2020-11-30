@@ -8,13 +8,14 @@
 
 'use strict';
 
-import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Point from '../../../Core/Series/Point';
+import LineSeries from '../../../Series/Line/LineSeries.js';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
-        ema: EMAIndicator
+        ema: EMAIndicator,
+        column: ColumnSeries
     }
 } = BaseSeries;
 import type {
@@ -27,11 +28,8 @@ import type MACDPoint from './MACDPoint';
 import type {
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
-import BaseSeries from '../../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import H from '../../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../../../Series/Line/LineSeries.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -480,9 +478,9 @@ class MACDIndicator extends SMAIndicator {
 }
 
 interface MACDIndicator {
-    crispCol: ColumnSeries['crispCol'];
+    crispCol: typeof ColumnSeries.prototype['crispCol'];
     currentLineZone: (string|null);
-    getColumnMetrics: ColumnSeries['getColumnMetrics'];
+    getColumnMetrics: typeof ColumnSeries.prototype['getColumnMetrics'];
     graphmacd: (Highcharts.SVGElement|undefined);
     graphsignal: (Highcharts.SVGElement|undefined);
     macdZones: MACDZonesOptions;
