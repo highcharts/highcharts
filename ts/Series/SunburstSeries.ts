@@ -14,6 +14,12 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type DashStyleValue from '../Core/Renderer/DashStyleValue';
@@ -23,15 +29,20 @@ import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type TreemapPoint from './Treemap/TreemapPoint';
 import type TreemapPointOptions from './Treemap/TreemapPointOptions';
-import type TreemapSeries from './Treemap/TreemapSeries';
 import type {
     TreemapSeriesLevelsColorVariationOptions,
     TreemapSeriesLevelsOptions,
     TreemapSeriesOptions
 } from './Treemap/TreemapSeriesOptions';
+import type TreemapSeriesType from './Treemap/TreemapSeries';
 import type TreemapUtilities from './Treemap/TreemapUtilities';
 import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        treemap: TreemapSeries
+    }
+} = BaseSeries;
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 const {
     getCenter,
@@ -78,37 +89,6 @@ declare global {
             public sliced?: boolean;
             public getDataLabelPath(label: SVGElement): SVGElement;
         }
-        class SunburstSeries extends TreemapSeries {
-            public center: Array<number>;
-            public data: Array<SunburstPoint>;
-            public mapOptionsToLevel: Dictionary<SunburstSeriesOptions>;
-            public nodeMap: Dictionary<SunburstNodeObject>;
-            public options: SunburstSeriesOptions;
-            public pointAttribs: LineSeries['pointAttribs'];
-            public pointClass: typeof SunburstPoint;
-            public points: Array<SunburstPoint>;
-            public shapeRoot?: SunburstNodeValuesObject;
-            public startAndEndRadians: RadianAngles;
-            public tree: SunburstNodeObject;
-            public utils: SunburstSeriesUtilsObject;
-            public drawPoints(): void;
-            public layoutAlgorithm(
-                parent: SunburstNodeValuesObject,
-                children: Array<SunburstNodeObject>,
-                options: SunburstSeriesOptions
-            ): Array<SunburstNodeValuesObject>;
-            public setShapeArgs(
-                parent: SunburstNodeObject,
-                parentValues: SunburstNodeValuesObject,
-                mapOptionsToLevel: Dictionary<SunburstSeriesOptions>
-            ): void;
-            public translate(): void;
-            public alignDataLabel(
-                point: SunburstPoint,
-                dataLabel: SVGElement,
-                labelOptions: DataLabelOptions
-            ): void;
-        }
         interface SunburstAnimationParams {
             center: PositionObject;
             idPreviousRoot?: string;
@@ -131,7 +111,7 @@ declare global {
             point: SunburstPoint;
             shapeArgs: SunburstNodeValuesObject;
         }
-        interface SunburstNodeObject extends TreemapSeries.NodeObject {
+        interface SunburstNodeObject extends TreemapSeriesType.NodeObject {
             children: Array<SunburstNodeObject>;
             childrenTotal: number;
             color: ColorType;
@@ -146,7 +126,7 @@ declare global {
         interface SunburstNodeValuesObject
             extends
             RadianAngles,
-            TreemapSeries.NodeValuesObject,
+            TreemapSeriesType.NodeValuesObject,
             TreeValuesOptionsObject<SunburstSeries>
         {
             color: ColorType;
@@ -207,12 +187,6 @@ declare global {
         type SunburstDataLabelsRotationValue = (
             'auto'|'perpendicular'|'parallel'|'circular'
         );
-    }
-}
-
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        sunburst: typeof Highcharts.SunburstSeries;
     }
 }
 
@@ -696,278 +670,336 @@ var cbSetTreeValuesBefore = function before(
     return node;
 };
 
-/**
- * A Sunburst displays hierarchical data, where a level in the hierarchy is
- * represented by a circle. The center represents the root node of the tree.
- * The visualization bears a resemblance to both treemap and pie charts.
- *
- * @sample highcharts/demo/sunburst
- *         Sunburst chart
- *
- * @extends      plotOptions.pie
- * @excluding    allAreas, clip, colorAxis, colorKey, compare, compareBase,
- *               dataGrouping, depth, dragDrop, endAngle, gapSize, gapUnit,
- *               ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
- *               minSize, navigatorOptions, pointRange
- * @product      highcharts
- * @requires     modules/sunburst.js
- * @optionparent plotOptions.sunburst
- * @private
- */
-var sunburstOptions: Highcharts.SunburstSeriesOptions = {
+class SunburstSeries extends TreemapSeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
-     * Set options on specific levels. Takes precedence over series options,
-     * but not point options.
+     * A Sunburst displays hierarchical data, where a level in the hierarchy is
+     * represented by a circle. The center represents the root node of the tree.
+     * The visualization bears a resemblance to both treemap and pie charts.
      *
      * @sample highcharts/demo/sunburst
      *         Sunburst chart
      *
-     * @type      {Array<*>}
-     * @apioption plotOptions.sunburst.levels
+     * @extends      plotOptions.pie
+     * @excluding    allAreas, clip, colorAxis, colorKey, compare, compareBase,
+     *               dataGrouping, depth, dragDrop, endAngle, gapSize, gapUnit,
+     *               ignoreHiddenPoint, innerSize, joinBy, legendType, linecap,
+     *               minSize, navigatorOptions, pointRange
+     * @product      highcharts
+     * @requires     modules/sunburst.js
+     * @optionparent plotOptions.sunburst
+     * @private
      */
-
-    /**
-     * Can set a `borderColor` on all points which lies on the same level.
-     *
-     * @type      {Highcharts.ColorString}
-     * @apioption plotOptions.sunburst.levels.borderColor
-     */
-
-    /**
-     * Can set a `borderWidth` on all points which lies on the same level.
-     *
-     * @type      {number}
-     * @apioption plotOptions.sunburst.levels.borderWidth
-     */
-
-    /**
-     * Can set a `borderDashStyle` on all points which lies on the same level.
-     *
-     * @type      {Highcharts.DashStyleValue}
-     * @apioption plotOptions.sunburst.levels.borderDashStyle
-     */
-
-    /**
-     * Can set a `color` on all points which lies on the same level.
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @apioption plotOptions.sunburst.levels.color
-     */
-
-    /**
-     * Can set a `colorVariation` on all points which lies on the same level.
-     *
-     * @apioption plotOptions.sunburst.levels.colorVariation
-     */
-
-    /**
-     * The key of a color variation. Currently supports `brightness` only.
-     *
-     * @type      {string}
-     * @apioption plotOptions.sunburst.levels.colorVariation.key
-     */
-
-    /**
-     * The ending value of a color variation. The last sibling will receive this
-     * value.
-     *
-     * @type      {number}
-     * @apioption plotOptions.sunburst.levels.colorVariation.to
-     */
-
-    /**
-     * Can set `dataLabels` on all points which lies on the same level.
-     *
-     * @extends   plotOptions.sunburst.dataLabels
-     * @apioption plotOptions.sunburst.levels.dataLabels
-     */
-
-    /**
-     * Decides which level takes effect from the options set in the levels
-     * object.
-     *
-     * @sample highcharts/demo/sunburst
-     *         Sunburst chart
-     *
-     * @type      {number}
-     * @apioption plotOptions.sunburst.levels.level
-     */
-
-    /**
-     * Can set a `levelSize` on all points which lies on the same level.
-     *
-     * @type      {object}
-     * @apioption plotOptions.sunburst.levels.levelSize
-     */
-
-    /**
-     * Can set a `rotation` on all points which lies on the same level.
-     *
-     * @type      {number}
-     * @apioption plotOptions.sunburst.levels.rotation
-     */
-
-    /**
-     * Can set a `rotationMode` on all points which lies on the same level.
-     *
-     * @type      {string}
-     * @apioption plotOptions.sunburst.levels.rotationMode
-     */
-
-    /**
-     * When enabled the user can click on a point which is a parent and
-     * zoom in on its children. Deprecated and replaced by
-     * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
-     *
-     * @deprecated
-     * @type      {boolean}
-     * @default   false
-     * @since     6.0.0
-     * @product   highcharts
-     * @apioption plotOptions.sunburst.allowDrillToNode
-     */
-
-    /**
-     * When enabled the user can click on a point which is a parent and
-     * zoom in on its children.
-     *
-     * @type      {boolean}
-     * @default   false
-     * @since     7.0.3
-     * @product   highcharts
-     * @apioption plotOptions.sunburst.allowTraversingTree
-     */
-
-    /**
-     * The center of the sunburst chart relative to the plot area. Can be
-     * percentages or pixel values.
-     *
-     * @sample {highcharts} highcharts/plotoptions/pie-center/
-     *         Centered at 100, 100
-     *
-     * @type    {Array<number|string>}
-     * @default ["50%", "50%"]
-     * @product highcharts
-     */
-    center: ['50%', '50%'],
-    colorByPoint: false,
-    /**
-     * Disable inherited opacity from Treemap series.
-     *
-     * @ignore-option
-     */
-    opacity: 1,
-    /**
-     * @declare Highcharts.SeriesSunburstDataLabelsOptionsObject
-     */
-    dataLabels: {
-
-        allowOverlap: true,
-
-        defer: true,
+    public static defaultOptions: Highcharts.SunburstSeriesOptions = merge(TreemapSeries.defaultOptions, {
 
         /**
-         * Decides how the data label will be rotated relative to the perimeter
-         * of the sunburst. Valid values are `auto`, `circular`, `parallel` and
-         * `perpendicular`. When `auto`, the best fit will be
-         * computed for the point. The `circular` option works similiar
-         * to `auto`, but uses the `textPath` feature - labels are curved,
-         * resulting in a better layout, however multiple lines and
-         * `textOutline` are not supported.
+         * Set options on specific levels. Takes precedence over series options,
+         * but not point options.
          *
-         * The `series.rotation` option takes precedence over `rotationMode`.
+         * @sample highcharts/demo/sunburst
+         *         Sunburst chart
          *
-         * @type       {string}
-         * @sample {highcharts} highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/
-         *         Circular rotation mode
-         * @validvalue ["auto", "perpendicular", "parallel", "circular"]
-         * @since      6.0.0
+         * @type      {Array<*>}
+         * @apioption plotOptions.sunburst.levels
          */
-        rotationMode: 'auto',
 
-        style: {
-            /** @internal */
-            textOverflow: 'ellipsis'
-        }
-
-    },
-    /**
-     * Which point to use as a root in the visualization.
-     *
-     * @type {string}
-     */
-    rootId: void 0,
-
-    /**
-     * Used together with the levels and `allowDrillToNode` options. When
-     * set to false the first level visible when drilling is considered
-     * to be level one. Otherwise the level will be the same as the tree
-     * structure.
-     */
-    levelIsConstant: true,
-
-    /**
-     * Determines the width of the ring per level.
-     *
-     * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
-     *         Sunburst with various sizes per level
-     *
-     * @since 6.0.5
-     */
-    levelSize: {
         /**
-         * The value used for calculating the width of the ring. Its' affect is
-         * determined by `levelSize.unit`.
+         * Can set a `borderColor` on all points which lies on the same level.
          *
-         * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
-         *         Sunburst with various sizes per level
+         * @type      {Highcharts.ColorString}
+         * @apioption plotOptions.sunburst.levels.borderColor
          */
-        value: 1,
+
         /**
-         * How to interpret `levelSize.value`.
+         * Can set a `borderWidth` on all points which lies on the same level.
          *
-         * - `percentage` gives a width relative to result of outer radius minus
-         *   inner radius.
+         * @type      {number}
+         * @apioption plotOptions.sunburst.levels.borderWidth
+         */
+
+        /**
+         * Can set a `borderDashStyle` on all points which lies on the same
+         * level.
          *
-         * - `pixels` gives the ring a fixed width in pixels.
+         * @type      {Highcharts.DashStyleValue}
+         * @apioption plotOptions.sunburst.levels.borderDashStyle
+         */
+
+        /**
+         * Can set a `color` on all points which lies on the same level.
          *
-         * - `weight` takes the remaining width after percentage and pixels, and
-         *   distributes it accross all "weighted" levels. The value relative to
-         *   the sum of all weights determines the width.
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.sunburst.levels.color
+         */
+
+        /**
+         * Can set a `colorVariation` on all points which lies on the same
+         * level.
+         *
+         * @apioption plotOptions.sunburst.levels.colorVariation
+         */
+
+        /**
+         * The key of a color variation. Currently supports `brightness` only.
+         *
+         * @type      {string}
+         * @apioption plotOptions.sunburst.levels.colorVariation.key
+         */
+
+        /**
+         * The ending value of a color variation. The last sibling will receive
+         * this value.
+         *
+         * @type      {number}
+         * @apioption plotOptions.sunburst.levels.colorVariation.to
+         */
+
+        /**
+         * Can set `dataLabels` on all points which lies on the same level.
+         *
+         * @extends   plotOptions.sunburst.dataLabels
+         * @apioption plotOptions.sunburst.levels.dataLabels
+         */
+
+        /**
+         * Decides which level takes effect from the options set in the levels
+         * object.
+         *
+         * @sample highcharts/demo/sunburst
+         *         Sunburst chart
+         *
+         * @type      {number}
+         * @apioption plotOptions.sunburst.levels.level
+         */
+
+        /**
+         * Can set a `levelSize` on all points which lies on the same level.
+         *
+         * @type      {object}
+         * @apioption plotOptions.sunburst.levels.levelSize
+         */
+
+        /**
+         * Can set a `rotation` on all points which lies on the same level.
+         *
+         * @type      {number}
+         * @apioption plotOptions.sunburst.levels.rotation
+         */
+
+        /**
+         * Can set a `rotationMode` on all points which lies on the same level.
+         *
+         * @type      {string}
+         * @apioption plotOptions.sunburst.levels.rotationMode
+         */
+
+        /**
+         * When enabled the user can click on a point which is a parent and
+         * zoom in on its children. Deprecated and replaced by
+         * [allowTraversingTree](#plotOptions.sunburst.allowTraversingTree).
+         *
+         * @deprecated
+         * @type      {boolean}
+         * @default   false
+         * @since     6.0.0
+         * @product   highcharts
+         * @apioption plotOptions.sunburst.allowDrillToNode
+         */
+
+        /**
+         * When enabled the user can click on a point which is a parent and
+         * zoom in on its children.
+         *
+         * @type      {boolean}
+         * @default   false
+         * @since     7.0.3
+         * @product   highcharts
+         * @apioption plotOptions.sunburst.allowTraversingTree
+         */
+
+        /**
+         * The center of the sunburst chart relative to the plot area. Can be
+         * percentages or pixel values.
+         *
+         * @sample {highcharts} highcharts/plotoptions/pie-center/
+         *         Centered at 100, 100
+         *
+         * @type    {Array<number|string>}
+         * @default ["50%", "50%"]
+         * @product highcharts
+         */
+        center: ['50%', '50%'],
+        colorByPoint: false,
+        /**
+         * Disable inherited opacity from Treemap series.
+         *
+         * @ignore-option
+         */
+        opacity: 1,
+        /**
+         * @declare Highcharts.SeriesSunburstDataLabelsOptionsObject
+         */
+        dataLabels: {
+
+            allowOverlap: true,
+
+            defer: true,
+
+            /**
+             * Decides how the data label will be rotated relative to the
+             * perimeter of the sunburst. Valid values are `auto`, `circular`,
+             * `parallel` and `perpendicular`. When `auto`, the best fit will be
+             * computed for the point. The `circular` option works similiar
+             * to `auto`, but uses the `textPath` feature - labels are curved,
+             * resulting in a better layout, however multiple lines and
+             * `textOutline` are not supported.
+             *
+             * The `series.rotation` option takes precedence over
+             * `rotationMode`.
+             *
+             * @type       {string}
+             * @sample {highcharts} highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/
+             *         Circular rotation mode
+             * @validvalue ["auto", "perpendicular", "parallel", "circular"]
+             * @since      6.0.0
+             */
+            rotationMode: 'auto',
+
+            style: {
+                /** @internal */
+                textOverflow: 'ellipsis'
+            }
+
+        },
+        /**
+         * Which point to use as a root in the visualization.
+         *
+         * @type {string}
+         */
+        rootId: void 0,
+
+        /**
+         * Used together with the levels and `allowDrillToNode` options. When
+         * set to false the first level visible when drilling is considered
+         * to be level one. Otherwise the level will be the same as the tree
+         * structure.
+         */
+        levelIsConstant: true,
+
+        /**
+         * Determines the width of the ring per level.
          *
          * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
          *         Sunburst with various sizes per level
          *
-         * @validvalue ["percentage", "pixels", "weight"]
+         * @since 6.0.5
          */
-        unit: 'weight'
-    },
+        levelSize: {
+            /**
+             * The value used for calculating the width of the ring. Its' affect
+             * is determined by `levelSize.unit`.
+             *
+             * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
+             *         Sunburst with various sizes per level
+             */
+            value: 1,
+            /**
+             * How to interpret `levelSize.value`.
+             *
+             * - `percentage` gives a width relative to result of outer radius
+             *   minus inner radius.
+             *
+             * - `pixels` gives the ring a fixed width in pixels.
+             *
+             * - `weight` takes the remaining width after percentage and pixels,
+             *   and distributes it accross all "weighted" levels. The value
+             *   relative to the sum of all weights determines the width.
+             *
+             * @sample {highcharts} highcharts/plotoptions/sunburst-levelsize/
+             *         Sunburst with various sizes per level
+             *
+             * @validvalue ["percentage", "pixels", "weight"]
+             */
+            unit: 'weight'
+        },
 
-    /**
-     * Options for the button appearing when traversing down in a treemap.
-     *
-     * @extends   plotOptions.treemap.traverseUpButton
-     * @since     6.0.0
-     * @apioption plotOptions.sunburst.traverseUpButton
-     */
+        /**
+         * Options for the button appearing when traversing down in a treemap.
+         *
+         * @extends   plotOptions.treemap.traverseUpButton
+         * @since     6.0.0
+         * @apioption plotOptions.sunburst.traverseUpButton
+         */
 
-    /**
-     * If a point is sliced, moved out from the center, how many pixels
-     * should it be moved?.
-     *
-     * @sample highcharts/plotoptions/sunburst-sliced
-     *         Sliced sunburst
-     *
-     * @since 6.0.4
-     */
-    slicedOffset: 10
-};
+        /**
+         * If a point is sliced, moved out from the center, how many pixels
+         * should it be moved?.
+         *
+         * @sample highcharts/plotoptions/sunburst-sliced
+         *         Sliced sunburst
+         *
+         * @since 6.0.4
+         */
+        slicedOffset: 10
+    } as Highcharts.SunburstSeriesOptions);
 
-// Properties of the Sunburst series.
-var sunburstSeries = {
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public center: Array<number> = void 0 as any;
+
+    public data: Array<SunburstPoint> = void 0 as any;
+
+    public mapOptionsToLevel: Record<string, Highcharts.SunburstSeriesOptions> = void 0 as any;
+
+    public nodeMap: Record<string, Highcharts.SunburstNodeObject> = void 0 as any;
+
+    public options: Highcharts.SunburstSeriesOptions = void 0 as any;
+
+    public points: Array<SunburstPoint> = void 0 as any;
+
+    public shapeRoot?: Highcharts.SunburstNodeValuesObject = void 0 as any;
+
+    public startAndEndRadians: Highcharts.RadianAngles = void 0 as any;
+
+    public tree: Highcharts.SunburstNodeObject = void 0 as any;
+
+}
+
+interface SunburstSeries {
+    pointAttribs: LineSeries['pointAttribs'];
+    pointClass: typeof SunburstPoint;
+    utils: Highcharts.SunburstSeriesUtilsObject;
+    drawPoints(): void;
+    layoutAlgorithm(
+        parent: Highcharts.SunburstNodeValuesObject,
+        children: Array<Highcharts.SunburstNodeObject>,
+        options: Highcharts.SunburstSeriesOptions
+    ): Array<Highcharts.SunburstNodeValuesObject>;
+    setShapeArgs(
+        parent: Highcharts.SunburstNodeObject,
+        parentValues: Highcharts.SunburstNodeValuesObject,
+        mapOptionsToLevel: Record<string, Highcharts.SunburstSeriesOptions>
+    ): void;
+    translate(): void;
+    alignDataLabel(
+        point: SunburstPoint,
+        dataLabel: SVGElement,
+        labelOptions: DataLabelOptions
+    ): void;
+}
+extend(SunburstSeries.prototype, {
     drawDataLabels: noop as any, // drawDataLabels is called in drawPoints
-    drawPoints: function drawPoints(this: Highcharts.SunburstSeries): void {
+    drawPoints: function drawPoints(this: SunburstSeries): void {
         var series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
             shapeRoot = series.shapeRoot,
@@ -1018,11 +1050,10 @@ var sunburstSeries = {
                 }
             };
         }
-        points.forEach(function (point: Highcharts.SunburstPoint): void {
+        points.forEach(function (point): void {
             var node = point.node,
                 level = mapOptionsToLevel[node.level],
-                shapeExisting: Highcharts.SunburstNodeValuesObject =
-                    point.shapeExisting || ({} as any),
+                shapeExisting: Highcharts.SunburstNodeValuesObject = point.shapeExisting || ({} as any),
                 shape: Highcharts.SunburstNodeValuesObject =
                     node.shapeArgs || ({} as any),
                 animationInfo,
@@ -1102,14 +1133,14 @@ var sunburstSeries = {
         }
     },
 
-    pointAttribs: seriesTypes.column.prototype.pointAttribs,
+    pointAttribs: ColumnSeries.prototype.pointAttribs,
 
     // The layout algorithm for the levels
     layoutAlgorithm: layoutAlgorithm,
 
     // Set the shape arguments on the nodes. Recursive from root down.
     setShapeArgs: function (
-        this: Highcharts.SunburstSeries,
+        this: SunburstSeries,
         parent: Highcharts.SunburstNodeObject,
         parentValues: Highcharts.SunburstNodeValuesObject,
         mapOptionsToLevel: (
@@ -1177,7 +1208,7 @@ var sunburstSeries = {
     },
 
 
-    translate: function translate(this: Highcharts.SunburstSeries): void {
+    translate: function translate(this: SunburstSeries): void {
         var series = this,
             options = series.options,
             positions = series.center = getCenter.call(series),
@@ -1214,7 +1245,7 @@ var sunburstSeries = {
         idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
         nodeTop = mapIdToNode[idTop];
         const { from, to } = getLevelFromAndTo(nodeRoot);
-        mapOptionsToLevel = getLevelOptions<Highcharts.SunburstSeries>({
+        mapOptionsToLevel = getLevelOptions<SunburstSeries>({
             from,
             levels: series.options.levels,
             to,
@@ -1270,7 +1301,7 @@ var sunburstSeries = {
     },
 
     alignDataLabel: function (
-        this: Highcharts.SunburstSeries,
+        this: SunburstSeries,
         point: Highcharts.SunburstPoint,
         dataLabel: SVGElement,
         labelOptions: DataLabelOptions
@@ -1279,12 +1310,11 @@ var sunburstSeries = {
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
         }
-        return seriesTypes.treemap.prototype.alignDataLabel
-            .apply(this, arguments);
+        return TreemapSeries.prototype.alignDataLabel.apply(this, arguments);
     },
 
     // Animate the slices in. Similar to the animation of polar charts.
-    animate: function (this: Highcharts.SunburstSeries, init?: boolean): void {
+    animate: function (this: SunburstSeries, init?: boolean): void {
         var chart = this.chart,
             center = [
                 chart.plotWidth / 2,
@@ -1328,10 +1358,47 @@ var sunburstSeries = {
         getLevelFromAndTo,
         range
     } as any
-};
+});
 
-// Properties of the Sunburst series.
-var sunburstPoint = {
+/* *
+ *
+ *  Class
+ *
+ * */
+
+class SunburstPoint extends TreemapSeries.prototype.pointClass {
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public dataLabelPath?: SVGElement;
+
+    public innerArcLength?: number;
+
+    public outerArcLength?: number;
+
+    public node: Highcharts.SunburstNodeObject = void 0 as any;
+
+    public options: Highcharts.SunburstPointOptions = void 0 as any;
+
+    public series: SunburstSeries = void 0 as any;
+
+    public shapeExisting: Highcharts.SunburstNodeValuesObject = void 0 as any;
+
+    public sliced?: boolean;
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+extend(SunburstPoint.prototype, {
     draw: drawPoint,
     shouldDraw: function shouldDraw(this: Highcharts.SunburstPoint): boolean {
         return !this.isNull;
@@ -1393,7 +1460,27 @@ var sunburstPoint = {
         });
         return this.dataLabelPath;
     }
-};
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        sunburst: typeof SunburstSeries;
+    }
+}
+SunburstSeries.prototype.pointClass = SunburstPoint;
+BaseSeries.registerSeriesType('sunburst', SunburstSeries);
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * A `sunburst` series. If the [type](#series.sunburst.type) option is
@@ -1457,18 +1544,3 @@ var sunburstPoint = {
   */
 
 ''; // detach doclets above
-
-/**
- * @private
- * @class
- * @name Highcharts.seriesTypes.sunburst
- *
- * @augments Highcharts.Series
- */
-BaseSeries.seriesType<typeof Highcharts.SunburstSeries>(
-    'sunburst',
-    'treemap',
-    sunburstOptions,
-    sunburstSeries,
-    sunburstPoint
-);
