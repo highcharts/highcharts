@@ -4,10 +4,10 @@ let itemChart;
 	let seriesNum;
 
 	let plotLineColor= 'transparent';//'#33797C';
-	let dashStyle = 'dot';
+	let dashStyle = 'dot';as
 	let plotLineZ = 3;
 
-	let imagePath = 'https://raw.githubusercontent.com/highcharts/highcharts/c2581dc1a677d2bb0d715536c788fa98e81f0179/samples/graphics/xmas-card-2020/*';
+	let imagePath = 'https://raw.githubusercontent.com/highcharts/highcharts/{commit-hash}/samples/graphics/xmas-card-2020/*';
 		
 	//let imagePath = '../../../graphics/xmas-card-2020/'
 	Math.easeOutQuint= function(pos) {
