@@ -12,22 +12,17 @@
 
 'use strict';
 
-import type ColorAxis from '../../Core/Axis/ColorAxis';
-import type ColorType from '../../Core/Color/ColorType';
-import type GradientColor from '../../Core/Color/GradientColor';
-import type GaugePoint from '../Gauge/GaugePoint';
-import type GaugePointOptions from '../Gauge/GaugePointOptions';
-import type GaugeSeriesOptions from '../Gauge/GaugeSeriesOptions';
-import type RadialAxis from '../../Core/Axis/RadialAxis';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SolidGaugePoint from './SolidGaugePoint';
+import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import SolidGaugeAxis from './SolidGaugeAxis.js';
 import BaseSeries from '../../Core/Series/Series.js';
-import GaugeSeries from '../Gauge/GaugeSeries.js';
-import Color from '../../Core/Color/Color.js';
 const {
-    parse: color
-} = Color;
+    seriesTypes: {
+        gauge: GaugeSeries
+    }
+} = BaseSeries;
 import H from '../../Core/Globals.js';
 const {
     Renderer
@@ -50,30 +45,11 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class SolidGaugePoint extends GaugePoint {
-            options: SolidGaugePointOptions;
-            series: SolidGaugeSeries;
-        }
-        interface SolidGaugePointOptions extends GaugePointOptions {
-            innerRadius?: (number|string);
-            radius?: (number|string);
-        }
-        interface SolidGaugeSeriesOptions extends GaugeSeriesOptions {
-            innerRadius?: (number|string);
-            linecap?: string;
-            overshoot?: number;
-            radius?: (number|string);
-            rounded?: boolean;
-            states?: SeriesStatesOptions<SolidGaugeSeries>;
-            threshold?: number;
-        }
         interface SymbolOptionsObject {
             rounded?: boolean;
         }
     }
 }
-
-import '../../Core/Options.js';
 
 /**
  * Additional options, depending on the actual symbol drawn.
@@ -147,183 +123,6 @@ wrap(
     }
 );
 
-/* eslint-disable valid-jsdoc */
-
-/**
- * @private
- */
-interface SolidGaugeAxis extends RadialAxis {
-    dataClasses: ColorAxis['dataClasses'];
-    options: SolidGaugeAxis.Options;
-    stops: ColorAxis['stops'];
-    initDataClasses(userOptions: ColorAxis.Options): void;
-    initStops(userOptions: ColorAxis.Options): void;
-    toColor(
-        value: number,
-        point: Highcharts.SolidGaugePoint
-    ): (ColorType|undefined);
-}
-
-/**
- * @private
- */
-namespace SolidGaugeAxis {
-
-    /* *
-     *
-     *  Interfaces
-     *
-     * */
-
-    export interface Options extends ColorAxis.Options {
-        dataClassColor?: ColorAxis.Options['dataClassColor'];
-        dataClasses?: ColorAxis.Options['dataClasses'];
-        maxColor?: ColorAxis.Options['maxColor'];
-        minColor?: ColorAxis.Options['minColor'];
-        stops?: ColorAxis.Options['stops'];
-    }
-
-    /* *
-     *
-     *  Constants
-     *
-     * */
-
-    /**
-     * These methods are defined in the ColorAxis object, and copied here.
-     * @private
-     *
-     * @todo
-     * If we implement an AMD system we should make ColorAxis a dependency.
-     */
-    const methods = {
-
-        initDataClasses: function (
-            this: SolidGaugeAxis,
-            userOptions: ColorAxis.Options
-        ): void {
-            var chart = this.chart,
-                dataClasses: Array<ColorAxis.DataClassesOptions>,
-                colorCounter = 0,
-                options = this.options;
-
-            this.dataClasses = dataClasses = [];
-
-            (userOptions.dataClasses as any).forEach(function (
-                dataClass: ColorAxis.DataClassesOptions,
-                i: number
-            ): void {
-                var colors: (Array<string>|undefined);
-
-                dataClass = merge(dataClass);
-                dataClasses.push(dataClass);
-                if (!dataClass.color) {
-                    if (options.dataClassColor === 'category') {
-                        colors = chart.options.colors;
-                        dataClass.color = (colors as any)[colorCounter++];
-                        // loop back to zero
-                        if (colorCounter === (colors as any).length) {
-                            colorCounter = 0;
-                        }
-                    } else {
-                        dataClass.color = color(options.minColor).tweenTo(
-                            color(options.maxColor),
-                            i / ((userOptions.dataClasses as any).length - 1)
-                        );
-                    }
-                }
-            });
-        },
-
-        initStops: function (
-            this: SolidGaugeAxis,
-            userOptions: ColorAxis.Options
-        ): void {
-            this.stops = userOptions.stops || [
-                [0, this.options.minColor as any],
-                [1, this.options.maxColor as any]
-            ];
-            this.stops.forEach(function (
-                stop: GradientColor['stops'][0]
-            ): void {
-                stop.color = color(stop[1]);
-            });
-        },
-        // Translate from a value to a color
-        toColor: function (
-            this: SolidGaugeAxis,
-            value: number,
-            point: Highcharts.SolidGaugePoint
-        ): (ColorType|undefined) {
-            var pos: number,
-                stops = this.stops,
-                from: (number|GradientColor['stops'][0]|undefined),
-                to: (number|GradientColor['stops'][0]|undefined),
-                color: (ColorType|undefined),
-                dataClasses = this.dataClasses,
-                dataClass: (ColorAxis.DataClassesOptions|undefined),
-                i: (number|undefined);
-
-            if (dataClasses) {
-                i = dataClasses.length;
-                while (i--) {
-                    dataClass = dataClasses[i];
-                    from = dataClass.from;
-                    to = dataClass.to;
-                    if (
-                        (typeof from === 'undefined' || value >= from) &&
-                        (typeof to === 'undefined' || value <= to)
-                    ) {
-                        color = dataClass.color;
-                        if (point) {
-                            point.dataClass = i;
-                        }
-                        break;
-                    }
-                }
-
-            } else {
-
-                if (this.logarithmic) {
-                    value = this.val2lin(value);
-                }
-                pos = 1 - ((this.max - value) / (this.max - this.min));
-                i = stops.length;
-                while (i--) {
-                    if (pos > stops[i][0]) {
-                        break;
-                    }
-                }
-                from = stops[i] || stops[i + 1];
-                to = stops[i + 1] || from;
-
-                // The position within the gradient
-                pos = (1 - ((to as any)[0] - pos) / (((to as any)[0] -
-                    (from as any)[0]) || 1));
-
-                color = (from as any).color.tweenTo(
-                    (to as any).color,
-                    pos
-                );
-            }
-            return color;
-        }
-    };
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * @private
-     */
-    export function init(axis: RadialAxis): void {
-        extend(axis, methods);
-    }
-
-}
 
 /**
  * A solid gauge is a circular gauge where the value is indicated by a filled
@@ -338,7 +137,7 @@ namespace SolidGaugeAxis {
  * @requires     modules/solid-gauge
  * @optionparent plotOptions.solidgauge
  */
-var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
+var solidGaugeOptions: SolidGaugeSeriesOptions = {
     /**
      * The inner radius for points in a solid gauge. Can be given as a number
      * (pixels) or percentage string.
@@ -437,6 +236,15 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
  *
  * */
 
+/**
+ * SolidGauge series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.solidgauge
+ *
+ * @augments Highcarts.Series
+ */
 class SolidGaugeSeries extends GaugeSeries {
 
     /* *
@@ -445,8 +253,8 @@ class SolidGaugeSeries extends GaugeSeries {
      *
      * */
 
-    public static defaultOptions: Highcharts.SolidGaugeSeriesOptions = merge(GaugeSeries.defaultOptions,
-        solidGaugeOptions as Highcharts.SolidGaugeSeriesOptions);
+    public static defaultOptions: SolidGaugeSeriesOptions = merge(GaugeSeries.defaultOptions,
+        solidGaugeOptions as SolidGaugeSeriesOptions);
 
     /* *
      *
@@ -454,14 +262,15 @@ class SolidGaugeSeries extends GaugeSeries {
      *
      * */
 
-    public data: Array<Highcharts.SolidGaugePoint> = void 0 as any;
-    public points: Array<Highcharts.SolidGaugePoint> = void 0 as any;
-    public options: Highcharts.SolidGaugeSeriesOptions = void 0 as any;
+    public data: Array<SolidGaugePoint> = void 0 as any;
+    public points: Array<SolidGaugePoint> = void 0 as any;
+    public options: SolidGaugeSeriesOptions = void 0 as any;
 
     public axis: SolidGaugeAxis = void 0 as any;
     public yAxis: SolidGaugeAxis = void 0 as any;
     public startAngleRad: SolidGaugeSeries['thresholdAngleRad'] = void 0 as any;
     public thresholdAngleRad: number = void 0 as any;
+
     /* *
      *
      *  Functions
@@ -514,7 +323,7 @@ class SolidGaugeSeries extends GaugeSeries {
 
 
         series.points.forEach(function (
-            point: Highcharts.SolidGaugePoint
+            point: SolidGaugePoint
         ): void {
             // #10630 null point should not be draw
             if (!point.isNull) { // condition like in pie chart
@@ -632,7 +441,7 @@ class SolidGaugeSeries extends GaugeSeries {
     }
 
     // Extend the pie slice animation by animating from start angle and up.
-    animate(init?: boolean): void {
+    public animate(init?: boolean): void {
         if (!init) {
             this.startAngleRad = this.thresholdAngleRad;
             H.seriesTypes.pie.prototype.animate.call(this, init);
@@ -646,8 +455,8 @@ class SolidGaugeSeries extends GaugeSeries {
  *
  * */
 
-interface SolidGaugeSeries extends GaugeSeries {
-    pointClass: typeof Highcharts.SolidGaugePoint;
+interface SolidGaugeSeries {
+    pointClass: typeof SolidGaugePoint;
     drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
 }
 extend(SolidGaugeSeries.prototype, {
