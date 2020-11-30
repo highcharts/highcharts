@@ -8,7 +8,6 @@
 
 'use strict';
 
-import type StochasticIndicator from './Stochastic/StochasticIndicator';
 import type {
     StochasticOptions,
     StochasticParamsOptions
@@ -17,8 +16,19 @@ import type StochasticPoint from './Stochastic/StochasticPoint';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        stochastic: StochasticIndicator
+    }
+} = BaseSeries;
 const { seriesTypes } = BaseSeries;
 import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
+import U from '../../Core/Utilities.js';
+const {
+    extend,
+    isArray,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -26,13 +36,6 @@ import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
  */
 declare global {
     namespace Highcharts {
-        class SlowStochasticIndicator extends StochasticIndicator {
-            public nameBase: string;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: SlowStochasticIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-        }
 
         interface SlowStochasticIndicatorParamsOptions
             extends StochasticParamsOptions {
@@ -50,14 +53,6 @@ declare global {
     }
 }
 
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        slowstochastic: typeof Highcharts.SlowStochasticIndicator;
-    }
-}
-
-// im port './StochasticIndicator.js';
-
 /**
  * The Slow Stochastic series type.
  *
@@ -67,9 +62,7 @@ declare module '../../Core/Series/SeriesType' {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.SlowStochasticIndicator>(
-    'slowstochastic',
-    'stochastic',
+class SlowStochasticIndicator extends StochasticIndicator {
     /**
      * Slow Stochastic oscillator. This series requires the `linkedTo` option
      * to be set and should be loaded after `stock/indicators/indicators.js`
@@ -86,7 +79,8 @@ BaseSeries.seriesType<typeof Highcharts.SlowStochasticIndicator>(
      * @requires     stock/indicators/slowstochastic
      * @optionparent plotOptions.slowstochastic
      */
-    {
+    public static defaultOptions: Highcharts.SlowStochasticIndicatorOptions =
+    merge(StochasticIndicator.defaultOptions, {
         params: {
             /**
              * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
@@ -96,94 +90,114 @@ BaseSeries.seriesType<typeof Highcharts.SlowStochasticIndicator>(
              */
             periods: [14, 3, 3]
         }
+    } as Highcharts.SlowStochasticIndicatorOptions)
+}
+interface SlowStochasticIndicator {
+    nameBase: string;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.SlowStochasticIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+}
+extend(SlowStochasticIndicator.prototype, {
+    nameBase: 'Slow Stochastic',
+    init: function (this: SlowStochasticIndicator): void {
+        const args = arguments,
+            ctx = this;
+
+        RequiredIndicatorMixin.isParentLoaded(
+            (seriesTypes.stochastic as any),
+            'stochastic',
+            ctx.type,
+            function (indicator: Highcharts.Indicator): undefined {
+                indicator.prototype.init.apply(ctx, args);
+                return;
+            }
+        );
     },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        nameBase: 'Slow Stochastic',
-        init: function (this: Highcharts.SlowStochasticIndicator): void {
-            const args = arguments,
-                ctx = this;
-
-            RequiredIndicatorMixin.isParentLoaded(
-                (seriesTypes.stochastic as any),
-                'stochastic',
-                ctx.type,
-                function (indicator: Highcharts.Indicator): undefined {
-                    indicator.prototype.init.apply(ctx, args);
-                    return;
-                }
-            );
-        },
-        getValues: function<TLinkedSeries extends LineSeries> (
-            this: Highcharts.SlowStochasticIndicator,
-            series: TLinkedSeries,
-            params: Highcharts.SlowStochasticIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            const periods: Array<number> = (params.periods as any),
-                fastValues = seriesTypes.stochastic.prototype.getValues.call(
-                    this,
-                    series,
-                    params
-                ) as any,
-                slowValues = {
-                    values: [] as Array<Array<number>>,
-                    xData: [] as Array<number>,
-                    yData: [] as Array<Array<number>>
-                };
-
-            let i = 0;
-
-            if (!fastValues) {
-                return;
-            }
-
-            slowValues.xData = fastValues.xData.slice(periods[1] - 1);
-            const fastYData = fastValues.yData.slice(periods[1] - 1);
-
-            // Get SMA(%D)
-            const smoothedValues: (
-                undefined|IndicatorValuesObject<LineSeries>
-            ) = seriesTypes.sma.prototype.getValues.call(
+    getValues: function<TLinkedSeries extends LineSeries> (
+        this: SlowStochasticIndicator,
+        series: TLinkedSeries,
+        params: Highcharts.SlowStochasticIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        const periods: Array<number> = (params.periods as any),
+            fastValues = seriesTypes.stochastic.prototype.getValues.call(
                 this,
-                ({
-                    xData: slowValues.xData,
-                    yData: fastYData
-                } as any),
-                {
-                    index: 1,
-                    period: periods[2]
-                }
-            );
+                series,
+                params
+            ) as any,
+            slowValues = {
+                values: [] as Array<Array<number>>,
+                xData: [] as Array<number>,
+                yData: [] as Array<Array<number>>
+            };
 
-            if (!smoothedValues) {
-                return;
-            }
+        let i = 0;
 
-            const xDataLen = slowValues.xData.length;
-
-            // Format data
-            for (; i < xDataLen; i++) {
-
-                slowValues.yData[i] = [
-                    fastYData[i][1],
-                    smoothedValues.yData[i - periods[2] + 1] || null
-                ];
-
-                slowValues.values[i] = [
-                    slowValues.xData[i],
-                    fastYData[i][1],
-                    smoothedValues.yData[i - periods[2] + 1] || null
-                ];
-            }
-
-            return slowValues as
-                IndicatorValuesObject<TLinkedSeries>;
+        if (!fastValues) {
+            return;
         }
-    }
-);
 
+        slowValues.xData = fastValues.xData.slice(periods[1] - 1);
+        const fastYData = fastValues.yData.slice(periods[1] - 1);
+
+        // Get SMA(%D)
+        const smoothedValues: (
+            undefined|IndicatorValuesObject<LineSeries>
+        ) = seriesTypes.sma.prototype.getValues.call(
+            this,
+            ({
+                xData: slowValues.xData,
+                yData: fastYData
+            } as any),
+            {
+                index: 1,
+                period: periods[2]
+            }
+        );
+
+        if (!smoothedValues) {
+            return;
+        }
+
+        const xDataLen = slowValues.xData.length;
+
+        // Format data
+        for (; i < xDataLen; i++) {
+
+            slowValues.yData[i] = [
+                fastYData[i][1],
+                smoothedValues.yData[i - periods[2] + 1] || null
+            ];
+
+            slowValues.values[i] = [
+                slowValues.xData[i],
+                fastYData[i][1],
+                smoothedValues.yData[i - periods[2] + 1] || null
+            ];
+        }
+
+        return slowValues as
+            IndicatorValuesObject<TLinkedSeries>;
+    }
+});
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        slowstochastic: typeof SlowStochasticIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('slowstochastic', SlowStochasticIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+
+export default SlowStochasticIndicator;
 /**
  * A Slow Stochastic indicator. If the [type](#series.slowstochastic.type)
  * option is not specified, it is inherited from [chart.type](#chart.type).
