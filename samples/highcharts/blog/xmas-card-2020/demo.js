@@ -4,7 +4,7 @@ let itemChart;
 	let seriesNum;
 
 	let plotLineColor= 'transparent';//'#33797C';
-	let dashStyle = 'dot';as
+	let dashStyle = 'dot';
 	let plotLineZ = 3;
 
 	let imagePath = 'https://raw.githubusercontent.com/highcharts/highcharts/{$commit-hash}/samples/graphics/xmas-card-2020/';
