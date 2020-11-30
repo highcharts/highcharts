@@ -44,6 +44,7 @@ const {
     pick,
     relativeLength
 } = U;
+import './Funnel3DComposition.js';
 
 /* *
  *
@@ -456,8 +457,8 @@ class Funnel3DSeries extends ColumnSeries {
  * */
 
 interface Funnel3DSeries {
-    pointClass: typeof Funnel3DPoint;
     getWidthAt(y: number): number; // added during translate
+    pointClass: typeof Funnel3DPoint;
     translate3dShapes(): void;
 }
 extend(Funnel3DSeries.prototype, {

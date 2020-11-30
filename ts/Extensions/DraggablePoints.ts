@@ -20,6 +20,7 @@ import type BulletPoint from '../Series/Bullet/BulletPoint';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
+import type ColumnRangePoint from '../Series/ColumnRange/ColumnRangePoint';
 import type OHLCPoint from '../Series/OHLC/OHLCPoint';
 import type PointerEvent from '../Core/PointerEvent';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
@@ -655,7 +656,7 @@ if (seriesTypes.columnrange) {
             resize: true,
             resizeSide: 'bottom',
             handlePositioner: function (
-                point: Highcharts.ColumnRangePoint
+                point: ColumnRangePoint
             ): PositionObject {
                 var bBox = point.shapeArgs || (point.graphic as any).getBBox();
 
@@ -667,7 +668,7 @@ if (seriesTypes.columnrange) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.ColumnRangePoint
+                point: ColumnRangePoint
             ): boolean {
                 return val <= point.high;
             }
@@ -687,7 +688,7 @@ if (seriesTypes.columnrange) {
             resize: true,
             resizeSide: 'top',
             handlePositioner: function (
-                point: Highcharts.ColumnRangePoint
+                point: ColumnRangePoint
             ): PositionObject {
                 var bBox = point.shapeArgs || (point.graphic as any).getBBox();
 
@@ -699,7 +700,7 @@ if (seriesTypes.columnrange) {
             handleFormatter: columnDragDropProps.y.handleFormatter,
             propValidate: function (
                 val: number,
-                point: Highcharts.ColumnRangePoint
+                point: ColumnRangePoint
             ): boolean {
                 return val >= point.low;
             }

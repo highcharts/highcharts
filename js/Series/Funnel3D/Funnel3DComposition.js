@@ -203,7 +203,7 @@ RendererProto.elements3d.funnel3d = merge(RendererProto.elements3d.cuboid, {
         this.finishedOnAdd = true;
     }
 });
-H.Renderer.prototype.funnel3d = function (shapeArgs) {
+RendererProto.funnel3d = function (shapeArgs) {
     var renderer = this, funnel3d = renderer.element3d('funnel3d', shapeArgs), styledMode = renderer.styledMode, 
     // hide stroke for Firefox
     strokeAttrs = {
@@ -244,7 +244,7 @@ H.Renderer.prototype.funnel3d = function (shapeArgs) {
  * Generates paths and zIndexes.
  * @private
  */
-H.Renderer.prototype.funnel3dPath = function (shapeArgs) {
+RendererProto.funnel3dPath = function (shapeArgs) {
     // Check getCylinderEnd for better error message if
     // the cylinder module is missing
     if (!this.getCylinderEnd) {
