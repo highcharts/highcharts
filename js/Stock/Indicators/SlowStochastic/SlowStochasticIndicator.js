@@ -37,7 +37,11 @@ var extend = U.extend, merge = U.merge;
 var SlowStochasticIndicator = /** @class */ (function (_super) {
     __extends(SlowStochasticIndicator, _super);
     function SlowStochasticIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
     SlowStochasticIndicator.prototype.init = function () {
         var args = arguments, ctx = this;

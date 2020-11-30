@@ -68,6 +68,10 @@ class SlowStochasticIndicator extends StochasticIndicator {
         }
     } as SlowStochasticOptions)
 
+    public data: Array<SlowStochasticPoint> = void 0 as any;
+    public options: SlowStochasticOptions = void 0 as any;
+    public points: Array<SlowStochasticPoint> = void 0 as any;
+
     public init(): void {
         const args = arguments,
             ctx = this;
