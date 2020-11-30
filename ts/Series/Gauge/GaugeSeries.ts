@@ -384,8 +384,6 @@ class GaugeSeries extends LineSeries {
 
     public yAxis: RadialAxis = void 0 as any;
     public pivot?: SVGElement;
-    public fixedBox: boolean = true;
-    public forceDL: boolean = true;
 
     /* *
      *

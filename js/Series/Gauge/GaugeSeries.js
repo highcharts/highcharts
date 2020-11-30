@@ -62,8 +62,6 @@ var GaugeSeries = /** @class */ (function (_super) {
         _this.points = void 0;
         _this.options = void 0;
         _this.yAxis = void 0;
-        _this.fixedBox = true;
-        _this.forceDL = true;
         return _this;
         /* eslint-enable valid-jsdoc */
     }
