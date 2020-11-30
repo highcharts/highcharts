@@ -577,8 +577,8 @@ QUnit.test('XRange series and tooltip position', assert => {
     chart.tooltip.refresh(chart.series[0].points[0]);
 
     var labelBox = chart.tooltip.label.element.getBoundingClientRect();
-    var pointGraphicBox = chart.series[0].points[0].graphic.element
-        .getBoundingClientRect();
+    var pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
 
     //Precision up to 2 pixels
     assert.close(
@@ -597,8 +597,8 @@ QUnit.test('XRange series and tooltip position', assert => {
     chart.tooltip.refresh(chart.series[0].points[0]);
 
     labelBox = chart.tooltip.label.element.getBoundingClientRect();
-    pointGraphicBox = chart.series[0].points[0].graphic.element
-        .getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
 
     //Precision up to 2 pixels
     assert.close(
@@ -617,8 +617,8 @@ QUnit.test('XRange series and tooltip position', assert => {
     chart.tooltip.refresh(chart.series[0].points[0]);
 
     labelBox = chart.tooltip.label.element.getBoundingClientRect();
-    pointGraphicBox = chart.series[0].points[0].graphic.element
-        .getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
 
     //Precision up to 2 pixels
     assert.close(
@@ -640,8 +640,8 @@ QUnit.test('XRange series and tooltip position', assert => {
     chart.tooltip.refresh(chart.series[0].points[0]);
 
     labelBox = chart.tooltip.label.element.getBoundingClientRect();
-    pointGraphicBox = chart.series[0].points[0].graphic.element
-        .getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
 
     //Precision up to 2 pixels
     assert.close(
@@ -666,8 +666,8 @@ QUnit.test('XRange series and tooltip position', assert => {
     chart.tooltip.refresh(chart.series[0].points[0]);
 
     labelBox = chart.tooltip.label.element.getBoundingClientRect();
-    pointGraphicBox = chart.series[0].points[0].graphic.element
-        .getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
 
     //Precision up to 2 pixels
     assert.close(
@@ -686,8 +686,8 @@ QUnit.test('XRange series and tooltip position', assert => {
     chart.tooltip.refresh(chart.series[0].points[0]);
 
     labelBox = chart.tooltip.label.element.getBoundingClientRect();
-    pointGraphicBox = chart.series[0].points[0].graphic.element
-        .getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
 
     //Precision up to 2 pixels
     assert.close(
@@ -709,8 +709,8 @@ QUnit.test('XRange series and tooltip position', assert => {
     chart.tooltip.refresh(chart.series[0].points[0]);
 
     labelBox = chart.tooltip.label.element.getBoundingClientRect();
-    pointGraphicBox = chart.series[0].points[0].graphic.element
-        .getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
 
     //Precision up to 2 pixels
     assert.close(
@@ -732,8 +732,8 @@ QUnit.test('XRange series and tooltip position', assert => {
     chart.tooltip.refresh(chart.series[0].points[0]);
 
     labelBox = chart.tooltip.label.element.getBoundingClientRect();
-    pointGraphicBox = chart.series[0].points[0].graphic.element
-        .getBoundingClientRect();
+    pointGraphicBox = chart.series[0].points[0]
+        .graphic.element.getBoundingClientRect();
 
     //Precision up to 2 pixels
     assert.close(

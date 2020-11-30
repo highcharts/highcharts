@@ -704,3 +704,43 @@ QUnit.test('Axis breaks on Y axis', function (assert) {
         '50 and 100 translate to the same axis position'
     );
 });
+
+QUnit.test('#14236: Stacked area chart null yBottom', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'datetime'
+        },
+        plotOptions: {
+            area: {
+                stacking: 'normal',
+                connectNulls: true
+            },
+            series: {
+                gapSize: 1
+            }
+        },
+        series: [{
+            type: 'area',
+            data: [
+                [0, 0],
+                [1, 0],
+                [3, 0],
+                [4, 0]
+            ]
+        }, {
+            type: 'area',
+            data: [
+                [0, 1],
+                [1, 1],
+                [2, 1],
+                [3, 1],
+                [4, 1]
+            ]
+        }]
+    });
+
+    assert.notOk(
+        chart.series[1].areaPath.some(p => p[2] === null),
+        'There should be no null yBottoms'
+    );
+});

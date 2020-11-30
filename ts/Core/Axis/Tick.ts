@@ -12,6 +12,7 @@
 
 import type CSSObject from '../Renderer/CSSObject';
 import type PositionObject from '../Renderer/PositionObject';
+import type { TickLike } from '../Axis/Types';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -34,6 +35,7 @@ declare global {
         interface TickPositionObject extends PositionObject {
             opacity?: number;
         }
+        interface Tick extends TickLike {}
         class Tick {
             public constructor(
                 axis: Axis,
