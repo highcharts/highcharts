@@ -14,7 +14,7 @@
  *
  * */
 
-import LinePointOptions from '../Line/LinePointOptions.js';
+import type LinePointOptions from '../Line/LinePointOptions';
 
 /* *
  *
