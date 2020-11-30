@@ -39,45 +39,14 @@ var SlowStochasticIndicator = /** @class */ (function (_super) {
     function SlowStochasticIndicator() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    /**
-     * Slow Stochastic oscillator. This series requires the `linkedTo` option
-     * to be set and should be loaded after `stock/indicators/indicators.js`
-     * and `stock/indicators/stochastic.js` files.
-     *
-     * @sample stock/indicators/slow-stochastic
-     *         Slow Stochastic oscillator
-     *
-     * @extends      plotOptions.stochastic
-     * @since        8.0.0
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/stochastic
-     * @requires     stock/indicators/slowstochastic
-     * @optionparent plotOptions.slowstochastic
-     */
-    SlowStochasticIndicator.defaultOptions = merge(StochasticIndicator.defaultOptions, {
-        params: {
-            /**
-             * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
-             *
-             * @type    {Array<number,number,number>}
-             * @default [14, 3, 3]
-             */
-            periods: [14, 3, 3]
-        }
-    });
-    return SlowStochasticIndicator;
-}(StochasticIndicator));
-extend(SlowStochasticIndicator.prototype, {
-    nameBase: 'Slow Stochastic',
-    init: function () {
+    SlowStochasticIndicator.prototype.init = function () {
         var args = arguments, ctx = this;
         RequiredIndicatorMixin.isParentLoaded(seriesTypes.stochastic, 'stochastic', ctx.type, function (indicator) {
             indicator.prototype.init.apply(ctx, args);
             return;
         });
-    },
-    getValues: function (series, params) {
+    };
+    SlowStochasticIndicator.prototype.getValues = function (series, params) {
         var periods = params.periods, fastValues = seriesTypes.stochastic.prototype.getValues.call(this, series, params), slowValues = {
             values: [],
             xData: [],
@@ -114,7 +83,38 @@ extend(SlowStochasticIndicator.prototype, {
             ];
         }
         return slowValues;
-    }
+    };
+    /**
+     * Slow Stochastic oscillator. This series requires the `linkedTo` option
+     * to be set and should be loaded after `stock/indicators/indicators.js`
+     * and `stock/indicators/stochastic.js` files.
+     *
+     * @sample stock/indicators/slow-stochastic
+     *         Slow Stochastic oscillator
+     *
+     * @extends      plotOptions.stochastic
+     * @since        8.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/stochastic
+     * @requires     stock/indicators/slowstochastic
+     * @optionparent plotOptions.slowstochastic
+     */
+    SlowStochasticIndicator.defaultOptions = merge(StochasticIndicator.defaultOptions, {
+        params: {
+            /**
+             * Periods for Slow Stochastic oscillator: [%K, %D, SMA(%D)].
+             *
+             * @type    {Array<number,number,number>}
+             * @default [14, 3, 3]
+             */
+            periods: [14, 3, 3]
+        }
+    });
+    return SlowStochasticIndicator;
+}(StochasticIndicator));
+extend(SlowStochasticIndicator.prototype, {
+    nameBase: 'Slow Stochastic'
 });
 BaseSeries.registerSeriesType('slowstochastic', SlowStochasticIndicator);
 /* *
