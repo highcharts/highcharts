@@ -27,12 +27,12 @@ import type {
     SankeyDataLabelOptions
 } from './Sankey/SankeyDataLabelOptions';
 import type SankeyPointOptions from './Sankey/SankeyPointOptions';
-import type SankeySeries from './Sankey/SankeySeries';
 import type {
     SankeySeriesLevelOptions,
     SankeySeriesNodeOptions,
     SankeySeriesOptions
 } from './Sankey/SankeySeriesOptions';
+import type SankeySeriesType from './Sankey/SankeySeries';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -41,9 +41,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes: {
-        sankey: {
-            prototype: base
-        }
+        sankey: SankeySeries
     }
 } = BaseSeries;
 import H from '../Core/Globals.js';
@@ -51,6 +49,8 @@ import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     css,
+    extend,
+    merge,
     pick,
     wrap
 } = U;
@@ -103,7 +103,7 @@ declare global {
                 column: OrganizationColumnArray
             ): void;
         }
-        interface OrganizationColumnArray<T = Highcharts.OrganizationPoint> extends SankeySeries.ColumnArray<T>
+        interface OrganizationColumnArray<T = Highcharts.OrganizationPoint> extends SankeySeriesType.ColumnArray<T>
         {
             offset(node: T, factor: number): (Dictionary<number>|undefined);
         }
@@ -157,25 +157,6 @@ declare global {
     }
 }
 
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        organization: typeof Highcharts.OrganizationSeries;
-    }
-}
-
-/**
- * Layout value for the child nodes in an organization chart. If `hanging`, this
- * node's children will hang below their parent, allowing a tighter packing of
- * nodes in the diagram.
- *
- * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
- */
-
-''; // detach doclets above
-
 /* *
  *
  *  Class
@@ -189,9 +170,14 @@ declare module '../Core/Series/SeriesType' {
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
-    'organization',
-    'sankey',
+class OrganizationSeries extends SankeySeries {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
     /**
      * An organization chart is a diagram that shows the structure of an
      * organization and the relationships and relative ranks of its parts and
@@ -213,7 +199,7 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
      * @requires     modules/organization
      * @optionparent plotOptions.organization
      */
-    {
+    public static defaultOptions: Highcharts.OrganizationSeriesOptions = merge(SankeySeries.defaultOptions, {
         /**
          * The border color of the node cards.
          *
@@ -400,336 +386,400 @@ BaseSeries.seriesType<typeof Highcharts.OrganizationSeries>(
         tooltip: {
             nodeFormat: '{point.name}<br>{point.title}<br>{point.description}'
         }
+    } as Highcharts.OrganizationSeriesOptions);
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.OrganizationPoint> = void 0 as any;
+
+    public options: Highcharts.OrganizationSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.OrganizationPoint> = void 0 as any;
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface OrganizationSeries {
+    pointClass: typeof Highcharts.OrganizationPoint;
+}
+extend(OrganizationSeries.prototype, {
+    pointAttribs: function (
+        this: Highcharts.OrganizationSeries,
+        point: Highcharts.OrganizationPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        var series = this,
+            attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
+            level = point.isNode ? point.level : point.fromNode.level,
+            levelOptions: Highcharts.OrganizationSeriesLevelsOptions =
+                (series.mapOptionsToLevel as any)[level || 0] || {},
+            options = point.options,
+            stateOptions: Highcharts.OrganizationSeriesOptions = (
+                levelOptions.states && (levelOptions.states as any)[state as any]
+            ) || {},
+            values: (
+                Highcharts.OrganizationPointOptions &
+                Highcharts.OrganizationSeriesOptions
+            ) = ['borderRadius', 'linkColor', 'linkLineWidth']
+                .reduce(function (
+                    obj: Highcharts.Dictionary<unknown>,
+                    key: string
+                ): Highcharts.Dictionary<unknown> {
+                    obj[key] = pick(
+                        (stateOptions as any)[key],
+                        (options as any)[key],
+                        (levelOptions as any)[key],
+                        (series.options as any)[key]
+                    );
+                    return obj;
+                }, {});
+
+        if (!point.isNode) {
+            attribs.stroke = values.linkColor;
+            attribs['stroke-width'] = values.linkLineWidth;
+            delete attribs.fill;
+        } else {
+            if (values.borderRadius) {
+                attribs.r = values.borderRadius;
+            }
+        }
+        return attribs;
     },
-    {
-        pointAttribs: function (
-            this: Highcharts.OrganizationSeries,
-            point: Highcharts.OrganizationPoint,
-            state?: StatesOptionsKey
-        ): SVGAttributes {
-            var series = this,
-                attribs = base.pointAttribs.call(series, point, state),
-                level = point.isNode ? point.level : point.fromNode.level,
-                levelOptions: Highcharts.OrganizationSeriesLevelsOptions =
-                    (series.mapOptionsToLevel as any)[level || 0] || {},
-                options = point.options,
-                stateOptions: Highcharts.OrganizationSeriesOptions = (
-                    levelOptions.states && (levelOptions.states as any)[state as any]
-                ) || {},
-                values: (
-                    Highcharts.OrganizationPointOptions &
-                    Highcharts.OrganizationSeriesOptions
-                ) = ['borderRadius', 'linkColor', 'linkLineWidth']
-                    .reduce(function (
-                        obj: Highcharts.Dictionary<unknown>,
-                        key: string
-                    ): Highcharts.Dictionary<unknown> {
-                        obj[key] = pick(
-                            (stateOptions as any)[key],
-                            (options as any)[key],
-                            (levelOptions as any)[key],
-                            (series.options as any)[key]
-                        );
-                        return obj;
-                    }, {});
 
-            if (!point.isNode) {
-                attribs.stroke = values.linkColor;
-                attribs['stroke-width'] = values.linkLineWidth;
-                delete attribs.fill;
-            } else {
-                if (values.borderRadius) {
-                    attribs.r = values.borderRadius;
-                }
-            }
-            return attribs;
-        },
+    createNode: function (
+        this: Highcharts.OrganizationSeries,
+        id: string
+    ): Highcharts.NodesPoint {
+        var node = SankeySeries.prototype.createNode.call(this, id);
 
-        createNode: function (
-            this: Highcharts.OrganizationSeries,
-            id: string
-        ): Highcharts.NodesPoint {
-            var node = base.createNode
-                .call(this, id);
+        // All nodes in an org chart are equal width
+        node.getSum = function (): number {
+            return 1;
+        };
 
-            // All nodes in an org chart are equal width
-            node.getSum = function (): number {
-                return 1;
-            };
+        return node;
 
-            return node;
+    },
 
-        },
+    createNodeColumn: function (
+        this: Highcharts.OrganizationSeries
+    ): Highcharts.OrganizationColumnArray {
+        var column: Highcharts.OrganizationColumnArray =
+            SankeySeries.prototype.createNodeColumn.call(this) as any;
 
-        createNodeColumn: function (
-            this: Highcharts.OrganizationSeries
-        ): Highcharts.OrganizationColumnArray {
-            var column: Highcharts.OrganizationColumnArray =
-                base.createNodeColumn.call(this) as any;
-
-            // Wrap the offset function so that the hanging node's children are
-            // aligned to their parent
-            wrap(column, 'offset', function (
-                this: Highcharts.OrganizationPoint,
-                proceed: SankeySeries.ColumnArray['offset'],
-                node: Highcharts.OrganizationPoint,
-                factor: number
-            ): (Highcharts.Dictionary<number>|undefined) {
-                var offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
-
-                // Modify the default output if the parent's layout is 'hanging'
-                if (node.hangsFrom) {
-                    return {
-                        absoluteTop: node.hangsFrom.nodeY
-                    };
-                }
-
-                return offset;
-            });
-
-            return column;
-        },
-
-        translateNode: function (
-            this: Highcharts.OrganizationSeries,
+        // Wrap the offset function so that the hanging node's children are
+        // aligned to their parent
+        wrap(column, 'offset', function (
+            this: Highcharts.OrganizationPoint,
+            proceed: SankeySeriesType.ColumnArray['offset'],
             node: Highcharts.OrganizationPoint,
-            column: Highcharts.OrganizationColumnArray
-        ): void {
-            base.translateNode.call(this, node, column);
+            factor: number
+        ): (Highcharts.Dictionary<number>|undefined) {
+            var offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
 
+            // Modify the default output if the parent's layout is 'hanging'
             if (node.hangsFrom) {
-                (node.shapeArgs as any).height -=
-                    this.options.hangingIndent as any;
-                if (!this.chart.inverted) {
-                    (node.shapeArgs as any).y += this.options.hangingIndent;
-                }
+                return {
+                    absoluteTop: node.hangsFrom.nodeY
+                };
             }
-            node.nodeHeight = this.chart.inverted ?
-                (node.shapeArgs as any).width :
-                (node.shapeArgs as any).height;
-        },
 
-        // General function to apply corner radius to a path - can be lifted to
-        // renderer or utilities if we need it elsewhere.
-        curvedPath: function (
-            path: SVGPath,
-            r: number
-        ): SVGPath {
-            var d: SVGPath = [];
+            return offset;
+        });
 
-            for (let i = 0; i < path.length; i++) {
-                const x = path[i][1];
-                const y = path[i][2];
+        return column;
+    },
 
-                if (typeof x === 'number' && typeof y === 'number') {
-                    // moveTo
-                    if (i === 0) {
-                        d.push(['M', x, y]);
+    translateNode: function (
+        this: Highcharts.OrganizationSeries,
+        node: Highcharts.OrganizationPoint,
+        column: Highcharts.OrganizationColumnArray
+    ): void {
+        SankeySeries.prototype.translateNode.call(this, node, column);
 
-                    } else if (i === path.length - 1) {
-                        d.push(['L', x, y]);
+        if (node.hangsFrom) {
+            (node.shapeArgs as any).height -=
+                this.options.hangingIndent as any;
+            if (!this.chart.inverted) {
+                (node.shapeArgs as any).y += this.options.hangingIndent;
+            }
+        }
+        node.nodeHeight = this.chart.inverted ?
+            (node.shapeArgs as any).width :
+            (node.shapeArgs as any).height;
+    },
 
-                    // curveTo
-                    } else if (r) {
-                        const prevSeg = path[i - 1];
-                        const nextSeg = path[i + 1];
-                        if (prevSeg && nextSeg) {
-                            const x1 = prevSeg[1],
-                                y1 = prevSeg[2],
-                                x2 = nextSeg[1],
-                                y2 = nextSeg[2];
+    // General function to apply corner radius to a path - can be lifted to
+    // renderer or utilities if we need it elsewhere.
+    curvedPath: function (
+        path: SVGPath,
+        r: number
+    ): SVGPath {
+        var d: SVGPath = [];
 
-                            // Only apply to breaks
-                            if (
-                                typeof x1 === 'number' &&
-                                typeof x2 === 'number' &&
-                                typeof y1 === 'number' &&
-                                typeof y2 === 'number' &&
-                                x1 !== x2 &&
-                                y1 !== y2
-                            ) {
-                                const directionX = x1 < x2 ? 1 : -1,
-                                    directionY = y1 < y2 ? 1 : -1;
-                                d.push([
-                                    'L',
-                                    x - directionX * Math.min(Math.abs(x - x1), r),
-                                    y - directionY * Math.min(Math.abs(y - y1), r)
-                                ], [
-                                    'C',
-                                    x,
-                                    y,
-                                    x,
-                                    y,
-                                    x + directionX * Math.min(Math.abs(x - x2), r),
-                                    y + directionY * Math.min(Math.abs(y - y2), r)
-                                ]);
-                            }
+        for (let i = 0; i < path.length; i++) {
+            const x = path[i][1];
+            const y = path[i][2];
 
+            if (typeof x === 'number' && typeof y === 'number') {
+                // moveTo
+                if (i === 0) {
+                    d.push(['M', x, y]);
+
+                } else if (i === path.length - 1) {
+                    d.push(['L', x, y]);
+
+                // curveTo
+                } else if (r) {
+                    const prevSeg = path[i - 1];
+                    const nextSeg = path[i + 1];
+                    if (prevSeg && nextSeg) {
+                        const x1 = prevSeg[1],
+                            y1 = prevSeg[2],
+                            x2 = nextSeg[1],
+                            y2 = nextSeg[2];
+
+                        // Only apply to breaks
+                        if (
+                            typeof x1 === 'number' &&
+                            typeof x2 === 'number' &&
+                            typeof y1 === 'number' &&
+                            typeof y2 === 'number' &&
+                            x1 !== x2 &&
+                            y1 !== y2
+                        ) {
+                            const directionX = x1 < x2 ? 1 : -1,
+                                directionY = y1 < y2 ? 1 : -1;
+                            d.push([
+                                'L',
+                                x - directionX * Math.min(Math.abs(x - x1), r),
+                                y - directionY * Math.min(Math.abs(y - y1), r)
+                            ], [
+                                'C',
+                                x,
+                                y,
+                                x,
+                                y,
+                                x + directionX * Math.min(Math.abs(x - x2), r),
+                                y + directionY * Math.min(Math.abs(y - y2), r)
+                            ]);
                         }
 
-                    // lineTo
-                    } else {
-                        d.push(['L', x, y]);
                     }
+
+                // lineTo
+                } else {
+                    d.push(['L', x, y]);
                 }
             }
+        }
 
-            return d;
+        return d;
 
-        },
+    },
 
-        translateLink: function (
-            this: Highcharts.OrganizationSeries,
-            point: Highcharts.OrganizationPoint
-        ): void {
-            var fromNode = point.fromNode,
-                toNode = point.toNode,
-                crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
-                x1 = Math.floor(
-                    (fromNode.shapeArgs as any).x +
-                    (fromNode.shapeArgs as any).width
-                ) + crisp,
+    translateLink: function (
+        this: Highcharts.OrganizationSeries,
+        point: Highcharts.OrganizationPoint
+    ): void {
+        var fromNode = point.fromNode,
+            toNode = point.toNode,
+            crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
+            x1 = Math.floor(
+                (fromNode.shapeArgs as any).x +
+                (fromNode.shapeArgs as any).width
+            ) + crisp,
+            y1 = Math.floor(
+                (fromNode.shapeArgs as any).y +
+                (fromNode.shapeArgs as any).height / 2
+            ) + crisp,
+            x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
+            y2 = Math.floor(
+                (toNode.shapeArgs as any).y +
+                (toNode.shapeArgs as any).height / 2
+            ) + crisp,
+            xMiddle,
+            hangingIndent: number = this.options.hangingIndent as any,
+            toOffset = toNode.options.offset,
+            percentOffset =
+                /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
+            inverted = this.chart.inverted;
+
+        if (inverted) {
+            x1 -= (fromNode.shapeArgs as any).width;
+            x2 += (toNode.shapeArgs as any).width;
+        }
+        xMiddle = Math.floor(
+            x2 +
+            (inverted ? 1 : -1) *
+            (this.colDistance - this.nodeWidth) / 2
+        ) + crisp;
+
+        // Put the link on the side of the node when an offset is given. HR
+        // node in the main demo.
+        if (
+            percentOffset &&
+            (percentOffset >= 50 || percentOffset <= -50)
+        ) {
+            xMiddle = x2 = Math.floor(
+                x2 + (inverted ? -0.5 : 0.5) *
+                (toNode.shapeArgs as any).width
+            ) + crisp;
+            y2 = (toNode.shapeArgs as any).y;
+            if (percentOffset > 0) {
+                y2 += (toNode.shapeArgs as any).height;
+            }
+        }
+
+        if (toNode.hangsFrom === fromNode) {
+            if (this.chart.inverted) {
                 y1 = Math.floor(
                     (fromNode.shapeArgs as any).y +
-                    (fromNode.shapeArgs as any).height / 2
-                ) + crisp,
-                x2 = Math.floor((toNode.shapeArgs as any).x) + crisp,
-                y2 = Math.floor(
+                    (fromNode.shapeArgs as any).height -
+                    hangingIndent / 2
+                ) + crisp;
+                y2 = (
                     (toNode.shapeArgs as any).y +
-                    (toNode.shapeArgs as any).height / 2
-                ) + crisp,
-                xMiddle,
-                hangingIndent: number = this.options.hangingIndent as any,
-                toOffset = toNode.options.offset,
-                percentOffset =
-                    /%$/.test(toOffset as any) && parseInt(toOffset as any, 10),
-                inverted = this.chart.inverted;
+                    (toNode.shapeArgs as any).height
+                );
+            } else {
+                y1 = Math.floor(
+                    (fromNode.shapeArgs as any).y +
+                    hangingIndent / 2
+                ) + crisp;
 
-            if (inverted) {
-                x1 -= (fromNode.shapeArgs as any).width;
-                x2 += (toNode.shapeArgs as any).width;
             }
-            xMiddle = Math.floor(
-                x2 +
-                (inverted ? 1 : -1) *
-                (this.colDistance - this.nodeWidth) / 2
+            xMiddle = x2 = Math.floor(
+                (toNode.shapeArgs as any).x +
+                (toNode.shapeArgs as any).width / 2
             ) + crisp;
-
-            // Put the link on the side of the node when an offset is given. HR
-            // node in the main demo.
-            if (
-                percentOffset &&
-                (percentOffset >= 50 || percentOffset <= -50)
-            ) {
-                xMiddle = x2 = Math.floor(
-                    x2 + (inverted ? -0.5 : 0.5) *
-                    (toNode.shapeArgs as any).width
-                ) + crisp;
-                y2 = (toNode.shapeArgs as any).y;
-                if (percentOffset > 0) {
-                    y2 += (toNode.shapeArgs as any).height;
-                }
-            }
-
-            if (toNode.hangsFrom === fromNode) {
-                if (this.chart.inverted) {
-                    y1 = Math.floor(
-                        (fromNode.shapeArgs as any).y +
-                        (fromNode.shapeArgs as any).height -
-                        hangingIndent / 2
-                    ) + crisp;
-                    y2 = (
-                        (toNode.shapeArgs as any).y +
-                        (toNode.shapeArgs as any).height
-                    );
-                } else {
-                    y1 = Math.floor(
-                        (fromNode.shapeArgs as any).y +
-                        hangingIndent / 2
-                    ) + crisp;
-
-                }
-                xMiddle = x2 = Math.floor(
-                    (toNode.shapeArgs as any).x +
-                    (toNode.shapeArgs as any).width / 2
-                ) + crisp;
-            }
-
-            point.plotY = 1;
-            point.shapeType = 'path';
-            point.shapeArgs = {
-                d: this.curvedPath([
-                    ['M', x1, y1],
-                    ['L', xMiddle, y1],
-                    ['L', xMiddle, y2],
-                    ['L', x2, y2]
-                ], this.options.linkRadius as any)
-            };
-        },
-
-        alignDataLabel: function (
-            this: Highcharts.OrganizationSeries,
-            point: Highcharts.OrganizationPoint,
-            dataLabel: SVGElement,
-            options: Highcharts.OrganizationDataLabelsOptionsObject
-        ): void {
-            // Align the data label to the point graphic
-            if (options.useHTML) {
-                var width = (point.shapeArgs as any).width,
-                    height = (point.shapeArgs as any).height,
-                    padjust = (
-                        (this.options.borderWidth as any) +
-                        2 * (this.options.dataLabels as any).padding
-                    );
-
-                if (this.chart.inverted) {
-                    width = height;
-                    height = (point.shapeArgs as any).width;
-                }
-
-                height -= padjust;
-                width -= padjust;
-
-                // Set the size of the surrounding div emulating `g`
-                const text = dataLabel.text;
-                if (text) {
-                    css(text.element.parentNode, {
-                        width: width + 'px',
-                        height: height + 'px'
-                    });
-
-                    // Set properties for the span emulating `text`
-                    css(text.element, {
-                        left: 0,
-                        top: 0,
-                        width: '100%',
-                        height: '100%',
-                        overflow: 'hidden'
-                    });
-                }
-
-                // The getBBox function is used in `alignDataLabel` to align
-                // inside the box
-                dataLabel.getBBox = function (): BBoxObject {
-                    return {
-                        width: width,
-                        height: height
-                    } as any;
-                };
-
-                // Overwrite dataLabel dimensions (#13100).
-                dataLabel.width = width;
-                dataLabel.height = height;
-            }
-
-            H.seriesTypes.column.prototype.alignDataLabel.apply(
-                this,
-                arguments
-            );
         }
-    }
 
-);
+        point.plotY = 1;
+        point.shapeType = 'path';
+        point.shapeArgs = {
+            d: this.curvedPath([
+                ['M', x1, y1],
+                ['L', xMiddle, y1],
+                ['L', xMiddle, y2],
+                ['L', x2, y2]
+            ], this.options.linkRadius as any)
+        };
+    },
+
+    alignDataLabel: function (
+        this: Highcharts.OrganizationSeries,
+        point: Highcharts.OrganizationPoint,
+        dataLabel: SVGElement,
+        options: Highcharts.OrganizationDataLabelsOptionsObject
+    ): void {
+        // Align the data label to the point graphic
+        if (options.useHTML) {
+            var width = (point.shapeArgs as any).width,
+                height = (point.shapeArgs as any).height,
+                padjust = (
+                    (this.options.borderWidth as any) +
+                    2 * (this.options.dataLabels as any).padding
+                );
+
+            if (this.chart.inverted) {
+                width = height;
+                height = (point.shapeArgs as any).width;
+            }
+
+            height -= padjust;
+            width -= padjust;
+
+            // Set the size of the surrounding div emulating `g`
+            const text = dataLabel.text;
+            if (text) {
+                css(text.element.parentNode, {
+                    width: width + 'px',
+                    height: height + 'px'
+                });
+
+                // Set properties for the span emulating `text`
+                css(text.element, {
+                    left: 0,
+                    top: 0,
+                    width: '100%',
+                    height: '100%',
+                    overflow: 'hidden'
+                });
+            }
+
+            // The getBBox function is used in `alignDataLabel` to align
+            // inside the box
+            dataLabel.getBBox = function (): BBoxObject {
+                return {
+                    width: width,
+                    height: height
+                } as any;
+            };
+
+            // Overwrite dataLabel dimensions (#13100).
+            dataLabel.width = width;
+            dataLabel.height = height;
+        }
+
+        H.seriesTypes.column.prototype.alignDataLabel.apply(
+            this,
+            arguments
+        );
+    }
+});
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+declare module '../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        organization: typeof Highcharts.OrganizationSeries;
+    }
+}
+BaseSeries.registerSeriesType('organization', OrganizationSeries);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default OrganizationSeries;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Layout value for the child nodes in an organization chart. If `hanging`, this
+ * node's children will hang below their parent, allowing a tighter packing of
+ * nodes in the diagram.
+ *
+ * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
+ */
+
+''; // detach doclets above
+
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * An `organization` series. If the [type](#series.organization.type) option is
