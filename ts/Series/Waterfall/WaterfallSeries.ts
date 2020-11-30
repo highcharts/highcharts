@@ -10,17 +10,12 @@
 
 'use strict';
 
-import type ColorType from '../../Core/Color/ColorType';
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import Axis from '../../Core/Axis/Axis.js';
+import type WaterfallPoint from './WaterfallPoint';
+import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -29,84 +24,30 @@ const {
     }
 } = BaseSeries;
 import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
 import palette from '../../Core/Color/Palette.js';
 import Point from '../../Core/Series/Point.js';
-import StackItem from '../../Extensions/Stacking.js';
 import U from '../../Core/Utilities.js';
 const {
-    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
     extend,
-    isNumber,
     merge,
     objectEach,
     pick
 } = U;
+import WaterfallAxis from './WaterfallAxis.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         showLine?: WaterfallSeries['showLine'];
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class WaterfallPoint extends ColumnPoint {
-            public below?: boolean;
-            public isIntermediateSum?: boolean;
-            public isSum?: boolean;
-            public minPointLengthOffset?: number;
-            public options: WaterfallPointOptions;
-            public series: WaterfallSeries;
-            public y: any;
-            public getClassName(): string;
-            public isValid: () => boolean;
-        }
-        /* class WaterfallSeries extends ColumnSeries {
-            public chart: WaterfallChart;
-            public data: Array<WaterfallPoint>;
-            public options: WaterfallSeriesOptions;
-            public pointClass: typeof WaterfallPoint;
-            public points: Array<WaterfallPoint>;
-            public pointValKey: string;
-            public showLine: boolean;
-            public stackedYNeg: Array<number>;
-            public stackedYPos: Array<number>;
-            public stackKey: 'waterfall';
-            public xData: Array<number>;
-            public yAxis: WaterfallAxis;
-            public yData: Array<any>;
-            public drawGraph(): void;
-            public generatePoints(): void;
-            public getCrispPath(): SVGPath;
-            public getExtremes(): DataExtremesObject;
-            public getGraphPath(): SVGPath;
-            public pointAttribs(
-                point: WaterfallPoint,
-                state?: StatesOptionsKey
-            ): SVGAttributes;
-            public processData(force?: boolean): undefined;
-            public setStackedPoints(): void;
-            public toYData(pt: WaterfallPoint): any;
-            public translate(): void;
-        }*/
-        interface WaterfallChart extends Chart {
-            axes: Array<WaterfallAxis>;
-        }
-        interface WaterfallPointOptions extends ColumnPointOptions {
-            isSum?: boolean;
-            y?: any;
-        }
-        interface WaterfallSeriesOptions extends ColumnSeriesOptions {
-            upColor?: ColorType;
-            states?: SeriesStatesOptions<WaterfallSeries>;
-        }
     }
 }
 
@@ -124,216 +65,6 @@ function ownProp(obj: unknown, key: string): boolean {
 }
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
-
-/**
- * @private
- */
-declare module '../../Core/Axis/Types' {
-    interface AxisComposition {
-        waterfall?: WaterfallAxis['waterfall'];
-    }
-    interface AxisTypeRegistry {
-        WaterfallAxis: WaterfallAxis;
-    }
-}
-
-/**
- * @private
- */
-interface WaterfallAxis extends Axis {
-    waterfall: WaterfallAxis.Composition;
-}
-
-/**
- * @private
- */
-namespace WaterfallAxis {
-
-    /* *
-     *
-     *  Interfaces
-     *
-     * */
-
-    interface StacksObject {
-        changed: boolean;
-        alreadyChanged?: Array<string>;
-        waterfall?: Record<string, StacksItemObject>;
-    }
-
-    export interface StacksItemObject {
-        label?: SVGElement;
-        negTotal: number;
-        posTotal: number;
-        stackState: Array<string>;
-        stackTotal: number;
-        stateIndex: number;
-        threshold: number;
-    }
-
-    /* *
-     *
-     *  Classes
-     *
-     * */
-
-    /**
-     * @private
-     */
-    export class Composition {
-
-        /* *
-         *
-         *  Constructors
-         *
-         * */
-
-        /**
-         * @private
-         */
-        public constructor(axis: WaterfallAxis) {
-            this.axis = axis;
-            this.stacks = {
-                changed: false
-            };
-        }
-
-        /* *
-         *
-         *  Properties
-         *
-         * */
-
-        public axis: WaterfallAxis;
-        public dummyStackItem?: StackItem;
-        public stacks: StacksObject;
-
-        /* *
-         *
-         *  Functions
-         *
-         * */
-
-        /**
-         * Calls StackItem.prototype.render function that creates and renders
-         * stack total label for each waterfall stack item.
-         *
-         * @private
-         * @function Highcharts.Axis#renderWaterfallStackTotals
-         */
-        public renderStackTotals(): void {
-            var yAxis = this.axis,
-                waterfallStacks = yAxis.waterfall.stacks,
-                stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
-                dummyStackItem = new StackItem(
-                    yAxis as any,
-                    yAxis.options.stackLabels as any,
-                    false,
-                    0,
-                    void 0
-                );
-
-            this.dummyStackItem = dummyStackItem;
-
-            // Render each waterfall stack total
-            objectEach(waterfallStacks, function (type): void {
-                objectEach(type, function (
-                    stackItem: StacksItemObject
-                ): void {
-                    dummyStackItem.total = stackItem.stackTotal;
-
-                    if (stackItem.label) {
-                        dummyStackItem.label = stackItem.label;
-                    }
-
-                    StackItem.prototype.render.call(
-                        dummyStackItem,
-                        stackTotalGroup as any
-                    );
-                    stackItem.label = dummyStackItem.label;
-                    delete dummyStackItem.label;
-                });
-            });
-            dummyStackItem.total = null;
-        }
-
-    }
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /**
-     * @private
-     */
-    export function compose(AxisClass: typeof Axis, ChartClass: typeof Chart): void {
-
-        addEvent(AxisClass, 'init', onInit);
-        addEvent(AxisClass, 'afterBuildStacks', onAfterBuildStacks);
-        addEvent(AxisClass, 'afterRender', onAfterRender);
-        addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
-
-    }
-
-    /**
-     * @private
-     */
-    function onAfterBuildStacks(this: Axis): void {
-        const axis = this as WaterfallAxis;
-        const stacks = axis.waterfall.stacks;
-
-        if (stacks) {
-            stacks.changed = false;
-            delete stacks.alreadyChanged;
-        }
-    }
-
-    /**
-     * @private
-     */
-    function onAfterRender(this: Axis): void {
-        const axis = this as WaterfallAxis;
-        const stackLabelOptions = axis.options.stackLabels;
-
-        if (stackLabelOptions && stackLabelOptions.enabled &&
-            axis.waterfall.stacks) {
-            axis.waterfall.renderStackTotals();
-        }
-    }
-
-    /**
-     * @private
-     */
-    function onBeforeRedraw(this: Chart): void {
-        var axes = this.axes as Array<WaterfallAxis>,
-            series = this.series,
-            i = series.length;
-
-        while (i--) {
-            if (series[i].options.stacking) {
-                axes.forEach(function (axis: WaterfallAxis): void {
-                    if (!axis.isXAxis) {
-                        axis.waterfall.stacks.changed = true;
-                    }
-                });
-                i = 0;
-            }
-        }
-    }
-
-    /**
-     * @private
-     */
-    function onInit(this: Axis): void {
-        const axis = this;
-
-        if (!axis.waterfall) {
-            axis.waterfall = new Composition(axis as WaterfallAxis);
-        }
-    }
-}
 
 // eslint-disable-next-line valid-jsdoc
 
@@ -381,7 +112,7 @@ class WaterfallSeries extends ColumnSeries {
      * @product   highcharts
      * @apioption plotOptions.waterfall.upColor
      */
-    public static defaultOptions: Highcharts.WaterfallSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: WaterfallSeriesOptions = merge(ColumnSeries.defaultOptions, {
         dataLabels: {
             inside: true
         },
@@ -445,11 +176,11 @@ class WaterfallSeries extends ColumnSeries {
      *
      * */
 
-    public chart: Highcharts.WaterfallChart = void 0 as any;
+    public chart: WaterfallSeries.WaterfallChart = void 0 as any;
 
     public data: Array<WaterfallPoint> = void 0 as any;
 
-    public options: Highcharts.WaterfallSeriesOptions = void 0 as any;
+    public options: WaterfallSeriesOptions = void 0 as any;
 
     public points: Array<WaterfallPoint> = void 0 as any;
 
@@ -827,7 +558,7 @@ class WaterfallSeries extends ColumnSeries {
 
 
     // Return y value or string if point is sum
-    public toYData(pt: Highcharts.WaterfallPoint): any {
+    public toYData(pt: WaterfallPoint): any {
         if (pt.isSum) {
             return 'sum';
         }
@@ -854,7 +585,7 @@ class WaterfallSeries extends ColumnSeries {
 
     // Postprocess mapping between options and SVG attributes
     public pointAttribs(
-        point: Highcharts.WaterfallPoint,
+        point: WaterfallPoint,
         state: StatesOptionsKey
     ): SVGAttributes {
 
@@ -1207,49 +938,16 @@ extend(WaterfallSeries.prototype, {
     showLine: true
 });
 
-class WaterfallPoint extends ColumnSeries.prototype.pointClass {
 
-    /* *
-     *
-     * Properties
-     *
-     * */
-    public below?: boolean;
+/* *
+ *
+ * Class namespace
+ *
+ * */
 
-    public isIntermediateSum?: boolean;
-
-    public isSum?: boolean;
-
-    public minPointLengthOffset?: number;
-
-    public options: Highcharts.WaterfallPointOptions = void 0 as any;
-
-    public series: WaterfallSeries = void 0 as any;
-
-    public y: any;
-
-    /* *
-     *
-     * Functions
-     *
-     * */
-    public getClassName(): string {
-        var className = Point.prototype.getClassName.call(this);
-
-        if (this.isSum) {
-            className += ' highcharts-sum';
-        } else if (this.isIntermediateSum) {
-            className += ' highcharts-intermediate-sum';
-        }
-        return className;
-    }
-    // Pass the null test in ColumnSeries.translate.
-    public isValid(): boolean {
-        return (
-            isNumber(this.y) ||
-            this.isSum ||
-            Boolean(this.isIntermediateSum)
-        );
+namespace WaterfallSeries {
+    export interface WaterfallChart extends Chart {
+        axes: Array<WaterfallAxis>;
     }
 }
 
@@ -1258,19 +956,21 @@ class WaterfallPoint extends ColumnSeries.prototype.pointClass {
  * Registry
  *
  * */
-BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         waterfall: typeof WaterfallSeries;
     }
 }
+BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
+WaterfallAxis.compose(H.Axis, Chart);
 
 /* *
  *
- * Export default
+ * Export
  *
  * */
+export default WaterfallSeries;
 
 /**
  *
@@ -1379,12 +1079,3 @@ declare module '../../Core/Series/SeriesType' {
  */
 
 ''; // adds doclets above to transpiled file
-
-WaterfallAxis.compose(Axis, Chart);
-
-const exports = {
-    WaterfallAxis,
-    WaterfallSeries
-};
-
-export default exports;

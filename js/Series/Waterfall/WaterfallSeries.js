@@ -21,15 +21,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import Axis from '../../Core/Axis/Axis.js';
 import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
 import palette from '../../Core/Color/Palette.js';
-import Point from '../../Core/Series/Point.js';
-import StackItem from '../../Extensions/Stacking.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+import WaterfallAxis from './WaterfallAxis.js';
 import '../../Core/Options.js';
 /**
  * Returns true if the key is a direct property of the object.
@@ -41,134 +40,7 @@ import '../../Core/Options.js';
 function ownProp(obj, key) {
     return Object.hasOwnProperty.call(obj, key);
 }
-/**
- * @private
- */
-var WaterfallAxis;
-(function (WaterfallAxis) {
-    /* *
-     *
-     *  Interfaces
-     *
-     * */
-    /* *
-     *
-     *  Classes
-     *
-     * */
-    /**
-     * @private
-     */
-    var Composition = /** @class */ (function () {
-        /* *
-         *
-         *  Constructors
-         *
-         * */
-        /**
-         * @private
-         */
-        function Composition(axis) {
-            this.axis = axis;
-            this.stacks = {
-                changed: false
-            };
-        }
-        /* *
-         *
-         *  Functions
-         *
-         * */
-        /**
-         * Calls StackItem.prototype.render function that creates and renders
-         * stack total label for each waterfall stack item.
-         *
-         * @private
-         * @function Highcharts.Axis#renderWaterfallStackTotals
-         */
-        Composition.prototype.renderStackTotals = function () {
-            var yAxis = this.axis, waterfallStacks = yAxis.waterfall.stacks, stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, void 0);
-            this.dummyStackItem = dummyStackItem;
-            // Render each waterfall stack total
-            objectEach(waterfallStacks, function (type) {
-                objectEach(type, function (stackItem) {
-                    dummyStackItem.total = stackItem.stackTotal;
-                    if (stackItem.label) {
-                        dummyStackItem.label = stackItem.label;
-                    }
-                    StackItem.prototype.render.call(dummyStackItem, stackTotalGroup);
-                    stackItem.label = dummyStackItem.label;
-                    delete dummyStackItem.label;
-                });
-            });
-            dummyStackItem.total = null;
-        };
-        return Composition;
-    }());
-    WaterfallAxis.Composition = Composition;
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /**
-     * @private
-     */
-    function compose(AxisClass, ChartClass) {
-        addEvent(AxisClass, 'init', onInit);
-        addEvent(AxisClass, 'afterBuildStacks', onAfterBuildStacks);
-        addEvent(AxisClass, 'afterRender', onAfterRender);
-        addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
-    }
-    WaterfallAxis.compose = compose;
-    /**
-     * @private
-     */
-    function onAfterBuildStacks() {
-        var axis = this;
-        var stacks = axis.waterfall.stacks;
-        if (stacks) {
-            stacks.changed = false;
-            delete stacks.alreadyChanged;
-        }
-    }
-    /**
-     * @private
-     */
-    function onAfterRender() {
-        var axis = this;
-        var stackLabelOptions = axis.options.stackLabels;
-        if (stackLabelOptions && stackLabelOptions.enabled &&
-            axis.waterfall.stacks) {
-            axis.waterfall.renderStackTotals();
-        }
-    }
-    /**
-     * @private
-     */
-    function onBeforeRedraw() {
-        var axes = this.axes, series = this.series, i = series.length;
-        while (i--) {
-            if (series[i].options.stacking) {
-                axes.forEach(function (axis) {
-                    if (!axis.isXAxis) {
-                        axis.waterfall.stacks.changed = true;
-                    }
-                });
-                i = 0;
-            }
-        }
-    }
-    /**
-     * @private
-     */
-    function onInit() {
-        var axis = this;
-        if (!axis.waterfall) {
-            axis.waterfall = new Composition(axis);
-        }
-    }
-})(WaterfallAxis || (WaterfallAxis = {}));
+/* eslint-disable no-invalid-this, valid-jsdoc */
 // eslint-disable-next-line valid-jsdoc
 /**
  * A waterfall chart displays sequentially introduced positive or negative
@@ -740,48 +612,14 @@ extend(WaterfallSeries.prototype, {
     // when negativeColor is used.
     showLine: true
 });
-var WaterfallPoint = /** @class */ (function (_super) {
-    __extends(WaterfallPoint, _super);
-    function WaterfallPoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-    }
-    /* *
-     *
-     * Functions
-     *
-     * */
-    WaterfallPoint.prototype.getClassName = function () {
-        var className = Point.prototype.getClassName.call(this);
-        if (this.isSum) {
-            className += ' highcharts-sum';
-        }
-        else if (this.isIntermediateSum) {
-            className += ' highcharts-intermediate-sum';
-        }
-        return className;
-    };
-    // Pass the null test in ColumnSeries.translate.
-    WaterfallPoint.prototype.isValid = function () {
-        return (isNumber(this.y) ||
-            this.isSum ||
-            Boolean(this.isIntermediateSum));
-    };
-    return WaterfallPoint;
-}(ColumnSeries.prototype.pointClass));
-/* *
- *
- * Registry
- *
- * */
 BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
+WaterfallAxis.compose(H.Axis, Chart);
 /* *
  *
- * Export default
+ * Export
  *
  * */
+export default WaterfallSeries;
 /**
  *
  * API Options
@@ -883,9 +721,3 @@ BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
  * @apioption series.waterfall.data.isSum
  */
 ''; // adds doclets above to transpiled file
-WaterfallAxis.compose(Axis, Chart);
-var exports = {
-    WaterfallAxis: WaterfallAxis,
-    WaterfallSeries: WaterfallSeries
-};
-export default exports;
