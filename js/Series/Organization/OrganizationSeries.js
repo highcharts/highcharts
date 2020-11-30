@@ -24,7 +24,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, SankeySeries = _a.sankey;
+var SankeySeries = BaseSeries.seriesTypes.sankey;
+import OrganizationPoint from './OrganizationPoint.js';
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var css = U.css, extend = U.extend, merge = U.merge, pick = U.pick, wrap = U.wrap;
@@ -179,7 +180,7 @@ var OrganizationSeries = /** @class */ (function (_super) {
         return node;
     };
     OrganizationSeries.prototype.createNodeColumn = function () {
-        var column = SankeySeries.prototype.createNodeColumn.call(this);
+        var column = _super.prototype.createNodeColumn.call(this);
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent
         wrap(column, 'offset', function (proceed, node, factor) {
@@ -456,7 +457,9 @@ var OrganizationSeries = /** @class */ (function (_super) {
     });
     return OrganizationSeries;
 }(SankeySeries));
-extend(OrganizationSeries.prototype, {});
+extend(OrganizationSeries.prototype, {
+    pointClass: OrganizationPoint
+});
 BaseSeries.registerSeriesType('organization', OrganizationSeries);
 /* *
  *

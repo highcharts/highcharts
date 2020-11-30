@@ -851,12 +851,8 @@ class SankeySeries extends ColumnSeries {
                 // NOTE: if support for allowTraversingTree is added, then
                 // levelIsConstant should be optional.
                 levelIsConstant: true,
-                linkColor: (
-                    options as Highcharts.OrganizationSeriesOptions
-                ).linkColor, // organization series
-                linkLineWidth: (
-                    options as Highcharts.OrganizationSeriesOptions
-                ).linkLineWidth, // organization series
+                linkColor: options.linkColor, // organization series
+                linkLineWidth: options.linkLineWidth, // organization series
                 linkOpacity: options.linkOpacity,
                 states: options.states
             }
