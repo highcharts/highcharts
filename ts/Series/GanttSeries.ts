@@ -17,6 +17,12 @@ import type ColorType from '../Core/Color/ColorType';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type XRangePoint from '../Series/XRange/XRangePoint';
+import type {
+    XRangePointOptions,
+    XRangePointPartialFillOptions
+} from '../Series/XRange/XRangePointOptions';
+import type XRangeSeriesOptions from '../Series/XRange/XRangeSeriesOptions';
 import BaseSeries from '../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import H from '../Core/Globals.js';
@@ -110,7 +116,7 @@ declare module '../Core/Series/SeriesType' {
 import '../Extensions/CurrentDateIndication.js';
 import '../Extensions/StaticScale.js';
 import '../Gantt/Pathfinder.js';
-import './XRangeSeries.js';
+import XRangeSeries from './XRange/XRangeSeries.js';
 
 var parent = seriesTypes.xrange;
 
