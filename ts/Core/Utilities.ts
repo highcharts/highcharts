@@ -2323,19 +2323,17 @@ const addEvent = H.addEvent = function<T> (
     options: Highcharts.EventOptionsObject = {}
 ): Function {
     /* eslint-enable valid-jsdoc */
-    var events: Highcharts.Dictionary<Array<any>>,
-        addEventListener = (
-            (el as any).addEventListener || H.addEventListenerPolyfill
-        );
 
-    // If we're setting events directly on the constructor, use a separate
-    // collection, `protoEvents` to distinguish it from the item events in
-    // `hcEvents`.
-    if (typeof el === 'function' && el.prototype) {
-        events = el.prototype.protoEvents = el.prototype.protoEvents || {};
-    } else {
-        events = (el as any).hcEvents = (el as any).hcEvents || {};
+    // Add hcEvents to either the prototype (in case we're running addEvent on a
+    // class) or the instance. If hasOwnProperty('hcEvents') is false, it is
+    // inherited down the prototype chain, in which case we need to set the
+    // property on this instance (which may itself be a prototype).
+    const owner = typeof el === 'function' && el.prototype || el;
+    if (!Object.hasOwnProperty.call(owner, 'hcEvents')) {
+        owner.hcEvents = {};
     }
+    const events: Highcharts.Dictionary<Array<any>> = owner.hcEvents;
+
 
     // Allow click events added to points, otherwise they will be prevented by
     // the TouchPointer.pinch function after a pinch zoom operation (#7091).
@@ -2350,6 +2348,9 @@ const addEvent = H.addEvent = function<T> (
     // Handle DOM events
     // If the browser supports passive events, add it to improve performance
     // on touch events (#11353).
+    const addEventListener = (
+        (el as any).addEventListener || H.addEventListenerPolyfill
+    );
     if (addEventListener) {
         addEventListener.call(
             el,
@@ -2374,12 +2375,10 @@ const addEvent = H.addEvent = function<T> (
     events[type].push(eventObject);
 
     // Order the calls
-    events[type].sort(function (
+    events[type].sort((
         a: Highcharts.EventWrapperObject<T>,
         b: Highcharts.EventWrapperObject<T>
-    ): number {
-        return a.order - b.order;
-    });
+    ): number => a.order - b.order);
 
     // Return a function that can be called to remove this event.
     return function (): void {
@@ -2412,8 +2411,6 @@ const removeEvent = H.removeEvent = function removeEvent<T>(
     fn?: (Highcharts.EventCallbackFunction<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
-
-    var events;
 
     /**
      * @private
@@ -2464,34 +2461,31 @@ const removeEvent = H.removeEvent = function removeEvent<T>(
         });
     }
 
-    ['protoEvents', 'hcEvents'].forEach(function (coll: string, i): void {
-        const eventElem = i ? el : (el as any).prototype;
-        const eventCollection = eventElem && eventElem[coll];
+    const owner = typeof el === 'function' && el.prototype || el;
+    if (Object.hasOwnProperty.call(owner, 'hcEvents')) {
+        const events = owner.hcEvents;
+        if (type) {
+            const typeEvents = (
+                events[type] || []
+            ) as Highcharts.EventWrapperObject<T>[];
 
-        if (eventCollection) {
-            if (type) {
-                events = (
-                    eventCollection[type] || []
-                ) as Highcharts.EventWrapperObject<T>[];
+            if (fn) {
+                events[type] = typeEvents.filter(
+                    function (obj): boolean {
+                        return fn !== obj.fn;
+                    }
+                );
+                removeOneEvent(type, fn);
 
-                if (fn) {
-                    eventCollection[type] = events.filter(
-                        function (obj): boolean {
-                            return fn !== obj.fn;
-                        }
-                    );
-                    removeOneEvent(type, fn);
-
-                } else {
-                    removeAllEvents(eventCollection);
-                    eventCollection[type] = [];
-                }
             } else {
-                removeAllEvents(eventCollection);
-                eventElem[coll] = {};
+                removeAllEvents(events);
+                events[type] = [];
             }
+        } else {
+            removeAllEvents(events);
+            delete owner.hcEvents;
         }
-    });
+    }
 };
 
 /* eslint-disable valid-jsdoc */
@@ -2543,7 +2537,7 @@ const fireEvent = H.fireEvent = function<T> (
             (el as any).fireEvent(type, e);
         }
 
-    } else {
+    } else if ((el as any).hcEvents) {
 
         if (!(eventArguments as any).target) {
             // We're running a custom event
@@ -2565,37 +2559,45 @@ const fireEvent = H.fireEvent = function<T> (
             });
         }
 
-        const fireInOrder = (
-            protoEvents: Highcharts.EventWrapperObject<any>[] = [],
-            hcEvents: Highcharts.EventWrapperObject<any>[] = []
-        ): void => {
-            let iA = 0;
-            let iB = 0;
-            const length = protoEvents.length + hcEvents.length;
+        const events: Array<Highcharts.EventWrapperObject<any>> = [];
+        let object: any = el;
+        let multilevel = false;
 
-            for (i = 0; i < length; i++) {
-                const obj = (
-                    !protoEvents[iA] ?
-                        hcEvents[iB++] :
-                        !hcEvents[iB] ?
-                            protoEvents[iA++] :
-                            protoEvents[iA].order <= hcEvents[iB].order ?
-                                protoEvents[iA++] :
-                                hcEvents[iB++]
-                );
-
-                // If the event handler return false, prevent the default
-                // handler from executing
-                if (obj.fn.call(el, eventArguments as any) === false) {
-                    (eventArguments as any).preventDefault();
+        // Recurse up the inheritance chain and collect hcEvents set as own
+        // objects on the prototypes.
+        while (object.hcEvents) {
+            if (
+                Object.hasOwnProperty.call(object, 'hcEvents') &&
+                object.hcEvents[type]
+            ) {
+                if (events.length) {
+                    multilevel = true;
                 }
+                events.unshift.apply(events, object.hcEvents[type]);
             }
-        };
+            object = Object.getPrototypeOf(object);
+        }
 
-        fireInOrder(
-            (el as any).protoEvents && (el as any).protoEvents[type],
-            (el as any).hcEvents && (el as any).hcEvents[type]
-        );
+        // For performance reasons, only sort the event handlers in case we are
+        // dealing with multiple levels in the prototype chain. Otherwise, the
+        // events are already sorted in the addEvent function.
+        if (multilevel) {
+            // Order the calls
+            events.sort((
+                a: Highcharts.EventWrapperObject<T>,
+                b: Highcharts.EventWrapperObject<T>
+            ): number => a.order - b.order);
+        }
+
+        // Call the collected event handlers
+        events.forEach((obj): void => {
+            // If the event handler returns false, prevent the default handler
+            // from executing
+            if (obj.fn.call(el, eventArguments as any) === false) {
+                (eventArguments as any).preventDefault();
+            }
+        });
+
     }
 
     // Run the default if not prevented

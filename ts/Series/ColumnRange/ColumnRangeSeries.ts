@@ -16,83 +16,29 @@
  *
  * */
 
-import type AreaRangePoint from './AreaRange/AreaRangePoint';
-import type AreaRangePointOptions from './AreaRange/AreaRangePointOptions';
-import type AreaRangeSeries from './AreaRange/AreaRangeSeries.js';
-import type AreaRangeSeriesOptions from './AreaRange/AreaRangeSeriesOptions';
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColumnMetricsObject from './Column/ColumnMetricsObject';
-import type ColumnPoint from './Column/ColumnPoint';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+import type ColumnRangeSeriesOptions from './ColumnRangeSeriesOptions';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import ColumnRangePoint from './ColumnRangePoint.js';
+import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        arearange: AreaRangeSeries,
+        column: ColumnSeries
+    }
+} = BaseSeries;
 const { prototype: columnProto } = ColumnSeries;
-import H from '../Core/Globals.js';
+const { prototype: arearangeProto } = AreaRangeSeries;
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     clamp,
     merge,
-    pick
+    pick,
+    extend
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class ColumnRangePoint extends AreaRangePoint {
-            public barX: ColumnPoint['barX'];
-            public options: ColumnRangePointOptions;
-            public pointWidth: ColumnPoint['pointWidth'];
-            public series: ColumnRangeSeries;
-            public shapeArgs: SVGAttributes;
-            public shapeType: ColumnPoint['shapeType'];
-        }
-        class ColumnRangeSeries extends AreaRangeSeries {
-            public adjustForMissingColumns: ColumnSeries['adjustForMissingColumns'];
-            public animate: ColumnSeries['animate'];
-            public crispCol: ColumnSeries['crispCol'];
-            public data: Array<ColumnRangePoint>;
-            public drawPoints: ColumnSeries['drawPoints'];
-            public drawTracker: ColumnSeries['drawTracker'];
-            public getColumnMetrics: ColumnSeries['getColumnMetrics'];
-            public options: ColumnRangeSeriesOptions;
-            public pointAttribs: ColumnSeries['pointAttribs'];
-            public pointClass: typeof ColumnRangePoint;
-            public points: Array<ColumnRangePoint>;
-            public polarArc: typeof AreaRangeSeries.prototype['polarArc'];
-            public translate(): void;
-        }
-        interface ColumnRangePointOptions extends AreaRangePointOptions {
-        }
-        interface ColumnRangeSeriesOptions extends AreaRangeSeriesOptions {
-            minPointLength?: number;
-            states?: SeriesStatesOptions<ColumnRangeSeries>;
-        }
-    }
-}
-
-/**
- * @private
- */
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        columnrange: typeof Highcharts.ColumnRangeSeries;
-    }
-}
-
-var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
 
 /**
  * The column range is a cartesian series type with higher and lower
@@ -109,7 +55,7 @@ var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
  * @requires     highcharts-more
  * @optionparent plotOptions.columnrange
  */
-var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
+var columnRangeOptions: ColumnRangeSeriesOptions = {
 
     /**
      * Extended data labels for range series types. Range series data labels
@@ -137,6 +83,12 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
     }
 };
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
 /**
  * The ColumnRangeSeries class
  *
@@ -146,22 +98,48 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
-    (defaultOptions.plotOptions as any).column,
-    (defaultOptions.plotOptions as any).arearange,
-    columnRangeOptions
-), {
-    setOptions: function (this: Highcharts.ColumnRangeSeries): Highcharts.ColumnRangeSeriesOptions {
+
+class ColumnRangeSeries extends AreaRangeSeries {
+
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+
+    public static defaultOptions: ColumnRangeSeriesOptions = merge(
+        ColumnSeries.defaultOptions,
+        AreaRangeSeries.defaultOptions,
+        columnRangeOptions as ColumnRangeSeriesOptions
+    )
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data = void 0 as any;
+    public points = void 0 as any;
+    public options = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    public setOptions(): ColumnRangeSeriesOptions {
         merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
         return arearangeProto.setOptions.apply(this, arguments);
-    },
+    }
 
     // eslint-disable-next-line valid-jsdoc
     /**
      * Translate data points from raw values x and y to plotX and plotY
      * @private
      */
-    translate: function (this: Highcharts.ColumnRangeSeries): void {
+    public translate(): void {
         var series = this,
             yAxis = series.yAxis,
             xAxis = series.xAxis,
@@ -186,7 +164,7 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
 
         // Set plotLow and plotHigh
         series.points.forEach(function (
-            point: Highcharts.ColumnRangePoint
+            point: ColumnRangePoint
         ): void {
             var shapeArgs = point.shapeArgs,
                 minPointLength = series.options.minPointLength,
@@ -247,53 +225,89 @@ BaseSeries.seriesType<typeof Highcharts.ColumnRangeSeries>('columnrange', 'arear
                     ]; // don't inherit from column tooltip position - #3372
             }
         });
-    },
+    }
+
+    // Overrides from modules that may be loaded after this module
+    public crispCol(): BBoxObject {
+        return columnProto.crispCol.apply(this, arguments as any);
+    }
+    public drawPoints(): void {
+        return columnProto.drawPoints.apply(this, arguments as any);
+    }
+    public drawTracker(): void {
+        return columnProto.drawTracker.apply(this, arguments as any);
+    }
+    public getColumnMetrics(): ColumnMetricsObject {
+        return columnProto.getColumnMetrics.apply(this, arguments as any);
+    }
+    public pointAttribs(): SVGAttributes {
+        return columnProto.pointAttribs.apply(this, arguments as any);
+    }
+    public adjustForMissingColumns(): number {
+        return columnProto.adjustForMissingColumns.apply(this, arguments);
+    }
+    public animate(): void {
+        return columnProto.animate.apply(this, arguments as any);
+    }
+    public translate3dPoints(): void {
+        return columnProto.translate3dPoints.apply(this, arguments as any);
+    }
+    public translate3dShapes(): void {
+        return columnProto.translate3dShapes.apply(this, arguments as any);
+    }
+}
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+
+interface ColumnRangeSeries {
+    pointClass: typeof ColumnRangePoint;
+    polarArc: typeof AreaRangeSeries.prototype['polarArc'];
+}
+extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop as any,
     getSymbol: noop as any,
-
-    // Overrides from modules that may be loaded after this module
-    crispCol: function (
-        this: Highcharts.ColumnRangeSeries
-    ): BBoxObject {
-        return columnProto.crispCol.apply(this, arguments as any);
-    },
-    drawPoints: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.drawPoints.apply(this, arguments as any);
-    },
-    drawTracker: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.drawTracker.apply(this, arguments as any);
-    },
-    getColumnMetrics: function (
-        this: Highcharts.ColumnRangeSeries
-    ): ColumnMetricsObject {
-        return columnProto.getColumnMetrics.apply(this, arguments as any);
-    },
-    pointAttribs: function (
-        this: Highcharts.ColumnRangeSeries
-    ): SVGAttributes {
-        return columnProto.pointAttribs.apply(this, arguments as any);
-    },
-    adjustForMissingColumns: function (this: Highcharts.ColumnRangeSeries): number {
-        return columnProto.adjustForMissingColumns.apply(this, arguments);
-    },
-    animate: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.animate.apply(this, arguments as any);
-    },
-    polarArc: function (this: Highcharts.ColumnRangeSeries): void {
+    polarArc: function (this: ColumnRangeSeries): void {
         return (columnProto as any).polarArc.apply(this, arguments);
     },
-    translate3dPoints: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.translate3dPoints.apply(this, arguments as any);
-    },
-    translate3dShapes: function (this: Highcharts.ColumnRangeSeries): void {
-        return columnProto.translate3dShapes.apply(this, arguments as any);
-    }
-}, {
-    setState: columnProto.pointClass.prototype.setState
+    pointClass: ColumnRangePoint
 });
 
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+/**
+ * @private
+ */
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        columnrange: typeof ColumnRangeSeries;
+    }
+}
+
+BaseSeries.registerSeriesType('columnrange', ColumnRangeSeries);
+
+/* *
+ *
+ *  Default export
+ *
+ * */
+
+export default ColumnRangeSeries;
+
+/* *
+ *
+ *  API options
+ *
+ * */
 
 /**
  * A `columnrange` series. If the [type](#series.columnrange.type)

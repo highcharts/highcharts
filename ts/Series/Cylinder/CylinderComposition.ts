@@ -20,24 +20,18 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type Chart from '../Core/Chart/Chart';
-import type Position3DObject from '../Core/Renderer/Position3DObject';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type { SVGElement3DLikeCuboid } from '../Core/Renderer/SVG/SVGElement3DLike';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import type SVGPath3D from '../Core/Renderer/SVG/SVGPath3D';
-import Color from '../Core/Color/Color.js';
+import type Chart from '../../Core/Chart/Chart';
+import type ColorType from '../../Core/Color/ColorType';
+import type Position3DObject from '../../Core/Renderer/Position3DObject';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type { SVGElement3DLikeCuboid } from '../../Core/Renderer/SVG/SVGElement3DLike';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type SVGPath3D from '../../Core/Renderer/SVG/SVGPath3D';
+import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
-import ColumnSeries from './Column/ColumnSeries.js';
-const { prototype: columnProto } = ColumnSeries;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const {
     charts,
     deg2rad,
@@ -46,11 +40,10 @@ const {
         prototype: RendererProto
     }
 } = H;
-import Math3D from '../Extensions/Math3D.js';
+import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
-import Series from '../Core/Series/Series.js';
-import _SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
-import U from '../Core/Utilities.js';
+import _SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
+import U from '../../Core/Utilities.js';
 const {
     merge,
     pick
@@ -62,72 +55,58 @@ const {
  *
  * */
 
-declare module '../Core/Renderer/SVG/SVGElement3DLike' {
+interface CylinderMethodsObject extends SVGElement3DLikeCuboid {
+    parts: Array<string>;
+    pathType: string;
+    fillSetter(fill: ColorType): SVGElement;
+}
+
+interface CylinderPathsObject extends SVGPath3D {
+    back: SVGPath;
+    bottom: SVGPath;
+    front: SVGPath;
+    top: SVGPath;
+    zIndexes: Record<string, number>;
+}
+
+declare module '../../Core/Renderer/SVG/SVGElement3DLike' {
     interface SVGElement3DLike {
-        cylinder?: Highcharts.CylinderMethodsObject;
+        cylinder?: CylinderMethodsObject;
     }
 }
 
-declare module '../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        cylinder: typeof Highcharts.CylinderSeries;
+declare module '../../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        /** @requires CylinderComposition */
+        cylinder(shapeArgs: SVGAttributes): SVGElement;
+        /** @requires CylinderComposition */
+        cylinderPath(shapeArgs: SVGAttributes): CylinderPathsObject;
+        /** @requires CylinderComposition */
+        getCurvedPath(points: Array<PositionObject>): SVGPath;
+        /** @requires CylinderComposition */
+        getCylinderBack(
+            topPath: SVGPath,
+            bottomPath: SVGPath
+        ): SVGPath;
+        /** @requires CylinderComposition */
+        getCylinderEnd(
+            chart: Chart,
+            shapeArgs: SVGAttributes,
+            isBottom?: boolean
+        ): SVGPath;
+        /** @requires CylinderComposition */
+        getCylinderFront(
+            topPath: SVGPath,
+            bottomPath: SVGPath
+        ): SVGPath;
     }
 }
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class CylinderPoint extends ColumnPoint {
-            public options: CylinderPointOptions;
-            public series: CylinderSeries;
-        }
-        class CylinderSeries extends ColumnSeries {
-            public data: Array<CylinderPoint>;
-            public options: CylinderSeriesOptions;
-            public pointClass: typeof CylinderPoint;
-            public points: Array<CylinderPoint>;
-        }
-        interface CylinderMethodsObject extends SVGElement3DLikeCuboid {
-            parts: Array<string>;
-            pathType: string;
-            fillSetter(fill: ColorType): SVGElement;
-        }
-        interface CylinderPathsObject extends SVGPath3D {
-            back: SVGPath;
-            bottom: SVGPath;
-            front: SVGPath;
-            top: SVGPath;
-            zIndexes: Dictionary<number>;
-        }
-        interface CylinderPointOptions extends ColumnPointOptions {
-            shapeType?: string;
-        }
-        interface CylinderSeriesOptions extends ColumnSeriesOptions {
-            states?: SeriesStatesOptions<CylinderSeries>;
-        }
-        interface SVGRenderer {
-            cylinder(shapeArgs: SVGAttributes): SVGElement;
-            cylinderPath(shapeArgs: SVGAttributes): CylinderPathsObject;
-            getCurvedPath(points: Array<PositionObject>): SVGPath;
-            getCylinderBack(
-                topPath: SVGPath,
-                bottomPath: SVGPath
-            ): SVGPath;
-            getCylinderEnd(
-                chart: Chart,
-                shapeArgs: SVGAttributes,
-                isBottom?: boolean
-            ): SVGPath;
-            getCylinderFront(
-                topPath: SVGPath,
-                bottomPath: SVGPath
-            ): SVGPath;
-        }
-    }
-}
+/* *
+ *
+ *  Composition
+ *
+ * */
 
 const cuboidPath = RendererProto.cuboidPath;
 
@@ -135,119 +114,6 @@ const cuboidPath = RendererProto.cuboidPath;
 // segments, whereas non-simplified contain curves.
 const isSimplified = (path: SVGPath): boolean =>
     !path.some((seg): boolean => seg[0] === 'C');
-
-/**
-  * The cylinder series type.
-  *
-  * @requires module:highcharts-3d
-  * @requires module:modules/cylinder
-  *
-  * @private
-  * @class
-  * @name Highcharts.seriesTypes.cylinder
-  *
-  * @augments Highcharts.Series
-  */
-Series.seriesType<typeof Highcharts.CylinderSeries>(
-    'cylinder',
-    'column',
-    /**
-     * A cylinder graph is a variation of a 3d column graph. The cylinder graph
-     * features cylindrical points.
-     *
-     * @sample {highcharts} highcharts/demo/cylinder/
-     *         Cylinder graph
-     *
-     * @extends      plotOptions.column
-     * @since        7.0.0
-     * @product      highcharts
-     * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
-     *               dragDrop, boostBlending
-     * @requires     modules/cylinder
-     * @optionparent plotOptions.cylinder
-     */
-    {},
-    {},
-    /** @lends Highcharts.seriesTypes.cylinder#pointClass# */
-    {
-        shapeType: 'cylinder',
-        hasNewShapeType: columnProto.pointClass.prototype.hasNewShapeType
-    }
-);
-
-/**
- * A `cylinder` series. If the [type](#series.cylinder.type) option is not
- * specified, it is inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.cylinder
- * @since     7.0.0
- * @product   highcharts
- * @excluding allAreas, boostThreshold, colorAxis, compare, compareBase,
- *            boostBlending
- * @requires  modules/cylinder
- * @apioption series.cylinder
- */
-
-/**
- * An array of data points for the series. For the `cylinder` series type,
- * points can be given in the following ways:
- *
- * 1. An array of numerical values. In this case, the numerical values will be
- *    interpreted as `y` options. The `x` values will be automatically
- *    calculated, either starting at 0 and incremented by 1, or from
- *    `pointStart` and `pointInterval` given in the series options. If the axis
- *    has categories, these will be used. Example:
- *    ```js
- *    data: [0, 5, 3, 5]
- *    ```
- *
- * 2. An array of arrays with 2 values. In this case, the values correspond to
- *    `x,y`. If the first value is a string, it is applied as the name of the
- *    point, and the `x` value is inferred.
- *    ```js
- *    data: [
- *        [0, 0],
- *        [1, 8],
- *        [2, 9]
- *    ]
- *    ```
- *
- * 3. An array of objects with named values. The following snippet shows only a
- *    few settings, see the complete options set below. If the total number of
- *    data points exceeds the series'
- *    [turboThreshold](#series.cylinder.turboThreshold), this option is not
- *    available.
- *
- *    ```js
- *    data: [{
- *        x: 1,
- *        y: 2,
- *        name: "Point2",
- *        color: "#00FF00"
- *    }, {
- *        x: 1,
- *        y: 4,
- *        name: "Point1",
- *        color: "#FF00FF"
- *    }]
- *    ```
- *
- * @sample {highcharts} highcharts/chart/reflow-true/
- *         Numerical values
- * @sample {highcharts} highcharts/series/data-array-of-arrays/
- *         Arrays of numeric x and y
- * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
- *         Arrays of datetime x and y
- * @sample {highcharts} highcharts/series/data-array-of-name-value/
- *         Arrays of point.name and y
- * @sample {highcharts} highcharts/series/data-array-of-objects/
- *         Config objects
- *
- * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
- * @extends   series.column.data
- * @product   highcharts highstock
- * @apioption series.cylinder.data
- */
 
 // cylinder extends cuboid
 const cylinderMethods = merge(RendererProto.elements3d.cuboid, {
@@ -281,7 +147,7 @@ RendererProto.cylinder = function (shapeArgs: SVGAttributes): SVGElement {
 // Generates paths and zIndexes.
 RendererProto.cylinderPath = function (
     shapeArgs: SVGAttributes
-): Highcharts.CylinderPathsObject {
+): CylinderPathsObject {
     var renderer = this,
         chart = charts[renderer.chartIndex],
 

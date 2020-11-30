@@ -8,16 +8,28 @@
  *
  * */
 'use strict';
-import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import ColumnRangePoint from './ColumnRangePoint.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, AreaRangeSeries = _a.arearange, ColumnSeries = _a.column;
 var columnProto = ColumnSeries.prototype;
-import H from '../Core/Globals.js';
+var arearangeProto = AreaRangeSeries.prototype;
+import H from '../../Core/Globals.js';
 var noop = H.noop;
-import O from '../Core/Options.js';
-var defaultOptions = O.defaultOptions;
-import U from '../Core/Utilities.js';
-var clamp = U.clamp, merge = U.merge, pick = U.pick;
-var arearangeProto = BaseSeries.seriesTypes.arearange.prototype;
+import U from '../../Core/Utilities.js';
+var clamp = U.clamp, merge = U.merge, pick = U.pick, extend = U.extend;
 /**
  * The column range is a cartesian series type with higher and lower
  * Y values along an X axis. To display horizontal bars, set
@@ -56,6 +68,11 @@ var columnRangeOptions = {
         }
     }
 };
+/* *
+ *
+ *  Class
+ *
+ * */
 /**
  * The ColumnRangeSeries class
  *
@@ -65,17 +82,40 @@ var columnRangeOptions = {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions), {
-    setOptions: function () {
+var ColumnRangeSeries = /** @class */ (function (_super) {
+    __extends(ColumnRangeSeries, _super);
+    function ColumnRangeSeries() {
+        /* *
+         *
+         *  Static properties
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.points = void 0;
+        _this.options = void 0;
+        return _this;
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    ColumnRangeSeries.prototype.setOptions = function () {
         merge(true, arguments[0], { stacking: void 0 }); // #14359 Prevent side-effect from stacking.
         return arearangeProto.setOptions.apply(this, arguments);
-    },
+    };
     // eslint-disable-next-line valid-jsdoc
     /**
      * Translate data points from raw values x and y to plotX and plotY
      * @private
      */
-    translate: function () {
+    ColumnRangeSeries.prototype.translate = function () {
         var series = this, yAxis = series.yAxis, xAxis = series.xAxis, startAngleRad = xAxis.startAngleRad, start, chart = series.chart, isRadial = series.xAxis.isRadial, safeDistance = Math.max(chart.chartWidth, chart.chartHeight) + 999, plotHigh;
         // eslint-disable-next-line valid-jsdoc
         /**
@@ -128,45 +168,60 @@ BaseSeries.seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptio
                 ]; // don't inherit from column tooltip position - #3372
             }
         });
-    },
+    };
+    // Overrides from modules that may be loaded after this module
+    ColumnRangeSeries.prototype.crispCol = function () {
+        return columnProto.crispCol.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.drawPoints = function () {
+        return columnProto.drawPoints.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.drawTracker = function () {
+        return columnProto.drawTracker.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.getColumnMetrics = function () {
+        return columnProto.getColumnMetrics.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.pointAttribs = function () {
+        return columnProto.pointAttribs.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.adjustForMissingColumns = function () {
+        return columnProto.adjustForMissingColumns.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.animate = function () {
+        return columnProto.animate.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.translate3dPoints = function () {
+        return columnProto.translate3dPoints.apply(this, arguments);
+    };
+    ColumnRangeSeries.prototype.translate3dShapes = function () {
+        return columnProto.translate3dShapes.apply(this, arguments);
+    };
+    ColumnRangeSeries.defaultOptions = merge(ColumnSeries.defaultOptions, AreaRangeSeries.defaultOptions, columnRangeOptions);
+    return ColumnRangeSeries;
+}(AreaRangeSeries));
+extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop,
     getSymbol: noop,
-    // Overrides from modules that may be loaded after this module
-    crispCol: function () {
-        return columnProto.crispCol.apply(this, arguments);
-    },
-    drawPoints: function () {
-        return columnProto.drawPoints.apply(this, arguments);
-    },
-    drawTracker: function () {
-        return columnProto.drawTracker.apply(this, arguments);
-    },
-    getColumnMetrics: function () {
-        return columnProto.getColumnMetrics.apply(this, arguments);
-    },
-    pointAttribs: function () {
-        return columnProto.pointAttribs.apply(this, arguments);
-    },
-    adjustForMissingColumns: function () {
-        return columnProto.adjustForMissingColumns.apply(this, arguments);
-    },
-    animate: function () {
-        return columnProto.animate.apply(this, arguments);
-    },
     polarArc: function () {
         return columnProto.polarArc.apply(this, arguments);
     },
-    translate3dPoints: function () {
-        return columnProto.translate3dPoints.apply(this, arguments);
-    },
-    translate3dShapes: function () {
-        return columnProto.translate3dShapes.apply(this, arguments);
-    }
-}, {
-    setState: columnProto.pointClass.prototype.setState
+    pointClass: ColumnRangePoint
 });
+BaseSeries.registerSeriesType('columnrange', ColumnRangeSeries);
+/* *
+ *
+ *  Default export
+ *
+ * */
+export default ColumnRangeSeries;
+/* *
+ *
+ *  API options
+ *
+ * */
 /**
  * A `columnrange` series. If the [type](#series.columnrange.type)
  * option is not specified, it is inherited from

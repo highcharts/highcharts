@@ -63,9 +63,10 @@ var ScrollbarAxis = /** @class */ (function () {
                     if (pick(this.options.liveRedraw, H.svg && !H.isTouchDevice && !this.chart.isBoosting) ||
                         // Mouseup always should change extremes
                         e.DOMType === 'mouseup' ||
+                        e.DOMType === 'touchend' ||
                         // Internal events
                         !defined(e.DOMType)) {
-                        axis.setExtremes(from, to, true, e.DOMType !== 'mousemove', e);
+                        axis.setExtremes(from, to, true, e.DOMType !== 'mousemove' && e.DOMType !== 'touchmove', e);
                     }
                     else {
                         // When live redraw is disabled, don't change extremes
