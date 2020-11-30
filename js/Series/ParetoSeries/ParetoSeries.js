@@ -57,8 +57,6 @@ var ParetoSeries = /** @class */ (function (_super) {
         _this.data = void 0;
         _this.points = void 0;
         _this.options = void 0;
-        _this.hasDerivedData = void 0;
-        _this.initialised = void 0;
         return _this;
     }
     /* *
@@ -138,7 +136,13 @@ var ParetoSeries = /** @class */ (function (_super) {
     });
     return ParetoSeries;
 }(LineSeries));
-extend(ParetoSeries.prototype, merge(DerivedSeriesMixin, {
+extend(ParetoSeries.prototype, {
+    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
+    addEvents: DerivedSeriesMixin.addEvents,
+    destroy: DerivedSeriesMixin.destroy,
+    hasDerivedData: DerivedSeriesMixin.hasDerivedData,
+    init: DerivedSeriesMixin.init,
+    setBaseSeries: DerivedSeriesMixin.setBaseSeries,
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Calculate sum and return percent points.
@@ -152,7 +156,7 @@ extend(ParetoSeries.prototype, merge(DerivedSeriesMixin, {
         this.setData(this.sumPointsPercents(yValues, xValues, sum, false), false);
     }
     /* eslint-enable no-invalid-this, valid-jsdoc */
-}));
+});
 BaseSeries.registerSeriesType('pareto', ParetoSeries);
 /* *
  *

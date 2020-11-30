@@ -98,9 +98,6 @@ class ParetoSeries extends LineSeries {
     public points: Array<ParetoPoint> = void 0 as any;
     public options: ParetoSeriesOptions = void 0 as any;
 
-    public hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'] = void 0 as any;
-    public initialised: Highcharts.DerivedSeries['initialised'] = void 0 as any;
-
     /* *
      *
      *  Functions
@@ -182,35 +179,44 @@ interface ParetoSeries {
     setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
 
     setDerivedData: Highcharts.DerivedSeries['setDerivedData'];
+
+    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
+
+    initialised: Highcharts.DerivedSeries['initialised'];
 }
 
-extend(ParetoSeries.prototype,
-    merge(DerivedSeriesMixin, {
-        /* eslint-disable no-invalid-this, valid-jsdoc */
-        /**
-         * Calculate sum and return percent points.
-         *
-         * @private
-         * @function Highcharts.Series#setDerivedData
-         * @requires modules/pareto
-         */
-        setDerivedData: (function (this: ParetoSeries): void {
-            var xValues = (this.baseSeries as any).xData,
-                yValues = (this.baseSeries as any).yData,
-                sum = this.sumPointsPercents(
-                    yValues,
-                    xValues,
-                    null as any,
-                    true
-                );
-
-            this.setData(
-                this.sumPointsPercents(yValues, xValues, sum, false),
-                false
+extend(ParetoSeries.prototype, {
+    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
+    addEvents: DerivedSeriesMixin.addEvents,
+    destroy: DerivedSeriesMixin.destroy,
+    hasDerivedData: DerivedSeriesMixin.hasDerivedData,
+    init: DerivedSeriesMixin.init,
+    setBaseSeries: DerivedSeriesMixin.setBaseSeries,
+    /* eslint-disable no-invalid-this, valid-jsdoc */
+    /**
+     * Calculate sum and return percent points.
+     *
+     * @private
+     * @function Highcharts.Series#setDerivedData
+     * @requires modules/pareto
+     */
+    setDerivedData: (function (this: ParetoSeries): void {
+        var xValues = (this.baseSeries as any).xData,
+            yValues = (this.baseSeries as any).yData,
+            sum = this.sumPointsPercents(
+                yValues,
+                xValues,
+                null as any,
+                true
             );
-        } as any)
-        /* eslint-enable no-invalid-this, valid-jsdoc */
-    })
+
+        this.setData(
+            this.sumPointsPercents(yValues, xValues, sum, false),
+            false
+        );
+    } as any)
+    /* eslint-enable no-invalid-this, valid-jsdoc */
+}
 );
 
 /* *
