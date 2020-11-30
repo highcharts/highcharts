@@ -55,16 +55,32 @@ var PolygonSeries = /** @class */ (function (_super) {
     __extends(PolygonSeries, _super);
     function PolygonSeries() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        /* *
-         *
-         * Properties
-         *
-         * */
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
         return _this;
     }
+    /* *
+     *
+     * Functions
+     *
+     * */
+    PolygonSeries.prototype.getGraphPath = function () {
+        var graphPath = LineSeries.prototype.getGraphPath.call(this), i = graphPath.length + 1;
+        // Close all segments
+        while (i--) {
+            if ((i === graphPath.length || graphPath[i][0] === 'M') && i > 0) {
+                graphPath.splice(i, 0, ['Z']);
+            }
+        }
+        this.areaPath = graphPath;
+        return graphPath;
+    };
+    PolygonSeries.prototype.drawGraph = function () {
+        // Hack into the fill logic in area.drawGraph
+        this.options.fillColor = this.color;
+        seriesTypes.area.prototype.drawGraph.call(this);
+    };
     /* *
      *
      * Static properties
@@ -90,22 +106,6 @@ var PolygonSeries = /** @class */ (function (_super) {
 }(ScatterSeries));
 extend(PolygonSeries.prototype, {
     type: 'polygon',
-    getGraphPath: function () {
-        var graphPath = LineSeries.prototype.getGraphPath.call(this), i = graphPath.length + 1;
-        // Close all segments
-        while (i--) {
-            if ((i === graphPath.length || graphPath[i][0] === 'M') && i > 0) {
-                graphPath.splice(i, 0, ['Z']);
-            }
-        }
-        this.areaPath = graphPath;
-        return graphPath;
-    },
-    drawGraph: function () {
-        // Hack into the fill logic in area.drawGraph
-        this.options.fillColor = this.color;
-        seriesTypes.area.prototype.drawGraph.call(this);
-    },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     drawTracker: LineSeries.prototype.drawTracker,
     setStackedPoints: noop // No stacking points on polygons (#5310)
