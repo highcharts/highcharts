@@ -17,11 +17,10 @@
  *
  * */
 
-import type ColumnPoint from '../Column/ColumnPoint';
-import type ColumnPointOptions from '../Column/ColumnPointOptions';
-import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type HistogramPoint from './HistogramPoint';
+import type HistogramPointOptions from './HistogramPointOptions';
+import type HistogramSeriesOptions from './HistogramSeriesOptions';
 import type LineSeries from '../Line/LineSeries';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -39,35 +38,6 @@ const {
     merge,
     objectEach
 } = U;
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class HistogramPoint extends ColumnPoint {
-            public options: HistogramPointOptions;
-            public series: HistogramSeries;
-        }
-        interface HistogramPointOptions extends ColumnPointOptions {
-            x2?: number;
-        }
-        interface HistogramSeriesOptions extends ColumnSeriesOptions {
-            baseSeries?: (number|string);
-            binsNumber?: string;
-            binWidth?: number;
-            states?: SeriesStatesOptions<HistogramSeries>;
-        }
-    }
-}
-
 
 /* ************************************************************************** *
  *  HISTOGRAM
@@ -149,7 +119,7 @@ class HistogramSeries extends ColumnSeries {
      * @requires     modules/histogram
      * @optionparent plotOptions.histogram
      */
-    public static defaultOptions: Highcharts.HistogramSeriesOptions = merge(ColumnSeries.defaultOptions, {
+    public static defaultOptions: HistogramSeriesOptions = merge(ColumnSeries.defaultOptions, {
         /**
          * A preferable number of bins. It is a suggestion, so a histogram may
          * have a different number of bins. By default it is set to the square
@@ -184,7 +154,7 @@ class HistogramSeries extends ColumnSeries {
             )
         }
 
-    } as Highcharts.HistogramSeriesOptions);
+    } as HistogramSeriesOptions);
 
     /* *
      *
@@ -194,13 +164,13 @@ class HistogramSeries extends ColumnSeries {
 
     public binWidth?: number;
 
-    public data: Array<Highcharts.HistogramPoint> = void 0 as any;
+    public data: Array<HistogramPoint> = void 0 as any;
 
-    public options: Highcharts.HistogramSeriesOptions = void 0 as any;
+    public options: HistogramSeriesOptions = void 0 as any;
 
-    public points: Array<Highcharts.HistogramPoint> = void 0 as any;
+    public points: Array<HistogramPoint> = void 0 as any;
 
-    public userOptions: Highcharts.HistogramSeriesOptions = void 0 as any;
+    public userOptions: HistogramSeriesOptions = void 0 as any;
 
     /* *
      *
@@ -230,7 +200,7 @@ class HistogramSeries extends ColumnSeries {
         baseData: Array<number>,
         binsNumber: number,
         binWidth: number
-    ): Array<Highcharts.HistogramPointOptions> {
+    ): Array<HistogramPointOptions> {
         var series = this,
             max = correctFloat(arrayMax(baseData)),
             // Float correction needed, because first frequency value is not
@@ -238,7 +208,7 @@ class HistogramSeries extends ColumnSeries {
             min = correctFloat(arrayMin(baseData)),
             frequencies: Array<number> = [],
             bins: Highcharts.Dictionary<number> = {},
-            data: Array<Highcharts.HistogramPointOptions> = [],
+            data: Array<HistogramPointOptions> = [],
             x: number,
             fitToBin: Function;
 
@@ -347,7 +317,7 @@ interface HistogramSeries {
     hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
     init: Highcharts.DerivedSeriesMixin['init'];
     initialised: Highcharts.DerivedSeries['initialised'];
-    pointClass: typeof Highcharts.HistogramPoint;
+    pointClass: typeof HistogramPoint;
     setBaseSeries: Highcharts.DerivedSeriesMixin['setBaseSeries'];
 }
 extend(HistogramSeries.prototype, {
