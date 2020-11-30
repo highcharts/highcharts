@@ -41,6 +41,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
 const {
     seriesTypes: {
+        column: ColumnSeries,
         sankey: SankeySeries
     }
 } = BaseSeries;
@@ -390,137 +391,18 @@ class OrganizationSeries extends SankeySeries {
 
     /* *
      *
-     *  Properties
+     *  Static Functions
      *
      * */
 
-    public data: Array<Highcharts.OrganizationPoint> = void 0 as any;
+    /* eslint-disable valid-jsdoc */
 
-    public options: Highcharts.OrganizationSeriesOptions = void 0 as any;
-
-    public points: Array<Highcharts.OrganizationPoint> = void 0 as any;
-
-}
-
-/* *
- *
- *  Prototype Properties
- *
- * */
-
-interface OrganizationSeries {
-    pointClass: typeof Highcharts.OrganizationPoint;
-}
-extend(OrganizationSeries.prototype, {
-    pointAttribs: function (
-        this: Highcharts.OrganizationSeries,
-        point: Highcharts.OrganizationPoint,
-        state?: StatesOptionsKey
-    ): SVGAttributes {
-        var series = this,
-            attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
-            level = point.isNode ? point.level : point.fromNode.level,
-            levelOptions: Highcharts.OrganizationSeriesLevelsOptions =
-                (series.mapOptionsToLevel as any)[level || 0] || {},
-            options = point.options,
-            stateOptions: Highcharts.OrganizationSeriesOptions = (
-                levelOptions.states && (levelOptions.states as any)[state as any]
-            ) || {},
-            values: (
-                Highcharts.OrganizationPointOptions &
-                Highcharts.OrganizationSeriesOptions
-            ) = ['borderRadius', 'linkColor', 'linkLineWidth']
-                .reduce(function (
-                    obj: Highcharts.Dictionary<unknown>,
-                    key: string
-                ): Highcharts.Dictionary<unknown> {
-                    obj[key] = pick(
-                        (stateOptions as any)[key],
-                        (options as any)[key],
-                        (levelOptions as any)[key],
-                        (series.options as any)[key]
-                    );
-                    return obj;
-                }, {});
-
-        if (!point.isNode) {
-            attribs.stroke = values.linkColor;
-            attribs['stroke-width'] = values.linkLineWidth;
-            delete attribs.fill;
-        } else {
-            if (values.borderRadius) {
-                attribs.r = values.borderRadius;
-            }
-        }
-        return attribs;
-    },
-
-    createNode: function (
-        this: Highcharts.OrganizationSeries,
-        id: string
-    ): Highcharts.NodesPoint {
-        var node = SankeySeries.prototype.createNode.call(this, id);
-
-        // All nodes in an org chart are equal width
-        node.getSum = function (): number {
-            return 1;
-        };
-
-        return node;
-
-    },
-
-    createNodeColumn: function (
-        this: Highcharts.OrganizationSeries
-    ): Highcharts.OrganizationColumnArray {
-        var column: Highcharts.OrganizationColumnArray =
-            SankeySeries.prototype.createNodeColumn.call(this) as any;
-
-        // Wrap the offset function so that the hanging node's children are
-        // aligned to their parent
-        wrap(column, 'offset', function (
-            this: Highcharts.OrganizationPoint,
-            proceed: SankeySeriesType.ColumnArray['offset'],
-            node: Highcharts.OrganizationPoint,
-            factor: number
-        ): (Highcharts.Dictionary<number>|undefined) {
-            var offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
-
-            // Modify the default output if the parent's layout is 'hanging'
-            if (node.hangsFrom) {
-                return {
-                    absoluteTop: node.hangsFrom.nodeY
-                };
-            }
-
-            return offset;
-        });
-
-        return column;
-    },
-
-    translateNode: function (
-        this: Highcharts.OrganizationSeries,
-        node: Highcharts.OrganizationPoint,
-        column: Highcharts.OrganizationColumnArray
-    ): void {
-        SankeySeries.prototype.translateNode.call(this, node, column);
-
-        if (node.hangsFrom) {
-            (node.shapeArgs as any).height -=
-                this.options.hangingIndent as any;
-            if (!this.chart.inverted) {
-                (node.shapeArgs as any).y += this.options.hangingIndent;
-            }
-        }
-        node.nodeHeight = this.chart.inverted ?
-            (node.shapeArgs as any).width :
-            (node.shapeArgs as any).height;
-    },
-
-    // General function to apply corner radius to a path - can be lifted to
-    // renderer or utilities if we need it elsewhere.
-    curvedPath: function (
+    /**
+     * General function to apply corner radius to a path - can be lifted to
+     * renderer or utilities if we need it elsewhere.
+     * @private
+     */
+    public static curvedPath(
         path: SVGPath,
         r: number
     ): SVGPath {
@@ -585,12 +467,169 @@ extend(OrganizationSeries.prototype, {
 
         return d;
 
-    },
+    }
 
-    translateLink: function (
-        this: Highcharts.OrganizationSeries,
-        point: Highcharts.OrganizationPoint
+    /* eslint-enable valid-jsdoc */
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public data: Array<Highcharts.OrganizationPoint> = void 0 as any;
+
+    public options: Highcharts.OrganizationSeriesOptions = void 0 as any;
+
+    public points: Array<Highcharts.OrganizationPoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    public alignDataLabel(
+        point: Highcharts.OrganizationPoint,
+        dataLabel: SVGElement,
+        options: Highcharts.OrganizationDataLabelsOptionsObject
     ): void {
+        // Align the data label to the point graphic
+        if (options.useHTML) {
+            var width = (point.shapeArgs as any).width,
+                height = (point.shapeArgs as any).height,
+                padjust = (
+                    (this.options.borderWidth as any) +
+                    2 * (this.options.dataLabels as any).padding
+                );
+
+            if (this.chart.inverted) {
+                width = height;
+                height = (point.shapeArgs as any).width;
+            }
+
+            height -= padjust;
+            width -= padjust;
+
+            // Set the size of the surrounding div emulating `g`
+            const text = dataLabel.text;
+            if (text) {
+                css(text.element.parentNode, {
+                    width: width + 'px',
+                    height: height + 'px'
+                });
+
+                // Set properties for the span emulating `text`
+                css(text.element, {
+                    left: 0,
+                    top: 0,
+                    width: '100%',
+                    height: '100%',
+                    overflow: 'hidden'
+                });
+            }
+
+            // The getBBox function is used in `alignDataLabel` to align
+            // inside the box
+            dataLabel.getBBox = function (): BBoxObject {
+                return {
+                    width: width,
+                    height: height
+                } as any;
+            };
+
+            // Overwrite dataLabel dimensions (#13100).
+            dataLabel.width = width;
+            dataLabel.height = height;
+        }
+
+        super.alignDataLabel.apply(this, arguments);
+    }
+
+    public createNode(id: string): Highcharts.OrganizationPoint {
+        var node: Highcharts.OrganizationPoint = super.createNode.call(this, id) as any;
+
+        // All nodes in an org chart are equal width
+        node.getSum = function (): number {
+            return 1;
+        };
+
+        return node;
+
+    }
+
+    public createNodeColumn(): Highcharts.OrganizationColumnArray {
+        var column: Highcharts.OrganizationColumnArray =
+            SankeySeries.prototype.createNodeColumn.call(this) as any;
+
+        // Wrap the offset function so that the hanging node's children are
+        // aligned to their parent
+        wrap(column, 'offset', function (
+            this: Highcharts.OrganizationPoint,
+            proceed: SankeySeriesType.ColumnArray['offset'],
+            node: Highcharts.OrganizationPoint,
+            factor: number
+        ): (Highcharts.Dictionary<number>|undefined) {
+            var offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
+
+            // Modify the default output if the parent's layout is 'hanging'
+            if (node.hangsFrom) {
+                return {
+                    absoluteTop: node.hangsFrom.nodeY
+                };
+            }
+
+            return offset;
+        });
+
+        return column;
+    }
+
+    public pointAttribs(
+        point: Highcharts.OrganizationPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        var series = this,
+            attribs = SankeySeries.prototype.pointAttribs.call(series, point, state),
+            level = point.isNode ? point.level : point.fromNode.level,
+            levelOptions: Highcharts.OrganizationSeriesLevelsOptions =
+                (series.mapOptionsToLevel as any)[level || 0] || {},
+            options = point.options,
+            stateOptions: Highcharts.OrganizationSeriesOptions = (
+                levelOptions.states && (levelOptions.states as any)[state as any]
+            ) || {},
+            values: (
+                Highcharts.OrganizationPointOptions &
+                Highcharts.OrganizationSeriesOptions
+            ) = ['borderRadius', 'linkColor', 'linkLineWidth']
+                .reduce(function (
+                    obj: Highcharts.Dictionary<unknown>,
+                    key: string
+                ): Highcharts.Dictionary<unknown> {
+                    obj[key] = pick(
+                        (stateOptions as any)[key],
+                        (options as any)[key],
+                        (levelOptions as any)[key],
+                        (series.options as any)[key]
+                    );
+                    return obj;
+                }, {});
+
+        if (!point.isNode) {
+            attribs.stroke = values.linkColor;
+            attribs['stroke-width'] = values.linkLineWidth;
+            delete attribs.fill;
+        } else {
+            if (values.borderRadius) {
+                attribs.r = values.borderRadius;
+            }
+        }
+        return attribs;
+    }
+
+    public translateLink(point: Highcharts.OrganizationPoint): void {
         var fromNode = point.fromNode,
             toNode = point.toNode,
             crisp = Math.round(this.options.linkLineWidth as any) % 2 / 2,
@@ -667,75 +706,48 @@ extend(OrganizationSeries.prototype, {
         point.plotY = 1;
         point.shapeType = 'path';
         point.shapeArgs = {
-            d: this.curvedPath([
+            d: OrganizationSeries.curvedPath([
                 ['M', x1, y1],
                 ['L', xMiddle, y1],
                 ['L', xMiddle, y2],
                 ['L', x2, y2]
             ], this.options.linkRadius as any)
         };
-    },
-
-    alignDataLabel: function (
-        this: Highcharts.OrganizationSeries,
-        point: Highcharts.OrganizationPoint,
-        dataLabel: SVGElement,
-        options: Highcharts.OrganizationDataLabelsOptionsObject
-    ): void {
-        // Align the data label to the point graphic
-        if (options.useHTML) {
-            var width = (point.shapeArgs as any).width,
-                height = (point.shapeArgs as any).height,
-                padjust = (
-                    (this.options.borderWidth as any) +
-                    2 * (this.options.dataLabels as any).padding
-                );
-
-            if (this.chart.inverted) {
-                width = height;
-                height = (point.shapeArgs as any).width;
-            }
-
-            height -= padjust;
-            width -= padjust;
-
-            // Set the size of the surrounding div emulating `g`
-            const text = dataLabel.text;
-            if (text) {
-                css(text.element.parentNode, {
-                    width: width + 'px',
-                    height: height + 'px'
-                });
-
-                // Set properties for the span emulating `text`
-                css(text.element, {
-                    left: 0,
-                    top: 0,
-                    width: '100%',
-                    height: '100%',
-                    overflow: 'hidden'
-                });
-            }
-
-            // The getBBox function is used in `alignDataLabel` to align
-            // inside the box
-            dataLabel.getBBox = function (): BBoxObject {
-                return {
-                    width: width,
-                    height: height
-                } as any;
-            };
-
-            // Overwrite dataLabel dimensions (#13100).
-            dataLabel.width = width;
-            dataLabel.height = height;
-        }
-
-        H.seriesTypes.column.prototype.alignDataLabel.apply(
-            this,
-            arguments
-        );
     }
+
+    public translateNode(
+        node: Highcharts.OrganizationPoint,
+        column: Highcharts.OrganizationColumnArray
+    ): void {
+        SankeySeries.prototype.translateNode.call(this, node, column);
+
+        if (node.hangsFrom) {
+            (node.shapeArgs as any).height -=
+                this.options.hangingIndent as any;
+            if (!this.chart.inverted) {
+                (node.shapeArgs as any).y += this.options.hangingIndent;
+            }
+        }
+        node.nodeHeight = this.chart.inverted ?
+            (node.shapeArgs as any).width :
+            (node.shapeArgs as any).height;
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface OrganizationSeries {
+    pointClass: typeof Highcharts.OrganizationPoint;
+}
+extend(OrganizationSeries.prototype, {
+
 });
 
 /* *
