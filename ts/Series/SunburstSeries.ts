@@ -48,8 +48,6 @@ const {
     getCenter,
     getStartAndEndRadians
 } = CenteredSeriesMixin;
-import DrawPointMixin from '../Mixins/DrawPoint.js';
-const { drawPoint } = DrawPointMixin;
 import H from '../Core/Globals.js';
 const { noop } = H;
 import LineSeries from './Line/LineSeries.js';
@@ -328,55 +326,6 @@ var getEndPoint = function getEndPoint(
         x: x + (Math.cos(angle) * distance),
         y: y + (Math.sin(angle) * distance)
     };
-};
-
-var layoutAlgorithm = function layoutAlgorithm(
-    parent: Highcharts.SunburstNodeValuesObject,
-    children: Array<Highcharts.SunburstNodeObject>,
-    options: Highcharts.SunburstSeriesOptions
-): Array<Highcharts.SunburstNodeValuesObject> {
-    var startAngle = parent.start,
-        range = parent.end - startAngle,
-        total = parent.val,
-        x = parent.x,
-        y = parent.y,
-        radius = (
-            (
-                options &&
-                isObject(options.levelSize) &&
-                isNumber((options.levelSize as any).value)
-            ) ?
-                (options.levelSize as any).value :
-                0
-        ),
-        innerRadius = parent.r,
-        outerRadius = innerRadius + radius,
-        slicedOffset = options && isNumber(options.slicedOffset) ?
-            options.slicedOffset :
-            0;
-
-    return (children || []).reduce(function (
-        arr: Array<Highcharts.SunburstNodeValuesObject>,
-        child: Highcharts.SunburstNodeObject
-    ): Array<Highcharts.SunburstNodeValuesObject> {
-        var percentage = (1 / total) * child.val,
-            radians = percentage * range,
-            radiansCenter = startAngle + (radians / 2),
-            offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
-            values: Highcharts.SunburstNodeValuesObject = {
-                x: child.sliced ? offsetPosition.x : x,
-                y: child.sliced ? offsetPosition.y : y,
-                innerR: innerRadius,
-                r: outerRadius,
-                radius: radius,
-                start: startAngle,
-                end: startAngle + radians
-            } as any;
-
-        arr.push(values);
-        startAngle = values.end;
-        return arr;
-    }, []);
 };
 
 var getDlOptions = function getDlOptions(
@@ -973,33 +922,71 @@ class SunburstSeries extends TreemapSeries {
 
     public tree: Highcharts.SunburstNodeObject = void 0 as any;
 
-}
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-interface SunburstSeries {
-    pointAttribs: LineSeries['pointAttribs'];
-    pointClass: typeof SunburstPoint;
-    utils: Highcharts.SunburstSeriesUtilsObject;
-    drawPoints(): void;
-    layoutAlgorithm(
-        parent: Highcharts.SunburstNodeValuesObject,
-        children: Array<Highcharts.SunburstNodeObject>,
-        options: Highcharts.SunburstSeriesOptions
-    ): Array<Highcharts.SunburstNodeValuesObject>;
-    setShapeArgs(
-        parent: Highcharts.SunburstNodeObject,
-        parentValues: Highcharts.SunburstNodeValuesObject,
-        mapOptionsToLevel: Record<string, Highcharts.SunburstSeriesOptions>
-    ): void;
-    translate(): void;
-    alignDataLabel(
-        point: SunburstPoint,
-        dataLabel: SVGElement,
+    /* eslint-disable valid-jsdoc */
+
+    public alignDataLabel(
+        _point: Highcharts.SunburstPoint,
+        _dataLabel: SVGElement,
         labelOptions: DataLabelOptions
-    ): void;
-}
-extend(SunburstSeries.prototype, {
-    drawDataLabels: noop as any, // drawDataLabels is called in drawPoints
-    drawPoints: function drawPoints(this: SunburstSeries): void {
+    ): void {
+
+        if (labelOptions.textPath && labelOptions.textPath.enabled) {
+            return;
+        }
+        return TreemapSeries.prototype.alignDataLabel.apply(this, arguments);
+    }
+
+    /**
+     * Animate the slices in. Similar to the animation of polar charts.
+     * @private
+     */
+    public animate(init?: boolean): void {
+        var chart = this.chart,
+            center = [
+                chart.plotWidth / 2,
+                chart.plotHeight / 2
+            ],
+            plotLeft = chart.plotLeft,
+            plotTop = chart.plotTop,
+            attribs,
+            group: SVGElement = this.group as any;
+
+        // Initialize the animation
+        if (init) {
+
+            // Scale down the group and place it in the center
+            attribs = {
+                translateX: center[0] + plotLeft,
+                translateY: center[1] + plotTop,
+                scaleX: 0.001, // #1499
+                scaleY: 0.001,
+                rotation: 10,
+                opacity: 0.01
+            };
+
+            group.attr(attribs);
+
+        // Run the animation
+        } else {
+            attribs = {
+                translateX: plotLeft,
+                translateY: plotTop,
+                scaleX: 1,
+                scaleY: 1,
+                rotation: 0,
+                opacity: 1
+            };
+            group.animate(attribs, this.options.animation);
+        }
+    }
+
+    public drawPoints(): void {
         var series = this,
             mapOptionsToLevel = series.mapOptionsToLevel,
             shapeRoot = series.shapeRoot,
@@ -1131,16 +1118,66 @@ extend(SunburstSeries.prototype, {
         } else {
             LineSeries.prototype.drawDataLabels.call(series);
         }
-    },
+    }
 
-    pointAttribs: ColumnSeries.prototype.pointAttribs,
+    /**
+     * The layout algorithm for the levels.
+     * @private
+     */
+    public layoutAlgorithm(
+        parent: Highcharts.SunburstNodeValuesObject,
+        children: Array<Highcharts.SunburstNodeObject>,
+        options: Highcharts.SunburstSeriesOptions
+    ): Array<Highcharts.SunburstNodeValuesObject> {
+        var startAngle = parent.start,
+            range = parent.end - startAngle,
+            total = parent.val,
+            x = parent.x,
+            y = parent.y,
+            radius = (
+                (
+                    options &&
+                    isObject(options.levelSize) &&
+                    isNumber((options.levelSize as any).value)
+                ) ?
+                    (options.levelSize as any).value :
+                    0
+            ),
+            innerRadius = parent.r,
+            outerRadius = innerRadius + radius,
+            slicedOffset = options && isNumber(options.slicedOffset) ?
+                options.slicedOffset :
+                0;
 
-    // The layout algorithm for the levels
-    layoutAlgorithm: layoutAlgorithm,
+        return (children || []).reduce(function (
+            arr: Array<Highcharts.SunburstNodeValuesObject>,
+            child: Highcharts.SunburstNodeObject
+        ): Array<Highcharts.SunburstNodeValuesObject> {
+            var percentage = (1 / total) * child.val,
+                radians = percentage * range,
+                radiansCenter = startAngle + (radians / 2),
+                offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset),
+                values: Highcharts.SunburstNodeValuesObject = {
+                    x: child.sliced ? offsetPosition.x : x,
+                    y: child.sliced ? offsetPosition.y : y,
+                    innerR: innerRadius,
+                    r: outerRadius,
+                    radius: radius,
+                    start: startAngle,
+                    end: startAngle + radians
+                } as any;
 
-    // Set the shape arguments on the nodes. Recursive from root down.
-    setShapeArgs: function (
-        this: SunburstSeries,
+            arr.push(values);
+            startAngle = values.end;
+            return arr;
+        }, []);
+    }
+
+    /**
+     * Set the shape arguments on the nodes. Recursive from root down.
+     * @private
+     */
+    public setShapeArgs(
         parent: Highcharts.SunburstNodeObject,
         parentValues: Highcharts.SunburstNodeValuesObject,
         mapOptionsToLevel: (
@@ -1205,10 +1242,9 @@ extend(SunburstSeries.prototype, {
                 );
             }
         }, this);
-    },
+    }
 
-
-    translate: function translate(this: SunburstSeries): void {
+    public translate(this: SunburstSeries): void {
         var series = this,
             options = series.options,
             positions = series.center = getCenter.call(series),
@@ -1298,61 +1334,26 @@ extend(SunburstSeries.prototype, {
 
         // reset object
         nodeIds = {};
-    },
+    }
 
-    alignDataLabel: function (
-        this: SunburstSeries,
-        point: Highcharts.SunburstPoint,
-        dataLabel: SVGElement,
-        labelOptions: DataLabelOptions
-    ): void {
+    /* eslint-enable valid-jsdoc */
 
-        if (labelOptions.textPath && labelOptions.textPath.enabled) {
-            return;
-        }
-        return TreemapSeries.prototype.alignDataLabel.apply(this, arguments);
-    },
+}
 
-    // Animate the slices in. Similar to the animation of polar charts.
-    animate: function (this: SunburstSeries, init?: boolean): void {
-        var chart = this.chart,
-            center = [
-                chart.plotWidth / 2,
-                chart.plotHeight / 2
-            ],
-            plotLeft = chart.plotLeft,
-            plotTop = chart.plotTop,
-            attribs,
-            group: SVGElement = this.group as any;
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
-        // Initialize the animation
-        if (init) {
-
-            // Scale down the group and place it in the center
-            attribs = {
-                translateX: center[0] + plotLeft,
-                translateY: center[1] + plotTop,
-                scaleX: 0.001, // #1499
-                scaleY: 0.001,
-                rotation: 10,
-                opacity: 0.01
-            };
-
-            group.attr(attribs);
-
-        // Run the animation
-        } else {
-            attribs = {
-                translateX: plotLeft,
-                translateY: plotTop,
-                scaleX: 1,
-                scaleY: 1,
-                rotation: 0,
-                opacity: 1
-            };
-            group.animate(attribs, this.options.animation);
-        }
-    },
+interface SunburstSeries {
+    pointAttribs: LineSeries['pointAttribs'];
+    pointClass: typeof SunburstPoint;
+    utils: Highcharts.SunburstSeriesUtilsObject;
+}
+extend(SunburstSeries.prototype, {
+    drawDataLabels: noop as any, // drawDataLabels is called in drawPoints
+    pointAttribs: ColumnSeries.prototype.pointAttribs,
     utils: {
         calculateLevelSizes,
         getLevelFromAndTo,
@@ -1390,23 +1391,15 @@ class SunburstPoint extends TreemapSeries.prototype.pointClass {
 
     public sliced?: boolean;
 
-}
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* eslint-disable valid-jsdoc */
 
-extend(SunburstPoint.prototype, {
-    draw: drawPoint,
-    shouldDraw: function shouldDraw(this: Highcharts.SunburstPoint): boolean {
-        return !this.isNull;
-    },
-    isValid: function isValid(this: Highcharts.SunburstPoint): boolean {
-        return true;
-    },
-    getDataLabelPath: function (
+    public getDataLabelPath(
         this: Highcharts.SunburstPoint,
         label: SVGElement
     ): SVGElement {
@@ -1460,7 +1453,18 @@ extend(SunburstPoint.prototype, {
         });
         return this.dataLabelPath;
     }
-});
+
+    public isValid(this: Highcharts.SunburstPoint): boolean {
+        return true;
+    }
+
+    public shouldDraw(this: Highcharts.SunburstPoint): boolean {
+        return !this.isNull;
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
 
 /* *
  *

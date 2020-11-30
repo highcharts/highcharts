@@ -29,8 +29,6 @@ import BaseSeries from '../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, TreemapSeries = _a.treemap;
 import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
 var getCenter = CenteredSeriesMixin.getCenter, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
-import DrawPointMixin from '../Mixins/DrawPoint.js';
-var drawPoint = DrawPointMixin.drawPoint;
 import H from '../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from './Line/LineSeries.js';
@@ -142,29 +140,6 @@ var getEndPoint = function getEndPoint(x, y, angle, distance) {
         x: x + (Math.cos(angle) * distance),
         y: y + (Math.sin(angle) * distance)
     };
-};
-var layoutAlgorithm = function layoutAlgorithm(parent, children, options) {
-    var startAngle = parent.start, range = parent.end - startAngle, total = parent.val, x = parent.x, y = parent.y, radius = ((options &&
-        isObject(options.levelSize) &&
-        isNumber(options.levelSize.value)) ?
-        options.levelSize.value :
-        0), innerRadius = parent.r, outerRadius = innerRadius + radius, slicedOffset = options && isNumber(options.slicedOffset) ?
-        options.slicedOffset :
-        0;
-    return (children || []).reduce(function (arr, child) {
-        var percentage = (1 / total) * child.val, radians = percentage * range, radiansCenter = startAngle + (radians / 2), offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset), values = {
-            x: child.sliced ? offsetPosition.x : x,
-            y: child.sliced ? offsetPosition.y : y,
-            innerR: innerRadius,
-            r: outerRadius,
-            radius: radius,
-            start: startAngle,
-            end: startAngle + radians
-        };
-        arr.push(values);
-        startAngle = values.end;
-        return arr;
-    }, []);
 };
 var getDlOptions = function getDlOptions(params) {
     // Set options to new object to avoid problems with scope
@@ -406,7 +381,280 @@ var SunburstSeries = /** @class */ (function (_super) {
         _this.startAndEndRadians = void 0;
         _this.tree = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    SunburstSeries.prototype.alignDataLabel = function (_point, _dataLabel, labelOptions) {
+        if (labelOptions.textPath && labelOptions.textPath.enabled) {
+            return;
+        }
+        return TreemapSeries.prototype.alignDataLabel.apply(this, arguments);
+    };
+    /**
+     * Animate the slices in. Similar to the animation of polar charts.
+     * @private
+     */
+    SunburstSeries.prototype.animate = function (init) {
+        var chart = this.chart, center = [
+            chart.plotWidth / 2,
+            chart.plotHeight / 2
+        ], plotLeft = chart.plotLeft, plotTop = chart.plotTop, attribs, group = this.group;
+        // Initialize the animation
+        if (init) {
+            // Scale down the group and place it in the center
+            attribs = {
+                translateX: center[0] + plotLeft,
+                translateY: center[1] + plotTop,
+                scaleX: 0.001,
+                scaleY: 0.001,
+                rotation: 10,
+                opacity: 0.01
+            };
+            group.attr(attribs);
+            // Run the animation
+        }
+        else {
+            attribs = {
+                translateX: plotLeft,
+                translateY: plotTop,
+                scaleX: 1,
+                scaleY: 1,
+                rotation: 0,
+                opacity: 1
+            };
+            group.animate(attribs, this.options.animation);
+        }
+    };
+    SunburstSeries.prototype.drawPoints = function () {
+        var series = this, mapOptionsToLevel = series.mapOptionsToLevel, shapeRoot = series.shapeRoot, group = series.group, hasRendered = series.hasRendered, idRoot = series.rootNode, idPreviousRoot = series.idPreviousRoot, nodeMap = series.nodeMap, nodePreviousRoot = nodeMap[idPreviousRoot], shapePreviousRoot = nodePreviousRoot && nodePreviousRoot.shapeArgs, points = series.points, radians = series.startAndEndRadians, chart = series.chart, optionsChart = chart && chart.options && chart.options.chart || {}, animation = (isBoolean(optionsChart.animation) ?
+            optionsChart.animation :
+            true), positions = series.center, center = {
+            x: positions[0],
+            y: positions[1]
+        }, innerR = positions[3] / 2, renderer = series.chart.renderer, animateLabels, animateLabelsCalled = false, addedHack = false, hackDataLabelAnimation = !!(animation &&
+            hasRendered &&
+            idRoot !== idPreviousRoot &&
+            series.dataLabelsGroup);
+        if (hackDataLabelAnimation) {
+            series.dataLabelsGroup.attr({ opacity: 0 });
+            animateLabels = function () {
+                var s = series;
+                animateLabelsCalled = true;
+                if (s.dataLabelsGroup) {
+                    s.dataLabelsGroup.animate({
+                        opacity: 1,
+                        visibility: 'visible'
+                    });
+                }
+            };
+        }
+        points.forEach(function (point) {
+            var node = point.node, level = mapOptionsToLevel[node.level], shapeExisting = point.shapeExisting || {}, shape = node.shapeArgs || {}, animationInfo, onComplete, visible = !!(node.visible && node.shapeArgs);
+            if (hasRendered && animation) {
+                animationInfo = getAnimation(shape, {
+                    center: center,
+                    point: point,
+                    radians: radians,
+                    innerR: innerR,
+                    idRoot: idRoot,
+                    idPreviousRoot: idPreviousRoot,
+                    shapeExisting: shapeExisting,
+                    shapeRoot: shapeRoot,
+                    shapePreviousRoot: shapePreviousRoot,
+                    visible: visible
+                });
+            }
+            else {
+                // When animation is disabled, attr is called from animation.
+                animationInfo = {
+                    to: shape,
+                    from: {}
+                };
+            }
+            extend(point, {
+                shapeExisting: shape,
+                tooltipPos: [shape.plotX, shape.plotY],
+                drillId: getDrillId(point, idRoot, nodeMap),
+                name: '' + (point.name || point.id || point.index),
+                plotX: shape.plotX,
+                plotY: shape.plotY,
+                value: node.val,
+                isNull: !visible // used for dataLabels & point.draw
+            });
+            point.dlOptions = getDlOptions({
+                point: point,
+                level: level,
+                optionsPoint: point.options,
+                shapeArgs: shape
+            });
+            if (!addedHack && visible) {
+                addedHack = true;
+                onComplete = animateLabels;
+            }
+            point.draw({
+                animatableAttribs: animationInfo.to,
+                attribs: extend(animationInfo.from, (!chart.styledMode && series.pointAttribs(point, (point.selected && 'select')))),
+                onComplete: onComplete,
+                group: group,
+                renderer: renderer,
+                shapeType: 'arc',
+                shapeArgs: shape
+            });
+        });
+        // Draw data labels after points
+        // TODO draw labels one by one to avoid addtional looping
+        if (hackDataLabelAnimation && addedHack) {
+            series.hasRendered = false;
+            series.options.dataLabels.defer = true;
+            LineSeries.prototype.drawDataLabels.call(series);
+            series.hasRendered = true;
+            // If animateLabels is called before labels were hidden, then call
+            // it again.
+            if (animateLabelsCalled) {
+                animateLabels();
+            }
+        }
+        else {
+            LineSeries.prototype.drawDataLabels.call(series);
+        }
+    };
+    /**
+     * The layout algorithm for the levels.
+     * @private
+     */
+    SunburstSeries.prototype.layoutAlgorithm = function (parent, children, options) {
+        var startAngle = parent.start, range = parent.end - startAngle, total = parent.val, x = parent.x, y = parent.y, radius = ((options &&
+            isObject(options.levelSize) &&
+            isNumber(options.levelSize.value)) ?
+            options.levelSize.value :
+            0), innerRadius = parent.r, outerRadius = innerRadius + radius, slicedOffset = options && isNumber(options.slicedOffset) ?
+            options.slicedOffset :
+            0;
+        return (children || []).reduce(function (arr, child) {
+            var percentage = (1 / total) * child.val, radians = percentage * range, radiansCenter = startAngle + (radians / 2), offsetPosition = getEndPoint(x, y, radiansCenter, slicedOffset), values = {
+                x: child.sliced ? offsetPosition.x : x,
+                y: child.sliced ? offsetPosition.y : y,
+                innerR: innerRadius,
+                r: outerRadius,
+                radius: radius,
+                start: startAngle,
+                end: startAngle + radians
+            };
+            arr.push(values);
+            startAngle = values.end;
+            return arr;
+        }, []);
+    };
+    /**
+     * Set the shape arguments on the nodes. Recursive from root down.
+     * @private
+     */
+    SunburstSeries.prototype.setShapeArgs = function (parent, parentValues, mapOptionsToLevel) {
+        var childrenValues = [], level = parent.level + 1, options = mapOptionsToLevel[level], 
+        // Collect all children which should be included
+        children = parent.children.filter(function (n) {
+            return n.visible;
+        }), twoPi = 6.28; // Two times Pi.
+        childrenValues = this.layoutAlgorithm(parentValues, children, options);
+        children.forEach(function (child, index) {
+            var values = childrenValues[index], angle = values.start + ((values.end - values.start) / 2), radius = values.innerR + ((values.r - values.innerR) / 2), radians = (values.end - values.start), isCircle = (values.innerR === 0 && radians > twoPi), center = (isCircle ?
+                { x: values.x, y: values.y } :
+                getEndPoint(values.x, values.y, angle, radius)), val = (child.val ?
+                (child.childrenTotal > child.val ?
+                    child.childrenTotal :
+                    child.val) :
+                child.childrenTotal);
+            // The inner arc length is a convenience for data label filters.
+            if (this.points[child.i]) {
+                this.points[child.i].innerArcLength = radians * values.innerR;
+                this.points[child.i].outerArcLength = radians * values.r;
+            }
+            child.shapeArgs = merge(values, {
+                plotX: center.x,
+                plotY: center.y + 4 * Math.abs(Math.cos(angle))
+            });
+            child.values = merge(values, {
+                val: val
+            });
+            // If node has children, then call method recursively
+            if (child.children.length) {
+                this.setShapeArgs(child, child.values, mapOptionsToLevel);
+            }
+        }, this);
+    };
+    SunburstSeries.prototype.translate = function () {
+        var series = this, options = series.options, positions = series.center = getCenter.call(series), radians = series.startAndEndRadians = getStartAndEndRadians(options.startAngle, options.endAngle), innerRadius = positions[3] / 2, outerRadius = positions[2] / 2, diffRadius = outerRadius - innerRadius, 
+        // NOTE: updateRootId modifies series.
+        rootId = updateRootId(series), mapIdToNode = series.nodeMap, mapOptionsToLevel, idTop, nodeRoot = mapIdToNode && mapIdToNode[rootId], nodeTop, tree, values, nodeIds = {};
+        series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
+        // Call prototype function
+        LineSeries.prototype.translate.call(series);
+        // @todo Only if series.isDirtyData is true
+        tree = series.tree = series.getTree();
+        // Render traverseUpButton, after series.nodeMap i calculated.
+        series.renderTraverseUpButton(rootId);
+        mapIdToNode = series.nodeMap;
+        nodeRoot = mapIdToNode[rootId];
+        idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
+        nodeTop = mapIdToNode[idTop];
+        var _a = getLevelFromAndTo(nodeRoot), from = _a.from, to = _a.to;
+        mapOptionsToLevel = getLevelOptions({
+            from: from,
+            levels: series.options.levels,
+            to: to,
+            defaults: {
+                colorByPoint: options.colorByPoint,
+                dataLabels: options.dataLabels,
+                levelIsConstant: options.levelIsConstant,
+                levelSize: options.levelSize,
+                slicedOffset: options.slicedOffset
+            }
+        });
+        // NOTE consider doing calculateLevelSizes in a callback to
+        // getLevelOptions
+        mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
+            diffRadius: diffRadius,
+            from: from,
+            to: to
+        });
+        // TODO Try to combine setTreeValues & setColorRecursive to avoid
+        //  unnecessary looping.
+        setTreeValues(tree, {
+            before: cbSetTreeValuesBefore,
+            idRoot: rootId,
+            levelIsConstant: options.levelIsConstant,
+            mapOptionsToLevel: mapOptionsToLevel,
+            mapIdToNode: mapIdToNode,
+            points: series.points,
+            series: series
+        });
+        values = mapIdToNode[''].shapeArgs = {
+            end: radians.end,
+            r: innerRadius,
+            start: radians.start,
+            val: nodeRoot.val,
+            x: positions[0],
+            y: positions[1]
+        };
+        this.setShapeArgs(nodeTop, values, mapOptionsToLevel);
+        // Set mapOptionsToLevel on series for use in drawPoints.
+        series.mapOptionsToLevel = mapOptionsToLevel;
+        // #10669 - verify if all nodes have unique ids
+        series.data.forEach(function (child) {
+            if (nodeIds[child.id]) {
+                error(31, false, series.chart);
+            }
+            // map
+            nodeIds[child.id] = true;
+        });
+        // reset object
+        nodeIds = {};
+    };
     /**
      * A Sunburst displays hierarchical data, where a level in the hierarchy is
      * represented by a circle. The center represents the root node of the tree.
@@ -656,242 +904,7 @@ var SunburstSeries = /** @class */ (function (_super) {
 }(TreemapSeries));
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop,
-    drawPoints: function drawPoints() {
-        var series = this, mapOptionsToLevel = series.mapOptionsToLevel, shapeRoot = series.shapeRoot, group = series.group, hasRendered = series.hasRendered, idRoot = series.rootNode, idPreviousRoot = series.idPreviousRoot, nodeMap = series.nodeMap, nodePreviousRoot = nodeMap[idPreviousRoot], shapePreviousRoot = nodePreviousRoot && nodePreviousRoot.shapeArgs, points = series.points, radians = series.startAndEndRadians, chart = series.chart, optionsChart = chart && chart.options && chart.options.chart || {}, animation = (isBoolean(optionsChart.animation) ?
-            optionsChart.animation :
-            true), positions = series.center, center = {
-            x: positions[0],
-            y: positions[1]
-        }, innerR = positions[3] / 2, renderer = series.chart.renderer, animateLabels, animateLabelsCalled = false, addedHack = false, hackDataLabelAnimation = !!(animation &&
-            hasRendered &&
-            idRoot !== idPreviousRoot &&
-            series.dataLabelsGroup);
-        if (hackDataLabelAnimation) {
-            series.dataLabelsGroup.attr({ opacity: 0 });
-            animateLabels = function () {
-                var s = series;
-                animateLabelsCalled = true;
-                if (s.dataLabelsGroup) {
-                    s.dataLabelsGroup.animate({
-                        opacity: 1,
-                        visibility: 'visible'
-                    });
-                }
-            };
-        }
-        points.forEach(function (point) {
-            var node = point.node, level = mapOptionsToLevel[node.level], shapeExisting = point.shapeExisting || {}, shape = node.shapeArgs || {}, animationInfo, onComplete, visible = !!(node.visible && node.shapeArgs);
-            if (hasRendered && animation) {
-                animationInfo = getAnimation(shape, {
-                    center: center,
-                    point: point,
-                    radians: radians,
-                    innerR: innerR,
-                    idRoot: idRoot,
-                    idPreviousRoot: idPreviousRoot,
-                    shapeExisting: shapeExisting,
-                    shapeRoot: shapeRoot,
-                    shapePreviousRoot: shapePreviousRoot,
-                    visible: visible
-                });
-            }
-            else {
-                // When animation is disabled, attr is called from animation.
-                animationInfo = {
-                    to: shape,
-                    from: {}
-                };
-            }
-            extend(point, {
-                shapeExisting: shape,
-                tooltipPos: [shape.plotX, shape.plotY],
-                drillId: getDrillId(point, idRoot, nodeMap),
-                name: '' + (point.name || point.id || point.index),
-                plotX: shape.plotX,
-                plotY: shape.plotY,
-                value: node.val,
-                isNull: !visible // used for dataLabels & point.draw
-            });
-            point.dlOptions = getDlOptions({
-                point: point,
-                level: level,
-                optionsPoint: point.options,
-                shapeArgs: shape
-            });
-            if (!addedHack && visible) {
-                addedHack = true;
-                onComplete = animateLabels;
-            }
-            point.draw({
-                animatableAttribs: animationInfo.to,
-                attribs: extend(animationInfo.from, (!chart.styledMode && series.pointAttribs(point, (point.selected && 'select')))),
-                onComplete: onComplete,
-                group: group,
-                renderer: renderer,
-                shapeType: 'arc',
-                shapeArgs: shape
-            });
-        });
-        // Draw data labels after points
-        // TODO draw labels one by one to avoid addtional looping
-        if (hackDataLabelAnimation && addedHack) {
-            series.hasRendered = false;
-            series.options.dataLabels.defer = true;
-            LineSeries.prototype.drawDataLabels.call(series);
-            series.hasRendered = true;
-            // If animateLabels is called before labels were hidden, then call
-            // it again.
-            if (animateLabelsCalled) {
-                animateLabels();
-            }
-        }
-        else {
-            LineSeries.prototype.drawDataLabels.call(series);
-        }
-    },
     pointAttribs: ColumnSeries.prototype.pointAttribs,
-    // The layout algorithm for the levels
-    layoutAlgorithm: layoutAlgorithm,
-    // Set the shape arguments on the nodes. Recursive from root down.
-    setShapeArgs: function (parent, parentValues, mapOptionsToLevel) {
-        var childrenValues = [], level = parent.level + 1, options = mapOptionsToLevel[level], 
-        // Collect all children which should be included
-        children = parent.children.filter(function (n) {
-            return n.visible;
-        }), twoPi = 6.28; // Two times Pi.
-        childrenValues = this.layoutAlgorithm(parentValues, children, options);
-        children.forEach(function (child, index) {
-            var values = childrenValues[index], angle = values.start + ((values.end - values.start) / 2), radius = values.innerR + ((values.r - values.innerR) / 2), radians = (values.end - values.start), isCircle = (values.innerR === 0 && radians > twoPi), center = (isCircle ?
-                { x: values.x, y: values.y } :
-                getEndPoint(values.x, values.y, angle, radius)), val = (child.val ?
-                (child.childrenTotal > child.val ?
-                    child.childrenTotal :
-                    child.val) :
-                child.childrenTotal);
-            // The inner arc length is a convenience for data label filters.
-            if (this.points[child.i]) {
-                this.points[child.i].innerArcLength = radians * values.innerR;
-                this.points[child.i].outerArcLength = radians * values.r;
-            }
-            child.shapeArgs = merge(values, {
-                plotX: center.x,
-                plotY: center.y + 4 * Math.abs(Math.cos(angle))
-            });
-            child.values = merge(values, {
-                val: val
-            });
-            // If node has children, then call method recursively
-            if (child.children.length) {
-                this.setShapeArgs(child, child.values, mapOptionsToLevel);
-            }
-        }, this);
-    },
-    translate: function translate() {
-        var series = this, options = series.options, positions = series.center = getCenter.call(series), radians = series.startAndEndRadians = getStartAndEndRadians(options.startAngle, options.endAngle), innerRadius = positions[3] / 2, outerRadius = positions[2] / 2, diffRadius = outerRadius - innerRadius, 
-        // NOTE: updateRootId modifies series.
-        rootId = updateRootId(series), mapIdToNode = series.nodeMap, mapOptionsToLevel, idTop, nodeRoot = mapIdToNode && mapIdToNode[rootId], nodeTop, tree, values, nodeIds = {};
-        series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
-        // Call prototype function
-        LineSeries.prototype.translate.call(series);
-        // @todo Only if series.isDirtyData is true
-        tree = series.tree = series.getTree();
-        // Render traverseUpButton, after series.nodeMap i calculated.
-        series.renderTraverseUpButton(rootId);
-        mapIdToNode = series.nodeMap;
-        nodeRoot = mapIdToNode[rootId];
-        idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
-        nodeTop = mapIdToNode[idTop];
-        var _a = getLevelFromAndTo(nodeRoot), from = _a.from, to = _a.to;
-        mapOptionsToLevel = getLevelOptions({
-            from: from,
-            levels: series.options.levels,
-            to: to,
-            defaults: {
-                colorByPoint: options.colorByPoint,
-                dataLabels: options.dataLabels,
-                levelIsConstant: options.levelIsConstant,
-                levelSize: options.levelSize,
-                slicedOffset: options.slicedOffset
-            }
-        });
-        // NOTE consider doing calculateLevelSizes in a callback to
-        // getLevelOptions
-        mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
-            diffRadius: diffRadius,
-            from: from,
-            to: to
-        });
-        // TODO Try to combine setTreeValues & setColorRecursive to avoid
-        //  unnecessary looping.
-        setTreeValues(tree, {
-            before: cbSetTreeValuesBefore,
-            idRoot: rootId,
-            levelIsConstant: options.levelIsConstant,
-            mapOptionsToLevel: mapOptionsToLevel,
-            mapIdToNode: mapIdToNode,
-            points: series.points,
-            series: series
-        });
-        values = mapIdToNode[''].shapeArgs = {
-            end: radians.end,
-            r: innerRadius,
-            start: radians.start,
-            val: nodeRoot.val,
-            x: positions[0],
-            y: positions[1]
-        };
-        this.setShapeArgs(nodeTop, values, mapOptionsToLevel);
-        // Set mapOptionsToLevel on series for use in drawPoints.
-        series.mapOptionsToLevel = mapOptionsToLevel;
-        // #10669 - verify if all nodes have unique ids
-        series.data.forEach(function (child) {
-            if (nodeIds[child.id]) {
-                error(31, false, series.chart);
-            }
-            // map
-            nodeIds[child.id] = true;
-        });
-        // reset object
-        nodeIds = {};
-    },
-    alignDataLabel: function (point, dataLabel, labelOptions) {
-        if (labelOptions.textPath && labelOptions.textPath.enabled) {
-            return;
-        }
-        return TreemapSeries.prototype.alignDataLabel.apply(this, arguments);
-    },
-    // Animate the slices in. Similar to the animation of polar charts.
-    animate: function (init) {
-        var chart = this.chart, center = [
-            chart.plotWidth / 2,
-            chart.plotHeight / 2
-        ], plotLeft = chart.plotLeft, plotTop = chart.plotTop, attribs, group = this.group;
-        // Initialize the animation
-        if (init) {
-            // Scale down the group and place it in the center
-            attribs = {
-                translateX: center[0] + plotLeft,
-                translateY: center[1] + plotTop,
-                scaleX: 0.001,
-                scaleY: 0.001,
-                rotation: 10,
-                opacity: 0.01
-            };
-            group.attr(attribs);
-            // Run the animation
-        }
-        else {
-            attribs = {
-                translateX: plotLeft,
-                translateY: plotTop,
-                scaleX: 1,
-                scaleY: 1,
-                rotation: 0,
-                opacity: 1
-            };
-            group.animate(attribs, this.options.animation);
-        }
-    },
     utils: {
         calculateLevelSizes: calculateLevelSizes,
         getLevelFromAndTo: getLevelFromAndTo,
@@ -917,23 +930,15 @@ var SunburstPoint = /** @class */ (function (_super) {
         _this.series = void 0;
         _this.shapeExisting = void 0;
         return _this;
+        /* eslint-enable valid-jsdoc */
     }
-    return SunburstPoint;
-}(TreemapSeries.prototype.pointClass));
-/* *
- *
- *  Prototype Properties
- *
- * */
-extend(SunburstPoint.prototype, {
-    draw: drawPoint,
-    shouldDraw: function shouldDraw() {
-        return !this.isNull;
-    },
-    isValid: function isValid() {
-        return true;
-    },
-    getDataLabelPath: function (label) {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    SunburstPoint.prototype.getDataLabelPath = function (label) {
         var renderer = this.series.chart.renderer, shapeArgs = this.shapeExisting, start = shapeArgs.start, end = shapeArgs.end, angle = start + (end - start) / 2, // arc middle value
         upperHalf = angle < 0 &&
             angle > -Math.PI ||
@@ -971,8 +976,15 @@ extend(SunburstPoint.prototype, {
             r: (r + shapeArgs.innerR) / 2
         });
         return this.dataLabelPath;
-    }
-});
+    };
+    SunburstPoint.prototype.isValid = function () {
+        return true;
+    };
+    SunburstPoint.prototype.shouldDraw = function () {
+        return !this.isNull;
+    };
+    return SunburstPoint;
+}(TreemapSeries.prototype.pointClass));
 SunburstSeries.prototype.pointClass = SunburstPoint;
 BaseSeries.registerSeriesType('sunburst', SunburstSeries);
 /* *
