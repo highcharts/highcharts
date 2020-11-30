@@ -1,5 +1,4 @@
 QUnit.test('No data module with boost', function (assert) {
-
     var data = [],
         n = 10,
         i;
@@ -9,7 +8,6 @@ QUnit.test('No data module with boost', function (assert) {
     }
 
     var chart = Highcharts.chart('container', {
-
         chart: {
             height: '400'
         },
@@ -25,26 +23,23 @@ QUnit.test('No data module with boost', function (assert) {
             min: 0,
             max: 10
         },
-        series: [{
-            type: 'scatter',
-            data: data,
-            marker: {
-                radius: 2
-            },
-            boostThreshold: 1
-        }]
+        series: [
+            {
+                type: 'scatter',
+                data: data,
+                marker: {
+                    radius: 2
+                },
+                boostThreshold: 1
+            }
+        ]
     });
 
-    assert.strictEqual(
-        chart.isBoosting,
-        true,
-        'The chart should be boosting'
-    );
+    assert.strictEqual(chart.isBoosting, true, 'The chart should be boosting');
 
     assert.strictEqual(
         chart.noDataLabel,
         undefined,
         'No-data should be invisible (#9758)'
     );
-
 });

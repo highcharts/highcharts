@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/WilliamsRIndicator.js';
+import '../../Stock/Indicators/WilliamsR/WilliamsRIndicator.js';

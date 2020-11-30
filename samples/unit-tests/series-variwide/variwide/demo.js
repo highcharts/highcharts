@@ -1,7 +1,5 @@
 QUnit.test('variwide', function (assert) {
-
     var chart = Highcharts.chart('container', {
-
         chart: {
             type: 'variwide'
         },
@@ -10,14 +8,9 @@ QUnit.test('variwide', function (assert) {
             type: 'category',
             crosshair: true
         }
-
     });
 
-    assert.strictEqual(
-        chart.series.length,
-        0,
-        'No series'
-    );
+    assert.strictEqual(chart.series.length, 0, 'No series');
 
     chart.addSeries({
         data: [
@@ -26,7 +19,6 @@ QUnit.test('variwide', function (assert) {
             [3, 3]
         ]
     });
-
 
     assert.strictEqual(
         chart.series[0].points.length,
@@ -39,18 +31,10 @@ QUnit.test('variwide', function (assert) {
         z: 50
     });
 
-    assert.deepEqual(
-        chart.series[0].points.length,
-        4,
-        'addPoint'
-    );
+    assert.deepEqual(chart.series[0].points.length, 4, 'addPoint');
 
     chart.series[0].removePoint(0);
-    assert.deepEqual(
-        chart.series[0].points.length,
-        3,
-        'removePoint'
-    );
+    assert.deepEqual(chart.series[0].points.length, 3, 'removePoint');
 
     // Show crosshair
     chart.series[0].points[1].onMouseOver();
@@ -64,26 +48,32 @@ QUnit.test('variwide', function (assert) {
     // Disable crosshair
     chart.xAxis[0].update({ crosshair: false });
     chart.series[0].points[0].onMouseOver();
-    assert.ok(true, "No errors with disabled crosshair (#8173)");
+    assert.ok(true, 'No errors with disabled crosshair (#8173)');
 
+    chart.update(
+        {
+            xAxis: {
+                minRange: 1
+            },
+            series: [
+                {
+                    type: 'variwide',
+                    borderWidth: 0,
+                    cropThreshold: 1,
 
-    chart.update({
-        xAxis: {
-            minRange: 1
-        },
-        series: [{
-            type: 'variwide',
-            borderWidth: 0,
-            cropThreshold: 1,
-
-            data: [
-                [0, 1, 1],
-                [1, 2, 1],
-                [2, 3, 1],
-                [3, 2, 1]
+                    data: [
+                        [0, 1, 1],
+                        [1, 2, 1],
+                        [2, 3, 1],
+                        [3, 2, 1]
+                    ]
+                }
             ]
-        }]
-    }, true, true, false);
+        },
+        true,
+        true,
+        false
+    );
 
     chart.xAxis[0].setExtremes(0, 1, true, false);
     chart.reflow();
@@ -106,27 +96,31 @@ QUnit.test('variwide', function (assert) {
         }
     });
 
-    assert.ok(
-        true,
-        'No errors with disabled xAxis labels (#11476)'
-    );
+    assert.ok(true, 'No errors with disabled xAxis labels (#11476)');
 
     chart.xAxis[0].setExtremes(0, 10000, true, false);
 
-    chart.update({
-        chart: {
-            inverted: false
+    chart.update(
+        {
+            chart: {
+                inverted: false
+            },
+            series: [
+                {
+                    data: [
+                        [0, 2, 1],
+                        [1, 1, 400]
+                    ]
+                }
+            ],
+            xAxis: {
+                type: 'linear'
+            }
         },
-        series: [{
-            data: [
-                [0, 2, 1],
-                [1, 1, 400]
-            ]
-        }],
-        xAxis: {
-            type: 'linear'
-        }
-    }, true, true, false);
+        true,
+        true,
+        false
+    );
 
     assert.strictEqual(
         chart.series[0].points[0].graphic.getBBox().width >= 1,
@@ -137,7 +131,6 @@ QUnit.test('variwide', function (assert) {
 
 QUnit.test('variwide null points', function (assert) {
     var chart = Highcharts.chart('container', {
-
         chart: {
             type: 'variwide'
         },
@@ -146,24 +139,26 @@ QUnit.test('variwide null points', function (assert) {
             type: 'category'
         },
 
-        series: [{
-            data: [
-                [1, 1],
-                [2, null],
-                [null, 3],
-                [null, null],
-                [3, 3]
-            ]
-        }]
-
+        series: [
+            {
+                data: [
+                    [1, 1],
+                    [2, null],
+                    [null, 3],
+                    [null, null],
+                    [3, 3]
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
-        chart.series[0].points.map(function (p) {
-            return p.isNull ? 'null' : 'valid';
-        }).join(','),
+        chart.series[0].points
+            .map(function (p) {
+                return p.isNull ? 'null' : 'valid';
+            })
+            .join(','),
         'valid,null,null,null,valid',
         'Nulls detected'
     );
-
 });

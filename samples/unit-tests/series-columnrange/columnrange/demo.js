@@ -8,10 +8,12 @@ QUnit.test('#14440: Missing adjustForMissingColumns', assert => {
                 centerInCategory: true
             }
         },
-        series: [{
-            type: 'columnrange',
-            data: [{ high: 2, low: 1, x: 0 }]
-        }]
+        series: [
+            {
+                type: 'columnrange',
+                data: [{ high: 2, low: 1, x: 0 }]
+            }
+        ]
     });
 
     assert.ok(true, 'Enabling centerInCategory should not throw');

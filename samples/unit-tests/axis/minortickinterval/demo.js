@@ -1,5 +1,4 @@
 QUnit.test('Legacy - null', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -10,9 +9,11 @@ QUnit.test('Legacy - null', function (assert) {
         yAxis: {
             //minorTickInterval: null // default
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -28,7 +29,6 @@ QUnit.test('Legacy - null', function (assert) {
 });
 
 QUnit.test('Legacy - auto, linear', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -39,9 +39,11 @@ QUnit.test('Legacy - auto, linear', function (assert) {
         yAxis: {
             minorTickInterval: 'auto'
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
@@ -51,7 +53,6 @@ QUnit.test('Legacy - auto, linear', function (assert) {
 });
 
 QUnit.test('Legacy - number, linear', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -62,9 +63,11 @@ QUnit.test('Legacy - number, linear', function (assert) {
         yAxis: {
             minorTickInterval: 0.5
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
@@ -73,9 +76,7 @@ QUnit.test('Legacy - number, linear', function (assert) {
     );
 });
 
-
 QUnit.test('Legacy - auto, log', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -89,9 +90,11 @@ QUnit.test('Legacy - auto, log', function (assert) {
             minorTickInterval: 'auto',
             type: 'logarithmic'
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
@@ -101,7 +104,6 @@ QUnit.test('Legacy - auto, log', function (assert) {
 });
 
 QUnit.test('Legacy - auto, deep log', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -113,9 +115,11 @@ QUnit.test('Legacy - auto, deep log', function (assert) {
             minorTickInterval: 'auto',
             type: 'logarithmic'
         },
-        series: [{
-            data: [1.001, 1.002, 1.003, 1.004]
-        }]
+        series: [
+            {
+                data: [1.001, 1.002, 1.003, 1.004]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
@@ -125,7 +129,6 @@ QUnit.test('Legacy - auto, deep log', function (assert) {
 });
 
 QUnit.test('Legacy - number, log', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -137,9 +140,11 @@ QUnit.test('Legacy - number, log', function (assert) {
             minorTickInterval: 0.5,
             type: 'logarithmic'
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
@@ -150,7 +155,6 @@ QUnit.test('Legacy - number, log', function (assert) {
 
 // /////////////////////////////////////////////////////////////////////////////
 QUnit.test('Typed - null', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -161,9 +165,11 @@ QUnit.test('Typed - null', function (assert) {
         yAxis: {
             //minorTickInterval: null // default
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -179,7 +185,6 @@ QUnit.test('Typed - null', function (assert) {
 });
 
 QUnit.test('Typed - minorTicks false', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -191,9 +196,11 @@ QUnit.test('Typed - minorTicks false', function (assert) {
             minorTickInterval: 0.5,
             minorTicks: false
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -204,7 +211,6 @@ QUnit.test('Typed - minorTicks false', function (assert) {
 });
 
 QUnit.test('Typed - auto, linear', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -215,9 +221,11 @@ QUnit.test('Typed - auto, linear', function (assert) {
         yAxis: {
             minorTicks: true
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
@@ -227,7 +235,6 @@ QUnit.test('Typed - auto, linear', function (assert) {
 });
 
 QUnit.test('Typed - number, linear', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -239,9 +246,11 @@ QUnit.test('Typed - number, linear', function (assert) {
             minorTickInterval: 0.5,
             minorTicks: true
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
@@ -250,9 +259,7 @@ QUnit.test('Typed - number, linear', function (assert) {
     );
 });
 
-
 QUnit.test('Typed - auto, log', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -266,9 +273,11 @@ QUnit.test('Typed - auto, log', function (assert) {
             minorTicks: true,
             type: 'logarithmic'
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
@@ -277,9 +286,7 @@ QUnit.test('Typed - auto, log', function (assert) {
     );
 });
 
-
 QUnit.test('Typed - auto, deep log', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -291,9 +298,11 @@ QUnit.test('Typed - auto, deep log', function (assert) {
             minorTicks: true,
             type: 'logarithmic'
         },
-        series: [{
-            data: [1.001, 1.002, 1.003, 1.004]
-        }]
+        series: [
+            {
+                data: [1.001, 1.002, 1.003, 1.004]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,
@@ -303,7 +312,6 @@ QUnit.test('Typed - auto, deep log', function (assert) {
 });
 
 QUnit.test('Typed - number, log', function (assert) {
-
     var chart;
 
     chart = Highcharts.chart('container', {
@@ -316,9 +324,11 @@ QUnit.test('Typed - number, log', function (assert) {
             minorTicks: true,
             type: 'logarithmic'
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
     assert.strictEqual(
         Object.keys(chart.yAxis[0].minorTicks).length,

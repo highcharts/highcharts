@@ -240,7 +240,7 @@ class AreaRangeSeries extends AreaSeries {
      * */
     /* eslint-disable valid-jsdoc */
 
-    public toYData(point: AreaRangePoint): [number, number] {
+    public toYData(point: AreaRangePoint): Array<number> {
         return [point.low, point.high];
     }
 

@@ -38,30 +38,57 @@ QUnit.test('Chart destroy', function (assert) {
 */
 
 QUnit.test('Destroy in own callback', function (assert) {
-
     var done = assert.async();
 
-    Highcharts.chart('container', {
-        xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    Highcharts.chart(
+        'container',
+        {
+            xAxis: {
+                categories: [
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec'
+                ]
+            },
+            series: [
+                {
+                    data: [
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ],
+                    type: 'column'
+                }
+            ]
         },
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-            type: 'column'
-        }]
+        function () {
+            assert.strictEqual(
+                typeof this.series,
+                'object',
+                'Properties available'
+            );
 
-    }, function () {
+            this.destroy();
 
-        assert.strictEqual(
-            typeof this.series,
-            'object',
-            'Properties available'
-        );
-
-        this.destroy();
-
-        /*assert.strictEqual(
+            /*assert.strictEqual(
             this.series,
             undefined,
             'Properties deleted'
@@ -73,43 +100,57 @@ QUnit.test('Destroy in own callback', function (assert) {
             'Container emptied'
         );*/
 
-        done();
-
-    });
-
+            done();
+        }
+    );
 });
 
 // Highcharts 4.0.4, Issue #3600: No-data-to-display module broken with chart creation in callback
 QUnit.test('Destroy in own callback and recreate (#3600)', function (assert) {
-
     var newChart;
 
-    Highcharts.chart('container', {
-        chart: {
-            test: false
+    Highcharts.chart(
+        'container',
+        {
+            chart: {
+                test: false
+            },
+            series: [
+                {
+                    animation: false,
+                    data: [
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ]
+                }
+            ]
         },
-        series: [{
-            animation: false,
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
-    }, function () {
+        function () {
+            var opts = this.options;
+            delete opts.chart.test; // run as normal
 
-        var opts = this.options;
-        delete opts.chart.test; // run as normal
+            this.destroy();
 
-        this.destroy();
-
-        newChart = Highcharts.chart('container', opts);
-        newChart.setTitle({
-            text: 'New chart title'
-        });
-
-    });
+            newChart = Highcharts.chart('container', opts);
+            newChart.setTitle({
+                text: 'New chart title'
+            });
+        }
+    );
 
     assert.equal(
         newChart.options.title.text,
         'New chart title',
         'New chart generated'
     );
-
 });

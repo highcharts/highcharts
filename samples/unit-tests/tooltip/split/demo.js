@@ -1,10 +1,13 @@
 QUnit.test('tooltip.destroy #5855', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                data: [1, 2, 3]
-            }, {
-                data: [3, 2, 1]
-            }],
+            series: [
+                {
+                    data: [1, 2, 3]
+                },
+                {
+                    data: [3, 2, 1]
+                }
+            ],
             tooltip: {
                 split: true
             }
@@ -15,50 +18,27 @@ QUnit.test('tooltip.destroy #5855', function (assert) {
         p2 = series2.points[0],
         tooltip = chart.tooltip;
     tooltip.refresh([p1, p2]);
-    assert.strictEqual(
-        typeof series1.tt,
-        'object',
-        'series[0].tt is exists'
-    );
-    assert.strictEqual(
-        typeof series2.tt,
-        'object',
-        'series[1].tt is exists'
-    );
-    assert.strictEqual(
-        typeof tooltip.tt,
-        'object',
-        'tooltip.tt is exists'
-    );
-
+    assert.strictEqual(typeof series1.tt, 'object', 'series[0].tt is exists');
+    assert.strictEqual(typeof series2.tt, 'object', 'series[1].tt is exists');
+    assert.strictEqual(typeof tooltip.tt, 'object', 'tooltip.tt is exists');
 
     tooltip.destroy();
 
-    assert.strictEqual(
-        series1.tt,
-        undefined,
-        'series[0].tt is destroyed'
-    );
-    assert.strictEqual(
-        series2.tt,
-        undefined,
-        'series[1].tt is destroyed'
-    );
-    assert.strictEqual(
-        tooltip.tt,
-        undefined,
-        'tooltip.tt is destroyed'
-    );
+    assert.strictEqual(series1.tt, undefined, 'series[0].tt is destroyed');
+    assert.strictEqual(series2.tt, undefined, 'series[1].tt is destroyed');
+    assert.strictEqual(tooltip.tt, undefined, 'tooltip.tt is destroyed');
 });
 
 QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                data: [1, 2, 3]
-            }, {
-                data: [3, 2, 1]
-
-            }],
+            series: [
+                {
+                    data: [1, 2, 3]
+                },
+                {
+                    data: [3, 2, 1]
+                }
+            ],
             tooltip: {
                 split: true
             }
@@ -74,18 +54,14 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
     el = chart.tooltip.tt.text.element;
 
     value = window.getComputedStyle(el).getPropertyValue('color');
-    assert.strictEqual(
-        value,
-        'rgb(51, 51, 51)',
-        'tooltip default color.'
-    );
+    assert.strictEqual(value, 'rgb(51, 51, 51)', 'tooltip default color.');
 
     el = chart.tooltip.tt.element;
     value = window.getComputedStyle(el);
 
-
     assert.notEqual(
-        document.getElementsByClassName('highcharts-label-box')[4]
+        document
+            .getElementsByClassName('highcharts-label-box')[4]
             .getAttribute('class')
             .indexOf('highcharts-shadow'),
         -1,
@@ -107,11 +83,7 @@ QUnit.test('Split tooltip and tooltip.style. #5838', function (assert) {
 
     el = chart.tooltip.tt.text.element;
     value = window.getComputedStyle(el).getPropertyValue('color');
-    assert.strictEqual(
-        value,
-        'rgb(255, 0, 0)',
-        'tooltip color from style.'
-    );
+    assert.strictEqual(value, 'rgb(255, 0, 0)', 'tooltip color from style.');
 });
 
 QUnit.test('Split tooltip returning false. #6115', function (assert) {
@@ -119,12 +91,14 @@ QUnit.test('Split tooltip returning false. #6115', function (assert) {
         chart: {
             width: 600
         },
-        series: [{
-            data: [1, 2, 3]
-        }, {
-            data: [3, 2, 1]
-
-        }],
+        series: [
+            {
+                data: [1, 2, 3]
+            },
+            {
+                data: [3, 2, 1]
+            }
+        ],
         tooltip: {
             split: true,
             formatter: function () {
@@ -155,14 +129,17 @@ QUnit.test('Split tooltip with empty formats (#8105)', function (assert) {
             split: true,
             headerFormat: ''
         },
-        series: [{
-            data: [1, 2, 3]
-        }, {
-            data: [2, 1, 2],
-            tooltip: {
-                pointFormat: ''
+        series: [
+            {
+                data: [1, 2, 3]
+            },
+            {
+                data: [2, 1, 2],
+                tooltip: {
+                    pointFormat: ''
+                }
             }
-        }]
+        ]
     });
 
     chart.tooltip.refresh([
@@ -199,9 +176,11 @@ QUnit.test('Split tooltip with useHTML (#7238)', function (assert) {
         chart: {
             width: 600
         },
-        series: [{
-            data: [1, 2, 3]
-        }],
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ],
         tooltip: {
             split: true,
             useHTML: true
@@ -221,25 +200,28 @@ QUnit.test(
     'Split tooltip on flags, having noSharedTooltip flag',
     function (assert) {
         var chart = Highcharts.chart('container', {
-
             tooltip: {
                 split: true
             },
 
-            series: [{
-                data: [1, 3, 2, 4],
-                id: 'dataseries'
-            }, {
-                type: 'flags',
-                data: [{
-                    x: 2,
-                    title: 'A',
-                    text: 'Flag tooltip'
-                }],
-                onSeries: 'dataseries'
-            }]
+            series: [
+                {
+                    data: [1, 3, 2, 4],
+                    id: 'dataseries'
+                },
+                {
+                    type: 'flags',
+                    data: [
+                        {
+                            x: 2,
+                            title: 'A',
+                            text: 'Flag tooltip'
+                        }
+                    ],
+                    onSeries: 'dataseries'
+                }
+            ]
         });
-
 
         chart.series[1].points[0].onMouseOver();
 
@@ -251,42 +233,49 @@ QUnit.test(
     }
 );
 
-QUnit.test('Split tooltip - points with different colors in one series (#10571)', function (assert) {
-    var chart = Highcharts.chart('container', {
-        series: [{
-            data: [{ y: 50, color: '#17541c' }, { y: 100, color: '#ea33d2' }]
-        }],
-        tooltip: {
-            split: true
-        }
-    });
-    const firstPointColor = chart.series[0].points[0].color,
-        secondPointColor = chart.series[0].points[1].color;
+QUnit.test(
+    'Split tooltip - points with different colors in one series (#10571)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [
+                {
+                    data: [
+                        { y: 50, color: '#17541c' },
+                        { y: 100, color: '#ea33d2' }
+                    ]
+                }
+            ],
+            tooltip: {
+                split: true
+            }
+        });
+        const firstPointColor = chart.series[0].points[0].color,
+            secondPointColor = chart.series[0].points[1].color;
 
-    chart.series[0].points[0].onMouseOver();
+        chart.series[0].points[0].onMouseOver();
 
-    assert.strictEqual(
-        chart.series[0].tt.box.stroke,
-        firstPointColor,
-        'Label stroke should be the same as the first point color.'
-    );
+        assert.strictEqual(
+            chart.series[0].tt.box.stroke,
+            firstPointColor,
+            'Label stroke should be the same as the first point color.'
+        );
 
-    chart.series[0].points[1].onMouseOver();
+        chart.series[0].points[1].onMouseOver();
 
-    assert.strictEqual(
-        chart.series[0].tt.box.stroke,
-        secondPointColor,
-        'Label stroke should be the same as the second point color.'
-    );
-
-});
+        assert.strictEqual(
+            chart.series[0].tt.box.stroke,
+            secondPointColor,
+            'Label stroke should be the same as the second point color.'
+        );
+    }
+);
 
 QUnit.test('positioning', assert => {
     const axisHeight = 150;
     const data = [85, 82, 84, 87, 92];
     const {
         series: [series1, series2],
-        yAxis: [/* yAxis1 */, yAxis2]
+        yAxis: [, /* yAxis1 */ yAxis2]
     } = Highcharts.stockChart('container', {
         chart: {
             height: axisHeight * 3
@@ -294,16 +283,19 @@ QUnit.test('positioning', assert => {
         tooltip: {
             split: true
         },
-        yAxis: [{
-            height: axisHeight,
-            top: 0,
-            offset: 0
-        }, {
-            opposite: false,
-            height: axisHeight,
-            top: axisHeight,
-            offset: 0
-        }],
+        yAxis: [
+            {
+                height: axisHeight,
+                top: 0,
+                offset: 0
+            },
+            {
+                opposite: false,
+                height: axisHeight,
+                top: axisHeight,
+                offset: 0
+            }
+        ],
         rangeSelector: {
             enabled: false
         },
@@ -313,11 +305,13 @@ QUnit.test('positioning', assert => {
         scrollbar: {
             enabled: false
         },
-        series: [{ data: data, yAxis: 0 }, { data: data, yAxis: 1 }]
+        series: [
+            { data: data, yAxis: 0 },
+            { data: data, yAxis: 1 }
+        ]
     });
-    const isInsideAxis = ({ pos, len }, { anchorY }) => (
-        (pos <= anchorY) && (anchorY <= (pos + len))
-    );
+    const isInsideAxis = ({ pos, len }, { anchorY }) =>
+        pos <= anchorY && anchorY <= pos + len;
 
     // Set extremes to 85-90 for yAxis2.
     yAxis2.setExtremes(85, 90);
@@ -355,11 +349,14 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
                 min: 0,
                 max: 10
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6, 17, 8, 9]
-            }, {
-                data: [9, 8, 7, 6, 5, 4, 3, 2, 1]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6, 17, 8, 9]
+                },
+                {
+                    data: [9, 8, 7, 6, 5, 4, 3, 2, 1]
+                }
+            ]
         });
         let bBox;
 
@@ -372,7 +369,6 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
             'The tooltip should be inside the chart area'
         );
 
-
         chart.series[0].points[4].onMouseOver();
         bBox = chart.series[0].tt.element.getBoundingClientRect();
         assert.ok(
@@ -380,15 +376,12 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
             'The left-aligned tooltip should be inside the chart area'
         );
 
-
         chart.series[1].points[6].onMouseOver();
         assert.strictEqual(
             chart.series[0].tt,
             undefined,
             'When a point is outside the plot height, its tooltip should not show'
         );
-
-
     } finally {
         container.style.width = originalContainerWidth;
     }
@@ -409,11 +402,14 @@ QUnit.test('Split tooltip, vertical scrollable plot area', assert => {
             min: 0,
             max: 10
         },
-        series: [{
-            data: [1, 2, 3, 4, 5, 6, 17, 8, 9]
-        }, {
-            data: [9, 8, 7, 6, 5, 4, 3, 2, 1]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4, 5, 6, 17, 8, 9]
+            },
+            {
+                data: [9, 8, 7, 6, 5, 4, 3, 2, 1]
+            }
+        ]
     });
 
     // Open tooltip
@@ -437,28 +433,34 @@ QUnit.test('Split tooltip, hideDelay set to 0 (#12994)', assert => {
                 hideDelay: 0,
                 split: true
             },
-            series: [{
-                data: [1, 2]
-            }, {
-                data: [3, 4]
-            }]
+            series: [
+                {
+                    data: [1, 2]
+                },
+                {
+                    data: [3, 4]
+                }
+            ]
         }),
         controller = new TestController(chart),
         point = chart.series[0].points[0],
         endTest = assert.async();
 
-    controller.moveTo(point.plotX + chart.plotLeft, point.plotY + chart.plotTop);
+    controller.moveTo(
+        point.plotX + chart.plotLeft,
+        point.plotY + chart.plotTop
+    );
     controller.moveTo(0, 0);
 
     setTimeout(function () {
         chart.series[0].show();
         assert.strictEqual(
-            +document.getElementsByClassName('highcharts-tooltip')[0]
+            +document
+                .getElementsByClassName('highcharts-tooltip')[0]
                 .getAttribute('opacity'),
             0,
             'The tooltip remains hidden after series[0].show()'
         );
         endTest();
     }, 1000);
-
 });
