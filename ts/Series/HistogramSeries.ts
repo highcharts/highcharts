@@ -40,8 +40,6 @@ const {
     objectEach
 } = U;
 
-import './Column/ColumnSeries.js';
-
 /* *
  *
  *  Declarations
@@ -203,50 +201,32 @@ class HistogramSeries extends ColumnSeries {
     public points: Array<Highcharts.HistogramPoint> = void 0 as any;
 
     public userOptions: Highcharts.HistogramSeriesOptions = void 0 as any;
-}
 
-/* *
- *
- *  Prototype Properties
- *
- * */
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
-interface HistogramSeries {
-    addBaseSeriesEvents: Highcharts.DerivedSeriesMixin['addBaseSeriesEvents'];
-    addEvents: Highcharts.DerivedSeriesMixin['addEvents'];
-    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
-    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
-    init: Highcharts.DerivedSeriesMixin['init'];
-    initialised: Highcharts.DerivedSeries['initialised'];
-    pointClass: typeof Highcharts.HistogramPoint;
-    setBaseSeries: Highcharts.DerivedSeriesMixin['setBaseSeries'];
-    setDerivedData: Highcharts.DerivedSeriesMixin['setDerivedData'];
-    binsNumber(): number;
-    derivedData(
-        baseData: Array<number>,
-        binsNumber: number,
-        binWidth: number
-    ): Array<Highcharts.HistogramPointOptions>;
-}
-extend(HistogramSeries.prototype, merge(DerivedSeriesMixin, {
-    setDerivedData: function (this: HistogramSeries): void {
-        var yData = (this.baseSeries as any).yData;
+    /* eslint-disable valid-jsdoc */
 
-        if (!yData.length) {
-            return;
-        }
+    public binsNumber(): number {
+        var binsNumberOption = this.options.binsNumber;
+        var binsNumber = binsNumberFormulas[binsNumberOption as any] ||
+            // #7457
+            (typeof binsNumberOption === 'function' && binsNumberOption);
 
-        var data = this.derivedData(
-            yData,
-            this.binsNumber(),
-            this.options.binWidth as any
+        return Math.ceil(
+            (binsNumber && binsNumber(this.baseSeries)) ||
+            (
+                isNumber(binsNumberOption) ?
+                    binsNumberOption :
+                    binsNumberFormulas['square-root'](this.baseSeries)
+            )
         );
+    }
 
-        this.setData(data, false);
-    },
-
-    derivedData: function (
-        this: HistogramSeries,
+    public derivedData(
         baseData: Array<number>,
         binsNumber: number,
         binWidth: number
@@ -332,24 +312,52 @@ extend(HistogramSeries.prototype, merge(DerivedSeriesMixin, {
         data[data.length - 1].x2 = max;
 
         return data;
-    },
-
-    binsNumber: function (this: HistogramSeries): number {
-        var binsNumberOption = this.options.binsNumber;
-        var binsNumber = binsNumberFormulas[binsNumberOption as any] ||
-            // #7457
-            (typeof binsNumberOption === 'function' && binsNumberOption);
-
-        return Math.ceil(
-            (binsNumber && binsNumber(this.baseSeries)) ||
-            (
-                isNumber(binsNumberOption) ?
-                    binsNumberOption :
-                    binsNumberFormulas['square-root'](this.baseSeries)
-            )
-        );
     }
-}));
+
+    public setDerivedData(): void {
+        var yData = (this.baseSeries as any).yData;
+
+        if (!yData.length) {
+            return;
+        }
+
+        var data = this.derivedData(
+            yData,
+            this.binsNumber(),
+            this.options.binWidth as any
+        );
+
+        this.setData(data, false);
+    }
+
+    /* eslint-enable valid-jsdoc */
+
+}
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
+
+interface HistogramSeries {
+    addBaseSeriesEvents: Highcharts.DerivedSeriesMixin['addBaseSeriesEvents'];
+    addEvents: Highcharts.DerivedSeriesMixin['addEvents'];
+    eventRemovers: Highcharts.DerivedSeries['eventRemovers'];
+    hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'];
+    init: Highcharts.DerivedSeriesMixin['init'];
+    initialised: Highcharts.DerivedSeries['initialised'];
+    pointClass: typeof Highcharts.HistogramPoint;
+    setBaseSeries: Highcharts.DerivedSeriesMixin['setBaseSeries'];
+}
+extend(HistogramSeries.prototype, {
+    addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
+    addEvents: DerivedSeriesMixin.addEvents,
+    destroy: DerivedSeriesMixin.destroy,
+    hasDerivedData: DerivedSeriesMixin.hasDerivedData,
+    init: DerivedSeriesMixin.init,
+    setBaseSeries: DerivedSeriesMixin.setBaseSeries
+});
 
 /* *
  *
