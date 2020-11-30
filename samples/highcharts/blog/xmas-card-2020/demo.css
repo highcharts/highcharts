@@ -77,7 +77,7 @@ body{
 	opacity:0;
 }
 #sound{
-	background-image:url('https://raw.githubusercontent.com/highcharts/highcharts/{commit-hash}/samples/graphics/xmas-card-2020/snow.svg');
+	background-image:url('https://cdn.rawgit.com/highcharts/highcharts/{commit-hash}/samples/graphics/xmas-card-2020/snow.svg');
 	background-size: contain;
 	/*display: none;*/
 	/*border:1px solid #000;*/
