@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/Regression/RegressionIndicators.js';
+import '../../Stock/Indicators/LinearRegression/LinearRegression.js';
