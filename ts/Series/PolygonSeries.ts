@@ -100,24 +100,17 @@ class PolygonSeries extends ScatterSeries {
      * Properties
      *
      * */
+    public areaPath?: SVGPath;
     public data: Array<Highcharts.PolygonPoint> = void 0 as any;
     public options: Highcharts.PolygonSeriesOptions = void 0 as any;
     public points: Array<Highcharts.PolygonPoint> = void 0 as any;
 
-}
-
-interface PolygonSeries {
-    areaPath?: SVGPath;
-    pointClass: typeof Highcharts.PolygonPoint;
-    type: string;
-
-}
-extend(PolygonSeries.prototype, {
-    type: 'polygon',
-    getGraphPath: function (
-        this: PolygonSeries
-    ): SVGPath {
-
+    /* *
+     *
+     * Functions
+     *
+     * */
+    public getGraphPath(): SVGPath {
         var graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
             i = graphPath.length + 1;
 
@@ -129,12 +122,22 @@ extend(PolygonSeries.prototype, {
         }
         this.areaPath = graphPath;
         return graphPath;
-    },
-    drawGraph: function (this: PolygonSeries): void {
+    }
+    public drawGraph(): void {
         // Hack into the fill logic in area.drawGraph
         this.options.fillColor = this.color;
         seriesTypes.area.prototype.drawGraph.call(this);
-    },
+    }
+}
+
+interface PolygonSeries {
+    pointClass: typeof Highcharts.PolygonPoint;
+    type: string;
+}
+
+extend(PolygonSeries.prototype, {
+    type: 'polygon',
+    
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     drawTracker: LineSeries.prototype.drawTracker,
     setStackedPoints: noop as any // No stacking points on polygons (#5310)
