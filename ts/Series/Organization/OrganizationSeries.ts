@@ -18,36 +18,35 @@
  *
  * */
 
-import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type ColorString from '../Core/Color/ColorString';
-import type CSSObject from '../Core/Renderer/CSSObject';
-import type Point from '../Core/Series/Point';
+import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type ColorString from '../../Core/Color/ColorString';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type Point from '../../Core/Series/Point';
 import type {
     SankeyDataLabelFormatterContext,
     SankeyDataLabelOptions
-} from './Sankey/SankeyDataLabelOptions';
-import type SankeyPointOptions from './Sankey/SankeyPointOptions';
+} from '../Sankey/SankeyDataLabelOptions';
+import type SankeyPointOptions from '../Sankey/SankeyPointOptions';
 import type {
     SankeySeriesLevelOptions,
     SankeySeriesNodeOptions,
     SankeySeriesOptions
-} from './Sankey/SankeySeriesOptions';
-import type SankeySeriesType from './Sankey/SankeySeries';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+} from '../Sankey/SankeySeriesOptions';
+import type SankeySeriesType from '../Sankey/SankeySeries';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         sankey: SankeySeries
     }
 } = BaseSeries;
-import H from '../Core/Globals.js';
-import palette from '../Core/Color/Palette.js';
-import U from '../Core/Utilities.js';
+import palette from '../../Core/Color/Palette.js';
+import U from '../../Core/Utilities.js';
 const {
     css,
     extend,
@@ -756,7 +755,7 @@ extend(OrganizationSeries.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         organization: typeof Highcharts.OrganizationSeries;
     }
