@@ -17,19 +17,19 @@
  *
  * */
 
-import type ColumnPoint from './Column/ColumnPoint';
-import type ColumnPointOptions from './Column/ColumnPointOptions';
-import type ColumnSeriesOptions from './Column/ColumnSeriesOptions';
-import type LineSeries from './Line/LineSeries';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import BaseSeries from '../Core/Series/Series.js';
+import type ColumnPoint from '../Column/ColumnPoint';
+import type ColumnPointOptions from '../Column/ColumnPointOptions';
+import type ColumnSeriesOptions from '../Column/ColumnSeriesOptions';
+import type LineSeries from '../Line/LineSeries';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = BaseSeries;
-import DerivedSeriesMixin from '../Mixins/DerivedSeries.js';
-import U from '../Core/Utilities.js';
+import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import U from '../../Core/Utilities.js';
 const {
     arrayMax,
     arrayMin,
@@ -365,7 +365,7 @@ extend(HistogramSeries.prototype, {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         histogram: typeof HistogramSeries;
     }
