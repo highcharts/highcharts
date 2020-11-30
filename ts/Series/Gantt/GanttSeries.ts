@@ -18,17 +18,9 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
-import type ColorType from '../../Core/Color/ColorType';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type GanttSeriesOptions from './GanttSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type XRangePoint from '../../Series/XRange/XRangePoint';
-import type {
-    XRangePointOptions,
-    XRangePointPartialFillOptions
-} from '../../Series/XRange/XRangePointOptions';
-import type XRangeSeriesOptions from '../../Series/XRange/XRangeSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -36,71 +28,14 @@ const {
         xrange: XRangeSeries
     }
 } = BaseSeries;
+import GanttPoint from './GanttPoint.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
     isNumber,
     merge,
-    pick,
     splat
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        type GanttDependencyOption =
-            (
-                string|
-                GanttConnectorsOptions|
-                Array<GanttConnectorsOptions>|
-                Array<string>
-            );
-        class GanttPoint extends XRangePoint {
-            public collapsed?: boolean;
-            public end?: GanttPointOptions['end'];
-            public milestone?: GanttPointOptions['milestone'];
-            public options: GanttPointOptions;
-            public series: GanttSeries;
-            public start?: GanttPointOptions['start'];
-            public applyOptions(
-                options: GanttPointOptions,
-                x: number
-            ): GanttPoint;
-            public isValid: () => boolean;
-        }
-        interface GanttAnimationOptionsObject extends Partial<AnimationOptionsObject> {
-            reversed?: boolean;
-        }
-        interface GanttConnectorsOptions extends ConnectorsOptions {
-            animation?: (boolean|GanttAnimationOptionsObject);
-            startMarker?: GanttConnectorsStartMarkerOptions;
-        }
-        interface GanttConnectorsStartMarkerOptions
-            extends ConnectorsStartMarkerOptions {
-            fill: ColorType;
-        }
-        interface GanttPointOptions extends XRangePointOptions {
-            completed?: (number|XRangePointPartialFillOptions);
-            dependency?: (
-                string|
-                GanttConnectorsOptions|
-                Array<GanttConnectorsOptions>|
-                Array<string>
-            );
-            end?: number;
-            milestone?: boolean;
-            parent?: string;
-            start?: number;
-        }
-        interface GanttSeriesOptions extends XRangeSeriesOptions {
-            connectors?: GanttConnectorsOptions;
-            states?: SeriesStatesOptions<GanttSeries>;
-        }
-    }
-}
 
 import '../../Core/Axis/TreeGridAxis.js';
 import '../../Extensions/CurrentDateIndication.js';
@@ -131,7 +66,7 @@ class GanttSeries extends XRangeSeries {
      * @requires     highcharts-gantt
      * @optionparent plotOptions.gantt
      */
-    public static defaultOptions: Highcharts.GanttSeriesOptions = merge(XRangeSeries.defaultOptions, {
+    public static defaultOptions: GanttSeriesOptions = merge(XRangeSeries.defaultOptions, {
         // options - default options merged with parent
 
         grouping: false,
@@ -207,7 +142,7 @@ class GanttSeries extends XRangeSeries {
                 align: 'right' as 'right'
             }
         }
-    } as Highcharts.GanttSeriesOptions);
+    } as GanttSeriesOptions);
 
     /* *
      *
@@ -217,7 +152,7 @@ class GanttSeries extends XRangeSeries {
 
     public data: Array<GanttPoint> = void 0 as any;
 
-    public options: Highcharts.GanttSeriesOptions = void 0 as any;
+    public options: GanttSeriesOptions = void 0 as any;
 
     public points: Array<GanttPoint> = void 0 as any;
 
@@ -294,27 +229,6 @@ class GanttSeries extends XRangeSeries {
     }
 
     /**
-     * @private
-     */
-    public setGanttPointAliases(options: Highcharts.GanttPointOptions): void {
-        /**
-         * Add a value to options if the value exists.
-         * @private
-         */
-        function addIfExists(prop: string, val: unknown): void {
-            if (typeof val !== 'undefined') {
-                (options as any)[prop] = val;
-            }
-        }
-
-        addIfExists('x', pick(options.start, options.x));
-        addIfExists('x2', pick(options.end, options.x2));
-        addIfExists(
-            'partialFill', pick(options.completed, options.partialFill)
-        );
-    }
-
-    /**
      * Handle milestones, as they have no x2.
      * @private
      */
@@ -358,90 +272,11 @@ extend(GanttSeries.prototype, { // props - series member overrides
 
     pointArrayMap: ['start', 'end', 'y'],
 
+    pointClass: GanttPoint,
+
     setData: LineSeries.prototype.setData
 
 });
-
-/* *
- *
- *  Class
- *
- * */
-
-class GanttPoint extends XRangeSeries.prototype.pointClass {
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
-
-    public collapsed?: boolean;
-
-    public end?: number;
-
-    public milestone?: boolean;
-
-    public options: Highcharts.GanttPointOptions = void 0 as any;
-
-    public series: GanttSeries = void 0 as any;
-
-    public start?: number;
-
-    /* *
-     *
-     *  Functions
-     *
-     * */
-
-    /* eslint-disable valid-jsdoc */
-
-    /**
-     * Applies the options containing the x and y data and possible some
-     * extra properties. This is called on point init or from point.update.
-     *
-     * @private
-     * @function Highcharts.Point#applyOptions
-     *
-     * @param {object} options
-     *        The point options
-     *
-     * @param {number} x
-     *        The x value
-     *
-     * @return {Highcharts.Point}
-     *         The Point instance
-     */
-    public applyOptions(
-        options: Highcharts.GanttPointOptions,
-        x: number
-    ): GanttPoint {
-        var point = this,
-            ganttPoint: GanttPoint;
-
-        ganttPoint = super.applyOptions.call(point, options, x) as any;
-        GanttSeries.prototype.setGanttPointAliases(ganttPoint as Highcharts.GanttPointOptions);
-
-        return ganttPoint;
-    }
-
-    public isValid(): boolean {
-        return (
-            (
-                typeof this.start === 'number' ||
-                typeof this.x === 'number'
-            ) &&
-            (
-                typeof this.end === 'number' ||
-                typeof this.x2 === 'number' ||
-                (this.milestone as any)
-            )
-        );
-    }
-
-    /* eslint-enable valid-jsdoc */
-
-}
 
 /* *
  *
@@ -454,7 +289,6 @@ declare module '../../Core/Series/SeriesType' {
         gantt: typeof GanttSeries;
     }
 }
-GanttSeries.prototype.pointClass = GanttPoint;
 BaseSeries.registerSeriesType('gantt', GanttSeries);
 
 /* *

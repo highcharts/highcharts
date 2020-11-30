@@ -25,8 +25,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, LineSeries = _a.line, XRangeSeries = _a.xrange;
+import GanttPoint from './GanttPoint.js';
 import U from '../../Core/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
+var extend = U.extend, isNumber = U.isNumber, merge = U.merge, splat = U.splat;
 import '../../Core/Axis/TreeGridAxis.js';
 import '../../Extensions/CurrentDateIndication.js';
 import '../../Extensions/StaticScale.js';
@@ -112,23 +113,6 @@ var GanttSeries = /** @class */ (function (_super) {
         }
     };
     /**
-     * @private
-     */
-    GanttSeries.prototype.setGanttPointAliases = function (options) {
-        /**
-         * Add a value to options if the value exists.
-         * @private
-         */
-        function addIfExists(prop, val) {
-            if (typeof val !== 'undefined') {
-                options[prop] = val;
-            }
-        }
-        addIfExists('x', pick(options.start, options.x));
-        addIfExists('x2', pick(options.end, options.x2));
-        addIfExists('partialFill', pick(options.completed, options.partialFill));
-    };
-    /**
      * Handle milestones, as they have no x2.
      * @private
      */
@@ -212,65 +196,9 @@ extend(GanttSeries.prototype, {
     // Keyboard navigation, don't use nearest vertical mode
     keyboardMoveVertical: false,
     pointArrayMap: ['start', 'end', 'y'],
+    pointClass: GanttPoint,
     setData: LineSeries.prototype.setData
 });
-/* *
- *
- *  Class
- *
- * */
-var GanttPoint = /** @class */ (function (_super) {
-    __extends(GanttPoint, _super);
-    function GanttPoint() {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.options = void 0;
-        _this.series = void 0;
-        return _this;
-        /* eslint-enable valid-jsdoc */
-    }
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Applies the options containing the x and y data and possible some
-     * extra properties. This is called on point init or from point.update.
-     *
-     * @private
-     * @function Highcharts.Point#applyOptions
-     *
-     * @param {object} options
-     *        The point options
-     *
-     * @param {number} x
-     *        The x value
-     *
-     * @return {Highcharts.Point}
-     *         The Point instance
-     */
-    GanttPoint.prototype.applyOptions = function (options, x) {
-        var point = this, ganttPoint;
-        ganttPoint = _super.prototype.applyOptions.call(point, options, x);
-        GanttSeries.prototype.setGanttPointAliases(ganttPoint);
-        return ganttPoint;
-    };
-    GanttPoint.prototype.isValid = function () {
-        return ((typeof this.start === 'number' ||
-            typeof this.x === 'number') &&
-            (typeof this.end === 'number' ||
-                typeof this.x2 === 'number' ||
-                this.milestone));
-    };
-    return GanttPoint;
-}(XRangeSeries.prototype.pointClass));
-GanttSeries.prototype.pointClass = GanttPoint;
 BaseSeries.registerSeriesType('gantt', GanttSeries);
 /* *
  *
