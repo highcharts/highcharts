@@ -214,6 +214,7 @@ extend(defaultOptions, {
          * The space in pixels between the buttons in the range selector.
          */
         buttonSpacing: 5,
+        dropdown: 'responsive',
         /**
          * Enable or disable the range selector. Default to `true` for stock
          * charts, using the `stockChart` factory.
@@ -1248,8 +1249,10 @@ var RangeSelector = /** @class */ (function () {
         var renderer = this.chart.renderer;
         var options = this.options;
         var buttons = this.buttons;
-        var buttonTheme = options.buttonTheme;
+        var buttonTheme = merge(options.buttonTheme);
         var states = buttonTheme && buttonTheme.states;
+        var width = buttonTheme.width || 28;
+        delete buttonTheme.width;
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
         this.zoomText = renderer
             .text(lang.rangeSelectorZoom, 0, 15)
@@ -1274,7 +1277,8 @@ var RangeSelector = /** @class */ (function () {
                 _this.isActive = true;
             }, buttonTheme, states && states.hover, states && states.select, states && states.disabled)
                 .attr({
-                'text-align': 'center'
+                'text-align': 'center',
+                width: width
             })
                 .add(_this.buttonGroup);
             if (rangeOptions.title) {
@@ -1291,13 +1295,12 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.alignElements = function () {
         var _this = this;
-        var _a = this, buttonGroup = _a.buttonGroup, buttons = _a.buttons, chart = _a.chart, group = _a.group, inputGroup = _a.inputGroup, options = _a.options, zoomText = _a.zoomText;
+        var _a = this, buttonGroup = _a.buttonGroup, chart = _a.chart, group = _a.group, inputGroup = _a.inputGroup, options = _a.options;
         var chartOptions = chart.options;
         var navButtonOptions = (chartOptions.exporting &&
             chartOptions.exporting.enabled !== false &&
             chartOptions.navigation &&
             chartOptions.navigation.buttonOptions);
-        var verb = chart.hasLoaded ? 'animate' : 'attr';
         var buttonPosition = options.buttonPosition, inputPosition = options.inputPosition, verticalAlign = options.verticalAlign;
         // Get the X offset required to avoid overlapping with the exporting
         // button. This is is used both by the buttonGroup and the inputGroup.
@@ -1315,24 +1318,10 @@ var RangeSelector = /** @class */ (function () {
             return 0;
         };
         var plotLeft = chart.plotLeft;
-        var buttonLeft = plotLeft;
         if (group && buttonPosition && inputPosition) {
             var translateX = buttonPosition.x - chart.spacing[3];
             if (buttonGroup) {
-                if (zoomText) {
-                    // #8769, allow dynamically updating margins
-                    zoomText[verb]({
-                        x: pick(plotLeft + buttonPosition.x, plotLeft)
-                    });
-                    // Button start position
-                    buttonLeft += buttonPosition.x +
-                        zoomText.getBBox().width + 5;
-                }
-                this.buttonOptions.forEach(function (rangeOptions, i) {
-                    buttons[i][verb]({ x: buttonLeft });
-                    // increase button position for the next button
-                    buttonLeft += buttons[i].width + options.buttonSpacing;
-                });
+                this.positionButtons();
                 plotLeft -= chart.spacing[3];
                 this.updateButtonStates();
                 // Detect collision between button group and exporting
@@ -1375,6 +1364,9 @@ var RangeSelector = /** @class */ (function () {
                 }
                 // Skip animation
                 inputGroup.placed = chart.hasLoaded;
+            }
+            else if (buttonGroup && options.dropdown === 'always') {
+                this.collapseButtons();
             }
             // Vertical align
             group.align({
@@ -1434,6 +1426,29 @@ var RangeSelector = /** @class */ (function () {
             }
         }
     };
+    RangeSelector.prototype.positionButtons = function () {
+        var _a = this, buttons = _a.buttons, chart = _a.chart, options = _a.options, zoomText = _a.zoomText;
+        var verb = chart.hasLoaded ? 'animate' : 'attr';
+        var buttonPosition = options.buttonPosition;
+        var plotLeft = chart.plotLeft;
+        var buttonLeft = this.chart.plotLeft;
+        if (zoomText && zoomText.visibility !== 'hidden') {
+            // #8769, allow dynamically updating margins
+            zoomText[verb]({
+                x: pick(plotLeft + buttonPosition.x, plotLeft)
+            });
+            // Button start position
+            buttonLeft += buttonPosition.x +
+                zoomText.getBBox().width + 5;
+        }
+        this.buttonOptions.forEach(function (rangeOptions, i) {
+            if (buttons[i].visibility !== 'hidden') {
+                buttons[i][verb]({ x: buttonLeft });
+                // increase button position for the next button
+                buttonLeft += buttons[i].width + options.buttonSpacing;
+            }
+        });
+    };
     /**
      * Handle collision between the button group and the input group
      *
@@ -1447,9 +1462,16 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.handleCollision = function (xOffsetForExportButton) {
         var _a = this, chart = _a.chart, buttonGroup = _a.buttonGroup, inputGroup = _a.inputGroup;
-        var _b = this.options, buttonPosition = _b.buttonPosition, inputPosition = _b.inputPosition;
+        var _b = this.options, buttonPosition = _b.buttonPosition, dropdown = _b.dropdown, inputPosition = _b.inputPosition;
         // Detect collision
         if (inputGroup && buttonGroup) {
+            if (dropdown === 'always') {
+                this.collapseButtons();
+                return;
+            }
+            if (dropdown === 'never') {
+                this.showButtons();
+            }
             var inputGroupX = (inputGroup.alignAttr.translateX +
                 inputGroup.alignOptions.x -
                 xOffsetForExportButton +
@@ -1468,16 +1490,69 @@ var RangeSelector = /** @class */ (function () {
                     (buttonPosition.y <
                         (inputPosition.y +
                             inputGroup.getBBox().height)))) {
-                // Move the input group down
-                inputGroup.attr({
-                    translateX: inputGroup.alignAttr.translateX + (chart.axisOffset[1] >= -xOffsetForExportButton ?
-                        0 :
-                        -xOffsetForExportButton),
-                    translateY: inputGroup.alignAttr.translateY +
-                        buttonGroup.getBBox().height + 10
-                });
+                if (dropdown === 'responsive') {
+                    this.collapseButtons();
+                }
+                else {
+                    // Move the input group down
+                    inputGroup.attr({
+                        translateX: inputGroup.alignAttr.translateX + (chart.axisOffset[1] >= -xOffsetForExportButton ?
+                            0 :
+                            -xOffsetForExportButton),
+                        translateY: inputGroup.alignAttr.translateY +
+                            buttonGroup.getBBox().height + 10
+                    });
+                }
+            }
+            else if (dropdown === 'responsive') {
+                this.showButtons();
             }
         }
+    };
+    RangeSelector.prototype.collapseButtons = function () {
+        var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, zoomText = _a.zoomText;
+        if (zoomText) {
+            zoomText.hide();
+        }
+        var hasActiveButton = false;
+        buttonOptions.forEach(function (rangeOptions, i) {
+            var button = buttons[i];
+            if (button.state !== 2) {
+                button.hide();
+            }
+            else {
+                button.show();
+                button.attr({
+                    text: rangeOptions.text + ' ▼',
+                    width: 'auto'
+                });
+                hasActiveButton = true;
+            }
+        });
+        if (!hasActiveButton && buttons.length > 0) {
+            buttons[0].show();
+            buttons[0].attr({
+                text: buttonOptions[0].text + ' ▼',
+                width: 'auto'
+            });
+        }
+        this.positionButtons();
+    };
+    RangeSelector.prototype.showButtons = function () {
+        var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, options = _a.options, zoomText = _a.zoomText;
+        if (zoomText) {
+            zoomText.show();
+        }
+        buttonOptions.forEach(function (rangeOptions, i) {
+            buttons[i].show();
+            buttons[i].attr({
+                text: rangeOptions.text,
+                width: options.buttonTheme.width || 28
+            });
+        });
+        this.positionButtons();
+    };
+    RangeSelector.prototype.showDropdown = function () {
     };
     /**
      * Extracts height of range selector

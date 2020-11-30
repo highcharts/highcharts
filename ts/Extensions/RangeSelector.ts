@@ -100,6 +100,7 @@ declare global {
             buttons?: Array<RangeSelectorButtonsOptions>;
             buttonSpacing: number;
             buttonTheme: SVGAttributes;
+            dropdown: 'always'|'never'|'responsive';
             enabled?: boolean;
             floating: boolean;
             height?: number;
@@ -386,6 +387,8 @@ extend(defaultOptions, {
          * The space in pixels between the buttons in the range selector.
          */
         buttonSpacing: 5,
+
+        dropdown: 'responsive',
 
         /**
          * Enable or disable the range selector. Default to `true` for stock
@@ -1759,8 +1762,11 @@ class RangeSelector {
         const renderer = this.chart.renderer;
         const options = this.options;
         const buttons = this.buttons;
-        const buttonTheme = options.buttonTheme;
+        const buttonTheme = merge(options.buttonTheme);
         const states = buttonTheme && buttonTheme.states;
+
+        const width = buttonTheme.width || 28;
+        delete buttonTheme.width;
 
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
 
@@ -1814,7 +1820,8 @@ class RangeSelector {
                     states && states.disabled
                 )
                 .attr({
-                    'text-align': 'center'
+                    'text-align': 'center',
+                    width
                 })
                 .add(this.buttonGroup);
 
@@ -1834,12 +1841,10 @@ class RangeSelector {
     public alignElements(): void {
         const {
             buttonGroup,
-            buttons,
             chart,
             group,
             inputGroup,
-            options,
-            zoomText
+            options
         } = this;
         const chartOptions = chart.options;
         const navButtonOptions = (
@@ -1848,7 +1853,6 @@ class RangeSelector {
             chartOptions.navigation &&
             chartOptions.navigation.buttonOptions
         );
-        const verb = chart.hasLoaded ? 'animate' : 'attr';
         const {
             buttonPosition,
             inputPosition,
@@ -1883,36 +1887,13 @@ class RangeSelector {
         };
 
         let plotLeft = chart.plotLeft;
-        let buttonLeft = plotLeft;
 
         if (group && buttonPosition && inputPosition) {
 
             let translateX = buttonPosition.x - chart.spacing[3];
 
             if (buttonGroup) {
-                if (zoomText) {
-                    // #8769, allow dynamically updating margins
-                    zoomText[verb]({
-                        x: pick(plotLeft + buttonPosition.x, plotLeft)
-                    });
-
-                    // Button start position
-                    buttonLeft += buttonPosition.x +
-                        zoomText.getBBox().width + 5;
-                }
-
-
-                this.buttonOptions.forEach(function (
-                    rangeOptions: Highcharts.RangeSelectorButtonsOptions,
-                    i: number
-                ): void {
-
-                    buttons[i][verb]({ x: buttonLeft });
-
-                    // increase button position for the next button
-                    buttonLeft += buttons[i].width + options.buttonSpacing;
-                });
-
+                this.positionButtons();
 
                 plotLeft -= chart.spacing[3];
                 this.updateButtonStates();
@@ -1936,7 +1917,6 @@ class RangeSelector {
                     align: buttonPosition.align,
                     x: translateX
                 }, true, chart.spacingBox);
-
 
                 // Skip animation
                 group.placed = buttonGroup.placed = chart.hasLoaded;
@@ -1974,6 +1954,8 @@ class RangeSelector {
 
                 // Skip animation
                 inputGroup.placed = chart.hasLoaded;
+            } else if (buttonGroup && options.dropdown === 'always') {
+                this.collapseButtons();
             }
 
             // Vertical align
@@ -2055,6 +2037,43 @@ class RangeSelector {
         }
     }
 
+    public positionButtons(): void {
+        const {
+            buttons,
+            chart,
+            options,
+            zoomText
+        } = this;
+        const verb = chart.hasLoaded ? 'animate' : 'attr';
+        const { buttonPosition } = options;
+
+        const plotLeft = chart.plotLeft;
+        let buttonLeft = this.chart.plotLeft;
+
+        if (zoomText && zoomText.visibility !== 'hidden') {
+            // #8769, allow dynamically updating margins
+            zoomText[verb]({
+                x: pick(plotLeft + buttonPosition.x, plotLeft)
+            });
+
+            // Button start position
+            buttonLeft += buttonPosition.x +
+                zoomText.getBBox().width + 5;
+        }
+
+        this.buttonOptions.forEach(function (
+            rangeOptions: Highcharts.RangeSelectorButtonsOptions,
+            i: number
+        ): void {
+            if (buttons[i].visibility !== 'hidden') {
+                buttons[i][verb]({ x: buttonLeft });
+
+                // increase button position for the next button
+                buttonLeft += buttons[i].width + options.buttonSpacing;
+            }
+        });
+    }
+
     /**
      * Handle collision between the button group and the input group
      *
@@ -2075,11 +2094,20 @@ class RangeSelector {
 
         const {
             buttonPosition,
+            dropdown,
             inputPosition
         } = this.options;
 
         // Detect collision
         if (inputGroup && buttonGroup) {
+            if (dropdown === 'always') {
+                this.collapseButtons();
+                return;
+            }
+            if (dropdown === 'never') {
+                this.showButtons();
+            }
+
             const inputGroupX = (
                 inputGroup.alignAttr.translateX +
                 inputGroup.alignOptions.x -
@@ -2111,19 +2139,96 @@ class RangeSelector {
                     )
                 )
             ) {
-                // Move the input group down
-                inputGroup.attr({
-                    translateX: inputGroup.alignAttr.translateX + (
-                        chart.axisOffset[1] >= -xOffsetForExportButton ?
-                            0 :
-                            -xOffsetForExportButton
-                    ),
-                    translateY: inputGroup.alignAttr.translateY +
-                        buttonGroup.getBBox().height + 10
-                });
-
+                if (dropdown === 'responsive') {
+                    this.collapseButtons();
+                } else {
+                    // Move the input group down
+                    inputGroup.attr({
+                        translateX: inputGroup.alignAttr.translateX + (
+                            chart.axisOffset[1] >= -xOffsetForExportButton ?
+                                0 :
+                                -xOffsetForExportButton
+                        ),
+                        translateY: inputGroup.alignAttr.translateY +
+                            buttonGroup.getBBox().height + 10
+                    });
+                }
+            } else if (dropdown === 'responsive') {
+                this.showButtons();
             }
         }
+    }
+
+    public collapseButtons(): void {
+        const {
+            buttons,
+            buttonOptions,
+            zoomText
+        } = this;
+
+        if (zoomText) {
+            zoomText.hide();
+        }
+
+        let hasActiveButton = false;
+
+        buttonOptions.forEach((
+            rangeOptions: Highcharts.RangeSelectorButtonsOptions,
+            i: number
+        ): void => {
+            const button = buttons[i];
+            if (button.state !== 2) {
+                button.hide();
+            } else {
+                button.show();
+                button.attr({
+                    text: rangeOptions.text + ' ▼',
+                    width: 'auto'
+                });
+
+                hasActiveButton = true;
+            }
+        });
+
+        if (!hasActiveButton && buttons.length > 0) {
+            buttons[0].show();
+            buttons[0].attr({
+                text: buttonOptions[0].text + ' ▼',
+                width: 'auto'
+            });
+        }
+
+        this.positionButtons();
+    }
+
+    public showButtons(): void {
+        const {
+            buttons,
+            buttonOptions,
+            options,
+            zoomText
+        } = this;
+
+        if (zoomText) {
+            zoomText.show();
+        }
+
+        buttonOptions.forEach((
+            rangeOptions: Highcharts.RangeSelectorButtonsOptions,
+            i: number
+        ): void => {
+            buttons[i].show();
+            buttons[i].attr({
+                text: rangeOptions.text,
+                width: options.buttonTheme.width || 28
+            });
+        });
+
+        this.positionButtons();
+    }
+
+    public showDropdown(): void {
+
     }
 
     /**

@@ -35,7 +35,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
                 },
                 inputPosition: {
                     align: align[align.length - i - 1]
-                }
+                },
+                dropdown: 'never'
             },
 
             series: series
@@ -46,8 +47,10 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
         inputPosition = chart.options.rangeSelector.inputPosition || {};
         buttonPosition = chart.options.rangeSelector.buttonPosition || {};
 
-        inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
-        inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
+        inputGroupX = inputGroup.translateX +
+            (inputGroup.alignOptions && inputGroup.alignOptions.x);
+        inputGroupWidth = inputGroup.alignOptions &&
+            inputGroup.alignOptions.width;
 
         buttonGroupX = buttonGroup.translateX;
         buttonGroupWidth = buttonGroup.getBBox().width + 10;
@@ -56,7 +59,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
             ((inputPosition.align === buttonPosition.align) ||
             ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
             (inputGroupX + inputGroupWidth > buttonGroupX))) &&
-            (inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
+            // check if input group is lower
+            (inputGroup.translateY > buttonGroup.translateY),
             true,
             'rangeSelector'
         );
@@ -90,7 +94,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
     selectorGroupBBox = chart.rangeSelector.group.getBBox();
 
     assert.ok(
-        chart.plotWidth - selectorGroupBBox.width + chart.plotLeft - selectorGroupBBox.x <= 1,
+        chart.plotWidth - selectorGroupBBox.width +
+        chart.plotLeft - selectorGroupBBox.x <= 1,
         'rangeSelector buttons should be right aligned correctly (#13014).'
     );
 
@@ -107,7 +112,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
     selectorGroupBBox = chart.rangeSelector.group.getBBox();
 
     assert.ok(
-        (chart.plotWidth - selectorGroupBBox.width) / 2 + chart.plotLeft - selectorGroupBBox.x <= 1,
+        (chart.plotWidth - selectorGroupBBox.width) / 2 +
+        chart.plotLeft - selectorGroupBBox.x <= 1,
         'rangeSelector buttons should be centered correctly (#13014).'
     );
 
@@ -127,8 +133,10 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
     selectorGroupBBox = chart.rangeSelector.group.getBBox();
 
     assert.ok(
-        chart.plotWidth - selectorGroupBBox.width + chart.plotLeft - 40 - selectorGroupBBox.x <= 1,
-        'rangeSelector buttons should be right aligned correctly when exporting enabled (#13014).'
+        chart.plotWidth - selectorGroupBBox.width +
+        chart.plotLeft - 40 - selectorGroupBBox.x <= 1,
+        'rangeSelector buttons should be right aligned ' +
+        'correctly when exporting enabled (#13014).'
     );
 });
 
@@ -165,7 +173,8 @@ QUnit.test('Aligning after updates.', function (assert) {
             },
             inputPosition: {
                 align: 'right'
-            }
+            },
+            dropdown: 'never'
         },
 
         series: series
@@ -178,7 +187,8 @@ QUnit.test('Aligning after updates.', function (assert) {
     inputPosition = chart.options.rangeSelector.inputPosition || {};
     buttonPosition = chart.options.rangeSelector.buttonPosition || {};
 
-    inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
+    inputGroupX = inputGroup.translateX +
+        (inputGroup.alignOptions && inputGroup.alignOptions.x);
     inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
 
     buttonGroupX = buttonGroup.translateX;
@@ -188,7 +198,8 @@ QUnit.test('Aligning after updates.', function (assert) {
         ((inputPosition.align === buttonPosition.align) ||
         ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
         (inputGroupX + inputGroupWidth > buttonGroupX))) &&
-        (inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
+        // check if input group is lower
+        (inputGroup.translateY > buttonGroup.translateY),
         true,
         'rangeSelector'
     );
@@ -211,7 +222,8 @@ QUnit.test('Aligning after updates.', function (assert) {
     inputPosition = chart.options.rangeSelector.inputPosition || {};
     buttonPosition = chart.options.rangeSelector.buttonPosition || {};
 
-    inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
+    inputGroupX = inputGroup.translateX +
+        (inputGroup.alignOptions && inputGroup.alignOptions.x);
     inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
 
     buttonGroupX = buttonGroup.translateX;
@@ -221,7 +233,8 @@ QUnit.test('Aligning after updates.', function (assert) {
         ((inputPosition.align === buttonPosition.align) ||
         ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
         (inputGroupX + inputGroupWidth > buttonGroupX))) &&
-        (inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
+        // check if input group is lower
+        (inputGroup.translateY > buttonGroup.translateY),
         true,
         'rangeSelector'
     );
@@ -304,7 +317,8 @@ QUnit.test('x and y parameters', function (assert) {
     });
 
     assert.strictEqual(
-        chart.rangeSelector.inputGroup.translateY > chart.options.rangeSelector.inputPosition.y,
+        chart.rangeSelector.inputGroup.translateY >
+            chart.options.rangeSelector.inputPosition.y,
         true,
         'rangeSelector'
     );
@@ -359,7 +373,8 @@ QUnit.test('button width', function (assert) {
             }, {
                 type: 'all',
                 text: 'All'
-            }]
+            }],
+            dropdown: 'never'
         },
 
         series: series
@@ -370,7 +385,8 @@ QUnit.test('button width', function (assert) {
     inputPosition = chart.options.rangeSelector.inputPosition || {};
     buttonPosition = chart.options.rangeSelector.buttonPosition || {};
 
-    inputGroupX = inputGroup.translateX + (inputGroup.alignOptions && inputGroup.alignOptions.x);
+    inputGroupX = inputGroup.translateX +
+        (inputGroup.alignOptions && inputGroup.alignOptions.x);
     inputGroupWidth = inputGroup.alignOptions && inputGroup.alignOptions.width;
 
     buttonGroupX = buttonGroup.translateX;
@@ -380,7 +396,8 @@ QUnit.test('button width', function (assert) {
         ((inputPosition.align === buttonPosition.align) ||
         ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
         (inputGroupX + inputGroupWidth > buttonGroupX))) &&
-        (inputGroup.translateY > buttonGroup.translateY), // check if input group is lower
+        // check if input group is lower
+        (inputGroup.translateY > buttonGroup.translateY),
         true,
         'rangeSelector'
     );
