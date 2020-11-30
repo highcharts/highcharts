@@ -224,15 +224,6 @@ var LinearRegressionIndicator = /** @class */ (function (_super) {
     });
     return LinearRegressionIndicator;
 }(SMAIndicator));
-var LinearRegressionIndicatorPoint = /** @class */ (function (_super) {
-    __extends(LinearRegressionIndicatorPoint, _super);
-    function LinearRegressionIndicatorPoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.series = void 0;
-        return _this;
-    }
-    return LinearRegressionIndicatorPoint;
-}(SMAIndicator.prototype.pointClass));
 extend(LinearRegressionIndicator.prototype, {
     nameBase: 'Linear Regression Indicator'
 });
@@ -289,28 +280,6 @@ var LinearRegressionSlopesIndicator = /** @class */ (function (_super) {
     LinearRegressionSlopesIndicator.defaultOptions = LinearRegressionIndicator.defaultOptions;
     return LinearRegressionSlopesIndicator;
 }(LinearRegressionIndicator));
-/**
- * A linear regression slope series. If the
- * [type](#series.linearregressionslope.type) option is not specified, it is
- * inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.linearregressionslope
- * @since     7.0.0
- * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
- * @apioption series.linearregressionslope
- */
-var LinearRegressionSlopesIndicatorPoint = /** @class */ (function (_super) {
-    __extends(LinearRegressionSlopesIndicatorPoint, _super);
-    function LinearRegressionSlopesIndicatorPoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.series = void 0;
-        return _this;
-    }
-    return LinearRegressionSlopesIndicatorPoint;
-}(LinearRegressionIndicatorPoint));
 extend(LinearRegressionSlopesIndicator.prototype, {
     nameBase: 'Linear Regression Slope Indicator'
 });
@@ -352,15 +321,6 @@ var LinearRegressionInterceptIndicator = /** @class */ (function (_super) {
     LinearRegressionInterceptIndicator.defaultOptions = LinearRegressionIndicator.defaultOptions;
     return LinearRegressionInterceptIndicator;
 }(LinearRegressionIndicator));
-var LinearRegressionInterceptIndicatorPoint = /** @class */ (function (_super) {
-    __extends(LinearRegressionInterceptIndicatorPoint, _super);
-    function LinearRegressionInterceptIndicatorPoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.series = void 0;
-        return _this;
-    }
-    return LinearRegressionInterceptIndicatorPoint;
-}(LinearRegressionIndicatorPoint));
 extend(LinearRegressionInterceptIndicator.prototype, {
     nameBase: 'Linear Regression Intercept Indicator'
 });
@@ -417,15 +377,6 @@ var LinearRegressionAngleIndicator = /** @class */ (function (_super) {
     });
     return LinearRegressionAngleIndicator;
 }(LinearRegressionIndicator));
-var LinearRegressionAngleIndicatorPoint = /** @class */ (function (_super) {
-    __extends(LinearRegressionAngleIndicatorPoint, _super);
-    function LinearRegressionAngleIndicatorPoint() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.series = void 0;
-        return _this;
-    }
-    return LinearRegressionAngleIndicatorPoint;
-}(LinearRegressionIndicatorPoint));
 extend(LinearRegressionAngleIndicator.prototype, {
     nameBase: 'Linear Regression Angle Indicator'
 });
