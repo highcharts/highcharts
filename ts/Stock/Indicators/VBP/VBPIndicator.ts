@@ -194,8 +194,15 @@ class VBPIndicator extends SMAIndicator {
     } as VBPOptions)
 
     public data: Array<VBPPoint> = void 0 as any;
+    public negWidths: Array<number> = void 0 as any;
     public options: VBPOptions = void 0 as any;
     public points: Array<VBPPoint> = void 0 as any;
+    public posWidths: Array<number> = void 0 as any;
+    public priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject> = void 0 as any;
+    public rangeStep: number = void 0 as any;
+    public volumeDataArray: Array<number> = void 0 as any;
+    public zoneStarts: Array<number> = void 0 as any;
+    public zoneLinesSVG: SVGElement = void 0 as any;
 
     public init(
         chart: Chart
@@ -767,14 +774,7 @@ namespace VBPIndicator {
 
 interface VBPIndicator {
     nameBase: string;
-    negWidths: Array<number>;
     pointClass: typeof VBPPoint;
-    posWidths: Array<number>;
-    priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>;
-    rangeStep: number;
-    volumeDataArray: Array<number>;
-    zoneStarts: Array<number>;
-    zoneLinesSVG: SVGElement;
 
     crispCol: ColumnSeries['crispCol'];
     getColumnMetrics: ColumnSeries['getColumnMetrics'];

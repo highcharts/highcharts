@@ -65,8 +65,15 @@ var VBPIndicator = /** @class */ (function (_super) {
     function VBPIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
+        _this.negWidths = void 0;
         _this.options = void 0;
         _this.points = void 0;
+        _this.posWidths = void 0;
+        _this.priceZones = void 0;
+        _this.rangeStep = void 0;
+        _this.volumeDataArray = void 0;
+        _this.zoneStarts = void 0;
+        _this.zoneLinesSVG = void 0;
         return _this;
     }
     VBPIndicator.prototype.init = function (chart) {
