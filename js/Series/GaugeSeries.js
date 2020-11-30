@@ -50,13 +50,168 @@ var GaugeSeries = /** @class */ (function (_super) {
         _this.data = void 0;
         _this.points = void 0;
         _this.options = void 0;
+        _this.yAxis = void 0;
         return _this;
-        /* *
-         *
-         *  Functions
-         *
-         * */
+        /* eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * Calculate paths etc
+     * @private
+     */
+    GaugeSeries.prototype.translate = function () {
+        var series = this, yAxis = series.yAxis, options = series.options, center = yAxis.center;
+        series.generatePoints();
+        series.points.forEach(function (point) {
+            var dialOptions = merge(options.dial, point.dial), radius = ((pInt(pick(dialOptions.radius, '80%')) * center[2]) /
+                200), baseLength = ((pInt(pick(dialOptions.baseLength, '70%')) * radius) /
+                100), rearLength = ((pInt(pick(dialOptions.rearLength, '10%')) * radius) /
+                100), baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1, overshoot = options.overshoot, rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
+            // Handle the wrap and overshoot options
+            if (isNumber(overshoot) || options.wrap === false) {
+                overshoot = isNumber(overshoot) ?
+                    (overshoot / 180 * Math.PI) : 0;
+                rotation = clamp(rotation, yAxis.startAngleRad - overshoot, yAxis.endAngleRad + overshoot);
+            }
+            rotation = rotation * 180 / Math.PI;
+            point.shapeType = 'path';
+            var d = dialOptions.path || [
+                ['M', -rearLength, -baseWidth / 2],
+                ['L', baseLength, -baseWidth / 2],
+                ['L', radius, -topWidth / 2],
+                ['L', radius, topWidth / 2],
+                ['L', baseLength, baseWidth / 2],
+                ['L', -rearLength, baseWidth / 2],
+                ['Z']
+            ];
+            point.shapeArgs = {
+                d: d,
+                translateX: center[0],
+                translateY: center[1],
+                rotation: rotation
+            };
+            // Positions for data label
+            point.plotX = center[0];
+            point.plotY = center[1];
+        });
+    };
+    /**
+     * Draw the points where each point is one needle
+     * @private
+     */
+    GaugeSeries.prototype.drawPoints = function () {
+        var series = this, chart = series.chart, center = series.yAxis.center, pivot = series.pivot, options = series.options, pivotOptions = options.pivot, renderer = chart.renderer;
+        series.points.forEach(function (point) {
+            var graphic = point.graphic, shapeArgs = point.shapeArgs, d = shapeArgs.d, dialOptions = merge(options.dial, point.dial); // #1233
+            if (graphic) {
+                graphic.animate(shapeArgs);
+                shapeArgs.d = d; // animate alters it
+            }
+            else {
+                point.graphic =
+                    renderer[point.shapeType](shapeArgs)
+                        .attr({
+                        // required by VML when animation is false
+                        rotation: shapeArgs.rotation,
+                        zIndex: 1
+                    })
+                        .addClass('highcharts-dial')
+                        .add(series.group);
+            }
+            // Presentational attributes
+            if (!chart.styledMode) {
+                point.graphic[graphic ? 'animate' : 'attr']({
+                    stroke: dialOptions.borderColor || 'none',
+                    'stroke-width': dialOptions.borderWidth || 0,
+                    fill: dialOptions.backgroundColor ||
+                        palette.neutralColor100
+                });
+            }
+        });
+        // Add or move the pivot
+        if (pivot) {
+            pivot.animate({
+                translateX: center[0],
+                translateY: center[1]
+            });
+        }
+        else {
+            series.pivot =
+                renderer.circle(0, 0, pick(pivotOptions.radius, 5))
+                    .attr({
+                    zIndex: 2
+                })
+                    .addClass('highcharts-pivot')
+                    .translate(center[0], center[1])
+                    .add(series.group);
+            // Presentational attributes
+            if (!chart.styledMode) {
+                series.pivot.attr({
+                    'stroke-width': pivotOptions.borderWidth || 0,
+                    stroke: pivotOptions.borderColor ||
+                        palette.neutralColor20,
+                    fill: pivotOptions.backgroundColor ||
+                        palette.neutralColor100
+                });
+            }
+        }
+    };
+    /**
+     * Animate the arrow up from startAngle
+     * @private
+     */
+    GaugeSeries.prototype.animate = function (init) {
+        var series = this;
+        if (!init) {
+            series.points.forEach(function (point) {
+                var graphic = point.graphic;
+                if (graphic) {
+                    // start value
+                    graphic.attr({
+                        rotation: series.yAxis.startAngleRad * 180 / Math.PI
+                    });
+                    // animate
+                    graphic.animate({
+                        rotation: point.shapeArgs.rotation
+                    }, series.options.animation);
+                }
+            });
+        }
+    };
+    /**
+     * @private
+     */
+    GaugeSeries.prototype.render = function () {
+        this.group = this.plotGroup('group', 'series', this.visible ? 'visible' : 'hidden', this.options.zIndex, this.chart.seriesGroup);
+        LineSeries.prototype.render.call(this);
+        this.group.clip(this.chart.clipRect);
+    };
+    /**
+     * Extend the basic setData method by running processData and generatePoints
+     * immediately, in order to access the points from the legend.
+     * @private
+     */
+    GaugeSeries.prototype.setData = function (data, redraw) {
+        LineSeries.prototype.setData.call(this, data, false);
+        this.processData();
+        this.generatePoints();
+        if (pick(redraw, true)) {
+            this.chart.redraw();
+        }
+    };
+    /**
+     * Define hasData function for non-cartesian series.
+     * Returns true if the series has points at all.
+     * @private
+     */
+    GaugeSeries.prototype.hasData = function () {
+        return !!this.points.length; // != 0
+    };
     GaugeSeries.defaultOptions = merge(LineSeries.defaultOptions, {
         /**
          * When this option is `true`, the dial will wrap around the axes.
@@ -317,183 +472,25 @@ extend(GaugeSeries.prototype, {
     forceDL: true,
     noSharedTooltip: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
-    /* eslint-disable valid-jsdoc */
-    /**
-     * Calculate paths etc
-     * @private
-     */
-    translate: function () {
-        var series = this, yAxis = series.yAxis, options = series.options, center = yAxis.center;
-        series.generatePoints();
-        series.points.forEach(function (point) {
-            var dialOptions = merge(options.dial, point.dial), radius = ((pInt(pick(dialOptions.radius, '80%')) * center[2]) /
-                200), baseLength = ((pInt(pick(dialOptions.baseLength, '70%')) * radius) /
-                100), rearLength = ((pInt(pick(dialOptions.rearLength, '10%')) * radius) /
-                100), baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1, overshoot = options.overshoot, rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
-            // Handle the wrap and overshoot options
-            if (isNumber(overshoot) || options.wrap === false) {
-                overshoot = isNumber(overshoot) ?
-                    (overshoot / 180 * Math.PI) : 0;
-                rotation = clamp(rotation, yAxis.startAngleRad - overshoot, yAxis.endAngleRad + overshoot);
-            }
-            rotation = rotation * 180 / Math.PI;
-            point.shapeType = 'path';
-            var d = dialOptions.path || [
-                ['M', -rearLength, -baseWidth / 2],
-                ['L', baseLength, -baseWidth / 2],
-                ['L', radius, -topWidth / 2],
-                ['L', radius, topWidth / 2],
-                ['L', baseLength, baseWidth / 2],
-                ['L', -rearLength, baseWidth / 2],
-                ['Z']
-            ];
-            point.shapeArgs = {
-                d: d,
-                translateX: center[0],
-                translateY: center[1],
-                rotation: rotation
-            };
-            // Positions for data label
-            point.plotX = center[0];
-            point.plotY = center[1];
-        });
-    },
-    /**
-     * Draw the points where each point is one needle
-     * @private
-     */
-    drawPoints: function () {
-        var series = this, chart = series.chart, center = series.yAxis.center, pivot = series.pivot, options = series.options, pivotOptions = options.pivot, renderer = chart.renderer;
-        series.points.forEach(function (point) {
-            var graphic = point.graphic, shapeArgs = point.shapeArgs, d = shapeArgs.d, dialOptions = merge(options.dial, point.dial); // #1233
-            if (graphic) {
-                graphic.animate(shapeArgs);
-                shapeArgs.d = d; // animate alters it
-            }
-            else {
-                point.graphic =
-                    renderer[point.shapeType](shapeArgs)
-                        .attr({
-                        // required by VML when animation is false
-                        rotation: shapeArgs.rotation,
-                        zIndex: 1
-                    })
-                        .addClass('highcharts-dial')
-                        .add(series.group);
-            }
-            // Presentational attributes
-            if (!chart.styledMode) {
-                point.graphic[graphic ? 'animate' : 'attr']({
-                    stroke: dialOptions.borderColor || 'none',
-                    'stroke-width': dialOptions.borderWidth || 0,
-                    fill: dialOptions.backgroundColor ||
-                        palette.neutralColor100
-                });
-            }
-        });
-        // Add or move the pivot
-        if (pivot) {
-            pivot.animate({
-                translateX: center[0],
-                translateY: center[1]
-            });
-        }
-        else {
-            series.pivot =
-                renderer.circle(0, 0, pick(pivotOptions.radius, 5))
-                    .attr({
-                    zIndex: 2
-                })
-                    .addClass('highcharts-pivot')
-                    .translate(center[0], center[1])
-                    .add(series.group);
-            // Presentational attributes
-            if (!chart.styledMode) {
-                series.pivot.attr({
-                    'stroke-width': pivotOptions.borderWidth || 0,
-                    stroke: pivotOptions.borderColor ||
-                        palette.neutralColor20,
-                    fill: pivotOptions.backgroundColor ||
-                        palette.neutralColor100
-                });
-            }
-        }
-    },
-    /**
-     * Animate the arrow up from startAngle
-     * @private
-     */
-    animate: function (init) {
-        var series = this;
-        if (!init) {
-            series.points.forEach(function (point) {
-                var graphic = point.graphic;
-                if (graphic) {
-                    // start value
-                    graphic.attr({
-                        rotation: series.yAxis.startAngleRad * 180 / Math.PI
-                    });
-                    // animate
-                    graphic.animate({
-                        rotation: point.shapeArgs.rotation
-                    }, series.options.animation);
-                }
-            });
-        }
-    },
-    /**
-     * @private
-     */
-    render: function () {
-        this.group = this.plotGroup('group', 'series', this.visible ? 'visible' : 'hidden', this.options.zIndex, this.chart.seriesGroup);
-        LineSeries.prototype.render.call(this);
-        this.group.clip(this.chart.clipRect);
-    },
-    /**
-     * Extend the basic setData method by running processData and generatePoints
-     * immediately, in order to access the points from the legend.
-     * @private
-     */
-    setData: function (data, redraw) {
-        LineSeries.prototype.setData.call(this, data, false);
-        this.processData();
-        this.generatePoints();
-        if (pick(redraw, true)) {
-            this.chart.redraw();
-        }
-    },
-    /**
-     * Define hasData function for non-cartesian series.
-     * Returns true if the series has points at all.
-     * @private
-     */
-    hasData: function () {
-        return !!this.points.length; // != 0
-    },
     // If the tracking module is loaded, add the point tracker
     drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
-    /* eslint-enable valid-jsdoc */
 });
 var GaugePoint = /** @class */ (function (_super) {
     __extends(GaugePoint, _super);
     function GaugePoint() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    return GaugePoint;
-}(LineSeries.prototype.pointClass));
-GaugeSeries.prototype.pointClass = GaugePoint;
-extend(GaugePoint.prototype, {
-    // Point members
     /* eslint-disable valid-jsdoc */
     /**
      * Don't do any hover colors or anything
      * @private
      */
-    setState: function (state) {
+    GaugePoint.prototype.setState = function (state) {
         this.state = state;
-    }
-    /* eslint-enable valid-jsdoc */
-});
+    };
+    return GaugePoint;
+}(LineSeries.prototype.pointClass));
+GaugeSeries.prototype.pointClass = GaugePoint;
 BaseSeries.registerSeriesType('gauge', GaugeSeries);
 /* *
  *
