@@ -11,5 +11,8 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+
 import '../../Stock/Indicators/LinearRegression/LinearRegression.js';
 import '../../Stock/Indicators/LinearRegressionAngle/LinearRegressionAngle.js';
+import
+'../../Stock/Indicators/LinearRegressionIntercept/LinearRegressionIntercept.js';
