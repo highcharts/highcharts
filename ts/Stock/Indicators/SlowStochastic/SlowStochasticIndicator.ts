@@ -9,49 +9,25 @@
 'use strict';
 
 import type {
-    StochasticOptions,
-    StochasticParamsOptions
-} from './Stochastic/StochasticOptions';
-import type StochasticPoint from './Stochastic/StochasticPoint';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+    SlowStochasticOptions,
+    SlowStochasticParamsOptions
+} from './SlowStochasticOptions';
+import type SlowStochasticPoint from './SlowStochasticPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         stochastic: StochasticIndicator
     }
 } = BaseSeries;
 const { seriesTypes } = BaseSeries;
-import RequiredIndicatorMixin from '../../Mixins/IndicatorRequired.js';
-import U from '../../Core/Utilities.js';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import U from '../../../Core/Utilities.js';
 const {
     extend,
-    isArray,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-
-        interface SlowStochasticIndicatorParamsOptions
-            extends StochasticParamsOptions {
-            // for inheritance
-        }
-
-        class SlowStochasticIndicatorPoint extends StochasticPoint {
-            public series: SlowStochasticIndicator;
-        }
-
-        interface SlowStochasticIndicatorOptions
-            extends StochasticOptions, MultipleLinesIndicatorOptions {
-            params?: SlowStochasticIndicatorParamsOptions;
-        }
-    }
-}
 
 /**
  * The Slow Stochastic series type.
@@ -79,7 +55,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
      * @requires     stock/indicators/slowstochastic
      * @optionparent plotOptions.slowstochastic
      */
-    public static defaultOptions: Highcharts.SlowStochasticIndicatorOptions =
+    public static defaultOptions: SlowStochasticOptions =
     merge(StochasticIndicator.defaultOptions, {
         params: {
             /**
@@ -90,7 +66,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
              */
             periods: [14, 3, 3]
         }
-    } as Highcharts.SlowStochasticIndicatorOptions)
+    } as SlowStochasticOptions)
 
     public init(): void {
         const args = arguments,
@@ -109,7 +85,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.SlowStochasticIndicatorParamsOptions
+        params: SlowStochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         const periods: Array<number> = (params.periods as any),
             fastValues = seriesTypes.stochastic.prototype.getValues.call(
@@ -180,7 +156,7 @@ extend(SlowStochasticIndicator.prototype, {
     nameBase: 'Slow Stochastic'
 });
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         slowstochastic: typeof SlowStochasticIndicator;
     }
