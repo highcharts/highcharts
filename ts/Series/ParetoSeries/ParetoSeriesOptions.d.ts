@@ -14,9 +14,9 @@
  *
  * */
 
-import ParetoSeries from './ParetoSeries';
-import LineSeriesOptions from '../Line/LineSeriesOptions';
-import { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type ParetoSeries from './ParetoSeries';
+import type LineSeriesOptions from '../Line/LineSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *

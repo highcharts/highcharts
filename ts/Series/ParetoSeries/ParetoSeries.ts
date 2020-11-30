@@ -100,8 +100,67 @@ class ParetoSeries extends LineSeries {
 
     public hasDerivedData: Highcharts.DerivedSeries['hasDerivedData'] = void 0 as any;
     public initialised: Highcharts.DerivedSeries['initialised'] = void 0 as any;
-}
 
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Calculate y sum and each percent point.
+     *
+     * @private
+     * @function Highcharts.Series#sumPointsPercents
+     *
+     * @param {Array<number>} yValues
+     * Y values
+     *
+     * @param {Array<number>} xValues
+     * X values
+     *
+     * @param {number} sum
+     * Sum of all y values
+     *
+     * @param {boolean} [isSum]
+     * Declares if calculate sum of all points
+     *
+     * @return {number|Array<number,number>}
+     * Returns sum of points or array of points [x,sum]
+     *
+     * @requires modules/pareto
+     */
+    public sumPointsPercents<T extends(boolean | undefined)>(
+        yValues: Array<number>,
+        xValues: Array<number>,
+        sum: number,
+        isSum?: T
+    ): (T extends true ? number : Array<Array<number>>) {
+        var sumY = 0,
+            sumPercent = 0,
+            percentPoints: Array<Array<number>> = [],
+            percentPoint: (number | undefined);
+
+        yValues.forEach(function (point: number, i: number): void {
+            if (point !== null) {
+                if (isSum) {
+                    sumY += point;
+                } else {
+                    percentPoint = (point / sum) * 100;
+                    percentPoints.push([
+                        xValues[i],
+                        correctFloat(sumPercent + percentPoint)
+                    ]);
+                    sumPercent += percentPoint;
+                }
+            }
+        });
+
+        return (isSum ? sumY : percentPoints) as (
+            T extends true ? number : Array<Array<number>>
+        );
+    }
+}
 
 /* *
  *
@@ -123,18 +182,10 @@ interface ParetoSeries {
     setBaseSeries: typeof DerivedSeriesMixin['setBaseSeries'];
 
     setDerivedData: Highcharts.DerivedSeries['setDerivedData'];
-
-    sumPointsPercents<T extends (boolean | undefined)>(
-        yValues: Array<number>,
-        xValues: Array<number>,
-        sum: number,
-        isSum?: T
-    ): (T extends true ? number : Array<Array<number>>);
 }
 
 extend(ParetoSeries.prototype,
     merge(DerivedSeriesMixin, {
-
         /* eslint-disable no-invalid-this, valid-jsdoc */
         /**
          * Calculate sum and return percent points.
@@ -157,64 +208,9 @@ extend(ParetoSeries.prototype,
                 this.sumPointsPercents(yValues, xValues, sum, false),
                 false
             );
-        } as any),
-        /**
-         * Calculate y sum and each percent point.
-         *
-         * @private
-         * @function Highcharts.Series#sumPointsPercents
-         *
-         * @param {Array<number>} yValues
-         * Y values
-         *
-         * @param {Array<number>} xValues
-         * X values
-         *
-         * @param {number} sum
-         * Sum of all y values
-         *
-         * @param {boolean} [isSum]
-         * Declares if calculate sum of all points
-         *
-         * @return {number|Array<number,number>}
-         * Returns sum of points or array of points [x,sum]
-         *
-         * @requires modules/pareto
-         */
-        sumPointsPercents: function<T extends (boolean|undefined)> (
-            this: ParetoSeries,
-            yValues: Array<number>,
-            xValues: Array<number>,
-            sum: number,
-            isSum?: T
-        ): (T extends true ? number : Array<Array<number>>) {
-            var sumY = 0,
-                sumPercent = 0,
-                percentPoints: Array<Array<number>> = [],
-                percentPoint: (number|undefined);
-
-            yValues.forEach(function (point: number, i: number): void {
-                if (point !== null) {
-                    if (isSum) {
-                        sumY += point;
-                    } else {
-                        percentPoint = (point / sum) * 100;
-                        percentPoints.push([
-                            xValues[i],
-                            correctFloat(sumPercent + percentPoint)
-                        ]);
-                        sumPercent += percentPoint;
-                    }
-                }
-            });
-
-            return (isSum ? sumY : percentPoints) as (
-                T extends true ? number : Array<Array<number>>
-            );
-        }
+        } as any)
+        /* eslint-enable no-invalid-this, valid-jsdoc */
     })
-
-    /* eslint-enable no-invalid-this, valid-jsdoc */
 );
 
 /* *
@@ -239,6 +235,13 @@ BaseSeries.registerSeriesType('pareto', ParetoSeries);
  * */
 
 export default ParetoSeries;
+
+
+/* *
+ *
+ *  API options
+ *
+ * */
 
 /**
  * A `pareto` series. If the [type](#series.pareto.type) option is not
