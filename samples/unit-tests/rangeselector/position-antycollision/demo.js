@@ -232,6 +232,7 @@ QUnit.test('Aligning after updates.', function (assert) {
     buttonGroup = chart.rangeSelector.buttonGroup;
     inputPosition = chart.options.rangeSelector.inputPosition || {};
     buttonPosition = chart.options.rangeSelector.buttonPosition || {};
+
     inputGroupX =
         inputGroup.translateX +
         (inputGroup.alignOptions && inputGroup.alignOptions.x);
@@ -386,7 +387,8 @@ QUnit.test('button width', function (assert) {
                     type: 'all',
                     text: 'All'
                 }
-            ]
+            ],
+            dropdown: 'never'
         },
 
         series: series
