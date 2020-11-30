@@ -20,45 +20,45 @@
  *
  * */
 
-import type ColorString from '../Core/Color/ColorString';
-import type ColorType from '../Core/Color/ColorType';
-import type DashStyleValue from '../Core/Renderer/DashStyleValue';
-import type DataLabelOptions from '../Core/Series/DataLabelOptions';
-import type PositionObject from '../Core/Renderer/PositionObject';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import type TreemapPoint from './Treemap/TreemapPoint';
-import type TreemapPointOptions from './Treemap/TreemapPointOptions';
+import type ColorString from '../../Core/Color/ColorString';
+import type ColorType from '../../Core/Color/ColorType';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type TreemapPoint from '../Treemap/TreemapPoint';
+import type TreemapPointOptions from '../Treemap/TreemapPointOptions';
 import type {
     TreemapSeriesLevelsColorVariationOptions,
     TreemapSeriesLevelsOptions,
     TreemapSeriesOptions
-} from './Treemap/TreemapSeriesOptions';
-import type TreemapSeriesType from './Treemap/TreemapSeries';
-import type TreemapUtilities from './Treemap/TreemapUtilities';
-import BaseSeries from '../Core/Series/Series.js';
+} from '../Treemap/TreemapSeriesOptions';
+import type TreemapSeriesType from '../Treemap/TreemapSeries';
+import type TreemapUtilities from '../Treemap/TreemapUtilities';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
+        line: LineSeries,
         treemap: TreemapSeries
     }
 } = BaseSeries;
-import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const {
     getCenter,
     getStartAndEndRadians
 } = CenteredSeriesMixin;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from './Line/LineSeries.js';
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 const {
     getColor,
     getLevelOptions,
     setTreeValues,
     updateRootId
 } = TreeSeriesMixin;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 const {
     correctFloat,
     error,
@@ -1347,7 +1347,7 @@ class SunburstSeries extends TreemapSeries {
  * */
 
 interface SunburstSeries {
-    pointAttribs: LineSeries['pointAttribs'];
+    pointAttribs: typeof LineSeries.prototype.pointAttribs;
     pointClass: typeof SunburstPoint;
     utils: Highcharts.SunburstSeriesUtilsObject;
 }
@@ -1472,7 +1472,7 @@ class SunburstPoint extends TreemapSeries.prototype.pointClass {
  *
  * */
 
-declare module '../Core/Series/SeriesType' {
+declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         sunburst: typeof SunburstSeries;
     }

@@ -25,16 +25,15 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, TreemapSeries = _a.treemap;
-import CenteredSeriesMixin from '../Mixins/CenteredSeries.js';
+import BaseSeries from '../../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line, TreemapSeries = _a.treemap;
+import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 var getCenter = CenteredSeriesMixin.getCenter, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
-import H from '../Core/Globals.js';
+import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from './Line/LineSeries.js';
-import TreeSeriesMixin from '../Mixins/TreeSeries.js';
+import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, setTreeValues = TreeSeriesMixin.setTreeValues, updateRootId = TreeSeriesMixin.updateRootId;
-import U from '../Core/Utilities.js';
+import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
 var isBoolean = function (x) {
     return typeof x === 'boolean';
