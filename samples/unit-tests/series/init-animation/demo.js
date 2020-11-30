@@ -7,9 +7,11 @@ QUnit.test('General aniamtion tests.', function (assert) {
         clock = TestUtilities.lolexInstall();
 
         var chart = Highcharts.chart('container', {
-                series: [{
-                    data: [29.9, 71.5, 106.4, 129.2]
-                }]
+                series: [
+                    {
+                        data: [29.9, 71.5, 106.4, 129.2]
+                    }
+                ]
             }),
             newSeries,
             done = assert.async(),
@@ -22,7 +24,8 @@ QUnit.test('General aniamtion tests.', function (assert) {
                 },
                 data: [194.1, 95.6, 54.4, 29.9]
             });
-            width = newSeries.sharedClipKey &&
+            width =
+                newSeries.sharedClipKey &&
                 chart[newSeries.sharedClipKey].element.width.baseVal.value;
 
             assert.ok(
@@ -40,29 +43,31 @@ QUnit.test('General aniamtion tests.', function (assert) {
 });
 
 QUnit.test('Initial animation - series.clip set to false', function (assert) {
-
     var clock = null;
 
     try {
         clock = TestUtilities.lolexInstall();
 
         var chart = Highcharts.chart('container', {
-                series: [{
-                    data: [1, 2],
-                    clip: false,
-                    animation: {
-                        duration: 500
-                    },
-                    lineWidth: 3000
-                }]
+                series: [
+                    {
+                        data: [1, 2],
+                        clip: false,
+                        animation: {
+                            duration: 500
+                        },
+                        lineWidth: 3000
+                    }
+                ]
             }),
             done = assert.async(),
             width;
 
         setTimeout(function () {
             // animation started
-            width = chart[chart.series[0].sharedClipKey].element.width.baseVal
-                .value;
+            width =
+                chart[chart.series[0].sharedClipKey].element.width.baseVal
+                    .value;
 
             assert.strictEqual(
                 width > 20 && width < 200,
@@ -72,8 +77,9 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
 
             setTimeout(function () {
                 // animation uncovers most of the plot
-                width = chart[chart.series[0].sharedClipKey].element.width
-                    .baseVal.value;
+                width =
+                    chart[chart.series[0].sharedClipKey].element.width.baseVal
+                        .value;
                 assert.strictEqual(
                     width > 300 && width < 600,
                     true,
@@ -86,9 +92,9 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
                 assert.strictEqual(
                     // Highcharts - tested in browser
                     chart[chart.series[0].sharedClipKey] === undefined ||
-                    // Highstock - tested in headless
-                    chart[chart.series[0].sharedClipKey].element.width
-                        .baseVal.value === chart.chartWidth,
+                        // Highstock - tested in headless
+                        chart[chart.series[0].sharedClipKey].element.width
+                            .baseVal.value === chart.chartWidth,
                     true,
                     'Animation finished - no clip box'
                 );
@@ -104,66 +110,82 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
     }
 });
 
-QUnit.test('Initial animation - defer and series label test #12901', function (assert) {
+QUnit.test(
+    'Initial animation - defer and series label test #12901',
+    function (assert) {
+        var clock = null;
 
-    var clock = null;
+        try {
+            clock = TestUtilities.lolexInstall();
 
-    try {
-        clock = TestUtilities.lolexInstall();
-
-        var chart = Highcharts.chart('container', {
-                series: [{
-                    data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175],
-                    animation: {
-                        defer: 200,
-                        duration: 200
-                    },
-                    clip: false
-                }]
-            }),
-            done = assert.async(),
-            width;
-
-        setTimeout(function () {
-            // animation started
-            width = chart[chart.series[0].sharedClipKey].element.width.baseVal.value;
-
-            assert.strictEqual(
-                width === 0,
-                true,
-                'Animate should not start'
-            );
-
-            setTimeout(function () {
-                // animation uncovers most of the plot
-                width = chart[chart.series[0].sharedClipKey].element.width
-                    .baseVal.value;
-                assert.strictEqual(
-                    width > 300 && width < 600,
-                    true,
-                    'Animation uncovers most of the plot'
-                );
-            }, 250);
+            var chart = Highcharts.chart('container', {
+                    series: [
+                        {
+                            data: [
+                                43934,
+                                52503,
+                                57177,
+                                69658,
+                                97031,
+                                119931,
+                                137133,
+                                154175
+                            ],
+                            animation: {
+                                defer: 200,
+                                duration: 200
+                            },
+                            clip: false
+                        }
+                    ]
+                }),
+                done = assert.async(),
+                width;
 
             setTimeout(function () {
-                // animation finished
+                // animation started
+                width =
+                    chart[chart.series[0].sharedClipKey].element.width.baseVal
+                        .value;
+
                 assert.strictEqual(
-                    // Highcharts - tested in browser
-                    chart[chart.series[0].sharedClipKey] === undefined ||
-                    // Highstock - tested in headless
-                    chart[chart.series[0].sharedClipKey].element.width
-                        .baseVal.value === chart.chartWidth,
+                    width === 0,
                     true,
-                    'Animation finished - no clip box'
+                    'Animate should not start'
                 );
 
-                // all tests are done
-                done();
-            }, 400);
-        }, 100);
+                setTimeout(function () {
+                    // animation uncovers most of the plot
+                    width =
+                        chart[chart.series[0].sharedClipKey].element.width
+                            .baseVal.value;
+                    assert.strictEqual(
+                        width > 300 && width < 600,
+                        true,
+                        'Animation uncovers most of the plot'
+                    );
+                }, 250);
 
-        TestUtilities.lolexRunAndUninstall(clock);
-    } finally {
-        TestUtilities.lolexUninstall(clock);
+                setTimeout(function () {
+                    // animation finished
+                    assert.strictEqual(
+                        // Highcharts - tested in browser
+                        chart[chart.series[0].sharedClipKey] === undefined ||
+                            // Highstock - tested in headless
+                            chart[chart.series[0].sharedClipKey].element.width
+                                .baseVal.value === chart.chartWidth,
+                        true,
+                        'Animation finished - no clip box'
+                    );
+
+                    // all tests are done
+                    done();
+                }, 400);
+            }, 100);
+
+            TestUtilities.lolexRunAndUninstall(clock);
+        } finally {
+            TestUtilities.lolexUninstall(clock);
+        }
     }
-});
+);

@@ -10,8 +10,11 @@ QUnit.test('drawPoint', assert => {
             return !point.graphic ? 'highcharts-point' : 'highcharts-updated';
         }
     };
-    const renderer =
-        new Renderer(document.getElementById('container'), 200, 200);
+    const renderer = new Renderer(
+        document.getElementById('container'),
+        200,
+        200
+    );
     const params = {
         renderer,
         shapeType: 'rect',

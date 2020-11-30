@@ -8,14 +8,12 @@ QUnit.test('Chart update - Spacing bottom is not ignored.', function (assert) {
             },
             spacingBottom: 100
         },
-        series: [{
-            data: [1, 2, 3]
-        }]
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
     });
 
-    assert.strictEqual(
-        chart.spacing[2],
-        100,
-        'spacing bottom'
-    );
+    assert.strictEqual(chart.spacing[2], 100, 'spacing bottom');
 });

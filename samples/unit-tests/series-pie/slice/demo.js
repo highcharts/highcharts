@@ -1,6 +1,5 @@
 QUnit.test('Pie slice updating(#4104)', function (assert) {
     $('#container').highcharts({
-
         chart: {
             type: 'pie',
             animation: false
@@ -10,12 +9,13 @@ QUnit.test('Pie slice updating(#4104)', function (assert) {
             labelFormat: '{name} ({percentage:.1f}%)'
         },
 
-        series: [{
-            animation: false,
-            data: [1, 2, 3, 4, 5, -5],
-            showInLegend: true
-        }]
-
+        series: [
+            {
+                animation: false,
+                data: [1, 2, 3, 4, 5, -5],
+                showInLegend: true
+            }
+        ]
     });
 
     var chart = $('#container').highcharts();
@@ -43,7 +43,6 @@ QUnit.test('Pie slice updating(#4104)', function (assert) {
         'Next to hidden data label text string'
     );
 
-
     chart.series[0].points[0].setVisible(true, false);
     chart.redraw();
     assert.strictEqual(
@@ -68,8 +67,6 @@ QUnit.test('Pie slice updating(#4104)', function (assert) {
         true,
         'Disallow negative data. #5322'
     );
-
-
 });
 QUnit.test('Allow point select with 3D chart (#6094)', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -89,9 +86,11 @@ QUnit.test('Allow point select with 3D chart (#6094)', function (assert) {
                 animation: false
             }
         },
-        series: [{
-            data: [2, 4, 6, 1, 3]
-        }]
+        series: [
+            {
+                data: [2, 4, 6, 1, 3]
+            }
+        ]
     });
 
     var point = chart.series[0].points[0];
@@ -105,11 +104,7 @@ QUnit.test('Allow point select with 3D chart (#6094)', function (assert) {
     try {
         chart.series[0].points[0].slice();
         TestUtilities.lolexRunAndUninstall(clock);
-        assert.notEqual(
-            getPos(),
-            startPos,
-            'Point has moved'
-        );
+        assert.notEqual(getPos(), startPos, 'Point has moved');
     } finally {
         TestUtilities.lolexUninstall(clock);
     }

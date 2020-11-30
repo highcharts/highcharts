@@ -1,14 +1,14 @@
 QUnit.test('Undefined lang', function (assert) {
-
-    var chart = Highcharts
-        .chart('container', {
-            lang: {
-                loading: undefined
-            },
-            series: [{
+    var chart = Highcharts.chart('container', {
+        lang: {
+            loading: undefined
+        },
+        series: [
+            {
                 data: [1, 2, 3]
-            }]
-        });
+            }
+        ]
+    });
 
     chart.showLoading();
 
@@ -17,5 +17,4 @@ QUnit.test('Undefined lang', function (assert) {
         '',
         'undefined value is not draw'
     );
-
 });

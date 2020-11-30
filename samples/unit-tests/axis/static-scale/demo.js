@@ -5,7 +5,6 @@
                 y: i
             };
         },
-
         getData = function (dataPoints) {
             var data = [];
             for (var i = 0; i < dataPoints; i++) {
@@ -13,7 +12,6 @@
             }
             return data;
         },
-
         getSpacing = function (chart) {
             var yAxis = chart.yAxis[0],
                 tickIdx = yAxis.tickPositions,
@@ -30,17 +28,17 @@
             var spaceBefore,
                 spaceAfter,
                 chart = Highcharts.chart('container', {
-
                     yAxis: {
                         staticScale: 24,
                         tickInterval: 1,
                         tickWidth: 1
                     },
 
-                    series: [{
-                        data: getData(100)
-                    }]
-
+                    series: [
+                        {
+                            data: getData(100)
+                        }
+                    ]
                 });
 
             spaceBefore = getSpacing(chart);
@@ -51,44 +49,41 @@
                 spaceAfter,
                 spaceBefore,
                 'Space between two first ticks does not ' +
-                'change after Chart.update()'
+                    'change after Chart.update()'
             );
         }
     );
 
     QUnit.test('Row height does not change with data size', function (assert) {
-        var chart1Spacing,
-            chart2Spacing,
-            chart1,
-            chart2;
+        var chart1Spacing, chart2Spacing, chart1, chart2;
 
         chart1 = Highcharts.chart('container', {
-
             yAxis: {
                 staticScale: 24,
                 tickInterval: 1,
                 tickWidth: 1
             },
 
-            series: [{
-                data: getData(300)
-            }]
-
+            series: [
+                {
+                    data: getData(300)
+                }
+            ]
         });
         chart1Spacing = getSpacing(chart1);
 
         chart2 = Highcharts.chart('container', {
-
             yAxis: {
                 staticScale: 24,
                 tickInterval: 1,
                 tickWidth: 1
             },
 
-            series: [{
-                data: getData(5)
-            }]
-
+            series: [
+                {
+                    data: getData(5)
+                }
+            ]
         });
         chart2Spacing = getSpacing(chart2);
 
@@ -102,42 +97,41 @@
     QUnit.test(
         'Row height does not change with axis breaks',
         function (assert) {
-            var chart1Spacing,
-                chart2Spacing,
-                chart1,
-                chart2;
+            var chart1Spacing, chart2Spacing, chart1, chart2;
 
             chart1 = Highcharts.chart('container', {
-
                 yAxis: {
                     staticScale: 24,
                     tickInterval: 1,
                     tickWidth: 1
                 },
 
-                series: [{
-                    data: getData(100)
-                }]
-
+                series: [
+                    {
+                        data: getData(100)
+                    }
+                ]
             });
             chart1Spacing = getSpacing(chart1);
 
             chart2 = Highcharts.chart('container', {
-
                 yAxis: {
                     staticScale: 24,
                     tickInterval: 1,
                     tickWidth: 1,
-                    breaks: [{
-                        from: 80,
-                        to: 90
-                    }]
+                    breaks: [
+                        {
+                            from: 80,
+                            to: 90
+                        }
+                    ]
                 },
 
-                series: [{
-                    data: getData(100)
-                }]
-
+                series: [
+                    {
+                        data: getData(100)
+                    }
+                ]
             });
             chart2Spacing = getSpacing(chart2);
 
@@ -145,7 +139,7 @@
                 chart2Spacing,
                 chart1Spacing,
                 'Space between two first ticks does ' +
-                'not change with axis breaks'
+                    'not change with axis breaks'
             );
         }
     );
@@ -154,7 +148,6 @@
         'Static scale should give way for chart.height',
         function (assert) {
             var chart = Highcharts.chart('container', {
-
                 chart: {
                     height: 200
                 },
@@ -163,10 +156,11 @@
                     staticScale: 24
                 },
 
-                series: [{
-                    data: getData(10)
-                }]
-
+                series: [
+                    {
+                        data: getData(10)
+                    }
+                ]
             });
 
             assert.strictEqual(
@@ -182,5 +176,4 @@
             );
         }
     );
-
 }());

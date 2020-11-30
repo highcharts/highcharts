@@ -16,9 +16,11 @@ QUnit.test('Positions of the points.', function (assert) {
                     borderWidth: 0
                 }
             },
-            series: [{
-                data: [3, 2, 2, 5, 8, 9, 10, 7]
-            }]
+            series: [
+                {
+                    data: [3, 2, 2, 5, 8, 9, 10, 7]
+                }
+            ]
         }),
         series = chart.series[0],
         yAxis = series.yAxis,
@@ -27,7 +29,7 @@ QUnit.test('Positions of the points.', function (assert) {
     assert.strictEqual(
         yAxis.startAngleRad,
         series.points[0].shapeArgs.start,
-        'The first point\'s start is in a correct place.'
+        "The first point's start is in a correct place."
     );
 
     yAxis.update({
@@ -38,7 +40,7 @@ QUnit.test('Positions of the points.', function (assert) {
     assert.strictEqual(
         yAxis.endAngleRad,
         series.points[7].shapeArgs.end,
-        'The last point\'s end is in a correct place.'
+        "The last point's end is in a correct place."
     );
 
     chart.update({
@@ -52,7 +54,7 @@ QUnit.test('Positions of the points.', function (assert) {
     assert.strictEqual(
         yAxis.startAngleRad,
         series.points[0].shapeArgs.start,
-        'The first point\'s start is in a correct place (threshold: -10).'
+        "The first point's start is in a correct place (threshold: -10)."
     );
 
     yAxis.update({
@@ -66,11 +68,7 @@ QUnit.test('Positions of the points.', function (assert) {
         }
     });
 
-    assert.strictEqual(
-        0,
-        customSum,
-        'Points are outside the visible range.'
-    );
+    assert.strictEqual(0, customSum, 'Points are outside the visible range.');
 
     customSum = 0;
     yAxis.update({
@@ -105,11 +103,7 @@ QUnit.test('Positions of the points.', function (assert) {
         }
     });
 
-    assert.strictEqual(
-        0,
-        customSum,
-        'Points are outside the visible range.'
-    );
+    assert.strictEqual(0, customSum, 'Points are outside the visible range.');
 });
 
 QUnit.test('Positions of the stacked points.', function (assert) {
@@ -130,9 +124,11 @@ QUnit.test('Positions of the stacked points.', function (assert) {
                     borderWidth: 0
                 }
             },
-            series: [{
-                data: [3, 2, 2, 5, 8, 9, 10, 7]
-            }]
+            series: [
+                {
+                    data: [3, 2, 2, 5, 8, 9, 10, 7]
+                }
+            ]
         }),
         firstSeries = chart.series[0],
         yAxis = firstSeries.yAxis,
@@ -146,8 +142,10 @@ QUnit.test('Positions of the stacked points.', function (assert) {
 
     secondSeries = chart.series[1];
     for (i = 0; i < firstSeries.points.length; i++) {
-        if (firstSeries.points[i].start === secondSeries.points[i].start &&
-            firstSeries.points[i].end === secondSeries.points[i].end) {
+        if (
+            firstSeries.points[i].start === secondSeries.points[i].start &&
+            firstSeries.points[i].end === secondSeries.points[i].end
+        ) {
             customSum++;
         }
     }
@@ -169,7 +167,7 @@ QUnit.test('Positions of the stacked points.', function (assert) {
     assert.strictEqual(
         yAxis.max,
         firstSeries.stackedYData[6],
-        'The Y axis\' range is correctly set.'
+        "The Y axis' range is correctly set."
     );
 
     chart.pane[0].update({

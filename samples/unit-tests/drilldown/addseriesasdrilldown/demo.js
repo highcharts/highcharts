@@ -1,9 +1,7 @@
 QUnit.test('Async addSeriesAsDrilldown', function (assert) {
-
     var clock = TestUtilities.lolexInstall();
 
     try {
-
         var done = assert.async();
 
         var chart = Highcharts.chart('container', {
@@ -12,7 +10,6 @@ QUnit.test('Async addSeriesAsDrilldown', function (assert) {
                 events: {
                     drilldown: function (e) {
                         if (!e.seriesOptions) {
-
                             var chart = this,
                                 drilldowns = {
                                     Animals: {
@@ -49,7 +46,6 @@ QUnit.test('Async addSeriesAsDrilldown', function (assert) {
                                 chart.addSeriesAsDrilldown(e.point, series);
                             }, 1000);
                         }
-
                     }
                 }
             },
@@ -70,23 +66,29 @@ QUnit.test('Async addSeriesAsDrilldown', function (assert) {
                     }
                 }
             },
-            series: [{
-                name: 'Things',
-                colorByPoint: true,
-                data: [{
-                    name: 'Animals',
-                    y: 5,
-                    drilldown: true
-                }, {
-                    name: 'Fruits',
-                    y: 2,
-                    drilldown: true
-                }, {
-                    name: 'Cars',
-                    y: 4,
-                    drilldown: true
-                }]
-            }],
+            series: [
+                {
+                    name: 'Things',
+                    colorByPoint: true,
+                    data: [
+                        {
+                            name: 'Animals',
+                            y: 5,
+                            drilldown: true
+                        },
+                        {
+                            name: 'Fruits',
+                            y: 2,
+                            drilldown: true
+                        },
+                        {
+                            name: 'Cars',
+                            y: 4,
+                            drilldown: true
+                        }
+                    ]
+                }
+            ],
             drilldown: {
                 series: []
             }
@@ -94,31 +96,15 @@ QUnit.test('Async addSeriesAsDrilldown', function (assert) {
 
         chart.options.drilldown.animation = false;
 
-        assert.equal(
-            chart.series[0].name,
-            'Things',
-            'Warming up'
-        );
+        assert.equal(chart.series[0].name, 'Things', 'Warming up');
 
         // Click first point
         Highcharts.fireEvent(chart.series[0].points[0], 'click');
-        assert.equal(
-            chart.series[0].name,
-            'Things',
-            '0 ms - no changes'
-        );
+        assert.equal(chart.series[0].name, 'Things', '0 ms - no changes');
 
         setTimeout(function () {
-            assert.equal(
-                chart.series[0].name,
-                'Things',
-                '600 ms - no changes'
-            );
-            assert.equal(
-                chart.loadingShown,
-                true,
-                '600 ms - loading shown'
-            );
+            assert.equal(chart.series[0].name, 'Things', '600 ms - no changes');
+            assert.equal(chart.loadingShown, true, '600 ms - loading shown');
         }, 600);
 
         setTimeout(function () {
@@ -128,20 +114,13 @@ QUnit.test('Async addSeriesAsDrilldown', function (assert) {
                 '1200 ms - drilled down'
             );
 
-            assert.equal(
-                chart.loadingShown,
-                false,
-                '1200 ms - loading hidden'
-            );
+            assert.equal(chart.loadingShown, false, '1200 ms - loading hidden');
 
             done();
         }, 1200);
 
         TestUtilities.lolexRunAndUninstall(clock);
-
     } finally {
-
         TestUtilities.lolexUninstall(clock);
-
     }
 });

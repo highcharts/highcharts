@@ -1,26 +1,34 @@
 QUnit.test('Chart.addSeries.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        }
+                    ]
+                }
+            ]
         });
     chart.addSeries({
         type: 'wordcloud',
-        data: [{
-            name: 'One',
-            weight: 1
-        }, {
-            name: 'Two',
-            weight: 2
-        }]
+        data: [
+            {
+                name: 'One',
+                weight: 1
+            },
+            {
+                name: 'Two',
+                weight: 2
+            }
+        ]
     });
     assert.strictEqual(
         chart.series.length,
@@ -32,46 +40,54 @@ QUnit.test('Chart.addSeries.', function (assert) {
 QUnit.test('Chart.setSize.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         });
     chart.setSize(200, 200);
     // TODO find something to tests against.
     // This only tests wether setSize is executed without errors
-    assert.strictEqual(
-        'todo',
-        'todo',
-        'todo'
-    );
+    assert.strictEqual('todo', 'todo', 'todo');
 });
 
 QUnit.test('Point.remove.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[0];
@@ -86,19 +102,25 @@ QUnit.test('Point.remove.', function (assert) {
 QUnit.test('Point.select.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[0];
@@ -123,19 +145,25 @@ QUnit.test('Point.select.', function (assert) {
 QUnit.test('Point.update.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[0];
@@ -155,19 +183,25 @@ QUnit.test('Point.update.', function (assert) {
 QUnit.test('Series.addPoint.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0],
         result;
@@ -191,19 +225,25 @@ QUnit.test('Series.addPoint.', function (assert) {
 QUnit.test('Series.hide.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(
@@ -222,19 +262,25 @@ QUnit.test('Series.hide.', function (assert) {
 QUnit.test('Series.remove.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
     series.remove();
@@ -248,19 +294,25 @@ QUnit.test('Series.remove.', function (assert) {
 QUnit.test('Series.removePoint.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0],
         result;
@@ -283,19 +335,25 @@ QUnit.test('Series.removePoint.', function (assert) {
 QUnit.test('Series.select.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(
@@ -320,34 +378,45 @@ QUnit.test('Series.select.', function (assert) {
 QUnit.test('Series.setData.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
-    series.setData([{
-        name: 'One',
-        weight: 1
-    }, {
-        name: 'Two',
-        weight: 2
-    }, {
-        name: 'Three',
-        weight: 3
-    }, {
-        name: 'Four',
-        weight: 4
-    }]);
+    series.setData([
+        {
+            name: 'One',
+            weight: 1
+        },
+        {
+            name: 'Two',
+            weight: 2
+        },
+        {
+            name: 'Three',
+            weight: 3
+        },
+        {
+            name: 'Four',
+            weight: 4
+        }
+    ]);
     assert.strictEqual(
         series.points.length,
         4,
@@ -358,19 +427,25 @@ QUnit.test('Series.setData.', function (assert) {
 QUnit.test('Series.setVisible.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(
@@ -395,20 +470,26 @@ QUnit.test('Series.setVisible.', function (assert) {
 QUnit.test('Series.show.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }],
-                visible: false
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ],
+                    visible: false
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(
@@ -427,19 +508,25 @@ QUnit.test('Series.show.', function (assert) {
 QUnit.test('Series.update.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'wordcloud',
-                data: [{
-                    name: 'One',
-                    weight: 1
-                }, {
-                    name: 'Two',
-                    weight: 2
-                }, {
-                    name: 'Three',
-                    weight: 3
-                }]
-            }]
+            series: [
+                {
+                    type: 'wordcloud',
+                    data: [
+                        {
+                            name: 'One',
+                            weight: 1
+                        },
+                        {
+                            name: 'Two',
+                            weight: 2
+                        },
+                        {
+                            name: 'Three',
+                            weight: 3
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(
@@ -458,28 +545,32 @@ QUnit.test('Series.update.', function (assert) {
 });
 
 QUnit.test('Set the series animation duration(#13098).', function (assert) {
-
     var clock = null;
 
     try {
-
         clock = TestUtilities.lolexInstall();
 
         var H = Highcharts,
             chart = H.chart('container', {
-                series: [{
-                    type: 'wordcloud',
-                    animation: {
-                        duration: 1000
-                    },
-                    data: [{
-                        name: 'One'
-                    }, {
-                        name: 'Two'
-                    }, {
-                        name: 'Three'
-                    }]
-                }]
+                series: [
+                    {
+                        type: 'wordcloud',
+                        animation: {
+                            duration: 1000
+                        },
+                        data: [
+                            {
+                                name: 'One'
+                            },
+                            {
+                                name: 'Two'
+                            },
+                            {
+                                name: 'Three'
+                            }
+                        ]
+                    }
+                ]
             }),
             point = chart.series[0].points[1],
             initialPos = point.graphic.attr('x'),
@@ -521,10 +612,7 @@ QUnit.test('Set the series animation duration(#13098).', function (assert) {
         }, 1500);
 
         TestUtilities.lolexRunAndUninstall(clock);
-
     } finally {
-
         TestUtilities.lolexUninstall(clock);
-
     }
 });

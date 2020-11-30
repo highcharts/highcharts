@@ -1,8 +1,6 @@
 var datasets = [
     undefined,
-    [
-        [0, null, null]
-    ],
+    [[0, null, null]],
     [
         [0, null, null],
         [1, null, null]
@@ -26,17 +24,17 @@ var datasets = [
         [1, 2, 3],
         [2, null, null]
     ]
-
 ];
 
 datasets.forEach(function (data, i) {
-
     QUnit.test('Empty arearange dataset (#5001) #' + i, function (assert) {
         var chart = Highcharts.chart('container', {
-            series: [{
-                type: 'arearange',
-                data: data
-            }]
+            series: [
+                {
+                    type: 'arearange',
+                    data: data
+                }
+            ]
         });
 
         assert.strictEqual(
