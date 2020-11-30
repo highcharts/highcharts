@@ -25,7 +25,6 @@ import TreeSeriesMixin from '../Mixins/TreeSeries.js';
 var getColor = TreeSeriesMixin.getColor, getLevelOptions = TreeSeriesMixin.getLevelOptions, setTreeValues = TreeSeriesMixin.setTreeValues, updateRootId = TreeSeriesMixin.updateRootId;
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
-import './TreemapSeries.js';
 var isBoolean = function (x) {
     return typeof x === 'boolean';
 }, rad2deg = 180 / Math.PI;

@@ -44,7 +44,6 @@ class DumbbellPoint extends AreaRangePoint {
     public options: DumbbellPointOptions = void 0 as any;
     public connector: Highcharts.SVGElement = void 0 as any;
     public pointWidth: number = void 0 as any;
-    public pointSetState: typeof AreaRangePoint.prototype.setState = super.setState;
 
     /* *
      *
@@ -115,6 +114,19 @@ class DumbbellPoint extends AreaRangePoint {
         point.connector[verb](series.getConnectorAttribs(point));
     }
 }
+
+/* *
+ *
+ *  Prototype properties
+ *
+ * */
+interface DumbbellPoint{
+    pointSetState: typeof AreaRangePoint.prototype.setState;
+}
+
+extend(DumbbellPoint.prototype, {
+    pointSetState: AreaRangePoint.prototype.setState
+});
 
 /* *
  *

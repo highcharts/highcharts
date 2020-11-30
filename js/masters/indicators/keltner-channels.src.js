@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/KeltnerChannelsIndicator.js';
+import '../../Stock/Indicators/KeltnerChannels/KeltnerChannelsIndicator.js';

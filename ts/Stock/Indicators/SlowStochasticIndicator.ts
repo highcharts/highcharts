@@ -8,6 +8,12 @@
 
 'use strict';
 
+import type StochasticIndicator from './Stochastic/StochasticIndicator';
+import type {
+    StochasticOptions,
+    StochasticParamsOptions
+} from './Stochastic/StochasticOptions';
+import type StochasticPoint from './Stochastic/StochasticPoint';
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -29,16 +35,16 @@ declare global {
         }
 
         interface SlowStochasticIndicatorParamsOptions
-            extends StochasticIndicatorParamsOptions {
+            extends StochasticParamsOptions {
             // for inheritance
         }
 
-        class SlowStochasticIndicatorPoint extends StochasticIndicatorPoint {
+        class SlowStochasticIndicatorPoint extends StochasticPoint {
             public series: SlowStochasticIndicator;
         }
 
         interface SlowStochasticIndicatorOptions
-            extends StochasticIndicatorOptions, MultipleLinesIndicatorOptions {
+            extends StochasticOptions, MultipleLinesIndicatorOptions {
             params?: SlowStochasticIndicatorParamsOptions;
         }
     }

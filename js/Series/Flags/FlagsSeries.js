@@ -110,28 +110,26 @@ var FlagsSeries = /** @class */ (function (_super) {
                 !outsideRight) {
                 // Create the flag
                 if (!graphic) {
-                    graphic = point.graphic = renderer.label('', null, null, shape, null, null, options.useHTML);
-                    if (!chart.styledMode) {
-                        graphic
-                            .attr(series.pointAttribs(point))
-                            .css(merge(options.style, point.style));
-                    }
-                    graphic.attr({
-                        align: centered ? 'center' : 'left',
-                        width: options.width,
-                        height: options.height,
-                        'text-align': options.textAlign
-                    })
+                    graphic = point.graphic = renderer.label('', null, null, shape, null, null, options.useHTML)
                         .addClass('highcharts-point')
                         .add(series.markerGroup);
                     // Add reference to the point for tracker (#6303)
                     if (point.graphic.div) {
                         point.graphic.div.point = point;
                     }
-                    if (!chart.styledMode) {
-                        graphic.shadow(options.shadow);
-                    }
                     graphic.isNew = true;
+                }
+                graphic.attr({
+                    align: centered ? 'center' : 'left',
+                    width: options.width,
+                    height: options.height,
+                    'text-align': options.textAlign
+                });
+                if (!chart.styledMode) {
+                    graphic
+                        .attr(series.pointAttribs(point))
+                        .css(merge(options.style, point.style))
+                        .shadow(options.shadow);
                 }
                 if (plotX > 0) { // #3119
                     plotX -= graphic.strokeWidth() % 2; // #4285
