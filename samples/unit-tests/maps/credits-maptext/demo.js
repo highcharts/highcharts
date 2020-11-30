@@ -1,5 +1,4 @@
 QUnit.test('Credits', function (assert) {
-
     var chart = new Highcharts.Map({
         chart: {
             renderTo: 'container'
@@ -8,17 +7,20 @@ QUnit.test('Credits', function (assert) {
             mapText: 'Test map credits',
             mapTextFull: 'Test full map credits'
         },
-        series: [{
-            mapData: Highcharts.maps['countries/bn/bn-all']
-        }]
+        series: [
+            {
+                mapData: Highcharts.maps['countries/bn/bn-all']
+            }
+        ]
     });
 
     assert.strictEqual(
         chart.credits.element.textContent,
-        'Test full map credits' + Highcharts.getOptions().credits.text + 'Test map credits',
+        'Test full map credits' +
+            Highcharts.getOptions().credits.text +
+            'Test map credits',
         'Setting map credits inline'
     );
-
 
     // Remove by default
     Highcharts.setOptions({
@@ -32,9 +34,11 @@ QUnit.test('Credits', function (assert) {
         chart: {
             renderTo: 'container'
         },
-        series: [{
-            mapData: Highcharts.maps['countries/bn/bn-all']
-        }]
+        series: [
+            {
+                mapData: Highcharts.maps['countries/bn/bn-all']
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -42,7 +46,6 @@ QUnit.test('Credits', function (assert) {
         Highcharts.getOptions().credits.text,
         'Removing map credits by default options'
     );
-
 
     // Setting default
 
@@ -57,17 +60,20 @@ QUnit.test('Credits', function (assert) {
         chart: {
             renderTo: 'container'
         },
-        series: [{
-            mapData: Highcharts.maps['countries/bn/bn-all']
-        }]
+        series: [
+            {
+                mapData: Highcharts.maps['countries/bn/bn-all']
+            }
+        ]
     });
 
     assert.strictEqual(
         chart.credits.element.textContent,
-        'Map credits full test' + Highcharts.getOptions().credits.text + 'Map credits test',
+        'Map credits full test' +
+            Highcharts.getOptions().credits.text +
+            'Map credits test',
         'Setting map credits default options'
     );
-
 
     // Setting both default and inline - text only
 
@@ -78,9 +84,11 @@ QUnit.test('Credits', function (assert) {
         credits: {
             text: 'Test'
         },
-        series: [{
-            mapData: Highcharts.maps['countries/bn/bn-all']
-        }]
+        series: [
+            {
+                mapData: Highcharts.maps['countries/bn/bn-all']
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -88,7 +96,6 @@ QUnit.test('Credits', function (assert) {
         'Map credits full testTestMap credits test',
         'Setting map credits default options as well as inline'
     );
-
 
     // Setting both default and overruling by inline
 
@@ -101,9 +108,11 @@ QUnit.test('Credits', function (assert) {
             mapTextFull: 'PrecedenceMapTextFull',
             text: 'PrecedenceTest'
         },
-        series: [{
-            mapData: Highcharts.maps['countries/bn/bn-all']
-        }]
+        series: [
+            {
+                mapData: Highcharts.maps['countries/bn/bn-all']
+            }
+        ]
     });
 
     assert.strictEqual(

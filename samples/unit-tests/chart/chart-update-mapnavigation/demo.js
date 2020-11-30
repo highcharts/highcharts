@@ -1,9 +1,7 @@
 /* eslint func-style:0 */
 
-
 QUnit.test('Update map navigation (#6369)', function (assert) {
     var chart = Highcharts.mapChart('container', {
-
         legend: {
             enabled: false
         },
@@ -30,11 +28,15 @@ QUnit.test('Update map navigation (#6369)', function (assert) {
             }
         },
 
-        series: [{
-            data: [{
-                path: 'M 0 0 L 100 0 L 100 100 L 0 100'
-            }]
-        }]
+        series: [
+            {
+                data: [
+                    {
+                        path: 'M 0 0 L 100 0 L 100 100 L 0 100'
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -59,18 +61,13 @@ QUnit.test('Update map navigation (#6369)', function (assert) {
         'Black button'
     );
 
-
     chart.update({
         mapNavigation: {
             enabled: false
         }
     });
 
-    assert.strictEqual(
-        chart.mapNavButtons[0],
-        undefined,
-        'No button'
-    );
+    assert.strictEqual(chart.mapNavButtons[0], undefined, 'No button');
 
     chart.update({
         mapNavigation: {
@@ -83,5 +80,4 @@ QUnit.test('Update map navigation (#6369)', function (assert) {
         'black',
         'Black button'
     );
-
 });

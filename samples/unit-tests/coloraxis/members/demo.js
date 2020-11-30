@@ -2,7 +2,7 @@
  * Related issues: #8406
  */
 QUnit.test('getSeriesExtremes', function (assert) {
-    var chart = Highcharts.chart("container", {
+    var chart = Highcharts.chart('container', {
             colorAxis: {
                 minColor: '#ffffff',
                 maxColor: Highcharts.getOptions().colors[0]
@@ -11,11 +11,15 @@ QUnit.test('getSeriesExtremes', function (assert) {
         }),
         series;
 
-    chart.addAxis({ id: "yAxis" }, false, true);
+    chart.addAxis({ id: 'yAxis' }, false, true);
     series = chart.addSeries({
         type: 'heatmap',
         yAxis: 'yAxis',
-        data: [[1, 1, 1], [1, 2, 2], [1, 3, 3]]
+        data: [
+            [1, 1, 1],
+            [1, 2, 2],
+            [1, 3, 3]
+        ]
     });
 
     assert.strictEqual(

@@ -10,18 +10,22 @@ QUnit.test('Series update', function (assert) {
                 marginTop: 46,
                 marginBottom: 53
             },
-            series: [{
-                layoutAlgorithm: {
-                    splitSeries: true,
-                    parentNodeLimit: true
-                },
-                data: [50, 80, 50]
-            }]
+            series: [
+                {
+                    layoutAlgorithm: {
+                        splitSeries: true,
+                        parentNodeLimit: true
+                    },
+                    data: [50, 80, 50]
+                }
+            ]
         });
     chart.update({
-        series: [{
-            data: [2, 3, 4, 5, 6, 7]
-        }]
+        series: [
+            {
+                data: [2, 3, 4, 5, 6, 7]
+            }
+        ]
     });
     series = chart.series[0];
     point = series.data[5];
@@ -39,6 +43,6 @@ QUnit.test('Series update', function (assert) {
     assert.strictEqual(
         radius,
         point.radius,
-        "Point radius should not be updated after adding series other than packedbubble."
+        'Point radius should not be updated after adding series other than packedbubble.'
     );
 });

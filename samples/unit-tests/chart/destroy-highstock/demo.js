@@ -1,9 +1,8 @@
 // Fails because of #8004 Accessibility does not remove itself completely during destroy
 QUnit.test('Chart destroy', function (assert) {
-
     assert.expect(0);
 
-/*
+    /*
     var chart = Highcharts.stockChart('container', {
         rangeSelector: {
             selected: 1

@@ -6,10 +6,12 @@ QUnit.test('Column type navigator', function (assert) {
                     pointRange: null
                 }
             },
-            series: [{
-                type: 'column',
-                data: [10, 20, 30, 10, 20, 30, 10, 20, 30]
-            }]
+            series: [
+                {
+                    type: 'column',
+                    data: [10, 20, 30, 10, 20, 30, 10, 20, 30]
+                }
+            ]
         }),
         nav = chart.navigator,
         navGroupBox = nav.navigatorGroup.getBBox(),

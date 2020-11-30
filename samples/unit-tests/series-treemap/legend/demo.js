@@ -1,18 +1,22 @@
 QUnit.test('Legend Item colors', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                type: "treemap",
-                showInLegend: true,
-                legendType: 'point',
-                data: [{
-                    name: 'A',
-                    value: 1
-                }]
-            }]
+            series: [
+                {
+                    type: 'treemap',
+                    showInLegend: true,
+                    legendType: 'point',
+                    data: [
+                        {
+                            name: 'A',
+                            value: 1
+                        }
+                    ]
+                }
+            ]
         }),
         legend = chart.legend,
         series = chart.series[0],
-        point  = series.points[0],
+        point = series.points[0],
         legendItem = series.points[0].legendItem,
         legendSymbol = legendItem.parentGroup.element.lastChild;
     assert.strictEqual(

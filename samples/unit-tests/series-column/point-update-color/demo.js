@@ -5,11 +5,13 @@ QUnit.test(
             chart: {
                 type: 'column'
             },
-            series: [{
-                data: [2, -2],
-                color: 'red',
-                negativeColor: 'yellow'
-            }]
+            series: [
+                {
+                    data: [2, -2],
+                    color: 'red',
+                    negativeColor: 'yellow'
+                }
+            ]
         });
         Highcharts.each(chart.series[0].data, function (p) {
             p.update({ color: 'blue' });

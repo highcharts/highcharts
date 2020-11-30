@@ -4,49 +4,59 @@ QUnit.test('Annotations events - general', function (assert) {
         removeEventCalled = 0,
         popupOptions,
         getShapes = function () {
-            return [{
-                strokeWidth: 3,
-                type: 'path',
-                points: [{
-                    x: 2,
-                    y: 10,
-                    xAxis: 0,
-                    yAxis: 0
-                }, {
-                    x: 2,
-                    y: 15,
-                    xAxis: 0,
-                    yAxis: 0
-                }]
-            }];
+            return [
+                {
+                    strokeWidth: 3,
+                    type: 'path',
+                    points: [
+                        {
+                            x: 2,
+                            y: 10,
+                            xAxis: 0,
+                            yAxis: 0
+                        },
+                        {
+                            x: 2,
+                            y: 15,
+                            xAxis: 0,
+                            yAxis: 0
+                        }
+                    ]
+                }
+            ];
         },
         chart = Highcharts.chart('container', {
-            annotations: [{
-                shapes: getShapes(),
-                draggable: true,
-                events: {
-                    add: function () {
-                        addEventCalled++;
-                    },
-                    afterUpdate: function () {
-                        afterUpdateEventCalled++;
-                    },
-                    remove: function () {
-                        removeEventCalled++;
+            annotations: [
+                {
+                    shapes: getShapes(),
+                    draggable: true,
+                    events: {
+                        add: function () {
+                            addEventCalled++;
+                        },
+                        afterUpdate: function () {
+                            afterUpdateEventCalled++;
+                        },
+                        remove: function () {
+                            removeEventCalled++;
+                        }
                     }
+                },
+                {
+                    shapes: [
+                        {
+                            type: 'circle',
+                            point: {
+                                xAxis: 0,
+                                yAxis: 0,
+                                x: 5,
+                                y: 20
+                            },
+                            r: 10
+                        }
+                    ]
                 }
-            }, {
-                shapes: [{
-                    type: 'circle',
-                    point: {
-                        xAxis: 0,
-                        yAxis: 0,
-                        x: 5,
-                        y: 20
-                    },
-                    r: 10
-                }]
-            }],
+            ],
             navigation: {
                 events: {
                     showPopup: function (event) {
@@ -54,9 +64,23 @@ QUnit.test('Annotations events - general', function (assert) {
                     }
                 }
             },
-            series: [{
-                data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 23.3, 18.3, 13.9, 9.6]
-            }]
+            series: [
+                {
+                    data: [
+                        7.0,
+                        6.9,
+                        9.5,
+                        14.5,
+                        18.2,
+                        21.5,
+                        25.2,
+                        23.3,
+                        18.3,
+                        13.9,
+                        9.6
+                    ]
+                }
+            ]
         }),
         annotation = chart.annotations[0],
         point = chart.series[0].points[2],
@@ -69,9 +93,11 @@ QUnit.test('Annotations events - general', function (assert) {
     );
 
     annotation.update({
-        shapes: [{
-            strokeWidth: 15
-        }]
+        shapes: [
+            {
+                strokeWidth: 15
+            }
+        ]
     });
     assert.strictEqual(
         afterUpdateEventCalled,
@@ -139,22 +165,21 @@ QUnit.test('Annotations events - general', function (assert) {
         'No errors after removing selected annotation and selecting a new one (#11015)'
     );
 
-    controller.click(
-        chart.xAxis[0].toPixels(5),
-        chart.yAxis[0].toPixels(20)
-    );
+    controller.click(chart.xAxis[0].toPixels(5), chart.yAxis[0].toPixels(20));
 
     assert.deepEqual(
         popupOptions,
         {
             langKey: undefined,
-            shapes: [{
-                fill: ['rgba(0, 0, 0, 0.75)', 'text'],
-                stroke: ['rgba(0, 0, 0, 0.75)', 'text'],
-                strokeWidth: [1, 'number']
-            }],
+            shapes: [
+                {
+                    fill: ['rgba(0, 0, 0, 0.75)', 'text'],
+                    stroke: ['rgba(0, 0, 0, 0.75)', 'text'],
+                    strokeWidth: [1, 'number']
+                }
+            ],
             type: 'circle'
         },
-        'Annotations\' popup should get correct config for fields (#11716)'
+        "Annotations' popup should get correct config for fields (#11716)"
     );
 });

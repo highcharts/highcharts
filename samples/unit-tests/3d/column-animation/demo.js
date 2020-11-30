@@ -1,7 +1,6 @@
 /* eslint func-style:0 */
 
 QUnit.test('Point animation', function (assert) {
-
     var clock = null;
 
     function getPhysicalHeight(point) {
@@ -11,41 +10,41 @@ QUnit.test('Point animation', function (assert) {
     function getCalculatedHeight(point) {
         return Math.round(
             point.series.yAxis.toPixels(0) -
-            point.series.yAxis.toPixels(point.y)
+                point.series.yAxis.toPixels(point.y)
         );
     }
 
     try {
-
         clock = TestUtilities.lolexInstall();
 
-        var chart = Highcharts
-                .chart('container', {
-                    chart: {
-                        type: 'column',
-                        animation: {
-                            duration: 1000
-                        },
-                        options3d: {
-                            enabled: true,
-                            alpha: 0,
-                            beta: 0,
-                            viewDistance: 25,
-                            depth: 0
-                        }
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column',
+                    animation: {
+                        duration: 1000
                     },
-                    plotOptions: {
-                        column: {
-                            depth: 0
-                        }
-                    },
-                    yAxis: {
-                        max: 250
-                    },
-                    series: [{
+                    options3d: {
+                        enabled: true,
+                        alpha: 0,
+                        beta: 0,
+                        viewDistance: 25,
+                        depth: 0
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        depth: 0
+                    }
+                },
+                yAxis: {
+                    max: 250
+                },
+                series: [
+                    {
                         data: [25]
-                    }]
-                }),
+                    }
+                ]
+            }),
             point = chart.series[0].points[0],
             initialPos = getCalculatedHeight(point),
             realPos,
@@ -75,7 +74,6 @@ QUnit.test('Point animation', function (assert) {
                 true,
                 'Time 800 - point should have continued to move'
             );
-
         }, 800);
 
         setTimeout(function () {
@@ -89,11 +87,7 @@ QUnit.test('Point animation', function (assert) {
         }, 1200);
 
         TestUtilities.lolexRunAndUninstall(clock);
-
     } finally {
-
         TestUtilities.lolexUninstall(clock);
-
     }
-
 });

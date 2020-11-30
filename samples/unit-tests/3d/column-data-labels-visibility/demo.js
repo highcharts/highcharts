@@ -12,21 +12,27 @@ QUnit.test('3D columns dataLabels initial visibility', function (assert) {
                 viewDistance: 5
             }
         },
-        series: [{
-            dataLabels: {
-                enabled: true
-            },
-            data: [{
-                x: 1,
-                y: 5
-            }, {
-                x: 2,
-                y: 10
-            }, {
-                x: 3,
-                y: 10
-            }]
-        }]
+        series: [
+            {
+                dataLabels: {
+                    enabled: true
+                },
+                data: [
+                    {
+                        x: 1,
+                        y: 5
+                    },
+                    {
+                        x: 2,
+                        y: 10
+                    },
+                    {
+                        x: 3,
+                        y: 10
+                    }
+                ]
+            }
+        ]
     });
     const points = chart.series[0].points;
     let dataLabel = points[0].dataLabel;
@@ -63,7 +69,6 @@ QUnit.test('3D columns dataLabels initial visibility', function (assert) {
         4,
         'dataLabel should be in proper y position'
     );
-
 
     chart.update({
         chart: {

@@ -16,21 +16,26 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
                 }
             }
         },
-        series: [{
-            parentNode: {
-                allowPointSelect: true
+        series: [
+            {
+                parentNode: {
+                    allowPointSelect: true
+                },
+                data: []
             },
-            data: []
-        }, {
-            parentNode: {
-                allowPointSelect: true
+            {
+                parentNode: {
+                    allowPointSelect: true
+                },
+                data: []
             },
-            data: []
-        }, {
-            data: []
-        }, {
-            data: []
-        }]
+            {
+                data: []
+            },
+            {
+                data: []
+            }
+        ]
     });
     chart.series[2].remove();
     function compareCollections(collections, collection) {
@@ -50,14 +55,14 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     const controller = new TestController(chart);
     controller.triggerEvent(
         'mouseover',
-        (chart.series[0].parentNode.plotX) + chart.plotLeft,
-        (chart.series[0].parentNode.plotY) + chart.plotTop,
+        chart.series[0].parentNode.plotX + chart.plotLeft,
+        chart.series[0].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
     controller.click(
-        (chart.series[0].parentNode.plotX) + chart.plotLeft,
-        (chart.series[0].parentNode.plotY) + chart.plotTop,
+        chart.series[0].parentNode.plotX + chart.plotLeft,
+        chart.series[0].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
@@ -67,62 +72,62 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     );
     controller.triggerEvent(
         'mouseover',
-        (chart.series[2].parentNode.plotX) + chart.plotLeft,
-        (chart.series[2].parentNode.plotY) + chart.plotTop,
+        chart.series[2].parentNode.plotX + chart.plotLeft,
+        chart.series[2].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
     controller.click(
-        (chart.series[2].parentNode.plotX) + chart.plotLeft,
-        (chart.series[2].parentNode.plotY) + chart.plotTop,
+        chart.series[2].parentNode.plotX + chart.plotLeft,
+        chart.series[2].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
     assert.notOk(
         chart.series[2].parentNode.selected,
-        'It shouldn\'t be possible to select a parent that has not enabled parentNode.allowPointSelect property.'
+        "It shouldn't be possible to select a parent that has not enabled parentNode.allowPointSelect property."
     );
     controller.triggerEvent(
         'mouseover',
-        (chart.series[0].parentNode.plotX) + chart.plotLeft,
-        (chart.series[0].parentNode.plotY) + chart.plotTop,
+        chart.series[0].parentNode.plotX + chart.plotLeft,
+        chart.series[0].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
     controller.click(
-        (chart.series[0].parentNode.plotX) + chart.plotLeft,
-        (chart.series[0].parentNode.plotY) + chart.plotTop,
+        chart.series[0].parentNode.plotX + chart.plotLeft,
+        chart.series[0].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
     controller.triggerEvent(
         'mouseover',
-        (chart.series[1].parentNode.plotX) + chart.plotLeft,
-        (chart.series[1].parentNode.plotY) + chart.plotTop,
+        chart.series[1].parentNode.plotX + chart.plotLeft,
+        chart.series[1].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
     controller.click(
-        (chart.series[1].parentNode.plotX) + chart.plotLeft,
-        (chart.series[1].parentNode.plotY) + chart.plotTop,
+        chart.series[1].parentNode.plotX + chart.plotLeft,
+        chart.series[1].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
     assert.strictEqual(
         chart.getSelectedParentNodes().length,
         1,
-        'It shouldn\'t be possible to select more than one parent node without using key modifier.'
+        "It shouldn't be possible to select more than one parent node without using key modifier."
     );
     controller.triggerEvent(
         'mouseover',
-        (chart.series[0].parentNode.plotX) + chart.plotLeft,
-        (chart.series[0].parentNode.plotY) + chart.plotTop,
+        chart.series[0].parentNode.plotX + chart.plotLeft,
+        chart.series[0].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
     controller.click(
-        (chart.series[0].parentNode.plotX) + chart.plotLeft,
-        (chart.series[0].parentNode.plotY) + chart.plotTop,
+        chart.series[0].parentNode.plotX + chart.plotLeft,
+        chart.series[0].parentNode.plotY + chart.plotTop,
         { shiftKey: true },
         false
     );
@@ -133,14 +138,14 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     );
     controller.triggerEvent(
         'mouseover',
-        (chart.series[0].parentNode.plotX) + chart.plotLeft,
-        (chart.series[0].parentNode.plotY) + chart.plotTop,
+        chart.series[0].parentNode.plotX + chart.plotLeft,
+        chart.series[0].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );
     controller.click(
-        (chart.series[0].parentNode.plotX) + chart.plotLeft,
-        (chart.series[0].parentNode.plotY) + chart.plotTop,
+        chart.series[0].parentNode.plotX + chart.plotLeft,
+        chart.series[0].parentNode.plotY + chart.plotTop,
         { shiftKey: false },
         false
     );

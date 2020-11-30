@@ -3,21 +3,29 @@ QUnit.test('Flags on inverted chart', function (assert) {
         chart: {
             inverted: true
         },
-        series: [{
-            data: [10, 20, 30, 10, 20, 30],
-            id: 'main'
-        }, {
-            type: 'flags',
-            data: [{
-                x: 3
-            }]
-        }, {
-            type: 'flags',
-            onSeries: 'main',
-            data: [{
-                x: 3
-            }]
-        }]
+        series: [
+            {
+                data: [10, 20, 30, 10, 20, 30],
+                id: 'main'
+            },
+            {
+                type: 'flags',
+                data: [
+                    {
+                        x: 3
+                    }
+                ]
+            },
+            {
+                type: 'flags',
+                onSeries: 'main',
+                data: [
+                    {
+                        x: 3
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -35,21 +43,28 @@ QUnit.test('Flags on inverted chart', function (assert) {
 
 QUnit.test('Positioning of flags on yAxis', function (assert) {
     var top = 80,
-        chart = $('#container').highcharts('StockChart', {
-            yAxis: {
-                top: top,
-                height: '20%'
-            },
-            series: [{
-                data: [10, 20, 15, 13, 15, 11, 15]
-            }, {
-                type: 'flags',
-                data: [{
-                    x: 5,
-                    title: 5
-                }]
-            }]
-        }).highcharts();
+        chart = $('#container')
+            .highcharts('StockChart', {
+                yAxis: {
+                    top: top,
+                    height: '20%'
+                },
+                series: [
+                    {
+                        data: [10, 20, 15, 13, 15, 11, 15]
+                    },
+                    {
+                        type: 'flags',
+                        data: [
+                            {
+                                x: 5,
+                                title: 5
+                            }
+                        ]
+                    }
+                ]
+            })
+            .highcharts();
 
     assert.strictEqual(
         chart.series[1].points[0].plotY,
@@ -59,40 +74,49 @@ QUnit.test('Positioning of flags on yAxis', function (assert) {
 });
 
 QUnit.test('#2049 - Flag series on grouped columns.', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
             chart: {
                 type: 'column'
             },
-            series: [{
-                data: [
-                    [0, 50.245666000100002],
-                    [1, 22.0]
-                ],
-                id: 'left'
-            }, {
-                data: [
-                    [0, 55.0],
-                    [1, 22.0]
-                ],
-                id: 'right'
-            }, {
-                data: [{
-                    x: 0
-                }, {
-                    x: 1
-                }],
-                onSeries: 'left',
-                type: 'flags'
-            }, {
-                data: [{
-                    x: 0
-                }, {
-                    x: 1
-                }],
-                onSeries: 'right',
-                type: 'flags'
-            }
+            series: [
+                {
+                    data: [
+                        [0, 50.245666000100002],
+                        [1, 22.0]
+                    ],
+                    id: 'left'
+                },
+                {
+                    data: [
+                        [0, 55.0],
+                        [1, 22.0]
+                    ],
+                    id: 'right'
+                },
+                {
+                    data: [
+                        {
+                            x: 0
+                        },
+                        {
+                            x: 1
+                        }
+                    ],
+                    onSeries: 'left',
+                    type: 'flags'
+                },
+                {
+                    data: [
+                        {
+                            x: 0
+                        },
+                        {
+                            x: 1
+                        }
+                    ],
+                    onSeries: 'right',
+                    type: 'flags'
+                }
             ]
         }),
         series,
@@ -105,7 +129,11 @@ QUnit.test('#2049 - Flag series on grouped columns.', function (assert) {
             assert.strictEqual(
                 Math.round(point.plotX + xOffset),
                 Math.round(chart.series[i + 2].points[j].plotX),
-                'Flag ' + j + ' from series ' + chart.series[i + 2].name + ' matches corresponding column.'
+                'Flag ' +
+                    j +
+                    ' from series ' +
+                    chart.series[i + 2].name +
+                    ' matches corresponding column.'
             );
         });
     });

@@ -1,7 +1,5 @@
 QUnit.test('series-line/type', function (assert) {
-
     TestTemplate.test('highcharts/line', {}, function (template) {
-
         var chart = template.chart,
             options = chart.options,
             series = chart.series[0];
@@ -17,33 +15,31 @@ QUnit.test('series-line/type', function (assert) {
             'line',
             'Series type should be "line".'
         );
-
     });
 
-    TestTemplate.test('highcharts/line', {
+    TestTemplate.test(
+        'highcharts/line',
+        {
+            chart: {
+                type: undefined
+            }
+        },
+        function (template) {
+            var chart = template.chart,
+                options = chart.options,
+                series = chart.series[0];
 
-        chart: {
-            type: undefined
+            assert.strictEqual(
+                options.chart.type,
+                undefined,
+                'Chart type option should be undefined.'
+            );
+
+            assert.strictEqual(
+                series.type,
+                'line',
+                'Series type should be "line" as default.'
+            );
         }
-
-    }, function (template) {
-
-        var chart = template.chart,
-            options = chart.options,
-            series = chart.series[0];
-
-        assert.strictEqual(
-            options.chart.type,
-            undefined,
-            'Chart type option should be undefined.'
-        );
-
-        assert.strictEqual(
-            series.type,
-            'line',
-            'Series type should be "line" as default.'
-        );
-
-    });
-
+    );
 });
