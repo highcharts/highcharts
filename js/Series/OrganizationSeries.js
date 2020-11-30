@@ -10,20 +10,25 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
-var base = BaseSeries.seriesTypes.sankey.prototype;
+var SankeySeries = BaseSeries.seriesTypes.sankey;
 import H from '../Core/Globals.js';
 import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
-var css = U.css, pick = U.pick, wrap = U.wrap;
-/**
- * Layout value for the child nodes in an organization chart. If `hanging`, this
- * node's children will hang below their parent, allowing a tighter packing of
- * nodes in the diagram.
- *
- * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
- */
-''; // detach doclets above
+var css = U.css, extend = U.extend, merge = U.merge, pick = U.pick, wrap = U.wrap;
 /* *
  *
  *  Class
@@ -36,189 +41,210 @@ var css = U.css, pick = U.pick, wrap = U.wrap;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-BaseSeries.seriesType('organization', 'sankey', 
-/**
- * An organization chart is a diagram that shows the structure of an
- * organization and the relationships and relative ranks of its parts and
- * positions.
- *
- * @sample       highcharts/demo/organization-chart/
- *               Organization chart
- * @sample       highcharts/series-organization/horizontal/
- *               Horizontal organization chart
- * @sample       highcharts/series-organization/borderless
- *               Borderless design
- * @sample       highcharts/series-organization/center-layout
- *               Centered layout
- *
- * @extends      plotOptions.sankey
- * @excluding    allowPointSelect, curveFactor, dataSorting
- * @since        7.1.0
- * @product      highcharts
- * @requires     modules/organization
- * @optionparent plotOptions.organization
- */
-{
-    /**
-     * The border color of the node cards.
-     *
-     * @type {Highcharts.ColorString}
-     * @private
-     */
-    borderColor: palette.neutralColor60,
-    /**
-     * The border radius of the node cards.
-     *
-     * @private
-     */
-    borderRadius: 3,
-    /**
-     * Radius for the rounded corners of the links between nodes.
-     *
-     * @sample   highcharts/series-organization/link-options
-     *           Square links
-     *
-     * @private
-     */
-    linkRadius: 10,
-    borderWidth: 1,
-    /**
-     * @declare Highcharts.SeriesOrganizationDataLabelsOptionsObject
-     *
-     * @private
-     */
-    dataLabels: {
-        /* eslint-disable valid-jsdoc */
-        /**
-         * A callback for defining the format for _nodes_ in the
-         * organization chart. The `nodeFormat` option takes precedence
-         * over `nodeFormatter`.
+var OrganizationSeries = /** @class */ (function (_super) {
+    __extends(OrganizationSeries, _super);
+    function OrganizationSeries() {
+        /* *
          *
-         * In an organization chart, the `nodeFormatter` is a quite complex
-         * function of the available options, striving for a good default
-         * layout of cards with or without images. In organization chart,
-         * the data labels come with `useHTML` set to true, meaning they
-         * will be rendered as true HTML above the SVG.
+         *  Static Properties
          *
-         * @sample highcharts/series-organization/datalabels-nodeformatter
-         *         Modify the default label format output
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
          *
-         * @type  {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
-         * @since 6.0.2
-         */
-        nodeFormatter: function () {
-            var outerStyle = {
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                'flex-direction': 'row',
-                'align-items': 'center',
-                'justify-content': 'center'
-            }, imageStyle = {
-                'max-height': '100%',
-                'border-radius': '50%'
-            }, innerStyle = {
-                width: '100%',
-                padding: 0,
-                'text-align': 'center',
-                'white-space': 'normal'
-            }, nameStyle = {
-                margin: 0
-            }, titleStyle = {
-                margin: 0
-            }, descriptionStyle = {
-                opacity: 0.75,
-                margin: '5px'
-            };
-            // eslint-disable-next-line valid-jsdoc
-            /**
-             * @private
-             */
-            function styleAttr(style) {
-                return Object.keys(style).reduce(function (str, key) {
-                    return str + key + ':' + style[key] + ';';
-                }, 'style="') + '"';
-            }
-            if (this.point.image) {
-                imageStyle['max-width'] = '30%';
-                innerStyle.width = '70%';
-            }
-            // PhantomJS doesn't support flex, roll back to absolute
-            // positioning
-            if (this.series.chart.renderer.forExport) {
-                outerStyle.display = 'block';
-                innerStyle.position = 'absolute';
-                innerStyle.left = this.point.image ? '30%' : 0;
-                innerStyle.top = 0;
-            }
-            var html = '<div ' + styleAttr(outerStyle) + '>';
-            if (this.point.image) {
-                html += '<img src="' + this.point.image + '" ' +
-                    styleAttr(imageStyle) + '>';
-            }
-            html += '<div ' + styleAttr(innerStyle) + '>';
-            if (this.point.name) {
-                html += '<h4 ' + styleAttr(nameStyle) + '>' +
-                    this.point.name + '</h4>';
-            }
-            if (this.point.title) {
-                html += '<p ' + styleAttr(titleStyle) + '>' +
-                    (this.point.title || '') + '</p>';
-            }
-            if (this.point.description) {
-                html += '<p ' + styleAttr(descriptionStyle) + '>' +
-                    this.point.description + '</p>';
-            }
-            html += '</div>' +
-                '</div>';
-            return html;
-        },
-        /* eslint-enable valid-jsdoc */
-        style: {
-            /** @internal */
-            fontWeight: 'normal',
-            /** @internal */
-            fontSize: '13px'
-        },
-        useHTML: true
-    },
-    /**
-     * The indentation in pixels of hanging nodes, nodes which parent has
-     * [layout](#series.organization.nodes.layout) set to `hanging`.
-     *
-     * @private
-     */
-    hangingIndent: 20,
-    /**
-     * The color of the links between nodes.
-     *
-     * @type {Highcharts.ColorString}
-     * @private
-     */
-    linkColor: palette.neutralColor60,
-    /**
-     * The line width of the links connecting nodes, in pixels.
-     *
-     * @sample   highcharts/series-organization/link-options
-     *           Square links
-     *
-     * @private
-     */
-    linkLineWidth: 1,
-    /**
-     * In a horizontal chart, the width of the nodes in pixels. Node that
-     * most organization charts are vertical, so the name of this option
-     * is counterintuitive.
-     *
-     * @private
-     */
-    nodeWidth: 50,
-    tooltip: {
-        nodeFormat: '{point.name}<br>{point.title}<br>{point.description}'
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-}, {
+    /**
+     * An organization chart is a diagram that shows the structure of an
+     * organization and the relationships and relative ranks of its parts and
+     * positions.
+     *
+     * @sample       highcharts/demo/organization-chart/
+     *               Organization chart
+     * @sample       highcharts/series-organization/horizontal/
+     *               Horizontal organization chart
+     * @sample       highcharts/series-organization/borderless
+     *               Borderless design
+     * @sample       highcharts/series-organization/center-layout
+     *               Centered layout
+     *
+     * @extends      plotOptions.sankey
+     * @excluding    allowPointSelect, curveFactor, dataSorting
+     * @since        7.1.0
+     * @product      highcharts
+     * @requires     modules/organization
+     * @optionparent plotOptions.organization
+     */
+    OrganizationSeries.defaultOptions = merge(SankeySeries.defaultOptions, {
+        /**
+         * The border color of the node cards.
+         *
+         * @type {Highcharts.ColorString}
+         * @private
+         */
+        borderColor: palette.neutralColor60,
+        /**
+         * The border radius of the node cards.
+         *
+         * @private
+         */
+        borderRadius: 3,
+        /**
+         * Radius for the rounded corners of the links between nodes.
+         *
+         * @sample   highcharts/series-organization/link-options
+         *           Square links
+         *
+         * @private
+         */
+        linkRadius: 10,
+        borderWidth: 1,
+        /**
+         * @declare Highcharts.SeriesOrganizationDataLabelsOptionsObject
+         *
+         * @private
+         */
+        dataLabels: {
+            /* eslint-disable valid-jsdoc */
+            /**
+             * A callback for defining the format for _nodes_ in the
+             * organization chart. The `nodeFormat` option takes precedence
+             * over `nodeFormatter`.
+             *
+             * In an organization chart, the `nodeFormatter` is a quite complex
+             * function of the available options, striving for a good default
+             * layout of cards with or without images. In organization chart,
+             * the data labels come with `useHTML` set to true, meaning they
+             * will be rendered as true HTML above the SVG.
+             *
+             * @sample highcharts/series-organization/datalabels-nodeformatter
+             *         Modify the default label format output
+             *
+             * @type  {Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction}
+             * @since 6.0.2
+             */
+            nodeFormatter: function () {
+                var outerStyle = {
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    'flex-direction': 'row',
+                    'align-items': 'center',
+                    'justify-content': 'center'
+                }, imageStyle = {
+                    'max-height': '100%',
+                    'border-radius': '50%'
+                }, innerStyle = {
+                    width: '100%',
+                    padding: 0,
+                    'text-align': 'center',
+                    'white-space': 'normal'
+                }, nameStyle = {
+                    margin: 0
+                }, titleStyle = {
+                    margin: 0
+                }, descriptionStyle = {
+                    opacity: 0.75,
+                    margin: '5px'
+                };
+                // eslint-disable-next-line valid-jsdoc
+                /**
+                 * @private
+                 */
+                function styleAttr(style) {
+                    return Object.keys(style).reduce(function (str, key) {
+                        return str + key + ':' + style[key] + ';';
+                    }, 'style="') + '"';
+                }
+                if (this.point.image) {
+                    imageStyle['max-width'] = '30%';
+                    innerStyle.width = '70%';
+                }
+                // PhantomJS doesn't support flex, roll back to absolute
+                // positioning
+                if (this.series.chart.renderer.forExport) {
+                    outerStyle.display = 'block';
+                    innerStyle.position = 'absolute';
+                    innerStyle.left = this.point.image ? '30%' : 0;
+                    innerStyle.top = 0;
+                }
+                var html = '<div ' + styleAttr(outerStyle) + '>';
+                if (this.point.image) {
+                    html += '<img src="' + this.point.image + '" ' +
+                        styleAttr(imageStyle) + '>';
+                }
+                html += '<div ' + styleAttr(innerStyle) + '>';
+                if (this.point.name) {
+                    html += '<h4 ' + styleAttr(nameStyle) + '>' +
+                        this.point.name + '</h4>';
+                }
+                if (this.point.title) {
+                    html += '<p ' + styleAttr(titleStyle) + '>' +
+                        (this.point.title || '') + '</p>';
+                }
+                if (this.point.description) {
+                    html += '<p ' + styleAttr(descriptionStyle) + '>' +
+                        this.point.description + '</p>';
+                }
+                html += '</div>' +
+                    '</div>';
+                return html;
+            },
+            /* eslint-enable valid-jsdoc */
+            style: {
+                /** @internal */
+                fontWeight: 'normal',
+                /** @internal */
+                fontSize: '13px'
+            },
+            useHTML: true
+        },
+        /**
+         * The indentation in pixels of hanging nodes, nodes which parent has
+         * [layout](#series.organization.nodes.layout) set to `hanging`.
+         *
+         * @private
+         */
+        hangingIndent: 20,
+        /**
+         * The color of the links between nodes.
+         *
+         * @type {Highcharts.ColorString}
+         * @private
+         */
+        linkColor: palette.neutralColor60,
+        /**
+         * The line width of the links connecting nodes, in pixels.
+         *
+         * @sample   highcharts/series-organization/link-options
+         *           Square links
+         *
+         * @private
+         */
+        linkLineWidth: 1,
+        /**
+         * In a horizontal chart, the width of the nodes in pixels. Node that
+         * most organization charts are vertical, so the name of this option
+         * is counterintuitive.
+         *
+         * @private
+         */
+        nodeWidth: 50,
+        tooltip: {
+            nodeFormat: '{point.name}<br>{point.title}<br>{point.description}'
+        }
+    });
+    return OrganizationSeries;
+}(SankeySeries));
+extend(OrganizationSeries.prototype, {
     pointAttribs: function (point, state) {
-        var series = this, attribs = base.pointAttribs.call(series, point, state), level = point.isNode ? point.level : point.fromNode.level, levelOptions = series.mapOptionsToLevel[level || 0] || {}, options = point.options, stateOptions = (levelOptions.states && levelOptions.states[state]) || {}, values = ['borderRadius', 'linkColor', 'linkLineWidth']
+        var series = this, attribs = SankeySeries.prototype.pointAttribs.call(series, point, state), level = point.isNode ? point.level : point.fromNode.level, levelOptions = series.mapOptionsToLevel[level || 0] || {}, options = point.options, stateOptions = (levelOptions.states && levelOptions.states[state]) || {}, values = ['borderRadius', 'linkColor', 'linkLineWidth']
             .reduce(function (obj, key) {
             obj[key] = pick(stateOptions[key], options[key], levelOptions[key], series.options[key]);
             return obj;
@@ -236,8 +262,7 @@ BaseSeries.seriesType('organization', 'sankey',
         return attribs;
     },
     createNode: function (id) {
-        var node = base.createNode
-            .call(this, id);
+        var node = SankeySeries.prototype.createNode.call(this, id);
         // All nodes in an org chart are equal width
         node.getSum = function () {
             return 1;
@@ -245,7 +270,7 @@ BaseSeries.seriesType('organization', 'sankey',
         return node;
     },
     createNodeColumn: function () {
-        var column = base.createNodeColumn.call(this);
+        var column = SankeySeries.prototype.createNodeColumn.call(this);
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent
         wrap(column, 'offset', function (proceed, node, factor) {
@@ -261,7 +286,7 @@ BaseSeries.seriesType('organization', 'sankey',
         return column;
     },
     translateNode: function (node, column) {
-        base.translateNode.call(this, node, column);
+        SankeySeries.prototype.translateNode.call(this, node, column);
         if (node.hangsFrom) {
             node.shapeArgs.height -=
                 this.options.hangingIndent;
@@ -417,6 +442,31 @@ BaseSeries.seriesType('organization', 'sankey',
         H.seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
     }
 });
+BaseSeries.registerSeriesType('organization', OrganizationSeries);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default OrganizationSeries;
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+/**
+ * Layout value for the child nodes in an organization chart. If `hanging`, this
+ * node's children will hang below their parent, allowing a tighter packing of
+ * nodes in the diagram.
+ *
+ * @typedef {"normal"|"hanging"} Highcharts.SeriesOrganizationNodesLayoutValue
+ */
+''; // detach doclets above
+/* *
+ *
+ *  API Options
+ *
+ * */
 /**
  * An `organization` series. If the [type](#series.organization.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
