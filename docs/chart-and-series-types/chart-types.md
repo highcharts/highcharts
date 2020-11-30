@@ -1,7 +1,7 @@
 Chart types
 ===========
 
-Highcharts support a range of different chart types so data can be displayed in a meaningful way. Highcharts supports a long list of different chart types, among others `line`, `spline`, `area`, `areaspline`, `column`, `bar`, `pie`, `scatter`, `gauge`, `arearange`, `areasplinerange` and `columnrange`. For the full list of available chart types, see the API for [https://api.highcharts.com/highcharts/plotOptions](Highcharts), [https://api.highcharts.com/highstock/plotOptions](Highcharts Stock), [https://api.highcharts.com/highmaps/plotOptions](Highcharts Maps) and [https://api.highcharts.com/gantt/plotOptions](Highcharts Gantt) respectively.
+Highcharts support a range of different chart types so data can be displayed in a meaningful way. Highcharts supports a long list of different chart types, among others `line`, `spline`, `area`, `areaspline`, `column`, `bar`, `pie`, `scatter`, `gauge`, `arearange`, `areasplinerange` and `columnrange`. For the full list of available chart types, see the API for [Highcharts](https://api.highcharts.com/highcharts/plotOptions), [Highcharts Stock](https://api.highcharts.com/highstock/plotOptions), [Highcharts Maps](https://api.highcharts.com/highmaps/plotOptions) and [Highcharts Gantt](https://api.highcharts.com/gantt/plotOptions) respectively.
 
 To set a default chart type use:
 
