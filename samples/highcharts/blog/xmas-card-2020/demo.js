@@ -7,7 +7,7 @@ let itemChart;
 	let dashStyle = 'dot';
 	let plotLineZ = 3;
 
-	let imagePath = 'https://cdn.rawgit.com/highcharts/highcharts/{commit_hash}/samples/graphics/xmas-card-2020/';
+	let imagePath = 'https://cdn.rawgit.com/highcharts/highcharts/{commit-hash}/samples/graphics/xmas-card-2020/';
 		
 	//let imagePath = '../../../graphics/xmas-card-2020/'
 	Math.easeOutQuint= function(pos) {
