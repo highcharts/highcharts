@@ -7,7 +7,7 @@ let itemChart;
 	let dashStyle = 'dot';
 	let plotLineZ = 3;
 
-	let imagePath = 'https://cdn.rawgit.com/highcharts/highcharts/%7Bcommit-hash%7D/samples/graphics/xmas-card-2020/';
+	let imagePath = 'https://cdn.rawgit.com/highcharts/highcharts/{commit-hash}/samples/graphics/xmas-card-2020/';
 		
 	//let imagePath = '../../../graphics/xmas-card-2020/'
 	Math.easeOutQuint= function(pos) {
@@ -650,7 +650,7 @@ let itemChart;
 			zIndex:6,
 			keys: ['name', 'y', 'color', 'label'],
 			data: [
-				{name:'white star',y: 2, marker:{symbol:'url(' + imagePath + 'white-star-big.svg)',radius:20}},
+				{name:'white star',y: 2, marker:{symbol:'url(https://cdn.rawgit.com/highcharts/highcharts/{commit-hash}/samples/graphics/xmas-card-2020/white-star-big.svg)',radius:20}},
 				{name:'red star',y:2, color:'#64A12D', marker:{symbol:'url(' + imagePath + 'red-star.svg)',radius:20}},
 				{name:'white dot',y:1, color:'#fff'},
 				{name:'big blue star',y:2,  marker:{symbol:'url(' + imagePath + 'blue-star-big.svg)',radius:20}},
