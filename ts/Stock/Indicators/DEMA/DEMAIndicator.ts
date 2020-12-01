@@ -61,6 +61,7 @@ class DEMAIndicator extends EMAIndicator {
      */
     public static defaultOptions: DEMAOptions = merge(EMAIndicator.defaultOptions)
 
+    public EMApercent: number = void 0 as any;
     public data: Array<DEMAPoint> = void 0 as any;
     public options: DEMAOptions = void 0 as any;
     public points: Array<DEMAPoint> = void 0 as any;
@@ -94,7 +95,7 @@ class DEMAIndicator extends EMAIndicator {
             xVal || [],
             yVal,
             typeof i === 'undefined' ? 1 : i,
-            (this.chart.series[0] as any).EMApercent,
+            this.EMApercent,
             prevEMA,
             typeof index === 'undefined' ? -1 : index,
             SMA
@@ -130,7 +131,7 @@ class DEMAIndicator extends EMAIndicator {
             i: number,
             DEMAPoint: [number, number];
 
-        series.EMApercent = (2 / (period + 1));
+        this.EMApercent = (2 / (period + 1));
 
         // Check period, if bigger than EMA points length, skip
         if (yValLen < 2 * period - 1) {
