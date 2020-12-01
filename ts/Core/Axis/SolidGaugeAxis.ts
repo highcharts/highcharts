@@ -16,16 +16,16 @@
  *
  * */
 
-import type SolidGaugePoint from './SolidGaugePoint';
-import type ColorAxis from '../../Core/Axis/ColorAxis';
+import type SolidGaugePoint from '../../Series/SolidGauge/SolidGaugePoint';
+import type ColorAxis from './ColorAxis';
 import type ColorType from '../../Core/Color/ColorType';
-import type GradientColor from '../../Core/Color/GradientColor';
-import type RadialAxis from '../../Core/Axis/RadialAxis';
-import Color from '../../Core/Color/Color.js';
+import type GradientColor from '../Color/GradientColor';
+import type RadialAxis from './RadialAxis';
+import Color from '../Color/Color.js';
 const {
     parse: color
 } = Color;
-import U from '../../Core/Utilities.js';
+import U from '../Utilities.js';
 const {
     extend,
     merge

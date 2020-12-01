@@ -22,7 +22,7 @@ import type SolidGaugePoint from './SolidGaugePoint';
 import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import SolidGaugeAxis from './SolidGaugeAxis.js';
+import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
