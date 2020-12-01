@@ -29,6 +29,7 @@ import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import WaterfallAxis from './WaterfallAxis.js';
+import WaterfallPoint from './WaterfallPoint.js';
 import '../../Core/Options.js';
 /**
  * Returns true if the key is a direct property of the object.
@@ -610,7 +611,8 @@ extend(WaterfallSeries.prototype, {
     pointValKey: 'y',
     // Property needed to prevent lines between the columns from disappearing
     // when negativeColor is used.
-    showLine: true
+    showLine: true,
+    pointClass: WaterfallPoint
 });
 BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
 WaterfallAxis.compose(H.Axis, Chart);

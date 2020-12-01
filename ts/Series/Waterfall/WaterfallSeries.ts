@@ -14,7 +14,6 @@ import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type WaterfallPoint from './WaterfallPoint';
 import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
@@ -38,6 +37,7 @@ const {
     pick
 } = U;
 import WaterfallAxis from './WaterfallAxis.js';
+import WaterfallPoint from './WaterfallPoint.js';
 
 /* *
  *
@@ -935,7 +935,8 @@ extend(WaterfallSeries.prototype, {
     pointValKey: 'y',
     // Property needed to prevent lines between the columns from disappearing
     // when negativeColor is used.
-    showLine: true
+    showLine: true,
+    pointClass: WaterfallPoint
 });
 
 
