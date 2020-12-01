@@ -639,6 +639,9 @@ var RangeSelector = /** @class */ (function () {
             newMax += rangeOptions._offsetMax;
         }
         rangeSelector.setSelected(i);
+        if (this.dropdown) {
+            this.dropdown.selectedIndex = i;
+        }
         // Update the chart
         if (!baseAxis) {
             // Axis not yet instanciated. Temporarily set min and range
@@ -733,7 +736,7 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.updateButtonStates = function () {
-        var rangeSelector = this, chart = this.chart, baseAxis = chart.xAxis[0], actualRange = Math.round(baseAxis.max - baseAxis.min), hasNoData = !baseAxis.hasVisibleSeries, day = 24 * 36e5, // A single day in milliseconds
+        var rangeSelector = this, chart = this.chart, dropdown = this.dropdown, baseAxis = chart.xAxis[0], actualRange = Math.round(baseAxis.max - baseAxis.min), hasNoData = !baseAxis.hasVisibleSeries, day = 24 * 36e5, // A single day in milliseconds
         unionExtremes = (chart.scroller &&
             chart.scroller.getUnionExtremes()) || baseAxis, dataMin = unionExtremes.dataMin, dataMax = unionExtremes.dataMax, ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, chart.time.useUTC), ytdMin = ytdExtremes.min, ytdMax = ytdExtremes.max, selected = rangeSelector.selected, selectedExists = isNumber(selected), allButtonsEnabled = rangeSelector.options.allButtonsEnabled, buttons = rangeSelector.buttons;
         rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
@@ -791,9 +794,12 @@ var RangeSelector = /** @class */ (function () {
             // If state has changed, update the button
             if (button.state !== state) {
                 button.setState(state);
+                if (state === 2 && dropdown) {
+                    dropdown.selectedIndex = i;
+                }
                 // Reset (#9209)
                 if (state === 0 && selected === i) {
-                    rangeSelector.setSelected(null);
+                    rangeSelector.setSelected();
                 }
             }
         });
@@ -1245,15 +1251,40 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.renderButtons = function () {
         var _this = this;
+        var _a = this, buttons = _a.buttons, chart = _a.chart, options = _a.options;
         var lang = defaultOptions.lang;
-        var renderer = this.chart.renderer;
-        var options = this.options;
-        var buttons = this.buttons;
+        var renderer = chart.renderer;
         var buttonTheme = merge(options.buttonTheme);
         var states = buttonTheme && buttonTheme.states;
         var width = buttonTheme.width || 28;
         delete buttonTheme.width;
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
+        var dropdown = this.dropdown = createElement('select', {}, {
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            top: '-9999em',
+            cursor: 'pointer',
+            opacity: 0.0001
+        }, this.div);
+        var mouseover = H.isMS ? 'mouseover' : 'mouseenter';
+        var mouseout = H.isMS ? 'mouseout' : 'mouseleave';
+        addEvent(dropdown, mouseover, function () {
+            var button = buttons[_this.currentButtonIndex()];
+            if (button) {
+                fireEvent(button.element, mouseover);
+            }
+        });
+        addEvent(dropdown, mouseout, function () {
+            var button = buttons[_this.currentButtonIndex()];
+            if (button) {
+                fireEvent(button.element, mouseout);
+            }
+        });
+        addEvent(dropdown, 'change', function () {
+            _this.clickButton(dropdown.selectedIndex);
+        });
         this.zoomText = renderer
             .text(lang.rangeSelectorZoom, 0, 15)
             .add(this.buttonGroup);
@@ -1262,6 +1293,10 @@ var RangeSelector = /** @class */ (function () {
             buttonTheme['stroke-width'] = pick(buttonTheme['stroke-width'], 0);
         }
         this.buttonOptions.forEach(function (rangeOptions, i) {
+            var option = createElement('option', {
+                textContent: rangeOptions.text,
+                value: i
+            }, void 0, dropdown);
             buttons[i] = renderer
                 .button(rangeOptions.text, 0, 0, function (e) {
                 // extract events from button object and call
@@ -1419,10 +1454,13 @@ var RangeSelector = /** @class */ (function () {
             }
             group.translate(options.x, options.y + Math.floor(translateY));
             // Translate HTML inputs
-            var _b = this, minInput = _b.minInput, maxInput = _b.maxInput;
+            var _b = this, minInput = _b.minInput, maxInput = _b.maxInput, dropdown = _b.dropdown;
             if (options.inputEnabled && minInput && maxInput) {
                 minInput.style.marginTop = group.translateY + 'px';
                 maxInput.style.marginTop = group.translateY + 'px';
+            }
+            if (dropdown) {
+                dropdown.style.marginTop = group.translateY + 'px';
             }
         }
     };
@@ -1443,7 +1481,8 @@ var RangeSelector = /** @class */ (function () {
         }
         this.buttonOptions.forEach(function (rangeOptions, i) {
             if (buttons[i].visibility !== 'hidden') {
-                buttons[i][verb]({ x: buttonLeft });
+                // TODO: Make animate work
+                buttons[i].attr({ x: buttonLeft });
                 // increase button position for the next button
                 buttonLeft += buttons[i].width + options.buttonSpacing;
             }
@@ -1510,7 +1549,7 @@ var RangeSelector = /** @class */ (function () {
         }
     };
     RangeSelector.prototype.collapseButtons = function () {
-        var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, zoomText = _a.zoomText;
+        var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, dropdown = _a.dropdown, zoomText = _a.zoomText;
         var getAttribs = function (text) { return ({
             text: text + " \u25BE",
             paddingLeft: 5,
@@ -1533,13 +1572,18 @@ var RangeSelector = /** @class */ (function () {
             }
         });
         if (!hasActiveButton && buttons.length > 0) {
+            if (dropdown) {
+                dropdown.selectedIndex = -1;
+            }
             buttons[0].show();
             buttons[0].attr(getAttribs(buttonOptions[0].text));
         }
         this.positionButtons();
+        this.showDropdown();
     };
     RangeSelector.prototype.showButtons = function () {
         var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, options = _a.options, zoomText = _a.zoomText;
+        this.hideDropdown();
         if (zoomText) {
             zoomText.show();
         }
@@ -1554,7 +1598,34 @@ var RangeSelector = /** @class */ (function () {
         });
         this.positionButtons();
     };
+    RangeSelector.prototype.currentButtonIndex = function () {
+        var dropdown = this.dropdown;
+        if (dropdown && dropdown.selectedIndex > -1) {
+            return dropdown.selectedIndex;
+        }
+        return 0;
+    };
     RangeSelector.prototype.showDropdown = function () {
+        var _a = this, buttonGroup = _a.buttonGroup, chart = _a.chart, dropdown = _a.dropdown, options = _a.options;
+        if (buttonGroup && dropdown) {
+            var translateX = buttonGroup.translateX, translateY = buttonGroup.translateY;
+            css(dropdown, {
+                left: (chart.plotLeft + translateX) + 'px',
+                top: translateY + 'px',
+                width: 'auto',
+                height: ((options.buttonTheme.height || 18) + 8) + 'px'
+            });
+        }
+    };
+    RangeSelector.prototype.hideDropdown = function () {
+        var dropdown = this.dropdown;
+        if (dropdown) {
+            css(dropdown, {
+                top: '-9999em',
+                width: '1px',
+                height: '1px'
+            });
+        }
     };
     /**
      * Extracts height of range selector

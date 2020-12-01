@@ -133,6 +133,7 @@ declare global {
             public defaultButtons: Array<RangeSelectorButtonsOptions>;
             public deferredYTDClick?: number;
             public div?: HTMLDOMElement;
+            public dropdown?: HTMLSelectElement;
             public forcedDataGrouping?: boolean;
             public frozenStates?: boolean;
             public group?: SVGElement;
@@ -759,6 +760,7 @@ class RangeSelector {
     public chart: Chart;
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
+    public dropdown?: HTMLSelectElement;
     public forcedDataGrouping?: boolean;
     public frozenStates?: boolean;
     public group?: SVGElement;
@@ -911,6 +913,9 @@ class RangeSelector {
         }
 
         rangeSelector.setSelected(i);
+        if (this.dropdown) {
+            this.dropdown.selectedIndex = i;
+        }
 
         // Update the chart
         if (!baseAxis) {
@@ -1041,6 +1046,7 @@ class RangeSelector {
     public updateButtonStates(): void {
         var rangeSelector = this,
             chart = this.chart,
+            dropdown = this.dropdown,
             baseAxis = chart.xAxis[0],
             actualRange = Math.round(
                 (baseAxis.max as any) - (baseAxis.min as any)
@@ -1151,9 +1157,13 @@ class RangeSelector {
             if (button.state !== state) {
                 button.setState(state);
 
+                if (state === 2 && dropdown) {
+                    dropdown.selectedIndex = i;
+                }
+
                 // Reset (#9209)
                 if (state === 0 && selected === i) {
-                    rangeSelector.setSelected(null as any);
+                    rangeSelector.setSelected();
                 }
             }
         });
@@ -1757,11 +1767,14 @@ class RangeSelector {
      * @return {void}
      */
     public renderButtons(): void {
-
+        const {
+            buttons,
+            chart,
+            options
+        } = this;
         const lang = defaultOptions.lang;
-        const renderer = this.chart.renderer;
-        const options = this.options;
-        const buttons = this.buttons;
+        const renderer = chart.renderer;
+
         const buttonTheme = merge(options.buttonTheme);
         const states = buttonTheme && buttonTheme.states;
 
@@ -1769,6 +1782,35 @@ class RangeSelector {
         delete buttonTheme.width;
 
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
+
+        const dropdown: HTMLSelectElement = this.dropdown = createElement('select', {}, {
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            top: '-9999em',
+            cursor: 'pointer',
+            opacity: 0.0001
+        }, this.div) as any;
+
+        const mouseover = H.isMS ? 'mouseover' : 'mouseenter';
+        const mouseout = H.isMS ? 'mouseout' : 'mouseleave';
+
+        addEvent(dropdown, mouseover, (): void => {
+            const button = buttons[this.currentButtonIndex()];
+            if (button) {
+                fireEvent(button.element, mouseover);
+            }
+        });
+        addEvent(dropdown, mouseout, (): void => {
+            const button = buttons[this.currentButtonIndex()];
+            if (button) {
+                fireEvent(button.element, mouseout);
+            }
+        });
+        addEvent(dropdown, 'change', (): void => {
+            this.clickButton(dropdown.selectedIndex);
+        });
 
         this.zoomText = renderer
             .text(
@@ -1788,6 +1830,10 @@ class RangeSelector {
             rangeOptions: Highcharts.RangeSelectorButtonsOptions,
             i: number
         ): void => {
+            const option = createElement('option', {
+                textContent: rangeOptions.text,
+                value: i
+            }, void 0, dropdown);
 
             buttons[i] = renderer
                 .button(
@@ -2029,10 +2075,13 @@ class RangeSelector {
             );
 
             // Translate HTML inputs
-            const { minInput, maxInput } = this;
+            const { minInput, maxInput, dropdown } = this;
             if (options.inputEnabled && minInput && maxInput) {
                 minInput.style.marginTop = group.translateY + 'px';
                 maxInput.style.marginTop = group.translateY + 'px';
+            }
+            if (dropdown) {
+                dropdown.style.marginTop = group.translateY + 'px';
             }
         }
     }
@@ -2066,7 +2115,8 @@ class RangeSelector {
             i: number
         ): void {
             if (buttons[i].visibility !== 'hidden') {
-                buttons[i][verb]({ x: buttonLeft });
+                // TODO: Make animate work
+                buttons[i].attr({ x: buttonLeft });
 
                 // increase button position for the next button
                 buttonLeft += buttons[i].width + options.buttonSpacing;
@@ -2163,6 +2213,7 @@ class RangeSelector {
         const {
             buttons,
             buttonOptions,
+            dropdown,
             zoomText
         } = this;
 
@@ -2195,11 +2246,16 @@ class RangeSelector {
         });
 
         if (!hasActiveButton && buttons.length > 0) {
+            if (dropdown) {
+                dropdown.selectedIndex = -1;
+            }
+
             buttons[0].show();
             buttons[0].attr(getAttribs(buttonOptions[0].text));
         }
 
         this.positionButtons();
+        this.showDropdown();
     }
 
     public showButtons(): void {
@@ -2209,6 +2265,8 @@ class RangeSelector {
             options,
             zoomText
         } = this;
+
+        this.hideDropdown();
 
         if (zoomText) {
             zoomText.show();
@@ -2230,8 +2288,44 @@ class RangeSelector {
         this.positionButtons();
     }
 
-    public showDropdown(): void {
+    public currentButtonIndex(): number {
+        const { dropdown } = this;
 
+        if (dropdown && dropdown.selectedIndex > -1) {
+            return dropdown.selectedIndex;
+        }
+        return 0;
+    }
+
+    public showDropdown(): void {
+        const {
+            buttonGroup,
+            chart,
+            dropdown,
+            options
+        } = this;
+
+        if (buttonGroup && dropdown) {
+            const { translateX, translateY } = buttonGroup;
+            css(dropdown, {
+                left: (chart.plotLeft + translateX) + 'px',
+                top: translateY + 'px',
+                width: 'auto',
+                height: ((options.buttonTheme.height || 18) + 8) + 'px'
+            });
+        }
+    }
+
+    public hideDropdown(): void {
+        const { dropdown } = this;
+
+        if (dropdown) {
+            css(dropdown, {
+                top: '-9999em',
+                width: '1px',
+                height: '1px'
+            });
+        }
     }
 
     /**
