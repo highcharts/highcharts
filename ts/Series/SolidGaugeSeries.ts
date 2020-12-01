@@ -15,11 +15,15 @@
 import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
 import type GradientColor from '../Core/Color/GradientColor';
+import type GaugePoint from './Gauge/GaugePoint';
+import type GaugePointOptions from './Gauge/GaugePointOptions';
+import type GaugeSeriesOptions from './Gauge/GaugeSeriesOptions';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
+import GaugeSeries from './Gauge/GaugeSeries.js';
 import Color from '../Core/Color/Color.js';
 const {
     parse: color
@@ -92,7 +96,6 @@ declare module '../Core/Series/SeriesType' {
 }
 
 import '../Core/Options.js';
-import '../Series/GaugeSeries.js';
 
 /**
  * Additional options, depending on the actual symbol drawn.

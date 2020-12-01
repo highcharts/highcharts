@@ -33,6 +33,7 @@ import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
+import './Funnel3DComposition.js';
 /* *
  *
  *  Class

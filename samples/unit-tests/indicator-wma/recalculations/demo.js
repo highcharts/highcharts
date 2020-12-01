@@ -1,24 +1,53 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
-        series: [{
-            id: 'main',
-            data: [
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15
-            ]
-        }, {
-            type: 'wma',
-            linkedTo: 'main'
-        }]
+        series: [
+            {
+                id: 'main',
+                data: [
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15
+                ]
+            },
+            {
+                type: 'wma',
+                linkedTo: 'main'
+            }
+        ]
     });
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'Initial number of WMA points is correct'
     );
 
@@ -26,7 +55,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'After addPoint number of WMA points is correct'
     );
 
@@ -40,7 +71,13 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         Highcharts.correctFloat(chart.series[1].yData[1]),
-        Highcharts.correctFloat(83 * (5 / 15) + 81 * (4 / 15) + 79 * (3 / 15) + 79 * (2 / 15) + 77 * (1 / 15)),
+        Highcharts.correctFloat(
+            83 * (5 / 15) +
+                81 * (4 / 15) +
+                79 * (3 / 15) +
+                79 * (2 / 15) +
+                77 * (1 / 15)
+        ),
         'Correct values'
     );
 
@@ -54,7 +91,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         Highcharts.correctFloat(chart.series[1].yData[0]),
-        Highcharts.correctFloat(81 * (5 / 15) + 79 * (4 / 15) + 79 * (3 / 15) + 77 * (2 / 15) + 0),
+        Highcharts.correctFloat(
+            81 * (5 / 15) + 79 * (4 / 15) + 79 * (3 / 15) + 77 * (2 / 15) + 0
+        ),
         'Correct values after point.remove()'
     );
 });

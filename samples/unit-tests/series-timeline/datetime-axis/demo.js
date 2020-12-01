@@ -1,5 +1,4 @@
 QUnit.test('Timeline: General tests.', function (assert) {
-
     // Returns true if axis etremes are equal to first and last visible point.
     function checkExtremes(chart) {
         var timeline = chart.series[0],
@@ -9,9 +8,10 @@ QUnit.test('Timeline: General tests.', function (assert) {
             ext = chart.xAxis[0].getExtremes();
 
         return (
-            ext.min === visiblePoints[0].x &&
-            ext.max === visiblePoints[visiblePoints.length - 1].x
-        ) || false;
+            (ext.min === visiblePoints[0].x &&
+                ext.max === visiblePoints[visiblePoints.length - 1].x) ||
+            false
+        );
     }
 
     var chart = Highcharts.chart('container', {
@@ -27,39 +27,47 @@ QUnit.test('Timeline: General tests.', function (assert) {
             maxPadding: 0,
             minRange: 1
         },
-        series: [{
-            showInLegend: true,
-            dataLabels: {
-                allowOverlap: false
-            },
-            type: 'timeline',
-            data: [{
-                x: Date.UTC(1951, 5, 22),
-                name: 'Event 1',
-                label: 'Event 1',
-                description: "Some description"
-            }, {
-                x: Date.UTC(1957, 9, 4),
-                name: 'Event 2',
-                label: 'Event 2',
-                description: "Some description"
-            }, {
-                x: Date.UTC(1959, 0, 4),
-                name: 'Event 3',
-                label: 'Event 3',
-                description: "Some description"
-            }, {
-                x: Date.UTC(1961, 3, 12),
-                name: 'Event 4',
-                label: 'Event 4',
-                description: "Some description"
-            }, {
-                x: Date.UTC(1966, 1, 3),
-                name: 'Event 5',
-                label: 'Event 5',
-                description: "Some description"
-            }]
-        }]
+        series: [
+            {
+                showInLegend: true,
+                dataLabels: {
+                    allowOverlap: false
+                },
+                type: 'timeline',
+                data: [
+                    {
+                        x: Date.UTC(1951, 5, 22),
+                        name: 'Event 1',
+                        label: 'Event 1',
+                        description: 'Some description'
+                    },
+                    {
+                        x: Date.UTC(1957, 9, 4),
+                        name: 'Event 2',
+                        label: 'Event 2',
+                        description: 'Some description'
+                    },
+                    {
+                        x: Date.UTC(1959, 0, 4),
+                        name: 'Event 3',
+                        label: 'Event 3',
+                        description: 'Some description'
+                    },
+                    {
+                        x: Date.UTC(1961, 3, 12),
+                        name: 'Event 4',
+                        label: 'Event 4',
+                        description: 'Some description'
+                    },
+                    {
+                        x: Date.UTC(1966, 1, 3),
+                        name: 'Event 5',
+                        label: 'Event 5',
+                        description: 'Some description'
+                    }
+                ]
+            }
+        ]
     });
 
     var timeline = chart.series[0];
@@ -68,19 +76,19 @@ QUnit.test('Timeline: General tests.', function (assert) {
         x: Date.UTC(1968, 1, 3),
         name: 'Event 6',
         label: 'Event 6',
-        description: "Some description"
+        description: 'Some description'
     });
 
     assert.strictEqual(
         timeline.points.length,
         6,
-        "Point added to timeline series."
+        'Point added to timeline series.'
     );
 
     assert.strictEqual(
         checkExtremes(chart),
         true,
-        "Axis extremes are set correctly after addPoint."
+        'Axis extremes are set correctly after addPoint.'
     );
 
     timeline.points[0].setVisible();
@@ -89,7 +97,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
     assert.strictEqual(
         checkExtremes(chart),
         true,
-        "Axis extremes are set correctly after hiding first and last points."
+        'Axis extremes are set correctly after hiding first and last points.'
     );
 
     timeline.points[1].remove();
@@ -98,7 +106,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
     assert.strictEqual(
         checkExtremes(chart),
         true,
-        "Extremes are set corectly after removing first and last visible points."
+        'Extremes are set corectly after removing first and last visible points.'
     );
 
     timeline.setData([
@@ -106,24 +114,26 @@ QUnit.test('Timeline: General tests.', function (assert) {
             x: Date.UTC(1912, 5, 22),
             name: 'New Event 1',
             label: 'New Event 1',
-            description: "Some description"
-        }, {
+            description: 'Some description'
+        },
+        {
             x: Date.UTC(1934, 9, 4),
             name: 'New Event 2',
             label: 'New Event 2',
-            description: "Some description"
-        }, {
+            description: 'Some description'
+        },
+        {
             x: Date.UTC(1941, 0, 4),
             name: 'New Event 3',
             label: 'New Event 3',
-            description: "Some description"
+            description: 'Some description'
         }
     ]);
 
     assert.strictEqual(
         timeline.points.length,
         3,
-        "New data is set correctly on timeline."
+        'New data is set correctly on timeline.'
     );
 
     chart = Highcharts.chart('container', {
@@ -139,25 +149,31 @@ QUnit.test('Timeline: General tests.', function (assert) {
             maxPadding: 0,
             minRange: 1
         },
-        series: [{
-            type: 'timeline',
-            data: [{
-                x: Date.UTC(1951, 5, 22),
-                name: 'Event 1',
-                label: 'Event 1',
-                description: "Some description"
-            }, {
-                x: Date.UTC(1957, 9, 4),
-                name: 'Event 2',
-                label: 'Event 2',
-                description: "Some description"
-            }, {
-                x: Date.UTC(1959, 0, 4),
-                name: 'Event 3',
-                label: 'Event 3',
-                description: "Some description"
-            }]
-        }]
+        series: [
+            {
+                type: 'timeline',
+                data: [
+                    {
+                        x: Date.UTC(1951, 5, 22),
+                        name: 'Event 1',
+                        label: 'Event 1',
+                        description: 'Some description'
+                    },
+                    {
+                        x: Date.UTC(1957, 9, 4),
+                        name: 'Event 2',
+                        label: 'Event 2',
+                        description: 'Some description'
+                    },
+                    {
+                        x: Date.UTC(1959, 0, 4),
+                        name: 'Event 3',
+                        label: 'Event 3',
+                        description: 'Some description'
+                    }
+                ]
+            }
+        ]
     });
 
     timeline = chart.series[0];
@@ -169,28 +185,35 @@ QUnit.test('Timeline: General tests.', function (assert) {
     assert.strictEqual(
         !chart.isInsidePlot(dataLabel.x, dataLabel.y),
         connector['stroke-width'] === undefined,
-        "Connector is hidden when the data label is not visible on init."
+        'Connector is hidden when the data label is not visible on init.'
     );
 
     chart.update({
-        series: [{
-            dataLabels: {
-                allowOverlap: false
-            },
-            data: [{
-                x: Date.UTC(1951, 5, 22),
-                label: 'First long data label with some description'
-            }, {
-                x: Date.UTC(1957, 9, 4),
-                label: 'Second long data label with some description'
-            }, {
-                x: Date.UTC(1959, 0, 4),
-                label: 'Third long data label with some description'
-            }, {
-                x: Date.UTC(1961, 0, 4),
-                label: 'Fourth long data label with some description'
-            }]
-        }]
+        series: [
+            {
+                dataLabels: {
+                    allowOverlap: false
+                },
+                data: [
+                    {
+                        x: Date.UTC(1951, 5, 22),
+                        label: 'First long data label with some description'
+                    },
+                    {
+                        x: Date.UTC(1957, 9, 4),
+                        label: 'Second long data label with some description'
+                    },
+                    {
+                        x: Date.UTC(1959, 0, 4),
+                        label: 'Third long data label with some description'
+                    },
+                    {
+                        x: Date.UTC(1961, 0, 4),
+                        label: 'Fourth long data label with some description'
+                    }
+                ]
+            }
+        ]
     });
 
     chart.xAxis[0].setExtremes(Date.UTC(1958, 11, 31), Date.UTC(1961, 0, 4));
@@ -202,7 +225,7 @@ QUnit.test('Timeline: General tests.', function (assert) {
     assert.strictEqual(
         dataLabel.opacity,
         connector.opacity,
-        "Connector is visible together with data label, after setting extremes."
+        'Connector is visible together with data label, after setting extremes.'
     );
 
     chart.update({

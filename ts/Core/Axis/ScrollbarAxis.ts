@@ -124,6 +124,7 @@ class ScrollbarAxis {
                         ) ||
                         // Mouseup always should change extremes
                         e.DOMType === 'mouseup' ||
+                        e.DOMType === 'touchend' ||
                         // Internal events
                         !defined(e.DOMType)
                     ) {
@@ -131,7 +132,7 @@ class ScrollbarAxis {
                             from,
                             to,
                             true,
-                            e.DOMType !== 'mousemove',
+                            e.DOMType !== 'mousemove' && e.DOMType !== 'touchmove',
                             e
                         );
                     } else {

@@ -11,6 +11,7 @@
  * */
 'use strict';
 import BaseSeries from '../Core/Series/Series.js';
+import GaugeSeries from './Gauge/GaugeSeries.js';
 import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
@@ -19,7 +20,6 @@ import LegendSymbolMixin from '../Mixins/LegendSymbol.js';
 import U from '../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
 import '../Core/Options.js';
-import '../Series/GaugeSeries.js';
 /**
  * Additional options, depending on the actual symbol drawn.
  *

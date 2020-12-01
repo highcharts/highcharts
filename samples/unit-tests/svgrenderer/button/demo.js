@@ -5,19 +5,24 @@ QUnit.test('General button() tests', function (assert) {
         300
     );
 
-    var button = ren.button('quite long text', 10, 10,
-        function () {
-            this.setState(this.state === 2 ? 0 : 2);
-        },
-        {
-            height: 18,
-            width: null,
-            style: {
-                fontSize: '20px',
-                fontWeight: 'normal'
+    var button = ren
+        .button(
+            'quite long text',
+            10,
+            10,
+            function () {
+                this.setState(this.state === 2 ? 0 : 2);
+            },
+            {
+                height: 18,
+                width: null,
+                style: {
+                    fontSize: '20px',
+                    fontWeight: 'normal'
+                }
             }
-        }
-    ).add();
+        )
+        .add();
 
     // #12165 - button should not return errors when width: null
     const normalButtonWidth = button.width;

@@ -13,7 +13,10 @@
             key + ': Add class, excessive spaces, no replace'
         );
 
-        elem.addClass('  string       with       excessive       spaces  ', true);
+        elem.addClass(
+            '  string       with       excessive       spaces  ',
+            true
+        );
         assert.strictEqual(
             node.getAttribute('class'),
             'string with excessive spaces',
@@ -35,12 +38,7 @@
             key + ': Add class twice'
         );
 
-
-        assert.strictEqual(
-            elem.hasClass('touched'),
-            true,
-            key + ': Has class'
-        );
+        assert.strictEqual(elem.hasClass('touched'), true, key + ': Has class');
 
         elem.removeClass('touched');
 
@@ -56,42 +54,36 @@
         );
 
         // #13590
-        elem
-            .addClass(
-                'highcharts-point highcharts-point-select highcharts-color-0',
-                true // Replace
-            )
-            .removeClass('highcharts-point-select');
+        elem.addClass(
+            'highcharts-point highcharts-point-select highcharts-color-0',
+            true // Replace
+        ).removeClass('highcharts-point-select');
 
         assert.strictEqual(
             elem.attr('class'),
             'highcharts-point highcharts-color-0',
             'Sandwiched class name should be removed without leaving or removing white-space #(13590)'
         );
-
-
     }
 
     QUnit.test('Add and remove classes', function (assert) {
-
         var ren = new Highcharts.Renderer(
             document.getElementById('container'),
             400,
             400
         );
 
-        var elem = ren.circle(100, 100, 50)
+        var elem = ren
+            .circle(100, 100, 50)
             .attr({
                 fill: 'red'
             })
             .add();
 
         checkElement('SVG circle', elem, elem.element, assert);
-
     });
 
     QUnit.test('Add and remove classes in HTML text', function (assert) {
-
         var ren = new Highcharts.Renderer(
             document.getElementById('container'),
             400,
@@ -100,14 +92,11 @@
 
         var g = ren.g().add();
 
-        var elem = ren.text('HTML', 100, 300, true)
-            .add(g);
+        var elem = ren.text('HTML', 100, 300, true).add(g);
 
         checkElement('HTML text', elem, elem.element, assert);
-
     });
     QUnit.test('Add and remove classes in HTML groups', function (assert) {
-
         var ren = new Highcharts.Renderer(
             document.getElementById('container'),
             400,
@@ -120,7 +109,6 @@
 
         // The class names should now be set on g.div
         checkElement('HTML group', g, g.div, assert);
-
     });
 
     QUnit.test('Add multiple class names', assert => {
@@ -130,7 +118,8 @@
             400
         );
 
-        const circle = ren.circle(100, 100, 100)
+        const circle = ren
+            .circle(100, 100, 100)
             .attr({
                 fill: 'blue'
             })

@@ -1,14 +1,16 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
-
     var correctFloat = Highcharts.correctFloat,
         chart = Highcharts.stockChart('container', {
-            series: [{
-                id: 'main',
-                data: [1, 1.5, 2.8, 3.5, 3.9, 4.2]
-            }, {
-                type: 'trendline',
-                linkedTo: 'main'
-            }]
+            series: [
+                {
+                    id: 'main',
+                    data: [1, 1.5, 2.8, 3.5, 3.9, 4.2]
+                },
+                {
+                    type: 'trendline',
+                    linkedTo: 'main'
+                }
+            ]
         }),
         tr = chart.series[1].yData;
 
@@ -20,7 +22,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         correctFloat(tr[0], 2) === 1.1 &&
-        correctFloat(tr[tr.length - 1], 2) === 4.5,
+            correctFloat(tr[tr.length - 1], 2) === 4.5,
         true,
         'Correct values'
     );
@@ -29,7 +31,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.deepEqual(
         correctFloat(tr[0], 2) === 1.1 &&
-        correctFloat(tr[tr.length - 1], 2) === 4.5,
+            correctFloat(tr[tr.length - 1], 2) === 4.5,
         true,
         'Correct values after point.remove()'
     );

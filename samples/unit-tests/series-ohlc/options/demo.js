@@ -10,18 +10,23 @@ QUnit.test('defaultOptions', function (assert) {
 
 QUnit.test('Disabled options', function (assert) {
     var chart = Highcharts.stockChart('container', {
-        series: [{
-            type: 'ohlc'
-        }, {
-            type: 'ohlc',
-            stacking: true
-        }, {
-            type: 'ohlc',
-            stacking: 'percent'
-        }, {
-            type: 'ohlc',
-            stacking: 'normal'
-        }]
+        series: [
+            {
+                type: 'ohlc'
+            },
+            {
+                type: 'ohlc',
+                stacking: true
+            },
+            {
+                type: 'ohlc',
+                stacking: 'percent'
+            },
+            {
+                type: 'ohlc',
+                stacking: 'normal'
+            }
+        ]
     });
 
     Highcharts.each(chart.series, function (series) {

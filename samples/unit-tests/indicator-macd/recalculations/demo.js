@@ -1,92 +1,20 @@
 QUnit.test('Zones on macd with no data.', function (assert) {
-
     Highcharts.stockChart('container', {
-        yAxis: [{
-            height: '50%'
-        }, {
-            top: '60%',
-            height: '40%'
-        }],
-        series: [{
-            id: 'main',
-            data: []
-        }, {
-            yAxis: 1,
-            type: 'macd',
-            linkedTo: 'main',
-            params: {
-                shortPeriod: 12,
-                longPeriod: 26,
-                signalPeriod: 9,
-                period: 26
-            },
-            macdLine: {
-                zones: [{
-                    value: 0,
-                    color: 'green'
-                }, {
-                    color: 'red'
-                }]
-            }
-        }]
-    });
-
-    // We expect no JS error when applying zones on macd and chart has no data.
-    assert.expect(0);
-
-});
-
-QUnit.test('Test algorithm on data updates.', function (assert) {
-
-    var chart = Highcharts.stockChart('container', {
-            yAxis: [{
+        yAxis: [
+            {
                 height: '50%'
-            }, {
+            },
+            {
                 top: '60%',
                 height: '40%'
-            }],
-            series: [{
+            }
+        ],
+        series: [
+            {
                 id: 'main',
-                data: [
-                    459.99,
-                    448.85,
-                    446.06,
-                    450.81,
-                    442.8,
-                    448.97,
-                    444.57,
-                    441.4,
-                    430.47,
-                    420.05,
-                    431.14,
-                    425.66,
-                    430.58,
-                    431.72,
-                    437.87,
-                    428.43,
-                    428.35,
-                    432.5,
-                    443.66,
-                    455.72,
-                    454.49,
-                    452.08,
-                    452.73,
-                    461.91,
-                    463.58,
-                    461.14,
-                    452.08,
-                    442.66,
-                    428.91,
-                    429.79,
-                    431.99,
-                    427.72,
-                    423.2,
-                    426.21,
-                    426.98,
-                    435.69,
-                    434.338
-                ]
-            }, {
+                data: []
+            },
+            {
                 yAxis: 1,
                 type: 'macd',
                 linkedTo: 'main',
@@ -95,15 +23,100 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
                     longPeriod: 26,
                     signalPeriod: 9,
                     period: 26
+                },
+                macdLine: {
+                    zones: [
+                        {
+                            value: 0,
+                            color: 'green'
+                        },
+                        {
+                            color: 'red'
+                        }
+                    ]
                 }
-            }]
+            }
+        ]
+    });
+
+    // We expect no JS error when applying zones on macd and chart has no data.
+    assert.expect(0);
+});
+
+QUnit.test('Test algorithm on data updates.', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+            yAxis: [
+                {
+                    height: '50%'
+                },
+                {
+                    top: '60%',
+                    height: '40%'
+                }
+            ],
+            series: [
+                {
+                    id: 'main',
+                    data: [
+                        459.99,
+                        448.85,
+                        446.06,
+                        450.81,
+                        442.8,
+                        448.97,
+                        444.57,
+                        441.4,
+                        430.47,
+                        420.05,
+                        431.14,
+                        425.66,
+                        430.58,
+                        431.72,
+                        437.87,
+                        428.43,
+                        428.35,
+                        432.5,
+                        443.66,
+                        455.72,
+                        454.49,
+                        452.08,
+                        452.73,
+                        461.91,
+                        463.58,
+                        461.14,
+                        452.08,
+                        442.66,
+                        428.91,
+                        429.79,
+                        431.99,
+                        427.72,
+                        423.2,
+                        426.21,
+                        426.98,
+                        435.69,
+                        434.338
+                    ]
+                },
+                {
+                    yAxis: 1,
+                    type: 'macd',
+                    linkedTo: 'main',
+                    params: {
+                        shortPeriod: 12,
+                        longPeriod: 26,
+                        signalPeriod: 9,
+                        period: 26
+                    }
+                }
+            ]
         }),
         lastPoint;
 
-
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'Initial number of MACD points is correct'
     );
 
@@ -130,7 +143,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'After addPoint number of MACD points is correct'
     );
 
@@ -253,45 +268,48 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Correct values'
     );
 */
-    chart.series[0].setData([
-        459.99,
-        448.85,
-        446.06,
-        450.81,
-        442.8,
-        448.97,
-        444.57,
-        441.4,
-        430.47,
-        420.05,
-        431.14,
-        425.66,
-        430.58,
-        431.72,
-        437.87,
-        428.43,
-        428.35,
-        432.5,
-        443.66,
-        455.72,
-        454.49,
-        452.08,
-        452.73,
-        461.91,
-        463.58,
-        461.14,
-        452.08,
-        442.66,
-        428.91,
-        429.79,
-        431.99,
-        427.72,
-        423.2,
-        426.21,
-        426.98,
-        435.69,
-        434.33
-    ], false);
+    chart.series[0].setData(
+        [
+            459.99,
+            448.85,
+            446.06,
+            450.81,
+            442.8,
+            448.97,
+            444.57,
+            441.4,
+            430.47,
+            420.05,
+            431.14,
+            425.66,
+            430.58,
+            431.72,
+            437.87,
+            428.43,
+            428.35,
+            432.5,
+            443.66,
+            455.72,
+            454.49,
+            452.08,
+            452.73,
+            461.91,
+            463.58,
+            461.14,
+            452.08,
+            442.66,
+            428.91,
+            429.79,
+            431.99,
+            427.72,
+            423.2,
+            426.21,
+            426.98,
+            435.69,
+            434.33
+        ],
+        false
+    );
 
     chart.series[1].update({
         signalLine: {
@@ -317,8 +335,12 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.deepEqual(
         chart.series[1].yData,
         [
-            [0, null, 2.009761429293235], [0, null, 1.89936238155002], [0, null, 3.495107645510018],
-            [0, null, 5.685067060259996], [0, null, 7.728053717040041], [0, null, 8.87498471007001],
+            [0, null, 2.009761429293235],
+            [0, null, 1.89936238155002],
+            [0, null, 3.495107645510018],
+            [0, null, 5.685067060259996],
+            [0, null, 7.728053717040041],
+            [0, null, 8.87498471007001],
             [2.7551900116424, 5.40792115922762, 8.163111170870025],
             [-0.29114458390317, 5.3108729645932, 5.019728380690026],
             [-1.7051015772624, 4.7425057721724, 3.037404194909982],
@@ -348,8 +370,12 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     assert.deepEqual(
         chart.series[1].yData,
         [
-            [0, null, 2.009761429293235], [0, null, 1.89936238155002], [0, null, 3.495107645510018],
-            [0, null, 5.685067060259996], [0, null, 8.828053717040007], [0, null, 9.816584710070003],
+            [0, null, 2.009761429293235],
+            [0, null, 1.89936238155002],
+            [0, null, 3.495107645510018],
+            [0, null, 5.685067060259996],
+            [0, null, 8.828053717040007],
+            [0, null, 9.816584710070003],
             [0.91233744021383, 5.441045730656185, 6.353383170870018],
             [-0.99759124156209, 5.1085153168021, 4.110924075240007],
             [-1.4652281468866, 4.6201059345066, 3.1548777876199665],
@@ -372,7 +398,6 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'DataGrouping applied to MACD series too (#7823).'
     );
 
-
     Highcharts.seriesTypes.macd.prototype.getValues(
         {
             xData: [0],
@@ -389,12 +414,66 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     Highcharts.seriesTypes.macd.prototype.getValues(
         {
             xData: [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
             ],
             yData: [
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
             ]
         },
         Highcharts.getOptions().plotOptions.macd.params
@@ -405,11 +484,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'No error when periods are greater than data length (#8847).'
     );
 
-
     // Last test: destroy MACD:
     chart.series[1].remove();
-    assert.ok(
-        true,
-        'No error when removing MACD without lines (#8848).'
-    );
+    assert.ok(true, 'No error when removing MACD without lines (#8848).');
 });

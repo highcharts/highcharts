@@ -8,11 +8,14 @@ QUnit.test('Negative or positive minPointLength', function (assert) {
                 minPointLength: 10
             }
         },
-        series: [{
-            data: [100]
-        }, {
-            data: [0, 0]
-        }]
+        series: [
+            {
+                data: [100]
+            },
+            {
+                data: [0, 0]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -32,9 +35,11 @@ QUnit.test('All zero values', function (assert) {
                 minPointLength: 10
             }
         },
-        series: [{
-            data: [0, 0, 0, 0, 0]
-        }]
+        series: [
+            {
+                data: [0, 0, 0, 0, 0]
+            }
+        ]
     });
 
     assert.strictEqual(
