@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SolidGaugeAxis from './SolidGaugeAxis.js';
+import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, GaugeSeries = _a.gauge, pieProto = _a.pie.prototype;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';

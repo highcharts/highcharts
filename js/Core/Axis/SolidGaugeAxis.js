@@ -8,9 +8,9 @@
  *
  * */
 'use strict';
-import Color from '../../Core/Color/Color.js';
+import Color from '../Color/Color.js';
 var color = Color.parse;
-import U from '../../Core/Utilities.js';
+import U from '../Utilities.js';
 var extend = U.extend, merge = U.merge;
 /**
  * @private
