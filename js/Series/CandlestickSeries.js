@@ -8,14 +8,27 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, OHLCSeries = _a.ohlc;
 var columnProto = ColumnSeries.prototype;
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
-var merge = U.merge;
+var extend = U.extend, merge = U.merge;
 import './OHLC/OHLCSeries.js';
 /* *
  *
@@ -132,11 +145,31 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-BaseSeries.seriesType('candlestick', 'ohlc', merge(defaultOptions.plotOptions.column, candlestickOptions), 
-/**
- * @lends seriesTypes.candlestick
- */
-{
+var CandlestickSeries = /** @class */ (function (_super) {
+    __extends(CandlestickSeries, _super);
+    function CandlestickSeries() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         * Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+    /* *
+     *
+     * Static properties
+     *
+     * */
+    CandlestickSeries.defaultOptions = merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
+    // Nothing here yet
+    });
+    return CandlestickSeries;
+}(OHLCSeries));
+extend(CandlestickSeries.prototype, {
     /* eslint-disable valid-jsdoc */
     /**
      * Postprocess mapping between options and SVG attributes
@@ -234,6 +267,23 @@ BaseSeries.seriesType('candlestick', 'ohlc', merge(defaultOptions.plotOptions.co
         /* eslint-enable valid-jsdoc */
     }
 });
+/* *
+ *
+ * Registry
+ *
+ * */
+BaseSeries.registerSeriesType('candlestick', CandlestickSeries);
+/* *
+ *
+ * Default Export
+ *
+ * */
+export default CandlestickSeries;
+/* *
+ *
+ * API Options
+ *
+ * */
 /**
  * A `candlestick` series. If the [type](#series.candlestick.type)
  * option is not specified, it is inherited from [chart.type](

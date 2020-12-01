@@ -19,20 +19,27 @@
 import type ColorType from '../Core/Color/ColorType';
 import type OHLCPoint from './OHLC/OHLCPoint';
 import type OHLCPointOptions from './OHLC/OHLCPointOptions';
-import type OHLCSeries from './OHLC/OHLCSeries';
 import type OHLCSeriesOptions from './OHLC/OHLCSeriesOptions';
 import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../Core/Series/Series.js';
-import ColumnSeries from './Column/ColumnSeries.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        ohlc: OHLCSeries
+    }
+} = BaseSeries;
 const { prototype: columnProto } = ColumnSeries;
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
-const { merge } = U;
+const {
+    extend,
+    merge
+} = U;
 
 import './OHLC/OHLCSeries.js';
 
@@ -53,12 +60,6 @@ declare global {
             public open: number;
             public options: CandlestickPointOptions;
             public series: CandlestickSeries;
-        }
-        class CandlestickSeries extends OHLCSeries {
-            public data: Array<CandlestickPoint>;
-            public options: CandlestickSeriesOptions;
-            public pointClass: typeof CandlestickPoint;
-            public points: Array<CandlestickPoint>;
         }
         interface CandlestickPointOptions extends OHLCPointOptions {
             lineColor?: ColorType;
@@ -204,179 +205,214 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-BaseSeries.seriesType<typeof Highcharts.CandlestickSeries>(
-    'candlestick',
-    'ohlc',
-    merge(
-        (defaultOptions.plotOptions as any).column,
-        candlestickOptions
-    ),
+class CandlestickSeries extends OHLCSeries {
+
+    /* *
+     *
+     * Static properties
+     *
+     * */
+    public static defaultOptions: Highcharts.CandlestickSeriesOptions =
+    merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions as any, {
+        // Nothing here yet
+
+    } as Highcharts.CandlestickSeriesOptions);
+
+    /* *
+     *
+     * Properties
+     *
+     * */
+    public data: Array<Highcharts.CandlestickPoint> = void 0 as any;
+    public options: Highcharts.CandlestickSeriesOptions = void 0 as any;
+    public points: Array<Highcharts.CandlestickPoint> = void 0 as any;
+
+}
+
+interface CandlestickSeries{
+    pointClass: typeof Highcharts.CandlestickPoint;
+}
+
+extend(CandlestickSeries.prototype, {
+    /* eslint-disable valid-jsdoc */
 
     /**
-     * @lends seriesTypes.candlestick
+     * Postprocess mapping between options and SVG attributes
+     *
+     * @private
+     * @function Highcharts.seriesTypes.candlestick#pointAttribs
      */
-    {
+    pointAttribs: function (
+        this: CandlestickSeries,
+        point: Highcharts.CandlestickPoint,
+        state?: StatesOptionsKey
+    ): SVGAttributes {
+        var attribs = columnProto.pointAttribs.call(
+                this,
+                point,
+                state
+            ),
+            options = this.options,
+            isUp = point.open < point.close,
+            stroke = options.lineColor || this.color,
+            stateOptions;
 
-        /* eslint-disable valid-jsdoc */
+        attribs['stroke-width'] = options.lineWidth;
 
-        /**
-         * Postprocess mapping between options and SVG attributes
-         *
-         * @private
-         * @function Highcharts.seriesTypes.candlestick#pointAttribs
-         */
-        pointAttribs: function (
-            this: Highcharts.CandlestickSeries,
-            point: Highcharts.CandlestickPoint,
-            state?: StatesOptionsKey
-        ): SVGAttributes {
-            var attribs = columnProto.pointAttribs.call(
-                    this,
-                    point,
-                    state
-                ),
-                options = this.options,
-                isUp = point.open < point.close,
-                stroke = options.lineColor || this.color,
-                stateOptions;
+        attribs.fill = point.options.color ||
+            (isUp ? (options.upColor || this.color) : this.color);
+        attribs.stroke = point.options.lineColor ||
+            (isUp ? (options.upLineColor || stroke) : stroke);
 
-            attribs['stroke-width'] = options.lineWidth;
-
-            attribs.fill = point.options.color ||
-                (isUp ? (options.upColor || this.color) : this.color);
-            attribs.stroke = point.options.lineColor ||
-                (isUp ? (options.upLineColor || stroke) : stroke);
-
-            // Select or hover states
-            if (state) {
-                stateOptions = (options.states as any)[state];
-                attribs.fill = stateOptions.color || attribs.fill;
-                attribs.stroke = stateOptions.lineColor || attribs.stroke;
-                attribs['stroke-width'] =
-                    stateOptions.lineWidth || attribs['stroke-width'];
-            }
-
-
-            return attribs;
-        },
-
-        /**
-         * Draw the data points.
-         *
-         * @private
-         * @function Highcharts.seriesTypes.candlestick#drawPoints
-         * @return {void}
-         */
-        drawPoints: function (this: Highcharts.CandlestickSeries): void {
-            var series = this,
-                points = series.points,
-                chart = series.chart,
-                reversedYAxis = series.yAxis.reversed;
-
-
-            points.forEach(function (point: Highcharts.CandlestickPoint): void {
-
-                var graphic = point.graphic,
-                    plotOpen,
-                    plotClose,
-                    topBox,
-                    bottomBox,
-                    hasTopWhisker,
-                    hasBottomWhisker,
-                    crispCorr,
-                    crispX,
-                    path: SVGPath,
-                    halfWidth,
-                    isNew = !graphic;
-
-                if (typeof point.plotY !== 'undefined') {
-
-                    if (!graphic) {
-                        point.graphic = graphic = chart.renderer.path()
-                            .add(series.group);
-                    }
-
-                    if (!series.chart.styledMode) {
-                        graphic
-                            .attr(
-                                series.pointAttribs(
-                                    point,
-                                    (point.selected && 'select') as any
-                                )
-                            ) // #3897
-                            .shadow(series.options.shadow);
-                    }
-
-                    // Crisp vector coordinates
-                    crispCorr = (graphic.strokeWidth() % 2) / 2;
-                    // #2596:
-                    crispX = Math.round(point.plotX as any) - crispCorr;
-                    plotOpen = point.plotOpen;
-                    plotClose = point.plotClose;
-                    topBox = Math.min(plotOpen, plotClose);
-                    bottomBox = Math.max(plotOpen, plotClose);
-                    halfWidth = Math.round((point.shapeArgs as any).width / 2);
-                    hasTopWhisker = reversedYAxis ?
-                        bottomBox !== point.yBottom :
-                        Math.round(topBox) !==
-                        Math.round(point.plotHigh as any);
-                    hasBottomWhisker = reversedYAxis ?
-                        Math.round(topBox) !==
-                        Math.round(point.plotHigh as any) :
-                        bottomBox !== point.yBottom;
-                    topBox = Math.round(topBox) + crispCorr;
-                    bottomBox = Math.round(bottomBox) + crispCorr;
-
-                    // Create the path. Due to a bug in Chrome 49, the path is
-                    // first instanciated with no values, then the values
-                    // pushed. For unknown reasons, instanciating the path array
-                    // with all the values would lead to a crash when updating
-                    // frequently (#5193).
-                    path = [];
-                    path.push(
-                        ['M', crispX - halfWidth, bottomBox],
-                        ['L', crispX - halfWidth, topBox],
-                        ['L', crispX + halfWidth, topBox],
-                        ['L', crispX + halfWidth, bottomBox],
-                        ['Z'], // Ensure a nice rectangle #2602
-                        ['M', crispX, topBox],
-                        [
-                            'L',
-                            // #460, #2094
-                            crispX,
-                            hasTopWhisker ?
-                                Math.round(
-                                    reversedYAxis ?
-                                        point.yBottom :
-                                        (point.plotHigh as any)
-                                ) :
-                                topBox
-                        ],
-                        ['M', crispX, bottomBox],
-                        [
-                            'L',
-                            // #460, #2094
-                            crispX,
-                            hasBottomWhisker ?
-                                Math.round(
-                                    reversedYAxis ?
-                                        (point.plotHigh as any) :
-                                        point.yBottom
-                                ) :
-                                bottomBox
-                        ]);
-
-                    graphic[isNew ? 'attr' : 'animate']({ d: path })
-                        .addClass(point.getClassName(), true);
-
-                }
-            });
-
-            /* eslint-enable valid-jsdoc */
+        // Select or hover states
+        if (state) {
+            stateOptions = (options.states as any)[state];
+            attribs.fill = stateOptions.color || attribs.fill;
+            attribs.stroke = stateOptions.lineColor || attribs.stroke;
+            attribs['stroke-width'] =
+                stateOptions.lineWidth || attribs['stroke-width'];
         }
-    }
-);
 
+
+        return attribs;
+    },
+
+    /**
+     * Draw the data points.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.candlestick#drawPoints
+     * @return {void}
+     */
+    drawPoints: function (this: CandlestickSeries): void {
+        var series = this,
+            points = series.points,
+            chart = series.chart,
+            reversedYAxis = series.yAxis.reversed;
+
+
+        points.forEach(function (point: Highcharts.CandlestickPoint): void {
+
+            var graphic = point.graphic,
+                plotOpen,
+                plotClose,
+                topBox,
+                bottomBox,
+                hasTopWhisker,
+                hasBottomWhisker,
+                crispCorr,
+                crispX,
+                path: SVGPath,
+                halfWidth,
+                isNew = !graphic;
+
+            if (typeof point.plotY !== 'undefined') {
+
+                if (!graphic) {
+                    point.graphic = graphic = chart.renderer.path()
+                        .add(series.group);
+                }
+
+                if (!series.chart.styledMode) {
+                    graphic
+                        .attr(
+                            series.pointAttribs(
+                                point,
+                                (point.selected && 'select') as any
+                            )
+                        ) // #3897
+                        .shadow(series.options.shadow);
+                }
+
+                // Crisp vector coordinates
+                crispCorr = (graphic.strokeWidth() % 2) / 2;
+                // #2596:
+                crispX = Math.round(point.plotX as any) - crispCorr;
+                plotOpen = point.plotOpen;
+                plotClose = point.plotClose;
+                topBox = Math.min(plotOpen, plotClose);
+                bottomBox = Math.max(plotOpen, plotClose);
+                halfWidth = Math.round((point.shapeArgs as any).width / 2);
+                hasTopWhisker = reversedYAxis ?
+                    bottomBox !== point.yBottom :
+                    Math.round(topBox) !==
+                    Math.round(point.plotHigh as any);
+                hasBottomWhisker = reversedYAxis ?
+                    Math.round(topBox) !==
+                    Math.round(point.plotHigh as any) :
+                    bottomBox !== point.yBottom;
+                topBox = Math.round(topBox) + crispCorr;
+                bottomBox = Math.round(bottomBox) + crispCorr;
+
+                // Create the path. Due to a bug in Chrome 49, the path is
+                // first instanciated with no values, then the values
+                // pushed. For unknown reasons, instanciating the path array
+                // with all the values would lead to a crash when updating
+                // frequently (#5193).
+                path = [];
+                path.push(
+                    ['M', crispX - halfWidth, bottomBox],
+                    ['L', crispX - halfWidth, topBox],
+                    ['L', crispX + halfWidth, topBox],
+                    ['L', crispX + halfWidth, bottomBox],
+                    ['Z'], // Ensure a nice rectangle #2602
+                    ['M', crispX, topBox],
+                    [
+                        'L',
+                        // #460, #2094
+                        crispX,
+                        hasTopWhisker ?
+                            Math.round(
+                                reversedYAxis ?
+                                    point.yBottom :
+                                    (point.plotHigh as any)
+                            ) :
+                            topBox
+                    ],
+                    ['M', crispX, bottomBox],
+                    [
+                        'L',
+                        // #460, #2094
+                        crispX,
+                        hasBottomWhisker ?
+                            Math.round(
+                                reversedYAxis ?
+                                    (point.plotHigh as any) :
+                                    point.yBottom
+                            ) :
+                            bottomBox
+                    ]);
+
+                graphic[isNew ? 'attr' : 'animate']({ d: path })
+                    .addClass(point.getClassName(), true);
+
+            }
+        });
+
+        /* eslint-enable valid-jsdoc */
+    }
+});
+
+/* *
+ *
+ * Registry
+ *
+ * */
+
+BaseSeries.registerSeriesType('candlestick', CandlestickSeries);
+
+/* *
+ *
+ * Default Export
+ *
+ * */
+export default CandlestickSeries;
+
+/* *
+ *
+ * API Options
+ *
+ * */
 /**
  * A `candlestick` series. If the [type](#series.candlestick.type)
  * option is not specified, it is inherited from [chart.type](
