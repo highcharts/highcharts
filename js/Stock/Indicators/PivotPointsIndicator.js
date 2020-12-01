@@ -6,9 +6,23 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../Core/Utilities.js';
-var defined = U.defined, isArray = U.isArray;
+var merge = U.merge, extend = U.extend, defined = U.defined, isArray = U.isArray;
 // im port './SMAIndicator.js';
 var SMA = BaseSeries.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
@@ -37,50 +51,53 @@ function destroyExtraLabels(point, functionName) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('pivotpoints', 'sma', 
-/**
- * Pivot points indicator. This series requires the `linkedTo` option to be
- * set and should be loaded after `stock/indicators/indicators.js` file.
- *
- * @sample stock/indicators/pivot-points
- *         Pivot points
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/pivotpoints
- * @optionparent plotOptions.pivotpoints
- */
-{
-    /**
-     * @excluding index
-     */
-    params: {
-        period: 28,
-        /**
-         * Algorithm used to calculate ressistance and support lines based
-         * on pivot points. Implemented algorithms: `'standard'`,
-         * `'fibonacci'` and `'camarilla'`
-         */
-        algorithm: 'standard'
-    },
-    marker: {
-        enabled: false
-    },
-    enableMouseTracking: false,
-    dataLabels: {
-        enabled: true,
-        format: '{point.pivotLine}'
-    },
-    dataGrouping: {
-        approximation: 'averages'
+var PivotPointsIndicator = /** @class */ (function (_super) {
+    __extends(PivotPointsIndicator, _super);
+    function PivotPointsIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    /**
+     * Pivot points indicator. This series requires the `linkedTo` option to be
+     * set and should be loaded after `stock/indicators/indicators.js` file.
+     *
+     * @sample stock/indicators/pivot-points
+     *         Pivot points
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/pivotpoints
+     * @optionparent plotOptions.pivotpoints
+     */
+    PivotPointsIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
+        params: {
+            period: 28,
+            /**
+             * Algorithm used to calculate ressistance and support lines based
+             * on pivot points. Implemented algorithms: `'standard'`,
+             * `'fibonacci'` and `'camarilla'`
+             */
+            algorithm: 'standard'
+        },
+        marker: {
+            enabled: false
+        },
+        enableMouseTracking: false,
+        dataLabels: {
+            enabled: true,
+            format: '{point.pivotLine}'
+        },
+        dataGrouping: {
+            approximation: 'averages'
+        }
+    });
+    return PivotPointsIndicator;
+}(SMAIndicator));
+extend(PivotPointsIndicator.prototype, {
     nameBase: 'Pivot Points',
     pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
     pointValKey: 'P',
@@ -259,13 +276,15 @@ BaseSeries.seriesType('pivotpoints', 'sma',
         ];
         return avg;
     }
-}, 
-/**
- * @lends Highcharts.Point#
- */
-{
-    // Destroy labels:
-    // This method is called when cropping data:
+});
+var PivotPointsIndicatorPoint = /** @class */ (function (_super) {
+    __extends(PivotPointsIndicatorPoint, _super);
+    function PivotPointsIndicatorPoint() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    return PivotPointsIndicatorPoint;
+}(SMAIndicator.prototype.pointClass));
+extend(PivotPointsIndicatorPoint.prototype, {
     destroyElements: function () {
         destroyExtraLabels(this, 'destroyElements');
     },
@@ -274,6 +293,21 @@ BaseSeries.seriesType('pivotpoints', 'sma',
         destroyExtraLabels(this, 'destroyElements');
     }
 });
+extend(PivotPointsIndicator.prototype, {
+    pointClass: PivotPointsIndicatorPoint
+});
+/* *
+ *
+ *  Registry
+ *
+ * */
+BaseSeries.registerSeriesType('pivotpoints', PivotPointsIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default PivotPointsIndicator;
 /**
  * A pivot points indicator. If the [type](#series.pivotpoints.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).
