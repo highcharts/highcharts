@@ -46,6 +46,7 @@ const {
  * @augments Highcharts.Series
  */
 class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
+
     /**
      * Linear regression slope indicator. This series requires `linkedTo`
      * option to be set.
@@ -57,11 +58,12 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     stock/indicators/linearregression
      * @optionparent plotOptions.linearregressionslope
      */
-    public static defaultOptions: LinearRegressionParamsOptions =
-    LinearRegressionIndicator.defaultOptions as LinearRegressionOptions;
+    public static defaultOptions: LinearRegressionParamsOptions = merge(
+        LinearRegressionIndicator.defaultOptions
+    );
 
     /* *
      *
@@ -85,19 +87,6 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
         return lineParameters.slope;
     }
 }
-/**
- * A linear regression slope series. If the
- * [type](#series.linearregressionslope.type) option is not specified, it is
- * inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.linearregressionslope
- * @since     7.0.0
- * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
- * @apioption series.linearregressionslope
- */
 
 /* *
  *
@@ -147,7 +136,7 @@ export default LinearRegressionSlopesIndicator;
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  stock/indicators/linearregressionslope
  * @apioption series.linearregressionslope
  */
 

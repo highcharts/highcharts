@@ -45,6 +45,7 @@ const {
  * @augments Highcharts.Series
  */
 class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
+
     /**
      * Linear regression angle indicator. This series requires `linkedTo`
      * option to be set.
@@ -56,7 +57,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     stock/indicators/linearregressionangle
      * @optionparent plotOptions.linearregressionangle
      */
     public static defaultOptions: LinearRegressionParamsOptions = merge(
@@ -135,7 +136,6 @@ BaseSeries.registerSeriesType(
     LinearRegressionAngleIndicator
 );
 
-
 /* *
  *
  *  Default Export
@@ -154,7 +154,7 @@ export default LinearRegressionAngleIndicator;
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  stock/indicators/linearregressionangle
  * @apioption series.linearregressionangle
  */
 
