@@ -25,38 +25,49 @@ QUnit.test('Updating 3D columns with z stacking #4743', function (assert) {
                     depth: 40
                 }
             },
-            series: [{
-                showInLegend: true,
-                data: [{
-                    x: 5,
-                    y: 5
-                }]
-            }, {
-                showInLegend: true,
-                data: [{
-                    x: 5,
-                    y: 5
-                }]
-            }]
+            series: [
+                {
+                    showInLegend: true,
+                    data: [
+                        {
+                            x: 5,
+                            y: 5
+                        }
+                    ]
+                },
+                {
+                    showInLegend: true,
+                    data: [
+                        {
+                            x: 5,
+                            y: 5
+                        }
+                    ]
+                }
+            ]
         });
     point0 = chart.series[0].data[0];
     point1 = chart.series[1].data[0];
     point0Z = point0.shapeArgs.z;
     point1Z = point1.shapeArgs.z;
 
-
     Highcharts.each(chart.series, function (s) {
-        s.update({
-            showInLegend: false
-        }, false);
+        s.update(
+            {
+                showInLegend: false
+            },
+            false
+        );
     });
     chart.redraw();
 
-
     Highcharts.each(chart.series, function (s) {
-        s.update({
-            showInLegend: true
-        }, false);
+        s.update(
+            {
+                showInLegend: true
+            },
+            false
+        );
     });
     chart.redraw();
 
@@ -65,9 +76,8 @@ QUnit.test('Updating 3D columns with z stacking #4743', function (assert) {
     point0ZUpd = point0.shapeArgs.z;
     point1ZUpd = point1.shapeArgs.z;
 
-
     assert.strictEqual(
-        (point0Z === point0ZUpd && point1Z === point1ZUpd),
+        point0Z === point0ZUpd && point1Z === point1ZUpd,
         true,
         'Updating 3D columns works with z stacking'
     );

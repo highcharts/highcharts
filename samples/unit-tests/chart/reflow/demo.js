@@ -1,5 +1,4 @@
 QUnit.test('Reflow tests (sync, #6968)', function (assert) {
-
     var clock,
         chart,
         originalChartWidth,
@@ -7,14 +6,12 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
         originalContainerWidth = container.offsetWidth;
 
     try {
-
         clock = TestUtilities.lolexInstall();
 
         var done = assert.async();
 
         // Set reflow to false
         setTimeout(function () {
-
             assert.ok(true, 'Test set reflow to false');
 
             chart = Highcharts.chart('container', {
@@ -25,12 +22,40 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
                     text: 'Chart reflow is set to false'
                 },
                 xAxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                    categories: [
+                        'Jan',
+                        'Feb',
+                        'Mar',
+                        'Apr',
+                        'May',
+                        'Jun',
+                        'Jul',
+                        'Aug',
+                        'Sep',
+                        'Oct',
+                        'Nov',
+                        'Dec'
+                    ]
                 },
 
-                series: [{
-                    data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-                }]
+                series: [
+                    {
+                        data: [
+                            29.9,
+                            71.5,
+                            106.4,
+                            129.2,
+                            144.0,
+                            176.0,
+                            135.6,
+                            148.5,
+                            216.4,
+                            194.1,
+                            95.6,
+                            54.4
+                        ]
+                    }
+                ]
             });
 
             originalChartWidth = chart.chartWidth;
@@ -44,14 +69,13 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
             // Change the container size and trigger window resize to make the chart resize
             container.style.width = '300px';
 
-            if (navigator.userAgent.indexOf('Edge') === -1) { // triggers page reload on BrowserStack
+            if (navigator.userAgent.indexOf('Edge') === -1) {
+                // triggers page reload on BrowserStack
                 Highcharts.fireEvent(window, 'resize');
             }
-
         }, 0);
 
         setTimeout(function () {
-
             assert.notEqual(
                 container.offsetWidth,
                 originalContainerWidth,
@@ -66,12 +90,10 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
 
             container.style.width = '';
             container.style.height = '';
-
         }, 100);
 
         // Set reflow to true
         setTimeout(function () {
-
             assert.ok(true, 'Test set reflow to true');
 
             chart = Highcharts.chart('container', {
@@ -82,11 +104,39 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
                     text: 'Chart reflow is set to false'
                 },
                 xAxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                    categories: [
+                        'Jan',
+                        'Feb',
+                        'Mar',
+                        'Apr',
+                        'May',
+                        'Jun',
+                        'Jul',
+                        'Aug',
+                        'Sep',
+                        'Oct',
+                        'Nov',
+                        'Dec'
+                    ]
                 },
-                series: [{
-                    data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-                }]
+                series: [
+                    {
+                        data: [
+                            29.9,
+                            71.5,
+                            106.4,
+                            129.2,
+                            144.0,
+                            176.0,
+                            135.6,
+                            148.5,
+                            216.4,
+                            194.1,
+                            95.6,
+                            54.4
+                        ]
+                    }
+                ]
             });
 
             originalChartWidth = chart.chartWidth;
@@ -100,11 +150,9 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
             // Change the container size and trigger window resize to make the chart resize
             container.style.width = '300px';
             chart.reflow();
-
         }, 200);
 
         setTimeout(function () {
-
             assert.strictEqual(
                 chart.chartWidth !== originalChartWidth,
                 true,
@@ -113,12 +161,10 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
 
             container.style.width = '';
             container.style.height = '';
-
         }, 300);
 
         // Reflow height only (#6968)
         setTimeout(function () {
-
             assert.ok(true, 'Test reflow height only (#6968)');
 
             chart = Highcharts.chart('container', {
@@ -126,40 +172,29 @@ QUnit.test('Reflow tests (sync, #6968)', function (assert) {
                     animation: false,
                     width: 500
                 },
-                series: [{
-                    type: 'column',
-                    data: [1, 3, 2, 4]
-                }]
+                series: [
+                    {
+                        type: 'column',
+                        data: [1, 3, 2, 4]
+                    }
+                ]
             });
 
-            assert.strictEqual(
-                chart.chartHeight,
-                400,
-                'Default height'
-            );
+            assert.strictEqual(chart.chartHeight, 400, 'Default height');
 
             container.style.height = '500px';
             chart.reflow();
 
-            assert.strictEqual(
-                chart.chartHeight,
-                500,
-                'Reflowed height'
-            );
+            assert.strictEqual(chart.chartHeight, 500, 'Reflowed height');
 
             container.style.width = '';
             container.style.height = '';
 
             done();
-
         }, 400);
 
         TestUtilities.lolexRunAndUninstall(clock);
-
     } finally {
-
         TestUtilities.lolexUninstall(clock);
-
     }
-
 });

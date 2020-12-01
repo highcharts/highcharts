@@ -1,19 +1,46 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
-            series: [{
-                id: 'main',
-                data: [
-                    13, 14, 15, 13, 14, 15,
-                    13, 14, 15, 13, 14, 15,
-                    13, 14, 15, 13, 14, 15,
-                    13, 14, 15, 13, 14, 15,
-                    13, 14, 15, 13, 14, 15
-                ]
-            }, {
-                type: 'sma',
-                linkedTo: 'main'
-            }]
+            series: [
+                {
+                    id: 'main',
+                    data: [
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15,
+                        13,
+                        14,
+                        15
+                    ]
+                },
+                {
+                    type: 'sma',
+                    linkedTo: 'main'
+                }
+            ]
         }),
         pointsValue = [],
         secondChart,
@@ -21,7 +48,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'Initial number of SMA points is correct'
     );
 
@@ -29,7 +58,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length + chart.series[1].options.params.period - 1,
+        chart.series[1].points.length +
+            chart.series[1].options.params.period -
+            1,
         'After addPoint number of SMA points is correct'
     );
 
@@ -41,11 +72,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         }
     });
 
-    assert.deepEqual(
-        chart.series[1].yData,
-        [13, 14, 15],
-        'Correct values'
-    );
+    assert.deepEqual(chart.series[1].yData, [13, 14, 15], 'Correct values');
 
     assert.strictEqual(
         chart.series[1].graph.attr('stroke'),
@@ -75,11 +102,36 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         cropThreshold: 2,
         pointStart: 1,
         data: [
-            13, 14, 15, 13, 14, 15,
-            13, 14, 15, 13, 14, 15,
-            13, 14, 15, 13, 14, 15,
-            13, 14, 15, 13, 14, 15,
-            13, 14, 15, 13, 14, 15
+            13,
+            14,
+            15,
+            13,
+            14,
+            15,
+            13,
+            14,
+            15,
+            13,
+            14,
+            15,
+            13,
+            14,
+            15,
+            13,
+            14,
+            15,
+            13,
+            14,
+            15,
+            13,
+            14,
+            15,
+            13,
+            14,
+            15,
+            13,
+            14,
+            15
         ]
     });
 
@@ -92,37 +144,38 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     secondSeries.points[secondSeries.points.length - 1].update(100);
 
-    assert.ok(
-        'No errors after updating point in a cropped dataset (#8968)'
-    );
+    assert.ok('No errors after updating point in a cropped dataset (#8968)');
 
     secondChart = Highcharts.stockChart('container', {
         xAxis: {
             minRange: 1
         },
-        series: [{
-            id: 'aapl',
-            pointStart: 1486166400000,
-            pointInterval: 24 * 3600 * 1000,
-            data: [
-                221.85,
-                220.95,
-                218.01,
-                224.94,
-                223.52,
-                225.75,
-                222.15,
-                217.79,
-                218.5,
-                220.91
-            ]
-        }, {
-            type: 'sma',
-            linkedTo: 'aapl',
-            params: {
-                period: 5
+        series: [
+            {
+                id: 'aapl',
+                pointStart: 1486166400000,
+                pointInterval: 24 * 3600 * 1000,
+                data: [
+                    221.85,
+                    220.95,
+                    218.01,
+                    224.94,
+                    223.52,
+                    225.75,
+                    222.15,
+                    217.79,
+                    218.5,
+                    220.91
+                ]
+            },
+            {
+                type: 'sma',
+                linkedTo: 'aapl',
+                params: {
+                    period: 5
+                }
             }
-        }]
+        ]
     });
 
     // Update issues with cropped data (#8572, #9493)
@@ -198,7 +251,9 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         secondChart.series[1].points[secondChart.series[1].points.length - 1].x,
-        secondChart.series[1].processedXData[secondChart.series[1].processedXData.length - 1],
+        secondChart.series[1].processedXData[
+            secondChart.series[1].processedXData.length - 1
+        ],
         'Correct last point position after addPoint() with shift parameter and cropped data (#8572)'
     );
 });

@@ -1,17 +1,22 @@
 QUnit.test('stateMarkerGraphic', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                data: [{
-                    y: 1,
-                    color: 'red'
-                }, {
-                    y: 2,
-                    color: 'blue'
-                }],
-                marker: {
-                    radius: 1
+            series: [
+                {
+                    data: [
+                        {
+                            y: 1,
+                            color: 'red'
+                        },
+                        {
+                            y: 2,
+                            color: 'blue'
+                        }
+                    ],
+                    marker: {
+                        radius: 1
+                    }
                 }
-            }],
+            ],
             xAxis: {
                 minRange: 15000000000
             }
@@ -37,28 +42,30 @@ QUnit.test('stateMarkerGraphic', function (assert) {
 
 QUnit.test('Inactive state and legend', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                visible: false,
-                name: 'John',
-                data: [5, 3, 4, 7, 2]
-            }, {
-                name: 'Jane',
-                data: [2, -2, -3, 2, 1]
-            }]
+            series: [
+                {
+                    visible: false,
+                    name: 'John',
+                    data: [5, 3, 4, 7, 2]
+                },
+                {
+                    name: 'Jane',
+                    data: [2, -2, -3, 2, 1]
+                }
+            ]
         }),
         series = chart.series,
         legend = chart.legend,
         legendItemBox = legend.allItems[0].legendItem.getBBox(),
         controller = new TestController(chart),
-        xPosition = legend.group.translateX + legendItemBox.x +
-            legendItemBox.width / 2,
-        yPosition = legend.group.translateY + legendItemBox.y +
+        xPosition =
+            legend.group.translateX + legendItemBox.x + legendItemBox.width / 2,
+        yPosition =
+            legend.group.translateY +
+            legendItemBox.y +
             legendItemBox.height / 2;
 
-    controller.mouseMove(
-        xPosition,
-        yPosition
-    );
+    controller.mouseMove(xPosition, yPosition);
 
     assert.strictEqual(
         series[1].group.attr('opacity'),
@@ -66,10 +73,7 @@ QUnit.test('Inactive state and legend', function (assert) {
         'Hovering hidden series should not inactive other series (#11301)'
     );
 
-    controller.click(
-        xPosition,
-        yPosition
-    );
+    controller.click(xPosition, yPosition);
 
     assert.strictEqual(
         series[1].group.attr('opacity'),
@@ -77,10 +81,7 @@ QUnit.test('Inactive state and legend', function (assert) {
         'Showing hidden series should inactivate other series (#11301)'
     );
 
-    controller.click(
-        xPosition,
-        yPosition
-    );
+    controller.click(xPosition, yPosition);
 
     assert.strictEqual(
         series[1].group.attr('opacity'),
@@ -90,7 +91,6 @@ QUnit.test('Inactive state and legend', function (assert) {
 });
 
 QUnit.test('Keep state after the redraw call #13719', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             events: {
@@ -104,13 +104,26 @@ QUnit.test('Keep state after the redraw call #13719', function (assert) {
                 }
             }
         },
-        series: [{
-            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-        }, {
-            data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
-        }, {
-            data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
-        }]
+        series: [
+            {
+                data: [
+                    43934,
+                    52503,
+                    57177,
+                    69658,
+                    97031,
+                    119931,
+                    137133,
+                    154175
+                ]
+            },
+            {
+                data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
+            },
+            {
+                data: [11744, 17722, 16005, 19771, 20185, 24377, 32147, 39387]
+            }
+        ]
     });
 
     chart.reflow();

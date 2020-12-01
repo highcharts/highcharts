@@ -1,10 +1,12 @@
 QUnit.test('series.data.id: default to string', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2]
+                }
+            ]
         }),
         series = chart.series[0],
         result;
@@ -21,16 +23,21 @@ QUnit.test('series.data.id: default to string', function (assert) {
 QUnit.test('series.data.id: custom id', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [{
-                    value: 1,
-                    id: '1'
-                }, {
-                    value: 2,
-                    id: '2'
-                }]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [
+                        {
+                            value: 1,
+                            id: '1'
+                        },
+                        {
+                            value: 2,
+                            id: '2'
+                        }
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(

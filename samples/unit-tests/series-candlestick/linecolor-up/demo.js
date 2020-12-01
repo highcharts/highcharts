@@ -1,5 +1,4 @@
 QUnit.test('Line color on up point (#4226)', function (assert) {
-
     var data = [
         [3, 4.5, 6, 3, 5.5],
         [4, 5.5, 6, 0.5, 1],
@@ -9,7 +8,7 @@ QUnit.test('Line color on up point (#4226)', function (assert) {
             high: 3,
             low: 0.5,
             close: 2,
-            lineColor: "#FF0000"
+            lineColor: '#FF0000'
         },
         {
             x: 6,
@@ -17,7 +16,7 @@ QUnit.test('Line color on up point (#4226)', function (assert) {
             high: 2,
             low: 0.5,
             close: 1.5,
-            lineColor: "#FF0000"
+            lineColor: '#FF0000'
         }
     ];
     $('#container').highcharts('StockChart', {
@@ -25,17 +24,18 @@ QUnit.test('Line color on up point (#4226)', function (assert) {
             selected: 1
         },
 
-        series: [{
-            lineColor: 'black',
-            type: 'candlestick',
-            name: 'test',
-            data: data
-        }]
+        series: [
+            {
+                lineColor: 'black',
+                type: 'candlestick',
+                name: 'test',
+                data: data
+            }
+        ]
     });
 
     var chart = $('#container').highcharts(),
         points = chart.series[0].points;
-
 
     assert.equal(
         points[0].graphic.element.getAttribute('stroke'),

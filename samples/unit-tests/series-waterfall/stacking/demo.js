@@ -9,11 +9,14 @@ QUnit.test('Waterfall should render stacks. (#6020)', function (assert) {
                     stacking: 'normal'
                 }
             },
-            series: [{
-                data: [5561.52, 5561.52, 5561.52, 5561.52]
-            }, {
-                data: [11178.45, 11178.45, 11178.45, 11178.45]
-            }]
+            series: [
+                {
+                    data: [5561.52, 5561.52, 5561.52, 5561.52]
+                },
+                {
+                    data: [11178.45, 11178.45, 11178.45, 11178.45]
+                }
+            ]
         }),
         UNDEFINED;
 

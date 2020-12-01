@@ -1,29 +1,35 @@
-QUnit.test('Point.dataLabels options should have higher priority than activeDataLabelStyle (#6752).',
+QUnit.test(
+    'Point.dataLabels options should have higher priority than activeDataLabelStyle (#6752).',
     function (assert) {
         var red = 'red',
             chart = Highcharts.chart('container', {
                 chart: {
                     type: 'column'
                 },
-                series: [{
-                    data: [{
-                        y: 5,
-                        drilldown: 'main',
-                        dataLabels: {
-                            enabled: true,
-                            style: {
-                                color: red
+                series: [
+                    {
+                        data: [
+                            {
+                                y: 5,
+                                drilldown: 'main',
+                                dataLabels: {
+                                    enabled: true,
+                                    style: {
+                                        color: red
+                                    }
+                                }
+                            },
+                            {
+                                y: 2,
+                                drilldown: 'fruits',
+                                dataLabels: {
+                                    enabled: true,
+                                    color: red
+                                }
                             }
-                        }
-                    }, {
-                        y: 2,
-                        drilldown: 'fruits',
-                        dataLabels: {
-                            enabled: true,
-                            color: red
-                        }
-                    }]
-                }]
+                        ]
+                    }
+                ]
             }),
             points = chart.series[0].points;
 

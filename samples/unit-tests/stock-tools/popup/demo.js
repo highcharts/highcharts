@@ -1,7 +1,7 @@
 QUnit.test('Touch event test on popup', function (assert) {
-
     // ADD CSS STYLES
-    var css = '.highcharts-popup.highcharts-annotation-toolbar {right: 10%;left: auto;height: 40px;padding-right: 40px;width: auto;}.highcharts-popup.highcharts-annotation-toolbar > span {display:block;float:left;padding: 12px;}.highcharts-popup {background-color: #fff;color: #666;display: none;font-size: 0.876em;height: 70%;top: 15%;left: 25%;position: absolute;width: 50%;z-index: 100;-webkit-box-shadow: 0px 0px 8px 0px rgba(61,61,61,0.3);-moz-box-shadow: 0px 0px 8px 0px rgba(61,61,61,0.3);box-shadow: 0px 0px 8px 0px rgba(61,61,61,0.3);}.highcharts-popup button {float: right;border: none;background: #f7f7f7;color: #666;margin-left:5px;}.highcharts-popup button.highcharts-annotation-edit-button,.highcharts-popup button.highcharts-annotation-remove-button {width: 20px;height: 40px;padding: 20px;}',
+    var css =
+            '.highcharts-popup.highcharts-annotation-toolbar {right: 10%;left: auto;height: 40px;padding-right: 40px;width: auto;}.highcharts-popup.highcharts-annotation-toolbar > span {display:block;float:left;padding: 12px;}.highcharts-popup {background-color: #fff;color: #666;display: none;font-size: 0.876em;height: 70%;top: 15%;left: 25%;position: absolute;width: 50%;z-index: 100;-webkit-box-shadow: 0px 0px 8px 0px rgba(61,61,61,0.3);-moz-box-shadow: 0px 0px 8px 0px rgba(61,61,61,0.3);box-shadow: 0px 0px 8px 0px rgba(61,61,61,0.3);}.highcharts-popup button {float: right;border: none;background: #f7f7f7;color: #666;margin-left:5px;}.highcharts-popup button.highcharts-annotation-edit-button,.highcharts-popup button.highcharts-annotation-remove-button {width: 20px;height: 40px;padding: 20px;}',
         head = document.head || document.getElementsByTagName('head')[0],
         style = document.createElement('style');
 
@@ -24,23 +24,29 @@ QUnit.test('Touch event test on popup', function (assert) {
                     align: 'left'
                 }
             },
-            annotations: [{
-                langKey: 'rect',
-                shapes: [{
+            annotations: [
+                {
                     langKey: 'rect',
-                    point: '0',
-                    type: 'rect',
-                    width: 700,
-                    height: 700
-                }]
-            }],
-            series: [{
-                keys: ['y', 'id'],
-                data: [
-                    [229.9, '0'],
-                    [76.0, '1']
-                ]
-            }],
+                    shapes: [
+                        {
+                            langKey: 'rect',
+                            point: '0',
+                            type: 'rect',
+                            width: 700,
+                            height: 700
+                        }
+                    ]
+                }
+            ],
+            series: [
+                {
+                    keys: ['y', 'id'],
+                    data: [
+                        [229.9, '0'],
+                        [76.0, '1']
+                    ]
+                }
+            ],
             stockTools: {
                 gui: {
                     enabled: false
@@ -65,7 +71,9 @@ QUnit.test('Touch event test on popup', function (assert) {
     );
 
     assert.strictEqual(
-        chart.navigationBindings.popup.container.className.indexOf('highcharts-annotation-toolbar'),
+        chart.navigationBindings.popup.container.className.indexOf(
+            'highcharts-annotation-toolbar'
+        ),
         -1,
         'Edit popup is displayed by touch event.'
     );

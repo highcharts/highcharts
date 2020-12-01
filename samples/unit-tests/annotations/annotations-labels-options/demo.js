@@ -11,19 +11,20 @@ QUnit.test('Setting graphic attributes for a label', function (assert) {
                 fontSize: '20px'
             }
         },
-
         chart = Highcharts.chart('container', {
-            series: [{
-                data: [{ y: 29.9, id: 'max' }]
-            }],
+            series: [
+                {
+                    data: [{ y: 29.9, id: 'max' }]
+                }
+            ],
 
-            annotations: [{
-                labels: [Highcharts.merge(expected, { point: 'max' })]
-            }]
+            annotations: [
+                {
+                    labels: [Highcharts.merge(expected, { point: 'max' })]
+                }
+            ]
         }),
-
         label = chart.annotations[0].labels[0].graphic,
-
         actual = {
             text: label.text.textStr,
             backgroundColor: label.box.attr('fill'),

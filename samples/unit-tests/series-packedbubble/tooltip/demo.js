@@ -20,23 +20,35 @@ QUnit.test('Packed Bubble Tooltip options', function (assert) {
                 tooltip: {
                     shared: true
                 },
-                series: [{
-                    data: [{
-                        value: 20
-                    }, {
-                        value: 20
-                    }]
-                }, {
-                    data: [{
-                        value: 20
-                    }, {
-                        value: 20
-                    }]
-                }, {
-                    data: [{
-                        value: 20
-                    }]
-                }]
+                series: [
+                    {
+                        data: [
+                            {
+                                value: 20
+                            },
+                            {
+                                value: 20
+                            }
+                        ]
+                    },
+                    {
+                        data: [
+                            {
+                                value: 20
+                            },
+                            {
+                                value: 20
+                            }
+                        ]
+                    },
+                    {
+                        data: [
+                            {
+                                value: 20
+                            }
+                        ]
+                    }
+                ]
             }),
             offset = $('#container').offset(),
             left = offset.left + chart.plotLeft,

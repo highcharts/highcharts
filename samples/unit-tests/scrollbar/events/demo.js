@@ -1,4 +1,5 @@
-QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator',
+QUnit.test(
+    '#6334 - double afterSetExtremes for scrollbar and navigator',
     function (assert) {
         var done = assert.async(),
             counter = 0,
@@ -22,9 +23,11 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator',
                 scrollbar: {
                     liveRedraw: false
                 },
-                series: [{
-                    data: [4, 20, 100, 5, 2, 33, 12, 23]
-                }]
+                series: [
+                    {
+                        data: [4, 20, 100, 5, 2, 33, 12, 23]
+                    }
+                ]
             },
             chart = Highcharts.stockChart('container', options),
             controller = new TestController(chart),
@@ -40,17 +43,14 @@ QUnit.test('#6334 - double afterSetExtremes for scrollbar and navigator',
 
         // No lolex should be needed for this
         setTimeout(function () {
-            assert.strictEqual(
-                counter,
-                1,
-                'afterSetExtremes called just once'
-            );
+            assert.strictEqual(counter, 1, 'afterSetExtremes called just once');
             done();
         }, 5);
     }
 );
 
-QUnit.test('#1716 - very small range in navigator and scrollbar events',
+QUnit.test(
+    '#1716 - very small range in navigator and scrollbar events',
     function (assert) {
         var done = assert.async(),
             min = 3,
@@ -64,9 +64,11 @@ QUnit.test('#1716 - very small range in navigator and scrollbar events',
                 rangeSelector: {
                     enabled: false
                 },
-                series: [{
-                    data: [4, 20, 100, 5, 2, 33, 12, 23]
-                }]
+                series: [
+                    {
+                        data: [4, 20, 100, 5, 2, 33, 12, 23]
+                    }
+                ]
             },
             chart = Highcharts.stockChart('container', options),
             controller = new TestController(chart),
@@ -74,10 +76,7 @@ QUnit.test('#1716 - very small range in navigator and scrollbar events',
             group = scrollbar.group,
             extremes;
 
-        controller.click(
-            group.translateX + 5,
-            group.translateY + 5
-        );
+        controller.click(group.translateX + 5, group.translateY + 5);
 
         // No lolex should be needed for this
         setTimeout(function () {
@@ -112,9 +111,11 @@ QUnit.test('Scrollbar.liveRedraw option', function (assert) {
             navigator: {
                 height: 15
             },
-            series: [{
-                data: [1, 2, 3, 4, 5]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5]
+                }
+            ]
         }),
         controller = new TestController(chart),
         scrollbar = chart.xAxis[0].scrollbar,
@@ -153,18 +154,51 @@ QUnit.test('#14193: Scrollbar touch', assert => {
                 enabled: true
             }
         },
-        series: [{
-            type: 'column',
-            data: [
-                5.5, 6.2, 5.9, 5.9, 6.2, 5.6, 5.7, 5.7,
-                5.7, 5.8, 5.7, 6.2, 5.6, 5.9, 6.0, 5.7, 6.0
-            ]
-        }, {
-            data: [
-                42, 67, 59, 61, 72, 42, 48, 46,
-                47, 50, 50, 70, 47, 58, 65, 50, 62
-            ]
-        }]
+        series: [
+            {
+                type: 'column',
+                data: [
+                    5.5,
+                    6.2,
+                    5.9,
+                    5.9,
+                    6.2,
+                    5.6,
+                    5.7,
+                    5.7,
+                    5.7,
+                    5.8,
+                    5.7,
+                    6.2,
+                    5.6,
+                    5.9,
+                    6.0,
+                    5.7,
+                    6.0
+                ]
+            },
+            {
+                data: [
+                    42,
+                    67,
+                    59,
+                    61,
+                    72,
+                    42,
+                    48,
+                    46,
+                    47,
+                    50,
+                    50,
+                    70,
+                    47,
+                    58,
+                    65,
+                    50,
+                    62
+                ]
+            }
+        ]
     });
 
     const controller = new TestController(chart);
