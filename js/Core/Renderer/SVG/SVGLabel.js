@@ -23,6 +23,13 @@ var __extends = (this && this.__extends) || (function () {
 import SVGElement from './SVGElement.js';
 import U from '../../Utilities.js';
 var defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, removeEvent = U.removeEvent;
+/* eslint require-jsdoc: 0, no-invalid-this: 0 */
+function paddingSetter(value, key) {
+    if (defined(value) && value !== this[key]) {
+        this[key] = value;
+        this.updateTextPadding();
+    }
+}
 /**
  * SVG label to render text.
  * @private
@@ -39,6 +46,9 @@ var SVGLabel = /** @class */ (function (_super) {
      * */
     function SVGLabel(renderer, str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
         var _this = _super.call(this) || this;
+        _this.paddingSetter = paddingSetter;
+        _this.paddingLeftSetter = paddingSetter;
+        _this.paddingRightSetter = paddingSetter;
         _this.init(renderer, 'g');
         _this.textStr = str;
         _this.x = x;
@@ -68,6 +78,7 @@ var SVGLabel = /** @class */ (function (_super) {
         _this.bBox = SVGLabel.emptyBBox;
         _this.padding = 3;
         _this.paddingLeft = 0;
+        _this.paddingRight = 0;
         _this.baselineOffset = 0;
         _this.needsBox = renderer.styledMode || hasBGImage;
         _this.deferredAttr = {};
@@ -235,18 +246,6 @@ var SVGLabel = /** @class */ (function (_super) {
             });
         }
     };
-    SVGLabel.prototype.paddingSetter = function (value) {
-        if (defined(value) && value !== this.padding) {
-            this.padding = value;
-            this.updateTextPadding();
-        }
-    };
-    SVGLabel.prototype.paddingLeftSetter = function (value) {
-        if (defined(value) && value !== this.paddingLeft) {
-            this.paddingLeft = value;
-            this.updateTextPadding();
-        }
-    };
     SVGLabel.prototype.rSetter = function (value, key) {
         this.boxAttr(key, value);
     };
@@ -290,7 +289,6 @@ var SVGLabel = /** @class */ (function (_super) {
     SVGLabel.prototype.updateBoxSize = function () {
         var style = this.text.element.style, crispAdjust, attribs = {};
         var padding = this.padding;
-        var paddingLeft = this.paddingLeft;
         // #12165 error when width is null (auto)
         // #12163 when fontweight: bold, recalculate bBox withot cache
         // #3295 && 3514 box failure when string equals 0
@@ -299,7 +297,8 @@ var SVGLabel = /** @class */ (function (_super) {
             this.text.getBBox() : SVGLabel.emptyBBox;
         this.width = ((this.widthSetting || bBox.width || 0) +
             2 * padding +
-            paddingLeft);
+            this.paddingLeft +
+            this.paddingRight);
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)

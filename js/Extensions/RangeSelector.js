@@ -1511,6 +1511,12 @@ var RangeSelector = /** @class */ (function () {
     };
     RangeSelector.prototype.collapseButtons = function () {
         var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, zoomText = _a.zoomText;
+        var getAttribs = function (text) { return ({
+            text: text + " \u25BE",
+            paddingLeft: 5,
+            paddingRight: 5,
+            width: 'auto'
+        }); };
         if (zoomText) {
             zoomText.hide();
         }
@@ -1522,19 +1528,13 @@ var RangeSelector = /** @class */ (function () {
             }
             else {
                 button.show();
-                button.attr({
-                    text: rangeOptions.text + ' ▼',
-                    width: 'auto'
-                });
+                button.attr(getAttribs(rangeOptions.text));
                 hasActiveButton = true;
             }
         });
         if (!hasActiveButton && buttons.length > 0) {
             buttons[0].show();
-            buttons[0].attr({
-                text: buttonOptions[0].text + ' ▼',
-                width: 'auto'
-            });
+            buttons[0].attr(getAttribs(buttonOptions[0].text));
         }
         this.positionButtons();
     };
@@ -1547,7 +1547,9 @@ var RangeSelector = /** @class */ (function () {
             buttons[i].show();
             buttons[i].attr({
                 text: rangeOptions.text,
-                width: options.buttonTheme.width || 28
+                width: options.buttonTheme.width || 28,
+                paddingLeft: 0,
+                paddingRight: 0
             });
         });
         this.positionButtons();

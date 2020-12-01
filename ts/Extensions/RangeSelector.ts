@@ -2166,6 +2166,13 @@ class RangeSelector {
             zoomText
         } = this;
 
+        const getAttribs = (text: string): SVGAttributes => ({
+            text: `${text} ▾`,
+            paddingLeft: 5,
+            paddingRight: 5,
+            width: 'auto'
+        });
+
         if (zoomText) {
             zoomText.hide();
         }
@@ -2181,10 +2188,7 @@ class RangeSelector {
                 button.hide();
             } else {
                 button.show();
-                button.attr({
-                    text: rangeOptions.text + ' ▼',
-                    width: 'auto'
-                });
+                button.attr(getAttribs(rangeOptions.text));
 
                 hasActiveButton = true;
             }
@@ -2192,10 +2196,7 @@ class RangeSelector {
 
         if (!hasActiveButton && buttons.length > 0) {
             buttons[0].show();
-            buttons[0].attr({
-                text: buttonOptions[0].text + ' ▼',
-                width: 'auto'
-            });
+            buttons[0].attr(getAttribs(buttonOptions[0].text));
         }
 
         this.positionButtons();
@@ -2220,7 +2221,9 @@ class RangeSelector {
             buttons[i].show();
             buttons[i].attr({
                 text: rangeOptions.text,
-                width: options.buttonTheme.width || 28
+                width: options.buttonTheme.width || 28,
+                paddingLeft: 0,
+                paddingRight: 0
             });
         });
 

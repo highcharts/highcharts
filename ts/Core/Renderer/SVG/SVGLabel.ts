@@ -25,6 +25,14 @@ const {
     removeEvent
 } = U;
 
+/* eslint require-jsdoc: 0, no-invalid-this: 0 */
+function paddingSetter(this: SVGLabel, value: number, key: string): void {
+    if (defined(value) && value !== this[key]) {
+        this[key] = value;
+        this.updateTextPadding();
+    }
+}
+
 /**
  * SVG label to render text.
  * @private
@@ -95,6 +103,7 @@ class SVGLabel extends SVGElement {
         this.bBox = SVGLabel.emptyBBox;
         this.padding = 3;
         this.paddingLeft = 0;
+        this.paddingRight = 0;
         this.baselineOffset = 0;
         this.needsBox = renderer.styledMode || hasBGImage;
         this.deferredAttr = {};
@@ -327,19 +336,11 @@ class SVGLabel extends SVGElement {
         }
     }
 
-    public paddingSetter(value: number): void {
-        if (defined(value) && value !== this.padding) {
-            this.padding = value;
-            this.updateTextPadding();
-        }
-    }
+    public paddingSetter = paddingSetter;
 
-    public paddingLeftSetter(value: number): void {
-        if (defined(value) && value !== this.paddingLeft) {
-            this.paddingLeft = value;
-            this.updateTextPadding();
-        }
-    }
+    public paddingLeftSetter = paddingSetter;
+
+    public paddingRightSetter = paddingSetter;
 
     public rSetter(
         value: any,
@@ -404,7 +405,6 @@ class SVGLabel extends SVGElement {
             attribs: SVGAttributes = {};
 
         const padding = this.padding;
-        const paddingLeft = this.paddingLeft;
 
         // #12165 error when width is null (auto)
         // #12163 when fontweight: bold, recalculate bBox withot cache
@@ -418,7 +418,8 @@ class SVGLabel extends SVGElement {
         this.width = (
             (this.widthSetting || bBox.width || 0) +
             2 * padding +
-            paddingLeft
+            this.paddingLeft +
+            this.paddingRight
         );
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
@@ -470,7 +471,7 @@ class SVGLabel extends SVGElement {
      * This function runs after setting text or padding, but only if padding
      * is changed.
      */
-    private updateTextPadding(): void {
+    public updateTextPadding(): void {
         const text = this.text;
 
         // Determine y based on the baseline
