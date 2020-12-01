@@ -14,8 +14,8 @@
  *
  * */
 import type PolygonPointOptions from './PolygonPointOptions';
-import PolygonSeries from './PolygonSeries.js';
-import ScatterPoint from '../Scatter/ScatterPoint.js';
+import type PolygonSeries from './PolygonSeries';
+import type ScatterPoint from '../Scatter/ScatterPoint';
 
 /* *
  *
