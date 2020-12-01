@@ -76,6 +76,7 @@ class TEMAIndicator extends EMAIndicator {
      */
     public static defaultOptions: TEMAOptions = merge(EMAIndicator.defaultOptions)
 
+    public EMApercent: number = void 0 as any;
     public data: Array<TEMAPoint> = void 0 as any;
     public options: TEMAOptions = void 0 as any;
     public points: Array<TEMAPoint> = void 0 as any;
@@ -108,7 +109,7 @@ class TEMAIndicator extends EMAIndicator {
             xVal || [],
             yVal,
             typeof i === 'undefined' ? 1 : i,
-            (this.chart.series[0] as any).EMApercent,
+            this.EMApercent,
             prevEMA,
             typeof index === 'undefined' ? -1 : index,
             SMA
@@ -165,7 +166,7 @@ class TEMAIndicator extends EMAIndicator {
             // EMA(EMA(EMA)) = level3,
             EMAlevels: TEMAIndicator.EMALevelsObject = ({} as any);
 
-        series.EMApercent = (2 / (period + 1));
+        this.EMApercent = (2 / (period + 1));
 
         // Check period, if bigger than EMA points length, skip
         if (yValLen < 3 * period - 2) {

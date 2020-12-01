@@ -37,6 +37,7 @@ var TEMAIndicator = /** @class */ (function (_super) {
     __extends(TEMAIndicator, _super);
     function TEMAIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.EMApercent = void 0;
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
@@ -50,7 +51,7 @@ var TEMAIndicator = /** @class */ (function (_super) {
         });
     };
     TEMAIndicator.prototype.getEMA = function (yVal, prevEMA, SMA, index, i, xVal) {
-        return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.chart.series[0].EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
+        return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
     };
     TEMAIndicator.prototype.getTemaPoint = function (xVal, tripledPeriod, EMAlevels, i) {
         var TEMAPoint = [
@@ -71,7 +72,7 @@ var TEMAIndicator = /** @class */ (function (_super) {
         // EMA(EMA) = level2,
         // EMA(EMA(EMA)) = level3,
         EMAlevels = {};
-        series.EMApercent = (2 / (period + 1));
+        this.EMApercent = (2 / (period + 1));
         // Check period, if bigger than EMA points length, skip
         if (yValLen < 3 * period - 2) {
             return;

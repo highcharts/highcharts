@@ -37,6 +37,7 @@ var DEMAIndicator = /** @class */ (function (_super) {
     __extends(DEMAIndicator, _super);
     function DEMAIndicator() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.EMApercent = void 0;
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
@@ -50,7 +51,7 @@ var DEMAIndicator = /** @class */ (function (_super) {
         });
     };
     DEMAIndicator.prototype.getEMA = function (yVal, prevEMA, SMA, index, i, xVal) {
-        return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.chart.series[0].EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
+        return EMAIndicator.prototype.calculateEma(xVal || [], yVal, typeof i === 'undefined' ? 1 : i, this.EMApercent, prevEMA, typeof index === 'undefined' ? -1 : index, SMA);
     };
     DEMAIndicator.prototype.getValues = function (series, params) {
         var period = params.period, doubledPeriod = 2 * period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, index = -1, accumulatePeriodPoints = 0, SMA = 0, DEMA = [], xDataDema = [], yDataDema = [], EMA = 0, 
@@ -60,7 +61,7 @@ var DEMAIndicator = /** @class */ (function (_super) {
         prevEMA, prevEMAlevel2, 
         // EMA values array
         EMAvalues = [], i, DEMAPoint;
-        series.EMApercent = (2 / (period + 1));
+        this.EMApercent = (2 / (period + 1));
         // Check period, if bigger than EMA points length, skip
         if (yValLen < 2 * period - 1) {
             return;

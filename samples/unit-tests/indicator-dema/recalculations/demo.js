@@ -2,6 +2,20 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     var chart = Highcharts.stockChart('container', {
         series: [
             {
+                id: 'additional',
+                data: [
+                    23.11,
+                    23.12,
+                    23.13,
+                    23.11,
+                    23.12,
+                    23.13,
+                    23.11,
+                    23.12,
+                    23.13
+                ]
+            },
+            {
                 id: 'main',
                 data: [
                     22.27,
@@ -29,15 +43,15 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].points.length,
-        chart.series[1].points.length +
-            2 * chart.series[1].options.params.period -
+        chart.series[1].points.length,
+        chart.series[2].points.length +
+            2 * chart.series[2].options.params.period -
             2,
         'Initial number of DEMA points is correct'
     );
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[2].yData,
         [
             22.1775,
             22.141875,
@@ -51,7 +65,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         'Correct values'
     );
 
-    chart.series[0].setData([
+    chart.series[1].setData([
         0,
         0,
         0,
@@ -68,26 +82,26 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     ]);
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[2].yData,
         [0, 0, 0, 0, 0, 0, 16.6125, 22.33, 23.766875],
         'Correct values'
     );
 
-    chart.series[0].addPoint(22.38);
+    chart.series[1].addPoint(22.38);
 
     assert.strictEqual(
-        chart.series[0].points.length,
-        chart.series[1].points.length +
-            2 * chart.series[1].options.params.period -
+        chart.series[1].points.length,
+        chart.series[2].points.length +
+            2 * chart.series[2].options.params.period -
             2,
         'After addPoint number of DEMA points is correct'
     );
 
-    chart.series[0].setData(
+    chart.series[1].setData(
         [23.36, 24.05, 23.75, 23.83, 23.95, 23.63, 23.82],
         false
     );
-    chart.series[1].update({
+    chart.series[2].update({
         color: 'red',
         params: {
             period: 2
@@ -95,7 +109,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     });
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[2].yData,
         [
             23.75,
             23.824444444444,
@@ -107,15 +121,15 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     );
 
     assert.strictEqual(
-        chart.series[1].graph.attr('stroke'),
+        chart.series[2].graph.attr('stroke'),
         'red',
         'Line color changed'
     );
 
-    chart.series[0].points[2].remove();
+    chart.series[1].points[2].remove();
 
     assert.deepEqual(
-        chart.series[1].yData,
+        chart.series[2].yData,
         [23.83, 23.945925925926, 23.676172839507, 23.794567901234],
         'Correct values after point.remove()'
     );
