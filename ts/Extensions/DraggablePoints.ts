@@ -21,6 +21,7 @@ import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type ColumnPoint from '../Series/Column/ColumnPoint';
 import type ColumnRangePoint from '../Series/ColumnRange/ColumnRangePoint';
+import type GanttPoint from '../Series/Gantt//GanttPoint';
 import type OHLCPoint from '../Series/OHLC/OHLCPoint';
 import type PointerEvent from '../Core/PointerEvent';
 import type { PointOptions, PointShortOptions } from '../Core/Series/PointOptions';
@@ -1177,7 +1178,7 @@ if (seriesTypes.xrange) {
                 optionName: 'draggableStart',
                 // Do not allow individual drag handles for milestones
                 validateIndividualDrag: function (
-                    point: Highcharts.GanttPoint
+                    point: GanttPoint
                 ): boolean {
                     return !point.milestone;
                 }
@@ -1194,7 +1195,7 @@ if (seriesTypes.xrange) {
                 optionName: 'draggableEnd',
                 // Do not allow individual drag handles for milestones
                 validateIndividualDrag: function (
-                    point: Highcharts.GanttPoint
+                    point: GanttPoint
                 ): boolean {
                     return !point.milestone;
                 }

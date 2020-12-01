@@ -9,7 +9,6 @@
  *
  * */
 'use strict';
-import H from '../Globals.js';
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
@@ -241,7 +240,7 @@ var TreeGridAxis;
                             // For using keys - rebuild the data structure
                             if (s.options.keys && s.options.keys.length) {
                                 data = s.pointClass.prototype.optionsToObject.call({ series: s }, data);
-                                H.seriesTypes.gantt.prototype.setGanttPointAliases(data);
+                                s.pointClass.setGanttPointAliases(data);
                             }
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again

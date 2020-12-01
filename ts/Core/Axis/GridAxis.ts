@@ -699,7 +699,7 @@ class GridAxis {
                     // For the Gantt set point aliases to the pointCopy
                     // to do not change the original point
                     pointCopy = merge(point);
-                    H.seriesTypes.gantt.prototype.setGanttPointAliases(pointCopy as any);
+                    H.seriesTypes.gantt.prototype.pointClass.setGanttPointAliases(pointCopy as any);
                 }
                 // Make additional properties available for the
                 // formatter
