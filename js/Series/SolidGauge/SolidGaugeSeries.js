@@ -25,58 +25,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import SolidGaugeAxis from './SolidGaugeAxis.js';
 import BaseSeries from '../../Core/Series/Series.js';
-import GaugeSeries from '../Gauge/GaugeSeries.js';
-import H from '../../Core/Globals.js';
-var Renderer = H.Renderer;
+var _a = BaseSeries.seriesTypes, GaugeSeries = _a.gauge, pieProto = _a.pie.prototype;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import U from '../../Core/Utilities.js';
-var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
-/**
- * Additional options, depending on the actual symbol drawn.
- *
- * @interface Highcharts.SymbolOptionsObject
- */ /**
-* Whether to draw rounded edges.
-* @name Highcharts.SymbolOptionsObject#rounded
-* @type {boolean|undefined}
-*/
-/**
- * Symbol definition of an arc with round edges.
- *
- * @private
- * @function Highcharts.Renderer#symbols.arc
- *
- * @param {number} x
- *        The X coordinate for the top left position.
- *
- * @param {number} y
- *        The Y coordinate for the top left position.
- *
- * @param {number} w
- *        The pixel width.
- *
- * @param {number} h
- *        The pixel height.
- *
- * @param {Highcharts.SymbolOptionsObject} [options]
- *        Additional options, depending on the actual symbol drawn.
- *
- * @return {Highcharts.SVGPathArray}
- *         Path of the created arc.
- */
-wrap(Renderer.prototype.symbols, 'arc', function (proceed, x, y, w, h, options) {
-    var arc = proceed, path = arc(x, y, w, h, options);
-    if (options.rounded) {
-        var r = options.r || w, smallR = (r - (options.innerR || 0)) / 2, outerArcStart = path[0], innerArcStart = path[2];
-        if (outerArcStart[0] === 'M' && innerArcStart[0] === 'L') {
-            var x1 = outerArcStart[1], y1 = outerArcStart[2], x2 = innerArcStart[1], y2 = innerArcStart[2], roundStart = ['A', smallR, smallR, 0, 1, 1, x1, y1], roundEnd = ['A', smallR, smallR, 0, 1, 1, x2, y2];
-            // Replace the line segment and the last close segment
-            path[2] = roundEnd;
-            path[4] = roundStart;
-        }
-    }
-    return path;
-});
+var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt;
+import './SolidGaugeComposition.js';
 /**
  * A solid gauge is a circular gauge where the value is indicated by a filled
  * arc, and the color of the arc may variate with the value.
@@ -178,6 +131,15 @@ var solidGaugeOptions = {
  *  Class
  *
  * */
+/**
+ * SolidGauge series type.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes.solidgauge
+ *
+ * @augments Highcarts.Series
+ */
 var SolidGaugeSeries = /** @class */ (function (_super) {
     __extends(SolidGaugeSeries, _super);
     function SolidGaugeSeries() {
@@ -217,7 +179,7 @@ var SolidGaugeSeries = /** @class */ (function (_super) {
         }
         axis.initStops(axis.options);
         // Generate points and inherit data label position
-        H.seriesTypes.gauge.prototype.translate.call(this);
+        GaugeSeries.prototype.translate.call(this);
     };
     // Draw the points where each point is one needle.
     SolidGaugeSeries.prototype.drawPoints = function () {
@@ -298,7 +260,7 @@ var SolidGaugeSeries = /** @class */ (function (_super) {
     SolidGaugeSeries.prototype.animate = function (init) {
         if (!init) {
             this.startAngleRad = this.thresholdAngleRad;
-            H.seriesTypes.pie.prototype.animate.call(this, init);
+            pieProto.animate.call(this, init);
         }
     };
     SolidGaugeSeries.defaultOptions = merge(GaugeSeries.defaultOptions, solidGaugeOptions);
