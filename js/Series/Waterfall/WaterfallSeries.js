@@ -43,35 +43,9 @@ function ownProp(obj, key) {
 }
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // eslint-disable-next-line valid-jsdoc
-/**
- * A waterfall chart displays sequentially introduced positive or negative
- * values in cumulative columns.
- *
- * @sample highcharts/demo/waterfall/
- *         Waterfall chart
- * @sample highcharts/plotoptions/waterfall-inverted/
- *         Horizontal (inverted) waterfall
- * @sample highcharts/plotoptions/waterfall-stacked/
- *         Stacked waterfall chart
- *
- * @extends      plotOptions.column
- * @excluding    boostThreshold, boostBlending
- * @product      highcharts
- * @requires     highcharts-more
- * @optionparent plotOptions.waterfall
- */
 var WaterfallSeries = /** @class */ (function (_super) {
     __extends(WaterfallSeries, _super);
     function WaterfallSeries() {
-        /* *
-         *
-         * Static propertie
-         *
-         * */
-        /**
-         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-         * @apioption plotOptions.waterfall.color
-         */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -538,22 +512,48 @@ var WaterfallSeries = /** @class */ (function (_super) {
             dataMax: this.dataMax
         };
     };
+    /* *
+     *
+     * Static properties
+     *
+     * */
     /**
-     * The color used specifically for positive point columns. When not
-     * specified, the general series color is used.
+     * A waterfall chart displays sequentially introduced positive or negative
+     * values in cumulative columns.
      *
-     * In styled mode, the waterfall colors can be set with the
-     * `.highcharts-point-negative`, `.highcharts-sum` and
-     * `.highcharts-intermediate-sum` classes.
+     * @sample highcharts/demo/waterfall/
+     *         Waterfall chart
+     * @sample highcharts/plotoptions/waterfall-inverted/
+     *         Horizontal (inverted) waterfall
+     * @sample highcharts/plotoptions/waterfall-stacked/
+     *         Stacked waterfall chart
      *
-     * @sample {highcharts} highcharts/demo/waterfall/
-     *         Waterfall
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @product   highcharts
-     * @apioption plotOptions.waterfall.upColor
+     * @extends      plotOptions.column
+     * @excluding    boostThreshold, boostBlending
+     * @product      highcharts
+     * @requires     highcharts-more
+     * @optionparent plotOptions.waterfall
      */
     WaterfallSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+        /**
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.waterfall.color
+         */
+        /**
+         * The color used specifically for positive point columns. When not
+         * specified, the general series color is used.
+         *
+         * In styled mode, the waterfall colors can be set with the
+         * `.highcharts-point-negative`, `.highcharts-sum` and
+         * `.highcharts-intermediate-sum` classes.
+         *
+         * @sample {highcharts} highcharts/demo/waterfall/
+         *         Waterfall
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product   highcharts
+         * @apioption plotOptions.waterfall.upColor
+         */
         dataLabels: {
             inside: true
         },

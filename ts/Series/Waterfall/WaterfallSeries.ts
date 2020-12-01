@@ -68,51 +68,51 @@ function ownProp(obj: unknown, key: string): boolean {
 
 // eslint-disable-next-line valid-jsdoc
 
-/**
- * A waterfall chart displays sequentially introduced positive or negative
- * values in cumulative columns.
- *
- * @sample highcharts/demo/waterfall/
- *         Waterfall chart
- * @sample highcharts/plotoptions/waterfall-inverted/
- *         Horizontal (inverted) waterfall
- * @sample highcharts/plotoptions/waterfall-stacked/
- *         Stacked waterfall chart
- *
- * @extends      plotOptions.column
- * @excluding    boostThreshold, boostBlending
- * @product      highcharts
- * @requires     highcharts-more
- * @optionparent plotOptions.waterfall
- */
-
 class WaterfallSeries extends ColumnSeries {
     /* *
      *
-     * Static propertie
+     * Static properties
      *
      * */
     /**
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @apioption plotOptions.waterfall.color
-     */
-
-    /**
-     * The color used specifically for positive point columns. When not
-     * specified, the general series color is used.
+     * A waterfall chart displays sequentially introduced positive or negative
+     * values in cumulative columns.
      *
-     * In styled mode, the waterfall colors can be set with the
-     * `.highcharts-point-negative`, `.highcharts-sum` and
-     * `.highcharts-intermediate-sum` classes.
+     * @sample highcharts/demo/waterfall/
+     *         Waterfall chart
+     * @sample highcharts/plotoptions/waterfall-inverted/
+     *         Horizontal (inverted) waterfall
+     * @sample highcharts/plotoptions/waterfall-stacked/
+     *         Stacked waterfall chart
      *
-     * @sample {highcharts} highcharts/demo/waterfall/
-     *         Waterfall
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @product   highcharts
-     * @apioption plotOptions.waterfall.upColor
+     * @extends      plotOptions.column
+     * @excluding    boostThreshold, boostBlending
+     * @product      highcharts
+     * @requires     highcharts-more
+     * @optionparent plotOptions.waterfall
      */
     public static defaultOptions: WaterfallSeriesOptions = merge(ColumnSeries.defaultOptions, {
+        /**
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.waterfall.color
+         */
+
+        /**
+         * The color used specifically for positive point columns. When not
+         * specified, the general series color is used.
+         *
+         * In styled mode, the waterfall colors can be set with the
+         * `.highcharts-point-negative`, `.highcharts-sum` and
+         * `.highcharts-intermediate-sum` classes.
+         *
+         * @sample {highcharts} highcharts/demo/waterfall/
+         *         Waterfall
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product   highcharts
+         * @apioption plotOptions.waterfall.upColor
+         */
+
         dataLabels: {
             inside: true
         },
