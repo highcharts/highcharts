@@ -13,8 +13,8 @@
 'use strict';
 
 import '../../Stock/Indicators/LinearRegression/LinearRegression.js';
+// eslint-disable-next-line max-len
+import '../../Stock/Indicators/LinearRegressionSlopes/LinearRegressionSlopes.js';
+// eslint-disable-next-line max-len
+import '../../Stock/Indicators/LinearRegressionIntercept/LinearRegressionIntercept.js';
 import '../../Stock/Indicators/LinearRegressionAngle/LinearRegressionAngle.js';
-import
-'../../Stock/Indicators/LinearRegressionIntercept/LinearRegressionIntercept.js';
-import
-'../../Stock/Indicators/LinearRegressionSlopes/LinearRegressionSlopes.js';

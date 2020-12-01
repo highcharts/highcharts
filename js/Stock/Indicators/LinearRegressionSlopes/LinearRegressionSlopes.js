@@ -90,15 +90,15 @@ BaseSeries.registerSeriesType('linearRegressionSlope', LinearRegressionSlopesInd
 export default LinearRegressionSlopesIndicator;
 /**
  * A linear regression intercept series. If the
- * [type](#series.linearregressionslopes.type) option is not specified, it is
+ * [type](#series.linearregressionslope.type) option is not specified, it is
  * inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.linearregressionslopes
+ * @extends   series,plotOptions.linearregressionslope
  * @since     7.0.0
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/regressions
- * @apioption series.linearregressionslopers
+ * @apioption series.linearregressionslope
  */
 ''; // to include the above in the js output
