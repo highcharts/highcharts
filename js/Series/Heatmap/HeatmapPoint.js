@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ScatterPoint = _a.scatter.prototype.pointClass;
+var ScatterPoint = BaseSeries.seriesTypes.scatter.prototype.pointClass;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin;
 import U from '../../Core/Utilities.js';
@@ -59,11 +59,8 @@ var HeatmapPoint = /** @class */ (function (_super) {
      * @private
      */
     HeatmapPoint.prototype.applyOptions = function (options, x) {
-        var point = LineSeries.prototype.pointClass.prototype
-            .applyOptions.call(this, options, x);
-        point.formatPrefix =
-            point.isNull || point.value === null ?
-                'null' : 'point';
+        var point = _super.prototype.applyOptions.call(this, options, x);
+        point.formatPrefix = point.isNull || point.value === null ? 'null' : 'point';
         return point;
     };
     HeatmapPoint.prototype.getCellAttributes = function () {

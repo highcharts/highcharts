@@ -25,6 +25,11 @@ import type TilemapSeries from './TilemapSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
+        line: {
+            prototype: {
+                pointClass: LinePoint
+            }
+        },
         heatmap: {
             prototype: {
                 pointClass: HeatmapPoint
@@ -35,9 +40,7 @@ const {
 import ColorSeriesModule from '../../Mixins/ColorSeries.js';
 const { colorPointMixin } = ColorSeriesModule;
 import U from '../../Core/Utilities.js';
-const {
-    extend
-} = U;
+const { extend } = U;
 
 /* *
  *
@@ -78,10 +81,7 @@ class TilemapPoint extends HeatmapPoint {
      * @return {Highcharts.SVGElement|Highcharts.SVGPathArray|Array<Highcharts.SVGElement>}
      */
     public haloPath(): SVGPath {
-        return this.series.tileShape.haloPath.apply(
-            this,
-            Array.prototype.slice.call(arguments) as any
-        );
+        return this.series.tileShape.haloPath.apply(this, arguments);
     }
 
     /* eslint-enable valid-jsdoc */
@@ -98,6 +98,7 @@ interface TilemapPoint {
     setVisible: typeof colorPointMixin.setVisible;
 }
 extend(TilemapPoint.prototype, {
+    setState: LinePoint.prototype.setState,
     setVisible: colorPointMixin.setVisible
 });
 
