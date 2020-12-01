@@ -530,7 +530,7 @@ module.exports = function (config) {
                         assertion = `
                             let svg = getSVG(chart);
                             saveSVGSnapshot(svg, '${path}/reference.svg');
-                            
+
                             assert.ok(
                                 svg,
                                 '${path}: SVG and reference.svg file should be generated'
@@ -613,10 +613,10 @@ module.exports = function (config) {
             {
                 'Win.IE8': {
                     base: 'BrowserStack',
-                    browser: 'ie',
+                    browser: 'IE',
                     browser_version: '8.0',
                     os: 'Windows',
-                    os_version: 'XP'
+                    os_version: '7'
                 }
             } :
             browserStackBrowsers;
@@ -703,15 +703,15 @@ function createVisualTestTemplate(argv, path, js, assertion) {
         QUnit.test('${path}', function (assert) {
             // Apply demo.html
             document.getElementById('demo-html').innerHTML = \`${html}\`;
-            
+
             ${useFakeTime ? `var clock = TestUtilities.lolexInstall({ now: ${startOfMockedTime} });` : ''}
-            
+
             /*
              * we expect 2 callbacks if --visualcompare argument is supplied,
              * one for the test comparison and one for checking if chart exists.
-             */ 
+             */
             var done = assert.async();
-            
+
             ${scriptBody}
 
             let attempts = 0;
@@ -739,7 +739,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                 }
             }
             waitForChartToLoad();
-            
+
             ${useFakeTime ? 'TestUtilities.lolexUninstall(clock);' : ''}
         });
     `;
