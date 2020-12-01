@@ -21,9 +21,8 @@
  * */
 
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
-import type Funnel3DPoint from './Funnel3DPoint';
-import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
@@ -33,6 +32,7 @@ const {
         line: LineSeries
     }
 } = BaseSeries;
+import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Math3D from '../../Extensions/Math3D.js';
@@ -462,6 +462,7 @@ interface Funnel3DSeries {
     translate3dShapes(): void;
 }
 extend(Funnel3DSeries.prototype, {
+    pointClass: Funnel3DPoint,
     translate3dShapes: noop as any
 });
 
