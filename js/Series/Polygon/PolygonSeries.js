@@ -22,38 +22,26 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+var _a = BaseSeries.seriesTypes, AreaSeries = _a.area, LineSeries = _a.line, ScatterSeries = _a.scatter;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
-import ScatterSeries from '../Scatter/ScatterSeries.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
-import '../../Core/Options.js';
 import '../../Core/Legend.js';
-import '../Scatter/ScatterSeries.js';
-/**
- * A polygon series can be used to draw any freeform shape in the cartesian
- * coordinate system. A fill is applied with the `color` option, and
- * stroke is applied through `lineWidth` and `lineColor` options.
+/* *
  *
- * @sample {highcharts} highcharts/demo/polygon/
- *         Polygon
- * @sample {highstock} highcharts/demo/polygon/
- *         Polygon
+ * Class
  *
- * @extends      plotOptions.scatter
- * @since        4.1.0
- * @excluding    jitter, softThreshold, threshold, cluster, boostThreshold,
- *               boostBlending
- * @product      highcharts highstock
- * @requires     highcharts-more
- * @optionparent plotOptions.polygon
- */
+ * */
 var PolygonSeries = /** @class */ (function (_super) {
     __extends(PolygonSeries, _super);
     function PolygonSeries() {
+        /* *
+         *
+         * Static properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.data = void 0;
         _this.options = void 0;
@@ -79,13 +67,26 @@ var PolygonSeries = /** @class */ (function (_super) {
     PolygonSeries.prototype.drawGraph = function () {
         // Hack into the fill logic in area.drawGraph
         this.options.fillColor = this.color;
-        seriesTypes.area.prototype.drawGraph.call(this);
+        AreaSeries.prototype.drawGraph.call(this);
     };
-    /* *
+    /**
+     * A polygon series can be used to draw any freeform shape in the cartesian
+     * coordinate system. A fill is applied with the `color` option, and
+     * stroke is applied through `lineWidth` and `lineColor` options.
      *
-     * Static properties
+     * @sample {highcharts} highcharts/demo/polygon/
+     *         Polygon
+     * @sample {highstock} highcharts/demo/polygon/
+     *         Polygon
      *
-     * */
+     * @extends      plotOptions.scatter
+     * @since        4.1.0
+     * @excluding    jitter, softThreshold, threshold, cluster, boostThreshold,
+     *               boostBlending
+     * @product      highcharts highstock
+     * @requires     highcharts-more
+     * @optionparent plotOptions.polygon
+     */
     PolygonSeries.defaultOptions = merge(ScatterSeries.defaultOptions, {
         marker: {
             enabled: false,
