@@ -25,7 +25,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var HeatmapPoint = BaseSeries.seriesTypes.heatmap.prototype.pointClass;
+var _a = BaseSeries.seriesTypes, LinePoint = _a.line.prototype.pointClass, HeatmapPoint = _a.heatmap.prototype.pointClass;
 import ColorSeriesModule from '../../Mixins/ColorSeries.js';
 var colorPointMixin = ColorSeriesModule.colorPointMixin;
 import U from '../../Core/Utilities.js';
@@ -64,11 +64,12 @@ var TilemapPoint = /** @class */ (function (_super) {
      * @return {Highcharts.SVGElement|Highcharts.SVGPathArray|Array<Highcharts.SVGElement>}
      */
     TilemapPoint.prototype.haloPath = function () {
-        return this.series.tileShape.haloPath.apply(this, Array.prototype.slice.call(arguments));
+        return this.series.tileShape.haloPath.apply(this, arguments);
     };
     return TilemapPoint;
 }(HeatmapPoint));
 extend(TilemapPoint.prototype, {
+    setState: LinePoint.prototype.setState,
     setVisible: colorPointMixin.setVisible
 });
 /* *

@@ -22,7 +22,6 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        line: LineSeries,
         scatter: {
             prototype: {
                 pointClass: ScatterPoint
@@ -80,12 +79,9 @@ class HeatmapPoint extends ScatterPoint {
         options: HeatmapPointOptions,
         x?: number
     ): HeatmapPoint {
-        const point: HeatmapPoint = LineSeries.prototype.pointClass.prototype
-            .applyOptions.call(this, options, x) as any;
+        const point: HeatmapPoint = super.applyOptions.call(this, options, x) as any;
 
-        point.formatPrefix =
-            point.isNull || point.value === null ?
-                'null' : 'point';
+        point.formatPrefix = point.isNull || point.value === null ? 'null' : 'point';
 
         return point;
     }
