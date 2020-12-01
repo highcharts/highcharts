@@ -178,7 +178,7 @@ var LinearRegressionIndicator = /** @class */ (function (_super) {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     stock/indicators/linearregression
      * @optionparent plotOptions.linearregression
      */
     LinearRegressionIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
@@ -255,7 +255,7 @@ export default LinearRegressionIndicator;
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  stock/indicators/linearregression
  * @apioption series.linearregression
  */
 ''; // to include the above in the js output

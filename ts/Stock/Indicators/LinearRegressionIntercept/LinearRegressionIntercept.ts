@@ -45,8 +45,8 @@ const {
  *
  * @augments Highcharts.Series
  */
-
 class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
+
     /**
      * Linear regression intercept indicator. This series requires `linkedTo`
      * option to be set.
@@ -58,11 +58,12 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      * @since        7.0.0
      * @product      highstock
      * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/regressions
+     * @requires     stock/indicators/linearregressionintercept
      * @optionparent plotOptions.linearregressionintercept
      */
-    public static defaultOptions: LinearRegressionParamsOptions =
-    LinearRegressionIndicator.defaultOptions as LinearRegressionOptions;
+    public static defaultOptions: LinearRegressionParamsOptions = merge(
+        LinearRegressionIndicator.defaultOptions
+    );
 
     /* *
      *
@@ -86,20 +87,6 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
         return lineParameters.intercept;
     }
 }
-
-/**
- * A linear regression intercept series. If the
- * [type](#series.linearregressionintercept.type) option is not specified, it is
- * inherited from [chart.type](#chart.type).
- *
- * @extends   series,plotOptions.linearregressionintercept
- * @since     7.0.0
- * @product   highstock
- * @excluding dataParser,dataURL
- * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
- * @apioption series.linearregressionintercept
- */
 
 /* *
  *
@@ -149,7 +136,7 @@ export default LinearRegressionInterceptIndicator;
  * @product   highstock
  * @excluding dataParser,dataURL
  * @requires  stock/indicators/indicators
- * @requires  stock/indicators/regressions
+ * @requires  stock/indicators/linearregressionintercept
  * @apioption series.linearregressionintercept
  */
 
