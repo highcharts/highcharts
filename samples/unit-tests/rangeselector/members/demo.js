@@ -135,12 +135,12 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
     );
     assert.strictEqual(
         chart.rangeSelector.selected,
-        void 0,
+        undefined,
         'The selected property should be updated'
     );
     assert.strictEqual(
         chart.rangeSelector.options.selected,
-        void 0,
+        undefined,
         'The selected option should be updated'
     );
 
@@ -154,12 +154,12 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
     );
     assert.strictEqual(
         chart.rangeSelector.selected,
-        void 0,
+        undefined,
         'The selected property should remain after redraw (#9209)'
     );
     assert.strictEqual(
         chart.rangeSelector.options.selected,
-        void 0,
+        undefined,
         'The selected option should remain after redraw (#9209)'
     );
 });

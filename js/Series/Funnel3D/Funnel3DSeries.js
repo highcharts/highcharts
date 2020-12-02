@@ -27,6 +27,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import BaseSeries from '../../Core/Series/Series.js';
 var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
+import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import Math3D from '../../Extensions/Math3D.js';
@@ -350,6 +351,7 @@ var Funnel3DSeries = /** @class */ (function (_super) {
     return Funnel3DSeries;
 }(ColumnSeries));
 extend(Funnel3DSeries.prototype, {
+    pointClass: Funnel3DPoint,
     translate3dShapes: noop
 });
 BaseSeries.registerSeriesType('funnel3d', Funnel3DSeries);

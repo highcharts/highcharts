@@ -414,6 +414,13 @@ extend(defaultOptions, {
             y: 0
         },
         /**
+         * The space in pixels between the labels and the date input boxes in
+         * the range selector.
+         *
+         * @since next
+         */
+        inputSpacing: 5,
+        /**
          * The index of the button to appear pre-selected.
          *
          * @type      {number}
@@ -658,7 +665,7 @@ var RangeSelector = /** @class */ (function () {
         }
         else {
             // Existing axis object. Set extremes after render time.
-            baseAxis.setExtremes(newMin, newMax, pick(redraw, 1), null, // auto animation
+            baseAxis.setExtremes(newMin, newMax, pick(redraw, true), void 0, // auto animation
             {
                 trigger: 'rangeSelectorButton',
                 rangeSelectorButton: rangeOptions
@@ -867,7 +874,7 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.setInputValue = function (name, inputTime) {
-        var options = this.options, time = this.chart.time, input = name === 'min' ? this.minInput : this.maxInput;
+        var options = this.options, time = this.chart.time, input = name === 'min' ? this.minInput : this.maxInput, dateBox = name === 'min' ? this.minDateBox : this.maxDateBox;
         if (input) {
             var hcTimeAttr = input.getAttribute('data-hc-time');
             var updatedTime = defined(hcTimeAttr) ? Number(hcTimeAttr) : void 0;
@@ -880,9 +887,11 @@ var RangeSelector = /** @class */ (function () {
                 updatedTime = inputTime;
             }
             input.value = time.dateFormat(this.inputTypeFormats[input.type] || options.inputEditDateFormat, updatedTime);
-            this[name + 'DateBox'].attr({
-                text: time.dateFormat(options.inputDateFormat, updatedTime)
-            });
+            if (dateBox) {
+                dateBox.attr({
+                    text: time.dateFormat(options.inputDateFormat, updatedTime)
+                });
+            }
         }
     };
     /**
@@ -919,29 +928,32 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.showInput = function (name) {
-        var dateBox = this[name + 'DateBox'], input = this[name + 'Input'], isTextInput = input.type === 'text';
-        var _a = this.inputGroup, translateX = _a.translateX, translateY = _a.translateY;
-        css(input, {
-            width: isTextInput ? ((dateBox.width - 2) + 'px') : 'auto',
-            height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
-            border: '2px solid silver'
-        });
-        if (isTextInput) {
+        var dateBox = name === 'min' ? this.minDateBox : this.maxDateBox;
+        var input = name === 'min' ? this.minInput : this.maxInput;
+        if (input && dateBox && this.inputGroup) {
+            var isTextInput = input.type === 'text';
+            var _a = this.inputGroup, translateX = _a.translateX, translateY = _a.translateY;
             css(input, {
-                left: (translateX + dateBox.x) + 'px',
-                top: translateY + 'px'
+                width: isTextInput ? ((dateBox.width - 2) + 'px') : 'auto',
+                height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
+                border: '2px solid silver'
             });
-            // Inputs of types date, time or datetime-local should be centered on
-            // top of the dateBox
-        }
-        else {
-            css(input, {
-                left: Math.min(Math.round(dateBox.x +
-                    translateX -
-                    (input.offsetWidth - dateBox.width) / 2), this.chart.chartWidth - input.offsetWidth) + 'px',
-                top: (translateY - (input.offsetHeight - dateBox.height) / 2) +
-                    'px'
-            });
+            if (isTextInput) {
+                css(input, {
+                    left: (translateX + dateBox.x) + 'px',
+                    top: translateY + 'px'
+                });
+                // Inputs of types date, time or datetime-local should be centered
+                // on top of the dateBox
+            }
+            else {
+                css(input, {
+                    left: Math.min(Math.round(dateBox.x +
+                        translateX -
+                        (input.offsetWidth - dateBox.width) / 2), this.chart.chartWidth - input.offsetWidth) + 'px',
+                    top: (translateY - (input.offsetHeight - dateBox.height) / 2) + 'px'
+                });
+            }
         }
     };
     /**
@@ -951,12 +963,15 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.hideInput = function (name) {
-        css(this[name + 'Input'], {
-            top: '-9999em',
-            border: 0,
-            width: '1px',
-            height: '1px'
-        });
+        var input = name === 'min' ? this.minInput : this.maxInput;
+        if (input) {
+            css(input, {
+                top: '-9999em',
+                border: 0,
+                width: '1px',
+                height: '1px'
+            });
+        }
     };
     /**
      * @private
@@ -998,11 +1013,11 @@ var RangeSelector = /** @class */ (function () {
      * @private
      * @function Highcharts.RangeSelector#drawInput
      * @param {string} name
-     * @return {void}
+     * @return {RangeSelectorInputElements}
      */
     RangeSelector.prototype.drawInput = function (name) {
         var _a = this, chart = _a.chart, div = _a.div, inputGroup = _a.inputGroup;
-        var rangeSelector = this, chartStyle = chart.renderer.style || {}, renderer = chart.renderer, options = chart.options.rangeSelector, lang = defaultOptions.lang, isMin = name === 'min', input, label, dateBox;
+        var rangeSelector = this, chartStyle = chart.renderer.style || {}, renderer = chart.renderer, options = chart.options.rangeSelector, lang = defaultOptions.lang, isMin = name === 'min';
         /**
          * @private
          */
@@ -1039,18 +1054,17 @@ var RangeSelector = /** @class */ (function () {
             }
         }
         // Create the text label
-        this[name + 'Label'] = label = renderer
-            .label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
+        var label = renderer
+            .label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], 0)
             .addClass('highcharts-range-label')
             .attr({
             padding: 2
         })
             .add(inputGroup);
-        inputGroup.offset += label.width + 5;
         // Create an SVG label that shows updated date ranges and and records
         // click events that bring in the HTML input.
-        this[name + 'DateBox'] = dateBox = renderer
-            .label('', inputGroup.offset)
+        var dateBox = renderer
+            .label('', 0)
             .addClass('highcharts-range-input')
             .attr({
             padding: 2,
@@ -1071,10 +1085,9 @@ var RangeSelector = /** @class */ (function () {
             });
         }
         dateBox.add(inputGroup);
-        inputGroup.offset += dateBox.width + (isMin ? 10 : 0);
         // Create the HTML input element. This is rendered as 1x1 pixel then set
         // to the right size when focused.
-        this[name + 'Input'] = input = createElement('input', {
+        var input = createElement('input', {
             name: name,
             className: 'highcharts-range-selector',
             type: preferredInputType(options.inputDateFormat || '%b %e, %Y')
@@ -1137,6 +1150,7 @@ var RangeSelector = /** @class */ (function () {
         input.onkeyup = function () {
             keyDown = false;
         };
+        return { dateBox: dateBox, input: input, label: label };
     };
     /**
      * Get the position of the range selector buttons and inputs. This can be
@@ -1222,9 +1236,14 @@ var RangeSelector = /** @class */ (function () {
                 container.parentNode.insertBefore(this.div, container);
                 // Create the group to keep the inputs
                 this.inputGroup = renderer.g('input-group').add(this.group);
-                this.inputGroup.offset = 0;
-                this.drawInput('min');
-                this.drawInput('max');
+                var minElems = this.drawInput('min');
+                this.minDateBox = minElems.dateBox;
+                this.minLabel = minElems.label;
+                this.minInput = minElems.input;
+                var maxElems = this.drawInput('max');
+                this.maxDateBox = maxElems.dateBox;
+                this.maxLabel = maxElems.label;
+                this.maxInput = maxElems.input;
             }
         }
         if (inputEnabled) {
@@ -1236,6 +1255,26 @@ var RangeSelector = /** @class */ (function () {
                 var minRange = chart.xAxis[0].minRange || 0;
                 this.setInputExtremes('min', unionExtremes.dataMin, Math.min(unionExtremes.dataMax, this.getInputValue('max')) - minRange);
                 this.setInputExtremes('max', Math.max(unionExtremes.dataMin, this.getInputValue('min')) + minRange, unionExtremes.dataMax);
+            }
+            // Reflow
+            if (this.inputGroup) {
+                var x_1 = 0;
+                [
+                    this.minLabel,
+                    this.minDateBox,
+                    this.maxLabel,
+                    this.maxDateBox
+                ].forEach(function (label, i) {
+                    if (label) {
+                        label.attr({ x: x_1 });
+                        x_1 += label.width + options.inputSpacing;
+                        // For version <= 8 compliance
+                        // @todo remove this if we change the design
+                        if (i % 2) {
+                            x_1 += options.inputSpacing;
+                        }
+                    }
+                });
             }
         }
         this.alignElements();

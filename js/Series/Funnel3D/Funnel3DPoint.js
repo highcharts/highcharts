@@ -29,7 +29,6 @@ import BaseSeries from '../../Core/Series/Series.js';
 var ColumnSeries = BaseSeries.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
-import '../Core/Renderer/SVG/SVGRenderer.js';
 /* *
  *
  *  Class

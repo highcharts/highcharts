@@ -13,7 +13,7 @@ import Chart from './Chart.js';
 import H from '../Globals.js';
 import U from '../Utilities.js';
 var getOptions = U.getOptions, isArray = U.isArray, merge = U.merge, splat = U.splat;
-import '../../Series/GanttSeries.js';
+import '../../Series/Gantt/GanttSeries.js';
 /**
  * Factory function for Gantt charts.
  *
