@@ -1,9 +1,10 @@
 QUnit.test('Plot options and series options priority (#3881)', assert => {
-
     const options = {
-        series: [{
-            type: 'column'
-        }]
+        series: [
+            {
+                type: 'column'
+            }
+        ]
     };
 
     let chart;
@@ -47,9 +48,7 @@ QUnit.test('Plot options and series options priority (#3881)', assert => {
     );
 });
 
-
 QUnit.test('Random properties in plot options', assert => {
-
     Highcharts.chart('container', {
         plotOptions: {
             randomProperty: true,
@@ -63,11 +62,12 @@ QUnit.test('Random properties in plot options', assert => {
 });
 
 QUnit.test('Updates', assert => {
-
     const chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     chart.update({
@@ -120,7 +120,6 @@ QUnit.test('Updates', assert => {
 });
 
 QUnit.test('hasOptionChanged() method', assert => {
-
     let chart;
 
     chart = Highcharts.chart('container', {
@@ -129,9 +128,11 @@ QUnit.test('hasOptionChanged() method', assert => {
                 pointStart: 210
             }
         },
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -146,10 +147,12 @@ QUnit.test('hasOptionChanged() method', assert => {
                 pointStart: 210
             }
         },
-        series: [{
-            pointStart: 200,
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                pointStart: 200,
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -158,12 +161,13 @@ QUnit.test('hasOptionChanged() method', assert => {
         'Property defined in both series and plotOptions should not be detected as change.'
     );
 
-
     chart = Highcharts.chart('container', {
-        series: [{
-            pointStart: 200,
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                pointStart: 200,
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -172,11 +176,12 @@ QUnit.test('hasOptionChanged() method', assert => {
         'Property defined in series should not be detected as change.'
     );
 
-
     chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 2, 3, 4]
-        }]
+        series: [
+            {
+                data: [1, 2, 3, 4]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -207,8 +212,5 @@ QUnit.test('hasOptionChanged() method', assert => {
         'Should return true when given property has changed - objects.'
     );
 
-    assert.ok(
-        true,
-        'Should not throw an error.'
-    );
+    assert.ok(true, 'Should not throw an error.');
 });

@@ -22,8 +22,11 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        line: LineSeries,
-        scatter: ScatterSeries
+        scatter: {
+            prototype: {
+                pointClass: ScatterPoint
+            }
+        }
     }
 } = BaseSeries;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
@@ -41,7 +44,7 @@ const {
  *
  * */
 
-class HeatmapPoint extends ScatterSeries.prototype.pointClass {
+class HeatmapPoint extends ScatterPoint {
 
     /* *
      *
@@ -55,11 +58,11 @@ class HeatmapPoint extends ScatterSeries.prototype.pointClass {
 
     public series: HeatmapSeries = void 0 as any;
 
-    public value: (number|null) = null;
+    public value: (number|null) = void 0 as any;
 
-    public x: number = NaN;
+    public x: number = void 0 as any;
 
-    public y: number = NaN;
+    public y: number = void 0 as any;
 
     /* *
      *
@@ -76,12 +79,9 @@ class HeatmapPoint extends ScatterSeries.prototype.pointClass {
         options: HeatmapPointOptions,
         x?: number
     ): HeatmapPoint {
-        const point: HeatmapPoint = LineSeries.prototype.pointClass.prototype
-            .applyOptions.call(this, options, x) as any;
+        const point: HeatmapPoint = super.applyOptions.call(this, options, x) as any;
 
-        point.formatPrefix =
-            point.isNull || point.value === null ?
-                'null' : 'point';
+        point.formatPrefix = point.isNull || point.value === null ? 'null' : 'point';
 
         return point;
     }
@@ -238,7 +238,6 @@ class HeatmapPoint extends ScatterSeries.prototype.pointClass {
 
 interface HeatmapPoint {
     dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
-    isValid: typeof colorMapPointMixin.isValid;
     setState: typeof colorMapPointMixin.setState;
 }
 extend(HeatmapPoint.prototype, {

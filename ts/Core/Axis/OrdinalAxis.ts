@@ -11,6 +11,7 @@
 'use strict';
 
 import type NavigatorAxis from './NavigatorAxis';
+import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 import Axis from './Axis.js';
 import H from '../Globals.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
@@ -176,7 +177,7 @@ namespace OrdinalAxis {
 
                     if (
                         (!ignoreHiddenSeries || series.visible !== false) &&
-                        (series.takeOrdinalPosition !== false || hasBreaks)
+                        ((series as ScatterSeries).takeOrdinalPosition !== false || hasBreaks)
                     ) {
 
                         // concatenate the processed X data into the existing

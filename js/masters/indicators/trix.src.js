@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/TRIXIndicator.js';
+import '../../Stock/Indicators/TRIX/TRIXIndicator.js';

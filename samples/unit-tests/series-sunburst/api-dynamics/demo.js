@@ -1,10 +1,12 @@
 QUnit.test('Chart.addSeries.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         });
     chart.addSeries({
         type: 'sunburst',
@@ -20,28 +22,28 @@ QUnit.test('Chart.addSeries.', function (assert) {
 QUnit.test('Chart.setSize.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         });
     chart.setSize(200, 200);
     // TODO find something to tests against.
     // This only tests wether setSize is executed without errors
-    assert.strictEqual(
-        'todo',
-        'todo',
-        'todo'
-    );
+    assert.strictEqual('todo', 'todo', 'todo');
 });
 
 QUnit.test('Point.remove.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[0];
@@ -56,10 +58,12 @@ QUnit.test('Point.remove.', function (assert) {
 QUnit.test('Point.select.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[0];
@@ -84,10 +88,12 @@ QUnit.test('Point.select.', function (assert) {
 QUnit.test('Point.update.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0],
         point = series.points[0];
@@ -107,10 +113,12 @@ QUnit.test('Point.update.', function (assert) {
 QUnit.test('Series.addPoint.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0];
     series.addPoint(4);
@@ -124,10 +132,12 @@ QUnit.test('Series.addPoint.', function (assert) {
 QUnit.test('Series.hide.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(
@@ -146,10 +156,12 @@ QUnit.test('Series.hide.', function (assert) {
 QUnit.test('Series.remove.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0];
     series.remove();
@@ -163,10 +175,12 @@ QUnit.test('Series.remove.', function (assert) {
 QUnit.test('Series.removePoint.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0],
         result;
@@ -189,10 +203,12 @@ QUnit.test('Series.removePoint.', function (assert) {
 QUnit.test('Series.select.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(
@@ -217,10 +233,12 @@ QUnit.test('Series.select.', function (assert) {
 QUnit.test('Series.setData.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0];
     series.setData([1, 2, 3, 4]);
@@ -234,10 +252,12 @@ QUnit.test('Series.setData.', function (assert) {
 QUnit.test('Series.setVisible.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(
@@ -262,11 +282,13 @@ QUnit.test('Series.setVisible.', function (assert) {
 QUnit.test('Series.show.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3],
-                visible: false
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3],
+                    visible: false
+                }
+            ]
         }),
         series = chart.series[0];
     assert.strictEqual(
@@ -285,10 +307,12 @@ QUnit.test('Series.show.', function (assert) {
 QUnit.test('Series.update.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2, 3]
+                }
+            ]
         }),
         series = chart.series[0],
         controller = new TestController(chart);
@@ -311,34 +335,44 @@ QUnit.test('Series.update.', function (assert) {
             enabled: false
         },
         allowDrillToNode: true,
-        data: [{
-            id: '0.0',
-            parent: ''
-        }, {
-            id: '1.1',
-            parent: '0.0'
-        }, {
-            id: '1.2',
-            parent: '0.0'
-        }, {
-            parent: '1.1',
-            value: 3
-        }, {
-            parent: '1.1',
-            value: 2
-        }, {
-            parent: '1.1',
-            value: 1
-        }, {
-            parent: '1.2',
-            value: 3
-        }, {
-            parent: '1.2',
-            value: 2
-        }, {
-            parent: '1.2',
-            value: 1
-        }]
+        data: [
+            {
+                id: '0.0',
+                parent: ''
+            },
+            {
+                id: '1.1',
+                parent: '0.0'
+            },
+            {
+                id: '1.2',
+                parent: '0.0'
+            },
+            {
+                parent: '1.1',
+                value: 3
+            },
+            {
+                parent: '1.1',
+                value: 2
+            },
+            {
+                parent: '1.1',
+                value: 1
+            },
+            {
+                parent: '1.2',
+                value: 3
+            },
+            {
+                parent: '1.2',
+                value: 2
+            },
+            {
+                parent: '1.2',
+                value: 1
+            }
+        ]
     });
 
     controller.mouseOver(

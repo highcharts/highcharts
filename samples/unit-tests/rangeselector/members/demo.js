@@ -15,7 +15,9 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
         getState = function (button) {
             return button.state;
         },
-        buttonOptions = RangeSelector.prototype.defaultButtons.map(function (rangeOptions) {
+        buttonOptions = RangeSelector.prototype.defaultButtons.map(function (
+            rangeOptions
+        ) {
             RangeSelector.prototype.computeButtonRange(rangeOptions);
             return rangeOptions;
         }),
@@ -24,14 +26,16 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
             buttons: buttons,
             buttonOptions: buttonOptions,
             chart: {
-                xAxis: [{
-                    min: now - (24 * month),
-                    minRange: 0,
-                    max: now,
-                    dataMin: now - (36 * month),
-                    dataMax: now,
-                    hasVisibleSeries: true
-                }],
+                xAxis: [
+                    {
+                        min: now - 24 * month,
+                        minRange: 0,
+                        max: now,
+                        dataMin: now - 36 * month,
+                        dataMax: now,
+                        hasVisibleSeries: true
+                    }
+                ],
                 time: new Highcharts.Time()
             },
             getYTDExtremes: RangeSelector.prototype.getYTDExtremes,
@@ -43,32 +47,20 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
         result;
     updateButtonStates.call(rangeSelector);
     result = rangeSelector.buttons.map(getState);
-    assert.deepEqual(
-        result,
-        [0, 0, 0, 0, 0, 0],
-        'Normal states.'
-    );
+    assert.deepEqual(result, [0, 0, 0, 0, 0, 0], 'Normal states.');
 
     rangeSelector.chart.xAxis[0].minRange = 2 * month;
     updateButtonStates.call(rangeSelector);
     result = rangeSelector.buttons.map(getState);
-    assert.deepEqual(
-        result,
-        [3, 0, 0, 0, 0, 0],
-        'minRange above 1m.'
-    );
+    assert.deepEqual(result, [3, 0, 0, 0, 0, 0], 'minRange above 1m.');
 
-    rangeSelector.chart.xAxis[0].min = now - (6 * month);
+    rangeSelector.chart.xAxis[0].min = now - 6 * month;
     rangeSelector.selected = 2;
     updateButtonStates.call(rangeSelector);
     result = rangeSelector.buttons.map(getState);
-    assert.deepEqual(
-        result,
-        [3, 0, 2, 0, 0, 0],
-        'Select 6m.'
-    );
+    assert.deepEqual(result, [3, 0, 2, 0, 0, 0], 'Select 6m.');
 
-    rangeSelector.chart.xAxis[0].dataMin = now - (9 * month);
+    rangeSelector.chart.xAxis[0].dataMin = now - 9 * month;
     updateButtonStates.call(rangeSelector);
     result = rangeSelector.buttons.map(getState);
     assert.deepEqual(
@@ -80,36 +72,36 @@ QUnit.test('RangeSelector.updateButtonStates', function (assert) {
     rangeSelector.options.allButtonsEnabled = true;
     updateButtonStates.call(rangeSelector);
     result = rangeSelector.buttons.map(getState);
-    assert.deepEqual(
-        result,
-        [0, 0, 2, 0, 0, 0],
-        'allButtonsEnabled.'
-    );
+    assert.deepEqual(result, [0, 0, 2, 0, 0, 0], 'allButtonsEnabled.');
 });
 
 QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
     const getOptions = () => ({
         chart: {
-            type: "column",
+            type: 'column',
             width: 600
         },
 
-        series: [{
-            data: (function () {
-                const dataArrayTmp = [];
-                for (let i = 0; i < 2 * 24; i++) {
-                    dataArrayTmp.push([i * 120000, 1]);
-                }
-                return dataArrayTmp;
-            }())
-        }],
+        series: [
+            {
+                data: (function () {
+                    const dataArrayTmp = [];
+                    for (let i = 0; i < 2 * 24; i++) {
+                        dataArrayTmp.push([i * 120000, 1]);
+                    }
+                    return dataArrayTmp;
+                }())
+            }
+        ],
 
         rangeSelector: {
-            buttons: [{
-                type: "hour",
-                count: 1,
-                text: "1h"
-            }]
+            buttons: [
+                {
+                    type: 'hour',
+                    count: 1,
+                    text: '1h'
+                }
+            ]
         }
     });
 
@@ -134,10 +126,7 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
     );
 
     // Change the extremes
-    chart.xAxis[0].setExtremes(
-        chart.xAxis[0].min + 12000,
-        chart.xAxis[0].max
-    );
+    chart.xAxis[0].setExtremes(chart.xAxis[0].min + 12000, chart.xAxis[0].max);
 
     assert.deepEqual(
         chart.rangeSelector.buttons.map(b => b.state),
@@ -146,12 +135,12 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
     );
     assert.strictEqual(
         chart.rangeSelector.selected,
-        null,
+        undefined,
         'The selected property should be updated'
     );
     assert.strictEqual(
         chart.rangeSelector.options.selected,
-        null,
+        undefined,
         'The selected option should be updated'
     );
 
@@ -165,12 +154,12 @@ QUnit.test('RangeSelector.updateButtonStates, visual output', assert => {
     );
     assert.strictEqual(
         chart.rangeSelector.selected,
-        null,
+        undefined,
         'The selected property should remain after redraw (#9209)'
     );
     assert.strictEqual(
         chart.rangeSelector.options.selected,
-        null,
+        undefined,
         'The selected option should remain after redraw (#9209)'
     );
 });
@@ -182,7 +171,7 @@ QUnit.test('RangeSelector.getYTDExtremes', function (assert) {
         year = new Date().getFullYear(),
         startOfYear = +new Date(year, 0, 1),
         startOfUTCYear = +new Date(Date.UTC(year, 0, 1)),
-        dataMin = now - (24 * month),
+        dataMin = now - 24 * month,
         dataMax = now,
         ctx = {
             chart: {

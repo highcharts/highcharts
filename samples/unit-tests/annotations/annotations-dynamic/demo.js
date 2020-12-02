@@ -1,39 +1,58 @@
-QUnit.test('Annotation\'s dynamic methods', function (assert) {
+QUnit.test("Annotation's dynamic methods", function (assert) {
     var labelCollector;
-    var chart = Highcharts.chart('container', {
-        chart: {
-            events: {
-                load: function () {
-                    labelCollector = this.annotations[0].labelCollector;
+    var chart = Highcharts.chart(
+        'container',
+        {
+            chart: {
+                events: {
+                    load: function () {
+                        labelCollector = this.annotations[0].labelCollector;
+                    }
                 }
-            }
+            },
+
+            series: [
+                {
+                    data: [
+                        43934,
+                        52503,
+                        57177,
+                        69658,
+                        97031,
+                        119931,
+                        137133,
+                        154175
+                    ]
+                }
+            ],
+
+            annotations: [
+                {
+                    id: '1',
+                    labels: [
+                        {
+                            point: {
+                                x: 2,
+                                y: 100000,
+                                xAxis: 0,
+                                yAxis: 0
+                            }
+                        }
+                    ]
+                }
+            ]
         },
+        function (chart) {
+            var annotation = chart.addAnnotation({});
 
-        series: [{
-            data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-        }],
+            assert.ok(
+                true,
+                'No errors after adding an annotation in callback (#10628).'
+            );
 
-        annotations: [{
-            id: '1',
-            labels: [{
-                point: {
-                    x: 2,
-                    y: 100000,
-                    xAxis: 0,
-                    yAxis: 0
-                }
-            }]
-        }]
-    }, function (chart) {
-        var annotation = chart.addAnnotation({});
-
-        assert.ok(
-            true,
-            'No errors after adding an annotation in callback (#10628).'
-        );
-
-        chart.removeAnnotation(annotation);
-    });
+            chart.removeAnnotation(annotation);
+        }
+    );
 
     assert.strictEqual(
         chart.options.annotations.length,
@@ -46,7 +65,7 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
     assert.strictEqual(
         chart.labelCollectors.indexOf(labelCollector),
         -1,
-        'Annotation label collector is not kept in the chart\'s label collectors (#7677).'
+        "Annotation label collector is not kept in the chart's label collectors (#7677)."
     );
 
     assert.strictEqual(
@@ -57,36 +76,40 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
 
     var secondAnnotationOptions = {
         id: 2,
-        labels: [{
-            point: {
-                x: 3,
-                y: 125000,
-                xAxis: 0,
-                yAxis: 0
+        labels: [
+            {
+                point: {
+                    x: 3,
+                    y: 125000,
+                    xAxis: 0,
+                    yAxis: 0
+                }
             }
-        }]
+        ]
     };
 
     var secondAnnotation = chart.addAnnotation(secondAnnotationOptions);
 
     var thirdAnnotationOptions = {
         id: '3',
-        labels: [{
-            point: {
-                x: 4,
-                y: 125000,
-                xAxis: 0,
-                yAxis: 0
+        labels: [
+            {
+                point: {
+                    x: 4,
+                    y: 125000,
+                    xAxis: 0,
+                    yAxis: 0
+                }
             }
-        }]
+        ]
     };
 
     var thirdAnnotation = chart.addAnnotation(thirdAnnotationOptions);
 
     assert.ok(
         chart.options.annotations[0] === secondAnnotation.options &&
-        chart.options.annotations[1] === thirdAnnotation.options &&
-        chart.options.annotations.length === 2,
+            chart.options.annotations[1] === thirdAnnotation.options &&
+            chart.options.annotations.length === 2,
         'Annotation options from the chart options are added when the annotations are added (#8393).'
     );
 
@@ -116,22 +139,26 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
     );
 
     var annotation = chart.addAnnotation({
-        shapes: [{
-            type: 'circle',
-            point: {
-                x: 4,
-                y: 123000,
-                xAxis: 0,
-                yAxis: 0
-            },
-            r: 5
-        }]
+        shapes: [
+            {
+                type: 'circle',
+                point: {
+                    x: 4,
+                    y: 123000,
+                    xAxis: 0,
+                    yAxis: 0
+                },
+                r: 5
+            }
+        ]
     });
 
     annotation.update({
-        shapes: [{
-            r: 25
-        }]
+        shapes: [
+            {
+                r: 25
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -149,67 +176,90 @@ QUnit.test('Annotation\'s dynamic methods', function (assert) {
     );
 });
 
-QUnit.test('Hiding and showing annotations with linked points', function (assert) {
-    var chart = Highcharts.chart('container', {
-        series: [{
-            showInLegend: true,
-            data: [{
-                id: 'point1',
-                visible: false,
-                y: 3
-            }, {
-                y: 3
-            }],
-            type: 'pie'
-        }],
-        annotations: [{
-            labels: [{
-                point: 'point1',
-                text: 'Annotation'
-            }]
-        }]
-    });
+QUnit.test(
+    'Hiding and showing annotations with linked points',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            series: [
+                {
+                    showInLegend: true,
+                    data: [
+                        {
+                            id: 'point1',
+                            visible: false,
+                            y: 3
+                        },
+                        {
+                            y: 3
+                        }
+                    ],
+                    type: 'pie'
+                }
+            ],
+            annotations: [
+                {
+                    labels: [
+                        {
+                            point: 'point1',
+                            text: 'Annotation'
+                        }
+                    ]
+                }
+            ]
+        });
 
-    assert.strictEqual(
-        chart.annotations[0].labels[0].graphic.visibility,
-        'hidden',
-        'Annotation correctly hidden.'
-    );
-});
+        assert.strictEqual(
+            chart.annotations[0].labels[0].graphic.visibility,
+            'hidden',
+            'Annotation correctly hidden.'
+        );
+    }
+);
 
-QUnit.test('Annotation\'s update methods', function (assert) {
-
+QUnit.test("Annotation's update methods", function (assert) {
     var clock = TestUtilities.lolexInstall();
 
     try {
-
         var done = assert.async(),
             chart = Highcharts.chart('container', {
-                annotations: [{
-                    labels: [{
-                        point: {
-                            xAxis: 0,
-                            yAxis: 0,
-                            x: 0,
-                            y: 5
-                        }
-                    }]
-                }],
-                series: [{
-                    data: [4, 3, 7, 8]
-                }]
+                annotations: [
+                    {
+                        labels: [
+                            {
+                                point: {
+                                    xAxis: 0,
+                                    yAxis: 0,
+                                    x: 0,
+                                    y: 5
+                                }
+                            }
+                        ]
+                    }
+                ],
+                series: [
+                    {
+                        data: [4, 3, 7, 8]
+                    }
+                ]
             });
 
-        chart.update({
-            annotations: [{
-                labelOptions: {
-                    format: 'Sample text'
+        chart.update(
+            {
+                annotations: [
+                    {
+                        labelOptions: {
+                            format: 'Sample text'
+                        }
+                    }
+                ],
+                xAxis: {
+                    title: 'Test'
                 }
-            }],
-            xAxis: {
-                title: 'Test'
-            }
-        }, null, null, { duration: 500 });
+            },
+            null,
+            null,
+            { duration: 500 }
+        );
 
         setTimeout(function () {
             const x = chart.annotations[0].clipRect.attr('x'),
@@ -220,7 +270,7 @@ QUnit.test('Annotation\'s update methods', function (assert) {
             assert.equal(
                 isNaN(+x) || isNaN(+y) || isNaN(+width) || isNaN(+height),
                 false,
-                'Annotation\'s clipRect cannot have a NaN for numerical attributes'
+                "Annotation's clipRect cannot have a NaN for numerical attributes"
             );
 
             done();

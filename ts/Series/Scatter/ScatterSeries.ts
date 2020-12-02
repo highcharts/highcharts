@@ -29,27 +29,6 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        takeOrdinalPosition?: boolean;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-    }
-}
-
-/* *
- *
  *  Class
  *
  * */
@@ -299,12 +278,8 @@ extend(ScatterSeries.prototype, {
 
 /* eslint-disable no-invalid-this */
 
-addEvent(LineSeries, 'afterTranslate', function (
-    this: LineSeries
-): void {
-    if (this instanceof ScatterSeries) {
-        this.applyJitter();
-    }
+addEvent(ScatterSeries, 'afterTranslate', function (): void {
+    this.applyJitter();
 });
 
 /* eslint-enable no-invalid-this */

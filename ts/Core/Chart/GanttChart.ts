@@ -41,7 +41,7 @@ const {
     splat
 } = U;
 
-import '../../Series/GanttSeries.js';
+import '../../Series/Gantt/GanttSeries.js';
 
 /**
  * Factory function for Gantt charts.

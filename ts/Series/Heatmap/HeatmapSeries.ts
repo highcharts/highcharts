@@ -699,7 +699,6 @@ class HeatmapSeries extends ScatterSeries {
  * */
 
 interface HeatmapSeries {
-    alignDataLabel: typeof ColumnSeries.prototype.alignDataLabel;
     axisTypes: typeof colorMapSeriesMixin.axisTypes;
     colorAttribs: typeof colorMapSeriesMixin.colorAttribs;
     colorKey: typeof colorMapSeriesMixin.colorKey;

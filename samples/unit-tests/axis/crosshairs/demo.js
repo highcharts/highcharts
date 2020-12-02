@@ -1,14 +1,16 @@
 QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
     var chart = Highcharts.chart('container', {
-        yAxis: [{
-            id: 'primary',
-            crosshair: true
-        }, {
-            id: 'secondary',
-            crosshair: true,
-            opposite: true
-
-        }],
+        yAxis: [
+            {
+                id: 'primary',
+                crosshair: true
+            },
+            {
+                id: 'secondary',
+                crosshair: true,
+                opposite: true
+            }
+        ],
         tooltip: {
             shared: true
         },
@@ -17,18 +19,41 @@ QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
                 kdNow: true
             }
         },
-        series: [{
-            data: [
-                1016, 1016, 1015.9, 1015.5, 1012.3, 1009.5,
-                1009.6, 1010.2, 1013.1, 1016.9, 1018.2, 1016.7
-            ]
-        }, {
-            yAxis: 1,
-            data: [
-                7.0, 6.9, 9.5, 14.5, 18.2, 21.5,
-                25.2, 26.5, 23.3, 18.3, 13.9, 9.6
-            ]
-        }]
+        series: [
+            {
+                data: [
+                    1016,
+                    1016,
+                    1015.9,
+                    1015.5,
+                    1012.3,
+                    1009.5,
+                    1009.6,
+                    1010.2,
+                    1013.1,
+                    1016.9,
+                    1018.2,
+                    1016.7
+                ]
+            },
+            {
+                yAxis: 1,
+                data: [
+                    7.0,
+                    6.9,
+                    9.5,
+                    14.5,
+                    18.2,
+                    21.5,
+                    25.2,
+                    26.5,
+                    23.3,
+                    18.3,
+                    13.9,
+                    9.6
+                ]
+            }
+        ]
     });
 
     var offset = Highcharts.offset(chart.renderTo);
@@ -52,12 +77,10 @@ QUnit.test('Crosshair on multiple axes (#4927)', function (assert) {
         'path',
         'Secondary axis has cross'
     );
-
 });
 
 QUnit.test('Crosshair with snap false (#5066)', function (assert) {
     var chart = Highcharts.chart('container', {
-
         xAxis: {
             crosshair: {
                 snap: false
@@ -70,14 +93,25 @@ QUnit.test('Crosshair with snap false (#5066)', function (assert) {
             }
         },
 
-        series: [{
-            data: [
-                29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-                135.6, 148.5, 216.4, 194.1, 95.6, 54.4
-            ],
-            type: 'column'
-        }]
-
+        series: [
+            {
+                data: [
+                    29.9,
+                    71.5,
+                    106.4,
+                    129.2,
+                    144.0,
+                    176.0,
+                    135.6,
+                    148.5,
+                    216.4,
+                    194.1,
+                    95.6,
+                    54.4
+                ],
+                type: 'column'
+            }
+        ]
     });
 
     var controller = new TestController(chart);
@@ -98,19 +132,23 @@ QUnit.test('Crosshair with snap false (#5066)', function (assert) {
     chart.renderTo.style.position = 'static';
 });
 QUnit.test(
-    'Update crosshair\'s stroke-width after resize.(#4737)',
+    "Update crosshair's stroke-width after resize.(#4737)",
     function (assert) {
-        var chart = $('#container').highcharts({
-                xAxis: {
-                    type: 'category'
-                },
-                tooltip: {
-                    crosshairs: [true, false]
-                },
-                series: [{
-                    data: [5, 10, 15]
-                }]
-            }).highcharts(),
+        var chart = $('#container')
+                .highcharts({
+                    xAxis: {
+                        type: 'category'
+                    },
+                    tooltip: {
+                        crosshairs: [true, false]
+                    },
+                    series: [
+                        {
+                            data: [5, 10, 15]
+                        }
+                    ]
+                })
+                .highcharts(),
             offset = $('#container').offset(),
             point = chart.series[0].points[0],
             x = offset.left + 50,
@@ -155,12 +193,12 @@ QUnit.test('snap', function (assert) {
                     kdNow: true
                 }
             },
-            series: [{
-                type: 'bubble',
-                data: [
-                    [1, 1, 1]
-                ]
-            }]
+            series: [
+                {
+                    type: 'bubble',
+                    data: [[1, 1, 1]]
+                }
+            ]
         }),
         point = chart.series[0].points[0],
         xAxis = chart.xAxis[0],
@@ -207,41 +245,50 @@ QUnit.test('snap', function (assert) {
 
 QUnit.test('Show only one crosshair at the same time', function (assert) {
     var chart = Highcharts.chart('container', {
-            xAxis: [{
-                crosshair: true
-            }, {
-                opposite: true,
-                crosshair: true
-            }],
-            yAxis: [{
-                height: '50%',
-                crosshair: {
-                    snap: false,
-                    label: {
-                        enabled: true
+            xAxis: [
+                {
+                    crosshair: true
+                },
+                {
+                    opposite: true,
+                    crosshair: true
+                }
+            ],
+            yAxis: [
+                {
+                    height: '50%',
+                    crosshair: {
+                        snap: false,
+                        label: {
+                            enabled: true
+                        }
+                    }
+                },
+                {
+                    top: '50%',
+                    height: '50%',
+                    crosshair: {
+                        snap: false,
+                        label: {
+                            enabled: true
+                        }
                     }
                 }
-            }, {
-                top: '50%',
-                height: '50%',
-                crosshair: {
-                    snap: false,
-                    label: {
-                        enabled: true
-                    }
+            ],
+            series: [
+                {
+                    name: 'Installation',
+                    data: [1, 2, 3],
+                    xAxis: 0,
+                    yAxis: 0
+                },
+                {
+                    name: 'Manufacturing',
+                    data: [1, 2, 3].reverse(),
+                    xAxis: 1,
+                    yAxis: 1
                 }
-            }],
-            series: [{
-                name: 'Installation',
-                data: [1, 2, 3],
-                xAxis: 0,
-                yAxis: 0
-            }, {
-                name: 'Manufacturing',
-                data: [1, 2, 3].reverse(),
-                xAxis: 1,
-                yAxis: 1
-            }]
+            ]
         }),
         series1 = chart.series[0],
         series2 = chart.series[1];
@@ -261,13 +308,13 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
         series1.yAxis.crossLabel.attr('visibility'),
         'visible',
         'Hover Series 1: crosshair label on yAxis of Series 1 is visible ' +
-        '(#7219)'
+            '(#7219)'
     );
     assert.strictEqual(
         !!series2.yAxis.crossLabel,
         false,
         'Hover Series 1: crosshair label on yAxis of Series 2 does not ' +
-        'exist (#7219)'
+            'exist (#7219)'
     );
 
     series2.points[2].onMouseOver();
@@ -287,47 +334,53 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
         series1.yAxis.crossLabel.attr('visibility'),
         'visible',
         'Hover Series 1 back: crosshair label on yAxis of Series 1 is ' +
-        'visible (#7219)'
+            'visible (#7219)'
     );
     assert.strictEqual(
         series2.yAxis.crossLabel.attr('visibility'),
         'hidden',
         'Hover Series 1 back: crosshair label on yAxis of Series 2 is ' +
-        'hidden (#7219)'
+            'hidden (#7219)'
     );
 
     chart.update({
-        yAxis: [{
-            crosshair: {
-                snap: true,
-                label: {
-                    enabled: false
+        yAxis: [
+            {
+                crosshair: {
+                    snap: true,
+                    label: {
+                        enabled: false
+                    }
+                }
+            },
+            {
+                crosshair: {
+                    snap: true,
+                    label: {
+                        enabled: false
+                    }
                 }
             }
-        }, {
-            crosshair: {
-                snap: true,
-                label: {
-                    enabled: false
-                }
-            }
-        }]
+        ]
     });
 
     chart.update({
-        yAxis: [{
-            crosshair: {
-                label: {
-                    enabled: true
+        yAxis: [
+            {
+                crosshair: {
+                    label: {
+                        enabled: true
+                    }
+                }
+            },
+            {
+                crosshair: {
+                    label: {
+                        enabled: true
+                    }
                 }
             }
-        }, {
-            crosshair: {
-                label: {
-                    enabled: true
-                }
-            }
-        }]
+        ]
     });
 
     assert.strictEqual(
@@ -356,24 +409,30 @@ QUnit.test('Use correct hover point for axis.', function (assert) {
             drawCrosshair.call(this, e, p);
         },
         options = {
-            yAxis: [{
-                crosshair: true
-            }, {
-                opposite: true,
-                crosshair: true
-            }],
+            yAxis: [
+                {
+                    crosshair: true
+                },
+                {
+                    opposite: true,
+                    crosshair: true
+                }
+            ],
             tooltip: {
                 shared: true
             },
-            series: [{
-                name: 'A',
-                data: [1, 2, 3],
-                yAxis: 0
-            }, {
-                name: 'B',
-                data: [1, 2, 3].reverse(),
-                yAxis: 1
-            }]
+            series: [
+                {
+                    name: 'A',
+                    data: [1, 2, 3],
+                    yAxis: 0
+                },
+                {
+                    name: 'B',
+                    data: [1, 2, 3].reverse(),
+                    yAxis: 1
+                }
+            ]
         },
         chart,
         series;
@@ -406,11 +465,14 @@ QUnit.test('Use correct hover point for axis.', function (assert) {
         tooltip: {
             shared: true
         },
-        series: [{
-            data: [50.9, 71.5, 106.4, 129.2, 144.0]
-        }, {
-            data: [9.9, 7.5, 36.4, 19.2, 14.0, 16.0]
-        }]
+        series: [
+            {
+                data: [50.9, 71.5, 106.4, 129.2, 144.0]
+            },
+            {
+                data: [9.9, 7.5, 36.4, 19.2, 14.0, 16.0]
+            }
+        ]
     });
 
     var point1 = chart.series[1].points[2],
@@ -420,7 +482,7 @@ QUnit.test('Use correct hover point for axis.', function (assert) {
     assert.ok(
         Math.abs(
             point1.series.yAxis.cross.getBBox().y -
-            (point1.plotY + chart.plotTop)
+                (point1.plotY + chart.plotTop)
         ) < 1,
         'Crosshair should be placed correctly when tooltip is shared (#13002).'
     );
@@ -429,12 +491,11 @@ QUnit.test('Use correct hover point for axis.', function (assert) {
     assert.ok(
         Math.abs(
             point2.series.yAxis.cross.getBBox().y -
-            (point2.plotY + chart.plotTop)
+                (point2.plotY + chart.plotTop)
         ) < 1,
         'Crosshair should be placed correctly when tooltip is shared (#13002).'
     );
 });
-
 
 QUnit.test(
     'Show crosshair label on logarithmic axis correctly. #8542',
@@ -454,10 +515,12 @@ QUnit.test(
                 }
             },
 
-            series: [{
-                data: [1, 512],
-                pointStart: 1
-            }]
+            series: [
+                {
+                    data: [1, 512],
+                    pointStart: 1
+                }
+            ]
         });
 
         chart.series[0].points[1].onMouseOver();
@@ -466,17 +529,15 @@ QUnit.test(
             chart.yAxis[0].crossLabel.attr('visibility'),
             'visible',
             'Crosshair label is visible on logarithmic ' +
-            'axis for the second point (#8542)'
+                'axis for the second point (#8542)'
         );
     }
 );
-
 
 QUnit.test(
     'Set crosshair stroke-width correctly in StyledMode #11246',
     function (assert) {
         var chart = Highcharts.chart('container', {
-
             chart: {
                 type: 'column',
                 styledMode: true
@@ -484,18 +545,40 @@ QUnit.test(
 
             xAxis: {
                 categories: [
-                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                    'Jan',
+                    'Feb',
+                    'Mar',
+                    'Apr',
+                    'May',
+                    'Jun',
+                    'Jul',
+                    'Aug',
+                    'Sep',
+                    'Oct',
+                    'Nov',
+                    'Dec'
                 ],
                 crosshair: true
             },
 
-            series: [{
-                data: [
-                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-                    135.6, 148.5, 216.4, 194.1, 95.6, 54.4
-                ]
-            }]
+            series: [
+                {
+                    data: [
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ]
+                }
+            ]
         });
 
         chart.series[0].points[1].onMouseOver();

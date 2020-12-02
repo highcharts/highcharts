@@ -22,7 +22,6 @@ function ok(description, success) {
     });
 }
 
-
 //----------------------------------------------------------------------------//
 // Start of actual tests
 
@@ -38,13 +37,14 @@ Highcharts.Chart.prototype.isReadyToRender = function () {
     return true;
 };
 for (var type in types) {
-    if (types.hasOwnProperty(type)) {
-
+    if (Object.hasOwnProperty.call(types, type)) {
         var chart = Highcharts.chart('container', {
-            series: [{
-                type: type,
-                data: [1, 3, 2, 4]
-            }]
+            series: [
+                {
+                    type: type,
+                    data: [1, 3, 2, 4]
+                }
+            ]
         });
 
         ok(
@@ -55,20 +55,17 @@ for (var type in types) {
         chart.series[0].points[0].onMouseOver();
         ok(
             'The tooltip should be displayed',
-            chart.tooltip.getLabel().element.innerHTML
-                .indexOf('<SPAN') !== -1
+            chart.tooltip.getLabel().element.innerHTML.indexOf('<SPAN') !== -1
         );
         chart.destroy();
     }
 }
-
 
 // End of actual tests
 //----------------------------------------------------------------------------//
 
 if (window.__karma__) {
     window.__karma__.start = function () {
-
         this.info({
             total: results.length
         });
@@ -90,7 +87,8 @@ if (window.__karma__) {
     for (var i = 0; i < results.length; i++) {
         var result = results[i];
         console.log(
-            result.success ? 'SUCCESS: ' : 'FAILED: ', result.description
+            result.success ? 'SUCCESS: ' : 'FAILED: ',
+            result.description
         );
     }
 }

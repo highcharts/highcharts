@@ -202,6 +202,24 @@ if (!Function.prototype.bind) {
     };
 }
 
+// Adapted from https://johnresig.com/blog/objectgetprototypeof/
+if (!Object.getPrototypeOf) {
+    if (typeof ('test' as any).__proto__ === 'object') { // eslint-disable-line no-proto
+        Object.getPrototypeOf = function (object): any {
+            return (object as any).__proto__; // eslint-disable-line no-proto
+        };
+    } else {
+        Object.getPrototypeOf = function (object): any {
+            const proto = object.constructor.prototype;
+            if (proto === object) {
+                return {}.constructor.prototype;
+            }
+            // May break if the constructor has been tampered with
+            return proto;
+        };
+    }
+}
+
 if (!Object.keys) {
     Object.keys = function (
         this: Record<string, any>,
