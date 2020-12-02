@@ -40,6 +40,14 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
             return { plotX: point.x, plotY: point.y, plotZ: point.z };
         });
         if (series.group && options3d && options3d.depth && options3d.beta) {
+            // Markers should take the global zIndex of series group.
+            if (series.markerGroup) {
+                series.markerGroup.add(series.group);
+                series.markerGroup.attr({
+                    translateX: 0,
+                    translateY: 0
+                });
+            }
             series.group.attr({
                 zIndex: Math.max(1, (options3d.beta > 270 || options3d.beta < 90) ?
                     options3d.depth - Math.round(series.zPadding || 0) :
