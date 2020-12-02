@@ -419,48 +419,27 @@ class IKHIndicator extends SMAIndicator {
             dataGrouping: {
                 approximation: 'ichimoku-averages'
             }
-        } as Highcharts.IKHIndicatorOptions
-    );
-}
+        } as Highcharts.IKHIndicatorOptions);
+    /* *
+    *
+    *  Properties
+    *
+    * */
 
-/* *
- *
- * Prototype Properties
- *
- * */
+    public data: Array<Highcharts.IKHIndicatorPoint> = void 0 as any;
+    public options: Highcharts.IKHIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.IKHIndicatorPoint> = void 0 as any;
+    public pointValKey = 'tenkanSen';
+    public nameComponents = ['periodSenkouSpanB', 'period', 'periodTenkan'];
 
-/* eslint-disable @typescript-eslint/interface-name-prefix */
-interface IKHIndicator {
-    data: Array<Highcharts.IKHIndicatorPoint>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.IKHIndicatorParamsOptions
-    ): IndicatorValuesObject<TLinkedSeries> | undefined;
-    graphCollection: Array<string>;
-    graphsenkouSpan: SVGElement | undefined;
-    ikhMap: Highcharts.Dictionary<Array<Highcharts.IKHIndicatorPoint>>;
-    nextPoints?: Array<Highcharts.IKHIndicatorPoint>;
-    options: Highcharts.IKHIndicatorOptions;
-    pointArrayMap: Array<keyof Highcharts.IKHIndicatorPoint>;
-    pointValKey: string;
-    pointClass: typeof Highcharts.IKHIndicatorPoint;
-    points: Array<Highcharts.IKHIndicatorPoint>;
-    drawGraph(): void;
-    init(): void;
-    toYData(point: Point): Array<number>;
-    translate(): void;
-}
-extend(IKHIndicator.prototype, {
-    pointArrayMap: [
-        'tenkanSen',
-        'kijunSen',
-        'chikouSpan',
-        'senkouSpanA',
-        'senkouSpanB'
-    ],
-    pointValKey: 'tenkanSen',
-    nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan'],
-    init: function (this: IKHIndicator): void {
+
+    /* *
+    *
+    * Functions
+    *
+    * */
+
+    public init(this: IKHIndicator): void {
         SMA.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
@@ -501,8 +480,9 @@ extend(IKHIndicator.prototype, {
             },
             this.options
         );
-    },
-    toYData: function (point: Highcharts.IKHIndicatorPoint): Array<number> {
+    }
+
+    public toYData(point: Highcharts.IKHIndicatorPoint): Array<number> {
         return [
             point.tenkanSen,
             point.kijunSen,
@@ -510,8 +490,9 @@ extend(IKHIndicator.prototype, {
             point.senkouSpanA,
             point.senkouSpanB
         ];
-    },
-    translate: function (this: IKHIndicator): void {
+    }
+
+    public translate(): void {
         var indicator = this;
 
         SMA.prototype.translate.apply(indicator);
@@ -539,12 +520,9 @@ extend(IKHIndicator.prototype, {
                 }
             });
         });
-    },
-    // One does not simply
-    // Render five linesZ
-    // And an arearange
-    // In just one series..
-    drawGraph: function (this: IKHIndicator): void {
+    }
+
+    public drawGraph(): void {
         var indicator = this,
             mainLinePoints: Array<Highcharts.IKHIndicatorPoint> =
                 indicator.points,
@@ -566,7 +544,9 @@ extend(IKHIndicator.prototype, {
                 [],
                 []
             ],
-            ikhMap: Highcharts.Dictionary<Array<Highcharts.IKHIndicatorPoint>> = {
+            ikhMap: Highcharts.Dictionary<
+            Array<Highcharts.IKHIndicatorPoint>
+            > = {
                 tenkanLine: allIchimokuPoints[0],
                 kijunLine: allIchimokuPoints[1],
                 chikouLine: allIchimokuPoints[2],
@@ -827,8 +807,9 @@ extend(IKHIndicator.prototype, {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
-    },
-    getGraphPath: function (this: IKHIndicator, points: Array<Point>): SVGPath {
+    }
+
+    public getGraphPath(points: Array<Point>): SVGPath {
         var indicator = this,
             path: SVGPath = [],
             spanA: SVGPath,
@@ -860,8 +841,9 @@ extend(IKHIndicator.prototype, {
         }
 
         return path;
-    },
-    getValues: function <TLinkedSeries extends LineSeries> (
+    }
+
+    public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.IKHIndicatorParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {
@@ -978,8 +960,41 @@ extend(IKHIndicator.prototype, {
             yData: IKH
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-});
+}
 
+/* eslint-disable @typescript-eslint/interface-name-prefix */
+
+/* *
+*
+* Prototype Properties
+*
+* */
+interface IKHIndicator {
+    data: Array<Highcharts.IKHIndicatorPoint>;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.IKHIndicatorParamsOptions
+    ): IndicatorValuesObject<TLinkedSeries> | undefined;
+    graphCollection: Array<string>;
+    graphsenkouSpan: SVGElement | undefined;
+    ikhMap: Highcharts.Dictionary<Array<Highcharts.IKHIndicatorPoint>>;
+    nextPoints?: Array<Highcharts.IKHIndicatorPoint>;
+    options: Highcharts.IKHIndicatorOptions;
+    pointValKey: string;
+    pointClass: typeof Highcharts.IKHIndicatorPoint;
+    points: Array<Highcharts.IKHIndicatorPoint>;
+    pointArrayMap: Array<keyof Highcharts.IKHIndicatorPoint>;
+}
+
+extend(IKHIndicator.prototype, {
+    pointArrayMap: [
+        'tenkanSen',
+        'kijunSen',
+        'chikouSpan',
+        'senkouSpanA',
+        'senkouSpanB'
+    ]
+});
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof IKHIndicator;
