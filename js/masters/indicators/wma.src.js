@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/WMAIndicator.js';
+import '../../Stock/Indicators/WMA/WMAIndicator.js';

@@ -10,49 +10,24 @@
 
 'use strict';
 
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import BaseSeries from '../../Core/Series/Series.js';
+    WMAOptions,
+    WMAParamsOptions
+} from './WMAOptions';
+import type WMAPoint from './WMAPoint';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
-import U from '../../Core/Utilities.js';
+import U from '../../../Core/Utilities.js';
 const {
-    extend,
     isArray,
     merge
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-
-        interface WMAIndicatorOptions extends SMAOptions {
-            params?: WMAIndicatorParamsOptions;
-            states?: SeriesStatesOptions<WMAIndicator>;
-        }
-
-        interface WMAIndicatorParamsOptions
-            extends SMAParamsOptions {
-            // for inheritance
-        }
-
-        class WMAIndicatorPoint extends SMAPoint {
-            public series: WMAIndicator;
-        }
-    }
-}
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -138,21 +113,21 @@ class WMAIndicator extends SMAIndicator {
      * @requires     stock/indicators/wma
      * @optionparent plotOptions.wma
      */
-    public static defaultOptions: Highcharts.WMAIndicatorOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: WMAOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             index: 3,
             period: 9
         }
-    } as Highcharts.WMAIndicatorOptions)
+    } as WMAOptions)
 
-    public data: Array<Highcharts.WMAIndicatorPoint> = void 0 as any;
-    public options: Highcharts.WMAIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.WMAIndicatorPoint> = void 0 as any;
+    public data: Array<WMAPoint> = void 0 as any;
+    public options: WMAOptions = void 0 as any;
+    public points: Array<WMAPoint> = void 0 as any;
 
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.WMAIndicatorParamsOptions
+        params: WMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = params.period as any,
             xVal: Array<number> = (series.xData as any),
@@ -211,15 +186,10 @@ class WMAIndicator extends SMAIndicator {
 }
 
 interface WMAIndicator {
-    pointClass: typeof Highcharts.WMAIndicatorPoint;
-
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.WMAIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+    pointClass: typeof WMAPoint;
 }
 
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         wma: typeof WMAIndicator;
     }
