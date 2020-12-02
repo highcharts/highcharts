@@ -1,5 +1,4 @@
 QUnit.test('Tests event order of TestController.moveTo', function (assert) {
-
     var browserOrder = [
             'mouseover rect 5 0',
             'mouseover DIV 5 0',
@@ -67,32 +66,32 @@ QUnit.test('Tests event order of TestController.moveTo', function (assert) {
         rect1 = renderer
             .rect(0, 0, 9, 9)
             .attr({ fill: 'rgba(255, 0, 0, 0.5)' })
-            .add()
-            .element,
+            .add().element,
         circle1 = renderer
             .circle(4.5, 4.5, 3.5)
             .attr({ fill: 'rgba(0, 255, 0, 0.5)' })
-            .add()
-            .element,
+            .add().element,
         rect2 = renderer
             .rect(3, 3, 3, 3)
             .attr({ fill: 'rgba(0, 0, 255, 0.5)' })
             .css({ pointerEvents: 'none' })
-            .add()
-            .element;
+            .add().element;
 
     controller.moveTo(5, -1);
 
     function captureEvent(e) {
         pointer.normalize(e);
-        var type = (e && e.type);
+        var type = e && e.type;
         if (type) {
             // console.log(type, e.currentTarget.nodeName, e.chartX, e.chartY);
             capturedOrder.push(
-                type + ' ' +
-                e.currentTarget.nodeName + ' ' +
-                e.chartX + ' ' +
-                e.chartY
+                type +
+                    ' ' +
+                    e.currentTarget.nodeName +
+                    ' ' +
+                    e.chartX +
+                    ' ' +
+                    e.chartY
             );
         }
     }
@@ -125,14 +124,15 @@ QUnit.test('Tests event order of TestController.moveTo', function (assert) {
         assert.strictEqual(
             capture,
             browserOrder[index],
-            'The event order of TestController should be in order at index ' + index + '.'
+            'The event order of TestController should be in order at index ' +
+                index +
+                '.'
         );
-        return (capture === browserOrder[index]);
+        return capture === browserOrder[index];
     });
 
     removeEvents(container);
     removeEvents(rect1);
     removeEvents(circle1);
     removeEvents(rect2);
-
 });

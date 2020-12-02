@@ -120,7 +120,7 @@ class TEMAIndicator extends EMAIndicator {
         tripledPeriod: number,
         EMAlevels: TEMAIndicator.EMALevelsObject,
         i: number
-    ): [number, number] {
+    ): ([number, (number|null)]|undefined) {
         var TEMAPoint: [number, number] = [
             xVal[i - 3],
             correctFloat(

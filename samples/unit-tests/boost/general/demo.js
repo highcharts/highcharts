@@ -3,16 +3,18 @@ QUnit.test('Clipping rectangle after set extremes (#6895)', function (assert) {
         chart: {
             type: 'column'
         },
-        series: [{
-            boostThreshold: 1,
-            data: [
-                [0, 0],
-                [0, 1],
-                [0, 2],
-                [0, 3],
-                [0, 4]
-            ]
-        }]
+        series: [
+            {
+                boostThreshold: 1,
+                data: [
+                    [0, 0],
+                    [0, 1],
+                    [0, 2],
+                    [0, 3],
+                    [0, 4]
+                ]
+            }
+        ]
     });
 
     chart.yAxis[0].setExtremes(1, 2);
@@ -33,9 +35,11 @@ QUnit.test(
                     boostThreshold: 1
                 }
             },
-            series: [{
-                data: [1, 3, 2, 4]
-            }],
+            series: [
+                {
+                    data: [1, 3, 2, 4]
+                }
+            ],
             xAxis: {
                 max: 10,
                 min: -10
@@ -49,15 +53,13 @@ QUnit.test(
             }
         });
 
-        assert.ok(
-            true,
-            'The chart should not fail'
-        );
+        assert.ok(true, 'The chart should not fail');
     }
 );
 
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
-    'Dynamically removing and adding series (#7499)', function (assert) {
+    'Dynamically removing and adding series (#7499)',
+    function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {
                 width: 400,
@@ -71,25 +73,23 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
                     boostThreshold: 1
                 }
             },
-            series: [{
-                data: [1, 2, 3, 4]
-            }, {
-                data: [2, 3, 4, 5]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4]
+                },
+                {
+                    data: [2, 3, 4, 5]
+                }
+            ]
         });
 
-        assert.strictEqual(
-            chart.series.length,
-            2,
-            'Successfully initiated'
-        );
+        assert.strictEqual(chart.series.length, 2, 'Successfully initiated');
 
         assert.strictEqual(
             chart.series[0].renderTarget,
             undefined,
             'No individual renderTarget'
         );
-
 
         chart.series[1].remove();
         chart.series[0].remove();
@@ -98,56 +98,54 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             data: [4, 3, 2, 1]
         });
 
-
         assert.strictEqual(
             typeof chart.series[0].renderTarget,
             'object',
             'Only one series, it should now have a renderTarget'
         );
 
-
         chart.addSeries({
             data: [5, 4, 3, 2]
         });
 
-        assert.strictEqual(
-            chart.series.length,
-            2,
-            'Successfully updated'
-        );
+        assert.strictEqual(chart.series.length, 2, 'Successfully updated');
         assert.notOk(
             chart.series[0].renderTarget,
             'No individual renderTarget after the second series is added'
         );
-
     }
 );
 QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     'Combination with non-boostable series types (#7634)',
     function (assert) {
         var chart = Highcharts.chart('container', {
-
             boost: {
                 seriesThreshold: 1
             },
 
-            series: [{
-                data: [1, 3, 2, 4],
-                boostThreshold: 1,
-                id: 'primary'
-            }, {
-                type: 'flags',
-                onSeries: 'primary',
-                data: [{
-                    x: 1,
-                    title: 'C',
-                    text: 'C text'
-                }]
-            }, {
-                data: [1, 2, 3, 4, 5],
-                boostThreshold: 0,
-                type: 'pie'
-            }]
+            series: [
+                {
+                    data: [1, 3, 2, 4],
+                    boostThreshold: 1,
+                    id: 'primary'
+                },
+                {
+                    type: 'flags',
+                    onSeries: 'primary',
+                    data: [
+                        {
+                            x: 1,
+                            title: 'C',
+                            text: 'C text'
+                        }
+                    ]
+                },
+                {
+                    data: [1, 2, 3, 4, 5],
+                    boostThreshold: 0,
+                    type: 'pie'
+                }
+            ]
         });
 
         assert.strictEqual(
@@ -175,9 +173,9 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         function getData() {
             i++;
             return [
-                ["Time", "2018-11-28", "2018-11-29", "2018-11-30"],
-                ["s1", 1, i, 1],
-                ["s2", 2, i, 2]
+                ['Time', '2018-11-28', '2018-11-29', '2018-11-30'],
+                ['s1', 1, i, 1],
+                ['s2', 2, i, 2]
             ];
         }
 
@@ -188,10 +186,12 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             chart: {
                 width: 600
             },
-            series: [{
-                boostThreshold: 1
-            }, {
-            }],
+            series: [
+                {
+                    boostThreshold: 1
+                },
+                {}
+            ],
             tooltip: {
                 shared: true
             }
@@ -214,27 +214,25 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     turbo threshold enabled, #13957.`,
     function (assert) {
         Highcharts.addEvent(Highcharts.Chart, 'displayError', function (e) {
-            assert.strictEqual(
-                e.code,
-                12,
-                'Error 12 should be invoked'
-            );
+            assert.strictEqual(e.code, 12, 'Error 12 should be invoked');
         });
         Highcharts.stockChart('container', {
-            series: [{
-                data: [
-                    [1, 2],
-                    {
-                        x: 2,
-                        y: 46.7407
-                    },
-                    [3, 46.6135],
-                    [4, 47.0005],
-                    [5, 48.1701],
-                    [6, 47.5816]
-                ],
-                turboThreshold: 2
-            }]
+            series: [
+                {
+                    data: [
+                        [1, 2],
+                        {
+                            x: 2,
+                            y: 46.7407
+                        },
+                        [3, 46.6135],
+                        [4, 47.0005],
+                        [5, 48.1701],
+                        [6, 47.5816]
+                    ],
+                    turboThreshold: 2
+                }
+            ]
         });
     }
 );
@@ -245,8 +243,8 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
         function generataSeries() {
             const series = Array.from(Array(100)).map(function () {
                 return {
-                    data: Array.from(
-                        Array(10)).map(() => Math.round(Math.random() * 10)
+                    data: Array.from(Array(10)).map(() =>
+                        Math.round(Math.random() * 10)
                     )
                 };
             });
@@ -284,22 +282,28 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
             'Width of the plot area and clip-path should be the same.'
         );
         chart.update({
-            xAxis: [{
-                max: 10,
-                height: '50%'
-            }, {
-                height: '50%',
-                max: 10,
-                linkedTo: 0
-            }],
-            yAxis: [{
-                max: 10,
-                height: '50%'
-            }, {
-                max: 10,
-                height: '50%',
-                linkedTo: 0
-            }]
+            xAxis: [
+                {
+                    max: 10,
+                    height: '50%'
+                },
+                {
+                    height: '50%',
+                    max: 10,
+                    linkedTo: 0
+                }
+            ],
+            yAxis: [
+                {
+                    max: 10,
+                    height: '50%'
+                },
+                {
+                    max: 10,
+                    height: '50%',
+                    linkedTo: 0
+                }
+            ]
         });
         assert.strictEqual(
             chart.boostClipRect.attr('height'),

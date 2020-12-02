@@ -1,17 +1,21 @@
 QUnit.test('Pie with zeroes(#4246)', function (assert) {
-    var chart = $('#container').highcharts({
-        series: [{
-            type: 'pie',
-            borderColor: 'green',
-            data: [
-                ['Firefox',   0],
-                ['IE',      0],
-                ['Safari',    0],
-                ['Opera',     0],
-                ['Others',   0]
+    var chart = $('#container')
+        .highcharts({
+            series: [
+                {
+                    type: 'pie',
+                    borderColor: 'green',
+                    data: [
+                        ['Firefox', 0],
+                        ['IE', 0],
+                        ['Safari', 0],
+                        ['Opera', 0],
+                        ['Others', 0]
+                    ]
+                }
             ]
-        }]
-    }).highcharts();
+        })
+        .highcharts();
 
     assert.strictEqual(
         chart.series[0].points[0].graphic instanceof Highcharts.SVGElement,
@@ -28,26 +32,29 @@ QUnit.test('Pie with zeroes(#4246)', function (assert) {
         true,
         'Has data label'
     );
-
 });
 
 QUnit.test('Pie with nulls', function (assert) {
-    var chart = $('#container').highcharts({
-        accessibility: {
-            enabled: false
-        },
-        series: [{
-            type: 'pie',
-            borderColor: 'green',
-            data: [
-                ['Firefox',   null],
-                ['IE',      null],
-                ['Safari',    null],
-                ['Opera',     null],
-                ['Others',   null]
+    var chart = $('#container')
+        .highcharts({
+            accessibility: {
+                enabled: false
+            },
+            series: [
+                {
+                    type: 'pie',
+                    borderColor: 'green',
+                    data: [
+                        ['Firefox', null],
+                        ['IE', null],
+                        ['Safari', null],
+                        ['Opera', null],
+                        ['Others', null]
+                    ]
+                }
             ]
-        }]
-    }).highcharts();
+        })
+        .highcharts();
 
     assert.notOk(
         Highcharts.defined(chart.series[0].points[0].graphic),
@@ -63,5 +70,4 @@ QUnit.test('Pie with nulls', function (assert) {
         undefined,
         'No data label'
     );
-
 });

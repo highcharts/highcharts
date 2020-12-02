@@ -8,14 +8,16 @@ QUnit.test('Redraw with dirty box', function (assert) {
         title: {
             text: 'Old title'
         },
-        series: [{
-            data: [2, 1],
-            animation: false,
-            dataLabels: {
-                enabled: false
-            },
-            slicedOffset: 0
-        }]
+        series: [
+            {
+                data: [2, 1],
+                animation: false,
+                dataLabels: {
+                    enabled: false
+                },
+                slicedOffset: 0
+            }
+        ]
     });
 
     var oldPlotHeight = chart.plotHeight;
@@ -27,14 +29,10 @@ QUnit.test('Redraw with dirty box', function (assert) {
     );
 
     chart.setTitle({ text: null });
-    assert.ok(
-        chart.plotHeight > oldPlotHeight,
-        'Plot height is increased'
-    );
+    assert.ok(chart.plotHeight > oldPlotHeight, 'Plot height is increased');
     assert.strictEqual(
         chart.series[0].center[2], // The best I could find to test. Change the test if the logic is changed.
         chart.plotHeight,
         'Pie fills plot'
     );
-
 });

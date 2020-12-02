@@ -18,6 +18,8 @@ import type {
 import type Axis from '../Core/Axis/Axis';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
+import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
 import type LineSeries from '../Series/Line/LineSeries';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -49,7 +51,7 @@ declare module '../Core/Series/PointOptions' {
     interface PointOptions {
         connect?: (
             Highcharts.PointConnectOptionsObject|
-            Highcharts.GanttDependencyOption
+            GanttDependencyOptions
         );
         connectors?: Highcharts.ConnectorsOptions;
     }
@@ -678,7 +680,7 @@ class Pathfinder {
         chart.series.forEach(function (series): void {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point: Point): void {
-                    const ganttPointOptions: Highcharts.GanttPointOptions = point.options;
+                    const ganttPointOptions: GanttPointOptions = point.options;
                     // For Gantt series the connect could be
                     // defined as a dependency
                     if (ganttPointOptions && ganttPointOptions.dependency) {

@@ -16,9 +16,11 @@ QUnit.test('Repetetive formats', function (assert) {
             pointFormat: '{point.y} - {point.y}',
             valuePrefix: 'NOK '
         },
-        series: [{
-            data: [1.11]
-        }]
+        series: [
+            {
+                data: [1.11]
+            }
+        ]
     });
 
     chart.series[0].points[0].onMouseOver();

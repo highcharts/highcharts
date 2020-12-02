@@ -17,50 +17,58 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
         xAxis: {
             minRange: 1
         },
-        series: [{
-            gapSize: 1,
-            gapUnit: 'value',
-            dataGrouping: {
-                enabled: true,
-                forced: true,
-                units: [
-                    [
-                        'millisecond', [2]
-                    ]
+        series: [
+            {
+                gapSize: 1,
+                gapUnit: 'value',
+                dataGrouping: {
+                    enabled: true,
+                    forced: true,
+                    units: [['millisecond', [2]]]
+                },
+                marker: {
+                    enabled: true
+                },
+                data: [
+                    {
+                        x: 0,
+                        y: 1
+                    },
+                    {
+                        x: 1,
+                        y: 2
+                    },
+                    {
+                        x: 2,
+                        y: 1
+                    },
+                    {
+                        x: 5,
+                        y: 2
+                    },
+                    {
+                        x: 6,
+                        y: 1
+                    },
+                    {
+                        x: 7,
+                        y: 2
+                    },
+                    {
+                        x: 10,
+                        y: 1
+                    },
+                    {
+                        x: 11,
+                        y: 2
+                    },
+                    {
+                        x: 12,
+                        y: 1
+                    }
                 ]
-            },
-            marker: {
-                enabled: true
-            },
-            data: [{
-                x: 0,
-                y: 1
-            }, {
-                x: 1,
-                y: 2
-            }, {
-                x: 2,
-                y: 1
-            }, {
-                x: 5,
-                y: 2
-            }, {
-                x: 6,
-                y: 1
-            }, {
-                x: 7,
-                y: 2
-            }, {
-                x: 10,
-                y: 1
-            }, {
-                x: 11,
-                y: 2
-            }, {
-                x: 12,
-                y: 1
-            }]
-        }]
+            }
+        ]
     });
 
     var series = chart.series[0];
@@ -79,11 +87,7 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
     });
     series.update({
         dataGrouping: {
-            units: [
-                [
-                    'day', [1]
-                ]
-            ]
+            units: [['day', [1]]]
         },
         data: [
             [Date.UTC(2019, 9, 20), 1],
@@ -109,11 +113,7 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
 
     series.update({
         dataGrouping: {
-            units: [
-                [
-                    'month', [1]
-                ]
-            ]
+            units: [['month', [1]]]
         },
         data: [
             [Date.UTC(2019, 0, 1), 1],
@@ -137,23 +137,22 @@ QUnit.test('dataGrouping with gapSize (#7686)', function (assert) {
         'Graph should be continuous when dataGrouping is months (#10000)'
     );
 
-    chart.addSeries({
-        dataGrouping: {
-            forced: true,
-            units: [
-                [
-                    'month', [1]
-                ]
+    chart.addSeries(
+        {
+            dataGrouping: {
+                forced: true,
+                units: [['month', [1]]]
+            },
+            gapSize: 2,
+            data: [
+                [Date.UTC(2019, 0, 1), 1],
+                [Date.UTC(2019, 3, 1), 2],
+                [Date.UTC(2019, 6, 1), 3],
+                [Date.UTC(2019, 9, 1), 4]
             ]
         },
-        gapSize: 2,
-        data: [
-            [Date.UTC(2019, 0, 1), 1],
-            [Date.UTC(2019, 3, 1), 2],
-            [Date.UTC(2019, 6, 1), 3],
-            [Date.UTC(2019, 9, 1), 4]
-        ]
-    }, false);
+        false
+    );
     chart.series[0].update({
         dataGrouping: {
             forced: true

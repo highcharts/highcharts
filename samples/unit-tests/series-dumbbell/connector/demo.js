@@ -1,13 +1,17 @@
 QUnit.test('Dumbbell connectors', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'dumbbell'
         },
-        series: [{
-            data: [[4, 10], [2, 10], [3, 6]]
-        }]
-
+        series: [
+            {
+                data: [
+                    [4, 10],
+                    [2, 10],
+                    [3, 6]
+                ]
+            }
+        ]
     });
 
     chart.series[0].points.forEach(function (point) {
@@ -38,17 +42,22 @@ QUnit.test('Dumbbell connectors', function (assert) {
     assert.strictEqual(
         chart.series[0].points[3].connector.element.getAttribute('stroke'),
         'green',
-        'Added point\'s connector should have correct color.'
+        "Added point's connector should have correct color."
     );
 
     assert.strictEqual(
-        chart.series[0].points[3].connector.element.getAttribute('stroke-width'),
+        chart.series[0].points[3].connector.element.getAttribute(
+            'stroke-width'
+        ),
         '3',
-        'Added point\'s connector should have correct width.'
+        "Added point's connector should have correct width."
     );
 
     chart.addSeries({
-        data: [[1, 5], [1, 6]],
+        data: [
+            [1, 5],
+            [1, 6]
+        ],
         connectorColor: 'blue'
     });
 
@@ -64,8 +73,7 @@ QUnit.test('Dumbbell connectors', function (assert) {
         assert.strictEqual(
             graphic.element,
             undefined,
-            'All point\'s graphics should be removed.'
+            "All point's graphics should be removed."
         );
     });
-
 });

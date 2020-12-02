@@ -31,4 +31,4 @@ export interface ROCParamsOptions extends SMAParamsOptions {
     // for inheritance
 }
 
-export default EMAOptions;
+export default ROCOptions;

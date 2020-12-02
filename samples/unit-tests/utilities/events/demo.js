@@ -36,9 +36,7 @@
         // Fire it again, should do nothing, since the handler is removed
         fireEvent(o, 'customEvent', null, null);
         assertEquals(assert, 'clicked again, no change', 1, o.clickedCount);
-
     });
-
 
     /**
      * Test an event that triggers another event that remove itself.
@@ -74,7 +72,6 @@
         fireEvent(o, 'innerEvent', null, null);
         assertEquals(assert, 'clicked again, no change', 1, o.clickedCount);
     });
-
 
     /**
      * Test event add/fire/remove on a POJO.
@@ -331,7 +328,7 @@
                 },
                 defaultFunction = function (e) {
                     o.clickedCount += e.inc;
-                    o.clickedCount += (e.extraInc || 0);
+                    o.clickedCount += e.extraInc || 0;
                 };
 
             // Setup event handler
@@ -410,7 +407,6 @@
             1,
             pInt(o.innerHTML)
         );
-
 
         // 2. Test HTML events
         // Reset the counter
@@ -539,25 +535,23 @@
         assertEquals(assert, 'clicked again, no change', 1, pInt(o.innerHTML));
     });
 
-
     QUnit.test('Event assigned as null (#5311)', function (assert) {
         assert.expect(0);
         var chart = Highcharts.chart('container', {
-
             chart: {
                 events: {
                     redraw: null
                 }
             },
 
-            series: [{
-                data: [1, 3, 2, 4]
-            }]
-
+            series: [
+                {
+                    data: [1, 3, 2, 4]
+                }
+            ]
         });
 
         chart.setSize(400, 300, false);
-
     });
 
     QUnit.test('Unbinding prototype event', function (assert) {
@@ -568,23 +562,24 @@
         Highcharts.chart('container', {});
 
         assert.ok(true, 'Chart should render');
-
     });
 
     QUnit.test('Event order', assert => {
         var obj = {},
             calls = [];
 
-        [
-            undefined,
-            { order: 2 },
-            undefined,
-            { order: 1 }
-        ].forEach(options => {
-            addEvent(obj, 'hit', () => {
-                calls.push(options ? options.order : undefined);
-            }, options);
-        });
+        [undefined, { order: 2 }, undefined, { order: 1 }].forEach(
+            options => {
+                addEvent(
+                    obj,
+                    'hit',
+                    () => {
+                        calls.push(options ? options.order : undefined);
+                    },
+                    options
+                );
+            }
+        );
 
         fireEvent(obj, 'hit');
 
@@ -593,11 +588,9 @@
             [1, 2, undefined, undefined],
             'Events should be fired in ascending order'
         );
-
     });
 
     QUnit.test('Events in extended classes', assert => {
-
         const results = [];
 
         function Series() {}
@@ -608,23 +601,10 @@
         });
         const item = new ColumnSeries();
 
+        addEvent(Series, 'touch', () => results.push('Series'));
+        addEvent(ColumnSeries, 'touch', () => results.push('ColumnSeries'));
 
-        addEvent(
-            Series,
-            'touch',
-            () => results.push('Series')
-        );
-        addEvent(
-            ColumnSeries,
-            'touch',
-            () => results.push('ColumnSeries')
-        );
-
-        addEvent(
-            item,
-            'touch',
-            () => results.push('item')
-        );
+        addEvent(item, 'touch', () => results.push('item'));
 
         fireEvent(item, 'touch');
         assert.deepEqual(
@@ -658,53 +638,23 @@
         removeEvent(Series, 'touch');
         removeEvent(item, 'touch');
         fireEvent(item, 'touch');
-        assert.deepEqual(
-            results,
-            [],
-            'No events should fire'
-        );
+        assert.deepEqual(results, [], 'No events should fire');
 
         // Add randomly ordered events spread over the prototype chain
         results.length = 0;
-        addEvent(
-            Series,
-            'touch',
-            () => results.push('Series.3'),
-            { order: 3 }
-        );
-        addEvent(
-            Series,
-            'touch',
-            () => results.push('Series.1'),
-            { order: 1 }
-        );
+        addEvent(Series, 'touch', () => results.push('Series.3'), { order: 3 });
+        addEvent(Series, 'touch', () => results.push('Series.1'), { order: 1 });
 
-        addEvent(
-            ColumnSeries,
-            'touch',
-            () => results.push('ColumnSeries.2'),
-            { order: 2 }
-        );
-        addEvent(
-            ColumnSeries,
-            'touch',
-            () => results.push('ColumnSeries.0'),
-            { order: 0 }
-        );
+        addEvent(ColumnSeries, 'touch', () => results.push('ColumnSeries.2'), {
+            order: 2
+        });
+        addEvent(ColumnSeries, 'touch', () => results.push('ColumnSeries.0'), {
+            order: 0
+        });
 
-        addEvent(
-            item,
-            'touch',
-            () => results.push('item.4'),
-            { order: 4 }
-        );
+        addEvent(item, 'touch', () => results.push('item.4'), { order: 4 });
 
-        addEvent(
-            item,
-            'touch',
-            () => results.push('item.-1'),
-            { order: -1 }
-        );
+        addEvent(item, 'touch', () => results.push('item.-1'), { order: -1 });
         fireEvent(item, 'touch');
         assert.deepEqual(
             results,

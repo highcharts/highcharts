@@ -1,15 +1,19 @@
-QUnit.test("Series.opacity general tests", assert => {
+QUnit.test('Series.opacity general tests', assert => {
     const chart = Highcharts.chart('container', {
-        series: [{
-            opacity: 0,
-            data: [1, 2]
-        }, {
-            opacity: 1,
-            data: [1, 1]
-        }, {
-            opacity: 0.5,
-            data: [2, 2]
-        }]
+        series: [
+            {
+                opacity: 0,
+                data: [1, 2]
+            },
+            {
+                opacity: 1,
+                data: [1, 1]
+            },
+            {
+                opacity: 0.5,
+                data: [2, 2]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -43,5 +47,4 @@ QUnit.test("Series.opacity general tests", assert => {
         0,
         'Updating series.opacity from 1 to 0 should be applied for a group'
     );
-
 });
