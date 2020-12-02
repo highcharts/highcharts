@@ -26,9 +26,11 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var TreemapPoint = BaseSeries.seriesTypes.treemap.prototype.pointClass;
+var _a = BaseSeries.seriesTypes, LinePoint = _a.line.prototype.pointClass, TreemapPoint = _a.treemap.prototype.pointClass;
+import H from '../../Core/Globals.js';
+var noop = H.noop;
 import U from '../../Core/Utilities.js';
-var correctFloat = U.correctFloat;
+var correctFloat = U.correctFloat, extend = U.extend;
 /* *
  *
  *  Class
@@ -103,6 +105,9 @@ var SunburstPoint = /** @class */ (function (_super) {
     };
     return SunburstPoint;
 }(TreemapPoint));
+extend(SunburstPoint.prototype, {
+    setState: LinePoint.prototype.setState
+});
 /* *
  *
  *  Defaul Export

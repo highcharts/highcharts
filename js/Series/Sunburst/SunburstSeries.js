@@ -334,7 +334,7 @@ var SunburstSeries = /** @class */ (function (_super) {
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
         }
-        return TreemapSeries.prototype.alignDataLabel.apply(this, arguments);
+        return _super.prototype.alignDataLabel.apply(this, arguments);
     };
     /**
      * Animate the slices in. Similar to the animation of polar charts.
@@ -845,7 +845,6 @@ var SunburstSeries = /** @class */ (function (_super) {
 }(TreemapSeries));
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop,
-    pointAttribs: ColumnSeries.prototype.pointAttribs,
     pointClass: SunburstPoint,
     utils: SunburstUtilities
 });

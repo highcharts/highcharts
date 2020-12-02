@@ -26,6 +26,11 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
+        line: {
+            prototype: {
+                pointClass: LinePoint
+            }
+        },
         treemap: {
             prototype: {
                 pointClass: TreemapPoint
@@ -33,8 +38,10 @@ const {
         }
     }
 } = BaseSeries;
+import H from '../../Core/Globals.js';
+const { noop } = H;
 import U from '../../Core/Utilities.js';
-const { correctFloat } = U;
+const { correctFloat, extend } = U;
 
 /* *
  *
@@ -137,6 +144,10 @@ class SunburstPoint extends TreemapPoint {
     /* eslint-enable valid-jsdoc */
 
 }
+
+extend(SunburstPoint.prototype, {
+    setState: LinePoint.prototype.setState
+});
 
 /* *
  *

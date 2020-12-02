@@ -9,4 +9,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import '../../Series/Treemap/TreemapSeries.js';
 import '../../Series/Sunburst/SunburstSeries.js';

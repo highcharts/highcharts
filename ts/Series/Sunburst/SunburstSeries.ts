@@ -726,7 +726,7 @@ class SunburstSeries extends TreemapSeries {
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
         }
-        return TreemapSeries.prototype.alignDataLabel.apply(this, arguments);
+        return super.alignDataLabel.apply(this, arguments);
     }
 
     /**
@@ -1124,13 +1124,11 @@ class SunburstSeries extends TreemapSeries {
  * */
 
 interface SunburstSeries {
-    pointAttribs: typeof LineSeries.prototype.pointAttribs;
     pointClass: typeof SunburstPoint;
     utils: typeof SunburstUtilities;
 }
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop as any, // drawDataLabels is called in drawPoints
-    pointAttribs: ColumnSeries.prototype.pointAttribs,
     pointClass: SunburstPoint,
     utils: SunburstUtilities
 });
