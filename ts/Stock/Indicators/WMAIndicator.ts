@@ -144,19 +144,13 @@ class WMAIndicator extends SMAIndicator {
             period: 9
         }
     } as Highcharts.WMAIndicatorOptions)
-}
-interface WMAIndicator {
-    data: Array<Highcharts.WMAIndicatorPoint>;
-    options: Highcharts.WMAIndicatorOptions;
-    pointClass: typeof Highcharts.WMAIndicatorPoint;
-    points: Array<Highcharts.WMAIndicatorPoint>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: Highcharts.WMAIndicatorParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-}
-extend(WMAIndicator.prototype, {
-    getValues: function<TLinkedSeries extends LineSeries> (
+
+    public data: Array<Highcharts.WMAIndicatorPoint> = void 0 as any;
+    public options: Highcharts.WMAIndicatorOptions = void 0 as any;
+    public points: Array<Highcharts.WMAIndicatorPoint> = void 0 as any;
+
+
+    public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: Highcharts.WMAIndicatorParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -214,7 +208,16 @@ extend(WMAIndicator.prototype, {
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
-});
+}
+
+interface WMAIndicator {
+    pointClass: typeof Highcharts.WMAIndicatorPoint;
+
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.WMAIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+}
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {

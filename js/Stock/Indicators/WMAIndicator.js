@@ -68,32 +68,13 @@ function populateAverage(points, xVal, yVal, i) {
 var WMAIndicator = /** @class */ (function (_super) {
     __extends(WMAIndicator, _super);
     function WMAIndicator() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
     }
-    /**
-     * Weighted moving average indicator (WMA). This series requires `linkedTo`
-     * option to be set.
-     *
-     * @sample stock/indicators/wma
-     *         Weighted moving average indicator
-     *
-     * @extends      plotOptions.sma
-     * @since        6.0.0
-     * @product      highstock
-     * @requires     stock/indicators/indicators
-     * @requires     stock/indicators/wma
-     * @optionparent plotOptions.wma
-     */
-    WMAIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            index: 3,
-            period: 9
-        }
-    });
-    return WMAIndicator;
-}(SMAIndicator));
-extend(WMAIndicator.prototype, {
-    getValues: function (series, params) {
+    WMAIndicator.prototype.getValues = function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, range = 1, xValue = xVal[0], yValue = yVal[0], WMA = [], xData = [], yData = [], index = -1, i, points, WMAPoint;
         if (xVal.length < period) {
             return;
@@ -127,8 +108,29 @@ extend(WMAIndicator.prototype, {
             xData: xData,
             yData: yData
         };
-    }
-});
+    };
+    /**
+     * Weighted moving average indicator (WMA). This series requires `linkedTo`
+     * option to be set.
+     *
+     * @sample stock/indicators/wma
+     *         Weighted moving average indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/wma
+     * @optionparent plotOptions.wma
+     */
+    WMAIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            index: 3,
+            period: 9
+        }
+    });
+    return WMAIndicator;
+}(SMAIndicator));
 BaseSeries.registerSeriesType('wma', WMAIndicator);
 /* *
  *
