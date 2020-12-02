@@ -471,4 +471,33 @@
                 new Date().getTimezoneOffset()
         );
     });
+
+    QUnit.test('#13961: Missing ticks for half-hour timezones', assert => {
+        const utc = new Highcharts.Time();
+        const india = new Highcharts.Time({
+            timezoneOffset: -330
+        });
+
+        [2, 5, 10, 15].forEach(count =>
+            assert.strictEqual(
+                utc.getTimeTicks(
+                    {
+                        unitRange: 60000,
+                        count
+                    },
+                    1595801085000,
+                    1595802945000
+                ).length,
+                india.getTimeTicks(
+                    {
+                        unitRange: 60000,
+                        count
+                    },
+                    1595801085000,
+                    1595802945000
+                ).length,
+                'Tick count should match'
+            )
+        );
+    });
 }());
