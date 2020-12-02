@@ -176,9 +176,6 @@ var CandlestickSeries = /** @class */ (function (_super) {
      *
      * */
     CandlestickSeries.defaultOptions = merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
-    // Nothing here yet
-    });
-    CandlestickSeries.candlestickOptions = {
         /**
          * The specific line color for up candle sticks. The default is to
          * inherit the general `lineColor` setting.
@@ -266,7 +263,7 @@ var CandlestickSeries = /** @class */ (function (_super) {
          * @product highstock
          */
         stickyTracking: true
-    };
+    });
     return CandlestickSeries;
 }(OHLCSeries));
 BaseSeries.registerSeriesType('candlestick', CandlestickSeries);

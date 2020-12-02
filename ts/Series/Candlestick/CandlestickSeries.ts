@@ -73,12 +73,7 @@ class CandlestickSeries extends OHLCSeries {
      *
      * */
     public static defaultOptions: CandlestickSeriesOptions =
-    merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions as any, {
-        // Nothing here yet
-    } as CandlestickSeriesOptions);
-
-    public static candlestickOptions = {
-
+    merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
         /**
          * The specific line color for up candle sticks. The default is to
          * inherit the general `lineColor` setting.
@@ -176,8 +171,7 @@ class CandlestickSeries extends OHLCSeries {
          * @product highstock
          */
         stickyTracking: true
-
-    };
+    } as CandlestickSeriesOptions);
 
     /* *
      *
