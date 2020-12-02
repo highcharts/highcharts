@@ -8,10 +8,23 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import BaseSeries from '../../Core/Series/Series.js';
+var SMAIndicator = BaseSeries.seriesTypes.sma;
 import U from '../../Core/Utilities.js';
-var isArray = U.isArray;
-// im port './SMAIndicator.js';
+var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -52,31 +65,34 @@ function populateAverage(points, xVal, yVal, i) {
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType('wma', 'sma', 
-/**
- * Weighted moving average indicator (WMA). This series requires `linkedTo`
- * option to be set.
- *
- * @sample stock/indicators/wma
- *         Weighted moving average indicator
- *
- * @extends      plotOptions.sma
- * @since        6.0.0
- * @product      highstock
- * @requires     stock/indicators/indicators
- * @requires     stock/indicators/wma
- * @optionparent plotOptions.wma
- */
-{
-    params: {
-        index: 3,
-        period: 9
+var WMAIndicator = /** @class */ (function (_super) {
+    __extends(WMAIndicator, _super);
+    function WMAIndicator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-}, 
-/**
- * @lends Highcharts.Series#
- */
-{
+    /**
+     * Weighted moving average indicator (WMA). This series requires `linkedTo`
+     * option to be set.
+     *
+     * @sample stock/indicators/wma
+     *         Weighted moving average indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        6.0.0
+     * @product      highstock
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/wma
+     * @optionparent plotOptions.wma
+     */
+    WMAIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
+        params: {
+            index: 3,
+            period: 9
+        }
+    });
+    return WMAIndicator;
+}(SMAIndicator));
+extend(WMAIndicator.prototype, {
     getValues: function (series, params) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, range = 1, xValue = xVal[0], yValue = yVal[0], WMA = [], xData = [], yData = [], index = -1, i, points, WMAPoint;
         if (xVal.length < period) {
@@ -113,6 +129,13 @@ BaseSeries.seriesType('wma', 'sma',
         };
     }
 });
+BaseSeries.registerSeriesType('wma', WMAIndicator);
+/* *
+ *
+ *  Default Export
+ *
+ * */
+export default WMAIndicator;
 /**
  * A `WMA` series. If the [type](#series.wma.type) option is not specified, it
  * is inherited from [chart.type](#chart.type).

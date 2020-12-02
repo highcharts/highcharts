@@ -13,16 +13,22 @@
 import type IndicatorValuesObject from './IndicatorValuesObject';
 import type LineSeries from '../../Series/Line/LineSeries';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
-import type SMAIndicator from './SMA/SMAIndicator';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from './SMA/SMAOptions';
 import type SMAPoint from './SMA/SMAPoint';
 import BaseSeries from '../../Core/Series/Series.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = BaseSeries;
 import U from '../../Core/Utilities.js';
 const {
-    isArray
+    extend,
+    isArray,
+    merge
 } = U;
 
 /**
@@ -31,17 +37,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-
-        class WMAIndicator extends SMAIndicator {
-            public data: Array<WMAIndicatorPoint>;
-            public options: WMAIndicatorOptions;
-            public pointClass: typeof WMAIndicatorPoint;
-            public points: Array<WMAIndicatorPoint>;
-            public getValues<TLinkedSeries extends LineSeries>(
-                series: TLinkedSeries,
-                params: WMAIndicatorParamsOptions
-            ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-        }
 
         interface WMAIndicatorOptions extends SMAOptions {
             params?: WMAIndicatorParamsOptions;
@@ -58,14 +53,6 @@ declare global {
         }
     }
 }
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        wma: typeof Highcharts.WMAIndicator;
-    }
-}
-
-// im port './SMAIndicator.js';
 
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -136,9 +123,7 @@ function populateAverage(
  *
  * @augments Highcharts.Series
  */
-BaseSeries.seriesType<typeof Highcharts.WMAIndicator>(
-    'wma',
-    'sma',
+class WMAIndicator extends SMAIndicator {
     /**
      * Weighted moving average indicator (WMA). This series requires `linkedTo`
      * option to be set.
@@ -153,77 +138,99 @@ BaseSeries.seriesType<typeof Highcharts.WMAIndicator>(
      * @requires     stock/indicators/wma
      * @optionparent plotOptions.wma
      */
-    {
+    public static defaultOptions: Highcharts.WMAIndicatorOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             index: 3,
             period: 9
         }
-    },
-    /**
-     * @lends Highcharts.Series#
-     */
-    {
-        getValues: function<TLinkedSeries extends LineSeries> (
-            series: TLinkedSeries,
-            params: Highcharts.WMAIndicatorParamsOptions
-        ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-            var period: number = params.period as any,
-                xVal: Array<number> = (series.xData as any),
-                yVal: Array<Array<number>> = (series.yData as any),
-                yValLen = yVal ? yVal.length : 0,
-                range = 1,
-                xValue: number = xVal[0],
-                yValue: (number|Array<number>) = yVal[0],
-                WMA: Array<Array<number>> = [],
-                xData: Array<number> = [],
-                yData: Array<number> = [],
-                index = -1,
-                i: (number|undefined),
-                points: Array<[number, (number|Array<number>)]>,
-                WMAPoint: (Array<number>|undefined);
+    } as Highcharts.WMAIndicatorOptions)
+}
+interface WMAIndicator {
+    data: Array<Highcharts.WMAIndicatorPoint>;
+    options: Highcharts.WMAIndicatorOptions;
+    pointClass: typeof Highcharts.WMAIndicatorPoint;
+    points: Array<Highcharts.WMAIndicatorPoint>;
+    getValues<TLinkedSeries extends LineSeries>(
+        series: TLinkedSeries,
+        params: Highcharts.WMAIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
+}
+extend(WMAIndicator.prototype, {
+    getValues: function<TLinkedSeries extends LineSeries> (
+        series: TLinkedSeries,
+        params: Highcharts.WMAIndicatorParamsOptions
+    ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+        var period: number = params.period as any,
+            xVal: Array<number> = (series.xData as any),
+            yVal: Array<Array<number>> = (series.yData as any),
+            yValLen = yVal ? yVal.length : 0,
+            range = 1,
+            xValue: number = xVal[0],
+            yValue: (number|Array<number>) = yVal[0],
+            WMA: Array<Array<number>> = [],
+            xData: Array<number> = [],
+            yData: Array<number> = [],
+            index = -1,
+            i: (number|undefined),
+            points: Array<[number, (number|Array<number>)]>,
+            WMAPoint: (Array<number>|undefined);
 
-            if (xVal.length < period) {
-                return;
-            }
+        if (xVal.length < period) {
+            return;
+        }
 
-            // Switch index for OHLC / Candlestick
-            if (isArray(yVal[0])) {
-                index = (params.index as any);
-                yValue = yVal[0][index];
-            }
-            // Starting point
-            points = [[xValue, yValue]];
+        // Switch index for OHLC / Candlestick
+        if (isArray(yVal[0])) {
+            index = (params.index as any);
+            yValue = yVal[0][index];
+        }
+        // Starting point
+        points = [[xValue, yValue]];
 
-            // Accumulate first N-points
-            while (range !== period) {
-                accumulateAverage(points, xVal, yVal, range, index);
-                range++;
-            }
+        // Accumulate first N-points
+        while (range !== period) {
+            accumulateAverage(points, xVal, yVal, range, index);
+            range++;
+        }
 
-            // Calculate value one-by-one for each period in visible data
-            for (i = range; i < yValLen; i++) {
-                WMAPoint = populateAverage(points, xVal, yVal, i);
-                WMA.push(WMAPoint);
-                xData.push(WMAPoint[0]);
-                yData.push(WMAPoint[1]);
-
-                accumulateAverage(points, xVal, yVal, i, index);
-            }
-
+        // Calculate value one-by-one for each period in visible data
+        for (i = range; i < yValLen; i++) {
             WMAPoint = populateAverage(points, xVal, yVal, i);
             WMA.push(WMAPoint);
             xData.push(WMAPoint[0]);
             yData.push(WMAPoint[1]);
 
-            return {
-                values: WMA,
-                xData: xData,
-                yData: yData
-            } as IndicatorValuesObject<TLinkedSeries>;
+            accumulateAverage(points, xVal, yVal, i, index);
         }
-    }
-);
 
+        WMAPoint = populateAverage(points, xVal, yVal, i);
+        WMA.push(WMAPoint);
+        xData.push(WMAPoint[0]);
+        yData.push(WMAPoint[1]);
+
+        return {
+            values: WMA,
+            xData: xData,
+            yData: yData
+        } as IndicatorValuesObject<TLinkedSeries>;
+    }
+});
+
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        wma: typeof WMAIndicator;
+    }
+}
+
+BaseSeries.registerSeriesType('wma', WMAIndicator);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
+
+export default WMAIndicator;
 /**
  * A `WMA` series. If the [type](#series.wma.type) option is not specified, it
  * is inherited from [chart.type](#chart.type).
