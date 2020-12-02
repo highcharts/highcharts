@@ -591,6 +591,8 @@ addEvent(Pointer, 'beforeGetHoverData', function (
                 (!chart.hoverPane || s.xAxis.pane === chart.hoverPane)
             );
         };
+    } else {
+        chart.hoverPane = void 0;
     }
 });
 
