@@ -69,7 +69,7 @@ declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         softThreshold?: boolean;
         startFromThreshold?: boolean;
-        threshold?: number;
+        threshold?: number|null;
     }
 }
 
