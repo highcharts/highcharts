@@ -16,11 +16,8 @@
  *
  * */
 
-import type ColorType from '../../Core/Color/ColorType';
-import type OHLCPoint from '../OHLC/OHLCPoint';
-import type OHLCPointOptions from '../OHLC/OHLCPointOptions';
-import type OHLCSeriesOptions from '../OHLC/OHLCSeriesOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type CandlestickPoint from './CandlestickPoint';
+import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -37,44 +34,8 @@ const { defaultOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
-    extend,
     merge
 } = U;
-
-import '../OHLC/OHLCSeries.js';
-
-/* *
- *
- *  Declarations
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        class CandlestickPoint extends OHLCPoint {
-            public close: number;
-            public open: number;
-            public options: CandlestickPointOptions;
-            public series: CandlestickSeries;
-        }
-        interface CandlestickPointOptions extends OHLCPointOptions {
-            lineColor?: ColorType;
-            upLineColor?: ColorType;
-        }
-        interface CandlestickSeriesOptions extends OHLCSeriesOptions {
-            lineColor?: ColorType;
-            states?: SeriesStatesOptions<CandlestickSeries>;
-            upLineColor?: ColorType;
-        }
-        interface SeriesTypesDictionary {
-            candlestick: typeof CandlestickSeries;
-        }
-    }
-}
 
 /* *
  *
@@ -95,7 +56,6 @@ declare global {
  * @optionparent plotOptions.candlestick
  */
 
-
 /**
  * The candlestick series type.
  *
@@ -112,11 +72,10 @@ class CandlestickSeries extends OHLCSeries {
      * Static properties
      *
      * */
-    public static defaultOptions: Highcharts.CandlestickSeriesOptions =
+    public static defaultOptions: CandlestickSeriesOptions =
     merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions as any, {
         // Nothing here yet
-
-    } as Highcharts.CandlestickSeriesOptions);
+    } as CandlestickSeriesOptions);
 
     public static candlestickOptions = {
 
@@ -225,9 +184,11 @@ class CandlestickSeries extends OHLCSeries {
      * Properties
      *
      * */
-    public data: Array<Highcharts.CandlestickPoint> = void 0 as any;
-    public options: Highcharts.CandlestickSeriesOptions = void 0 as any;
-    public points: Array<Highcharts.CandlestickPoint> = void 0 as any;
+    public data: Array<CandlestickPoint> = void 0 as any;
+
+    public options: CandlestickSeriesOptions = void 0 as any;
+
+    public points: Array<CandlestickPoint> = void 0 as any;
 
     /* *
      *
@@ -243,7 +204,7 @@ class CandlestickSeries extends OHLCSeries {
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
      */
     public pointAttribs(
-        point: Highcharts.CandlestickPoint,
+        point: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
         var attribs = columnProto.pointAttribs.call(
@@ -272,7 +233,6 @@ class CandlestickSeries extends OHLCSeries {
                 stateOptions.lineWidth || attribs['stroke-width'];
         }
 
-
         return attribs;
     }
 
@@ -289,8 +249,7 @@ class CandlestickSeries extends OHLCSeries {
             chart = series.chart,
             reversedYAxis = series.yAxis.reversed;
 
-
-        points.forEach(function (point: Highcharts.CandlestickPoint): void {
+        points.forEach(function (point: CandlestickPoint): void {
 
             var graphic = point.graphic,
                 plotOpen,
@@ -394,7 +353,7 @@ class CandlestickSeries extends OHLCSeries {
 }
 
 interface CandlestickSeries{
-    pointClass: typeof Highcharts.CandlestickPoint;
+    pointClass: typeof CandlestickPoint;
 }
 
 /* *
@@ -402,6 +361,12 @@ interface CandlestickSeries{
  * Registry
  *
  * */
+
+declare module '../../Core/Series/SeriesType'{
+    interface SeriesTypeRegistry {
+        candlestick: typeof CandlestickSeries;
+    }
+}
 
 BaseSeries.registerSeriesType('candlestick', CandlestickSeries);
 

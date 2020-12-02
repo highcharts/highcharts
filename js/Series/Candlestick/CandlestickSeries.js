@@ -28,8 +28,7 @@ import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
-var extend = U.extend, merge = U.merge;
-import '../OHLC/OHLCSeries.js';
+var merge = U.merge;
 /* *
  *
  *  Code
@@ -270,11 +269,6 @@ var CandlestickSeries = /** @class */ (function (_super) {
     };
     return CandlestickSeries;
 }(OHLCSeries));
-/* *
- *
- * Registry
- *
- * */
 BaseSeries.registerSeriesType('candlestick', CandlestickSeries);
 /* *
  *
