@@ -8,7 +8,7 @@
  *
  * */
 import StackItem from '../../Extensions/Stacking.js';
-import U from '../../Core/Utilities.js';
+import U from '../Utilities.js';
 var addEvent = U.addEvent, objectEach = U.objectEach;
 /**
  * @private

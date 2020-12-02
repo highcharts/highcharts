@@ -14,11 +14,11 @@
  *
  * */
 
-import type Axis from '../../Core/Axis/Axis.js';
-import type Chart from '../../Core/Chart/Chart.js';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import type Axis from './Axis.js';
+import type Chart from '../Chart/Chart.js';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import StackItem from '../../Extensions/Stacking.js';
-import U from '../../Core/Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     objectEach

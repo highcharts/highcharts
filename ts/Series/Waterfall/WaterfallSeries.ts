@@ -36,7 +36,7 @@ const {
     objectEach,
     pick
 } = U;
-import WaterfallAxis from './WaterfallAxis.js';
+import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 
 /* *

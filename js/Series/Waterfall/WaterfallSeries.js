@@ -28,7 +28,7 @@ import H from '../../Core/Globals.js';
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import WaterfallAxis from './WaterfallAxis.js';
+import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
 import WaterfallPoint from './WaterfallPoint.js';
 import '../../Core/Options.js';
 /**
