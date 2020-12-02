@@ -47,95 +47,6 @@ import './OHLC/OHLCSeries.js';
  * @product      highstock
  * @optionparent plotOptions.candlestick
  */
-var candlestickOptions = {
-    /**
-     * The specific line color for up candle sticks. The default is to inherit
-     * the general `lineColor` setting.
-     *
-     * @sample {highstock} stock/plotoptions/candlestick-linecolor/
-     *         Candlestick line colors
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since     1.3.6
-     * @product   highstock
-     * @apioption plotOptions.candlestick.upLineColor
-     */
-    /**
-     * @type      {Highcharts.DataGroupingApproximationValue|Function}
-     * @default   ohlc
-     * @product   highstock
-     * @apioption plotOptions.candlestick.dataGrouping.approximation
-     */
-    states: {
-        /**
-         * @extends plotOptions.column.states.hover
-         * @product highstock
-         */
-        hover: {
-            /**
-             * The pixel width of the line/border around the candlestick.
-             *
-             * @product highstock
-             */
-            lineWidth: 2
-        }
-    },
-    /**
-     * @extends plotOptions.ohlc.tooltip
-     */
-    tooltip: defaultOptions.plotOptions.ohlc.tooltip,
-    /**
-     * @type    {number|null}
-     * @product highstock
-     */
-    threshold: null,
-    /**
-     * The color of the line/border of the candlestick.
-     *
-     * In styled mode, the line stroke can be set with the
-     * `.highcharts-candlestick-series .highcahrts-point` rule.
-     *
-     * @see [upLineColor](#plotOptions.candlestick.upLineColor)
-     *
-     * @sample {highstock} stock/plotoptions/candlestick-linecolor/
-     *         Candlestick line colors
-     *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default #000000
-     * @product highstock
-     */
-    lineColor: palette.neutralColor100,
-    /**
-     * The pixel width of the candlestick line/border. Defaults to `1`.
-     *
-     *
-     * In styled mode, the line stroke width can be set with the
-     * `.highcharts-candlestick-series .highcahrts-point` rule.
-     *
-     * @product highstock
-     */
-    lineWidth: 1,
-    /**
-     * The fill color of the candlestick when values are rising.
-     *
-     * In styled mode, the up color can be set with the
-     * `.highcharts-candlestick-series .highcharts-point-up` rule.
-     *
-     * @sample {highstock} stock/plotoptions/candlestick-color/
-     *         Custom colors
-     * @sample {highstock} highcharts/css/candlestick/
-     *         Colors in styled mode
-     *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @default #ffffff
-     * @product highstock
-     */
-    upColor: palette.backgroundColor,
-    /**
-     * @product highstock
-     */
-    stickyTracking: true
-};
 /**
  * The candlestick series type.
  *
@@ -161,15 +72,9 @@ var CandlestickSeries = /** @class */ (function (_super) {
     }
     /* *
      *
-     * Static properties
+     * Functions
      *
      * */
-    CandlestickSeries.defaultOptions = merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
-    // Nothing here yet
-    });
-    return CandlestickSeries;
-}(OHLCSeries));
-extend(CandlestickSeries.prototype, {
     /* eslint-disable valid-jsdoc */
     /**
      * Postprocess mapping between options and SVG attributes
@@ -177,7 +82,7 @@ extend(CandlestickSeries.prototype, {
      * @private
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
      */
-    pointAttribs: function (point, state) {
+    CandlestickSeries.prototype.pointAttribs = function (point, state) {
         var attribs = columnProto.pointAttribs.call(this, point, state), options = this.options, isUp = point.open < point.close, stroke = options.lineColor || this.color, stateOptions;
         attribs['stroke-width'] = options.lineWidth;
         attribs.fill = point.options.color ||
@@ -193,7 +98,7 @@ extend(CandlestickSeries.prototype, {
                 stateOptions.lineWidth || attribs['stroke-width'];
         }
         return attribs;
-    },
+    };
     /**
      * Draw the data points.
      *
@@ -201,7 +106,7 @@ extend(CandlestickSeries.prototype, {
      * @function Highcharts.seriesTypes.candlestick#drawPoints
      * @return {void}
      */
-    drawPoints: function () {
+    CandlestickSeries.prototype.drawPoints = function () {
         var series = this, points = series.points, chart = series.chart, reversedYAxis = series.yAxis.reversed;
         points.forEach(function (point) {
             var graphic = point.graphic, plotOpen, plotClose, topBox, bottomBox, hasTopWhisker, hasBottomWhisker, crispCorr, crispX, path, halfWidth, isNew = !graphic;
@@ -265,8 +170,106 @@ extend(CandlestickSeries.prototype, {
             }
         });
         /* eslint-enable valid-jsdoc */
-    }
-});
+    };
+    /* *
+     *
+     * Static properties
+     *
+     * */
+    CandlestickSeries.defaultOptions = merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
+    // Nothing here yet
+    });
+    CandlestickSeries.candlestickOptions = {
+        /**
+         * The specific line color for up candle sticks. The default is to
+         * inherit the general `lineColor` setting.
+         *
+         * @sample {highstock} stock/plotoptions/candlestick-linecolor/
+         *         Candlestick line colors
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since     1.3.6
+         * @product   highstock
+         * @apioption plotOptions.candlestick.upLineColor
+         */
+        /**
+         * @type      {Highcharts.DataGroupingApproximationValue|Function}
+         * @default   ohlc
+         * @product   highstock
+         * @apioption plotOptions.candlestick.dataGrouping.approximation
+         */
+        states: {
+            /**
+             * @extends plotOptions.column.states.hover
+             * @product highstock
+             */
+            hover: {
+                /**
+                 * The pixel width of the line/border around the candlestick.
+                 *
+                 * @product highstock
+                 */
+                lineWidth: 2
+            }
+        },
+        /**
+         * @extends plotOptions.ohlc.tooltip
+         */
+        tooltip: defaultOptions.plotOptions.ohlc.tooltip,
+        /**
+         * @type    {number|null}
+         * @product highstock
+         */
+        threshold: null,
+        /**
+         * The color of the line/border of the candlestick.
+         *
+         * In styled mode, the line stroke can be set with the
+         * `.highcharts-candlestick-series .highcahrts-point` rule.
+         *
+         * @see [upLineColor](#plotOptions.candlestick.upLineColor)
+         *
+         * @sample {highstock} stock/plotoptions/candlestick-linecolor/
+         *         Candlestick line colors
+         *
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @default #000000
+         * @product highstock
+         */
+        lineColor: palette.neutralColor100,
+        /**
+         * The pixel width of the candlestick line/border. Defaults to `1`.
+         *
+         *
+         * In styled mode, the line stroke width can be set with the
+         * `.highcharts-candlestick-series .highcahrts-point` rule.
+         *
+         * @product highstock
+         */
+        lineWidth: 1,
+        /**
+         * The fill color of the candlestick when values are rising.
+         *
+         * In styled mode, the up color can be set with the
+         * `.highcharts-candlestick-series .highcharts-point-up` rule.
+         *
+         * @sample {highstock} stock/plotoptions/candlestick-color/
+         *         Custom colors
+         * @sample {highstock} highcharts/css/candlestick/
+         *         Colors in styled mode
+         *
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @default #ffffff
+         * @product highstock
+         */
+        upColor: palette.backgroundColor,
+        /**
+         * @product highstock
+         */
+        stickyTracking: true
+    };
+    return CandlestickSeries;
+}(OHLCSeries));
 /* *
  *
  * Registry
