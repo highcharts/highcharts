@@ -1102,7 +1102,10 @@ itemChart = Highcharts.chart('container', {
                 }
             }
 
-        ], // Circular options startAngle:100, endAngle:100, size:'23%',
+        ], // Circular options
+        startAngle: 100,
+        endAngle: 100,
+        size: '23%',
         innerSize: '50%',
         center: ['5%', '23%']
     }]
