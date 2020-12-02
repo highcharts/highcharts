@@ -426,3 +426,60 @@ QUnit.test('3D pie updates', assert => {
         "Updating series shouldn't change pie y position (#11928)."
     );
 });
+
+QUnit.test('#13804: Inactive tab animation threw', assert => {
+    const animate = Highcharts.SVGElement.prototype.animate;
+    Highcharts.SVGElement.prototype.animate = function (params, options) {
+        // Simulate inactive tab
+        if (options) {
+            options.duration = 0;
+        } else {
+            options = { duration: 0 };
+        }
+
+        animate.call(this, params, options);
+    };
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            animation: {
+                duration: 500
+            },
+            type: 'pie',
+            options3d: {
+                enabled: true,
+                alpha: 45,
+                beta: 0
+            }
+        },
+        plotOptions: {
+            pie: {
+                depth: 35
+            }
+        },
+        series: [{
+            type: 'pie',
+            data: [
+                Math.random() * 20,
+                Math.random() * 20,
+                Math.random() * 20,
+                Math.random() * 20
+            ]
+        }]
+    });
+
+    chart.update({
+        series: [{
+            data: [
+                Math.random() * 20,
+                Math.random() * 20,
+                Math.random() * 20,
+                Math.random() * 20
+            ]
+        }]
+    });
+
+    assert.ok(true, 'It should not throw');
+
+    Highcharts.SVGElement.prototype.animate = animate;
+});
