@@ -8,22 +8,23 @@
 
 'use strict';
 
-import type Point from '../../Core/Series/Point';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import type Point from '../../../Core/Series/Point';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = BaseSeries;
 import type {
-    SMAOptions,
-    SMAParamsOptions
-} from './SMA/SMAOptions';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import U from '../../Core/Utilities.js';
+    PivotPointsOptions,
+    PivotPointsParamsOptions
+} from './PivotPointsOptions';
+import PivotPointsPoint from './PivotPointsPoint';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import U from '../../../Core/Utilities.js';
 const {
     merge,
     extend,
@@ -32,52 +33,10 @@ const {
 } = U;
 
 /**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PivotPointsIndicatorParamsOptions
-            extends SMAParamsOptions {
-            algorithm?: string;
-        }
-
-        interface PivotPointsIndicatorOptions extends SMAOptions {
-            params?: PivotPointsIndicatorParamsOptions;
-        }
-    }
-}
-
-// im port './SMAIndicator.js';
-
-var SMA = BaseSeries.seriesTypes.sma;
-
-/* eslint-disable valid-jsdoc */
-
-/**
- * @private
- */
-function destroyExtraLabels(
-    point: PivotPointsIndicatorPoint,
-    functionName: string
-): void {
-    var props: Array<string> = point.series.pointArrayMap,
-        prop: string,
-        i: number = props.length;
-
-    (SMA.prototype.pointClass.prototype as any)[functionName].call(point);
-
-    while (i--) {
-        prop = 'dataLabel' + props[i];
-        // S4 dataLabel could be removed by parent method:
-        if ((point as any)[prop] && (point as any)[prop].element) {
-            (point as any)[prop].destroy();
-        }
-        (point as any)[prop] = null;
-    }
-}
-
-/* eslint-enable valid-jsdoc */
+ *
+ *  Class
+ *
+ **/
 
 /**
  * The Pivot Points series type.
@@ -103,7 +62,7 @@ class PivotPointsIndicator extends SMAIndicator {
      * @requires     stock/indicators/pivotpoints
      * @optionparent plotOptions.pivotpoints
      */
-    public static defaultOptions: Highcharts.PivotPointsIndicatorOptions =
+    public static defaultOptions: PivotPointsOptions =
     merge(SMAIndicator.defaultOptions, {
         /**
          * @excluding index
@@ -128,13 +87,13 @@ class PivotPointsIndicator extends SMAIndicator {
         dataGrouping: {
             approximation: 'averages'
         }
-    } as Highcharts.PivotPointsIndicatorOptions);
+    } as PivotPointsOptions);
 }
 interface PivotPointsIndicator{
     camarillaPlacement(
         values: Array<number>
     ): Array<number>;
-    data: Array<PivotPointsIndicatorPoint>;
+    data: Array<PivotPointsPoint>;
     endPoint: number;
     fibonacciPlacement(
         values: Array<number>
@@ -144,14 +103,14 @@ interface PivotPointsIndicator{
     ): [number, number, number, number];
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.PivotPointsIndicatorParamsOptions
+        params: PivotPointsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined);
     nameBase: string;
-    options: Highcharts.PivotPointsIndicatorOptions;
+    options: PivotPointsOptions;
     plotEndPoint: number;
     pointArrayMap: Array<string>;
-    pointClass: typeof PivotPointsIndicatorPoint;
-    points: Array<PivotPointsIndicatorPoint>;
+    pointClass: typeof PivotPointsPoint;
+    points: Array<PivotPointsPoint>;
     pointValKey: string;
     standardPlacement(
         values: Array<number>
@@ -163,18 +122,18 @@ interface PivotPointsIndicator{
     pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
     pointValKey: 'P',
     toYData: function (
-        point: PivotPointsIndicatorPoint
+        point: PivotPointsPoint
     ): Array<number> {
         return [point.P]; // The rest should not affect extremes
     },
     translate: function (this: PivotPointsIndicator): void {
         var indicator = this;
 
-        SMA.prototype.translate.apply(indicator);
+        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
 
         indicator.points.forEach(
             function (
-                point: PivotPointsIndicatorPoint
+                point: PivotPointsPoint
             ): void {
                 indicator.pointArrayMap.forEach(
                     function (value: string): void {
@@ -246,7 +205,7 @@ interface PivotPointsIndicator{
             pivotPoints: Array<Point>
         ): void {
             path = path.concat(
-                SMA.prototype.getGraphPath.call(indicator, pivotPoints)
+                BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(indicator, pivotPoints)
             );
         });
 
@@ -258,7 +217,7 @@ interface PivotPointsIndicator{
             pointMapping: Array<(string|boolean)> = indicator.pointArrayMap,
             currentLabel: (SVGElement|null),
             pointsLength: number,
-            point: PivotPointsIndicatorPoint,
+            point: PivotPointsPoint,
             i: number;
 
         if ((indicator.options as any).dataLabels.enabled) {
@@ -306,7 +265,7 @@ interface PivotPointsIndicator{
                                     null;
                         }
                     }
-                    SMA.prototype.drawDataLabels.apply(
+                    BaseSeries.seriesTypes.sma.prototype.drawDataLabels.apply(
                         indicator, arguments
                     );
                 }
@@ -316,7 +275,7 @@ interface PivotPointsIndicator{
     getValues: function<TLinkedSeries extends LineSeries> (
         this: PivotPointsIndicator,
         series: TLinkedSeries,
-        params: Highcharts.PivotPointsIndicatorParamsOptions
+        params: PivotPointsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = (params.period as any),
             xVal: Array<number> = (series.xData as any),
@@ -452,33 +411,6 @@ interface PivotPointsIndicator{
 
         return avg;
     }
-});
-
-class PivotPointsIndicatorPoint extends SMAIndicator.prototype.pointClass {
-
-}
-interface PivotPointsIndicatorPoint {
-    destroy(): void;
-    destroyElements(): void;
-    P: number;
-    pivotLine: string;
-    series: PivotPointsIndicator;
-}
-extend(PivotPointsIndicatorPoint.prototype, {
-    destroyElements: function (
-        this: PivotPointsIndicatorPoint
-    ): void {
-        destroyExtraLabels(this, 'destroyElements');
-    },
-    // This method is called when removing points, e.g. series.update()
-    destroy: function (
-        this: PivotPointsIndicatorPoint
-    ): void {
-        destroyExtraLabels(this, 'destroyElements');
-    }
-});
-extend(PivotPointsIndicator.prototype, {
-    pointClass: PivotPointsIndicatorPoint
 });
 
 /* *
