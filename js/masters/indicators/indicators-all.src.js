@@ -47,7 +47,7 @@ import '../../Stock/Indicators/Supertrend/SupertrendIndicator.js';
 import '../../Stock/Indicators/VBP/VBPIndicator.js';
 import '../../Stock/Indicators/VWAP/VWAPIndicator.js';
 import '../../Stock/Indicators/WilliamsR/WilliamsRIndicator.js';
-import '../../Stock/Indicators/WMAIndicator.js';
+import '../../Stock/Indicators/WMA/WMAIndicator.js';
 import '../../Stock/Indicators/Zigzag/ZigzagIndicator.js';
 import '../../Stock/Indicators/LinearRegression/LinearRegression.js';
 // eslint-disable-next-line max-len
