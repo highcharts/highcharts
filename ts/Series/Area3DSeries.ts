@@ -79,6 +79,14 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
             return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
         });
         if (series.group && options3d && options3d.depth && options3d.beta) {
+            // Markers should take the global zIndex of series group.
+            if (series.markerGroup) {
+                series.markerGroup.add(series.group);
+                series.markerGroup.attr({
+                    translateX: 0,
+                    translateY: 0
+                });
+            }
             series.group.attr({
                 zIndex: Math.max(
                     1,
