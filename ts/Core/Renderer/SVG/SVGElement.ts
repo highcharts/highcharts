@@ -836,7 +836,7 @@ class SVGElement {
             // Call the end step synchronously
             objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
-                    animOptions.step.call(this as any, val, { prop: prop, pos: 1 });
+                    animOptions.step.call(this, val, { prop: prop, pos: 1, elem: this });
                 }
             }, this);
         }
