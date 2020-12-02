@@ -16,15 +16,15 @@
  *
  * */
 
-import type ColorType from '../Core/Color/ColorType';
-import type OHLCPoint from './OHLC/OHLCPoint';
-import type OHLCPointOptions from './OHLC/OHLCPointOptions';
-import type OHLCSeriesOptions from './OHLC/OHLCSeriesOptions';
-import type { SeriesStatesOptions } from '../Core/Series/SeriesOptions';
-import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-import type SVGPath from '../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../Core/Series/Series.js';
+import type ColorType from '../../Core/Color/ColorType';
+import type OHLCPoint from '../OHLC/OHLCPoint';
+import type OHLCPointOptions from '../OHLC/OHLCPointOptions';
+import type OHLCSeriesOptions from '../OHLC/OHLCSeriesOptions';
+import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
@@ -32,16 +32,16 @@ const {
     }
 } = BaseSeries;
 const { prototype: columnProto } = ColumnSeries;
-import O from '../Core/Options.js';
+import O from '../../Core/Options.js';
 const { defaultOptions } = O;
-import palette from '../Core/Color/Palette.js';
-import U from '../Core/Utilities.js';
+import palette from '../../Core/Color/Palette.js';
+import U from '../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
 
-import './OHLC/OHLCSeries.js';
+import '../OHLC/OHLCSeries.js';
 
 /* *
  *
