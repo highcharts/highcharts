@@ -1,10 +1,10 @@
 let itemChart;
 let chartToChange;
 let seriesNum;
-const imagePath = 'https://cdn.rawgit.com/highcharts/highcharts/4b2b993a59d2358c85dbef61bfcd9e02547ce83a/samples/graphics/xmas-card-2020/';
-//let imagePath = '../../../graphics/xmas-card-2020/';
+const imagePath = 'https://cdn.rawgit.com/highcharts/'+
+    'highcharts/4b2b993a59d2358c85dbef61bfcd9e02547ce83a/'+
+    'samples/graphics/xmas-card-2020/';
 let direction = 'forward';
-
 const msgColors = [
     ['#b4141c', '#DF8B81'],
     ['#e01b22', '#f7f3cd'],
@@ -119,7 +119,9 @@ itemChart = Highcharts.chart('container', {
         useHTML: true,
         y: 110,
         x: -310,
-        text: '<div class="cardTitle"><div>May your charts be merry and bright!</div><div ><img src="https://www.highcharts.com/media/templates/highsoft_2015/images/logo.svg"></div></div>'
+        text: '<div class="cardTitle"><div>May your charts be merry and'+
+            'bright!</div><div ><img src="https://www.highcharts.com/media/'+
+            'templates/highsoft_2015/images/logo.svg"></div></div>'
     },
     credits: {
         enabled: false
