@@ -8,101 +8,41 @@
 
 'use strict';
 
-import type ColorType from '../../Core/Color/ColorType';
-import type CSSObject from '../../Core/Renderer/CSSObject';
-import type IndicatorValuesObject from './IndicatorValuesObject';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type Point from '../../Core/Series/Point';
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
-import type { SMAOptions, SMAParamsOptions } from './SMA/SMAOptions';
-import type SMAPoint from './SMA/SMAPoint';
-import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+/* *
+*
+* Import
+*
+* */
+
+import type ColorType from '../../../Core/Color/ColorType';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+import type Point from '../../../Core/Series/Point';
+import type IKHPoint from './IKHPoint';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import BaseSeries from '../../../Core/Series/Series.js';
 const {
     seriesTypes: { sma: SMAIndicator }
 } = BaseSeries;
-import Color from '../../Core/Color/Color.js';
+import Color from '../../../Core/Color/Color.js';
 const color = Color.parse;
-import H from '../../Core/Globals.js';
-import U from '../../Core/Utilities.js';
+import H from '../../../Core/Globals.js';
+import U from '../../../Core/Utilities.js';
+import {
+    IKHDrawSenkouSpanObject,
+    IKHGapExtensionObject,
+    IKHOptions,
+    IKHParamsOptions,
+    IKHSenkouSpanOptions
+} from './IKHOptions';
 const { defined, extend, isArray, merge, objectEach } = U;
 
-declare module '../../Core/Series/SeriesLike' {
+declare module '../../../Core/Series/SeriesLike' {
     interface SeriesLike {
         fillGraph?: boolean;
     }
 }
-
-/* eslint-disable @typescript-eslint/interface-name-prefix */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface IKHIndicatorDrawSenkouSpanObject {
-            indicator: IKHIndicator;
-            points: Array<IKHIndicatorPoint>;
-            nextPoints: Array<IKHIndicatorPoint>;
-            color?: ColorType;
-            options: IKHIndicatorOptions;
-            gap: IKHIndicatorGapExtensionObject;
-            graph: SVGElement | undefined;
-        }
-
-        interface IKHIndicatorSenkouSpanOptions {
-            color?: ColorType;
-            negativeColor?: ColorType;
-            styles?: CSSObject & { fill: ColorType };
-        }
-
-        interface IKHIndicatorGapExtensionObject {
-            options?: IKHIndicatorGapSizeOptions;
-        }
-
-        interface IKHIndicatorGapSizeOptions {
-            gapSize?: IKHIndicatorOptions['gapSize'];
-        }
-
-        interface IKHIndicatorOptions extends SMAOptions {
-            chikouLine?: Record<string, CSSObject>;
-            gapSize?: number;
-            kijunLine?: Record<string, CSSObject>;
-            marker?: PointMarkerOptions;
-            params?: IKHIndicatorParamsOptions;
-            senkouSpan?: IKHIndicatorSenkouSpanOptions;
-            senkouSpanA?: Record<string, CSSObject>;
-            senkouSpanB?: Record<string, CSSObject>;
-            tenkanLine?: Record<string, CSSObject>;
-            tooltip?: TooltipOptions;
-        }
-
-        interface IKHIndicatorParamsOptions extends SMAParamsOptions {
-            periodTenkan?: number;
-            periodSenkouSpanB?: number;
-        }
-
-
-        class IKHIndicatorPoint extends SMAPoint {
-            public series: IKHIndicator;
-            public tenkanSen: number;
-            public kijunSen: number;
-            public chikouSpan: number;
-            public senkouSpanA: number;
-            public senkouSpanB: number;
-            public plotX: number;
-            public plotY: number;
-            public isNull: boolean;
-            public intersectPoint?: boolean;
-        }
-    }
-}
-
-/* eslint-enable @typescript-eslint/interface-name-prefix */
-
-// im port './SMAIndicator.js';
 
 var SMA = BaseSeries.seriesTypes.sma;
 
@@ -160,10 +100,10 @@ function getClosestPointRange(axis: Highcharts.Axis): number | undefined {
 // Check two lines intersection (line a1-a2 and b1-b2)
 // Source: https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
 function checkLineIntersection(
-    a1: Highcharts.IKHIndicatorPoint | undefined,
-    a2: Highcharts.IKHIndicatorPoint | undefined,
-    b1: Highcharts.IKHIndicatorPoint | undefined,
-    b2: Highcharts.IKHIndicatorPoint | undefined
+    a1: IKHPoint | undefined,
+    a2: IKHPoint | undefined,
+    b1: IKHPoint | undefined,
+    b2: IKHPoint | undefined
 ): boolean | Highcharts.Dictionary<number> {
     if (a1 && a2 && b1 && b2) {
         var saX: number = a2.plotX - a1.plotX, // Auxiliary section a2-a1 X
@@ -193,7 +133,7 @@ function checkLineIntersection(
 // Parameter opt (indicator options object) include indicator, points,
 // nextPoints, color, options, gappedExtend and graph properties
 function drawSenkouSpan(
-    opt: Highcharts.IKHIndicatorDrawSenkouSpanObject
+    opt: IKHDrawSenkouSpanObject
 ): void {
     var indicator = opt.indicator;
 
@@ -263,7 +203,7 @@ class IKHIndicator extends SMAIndicator {
      * @requires     stock/indicators/ichimoku-kinko-hyo
      * @optionparent plotOptions.ikh
      */
-    public static defaultOptions: Highcharts.IKHIndicatorOptions = merge(
+    public static defaultOptions: IKHOptions = merge(
         SMAIndicator.defaultOptions,
         {
             params: {
@@ -419,16 +359,16 @@ class IKHIndicator extends SMAIndicator {
             dataGrouping: {
                 approximation: 'ichimoku-averages'
             }
-        } as Highcharts.IKHIndicatorOptions);
+        } as IKHOptions);
     /* *
     *
     *  Properties
     *
     * */
 
-    public data: Array<Highcharts.IKHIndicatorPoint> = void 0 as any;
-    public options: Highcharts.IKHIndicatorOptions = void 0 as any;
-    public points: Array<Highcharts.IKHIndicatorPoint> = void 0 as any;
+    public data: Array<IKHPoint> = void 0 as any;
+    public options: IKHOptions = void 0 as any;
+    public points: Array<IKHPoint> = void 0 as any;
     public pointValKey = 'tenkanSen';
     public nameComponents = ['periodSenkouSpanB', 'period', 'periodTenkan'];
 
@@ -482,7 +422,7 @@ class IKHIndicator extends SMAIndicator {
         );
     }
 
-    public toYData(point: Highcharts.IKHIndicatorPoint): Array<number> {
+    public toYData(point: IKHPoint): Array<number> {
         return [
             point.tenkanSen,
             point.kijunSen,
@@ -498,10 +438,10 @@ class IKHIndicator extends SMAIndicator {
         SMA.prototype.translate.apply(indicator);
 
         indicator.points.forEach(function (
-            point: Highcharts.IKHIndicatorPoint
+            point: IKHPoint
         ): void {
             indicator.pointArrayMap.forEach(function (
-                value: keyof Highcharts.IKHIndicatorPoint
+                value: keyof IKHPoint
             ): void {
                 if (defined(point[value])) {
                     (point as any)['plot' + value] = indicator.yAxis.toPixels(
@@ -524,19 +464,19 @@ class IKHIndicator extends SMAIndicator {
 
     public drawGraph(): void {
         var indicator = this,
-            mainLinePoints: Array<Highcharts.IKHIndicatorPoint> =
+            mainLinePoints: Array<IKHPoint> =
                 indicator.points,
             pointsLength: number = mainLinePoints.length,
-            mainLineOptions: Highcharts.IKHIndicatorOptions = indicator.options,
-            mainLinePath: SVGElement | undefined = indicator.graph,
+            mainLineOptions: IKHOptions = indicator.options,
+            mainLinePath: Highcharts.SVGElement | undefined = indicator.graph,
             mainColor = indicator.color,
-            gappedExtend: Highcharts.IKHIndicatorGapExtensionObject = {
+            gappedExtend: IKHGapExtensionObject = {
                 options: {
                     gapSize: mainLineOptions.gapSize
                 }
             },
             pointArrayMapLength: number = indicator.pointArrayMap.length,
-            allIchimokuPoints: Array<Array<Highcharts.IKHIndicatorPoint>> = [
+            allIchimokuPoints: Array<Array<IKHPoint>> = [
                 [],
                 [],
                 [],
@@ -545,7 +485,7 @@ class IKHIndicator extends SMAIndicator {
                 []
             ],
             ikhMap: Highcharts.Dictionary<
-            Array<Highcharts.IKHIndicatorPoint>
+            Array<IKHPoint>
             > = {
                 tenkanLine: allIchimokuPoints[0],
                 kijunLine: allIchimokuPoints[1],
@@ -555,7 +495,7 @@ class IKHIndicator extends SMAIndicator {
                 senkouSpan: allIchimokuPoints[5]
             },
             intersectIndexColl: Array<number> = [],
-            senkouSpanOptions: Highcharts.IKHIndicatorSenkouSpanOptions = indicator
+            senkouSpanOptions: IKHSenkouSpanOptions = indicator
                 .options.senkouSpan as any,
             color: ColorType =
                 senkouSpanOptions.color ||
@@ -563,24 +503,24 @@ class IKHIndicator extends SMAIndicator {
             negativeColor: ColorType | undefined =
                 senkouSpanOptions.negativeColor,
             // Points to create color and negativeColor senkouSpan
-            points: Array<Array<Highcharts.IKHIndicatorPoint>> = [
+            points: Array<Array<IKHPoint>> = [
                 [], // Points color
                 [] // Points negative color
             ],
             // For span, we need an access to the next points, used in
             // getGraphPath()
-            nextPoints: Array<Array<Highcharts.IKHIndicatorPoint>> = [
+            nextPoints: Array<Array<IKHPoint>> = [
                 [], // NextPoints color
                 [] // NextPoints negative color
             ],
             lineIndex = 0,
             position: string,
-            point: Highcharts.IKHIndicatorPoint,
+            point: IKHPoint,
             i: number,
             startIntersect: number,
             endIntersect: number,
-            sectionPoints: Array<Highcharts.IKHIndicatorPoint>,
-            sectionNextPoints: Array<Highcharts.IKHIndicatorPoint>,
+            sectionPoints: Array<IKHPoint>,
+            sectionNextPoints: Array<IKHPoint>,
             pointsPlotYSum: number,
             nextPointsPlotYSum: number,
             senkouSpanTempColor,
@@ -643,7 +583,7 @@ class IKHIndicator extends SMAIndicator {
         objectEach(
             ikhMap,
             function (
-                values: Array<Highcharts.IKHIndicatorPoint>,
+                values: Array<IKHPoint>,
                 lineName: string
             ): void {
                 if (
@@ -845,7 +785,7 @@ class IKHIndicator extends SMAIndicator {
 
     public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.IKHIndicatorParamsOptions
+        params: IKHParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {
         var period: number = params.period as any,
             periodTenkan: number = params.periodTenkan as any,
@@ -970,20 +910,20 @@ class IKHIndicator extends SMAIndicator {
 *
 * */
 interface IKHIndicator {
-    data: Array<Highcharts.IKHIndicatorPoint>;
+    data: Array<IKHPoint>;
     getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
-        params: Highcharts.IKHIndicatorParamsOptions
+        params: IKHParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined;
     graphCollection: Array<string>;
     graphsenkouSpan: SVGElement | undefined;
-    ikhMap: Highcharts.Dictionary<Array<Highcharts.IKHIndicatorPoint>>;
-    nextPoints?: Array<Highcharts.IKHIndicatorPoint>;
-    options: Highcharts.IKHIndicatorOptions;
+    ikhMap: Highcharts.Dictionary<Array<IKHPoint>>;
+    nextPoints?: Array<IKHPoint>;
+    options: IKHOptions;
     pointValKey: string;
-    pointClass: typeof Highcharts.IKHIndicatorPoint;
-    points: Array<Highcharts.IKHIndicatorPoint>;
-    pointArrayMap: Array<keyof Highcharts.IKHIndicatorPoint>;
+    pointClass: typeof IKHPoint;
+    points: Array<IKHPoint>;
+    pointArrayMap: Array<keyof IKHPoint>;
 }
 
 extend(IKHIndicator.prototype, {
@@ -995,7 +935,7 @@ extend(IKHIndicator.prototype, {
         'senkouSpanB'
     ]
 });
-declare module '../../Core/Series/SeriesType' {
+declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         ikh: typeof IKHIndicator;
     }
