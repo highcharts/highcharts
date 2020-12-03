@@ -185,10 +185,11 @@ var SVGLabel = /** @class */ (function (_super) {
     SVGLabel.prototype.getBBox = function () {
         var bBox = this.bBox;
         var padding = this.padding;
+        var paddingLeft = this.paddingLeft || padding;
         return {
-            width: bBox.width + 2 * padding,
-            height: bBox.height + 2 * padding,
-            x: bBox.x - padding,
+            width: this.width,
+            height: this.height,
+            x: bBox.x - paddingLeft,
             y: bBox.y - padding
         };
     };
@@ -289,16 +290,15 @@ var SVGLabel = /** @class */ (function (_super) {
     SVGLabel.prototype.updateBoxSize = function () {
         var style = this.text.element.style, crispAdjust, attribs = {};
         var padding = this.padding;
+        var paddingLeft = this.paddingLeft || padding;
+        var paddingRight = this.paddingRight || padding;
         // #12165 error when width is null (auto)
         // #12163 when fontweight: bold, recalculate bBox withot cache
         // #3295 && 3514 box failure when string equals 0
         var bBox = ((!isNumber(this.widthSetting) || !isNumber(this.heightSetting) || this.textAlign) &&
             defined(this.text.textStr)) ?
             this.text.getBBox() : SVGLabel.emptyBBox;
-        this.width = ((this.widthSetting || bBox.width || 0) +
-            2 * padding +
-            this.paddingLeft +
-            this.paddingRight);
+        this.width = (this.widthSetting || bBox.width || 0) + paddingLeft + paddingRight;
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)
@@ -337,7 +337,7 @@ var SVGLabel = /** @class */ (function (_super) {
         var text = this.text;
         // Determine y based on the baseline
         var textY = this.baseline ? 0 : this.baselineOffset;
-        var textX = this.paddingLeft + this.padding;
+        var textX = this.paddingLeft || this.padding;
         // compensate for alignment
         if (defined(this.widthSetting) &&
             this.bBox &&
@@ -352,12 +352,12 @@ var SVGLabel = /** @class */ (function (_super) {
             // (useHTML: true)
             if (text.hasBoxWidthChanged) {
                 this.bBox = text.getBBox(true);
-                this.updateBoxSize();
             }
             if (typeof textY !== 'undefined') {
                 text.attr('y', textY);
             }
         }
+        this.updateBoxSize();
         // record current values
         text.x = textX;
         text.y = textY;
@@ -369,8 +369,7 @@ var SVGLabel = /** @class */ (function (_super) {
     SVGLabel.prototype.xSetter = function (value) {
         this.x = value; // for animation getter
         if (this.alignFactor) {
-            value -= this.alignFactor * ((this.widthSetting || this.bBox.width) +
-                2 * this.padding);
+            value -= this.alignFactor * this.width;
             // Force animation even when setting to the same value (#7898)
             this['forceAnimate:x'] = true;
         }

@@ -252,10 +252,11 @@ class SVGLabel extends SVGElement {
     public getBBox(): BBoxObject {
         const bBox = this.bBox;
         const padding = this.padding;
+        const paddingLeft = this.paddingLeft || padding;
         return {
-            width: bBox.width + 2 * padding,
-            height: bBox.height + 2 * padding,
-            x: bBox.x - padding,
+            width: this.width,
+            height: this.height,
+            x: bBox.x - paddingLeft,
             y: bBox.y - padding
         };
     }
@@ -405,6 +406,8 @@ class SVGLabel extends SVGElement {
             attribs: SVGAttributes = {};
 
         const padding = this.padding;
+        const paddingLeft = this.paddingLeft || padding;
+        const paddingRight = this.paddingRight || padding;
 
         // #12165 error when width is null (auto)
         // #12163 when fontweight: bold, recalculate bBox withot cache
@@ -415,12 +418,7 @@ class SVGLabel extends SVGElement {
         ) ?
             this.text.getBBox() : SVGLabel.emptyBBox;
 
-        this.width = (
-            (this.widthSetting || bBox.width || 0) +
-            2 * padding +
-            this.paddingLeft +
-            this.paddingRight
-        );
+        this.width = (this.widthSetting || bBox.width || 0) + paddingLeft + paddingRight;
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
         // Update the label-scoped y offset. Math.min because of inline
@@ -477,7 +475,7 @@ class SVGLabel extends SVGElement {
         // Determine y based on the baseline
         const textY = this.baseline ? 0 : this.baselineOffset;
 
-        let textX = this.paddingLeft + this.padding;
+        let textX = this.paddingLeft || this.padding;
 
         // compensate for alignment
         if (
@@ -496,12 +494,13 @@ class SVGLabel extends SVGElement {
             // (useHTML: true)
             if (text.hasBoxWidthChanged) {
                 this.bBox = text.getBBox(true);
-                this.updateBoxSize();
             }
             if (typeof textY !== 'undefined') {
                 text.attr('y', textY);
             }
         }
+
+        this.updateBoxSize();
 
         // record current values
         text.x = textX;
@@ -516,8 +515,7 @@ class SVGLabel extends SVGElement {
     public xSetter(value: number): void {
         this.x = value; // for animation getter
         if (this.alignFactor) {
-            value -= this.alignFactor * ((this.widthSetting || this.bBox.width) +
-                2 * this.padding);
+            value -= this.alignFactor * this.width;
 
             // Force animation even when setting to the same value (#7898)
             this['forceAnimate:x'] = true;

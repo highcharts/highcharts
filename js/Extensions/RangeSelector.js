@@ -1591,8 +1591,8 @@ var RangeSelector = /** @class */ (function () {
         var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, dropdown = _a.dropdown, zoomText = _a.zoomText;
         var getAttribs = function (text) { return ({
             text: text + " \u25BE",
-            paddingLeft: 5,
-            paddingRight: 5,
+            paddingLeft: 8,
+            paddingRight: 8,
             width: 'auto'
         }); };
         if (zoomText) {

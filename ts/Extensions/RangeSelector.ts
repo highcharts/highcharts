@@ -2272,8 +2272,8 @@ class RangeSelector {
 
         const getAttribs = (text: string): SVGAttributes => ({
             text: `${text} ▾`,
-            paddingLeft: 5,
-            paddingRight: 5,
+            paddingLeft: 8,
+            paddingRight: 8,
             width: 'auto'
         });
 
