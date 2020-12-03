@@ -55,7 +55,7 @@ const {
  *
  * */
 
-class TreemapPoint extends ScatterPoint {
+class TreemapPoint extends ScatterPoint implements Highcharts.DrawPoint {
 
     /* *
      *
