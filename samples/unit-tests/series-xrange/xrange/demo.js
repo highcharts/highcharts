@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 QUnit.test('X-Range', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
