@@ -146,6 +146,7 @@ class SunburstPoint extends TreemapPoint {
 }
 
 extend(SunburstPoint.prototype, {
+    haloPath: LinePoint.prototype.haloPath,
     setState: LinePoint.prototype.setState
 });
 

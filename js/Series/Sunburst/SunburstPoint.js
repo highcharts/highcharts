@@ -106,6 +106,7 @@ var SunburstPoint = /** @class */ (function (_super) {
     return SunburstPoint;
 }(TreemapPoint));
 extend(SunburstPoint.prototype, {
+    haloPath: LinePoint.prototype.haloPath,
     setState: LinePoint.prototype.setState
 });
 /* *
