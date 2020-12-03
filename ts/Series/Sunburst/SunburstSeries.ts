@@ -1128,7 +1128,8 @@ interface SunburstSeries {
     utils: typeof SunburstUtilities;
 }
 extend(SunburstSeries.prototype, {
-    drawDataLabels: noop as any, // drawDataLabels is called in drawPoints
+    drawDataLabels: noop, // drawDataLabels is called in drawPoints
+    pointAttribs: ColumnSeries.prototype.pointAttribs,
     pointClass: SunburstPoint,
     utils: SunburstUtilities
 });

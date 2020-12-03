@@ -845,6 +845,7 @@ var SunburstSeries = /** @class */ (function (_super) {
 }(TreemapSeries));
 extend(SunburstSeries.prototype, {
     drawDataLabels: noop,
+    pointAttribs: ColumnSeries.prototype.pointAttribs,
     pointClass: SunburstPoint,
     utils: SunburstUtilities
 });
