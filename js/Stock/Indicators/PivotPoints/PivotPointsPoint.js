@@ -25,9 +25,6 @@ var __extends = (this && this.__extends) || (function () {
  * */
 import BaseSeries from '../../../Core/Series/Series.js';
 var SMAIndicator = BaseSeries.seriesTypes.sma;
-import PivotPointsIndicator from './PivotPointsIndicator';
-import U from '../../../Core/Utilities.js';
-var extend = U.extend;
 /* eslint-disable valid-jsdoc */
 /**
  * @private
@@ -64,9 +61,6 @@ var PivotPointsPoint = /** @class */ (function (_super) {
     };
     return PivotPointsPoint;
 }(SMAIndicator.prototype.pointClass));
-extend(PivotPointsIndicator.prototype, {
-    pointClass: PivotPointsPoint
-});
 /* *
  *
  *  Default Export
