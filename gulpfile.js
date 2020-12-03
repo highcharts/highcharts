@@ -64,6 +64,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-ts',
     'scripts-vendor',
     'scripts-watch',
+    'samples-build',
     'test',
     'test-tree',
     'reset-visual-references',
