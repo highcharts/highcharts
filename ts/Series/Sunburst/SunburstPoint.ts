@@ -38,8 +38,6 @@ const {
         }
     }
 } = BaseSeries;
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import U from '../../Core/Utilities.js';
 const { correctFloat, extend } = U;
 
@@ -146,6 +144,7 @@ class SunburstPoint extends TreemapPoint {
 }
 
 extend(SunburstPoint.prototype, {
+    getClassName: LinePoint.prototype.getClassName,
     haloPath: LinePoint.prototype.haloPath,
     setState: LinePoint.prototype.setState
 });
