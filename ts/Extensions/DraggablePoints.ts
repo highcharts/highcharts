@@ -29,6 +29,7 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
+import type WaterfallPoint from '../Series/Waterfall/WaterfallPoint';
 import type XRangePoint from '../Series/XRange/XRangePoint';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -1059,7 +1060,7 @@ if (seriesTypes.waterfall) {
         x: columnDragDropProps.x,
         y: merge(columnDragDropProps.y, {
             handleFormatter: function (
-                point: Highcharts.WaterfallPoint
+                point: WaterfallPoint
             ): (SVGPath|null) {
                 return point.isSum || point.isIntermediateSum ? null :
                     columnDragDropProps.y.handleFormatter(point);

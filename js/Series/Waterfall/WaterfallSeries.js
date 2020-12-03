@@ -8,17 +8,29 @@
  *
  * */
 'use strict';
-import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
-import Chart from '../Core/Chart/Chart.js';
-import LineSeries from './Line/LineSeries.js';
-import palette from '../Core/Color/Palette.js';
-import Point from '../Core/Series/Point.js';
-import StackItem from '../Extensions/Stacking.js';
-import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
-import '../Core/Options.js';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import BaseSeries from '../../Core/Series/Series.js';
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
+import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+import palette from '../../Core/Color/Palette.js';
+import U from '../../Core/Utilities.js';
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
+import WaterfallPoint from './WaterfallPoint.js';
+import '../../Core/Options.js';
 /**
  * Returns true if the key is a direct property of the object.
  * @private
@@ -29,232 +41,39 @@ import '../Core/Options.js';
 function ownProp(obj, key) {
     return Object.hasOwnProperty.call(obj, key);
 }
-/**
- * @private
- */
-var WaterfallAxis;
-(function (WaterfallAxis) {
-    /* *
-     *
-     *  Interfaces
-     *
-     * */
-    /* *
-     *
-     *  Classes
-     *
-     * */
-    /**
-     * @private
-     */
-    var Composition = /** @class */ (function () {
-        /* *
-         *
-         *  Constructors
-         *
-         * */
-        /**
-         * @private
-         */
-        function Composition(axis) {
-            this.axis = axis;
-            this.stacks = {
-                changed: false
-            };
-        }
-        /* *
-         *
-         *  Functions
-         *
-         * */
-        /**
-         * Calls StackItem.prototype.render function that creates and renders
-         * stack total label for each waterfall stack item.
-         *
-         * @private
-         * @function Highcharts.Axis#renderWaterfallStackTotals
-         */
-        Composition.prototype.renderStackTotals = function () {
-            var yAxis = this.axis, waterfallStacks = yAxis.waterfall.stacks, stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, void 0);
-            this.dummyStackItem = dummyStackItem;
-            // Render each waterfall stack total
-            objectEach(waterfallStacks, function (type) {
-                objectEach(type, function (stackItem) {
-                    dummyStackItem.total = stackItem.stackTotal;
-                    if (stackItem.label) {
-                        dummyStackItem.label = stackItem.label;
-                    }
-                    StackItem.prototype.render.call(dummyStackItem, stackTotalGroup);
-                    stackItem.label = dummyStackItem.label;
-                    delete dummyStackItem.label;
-                });
-            });
-            dummyStackItem.total = null;
-        };
-        return Composition;
-    }());
-    WaterfallAxis.Composition = Composition;
-    /* *
-     *
-     *  Functions
-     *
-     * */
-    /**
-     * @private
-     */
-    function compose(AxisClass, ChartClass) {
-        addEvent(AxisClass, 'init', onInit);
-        addEvent(AxisClass, 'afterBuildStacks', onAfterBuildStacks);
-        addEvent(AxisClass, 'afterRender', onAfterRender);
-        addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
-    }
-    WaterfallAxis.compose = compose;
-    /**
-     * @private
-     */
-    function onAfterBuildStacks() {
-        var axis = this;
-        var stacks = axis.waterfall.stacks;
-        if (stacks) {
-            stacks.changed = false;
-            delete stacks.alreadyChanged;
-        }
-    }
-    /**
-     * @private
-     */
-    function onAfterRender() {
-        var axis = this;
-        var stackLabelOptions = axis.options.stackLabels;
-        if (stackLabelOptions && stackLabelOptions.enabled &&
-            axis.waterfall.stacks) {
-            axis.waterfall.renderStackTotals();
-        }
-    }
-    /**
-     * @private
-     */
-    function onBeforeRedraw() {
-        var axes = this.axes, series = this.series, i = series.length;
-        while (i--) {
-            if (series[i].options.stacking) {
-                axes.forEach(function (axis) {
-                    if (!axis.isXAxis) {
-                        axis.waterfall.stacks.changed = true;
-                    }
-                });
-                i = 0;
-            }
-        }
-    }
-    /**
-     * @private
-     */
-    function onInit() {
-        var axis = this;
-        if (!axis.waterfall) {
-            axis.waterfall = new Composition(axis);
-        }
-    }
-})(WaterfallAxis || (WaterfallAxis = {}));
+/* eslint-disable no-invalid-this, valid-jsdoc */
 // eslint-disable-next-line valid-jsdoc
-/**
- * A waterfall chart displays sequentially introduced positive or negative
- * values in cumulative columns.
- *
- * @sample highcharts/demo/waterfall/
- *         Waterfall chart
- * @sample highcharts/plotoptions/waterfall-inverted/
- *         Horizontal (inverted) waterfall
- * @sample highcharts/plotoptions/waterfall-stacked/
- *         Stacked waterfall chart
- *
- * @extends      plotOptions.column
- * @excluding    boostThreshold, boostBlending
- * @product      highcharts
- * @requires     highcharts-more
- * @optionparent plotOptions.waterfall
- */
-BaseSeries.seriesType('waterfall', 'column', {
-    /**
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @apioption plotOptions.waterfall.color
-     */
-    /**
-     * The color used specifically for positive point columns. When not
-     * specified, the general series color is used.
-     *
-     * In styled mode, the waterfall colors can be set with the
-     * `.highcharts-point-negative`, `.highcharts-sum` and
-     * `.highcharts-intermediate-sum` classes.
-     *
-     * @sample {highcharts} highcharts/demo/waterfall/
-     *         Waterfall
-     *
-     * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @product   highcharts
-     * @apioption plotOptions.waterfall.upColor
-     */
-    dataLabels: {
-        inside: true
-    },
-    /**
-     * The width of the line connecting waterfall columns.
-     *
-     * @product highcharts
-     */
-    lineWidth: 1,
-    /**
-     * The color of the line that connects columns in a waterfall series.
-     *
-     * In styled mode, the stroke can be set with the `.highcharts-graph` class.
-     *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since   3.0
-     * @product highcharts
-     */
-    lineColor: palette.neutralColor80,
-    /**
-     * A name for the dash style to use for the line connecting the columns
-     * of the waterfall series. Possible values: Dash, DashDot, Dot, LongDash,
-     * LongDashDot, LongDashDotDot, ShortDash, ShortDashDot, ShortDashDotDot,
-     * ShortDot, Solid
-     *
-     * In styled mode, the stroke dash-array can be set with the
-     * `.highcharts-graph` class.
-     *
-     * @type    {Highcharts.DashStyleValue}
-     * @since   3.0
-     * @product highcharts
-     */
-    dashStyle: 'Dot',
-    /**
-     * The color of the border of each waterfall column.
-     *
-     * In styled mode, the border stroke can be set with the
-     * `.highcharts-point` class.
-     *
-     * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since   3.0
-     * @product highcharts
-     */
-    borderColor: palette.neutralColor80,
-    states: {
-        hover: {
-            lineWidthPlus: 0 // #3126
-        }
+var WaterfallSeries = /** @class */ (function (_super) {
+    __extends(WaterfallSeries, _super);
+    function WaterfallSeries() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         * Properties
+         *
+         * */
+        _this.chart = void 0;
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        _this.stackedYNeg = void 0;
+        _this.stackedYPos = void 0;
+        _this.stackKey = void 0;
+        _this.xData = void 0;
+        _this.yAxis = void 0;
+        _this.yData = void 0;
+        return _this;
     }
-    // Prototype members
-}, {
-    pointValKey: 'y',
-    // Property needed to prevent lines between the columns from disappearing
-    // when negativeColor is used.
-    showLine: true,
+    /* *
+     *
+     * Functions
+     *
+     * */
     // After generating points, set y-values for all sums.
-    generatePoints: function () {
+    WaterfallSeries.prototype.generatePoints = function () {
         var point, len, i, y;
         // Parent call:
-        seriesTypes.column.prototype.generatePoints.apply(this);
+        ColumnSeries.prototype.generatePoints.apply(this);
         for (i = 0, len = this.points.length; i < len; i++) {
             point = this.points[i];
             y = this.processedYData[i];
@@ -264,12 +83,12 @@ BaseSeries.seriesType('waterfall', 'column', {
                 point.y = correctFloat(y);
             }
         }
-    },
+    };
     // Translate data points from raw values
-    translate: function () {
+    WaterfallSeries.prototype.translate = function () {
         var series = this, options = series.options, yAxis = series.yAxis, len, i, points, point, shapeArgs, y, yValue, previousY, previousIntermediate, range, minPointLength = pick(options.minPointLength, 5), halfMinPointLength = minPointLength / 2, threshold = options.threshold, stacking = options.stacking, tooltipY, actualStack = yAxis.waterfall.stacks[series.stackKey], actualStackX, dummyStackItem, total, pointY, yPos, hPos;
         // run column series translate
-        seriesTypes.column.prototype.translate.apply(series);
+        ColumnSeries.prototype.translate.apply(series);
         previousY = previousIntermediate = threshold;
         points = series.points;
         for (i = 0, len = points.length; i < len; i++) {
@@ -429,10 +248,10 @@ BaseSeries.seriesType('waterfall', 'column', {
                 point.tooltipPos[1] = tooltipY;
             }
         }
-    },
+    };
     // Call default processData then override yData to reflect waterfall's
     // extremes on yAxis
-    processData: function (force) {
+    WaterfallSeries.prototype.processData = function (force) {
         var series = this, options = series.options, yData = series.yData, 
         // #3710 Update point does not propagate to sum
         points = options.data, point, dataLength = yData.length, threshold = options.threshold || 0, subSum, sum, dataMin, dataMax, y, i;
@@ -462,9 +281,9 @@ BaseSeries.seriesType('waterfall', 'column', {
             series.dataMax = dataMax;
         }
         return;
-    },
+    };
     // Return y value or string if point is sum
-    toYData: function (pt) {
+    WaterfallSeries.prototype.toYData = function (pt) {
         if (pt.isSum) {
             return 'sum';
         }
@@ -472,34 +291,34 @@ BaseSeries.seriesType('waterfall', 'column', {
             return 'intermediateSum';
         }
         return pt.y;
-    },
-    updateParallelArrays: function (point, i) {
+    };
+    WaterfallSeries.prototype.updateParallelArrays = function (point, i) {
         LineSeries.prototype.updateParallelArrays.call(this, point, i);
         // Prevent initial sums from triggering an error (#3245, #7559)
         if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
             this.yData[0] = null;
         }
-    },
+    };
     // Postprocess mapping between options and SVG attributes
-    pointAttribs: function (point, state) {
+    WaterfallSeries.prototype.pointAttribs = function (point, state) {
         var upColor = this.options.upColor, attr;
         // Set or reset up color (#3710, update to negative)
         if (upColor && !point.options.color) {
             point.color = point.y > 0 ? upColor : null;
         }
-        attr = seriesTypes.column.prototype.pointAttribs.call(this, point, state);
+        attr = ColumnSeries.prototype.pointAttribs.call(this, point, state);
         // The dashStyle option in waterfall applies to the graph, not
         // the points
         delete attr.dashstyle;
         return attr;
-    },
+    };
     // Return an empty path initially, because we need to know the stroke-width
     // in order to set the final path.
-    getGraphPath: function () {
+    WaterfallSeries.prototype.getGraphPath = function () {
         return [['M', 0, 0]];
-    },
+    };
     // Draw columns' connector lines
-    getCrispPath: function () {
+    WaterfallSeries.prototype.getCrispPath = function () {
         var data = this.data, yAxis = this.yAxis, length = data.length, graphNormalizer = Math.round(this.graph.strokeWidth()) % 2 / 2, borderNormalizer = Math.round(this.borderWidth) % 2 / 2, reversedXAxis = this.xAxis.reversed, reversedYAxis = this.yAxis.reversed, stacking = this.options.stacking, path = [], connectorThreshold, prevStack, prevStackX, prevPoint, yPos, isPos, prevArgs, pointArgs, i;
         for (i = 1; i < length; i++) {
             pointArgs = data[i].shapeArgs;
@@ -546,17 +365,17 @@ BaseSeries.seriesType('waterfall', 'column', {
             }
         }
         return path;
-    },
+    };
     // The graph is initially drawn with an empty definition, then updated with
     // crisp rendering.
-    drawGraph: function () {
+    WaterfallSeries.prototype.drawGraph = function () {
         LineSeries.prototype.drawGraph.call(this);
         this.graph.attr({
             d: this.getCrispPath()
         });
-    },
+    };
     // Waterfall has stacking along the x-values too.
-    setStackedPoints: function () {
+    WaterfallSeries.prototype.setStackedPoints = function () {
         var series = this, options = series.options, waterfallStacks = series.yAxis.waterfall.stacks, seriesThreshold = options.threshold, stackThreshold = seriesThreshold || 0, interSum = stackThreshold, stackKey = series.stackKey, xData = series.xData, xLength = xData.length, actualStack, actualStackX, totalYVal, actualSum, prevSum, statesLen, posTotal, negTotal, xPoint, yVal, x, alreadyChanged, changed;
         // function responsible for calculating correct values for stackState
         // array of each stack item. The arguments are: firstS - the value for
@@ -657,10 +476,10 @@ BaseSeries.seriesType('waterfall', 'column', {
             }
             waterfallStacks.alreadyChanged.push(stackKey);
         }
-    },
+    };
     // Extremes for a non-stacked series are recorded in processData.
     // In case of stacking, use Series.stackedYData to calculate extremes.
-    getExtremes: function () {
+    WaterfallSeries.prototype.getExtremes = function () {
         var stacking = this.options.stacking, yAxis, waterfallStacks, stackedYNeg, stackedYPos;
         if (stacking) {
             yAxis = this.yAxis;
@@ -692,26 +511,122 @@ BaseSeries.seriesType('waterfall', 'column', {
             dataMin: this.dataMin,
             dataMax: this.dataMax
         };
-    }
-    // Point members
-}, {
-    getClassName: function () {
-        var className = Point.prototype.getClassName.call(this);
-        if (this.isSum) {
-            className += ' highcharts-sum';
+    };
+    /* *
+     *
+     * Static properties
+     *
+     * */
+    /**
+     * A waterfall chart displays sequentially introduced positive or negative
+     * values in cumulative columns.
+     *
+     * @sample highcharts/demo/waterfall/
+     *         Waterfall chart
+     * @sample highcharts/plotoptions/waterfall-inverted/
+     *         Horizontal (inverted) waterfall
+     * @sample highcharts/plotoptions/waterfall-stacked/
+     *         Stacked waterfall chart
+     *
+     * @extends      plotOptions.column
+     * @excluding    boostThreshold, boostBlending
+     * @product      highcharts
+     * @requires     highcharts-more
+     * @optionparent plotOptions.waterfall
+     */
+    WaterfallSeries.defaultOptions = merge(ColumnSeries.defaultOptions, {
+        /**
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @apioption plotOptions.waterfall.color
+         */
+        /**
+         * The color used specifically for positive point columns. When not
+         * specified, the general series color is used.
+         *
+         * In styled mode, the waterfall colors can be set with the
+         * `.highcharts-point-negative`, `.highcharts-sum` and
+         * `.highcharts-intermediate-sum` classes.
+         *
+         * @sample {highcharts} highcharts/demo/waterfall/
+         *         Waterfall
+         *
+         * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @product   highcharts
+         * @apioption plotOptions.waterfall.upColor
+         */
+        dataLabels: {
+            inside: true
+        },
+        /**
+         * The width of the line connecting waterfall columns.
+         *
+         * @product highcharts
+         */
+        lineWidth: 1,
+        /**
+         * The color of the line that connects columns in a waterfall series.
+         *
+         * In styled mode, the stroke can be set with the `.highcharts-graph`
+         * class.
+         *
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since   3.0
+         * @product highcharts
+         */
+        lineColor: palette.neutralColor80,
+        /**
+         * A name for the dash style to use for the line connecting the columns
+         * of the waterfall series. Possible values: Dash, DashDot, Dot,
+         * LongDash, LongDashDot, LongDashDotDot, ShortDash, ShortDashDot,
+         * ShortDashDotDot, ShortDot, Solid
+         *
+         * In styled mode, the stroke dash-array can be set with the
+         * `.highcharts-graph` class.
+         *
+         * @type    {Highcharts.DashStyleValue}
+         * @since   3.0
+         * @product highcharts
+         */
+        dashStyle: 'Dot',
+        /**
+         * The color of the border of each waterfall column.
+         *
+         * In styled mode, the border stroke can be set with the
+         * `.highcharts-point` class.
+         *
+         * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         * @since   3.0
+         * @product highcharts
+         */
+        borderColor: palette.neutralColor80,
+        states: {
+            hover: {
+                lineWidthPlus: 0 // #3126
+            }
         }
-        else if (this.isIntermediateSum) {
-            className += ' highcharts-intermediate-sum';
-        }
-        return className;
-    },
-    // Pass the null test in ColumnSeries.translate.
-    isValid: function () {
-        return (isNumber(this.y) ||
-            this.isSum ||
-            Boolean(this.isIntermediateSum));
-    }
+    });
+    return WaterfallSeries;
+}(ColumnSeries));
+extend(WaterfallSeries.prototype, {
+    pointValKey: 'y',
+    // Property needed to prevent lines between the columns from disappearing
+    // when negativeColor is used.
+    showLine: true,
+    pointClass: WaterfallPoint
 });
+BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
+WaterfallAxis.compose(H.Axis, Chart);
+/* *
+ *
+ * Export
+ *
+ * */
+export default WaterfallSeries;
+/**
+ *
+ * API Options
+ *
+ */
 /**
  * A `waterfall` series. If the [type](#series.waterfall.type) option
  * is not specified, it is inherited from [chart.type](#chart.type).
@@ -808,5 +723,3 @@ BaseSeries.seriesType('waterfall', 'column', {
  * @apioption series.waterfall.data.isSum
  */
 ''; // adds doclets above to transpiled file
-WaterfallAxis.compose(Axis, Chart);
-export default WaterfallAxis;
