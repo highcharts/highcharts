@@ -214,6 +214,15 @@ extend(defaultOptions, {
          * The space in pixels between the buttons in the range selector.
          */
         buttonSpacing: 5,
+        /**
+         * Whether to collapse the range selector buttons into a dropdown when
+         * there is not enough room to show everything in a single row, instead
+         * of dividing the range selector into multiple rows.
+         * Can be one of the following:
+         *  - `always`: Always collapse
+         *  - `responsive`: Only collapse when there is not enough room
+         *  - `never`: Never collapse
+         */
         dropdown: 'responsive',
         /**
          * Enable or disable the range selector. Default to `true` for stock
@@ -1503,6 +1512,11 @@ var RangeSelector = /** @class */ (function () {
             }
         }
     };
+    /**
+     * @private
+     * @function Highcharts.RangeSelector#positionButtons
+     * @return {void}
+     */
     RangeSelector.prototype.positionButtons = function () {
         var _a = this, buttons = _a.buttons, chart = _a.chart, options = _a.options, zoomText = _a.zoomText;
         var verb = chart.hasLoaded ? 'animate' : 'attr';
@@ -1587,6 +1601,13 @@ var RangeSelector = /** @class */ (function () {
             }
         }
     };
+    /**
+     * Collapse the buttons and put the select element on top.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#collapseButtons
+     * @return {void}
+     */
     RangeSelector.prototype.collapseButtons = function () {
         var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, dropdown = _a.dropdown, zoomText = _a.zoomText;
         var getAttribs = function (text) { return ({
@@ -1620,6 +1641,11 @@ var RangeSelector = /** @class */ (function () {
         this.positionButtons();
         this.showDropdown();
     };
+    /**
+     * @private
+     * @function Highcharts.RangeSelector#showButtons
+     * @return {void}
+     */
     RangeSelector.prototype.showButtons = function () {
         var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, options = _a.options, zoomText = _a.zoomText;
         this.hideDropdown();
@@ -1637,6 +1663,13 @@ var RangeSelector = /** @class */ (function () {
         });
         this.positionButtons();
     };
+    /**
+     * Get the index of the visible button when the buttons are collapsed.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#currentButtonIndex
+     * @return {number}
+     */
     RangeSelector.prototype.currentButtonIndex = function () {
         var dropdown = this.dropdown;
         if (dropdown && dropdown.selectedIndex > -1) {
@@ -1644,6 +1677,13 @@ var RangeSelector = /** @class */ (function () {
         }
         return 0;
     };
+    /**
+     * Position the select element on top of the button.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#showDropdown
+     * @return {void}
+     */
     RangeSelector.prototype.showDropdown = function () {
         var _a = this, buttonGroup = _a.buttonGroup, chart = _a.chart, dropdown = _a.dropdown, options = _a.options;
         if (buttonGroup && dropdown) {
@@ -1656,6 +1696,11 @@ var RangeSelector = /** @class */ (function () {
             });
         }
     };
+    /**
+     * @private
+     * @function Highcharts.RangeSelector#hideDropdown
+     * @return {void}
+     */
     RangeSelector.prototype.hideDropdown = function () {
         var dropdown = this.dropdown;
         if (dropdown) {

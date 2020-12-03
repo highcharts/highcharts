@@ -396,6 +396,15 @@ extend(defaultOptions, {
          */
         buttonSpacing: 5,
 
+        /**
+         * Whether to collapse the range selector buttons into a dropdown when
+         * there is not enough room to show everything in a single row, instead
+         * of dividing the range selector into multiple rows.
+         * Can be one of the following:
+         *  - `always`: Always collapse
+         *  - `responsive`: Only collapse when there is not enough room
+         *  - `never`: Never collapse
+         */
         dropdown: 'responsive',
 
         /**
@@ -2139,6 +2148,11 @@ class RangeSelector {
         }
     }
 
+    /**
+     * @private
+     * @function Highcharts.RangeSelector#positionButtons
+     * @return {void}
+     */
     public positionButtons(): void {
         const {
             buttons,
@@ -2262,6 +2276,13 @@ class RangeSelector {
         }
     }
 
+    /**
+     * Collapse the buttons and put the select element on top.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#collapseButtons
+     * @return {void}
+     */
     public collapseButtons(): void {
         const {
             buttons,
@@ -2311,6 +2332,11 @@ class RangeSelector {
         this.showDropdown();
     }
 
+    /**
+     * @private
+     * @function Highcharts.RangeSelector#showButtons
+     * @return {void}
+     */
     public showButtons(): void {
         const {
             buttons,
@@ -2341,6 +2367,13 @@ class RangeSelector {
         this.positionButtons();
     }
 
+    /**
+     * Get the index of the visible button when the buttons are collapsed.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#currentButtonIndex
+     * @return {number}
+     */
     public currentButtonIndex(): number {
         const { dropdown } = this;
 
@@ -2350,6 +2383,13 @@ class RangeSelector {
         return 0;
     }
 
+    /**
+     * Position the select element on top of the button.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#showDropdown
+     * @return {void}
+     */
     public showDropdown(): void {
         const {
             buttonGroup,
@@ -2369,6 +2409,11 @@ class RangeSelector {
         }
     }
 
+    /**
+     * @private
+     * @function Highcharts.RangeSelector#hideDropdown
+     * @return {void}
+     */
     public hideDropdown(): void {
         const { dropdown } = this;
 
