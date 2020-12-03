@@ -1895,7 +1895,8 @@ var LineSeries = /** @class */ (function () {
         // Handle hover and select states
         state = state || 'normal';
         if (state) {
-            seriesStateOptions = seriesMarkerOptions.states[state];
+            seriesStateOptions = seriesMarkerOptions.states[state] ||
+                {}; // (#13868) Prevent error when state is inactive
             pointStateOptions = (pointMarkerOptions.states &&
                 pointMarkerOptions.states[state]) || {};
             strokeWidth = pick(pointStateOptions.lineWidth, seriesStateOptions.lineWidth, strokeWidth + pick(pointStateOptions.lineWidthPlus, seriesStateOptions.lineWidthPlus, 0));

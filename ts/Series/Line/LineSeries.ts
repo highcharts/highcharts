@@ -5279,7 +5279,9 @@ class LineSeries {
         // Handle hover and select states
         state = state || 'normal';
         if (state) {
-            seriesStateOptions = (seriesMarkerOptions as any).states[state];
+            seriesStateOptions = (seriesMarkerOptions as any).states[state] ||
+                {}; // (#13868) Prevent error when state is inactive
+
             pointStateOptions = (
                 pointMarkerOptions.states &&
                 (pointMarkerOptions.states as any)[state]
