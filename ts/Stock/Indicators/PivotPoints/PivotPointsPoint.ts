@@ -19,10 +19,6 @@ const {
     }
 } = BaseSeries;
 import PivotPointsIndicator from './PivotPointsIndicator';
-import U from '../../../Core/Utilities.js';
-const {
-    extend
-} = U;
 
 /* eslint-disable valid-jsdoc */
 
@@ -32,7 +28,7 @@ const {
 function destroyExtraLabels(
     point: PivotPointsPoint,
     functionName: string
-): void{
+): void {
     var props: Array<string> = point.series.pointArrayMap,
         prop: string,
         i: number = props.length;
@@ -60,19 +56,16 @@ function destroyExtraLabels(
 class PivotPointsPoint extends SMAIndicator.prototype.pointClass {
     destroyElements(
         this: PivotPointsPoint
-    ): void{
+    ): void {
         destroyExtraLabels(this, 'destroyElements');
     }
     // This method is called when removing points, e.g. series.update()
     destroy(
         this: PivotPointsPoint
-    ): void{
+    ): void {
         destroyExtraLabels(this, 'destroyElements');
     }
 }
-extend(PivotPointsIndicator.prototype, {
-    pointClass: PivotPointsPoint
-});
 interface PivotPointsPoint {
     P: number;
     pivotLine: string;

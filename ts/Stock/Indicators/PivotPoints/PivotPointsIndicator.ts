@@ -21,7 +21,7 @@ import type {
     PivotPointsOptions,
     PivotPointsParamsOptions
 } from './PivotPointsOptions';
-import PivotPointsPoint from './PivotPointsPoint';
+import PivotPointsPoint from './PivotPointsPoint.js';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import U from '../../../Core/Utilities.js';
@@ -88,45 +88,30 @@ class PivotPointsIndicator extends SMAIndicator {
             approximation: 'averages'
         }
     } as PivotPointsOptions);
-}
-interface PivotPointsIndicator{
-    camarillaPlacement(
-        values: Array<number>
-    ): Array<number>;
-    data: Array<PivotPointsPoint>;
-    endPoint: number;
-    fibonacciPlacement(
-        values: Array<number>
-    ): Array<(number|null)>;
-    getPivotAndHLC(
-        values: Array<Array<number>>
-    ): [number, number, number, number];
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: PivotPointsParamsOptions
-    ): (IndicatorValuesObject<TLinkedSeries>|undefined);
-    nameBase: string;
-    options: PivotPointsOptions;
-    plotEndPoint: number;
-    pointArrayMap: Array<string>;
-    pointClass: typeof PivotPointsPoint;
-    points: Array<PivotPointsPoint>;
-    pointValKey: string;
-    standardPlacement(
-        values: Array<number>
-    ): Array<(number|null)>;
-    toYData(point: Point): Array<number>;
-    translate(): void;
-} extend(PivotPointsIndicator.prototype, {
-    nameBase: 'Pivot Points',
-    pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
-    pointValKey: 'P',
-    toYData: function (
+
+    /**
+     *
+     * Properties
+     *
+     */
+
+    public data: Array<PivotPointsPoint> = void 0 as any;
+    public options: PivotPointsOptions = void 0 as any;
+    public points: Array<PivotPointsPoint> = void 0 as any;
+
+    /**
+     *
+     * Functions
+     *
+     */
+
+    public toYData(
         point: PivotPointsPoint
     ): Array<number> {
         return [point.P]; // The rest should not affect extremes
-    },
-    translate: function (this: PivotPointsIndicator): void {
+    }
+
+    public translate(this: PivotPointsIndicator): void {
         var indicator = this;
 
         BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
@@ -157,11 +142,9 @@ interface PivotPointsIndicator{
             indicator.endPoint,
             true
         );
-    },
-    getGraphPath: function (
-        this: PivotPointsIndicator,
-        points: Array<Point>
-    ): SVGPath {
+    }
+
+    public getGraphPath(this: PivotPointsIndicator, points: Array<Point>): SVGPath {
         var indicator = this,
             pointsLength: number = points.length,
             allPivotPoints: Array<Array<Point>> = (
@@ -200,7 +183,6 @@ interface PivotPointsIndicator{
             }
             endPoint = point.plotX;
         }
-
         allPivotPoints.forEach(function (
             pivotPoints: Array<Point>
         ): void {
@@ -210,9 +192,10 @@ interface PivotPointsIndicator{
         });
 
         return path;
-    },
+    }
+
     // TODO: Rewrite this logic to use multiple datalabels
-    drawDataLabels: function (this: PivotPointsIndicator): void {
+    public drawDataLabels(this: PivotPointsIndicator): void {
         var indicator = this,
             pointMapping: Array<(string|boolean)> = indicator.pointArrayMap,
             currentLabel: (SVGElement|null),
@@ -271,8 +254,9 @@ interface PivotPointsIndicator{
                 }
             );
         }
-    },
-    getValues: function<TLinkedSeries extends LineSeries> (
+    }
+
+    public getValues<TLinkedSeries extends LineSeries>(
         this: PivotPointsIndicator,
         series: TLinkedSeries,
         params: PivotPointsParamsOptions
@@ -340,8 +324,9 @@ interface PivotPointsIndicator{
             xData: xData,
             yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
-    },
-    getPivotAndHLC: function (
+    }
+
+    public getPivotAndHLC(
         values: Array<Array<number>>
     ): [number, number, number, number] {
         var high = -Infinity,
@@ -356,8 +341,9 @@ interface PivotPointsIndicator{
         pivot = (high + low + close) / 3;
 
         return [pivot, high, low, close];
-    },
-    standardPlacement: function (
+    }
+
+    public standardPlacement(
         values: Array<number>
     ): Array<(number|null)> {
         var diff: number = values[1] - values[2],
@@ -374,8 +360,9 @@ interface PivotPointsIndicator{
             ];
 
         return avg;
-    },
-    camarillaPlacement: function (
+    }
+
+    public camarillaPlacement(
         values: Array<number>
     ): Array<number> {
         var diff: number = values[1] - values[2],
@@ -392,8 +379,9 @@ interface PivotPointsIndicator{
             ];
 
         return avg;
-    },
-    fibonacciPlacement: function (
+    }
+
+    public fibonacciPlacement(
         values: Array<number>
     ): Array<(number|null)> {
         var diff: number = values[1] - values[2],
@@ -411,6 +399,21 @@ interface PivotPointsIndicator{
 
         return avg;
     }
+}
+
+interface PivotPointsIndicator{
+    endPoint: number;
+    nameBase: string;
+    plotEndPoint: number;
+    pointArrayMap: Array<string>;
+    pointClass: typeof PivotPointsPoint;
+    pointValKey: string;
+}
+extend(PivotPointsIndicator.prototype, {
+    nameBase: 'Pivot Points',
+    pointArrayMap: ['R4', 'R3', 'R2', 'R1', 'P', 'S1', 'S2', 'S3', 'S4'],
+    pointValKey: 'P',
+    pointClass: PivotPointsPoint
 });
 
 /* *
