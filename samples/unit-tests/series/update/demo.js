@@ -155,6 +155,14 @@ QUnit.test('Series.update', function (assert) {
         type: 'column'
     });
     assert.strictEqual(chart.series[0].type, 'column', 'Column type');
+
+    if (Object.setPrototypeOf) {
+        assert.ok(
+            chart.series[0] instanceof Highcharts.seriesTypes.column,
+            'The series should be an instance of the ColumnSeries'
+        );
+    }
+
     assert.strictEqual(
         chart.series[0].points[0].graphic.element.nodeName,
         'rect',
@@ -171,12 +179,27 @@ QUnit.test('Series.update', function (assert) {
         'square',
         'Line point'
     );
+    if (Object.setPrototypeOf) {
+        assert.ok(
+            chart.series[0] instanceof Highcharts.seriesTypes.line,
+            'The series should be an instance of the LineSeries'
+        );
+        assert.notOk(
+            chart.series[0] instanceof Highcharts.seriesTypes.column,
+            'The series should not be an instance of the ColumnSeries'
+        );
+    }
 
     // Type spline
     chart.series[0].update({
         type: 'spline'
     });
     assert.strictEqual(chart.series[0].type, 'spline', 'Spline type');
+    assert.ok(
+        chart.series[0] instanceof Highcharts.seriesTypes.spline,
+        'The series should be an instance of the SplineSeries'
+    );
+
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute('d').indexOf('C') !== -1, // has curved path
         true,
@@ -188,6 +211,11 @@ QUnit.test('Series.update', function (assert) {
         type: 'area'
     });
     assert.strictEqual(chart.series[0].type, 'area', 'Area type');
+    assert.ok(
+        chart.series[0] instanceof Highcharts.seriesTypes.area,
+        'The series should be an instance of the AreaSeries'
+    );
+
     assert.strictEqual(
         chart.series[0].area.element.nodeName,
         'path',
@@ -199,6 +227,11 @@ QUnit.test('Series.update', function (assert) {
         type: 'areaspline'
     });
     assert.strictEqual(chart.series[0].type, 'areaspline', 'Areaspline type');
+    assert.ok(
+        chart.series[0] instanceof Highcharts.seriesTypes.areaspline,
+        'The series should be an instance of the AreaSpline'
+    );
+
     assert.strictEqual(
         chart.series[0].graph.element.getAttribute('d').indexOf('C') !== -1, // has curved path
         true,
@@ -215,6 +248,11 @@ QUnit.test('Series.update', function (assert) {
         type: 'scatter'
     });
     assert.strictEqual(chart.series[0].type, 'scatter', 'Scatter type');
+    assert.ok(
+        chart.series[0] instanceof Highcharts.seriesTypes.scatter,
+        'The series should be an instance of the ScatterSeries'
+    );
+
     assert.strictEqual(
         typeof chart.series[0].graph,
         'undefined',
@@ -226,6 +264,11 @@ QUnit.test('Series.update', function (assert) {
         type: 'pie'
     });
     assert.strictEqual(chart.series[0].type, 'pie', 'Pie type');
+    assert.ok(
+        chart.series[0] instanceof Highcharts.seriesTypes.pie,
+        'The series should be an instance of the PieSeries'
+    );
+
     assert.strictEqual(
         typeof chart.series[0].graph,
         'undefined',
