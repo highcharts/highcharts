@@ -5902,7 +5902,7 @@ class Axis {
 
         if (
             !defined(options.tickInterval) &&
-            !tickAmount && this.len < tickPixelInterval &&
+            tickAmount == 0 && this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
