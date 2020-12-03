@@ -18,16 +18,27 @@
  *
  * */
 
-import type PiePoint from '../Pie/PiePoint';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
-        line: LineSeries,
-        pie: PieSeries,
-        scatter: ScatterSeries
+        line: {
+            prototype: {
+                pointClass: LinePoint
+            }
+        },
+        pie: {
+            prototype: {
+                pointClass: PiePoint
+            }
+        },
+        scatter: {
+            prototype: {
+                pointClass: ScatterPoint
+            }
+        }
     }
 } = BaseSeries;
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
@@ -44,7 +55,7 @@ const {
  *
  * */
 
-class TreemapPoint extends ScatterSeries.prototype.pointClass {
+class TreemapPoint extends ScatterPoint {
 
     /* *
      *
@@ -77,7 +88,7 @@ class TreemapPoint extends ScatterSeries.prototype.pointClass {
     /* eslint-disable valid-jsdoc */
 
     public getClassName(): string {
-        var className = LineSeries.prototype.pointClass.prototype.getClassName.call(this),
+        var className = LinePoint.prototype.getClassName.call(this),
             series = this.series,
             options = series.options;
 
@@ -109,7 +120,7 @@ class TreemapPoint extends ScatterSeries.prototype.pointClass {
     }
 
     public setState(state: StatesOptionsKey): void {
-        LineSeries.prototype.pointClass.prototype.setState.call(this, state);
+        LinePoint.prototype.setState.call(this, state);
 
         // Graphic does not exist when point is not visible.
         if (this.graphic) {
@@ -135,11 +146,11 @@ class TreemapPoint extends ScatterSeries.prototype.pointClass {
 
 interface TreemapPoint extends Highcharts.DrawPoint {
     draw: typeof DrawPointMixin.drawPoint;
-    setVisible: PiePoint['setVisible'];
+    setVisible: typeof PiePoint.prototype.setVisible;
 }
 extend(TreemapPoint.prototype, {
     draw: DrawPointMixin.drawPoint,
-    setVisible: PieSeries.prototype.pointClass.prototype.setVisible
+    setVisible: PiePoint.prototype.setVisible
 });
 
 /* *

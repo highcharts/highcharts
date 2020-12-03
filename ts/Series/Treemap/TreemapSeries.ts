@@ -832,7 +832,7 @@ class TreemapSeries extends ScatterSeries {
      * Over the alignment method by setting z index.
      * @private
      */
-    alignDataLabel(
+    public alignDataLabel(
         point: TreemapPoint,
         dataLabel: SVGElement,
         labelOptions: DataLabelOptions

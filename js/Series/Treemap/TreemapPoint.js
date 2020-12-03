@@ -24,7 +24,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie, ScatterSeries = _a.scatter;
+var _a = BaseSeries.seriesTypes, LinePoint = _a.line.prototype.pointClass, PiePoint = _a.pie.prototype.pointClass, ScatterPoint = _a.scatter.prototype.pointClass;
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, pick = U.pick;
@@ -57,7 +57,7 @@ var TreemapPoint = /** @class */ (function (_super) {
      * */
     /* eslint-disable valid-jsdoc */
     TreemapPoint.prototype.getClassName = function () {
-        var className = LineSeries.prototype.pointClass.prototype.getClassName.call(this), series = this.series, options = series.options;
+        var className = LinePoint.prototype.getClassName.call(this), series = this.series, options = series.options;
         // Above the current level
         if (this.node.level <= series.nodeMap[series.rootNode].level) {
             className += ' highcharts-above-level';
@@ -82,7 +82,7 @@ var TreemapPoint = /** @class */ (function (_super) {
         return Boolean(this.id || isNumber(this.value));
     };
     TreemapPoint.prototype.setState = function (state) {
-        LineSeries.prototype.pointClass.prototype.setState.call(this, state);
+        LinePoint.prototype.setState.call(this, state);
         // Graphic does not exist when point is not visible.
         if (this.graphic) {
             this.graphic.attr({
@@ -94,10 +94,10 @@ var TreemapPoint = /** @class */ (function (_super) {
         return isNumber(this.plotY) && this.y !== null;
     };
     return TreemapPoint;
-}(ScatterSeries.prototype.pointClass));
+}(ScatterPoint));
 extend(TreemapPoint.prototype, {
     draw: DrawPointMixin.drawPoint,
-    setVisible: PieSeries.prototype.pointClass.prototype.setVisible
+    setVisible: PiePoint.prototype.setVisible
 });
 /* *
  *
