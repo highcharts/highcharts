@@ -28,6 +28,7 @@ import type MACDPoint from './MACDPoint';
 import type {
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
 import U from '../../../Core/Utilities.js';
@@ -175,6 +176,11 @@ class MACDIndicator extends SMAIndicator {
     public data: Array<MACDPoint> = void 0 as any;
     public options: MACDOptions = void 0 as any;
     public points: Array<MACDPoint> = void 0 as any;
+    public currentLineZone: (string|null) = void 0 as any;
+    public graphmacd: (SVGElement|undefined) = void 0 as any;
+    public graphsignal: (SVGElement|undefined) = void 0 as any;
+    public macdZones: MACDZonesOptions = void 0 as any;
+    public signalZones: MACDZonesOptions= void 0 as any;
 
     /**
      *
@@ -182,7 +188,7 @@ class MACDIndicator extends SMAIndicator {
      *
      */
 
-    init(
+    public init(
         this: MACDIndicator
     ): void {
         BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
@@ -220,13 +226,13 @@ class MACDIndicator extends SMAIndicator {
         }
     }
 
-    toYData(
+    public toYData(
         point: MACDPoint
     ): Array<number> {
         return [point.y, point.signal, point.MACD];
     }
 
-    translate(this: MACDIndicator): void {
+    public translate(this: MACDIndicator): void {
         var indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];
 
@@ -249,7 +255,7 @@ class MACDIndicator extends SMAIndicator {
         );
     }
 
-    destroy(this: MACDIndicator): void {
+    public destroy(this: MACDIndicator): void {
         // this.graph is null due to removing two times the same SVG element
         this.graph = (null as any);
         this.graphmacd = this.graphmacd && this.graphmacd.destroy();
@@ -258,7 +264,7 @@ class MACDIndicator extends SMAIndicator {
         BaseSeries.seriesTypes.sma.prototype.destroy.apply(this, arguments);
     }
 
-    drawGraph(this: MACDIndicator): void {
+    public drawGraph(this: MACDIndicator): void {
         var indicator = this,
             mainLinePoints: Array<(
                 MACDPoint
@@ -324,7 +330,7 @@ class MACDIndicator extends SMAIndicator {
         // indicator.graph = null;
     }
 
-    getZonesGraphs(
+    public getZonesGraphs(
         this: MACDIndicator,
         props: Array<Array<string>>
     ): Array<Array<string>> {
@@ -349,7 +355,7 @@ class MACDIndicator extends SMAIndicator {
         return currentZones;
     }
 
-    applyZones(
+    public applyZones(
         this: MACDIndicator
     ): void {
         // Histogram zones are handled by drawPoints method
@@ -368,7 +374,7 @@ class MACDIndicator extends SMAIndicator {
         this.zones = histogramZones;
     }
 
-    getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -479,18 +485,13 @@ class MACDIndicator extends SMAIndicator {
 
 interface MACDIndicator {
     crispCol: typeof ColumnSeries.prototype['crispCol'];
-    currentLineZone: (string|null);
     getColumnMetrics: typeof ColumnSeries.prototype['getColumnMetrics'];
-    graphmacd: (Highcharts.SVGElement|undefined);
-    graphsignal: (Highcharts.SVGElement|undefined);
-    macdZones: MACDZonesOptions;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof MACDPoint;
     pointValKey: string;
     requiredIndicators: Array<string>;
-    signalZones: MACDZonesOptions;
 }
 
 extend(MACDIndicator.prototype, {

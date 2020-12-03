@@ -51,6 +51,11 @@ var MACDIndicator = /** @class */ (function (_super) {
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
+        _this.currentLineZone = void 0;
+        _this.graphmacd = void 0;
+        _this.graphsignal = void 0;
+        _this.macdZones = void 0;
+        _this.signalZones = void 0;
         return _this;
     }
     /**
