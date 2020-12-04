@@ -1696,7 +1696,7 @@ var Axis = /** @class */ (function () {
     Axis.prototype.getTickAmount = function () {
         var axis = this, options = this.options, tickAmount = options.tickAmount, tickPixelInterval = options.tickPixelInterval;
         if (!defined(options.tickInterval) &&
-            !tickAmount && this.len < tickPixelInterval &&
+            tickAmount == 0 && this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
