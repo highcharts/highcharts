@@ -50,8 +50,22 @@ function destroyExtraLabels(point, functionName) {
 var PivotPointsPoint = /** @class */ (function (_super) {
     __extends(PivotPointsPoint, _super);
     function PivotPointsPoint() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        /**
+         *
+         * Properties
+         *
+         */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.P = void 0;
+        _this.pivotLine = void 0;
+        _this.series = void 0;
+        return _this;
     }
+    /**
+      *
+      * Functions
+      *
+      */
     PivotPointsPoint.prototype.destroyElements = function () {
         destroyExtraLabels(this, 'destroyElements');
     };

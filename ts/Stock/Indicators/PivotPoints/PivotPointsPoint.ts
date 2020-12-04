@@ -54,22 +54,34 @@ function destroyExtraLabels(
  * */
 
 class PivotPointsPoint extends SMAIndicator.prototype.pointClass {
-    destroyElements(
+
+    /**
+     *
+     * Properties
+     *
+     */
+
+    public P: number = void 0 as any;
+    public pivotLine: string = void 0 as any;
+    public series: PivotPointsIndicator = void 0 as any;
+
+    /**
+      *
+      * Functions
+      *
+      */
+
+    public destroyElements(
         this: PivotPointsPoint
     ): void {
         destroyExtraLabels(this, 'destroyElements');
     }
     // This method is called when removing points, e.g. series.update()
-    destroy(
+    public destroy(
         this: PivotPointsPoint
     ): void {
         destroyExtraLabels(this, 'destroyElements');
     }
-}
-interface PivotPointsPoint {
-    P: number;
-    pivotLine: string;
-    series: PivotPointsIndicator;
 }
 
 /* *
