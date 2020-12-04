@@ -290,15 +290,13 @@ var SVGLabel = /** @class */ (function (_super) {
     SVGLabel.prototype.updateBoxSize = function () {
         var style = this.text.element.style, crispAdjust, attribs = {};
         var padding = this.padding;
-        var paddingLeft = this.paddingLeft || padding;
-        var paddingRight = this.paddingRight || padding;
         // #12165 error when width is null (auto)
         // #12163 when fontweight: bold, recalculate bBox withot cache
         // #3295 && 3514 box failure when string equals 0
-        var bBox = ((!isNumber(this.widthSetting) || !isNumber(this.heightSetting) || this.textAlign) &&
+        var bBox = this.bBox = ((!isNumber(this.widthSetting) || !isNumber(this.heightSetting) || this.textAlign) &&
             defined(this.text.textStr)) ?
             this.text.getBBox() : SVGLabel.emptyBBox;
-        this.width = (this.widthSetting || bBox.width || 0) + paddingLeft + paddingRight;
+        this.width = this.getPaddedWidth();
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
         // Update the label-scoped y offset. Math.min because of inline
         // style (#9400)
@@ -327,7 +325,6 @@ var SVGLabel = /** @class */ (function (_super) {
             this.box.attr(extend(attribs, this.deferredAttr));
             this.deferredAttr = {};
         }
-        this.bBox = bBox;
     };
     /*
      * This function runs after setting text or padding, but only if padding
@@ -366,10 +363,16 @@ var SVGLabel = /** @class */ (function (_super) {
         // width:auto => null
         this.widthSetting = isNumber(value) ? value : void 0;
     };
+    SVGLabel.prototype.getPaddedWidth = function () {
+        var padding = this.padding;
+        var paddingLeft = this.paddingLeft || padding;
+        var paddingRight = this.paddingRight || padding;
+        return (this.widthSetting || this.bBox.width || 0) + paddingLeft + paddingRight;
+    };
     SVGLabel.prototype.xSetter = function (value) {
         this.x = value; // for animation getter
         if (this.alignFactor) {
-            value -= this.alignFactor * this.width;
+            value -= this.alignFactor * this.getPaddedWidth();
             // Force animation even when setting to the same value (#7898)
             this['forceAnimate:x'] = true;
         }
