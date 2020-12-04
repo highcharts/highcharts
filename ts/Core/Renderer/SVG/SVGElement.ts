@@ -633,6 +633,11 @@ class SVGElement {
                 name: string
             ): Array<string> {
                 if ((currentClassName as any).indexOf(name) === -1) {
+                    let split = name.split(/-\d+$/); // see if the `name` is a serialized class that ends in hyphen-number, i.e., `highcharts-color-1`
+                    if (split.length > 1) { // if so the split array will have 2 entries
+                        let regex = new RegExp(split[0] + '-\\d+$'); // remove the corresponding existing className from what will be returned (i.e., remove `highcharts-color-0`)
+                        newClassName[0] = newClassName[0].replace(regex, '');
+                    }
                     newClassName.push(name);
                 }
                 return newClassName;
