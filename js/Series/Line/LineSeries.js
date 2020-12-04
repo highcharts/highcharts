@@ -13,14 +13,14 @@ var animObject = A.animObject;
 import BaseSeries from '../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import H from '../../Core/Globals.js';
-var win = H.win;
+var hasTouch = H.hasTouch, svg = H.svg, win = H.win;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import palette from '../../Core/Color/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 /* *
  *
  *  Class
@@ -2710,6 +2710,80 @@ var LineSeries = /** @class */ (function () {
             point.plotX >= 0 &&
             point.plotX <= this.xAxis.len;
         return isInside;
+    };
+    /**
+     * Draw the tracker object that sits above all data labels and markers to
+     * track mouse events on the graph or points. For the line type charts
+     * the tracker uses the same graphPath, but with a greater stroke width
+     * for better control.
+     * @private
+     */
+    LineSeries.prototype.drawTracker = function () {
+        var series = this, options = series.options, trackByArea = options.trackByArea, trackerPath = [].concat(trackByArea ?
+            series.areaPath :
+            series.graphPath), 
+        // trackerPathLength = trackerPath.length,
+        chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function (e) {
+            if (chart.hoverSeries !== series) {
+                series.onMouseOver();
+            }
+        }, 
+        /*
+         * Empirical lowest possible opacities for TRACKER_FILL for an
+         * element to stay invisible but clickable
+         * IE6: 0.002
+         * IE7: 0.002
+         * IE8: 0.002
+         * IE9: 0.00000000001 (unlimited)
+         * IE10: 0.0001 (exporting only)
+         * FF: 0.00000000001 (unlimited)
+         * Chrome: 0.000001
+         * Safari: 0.000001
+         * Opera: 0.00000000001 (unlimited)
+         */
+        TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
+        // Draw the tracker
+        if (tracker) {
+            tracker.attr({ d: trackerPath });
+        }
+        else if (series.graph) { // create
+            series.tracker = renderer.path(trackerPath)
+                .attr({
+                visibility: series.visible ? 'visible' : 'hidden',
+                zIndex: 2
+            })
+                .addClass(trackByArea ?
+                'highcharts-tracker-area' :
+                'highcharts-tracker-line')
+                .add(series.group);
+            if (!chart.styledMode) {
+                series.tracker.attr({
+                    'stroke-linecap': 'round',
+                    'stroke-linejoin': 'round',
+                    stroke: TRACKER_FILL,
+                    fill: trackByArea ? TRACKER_FILL : 'none',
+                    'stroke-width': series.graph.strokeWidth() +
+                        (trackByArea ? 0 : 2 * snap)
+                });
+            }
+            // The tracker is added to the series group, which is clipped, but
+            // is covered by the marker group. So the marker group also needs to
+            // capture events.
+            [series.tracker, series.markerGroup].forEach(function (tracker) {
+                tracker.addClass('highcharts-tracker')
+                    .on('mouseover', onMouseOver)
+                    .on('mouseout', function (e) {
+                    pointer.onTrackerMouseOut(e);
+                });
+                if (options.cursor && !chart.styledMode) {
+                    tracker.css({ cursor: options.cursor });
+                }
+                if (hasTouch) {
+                    tracker.on('touchstart', onMouseOver);
+                }
+            });
+        }
+        fireEvent(this, 'afterDrawTracker');
     };
     /**
      * General options for all series types.

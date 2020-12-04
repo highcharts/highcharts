@@ -1203,6 +1203,8 @@ extend(PieSeries.prototype, {
 
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
+    drawTracker: ColumnSeries.prototype.drawTracker,
+
     getCenter: CenteredSeriesMixin.getCenter,
 
     getSymbol: noop as any,

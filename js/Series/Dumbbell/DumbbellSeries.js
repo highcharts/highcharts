@@ -32,7 +32,7 @@ var areaRangeProto = AreaRangeSeries.prototype;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import palette from '../../Core/Color/Palette.js';
 import H from '../../Core/Globals.js';
-var noop = H.noop, TrackerMixin = H.TrackerMixin;
+var noop = H.noop;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 import '../../Core/Interaction.js';
@@ -62,9 +62,6 @@ var DumbbellSeries = /** @class */ (function (_super) {
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
-        _this.trackerGroups = ['group', 'markerGroup', 'dataLabelsGroup'];
-        _this.drawTracker = TrackerMixin.drawTrackerPoint;
-        _this.drawGraph = noop;
         _this.columnMetrics = void 0;
         return _this;
     }
@@ -353,11 +350,14 @@ var DumbbellSeries = /** @class */ (function (_super) {
     return DumbbellSeries;
 }(AreaRangeSeries));
 extend(DumbbellSeries.prototype, {
-    pointClass: DumbbellPoint,
     crispCol: colProto.crispCol,
-    translatePoint: areaRangeProto.translate,
+    drawGraph: noop,
+    drawTracker: ColumnSeries.prototype.drawTracker,
+    pointClass: DumbbellPoint,
     setShapeArgs: columnRangeProto.translate,
-    seriesDrawPoints: areaRangeProto.drawPoints
+    seriesDrawPoints: areaRangeProto.drawPoints,
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
+    translatePoint: areaRangeProto.translate
 });
 BaseSeries.registerSeriesType('dumbbell', DumbbellSeries);
 /* *

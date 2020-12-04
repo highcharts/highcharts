@@ -659,7 +659,6 @@ interface NetworkgraphSeries {
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
-    drawTracker: Highcharts.TrackerMixin['drawTrackerPoint'];
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;
@@ -710,7 +709,7 @@ extend(NetworkgraphSeries.prototype, {
     noSharedTooltip: true,
     pointArrayMap: ['from', 'to'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    drawTracker: H.TrackerMixin.drawTrackerPoint,
+    drawTracker: seriesTypes.column.prototype.drawTracker,
     // Animation is run in `series.simulation`.
     animate: null as any,
     buildKDTree: H.noop as any,

@@ -28,12 +28,13 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
+        column: ColumnSeries,
         line: LineSeries
     }
 } = BaseSeries;
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
-const { TrackerMixin, noop } = H;
+const { noop } = H;
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -622,7 +623,6 @@ interface GaugeSeries {
     angular: boolean;
     directTouch: boolean;
     drawGraph: typeof LineSeries.prototype.drawGraph;
-    drawTracker: typeof TrackerMixin['drawTrackerPoint'];
     fixedBox: boolean;
     forceDL: boolean;
     noSharedTooltip: boolean;
@@ -635,13 +635,12 @@ extend(GaugeSeries.prototype, {
     angular: true,
     directTouch: true, // #5063
     drawGraph: noop as any,
+    drawTracker: ColumnSeries.prototype.drawTracker,
     fixedBox: true,
     forceDL: true,
     noSharedTooltip: true,
-    trackerGroups: ['group', 'dataLabelsGroup'],
-    // If the tracking module is loaded, add the point tracker
-    drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint,
-    pointClass: GaugePoint
+    pointClass: GaugePoint,
+    trackerGroups: ['group', 'dataLabelsGroup']
 });
 /* *
  *

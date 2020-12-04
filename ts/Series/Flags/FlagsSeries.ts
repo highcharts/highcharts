@@ -78,8 +78,6 @@ declare global {
     }
 }
 
-const TrackerMixin = H.TrackerMixin; // Interaction
-
 /**
  * The Flags series.
  *
@@ -559,6 +557,57 @@ class FlagsSeries extends ColumnSeries {
     }
 
     /**
+     * Extend the column trackers with listeners to expand and contract
+     * stacks.
+     * @private
+     */
+    public drawTracker(): void {
+        var series = this,
+            points = series.points;
+
+        super.drawTracker();
+
+        /* *
+        * Bring each stacked flag up on mouse over, this allows readability
+        * of vertically stacked elements as well as tight points on the x
+        * axis. #1924.
+        */
+        points.forEach(function (point): void {
+            var graphic = point.graphic;
+
+            if (graphic) {
+                addEvent(graphic.element, 'mouseover', function (): void {
+
+                    // Raise this point
+                    if ((point.stackIndex as any) > 0 &&
+                        !point.raised
+                    ) {
+                        point._y = (graphic as any).y;
+                        (graphic as any).attr({
+                            y: (point._y as any) - 8
+                        });
+                        point.raised = true;
+                    }
+
+                    // Revert other raised points
+                    points.forEach(function (otherPoint): void {
+                        if (
+                            otherPoint !== point &&
+                        otherPoint.raised &&
+                        otherPoint.graphic
+                        ) {
+                            otherPoint.graphic.attr({
+                                y: otherPoint._y
+                            });
+                            otherPoint.raised = false;
+                        }
+                    });
+                });
+            }
+        });
+    }
+
+    /**
      * Get presentational attributes
      * @private
      */
@@ -654,62 +703,7 @@ extend(FlagsSeries.prototype, {
 
     trackerGroups: ['markerGroup'],
 
-    translate: OnSeriesMixin.translate,
-
-    /* eslint-disable no-invalid-this, valid-jsdoc */
-
-    /**
-     * Extend the column trackers with listeners to expand and contract
-     * stacks.
-     * @private
-     */
-    drawTracker: function (this: FlagsSeries): void {
-        var series = this,
-            points = series.points;
-
-        TrackerMixin.drawTrackerPoint.apply(this);
-
-        /* *
-        * Bring each stacked flag up on mouse over, this allows readability
-        * of vertically stacked elements as well as tight points on the x
-        * axis. #1924.
-        */
-        points.forEach(function (point): void {
-            var graphic = point.graphic;
-
-            if (graphic) {
-                addEvent(graphic.element, 'mouseover', function (): void {
-
-                    // Raise this point
-                    if ((point.stackIndex as any) > 0 &&
-                        !point.raised
-                    ) {
-                        point._y = (graphic as any).y;
-                        (graphic as any).attr({
-                            y: (point._y as any) - 8
-                        });
-                        point.raised = true;
-                    }
-
-                    // Revert other raised points
-                    points.forEach(function (otherPoint): void {
-                        if (
-                            otherPoint !== point &&
-                        otherPoint.raised &&
-                        otherPoint.graphic
-                        ) {
-                            otherPoint.graphic.attr({
-                                y: otherPoint._y
-                            });
-                            otherPoint.raised = false;
-                        }
-                    });
-                });
-            }
-        });
-    }
-
-    /* eslint-enable no-invalid-this, valid-jsdoc */
+    translate: OnSeriesMixin.translate
 
 });
 

@@ -50,7 +50,11 @@ const { animObject } = A;
 import BaseSeries from '../../Core/Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import H from '../../Core/Globals.js';
-const { win } = H;
+const {
+    hasTouch,
+    svg,
+    win
+} = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
@@ -63,6 +67,7 @@ const {
     arrayMin,
     clamp,
     correctFloat,
+    css,
     defined,
     erase,
     error,
@@ -6452,6 +6457,102 @@ class LineSeries {
             point.plotX <= this.xAxis.len;
 
         return isInside;
+    }
+
+
+    /**
+     * Draw the tracker object that sits above all data labels and markers to
+     * track mouse events on the graph or points. For the line type charts
+     * the tracker uses the same graphPath, but with a greater stroke width
+     * for better control.
+     * @private
+     */
+    public drawTracker(): void {
+        var series = this,
+            options = series.options,
+            trackByArea = options.trackByArea,
+            trackerPath = ([] as SVGPath).concat(
+                trackByArea ?
+                    (series.areaPath as any) :
+                    (series.graphPath as any)
+            ),
+            // trackerPathLength = trackerPath.length,
+            chart = series.chart,
+            pointer = chart.pointer,
+            renderer = chart.renderer,
+            snap = (chart.options.tooltip as any).snap,
+            tracker = series.tracker,
+            i: number,
+            onMouseOver = function (e: PointerEvent): void {
+                if (chart.hoverSeries !== series) {
+                    series.onMouseOver();
+                }
+            },
+            /*
+             * Empirical lowest possible opacities for TRACKER_FILL for an
+             * element to stay invisible but clickable
+             * IE6: 0.002
+             * IE7: 0.002
+             * IE8: 0.002
+             * IE9: 0.00000000001 (unlimited)
+             * IE10: 0.0001 (exporting only)
+             * FF: 0.00000000001 (unlimited)
+             * Chrome: 0.000001
+             * Safari: 0.000001
+             * Opera: 0.00000000001 (unlimited)
+             */
+            TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
+
+        // Draw the tracker
+        if (tracker) {
+            tracker.attr({ d: trackerPath });
+        } else if (series.graph) { // create
+
+            series.tracker = renderer.path(trackerPath)
+                .attr({
+                    visibility: series.visible ? 'visible' : 'hidden',
+                    zIndex: 2
+                })
+                .addClass(
+                    trackByArea ?
+                        'highcharts-tracker-area' :
+                        'highcharts-tracker-line'
+                )
+                .add(series.group);
+
+            if (!chart.styledMode) {
+                (series.tracker as any).attr({
+                    'stroke-linecap': 'round',
+                    'stroke-linejoin': 'round', // #1225
+                    stroke: TRACKER_FILL,
+                    fill: trackByArea ? TRACKER_FILL : 'none',
+                    'stroke-width': series.graph.strokeWidth() +
+                        (trackByArea ? 0 : 2 * snap)
+                });
+            }
+
+            // The tracker is added to the series group, which is clipped, but
+            // is covered by the marker group. So the marker group also needs to
+            // capture events.
+            [series.tracker, series.markerGroup].forEach(function (
+                tracker: (SVGElement|undefined)
+            ): void {
+                (tracker as any).addClass('highcharts-tracker')
+                    .on('mouseover', onMouseOver)
+                    .on('mouseout', function (e: PointerEvent): void {
+                        pointer.onTrackerMouseOut(e);
+                    });
+
+                if (options.cursor && !chart.styledMode) {
+                    (tracker as any).css({ cursor: options.cursor });
+                }
+
+                if (hasTouch) {
+                    (tracker as any).on('touchstart', onMouseOver);
+                }
+            });
+        }
+        fireEvent(this, 'afterDrawTracker');
     }
 
     /** eslint-enable valid-jsdoc */

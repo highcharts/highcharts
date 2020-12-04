@@ -48,6 +48,12 @@ declare module '../../Core/Renderer/SVG/SVGPath' {
     }
 }
 
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        areaPath?: SVGPath;
+    }
+}
+
 /* *
  *
  *  Class
