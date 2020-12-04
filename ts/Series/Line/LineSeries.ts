@@ -65,6 +65,7 @@ const {
     arrayMax,
     arrayMin,
     clamp,
+    cleanRecursively,
     correctFloat,
     defined,
     erase,
@@ -6759,7 +6760,7 @@ class LineSeries {
         redraw?: boolean
     ): void {
 
-        options = H.cleanRecursively(options, this.userOptions);
+        options = cleanRecursively(options, this.userOptions);
 
         fireEvent(this, 'update', { options: options });
 

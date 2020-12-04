@@ -58,6 +58,7 @@ import U from '../Utilities.js';
 const {
     addEvent,
     attr,
+    cleanRecursively,
     createElement,
     css,
     defined,
@@ -116,6 +117,9 @@ declare global {
         }
         interface TitleObject extends SVGElement {
             update(titleOptions: TitleOptions, redraw?: boolean): void;
+        }
+        interface XAxisOptions {
+            index?: number;
         }
         function chart(
             options: Options,
@@ -2824,7 +2828,7 @@ class Chart {
      */
     public createAxis(
         type: string,
-        options: Highcharts.CreateAxisOptionsObject
+        options: Chart.CreateAxisOptionsObject
     ): Highcharts.Axis {
         var chartOptions = this.options,
             isColorAxis = type === 'colorAxis',
@@ -3072,7 +3076,7 @@ class Chart {
             chart.setResponsive(false, true);
         }
 
-        options = H.cleanRecursively(options, chart.options);
+        options = cleanRecursively(options, chart.options);
 
         merge(true, chart.userOptions, options);
 
@@ -3479,8 +3483,20 @@ extend(Chart.prototype, {
 
 namespace Chart {
 
+    export interface AfterUpdateEventObject {
+        animation: (boolean|Partial<AnimationOptionsObject>);
+        options: Highcharts.Options;
+        redraw: boolean;
+    }
+
     export interface CallbackFunction {
         (this: Chart, chart: Chart): void;
+    }
+
+    export interface CreateAxisOptionsObject {
+        animation: undefined | boolean | Partial<AnimationOptionsObject>;
+        axis: Highcharts.AxisOptions | ColorAxis.Options;
+        redraw: undefined | boolean;
     }
 
     export interface LabelCollectorFunction {
