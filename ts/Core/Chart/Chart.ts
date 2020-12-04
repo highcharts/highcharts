@@ -2368,11 +2368,6 @@ class Chart {
         // Credits
         chart.addCredits();
 
-        // Handle responsiveness
-        if (chart.setResponsive) {
-            chart.setResponsive();
-        }
-
         // Handle scaling
         chart.updateContainerScaling();
 
@@ -2619,6 +2614,13 @@ class Chart {
                 chart.pointer = new Pointer(chart, options);
             }
         }
+
+        // Handle responsiveness. Has to fire after extensions are loaded
+        addEvent(chart, 'load', function (): void {
+            if (chart.setResponsive) {
+                chart.setResponsive(true);
+            }
+        });
 
         chart.render();
 
