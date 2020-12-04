@@ -1049,7 +1049,8 @@ class Data {
                 cn = '',
                 token = '',
                 actualColumn = 0,
-                column = 0;
+                column = 0,
+                remainingHexColors = countHexValues(); // (#13283)
 
             /**
              * @private
@@ -1108,6 +1109,31 @@ class Data {
                 ++actualColumn;
             }
 
+            /**
+             * Count hex values that are not comments (#13283)
+             * @private
+             */
+            function countHexValues(): number {
+                var hexValuesCount: number = 0;
+                var potentialHexValues = columnStr.split(itemDelimiter)
+                    .filter(function (item: string): boolean {
+                        return item.indexOf('#') === 0;
+                    });
+
+                potentialHexValues.forEach(function (
+                    pH: string
+                ): void {
+                    pH = pH.substring(1);
+                    var a: number = parseInt(pH, 16);
+                    if ((a.toString(16) === pH.toLowerCase()) ||
+                        (pH === '000')) { // Black values
+                        hexValuesCount++;
+                    }
+                });
+
+                return hexValuesCount;
+            }
+
             if (!columnStr.trim().length) {
                 return;
             }
@@ -1119,8 +1145,10 @@ class Data {
             for (; i < columnStr.length; i++) {
                 read(i);
 
-                // Quoted string
-                if (c === '#') {
+                // If there are hexvalues remaining (#13283)
+                if (c === '#' && remainingHexColors) {
+                    remainingHexColors--;
+                } else if (c === '#') {
                     // The rest of the row is a comment
                     push();
                     return;
