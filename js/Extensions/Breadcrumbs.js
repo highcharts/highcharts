@@ -15,7 +15,7 @@ import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, extend = U.extend, format = U.format, pick = U.pick;
+var addEvent = U.addEvent, defined = U.defined, extend = U.extend, format = U.format;
 // Add language support.
 extend(defaultOptions.lang, 
 /**
@@ -181,7 +181,7 @@ var Breadcrumbs = /** @class */ (function () {
     Breadcrumbs.prototype.init = function (chart, userOptions) {
         var chartOptions = H.merge(userOptions, this.options), breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs;
         this.chart = chart;
-        this.options = breadcrumbsOptions;
+        this.options = breadcrumbsOptions || {};
     };
     /**
      * Align the breadcrumbs group.
@@ -193,45 +193,39 @@ var Breadcrumbs = /** @class */ (function () {
      *        Breadcrumbs class.
      */
     Breadcrumbs.prototype.alignGroup = function () {
-        var chart = this.chart, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs, calcPosition = {};
-        if (breadcrumbsOptions && breadcrumbsOptions.position) {
+        var chart = this.chart, breadcrumbsOptions = this.options, bBox = this.breadcrumbsGroup.getBBox(), rangeSelector = chart.rangeSelector, positionOptions = breadcrumbsOptions.position;
+        if (positionOptions) {
             // Create a deep copy.
-            calcPosition.align = breadcrumbsOptions.position.align;
-            calcPosition.alignByTranslate = breadcrumbsOptions.position.alignByTranslate;
-            calcPosition.verticalAlign = breadcrumbsOptions.position.verticalAlign;
-            calcPosition.x = breadcrumbsOptions.position.x;
-            calcPosition.y = breadcrumbsOptions.position.y;
+            var calcPosition = {
+                align: positionOptions.align,
+                alignByTranslate: positionOptions.alignByTranslate,
+                verticalAlign: positionOptions.verticalAlign,
+                x: positionOptions.x,
+                y: positionOptions.y
+            };
             // Change the initial position based on other elements on the chart.
-            if (breadcrumbsOptions.position.verticalAlign === 'top') {
-                if (chart.title && chart.title.textStr) {
-                    var titleY = chart.title.alignOptions.y, titleHeight = chart.title.alignOptions.height;
-                    calcPosition.y += titleY + titleHeight;
-                }
-                if (chart.subtitle) {
-                    var subtitletitleHeight = chart.subtitle.alignOptions.height;
-                    calcPosition.y += subtitletitleHeight;
-                }
-                if (chart.rangeSelector && chart.rangeSelector.group) {
-                    var rangeSelectorY = chart.rangeSelector.group.getBBox().y, rangeSelectorHight = chart.rangeSelector.group.getBBox().height;
-                    calcPosition.y += (rangeSelectorY && rangeSelectorHight) ?
-                        rangeSelectorY + rangeSelectorHight : 0;
+            if (positionOptions.verticalAlign === 'top') {
+                calcPosition.y += chart.titleOffset && chart.titleOffset[0] || 0;
+                if (rangeSelector && rangeSelector.group) {
+                    var rangeSelectorBBox = rangeSelector.group.getBBox(), rangeSelectorY = rangeSelectorBBox.y, rangeSelectorHight = rangeSelectorBBox.height;
+                    calcPosition.y += (rangeSelectorY + rangeSelectorHight) || 0;
                 }
             }
-            else if (breadcrumbsOptions.position.verticalAlign === 'bottom' && chart.marginBottom) {
+            if (positionOptions.verticalAlign === 'bottom' && chart.marginBottom) {
                 if (chart.legend && chart.legend.group && chart.legend.options.verticalAlign === 'bottom') {
                     calcPosition.y -= chart.marginBottom -
-                        this.breadcrumbsGroup.getBBox().height -
+                        bBox.height -
                         chart.legend.legendHeight;
                 }
                 else {
-                    calcPosition.y -= this.breadcrumbsGroup.getBBox().height;
+                    calcPosition.y -= bBox.height;
                 }
             }
-            if (breadcrumbsOptions.position.align === 'right') {
-                calcPosition.x -= this.breadcrumbsGroup.getBBox().width;
+            if (positionOptions.align === 'right') {
+                calcPosition.x -= bBox.width;
             }
-            else if (breadcrumbsOptions.position.align === 'center') {
-                calcPosition.x -= this.breadcrumbsGroup.getBBox().width / 2;
+            else if (positionOptions.align === 'center') {
+                calcPosition.x -= bBox.width / 2;
             }
             this.breadcrumbsGroup
                 .align(calcPosition, true, chart.spacingBox);
@@ -250,24 +244,26 @@ var Breadcrumbs = /** @class */ (function () {
      *        Event in case of the treemap series.
      */
     Breadcrumbs.prototype.createList = function (e) {
-        var breadcrumbsList = this.breadcrumbsList || [];
-        var chart = this.chart, drilldownLevels = chart.drilldownLevels, 
-        // First created drilldown level has number 0,
-        // that is why the initial series is treated as -1 level.
-        initialSeriesLevel = -1;
+        var breadcrumbsList = this.breadcrumbsList || [], chart = this.chart, drilldownLevels = chart.drilldownLevels;
         // If the list doesn't exist treat the initial series
         // as the current level- first iteration.
         var currentLevelNumber = breadcrumbsList.length ?
-            breadcrumbsList[breadcrumbsList.length - 1][0] : initialSeriesLevel;
+            breadcrumbsList[breadcrumbsList.length - 1][0] : null;
         if (chart.series[0].is('treemap')) {
             if (e) {
                 if (!breadcrumbsList[0]) {
                     // As a first element add the series.
-                    breadcrumbsList.push([initialSeriesLevel, chart.series[0]]);
+                    breadcrumbsList.push([null, chart.series[0]]);
                 }
                 if (e.trigger === 'click') {
                     // When a user clicks add element one by one.
-                    breadcrumbsList.push([currentLevelNumber + 1, chart.get(e.newRootId)]);
+                    if (currentLevelNumber === null) {
+                        breadcrumbsList.push([0, chart.get(e.newRootId)]);
+                        currentLevelNumber = 0;
+                    }
+                    else {
+                        breadcrumbsList.push([currentLevelNumber + 1, chart.get(e.newRootId)]);
+                    }
                 }
                 else {
                     var node = e.target.nodeMap[e.newRootId];
@@ -279,16 +275,23 @@ var Breadcrumbs = /** @class */ (function () {
                         node = e.target.nodeMap[node.parent];
                     }
                     extraNodes.reverse().forEach(function (node) {
-                        currentLevelNumber++;
-                        breadcrumbsList.push([currentLevelNumber, node]);
+                        if (currentLevelNumber === null) {
+                            breadcrumbsList.push([0, node]);
+                            currentLevelNumber = 0;
+                        }
+                        else {
+                            breadcrumbsList.push([++currentLevelNumber, node]);
+                        }
                     });
                 }
             }
         }
         else if (drilldownLevels && drilldownLevels.length) {
             // Add the initial series as the first element.
-            breadcrumbsList = !breadcrumbsList.length ?
-                [[initialSeriesLevel, drilldownLevels[0].seriesOptions]] : breadcrumbsList;
+            if (!breadcrumbsList[0]) {
+                breadcrumbsList.push([null, drilldownLevels[0].seriesOptions]);
+                currentLevelNumber = -1;
+            }
             drilldownLevels.forEach(function (level) {
                 // If level is already added to breadcrumbs list,
                 // don't add it again- drilling categories
@@ -311,14 +314,14 @@ var Breadcrumbs = /** @class */ (function () {
      *        Number of levels to destoy.
      */
     Breadcrumbs.prototype.destroy = function (lastVisibleLevel) {
-        var breadcrumbs = this, chart = breadcrumbs.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, initialSeriesLevel = -1, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs;
+        var breadcrumbs = this, chart = breadcrumbs.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs;
         // Click the main breadcrumb
-        if (lastVisibleLevel === initialSeriesLevel || (!lastVisibleLevel && lastVisibleLevel !== 0)) {
+        if (!lastVisibleLevel && lastVisibleLevel !== 0) {
             breadcrumbsList.forEach(function (el) {
                 var button = el[2], separator = el[3];
                 // Remove SVG elements fromt the DOM.
-                button ? button.destroy() : void 0;
-                separator ? separator.destroy() : void 0;
+                button && button.destroy();
+                separator && separator.destroy();
             });
             // Clear the breadcrums list array.
             breadcrumbsList.length = 0;
@@ -326,13 +329,13 @@ var Breadcrumbs = /** @class */ (function () {
         else {
             var prevConector = breadcrumbsList[lastVisibleLevel + 1][3];
             // Remove connector from the previous button.
-            prevConector ? prevConector.destroy() : void 0;
+            prevConector && prevConector.destroy();
             breadcrumbsList[lastVisibleLevel + 1].length = 3;
             for (var i = lastVisibleLevel + 2; i < breadcrumbsList.length; i++) {
                 var el = breadcrumbsList[i], button = el[2], conector = el[3];
                 // Remove SVG elements fromt the DOM.
-                button ? button.destroy() : void 0;
-                conector ? conector.destroy() : void 0;
+                button && button.destroy();
+                conector && conector.destroy();
             }
             // Clear the breadcrums list array.
             breadcrumbsList.length = lastVisibleLevel + 2;
@@ -385,8 +388,6 @@ var Breadcrumbs = /** @class */ (function () {
                     posX_1 += separator ? separator.getBBox().width + buttonPadding : 0;
                 }
             });
-            // breadcrumbsList[breadcrumbsList.length - 1][3].destroy()
-            // breadcrumbsList[breadcrumbsList.length - 1].length = 3
         }
         breadcrumbs.alignGroup();
     };
@@ -402,9 +403,11 @@ var Breadcrumbs = /** @class */ (function () {
      *        A number of drillups that needs to be performed.
      */
     Breadcrumbs.prototype.multipleDrillUp = function (drillAmount) {
-        var chart = this.chart, breadcrumbsList = this.breadcrumbsList;
+        var chart = this.chart, breadcrumbsList = this.breadcrumbsList, drillNumb = defined(drillAmount) ?
+            breadcrumbsList[breadcrumbsList.length - 1][0] - drillAmount :
+            breadcrumbsList[breadcrumbsList.length - 1][0] + 1;
         if (breadcrumbsList && breadcrumbsList.length) {
-            for (var i = 0; i < breadcrumbsList[breadcrumbsList.length - 1][0] - drillAmount; i++) {
+            for (var i = 0; i < drillNumb; i++) {
                 if (chart.series[0].is('treemap')) {
                     chart.series[0].drillUp();
                 }

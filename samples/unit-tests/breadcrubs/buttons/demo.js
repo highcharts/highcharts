@@ -119,7 +119,7 @@ QUnit.test('Breadcrumbs button', function (assert) {
         'Fruits',
         'The last button should have text Fruits.'
     );
-    chart.drilldown.breadcrumbs.multipleDrillUp(-1);
+    chart.drilldown.breadcrumbs.multipleDrillUp(null);
     assert.notOk(
         buttons.length,
         'The breadcrumbsButtonGroup should be empty.'
