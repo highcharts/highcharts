@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisLike } from './Types';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
@@ -1551,7 +1551,7 @@ namespace ColorAxis {
     }
 
     export interface MarkerOptions {
-        animation?: (boolean|Partial<AnimationOptionsObject>);
+        animation?: (boolean|Partial<AnimationOptions>);
         color?: ColorType;
         width?: number;
     }

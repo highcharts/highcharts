@@ -14,7 +14,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type { AxisType } from '../../Core/Axis/Types';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
@@ -146,7 +146,7 @@ declare global {
             itemType?: string;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
-            animation: Partial<AnimationOptionsObject>;
+            animation: Partial<AnimationOptions>;
             controlPointOptions: AnnotationControlPointOptionsObject;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
@@ -420,7 +420,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public coll: 'annotations' = 'annotations';
     public collection: ControllableMixin.Type['collection'] = void 0 as any;
     public controlPoints: Array<ControlPoint>;
-    public animationConfig: Partial<AnimationOptionsObject> = void 0 as any;
+    public animationConfig: Partial<AnimationOptions> = void 0 as any;
     public graphic: SVGElement = void 0 as any;
     public group: SVGElement = void 0 as any;
     public isUpdating?: boolean;

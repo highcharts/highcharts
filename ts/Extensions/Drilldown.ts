@@ -17,7 +17,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type {
@@ -174,7 +174,7 @@ declare global {
                 CSSObject|DrilldownActiveDataLabelStyleOptions
             );
             allowPointDrilldown?: boolean;
-            animation?: (boolean|Partial<AnimationOptionsObject>);
+            animation?: (boolean|Partial<AnimationOptions>);
             drillUpButton?: DrilldownDrillUpButtonOptions;
             series?: Array<SeriesTypeOptions>;
         }
@@ -219,7 +219,7 @@ declare global {
             drilldown?: DrilldownOptions;
         }
         interface SVGElement {
-            fadeIn(animation?: (boolean|Partial<AnimationOptionsObject>)): void;
+            fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
         }
         interface Tick {
             drillable(): void;
@@ -661,7 +661,7 @@ defaultOptions.drilldown = {
  * The animation options for the element fade.
  */
 SVGRenderer.prototype.Element.prototype.fadeIn = function (
-    animation?: (boolean|Partial<AnimationOptionsObject>)
+    animation?: (boolean|Partial<AnimationOptions>)
 ): void {
     this
         .attr({

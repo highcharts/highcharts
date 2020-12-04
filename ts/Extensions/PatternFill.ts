@@ -13,7 +13,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
@@ -65,7 +65,7 @@ declare global {
             patternElements?: Dictionary<SVGElement>;
             addPattern(
                 options: PatternFill.PatternOptionsObject,
-                animation?: (boolean|AnimationOptionsObject)
+                animation?: (boolean|AnimationOptions)
             ): (SVGElement|undefined);
         }
         let patterns: Array<PatternFill.PatternOptionsObject>|undefined;
@@ -368,7 +368,7 @@ Point.prototype.calculatePatternDimensions = function (
  */
 SVGRenderer.prototype.addPattern = function (
     options: PatternFill.PatternOptionsObject,
-    animation?: (boolean|Partial<AnimationOptionsObject>)
+    animation?: (boolean|Partial<AnimationOptions>)
 ): (SVGElement|undefined) {
     var pattern: (SVGElement|undefined),
         animate = pick(animation, true),
@@ -769,7 +769,7 @@ addEvent(Chart, 'redraw', function (): void {
 namespace PatternFill {
 
     export interface PatternObject {
-        animation?: Partial<AnimationOptionsObject>;
+        animation?: Partial<AnimationOptions>;
         pattern: PatternOptionsObject;
         patternIndex?: number;
     }

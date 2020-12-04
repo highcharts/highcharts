@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
+import type AnimationOptions from './Animation/AnimationOptions';
 import type AreaSeries from '../Series/Area/AreaSeries';
 import type AreaRangeSeriesOptions from '../Series/AreaRange/AreaRangeSeriesOptions';
 import type PointerEvent from './PointerEvent';
@@ -1172,7 +1172,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             haloOptions,
             markerAttribs,
             pointAttribs: SVGAttributes,
-            pointAttribsAnimation: AnimationOptionsObject,
+            pointAttribsAnimation: AnimationOptions,
             hasMarkers = (markerOptions && series.markerAttribs),
             newSymbol;
 

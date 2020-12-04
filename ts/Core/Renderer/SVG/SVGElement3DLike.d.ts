@@ -16,7 +16,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Animation/AnimationOptions';
 import type ColorType from '../../Color/ColorType';
 import type SVGAttributes from './SVGAttributes';
 import type SVGElement from './SVGElement';
@@ -48,7 +48,7 @@ export interface SVGElement3DLikeCuboid extends SVGElement3DLikeBase {
     animate(
         this: SVGElement,
         args: SVGAttributes,
-        duration?: (boolean|Partial<AnimationOptionsObject>),
+        duration?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement;
     attr(

@@ -13,7 +13,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../AlignObject';
-import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
@@ -121,7 +121,7 @@ declare global {
             public alignSetter(value: ('left'|'center'|'right')): void;
             public animate(
                 params: SVGAttributes,
-                options?: (boolean|DeepPartial<AnimationOptionsObject>),
+                options?: (boolean|DeepPartial<AnimationOptions>),
                 complete?: Function
             ): SVGElement;
             public applyTextOutline(textOutline: string): void;
@@ -805,7 +805,7 @@ class SVGElement {
      */
     public animate(
         params: SVGAttributes,
-        options?: (boolean|Partial<AnimationOptionsObject>),
+        options?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement {
         var animOptions = animObject(

@@ -17,7 +17,7 @@
  * */
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type PieDataLabelOptions from './PieDataLabelOptions';
 import type PiePointOptions from './PiePointOptions';
 import type PiePositionObject from './PiePositionObject';
@@ -257,7 +257,7 @@ class PiePoint extends Point {
     public slice(
         sliced: boolean,
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         var point = this,
             series = point.series,

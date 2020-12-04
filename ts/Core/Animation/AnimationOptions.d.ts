@@ -16,7 +16,7 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
  *
  * */
 
-export interface AnimationOptionsObject {
+export interface AnimationOptions {
     complete?: Function;
     curAnim?: Record<string, boolean>;
     defer: number;
@@ -34,4 +34,4 @@ export interface AnimationStepCallbackFunction {
  *
  * */
 
-export default AnimationOptionsObject;
+export default AnimationOptions;

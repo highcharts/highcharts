@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
+import type AnimationOptions from './Animation/AnimationOptions';
 import type BBoxObject from './Renderer/BBoxObject';
 import type Chart from './Chart/Chart';
 import type ColorAxis from './Axis/ColorAxis';
@@ -143,7 +143,7 @@ declare global {
             public renderTitle(): void;
             public scroll(
                 scrollBy: number,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
+                animation?: (boolean|Partial<AnimationOptions>)
             ): void;
             public setOptions(options: LegendOptions): void;
             public setText(item: (BubbleLegend|LineSeries|Point)): void;
@@ -1581,7 +1581,7 @@ class Legend {
      *
      * @return {void}
      */
-    public scroll(scrollBy: number, animation?: (boolean|Partial<AnimationOptionsObject>)): void {
+    public scroll(scrollBy: number, animation?: (boolean|Partial<AnimationOptions>)): void {
         var chart = this.chart,
             pages = this.pages,
             pageCount = pages.length,

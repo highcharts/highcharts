@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
@@ -1086,7 +1086,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Default initial animation to a fraction of the series
                     // animation (#9396)
-                    let animationOptions: Partial<AnimationOptionsObject>|undefined;
+                    let animationOptions: Partial<AnimationOptions>|undefined;
                     if (isNew) {
                         animationOptions = animObject(series.options.animation);
                         // @todo: Safely remove any cast after merging #13005

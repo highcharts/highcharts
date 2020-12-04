@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from './AnimationOptionsObject';
+import type AnimationOptions from './AnimationOptions';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type FxLike from './FxLike';
@@ -39,18 +39,18 @@ declare global {
         function animate(
             el: (HTMLDOMElement|SVGElement),
             params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptionsObject>
+            opt?: Partial<AnimationOptions>
         ): void;
         function animObject(
-            animation?: (boolean|AnimationOptionsObject)
-        ): AnimationOptionsObject;
+            animation?: (boolean|AnimationOptions)
+        ): AnimationOptions;
         function getDeferredAnimation(
             chart: Chart,
-            animation: Partial<AnimationOptionsObject>,
+            animation: Partial<AnimationOptions>,
             series?: LineSeries
-        ): Partial<AnimationOptionsObject>;
+        ): Partial<AnimationOptions>;
         function setAnimation(
-            animation: (boolean|Partial<AnimationOptionsObject>|undefined),
+            animation: (boolean|Partial<AnimationOptions>|undefined),
             chart: Chart
         ): void
     }
@@ -91,7 +91,7 @@ class Fx {
      */
     public constructor(
         elem: (HTMLElement|SVGElement),
-        options: Partial<AnimationOptionsObject>,
+        options: Partial<AnimationOptions>,
         prop: string
     ) {
         this.options = options;
@@ -109,7 +109,7 @@ class Fx {
     public end?: number;
     public from?: number;
     public now?: number;
-    public options: Partial<AnimationOptionsObject>;
+    public options: Partial<AnimationOptions>;
     public paths?: [SVGPath, SVGPath];
     public pos: number = NaN;
     public prop: string;

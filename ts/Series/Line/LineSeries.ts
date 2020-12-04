@@ -16,7 +16,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type { AxisType } from '../../Core/Axis/Types';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
@@ -3535,7 +3535,7 @@ class LineSeries {
      */
     public updateData(
         data: Array<(PointOptions|PointShortOptions)>,
-        animation?: (boolean|Partial<AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptions>)
     ): boolean {
         var options = this.options,
             dataSorting = options.dataSorting,
@@ -3731,7 +3731,7 @@ class LineSeries {
     public setData(
         data: Array<(PointOptions|PointShortOptions)>,
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
         var series = this,
@@ -4795,7 +4795,7 @@ class LineSeries {
      * @return {Highcharts.Dictionary<number>}
      */
     public getClipBox(
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         finalBox?: boolean
     ): Highcharts.Dictionary<number> {
         var series = this,
@@ -4847,7 +4847,7 @@ class LineSeries {
      * @private
      * @function Highcharts.Series#setClip
      */
-    public setClip(animation?: (boolean|AnimationOptionsObject)): void {
+    public setClip(animation?: (boolean|AnimationOptions)): void {
         var chart = this.chart,
             options = this.options,
             renderer = chart.renderer,
@@ -6517,7 +6517,7 @@ class LineSeries {
         options: (PointOptions|PointShortOptions),
         redraw?: boolean,
         shift?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         withEvent?: boolean
     ): void {
         var series = this,
@@ -6628,7 +6628,7 @@ class LineSeries {
     public removePoint(
         i: number,
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptions>)
     ): void {
 
         var series = this,
@@ -6696,7 +6696,7 @@ class LineSeries {
      */
     public remove(
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         withEvent?: boolean,
         keepEvents?: boolean
     ): void {

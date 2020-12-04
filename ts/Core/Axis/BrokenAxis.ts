@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisBreakBorderObject, AxisBreakObject } from './Types';
 import type Point from '../Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -311,7 +311,7 @@ class BrokenAxisAdditions {
                 newMin: number,
                 newMax: number,
                 redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
+                animation?: (boolean|Partial<AnimationOptions>),
                 eventArguments?: any
             ): void {
                 // If trying to set extremes inside a break, extend min to
