@@ -841,6 +841,47 @@ function clamp(value: number, min: number, max: number): number {
     return value > min ? value < max ? value : max : min;
 }
 
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Remove settings that have not changed, to avoid unnecessary rendering or
+ * computing (#9197).
+ * @private
+ */
+function cleanRecursively<TNew extends Record<string, any>, TOld extends Record<string, any>>(
+    newer: TNew,
+    older: TOld
+): TNew & TOld {
+    var result: Record<string, any> = {};
+
+    objectEach(newer, function (_val: unknown, key: (number|string)): void {
+        var ob;
+
+        // Dive into objects (except DOM nodes)
+        if (
+            isObject(newer[key], true) &&
+            !newer.nodeType && // #10044
+            older[key]
+        ) {
+            ob = cleanRecursively(
+                newer[key],
+                older[key]
+            );
+            if (Object.keys(ob).length) {
+                result[key] = ob;
+            }
+
+        // Arrays, primitives and DOM nodes are copied directly
+        } else if (
+            isObject(newer[key]) ||
+            newer[key] !== older[key]
+        ) {
+            result[key] = newer[key];
+        }
+    });
+
+    return result;
+}
+
 /**
  * Shortcut for parseInt
  *
@@ -2777,6 +2818,7 @@ const utilitiesModule = {
     arrayMin,
     attr,
     clamp,
+    cleanRecursively,
     clearTimeout: internalClearTimeout,
     correctFloat,
     createElement,

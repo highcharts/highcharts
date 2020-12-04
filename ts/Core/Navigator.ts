@@ -2772,7 +2772,7 @@ if (!H.Navigator) {
 
     // Initialize navigator, if no scrolling exists yet
     addEvent(Chart, 'afterUpdate', function (
-        event: Highcharts.ChartAfterUpdateEventObject
+        event: Chart.AfterUpdateEventObject
     ): void {
 
         if (!this.navigator && !this.scroller &&

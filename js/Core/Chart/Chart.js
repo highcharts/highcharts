@@ -22,7 +22,7 @@ import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, attr = U.attr, cleanRecursively = U.cleanRecursively, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
 var marginNames = H.marginNames;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -2220,7 +2220,7 @@ var Chart = /** @class */ (function () {
         if (!isResponsiveOptions) {
             chart.setResponsive(false, true);
         }
-        options = H.cleanRecursively(options, chart.options);
+        options = cleanRecursively(options, chart.options);
         merge(true, chart.userOptions, options);
         // If the top-level chart option is present, some special updates are
         // required

@@ -33,29 +33,6 @@ var Series;
      *
      * */
     /* eslint-disable valid-jsdoc */
-    /** @private */
-    function cleanRecursively(toClean, reference) {
-        var clean = {};
-        objectEach(toClean, function (_val, key) {
-            var ob;
-            // Dive into objects (except DOM nodes)
-            if (isObject(toClean[key], true) &&
-                !toClean.nodeType && // #10044
-                reference[key]) {
-                ob = cleanRecursively(toClean[key], reference[key]);
-                if (Object.keys(ob).length) {
-                    clean[key] = ob;
-                }
-                // Arrays, primitives and DOM nodes are copied directly
-            }
-            else if (isObject(toClean[key]) ||
-                toClean[key] !== reference[key]) {
-                clean[key] = toClean[key];
-            }
-        });
-        return clean;
-    }
-    Series.cleanRecursively = cleanRecursively;
     /**
      * Internal function to initialize an individual series.
      * @private
