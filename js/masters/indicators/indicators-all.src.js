@@ -28,7 +28,7 @@ import '../../Stock/Indicators/DEMAIndicator.js';
 import '../../Stock/Indicators/TEMAIndicator.js';
 import '../../Stock/Indicators/TRIXIndicator.js';
 import '../../Stock/Indicators/APOIndicator.js';
-import '../../Stock/Indicators/IKHIndicator.js';
+import '../../Stock/Indicators/IKH/IKHIndicator.js';
 import '../../Stock/Indicators/KeltnerChannelsIndicator.js';
 import '../../Stock/Indicators/MACDIndicator.js';
 import '../../Stock/Indicators/MFIIndicator.js';
