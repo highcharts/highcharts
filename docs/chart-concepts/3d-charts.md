@@ -134,7 +134,7 @@ A 3D chart of type [area](https://highcharts.com/docs/chart-and-series-types/are
 
 Just like in normal area charts, the Highcharts 3D plugin does allow to display multiple area series and to order these as desired with _grouping_ and _stacking_.
 
-**Make sure the depth of the chart is sufficient to display all your area series. You will need at least the following depth: number of area series * (depth of single area series)**
+**Make sure the depth of the chart is sufficient to display all your area series. You will need at least the following depth: (number of area series - 1) * (depth of single area series)**
 
 Stacking is still available in 3D charts and works in exactly the same way by setting _stacking_ to **true**.
 
