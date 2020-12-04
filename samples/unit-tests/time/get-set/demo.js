@@ -312,3 +312,13 @@ QUnit.test('useUTC = false (variableTimezone)', assert => {
         'Time should be intact when useUTC = false'
     );
 });
+
+QUnit.test('#14746: Undefined max getTimeTicks threw', assert => {
+    const time = new Highcharts.Time({
+        useUTC: false
+    });
+
+    time.getTimeTicks({}, 0, undefined);
+
+    assert.ok(true, 'It should not throw');
+});
