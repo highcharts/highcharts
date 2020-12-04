@@ -84,45 +84,6 @@ namespace Series {
 
     /* eslint-disable valid-jsdoc */
 
-    /** @private */
-    export function cleanRecursively<T>(
-        toClean: DeepRecord<string, T>,
-        reference: DeepRecord<string, T>
-    ): DeepRecord<string, T> {
-        var clean: DeepRecord<string, T> = {};
-
-        objectEach(toClean, function (
-            _val: (T|DeepRecord<string, T>),
-            key: (number|string)
-        ): void {
-            var ob;
-
-            // Dive into objects (except DOM nodes)
-            if (
-                isObject(toClean[key], true) &&
-                !toClean.nodeType && // #10044
-                reference[key]
-            ) {
-                ob = cleanRecursively<T>(
-                    toClean[key] as DeepRecord<string, T>,
-                    reference[key] as DeepRecord<string, T>
-                );
-                if (Object.keys(ob).length) {
-                    clean[key] = ob;
-                }
-
-            // Arrays, primitives and DOM nodes are copied directly
-            } else if (
-                isObject(toClean[key]) ||
-                toClean[key] !== reference[key]
-            ) {
-                clean[key] = toClean[key];
-            }
-        });
-
-        return clean;
-    }
-
     /**
      * Internal function to initialize an individual series.
      * @private

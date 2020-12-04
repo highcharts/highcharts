@@ -578,7 +578,7 @@ var Time = /** @class */ (function () {
             // Redefine min to the floored/rounded minimum time (#7432)
             min = minDate.getTime();
             // Handle local timezone offset
-            if (time.variableTimezone || !time.useUTC) {
+            if ((time.variableTimezone || !time.useUTC) && defined(max)) {
                 // Detect whether we need to take the DST crossover into
                 // consideration. If we're crossing over DST, the day length may
                 // be 23h or 25h and we need to compute the exact clock time for

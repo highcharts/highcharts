@@ -46,6 +46,7 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
+    erase,
     error,
     extend,
     fireEvent,
@@ -430,6 +431,7 @@ declare global {
             public ticks: Dictionary<Tick>;
             public titleOffset?: number;
             public top: number;
+            public touched?: boolean;
             public transA: number;
             public transB: number;
             public translationSlope: number;
@@ -477,6 +479,7 @@ declare global {
             public minFromRange(): (number|undefined);
             public nameToX(point: Point): number;
             public redraw(): void;
+            public remove(redraw?: boolean): void;
             public render(): void;
             public renderLine(): void;
             public renderMinorTick(pos: number): void;
@@ -484,6 +487,7 @@ declare global {
             public renderUnsquish(): void;
             public setAxisSize(): void;
             public setAxisTranslation(): void;
+            public setCategories(categories: Array<string>, redraw?: boolean): void;
             public setExtremes(
                 newMin?: number,
                 newMax?: number,
@@ -495,6 +499,7 @@ declare global {
             public setScale(): void;
             public setTickInterval(secondPass?: boolean): void;
             public setTickPositions(): void;
+            public setTitle(titleOptions: AxisTitleOptions, redraw?: boolean): void;
             public tickSize(prefix?: string): [number, number]|undefined;
             public toPixels(value: number, paneCoordinates?: boolean): number;
             public toValue(pixel: number, paneCoordinates?: boolean): number;
@@ -512,6 +517,7 @@ declare global {
                 endOnTick?: boolean
             ): void;
             public unsquish(): number;
+            public update(options: AxisOptions, redraw?: boolean): void;
             public updateNames(): void;
             public validatePositiveValue(value: unknown): boolean;
             public zoom(newMin: number, newMax: number): boolean;
@@ -7814,12 +7820,163 @@ class Axis {
     *
     * @param {unknown} value
     * The axis value
-    * @return {boolean}
     *
+    * @return {boolean}
     */
     public validatePositiveValue(value: unknown): boolean {
         return isNumber(value) && value > 0;
     }
+
+    /**
+     * Update an axis object with a new set of options. The options are merged
+     * with the existing options, so only new or altered options need to be
+     * specified.
+     *
+     * @sample highcharts/members/axis-update/
+     *         Axis update demo
+     *
+     * @function Highcharts.Axis#update
+     *
+     * @param {Highcharts.AxisOptions} options
+     *        The new options that will be merged in with existing options on
+     *        the axis.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the axis is altered. If doing
+     *        more operations on the chart, it is a good idea to set redraw to
+     *        false and call {@link Chart#redraw} after.
+     */
+    public update(
+        options: Highcharts.AxisOptions,
+        redraw?: boolean
+    ): void {
+        var chart = this.chart,
+            newEvents = ((options && options.events) || {});
+
+        options = merge(this.userOptions, options);
+
+        // Color Axis is not an array,
+        // This change is applied in the ColorAxis wrapper
+        if ((chart.options as any)[this.coll].indexOf) {
+            // Don't use this.options.index,
+            // StockChart has Axes in navigator too
+            (chart.options as any)[this.coll][
+                (chart.options as any)[this.coll].indexOf(this.userOptions)
+            ] = options;
+        }
+
+        // Remove old events, if no new exist (#8161)
+        objectEach(
+            (chart.options as any)[this.coll].events,
+            function (fn: Function, ev: string): void {
+                if (typeof (newEvents as any)[ev] === 'undefined') {
+                    (newEvents as any)[ev] = void 0;
+                }
+            }
+        );
+
+        this.destroy(true);
+        this.init(chart, extend(options, { events: newEvents }));
+
+        chart.isDirtyBox = true;
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
+    }
+
+    /**
+     * Remove the axis from the chart.
+     *
+     * @sample highcharts/members/chart-addaxis/
+     *         Add and remove axes
+     *
+     * @function Highcharts.Axis#remove
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart following the remove.
+     */
+    public remove(redraw?: boolean): void {
+        var chart = this.chart,
+            key = this.coll, // xAxis or yAxis
+            axisSeries = this.series,
+            i = axisSeries.length;
+
+        // Remove associated series (#2687)
+        while (i--) {
+            if (axisSeries[i]) {
+                axisSeries[i].remove(false);
+            }
+        }
+
+        // Remove the axis
+        erase(chart.axes, this);
+        erase((chart as any)[key], this);
+
+        if (isArray((chart.options as any)[key])) {
+            (chart.options as any)[key].splice(this.options.index, 1);
+        } else { // color axis, #6488
+            delete (chart.options as any)[key];
+        }
+
+        (chart as any)[key].forEach(function (
+            axis: Highcharts.Axis,
+            i: number
+        ): void {
+            // Re-index, #1706, #8075
+            axis.options.index = axis.userOptions.index = i;
+        });
+        this.destroy();
+        chart.isDirtyBox = true;
+
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
+    }
+
+    /**
+     * Update the axis title by options after render time.
+     *
+     * @sample highcharts/members/axis-settitle/
+     *         Set a new Y axis title
+     *
+     * @function Highcharts.Axis#setTitle
+     *
+     * @param {Highcharts.AxisTitleOptions} titleOptions
+     *        The additional title options.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after setting the title.
+     *
+     * @return {void}
+     */
+    public setTitle(
+        titleOptions: Highcharts.AxisTitleOptions,
+        redraw?: boolean
+    ): void {
+        this.update({ title: titleOptions }, redraw);
+    }
+
+    /**
+     * Set new axis categories and optionally redraw.
+     *
+     * @sample highcharts/members/axis-setcategories/
+     *         Set categories by click on a button
+     *
+     * @function Highcharts.Axis#setCategories
+     *
+     * @param {Array<string>} categories
+     *        The new categories.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart.
+     */
+    public setCategories(
+        categories: Array<string>,
+        redraw?: boolean
+    ): void {
+        this.update({ categories: categories }, redraw);
+    }
+
 }
 
 interface Axis extends AxisComposition, AxisLike {
