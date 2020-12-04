@@ -1845,15 +1845,16 @@ class RangeSelector {
 
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
 
-        const dropdown: HTMLSelectElement = this.dropdown = createElement('select', {}, {
+        const dropdown = this.dropdown = createElement('select', {}, {
             position: 'absolute',
             width: '1px',
             height: '1px',
             padding: 0,
+            border: 0,
             top: '-9999em',
             cursor: 'pointer',
             opacity: 0.0001
-        }, this.div) as any;
+        }, this.div) as HTMLSelectElement;
 
         const mouseover = H.isMS ? 'mouseover' : 'mouseenter';
         const mouseout = H.isMS ? 'mouseout' : 'mouseleave';
@@ -2393,18 +2394,19 @@ class RangeSelector {
     public showDropdown(): void {
         const {
             buttonGroup,
+            buttons,
             chart,
-            dropdown,
-            options
+            dropdown
         } = this;
 
         if (buttonGroup && dropdown) {
             const { translateX, translateY } = buttonGroup;
+            const bBox = buttons[this.currentButtonIndex()].getBBox();
             css(dropdown, {
                 left: (chart.plotLeft + translateX) + 'px',
-                top: translateY + 'px',
-                width: 'auto',
-                height: ((options.buttonTheme.height || 18) + 8) + 'px'
+                top: (translateY + 0.5) + 'px',
+                width: bBox.width + 'px',
+                height: bBox.height + 'px'
             });
         }
     }

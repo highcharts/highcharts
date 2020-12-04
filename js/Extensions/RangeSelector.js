@@ -1312,6 +1312,7 @@ var RangeSelector = /** @class */ (function () {
             width: '1px',
             height: '1px',
             padding: 0,
+            border: 0,
             top: '-9999em',
             cursor: 'pointer',
             opacity: 0.0001
@@ -1685,14 +1686,15 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.showDropdown = function () {
-        var _a = this, buttonGroup = _a.buttonGroup, chart = _a.chart, dropdown = _a.dropdown, options = _a.options;
+        var _a = this, buttonGroup = _a.buttonGroup, buttons = _a.buttons, chart = _a.chart, dropdown = _a.dropdown;
         if (buttonGroup && dropdown) {
             var translateX = buttonGroup.translateX, translateY = buttonGroup.translateY;
+            var bBox = buttons[this.currentButtonIndex()].getBBox();
             css(dropdown, {
                 left: (chart.plotLeft + translateX) + 'px',
-                top: translateY + 'px',
-                width: 'auto',
-                height: ((options.buttonTheme.height || 18) + 8) + 'px'
+                top: (translateY + 0.5) + 'px',
+                width: bBox.width + 'px',
+                height: bBox.height + 'px'
             });
         }
     };
