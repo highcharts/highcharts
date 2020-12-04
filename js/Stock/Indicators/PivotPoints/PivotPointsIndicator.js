@@ -50,6 +50,8 @@ var PivotPointsIndicator = /** @class */ (function (_super) {
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
+        _this.endPoint = void 0;
+        _this.plotEndPoint = void 0;
         return _this;
     }
     /**
