@@ -16,7 +16,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type MapPointOptions from './MapPointOptions';
@@ -512,7 +512,7 @@ class MapSeries extends ScatterSeries {
                     (this.chart.drilldownLevels as any).length - 1
                 ],
             fromBox = level.bBox,
-            animationOptions: (boolean|Partial<AnimationOptionsObject>) =
+            animationOptions: (boolean|Partial<AnimationOptions>) =
                 (this.chart.options.drilldown as any).animation,
             scale;
 
@@ -1019,7 +1019,7 @@ class MapSeries extends ScatterSeries {
     public setData(
         data: Array<(MapPointOptions|PointShortOptions)>,
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
         var options = this.options,

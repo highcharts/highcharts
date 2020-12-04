@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type AreaRangePoint from '../Series/AreaRange/AreaRangePoint';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type BoxPlotPoint from '../Series/BoxPlot/BoxPlotPoint';
@@ -2117,7 +2117,7 @@ function getNewPoints(
  */
 function updatePoints(
     chart: Chart,
-    animate?: (boolean|Partial<AnimationOptionsObject>)
+    animate?: (boolean|Partial<AnimationOptions>)
 ): void {
     var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,

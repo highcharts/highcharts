@@ -14,7 +14,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { EventCallback } from '../Callback';
 import type ColorType from '../Color/ColorType';
 import type DashStyleValue from '../Renderer/DashStyleValue';
@@ -74,7 +74,7 @@ export interface SeriesEventsOptions {
  * file.
  */
 export interface SeriesOptions {
-    animation?: (boolean|DeepPartial<AnimationOptionsObject>);
+    animation?: (boolean|DeepPartial<AnimationOptions>);
     color?: ColorType;
     colorIndex?: number;
     data?: Array<(PointOptions|PointShortOptions)>;
@@ -110,7 +110,7 @@ export interface SeriesStateHoverHaloOptions {
 }
 
 export interface SeriesStateHoverOptions extends StateHoverOptions {
-    animation?: (boolean|DeepPartial<AnimationOptionsObject>);
+    animation?: (boolean|DeepPartial<AnimationOptions>);
     brightness?: number;
     enabled?: boolean;
     halo?: (boolean|SeriesStateHoverHaloOptions);
