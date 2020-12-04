@@ -276,11 +276,6 @@ class TEMAIndicator extends EMAIndicator {
 interface TEMAIndicator {
     pointClass: typeof TEMAPoint;
 }
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        EMApercent?: number;
-    }
-}
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         tema: typeof TEMAIndicator;
