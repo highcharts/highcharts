@@ -29,7 +29,7 @@ QUnit.test('Point dataGroup', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points[0].dataGroup.length,
-        3,
-        'First group includes 3 points'
+        7,
+        'First group includes 7 points'
     );
 });

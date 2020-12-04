@@ -48,3 +48,20 @@ QUnit.test('Single point padding (#2846)', function (assert) {
         'The point width should be larger than about 1 pixel.'
     );
 });
+
+QUnit.test('The getTimeTicks should not return negative values.', function (assert) {
+    var chart = Highcharts.chart('container', {
+        yAxis: {
+            type: "datetime"
+        },
+        series: [{
+            type: 'column',
+            data: [6048000000, 41280000, 33180000, 0]
+        }]
+    });
+
+    assert.ok(
+        chart.yAxis[0].tickPositions[0] >= 0,
+        'The first tick on the datetime axis should not be negative.'
+    );
+});
