@@ -207,11 +207,6 @@ interface DEMAIndicator {
     pointClass: typeof DEMAPoint;
 }
 
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        EMApercent?: number;
-    }
-}
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         dema: typeof DEMAIndicator;
