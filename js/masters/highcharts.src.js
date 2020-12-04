@@ -22,7 +22,6 @@ import '../Core/Legend.js';
 import '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
 import '../Extensions/Stacking.js';
-import '../Core/Dynamics.js';
 import '../Series/Area/AreaSeries.js';
 import '../Series/Spline/SplineSeries.js';
 import '../Series/AreaSpline/AreaSplineSeries.js';
