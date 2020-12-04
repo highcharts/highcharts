@@ -1,15 +1,20 @@
 QUnit.test('Stock chart specific options in setOptions', function (assert) {
-
     var chart;
 
-    chart = $('#container').highcharts('StockChart', {
-        series: [{
-            data: [1, 2, 3]
-        }]
-    }).highcharts();
+    chart = $('#container')
+        .highcharts('StockChart', {
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
+        })
+        .highcharts();
 
     assert.strictEqual(
-        chart.navigator.enabled && chart.scrollbar.enabled && chart.rangeSelector.enabled,
+        chart.navigator.enabled &&
+            chart.scrollbar.enabled &&
+            chart.rangeSelector.enabled,
         undefined,
         'navigator, scrollbar, rangeSelector enabled'
     );
@@ -27,18 +32,24 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         tooltip: {
             split: false
         },
-        yAxis: [{
-            title: {
-                text: 'Custom title'
+        yAxis: [
+            {
+                title: {
+                    text: 'Custom title'
+                }
             }
-        }]
+        ]
     });
 
-    chart = $('#container').highcharts('StockChart', {
-        series: [{
-            data: [1, 2, 3]
-        }]
-    }).highcharts();
+    chart = $('#container')
+        .highcharts('StockChart', {
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
+        })
+        .highcharts();
 
     assert.strictEqual(
         chart.navigator && chart.scrollbar && chart.rangeSelector,
@@ -59,20 +70,24 @@ QUnit.test('Stock chart specific options in setOptions', function (assert) {
         'Axis option set as array should apply to corresponding index (#7690)'
     );
 
-    chart = $('#container').highcharts('StockChart', {
-        navigator: {
-            enabled: false
-        },
-        scrollbar: {
-            enabled: false
-        },
-        rangeSelector: {
-            enabled: false
-        },
-        series: [{
-            data: [1, 2, 3]
-        }]
-    }).highcharts();
+    chart = $('#container')
+        .highcharts('StockChart', {
+            navigator: {
+                enabled: false
+            },
+            scrollbar: {
+                enabled: false
+            },
+            rangeSelector: {
+                enabled: false
+            },
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
+        })
+        .highcharts();
 
     assert.strictEqual(
         chart.navigator && chart.scrollbar && chart.rangeSelector,

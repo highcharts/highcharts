@@ -4664,13 +4664,15 @@ class LineSeries {
 
             // Set the the plotY value, reset it for redraws
             // #3201
-            point.plotY = (
-                (typeof yValue === 'number' && yValue !== Infinity) ?
-                    limitedRange(yAxis.translate(
-                        yValue, 0 as any, 1 as any, 0 as any, 1 as any
-                    ) as any) :
-                    void 0
-            );
+            point.plotY = void 0;
+            if (isNumber(yValue)) {
+                const translated = yAxis.translate(
+                    yValue, false, true, false, true
+                );
+                if (typeof translated !== 'undefined') {
+                    point.plotY = limitedRange(translated);
+                }
+            }
 
             point.isInside = this.isPointInside(point);
 
@@ -6432,7 +6434,7 @@ class LineSeries {
         }
 
         return isNumber(factor) ?
-            factor * pick(pointRange, axis.pointRange) :
+            factor * (pointRange || axis.pointRange) :
             0;
     }
 
@@ -6472,7 +6474,7 @@ interface LineSeries extends SeriesLike {
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
-    hcEvents: Record<string, Array<Highcharts.EventWrapperObject<LineSeries>>>;
+    hcEvents?: Record<string, Array<Highcharts.EventWrapperObject<LineSeries>>>;
     isCartesian: boolean;
     kdAxisArray: Array<string>;
     parallelArrays: Array<string>;

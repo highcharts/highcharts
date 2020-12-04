@@ -19,8 +19,10 @@ import type {
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
-    unhideChartElementFromAT
+    unhideChartElementFromAT,
+    getAxisRangeDescription
 } = ChartUtilities;
+import Announcer from '../Utils/Announcer.js';
 import H from '../../Core/Globals.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
@@ -28,6 +30,7 @@ const {
 } = HTMLUtilities;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
+import RangeSelector from '../../Extensions/RangeSelector.js';
 const {
     extend
 } = U;
@@ -50,10 +53,12 @@ declare global {
     namespace Highcharts {
         class RangeSelectorComponent extends AccessibilityComponent {
             public constructor ();
+            public announcer: Announcer;
             public getKeyboardNavigation(): Array<KeyboardNavigationHandler>;
             public getRangeSelectorButtonNavigation(
             ): KeyboardNavigationHandler;
             public getRangeSelectorInputNavigation(): KeyboardNavigationHandler;
+            public onAfterBtnClick(): void;
             public onButtonNavKbdArrowKey(
                 keyboardNavigationHandler: KeyboardNavigationHandler,
                 keyCode: number
@@ -138,6 +143,14 @@ H.Chart.prototype.highlightRangeSelectorButton = function (
 };
 
 
+// Range selector does not have destroy-setup for class instance events - so
+// we set it on the class and call the component from here.
+H.addEvent(RangeSelector, 'afterBtnClick', function (): void {
+    const component = this.chart.accessibility?.components.rangeSelector;
+    return component?.onAfterBtnClick();
+});
+
+
 /**
  * The RangeSelectorComponent class
  *
@@ -149,6 +162,16 @@ var RangeSelectorComponent: typeof Highcharts.RangeSelectorComponent =
     function (): void {} as any;
 RangeSelectorComponent.prototype = new (AccessibilityComponent as any)();
 extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComponent */ { // eslint-disable-line
+
+    /**
+     * Init the component
+     * @private
+     */
+    init: function (this: Highcharts.RangeSelectorComponent): void {
+        const chart = this.chart;
+        this.announcer = new Announcer(chart, 'polite');
+    },
+
 
     /**
      * Called on first render/updates to the chart, including options changes.
@@ -332,6 +355,27 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
 
 
     /**
+     * Called whenever a range selector button has been clicked, either by
+     * mouse, touch, or kbd/voice/other.
+     * @private
+     */
+    onAfterBtnClick: function (
+        this: Highcharts.RangeSelectorComponent
+    ): void {
+        const chart = this.chart;
+        const axisRangeDescription = getAxisRangeDescription(chart.xAxis[0]);
+        const announcement = chart.langFormat(
+            'accessibility.rangeSelector.clickButtonAnnouncement',
+            { chart, axisRangeDescription }
+        );
+
+        if (announcement) {
+            this.announcer.announce(announcement);
+        }
+    },
+
+
+    /**
      * Get navigation for the range selector input boxes.
      * @private
      * @return {Highcharts.KeyboardNavigationHandler}
@@ -454,8 +498,15 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
             this.getRangeSelectorButtonNavigation(),
             this.getRangeSelectorInputNavigation()
         ];
-    }
+    },
 
+
+    /**
+     * Remove component traces
+     */
+    destroy: function (this: Highcharts.RangeSelectorComponent): void {
+        this.announcer?.destroy();
+    }
 });
 
 export default RangeSelectorComponent;

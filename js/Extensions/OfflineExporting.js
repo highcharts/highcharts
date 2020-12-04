@@ -210,6 +210,20 @@ function downloadSVGLocal(svg, options, failCallback, successCallback) {
         [].forEach.call(svgElement.querySelectorAll('*[visibility="hidden"]'), function (node) {
             node.parentNode.removeChild(node);
         });
+        // Workaround for #13948, multiple stops in linear gradient set to 0
+        // causing error in Acrobat
+        var gradients = svgElement.querySelectorAll('linearGradient');
+        for (var index = 0; index < gradients.length; index++) {
+            var gradient = gradients[index];
+            var stops = gradient.querySelectorAll('stop');
+            var i = 0;
+            while (i < stops.length &&
+                stops[i].getAttribute('offset') === '0' &&
+                stops[i + 1].getAttribute('offset') === '0') {
+                stops[i].remove();
+                i++;
+            }
+        }
         win.svg2pdf(svgElement, pdf, { removeInvalid: true });
         return pdf.output('datauristring');
     }

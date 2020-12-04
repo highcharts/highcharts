@@ -2,9 +2,11 @@ QUnit.test(
     'yAxis should be on the left side when opposite is false (#3802)',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
-            series: [{
-                data: [1, 20, 5, 1, 11]
-            }]
+            series: [
+                {
+                    data: [1, 20, 5, 1, 11]
+                }
+            ]
         });
 
         // Regression during Gantt development

@@ -4,9 +4,11 @@ QUnit.test('options3d update', function (assert) {
         chart: {
             type: 'pie'
         },
-        series: [{
-            data: [1, 2, 3]
-        }]
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
     });
     const series = chart.series[0];
     const elements3d = ['top', 'side1', 'side2', 'out'];
@@ -49,34 +51,34 @@ QUnit.test('3D pie animation', function (assert) {
                 duration: 1
             }
         },
-        series: [{
-            data: [1, 2, 3],
-            depth: 35,
-            animation: false
-        }]
+        series: [
+            {
+                data: [1, 2, 3],
+                depth: 35,
+                animation: false
+            }
+        ]
     });
 
     var clock = TestUtilities.lolexInstall();
     try {
+        var d = chart.series[0].points[0].graphic.element
+            .querySelector('path')
+            .getAttribute('d');
 
-        var d = chart.series[0].points[0].graphic.element.querySelector('path').getAttribute('d');
-
-        assert.strictEqual(
-            d.indexOf('M'),
-            0,
-            'Path makes sense'
-        );
+        assert.strictEqual(d.indexOf('M'), 0, 'Path makes sense');
 
         chart.series[0].points[1].setVisible(false);
 
         TestUtilities.lolexRunAndUninstall(clock);
 
         assert.notEqual(
-            chart.series[0].points[0].graphic.element.querySelector('path').getAttribute('d'),
+            chart.series[0].points[0].graphic.element
+                .querySelector('path')
+                .getAttribute('d'),
             d,
             'Path has changed since update'
         );
-
     } finally {
         TestUtilities.lolexUninstall(clock);
     }

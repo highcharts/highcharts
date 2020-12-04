@@ -1,5 +1,4 @@
 QUnit.test('Stack labels on non-data axis', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -15,22 +14,23 @@ QUnit.test('Stack labels on non-data axis', function (assert) {
                 stacking: 'normal'
             }
         },
-        series: [{
-            data: [-10, -10, -15]
-        }]
+        series: [
+            {
+                data: [-10, -10, -15]
+            }
+        ]
     });
 
-
     assert.notStrictEqual(
-        chart.container.querySelector('.highcharts-stack-labels text')
+        chart.container
+            .querySelector('.highcharts-stack-labels text')
             .getAttribute('y'),
         null,
         'Y attribute should be set (#8834)'
     );
 
     assert.strictEqual(
-        chart
-            .container
+        chart.container
             .querySelector('.highcharts-label.highcharts-stack-labels')
             .getAttribute('visibility'),
         'hidden',
@@ -39,7 +39,6 @@ QUnit.test('Stack labels on non-data axis', function (assert) {
 });
 
 QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
-
     let firstStackLabel;
     let lastStackLabel;
 
@@ -66,32 +65,29 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             }
         },
 
-        series: [{
-            data: [
-                29.9123464, -71.5123464,
-                106.4123464, 129.2123464
-            ]
-        }, {
-            data: [
-                144.0123464, -176.0123464,
-                135.6123464, 148.5123464
-            ]
-        }, {
-            data: [
-                144.0123464, -176.0123464,
-                135.6123464, 148.5123464
-            ].reverse()
-        }]
+        series: [
+            {
+                data: [29.9123464, -71.5123464, 106.4123464, 129.2123464]
+            },
+            {
+                data: [144.0123464, -176.0123464, 135.6123464, 148.5123464]
+            },
+            {
+                data: [
+                    144.0123464,
+                    -176.0123464,
+                    135.6123464,
+                    148.5123464
+                ].reverse()
+            }
+        ]
     });
 
     const getFirstAndLast = () => {
         const stacks = chart.yAxis[0].stacking.stacks,
             stackKey = Object.keys(stacks)[0];
 
-        return [
-            stacks[stackKey][0].label,
-            stacks[stackKey][3].label
-        ];
+        return [stacks[stackKey][0].label, stacks[stackKey][3].label];
     };
 
     [firstStackLabel, lastStackLabel] = getFirstAndLast();
@@ -104,7 +100,8 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
 
     assert.close(
         lastStackLabel.alignAttr.x +
-        lastStackLabel.width - lastStackLabel.padding,
+            lastStackLabel.width -
+            lastStackLabel.padding,
         chart.plotWidth,
         0.5,
         'Stack label should be inside plot area right'
@@ -146,15 +143,16 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
     [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
-        firstStackLabel.alignAttr.x +
-        firstStackLabel.padding >= 0,
+        firstStackLabel.alignAttr.x + firstStackLabel.padding >= 0,
         false,
         'Stack label should be outside plot area'
     );
 
     assert.strictEqual(
         lastStackLabel.alignAttr.x +
-        lastStackLabel.width - lastStackLabel.padding <= chart.plotWidth,
+            lastStackLabel.width -
+            lastStackLabel.padding <=
+            chart.plotWidth,
         false,
         'Stack label should be outside plot area'
     );
@@ -168,15 +166,16 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
     [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
-        firstStackLabel.alignAttr.x +
-        firstStackLabel.padding >= 0,
+        firstStackLabel.alignAttr.x + firstStackLabel.padding >= 0,
         true,
         'Stack label should be outside plot area'
     );
 
     assert.strictEqual(
         lastStackLabel.alignAttr.x +
-        lastStackLabel.width - lastStackLabel.padding <= chart.plotWidth,
+            lastStackLabel.width -
+            lastStackLabel.padding <=
+            chart.plotWidth,
         false,
         'Stack label should be outside plot area'
     );
@@ -215,21 +214,21 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
     [firstStackLabel, lastStackLabel] = getFirstAndLast();
 
     assert.strictEqual(
-        firstStackLabel.alignAttr.x +
-        firstStackLabel.padding >= 0,
+        firstStackLabel.alignAttr.x + firstStackLabel.padding >= 0,
         true,
         'Stack label should be inside plot area left'
     );
     assert.strictEqual(
         lastStackLabel.alignAttr.x +
-        lastStackLabel.width - lastStackLabel.padding <= chart.plotWidth,
+            lastStackLabel.width -
+            lastStackLabel.padding <=
+            chart.plotWidth,
         true,
         'Stack label should be inside plot area right'
     );
 });
 
 QUnit.test('Stack labels overlapping issue #11982', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
@@ -241,12 +240,13 @@ QUnit.test('Stack labels overlapping issue #11982', function (assert) {
                 enabled: true
             }
         },
-        series: [{
-            stacking: 'normal',
-            data: [25.2, 24, 25, 26, 25, 25, 23, 27, 25, 25, 25, 25, 25, 25]
-        }]
+        series: [
+            {
+                stacking: 'normal',
+                data: [25.2, 24, 25, 26, 25, 25, 23, 27, 25, 25, 25, 25, 25, 25]
+            }
+        ]
     });
-
 
     assert.strictEqual(
         chart.yAxis[0].stacking.stacks['column,,,'][2].label.opacity,
@@ -280,24 +280,44 @@ QUnit.test(
                     groupPadding: 0
                 }
             },
-            series: [{
-                data: [
-                    29.9, 71.5, 106.4, 129.2, 144.0, 176.0,
-                    135.6, 148.5, 216.4, 194.1, 95.6, 54.4
-                ]
-            }, {
-                data: [
-                    144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
-                    95.6, 54.4, 29.9, 71.5, 106.4, 129.2
-                ]
-            }]
+            series: [
+                {
+                    data: [
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2,
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4
+                    ]
+                },
+                {
+                    data: [
+                        144.0,
+                        176.0,
+                        135.6,
+                        148.5,
+                        216.4,
+                        194.1,
+                        95.6,
+                        54.4,
+                        29.9,
+                        71.5,
+                        106.4,
+                        129.2
+                    ]
+                }
+            ]
         });
 
-        var testValue = chart
-            .yAxis[0]
-            .stacking.stacks['column,,,'][4]
-            .label
-            .alignAttr;
+        var testValue =
+            chart.yAxis[0].stacking.stacks['column,,,'][4].label.alignAttr;
 
         // StackedLabel has incorrect position after resize chart container
         // #12337
@@ -332,14 +352,14 @@ QUnit.test(
             column[4].label.alignAttr.x,
             testValue.x,
             'This stack-label alignAttr should be ' +
-            'the same after chart resize #12337'
+                'the same after chart resize #12337'
         );
 
         assert.strictEqual(
             column[4].label.alignAttr.y,
             testValue.y,
             'This stack-label alignAttr should be ' +
-            'the same after chart resize #12337'
+                'the same after chart resize #12337'
         );
 
         chart.update({
@@ -354,7 +374,7 @@ QUnit.test(
             column[4].label.text.x,
             padding,
             'This stack-label text x attribute should be ' +
-            'equal to set padding #12308'
+                'equal to set padding #12308'
         );
     }
 );
@@ -383,16 +403,19 @@ QUnit.test(
                 }
             },
 
-            series: [{
-                name: 'Year 1800',
-                data: [107, 31, 635, 203, 2],
-                dataLabels: {
-                    enabled: true
+            series: [
+                {
+                    name: 'Year 1800',
+                    data: [107, 31, 635, 203, 2],
+                    dataLabels: {
+                        enabled: true
+                    }
+                },
+                {
+                    name: 'Year 1900',
+                    data: [133, 156, 947, 408, 6]
                 }
-            }, {
-                name: 'Year 1900',
-                data: [133, 156, 947, 408, 6]
-            }]
+            ]
         });
 
         const getStack = () => {
@@ -409,7 +432,7 @@ QUnit.test(
             stackLabel.parentGroup.translateX + stackLabel.translateX,
             dataLabel.parentGroup.translateX + dataLabel.x,
             'This stack-label should moved to the same ' +
-            'position as dataLabel #11500'
+                'position as dataLabel #11500'
         );
 
         chart.update({
@@ -428,13 +451,12 @@ QUnit.test(
             stackLabel.parentGroup.translateY + stackLabel.translateY,
             dataLabel.parentGroup.translateY + dataLabel.y,
             'This stack-label should moved to the same ' +
-            'position as dataLabel #11500'
+                'position as dataLabel #11500'
         );
     }
 );
 
 QUnit.test('Stack labels styles options #13330', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -459,13 +481,16 @@ QUnit.test('Stack labels styles options #13330', function (assert) {
             }
         },
 
-        series: [{
-            name: 'A',
-            data: [5, 3]
-        }, {
-            name: 'B',
-            data: [15, 12]
-        }]
+        series: [
+            {
+                name: 'A',
+                data: [5, 3]
+            },
+            {
+                name: 'B',
+                data: [15, 12]
+            }
+        ]
     });
 
     const stackLabel = chart.yAxis[0].stacking.stacks['column,,,'][0];
@@ -474,28 +499,28 @@ QUnit.test('Stack labels styles options #13330', function (assert) {
         stackLabel.label.fill,
         stackLabel.options.backgroundColor,
         'This stack-label fill atribute should be same as ' +
-        'set in options #13330'
+            'set in options #13330'
     );
 
     assert.strictEqual(
         stackLabel.label.stroke,
         stackLabel.options.borderColor,
         'This stack-label stroke atribute should be same as ' +
-        'set in options #13330'
+            'set in options #13330'
     );
 
     assert.strictEqual(
-        stackLabel.label["stroke-width"],
+        stackLabel.label['stroke-width'],
         stackLabel.options.borderWidth,
         'This stack-label stroke-width atribute should be same as ' +
-        'set in options #13330'
+            'set in options #13330'
     );
 
     assert.strictEqual(
         stackLabel.label.box.r,
         stackLabel.options.borderRadius,
         'This stack-label box r atribute should be same as ' +
-        'set in options #13330'
+            'set in options #13330'
     );
 });
 
@@ -528,42 +553,49 @@ QUnit.test(
                         }
                     },
 
-                    series: [{
-                        data: [
-                            43934, 52503, 57177, 69658,
-                            97031, 119931, 137133, 154175
-                        ]
-
-                    }, {
-                        data: [
-                            43934, 52503, 57177, 69658,
-                            97031, 119931, 137133, 154175
-                        ].reverse()
-                    }]
+                    series: [
+                        {
+                            data: [
+                                43934,
+                                52503,
+                                57177,
+                                69658,
+                                97031,
+                                119931,
+                                137133,
+                                154175
+                            ]
+                        },
+                        {
+                            data: [
+                                43934,
+                                52503,
+                                57177,
+                                69658,
+                                97031,
+                                119931,
+                                137133,
+                                154175
+                            ].reverse()
+                        }
+                    ]
                 }),
                 done = assert.async(),
                 labelOpacity;
 
             setTimeout(function () {
                 // Animation started
-                labelOpacity = chart
-                    .yAxis[0]
-                    .stacking
-                    .stackTotalGroup
-                    .opacity;
+                labelOpacity = chart.yAxis[0].stacking.stackTotalGroup.opacity;
                 assert.strictEqual(
                     labelOpacity,
                     0,
                     'Animate should not be started - ' +
-                    'stackLabels should be invisible'
+                        'stackLabels should be invisible'
                 );
 
                 setTimeout(function () {
-                    labelOpacity = chart
-                        .yAxis[0]
-                        .stacking
-                        .stackTotalGroup
-                        .opacity;
+                    labelOpacity =
+                        chart.yAxis[0].stacking.stackTotalGroup.opacity;
                     // Animation started but not finished
                     assert.strictEqual(
                         labelOpacity > 0 && labelOpacity < 1,
@@ -573,17 +605,14 @@ QUnit.test(
                 }, 250);
 
                 setTimeout(function () {
-                    labelOpacity = chart
-                        .yAxis[0]
-                        .stacking
-                        .stackTotalGroup
-                        .opacity;
+                    labelOpacity =
+                        chart.yAxis[0].stacking.stackTotalGroup.opacity;
                     // Animation finished
                     assert.strictEqual(
                         labelOpacity,
                         1,
                         'Animate should be finished - ' +
-                        'stackLabels should be visible'
+                            'stackLabels should be visible'
                     );
                     // All tests are done
                     done();

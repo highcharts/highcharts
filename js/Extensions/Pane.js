@@ -388,6 +388,9 @@ addEvent(Pointer, 'beforeGetHoverData', function (eventArgs) {
                 (!chart.hoverPane || s.xAxis.pane === chart.hoverPane));
         };
     }
+    else {
+        chart.hoverPane = void 0;
+    }
 });
 addEvent(Pointer, 'afterGetHoverData', function (eventArgs) {
     var chart = this.chart;

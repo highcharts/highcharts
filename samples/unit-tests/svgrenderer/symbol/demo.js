@@ -9,9 +9,10 @@ QUnit.test('Symbol tests', function (assert) {
         symbol2,
         symbol3,
         label,
-        url = location.host.substr(0, 12) === 'localhost:98' ?
-            'url(base/test/testimage.png)' : // karma
-            'url(testimage.png)'; // utils
+        url =
+            location.host.substr(0, 12) === 'localhost:98' ?
+                'url(base/test/testimage.png)' : // karma
+                'url(testimage.png)'; // utils
 
     function ifDone() {
         count++;
@@ -56,11 +57,17 @@ QUnit.test('Symbol tests', function (assert) {
 
                     // With explicit size
                     symbol2 = ren
-                        .symbol(url.replace(')', '?' + Date.now() + ')'),
-                            200, 100, null, null, {
+                        .symbol(
+                            url.replace(')', '?' + Date.now() + ')'),
+                            200,
+                            100,
+                            null,
+                            null,
+                            {
                                 width: 20,
                                 height: 20
-                            })
+                            }
+                        )
                         .add();
                     total++;
 
@@ -83,7 +90,6 @@ QUnit.test('Symbol tests', function (assert) {
                         })
                         .add();
                     total++;
-
                 },
                 // images are loaded
                 load: function () {
@@ -95,7 +101,8 @@ QUnit.test('Symbol tests', function (assert) {
                     );
                     assert.strictEqual(
                         symbol1.element.getAttribute('transform') &&
-                            symbol1.element.getAttribute('transform')
+                            symbol1.element
+                                .getAttribute('transform')
                                 .replace(' ', ','), // MSIE
                         'translate(-15,-15)',
                         'Translate ok'
@@ -110,7 +117,8 @@ QUnit.test('Symbol tests', function (assert) {
                     );
                     assert.strictEqual(
                         symbol2.element.getAttribute('transform') &&
-                            symbol2.element.getAttribute('transform')
+                            symbol2.element
+                                .getAttribute('transform')
                                 .replace(' ', ','), // MSIE
                         'translate(-10,-10)',
                         'Translate ok'
@@ -125,8 +133,9 @@ QUnit.test('Symbol tests', function (assert) {
                     );
                     assert.strictEqual(
                         label.box.element.getAttribute('transform') &&
-                        label.box.element.getAttribute('transform')
-                            .replace('(35)', '(35,0)'), // MSIE
+                            label.box.element
+                                .getAttribute('transform')
+                                .replace('(35)', '(35,0)'), // MSIE
                         'translate(35,0)',
                         'Label box translate ok, centered in label'
                     );
@@ -143,5 +152,4 @@ QUnit.test('Symbol tests', function (assert) {
             }
         }
     });
-
 });

@@ -899,7 +899,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
 
         itemsForRemoval.forEach(function (item: any): void {
-            if (item.remove) {
+            if (item.chart) { // #9097, avoid removing twice
                 item.remove(false);
             }
         });
@@ -1426,7 +1426,6 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
 
             // Destroy elements
             series.destroy(keepEvents);
-            (series as any).remove = null; // Prevent from doing again (#9097)
 
             // Redraw
             chart.isDirtyLegend = chart.isDirtyBox = true;
@@ -1604,15 +1603,44 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
             delete (series as any)[prop];
         });
 
-        // Destroy the series and delete all properties. Reinsert all
-        // methods and properties from the new type prototype (#2270,
-        // #3719).
-        series.remove(false, null as any, false, true);
-        for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
-            (series as any)[n] = void 0;
-        }
         if (seriesTypes[newType || initialType]) {
-            extend(series, seriesTypes[newType || initialType].prototype);
+
+            const casting = newType !== series.type;
+
+            // Destroy the series and delete all properties, it will be
+            // reinserted within the `init` call below
+            series.remove(false, false, false, true);
+
+            if (casting) {
+                // Modern browsers including IE11
+                if (Object.setPrototypeOf) {
+                    Object.setPrototypeOf(
+                        series,
+                        seriesTypes[newType || initialType].prototype
+                    );
+
+                // Legacy (IE < 11)
+                } else {
+
+                    const ownEvents = Object.hasOwnProperty.call(series, 'hcEvents') &&
+                        series.hcEvents;
+                    for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
+                        (series as any)[n] = void 0;
+                    }
+
+                    // Reinsert all methods and properties from the new type
+                    // prototype (#2270, #3719).
+                    extend(series, seriesTypes[newType || initialType].prototype);
+
+                    // The events are tied to the prototype chain, don't copy if
+                    // they're not the series' own
+                    if (ownEvents) {
+                        series.hcEvents = ownEvents;
+                    } else {
+                        delete series.hcEvents;
+                    }
+                }
+            }
         } else {
             error(
                 17,
@@ -1628,6 +1656,7 @@ extend(LineSeries.prototype, /** @lends Series.prototype */ {
         });
 
         series.init(chart, options);
+
 
         // Remove particular elements of the points. Check `series.options`
         // because we need to consider the options being set on plotOptions as

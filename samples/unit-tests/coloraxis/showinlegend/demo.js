@@ -3,17 +3,19 @@ QUnit.test('showInLegend. #5544', function (assert) {
             chart: {
                 renderTo: 'container'
             },
-            series: [{
-                type: 'heatmap',
-                data: [
-                    [0, 0, 10],
-                    [0, 1, 19],
-                    [0, 2, 8],
-                    [1, 0, 92],
-                    [1, 1, 58],
-                    [1, 2, 78]
-                ]
-            }]
+            series: [
+                {
+                    type: 'heatmap',
+                    data: [
+                        [0, 0, 10],
+                        [0, 1, 19],
+                        [0, 2, 8],
+                        [1, 0, 92],
+                        [1, 1, 58],
+                        [1, 2, 78]
+                    ]
+                }
+            ]
         }),
         items = chart.legend.getAllItems(),
         // While we wait for chart.update
@@ -72,7 +74,6 @@ QUnit.test('showInLegend. #5544', function (assert) {
 });
 
 QUnit.test('Grid lines, disabled color axis legend', function (assert) {
-
     var chart = Highcharts.mapChart('container', {
         chart: {
             map: 'countries/au/au-all'
@@ -80,11 +81,15 @@ QUnit.test('Grid lines, disabled color axis legend', function (assert) {
         legend: {
             enabled: false
         },
-        colorAxis: {
-        },
-        series: [{
-            data: [['au-wa', 1], ['au-nt', 0]]
-        }]
+        colorAxis: {},
+        series: [
+            {
+                data: [
+                    ['au-wa', 1],
+                    ['au-nt', 0]
+                ]
+            }
+        ]
     });
     var items = chart.container.querySelectorAll('svg > .highcharts-grid-line');
     assert.notOk(items && items.length, 'No stray ticks when legend disabled.');

@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/PCIndicator.js';
+import '../../Stock/Indicators/PC/PCIndicator.js';

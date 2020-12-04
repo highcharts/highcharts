@@ -69,7 +69,7 @@ declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         softThreshold?: boolean;
         startFromThreshold?: boolean;
-        threshold?: number;
+        threshold?: number|null;
     }
 }
 
@@ -7798,7 +7798,12 @@ class Axis {
     *
     */
     public hasVerticalPanning(): boolean {
-        return /y/.test(this.chart.options.chart?.panning?.type || '');
+        const panningOptions = this.chart.options.chart?.panning;
+        return Boolean(
+            panningOptions &&
+            panningOptions.enabled && // #14624
+            /y/.test(panningOptions.type)
+        );
     }
 
     /**

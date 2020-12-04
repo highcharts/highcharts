@@ -1,12 +1,13 @@
-/* global TestController */
 QUnit.test('getUnionExtremes', function (assert) {
     var chart = Highcharts.stockChart('container', {
-            series: [{
-                marker: {
-                    enabled: true
-                },
-                data: [[1451952000000, 354652]]
-            }]
+            series: [
+                {
+                    marker: {
+                        enabled: true
+                    },
+                    data: [[1451952000000, 354652]]
+                }
+            ]
         }),
         unionExtremes = chart.scroller.getUnionExtremes(),
         extremes = chart.xAxis[0].getExtremes();
@@ -29,9 +30,11 @@ QUnit.test('Extremes - edge cases', function (assert) {
                 min: 5,
                 max: 10
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6, 3, 8, 9, 1]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6, 3, 8, 9, 1]
+                }
+            ]
         }),
         extremes = chart.xAxis[0].getExtremes(),
         navigator = chart.navigator,
@@ -51,14 +54,19 @@ QUnit.test('Extremes - edge cases', function (assert) {
         'Extremes with selected button, correct range (#6383)'
     );
 
-    chart.xAxis[0].update({
-        reversed: true
-    }, false);
+    chart.xAxis[0].update(
+        {
+            reversed: true
+        },
+        false
+    );
     chart.xAxis[0].setExtremes(1, 5);
 
     navigator.handlesMousedown({}, 1);
     navigator.onMouseMove({
-        pageX: navigator.size + navigator.left +
+        pageX:
+            navigator.size +
+            navigator.left +
             Highcharts.offset(chart.container).left,
         pageY: navigator.handles[1].translateY + 5
     });
@@ -88,9 +96,11 @@ QUnit.test('Extremes - inverted chart', function (assert) {
                 min: 0,
                 max: 3
             },
-            series: [{
-                data: [1, 2, 3, 4, 5, 6, 3, 8, 9, 1]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3, 4, 5, 6, 3, 8, 9, 1]
+                }
+            ]
         }),
         controller = new TestController(chart),
         newExtremes;

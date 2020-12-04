@@ -1,10 +1,12 @@
 QUnit.test('series.colors: default to colors.', function (assert) {
     var H = Highcharts,
         chart = H.chart('container', {
-            series: [{
-                type: 'sunburst',
-                data: [1, 2]
-            }]
+            series: [
+                {
+                    type: 'sunburst',
+                    data: [1, 2]
+                }
+            ]
         }),
         series = chart.series[0];
     // TODO chart.colors could be copied explicitly onto the series object.
@@ -23,13 +25,17 @@ QUnit.test('series.colors: default to colors.', function (assert) {
 QUnit.test('series.colors: custom colors.', assert => {
     const chartColors = ['#00ffff', '#ff00ff', '#ffff00'];
     const seriesColors = ['#ff0000', '#00ff00', '#0000ff'];
-    const { series: [series] } = Highcharts.chart('container', {
+    const {
+        series: [series]
+    } = Highcharts.chart('container', {
         colors: chartColors,
-        series: [{
-            colorByPoint: true,
-            type: 'sunburst',
-            data: [1, 2, 3]
-        }]
+        series: [
+            {
+                colorByPoint: true,
+                type: 'sunburst',
+                data: [1, 2, 3]
+            }
+        ]
     });
     assert.deepEqual(
         series.points.map(point => point.color),

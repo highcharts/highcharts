@@ -1,5 +1,4 @@
 QUnit.test('Bindings general tests', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
             chart: {
                 width: 800
@@ -9,23 +8,25 @@ QUnit.test('Bindings general tests', function (assert) {
                     align: 'left'
                 }
             },
-            series: [{
-                type: 'ohlc',
-                id: 'aapl',
-                name: 'AAPL Stock Price',
-                data: [
-                    [0, 12, 15, 10, 13],
-                    [1, 13, 16, 9, 15],
-                    [2, 15, 15, 11, 12],
-                    [3, 12, 12, 11, 12],
-                    [4, 12, 15, 12, 15],
-                    [5, 11, 11, 10, 10],
-                    [6, 10, 16, 10, 12],
-                    [7, 12, 17, 12, 17],
-                    [8, 17, 18, 15, 15],
-                    [9, 15, 19, 12, 12]
-                ]
-            }],
+            series: [
+                {
+                    type: 'ohlc',
+                    id: 'aapl',
+                    name: 'AAPL Stock Price',
+                    data: [
+                        [0, 12, 15, 10, 13],
+                        [1, 13, 16, 9, 15],
+                        [2, 15, 15, 11, 12],
+                        [3, 12, 12, 11, 12],
+                        [4, 12, 15, 12, 15],
+                        [5, 11, 11, 10, 10],
+                        [6, 10, 16, 10, 12],
+                        [7, 12, 17, 12, 17],
+                        [8, 17, 18, 15, 15],
+                        [9, 15, 19, 12, 12]
+                    ]
+                }
+            ],
             stockTools: {
                 gui: {
                     enabled: true
@@ -41,7 +42,9 @@ QUnit.test('Bindings general tests', function (assert) {
     // CSS Styles are not loaded, so hide left bar. If we don't hide the bar,
     // chart will be rendered outside the visible page and events will not be
     // fired (TestController issue)
-    document.getElementsByClassName('highcharts-stocktools-wrapper')[0].style.display = 'none';
+    document.getElementsByClassName(
+        'highcharts-stocktools-wrapper'
+    )[0].style.display = 'none';
 
     // Number of tests is so high that events are not triggered on a chart, temporary hide it:
     var qunitContainer = document.getElementById('qunit');
@@ -97,7 +100,8 @@ QUnit.test('Bindings general tests', function (assert) {
                 points[2].plotY + plotTop - 5
             );
             Highcharts.each(
-                chart.navigationBindings.boundClassNames['highcharts-' + name].steps,
+                chart.navigationBindings.boundClassNames['highcharts-' + name]
+                    .steps,
                 function (step, index) {
                     controller.click(
                         points[4 + index].plotX + plotLeft - 5,
@@ -128,10 +132,7 @@ QUnit.test('Bindings general tests', function (assert) {
         function (name) {
             selectButton(name);
 
-            controller.click(
-                points[2].plotX,
-                points[2].plotY
-            );
+            controller.click(points[2].plotX, points[2].plotY);
 
             assert.strictEqual(
                 chart.annotations.length,
@@ -149,7 +150,8 @@ QUnit.test('Bindings general tests', function (assert) {
 
     controller.mouseDown(
         chart.plotLeft + chart.plotWidth / 2,
-        chart.plotTop + chart.plotHeight / 2 +
+        chart.plotTop +
+            chart.plotHeight / 2 +
             chart.annotations[16].shapes[1].graphic.getBBox().height / 2
     );
 
@@ -167,7 +169,7 @@ QUnit.test('Bindings general tests', function (assert) {
         chart.annotations[16].yAxisMax,
         chart.yAxis[0].toValue(chart.plotHeight / 2 + 10),
         1,
-        'Annotation should updated after control point\'s drag&drop (#12459)'
+        "Annotation should updated after control point's drag&drop (#12459)"
     );
 
     // Individual button events:
@@ -181,8 +183,7 @@ QUnit.test('Bindings general tests', function (assert) {
         'Last price in the range visible.'
     );
     assert.strictEqual(
-        chart.series[0].lastPrice &&
-            chart.series[0].lastPrice.visibility,
+        chart.series[0].lastPrice && chart.series[0].lastPrice.visibility,
         'visible',
         'Last price in the dataset visible.'
     );
@@ -195,8 +196,7 @@ QUnit.test('Bindings general tests', function (assert) {
         'Last price in the range hidden.'
     );
     assert.strictEqual(
-        chart.series[0].lastPrice &&
-            chart.series[0].lastPrice.visibility,
+        chart.series[0].lastPrice && chart.series[0].lastPrice.visibility,
         Highcharts.UNDEFINED,
         'Last price in the dataset hidden.'
     );
@@ -235,17 +235,14 @@ QUnit.test('Bindings general tests', function (assert) {
     );
 
     // Series types change:
-    Highcharts.each(
-        ['line', 'ohlc', 'candlestick'],
-        function (type) {
-            selectButton('series-type-' + type);
-            assert.strictEqual(
-                chart.series[0].type,
-                type,
-                'Series type changed to ' + type + '.'
-            );
-        }
-    );
+    Highcharts.each(['line', 'ohlc', 'candlestick'], function (type) {
+        selectButton('series-type-' + type);
+        assert.strictEqual(
+            chart.series[0].type,
+            type,
+            'Series type changed to ' + type + '.'
+        );
+    });
 
     // Saving chart in the local storage
     selectButton('save-chart');
@@ -255,17 +252,19 @@ QUnit.test('Bindings general tests', function (assert) {
         'Chart saved in the local storage'
     );
     // Restore basic annotations
-    JSON.parse(localStorage['highcharts-chart']).annotations.forEach(annotation => {
-        if (!annotation.typeOptions) {
-            chart.addAnnotation(annotation);
+    JSON.parse(localStorage['highcharts-chart']).annotations.forEach(
+        annotation => {
+            if (!annotation.typeOptions) {
+                chart.addAnnotation(annotation);
 
-            assert.ok(
-                1,
-                'No errors should be thrown after setting the basic annotations (#12054)'
-            );
-            ++annotationsCounter;
+                assert.ok(
+                    1,
+                    'No errors should be thrown after setting the basic annotations (#12054)'
+                );
+                ++annotationsCounter;
+            }
         }
-    });
+    );
 
     localStorage.removeItem('highcharts-chart');
 
@@ -279,13 +278,12 @@ QUnit.test('Bindings general tests', function (assert) {
     // Styles in Karma are not loaded!
     chart.navigationBindings.popup.container.style.position = 'absolute';
 
-    var button = document.querySelectorAll('.highcharts-popup .highcharts-annotation-edit-button')[0],
+    var button = document.querySelectorAll(
+            '.highcharts-popup .highcharts-annotation-edit-button'
+        )[0],
         buttonOffset = Highcharts.offset(button);
 
-    controller.click(
-        buttonOffset.left + 5,
-        buttonOffset.top + 5
-    );
+    controller.click(buttonOffset.left + 5, buttonOffset.top + 5);
 
     var popupEditor = document.querySelectorAll('.highcharts-popup-lhs-col');
 
@@ -296,10 +294,7 @@ QUnit.test('Bindings general tests', function (assert) {
     );
 
     // Point out the other point to close the editor popup
-    controller.click(
-        points[9].plotX + plotLeft,
-        points[9].plotY + plotTop
-    );
+    controller.click(points[9].plotX + plotLeft, points[9].plotY + plotTop);
 
     controller.click(
         points[2].plotX + plotLeft + 15,
@@ -307,8 +302,9 @@ QUnit.test('Bindings general tests', function (assert) {
     );
 
     assert.strictEqual(
-        chart.navigationBindings.popup.container.classList
-            .contains('highcharts-annotation-toolbar'),
+        chart.navigationBindings.popup.container.classList.contains(
+            'highcharts-annotation-toolbar'
+        ),
         true,
         'Annotations toolbar rendered.'
     );
@@ -327,10 +323,7 @@ QUnit.test('Bindings general tests', function (assert) {
     )[0];
     buttonOffset = Highcharts.offset(button);
 
-    controller.click(
-        buttonOffset.left + 5,
-        buttonOffset.top + 5
-    );
+    controller.click(buttonOffset.left + 5, buttonOffset.top + 5);
     assert.strictEqual(
         chart.annotations.length,
         --annotationsCounter,
@@ -347,10 +340,7 @@ QUnit.test('Bindings general tests', function (assert) {
 
     selectButton('flag-circlepin');
     // Register flag position
-    controller.click(
-        points[2].plotX,
-        points[2].plotY
-    );
+    controller.click(points[2].plotX, points[2].plotY);
 
     // Styles in Karma are not loaded!
     chart.navigationBindings.popup.container.style.position = 'absolute';
@@ -359,10 +349,7 @@ QUnit.test('Bindings general tests', function (assert) {
         '.highcharts-popup .highcharts-popup-bottom-row button'
     )[0];
     buttonOffset = Highcharts.offset(button);
-    controller.click(
-        buttonOffset.left + 5,
-        buttonOffset.top + 5
-    );
+    controller.click(buttonOffset.left + 5, buttonOffset.top + 5);
 
     assert.strictEqual(
         chart.series.length,
@@ -377,13 +364,16 @@ QUnit.test('Bindings general tests', function (assert) {
     );
 
     // #9740:
-    chart.update({
-        stockTools: {
-            gui: {
-                buttons: ['toggleAnnotations']
+    chart.update(
+        {
+            stockTools: {
+                gui: {
+                    buttons: ['toggleAnnotations']
+                }
             }
-        }
-    }, true);
+        },
+        true
+    );
 
     selectButton('toggle-annotations');
 

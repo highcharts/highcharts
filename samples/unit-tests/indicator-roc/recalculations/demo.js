@@ -1,25 +1,51 @@
 QUnit.test('Test algorithm on data updates.', function (assert) {
-
     var chart = Highcharts.stockChart('container', {
-        series: [{
-            id: 'main',
-            data: [
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15,
-                13, 14, 15, 13, 14, 15
-            ]
-        }, {
-            type: 'roc',
-            linkedTo: 'main'
-        }]
+        series: [
+            {
+                id: 'main',
+                data: [
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15,
+                    13,
+                    14,
+                    15
+                ]
+            },
+            {
+                type: 'roc',
+                linkedTo: 'main'
+            }
+        ]
     });
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length +
-            chart.series[1].options.params.period,
+        chart.series[1].points.length + chart.series[1].options.params.period,
         'Initial number of ROC points is correct'
     );
 
@@ -27,8 +53,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         chart.series[0].points.length,
-        chart.series[1].points.length +
-            chart.series[1].options.params.period,
+        chart.series[1].points.length + chart.series[1].options.params.period,
         'After addPoint number of ROC points is correct'
     );
 
@@ -42,7 +67,7 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
 
     assert.strictEqual(
         Highcharts.correctFloat(chart.series[1].yData[3]),
-        Highcharts.correctFloat((80 - 77) / 77 * 100),
+        Highcharts.correctFloat(((80 - 77) / 77) * 100),
         'Correct values'
     );
 
