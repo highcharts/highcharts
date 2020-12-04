@@ -1649,7 +1649,7 @@ class Data {
                     url: url,
                     dataType: tp || 'json',
                     success: function (
-                        res: (string|Highcharts.JSONType)
+                        res: any
                     ): void {
                         if (chart && chart.series) {
                             done(res);
@@ -1676,7 +1676,7 @@ class Data {
             if (!request(
                 originalOptions.csvURL,
                 function (
-                    res: (string|Highcharts.JSONType)
+                    res: any
                 ): void {
                     chart.update({
                         data: {
@@ -1687,7 +1687,7 @@ class Data {
                 'text'
             )) {
                 if (!request(originalOptions.rowsURL, function (
-                    res: (string|Highcharts.JSONType)
+                    res: any
                 ): void {
                     chart.update({
                         data: {
@@ -1696,7 +1696,7 @@ class Data {
                     });
                 })) {
                     request(originalOptions.columnsURL, function (
-                        res: (string|Highcharts.JSONType)
+                        res: any
                     ): void {
                         chart.update({
                             data: {
@@ -1756,7 +1756,7 @@ class Data {
             ajax({
                 url: url,
                 dataType: 'json',
-                success: function (json: Highcharts.JSONType): void {
+                success: function (json: any): void {
                     fn(json);
 
                     if (options.enablePolling) {
@@ -1782,7 +1782,7 @@ class Data {
             delete options.googleSpreadsheetKey;
 
             fetchSheet(function (
-                json: Highcharts.JSONType
+                json: any
             ): (boolean|undefined) {
                 // Prepare the data from the spreadsheat
                 var columns: Array<Array<Highcharts.DataValueType>> = [],
