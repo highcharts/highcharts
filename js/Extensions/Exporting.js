@@ -1578,7 +1578,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             };
         }
         if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 25);
+            attr.paddingLeft = pick(attr.paddingLeft, 30);
         }
         else if (!btnOptions.text) {
             extend(attr, {

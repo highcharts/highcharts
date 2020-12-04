@@ -433,7 +433,7 @@ class SVGLabel extends SVGElement {
             bBox.height || Infinity
         );
 
-        if (this.needsBox) {
+        if (this.needsBox && (!this.renderer.styledMode || this.text.added)) {
 
             // Create the border box if it is not already present
             if (!this.box) {

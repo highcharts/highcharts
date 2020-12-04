@@ -306,7 +306,7 @@ var SVGLabel = /** @class */ (function (_super) {
         // When the height is 0, there is no bBox, so go with the font
         // metrics. Highmaps CSS demos.
         bBox.height || Infinity);
-        if (this.needsBox) {
+        if (this.needsBox && (!this.renderer.styledMode || this.text.added)) {
             // Create the border box if it is not already present
             if (!this.box) {
                 // Symbol definition exists (#5324)
