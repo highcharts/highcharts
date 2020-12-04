@@ -26,7 +26,6 @@ var color = Color.parse;
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach;
-var SMA = BaseSeries.seriesTypes.sma;
 /* eslint-disable require-jsdoc */
 // Utils:
 function maxHigh(arr) {
@@ -95,7 +94,7 @@ function drawSenkouSpan(opt) {
     indicator.options = merge(opt.options.senkouSpan.styles, opt.gap);
     indicator.graph = opt.graph;
     indicator.fillGraph = true;
-    SMA.prototype.drawGraph.call(indicator);
+    BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
 }
 // Data integrity in Ichimoku is different than default 'averages':
 // Point: [undefined, value, value, ...] is correct
@@ -137,8 +136,10 @@ var IKHIndicator = /** @class */ (function (_super) {
         _this.data = void 0;
         _this.options = void 0;
         _this.points = void 0;
-        _this.pointValKey = 'tenkanSen';
-        _this.nameComponents = ['periodSenkouSpanB', 'period', 'periodTenkan'];
+        _this.graphCollection = void 0;
+        _this.graphsenkouSpan = void 0;
+        _this.ikhMap = void 0;
+        _this.nextPoints = void 0;
         return _this;
     }
     /* *
@@ -147,7 +148,7 @@ var IKHIndicator = /** @class */ (function (_super) {
     *
     * */
     IKHIndicator.prototype.init = function () {
-        SMA.prototype.init.apply(this, arguments);
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             tenkanLine: {
@@ -195,7 +196,7 @@ var IKHIndicator = /** @class */ (function (_super) {
     };
     IKHIndicator.prototype.translate = function () {
         var indicator = this;
-        SMA.prototype.translate.apply(indicator);
+        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
         indicator.points.forEach(function (point) {
             indicator.pointArrayMap.forEach(function (value) {
                 if (defined(point[value])) {
@@ -286,7 +287,7 @@ var IKHIndicator = /** @class */ (function (_super) {
                 indicator.graph = indicator['graph' + lineName];
                 indicator.fillGraph = false;
                 indicator.color = mainColor;
-                SMA.prototype.drawGraph.call(indicator);
+                BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
                 // Now save line
                 indicator['graph' + lineName] = indicator.graph;
             }
@@ -394,12 +395,12 @@ var IKHIndicator = /** @class */ (function (_super) {
         points = points || this.points;
         // Render Senkou Span
         if (indicator.fillGraph && indicator.nextPoints) {
-            spanA = SMA.prototype.getGraphPath.call(indicator, 
+            spanA = BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(indicator, 
             // Reverse points, so Senkou Span A will start from the end:
             indicator.nextPoints);
             if (spanA && spanA.length) {
                 spanA[0][0] = 'L';
-                path = SMA.prototype.getGraphPath.call(indicator, points);
+                path = BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
                 spanAarr = spanA.slice(0, path.length);
                 for (var i = spanAarr.length - 1; i >= 0; i--) {
                     path.push(spanAarr[i]);
@@ -407,7 +408,7 @@ var IKHIndicator = /** @class */ (function (_super) {
             }
         }
         else {
-            path = SMA.prototype.getGraphPath.apply(indicator, arguments);
+            path = BaseSeries.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
         }
         return path;
     };
@@ -654,7 +655,9 @@ extend(IKHIndicator.prototype, {
         'chikouSpan',
         'senkouSpanA',
         'senkouSpanB'
-    ]
+    ],
+    pointValKey: 'tenkanSen',
+    nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan']
 });
 BaseSeries.registerSeriesType('ikh', IKHIndicator);
 export default IKHIndicator;

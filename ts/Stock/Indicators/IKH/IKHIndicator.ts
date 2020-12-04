@@ -29,7 +29,7 @@ import Color from '../../../Core/Color/Color.js';
 const color = Color.parse;
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
-import {
+import type {
     IKHDrawSenkouSpanObject,
     IKHGapExtensionObject,
     IKHOptions,
@@ -43,8 +43,6 @@ declare module '../../../Core/Series/SeriesLike' {
         fillGraph?: boolean;
     }
 }
-
-var SMA = BaseSeries.seriesTypes.sma;
 
 /* eslint-disable require-jsdoc */
 
@@ -146,7 +144,7 @@ function drawSenkouSpan(
     ) as any;
     indicator.graph = opt.graph;
     indicator.fillGraph = true;
-    SMA.prototype.drawGraph.call(indicator);
+    BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
 }
 
 // Data integrity in Ichimoku is different than default 'averages':
@@ -369,9 +367,10 @@ class IKHIndicator extends SMAIndicator {
     public data: Array<IKHPoint> = void 0 as any;
     public options: IKHOptions = void 0 as any;
     public points: Array<IKHPoint> = void 0 as any;
-    public pointValKey = 'tenkanSen';
-    public nameComponents = ['periodSenkouSpanB', 'period', 'periodTenkan'];
-
+    public graphCollection: Array<string> = void 0 as any;
+    public graphsenkouSpan: SVGElement | undefined = void 0 as any;
+    public ikhMap: Highcharts.Dictionary<Array<IKHPoint>> = void 0 as any;
+    public nextPoints?: Array<IKHPoint> = void 0 as any;
 
     /* *
     *
@@ -380,7 +379,7 @@ class IKHIndicator extends SMAIndicator {
     * */
 
     public init(this: IKHIndicator): void {
-        SMA.prototype.init.apply(this, arguments);
+        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
         this.options = merge(
@@ -435,7 +434,7 @@ class IKHIndicator extends SMAIndicator {
     public translate(): void {
         var indicator = this;
 
-        SMA.prototype.translate.apply(indicator);
+        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
 
         indicator.points.forEach(function (
             point: IKHPoint
@@ -600,7 +599,7 @@ class IKHIndicator extends SMAIndicator {
 
                     indicator.fillGraph = false;
                     indicator.color = mainColor;
-                    SMA.prototype.drawGraph.call(indicator);
+                    BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
 
                     // Now save line
                     (indicator as any)['graph' + lineName] = indicator.graph;
@@ -759,7 +758,7 @@ class IKHIndicator extends SMAIndicator {
 
         // Render Senkou Span
         if (indicator.fillGraph && indicator.nextPoints) {
-            spanA = SMA.prototype.getGraphPath.call(
+            spanA = BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(
                 indicator,
                 // Reverse points, so Senkou Span A will start from the end:
                 indicator.nextPoints
@@ -768,7 +767,7 @@ class IKHIndicator extends SMAIndicator {
             if (spanA && spanA.length) {
                 spanA[0][0] = 'L';
 
-                path = SMA.prototype.getGraphPath.call(indicator, points);
+                path = BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
 
                 spanAarr = spanA.slice(0, path.length);
 
@@ -777,7 +776,7 @@ class IKHIndicator extends SMAIndicator {
                 }
             }
         } else {
-            path = SMA.prototype.getGraphPath.apply(indicator, arguments);
+            path = BaseSeries.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
         }
 
         return path;
@@ -910,19 +909,11 @@ class IKHIndicator extends SMAIndicator {
 *
 * */
 interface IKHIndicator {
-    data: Array<IKHPoint>;
-    getValues<TLinkedSeries extends LineSeries>(
-        series: TLinkedSeries,
-        params: IKHParamsOptions
-    ): IndicatorValuesObject<TLinkedSeries> | undefined;
-    graphCollection: Array<string>;
-    graphsenkouSpan: SVGElement | undefined;
-    ikhMap: Highcharts.Dictionary<Array<IKHPoint>>;
-    nextPoints?: Array<IKHPoint>;
-    options: IKHOptions;
-    pointValKey: string;
+
+
     pointClass: typeof IKHPoint;
-    points: Array<IKHPoint>;
+    nameComponents: Array<string>;
+    pointValKey: string;
     pointArrayMap: Array<keyof IKHPoint>;
 }
 
@@ -933,7 +924,9 @@ extend(IKHIndicator.prototype, {
         'chikouSpan',
         'senkouSpanA',
         'senkouSpanB'
-    ]
+    ],
+    pointValKey: 'tenkanSen',
+    nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan']
 });
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
