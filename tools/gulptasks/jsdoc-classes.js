@@ -31,7 +31,6 @@ const SOURCE_GLOBS = [
     'js/Core/Series/DataLabels.js',
     'js/Core/Series/Point.js',
     'js/Core/Series/Series.js',
-    'js/Core/Dynamics.js',
     'js/Core/Globals.js',
     'js/Core/Interaction.js',
     'js/Core/Legend.js',
