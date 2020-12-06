@@ -3,16 +3,19 @@
  */
 
 const { task, series } = require('gulp');
-const { promisify } = require('util');
-const exec = promisify(require('child_process').exec);
 const yargs = require('yargs');
+
+const { handle: demoBuilder } = require('highcharts-demo-manager/lib/cli/cmd.build-demo-pages');
+const { handle: thumbnailgenerator } = require('highcharts-demo-manager/lib/cli/cmd.genthumbnails');
+const { handle: deployer } = require('highcharts-demo-manager/lib/cli/cmd.demo-deploy');
+
+
 const argv = yargs(process.argv).argv;
 const { deleteDirectory } = require('./lib/fs');
 const { success, message } = require('./lib/log');
 const { log } = console;
 
-const BASE_CMD = 'npx highcharts-demo-manager',
-    SAMPLES_PATH = 'samples',
+const SAMPLES_PATH = 'samples',
     TMP_PATH = 'tmp/demos-html',
     S3_BUCKET = 'assets.highcharts.com';
 
@@ -22,9 +25,12 @@ const BASE_CMD = 'npx highcharts-demo-manager',
  * @return {void}
  */
 async function buildAllDemos() {
-    const { stdout, stderr } = await exec(`${BASE_CMD} build-demo-pages -input ${SAMPLES_PATH} -output ${TMP_PATH}`);
-    log(stdout);
-    log(stderr);
+    const args = {
+        input: SAMPLES_PATH,
+        output: TMP_PATH
+    };
+
+    await demoBuilder(args);
 }
 
 /**
@@ -38,39 +44,73 @@ async function cleanDemosHTML() {
 }
 
 /**
+ * Generates thumbnails
+ *
+ * Optional arguments `--output <output path>`
+ *
+ * @return {void}
+ */
+async function generateThumbnails() {
+    const tags = [
+        'Highcharts demo',
+        'Highcharts Maps demo',
+        'Highcharts Stock demo',
+        'Highcharts Gantt demo'
+    ];
+
+    const themes = [
+        'default',
+        'dark-unica',
+        'sand-signika',
+        'grid-light'
+    ];
+
+    const output = argv.output || 'tmp/demo-thumbnails';
+
+    // Build per tag
+    await thumbnailgenerator({
+        input: './' + SAMPLES_PATH,
+        output,
+        tags: tags.join(),
+        themes: themes.join(),
+        scale: 2
+    });
+
+}
+
+/**
  * Deploys demos in `tmp/demos-html`
  *
- * Usage `npx gulp demos-deploy --paths gantt,highcharts...` or `npx gulp demos-deploy --all`
- * Additional flags: `--verbose --profile <AWS profile>`
+ * Usage `npx gulp demos-deploy --all`
+ * Additional flags: `--dryrun`, `--profile <AWS profile>`
  * @return {void}
  */
 async function deployDemos() {
-    const { all, verbose, profile, dryrun } = argv;
+    const { all, profile, dryrun } = argv;
 
     const AWSProfile = profile || 'default';
 
     // Deploy everything
     if (all) {
         message(`Uploading all demos to ${S3_BUCKET} `);
-        const { stdout, stderr } = await exec(`${BASE_CMD} demo-deploy -input ${TMP_PATH} ` +
-            `-bucket ${S3_BUCKET} -AWSProfile ${AWSProfile} -output demos -make-redirects ${dryrun ? '-dryrun' : ''}`,
-        { maxBuffer: 1024 * (1024 * 4) });
 
-        if (verbose) {
-            log(stdout);
-        }
-        if (stderr) {
-            log(stderr);
-        }
+        const args = {
+            input: TMP_PATH,
+            output: 'demos',
+            bucket: S3_BUCKET,
+            AWSProfile,
+            'make-redirects': true,
+            dryrun
+        };
 
-        success('Done uploading demos!');
-        return;
+        await deployer(args);
+        success('Finished uploading demos');
     }
 
-    throw new Error('Specify subfolders with --paths <subfolders> or upload everything with --all');
 }
 
 task('demos-build', series(cleanDemosHTML, buildAllDemos));
+task('demos-thumbnails', generateThumbnails);
 task('demos-deploy', deployDemos);
 task('demos-clean', cleanDemosHTML);
 task('demos-build-and-deploy', series('demos-build', 'demos-deploy'));

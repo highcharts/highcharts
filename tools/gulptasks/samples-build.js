@@ -3,16 +3,16 @@
  */
 
 const { task, series } = require('gulp');
-const { promisify } = require('util');
-const exec = promisify(require('child_process').exec);
 const yargs = require('yargs');
 const argv = yargs(process.argv).argv;
 const { deleteDirectory } = require('./lib/fs');
 const { success, message } = require('./lib/log');
 const { log } = console;
 
-const BASE_CMD = 'npx highcharts-demo-manager',
-    SAMPLES_PATH = 'samples',
+const { handle: builder } = require('highcharts-demo-manager/lib/cli/cmd.builder');
+const { handle: deployer } = require('highcharts-demo-manager/lib/cli/cmd.demo-deploy');
+
+const SAMPLES_PATH = 'samples',
     TMP_PATH = 'tmp/samples-html',
     S3_BUCKET = 'assets.highcharts.com';
 
@@ -22,8 +22,10 @@ const BASE_CMD = 'npx highcharts-demo-manager',
  * @return {void}
  */
 async function buildAllSamples() {
-    const { stdout } = await exec(`${BASE_CMD} build -input ${SAMPLES_PATH} -output ${TMP_PATH}`);
-    log(stdout);
+    await builder({
+        input: SAMPLES_PATH,
+        output: TMP_PATH
+    });
 }
 
 /**
@@ -44,7 +46,7 @@ async function cleanSampleHTML() {
  * @return {void}
  */
 async function deploySamples() {
-    const { paths, all, verbose, profile } = argv;
+    const { paths, all, profile, dryrun } = argv;
 
     const AWSProfile = profile || 'default';
 
@@ -54,18 +56,15 @@ async function deploySamples() {
 
     // Deploy everything
     if (all) {
-        message(`Uploading all samples to ${S3_BUCKET} `);
-        const { stdout, stderr } = await exec(`${BASE_CMD} demo-deploy -input ${TMP_PATH} ` +
-            `-bucket ${S3_BUCKET} -AWSProfile ${AWSProfile} -output demos -make-redirects`,
-        { maxBuffer: 1024 * (1024 * 4) });
-
-        if (verbose) {
-            log(stdout);
-        }
-        if (stderr) {
-            log(stderr);
-        }
-
+        message(`Uploading samples to ${S3_BUCKET} `);
+        await deployer({
+            input: TMP_PATH,
+            bucket: S3_BUCKET,
+            AWSProfile,
+            output: 'demos',
+            'make-redirects': true,
+            dryrun
+        });
         success('Done uploading samples!');
         return;
     }
@@ -77,26 +76,24 @@ async function deploySamples() {
 
     message(`Uploading samples to ${S3_BUCKET} `);
     const subpaths = argv.paths.split(',');
-    const execPromises = subpaths.map(subpath => {
+    const uploadPromises = subpaths.map(subpath => {
         if (!subpath.startsWith('/')) {
             subpath = '/' + subpath;
         }
         const inputPath = `${TMP_PATH}/samples${subpath}`,
             outputPath = `demos/samples${subpath}`;
 
-        return exec(`${BASE_CMD} demo-deploy -input ${inputPath} ` +
-            `-bucket ${S3_BUCKET} -AWSProfile ${AWSProfile} -output ${outputPath} -make-redirects`);
+        return deployer({
+            input: inputPath,
+            bucket: S3_BUCKET,
+            AWSProfile,
+            output: outputPath,
+            'make-redirects': true,
+            dryrun
+        });
     });
 
-    for await (const deploy of execPromises) {
-        const { stdout, stderr } = deploy;
-        if (verbose) {
-            log(stdout);
-        }
-        if (stderr) {
-            log(stderr);
-        }
-    }
+    await Promise.all(uploadPromises);
     success('Done uploading samples!');
 }
 
