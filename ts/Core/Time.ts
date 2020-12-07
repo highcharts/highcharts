@@ -833,16 +833,11 @@ class Time {
                 time.set(
                     'Date',
                     minDate,
-                    Math.max(
-                        1,
-                        (
-                            time.get('Date', minDate) -
-                            minDay + startOfWeek +
-                            // We don't want to skip days that are before
-                            // startOfWeek (#7051)
-                            (minDay < startOfWeek ? -7 : 0)
-                        )
-                    )
+                    time.get('Date', minDate) -
+                        minDay + startOfWeek +
+                        // We don't want to skip days that are before
+                        // startOfWeek (#7051)
+                        (minDay < startOfWeek ? -7 : 0)
                 );
             }
 
@@ -875,6 +870,10 @@ class Time {
 
             // Iterate and add tick positions at appropriate values
             var t = minDate.getTime();
+            // Don't allow negative ticks.
+            if (t < 0) {
+                t = 1;
+            }
 
             i = 1;
             while (t < (max as any)) {
