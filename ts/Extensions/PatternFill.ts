@@ -184,7 +184,7 @@ declare global {
 ''; // detach doclets above
 
 // Add the predefined patterns
-const patterns = ((): Array<PatternFill.PatternOptionsObject> => {
+const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
     const patterns: Array<PatternFill.PatternOptionsObject> = [],
         colors: Array<string> = getOptions().colors as any;
 

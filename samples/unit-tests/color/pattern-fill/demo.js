@@ -698,3 +698,7 @@ QUnit.test('Destroy and recreate chart', function (assert) {
     const secondChart = Highcharts.chart('container', options);
     testChart(secondChart);
 });
+
+QUnit.test('#14765: Global patterns', assert => {
+    assert.ok(Highcharts.patterns, 'Global patterns should be defined');
+});
