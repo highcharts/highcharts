@@ -810,8 +810,11 @@ var RangeSelector = /** @class */ (function () {
             // If state has changed, update the button
             if (button.state !== state) {
                 button.setState(state);
-                if (state === 2 && dropdown) {
-                    dropdown.selectedIndex = i;
+                if (dropdown) {
+                    dropdown.options[i].disabled = disable;
+                    if (state === 2) {
+                        dropdown.selectedIndex = i;
+                    }
                 }
                 // Reset (#9209)
                 if (state === 0 && selected === i) {

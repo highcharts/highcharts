@@ -1185,8 +1185,12 @@ class RangeSelector {
             if (button.state !== state) {
                 button.setState(state);
 
-                if (state === 2 && dropdown) {
-                    dropdown.selectedIndex = i;
+                if (dropdown) {
+                    dropdown.options[i].disabled = disable;
+
+                    if (state === 2) {
+                        dropdown.selectedIndex = i;
+                    }
                 }
 
                 // Reset (#9209)
