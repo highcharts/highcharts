@@ -192,7 +192,7 @@ namespace Ajax {
  *
  * */
 
-export default Ajax;
+export default H as unknown as typeof Ajax;
 
 /* *
  *

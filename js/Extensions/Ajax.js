@@ -144,7 +144,7 @@ H.getJSON = Ajax.getJSON;
  *  Default Export
  *
  * */
-export default Ajax;
+export default H;
 /* *
  *
  *  API Declarations
