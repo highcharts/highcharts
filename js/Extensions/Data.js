@@ -830,6 +830,7 @@ var Data = /** @class */ (function () {
             /**
              * Count hex values that are not comments (#13283)
              * @private
+             * @return {number}
              */
             function countHexValues() {
                 var hexValuesCount = 0;
