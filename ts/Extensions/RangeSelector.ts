@@ -28,7 +28,6 @@ const { defaultOptions } = O;
 import palette from '../Core/Color/Palette.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
-import SVGLabel from '../Core/Renderer/SVG/SVGLabel';
 const {
     addEvent,
     createElement,
@@ -788,6 +787,7 @@ class RangeSelector {
     public forcedDataGrouping?: boolean;
     public frozenStates?: boolean;
     public group?: SVGElement;
+    public initialButtonGroupWidth = 0;
     public inputGroup?: SVGElement;
     public isActive?: boolean;
     public maxDateBox?: SVGElement;
@@ -1897,9 +1897,8 @@ class RangeSelector {
             rangeOptions: Highcharts.RangeSelectorButtonsOptions,
             i: number
         ): void => {
-            const option = createElement('option', {
-                textContent: rangeOptions.text,
-                value: i
+            createElement('option', {
+                textContent: rangeOptions.text
             }, void 0, dropdown);
 
             buttons[i] = renderer
@@ -1954,10 +1953,12 @@ class RangeSelector {
     public alignElements(): void {
         const {
             buttonGroup,
+            buttons,
             chart,
             group,
             inputGroup,
-            options
+            options,
+            zoomText
         } = this;
         const chartOptions = chart.options;
         const navButtonOptions = (
@@ -2007,6 +2008,26 @@ class RangeSelector {
 
             if (buttonGroup) {
                 this.positionButtons();
+
+                if (!this.initialButtonGroupWidth) {
+                    let width = 0;
+
+                    if (zoomText) {
+                        width += zoomText.getBBox().width + 5;
+                    }
+
+                    buttons.forEach((
+                        button: SVGElement,
+                        i: number
+                    ): void => {
+                        width += button.width;
+                        if (i !== buttons.length - 1) {
+                            width += options.buttonSpacing;
+                        }
+                    });
+
+                    this.initialButtonGroupWidth = width;
+                }
 
                 plotLeft -= chart.spacing[3];
                 this.updateButtonStates();
@@ -2187,11 +2208,12 @@ class RangeSelector {
             i: number
         ): void {
             if (buttons[i].visibility !== 'hidden') {
-                // TODO: Make animate work
-                buttons[i].attr({ x: buttonLeft });
+                buttons[i][verb]({ x: buttonLeft });
 
                 // increase button position for the next button
                 buttonLeft += buttons[i].width + options.buttonSpacing;
+            } else {
+                buttons[i][verb]({ x: plotLeft });
             }
         });
     }
@@ -2245,7 +2267,7 @@ class RangeSelector {
             const buttonGroupX = buttonGroup.alignAttr.translateX +
                 buttonGroup.getBBox().x;
             // 20 is minimal spacing between elements
-            const buttonGroupWidth = buttonGroup.getBBox().width + 20;
+            const buttonGroupWidth = this.initialButtonGroupWidth + 20;
 
             if (
                 (inputPosition.align === buttonPosition.align) ||

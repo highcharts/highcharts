@@ -555,6 +555,7 @@ var RangeSelector = /** @class */ (function () {
          * */
         this.buttons = void 0;
         this.buttonOptions = RangeSelector.prototype.defaultButtons;
+        this.initialButtonGroupWidth = 0;
         this.options = void 0;
         this.chart = chart;
         // Run RangeSelector
@@ -1345,9 +1346,8 @@ var RangeSelector = /** @class */ (function () {
             buttonTheme['stroke-width'] = pick(buttonTheme['stroke-width'], 0);
         }
         this.buttonOptions.forEach(function (rangeOptions, i) {
-            var option = createElement('option', {
-                textContent: rangeOptions.text,
-                value: i
+            createElement('option', {
+                textContent: rangeOptions.text
             }, void 0, dropdown);
             buttons[i] = renderer
                 .button(rangeOptions.text, 0, 0, function (e) {
@@ -1382,7 +1382,7 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.alignElements = function () {
         var _this = this;
-        var _a = this, buttonGroup = _a.buttonGroup, chart = _a.chart, group = _a.group, inputGroup = _a.inputGroup, options = _a.options;
+        var _a = this, buttonGroup = _a.buttonGroup, buttons = _a.buttons, chart = _a.chart, group = _a.group, inputGroup = _a.inputGroup, options = _a.options, zoomText = _a.zoomText;
         var chartOptions = chart.options;
         var navButtonOptions = (chartOptions.exporting &&
             chartOptions.exporting.enabled !== false &&
@@ -1409,6 +1409,19 @@ var RangeSelector = /** @class */ (function () {
             var translateX = buttonPosition.x - chart.spacing[3];
             if (buttonGroup) {
                 this.positionButtons();
+                if (!this.initialButtonGroupWidth) {
+                    var width_1 = 0;
+                    if (zoomText) {
+                        width_1 += zoomText.getBBox().width + 5;
+                    }
+                    buttons.forEach(function (button, i) {
+                        width_1 += button.width;
+                        if (i !== buttons.length - 1) {
+                            width_1 += options.buttonSpacing;
+                        }
+                    });
+                    this.initialButtonGroupWidth = width_1;
+                }
                 plotLeft -= chart.spacing[3];
                 this.updateButtonStates();
                 // Detect collision between button group and exporting
@@ -1538,10 +1551,12 @@ var RangeSelector = /** @class */ (function () {
         }
         this.buttonOptions.forEach(function (rangeOptions, i) {
             if (buttons[i].visibility !== 'hidden') {
-                // TODO: Make animate work
-                buttons[i].attr({ x: buttonLeft });
+                buttons[i][verb]({ x: buttonLeft });
                 // increase button position for the next button
                 buttonLeft += buttons[i].width + options.buttonSpacing;
+            }
+            else {
+                buttons[i][verb]({ x: plotLeft });
             }
         });
     };
@@ -1579,7 +1594,7 @@ var RangeSelector = /** @class */ (function () {
             var buttonGroupX = buttonGroup.alignAttr.translateX +
                 buttonGroup.getBBox().x;
             // 20 is minimal spacing between elements
-            var buttonGroupWidth = buttonGroup.getBBox().width + 20;
+            var buttonGroupWidth = this.initialButtonGroupWidth + 20;
             if ((inputPosition.align === buttonPosition.align) ||
                 ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
                     (inputGroupX + inputGroupWidth > buttonGroupX) &&
