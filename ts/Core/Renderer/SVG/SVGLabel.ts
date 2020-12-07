@@ -188,10 +188,11 @@ class SVGLabel extends SVGElement {
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
-            SVGLabel.textProps.forEach(function (
-                prop: string
-            ): void {
-                if (typeof styles[prop] !== 'undefined') {
+            SVGLabel.textProps.forEach((prop: string): void => {
+                if (
+                    !(this.className === 'button' && prop === 'cursor') &&
+                    typeof styles[prop] !== 'undefined'
+                ) {
                     textStyles[prop] = styles[prop];
                     delete styles[prop];
                 }
