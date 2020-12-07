@@ -1,4 +1,7 @@
 QUnit.test('RangeSelector.dropdown', assert => {
+    const container = document.getElementById('container');
+    container.style.width = '600px';
+
     const chart = Highcharts.stockChart('container', {
         series: [
             {
@@ -76,7 +79,6 @@ QUnit.test('RangeSelector.dropdown', assert => {
         'Select should be inside chart'
     );
 
-    const container = document.getElementById('container');
     container.style.width = '400px';
     chart.reflow();
 
