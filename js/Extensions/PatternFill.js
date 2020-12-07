@@ -14,6 +14,7 @@
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
 import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
@@ -129,7 +130,7 @@ import '../Series/Line/LineSeries.js';
 */
 ''; // detach doclets above
 // Add the predefined patterns
-var patterns = (function () {
+var patterns = H.patterns = (function () {
     var patterns = [], colors = getOptions().colors;
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
