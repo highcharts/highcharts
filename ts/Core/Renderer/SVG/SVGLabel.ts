@@ -125,7 +125,7 @@ class SVGLabel extends SVGElement {
      * @type {Array<string>}
      */
     public static textProps: Array<string> = [
-        'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
+        'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
         'textOutline', 'textOverflow', 'width'
     ]
@@ -189,10 +189,7 @@ class SVGLabel extends SVGElement {
             // (#537)
             styles = merge(styles);
             SVGLabel.textProps.forEach((prop: string): void => {
-                if (
-                    !(this.className === 'button' && prop === 'cursor') &&
-                    typeof styles[prop] !== 'undefined'
-                ) {
+                if (typeof styles[prop] !== 'undefined') {
                     textStyles[prop] = styles[prop];
                     delete styles[prop];
                 }

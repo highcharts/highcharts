@@ -128,15 +128,13 @@ var SVGLabel = /** @class */ (function (_super) {
      * wrapper.
      */
     SVGLabel.prototype.css = function (styles) {
-        var _this = this;
         if (styles) {
             var textStyles = {}, isWidth, isFontStyle;
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
             SVGLabel.textProps.forEach(function (prop) {
-                if (!(_this.className === 'button' && prop === 'cursor') &&
-                    typeof styles[prop] !== 'undefined') {
+                if (typeof styles[prop] !== 'undefined') {
                     textStyles[prop] = styles[prop];
                     delete styles[prop];
                 }
@@ -404,7 +402,7 @@ var SVGLabel = /** @class */ (function (_super) {
      * @type {Array<string>}
      */
     SVGLabel.textProps = [
-        'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
+        'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
         'textOutline', 'textOverflow', 'width'
     ];
