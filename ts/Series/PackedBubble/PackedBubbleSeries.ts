@@ -866,7 +866,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             parentNode = series.parentNode;
         let dataLabels;
 
-        H.TrackerMixin.drawTrackerPoint.call(this);
+        super.drawTracker();
         // Add reference to the point
         if (parentNode) {
             dataLabels = (

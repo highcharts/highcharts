@@ -33,6 +33,12 @@ export interface AreaRangeSeriesOptions extends AreaSeriesOptions {
     trackByArea?: boolean;
 }
 
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        trackByArea?: boolean;
+    }
+}
+
 /* *
  *
  *  Default export

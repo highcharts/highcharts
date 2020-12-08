@@ -40,7 +40,7 @@ const { prototype: areaRangeProto } = AreaRangeSeries;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import palette from '../../Core/Color/Palette.js';
 import H from '../../Core/Globals.js';
-const { noop, TrackerMixin } = H;
+const { noop } = H;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -164,9 +164,6 @@ class DumbbellSeries extends AreaRangeSeries {
     public data: Array<DumbbellPoint> = void 0 as any;
     public options: DumbbellSeriesOptions = void 0 as any;
     public points: Array<DumbbellPoint> = void 0 as any;
-    public trackerGroups: Array<string> = ['group', 'markerGroup', 'dataLabelsGroup'];
-    public drawTracker = TrackerMixin.drawTrackerPoint;
-    public drawGraph: typeof areaRangeProto.drawGraph = noop;
     public columnMetrics: ColumnMetricsObject = void 0 as any;
     public lowColor?: ColorType;
 
@@ -485,16 +482,20 @@ class DumbbellSeries extends AreaRangeSeries {
 interface DumbbellSeries {
     pointClass: typeof DumbbellPoint;
     crispCol: typeof colProto.crispCol;
+    trackerGroups: Array<string>;
     translatePoint: typeof AreaRangeSeries.prototype['translate'];
     setShapeArgs: typeof columnRangeProto['translate'];
     seriesDrawPoints: typeof AreaRangeSeries.prototype['drawPoints'];
 }
 extend(DumbbellSeries.prototype, {
-    pointClass: DumbbellPoint,
     crispCol: colProto.crispCol,
-    translatePoint: areaRangeProto.translate,
+    drawGraph: noop,
+    drawTracker: ColumnSeries.prototype.drawTracker,
+    pointClass: DumbbellPoint,
     setShapeArgs: columnRangeProto.translate,
-    seriesDrawPoints: areaRangeProto.drawPoints
+    seriesDrawPoints: areaRangeProto.drawPoints,
+    trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
+    translatePoint: areaRangeProto.translate
 });
 
 /* *
