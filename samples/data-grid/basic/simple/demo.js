@@ -2,7 +2,7 @@
     const { default: Highcharts } =
         await import('https://code.highcharts.com/es-modules/masters/datagrid.src.js');
 
-    const rows = new Array(30);
+    const rows = new Array(60);
     const numCols = 5;    
     const data = rows
         .fill('')

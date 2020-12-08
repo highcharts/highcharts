@@ -79,6 +79,8 @@ class DataGrid {
 
     public dataTable: DataTable;
 
+    private rowElements: Array<HTMLElement>;
+
     /* *
      *
      *  Functions
@@ -88,9 +90,10 @@ class DataGrid {
     constructor(container: (string|HTMLElement), options: DeepPartial<DataGridOptions>) {
         // Initialize containers
         if (typeof container === 'string') {
-            container = doc.getElementById(container) || makeDiv('hc-dg-container');
+            this.container = doc.getElementById(container) || makeDiv('hc-dg-container');
+        } else {
+            this.container = container;
         }
-        this.container = container;
         this.outerContainer = makeDiv('hc-dg-outer-container');
         this.scrollContainer = makeDiv('hc-dg-scroll-container');
         this.innerContainer = makeDiv('hc-dg-inner-container');
@@ -104,18 +107,13 @@ class DataGrid {
         // Init data table
         this.dataTable = this.getDataTableFromOptions();
 
+        this.rowElements = [];
         this.render();
     }
 
 
     public getRowCount(): number {
         return this.dataTable.getRowCount();
-    }
-
-
-    public getColumnCount(): number {
-        // TBD.
-        return 5;
     }
 
 
@@ -138,6 +136,7 @@ class DataGrid {
         this.updateScrollingLength();
         this.applyContainerStyles();
         this.renderInitialRows();
+        this.addEvents();
     }
 
 
@@ -159,14 +158,39 @@ class DataGrid {
             'height: 1000px;' +
             'z-index: 1;' +
             'position: relative;';
-        const numColumns = this.getColumnCount();
         this.innerContainer.style.cssText =
-            'display: grid;' +
-            `grid-template-columns: repeat(${numColumns}, 1fr);` +
+            'display: flex;' +
+            'flex-direction: column;' +
             'width: 100%;' +
             'min-height: 20px;' +
             'position: fixed;' +
             'z-index: -1;';
+    }
+
+
+    private addEvents(): void {
+        this.outerContainer.addEventListener('scroll', (e): void => this.onScroll(e));
+    }
+
+
+    private onScroll(e: Event): void {
+        e.preventDefault();
+        window.requestAnimationFrame((): void => {
+            let i = Math.floor(this.outerContainer.scrollTop / DataGrid.cellHeight) || 0;
+
+            for (const tableRow of this.rowElements) {
+                const dataTableRow = this.dataTable.getRow(i);
+                if (dataTableRow) {
+                    const row = (Object as any).values(dataTableRow.getAllCells());
+
+                    row.forEach((columnValue: string, j: number): void => {
+                        const cell = tableRow.querySelectorAll('div')[j];
+                        cell.textContent = columnValue;
+                    });
+                }
+                i++;
+            }
+        });
     }
 
 
@@ -185,11 +209,15 @@ class DataGrid {
 
 
     private renderInitialRows(): void {
+        this.rowElements = [];
         const rowsToDraw = this.getNumRowsToDraw();
         let i = 0;
         while (i < rowsToDraw) {
             const rowEl = makeDiv('hc-dg-row');
-            rowEl.style.cssText = 'background-color: white; width: 150px; max-height: 20px; z-index: -1;';
+            rowEl.style.cssText = 'display: flex;' +
+                'background-color: white;' +
+                'max-height: 20px;' +
+                'z-index: -1;';
 
             const dataTableRow = this.dataTable.getRow(i);
             if (dataTableRow) {
@@ -197,13 +225,17 @@ class DataGrid {
 
                 row.forEach((columnValue: string): void => {
                     const cellEl = makeDiv('hc-dg-cell');
-                    cellEl.style.cssText = 'border: 1px solid black; overflow: hidden; z-index: -1;';
+                    cellEl.style.cssText = 'border: 1px solid black;' +
+                        'overflow: hidden;' +
+                        'padding: 0 10px;' +
+                        'z-index: -1;';
                     cellEl.textContent = columnValue;
                     rowEl.appendChild(cellEl);
                 });
             }
 
             this.innerContainer.appendChild(rowEl);
+            this.rowElements.push(rowEl);
             i++;
         }
     }

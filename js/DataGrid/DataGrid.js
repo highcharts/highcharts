@@ -30,9 +30,11 @@ var DataGrid = /** @class */ (function () {
     function DataGrid(container, options) {
         // Initialize containers
         if (typeof container === 'string') {
-            container = doc.getElementById(container) || makeDiv('hc-dg-container');
+            this.container = doc.getElementById(container) || makeDiv('hc-dg-container');
         }
-        this.container = container;
+        else {
+            this.container = container;
+        }
         this.outerContainer = makeDiv('hc-dg-outer-container');
         this.scrollContainer = makeDiv('hc-dg-scroll-container');
         this.innerContainer = makeDiv('hc-dg-inner-container');
@@ -43,14 +45,11 @@ var DataGrid = /** @class */ (function () {
         this.options = merge(DataGrid.defaultOptions, options);
         // Init data table
         this.dataTable = this.getDataTableFromOptions();
+        this.rowElements = [];
         this.render();
     }
     DataGrid.prototype.getRowCount = function () {
         return this.dataTable.getRowCount();
-    };
-    DataGrid.prototype.getColumnCount = function () {
-        // TBD.
-        return 5;
     };
     DataGrid.prototype.getDataTableFromOptions = function () {
         if (this.options.dataTable) {
@@ -69,6 +68,7 @@ var DataGrid = /** @class */ (function () {
         this.updateScrollingLength();
         this.applyContainerStyles();
         this.renderInitialRows();
+        this.addEvents();
     };
     DataGrid.prototype.emptyContainer = function () {
         var container = this.innerContainer;
@@ -86,14 +86,39 @@ var DataGrid = /** @class */ (function () {
             'height: 1000px;' +
                 'z-index: 1;' +
                 'position: relative;';
-        var numColumns = this.getColumnCount();
         this.innerContainer.style.cssText =
-            'display: grid;' +
-                ("grid-template-columns: repeat(" + numColumns + ", 1fr);") +
+            'display: flex;' +
+                'flex-direction: column;' +
                 'width: 100%;' +
                 'min-height: 20px;' +
                 'position: fixed;' +
                 'z-index: -1;';
+    };
+    DataGrid.prototype.addEvents = function () {
+        var _this = this;
+        this.outerContainer.addEventListener('scroll', function (e) { return _this.onScroll(e); });
+    };
+    DataGrid.prototype.onScroll = function (e) {
+        var _this = this;
+        e.preventDefault();
+        window.requestAnimationFrame(function () {
+            var i = Math.floor(_this.outerContainer.scrollTop / DataGrid.cellHeight) || 0;
+            var _loop_1 = function (tableRow) {
+                var dataTableRow = _this.dataTable.getRow(i);
+                if (dataTableRow) {
+                    var row = Object.values(dataTableRow.getAllCells());
+                    row.forEach(function (columnValue, j) {
+                        var cell = tableRow.querySelectorAll('div')[j];
+                        cell.textContent = columnValue;
+                    });
+                }
+                i++;
+            };
+            for (var _i = 0, _a = _this.rowElements; _i < _a.length; _i++) {
+                var tableRow = _a[_i];
+                _loop_1(tableRow);
+            }
+        });
     };
     DataGrid.prototype.updateScrollingLength = function () {
         var height = (this.getRowCount() + 1) * DataGrid.cellHeight;
@@ -103,27 +128,35 @@ var DataGrid = /** @class */ (function () {
         return Math.min(this.getRowCount() + 1, Math.floor(this.outerContainer.clientHeight / DataGrid.cellHeight));
     };
     DataGrid.prototype.renderInitialRows = function () {
+        this.rowElements = [];
         var rowsToDraw = this.getNumRowsToDraw();
         var i = 0;
-        var _loop_1 = function () {
+        var _loop_2 = function () {
             var rowEl = makeDiv('hc-dg-row');
-            rowEl.style.cssText = 'background-color: white; width: 150px; max-height: 20px; z-index: -1;';
+            rowEl.style.cssText = 'display: flex;' +
+                'background-color: white;' +
+                'max-height: 20px;' +
+                'z-index: -1;';
             var dataTableRow = this_1.dataTable.getRow(i);
             if (dataTableRow) {
                 var row = Object.values(dataTableRow.getAllCells());
                 row.forEach(function (columnValue) {
                     var cellEl = makeDiv('hc-dg-cell');
-                    cellEl.style.cssText = 'border: 1px solid black; overflow: hidden; z-index: -1;';
+                    cellEl.style.cssText = 'border: 1px solid black;' +
+                        'overflow: hidden;' +
+                        'padding: 0 10px;' +
+                        'z-index: -1;';
                     cellEl.textContent = columnValue;
                     rowEl.appendChild(cellEl);
                 });
             }
             this_1.innerContainer.appendChild(rowEl);
+            this_1.rowElements.push(rowEl);
             i++;
         };
         var this_1 = this;
         while (i < rowsToDraw) {
-            _loop_1();
+            _loop_2();
         }
     };
     /* *
