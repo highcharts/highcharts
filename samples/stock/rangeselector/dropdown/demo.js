@@ -9,10 +9,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
             selected: 2
         },
         title: {
-            text: 'Temperature variation by day'
-        },
-        subtitle: {
-            text: 'The dropdown option determines what<br>should happen when there is not enough space<br>to show the range selector in a single row'
+            text: 'RangeSelector dropdown demo'
         },
         tooltip: {
             valueSuffix: '°C'
@@ -40,6 +37,5 @@ document.getElementById('width').addEventListener('click', e => {
     if (width) {
         document.getElementById('container').style.width = width;
         chart.reflow();
-        chart.redraw();
     }
 });

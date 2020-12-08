@@ -1,0 +1,15 @@
+.highcharts-figure {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#container {
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+}
+
+button .dim {
+    opacity: 0.5;
+    pointer-events: none;
+}
