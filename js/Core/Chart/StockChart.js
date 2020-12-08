@@ -685,9 +685,9 @@ addEvent(LineSeries, 'render', function () {
             }
         }
         // First render, initial clip box
-        if (!this.clipBox) {
-            this.clipBox = merge({}, chart.clipBox);
-            this.clipBox.width = chart.chartWidth;
+        if (!this.clipBox && this.isDirty && !this.isDirtyData) {
+            this.clipBox = merge(chart.clipBox);
+            this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
             // On redrawing, resizing etc, update the clip rectangle
         }

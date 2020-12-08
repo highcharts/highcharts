@@ -33,7 +33,7 @@ QUnit.test('Axis offsets - test series clips.(#4371)', function (assert) {
         };
 
     assert.strictEqual(
-        chart.chartWidth === parseInt(clip.width, 10) &&
+        chart.plotWidth === parseInt(clip.width, 10) &&
             chart.plotHeight === parseInt(clip.height, 10),
         true,
         'CLip path has proper width and height'
