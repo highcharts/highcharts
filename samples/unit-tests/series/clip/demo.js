@@ -63,7 +63,7 @@ QUnit.test('General series clip tests', assert => {
                         )[0]
                         .getAttribute('width')
                 ),
-                chart.chartWidth,
+                chart.clipBox.width,
                 "Correct clippath's width after updating chart (#13751)."
             );
 
