@@ -4,6 +4,8 @@
 
 /* eslint no-use-before-define: 0 */
 
+const { execSync, exec } = require('child_process');
+
 /* *
  *
  *  Constants
@@ -25,12 +27,9 @@ const PORCELAN_REGEXP = /([ACDMRU\?\! ])([ACDMRU\?\! ]) ([\.\/\w]+)/;
  *         Promise to keep with results
  */
 function getStatus() {
-
-    const ChildProcess = require('child_process');
-
     return new Promise((resolve, reject) => {
 
-        ChildProcess.exec(
+        exec(
             'git status --porcelain',
             (error, stdout) => {
 
@@ -59,12 +58,24 @@ function getStatus() {
  * Returns the lastest commit sha
  *
  * @param {Boolean} useShortVersion if you want the short version of the latest git sha.
- * @return {Promise<String>}
- *         Promise to keep with results
+ * @return {String}
+ * Commit SHA
  */
 function getLatestCommitShaSync(useShortVersion = false) {
-    const ChildProcess = require('child_process');
-    return ChildProcess.execSync(`git log --pretty=format:'%${useShortVersion ? 'h' : 'H'}' -n 1`).toString();
+    return execSync(`git log --pretty=format:'%${useShortVersion ? 'h' : 'H'}' -n 1`).toString();
+}
+
+/**
+ * Returns the lastest commit SHA for a given path
+ *
+ * @param {Boolean} path
+ * The path to check
+ *
+ * @return {String}
+ * Commit SHA
+ */
+function getLatestCommitShaByPath(path) {
+    return execSync(`git log -1 --format=format:%H --full-diff ${path}`).toString();
 }
 
 /**
@@ -74,8 +85,24 @@ function getLatestCommitShaSync(useShortVersion = false) {
  *         Promise to keep with results
  */
 function getFilesChanged() {
-    const ChildProcess = require('child_process');
-    return ChildProcess.execSync('git whatchanged --name-status --pretty="" origin..HEAD').toString() || '';
+    return execSync('git whatchanged --name-status --pretty="" origin..HEAD').toString() || '';
+}
+
+
+/**
+ * Checks if the latest commit contains a change in the given path
+ *
+ * @param {string} path
+ * The path to check, i.e. `samples/highcharts/demo`
+ *
+ * @return {boolean} `true` or `false`
+ */
+function shouldUpdate(path) {
+    try {
+        return !!(getLatestCommitShaSync().trim() === getLatestCommitShaByPath(path).trim());
+    } catch (error) {
+        return false;
+    }
 }
 
 /* *
@@ -85,6 +112,7 @@ function getFilesChanged() {
  * */
 
 module.exports = {
+    shouldUpdate,
     getStatus,
     getLatestCommitShaSync,
     getFilesChanged

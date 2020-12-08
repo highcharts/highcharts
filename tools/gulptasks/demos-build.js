@@ -8,7 +8,7 @@ const yargs = require('yargs');
 const { handle: demoBuilder } = require('highcharts-demo-manager/lib/cli/cmd.build-demo-pages');
 const { handle: thumbnailgenerator } = require('highcharts-demo-manager/lib/cli/cmd.genthumbnails');
 const { handle: deployer } = require('highcharts-demo-manager/lib/cli/cmd.demo-deploy');
-
+const { shouldUpdate } = require('./lib/git');
 
 const argv = yargs(process.argv).argv;
 const { deleteDirectory } = require('./lib/fs');
@@ -22,7 +22,8 @@ const SAMPLES_PATH = 'samples',
 /**
  * Builds all the demos and places them in `tmp/demos-html`
  *
- * @return {void}
+ * @return {Promise<void>}
+ * Promise
  */
 async function buildAllDemos() {
     const args = {
@@ -36,7 +37,8 @@ async function buildAllDemos() {
 /**
  * Deletes the `tmp/demos-html` folder
  *
- * @return {void}
+ * @return {Promise<void>}
+ * Promise
  */
 async function cleanDemosHTML() {
     log(`Deleting ${TMP_PATH}`);
@@ -44,19 +46,40 @@ async function cleanDemosHTML() {
 }
 
 /**
+ * Deletes the `tmp/demo-thumbnails` folder
+ *
+ * @return {Promise<void>}
+ * Promise
+ */
+async function cleanDemoThumbnails() {
+    const thumbnailPath = 'tmp/demo-thumbnails';
+    log(`Deleting ${thumbnailPath}`);
+    deleteDirectory(thumbnailPath, true);
+}
+
+/**
  * Generates thumbnails
  *
  * Optional arguments `--output <output path>`
  *
- * @return {void}
+ * @param {Array<string>} [tags]
+ * Optional tags to limit the build to
+ * @return {Promise<void>}
+ * Promise
  */
-async function generateThumbnails() {
-    const tags = [
-        'Highcharts demo',
-        'Highcharts Maps demo',
-        'Highcharts Stock demo',
-        'Highcharts Gantt demo'
-    ];
+async function generateThumbnails(tags = void 0) {
+
+    if (argv.tags) {
+        tags = argv.tags.split(',');
+    }
+    if (!tags) {
+        tags = [
+            'Highcharts demo',
+            'Highcharts Maps demo',
+            'Highcharts Stock demo',
+            'Highcharts Gantt demo'
+        ];
+    }
 
     const themes = [
         'default',
@@ -83,15 +106,19 @@ async function generateThumbnails() {
  *
  * Usage `npx gulp demos-deploy --all`
  * Additional flags: `--dryrun`, `--profile <AWS profile>`
- * @return {void}
+ *
+ * @param {boolean} force
+ * True or false
+ *
+ * @return {Promise<void>}
+ * Promise
  */
-async function deployDemos() {
+async function deployDemos(force = false) {
     const { all, profile, dryrun } = argv;
-
     const AWSProfile = profile || 'default';
 
     // Deploy everything
-    if (all) {
+    if (all || force) {
         message(`Uploading all demos to ${S3_BUCKET} `);
 
         const args = {
@@ -108,9 +135,94 @@ async function deployDemos() {
     }
 
 }
+/**
+ * Deploys demos in `tmp/demos-html`
+ *
+ * Usage `npx gulp demos-deploy --all`
+ * Additional flags: `--dryrun`, `--profile <AWS profile>`
+ *
+ * @param {boolean} force
+ * True or false
+ *
+ * @return {Promise<void>}
+ * Promise
+ */
+async function deployThumbnails() {
+    const { profile, dryrun } = argv;
+    const AWSProfile = profile || 'default';
 
+    // Deploy everything
+    message(`Uploading all demos to ${S3_BUCKET} `);
+
+    const args = {
+        input: 'tmp/demo-thumbnails',
+        output: 'demos/demo/images',
+        bucket: S3_BUCKET,
+        AWSProfile,
+        dryrun
+    };
+
+    await deployer(args);
+    success('Finished uploading thumbnails');
+
+}
+
+
+/**
+ * Builds thumbnails for the product with at least one changed demo
+ *
+ * @param {boolean} [deploy]
+ * Whether or not to deploy the changes
+ * @return {Promise<void>}
+ * Promise
+ */
+async function updateThumbnails(deploy = false) {
+    await cleanDemoThumbnails();
+
+    const tags = [];
+    ['Highcharts', 'Gantt', 'Maps', 'Stock'].forEach(product => {
+        if (shouldUpdate(`samples/${product.toLowerCase()}/demo`)) {
+            if (product === 'Highcharts') {
+                tags.push('Highcharts demo');
+            } else {
+                tags.push(`Highcharts ${product} demo`);
+            }
+        }
+    });
+
+    await generateThumbnails(tags);
+
+    if (deploy) {
+        await deployThumbnails();
+    }
+
+}
+
+/**
+ * Deploy demos if there has been a change in a demo folder in the latest commit
+ * @return {Promise<void>}
+ * Promise
+ */
+async function deployOnChanges() {
+    if (shouldUpdate('samples/**/demo')) {
+        message('Changes found, starting build...');
+        await cleanDemosHTML();
+        await buildAllDemos();
+        await deployDemos();
+        message('Deploying...');
+        await deployDemos(true);
+        await updateThumbnails(true);
+    }
+    message('No changes in demo folders');
+}
+
+// Scripts for human users
+task('demos-clean', cleanDemosHTML);
 task('demos-build', series(cleanDemosHTML, buildAllDemos));
 task('demos-thumbnails', generateThumbnails);
 task('demos-deploy', deployDemos);
-task('demos-clean', cleanDemosHTML);
 task('demos-build-and-deploy', series('demos-build', 'demos-deploy'));
+
+// Scripts for robots
+task('demos-deploy-if-changed', deployOnChanges);
+task('demos-update-thumbnails', updateThumbnails);
