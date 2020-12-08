@@ -47,7 +47,7 @@ const { correctFloat, extend } = U;
  *
  * */
 
-class SunburstPoint extends TreemapPoint {
+class SunburstPoint extends TreemapPoint implements Highcharts.DrawPoint {
 
     /* *
      *

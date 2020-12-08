@@ -22,10 +22,10 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var LineSeries = BaseSeries.seriesTypes.line;
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
-var TrackerMixin = H.TrackerMixin, noop = H.noop;
+var noop = H.noop;
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, isNumber = U.isNumber, extend = U.extend, merge = U.merge, pick = U.pick, pInt = U.pInt;
@@ -492,13 +492,12 @@ extend(GaugeSeries.prototype, {
     angular: true,
     directTouch: true,
     drawGraph: noop,
+    drawTracker: ColumnSeries.prototype.drawTracker,
     fixedBox: true,
     forceDL: true,
     noSharedTooltip: true,
-    trackerGroups: ['group', 'dataLabelsGroup'],
-    // If the tracking module is loaded, add the point tracker
-    drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint,
-    pointClass: GaugePoint
+    pointClass: GaugePoint,
+    trackerGroups: ['group', 'dataLabelsGroup']
 });
 BaseSeries.registerSeriesType('gauge', GaugeSeries);
 /* *

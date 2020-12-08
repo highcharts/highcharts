@@ -18,7 +18,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Animation/AnimationOptions';
 import type ColorType from '../../Color/ColorType';
 import type Position3DObject from '../../Renderer/Position3DObject';
 import type PositionObject from '../../Renderer/PositionObject';
@@ -358,7 +358,7 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
     result.animate = function (
         this: SVGElement,
         params: SVGAttributes,
-        duration?: (boolean|Partial<AnimationOptionsObject>),
+        duration?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement {
         if (params && params.faces) {
@@ -825,7 +825,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
     wrapper.animate = function (
         this: SVGElement,
         params: SVGAttributes,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement {
         var paramArr,

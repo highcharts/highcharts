@@ -488,7 +488,7 @@ extend(NetworkgraphSeries.prototype, {
     noSharedTooltip: true,
     pointArrayMap: ['from', 'to'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    drawTracker: H.TrackerMixin.drawTrackerPoint,
+    drawTracker: seriesTypes.column.prototype.drawTracker,
     // Animation is run in `series.simulation`.
     animate: null,
     buildKDTree: H.noop,

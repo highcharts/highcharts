@@ -38,11 +38,10 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
+        column: ColumnSeries,
         line: LineSeries
     }
 } = BaseSeries;
-import H from '../../Core/Globals.js';
-const { TrackerMixin } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -624,7 +623,6 @@ class TimelineSeries extends LineSeries {
 
 interface TimelineSeries {
     drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
-    drawTracker: Highcharts.TrackerMixin['drawTrackerPoint'];
     pointClass: typeof TimelinePoint;
     trackerGroups: Array<string>;
 }
@@ -632,7 +630,7 @@ extend(TimelineSeries.prototype, {
     // Use a simple symbol from LegendSymbolMixin
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     // Use a group of trackers from TrackerMixin
-    drawTracker: TrackerMixin.drawTrackerPoint,
+    drawTracker: ColumnSeries.prototype.drawTracker,
     pointClass: TimelinePoint,
     trackerGroups: ['markerGroup', 'dataLabelsGroup']
 });

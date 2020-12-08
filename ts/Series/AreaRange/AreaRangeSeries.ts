@@ -42,20 +42,6 @@ const {
     merge
 } = U;
 
-
-/* *
- *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/PointLike' {
-    interface PointLike {
-        plotHigh?: AreaRangePoint['plotHigh'];
-        plotLow?: AreaRangePoint['plotLow'];
-    }
-}
-
 /* *
  *
  *  Class

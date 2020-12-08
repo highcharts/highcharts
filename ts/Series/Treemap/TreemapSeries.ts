@@ -18,7 +18,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
@@ -1051,7 +1051,7 @@ class TreemapSeries extends ScatterSeries {
 
         points.forEach(function (point): void {
             var levelDynamic = point.node.levelDynamic,
-                animatableAttribs: Partial<AnimationOptionsObject> = {},
+                animatableAttribs: Partial<AnimationOptions> = {},
                 attribs: SVGAttributes = {},
                 css: CSSObject = {},
                 groupKey = 'level-group-' + point.node.level,

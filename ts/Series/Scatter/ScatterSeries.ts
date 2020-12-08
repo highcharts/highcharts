@@ -19,6 +19,7 @@
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
 import BaseSeries from '../../Core/Series/Series.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -261,7 +262,7 @@ interface ScatterSeries {
     takeOrdinalPosition: boolean;
 }
 extend(ScatterSeries.prototype, {
-
+    drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
     requireSorting: false,
     noSharedTooltip: true,

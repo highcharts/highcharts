@@ -26,9 +26,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import BaseSeries from '../../Core/Series/Series.js';
-var LineSeries = BaseSeries.seriesTypes.line;
-import H from '../../Core/Globals.js';
-var TrackerMixin = H.TrackerMixin;
+var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -435,7 +433,7 @@ extend(TimelineSeries.prototype, {
     // Use a simple symbol from LegendSymbolMixin
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     // Use a group of trackers from TrackerMixin
-    drawTracker: TrackerMixin.drawTrackerPoint,
+    drawTracker: ColumnSeries.prototype.drawTracker,
     pointClass: TimelinePoint,
     trackerGroups: ['markerGroup', 'dataLabelsGroup']
 });

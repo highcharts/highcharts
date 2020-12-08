@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/IKHIndicator.js';
+import '../../Stock/Indicators/IKH/IKHIndicator.js';

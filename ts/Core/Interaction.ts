@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
+import type AnimationOptions from './Animation/AnimationOptions';
 import type AreaSeries from '../Series/Area/AreaSeries';
 import type AreaRangeSeriesOptions from '../Series/AreaRange/AreaRangeSeriesOptions';
 import type PointerEvent from './PointerEvent';
@@ -26,11 +26,6 @@ import type SVGPath from './Renderer/SVG/SVGPath';
 import BaseSeries from './Series/Series.js';
 const { seriesTypes } = BaseSeries;
 import Chart from './Chart/Chart.js';
-import H from './Globals.js';
-const {
-    hasTouch,
-    svg
-} = H;
 import Legend from './Legend.js';
 import LineSeries from '../Series/Line/LineSeries.js';
 import O from './Options.js';
@@ -149,13 +144,8 @@ declare global {
             type: ('x'|'y'|'xy');
             enabled: boolean;
         }
-        interface TrackerMixin {
-            drawTrackerGraph(this: LineSeries): void;
-            drawTrackerPoint(this: LineSeries): void;
-        }
         type PointStateValue = keyof PointStatesOptions<LineSeries['pointClass']['prototype']>;
         type SeriesStateValue = keyof SeriesStatesOptions<LineSeries>;
-        let TrackerMixin: TrackerMixin;
     }
 }
 
@@ -214,217 +204,6 @@ declare global {
 ''; // detach doclets above
 
 /* eslint-disable valid-jsdoc */
-
-/**
- * TrackerMixin for points and graphs.
- *
- * @private
- * @mixin Highcharts.TrackerMixin
- */
-const TrackerMixin = H.TrackerMixin = {
-
-    /**
-     * Draw the tracker for a point.
-     *
-     * @private
-     * @function Highcharts.TrackerMixin.drawTrackerPoint
-     * @param {Highcharts.Series} this
-     * @fires Highcharts.Series#event:afterDrawTracker
-     */
-    drawTrackerPoint: function (this: LineSeries): void {
-        var series = this,
-            chart = series.chart,
-            pointer = chart.pointer,
-            onMouseOver = function (e: PointerEvent): void {
-                var point = pointer.getPointFromEvent(e);
-
-                // undefined on graph in scatterchart
-                if (typeof point !== 'undefined') {
-                    pointer.isDirectTouch = true;
-                    point.onMouseOver(e);
-                }
-            },
-            dataLabels;
-
-        // Add reference to the point
-        series.points.forEach(function (point): void {
-            dataLabels = (
-                isArray(point.dataLabels) ?
-                    point.dataLabels :
-                    (point.dataLabel ? [point.dataLabel] : [])
-            );
-
-            if (point.graphic) {
-                (point.graphic.element as any).point = point;
-            }
-            (dataLabels as any).forEach(function (
-                dataLabel: SVGElement
-            ): void {
-                if (dataLabel.div) {
-                    dataLabel.div.point = point;
-                } else {
-                    (dataLabel.element as any).point = point;
-                }
-            });
-        });
-
-        // Add the event listeners, we need to do this only once
-        if (!series._hasTracking) {
-            (series.trackerGroups as any).forEach(function (key: string): void {
-                if ((series as any)[key]) {
-                    // we don't always have dataLabelsGroup
-                    (series as any)[key]
-                        .addClass('highcharts-tracker')
-                        .on('mouseover', onMouseOver)
-                        .on('mouseout', function (e: PointerEvent): void {
-                            pointer.onTrackerMouseOut(e);
-                        });
-                    if (hasTouch) {
-                        (series as any)[key].on('touchstart', onMouseOver);
-                    }
-
-                    if (!chart.styledMode && series.options.cursor) {
-                        (series as any)[key]
-                            .css(css)
-                            .css({ cursor: series.options.cursor });
-                    }
-                }
-            });
-            series._hasTracking = true;
-        }
-
-        fireEvent(this, 'afterDrawTracker');
-    },
-
-    /**
-     * Draw the tracker object that sits above all data labels and markers to
-     * track mouse events on the graph or points. For the line type charts
-     * the tracker uses the same graphPath, but with a greater stroke width
-     * for better control.
-     *
-     * @private
-     * @function Highcharts.TrackerMixin.drawTrackerGraph
-     * @param {Highcharts.Series} this
-     * @fires Highcharts.Series#event:afterDrawTracker
-     */
-    drawTrackerGraph: function (this: LineSeries): void {
-        var series = this,
-            options = series.options,
-            trackByArea =
-                (options as AreaRangeSeriesOptions).trackByArea,
-            trackerPath = ([] as SVGPath).concat(
-                trackByArea ?
-                    ((series as AreaSeries).areaPath as any) :
-                    (series.graphPath as any)
-            ),
-            // trackerPathLength = trackerPath.length,
-            chart = series.chart,
-            pointer = chart.pointer,
-            renderer = chart.renderer,
-            snap = (chart.options.tooltip as any).snap,
-            tracker = series.tracker,
-            i: number,
-            onMouseOver = function (e: PointerEvent): void {
-                if (chart.hoverSeries !== series) {
-                    series.onMouseOver();
-                }
-            },
-            /*
-             * Empirical lowest possible opacities for TRACKER_FILL for an
-             * element to stay invisible but clickable
-             * IE6: 0.002
-             * IE7: 0.002
-             * IE8: 0.002
-             * IE9: 0.00000000001 (unlimited)
-             * IE10: 0.0001 (exporting only)
-             * FF: 0.00000000001 (unlimited)
-             * Chrome: 0.000001
-             * Safari: 0.000001
-             * Opera: 0.00000000001 (unlimited)
-             */
-            TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
-
-        // Draw the tracker
-        if (tracker) {
-            tracker.attr({ d: trackerPath });
-        } else if (series.graph) { // create
-
-            series.tracker = renderer.path(trackerPath)
-                .attr({
-                    visibility: series.visible ? 'visible' : 'hidden',
-                    zIndex: 2
-                })
-                .addClass(
-                    trackByArea ?
-                        'highcharts-tracker-area' :
-                        'highcharts-tracker-line'
-                )
-                .add(series.group);
-
-            if (!chart.styledMode) {
-                (series.tracker as any).attr({
-                    'stroke-linecap': 'round',
-                    'stroke-linejoin': 'round', // #1225
-                    stroke: TRACKER_FILL,
-                    fill: trackByArea ? TRACKER_FILL : 'none',
-                    'stroke-width': series.graph.strokeWidth() +
-                        (trackByArea ? 0 : 2 * snap)
-                });
-            }
-
-            // The tracker is added to the series group, which is clipped, but
-            // is covered by the marker group. So the marker group also needs to
-            // capture events.
-            [series.tracker, series.markerGroup].forEach(function (
-                tracker: (SVGElement|undefined)
-            ): void {
-                (tracker as any).addClass('highcharts-tracker')
-                    .on('mouseover', onMouseOver)
-                    .on('mouseout', function (e: PointerEvent): void {
-                        pointer.onTrackerMouseOut(e);
-                    });
-
-                if (options.cursor && !chart.styledMode) {
-                    (tracker as any).css({ cursor: options.cursor });
-                }
-
-                if (hasTouch) {
-                    (tracker as any).on('touchstart', onMouseOver);
-                }
-            });
-        }
-        fireEvent(this, 'afterDrawTracker');
-    }
-};
-/* End TrackerMixin */
-
-
-// Add tracking event listener to the series group, so the point graphics
-// themselves act as trackers
-
-if (seriesTypes.column) {
-    /**
-     * @private
-     * @borrows Highcharts.TrackerMixin.drawTrackerPoint as Highcharts.seriesTypes.column#drawTracker
-     */
-    seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
-}
-
-if (seriesTypes.pie) {
-    /**
-     * @private
-     * @borrows Highcharts.TrackerMixin.drawTrackerPoint as Highcharts.seriesTypes.pie#drawTracker
-     */
-    seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
-}
-
-if (seriesTypes.scatter) {
-    /**
-     * @private
-     * @borrows Highcharts.TrackerMixin.drawTrackerPoint as Highcharts.seriesTypes.scatter#drawTracker
-     */
-    seriesTypes.scatter.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
-}
 
 // Extend Legend for item events.
 extend(Legend.prototype, {
@@ -1172,7 +951,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
             haloOptions,
             markerAttribs,
             pointAttribs: SVGAttributes,
-            pointAttribsAnimation: AnimationOptionsObject,
+            pointAttribsAnimation: AnimationOptions,
             hasMarkers = (markerOptions && series.markerAttribs),
             newSymbol;
 
@@ -1809,11 +1588,6 @@ extend(LineSeries.prototype, /** @lends Highcharts.Series.prototype */ {
         }
 
         fireEvent(series, selected ? 'select' : 'unselect');
-    },
+    }
 
-    /**
-     * @private
-     * @borrows Highcharts.TrackerMixin.drawTrackerGraph as Highcharts.Series#drawTracker
-     */
-    drawTracker: TrackerMixin.drawTrackerGraph
 });

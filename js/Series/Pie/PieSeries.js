@@ -958,6 +958,7 @@ extend(PieSeries.prototype, {
     directTouch: true,
     drawGraph: null,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    drawTracker: ColumnSeries.prototype.drawTracker,
     getCenter: CenteredSeriesMixin.getCenter,
     getSymbol: noop,
     isCartesian: false,

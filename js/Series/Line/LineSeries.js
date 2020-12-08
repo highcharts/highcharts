@@ -9,18 +9,18 @@
  * */
 'use strict';
 import A from '../../Core/Animation/AnimationUtilities.js';
-var animObject = A.animObject;
+var animObject = A.animObject, setAnimation = A.setAnimation;
 import BaseSeries from '../../Core/Series/Series.js';
 var seriesTypes = BaseSeries.seriesTypes;
 import H from '../../Core/Globals.js';
-var win = H.win;
+var hasTouch = H.hasTouch, svg = H.svg, win = H.win;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import palette from '../../Core/Color/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, cleanRecursively = U.cleanRecursively, correctFloat = U.correctFloat, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 /* *
  *
  *  Class
@@ -114,6 +114,7 @@ var LineSeries = /** @class */ (function () {
         this.processedXData = void 0;
         this.processedYData = void 0;
         this.tooltipOptions = void 0;
+        this.userOptions = void 0;
         this.xAxis = void 0;
         this.yAxis = void 0;
         this.zones = void 0;
@@ -2710,6 +2711,496 @@ var LineSeries = /** @class */ (function () {
             point.plotX >= 0 &&
             point.plotX <= this.xAxis.len;
         return isInside;
+    };
+    /**
+     * Draw the tracker object that sits above all data labels and markers to
+     * track mouse events on the graph or points. For the line type charts
+     * the tracker uses the same graphPath, but with a greater stroke width
+     * for better control.
+     * @private
+     */
+    LineSeries.prototype.drawTracker = function () {
+        var series = this, options = series.options, trackByArea = options.trackByArea, trackerPath = [].concat(trackByArea ?
+            series.areaPath :
+            series.graphPath), 
+        // trackerPathLength = trackerPath.length,
+        chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function (e) {
+            if (chart.hoverSeries !== series) {
+                series.onMouseOver();
+            }
+        }, 
+        /*
+         * Empirical lowest possible opacities for TRACKER_FILL for an
+         * element to stay invisible but clickable
+         * IE6: 0.002
+         * IE7: 0.002
+         * IE8: 0.002
+         * IE9: 0.00000000001 (unlimited)
+         * IE10: 0.0001 (exporting only)
+         * FF: 0.00000000001 (unlimited)
+         * Chrome: 0.000001
+         * Safari: 0.000001
+         * Opera: 0.00000000001 (unlimited)
+         */
+        TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
+        // Draw the tracker
+        if (tracker) {
+            tracker.attr({ d: trackerPath });
+        }
+        else if (series.graph) { // create
+            series.tracker = renderer.path(trackerPath)
+                .attr({
+                visibility: series.visible ? 'visible' : 'hidden',
+                zIndex: 2
+            })
+                .addClass(trackByArea ?
+                'highcharts-tracker-area' :
+                'highcharts-tracker-line')
+                .add(series.group);
+            if (!chart.styledMode) {
+                series.tracker.attr({
+                    'stroke-linecap': 'round',
+                    'stroke-linejoin': 'round',
+                    stroke: TRACKER_FILL,
+                    fill: trackByArea ? TRACKER_FILL : 'none',
+                    'stroke-width': series.graph.strokeWidth() +
+                        (trackByArea ? 0 : 2 * snap)
+                });
+            }
+            // The tracker is added to the series group, which is clipped, but
+            // is covered by the marker group. So the marker group also needs to
+            // capture events.
+            [series.tracker, series.markerGroup].forEach(function (tracker) {
+                tracker.addClass('highcharts-tracker')
+                    .on('mouseover', onMouseOver)
+                    .on('mouseout', function (e) {
+                    pointer.onTrackerMouseOut(e);
+                });
+                if (options.cursor && !chart.styledMode) {
+                    tracker.css({ cursor: options.cursor });
+                }
+                if (hasTouch) {
+                    tracker.on('touchstart', onMouseOver);
+                }
+            });
+        }
+        fireEvent(this, 'afterDrawTracker');
+    };
+    /**
+     * Add a point to the series after render time. The point can be added at
+     * the end, or by giving it an X value, to the start or in the middle of the
+     * series.
+     *
+     * @sample highcharts/members/series-addpoint-append/
+     *         Append point
+     * @sample highcharts/members/series-addpoint-append-and-shift/
+     *         Append and shift
+     * @sample highcharts/members/series-addpoint-x-and-y/
+     *         Both X and Y values given
+     * @sample highcharts/members/series-addpoint-pie/
+     *         Append pie slice
+     * @sample stock/members/series-addpoint/
+     *         Append 100 points in Highstock
+     * @sample stock/members/series-addpoint-shift/
+     *         Append and shift in Highstock
+     * @sample maps/members/series-addpoint/
+     *         Add a point in Highmaps
+     *
+     * @function Highcharts.Series#addPoint
+     *
+     * @param {Highcharts.PointOptionsType} options
+     *        The point options. If options is a single number, a point with
+     *        that y value is appended to the series. If it is an array, it will
+     *        be interpreted as x and y values respectively. If it is an
+     *        object, advanced options as outlined under `series.data` are
+     *        applied.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the point is added. When adding
+     *        more than one point, it is highly recommended that the redraw
+     *        option be set to false, and instead {@link Chart#redraw} is
+     *        explicitly called after the adding of points is finished.
+     *        Otherwise, the chart will redraw after adding each point.
+     *
+     * @param {boolean} [shift=false]
+     *        If true, a point is shifted off the start of the series as one is
+     *        appended to the end.
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether to apply animation, and optionally animation
+     *        configuration.
+     *
+     * @param {boolean} [withEvent=true]
+     *        Used internally, whether to fire the series `addPoint` event.
+     *
+     * @fires Highcharts.Series#event:addPoint
+     */
+    LineSeries.prototype.addPoint = function (options, redraw, shift, animation, withEvent) {
+        var series = this, seriesOptions = series.options, data = series.data, chart = series.chart, xAxis = series.xAxis, names = xAxis && xAxis.hasNames && xAxis.names, dataOptions = seriesOptions.data, point, xData = series.xData, isInTheMiddle, i, x;
+        // Optional redraw, defaults to true
+        redraw = pick(redraw, true);
+        // Get options and push the point to xData, yData and series.options. In
+        // series.generatePoints the Point instance will be created on demand
+        // and pushed to the series.data array.
+        point = { series: series };
+        series.pointClass.prototype.applyOptions.apply(point, [options]);
+        x = point.x;
+        // Get the insertion point
+        i = xData.length;
+        if (series.requireSorting && x < xData[i - 1]) {
+            isInTheMiddle = true;
+            while (i && xData[i - 1] > x) {
+                i--;
+            }
+        }
+        // Insert undefined item
+        series.updateParallelArrays(point, 'splice', i, 0, 0);
+        // Update it
+        series.updateParallelArrays(point, i);
+        if (names && point.name) {
+            names[x] = point.name;
+        }
+        dataOptions.splice(i, 0, options);
+        if (isInTheMiddle) {
+            series.data.splice(i, 0, null);
+            series.processData();
+        }
+        // Generate points to be added to the legend (#1329)
+        if (seriesOptions.legendType === 'point') {
+            series.generatePoints();
+        }
+        // Shift the first point off the parallel arrays
+        if (shift) {
+            if (data[0] && data[0].remove) {
+                data[0].remove(false);
+            }
+            else {
+                data.shift();
+                series.updateParallelArrays(point, 'shift');
+                dataOptions.shift();
+            }
+        }
+        // Fire event
+        if (withEvent !== false) {
+            fireEvent(series, 'addPoint', { point: point });
+        }
+        // redraw
+        series.isDirty = true;
+        series.isDirtyData = true;
+        if (redraw) {
+            chart.redraw(animation); // Animation is set anyway on redraw, #5665
+        }
+    };
+    /**
+     * Remove a point from the series. Unlike the
+     * {@link Highcharts.Point#remove} method, this can also be done on a point
+     * that is not instanciated because it is outside the view or subject to
+     * Highstock data grouping.
+     *
+     * @sample highcharts/members/series-removepoint/
+     *         Remove cropped point
+     *
+     * @function Highcharts.Series#removePoint
+     *
+     * @param {number} i
+     *        The index of the point in the {@link Highcharts.Series.data|data}
+     *        array.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the point is added. When
+     *        removing more than one point, it is highly recommended that the
+     *        `redraw` option be set to `false`, and instead {@link
+     *        Highcharts.Chart#redraw} is explicitly called after the adding of
+     *        points is finished.
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether and optionally how the series should be animated.
+     *
+     * @fires Highcharts.Point#event:remove
+     */
+    LineSeries.prototype.removePoint = function (i, redraw, animation) {
+        var series = this, data = series.data, point = data[i], points = series.points, chart = series.chart, remove = function () {
+            if (points && points.length === data.length) { // #4935
+                points.splice(i, 1);
+            }
+            data.splice(i, 1);
+            series.options.data.splice(i, 1);
+            series.updateParallelArrays(point || { series: series }, 'splice', i, 1);
+            if (point) {
+                point.destroy();
+            }
+            // redraw
+            series.isDirty = true;
+            series.isDirtyData = true;
+            if (redraw) {
+                chart.redraw();
+            }
+        };
+        setAnimation(animation, chart);
+        redraw = pick(redraw, true);
+        // Fire the event with a default handler of removing the point
+        if (point) {
+            point.firePointEvent('remove', null, remove);
+        }
+        else {
+            remove();
+        }
+    };
+    /**
+     * Remove a series and optionally redraw the chart.
+     *
+     * @sample highcharts/members/series-remove/
+     *         Remove first series from a button
+     *
+     * @function Highcharts.Series#remove
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart or wait for an explicit call to
+     *        {@link Highcharts.Chart#redraw}.
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether to apply animation, and optionally animation
+     *        configuration.
+     *
+     * @param {boolean} [withEvent=true]
+     *        Used internally, whether to fire the series `remove` event.
+     *
+     * @fires Highcharts.Series#event:remove
+     */
+    LineSeries.prototype.remove = function (redraw, animation, withEvent, keepEvents) {
+        var series = this, chart = series.chart;
+        /**
+         * @private
+         */
+        function remove() {
+            // Destroy elements
+            series.destroy(keepEvents);
+            // Redraw
+            chart.isDirtyLegend = chart.isDirtyBox = true;
+            chart.linkSeries();
+            if (pick(redraw, true)) {
+                chart.redraw(animation);
+            }
+        }
+        // Fire the event with a default handler of removing the point
+        if (withEvent !== false) {
+            fireEvent(series, 'remove', null, remove);
+        }
+        else {
+            remove();
+        }
+    };
+    /**
+     * Update the series with a new set of options. For a clean and precise
+     * handling of new options, all methods and elements from the series are
+     * removed, and it is initialized from scratch. Therefore, this method is
+     * more performance expensive than some other utility methods like {@link
+     * Series#setData} or {@link Series#setVisible}.
+     *
+     * Note that `Series.update` may mutate the passed `data` options.
+     *
+     * @sample highcharts/members/series-update/
+     *         Updating series options
+     * @sample maps/members/series-update/
+     *         Update series options in Highmaps
+     *
+     * @function Highcharts.Series#update
+     *
+     * @param {Highcharts.SeriesOptionsType} options
+     *        New options that will be merged with the series' existing options.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the series is altered. If doing
+     *        more operations on the chart, it is a good idea to set redraw to
+     *        false and call {@link Chart#redraw} after.
+     *
+     * @fires Highcharts.Series#event:update
+     * @fires Highcharts.Series#event:afterUpdate
+     */
+    LineSeries.prototype.update = function (options, redraw) {
+        options = cleanRecursively(options, this.userOptions);
+        fireEvent(this, 'update', { options: options });
+        var series = this, chart = series.chart, 
+        // must use user options when changing type because series.options
+        // is merged in with type specific plotOptions
+        oldOptions = series.userOptions, seriesOptions, initialType = series.initialType || series.type, plotOptions = chart.options.plotOptions, newType = (options.type ||
+            oldOptions.type ||
+            chart.options.chart.type), keepPoints = !(
+        // Indicators, histograms etc recalculate the data. It should be
+        // possible to omit this.
+        this.hasDerivedData ||
+            // New type requires new point classes
+            (newType && newType !== this.type) ||
+            // New options affecting how the data points are built
+            typeof options.pointStart !== 'undefined' ||
+            typeof options.pointInterval !== 'undefined' ||
+            // Changes to data grouping requires new points in new group
+            series.hasOptionChanged('dataGrouping') ||
+            series.hasOptionChanged('pointStart') ||
+            series.hasOptionChanged('pointInterval') ||
+            series.hasOptionChanged('pointIntervalUnit') ||
+            series.hasOptionChanged('keys')), initialSeriesProto = seriesTypes[initialType].prototype, n, groups = [
+            'group',
+            'markerGroup',
+            'dataLabelsGroup',
+            'transformGroup'
+        ], preserve = [
+            'eventOptions',
+            'navigatorSeries',
+            'baseSeries'
+        ], 
+        // Animation must be enabled when calling update before the initial
+        // animation has first run. This happens when calling update
+        // directly after chart initialization, or when applying responsive
+        // rules (#6912).
+        animation = series.finishedAnimating && { animation: false }, kinds = {};
+        if (keepPoints) {
+            preserve.push('data', 'isDirtyData', 'points', 'processedXData', 'processedYData', 'xIncrement', 'cropped', '_hasPointMarkers', '_hasPointLabels', 
+            // Networkgraph (#14397)
+            'nodes', 'layout', 
+            // Map specific, consider moving it to series-specific preserve-
+            // properties (#10617)
+            'mapMap', 'mapData', 'minY', 'maxY', 'minX', 'maxX');
+            if (options.visible !== false) {
+                preserve.push('area', 'graph');
+            }
+            series.parallelArrays.forEach(function (key) {
+                preserve.push(key + 'Data');
+            });
+            if (options.data) {
+                // setData uses dataSorting options so we need to update them
+                // earlier
+                if (options.dataSorting) {
+                    extend(series.options.dataSorting, options.dataSorting);
+                }
+                this.setData(options.data, false);
+            }
+        }
+        // Do the merge, with some forced options
+        options = merge(oldOptions, animation, {
+            // When oldOptions.index is null it should't be cleared.
+            // Otherwise navigator series will have wrong indexes (#10193).
+            index: typeof oldOptions.index === 'undefined' ?
+                series.index : oldOptions.index,
+            pointStart: pick(
+            // when updating from blank (#7933)
+            plotOptions && plotOptions.series && plotOptions.series.pointStart, oldOptions.pointStart, 
+            // when updating after addPoint
+            series.xData[0])
+        }, (!keepPoints && { data: series.options.data }), options);
+        // Merge does not merge arrays, but replaces them. Since points were
+        // updated, `series.options.data` has correct merged options, use it:
+        if (keepPoints && options.data) {
+            options.data = series.options.data;
+        }
+        // Make sure preserved properties are not destroyed (#3094)
+        preserve = groups.concat(preserve);
+        preserve.forEach(function (prop) {
+            preserve[prop] = series[prop];
+            delete series[prop];
+        });
+        if (seriesTypes[newType || initialType]) {
+            var casting = newType !== series.type;
+            // Destroy the series and delete all properties, it will be
+            // reinserted within the `init` call below
+            series.remove(false, false, false, true);
+            if (casting) {
+                // Modern browsers including IE11
+                if (Object.setPrototypeOf) {
+                    Object.setPrototypeOf(series, seriesTypes[newType || initialType].prototype);
+                    // Legacy (IE < 11)
+                }
+                else {
+                    var ownEvents = Object.hasOwnProperty.call(series, 'hcEvents') &&
+                        series.hcEvents;
+                    for (n in initialSeriesProto) { // eslint-disable-line guard-for-in
+                        series[n] = void 0;
+                    }
+                    // Reinsert all methods and properties from the new type
+                    // prototype (#2270, #3719).
+                    extend(series, seriesTypes[newType || initialType].prototype);
+                    // The events are tied to the prototype chain, don't copy if
+                    // they're not the series' own
+                    if (ownEvents) {
+                        series.hcEvents = ownEvents;
+                    }
+                    else {
+                        delete series.hcEvents;
+                    }
+                }
+            }
+        }
+        else {
+            error(17, true, chart, { missingModuleFor: (newType || initialType) });
+        }
+        // Re-register groups (#3094) and other preserved properties
+        preserve.forEach(function (prop) {
+            series[prop] = preserve[prop];
+        });
+        series.init(chart, options);
+        // Remove particular elements of the points. Check `series.options`
+        // because we need to consider the options being set on plotOptions as
+        // well.
+        if (keepPoints && this.points) {
+            seriesOptions = series.options;
+            // What kind of elements to destroy
+            if (seriesOptions.visible === false) {
+                kinds.graphic = 1;
+                kinds.dataLabel = 1;
+            }
+            else if (!series._hasPointLabels) {
+                var marker = seriesOptions.marker, dataLabels = seriesOptions.dataLabels;
+                if (marker && (marker.enabled === false ||
+                    'symbol' in marker // #10870
+                )) {
+                    kinds.graphic = 1;
+                }
+                if (dataLabels &&
+                    dataLabels.enabled === false) {
+                    kinds.dataLabel = 1;
+                }
+            }
+            this.points.forEach(function (point) {
+                if (point && point.series) {
+                    point.resolveColor();
+                    // Destroy elements in order to recreate based on updated
+                    // series options.
+                    if (Object.keys(kinds).length) {
+                        point.destroyElements(kinds);
+                    }
+                    if (seriesOptions.showInLegend === false &&
+                        point.legendItem) {
+                        chart.legend.destroyItem(point);
+                    }
+                }
+            }, this);
+        }
+        series.initialType = initialType;
+        chart.linkSeries(); // Links are lost in series.remove (#3028)
+        fireEvent(this, 'afterUpdate');
+        if (pick(redraw, true)) {
+            chart.redraw(keepPoints ? void 0 : false);
+        }
+    };
+    /**
+     * Used from within series.update
+     * @private
+     */
+    LineSeries.prototype.setName = function (name) {
+        this.name = this.options.name = this.userOptions.name = name;
+        this.chart.isDirtyLegend = true;
+    };
+    /**
+     * Check if the option has changed.
+     * @private
+     */
+    LineSeries.prototype.hasOptionChanged = function (optionName) {
+        var chart = this.chart, option = this.options[optionName], plotOptions = chart.options.plotOptions, oldOption = this.userOptions[optionName];
+        if (oldOption) {
+            return option !== oldOption;
+        }
+        return option !==
+            pick(plotOptions && plotOptions[this.type] && plotOptions[this.type][optionName], plotOptions && plotOptions.series && plotOptions.series[optionName], option);
     };
     /**
      * General options for all series types.

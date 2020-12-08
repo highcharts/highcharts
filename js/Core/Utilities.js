@@ -491,6 +491,33 @@ H.merge = merge;
 function clamp(value, min, max) {
     return value > min ? value < max ? value : max : min;
 }
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Remove settings that have not changed, to avoid unnecessary rendering or
+ * computing (#9197).
+ * @private
+ */
+function cleanRecursively(newer, older) {
+    var result = {};
+    objectEach(newer, function (_val, key) {
+        var ob;
+        // Dive into objects (except DOM nodes)
+        if (isObject(newer[key], true) &&
+            !newer.nodeType && // #10044
+            older[key]) {
+            ob = cleanRecursively(newer[key], older[key]);
+            if (Object.keys(ob).length) {
+                result[key] = ob;
+            }
+            // Arrays, primitives and DOM nodes are copied directly
+        }
+        else if (isObject(newer[key]) ||
+            newer[key] !== older[key]) {
+            result[key] = newer[key];
+        }
+    });
+    return result;
+}
 /**
  * Shortcut for parseInt
  *
@@ -2075,6 +2102,7 @@ var utilitiesModule = {
     arrayMin: arrayMin,
     attr: attr,
     clamp: clamp,
+    cleanRecursively: cleanRecursively,
     clearTimeout: internalClearTimeout,
     correctFloat: correctFloat,
     createElement: createElement,

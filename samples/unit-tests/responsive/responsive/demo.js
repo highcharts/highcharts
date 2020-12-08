@@ -332,6 +332,83 @@ QUnit.test(
     }
 );
 
+QUnit.test('Annotations applied on init', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            animation: false
+        },
+
+        series: [
+            {
+                data: [1, 4, 3],
+                animation: false,
+                yAxis: 0
+            }
+        ],
+
+        yAxis: [
+            {
+                min: 0,
+                max: 10
+            },
+            {
+                opposite: true,
+                min: -10,
+                max: 10
+            }
+        ],
+
+        responsive: {
+            rules: [
+                {
+                    condition: {
+                        minWidth: 100
+                    },
+                    chartOptions: {
+                        plotOptions: {
+                            series: {
+                                color: 'red'
+                            }
+                        },
+                        series: [
+                            {
+                                yAxis: 1
+                            }
+                        ],
+                        annotations: [
+                            {
+                                labels: [
+                                    {
+                                        point: {
+                                            xAxis: 0,
+                                            yAxis: 0,
+                                            x: 1,
+                                            y: 1
+                                        },
+                                        text: 'Label v2'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    });
+
+    assert.strictEqual(
+        chart.annotations.length,
+        1,
+        'Annotations should be applied to chart from responsive rule'
+    );
+    assert.strictEqual(
+        chart.options.annotations[0].labels[0].text,
+        'Label v2',
+        'Annotation options should be set'
+    );
+
+});
+
 QUnit.test('Revert axis properties', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
