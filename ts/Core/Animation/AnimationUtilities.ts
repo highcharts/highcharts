@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from './AnimationOptionsObject';
+import type AnimationOptions from './AnimationOptions';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
@@ -40,18 +40,18 @@ declare global {
         function animate(
             el: (HTMLDOMElement|SVGElement),
             params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptionsObject>
+            opt?: Partial<AnimationOptions>
         ): void;
         function animObject(
-            animation?: (boolean|AnimationOptionsObject)
-        ): AnimationOptionsObject;
+            animation?: (boolean|AnimationOptions)
+        ): AnimationOptions;
         function getDeferredAnimation(
             chart: Chart,
-            animation: Partial<AnimationOptionsObject>,
+            animation: Partial<AnimationOptions>,
             series?: LineSeries
-        ): Partial<AnimationOptionsObject>;
+        ): Partial<AnimationOptions>;
         function setAnimation(
-            animation: (boolean|Partial<AnimationOptionsObject>|undefined),
+            animation: (boolean|Partial<AnimationOptions>|undefined),
             chart: Chart
         ): void
         function stop(el: SVGElement, prop?: string): void;
@@ -75,7 +75,7 @@ declare global {
  * so it should be moved to the SVGRenderer.
  */
 const setAnimation = H.setAnimation = function setAnimation(
-    animation: (boolean|Partial<AnimationOptionsObject>|undefined),
+    animation: (boolean|Partial<AnimationOptions>|undefined),
     chart: Chart
 ): void {
     chart.renderer.globalAnimation = pick(
@@ -99,12 +99,12 @@ const setAnimation = H.setAnimation = function setAnimation(
  *         An object with at least a duration property.
  */
 const animObject = H.animObject = function animObject(
-    animation?: (boolean|DeepPartial<AnimationOptionsObject>)
-): AnimationOptionsObject {
+    animation?: (boolean|DeepPartial<AnimationOptions>)
+): AnimationOptions {
     return isObject(animation) ?
         H.merge(
             { duration: 500, defer: 0 },
-            animation as AnimationOptionsObject
+            animation as AnimationOptions
         ) as any :
         { duration: animation as boolean ? 500 : 0, defer: 0 };
 };
@@ -129,9 +129,9 @@ const animObject = H.animObject = function animObject(
  */
 const getDeferredAnimation = H.getDeferredAnimation = function (
     chart: Chart,
-    animation: (false|DeepPartial<AnimationOptionsObject>),
+    animation: (false|DeepPartial<AnimationOptions>),
     series?: LineSeries
-): Partial<AnimationOptionsObject> {
+): Partial<AnimationOptions> {
 
     const labelAnimation = animObject(animation);
     const s = series ? [series] : chart.series;
@@ -183,7 +183,7 @@ const getDeferredAnimation = H.getDeferredAnimation = function (
 const animate = H.animate = function (
     el: (HTMLDOMElement|SVGElement),
     params: (CSSObject|SVGAttributes),
-    opt?: Partial<AnimationOptionsObject>
+    opt?: Partial<AnimationOptions>
 ): void {
     var start,
         unit = '',

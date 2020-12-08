@@ -16,7 +16,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorAxis from '../../Core/Axis/ColorAxis';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
@@ -605,7 +605,7 @@ class HeatmapSeries extends ScatterSeries {
     /**
      * @private
      */
-    public setClip(animation?: (boolean|AnimationOptionsObject)): void {
+    public setClip(animation?: (boolean|AnimationOptions)): void {
         var series = this,
             chart = series.chart;
 

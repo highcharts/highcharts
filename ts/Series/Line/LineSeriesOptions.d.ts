@@ -14,7 +14,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type { CursorValue } from '../../Core/Renderer/CSSObject';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
@@ -46,7 +46,7 @@ declare module '../../Core/Series/SeriesOptions' {
 
 export interface LineSeriesOptions extends SeriesOptions {
     allAreas?: boolean;
-    animation?: (boolean|DeepPartial<AnimationOptionsObject>);
+    animation?: (boolean|DeepPartial<AnimationOptions>);
     animationLimit?: number;
     boostThreshold?: number;
     borderColor?: ColorType;

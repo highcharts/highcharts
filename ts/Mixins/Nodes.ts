@@ -6,7 +6,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
@@ -46,7 +46,7 @@ declare global {
                 this: NodesSeries,
                 data: Array<NodesPointOptions>,
                 redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
+                animation?: (boolean|Partial<AnimationOptions>),
                 updatePoints?: boolean
             ): void;
             setNodeState(this: NodesPoint, state: string): void;

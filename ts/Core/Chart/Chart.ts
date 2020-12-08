@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisType } from '../Axis/Types';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type {
@@ -651,7 +651,7 @@ class Chart {
      * @fires Highcharts.Chart#event:render
      * @fires Highcharts.Chart#event:updatedData
      */
-    public redraw(animation?: (boolean|Partial<AnimationOptionsObject>)): void {
+    public redraw(animation?: (boolean|Partial<AnimationOptions>)): void {
 
         fireEvent(this, 'beforeRedraw');
 
@@ -1718,7 +1718,7 @@ class Chart {
     public setSize(
         width?: (number|null),
         height?: (number|null),
-        animation?: (boolean|Partial<AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         var chart = this,
             renderer = chart.renderer,
@@ -2368,11 +2368,6 @@ class Chart {
         // Credits
         chart.addCredits();
 
-        // Handle responsiveness
-        if (chart.setResponsive) {
-            chart.setResponsive();
-        }
-
         // Handle scaling
         chart.updateContainerScaling();
 
@@ -2620,6 +2615,13 @@ class Chart {
             }
         }
 
+        // Handle responsiveness. Has to fire after extensions are loaded
+        addEvent(chart, 'load', function (): void {
+            if (chart.setResponsive) {
+                chart.setResponsive(true);
+            }
+        });
+
         chart.render();
 
         // Fire the load event if there are no external images
@@ -2702,7 +2704,7 @@ class Chart {
     public addSeries(
         options: SeriesTypeOptions,
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptions>)
     ): LineSeries {
         var series: (LineSeries|undefined),
             chart = this;
@@ -3049,7 +3051,7 @@ class Chart {
         options: Highcharts.Options,
         redraw?: boolean,
         oneToOne?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         var chart = this,
             adders = {
@@ -3484,7 +3486,7 @@ extend(Chart.prototype, {
 namespace Chart {
 
     export interface AfterUpdateEventObject {
-        animation: (boolean|Partial<AnimationOptionsObject>);
+        animation: (boolean|Partial<AnimationOptions>);
         options: Highcharts.Options;
         redraw: boolean;
     }
@@ -3494,7 +3496,7 @@ namespace Chart {
     }
 
     export interface CreateAxisOptionsObject {
-        animation: undefined | boolean | Partial<AnimationOptionsObject>;
+        animation: undefined | boolean | Partial<AnimationOptions>;
         axis: Highcharts.AxisOptions | ColorAxis.Options;
         redraw: undefined | boolean;
     }

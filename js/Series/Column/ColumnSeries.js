@@ -27,12 +27,12 @@ import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
-var noop = H.noop;
+var hasTouch = H.hasTouch, noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
-var clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
+var clamp = U.clamp, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /**
  * The column series type.
  *
@@ -70,6 +70,48 @@ var ColumnSeries = /** @class */ (function (_super) {
      *
      * */
     /* eslint-disable valid-jsdoc */
+    /**
+     * Animate the column heights one by one from zero.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#animate
+     *
+     * @param {boolean} init
+     *        Whether to initialize the animation or run it
+     */
+    ColumnSeries.prototype.animate = function (init) {
+        var series = this, yAxis = this.yAxis, options = series.options, inverted = this.chart.inverted, attr = {}, translateProp = inverted ? 'translateX' : 'translateY', translateStart, translatedThreshold;
+        if (init) {
+            attr.scaleY = 0.001;
+            translatedThreshold = clamp(yAxis.toPixels(options.threshold), yAxis.pos, yAxis.pos + yAxis.len);
+            if (inverted) {
+                attr.translateX = translatedThreshold - yAxis.len;
+            }
+            else {
+                attr.translateY = translatedThreshold;
+            }
+            // apply finnal clipping (used in Highstock) (#7083)
+            // animation is done by scaleY, so cliping is for panes
+            if (series.clipBox) {
+                series.setClip();
+            }
+            series.group.attr(attr);
+        }
+        else { // run the animation
+            translateStart = series.group.attr(translateProp);
+            series.group.animate({ scaleY: 1 }, extend(animObject(series.options.animation), {
+                // Do the scale synchronously to ensure smooth
+                // updating (#5030, #7228)
+                step: function (val, fx) {
+                    if (series.group) {
+                        attr[translateProp] = translateStart +
+                            fx.pos * (yAxis.pos - translateStart);
+                        series.group.attr(attr);
+                    }
+                }
+            }));
+        }
+    };
     /**
      * Initialize the series. Extends the basic Series.init method by
      * marking other series of the same type as dirty.
@@ -487,46 +529,59 @@ var ColumnSeries = /** @class */ (function (_super) {
         });
     };
     /**
-     * Animate the column heights one by one from zero.
-     *
+     * Draw the tracker for a point.
      * @private
-     * @function Highcharts.seriesTypes.column#animate
-     *
-     * @param {boolean} init
-     *        Whether to initialize the animation or run it
      */
-    ColumnSeries.prototype.animate = function (init) {
-        var series = this, yAxis = this.yAxis, options = series.options, inverted = this.chart.inverted, attr = {}, translateProp = inverted ? 'translateX' : 'translateY', translateStart, translatedThreshold;
-        if (init) {
-            attr.scaleY = 0.001;
-            translatedThreshold = clamp(yAxis.toPixels(options.threshold), yAxis.pos, yAxis.pos + yAxis.len);
-            if (inverted) {
-                attr.translateX = translatedThreshold - yAxis.len;
+    ColumnSeries.prototype.drawTracker = function () {
+        var series = this, chart = series.chart, pointer = chart.pointer, onMouseOver = function (e) {
+            var point = pointer.getPointFromEvent(e);
+            // undefined on graph in scatterchart
+            if (typeof point !== 'undefined') {
+                pointer.isDirectTouch = true;
+                point.onMouseOver(e);
             }
-            else {
-                attr.translateY = translatedThreshold;
+        }, dataLabels;
+        // Add reference to the point
+        series.points.forEach(function (point) {
+            dataLabels = (isArray(point.dataLabels) ?
+                point.dataLabels :
+                (point.dataLabel ? [point.dataLabel] : []));
+            if (point.graphic) {
+                point.graphic.element.point = point;
             }
-            // apply finnal clipping (used in Highstock) (#7083)
-            // animation is done by scaleY, so cliping is for panes
-            if (series.clipBox) {
-                series.setClip();
-            }
-            series.group.attr(attr);
-        }
-        else { // run the animation
-            translateStart = series.group.attr(translateProp);
-            series.group.animate({ scaleY: 1 }, extend(animObject(series.options.animation), {
-                // Do the scale synchronously to ensure smooth
-                // updating (#5030, #7228)
-                step: function (val, fx) {
-                    if (series.group) {
-                        attr[translateProp] = translateStart +
-                            fx.pos * (yAxis.pos - translateStart);
-                        series.group.attr(attr);
+            dataLabels.forEach(function (dataLabel) {
+                if (dataLabel.div) {
+                    dataLabel.div.point = point;
+                }
+                else {
+                    dataLabel.element.point = point;
+                }
+            });
+        });
+        // Add the event listeners, we need to do this only once
+        if (!series._hasTracking) {
+            series.trackerGroups.forEach(function (key) {
+                if (series[key]) {
+                    // we don't always have dataLabelsGroup
+                    series[key]
+                        .addClass('highcharts-tracker')
+                        .on('mouseover', onMouseOver)
+                        .on('mouseout', function (e) {
+                        pointer.onTrackerMouseOut(e);
+                    });
+                    if (hasTouch) {
+                        series[key].on('touchstart', onMouseOver);
+                    }
+                    if (!chart.styledMode && series.options.cursor) {
+                        series[key]
+                            .css(css)
+                            .css({ cursor: series.options.cursor });
                     }
                 }
-            }));
+            });
+            series._hasTracking = true;
         }
+        fireEvent(this, 'afterDrawTracker');
     };
     /**
      * Remove this series from the chart

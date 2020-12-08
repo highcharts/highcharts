@@ -32,7 +32,6 @@ import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
 import './FlagsSymbols.js';
-var TrackerMixin = H.TrackerMixin; // Interaction
 /**
  * The Flags series.
  *
@@ -210,6 +209,47 @@ var FlagsSeries = /** @class */ (function (_super) {
                 [].slice.call(arguments, 1));
             });
         }
+    };
+    /**
+     * Extend the column trackers with listeners to expand and contract
+     * stacks.
+     * @private
+     */
+    FlagsSeries.prototype.drawTracker = function () {
+        var series = this, points = series.points;
+        _super.prototype.drawTracker.call(this);
+        /* *
+        * Bring each stacked flag up on mouse over, this allows readability
+        * of vertically stacked elements as well as tight points on the x
+        * axis. #1924.
+        */
+        points.forEach(function (point) {
+            var graphic = point.graphic;
+            if (graphic) {
+                addEvent(graphic.element, 'mouseover', function () {
+                    // Raise this point
+                    if (point.stackIndex > 0 &&
+                        !point.raised) {
+                        point._y = graphic.y;
+                        graphic.attr({
+                            y: point._y - 8
+                        });
+                        point.raised = true;
+                    }
+                    // Revert other raised points
+                    points.forEach(function (otherPoint) {
+                        if (otherPoint !== point &&
+                            otherPoint.raised &&
+                            otherPoint.graphic) {
+                            otherPoint.graphic.attr({
+                                y: otherPoint._y
+                            });
+                            otherPoint.raised = false;
+                        }
+                    });
+                });
+            }
+        });
     };
     /**
      * Get presentational attributes
@@ -477,50 +517,7 @@ extend(FlagsSeries.prototype, {
     sorted: false,
     takeOrdinalPosition: false,
     trackerGroups: ['markerGroup'],
-    translate: OnSeriesMixin.translate,
-    /* eslint-disable no-invalid-this, valid-jsdoc */
-    /**
-     * Extend the column trackers with listeners to expand and contract
-     * stacks.
-     * @private
-     */
-    drawTracker: function () {
-        var series = this, points = series.points;
-        TrackerMixin.drawTrackerPoint.apply(this);
-        /* *
-        * Bring each stacked flag up on mouse over, this allows readability
-        * of vertically stacked elements as well as tight points on the x
-        * axis. #1924.
-        */
-        points.forEach(function (point) {
-            var graphic = point.graphic;
-            if (graphic) {
-                addEvent(graphic.element, 'mouseover', function () {
-                    // Raise this point
-                    if (point.stackIndex > 0 &&
-                        !point.raised) {
-                        point._y = graphic.y;
-                        graphic.attr({
-                            y: point._y - 8
-                        });
-                        point.raised = true;
-                    }
-                    // Revert other raised points
-                    points.forEach(function (otherPoint) {
-                        if (otherPoint !== point &&
-                            otherPoint.raised &&
-                            otherPoint.graphic) {
-                            otherPoint.graphic.attr({
-                                y: otherPoint._y
-                            });
-                            otherPoint.raised = false;
-                        }
-                    });
-                });
-            }
-        });
-    }
-    /* eslint-enable no-invalid-this, valid-jsdoc */
+    translate: OnSeriesMixin.translate
 });
 BaseSeries.registerSeriesType('flags', FlagsSeries);
 /* *

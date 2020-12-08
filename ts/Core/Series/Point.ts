@@ -16,7 +16,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { EventCallback } from '../Callback';
 import type LineSeries from '../../Series/Line/LineSeries';
@@ -1102,7 +1102,7 @@ class Point {
     public update(
         options: (PointOptions|PointShortOptions),
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         runEvent?: boolean
     ): void {
         var point = this,
@@ -1210,7 +1210,7 @@ class Point {
      */
     public remove(
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>)
+        animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         this.series.removePoint(
             this.series.data.indexOf(this),

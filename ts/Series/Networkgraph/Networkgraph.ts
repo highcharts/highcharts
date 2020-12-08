@@ -18,7 +18,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type Chart from '../../Core/Chart/Chart';
 import type ColorType from '../../Core/Color/ColorType';
 import type {
@@ -65,7 +65,7 @@ var dragNodesMixin = H.dragNodesMixin;
 declare module '../../Core/Series/PointOptions' {
     interface PointStateInactiveOptions
     {
-        animation?: (boolean|Partial<AnimationOptionsObject>);
+        animation?: (boolean|Partial<AnimationOptions>);
     }
 }
 
@@ -78,7 +78,7 @@ declare module '../../Core/Series/SeriesLike' {
 declare module '../../Core/Series/SeriesOptions' {
     interface SeriesStateInactiveOptions
     {
-        animation?: (boolean|Partial<AnimationOptionsObject>);
+        animation?: (boolean|Partial<AnimationOptions>);
         linkOpacity?: number;
     }
 }
@@ -659,7 +659,6 @@ interface NetworkgraphSeries {
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
-    drawTracker: Highcharts.TrackerMixin['drawTrackerPoint'];
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;
@@ -710,7 +709,7 @@ extend(NetworkgraphSeries.prototype, {
     noSharedTooltip: true,
     pointArrayMap: ['from', 'to'],
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-    drawTracker: H.TrackerMixin.drawTrackerPoint,
+    drawTracker: seriesTypes.column.prototype.drawTracker,
     // Animation is run in `series.simulation`.
     animate: null as any,
     buildKDTree: H.noop as any,

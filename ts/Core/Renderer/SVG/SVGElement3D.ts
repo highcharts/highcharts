@@ -18,7 +18,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Animation/AnimationOptions';
 import type ColorType from '../../Color/ColorType';
 import type SVGArc3D from './SVGArc3D';
 import type SVGAttributes from './SVGAttributes';
@@ -219,7 +219,7 @@ namespace SVGElement3D {
         animate: function (
             this: SVGElement,
             args: SVGAttributes,
-            duration?: (boolean|Partial<AnimationOptionsObject>),
+            duration?: (boolean|Partial<AnimationOptions>),
             complete?: Function
         ): SVGElement {
             if (defined(args.x) && defined(args.y)) {

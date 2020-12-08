@@ -361,7 +361,7 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
         }, */
         parentNode = series.parentNode;
         var dataLabels;
-        H.TrackerMixin.drawTrackerPoint.call(this);
+        _super.prototype.drawTracker.call(this);
         // Add reference to the point
         if (parentNode) {
             dataLabels = (isArray(parentNode.dataLabels) ?

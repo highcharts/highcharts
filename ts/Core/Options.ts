@@ -15,7 +15,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from './Renderer/AlignObject';
-import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
+import type AnimationOptions from './Animation/AnimationOptions';
 import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
@@ -96,7 +96,7 @@ declare global {
         }
         interface ChartOptions {
             alignTicks?: boolean;
-            animation?: (boolean|Partial<AnimationOptionsObject>);
+            animation?: (boolean|Partial<AnimationOptions>);
             backgroundColor?: ColorType;
             borderColor?: ColorType;
             borderRadius?: number;
@@ -230,7 +230,7 @@ declare global {
         }
         interface LegendNavigationOptions {
             activeColor?: ColorType;
-            animation?: (boolean|Partial<AnimationOptionsObject>);
+            animation?: (boolean|Partial<AnimationOptions>);
             arrowSize?: number;
             enabled?: boolean;
             inactiveColor?: ColorType;

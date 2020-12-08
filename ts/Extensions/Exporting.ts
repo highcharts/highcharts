@@ -16,7 +16,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
@@ -229,7 +229,7 @@ declare global {
             resetParams?: [
                 (number|null)?,
                 (number|null)?,
-                (boolean|Partial<AnimationOptionsObject>)?
+                (boolean|Partial<AnimationOptions>)?
             ];
         }
         interface SVGRenderer {
