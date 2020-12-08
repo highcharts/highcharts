@@ -1,8 +1,8 @@
 QUnit.test('RangeSelector.dropdown', assert => {
-    const container = document.getElementById('container');
-    container.style.width = '600px';
-
     const chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 800
+        },
         series: [
             {
                 pointInterval: 24 * 3600 * 1000,
@@ -41,7 +41,7 @@ QUnit.test('RangeSelector.dropdown', assert => {
 
     assert.ok(
         chart.rangeSelector.buttons.every(b => b.visibility !== 'hidden'),
-        '600px + responsive: All the buttons should be visible'
+        '800px + responsive: All the buttons should be visible'
     );
     assert.notOk(
         isSelectInsideChart(),
@@ -56,7 +56,7 @@ QUnit.test('RangeSelector.dropdown', assert => {
 
     assert.ok(
         chart.rangeSelector.buttons.every(b => b.visibility !== 'hidden'),
-        '600px + never: All the buttons should be visible'
+        '800px + never: All the buttons should be visible'
     );
     assert.notOk(
         isSelectInsideChart(),
@@ -72,15 +72,18 @@ QUnit.test('RangeSelector.dropdown', assert => {
     assert.strictEqual(
         chart.rangeSelector.buttons.filter(b => b.visibility !== 'hidden').length,
         1,
-        '600px + always: Only 1 button should be visible'
+        '800px + always: Only 1 button should be visible'
     );
     assert.ok(
         isSelectInsideChart(),
         'Select should be inside chart'
     );
 
-    container.style.width = '400px';
-    chart.reflow();
+    chart.update({
+        chart: {
+            width: 400
+        }
+    });
 
     assert.strictEqual(
         chart.rangeSelector.buttons.filter(b => b.visibility !== 'hidden').length,
