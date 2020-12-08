@@ -1323,6 +1323,10 @@ var RangeSelector = /** @class */ (function () {
         }, this.div);
         var mouseover = H.isMS ? 'mouseover' : 'mouseenter';
         var mouseout = H.isMS ? 'mouseout' : 'mouseleave';
+        // Prevent page zoom on iPhone
+        addEvent(dropdown, 'touchstart', function () {
+            dropdown.style.fontSize = '16px';
+        });
         addEvent(dropdown, mouseover, function () {
             var button = buttons[_this.currentButtonIndex()];
             if (button) {

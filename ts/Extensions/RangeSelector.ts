@@ -1863,6 +1863,12 @@ class RangeSelector {
         const mouseover = H.isMS ? 'mouseover' : 'mouseenter';
         const mouseout = H.isMS ? 'mouseout' : 'mouseleave';
 
+
+        // Prevent page zoom on iPhone
+        addEvent(dropdown, 'touchstart', (): void => {
+            dropdown.style.fontSize = '16px';
+        });
+
         addEvent(dropdown, mouseover, (): void => {
             const button = buttons[this.currentButtonIndex()];
             if (button) {
