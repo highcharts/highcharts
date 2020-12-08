@@ -2029,10 +2029,14 @@ class Pointer {
         }
 
         // In case we are dealing with overflow, reset the chart position when
-        // scrolling
-        addEvent(this.chart.renderTo.parentElement, 'scroll', (): void => {
-            delete this.chartPosition;
-        });
+        // scrolling parent elements
+        let parent = this.chart.renderTo.parentElement;
+        while (parent && parent.tagName !== 'BODY') {
+            addEvent(parent, 'scroll', (): void => {
+                delete this.chartPosition;
+            });
+            parent = parent.parentElement;
+        }
 
         if (H.hasTouch) {
             addEvent(

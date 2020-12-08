@@ -1392,10 +1392,14 @@ var Pointer = /** @class */ (function () {
             H.unbindDocumentMouseUp = addEvent(ownerDoc, 'mouseup', this.onDocumentMouseUp.bind(this));
         }
         // In case we are dealing with overflow, reset the chart position when
-        // scrolling
-        addEvent(this.chart.renderTo.parentElement, 'scroll', function () {
-            delete _this.chartPosition;
-        });
+        // scrolling parent elements
+        var parent = this.chart.renderTo.parentElement;
+        while (parent && parent.tagName !== 'BODY') {
+            addEvent(parent, 'scroll', function () {
+                delete _this.chartPosition;
+            });
+            parent = parent.parentElement;
+        }
         if (H.hasTouch) {
             addEvent(container, 'touchstart', this.onContainerTouchStart.bind(this), { passive: false });
             addEvent(container, 'touchmove', this.onContainerTouchMove.bind(this), { passive: false });
