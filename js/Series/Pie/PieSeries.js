@@ -262,7 +262,7 @@ var PieSeries = /** @class */ (function (_super) {
                 graphic.attr({
                     visibility: point.visible ? 'inherit' : 'hidden'
                 });
-                graphic.addClass(point.getClassName());
+                graphic.addClass(point.getClassName(), true);
             }
             else if (graphic) {
                 point.graphic = graphic.destroy();
