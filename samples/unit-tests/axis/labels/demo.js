@@ -2057,3 +2057,33 @@ QUnit.test(
         );
     }
 );
+
+// Issue #14769
+QUnit.test('Formatter calls with NaN values when chart is narrow', assert => {
+    var results = [];
+
+    Highcharts.chart('container', {
+        chart: {
+            height: 150,
+            width: 500
+        },
+
+        yAxis: {
+            labels: {
+                formatter: function () {
+                    results.push(this.value);
+                }
+            }
+        },
+
+        series: [{
+            data: [null, null]
+        }]
+    });
+
+    assert.deepEqual(
+        results,
+        [],
+        "No values"
+    );
+});
