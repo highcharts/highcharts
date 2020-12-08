@@ -5906,9 +5906,10 @@ class Axis {
             tickAmount = options.tickAmount,
             tickPixelInterval = options.tickPixelInterval as any;
 
+        // Checking if values are NaN (#14769)
         if (
             !defined(options.tickInterval) &&
-            !tickAmount && this.len < tickPixelInterval &&
+            tickAmount === 0 && this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
