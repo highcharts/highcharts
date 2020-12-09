@@ -71,15 +71,15 @@ class DataGrid {
      * */
 
     public container: HTMLElement;
-    private outerContainer: HTMLElement;
-    private scrollContainer: HTMLElement;
-    private innerContainer: HTMLElement;
-
     public options: DataGridOptions;
-
     public dataTable: DataTable;
 
     private rowElements: Array<HTMLElement>;
+    private outerContainer: HTMLElement;
+    private scrollContainer: HTMLElement;
+    private innerContainer: HTMLElement;
+    private cellInputEl?: HTMLInputElement;
+
 
     /* *
      *
@@ -170,6 +170,7 @@ class DataGrid {
 
     private addEvents(): void {
         this.outerContainer.addEventListener('scroll', (e): void => this.onScroll(e));
+        document.addEventListener('click', (e): void => this.onDocumentClick(e));
     }
 
 
@@ -182,15 +183,58 @@ class DataGrid {
                 const dataTableRow = this.dataTable.getRow(i);
                 if (dataTableRow) {
                     const row = (Object as any).values(dataTableRow.getAllCells());
-
+                    const cellElements = tableRow.querySelectorAll('div');
                     row.forEach((columnValue: string, j: number): void => {
-                        const cell = tableRow.querySelectorAll('div')[j];
+                        const cell = cellElements[j];
                         cell.textContent = columnValue;
                     });
                 }
                 i++;
             }
         });
+    }
+
+
+    private onCellClick(cellEl: HTMLElement): void {
+        let input = cellEl.querySelector('input');
+        const cellValue = cellEl.textContent;
+
+        if (!input) {
+            this.removeCellInputElement();
+
+            // Replace cell contents with an input element
+            cellEl.textContent = '';
+            input = this.cellInputEl = document.createElement('input');
+            input.style.width = '60px';
+            cellEl.appendChild(input);
+            input.focus();
+            input.value = cellValue || '';
+        }
+    }
+
+
+    private onDocumentClick(e: MouseEvent): void {
+        if (this.cellInputEl && e.target) {
+            const cellEl = this.cellInputEl.parentNode;
+            const isClickInInput = cellEl?.contains(e.target as Node);
+            if (!isClickInInput) {
+                this.removeCellInputElement();
+            }
+        }
+    }
+
+
+    private removeCellInputElement(): void {
+        const cellInputEl = this.cellInputEl;
+        if (cellInputEl) {
+            // TODO: This needs to modify DataTable. The change in DataTable
+            // should cause a re-render?
+            if (cellInputEl.parentNode) {
+                cellInputEl.parentNode.textContent = cellInputEl.value;
+            }
+            cellInputEl.remove();
+            delete this.cellInputEl;
+        }
     }
 
 
@@ -230,6 +274,7 @@ class DataGrid {
                         'padding: 0 10px;' +
                         'z-index: -1;';
                     cellEl.textContent = columnValue;
+                    cellEl.addEventListener('click', (): void => this.onCellClick(cellEl));
                     rowEl.appendChild(cellEl);
                 });
             }

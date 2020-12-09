@@ -97,6 +97,7 @@ var DataGrid = /** @class */ (function () {
     DataGrid.prototype.addEvents = function () {
         var _this = this;
         this.outerContainer.addEventListener('scroll', function (e) { return _this.onScroll(e); });
+        document.addEventListener('click', function (e) { return _this.onDocumentClick(e); });
     };
     DataGrid.prototype.onScroll = function (e) {
         var _this = this;
@@ -107,8 +108,9 @@ var DataGrid = /** @class */ (function () {
                 var dataTableRow = _this.dataTable.getRow(i);
                 if (dataTableRow) {
                     var row = Object.values(dataTableRow.getAllCells());
+                    var cellElements_1 = tableRow.querySelectorAll('div');
                     row.forEach(function (columnValue, j) {
-                        var cell = tableRow.querySelectorAll('div')[j];
+                        var cell = cellElements_1[j];
                         cell.textContent = columnValue;
                     });
                 }
@@ -120,6 +122,41 @@ var DataGrid = /** @class */ (function () {
             }
         });
     };
+    DataGrid.prototype.onCellClick = function (cellEl) {
+        var input = cellEl.querySelector('input');
+        var cellValue = cellEl.textContent;
+        if (!input) {
+            this.removeCellInputElement();
+            // Replace cell contents with an input element
+            cellEl.textContent = '';
+            input = this.cellInputEl = document.createElement('input');
+            input.style.width = '60px';
+            cellEl.appendChild(input);
+            input.focus();
+            input.value = cellValue || '';
+        }
+    };
+    DataGrid.prototype.onDocumentClick = function (e) {
+        if (this.cellInputEl && e.target) {
+            var cellEl = this.cellInputEl.parentNode;
+            var isClickInInput = cellEl === null || cellEl === void 0 ? void 0 : cellEl.contains(e.target);
+            if (!isClickInInput) {
+                this.removeCellInputElement();
+            }
+        }
+    };
+    DataGrid.prototype.removeCellInputElement = function () {
+        var cellInputEl = this.cellInputEl;
+        if (cellInputEl) {
+            // TODO: This needs to modify DataTable. The change in DataTable
+            // should cause a re-render?
+            if (cellInputEl.parentNode) {
+                cellInputEl.parentNode.textContent = cellInputEl.value;
+            }
+            cellInputEl.remove();
+            delete this.cellInputEl;
+        }
+    };
     DataGrid.prototype.updateScrollingLength = function () {
         var height = (this.getRowCount() + 1) * DataGrid.cellHeight;
         this.scrollContainer.style.height = height + 'px';
@@ -128,6 +165,7 @@ var DataGrid = /** @class */ (function () {
         return Math.min(this.getRowCount() + 1, Math.floor(this.outerContainer.clientHeight / DataGrid.cellHeight));
     };
     DataGrid.prototype.renderInitialRows = function () {
+        var _this = this;
         this.rowElements = [];
         var rowsToDraw = this.getNumRowsToDraw();
         var i = 0;
@@ -147,6 +185,7 @@ var DataGrid = /** @class */ (function () {
                         'padding: 0 10px;' +
                         'z-index: -1;';
                     cellEl.textContent = columnValue;
+                    cellEl.addEventListener('click', function () { return _this.onCellClick(cellEl); });
                     rowEl.appendChild(cellEl);
                 });
             }
