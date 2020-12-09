@@ -5906,10 +5906,10 @@ class Axis {
             tickAmount = options.tickAmount,
             tickPixelInterval = options.tickPixelInterval as any;
 
-        // Checking if values are NaN (#14769)
         if (
             !defined(options.tickInterval) &&
-            tickAmount === 0 && this.len < tickPixelInterval &&
+            !tickAmount &&
+            this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
@@ -5951,21 +5951,18 @@ class Axis {
             finalTickAmt = axis.finalTickAmt,
             currentTickAmount = tickPositions && tickPositions.length,
             threshold = pick(axis.threshold, axis.softThreshold ? 0 : null),
-            min,
             len,
             i;
 
-        if (axis.hasData()) {
+        if (axis.hasData() && isNumber(axis.min) && isNumber(axis.max)) { // #14769
             if (currentTickAmount < tickAmount) {
-                min = axis.min;
-
                 while (tickPositions.length < tickAmount) {
 
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
                     if (
                         tickPositions.length % 2 ||
-                        min === threshold
+                        axis.min === threshold
                     ) {
                         // to the end
                         tickPositions.push(correctFloat(
@@ -5984,11 +5981,11 @@ class Axis {
                 // Do not crop when ticks are not extremes (#9841)
                 axis.min = axisOptions.startOnTick ?
                     tickPositions[0] :
-                    Math.min((axis.min as any), tickPositions[0]);
+                    Math.min(axis.min, tickPositions[0]);
                 axis.max = axisOptions.endOnTick ?
                     tickPositions[tickPositions.length - 1] :
                     Math.max(
-                        (axis.max as any),
+                        axis.max,
                         tickPositions[tickPositions.length - 1]
                     );
 
