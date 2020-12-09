@@ -1486,6 +1486,19 @@ H.defaultOptions = {
          * @apioption  chart.zoomType
          */
         /**
+         * Enables zooming by a single touch, in combination with
+         * [chart.zoomType](#chart.zoomType). When enabled, two-finger pinch
+         * will still work as set up by [chart.pinchType](#chart.pinchType).
+         * However, `zoomBySingleTouch` will interfere with touch-dragging the
+         * chart to read the tooltip. And especially when vertical zooming is
+         * enabled, it will make it hard to scroll vertically on the page.
+         * @since      next
+         * @sample     highcharts/chart/zoombysingletouch
+         *             Zoom by single touch enabled, with buttons to toggle
+         * @product    highcharts higstock gantt
+         */
+        zoomBySingleTouch: false,
+        /**
          * An explicit width for the chart. By default (when `null`) the width
          * is calculated from the offset width of the containing element.
          *

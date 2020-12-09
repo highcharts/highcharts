@@ -874,7 +874,7 @@ var Pointer = /** @class */ (function () {
         if (!pEvt.preventDefault) {
             pEvt.returnValue = false;
         }
-        if (chart.mouseIsDown === 'mousedown') {
+        if (chart.mouseIsDown === 'mousedown' || this.touchSelect(pEvt)) {
             this.drag(pEvt);
         }
         // Show the tooltip and run mouse over events (#977)
@@ -906,7 +906,12 @@ var Pointer = /** @class */ (function () {
      * @return {void}
      */
     Pointer.prototype.onContainerTouchMove = function (e) {
-        this.touch(e);
+        if (this.touchSelect(e)) {
+            this.onContainerMouseMove(e);
+        }
+        else {
+            this.touch(e);
+        }
     };
     /**
      * @private
@@ -917,8 +922,13 @@ var Pointer = /** @class */ (function () {
      * @return {void}
      */
     Pointer.prototype.onContainerTouchStart = function (e) {
-        this.zoomOption(e);
-        this.touch(e, true);
+        if (this.touchSelect(e)) {
+            this.onContainerMouseDown(e);
+        }
+        else {
+            this.zoomOption(e);
+            this.touch(e, true);
+        }
     };
     /**
      * Special handler for mouse move that will hide the tooltip when the mouse
@@ -1458,6 +1468,17 @@ var Pointer = /** @class */ (function () {
         else if (e.touches.length === 2) {
             this.pinch(e);
         }
+    };
+    /**
+     * Returns true if the chart is set up for zooming by single touch and the
+     * event is capable
+     * @param {PointEvent} e
+     *        Event object
+     */
+    Pointer.prototype.touchSelect = function (e) {
+        return Boolean(this.chart.options.chart.zoomBySingleTouch &&
+            e.touches &&
+            e.touches.length === 1);
     };
     /**
      * Resolve the zoomType option, this is reset on all touch start and mouse
