@@ -347,4 +347,48 @@
         assert.notEqual(xAxis.min, 0, 'Altered min');
         assert.notEqual(xAxis.max, 999, 'Altered max');
     });
+
+    QUnit.test('zoomBySingleTouch is true', assert => {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'x',
+                animation: false,
+                width: 600
+            },
+            series: [
+                {
+                    animation: false,
+                    data: getData(),
+                    kdNow: true
+                }
+            ]
+        });
+
+        var xAxis = chart.xAxis[0];
+
+        assert.ok(xAxis.min <= 0, 'Initial min');
+
+        assert.ok(xAxis.max >= 1000, 'Initial max');
+
+        var initialExtremes = [xAxis.min, xAxis.max];
+
+        singleTouchDrag(chart);
+        assert.deepEqual(
+            [xAxis.min, xAxis.max],
+            initialExtremes,
+            'Extremes should not change after single touch'
+        );
+
+        chart.update({
+            chart: {
+                zoomBySingleTouch: true
+            }
+        });
+        singleTouchDrag(chart);
+        assert.notDeepEqual(
+            [xAxis.min, xAxis.max],
+            initialExtremes,
+            'Extremes should change after single touch zoom'
+        );
+    });
 }());

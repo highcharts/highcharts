@@ -1272,7 +1272,7 @@ class Pointer {
             pEvt.returnValue = false;
         }
 
-        if (chart.mouseIsDown === 'mousedown') {
+        if (chart.mouseIsDown === 'mousedown' || this.touchSelect(pEvt)) {
             this.drag(pEvt);
         }
 
@@ -1314,7 +1314,11 @@ class Pointer {
      * @return {void}
      */
     public onContainerTouchMove(e: PointerEvent): void {
-        this.touch(e);
+        if (this.touchSelect(e)) {
+            this.onContainerMouseMove(e);
+        } else {
+            this.touch(e);
+        }
     }
 
     /**
@@ -1326,8 +1330,12 @@ class Pointer {
      * @return {void}
      */
     public onContainerTouchStart(e: PointerEvent): void {
-        this.zoomOption(e);
-        this.touch(e, true);
+        if (this.touchSelect(e)) {
+            this.onContainerMouseDown(e);
+        } else {
+            this.zoomOption(e);
+            this.touch(e, true);
+        }
     }
 
     /**
@@ -2143,6 +2151,20 @@ class Pointer {
         } else if ((e as any).touches.length === 2) {
             this.pinch(e);
         }
+    }
+
+    /**
+     * Returns true if the chart is set up for zooming by single touch and the
+     * event is capable
+     * @param {PointEvent} e
+     *        Event object
+     */
+    private touchSelect(e: PointerEvent): boolean {
+        return Boolean(
+            (this.chart.options.chart as any).zoomBySingleTouch &&
+            e.touches &&
+            e.touches.length === 1
+        );
     }
 
     /**
