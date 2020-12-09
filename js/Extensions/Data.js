@@ -774,7 +774,7 @@ var Data = /** @class */ (function () {
          * @private
          */
         function parseRow(columnStr, rowNumber, noAdd, callbacks) {
-            var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0, remainingHexColors = countHexValues(); // (#13283)
+            var i = 0, c = '', cl = '', cn = '', token = '', actualColumn = 0, column = 0;
             /**
              * @private
              */
@@ -827,27 +827,6 @@ var Data = /** @class */ (function () {
                 ++column;
                 ++actualColumn;
             }
-            /**
-             * Count hex values that are not comments (#13283)
-             * @private
-             * @return {number}
-             */
-            function countHexValues() {
-                var hexValuesCount = 0;
-                var potentialHexValues = columnStr.split(itemDelimiter)
-                    .filter(function (item) {
-                    return item.indexOf('#') === 0;
-                });
-                potentialHexValues.forEach(function (pH) {
-                    pH = pH.substring(1);
-                    var a = parseInt(pH, 16);
-                    if ((a.toString(16) === pH.toLowerCase()) ||
-                        (pH === '000')) { // Black values
-                        hexValuesCount++;
-                    }
-                });
-                return hexValuesCount;
-            }
             if (!columnStr.trim().length) {
                 return;
             }
@@ -856,15 +835,6 @@ var Data = /** @class */ (function () {
             }
             for (; i < columnStr.length; i++) {
                 read(i);
-                // If there are hexvalues remaining (#13283)
-                if (c === '#' && remainingHexColors) {
-                    remainingHexColors--;
-                }
-                else if (c === '#') {
-                    // The rest of the row is a comment
-                    push();
-                    return;
-                }
                 if (c === '"') {
                     read(++i);
                     while (i < columnStr.length) {
