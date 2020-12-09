@@ -154,12 +154,12 @@ module.exports = {
         'Accessibility': [
             'accessibility/accessibility-module',
             'accessibility/accessibility-module-feature-overview',
-            'accessibility/compliance',
             'accessibility/configure-the-accessibility-module',
             'accessibility/accessible-dynamic-data',
             'accessibility/sonification',
             'accessibility/patterns-and-contrast',
-            'accessibility/tables'
+            'accessibility/tables',
+            'accessibility/compliance'
         ],
         'Extending Highcharts': [
             'extending-highcharts/extending-highcharts'
