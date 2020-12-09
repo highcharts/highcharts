@@ -1381,6 +1381,7 @@ var Pointer = /** @class */ (function () {
      * @function Highcharts.Pointer#setDOMEvents
      */
     Pointer.prototype.setDOMEvents = function () {
+        var _this = this;
         var container = this.chart.container, ownerDoc = container.ownerDocument;
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
@@ -1389,6 +1390,15 @@ var Pointer = /** @class */ (function () {
         this.unbindContainerMouseLeave = addEvent(container, 'mouseleave', this.onContainerMouseLeave.bind(this));
         if (!H.unbindDocumentMouseUp) {
             H.unbindDocumentMouseUp = addEvent(ownerDoc, 'mouseup', this.onDocumentMouseUp.bind(this));
+        }
+        // In case we are dealing with overflow, reset the chart position when
+        // scrolling parent elements
+        var parent = this.chart.renderTo.parentElement;
+        while (parent && parent.tagName !== 'BODY') {
+            addEvent(parent, 'scroll', function () {
+                delete _this.chartPosition;
+            });
+            parent = parent.parentElement;
         }
         if (H.hasTouch) {
             addEvent(container, 'touchstart', this.onContainerTouchStart.bind(this), { passive: false });

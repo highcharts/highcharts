@@ -267,3 +267,48 @@ QUnit.test('#14246: ignoreHiddenPoint legend click', assert => {
         'Point graphic should be inside plot'
     );
 });
+
+QUnit.test(
+    'Colors must change after second update. (#14773)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+            chart: {
+                styledMode: true,
+                type: 'pie'
+            },
+            series: [{
+                data: [3]
+            }]
+        });
+
+        const styleBefore = chart.series[0]
+            .points[0]
+            .graphic
+            .element
+            .attributes
+            .class
+            .value;
+
+        chart.series[0].points[0].update({
+            colorIndex: 5
+        });
+
+        chart.series[0].points[0].update({
+            colorIndex: 0
+        });
+
+        const styleAfter = chart.series[0]
+            .points[0]
+            .graphic
+            .element
+            .attributes
+            .class
+            .value;
+
+        assert.strictEqual(
+            styleAfter,
+            styleBefore,
+            'Must be the same style after updating twice.'
+        );
+    }
+);

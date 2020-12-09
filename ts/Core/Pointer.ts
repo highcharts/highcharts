@@ -2027,6 +2027,17 @@ class Pointer {
                 this.onDocumentMouseUp.bind(this)
             );
         }
+
+        // In case we are dealing with overflow, reset the chart position when
+        // scrolling parent elements
+        let parent = this.chart.renderTo.parentElement;
+        while (parent && parent.tagName !== 'BODY') {
+            addEvent(parent, 'scroll', (): void => {
+                delete this.chartPosition;
+            });
+            parent = parent.parentElement;
+        }
+
         if (H.hasTouch) {
             addEvent(
                 container,

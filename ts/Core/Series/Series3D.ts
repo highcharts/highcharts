@@ -29,7 +29,8 @@ const {
     addEvent,
     extend,
     merge,
-    pick
+    pick,
+    isNumber
 } = U;
 
 /* *
@@ -48,6 +49,8 @@ declare module './PointLike' {
 declare module './SeriesLike' {
     interface SeriesLike {
         zAxis?: ZAxis;
+        rawPointsX?: Array<number>;
+        zPadding?: number;
         /** @requires Core/Series/Series3D */
         translate3dPoints(): void;
     }
@@ -90,6 +93,7 @@ class Series3D extends LineSeries {
      */
     public translate3dPoints(): void {
         var series = this,
+            seriesOptions = series.options,
             chart = series.chart,
             zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
             rawPoints = [] as Array<Position3DObject>,
@@ -97,7 +101,14 @@ class Series3D extends LineSeries {
             projectedPoints: Array<Position3DObject>,
             projectedPoint: Position3DObject,
             zValue: (number|null|undefined),
-            i: number;
+            i: number,
+            rawPointsX: Array<number> = [],
+            stack = seriesOptions.stacking ?
+                (isNumber(seriesOptions.stack) ? seriesOptions.stack : 0) :
+                series.index || 0;
+
+        series.zPadding = stack *
+            (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
         for (i = 0; i < series.data.length; i++) {
             rawPoint = series.data[i];
@@ -112,7 +123,7 @@ class Series3D extends LineSeries {
                     (zValue as any) <= (zAxis.max as any)) :
                     false;
             } else {
-                rawPoint.plotZ = 0;
+                rawPoint.plotZ = series.zPadding;
             }
 
             rawPoint.axisXpos = rawPoint.plotX;
@@ -124,7 +135,11 @@ class Series3D extends LineSeries {
                 y: rawPoint.plotY as any,
                 z: rawPoint.plotZ as any
             });
+
+            rawPointsX.push(rawPoint.plotX || 0);
         }
+
+        series.rawPointsX = rawPointsX;
 
         projectedPoints = perspective(rawPoints, chart, true);
 
