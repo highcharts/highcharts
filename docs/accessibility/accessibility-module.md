@@ -1,13 +1,13 @@
 Accessibility module
 ===
 
-The accessibility of Highcharts is critical to us. Accessibility should be fundamental to any software project, not an additional add on. Every Highcharts license includes our Accessibility module, which helps ensure your charts are as accessible as possible.  We use the WCAG 2.1 standard as our guideline for this, as well as involving users with disabilities in our testing and feature development.
+The accessibility of Highcharts is critical to us. Accessibility should be fundamental to any software project, not an afterthought. Every Highcharts license includes our Accessibility module, which helps ensure your charts are as accessible as possible. We use the WCAG 2.1 standard as our guideline for this, as well as involving users with disabilities in our testing and feature development.
 
 We recommend to always include the accessibility module, unless there is an explicit reason not to do so. Including this module will make your charts compatible with assistive technologies used by people with disabilities, and also improve the usability of your charts, helping you reach a broader audience. Including the Accessibility module will also help with SEO by making your charts more visible to web crawlers.
 
 Getting started with accessibility
 ----------------------------------
-You can read more about [installation of Highcharts](https://www.highcharts.com/docs/getting-started/installation) and [setting up your first chart](https://www.highcharts.com/docs/getting-started/your-first-chart).
+*Read more about [installation of Highcharts](https://www.highcharts.com/docs/getting-started/installation) and [setting up your first chart](https://www.highcharts.com/docs/getting-started/your-first-chart).*
 
 To include the accessibility module, simply include the following file after including any of the Highcharts JS files:
 
@@ -47,7 +47,7 @@ This behavior can be configured with the [`accessibility.linkedDescription`](htt
 
 **Caption:**
 
-It is possible to add the text description directly on the chart SVG as well, using the [`caption`](https://api.highcharts.com/highcharts/caption) option. If this option is used, the caption will automatically be made available to screen reader users. The caption renders in the bottom, and is a part of the exported chart.
+It is possible to add the text description directly on the chart SVG as well, using the [`caption`](https://api.highcharts.com/highcharts/caption) option. If this option is used, the caption will automatically be made available to screen reader users. The caption renders at the bottom of the chart, and is included if the chart is exported.
 
 ```js
 Highcharts.chart('container', {
