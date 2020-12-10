@@ -1082,9 +1082,21 @@ var RangeSelector = /** @class */ (function () {
         // to the right size when focused.
         var input = createElement('input', {
             name: name,
-            className: 'highcharts-range-selector',
-            type: preferredInputType(options.inputDateFormat || '%b %e, %Y')
+            className: 'highcharts-range-selector'
         }, void 0, div);
+        // #14788, setting input.type to an unsupported type throws in IE, so
+        // we need to use setAttribute instead
+        input.setAttribute('type', preferredInputType(options.inputDateFormat || '%b %e, %Y'));
+        if (input.type !== 'text') {
+            // This is the test string modernizr uses
+            input.value = '1)';
+            if (input.value === '1)') {
+                // Some Android browsers pretend to support the type, if it
+                // doesnt reject '1)' then it doesnt actually support the type
+                input.setAttribute('type', 'text');
+            }
+            input.value = '';
+        }
         if (!chart.styledMode) {
             // Styles
             label.css(merge(chartStyle, options.labelStyle));
