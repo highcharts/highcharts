@@ -19,6 +19,7 @@
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
+    fireEvent,
     merge,
     objectEach
 } = U;
@@ -67,24 +68,17 @@ namespace Ajax {
      * @function Highcharts.ajax
      *
      * @param {Partial<Highcharts.AjaxSettingsObject>} attr
-     *        The Ajax settings to use.
+     * The Ajax settings to use.
      *
      * @return {false|undefined}
-     *         Returns false, if error occured.
+     * Returns false, if error occured.
+     *
+     * @fires Highcharts.ajax#ajax
      */
     export function ajax(
         attr: Partial<SettingsObject>
     ): (false|undefined) {
-        var options = merge(true, {
-                url: false as any,
-                type: 'get',
-                dataType: 'json',
-                success: false as any,
-                error: false as any,
-                data: false as any,
-                headers: {}
-            } as SettingsObject, attr),
-            headers: Highcharts.Dictionary<string> = {
+        const headers: Record<string, string> = {
                 json: 'application/json',
                 xml: 'application/xml',
                 text: 'text/plain',
@@ -92,59 +86,71 @@ namespace Ajax {
             },
             r = new XMLHttpRequest();
 
-        // eslint-disable-next-line require-jsdoc
-        function handleError(xhr: XMLHttpRequest, err: (string|Error)): void {
-            if (options.error) {
-                options.error(xhr, err);
-            } else {
-                // @todo Maybe emit a highcharts error event here
-            }
-        }
-
-        if (!options.url) {
+        if (!attr.url) {
             return false;
         }
 
-        r.open((options.type as any).toUpperCase(), options.url, true);
-        if (!options.headers['Content-Type']) {
-            r.setRequestHeader(
-                'Content-Type',
-                headers[options.dataType] || headers.text
-            );
-        }
+        fireEvent(ajax, 'ajax', { attr, request: r }, function (): void {
+            const options = merge(true, {
+                url: false as any,
+                type: 'get',
+                dataType: 'json',
+                success: false as any,
+                error: false as any,
+                data: false as any,
+                headers: {}
+            } as SettingsObject, attr);
 
-        objectEach(options.headers, function (val: string, key: string): void {
-            r.setRequestHeader(key, val);
-        });
-
-        // @todo lacking timeout handling
-        r.onreadystatechange = function (): void {
-            var res;
-
-            if (r.readyState === 4) {
-                if (r.status === 200) {
-                    res = r.responseText;
-                    if (options.dataType === 'json') {
-                        try {
-                            res = JSON.parse(res);
-                        } catch (e) {
-                            return handleError(r, e);
-                        }
-                    }
-                    return options.success && options.success(res);
+            // eslint-disable-next-line require-jsdoc
+            function handleError(xhr: XMLHttpRequest, err: (string|Error)): void {
+                if (options.error) {
+                    options.error(xhr, err);
+                } else {
+                    // @todo Maybe emit a highcharts error event here
                 }
-
-                handleError(r, r.responseText);
             }
-        };
 
-        try {
-            options.data = JSON.stringify(options.data);
-        } catch (e) {
-            // empty
-        }
+            r.open((options.type as any).toUpperCase(), options.url, true);
+            if (!options.headers['Content-Type']) {
+                r.setRequestHeader(
+                    'Content-Type',
+                    headers[options.dataType] || headers.text
+                );
+            }
 
-        r.send(options.data || (true as any));
+            objectEach(options.headers, function (val: string, key: string): void {
+                r.setRequestHeader(key, val);
+            });
+
+            // @todo lacking timeout handling
+            r.onreadystatechange = function (): void {
+                var res;
+
+                if (r.readyState === 4) {
+                    if (r.status === 200) {
+                        res = r.responseText;
+                        if (options.dataType === 'json') {
+                            try {
+                                res = JSON.parse(res);
+                            } catch (e) {
+                                return handleError(r, e);
+                            }
+                        }
+                        return options.success && options.success(res);
+                    }
+
+                    handleError(r, r.responseText);
+                }
+            };
+
+            try {
+                options.data = JSON.stringify(options.data);
+            } catch (e) {
+                // empty
+            }
+
+            r.send(options.data || (true as any));
+        });
     }
 
     /**

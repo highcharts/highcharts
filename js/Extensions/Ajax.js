@@ -15,7 +15,7 @@
  * */
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var merge = U.merge, objectEach = U.objectEach;
+var fireEvent = U.fireEvent, merge = U.merge, objectEach = U.objectEach;
 /* *
  *
  *  Namespace
@@ -39,71 +39,76 @@ var Ajax;
      * @function Highcharts.ajax
      *
      * @param {Partial<Highcharts.AjaxSettingsObject>} attr
-     *        The Ajax settings to use.
+     * The Ajax settings to use.
      *
      * @return {false|undefined}
-     *         Returns false, if error occured.
+     * Returns false, if error occured.
+     *
+     * @fires Highcharts.ajax#ajax
      */
     function ajax(attr) {
-        var options = merge(true, {
-            url: false,
-            type: 'get',
-            dataType: 'json',
-            success: false,
-            error: false,
-            data: false,
-            headers: {}
-        }, attr), headers = {
+        var headers = {
             json: 'application/json',
             xml: 'application/xml',
             text: 'text/plain',
             octet: 'application/octet-stream'
         }, r = new XMLHttpRequest();
-        // eslint-disable-next-line require-jsdoc
-        function handleError(xhr, err) {
-            if (options.error) {
-                options.error(xhr, err);
-            }
-            else {
-                // @todo Maybe emit a highcharts error event here
-            }
-        }
-        if (!options.url) {
+        if (!attr.url) {
             return false;
         }
-        r.open(options.type.toUpperCase(), options.url, true);
-        if (!options.headers['Content-Type']) {
-            r.setRequestHeader('Content-Type', headers[options.dataType] || headers.text);
-        }
-        objectEach(options.headers, function (val, key) {
-            r.setRequestHeader(key, val);
-        });
-        // @todo lacking timeout handling
-        r.onreadystatechange = function () {
-            var res;
-            if (r.readyState === 4) {
-                if (r.status === 200) {
-                    res = r.responseText;
-                    if (options.dataType === 'json') {
-                        try {
-                            res = JSON.parse(res);
-                        }
-                        catch (e) {
-                            return handleError(r, e);
-                        }
-                    }
-                    return options.success && options.success(res);
+        fireEvent(ajax, 'ajax', { attr: attr, request: r }, function () {
+            var options = merge(true, {
+                url: false,
+                type: 'get',
+                dataType: 'json',
+                success: false,
+                error: false,
+                data: false,
+                headers: {}
+            }, attr);
+            // eslint-disable-next-line require-jsdoc
+            function handleError(xhr, err) {
+                if (options.error) {
+                    options.error(xhr, err);
                 }
-                handleError(r, r.responseText);
+                else {
+                    // @todo Maybe emit a highcharts error event here
+                }
             }
-        };
-        try {
-            options.data = JSON.stringify(options.data);
-        }
-        catch (e) {
-            // empty
-        }
-        r.send(options.data || true);
+            r.open(options.type.toUpperCase(), options.url, true);
+            if (!options.headers['Content-Type']) {
+                r.setRequestHeader('Content-Type', headers[options.dataType] || headers.text);
+            }
+            objectEach(options.headers, function (val, key) {
+                r.setRequestHeader(key, val);
+            });
+            // @todo lacking timeout handling
+            r.onreadystatechange = function () {
+                var res;
+                if (r.readyState === 4) {
+                    if (r.status === 200) {
+                        res = r.responseText;
+                        if (options.dataType === 'json') {
+                            try {
+                                res = JSON.parse(res);
+                            }
+                            catch (e) {
+                                return handleError(r, e);
+                            }
+                        }
+                        return options.success && options.success(res);
+                    }
+                    handleError(r, r.responseText);
+                }
+            };
+            try {
+                options.data = JSON.stringify(options.data);
+            }
+            catch (e) {
+                // empty
+            }
+            r.send(options.data || true);
+        });
     }
     Ajax.ajax = ajax;
     /**

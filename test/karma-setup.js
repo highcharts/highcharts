@@ -127,20 +127,23 @@ Highcharts.defaultOptionsRaw = JSON.stringify(Highcharts.defaultOptions);
 Highcharts.callbacksRaw = Highcharts.Chart.prototype.callbacks.slice(0);
 
 // Override Highcharts and jQuery ajax functions to load from local
-Highcharts.wrap(Highcharts, 'ajax', function (proceed, attr) {
-    var success = attr.success;
-    attr.error = function (e) {
-        throw new Error('Failed to load: ' + attr.url);
+Highcharts.addEvent(Highcharts.ajax, 'ajax', function (e) {
+    var attr = e.attr,
+        success = attr.success,
+        url = attr.url;
+
+    attr.error = function (err) {
+        throw new Error('Failed to load: ' + err.url);
     };
-    if (attr.url && window.JSONSources[attr.url]) {
-        success.call(attr, window.JSONSources[attr.url]);
+    if (url && window.JSONSources[url]) {
+        success.call(attr, window.JSONSources[url]);
+        return false;
     } else {
-        console.log('@ajax: Loading over network', attr.url);
+        console.log('@ajax: Loading over network', url);
         attr.success = function (data) {
-            window.JSONSources[attr.url] = data;
+            window.JSONSources[url] = data;
             success.call(this, data);
         };
-        return proceed.call(this, attr);
     }
 });
 if (window.$) {
