@@ -90,7 +90,7 @@ declare global {
             hasMarkers: boolean;
             markerFrom: number;
             markerTo?: number;
-            segments: Array<Dictionary<number>>;
+            segments: Array<Record<string, number>>;
             series: LineSeries;
             showMarkers: boolean;
             skipTranslation?: boolean;
@@ -168,18 +168,18 @@ function GLRenderer(
         // The series stack
         series: Array<Highcharts.BoostGLSeriesObject> = [],
         // Texture handles
-        textureHandles: Highcharts.Dictionary<(
+        textureHandles: Record<string, (
             Highcharts.BoostGLTextureObject
         )> = {},
         // Things to draw as "rectangles" (i.e lines)
-        asBar: Highcharts.Dictionary<boolean> = {
+        asBar: Record<string, boolean> = {
             'column': true,
             'columnrange': true,
             'bar': true,
             'area': true,
             'arearange': true
         },
-        asCircle: Highcharts.Dictionary<boolean> = {
+        asCircle: Record<string, boolean> = {
             'scatter': true,
             'bubble': true
         },
@@ -383,7 +383,7 @@ function GLRenderer(
             // The following are used in the builder while loop
             x: number,
             y: number,
-            d: (number|Array<number>|Highcharts.Dictionary<number>),
+            d: (number|Array<number>|Record<string, number>),
             z: (number|undefined),
             i = -1,
             px: number = false as any,
@@ -1074,7 +1074,7 @@ function GLRenderer(
                     'heatmap': 'triangles',
                     'treemap': 'triangles',
                     'bubble': 'points'
-                } as Highcharts.Dictionary<Highcharts.BoostGLDrawModeValue>
+                } as Record<string, Highcharts.BoostGLDrawModeValue>
             )[s.type] || 'line_strip'
         });
 

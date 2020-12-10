@@ -632,7 +632,7 @@ namespace OrdinalAxis {
             var start = 0,
                 end,
                 segmentPositions,
-                higherRanks = {} as Highcharts.Dictionary<string>,
+                higherRanks = {} as Record<string, string>,
                 hasCrossedHigherRank,
                 info,
                 posLength,

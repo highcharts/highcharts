@@ -51,7 +51,7 @@ declare global {
             hoverPoint: DragNodesPoint;
         }
         interface DragNodesPoint extends Point {
-            fixedPosition?: Dictionary<number>;
+            fixedPosition?: Record<string, number>;
             hasDragged?: boolean;
             inDragMode?: boolean;
             series: DragNodesSeries;
@@ -99,7 +99,7 @@ H.dragNodesMixin = {
             chartY: normalizedEvent.chartY,
             plotX: point.plotX,
             plotY: point.plotY
-        } as Highcharts.Dictionary<number>;
+        } as Record<string, number>;
 
         point.inDragMode = true;
     },

@@ -465,7 +465,7 @@ class OrganizationSeries extends SankeySeries {
             proceed: SankeySeriesType.ColumnArray['offset'],
             node: OrganizationPoint,
             factor: number
-        ): (Highcharts.Dictionary<number>|undefined) {
+        ): (Record<string, number>|undefined) {
             var offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
 
             // Modify the default output if the parent's layout is 'hanging'
@@ -499,9 +499,9 @@ class OrganizationSeries extends SankeySeries {
                 OrganizationSeriesOptions
             ) = ['borderRadius', 'linkColor', 'linkLineWidth']
                 .reduce(function (
-                    obj: Highcharts.Dictionary<unknown>,
+                    obj: Record<string, unknown>,
                     key: string
-                ): Highcharts.Dictionary<unknown> {
+                ): Record<string, unknown> {
                     obj[key] = pick(
                         (stateOptions as any)[key],
                         (options as any)[key],

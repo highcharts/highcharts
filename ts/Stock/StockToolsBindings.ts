@@ -54,18 +54,18 @@ declare global {
                 yAxes: Array<AxisType>,
                 plotHeight: number,
                 defaultHeight: number
-            ): Array<Dictionary<number>>;
+            ): Array<Record<string, number>>;
             /** @requires modules/stock-tools */
             getYAxisResizers(
                 yAxes: Array<AxisType>
             ): Array<NavigationBindingsResizerObject>;
             /** @requires modules/stock-tools */
             recalculateYAxisPositions(
-                positions: Array<Dictionary<number>>,
+                positions: Array<Record<string, number>>,
                 changedSpace: number,
                 modifyHeight?: boolean,
                 adder?: number
-            ): Array<Dictionary<number>>;
+            ): Array<Record<string, number>>;
             /** @requires modules/stock-tools */
             resizeYAxes (defaultHeight?: number): void;
         }
@@ -78,7 +78,7 @@ declare global {
             yAxis: number;
         }
         interface NavigationBindingsResizerObject {
-            controlledAxis?: Dictionary<Array<number>>;
+            controlledAxis?: Record<string, Array<number>>;
             enabled: boolean;
         }
         interface StockToolsNavigationBindingsUtilsObject extends NavigationBindingUtils {
@@ -90,7 +90,7 @@ declare global {
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
         }
         interface NavigationOptions {
-            bindings?: Dictionary<NavigationBindingsOptionsObject>;
+            bindings?: Record<string, NavigationBindingsOptionsObject>;
         }
         interface StockToolsFieldsObject {
             [key: string]: any;
@@ -507,8 +507,8 @@ extend(NavigationBindings.prototype, {
         yAxes: Array<AxisType>,
         plotHeight: number,
         defaultHeight: number
-    ): Array<Highcharts.Dictionary<number>> {
-        var positions: (Array<Highcharts.Dictionary<number>>|undefined),
+    ): Array<Record<string, number>> {
+        var positions: (Array<Record<string, number>>|undefined),
             allAxesHeight = 0;
 
         /** @private */
@@ -518,7 +518,7 @@ extend(NavigationBindings.prototype, {
 
         positions = yAxes.map(function (
             yAxis: AxisType
-        ): Highcharts.Dictionary<number> {
+        ): Record<string, number> {
             var height = isPercentage(yAxis.options.height) ?
                     parseFloat(yAxis.options.height as any) / 100 :
                     yAxis.height / plotHeight,
@@ -690,7 +690,7 @@ extend(NavigationBindings.prototype, {
         }
 
         positions.forEach(function (
-            position: Highcharts.Dictionary<number>,
+            position: Record<string, number>,
             index: number
         ): void {
             // if (index === 0) debugger;
@@ -720,13 +720,13 @@ extend(NavigationBindings.prototype, {
      *         Modified positions,
      */
     recalculateYAxisPositions: function (
-        positions: Array<Highcharts.Dictionary<number>>,
+        positions: Array<Record<string, number>>,
         changedSpace: number,
         modifyHeight?: boolean,
         adder?: number
-    ): Array<Highcharts.Dictionary<number>> {
+    ): Array<Record<string, number>> {
         positions.forEach(function (
-            position: Highcharts.Dictionary<number>,
+            position: Record<string, number>,
             index: number
         ): void {
             var prevPosition = positions[index - 1];
@@ -751,7 +751,7 @@ extend(NavigationBindings.prototype, {
  * @since        7.0.0
  * @optionparent navigation.bindings
  */
-var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject> = {
+var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObject> = {
     // Line type annotations:
     /**
      * A segment annotation bindings. Includes `start` and one event in `steps`

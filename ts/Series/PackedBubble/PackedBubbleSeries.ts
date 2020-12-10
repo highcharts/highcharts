@@ -903,7 +903,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             seriesOptions = series.options,
             useSimulation = seriesOptions.useSimulation,
             smallestSize = Math.min(plotWidth, plotHeight),
-            extremes = {} as Highcharts.Dictionary<number>,
+            extremes = {} as Record<string, number>,
             radii = [] as Array<(number|null)>,
             allDataPoints = chart.allDataPoints,
             minSize: number,

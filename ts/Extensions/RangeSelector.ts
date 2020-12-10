@@ -160,7 +160,7 @@ declare global {
             public drawInput(name: ('min'|'max')): RangeSelectorInputElements;
             public getHeight(): number;
             public getInputValue(name: string): number;
-            public getPosition(): Dictionary<number>;
+            public getPosition(): Record<string, number>;
             public getYTDExtremes(
                 dataMax: number,
                 dataMin: number,
@@ -1198,7 +1198,7 @@ class RangeSelector {
                 hour: 3600 * 1000,
                 day: 24 * 3600 * 1000,
                 week: 7 * 24 * 3600 * 1000
-            } as Highcharts.Dictionary<number>);
+            } as Record<string, number>);
 
         // Store the range on the button object
         if (fixedTimes[type]) {
@@ -1207,7 +1207,7 @@ class RangeSelector {
             rangeOptions._range = ({
                 month: 30,
                 year: 365
-            } as Highcharts.Dictionary<number>)[type] * 24 * 36e5 * count;
+            } as Record<string, number>)[type] * 24 * 36e5 * count;
         }
 
         rangeOptions._offsetMin = pick(rangeOptions.offsetMin, 0);
@@ -1623,7 +1623,7 @@ class RangeSelector {
      *
      * @return {Highcharts.Dictionary<number>}
      */
-    public getPosition(): Highcharts.Dictionary<number> {
+    public getPosition(): Record<string, number> {
         var chart = this.chart,
             options =
                 chart.options.rangeSelector as Highcharts.RangeSelectorOptions,
@@ -1841,7 +1841,7 @@ class RangeSelector {
                     rangeOptions.text,
                     0,
                     0,
-                    (e: (Event|Highcharts.Dictionary<any>)): void => {
+                    (e: (Event|Record<string, any>)): void => {
 
                         // extract events from button object and call
                         var buttonEvents = (

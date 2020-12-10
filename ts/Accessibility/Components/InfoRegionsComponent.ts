@@ -68,7 +68,7 @@ declare global {
             public dataTableButtonId?: string;
             public dataTableDiv?: HTMLDOMElement;
             public linkedDescriptionElement: (HTMLDOMElement|undefined);
-            public screenReaderSections: Dictionary<(
+            public screenReaderSections: Record<string, (
                 InfoRegionsComponentScreenReaderSectionObject
             )>;
             sonifyButton?: (DOMElementType|null);
@@ -77,7 +77,7 @@ declare global {
             public defaultAfterChartFormatter(): string;
             public defaultBeforeChartFormatter(): string;
             public focusDataTable(): void;
-            public getAxesDescription(): Dictionary<string>;
+            public getAxesDescription(): Record<string, string>;
             public getAxisDescriptionText(
                 collectionKey: ('xAxis'|'yAxis')
             ): string;
@@ -797,7 +797,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     getAxesDescription: function (
         this: Highcharts.InfoRegionsComponent
-    ): Highcharts.Dictionary<string> {
+    ): Record<string, string> {
         var chart = this.chart,
             shouldDescribeColl = function (
                 collectionKey: ('xAxis'|'yAxis'),
@@ -819,7 +819,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             showYAxes = shouldDescribeColl(
                 'yAxis', hasCartesian && hasNoMap
             ),
-            desc: Highcharts.Dictionary<string> = {};
+            desc: Record<string, string> = {};
 
         if (showXAxes) {
             desc.xAxis = this.getAxisDescriptionText('xAxis');

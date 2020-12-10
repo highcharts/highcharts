@@ -27,7 +27,7 @@ declare global {
     namespace Highcharts {
         class SignalHandler {
             public constructor(supportedSignals: Array<string>);
-            public signals: Dictionary<Array<Function>>;
+            public signals: Record<string, Array<Function>>;
             public supportedSignals: Array<string>;
             public clearSignalCallbacks(signalNames?: Array<string>): void;
             public emitSignal(
@@ -36,7 +36,7 @@ declare global {
             ): (unknown|undefined);
             public init(supportedSignals: Array<string>): void;
             public registerSignalCallbacks(
-                signals: Dictionary<(Function|undefined)>
+                signals: Record<string, (Function|undefined)>
             ): void;
         }
         interface SonificationUtilitiesObject {
@@ -95,7 +95,7 @@ SignalHandler.prototype.init = function (
  */
 SignalHandler.prototype.registerSignalCallbacks = function (
     this: Highcharts.SignalHandler,
-    signals: Highcharts.Dictionary<(Function|undefined)>
+    signals: Record<string, (Function|undefined)>
 ): void {
     var signalHandler = this;
 

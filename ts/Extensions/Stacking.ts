@@ -153,7 +153,7 @@ declare global {
             public label?: SVGElement;
             public leftCliff: number;
             public options: YAxisStackLabelsOptions;
-            public points: Dictionary<Array<number>>;
+            public points: Record<string, Array<number>>;
             public rightCliff: number;
             public stack?: OptionsStackingValue;
             public textAlign: AlignValue;
@@ -299,7 +299,7 @@ class StackItem {
     public label?: SVGElement;
     public leftCliff: number;
     public options: Highcharts.YAxisStackLabelsOptions;
-    public points: Highcharts.Dictionary<Array<number>>;
+    public points: Record<string, Array<number>>;
     public rightCliff: number;
     public stack?: Highcharts.OptionsStackingValue;
     public textAlign: AlignValue;
@@ -690,7 +690,7 @@ LineSeries.prototype.setStackedPoints = function (stackingParam?: string): void 
         // Create empty object for this stack if it doesn't exist yet
         if (!stacks[key as any]) {
             stacks[key as any] =
-                {} as Highcharts.Dictionary<Highcharts.StackItem>;
+                {} as Record<string, Highcharts.StackItem>;
         }
 
         // Initialize StackItem for this x

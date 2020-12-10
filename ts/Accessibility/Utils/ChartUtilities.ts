@@ -158,7 +158,7 @@ function getCategoryAxisRangeDesc(axis: Highcharts.Axis): string {
  */
 function getAxisTimeLengthDesc(axis: Highcharts.Axis): string {
     const chart = axis.chart;
-    const range: Highcharts.Dictionary<number> = {};
+    const range: Record<string, number> = {};
     let rangeUnit = 'Seconds';
 
     range.Seconds = ((axis.max || 0) - (axis.min || 0)) / 1000;

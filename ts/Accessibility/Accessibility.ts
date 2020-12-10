@@ -307,7 +307,7 @@ Accessibility.prototype = {
      * @private
      */
     getChartTypes: function (this: Highcharts.Accessibility): Array<string> {
-        var types: Highcharts.Dictionary<number> = {};
+        var types: Record<string, number> = {};
         this.chart.series.forEach(function (series): void {
             types[series.type] = 1;
         });

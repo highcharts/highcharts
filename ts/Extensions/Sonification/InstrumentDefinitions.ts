@@ -18,7 +18,7 @@
  */
 declare global {
     namespace Highcharts {
-        interface InstrumentsDictionary extends Dictionary<Instrument> {
+        interface InstrumentsDictionary extends Record<string, Instrument> {
             sawtooth: Instrument;
             sawtoothMajor: Instrument;
             sawtoothMusical: Instrument;

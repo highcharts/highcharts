@@ -32,7 +32,7 @@ declare global {
             title: string;
             text: string;
         }
-        const errorMessages: (Dictionary<ErrorMessageObject>|undefined);
+        const errorMessages: (Record<string, ErrorMessageObject>|undefined);
     }
 }
 

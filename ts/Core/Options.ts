@@ -349,7 +349,7 @@ declare global {
             changeDecimals?: number;
             /** @deprecated */
             crosshairs?: any;
-            dateTimeLabelFormats?: Dictionary<string>;
+            dateTimeLabelFormats?: Record<string, string>;
             enabled?: boolean;
             followPointer?: boolean;
             followTouchMove?: boolean;

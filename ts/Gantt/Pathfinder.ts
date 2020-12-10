@@ -142,7 +142,7 @@ declare global {
             public algorithms: Record<string, PathfinderAlgorithmFunction>;
             public chart: Chart;
             public chartObstacles: Array<any>;
-            public chartObstacleMetrics: Dictionary<number>;
+            public chartObstacleMetrics: Record<string, number>;
             public connections: Array<Connection>;
             public group: SVGElement;
             public lineObstacles: Array<any>;
@@ -154,7 +154,7 @@ declare global {
             ): Array<any>;
             public getObstacleMetrics(
                 obstacles: Array<any>
-            ): Dictionary<number>;
+            ): Record<string, number>;
             public init(chart: Chart): void;
             public renderConnections(deferRender?: boolean): void;
             public update(deferRender?: boolean): void;
@@ -498,7 +498,7 @@ extend(defaultOptions, {
  * @return {Highcharts.Dictionary<number>|null}
  *         Result xMax, xMin, yMax, yMin.
  */
-function getPointBB(point: Point): (Highcharts.Dictionary<number>|null) {
+function getPointBB(point: Point): (Record<string, number>|null) {
     var shapeArgs = point.shapeArgs,
         bb;
 
@@ -544,8 +544,8 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
         distances = [],
         // Compute smallest distance between two rectangles
         distance = function (
-            a: Highcharts.Dictionary<number>,
-            b: Highcharts.Dictionary<number>,
+            a: Record<string, number>,
+            b: Record<string, number>,
             bbMargin?: number
         ): number {
             // Count the distance even if we are slightly off
@@ -630,7 +630,7 @@ class Pathfinder {
 
     public chart: Chart = void 0 as any;
     public chartObstacles: Array<any> = void 0 as any;
-    public chartObstacleMetrics: Highcharts.Dictionary<number> = void 0 as any;
+    public chartObstacleMetrics: Record<string, number> = void 0 as any;
     public connections: Array<Highcharts.Connection> = void 0 as any;
     public group: SVGElement = void 0 as any;
     public lineObstacles: Array<any> = void 0 as any;

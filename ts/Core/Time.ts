@@ -83,8 +83,8 @@ declare global {
                 seconds?: number
             ): number;
             public resolveDTLFormat<T>(
-                f: (string|Array<T>|Dictionary<T>)
-            ): Dictionary<T>;
+                f: (string|Array<T>|Record<string, T>)
+            ): Record<string, T>;
             public set(unit: TimeUnitValue, date: Date, value: number): (number|undefined);
             public timezoneOffsetFunction(): Time['getTimezoneOffset']
             public update(options: TimeOptions): void;
@@ -699,8 +699,8 @@ class Time {
      * @return {Highcharts.Dictionary<T>} - The object definition
      */
     public resolveDTLFormat<T>(
-        f: (string|Array<T>|Highcharts.Dictionary<T>)
-    ): Highcharts.Dictionary<T> {
+        f: (string|Array<T>|Record<string, T>)
+    ): Record<string, T> {
         if (!isObject(f, true)) { // check for string or array
             f = splat(f);
             return {
@@ -742,7 +742,7 @@ class Time {
             Date = time.Date,
             tickPositions = [] as Highcharts.AxisTickPositionsArray,
             i,
-            higherRanks = {} as Highcharts.Dictionary<string>,
+            higherRanks = {} as Record<string, string>,
             minYear: any, // used in months and years as a basis for Date.UTC()
             // When crossing DST, use the max. Resolves #6278.
             minDate = new Date(min as any),

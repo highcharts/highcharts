@@ -61,7 +61,7 @@ function minLow(arr: Array<Array<number>>): number {
 
 function highlowLevel(
     arr: Array<Array<number>>
-): Highcharts.Dictionary<number> {
+): Record<string, number> {
     return {
         high: maxHigh(arr),
         low: minLow(arr)
@@ -102,7 +102,7 @@ function checkLineIntersection(
     a2: IKHPoint | undefined,
     b1: IKHPoint | undefined,
     b2: IKHPoint | undefined
-): boolean | Highcharts.Dictionary<number> {
+): boolean | Record<string, number> {
     if (a1 && a2 && b1 && b2) {
         var saX: number = a2.plotX - a1.plotX, // Auxiliary section a2-a1 X
             saY: number = a2.plotY - a1.plotY, // Auxiliary section a2-a1 Y
@@ -369,7 +369,7 @@ class IKHIndicator extends SMAIndicator {
     public points: Array<IKHPoint> = void 0 as any;
     public graphCollection: Array<string> = void 0 as any;
     public graphsenkouSpan: SVGElement | undefined = void 0 as any;
-    public ikhMap: Highcharts.Dictionary<Array<IKHPoint>> = void 0 as any;
+    public ikhMap: Record<string, Array<IKHPoint>> = void 0 as any;
     public nextPoints?: Array<IKHPoint> = void 0 as any;
 
     /* *
@@ -483,7 +483,7 @@ class IKHIndicator extends SMAIndicator {
                 [],
                 []
             ],
-            ikhMap: Highcharts.Dictionary<
+            ikhMap: Record<string,
             Array<IKHPoint>
             > = {
                 tenkanLine: allIchimokuPoints[0],
@@ -801,9 +801,9 @@ class IKHIndicator extends SMAIndicator {
             slicedTSY: Array<Array<number>>,
             slicedKSY: Array<Array<number>>,
             slicedSSBY: Array<Array<number>>,
-            pointTS: Highcharts.Dictionary<number>,
-            pointKS: Highcharts.Dictionary<number>,
-            pointSSB: Highcharts.Dictionary<number>,
+            pointTS: Record<string, number>,
+            pointKS: Record<string, number>,
+            pointSSB: Record<string, number>,
             i: number,
             TS: number | undefined,
             KS: number | undefined,

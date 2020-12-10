@@ -121,7 +121,7 @@ declare global {
             public addEvents(): void;
             public cursorToScrollbarPosition(
                 normalizedEvent: PointerEvent
-            ): Dictionary<number>;
+            ): Record<string, number>;
             public destroy(): void;
             public drawScrollbarButton(index: number): void;
             public init(
@@ -615,7 +615,7 @@ class Scrollbar {
      * @return {Highcharts.Dictionary<number>}
      *         Local position {chartX, chartY}
      */
-    public cursorToScrollbarPosition(normalizedEvent: PointerEvent): Highcharts.Dictionary<number> {
+    public cursorToScrollbarPosition(normalizedEvent: PointerEvent): Record<string, number> {
         var scroller = this,
             options = scroller.options,
             minWidthDifference =

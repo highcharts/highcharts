@@ -63,11 +63,11 @@ declare global {
         class SeriesKeyboardNavigation {
             public constructor(
                 chart: AccessibilityChart,
-                keyCodes: Dictionary<number>
+                keyCodes: Record<string, number>
             );
             public chart: AccessibilityChart;
             public eventProvider?: EventProvider;
-            public keyCodes: Dictionary<number>;
+            public keyCodes: Record<string, number>;
             public lastDrilledDownPoint?: (
                 SeriesKeyboardNavigationDrilldownObject
             );
@@ -618,7 +618,7 @@ function updateChartFocusAfterDrilling(chart: Chart): void {
 function SeriesKeyboardNavigation(
     this: Highcharts.SeriesKeyboardNavigation,
     chart: Highcharts.AccessibilityChart,
-    keyCodes: Highcharts.Dictionary<number>
+    keyCodes: Record<string, number>
 ): void {
     this.keyCodes = keyCodes;
     this.chart = chart;

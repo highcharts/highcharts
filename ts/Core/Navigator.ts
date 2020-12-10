@@ -186,7 +186,7 @@ declare global {
             public getPartsEvents(eventName: string): Array<Function>;
             public getUnionExtremes(
                 returnFalseOnNoBaseSeries?: boolean
-            ): (Dictionary<(number|undefined)>|undefined);
+            ): (Record<string, (number|undefined)>|undefined);
             public handlesMousedown(e: PointerEvent, index: number): void;
             public init(chart: Chart): void;
             public modifyBaseAxisExtremes(): void;
@@ -2054,7 +2054,7 @@ class Navigator {
      */
     public getUnionExtremes(
         returnFalseOnNoBaseSeries?: boolean
-    ): (Highcharts.Dictionary<(number|undefined)>|undefined) {
+    ): (Record<string, (number|undefined)>|undefined) {
         var baseAxis = this.chart.xAxis[0],
             navAxis = this.xAxis,
             navAxisOptions = navAxis.options,
@@ -2182,7 +2182,7 @@ class Navigator {
                         opacity: 1
                     }
                 }
-            } as Highcharts.Dictionary<any>,
+            } as Record<string, any>,
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series =
                 (navigator.series || []).filter(function (navSeries): boolean {

@@ -75,7 +75,7 @@ declare global {
         }
         interface MapNavigationOptions {
             buttonOptions?: MapNavigationButtonOptions;
-            buttons?: Dictionary<MapNavigationButtonOptions>;
+            buttons?: Record<string, MapNavigationButtonOptions>;
             enableButtons?: boolean;
             enabled?: boolean;
             enableDoubleClickZoom?: boolean;
@@ -179,7 +179,7 @@ MapNavigation.prototype.update = function (
         selectStates: SVGAttributes,
         outerHandler = function (
             this: SVGElement,
-            e: (Event|Highcharts.Dictionary<any>)
+            e: (Event|Record<string, any>)
         ): void {
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)
@@ -233,7 +233,7 @@ MapNavigation.prototype.update = function (
                 .addClass('highcharts-map-navigation highcharts-' + ({
                     zoomIn: 'zoom-in',
                     zoomOut: 'zoom-out'
-                } as Highcharts.Dictionary<string>)[n])
+                } as Record<string, string>)[n])
                 .attr({
                     width: buttonOptions.width,
                     height: buttonOptions.height,

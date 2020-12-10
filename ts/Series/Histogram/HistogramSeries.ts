@@ -47,7 +47,7 @@ const {
  * A dictionary with formulas for calculating number of bins based on the
  * base series
  **/
-var binsNumberFormulas: Highcharts.Dictionary<Function> = {
+var binsNumberFormulas: Record<string, Function> = {
     'square-root': function (baseSeries: LineSeries): number {
         return Math.ceil(Math.sqrt((baseSeries.options.data as any).length));
     },
@@ -207,7 +207,7 @@ class HistogramSeries extends ColumnSeries {
             // corrected when generating frequencies (within for loop).
             min = correctFloat(arrayMin(baseData)),
             frequencies: Array<number> = [],
-            bins: Highcharts.Dictionary<number> = {},
+            bins: Record<string, number> = {},
             data: Array<HistogramPointOptions> = [],
             x: number,
             fitToBin: Function;

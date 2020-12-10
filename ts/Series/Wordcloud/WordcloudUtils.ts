@@ -347,10 +347,10 @@ namespace WordcloudUtils {
         targetHeight: number,
         data: Array<WordcloudPoint>
     ): WordcloudSeries.WordcloudFieldObject {
-        var info: Highcharts.Dictionary<number> = data.reduce(function (
-                obj: Highcharts.Dictionary<number>,
+        var info: Record<string, number> = data.reduce(function (
+                obj: Record<string, number>,
                 point: WordcloudPoint
-            ): Highcharts.Dictionary<number> {
+            ): Record<string, number> {
                 var dimensions = point.dimensions,
                     x = Math.max(dimensions.width, dimensions.height);
 

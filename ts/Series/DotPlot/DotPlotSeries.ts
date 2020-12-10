@@ -107,7 +107,7 @@ class DotPlotSeries extends ColumnSeries {
         this.points.forEach(function (point: DotPlotPoint): void {
             var yPos: number,
                 attr: SVGAttributes,
-                graphics: Highcharts.Dictionary<SVGElement>,
+                graphics: Record<string, SVGElement>,
                 itemY: (number|undefined),
                 pointAttr,
                 pointMarkerOptions = point.marker || {},

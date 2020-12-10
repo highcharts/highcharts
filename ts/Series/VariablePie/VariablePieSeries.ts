@@ -185,7 +185,7 @@ class VariablePieSeries extends PieSeries {
             zData: Array<number> = series.zData as any,
             smallestSize = Math.min(plotWidth, plotHeight) - slicingRoom,
             // Min and max size of pie slice:
-            extremes: Highcharts.Dictionary<number> = {},
+            extremes: Record<string, number> = {},
             // In pie charts size of a pie is changed to make space for
             // dataLabels, then series.center is changing.
             positions = series.center || series.getCenter();

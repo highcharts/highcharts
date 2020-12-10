@@ -104,7 +104,7 @@ declare global {
             loss: number;
         }
         interface VennPropsObject {
-            overlapping: Dictionary<number>;
+            overlapping: Record<string, number>;
             totalOverlap: number;
         }
         interface VennRelationObject extends VennPropsObject {
@@ -136,9 +136,9 @@ declare global {
             ): number;
             layoutGreedyVenn(
                 relations: Array<VennRelationObject>
-            ): Dictionary<CircleObject>;
+            ): Record<string, CircleObject>;
             loss(
-                mapOfIdToCircle: Dictionary<CircleObject>,
+                mapOfIdToCircle: Record<string, CircleObject>,
                 relations: Array<VennRelationObject>
             ): number;
             processVennData(
@@ -361,9 +361,9 @@ class VennSeries extends ScatterSeries {
         const sets = relation.sets;
         // Create a list of internal and external circles.
         const data = setRelations.reduce(function (
-            data: Highcharts.Dictionary<(Array<Highcharts.CircleObject>)>,
+            data: Record<string, (Array<Highcharts.CircleObject>)>,
             set: Highcharts.VennRelationObject
-        ): Highcharts.Dictionary<Array<Highcharts.CircleObject>> {
+        ): Record<string, Array<Highcharts.CircleObject>> {
             // If the set exists in this relation, then it is internal,
             // otherwise it will be external.
             const isInternal = sets.indexOf(set.sets[0]) > -1;
@@ -413,17 +413,17 @@ class VennSeries extends ScatterSeries {
     public static layout(
         relations: Array<Highcharts.VennRelationObject>
     ): ({
-            mapOfIdToShape: Highcharts.Dictionary<(
+            mapOfIdToShape: Record<string, (
                 Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
             )>;
-            mapOfIdToLabelValues: Highcharts.Dictionary<(
+            mapOfIdToLabelValues: Record<string, (
                 Highcharts.VennLabelValuesObject
             )>;
         }) {
-        const mapOfIdToShape: Highcharts.Dictionary<(
+        const mapOfIdToShape: Record<string, (
             Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
         )> = {};
-        const mapOfIdToLabelValues: Highcharts.Dictionary<(
+        const mapOfIdToLabelValues: Record<string, (
             Highcharts.VennLabelValuesObject
         )> = {};
 
@@ -476,7 +476,7 @@ class VennSeries extends ScatterSeries {
         targetWidth: number,
         targetHeight: number,
         field: Highcharts.PolygonBoxObject
-    ): Highcharts.Dictionary<number> {
+    ): Record<string, number> {
         var height = field.bottom - field.top, // top is smaller than bottom
             width = field.right - field.left,
             scaleX = width > 0 ? 1 / width * targetWidth : 1,

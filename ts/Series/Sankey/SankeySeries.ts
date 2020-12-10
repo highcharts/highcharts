@@ -474,7 +474,7 @@ class SankeySeries extends ColumnSeries {
             this: SankeySeries.ColumnArray,
             node: SankeyPoint,
             factor: number
-        ): (Highcharts.Dictionary<number>|undefined) {
+        ): (Record<string, number>|undefined) {
             var offset = 0,
                 totalNodeOffset,
                 nodePadding = series.nodePadding;
@@ -703,12 +703,12 @@ class SankeySeries extends ColumnSeries {
             stateOptions = (
                 levelOptions.states && levelOptions.states[state || '']
             ) || {},
-            values: Highcharts.Dictionary<any> = [
+            values: Record<string, any> = [
                 'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
             ].reduce(function (
-                obj: Highcharts.Dictionary<any>,
+                obj: Record<string, any>,
                 key: string
-            ): Highcharts.Dictionary<any> {
+            ): Record<string, any> {
                 obj[key] = pick(
                     stateOptions[key],
                     (options as any)[key],

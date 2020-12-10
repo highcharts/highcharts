@@ -62,7 +62,7 @@ declare global {
         interface SVGRenderer {
             defIds?: Array<string>;
             idCounter?: number;
-            patternElements?: Dictionary<SVGElement>;
+            patternElements?: Record<string, SVGElement>;
             addPattern(
                 options: PatternFill.PatternOptionsObject,
                 animation?: (boolean|AnimationOptions)

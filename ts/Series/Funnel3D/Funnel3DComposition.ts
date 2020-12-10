@@ -65,7 +65,7 @@ declare global {
             parts: Array<string>;
             mainParts: Array<string>;
             sideGroups: Array<string>;
-            sideParts: Dictionary<Array<string>>;
+            sideParts: Record<string, Array<string>>;
             pathType: string;
             opacitySetter(opacity: number): SVGElement;
             fillSetter(this: SVGElement, fill: ColorType): SVGElement;

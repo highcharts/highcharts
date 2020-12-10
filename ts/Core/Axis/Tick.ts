@@ -29,7 +29,7 @@ declare global {
         }
         interface TickParametersObject {
             category?: string;
-            options?: Dictionary<any>;
+            options?: Record<string, any>;
             tickmarkOffset?: number;
         }
         interface TickPositionObject extends PositionObject {
@@ -320,7 +320,7 @@ class Tick {
             dateTimeLabelFormat,
             dateTimeLabelFormats,
             i,
-            list: Highcharts.Dictionary<any>;
+            list: Record<string, any>;
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.

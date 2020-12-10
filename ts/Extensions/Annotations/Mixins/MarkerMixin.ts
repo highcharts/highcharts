@@ -35,7 +35,7 @@ declare global {
             setItemMarkers(this: ControllablePath, item: ControllablePath): void;
         }
         interface Options {
-            defs?: Dictionary<SVGDefinitionObject>;
+            defs?: Record<string, SVGDefinitionObject>;
         }
         interface SVGRenderer {
             addMarker(id: string, markerOptions: SVGAttributes): SVGElement;
