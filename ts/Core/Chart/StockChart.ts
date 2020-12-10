@@ -1003,64 +1003,6 @@ Point.prototype.tooltipFormatter = function (pointFormat: string): string {
  *  End value compare logic                                                   *
  * ************************************************************************** */
 
-
-// Extend the Series prototype to create a separate series clip box. This is
-// related to using multiple panes, and a future pane logic should incorporate
-// this feature (#2754).
-addEvent(LineSeries, 'render', function (): void {
-    var chart = this.chart,
-        clipHeight;
-
-    // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
-    // if the series type handles clipping in the animate method (#2975).
-    if (
-        !(chart.is3d && chart.is3d()) &&
-        !chart.polar &&
-        this.xAxis &&
-        !this.xAxis.isRadial // Gauge, #6192
-    ) {
-
-        clipHeight = this.yAxis.len;
-
-        // Include xAxis line width (#8031) but only if the Y axis ends on the
-        // edge of the X axis (#11005).
-        if (this.xAxis.axisLine) {
-            var dist = chart.plotTop + chart.plotHeight -
-                    (this.yAxis.pos as any) - this.yAxis.len,
-                lineHeightCorrection = Math.floor(
-                    this.xAxis.axisLine.strokeWidth() / 2
-                );
-
-            if (dist >= 0) {
-                clipHeight -= Math.max(lineHeightCorrection - dist, 0);
-            }
-        }
-
-        // First render, initial clip box
-        if (!this.clipBox && !chart.hasRendered) {
-            this.clipBox = merge(chart.clipBox);
-            this.clipBox.width = this.xAxis.len;
-            this.clipBox.height = clipHeight;
-
-        // On redrawing, resizing etc, update the clip rectangle
-        } else if ((chart as any)[this.sharedClipKey as any]) {
-            // animate in case resize is done during initial animation
-            (chart as any)[this.sharedClipKey as any].animate({
-                width: this.xAxis.len,
-                height: clipHeight
-            });
-
-            // also change markers clip animation for consistency
-            // (marker clip rects should exist only on chart init)
-            if ((chart as any)[this.sharedClipKey + 'm']) {
-                (chart as any)[this.sharedClipKey + 'm'].animate({
-                    width: this.xAxis.len
-                });
-            }
-        }
-    }
-});
-
 addEvent(Chart, 'update', function (
     this: StockChart,
     e: { options: Highcharts.Options }
