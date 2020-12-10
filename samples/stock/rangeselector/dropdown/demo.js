@@ -3,7 +3,8 @@ let chart;
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/range.json', data => {
     chart = Highcharts.stockChart('container', {
         chart: {
-            type: 'arearange'
+            type: 'arearange',
+            width: 400
         },
         rangeSelector: {
             selected: 2
@@ -35,8 +36,6 @@ document.getElementById('dropdown').addEventListener('click', e => {
 document.getElementById('width').addEventListener('click', e => {
     const width = e.target.dataset.width;
     if (width) {
-        document.getElementById('container').style.width = width;
-        chart.reflow();
-        chart.redraw();
+        chart.setSize(width);
     }
 });

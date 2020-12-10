@@ -444,3 +444,28 @@ QUnit.test('Rangeselector update', function (assert) {
         'Range selector should have enough space'
     );
 });
+
+
+QUnit.test('Chart setSize', assert => {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 600
+        },
+        rangeSelector: {
+            dropdown: 'never'
+        },
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+    const plotHeight = chart.plotHeight;
+
+    chart.setSize(400);
+    assert.notStrictEqual(
+        chart.plotHeight,
+        plotHeight,
+        'The plot height should change after a single resize'
+    );
+});

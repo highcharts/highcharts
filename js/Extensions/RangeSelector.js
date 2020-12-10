@@ -1801,6 +1801,9 @@ var RangeSelector = /** @class */ (function () {
         if (options.height) {
             return options.height;
         }
+        // Align the elements before we read the height in case we're switching
+        // between wrapped and non-wrapped layout
+        this.alignElements();
         rangeSelectorHeight = rangeSelectorGroup ?
             // 13px to keep back compatibility
             (rangeSelectorGroup.getBBox(true).height) + 13 +
