@@ -28,12 +28,12 @@ QUnit.test('RangeSelector.dropdown', assert => {
     );
     assert.strictEqual(
         chart.rangeSelector.buttons.length,
-        chart.rangeSelector.dropdown.options.length,
+        chart.rangeSelector.dropdown.options.length - 1,
         'Button and option count should match'
     );
     assert.ok(
         chart.rangeSelector.buttons.every((b, i) => {
-            const option = chart.rangeSelector.dropdown.options[i];
+            const option = chart.rangeSelector.dropdown.options[i + 1];
             return b.state === 3 ? option.disabled : !option.disabled;
         }),
         'Button and option disabled states should match'

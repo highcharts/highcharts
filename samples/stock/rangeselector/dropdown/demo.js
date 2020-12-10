@@ -37,5 +37,6 @@ document.getElementById('width').addEventListener('click', e => {
     if (width) {
         document.getElementById('container').style.width = width;
         chart.reflow();
+        chart.redraw();
     }
 });

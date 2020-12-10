@@ -403,6 +403,12 @@ extend(defaultOptions, {
          *  - `always`: Always collapse
          *  - `responsive`: Only collapse when there is not enough room
          *  - `never`: Never collapse
+         *
+         * @sample {highstock} stock/rangeselector/dropdown/
+         *         Dropdown option
+         *
+         * @validvalue ["always", "responsive", "never"]
+         * @since next
          */
         dropdown: 'responsive',
 
@@ -942,7 +948,7 @@ class RangeSelector {
 
         rangeSelector.setSelected(i);
         if (this.dropdown) {
-            this.dropdown.selectedIndex = i;
+            this.dropdown.selectedIndex = i + 1;
         }
 
         // Update the chart
@@ -1186,10 +1192,10 @@ class RangeSelector {
                 button.setState(state);
 
                 if (dropdown) {
-                    dropdown.options[i].disabled = disable;
+                    dropdown.options[i + 1].disabled = disable;
 
                     if (state === 2) {
-                        dropdown.selectedIndex = i;
+                        dropdown.selectedIndex = i + 1;
                     }
                 }
 
@@ -1754,9 +1760,10 @@ class RangeSelector {
 
             // First create a wrapper outside the container in order to make
             // the inputs work and make export correct
-            if (inputEnabled && container.parentNode) {
+            if (container.parentNode) {
                 container.parentNode.insertBefore(this.div, container);
-
+            }
+            if (inputEnabled) {
                 // Create the group to keep the inputs
                 this.inputGroup = renderer.g('input-group').add(this.group);
 
@@ -1844,12 +1851,15 @@ class RangeSelector {
         const buttonTheme = merge(options.buttonTheme);
         const states = buttonTheme && buttonTheme.states;
 
+        // Prevent the button from resetting the width when the button state
+        // changes since we need more control over the width when collapsing
+        // the buttons
         const width = buttonTheme.width || 28;
         delete buttonTheme.width;
 
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
 
-        const dropdown = this.dropdown = createElement('select', {}, {
+        const dropdown = this.dropdown = createElement('select', void 0, {
             position: 'absolute',
             width: '1px',
             height: '1px',
@@ -1860,29 +1870,23 @@ class RangeSelector {
             opacity: 0.0001
         }, this.div) as HTMLSelectElement;
 
-        const mouseover = H.isMS ? 'mouseover' : 'mouseenter';
-        const mouseout = H.isMS ? 'mouseout' : 'mouseleave';
-
-
         // Prevent page zoom on iPhone
         addEvent(dropdown, 'touchstart', (): void => {
             dropdown.style.fontSize = '16px';
         });
 
-        addEvent(dropdown, mouseover, (): void => {
-            const button = buttons[this.currentButtonIndex()];
-            if (button) {
-                fireEvent(button.element, mouseover);
-            }
-        });
-        addEvent(dropdown, mouseout, (): void => {
-            const button = buttons[this.currentButtonIndex()];
-            if (button) {
-                fireEvent(button.element, mouseout);
-            }
-        });
-        addEvent(dropdown, 'change', (): void => {
-            this.clickButton(dropdown.selectedIndex);
+        // Forward events from select to button
+        [
+            [H.isMS ? 'mouseover' : 'mouseenter'],
+            [H.isMS ? 'mouseout' : 'mouseleave'],
+            ['change', 'click']
+        ].forEach(([from, to]): void => {
+            addEvent(dropdown, from, (): void => {
+                const button = buttons[this.currentButtonIndex()];
+                if (button) {
+                    fireEvent(button.element, to || from);
+                }
+            });
         });
 
         this.zoomText = renderer
@@ -1894,11 +1898,16 @@ class RangeSelector {
             .add(this.buttonGroup);
 
         if (!this.chart.styledMode) {
-
             this.zoomText.css(options.labelStyle);
 
             buttonTheme['stroke-width'] = pick(buttonTheme['stroke-width'], 0);
         }
+
+        createElement('option', {
+            textContent: this.zoomText.textStr,
+            disabled: true
+        }, void 0, dropdown);
+
         this.buttonOptions.forEach((
             rangeOptions: Highcharts.RangeSelectorButtonsOptions,
             i: number
@@ -2062,9 +2071,11 @@ class RangeSelector {
                 group.placed = buttonGroup.placed = chart.hasLoaded;
             }
 
+            let xOffsetForExportButton = 0;
+
             if (inputGroup) {
                 // Detect collision between the input group and exporting button
-                const xOffsetForExportButton = getXOffsetForExportButton(
+                xOffsetForExportButton = getXOffsetForExportButton(
                     inputGroup,
                     inputPosition
                 );
@@ -2087,16 +2098,11 @@ class RangeSelector {
                     x: inputPosition.x + translateX - 2
                 }, true, chart.spacingBox);
 
-
-                if (buttonGroup) {
-                    this.handleCollision(xOffsetForExportButton);
-                }
-
                 // Skip animation
                 inputGroup.placed = chart.hasLoaded;
-            } else if (buttonGroup && options.dropdown === 'always') {
-                this.collapseButtons();
             }
+
+            this.handleCollision(xOffsetForExportButton);
 
             // Vertical align
             group.align({
@@ -2248,37 +2254,37 @@ class RangeSelector {
             inputPosition
         } = this.options;
 
-        // Detect collision
-        if (inputGroup && buttonGroup) {
-            if (dropdown === 'always') {
-                this.collapseButtons();
-                return;
-            }
-            if (dropdown === 'never') {
-                this.showButtons();
-            }
+        const maxButtonWidth = (): number => {
+            let buttonWidth = 0;
 
-            const inputGroupX = (
-                inputGroup.alignAttr.translateX +
-                inputGroup.alignOptions.x -
-                xOffsetForExportButton +
-                // getBBox for detecing left margin
-                inputGroup.getBBox().x +
-                // 2px padding to not overlap input and label
-                2
-            );
+            this.buttons.forEach((button): void => {
+                const bBox = button.getBBox();
+                if (bBox.width > buttonWidth) {
+                    buttonWidth = bBox.width;
+                }
+            });
 
-            const inputGroupWidth = inputGroup.alignOptions.width;
+            return buttonWidth;
+        };
 
-            const buttonGroupX = buttonGroup.alignAttr.translateX +
-                buttonGroup.getBBox().x;
-            // 20 is minimal spacing between elements
-            const buttonGroupWidth = this.initialButtonGroupWidth + 20;
+        const groupsOverlap = (buttonGroupWidth: number): boolean => {
+            if (inputGroup && buttonGroup) {
+                const inputGroupX = (
+                    inputGroup.alignAttr.translateX +
+                    inputGroup.alignOptions.x -
+                    xOffsetForExportButton +
+                    // getBBox for detecing left margin
+                    inputGroup.getBBox().x +
+                    // 2px padding to not overlap input and label
+                    2
+                );
 
-            if (
-                (inputPosition.align === buttonPosition.align) ||
-                (
-                    (buttonGroupX + buttonGroupWidth > inputGroupX) &&
+                const inputGroupWidth = inputGroup.alignOptions.width;
+
+                const buttonGroupX = buttonGroup.alignAttr.translateX +
+                    buttonGroup.getBBox().x;
+
+                return (buttonGroupX + buttonGroupWidth > inputGroupX) &&
                     (inputGroupX + inputGroupWidth > buttonGroupX) &&
                     (
                         buttonPosition.y <
@@ -2286,25 +2292,65 @@ class RangeSelector {
                             inputPosition.y +
                             inputGroup.getBBox().height
                         )
-                    )
-                )
+                    );
+            }
+            return false;
+        };
+
+        const moveInputsDown = (): void => {
+            if (inputGroup && buttonGroup) {
+                inputGroup.attr({
+                    translateX: inputGroup.alignAttr.translateX + (
+                        chart.axisOffset[1] >= -xOffsetForExportButton ?
+                            0 :
+                            -xOffsetForExportButton
+                    ),
+                    translateY: inputGroup.alignAttr.translateY +
+                        buttonGroup.getBBox().height + 10
+                });
+            }
+        };
+
+        if (buttonGroup) {
+            if (dropdown === 'always') {
+                this.collapseButtons();
+
+                if (groupsOverlap(maxButtonWidth())) {
+                    // Move the inputs down if there is still a collision
+                    // after collapsing the buttons
+                    moveInputsDown();
+                }
+                return;
+            }
+            if (dropdown === 'never') {
+                this.expandButtons();
+            }
+        }
+
+        // Detect collision
+        if (inputGroup && buttonGroup) {
+            if (
+                (inputPosition.align === buttonPosition.align) ||
+                // 20 is minimal spacing between elements
+                groupsOverlap(this.initialButtonGroupWidth + 20)
             ) {
                 if (dropdown === 'responsive') {
                     this.collapseButtons();
+
+                    if (groupsOverlap(maxButtonWidth())) {
+                        moveInputsDown();
+                    }
                 } else {
-                    // Move the input group down
-                    inputGroup.attr({
-                        translateX: inputGroup.alignAttr.translateX + (
-                            chart.axisOffset[1] >= -xOffsetForExportButton ?
-                                0 :
-                                -xOffsetForExportButton
-                        ),
-                        translateY: inputGroup.alignAttr.translateY +
-                            buttonGroup.getBBox().height + 10
-                    });
+                    moveInputsDown();
                 }
             } else if (dropdown === 'responsive') {
-                this.showButtons();
+                this.expandButtons();
+            }
+        } else if (buttonGroup && dropdown === 'responsive') {
+            if (this.initialButtonGroupWidth > chart.plotWidth) {
+                this.collapseButtons();
+            } else {
+                this.expandButtons();
             }
         }
     }
@@ -2324,11 +2370,11 @@ class RangeSelector {
             zoomText
         } = this;
 
-        const getAttribs = (text: string): SVGAttributes => ({
-            text: `${text} ▾`,
+        const getAttribs = (text?: string): SVGAttributes => ({
+            text: text ? `${text} ▾` : '▾',
+            width: 'auto',
             paddingLeft: 8,
-            paddingRight: 8,
-            width: 'auto'
+            paddingRight: 8
         });
 
         if (zoomText) {
@@ -2354,11 +2400,11 @@ class RangeSelector {
 
         if (!hasActiveButton && buttons.length > 0) {
             if (dropdown) {
-                dropdown.selectedIndex = -1;
+                dropdown.selectedIndex = 0;
             }
 
             buttons[0].show();
-            buttons[0].attr(getAttribs(buttonOptions[0].text));
+            buttons[0].attr(getAttribs(this.zoomText?.textStr));
         }
 
         this.positionButtons();
@@ -2366,11 +2412,13 @@ class RangeSelector {
     }
 
     /**
+     * Show all the buttons and hide the select element.
+     *
      * @private
-     * @function Highcharts.RangeSelector#showButtons
+     * @function Highcharts.RangeSelector#expandButtons
      * @return {void}
      */
-    public showButtons(): void {
+    public expandButtons(): void {
         const {
             buttons,
             buttonOptions,
@@ -2388,13 +2436,19 @@ class RangeSelector {
             rangeOptions: Highcharts.RangeSelectorButtonsOptions,
             i: number
         ): void => {
-            buttons[i].show();
-            buttons[i].attr({
+            const button = buttons[i];
+
+            button.show();
+            button.attr({
                 text: rangeOptions.text,
                 width: options.buttonTheme.width || 28,
-                paddingLeft: 0,
-                paddingRight: 0
+                paddingLeft: 'unset',
+                paddingRight: 'unset'
             });
+
+            if (button.state < 2) {
+                button.setState(0);
+            }
         });
 
         this.positionButtons();
@@ -2410,8 +2464,8 @@ class RangeSelector {
     public currentButtonIndex(): number {
         const { dropdown } = this;
 
-        if (dropdown && dropdown.selectedIndex > -1) {
-            return dropdown.selectedIndex;
+        if (dropdown && dropdown.selectedIndex > 0) {
+            return dropdown.selectedIndex - 1;
         }
         return 0;
     }
