@@ -14,7 +14,7 @@ import boostables from './Boostables.js';
 
 // These are the series we allow boosting for.
 
-const boostableMap: Highcharts.Dictionary<number> = {};
+const boostableMap: Record<string, number> = {};
 
 boostables.forEach(function (item: string): void {
     boostableMap[item] = 1;

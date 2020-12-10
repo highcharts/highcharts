@@ -70,13 +70,13 @@ declare global {
 const getListOfParents = function (
     data: Array<Highcharts.TreePointOptionsObject>,
     ids: Array<string>
-): Highcharts.Dictionary<Array<Highcharts.TreePointOptionsObject>> {
+): Record<string, Array<Highcharts.TreePointOptionsObject>> {
     var listOfParents = data.reduce(function (
             prev: (
-                Highcharts.Dictionary<Array<Highcharts.TreePointOptionsObject>>
+                Record<string, Array<Highcharts.TreePointOptionsObject>>
             ),
             curr: Highcharts.TreePointOptionsObject
-        ): Highcharts.Dictionary<Array<Highcharts.TreePointOptionsObject>> {
+        ): Record<string, Array<Highcharts.TreePointOptionsObject>> {
             var parent = pick(curr.parent, '');
 
             if (typeof prev[parent] === 'undefined') {
@@ -85,7 +85,7 @@ const getListOfParents = function (
             prev[parent].push(curr);
             return prev;
         }, {} as (
-            Highcharts.Dictionary<Array<Highcharts.TreePointOptionsObject>>
+            Record<string, Array<Highcharts.TreePointOptionsObject>>
         )),
         parents = Object.keys(listOfParents);
 
@@ -110,7 +110,7 @@ const getNode = function (
     level: number,
     data: (Highcharts.TreePointOptionsObject|null),
     mapOfIdToChildren: (
-        Highcharts.Dictionary<Array<Highcharts.TreePointOptionsObject>>
+        Record<string, Array<Highcharts.TreePointOptionsObject>>
     ),
     options: Highcharts.TreeGetOptionsObject
 ): Highcharts.TreeNode {

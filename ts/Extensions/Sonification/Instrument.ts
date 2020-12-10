@@ -58,7 +58,7 @@ declare global {
             public preparePlay(): void;
             public setFrequency(
                 frequency: number,
-                frequencyLimits?: Dictionary<number>
+                frequencyLimits?: Record<string, number>
             ): void;
             public setGain(gainValue: number, rampTime?: number): void;
             public setMasterVolume(volumeMultiplier: number): void;
@@ -493,7 +493,7 @@ Instrument.prototype.clearPlayCallbackTimers = function (
 Instrument.prototype.setFrequency = function (
     this: Highcharts.Instrument,
     frequency: number,
-    frequencyLimits?: Highcharts.Dictionary<number>
+    frequencyLimits?: Record<string, number>
 ): void {
     var limits = frequencyLimits || {},
         validFrequency = this.getValidFrequency(

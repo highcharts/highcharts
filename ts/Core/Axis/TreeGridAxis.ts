@@ -334,14 +334,14 @@ namespace TreeGridAxis {
         };
 
         const updateYValuesAndTickPos = function (
-            map: Highcharts.Dictionary<GridNode>,
+            map: Record<string, GridNode>,
             numberOfSeries: number
-        ): Highcharts.Dictionary<GridNode> {
+        ): Record<string, GridNode> {
             const setValues = function (
                 gridNode: GridNode,
                 start: number,
-                result: Highcharts.Dictionary<GridNode>
-            ): Highcharts.Dictionary<GridNode> {
+                result: Record<string, GridNode>
+            ): Record<string, GridNode> {
                 var nodes = gridNode.nodes,
                     end = start + (start === -1 ? 0 : numberOfSeries - 1),
                     diff = (end - start) / 2,

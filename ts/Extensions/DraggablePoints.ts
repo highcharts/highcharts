@@ -120,7 +120,7 @@ declare global {
             groupedPoints: Array<Point>;
             isDragging: boolean;
             isHoveringHandle?: string;
-            newPoints?: Dictionary<DragDropPointObject>;
+            newPoints?: Record<string, DragDropPointObject>;
             origin: DragDropPositionObject;
             point: Point;
             updateProp?: string;
@@ -154,18 +154,18 @@ declare global {
             dragPrecisionY?: number;
             dragSensitivity?: number;
             groupBy?: string;
-            guideBox?: Dictionary<DragDropGuideBoxOptionsObject>;
+            guideBox?: Record<string, DragDropGuideBoxOptionsObject>;
             liveRedraw?: boolean;
         }
         interface DragDropPointObject {
             point: Point;
-            newValues: Dictionary<number>;
+            newValues: Record<string, number>;
         }
         interface DragDropPositionObject {
             chartX: number;
             chartY: number;
             guideBox?: BBoxObject;
-            points: Dictionary<Dictionary<number>>;
+            points: Record<string, Record<string, number>>;
             prevdX?: number;
             prevdY?: number;
         }
@@ -177,13 +177,13 @@ declare global {
             (this: Point, event: PointDragEventObject): void;
         }
         interface PointDragDropObject {
-            newValues: Dictionary<number>;
+            newValues: Record<string, number>;
             point: Point;
         }
         interface PointDragEventObject {
             newPoint?: PointDragDropObject;
             newPointId?: string;
-            newPoints: Dictionary<PointDragDropObject>;
+            newPoints: Record<string, PointDragDropObject>;
             origin: DragDropPositionObject;
             preventDefault: Function;
             target: Point;
@@ -201,7 +201,7 @@ declare global {
         interface PointDropEventObject {
             newPoint?: PointDragDropObject;
             newPointId?: string;
-            newPoints: Dictionary<PointDragDropObject>;
+            newPoints: Record<string, PointDragDropObject>;
             numNewPoints: number;
             origin: DragDropPositionObject;
             preventDefault: Function;
@@ -421,7 +421,7 @@ function flipResizeSide(side: string): string {
         right: 'left',
         top: 'bottom',
         bottom: 'top'
-    } as Highcharts.Dictionary<string>)[side];
+    } as Record<string, string>)[side];
 }
 
 /* @todo
@@ -1283,7 +1283,7 @@ const defaultDragSensitivity = 2;
  * @private
  */
 const defaultGuideBoxOptions: (
-    Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>
+    Record<string, Highcharts.DragDropGuideBoxOptionsObject>
 ) = {
     /**
      * Style options for the guide box default state.
@@ -2041,15 +2041,15 @@ function initDragDrop(
 function getNewPoints(
     dragDropData: Highcharts.DragDropDataObject,
     newPos: PointerEvent
-): Highcharts.Dictionary<Highcharts.DragDropPointObject> {
+): Record<string, Highcharts.DragDropPointObject> {
     var point = dragDropData.point,
         series = point.series,
         options = merge(series.options.dragDrop, point.options.dragDrop),
         updateProps: (
-            Highcharts.Dictionary<Partial<Highcharts.SeriesDragDropPropsObject>>
+            Record<string, Partial<Highcharts.SeriesDragDropPropsObject>>
         ) = {},
         resizeProp = dragDropData.updateProp,
-        hashmap: Highcharts.Dictionary<Highcharts.DragDropPointObject> = {};
+        hashmap: Record<string, Highcharts.DragDropPointObject> = {};
 
     // Go through the data props that can be updated on this series and find out
     // which ones we want to update.
@@ -2119,7 +2119,7 @@ function updatePoints(
     chart: Chart,
     animate?: (boolean|Partial<AnimationOptions>)
 ): void {
-    var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
+    var newPoints: Record<string, Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,
         animOptions = animate === false ? false : merge({
             duration: 400 // 400 is the default in animate
@@ -2270,7 +2270,7 @@ function dragMove(
  */
 Chart.prototype.setGuideBoxState = function (
     state: string,
-    options?: Highcharts.Dictionary<Highcharts.DragDropGuideBoxOptionsObject>
+    options?: Record<string, Highcharts.DragDropGuideBoxOptionsObject>
 ): SVGElement {
     var guideBox = this.dragGuideBox,
         guideBoxOptions = merge(defaultGuideBoxOptions, options),
@@ -2329,7 +2329,7 @@ Point.prototype.getDropValues = function (
     var point = this,
         series = point.series,
         options = merge(series.options.dragDrop, point.options.dragDrop),
-        result: Highcharts.Dictionary<number> = {},
+        result: Record<string, number> = {},
         updateSingleProp: (boolean|undefined),
         pointOrigin = origin.points[point.id];
 
@@ -2728,7 +2728,7 @@ function countProps(obj: object): number {
  *         Value of the first prop in the object.
  * @template T
  */
-function getFirstProp<T>(obj: Highcharts.Dictionary<T>): (T|undefined) {
+function getFirstProp<T>(obj: Record<string, T>): (T|undefined) {
     for (var p in obj) {
         if (Object.hasOwnProperty.call(obj, p)) {
             return obj[p];
@@ -2793,7 +2793,7 @@ function mouseMove(
     var dragDropData = chart.dragDropData,
         point: Point,
         seriesDragDropOpts: Highcharts.DragDropOptionsObject,
-        newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject>,
+        newPoints: Record<string, Highcharts.DragDropPointObject>,
         numNewPoints = 0,
         newPoint: (Highcharts.DragDropPointObject|null|undefined);
 

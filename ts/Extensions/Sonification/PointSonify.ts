@@ -56,7 +56,7 @@ declare global {
             ): void;
         }
         interface PointSonifyOptionsObject {
-            dataExtremes?: Dictionary<RangeObject>;
+            dataExtremes?: Record<string, RangeObject>;
             instruments: Array<PointInstrumentObject>;
             onEnd?: Function;
             masterVolume?: number;

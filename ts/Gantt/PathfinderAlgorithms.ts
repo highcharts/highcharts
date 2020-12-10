@@ -277,8 +277,8 @@ const simpleConnect = extend(function (
         to: any,
         toKey?: string,
         offset?: number
-    ): Highcharts.Dictionary<number> {
-        var point: Highcharts.Dictionary<number> = {
+    ): Record<string, number> {
+        var point: Record<string, number> = {
             x: from.x as any,
             y: from.y as any
         };
@@ -296,7 +296,7 @@ const simpleConnect = extend(function (
         obstacle: any,
         point: any,
         direction: string
-    ): Highcharts.Dictionary<number> {
+    ): Record<string, number> {
         var useMax = abs(point[direction] - obstacle[direction + 'Min']) >
                     abs(point[direction] - obstacle[direction + 'Max']);
 
@@ -588,9 +588,9 @@ const fastAvoid = extend(function (
         var softBounds = bounds.soft,
             hardBounds = bounds.hard,
             dir = dirIsX ? 'x' : 'y',
-            toPointMax: Highcharts.Dictionary<number> =
+            toPointMax: Record<string, number> =
                 { x: fromPoint.x, y: fromPoint.y },
-            toPointMin: Highcharts.Dictionary<number> =
+            toPointMin: Record<string, number> =
                 { x: fromPoint.x, y: fromPoint.y },
             minPivot,
             maxPivot,
@@ -663,7 +663,7 @@ const fastAvoid = extend(function (
             waypointUseMax,
             envelopingObstacle,
             secondEnvelopingObstacle,
-            envelopWaypoint: Highcharts.Dictionary<number>,
+            envelopWaypoint: Record<string, number>,
             obstacleMargin = options.obstacleOptions.margin,
             bounds = {
                 soft: {

@@ -99,7 +99,7 @@ declare global {
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLAttributes extends Dictionary<any> {
+        interface VMLAttributes extends Record<string, any> {
             d?: VMLPathArray;
             end?: number;
             innerR?: number;
@@ -265,7 +265,7 @@ declare global {
             public isVML: true;
             public setSize: SVGRenderer['setSize'];
             public symbols: SVGRenderer['symbols'];
-            public circle(obj: Dictionary<number>): VMLElement;
+            public circle(obj: Record<string, number>): VMLElement;
             public circle(x: number, y: number, r: number): VMLElement;
             public clipRect(size: SizeObject): VMLClipRectObject;
             public clipRect(
@@ -385,7 +385,7 @@ if (doc && !doc.defaultView) {
             alias = ({
                 width: 'clientWidth',
                 height: 'clientHeight'
-            } as Highcharts.Dictionary<string>)[prop];
+            } as Record<string, string>)[prop];
 
         if (el.style[prop as any]) {
             return pInt(el.style[prop as any]);

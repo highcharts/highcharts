@@ -91,7 +91,7 @@ declare global {
     namespace Highcharts {
         interface NetworkgraphChart extends DragNodesChart {
             graphLayoutsLookup: Array<NetworkgraphLayout>;
-            graphLayoutsStorage: Dictionary<NetworkgraphLayout>;
+            graphLayoutsStorage: Record<string, NetworkgraphLayout>;
         }
         interface NetworkgraphDataLabelsFormatterCallbackFunction {
             (this: (
@@ -156,7 +156,7 @@ declare global {
             public getDegree(): number;
             public getLinkAttributes(): SVGAttributes;
             public getLinkPath(): SVGPath;
-            public getMass(): Dictionary<number>;
+            public getMass(): Record<string, number>;
             public getPointsCollection(): Array<NetworkgraphPoint>;
             public init(
                 series: NetworkgraphSeries,
@@ -1296,7 +1296,7 @@ extend(NetworkgraphPoint.prototype, {
      */
     getMass: function (
         this: Highcharts.NetworkgraphPoint
-    ): Highcharts.Dictionary<number> {
+    ): Record<string, number> {
         var m1 = this.fromNode.mass,
             m2 = this.toNode.mass,
             sum = m1 + m2;

@@ -686,7 +686,7 @@ class Point {
      * @param {Highcharts.Dictionary<number>} [kinds]
      * @return {Highcharts.PointGraphicalProps}
      */
-    public getGraphicalProps(kinds?: Highcharts.Dictionary<number>): Highcharts.PointGraphicalProps {
+    public getGraphicalProps(kinds?: Record<string, number>): Highcharts.PointGraphicalProps {
         var point = this,
             props = [],
             prop,

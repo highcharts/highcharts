@@ -41,7 +41,7 @@ declare global {
             distance: number
         ): PositionObject;
         function pointCameraDistance(
-            coordinates: Dictionary<number>,
+            coordinates: Record<string, number>,
             chart: Chart
         ): number;
         function shapeArea(vertexes: Array<PositionObject>): number;
@@ -258,7 +258,7 @@ H.perspective = perspective;
  * @requires highcharts-3d
  */
 function pointCameraDistance(
-    coordinates: Highcharts.Dictionary<number>,
+    coordinates: Record<string, number>,
     chart: Chart
 ): number {
     var options3d = (chart.options.chart as any).options3d,

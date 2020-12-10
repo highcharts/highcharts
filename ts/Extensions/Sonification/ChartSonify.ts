@@ -66,7 +66,7 @@ declare global {
         }
         interface ChartSonificationOptions {
             afterSeriesWait?: number;
-            dataExtremes?: Dictionary<RangeObject>;
+            dataExtremes?: Record<string, RangeObject>;
             defaultInstrumentOptions?: DefaultSonificationInstrumentOptions;
             duration: number;
             earcons?: Array<EarconConfiguration>;
@@ -98,7 +98,7 @@ declare global {
         }
         interface SonifyChartOptionsObject {
             afterSeriesWait?: number;
-            dataExtremes?: Dictionary<RangeObject>;
+            dataExtremes?: Record<string, RangeObject>;
             duration: number;
             earcons?: Array<EarconConfiguration>;
             instruments?: Array<PointInstrumentObject>;
@@ -113,7 +113,7 @@ declare global {
             );
         }
         interface SonifySeriesOptionsObject extends SeriesOptions {
-            dataExtremes?: Dictionary<RangeObject>;
+            dataExtremes?: Record<string, RangeObject>;
             duration: number;
             earcons?: Array<EarconConfiguration>;
             instruments: Array<PointInstrumentObject>;
@@ -301,8 +301,8 @@ function getTimeExtremes(
 function getExtremesForInstrumentProps(
     chart: Chart,
     instruments?: Array<Highcharts.PointInstrumentObject>,
-    dataExtremes?: Highcharts.Dictionary<Highcharts.RangeObject>
-): Highcharts.Dictionary<Highcharts.RangeObject> {
+    dataExtremes?: Record<string, Highcharts.RangeObject>
+): Record<string, Highcharts.RangeObject> {
     let allInstrumentDefinitions = (instruments || []).slice(0);
     const defaultInstrumentDef = chart.options.sonification?.defaultInstrumentOptions;
     const optionDefToInstrDef = (
@@ -323,9 +323,9 @@ function getExtremesForInstrumentProps(
     });
 
     return (allInstrumentDefinitions).reduce(function (
-        newExtremes: Highcharts.Dictionary<Highcharts.RangeObject>,
+        newExtremes: Record<string, Highcharts.RangeObject>,
         instrumentDefinition: Highcharts.PointInstrumentObject
-    ): Highcharts.Dictionary<Highcharts.RangeObject> {
+    ): Record<string, Highcharts.RangeObject> {
         Object.keys(instrumentDefinition.instrumentMapping || {}).forEach(
             function (instrumentParameter: string): void {
                 var value = instrumentDefinition.instrumentMapping[
@@ -453,7 +453,7 @@ function applyMasterVolumeToInstruments(
 function getFinalNoteDuration(
     series: Highcharts.SonifyableSeries,
     instruments: Array<Highcharts.PointInstrumentObject>,
-    dataExtremes: Highcharts.Dictionary<Highcharts.RangeObject>
+    dataExtremes: Record<string, Highcharts.RangeObject>
 ): number {
     const finalPoint = series.points[series.points.length - 1];
     return instruments.reduce((duration, instrument): number => {
@@ -661,7 +661,7 @@ function seriesSonify(
  */
 function buildChartSonifySeriesOptions(
     series: Highcharts.SonifyableSeries,
-    dataExtremes: Highcharts.Dictionary<Highcharts.RangeObject>,
+    dataExtremes: Record<string, Highcharts.RangeObject>,
     chartSonifyOptions: Highcharts.SonifyChartOptionsObject
 ): Partial<Highcharts.SonifySeriesOptionsObject> {
     const additionalSeriesOptions: (
@@ -1126,11 +1126,11 @@ function getSeriesInstrumentOptions(
         return options.instruments;
     }
 
-    const defaultInstrOpts: Highcharts.Dictionary<any> =
+    const defaultInstrOpts: Record<string, any> =
         series.chart.options.sonification?.defaultInstrumentOptions || {};
-    const seriesInstrOpts: Array<Highcharts.Dictionary<any>> =
+    const seriesInstrOpts: Array<Record<string, any>> =
         series.options.sonification?.instruments || [{}];
-    const removeNullsFromObject = (obj: Highcharts.Dictionary<any>): void => {
+    const removeNullsFromObject = (obj: Record<string, any>): void => {
         objectEach(obj, (val: any, key: string): void => {
             if (val === null) {
                 delete obj[key];
@@ -1222,7 +1222,7 @@ function getChartSonifyOptions(
     chart: Highcharts.SonifyableChart,
     options?: Highcharts.SonifyChartOptionsObject
 ): Highcharts.SonifyChartOptionsObject {
-    const chartOpts: Highcharts.Dictionary<any> = chart.options.sonification || {};
+    const chartOpts: Record<string, any> = chart.options.sonification || {};
 
     return merge(
         {
@@ -1416,7 +1416,7 @@ function chartSonify(
 function getCurrentPoints(
     this: Highcharts.SonifyableChart
 ): Array<Point> {
-    var cursorObj: Highcharts.Dictionary<Highcharts.TimelineEvent>;
+    var cursorObj: Record<string, Highcharts.TimelineEvent>;
 
     if (this.sonification.timeline) {
         cursorObj = this.sonification.timeline.getCursor(); // Cursor per pathID

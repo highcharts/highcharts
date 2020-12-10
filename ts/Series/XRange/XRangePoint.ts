@@ -61,7 +61,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
     public static getColorByCategory(
         series: LineSeries,
         point: Point
-    ): Highcharts.Dictionary<any> {
+    ): Record<string, any> {
         var colors = series.options.colors || series.chart.options.colors,
             colorCount = colors ?
                 colors.length :

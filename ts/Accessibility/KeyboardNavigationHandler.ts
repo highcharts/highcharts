@@ -32,7 +32,7 @@ declare global {
             public chart: Chart;
             public init: Function;
             public keyCodeMap: Array<[Array<number>, Function]>;
-            public response: Dictionary<number>;
+            public response: Record<string, number>;
             public terminate?: Function;
             public validate?: Function;
             public run(e: KeyboardEvent): number;

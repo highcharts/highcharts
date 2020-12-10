@@ -120,16 +120,16 @@ declare global {
             public allowHTML?: boolean;
             public box: SVGDOMElement;
             public boxWrapper: SVGElement;
-            public cache: Dictionary<BBoxObject>;
+            public cache: Record<string, BBoxObject>;
             public cacheKeys: Array<string>;
             public chartIndex: number;
             public defs: SVGElement;
             /** @deprecated */
             public draw: Function;
-            public escapes: Dictionary<string>;
+            public escapes: Record<string, string>;
             public forExport?: boolean;
             public globalAnimation: Partial<AnimationOptions>;
-            public gradients: Dictionary<SVGElement>;
+            public gradients: Record<string, SVGElement>;
             public height: number;
             public imgCount: number;
             public isSVG: boolean;

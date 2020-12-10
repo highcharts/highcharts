@@ -63,7 +63,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
             !yAxis.options.stackLabels.allowOverlap
         ) {
             objectEach(yAxis.stacking.stacks, function (
-                stack: Highcharts.Dictionary<Highcharts.StackItem>
+                stack: Record<string, Highcharts.StackItem>
             ): void {
                 objectEach(stack, function (
                     stackItem: Highcharts.StackItem

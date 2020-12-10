@@ -296,7 +296,7 @@ class Fx {
             elem = this.elem,
             complete = options.complete,
             duration: number = options.duration as any,
-            curAnim: Highcharts.Dictionary<boolean> = options.curAnim as any;
+            curAnim: Record<string, boolean> = options.curAnim as any;
 
         if (elem.attr && !elem.element) { // #2616, element is destroyed
             ret = false;

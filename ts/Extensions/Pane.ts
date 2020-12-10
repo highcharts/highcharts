@@ -462,7 +462,7 @@ class Pane {
         this.center = (
             axis ||
             this.axis ||
-            ({} as Highcharts.Dictionary<Array<number>>)
+            ({} as Record<string, Array<number>>)
         ).center = centeredSeriesMixin.getCenter.call(this as any);
     }
 

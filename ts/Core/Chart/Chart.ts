@@ -340,7 +340,7 @@ class Chart {
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (
-                typeOptions: Highcharts.Dictionary<any>,
+                typeOptions: Record<string, any>,
                 type: string
             ): void {
                 if (isObject(typeOptions)) { // #8766
@@ -3059,7 +3059,7 @@ class Chart {
                 title: 'setTitle',
                 subtitle: 'setSubtitle',
                 caption: 'setCaption'
-            } as Highcharts.Dictionary<string>,
+            } as Record<string, string>,
             optionsChart,
             updateAllAxes,
             updateAllSeries,
@@ -3175,7 +3175,7 @@ class Chart {
         // options.navigator => chart.navigator
         // options.scrollbar => chart.scrollbar
         objectEach(options, function (
-            val: Highcharts.Dictionary<any>,
+            val: Record<string, any>,
             key: string
         ): void {
             if ((chart as any)[key] &&

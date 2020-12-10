@@ -126,7 +126,7 @@ declare global {
             (this: Axis, evt: AxisPointBreakEventObject): void;
         }
         interface AxisPointBreakEventObject {
-            brk: Dictionary<number>;
+            brk: Record<string, number>;
             point: Point;
             preventDefault: Function;
             target: SVGElement;
@@ -338,7 +338,7 @@ declare global {
             public constructor(chart: Chart, userOptions: AxisOptions);
             public _addedPlotLB?: boolean;
             public allowZoomOutside?: boolean;
-            public alternateBands: Dictionary<PlotLineOrBand>;
+            public alternateBands: Record<string, PlotLineOrBand>;
             public autoRotation?: Array<number>;
             public axisGroup?: SVGElement;
             public axisLine?: SVGElement;
@@ -386,7 +386,7 @@ declare global {
             public maxLabelLength: number;
             public min: (null|number);
             public minorTickInterval: number;
-            public minorTicks: Dictionary<Tick>;
+            public minorTicks: Record<string, Tick>;
             public minPixelPadding: number;
             public minPointOffset?: number;
             public minRange?: (null|number);
@@ -405,7 +405,7 @@ declare global {
             public overlap: boolean;
             public paddedTicks: Array<number>;
             public plotLinesAndBands: Array<PlotLineOrBand>;
-            public plotLinesAndBandsGroups: Dictionary<SVGElement>;
+            public plotLinesAndBandsGroups: Record<string, SVGElement>;
             public pointRange: number;
             public pointRangePadding: number;
             public pos: number;
@@ -428,7 +428,7 @@ declare global {
             public tickmarkOffset: number;
             public tickPositions: AxisTickPositionsArray;
             public tickRotCorr: PositionObject;
-            public ticks: Dictionary<Tick>;
+            public ticks: Record<string, Tick>;
             public titleOffset?: number;
             public top: number;
             public touched?: boolean;
@@ -6182,7 +6182,7 @@ class Axis {
             evt = {
                 newMin: newMin,
                 newMax: newMax
-            } as Highcharts.Dictionary<any>;
+            } as Record<string, any>;
 
         fireEvent(this, 'zoom', evt, function (e: Record<string, any>): void {
 
@@ -6370,7 +6370,7 @@ class Axis {
             evt = { align: 'center' as AlignValue };
 
         fireEvent(this, 'autoLabelAlign', evt, function (
-            e: Highcharts.Dictionary<any>
+            e: Record<string, any>
         ): void {
 
             if (angle > 15 && angle < 165) {
@@ -6837,7 +6837,7 @@ class Axis {
                     low: opposite ? 'right' : 'left',
                     middle: 'center',
                     high: opposite ? 'left' : 'right'
-                }) as Highcharts.Dictionary<AlignValue>)[
+                }) as Record<string, AlignValue>)[
                     (axisTitleOptions as any).align
                 ];
             }
@@ -7353,8 +7353,8 @@ class Axis {
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (
-                Highcharts.Dictionary<Tick>|
-                Highcharts.Dictionary<PlotLineOrBand>
+                Record<string, Tick>|
+                Record<string, PlotLineOrBand>
             )
         ): void {
             objectEach(coll, function (tick): void {
@@ -7443,8 +7443,8 @@ class Axis {
         // Remove inactive ticks
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (
-                Highcharts.Dictionary<Highcharts.Tick>|
-                Highcharts.Dictionary<Highcharts.PlotLineOrBand>
+                Record<string, Highcharts.Tick>|
+                Record<string, Highcharts.PlotLineOrBand>
             )
         ): void {
             var i,
@@ -7596,8 +7596,8 @@ class Axis {
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
             function (
                 coll: (
-                    Highcharts.Dictionary<Highcharts.PlotLineOrBand>|
-                    Highcharts.Dictionary<Highcharts.Tick>
+                    Record<string, Highcharts.PlotLineOrBand>|
+                    Record<string, Highcharts.Tick>
                 )
             ): void {
                 destroyObjectProperties(coll);

@@ -99,7 +99,7 @@ class StreamgraphSeries extends AreaSplineSeries {
     // down in order to center the full stack vertically.
     public streamStacker(
         pointExtremes: Array<number>,
-        stack: Highcharts.Dictionary<number>,
+        stack: Record<string, number>,
         i: number
     ): void {
         // Y bottom value

@@ -48,7 +48,7 @@ declare global {
         interface Axis {
             axisBorder?: SVGElement;
             getMaxLabelDimensions(
-                ticks: Dictionary<Tick>,
+                ticks: Record<string, Tick>,
                 tickPositions: Array<(number|string)>
             ): SizeObject;
             addExtraBorder(
@@ -212,7 +212,7 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
  * @todo Move this to the generic axis implementation, as it is used there.
  */
 Axis.prototype.getMaxLabelDimensions = function (
-    ticks: Highcharts.Dictionary<Highcharts.Tick>,
+    ticks: Record<string, Highcharts.Tick>,
     tickPositions: Array<(number|string)>
 ): SizeObject {
     var dimensions: SizeObject = {

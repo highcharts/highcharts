@@ -80,7 +80,7 @@ declare global {
             public isSticky: boolean;
             public label?: SVGElement;
             public len?: number;
-            public now: Dictionary<number>;
+            public now: Record<string, number>;
             public options: TooltipOptions;
             public outside?: boolean;
             public renderer?: Renderer;
@@ -105,7 +105,7 @@ declare global {
                 range: number,
                 date: number,
                 startOfWeek: number,
-                dateTimeLabelFormats: Dictionary<string>
+                dateTimeLabelFormats: Record<string, string>
             ): string;
             public getLabel(): SVGElement;
             public getPosition(
@@ -620,7 +620,7 @@ class Tooltip {
         range: number,
         date: number,
         startOfWeek: number,
-        dateTimeLabelFormats: Highcharts.Dictionary<string>
+        dateTimeLabelFormats: Record<string, string>
     ): string {
         var time = this.chart.time,
             dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date),
@@ -633,7 +633,7 @@ class Tooltip {
                 minute: 9,
                 hour: 6,
                 day: 3
-            } as Highcharts.Dictionary<number>,
+            } as Record<string, number>,
             lastN = 'millisecond'; // for sub-millisecond data, #4223
 
         for (n in timeUnits) { // eslint-disable-line guard-for-in
@@ -1695,7 +1695,7 @@ class Tooltip {
 
         // If overflow left then align all labels to the right
         if (!positioner && boxes.some((box): boolean => box.x < bounds.left)) {
-            boxes = boxes.map((box): Highcharts.Dictionary<any> => {
+            boxes = boxes.map((box): Record<string, any> => {
                 const { x, y } = defaultPositioner(
                     box.anchorX,
                     box.anchorY,
@@ -1715,7 +1715,7 @@ class Tooltip {
 
         // Distribute and put in place
         H.distribute(boxes as any, adjustedPlotHeight);
-        boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
+        boxes.forEach(function (box: Record<string, any>): void {
             const { anchorX, anchorY, pos, x } = box;
             // Put the label in place
             box.tt.attr({
@@ -1870,11 +1870,11 @@ class Tooltip {
             e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
-            } as Highcharts.Dictionary<any>;
+            } as Record<string, any>;
 
         fireEvent(this, 'headerFormatter', e, function (
             this: Highcharts.Tooltip,
-            e: Highcharts.Dictionary<any>
+            e: Record<string, any>
         ): void {
 
             // Guess the best date format based on the closest point distance

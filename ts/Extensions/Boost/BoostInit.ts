@@ -84,10 +84,10 @@ function init(): void {
                 yExtremes = yAxis.getExtremes(),
                 yMin = yExtremes.min,
                 yMax = yExtremes.max,
-                pointTaken: Highcharts.Dictionary<boolean> = {},
+                pointTaken: Record<string, boolean> = {},
                 lastClientX: (number|undefined),
                 sampling = !!series.sampling,
-                points: Array<Highcharts.Dictionary<number>>,
+                points: Array<Record<string, number>>,
                 enableMouseTracking = options.enableMouseTracking !== false,
                 threshold: number = options.threshold as any,
                 yBottom = yAxis.getThreshold(threshold),
@@ -214,7 +214,7 @@ function init(): void {
              * @private
              */
             function processPoint(
-                d: (number|Array<number>|Highcharts.Dictionary<number>),
+                d: (number|Array<number>|Record<string, number>),
                 i: number
             ): boolean {
                 var x: number,

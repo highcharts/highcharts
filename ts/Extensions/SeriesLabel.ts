@@ -426,7 +426,7 @@ LineSeries.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
         paneTop: number = inverted ? xAxis.pos : (yAxis.pos as any),
         onArea = pick((this.options.label as any).onArea, !!this.area),
         translatedThreshold = yAxis.getThreshold(this.options.threshold as any),
-        grid: Highcharts.Dictionary<number> = {};
+        grid: Record<string, number> = {};
 
     /**
      * Push the point to the interpolated points, but only if that position in

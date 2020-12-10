@@ -266,7 +266,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
             '}'
             /* eslint-enable max-len, @typescript-eslint/indent */
         ].join('\n'),
-        uLocations: Highcharts.Dictionary<WebGLUniformLocation> = {},
+        uLocations: Record<string, WebGLUniformLocation> = {},
         // The shader program
         shaderProgram: (WebGLProgram|null|undefined),
         // Uniform handle to the perspective matrix

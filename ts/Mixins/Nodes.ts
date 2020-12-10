@@ -89,7 +89,7 @@ declare global {
             public createNode: NodesMixin['createNode'];
             public data: Array<NodesPoint>;
             public generatePoints: NodesMixin['generatePoints'];
-            public nodeLookup: Dictionary<NodesPoint>;
+            public nodeLookup: Record<string, NodesPoint>;
             public nodes: Array<NodesPoint>;
             public options: NodesSeriesOptions;
             public pointClass: typeof NodesPoint;
@@ -222,7 +222,7 @@ const NodesMixin = H.NodesMixin = {
      */
     generatePoints: function (this: Highcharts.NodesSeries): void {
         var chart = this.chart,
-            nodeLookup = {} as Highcharts.Dictionary<Highcharts.NodesPoint>;
+            nodeLookup = {} as Record<string, Highcharts.NodesPoint>;
 
         LineSeries.prototype.generatePoints.call(this);
 

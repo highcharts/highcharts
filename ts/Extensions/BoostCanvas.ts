@@ -345,10 +345,10 @@ const initCanvasBoost = function (): void {
                 yExtremes = yAxis.getExtremes(),
                 yMin = yExtremes.min,
                 yMax = yExtremes.max,
-                pointTaken: Highcharts.Dictionary<boolean> = {},
+                pointTaken: Record<string, boolean> = {},
                 lastClientX: number,
                 sampling = !!series.sampling,
-                points: Array<Highcharts.Dictionary<number>>,
+                points: Array<Record<string, number>>,
                 r = options.marker && options.marker.radius,
                 cvsDrawPoint = this.cvsDrawPoint,
                 cvsLineTo = options.lineWidth ? this.cvsLineTo : void 0,
@@ -359,7 +359,7 @@ const initCanvasBoost = function (): void {
                 ),
                 strokeBatch = this.cvsStrokeBatch || 1000,
                 enableMouseTracking = options.enableMouseTracking !== false,
-                lastPoint: Highcharts.Dictionary<number>,
+                lastPoint: Record<string, number>,
                 threshold: number = options.threshold as any,
                 yBottom: number = yAxis.getThreshold(threshold) as any,
                 hasThreshold = isNumber(threshold),
@@ -823,7 +823,7 @@ const initCanvasBoost = function (): void {
             clientX: number,
             plotY: number,
             yBottom: number,
-            lastPoint: Highcharts.Dictionary<number>
+            lastPoint: Record<string, number>
         ): void {
             if (lastPoint && clientX !== lastPoint.clientX) {
                 ctx.moveTo(lastPoint.clientX as any, lastPoint.yBottom as any);

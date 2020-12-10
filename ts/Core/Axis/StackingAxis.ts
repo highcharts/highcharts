@@ -142,7 +142,7 @@ class StackingAxisAdditions {
 
         if (!axis.isXAxis) {
             objectEach(stacks, function (
-                type: Highcharts.Dictionary<Highcharts.StackItem>
+                type: Record<string, Highcharts.StackItem>
             ): void {
                 objectEach(type, function (
                     stack: Highcharts.StackItem,
@@ -193,7 +193,7 @@ class StackingAxisAdditions {
 
         // Render each stack total
         objectEach(stacks, function (
-            type: Highcharts.Dictionary<Highcharts.StackItem>
+            type: Record<string, Highcharts.StackItem>
         ): void {
             objectEach(type, function (stack: Highcharts.StackItem): void {
                 stack.render(stackTotalGroup);

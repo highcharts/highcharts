@@ -273,7 +273,7 @@ function getDlOptions(params: SunburstSeries.DlOptionsParams): SunburstDataLabel
 function getAnimation(
     shape: SunburstSeries.NodeValuesObject,
     params: SunburstSeries.AnimationParams
-): Highcharts.Dictionary<Highcharts.Dictionary<number>> {
+): Record<string, Record<string, number>> {
     var point = params.point,
         radians = params.radians,
         innerR = params.innerR,
@@ -283,8 +283,8 @@ function getAnimation(
         shapeRoot = params.shapeRoot,
         shapePreviousRoot = params.shapePreviousRoot,
         visible = params.visible,
-        from: Highcharts.Dictionary<number> = {},
-        to: Highcharts.Dictionary<number> = {
+        from: Record<string, number> = {},
+        to: Record<string, number> = {
             end: shape.end,
             start: shape.start,
             innerR: shape.innerR,
@@ -370,7 +370,7 @@ function cbSetTreeValuesBefore(
     node: SunburstSeries.NodeObject,
     options: SunburstSeries.NodeValuesObject
 ): SunburstSeries.NodeObject {
-    var mapIdToNode: Highcharts.Dictionary<SunburstSeries.NodeObject> =
+    var mapIdToNode: Record<string, SunburstSeries.NodeObject> =
             options.mapIdToNode as any,
         nodeParent = mapIdToNode[node.parent],
         series = options.series,
@@ -965,7 +965,7 @@ class SunburstSeries extends TreemapSeries {
         parent: SunburstSeries.NodeObject,
         parentValues: SunburstSeries.NodeValuesObject,
         mapOptionsToLevel: (
-            Highcharts.Dictionary<SunburstSeriesOptions>
+            Record<string, SunburstSeriesOptions>
         )
     ): void {
         var childrenValues: Array<SunburstSeries.NodeValuesObject> = [],

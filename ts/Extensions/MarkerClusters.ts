@@ -220,13 +220,13 @@ declare global {
                 processedYData: Array<number>,
                 visibleDataIndexes: Array<number>,
                 options: MarkerClusterLayoutAlgorithmOptions
-            ): Dictionary<MarkerClusterSplitDataArray>;
+            ): Record<string, MarkerClusterSplitDataArray>;
         }
         interface MarkerClusterPreventCollisionObject {
             x: number;
             y: number;
             key: string;
-            groupedData: Dictionary<MarkerClusterSplitDataArray>;
+            groupedData: Record<string, MarkerClusterSplitDataArray>;
             gridSize: number;
             defaultRadius: number;
             clusterRadius: number;
@@ -261,8 +261,8 @@ declare global {
             point: (Point|undefined);
         }
         interface MarkerClusterPointsStateObject {
-            oldState?: Dictionary<MarkerClusterPointsState>;
-            newState: Dictionary<MarkerClusterPointsState>;
+            oldState?: Record<string, MarkerClusterPointsState>;
+            newState: Record<string, MarkerClusterPointsState>;
         }
         interface MarkerClusterInfoObject {
             clusters: Array<ClusterAndNoiseObject>;
@@ -732,7 +732,7 @@ function hideStatePoint(
 
 function destroyOldPoints(
     oldState:
-    (Highcharts.Dictionary<Highcharts.MarkerClusterPointsState>|undefined)
+    (Record<string, Highcharts.MarkerClusterPointsState>|undefined)
 ): void {
     if (oldState) {
         objectEach(oldState, function (state): void {
@@ -1410,7 +1410,7 @@ Scatter.prototype.markerClusterAlgorithms = {
             pointX = 0,
             pointY = 0,
             tempPos,
-            pointClusterDistance: Array<Highcharts.Dictionary<number>> = [],
+            pointClusterDistance: Array<Record<string, number>> = [],
             groupedData, key, i, j;
 
         options.processedGridSize = options.processedDistance;

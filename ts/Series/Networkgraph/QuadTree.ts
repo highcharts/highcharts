@@ -32,7 +32,7 @@ declare global {
                 width: number,
                 height: number
             );
-            public box: Dictionary<number>;
+            public box: Record<string, number>;
             public maxDepth: number;
             public root: QuadTreeNode;
             public calculateMassAndCenter(): void;
@@ -44,9 +44,9 @@ declare global {
             ): void;
         }
         class QuadTreeNode {
-            public constructor(box: Dictionary<number>);
+            public constructor(box: Record<string, number>);
             public body: (boolean|Point);
-            public box: Dictionary<number>;
+            public box: Record<string, number>;
             public boxSize: number;
             public isEmpty: boolean;
             public isInternal: boolean;
@@ -77,7 +77,7 @@ declare global {
  */
 var QuadTreeNode = H.QuadTreeNode = function (
     this: Highcharts.QuadTreeNode,
-    box: Highcharts.Dictionary<number>
+    box: Record<string, number>
 ): void {
     /**
      * Read only. The available space for node.
