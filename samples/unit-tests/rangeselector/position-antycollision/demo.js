@@ -449,7 +449,7 @@ QUnit.test('Rangeselector update', function (assert) {
 QUnit.test('Chart setSize', assert => {
     const chart = Highcharts.stockChart('container', {
         chart: {
-            width: 600
+            width: 800
         },
         rangeSelector: {
             dropdown: 'never'
