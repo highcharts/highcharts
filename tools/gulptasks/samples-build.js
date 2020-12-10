@@ -5,12 +5,15 @@
 const { task, series } = require('gulp');
 const yargs = require('yargs');
 const argv = yargs(process.argv).argv;
-const { deleteDirectory } = require('./lib/fs');
+const { deleteDirectory, getDirectoryPaths } = require('./lib/fs');
 const { success, message } = require('./lib/log');
 const { log } = console;
 
 const { handle: builder } = require('highcharts-demo-manager/lib/cli/cmd.builder');
 const { handle: deployer } = require('highcharts-demo-manager/lib/cli/cmd.demo-deploy');
+
+
+const { shouldUpdate } = require('./lib/git');
 
 const SAMPLES_PATH = 'samples',
     TMP_PATH = 'tmp/samples-html',
@@ -43,10 +46,17 @@ async function cleanSampleHTML() {
  *
  * Usage `npx gulp samples-deploy --paths gantt,highcharts...` or `npx gulp samples-deploy --all`
  * Additional flags: `--verbose --profile <AWS profile>`
+ *
+ * @param {string} [paths]
+ * paths to deploy
+ *
  * @return {void}
  */
-async function deploySamples() {
-    const { paths, all, profile, dryrun } = argv;
+async function deploySamples(paths = void 0) {
+    const { all, profile, dryrun } = argv;
+    if (!paths.length && argv.paths) {
+        paths = argv.paths.split(',');
+    }
 
     const AWSProfile = profile || 'default';
 
@@ -70,13 +80,12 @@ async function deploySamples() {
     }
 
     // Deploy specified paths
-    if (!argv.paths.length) {
+    if (!paths.length) {
         throw new Error('You must specify one or more subfolders, i.e. --paths highcharts,gantt');
     }
 
     message(`Uploading samples to ${S3_BUCKET} `);
-    const subpaths = argv.paths.split(',');
-    const uploadPromises = subpaths.map(subpath => {
+    const uploadPromises = paths.map(subpath => {
         if (!subpath.startsWith('/')) {
             subpath = '/' + subpath;
         }
@@ -96,8 +105,25 @@ async function deploySamples() {
     await Promise.all(uploadPromises);
     success('Done uploading samples!');
 }
+/**
+ * Builds all samples, but only deploys samples where there have been changes in the last commit
+ * @return {void}
+ */
+async function updateSamples() {
+    const sampleDirs = getDirectoryPaths('samples', false);
+    const shouldBeUpdated = sampleDirs.filter(sample => shouldUpdate(sample)).flatMap(dir =>
+        // We need to go deeper
+        getDirectoryPaths(dir, false)
+            .filter(subDir => shouldUpdate(subDir)));
+
+    await buildAllSamples();
+    await deploySamples(shouldBeUpdated.flatMap(path => path.replace(/^samples\//, '')));
+
+}
 
 task('samples-build', series(cleanSampleHTML, buildAllSamples));
 task('samples-deploy', deploySamples);
 task('samples-clean', cleanSampleHTML);
 task('samples-build-and-deploy', series('samples-build', 'samples-deploy'));
+
+task('samples-update', updateSamples);

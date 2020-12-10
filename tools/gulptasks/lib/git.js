@@ -90,7 +90,8 @@ function getFilesChanged() {
 
 
 /**
- * Checks if the latest commit contains a change in the given path
+ * Checks if the latest commit contains a change in the given path.
+ * Note: pretty slow, don't run on a huge array
  *
  * @param {string} path
  * The path to check, i.e. `samples/highcharts/demo`

@@ -68,7 +68,6 @@ async function cleanDemoThumbnails() {
  * Promise
  */
 async function generateThumbnails(tags = void 0) {
-
     if (argv.tags) {
         tags = argv.tags.split(',');
     }
@@ -208,7 +207,6 @@ async function deployOnChanges() {
         message('Changes found, starting build...');
         await cleanDemosHTML();
         await buildAllDemos();
-        await deployDemos();
         message('Deploying...');
         await deployDemos(true);
         await updateThumbnails(true);
