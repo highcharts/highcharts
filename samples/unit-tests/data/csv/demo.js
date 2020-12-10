@@ -689,23 +689,23 @@ QUnit.test('Dot date format', function (assert) {
 QUnit.test(
     'Hex values are not treated as comments (#13283).',
     function (assert) {
-        var chart = Highcharts.chart('container', {
-            chart: {
-                type: 'bar'
-            },
-            data: {
-                csv:
-                    'x;y;color\n' +
-                    '0;1;#F0F\n',
+        Highcharts.data({
+            csv:
+                'x;y;color\n' +
+                '0;1;#F0F\n',
 
-                itemDelimiter: ';',
-                seriesMapping: [{
-                    color: 2
-                }]
+            itemDelimiter: ';',
+            seriesMapping: [{
+                color: 2
+            }],
+
+            parsed: function () {
+                assert.strictEqual(
+                    this.columns[2][1],
+                    '#F0F',
+                    'Color should be a hex value.'
+                );
             }
         });
-
-        var actualColor = chart.series[0].data[0].options.color;
-        assert.strictEqual(actualColor, '#F0F', 'Color must be a hex value');
     }
 );
