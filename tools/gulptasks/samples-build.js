@@ -4,16 +4,16 @@
 
 const { task, series } = require('gulp');
 const yargs = require('yargs');
+const { join } = require('path');
+
 const argv = yargs(process.argv).argv;
-const { deleteDirectory, getDirectoryPaths } = require('./lib/fs');
+const { deleteDirectory } = require('./lib/fs');
 const { success, message } = require('./lib/log');
 const { log } = console;
-
+const { uploadFiles } = require('./lib/uploadS3');
 const { handle: builder } = require('highcharts-demo-manager/lib/cli/cmd.builder');
 const { handle: deployer } = require('highcharts-demo-manager/lib/cli/cmd.demo-deploy');
-
-
-const { shouldUpdate } = require('./lib/git');
+const { getFilesChanged } = require('./lib/git');
 
 const SAMPLES_PATH = 'samples',
     TMP_PATH = 'tmp/samples-html',
@@ -22,7 +22,8 @@ const SAMPLES_PATH = 'samples',
 /**
  * Builds all the samples and places them in `tmp/samples-html`
  *
- * @return {void}
+ * @return {Promise<void>}
+ * Promise
  */
 async function buildAllSamples() {
     await builder({
@@ -50,11 +51,12 @@ async function cleanSampleHTML() {
  * @param {string} [paths]
  * paths to deploy
  *
- * @return {void}
+ * @return {Promise<void>}
+ * Promise
  */
 async function deploySamples(paths = void 0) {
     const { all, profile, dryrun } = argv;
-    if (!paths.length && argv.paths) {
+    if (!paths.length && argv.paths.length) {
         paths = argv.paths.split(',');
     }
 
@@ -89,17 +91,25 @@ async function deploySamples(paths = void 0) {
         if (!subpath.startsWith('/')) {
             subpath = '/' + subpath;
         }
-        const inputPath = `${TMP_PATH}/samples${subpath}`,
-            outputPath = `demos/samples${subpath}`;
+        if (!subpath.includes('.html') && !subpath.endsWith('/')) {
+            subpath = subpath + '/';
+        }
 
-        return deployer({
-            input: inputPath,
-            bucket: S3_BUCKET,
-            AWSProfile,
-            output: outputPath,
-            'make-redirects': true,
-            dryrun
-        });
+        // Upload each version
+        return Promise.all(['', 'embed', 'nonav'].map(thing => {
+            const inputPath = join(TMP_PATH, 'samples', thing, subpath),
+                outputPath = join('demos/samples', thing, subpath);
+
+            return deployer({
+                input: inputPath,
+                bucket: S3_BUCKET,
+                AWSProfile,
+                output: outputPath,
+                'make-redirects': true,
+                dryrun
+            });
+        }));
+
     });
 
     await Promise.all(uploadPromises);
@@ -107,17 +117,36 @@ async function deploySamples(paths = void 0) {
 }
 /**
  * Builds all samples, but only deploys samples where there have been changes in the last commit
- * @return {void}
+ * @return {Promise<void>}
+ * promise
  */
 async function updateSamples() {
-    const sampleDirs = getDirectoryPaths('samples', false);
-    const shouldBeUpdated = sampleDirs.filter(sample => shouldUpdate(sample)).flatMap(dir =>
-        // We need to go deeper
-        getDirectoryPaths(dir, false)
-            .filter(subDir => shouldUpdate(subDir)));
+    const allChanges = await getFilesChanged();
+    const shouldBeUpdated = allChanges.match(/.*samples\/.*?(?=demo\.)/gm);
 
+    if (!shouldBeUpdated) {
+        message('No changes found in `/samples`');
+        return;
+    }
+    // If a demo file was added or removed we should _probably_ update the index file
+    const shouldUpdateIndexPage = shouldBeUpdated.some(logString => logString.match(/^[AD]/));
+
+    // Get just the subpaths and remove duplicates
+    const filtered = shouldBeUpdated.flatMap(path => path.replace(/.*samples\//, ''))
+        .filter((item, pos, arr) => arr.indexOf(item) === pos);
     await buildAllSamples();
-    await deploySamples(shouldBeUpdated.flatMap(path => path.replace(/^samples\//, '')));
+    await deploySamples(filtered);
+
+    if (shouldUpdateIndexPage && !argv.dryrun) {
+        await uploadFiles({
+            name: 'Samples index page',
+            bucket: S3_BUCKET,
+            files: [{
+                from: join(TMP_PATH, '/samples/index.html'),
+                to: 'demos/samples'
+            }]
+        });
+    }
 
 }
 
@@ -125,5 +154,4 @@ task('samples-build', series(cleanSampleHTML, buildAllSamples));
 task('samples-deploy', deploySamples);
 task('samples-clean', cleanSampleHTML);
 task('samples-build-and-deploy', series('samples-build', 'samples-deploy'));
-
 task('samples-update', updateSamples);
