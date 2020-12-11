@@ -1084,15 +1084,16 @@ var RangeSelector = /** @class */ (function () {
             name: name,
             className: 'highcharts-range-selector'
         }, void 0, div);
-        // #14788, setting input.type to an unsupported type throws in IE, so
+        // #14788: Setting input.type to an unsupported type throws in IE, so
         // we need to use setAttribute instead
         input.setAttribute('type', preferredInputType(options.inputDateFormat || '%b %e, %Y'));
+        // Some old Android browsers (0.06% usage as of dec 2020) pretend to
+        // support the type by not setting the type attribute back to 'text',
+        // if it doesnt reject the '1)' then it doesnt actually support the
+        // type. May remove this is in the future.
         if (input.type !== 'text') {
-            // This is the test string modernizr uses
-            input.value = '1)';
+            input.value = '1)'; // This is the test string modernizr uses
             if (input.value === '1)') {
-                // Some Android browsers pretend to support the type, if it
-                // doesnt reject '1)' then it doesnt actually support the type
                 input.setAttribute('type', 'text');
             }
             input.value = '';
