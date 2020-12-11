@@ -1545,18 +1545,6 @@ class RangeSelector {
         // we need to use setAttribute instead
         input.setAttribute('type', preferredInputType(options.inputDateFormat || '%b %e, %Y'));
 
-        // Some old Android browsers (0.06% usage as of dec 2020) pretend to
-        // support the type by not setting the type attribute back to 'text',
-        // if it doesnt reject the '1)' then it doesnt actually support the
-        // type. May remove this is in the future.
-        if (input.type !== 'text') {
-            input.value = '1)'; // This is the test string modernizr uses
-            if (input.value === '1)') {
-                input.setAttribute('type', 'text');
-            }
-            input.value = '';
-        }
-
         if (!chart.styledMode) {
             // Styles
             label.css(merge(chartStyle, options.labelStyle));
