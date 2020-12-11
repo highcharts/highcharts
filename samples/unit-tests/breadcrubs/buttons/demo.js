@@ -187,3 +187,74 @@ QUnit.test('Breadcrumbs format', function (assert) {
         'The last button should have text Go to Fruits.'
     );
 });
+
+QUnit.test('Breadcrumbs formatter', function (assert) {
+    const labels = [1, 2, 3, 4],
+        chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            xAxis: {
+                type: 'category'
+            },
+            series: [{
+                name: "Supply",
+                data: [{
+                    name: "Fruits",
+                    y: 5,
+                    drilldown: "Fruits"
+                }, {
+                    name: "Vegetables",
+                    y: 6,
+                    drilldown: "Vegetables"
+                }, {
+                    name: "Meat",
+                    y: 3
+                }]
+            }],
+            drilldown: {
+                animation: false,
+                breadcrumbs: {
+                    enabled: true,
+                    formatter: function (breadcrumb) {
+                        let index;
+
+                        if (breadcrumb[0] === null) {
+                            index = 0;
+                        } else {
+                            index = breadcrumb[0] + 1;
+                        }
+                        return labels[index];
+                    }
+                },
+                series: [{
+                    name: "Fruits",
+                    id: "Fruits",
+                    data: [{
+                        name: "Citrus",
+                        y: 2,
+                        drilldown: "Citrus"
+                    }, {
+                        name: "Tropical",
+                        y: 5,
+                        drilldown: "Tropical"
+                    }, ['Other', 1]
+                    ]
+                }]
+            }
+        });
+    chart.series[0].points[0].doDrilldown();
+
+    const buttons = chart.drilldown.breadcrumbs.breadcrumbsGroup.element.childNodes;
+
+    assert.strictEqual(
+        buttons[0].textContent,
+        '1',
+        'The first button should have text 1.'
+    );
+    assert.strictEqual(
+        buttons[2].textContent,
+        '2',
+        'The next button should have text 2.'
+    );
+});

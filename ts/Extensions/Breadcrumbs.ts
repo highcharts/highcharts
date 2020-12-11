@@ -65,7 +65,10 @@ declare global {
             click?: BreadcrumbsClickCallbackFunction;
         }
         interface BreadcrumbsButtonsFormatter {
-            (breadcrumbs: any): (string);
+            (
+                breadcrumb: Array<any>,
+                breadcrumbs: Breadcrumbs
+            ): (string);
         }
         interface DrilldownOptions {
             breadcrumbs?: BreadcrumbsOptions;
@@ -627,7 +630,7 @@ class Breadcrumbs {
 
         if (breadcrumbsOptions && breadcrumb[1]) {
             const button = chart.renderer.button(
-                breadcrumbsOptions.formatter ? breadcrumbsOptions.formatter(breadcrumbs) : void 0 ||
+                breadcrumbsOptions.formatter ? breadcrumbsOptions.formatter(breadcrumb, breadcrumbs) : void 0 ||
                     format(breadcrumbsOptions.format as string,
                         { value: breadcrumb[1].name || (lang && lang.mainBreadCrumb) }, chart),
                 posX,
