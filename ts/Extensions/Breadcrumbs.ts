@@ -234,11 +234,20 @@ extend(
             },
 
             /**
-            * A symbol of the seperator.
-            *
-            * @type      {string}
-            * @since     next
-            */
+             * A predefined shape or symbol for the separator. Other possible
+             *  values are `'circle'`, `'square'`,`'diamond'`.
+             * Custom callbacks for symbol path generation can also be added to
+             * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
+             * used by its method name.
+             *
+             * Additionally, the URL to a graphic can be given on this form:
+             * `'url(graphic.png)'`. Note that for the image to be applied to
+             * exported charts, its URL needs to be accessible by the export
+             * server. Recommended size of image is 10x10px.
+             *
+             * @type      {string}
+             * @since     next
+             */
             separator: 'triangle',
 
             /**
@@ -623,11 +632,18 @@ class Breadcrumbs {
                         { value: breadcrumb[1].name || (lang && lang.mainBreadCrumb) }, chart),
                 posX,
                 posY,
-                function (): void {
-                    if (breadcrumbsOptions.events && breadcrumbsOptions.events.click) {
-                        breadcrumbsOptions.events.click(button as any, breadcrumbs as Breadcrumbs);
-                        // Prevent from click on the current level
-                    } else if (breadcrumbsList[breadcrumbsList.length - 1][1].name !== button.textStr) {
+                function (e: (Event|Highcharts.Dictionary<any>)): void {
+                    // extract events from button object and call
+                    const buttonEvents = breadcrumbsOptions.events && breadcrumbsOptions.events.click;
+                    let callDefaultEvent;
+
+                    if (buttonEvents) {
+                        callDefaultEvent = buttonEvents.call(breadcrumbsOptions, e as any, breadcrumbs);
+                    }
+
+                    // Prevent from click on the current level
+                    if (callDefaultEvent !== false &&
+                        breadcrumbsList[breadcrumbsList.length - 1][1].name !== button.textStr) {
                         breadcrumbs.multipleDrillUp(breadcrumb[0]);
                     }
                 })
@@ -659,26 +675,35 @@ class Breadcrumbs {
     public renderSeparator(this: Breadcrumbs, posX: number, posY: number): SVGElement|void {
         const breadcrumbs = this,
             chart = this.chart,
-            breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs;
+            breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs,
+            size = 10;
 
         if (breadcrumbsOptions) {
-            return chart.renderer.symbol(
-                breadcrumbsOptions.separator as string,
-                posX + 5,
-                posY - 10,
-                10,
-                10
-            )
-                .attr({
-                    fill: 'white',
-                    stroke: 'black',
-                    'stroke-width': 1,
-                    rotation: 90,
-                    rotationOriginX: posX,
-                    rotationOriginY: posY
-                })
-                .add(breadcrumbs.breadcrumbsGroup)
-                .addClass('highcharts-drilldown-breadcrumbs-separator');
+            const separatorSymbol = breadcrumbsOptions.separator,
+                serparatorRotation = separatorSymbol && separatorSymbol.slice(0, 3) === 'url' ? 0 : 90;
+
+            const separator = chart.renderer.symbol(
+                    separatorSymbol as string,
+                    posX,
+                    posY,
+                    size,
+                    size
+                )
+                    .attr({
+                        fill: 'white',
+                        stroke: 'black',
+                        'stroke-width': 1,
+                        rotation: serparatorRotation,
+                        rotationOriginX: posX,
+                        rotationOriginY: posY
+                    })
+                    .add(breadcrumbs.breadcrumbsGroup)
+                    .addClass('highcharts-drilldown-breadcrumbs-separator'),
+                separatorBBox = separator.getBBox();
+
+            separator.translate(separatorBBox.width, separatorBBox.height / 2);
+
+            return separator;
         }
     }
 

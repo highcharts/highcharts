@@ -136,11 +136,20 @@ extend(defaultOptions.drilldown, {
             'position': 'absolute'
         },
         /**
-        * A symbol of the seperator.
-        *
-        * @type      {string}
-        * @since     next
-        */
+         * A predefined shape or symbol for the separator. Other possible
+         *  values are `'circle'`, `'square'`,`'diamond'`.
+         * Custom callbacks for symbol path generation can also be added to
+         * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
+         * used by its method name.
+         *
+         * Additionally, the URL to a graphic can be given on this form:
+         * `'url(graphic.png)'`. Note that for the image to be applied to
+         * exported charts, its URL needs to be accessible by the export
+         * server. Recommended size of image is 10x10px.
+         *
+         * @type      {string}
+         * @since     next
+         */
         separator: 'triangle',
         /**
         * A useHTML property.
@@ -456,12 +465,16 @@ var Breadcrumbs = /** @class */ (function () {
         var breadcrumbs = this, chart = this.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs, lang = chart.options.lang;
         if (breadcrumbsOptions && breadcrumb[1]) {
             var button_1 = chart.renderer.button(breadcrumbsOptions.formatter ? breadcrumbsOptions.formatter(breadcrumbs) : void 0 ||
-                format(breadcrumbsOptions.format, { value: breadcrumb[1].name || (lang && lang.mainBreadCrumb) }, chart), posX, posY, function () {
-                if (breadcrumbsOptions.events && breadcrumbsOptions.events.click) {
-                    breadcrumbsOptions.events.click(button_1, breadcrumbs);
-                    // Prevent from click on the current level
+                format(breadcrumbsOptions.format, { value: breadcrumb[1].name || (lang && lang.mainBreadCrumb) }, chart), posX, posY, function (e) {
+                // extract events from button object and call
+                var buttonEvents = breadcrumbsOptions.events && breadcrumbsOptions.events.click;
+                var callDefaultEvent;
+                if (buttonEvents) {
+                    callDefaultEvent = buttonEvents.call(breadcrumbsOptions, e, breadcrumbs);
                 }
-                else if (breadcrumbsList[breadcrumbsList.length - 1][1].name !== button_1.textStr) {
+                // Prevent from click on the current level
+                if (callDefaultEvent !== false &&
+                    breadcrumbsList[breadcrumbsList.length - 1][1].name !== button_1.textStr) {
                     breadcrumbs.multipleDrillUp(breadcrumb[0]);
                 }
             })
@@ -490,19 +503,22 @@ var Breadcrumbs = /** @class */ (function () {
     *        Returns the SVG button
     */
     Breadcrumbs.prototype.renderSeparator = function (posX, posY) {
-        var breadcrumbs = this, chart = this.chart, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs;
+        var breadcrumbs = this, chart = this.chart, breadcrumbsOptions = chart.options.drilldown && chart.options.drilldown.breadcrumbs, size = 10;
         if (breadcrumbsOptions) {
-            return chart.renderer.symbol(breadcrumbsOptions.separator, posX + 5, posY - 10, 10, 10)
+            var separatorSymbol = breadcrumbsOptions.separator, serparatorRotation = separatorSymbol && separatorSymbol.slice(0, 3) === 'url' ? 0 : 90;
+            var separator = chart.renderer.symbol(separatorSymbol, posX, posY, size, size)
                 .attr({
                 fill: 'white',
                 stroke: 'black',
                 'stroke-width': 1,
-                rotation: 90,
+                rotation: serparatorRotation,
                 rotationOriginX: posX,
                 rotationOriginY: posY
             })
                 .add(breadcrumbs.breadcrumbsGroup)
-                .addClass('highcharts-drilldown-breadcrumbs-separator');
+                .addClass('highcharts-drilldown-breadcrumbs-separator'), separatorBBox = separator.getBBox();
+            separator.translate(separatorBBox.width, separatorBBox.height / 2);
+            return separator;
         }
     };
     /**
