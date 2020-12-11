@@ -721,7 +721,7 @@ class Pointer {
                 );
 
             if (// Check that we actually found a point on the series.
-                isObject(point, true) &&
+                isObject(point, true) && point.series &&
                 // Use the new point if it is closer.
                 (!isObject(closest, true) ||
                 (sort(closest as any, point as any) > 0))
