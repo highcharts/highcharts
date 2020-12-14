@@ -137,6 +137,7 @@ class WilliamsRIndicator extends SMAIndicator {
 }
 
 interface WilliamsRIndicator {
+    nameBase: string;
     pointClass: typeof WilliamsRPoint;
 }
 extend(WilliamsRIndicator.prototype, {

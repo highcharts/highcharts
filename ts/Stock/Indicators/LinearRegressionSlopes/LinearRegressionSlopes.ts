@@ -95,6 +95,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
  * */
 interface LinearRegressionSlopesIndicator {
     pointClass: typeof LinearRegressionSlopesPoint;
+    nameBase: string;
 }
 
 extend(LinearRegressionSlopesIndicator.prototype, {

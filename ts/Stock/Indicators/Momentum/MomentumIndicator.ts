@@ -147,6 +147,7 @@ class MomentumIndicator extends SMAIndicator {
 
 interface MomentumIndicator {
     pointClass: typeof MomentumPoint;
+    nameBase: string;
 }
 extend(MomentumIndicator.prototype, {
     nameBase: 'Momentum'

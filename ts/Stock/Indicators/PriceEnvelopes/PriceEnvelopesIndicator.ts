@@ -293,6 +293,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
 }
 
 interface PriceEnvelopesIndicator {
+    nameComponents: Array<string>;
     nameBase: string;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;

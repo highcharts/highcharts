@@ -29,7 +29,6 @@ const {
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
-    extend,
     merge
 } = U;
 
