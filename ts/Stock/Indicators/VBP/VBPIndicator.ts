@@ -775,6 +775,7 @@ namespace VBPIndicator {
 
 interface VBPIndicator {
     nameBase: string;
+    calculateOn: string;
     pointClass: typeof VBPPoint;
 
     crispCol: ColumnSeries['crispCol'];
