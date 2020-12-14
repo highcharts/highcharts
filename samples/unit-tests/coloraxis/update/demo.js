@@ -135,3 +135,38 @@ QUnit.test('Color axis update (#3207)', function (assert) {
         'Export has two legend items'
     );
 });
+
+QUnit.test('Color axis visibility (#14283)', assert => {
+    const chart = Highcharts.chart('container', {
+        colorAxis: {
+            id: "colorAxis"
+        },
+        series: [{
+            type: "scatter",
+            data: [
+                [0, 2],
+                [1, 4],
+                [2, 6],
+                [3, 8]
+            ]
+        }]
+    });
+
+    assert.equal(
+        $('.highcharts-legend-item', '#container').length,
+        1,
+        "Color axis should be visible."
+    );
+
+    chart.update({
+        colorAxis: {
+            visible: false
+        }
+    });
+
+    assert.equal(
+        $('.highcharts-legend-item', '#container').length,
+        0,
+        "Color axis should be invisible."
+    );
+});

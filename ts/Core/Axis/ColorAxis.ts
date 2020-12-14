@@ -1293,6 +1293,14 @@ class ColorAxis extends Axis implements AxisLike {
         chart.isDirtyLegend = true;
     }
 
+    // Removing the whole axis (#14283)
+    public destroy(): void {
+        this.chart.isDirtyLegend = true;
+
+        this.destroyItems();
+        H.Axis.prototype.destroy.call(this);
+    }
+
     /**
      * Removes the color axis and the related legend item.
      *
