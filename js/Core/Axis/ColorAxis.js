@@ -550,7 +550,6 @@ var ColorAxis = /** @class */ (function (_super) {
     ColorAxis.prototype.destroyItems = function () {
         var axis = this;
         var chart = axis.chart;
-        console.log('im in destroyItems method');
         if (axis.legendItem) {
             chart.legend.destroyItem(axis);
         }
@@ -561,8 +560,8 @@ var ColorAxis = /** @class */ (function (_super) {
         }
         chart.isDirtyLegend = true;
     };
+    // Removing the whole axis (#14283)
     ColorAxis.prototype.destroy = function () {
-        console.log('im in destroy method');
         this.chart.isDirtyLegend = true;
         this.destroyItems();
         H.Axis.prototype.destroy.call(this);
