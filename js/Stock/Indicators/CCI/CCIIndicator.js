@@ -21,7 +21,7 @@ var __extends = (this && this.__extends) || (function () {
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-var isArray = U.isArray, extend = U.extend, merge = U.merge;
+var isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**

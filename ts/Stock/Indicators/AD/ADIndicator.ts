@@ -185,6 +185,8 @@ class ADIndicator extends SMAIndicator {
 
 interface ADIndicator {
     pointClass: typeof ADPoint;
+    nameComponents: Array<string>;
+    nameBase: string;
 }
 extend(ADIndicator.prototype, {
     nameComponents: (false as any),

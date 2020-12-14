@@ -909,8 +909,6 @@ class IKHIndicator extends SMAIndicator {
 *
 * */
 interface IKHIndicator {
-
-
     pointClass: typeof IKHPoint;
     nameComponents: Array<string>;
     pointValKey: string;
