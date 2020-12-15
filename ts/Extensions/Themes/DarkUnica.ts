@@ -15,10 +15,13 @@
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+const {
+    createElement,
+    setOptions
+} = U;
 
 // Load the fonts
-H.createElement('link', {
+createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Unica+One',
     rel: 'stylesheet',
     type: 'text/css'

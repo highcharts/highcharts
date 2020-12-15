@@ -330,7 +330,7 @@ var charts = H.charts, doc = H.doc, win = H.win;
  *
  * @namespace Highcharts
  */
-H.timers = [];
+''; // detach doclets above
 /**
  * Provide error messages for debugging, with links to online explanation. This
  * function can be overridden to provide custom error handling.
@@ -402,7 +402,6 @@ function error(code, stop, chart, params) {
 (function (error) {
     error.messages = [];
 })(error || (error = {}));
-H.error = error;
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
@@ -478,7 +477,6 @@ function merge() {
     }
     return ret;
 }
-H.merge = merge;
 /**
  * Constrain a value to within a lower and upper threshold.
  *
@@ -533,9 +531,9 @@ function cleanRecursively(newer, older) {
  * @return {number}
  *         number
  */
-var pInt = H.pInt = function pInt(s, mag) {
+function pInt(s, mag) {
     return parseInt(s, mag || 10);
-};
+}
 /**
  * Utility function to check for string type.
  *
@@ -547,9 +545,9 @@ var pInt = H.pInt = function pInt(s, mag) {
  * @return {boolean}
  *         True if the argument is a string.
  */
-var isString = H.isString = function isString(s) {
+function isString(s) {
     return typeof s === 'string';
-};
+}
 /**
  * Utility function to check if an item is an array.
  *
@@ -561,10 +559,10 @@ var isString = H.isString = function isString(s) {
  * @return {boolean}
  *         True if the argument is an array.
  */
-var isArray = H.isArray = function isArray(obj) {
+function isArray(obj) {
     var str = Object.prototype.toString.call(obj);
     return str === '[object Array]' || str === '[object Array Iterator]';
-};
+}
 /**
  * Utility function to check if an item is of type object.
  *
@@ -584,7 +582,6 @@ function isObject(obj, strict) {
         typeof obj === 'object' &&
         (!strict || !isArray(obj))); // eslint-disable-line @typescript-eslint/no-explicit-any
 }
-H.isObject = isObject;
 /**
  * Utility function to check if an Object is a HTML Element.
  *
@@ -596,9 +593,9 @@ H.isObject = isObject;
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-var isDOMElement = H.isDOMElement = function isDOMElement(obj) {
+function isDOMElement(obj) {
     return isObject(obj) && typeof obj.nodeType === 'number';
-};
+}
 /**
  * Utility function to check if an Object is a class.
  *
@@ -610,12 +607,12 @@ var isDOMElement = H.isDOMElement = function isDOMElement(obj) {
  * @return {boolean}
  *         True if the argument is a class.
  */
-var isClass = H.isClass = function isClass(obj) {
+function isClass(obj) {
     var c = obj && obj.constructor;
     return !!(isObject(obj, true) &&
         !isDOMElement(obj) &&
         (c && c.name && c.name !== 'Object'));
-};
+}
 /**
  * Utility function to check if an item is a number and it is finite (not NaN,
  * Infinity or -Infinity).
@@ -628,9 +625,9 @@ var isClass = H.isClass = function isClass(obj) {
  * @return {boolean}
  *         True if the item is a finite number
  */
-var isNumber = H.isNumber = function isNumber(n) {
+function isNumber(n) {
     return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
-};
+}
 /**
  * Remove the last occurence of an item from an array.
  *
@@ -644,7 +641,7 @@ var isNumber = H.isNumber = function isNumber(n) {
  *
  * @return {void}
  */
-var erase = H.erase = function erase(arr, item) {
+function erase(arr, item) {
     var i = arr.length;
     while (i--) {
         if (arr[i] === item) {
@@ -652,7 +649,7 @@ var erase = H.erase = function erase(arr, item) {
             break;
         }
     }
-};
+}
 /**
  * Check if an object is null or undefined.
  *
@@ -664,9 +661,9 @@ var erase = H.erase = function erase(arr, item) {
  * @return {boolean}
  *         False if the object is null or undefined, otherwise true.
  */
-var defined = H.defined = function defined(obj) {
+function defined(obj) {
     return typeof obj !== 'undefined' && obj !== null;
-};
+}
 /**
  * Set or get an attribute or an object of attributes. To use as a setter, pass
  * a key and a value, or let the second argument be a collection of keys and
@@ -711,7 +708,6 @@ function attr(elem, prop, value) {
     }
     return ret;
 }
-H.attr = attr;
 /**
  * Check if an element is an array, and if not, make it into an array.
  *
@@ -723,9 +719,9 @@ H.attr = attr;
  * @return {Array}
  *         The produced or original array.
  */
-var splat = H.splat = function splat(obj) {
+function splat(obj) {
     return isArray(obj) ? obj : [obj];
-};
+}
 /**
  * Set a timeout if the delay is given, otherwise perform the function
  * synchronously.
@@ -745,13 +741,13 @@ var splat = H.splat = function splat(obj) {
  *         An identifier for the timeout that can later be cleared with
  *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-var syncTimeout = H.syncTimeout = function syncTimeout(fn, delay, context) {
+function syncTimeout(fn, delay, context) {
     if (delay > 0) {
         return setTimeout(fn, delay, context);
     }
     fn.call(0, context);
     return -1;
-};
+}
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
  * (e.g. by `chart.destroy()`). For the details see
@@ -764,11 +760,11 @@ var syncTimeout = H.syncTimeout = function syncTimeout(fn, delay, context) {
  *
  * @return {void}
  */
-var internalClearTimeout = H.clearTimeout = function (id) {
+function internalClearTimeout(id) {
     if (defined(id)) {
         clearTimeout(id);
     }
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to extend an object with the members of another.
@@ -784,7 +780,7 @@ var internalClearTimeout = H.clearTimeout = function (id) {
  * @return {T}
  *         Object a, the original object.
  */
-var extend = H.extend = function extend(a, b) {
+function extend(a, b) {
     /* eslint-enable valid-jsdoc */
     var n;
     if (!a) {
@@ -794,7 +790,7 @@ var extend = H.extend = function extend(a, b) {
         a[n] = b[n];
     }
     return a;
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -817,7 +813,6 @@ function pick() {
         }
     }
 }
-H.pick = pick;
 /**
  * Set CSS on a given element.
  *
@@ -831,7 +826,7 @@ H.pick = pick;
  *
  * @return {void}
  */
-var css = H.css = function css(el, styles) {
+function css(el, styles) {
     if (H.isMS && !H.svg) { // #2686
         if (styles && typeof styles.opacity !== 'undefined') {
             styles.filter =
@@ -839,7 +834,7 @@ var css = H.css = function css(el, styles) {
         }
     }
     extend(el.style, styles);
-};
+}
 /**
  * Utility function to create an HTML element with attributes and styles.
  *
@@ -863,7 +858,7 @@ var css = H.css = function css(el, styles) {
  * @return {Highcharts.HTMLDOMElement}
  *         The created DOM element.
  */
-var createElement = H.createElement = function createElement(tag, attribs, styles, parent, nopad) {
+function createElement(tag, attribs, styles, parent, nopad) {
     var el = doc.createElement(tag);
     if (attribs) {
         extend(el, attribs);
@@ -878,7 +873,7 @@ var createElement = H.createElement = function createElement(tag, attribs, style
         parent.appendChild(el);
     }
     return el;
-};
+}
 // eslint-disable-next-line valid-jsdoc
 /**
  * Extend a prototyped class by new members.
@@ -895,12 +890,12 @@ var createElement = H.createElement = function createElement(tag, attribs, style
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-var extendClass = H.extendClass = function extendClass(parent, members) {
+function extendClass(parent, members) {
     var obj = (function () { });
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
     return obj;
-};
+}
 /**
  * Left-pad a string to a given length by adding a character repetetively.
  *
@@ -918,13 +913,13 @@ var extendClass = H.extendClass = function extendClass(parent, members) {
  * @return {string}
  *         The padded string.
  */
-var pad = H.pad = function pad(number, length, padder) {
+function pad(number, length, padder) {
     return new Array((length || 2) +
         1 -
         String(number)
             .replace('-', '')
             .length).join(padder || '0') + number;
-};
+}
 /**
  * Return a length based on either the integer value, or a percentage of a base.
  *
@@ -943,11 +938,11 @@ var pad = H.pad = function pad(number, length, padder) {
  * @return {number}
  *         The computed length.
  */
-var relativeLength = H.relativeLength = function relativeLength(value, base, offset) {
+function relativeLength(value, base, offset) {
     return (/%$/).test(value) ?
         (base * parseFloat(value) / 100) + (offset || 0) :
         parseFloat(value);
-};
+}
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
@@ -965,7 +960,7 @@ var relativeLength = H.relativeLength = function relativeLength(value, base, off
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
  */
-var wrap = H.wrap = function wrap(obj, method, func) {
+function wrap(obj, method, func) {
     var proceed = obj[method];
     obj[method] = function () {
         var args = Array.prototype.slice.call(arguments), outerArgs = arguments, ctx = this, ret;
@@ -977,7 +972,7 @@ var wrap = H.wrap = function wrap(obj, method, func) {
         ctx.proceed = null;
         return ret;
     };
-};
+}
 /**
  * Format a string according to a subset of the rules of Python's String.format
  * method.
@@ -1004,7 +999,7 @@ var wrap = H.wrap = function wrap(obj, method, func) {
  * @return {string}
  *         The formatted string.
  */
-var format = H.format = function (str, ctx, chart) {
+function format(str, ctx, chart) {
     var splitter = '{', isInside = false, segment, valueAndFormat, ret = [], val, index;
     var floatRegex = /f$/;
     var decRegex = /\.([0-9])/;
@@ -1045,7 +1040,7 @@ var format = H.format = function (str, ctx, chart) {
     }
     ret.push(str);
     return ret.join('');
-};
+}
 /**
  * Get the magnitude of a number.
  *
@@ -1057,9 +1052,9 @@ var format = H.format = function (str, ctx, chart) {
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-var getMagnitude = H.getMagnitude = function (num) {
+function getMagnitude(num) {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
-};
+}
 /**
  * Take an interval and normalize it to multiples of round numbers.
  *
@@ -1089,7 +1084,7 @@ var getMagnitude = H.getMagnitude = function (num) {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-var normalizeTickInterval = H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
+function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, hasTickAmount) {
     var normalized, i, retInterval = interval;
     // round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, 1);
@@ -1131,7 +1126,7 @@ var normalizeTickInterval = H.normalizeTickInterval = function (interval, multip
     // precision (#6085).
     retInterval = correctFloat(retInterval * magnitude, -Math.round(Math.log(0.001) / Math.LN10));
     return retInterval;
-};
+}
 /**
  * Sort an object array and keep the order of equal items. The ECMAScript
  * standard does not specify the behaviour when items are equal.
@@ -1146,7 +1141,7 @@ var normalizeTickInterval = H.normalizeTickInterval = function (interval, multip
  *
  * @return {void}
  */
-var stableSort = H.stableSort = function stableSort(arr, sortFunction) {
+function stableSort(arr, sortFunction) {
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
     // function
@@ -1163,7 +1158,7 @@ var stableSort = H.stableSort = function stableSort(arr, sortFunction) {
     for (i = 0; i < length; i++) {
         delete arr[i].safeI; // stable sort index
     }
-};
+}
 /**
  * Non-recursive method to find the lowest member of an array. `Math.min` raises
  * a maximum call stack size exceeded error in Chrome when trying to apply more
@@ -1177,7 +1172,7 @@ var stableSort = H.stableSort = function stableSort(arr, sortFunction) {
  * @return {number}
  *         The lowest number.
  */
-var arrayMin = H.arrayMin = function arrayMin(data) {
+function arrayMin(data) {
     var i = data.length, min = data[0];
     while (i--) {
         if (data[i] < min) {
@@ -1185,7 +1180,7 @@ var arrayMin = H.arrayMin = function arrayMin(data) {
         }
     }
     return min;
-};
+}
 /**
  * Non-recursive method to find the lowest member of an array. `Math.max` raises
  * a maximum call stack size exceeded error in Chrome when trying to apply more
@@ -1199,7 +1194,7 @@ var arrayMin = H.arrayMin = function arrayMin(data) {
  * @return {number}
  *         The highest number.
  */
-var arrayMax = H.arrayMax = function arrayMax(data) {
+function arrayMax(data) {
     var i = data.length, max = data[0];
     while (i--) {
         if (data[i] > max) {
@@ -1207,7 +1202,7 @@ var arrayMax = H.arrayMax = function arrayMax(data) {
         }
     }
     return max;
-};
+}
 /**
  * Utility method that destroys any SVGElement instances that are properties on
  * the given object. It loops all properties and invokes destroy if there is a
@@ -1221,18 +1216,17 @@ var arrayMax = H.arrayMax = function arrayMax(data) {
  * @param {*} [except]
  *        Exception, do not destroy this property, only delete it.
  */
-var destroyObjectProperties = H.destroyObjectProperties =
-    function destroyObjectProperties(obj, except) {
-        objectEach(obj, function (val, n) {
-            // If the object is non-null and destroy is defined
-            if (val && val !== except && val.destroy) {
-                // Invoke the destroy
-                val.destroy();
-            }
-            // Delete the property from the object.
-            delete obj[n];
-        });
-    };
+function destroyObjectProperties(obj, except) {
+    objectEach(obj, function (val, n) {
+        // If the object is non-null and destroy is defined
+        if (val && val !== except && val.destroy) {
+            // Invoke the destroy
+            val.destroy();
+        }
+        // Delete the property from the object.
+        delete obj[n];
+    });
+}
 /**
  * Discard a HTML element by moving it to the bin and delete.
  *
@@ -1241,8 +1235,7 @@ var destroyObjectProperties = H.destroyObjectProperties =
  * @param {Highcharts.HTMLDOMElement} element
  *        The HTML node to discard.
  */
-var discardElement = H.discardElement = function discardElement(element) {
-    var garbageBin = H.garbageBin;
+function discardElement(element) {
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
         garbageBin = createElement('div');
@@ -1252,7 +1245,8 @@ var discardElement = H.discardElement = function discardElement(element) {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-};
+}
+var garbageBin;
 /**
  * Fix JS round off float errors.
  *
@@ -1267,15 +1261,15 @@ var discardElement = H.discardElement = function discardElement(element) {
  * @return {number}
  *         The corrected float number.
  */
-var correctFloat = H.correctFloat = function correctFloat(num, prec) {
+function correctFloat(num, prec) {
     return parseFloat(num.toPrecision(prec || 14));
-};
+}
 /**
  * The time unit lookup
  *
  * @ignore
  */
-var timeUnits = H.timeUnits = {
+var timeUnits = {
     millisecond: 1,
     second: 1000,
     minute: 60000,
@@ -1311,7 +1305,7 @@ var timeUnits = H.timeUnits = {
  * @return {string}
  *         The formatted number.
  */
-var numberFormat = H.numberFormat = function numberFormat(number, decimals, decimalPoint, thousandsSep) {
+function numberFormat(number, decimals, decimalPoint, thousandsSep) {
     number = +number || 0;
     decimals = +decimals;
     var lang = H.defaultOptions.lang, origDec = (number.toString().split('.')[1] || '').split('e')[0].length, strinteger, thousands, ret, roundedNumber, exponent = number.toString().split('e'), fractionDigits, firstDecimals = decimals;
@@ -1380,7 +1374,7 @@ var numberFormat = H.numberFormat = function numberFormat(number, decimals, deci
         ret += 'e' + exponent[1];
     }
     return ret;
-};
+}
 /**
  * Easing definition
  *
@@ -1448,7 +1442,7 @@ function getNestedProperty(path, obj) {
  * @return {number|string}
  *         The numeric value.
  */
-var getStyle = H.getStyle = function (el, prop, toInt) {
+function getStyle(el, prop, toInt) {
     var style;
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -1488,7 +1482,7 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
         }
     }
     return style;
-};
+}
 /**
  * Search for an item in an array.
  *
@@ -1508,10 +1502,10 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
  * @return {number}
  *         The index within the array, or -1 if not found.
  */
-var inArray = H.inArray = function (item, arr, fromIndex) {
+function inArray(item, arr, fromIndex) {
     error(32, false, void 0, { 'Highcharts.inArray': 'use Array.indexOf' });
     return arr.indexOf(item, fromIndex);
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Return the value of the first element in the array that satisfies the
@@ -1529,7 +1523,7 @@ var inArray = H.inArray = function (item, arr, fromIndex) {
  * @return {T|undefined}
  *         The value of the element.
  */
-var find = H.find = Array.prototype.find ?
+var find = Array.prototype.find ?
     /* eslint-enable valid-jsdoc */
     function (arr, callback) {
         return arr.find(callback);
@@ -1555,10 +1549,10 @@ var find = H.find = Array.prototype.find ?
  * @return {Array<string>}
  *         An array of strings that represents all the properties.
  */
-H.keys = function (obj) {
+function keys(obj) {
     error(32, false, void 0, { 'Highcharts.keys': 'use Object.keys' });
     return Object.keys(obj);
-};
+}
 /**
  * Get the element's offset position, corrected for `overflow: auto`.
  *
@@ -1571,7 +1565,7 @@ H.keys = function (obj) {
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-var offset = H.offset = function offset(el) {
+function offset(el) {
     var docElem = doc.documentElement, box = (el.parentElement || el.parentNode) ?
         el.getBoundingClientRect() :
         { top: 0, left: 0 };
@@ -1581,7 +1575,7 @@ var offset = H.offset = function offset(el) {
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Iterate over object key pairs in an object.
@@ -1602,14 +1596,14 @@ var offset = H.offset = function offset(el) {
  *
  * @return {void}
  */
-var objectEach = H.objectEach = function objectEach(obj, fn, ctx) {
+function objectEach(obj, fn, ctx) {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }
-};
+}
 /**
  * Iterate over an array.
  *
@@ -1735,7 +1729,7 @@ objectEach({
  * @return {Function}
  *         A callback function to remove the added event.
  */
-var addEvent = H.addEvent = function (el, type, fn, options) {
+function addEvent(el, type, fn, options) {
     /* eslint-enable valid-jsdoc */
     if (options === void 0) { options = {}; }
     // Add hcEvents to either the prototype (in case we're running addEvent on a
@@ -1780,7 +1774,7 @@ var addEvent = H.addEvent = function (el, type, fn, options) {
     return function () {
         removeEvent(el, type, fn);
     };
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Remove an event that was added with {@link Highcharts#addEvent}.
@@ -1800,7 +1794,7 @@ var addEvent = H.addEvent = function (el, type, fn, options) {
  *
  * @return {void}
  */
-var removeEvent = H.removeEvent = function removeEvent(el, type, fn) {
+function removeEvent(el, type, fn) {
     /* eslint-enable valid-jsdoc */
     /**
      * @private
@@ -1861,7 +1855,7 @@ var removeEvent = H.removeEvent = function removeEvent(el, type, fn) {
             delete owner.hcEvents;
         }
     }
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Fire an event that was registered with {@link Highcharts#addEvent}.
@@ -1885,7 +1879,7 @@ var removeEvent = H.removeEvent = function removeEvent(el, type, fn) {
  *
  * @return {void}
  */
-var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunction) {
+function fireEvent(el, type, eventArguments, defaultFunction) {
     /* eslint-enable valid-jsdoc */
     var e, i;
     eventArguments = eventArguments || {};
@@ -1955,7 +1949,7 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
     if (defaultFunction && !eventArguments.defaultPrevented) {
         defaultFunction.call(el, eventArguments);
     }
-};
+}
 var serialMode;
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
@@ -1970,7 +1964,7 @@ var serialMode;
  * @return {string}
  * A unique key.
  */
-var uniqueKey = H.uniqueKey = (function () {
+var uniqueKey = (function () {
     var hash = Math.random().toString(36).substring(2, 9) + '-';
     var id = 0;
     return function () {
@@ -2001,12 +1995,12 @@ var uniqueKey = H.uniqueKey = (function () {
  * @return {boolean|undefined}
  * State of the serial mode.
  */
-var useSerialIds = H.useSerialIds = function (mode) {
+function useSerialIds(mode) {
     return (serialMode = pick(mode, serialMode));
-};
-var isFunction = H.isFunction = function (obj) {
+}
+function isFunction(obj) {
     return typeof obj === 'function';
-};
+}
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
  * for outside modules wasn't enough because the setOptions method created a new
@@ -2129,6 +2123,7 @@ var utilitiesModule = {
     isNumber: isNumber,
     isObject: isObject,
     isString: isString,
+    keys: keys,
     merge: merge,
     normalizeTickInterval: normalizeTickInterval,
     numberFormat: numberFormat,

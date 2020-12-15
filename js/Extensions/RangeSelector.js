@@ -16,7 +16,7 @@ var defaultOptions = O.defaultOptions;
 import palette from '../Core/Color/Palette.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat;
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pad = U.pad, pick = U.pick, pInt = U.pInt, splat = U.splat;
 /**
  * Define the time span for the button
  *
@@ -985,7 +985,7 @@ var RangeSelector = /** @class */ (function () {
         }
         else if (H.isSafari && !hasTimezone(input)) {
             var offset = new Date(input).getTimezoneOffset() / 60;
-            input += offset <= 0 ? "+" + H.pad(-offset) + ":00" : "-" + H.pad(offset) + ":00";
+            input += offset <= 0 ? "+" + pad(-offset) + ":00" : "-" + pad(offset) + ":00";
         }
         var date = Date.parse(input);
         // If the value isn't parsed directly to a value by the

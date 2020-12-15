@@ -41,6 +41,7 @@ const {
     isNumber,
     merge,
     objectEach,
+    pad,
     pick,
     pInt,
     splat
@@ -1399,7 +1400,7 @@ class RangeSelector {
             input += 'Z';
         } else if (H.isSafari && !hasTimezone(input)) {
             const offset = new Date(input).getTimezoneOffset() / 60;
-            input += offset <= 0 ? `+${H.pad(-offset)}:00` : `-${H.pad(offset)}:00`;
+            input += offset <= 0 ? `+${pad(-offset)}:00` : `-${pad(offset)}:00`;
         }
         let date = Date.parse(input);
 
