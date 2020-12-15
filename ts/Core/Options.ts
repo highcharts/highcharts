@@ -16,6 +16,7 @@ import type {
     VerticalAlignValue
 } from './Renderer/AlignObject';
 import type AnimationOptions from './Animation/AnimationOptions';
+import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';

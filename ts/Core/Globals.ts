@@ -109,7 +109,13 @@ declare global {
             qualifiedName: string,
             value: (boolean|number|string)
         ): void;
-    }
+    }/*
+    interface Highcharts {
+        /**
+         * @deprecated
+         * /
+        [key: string]: any;
+    }*/
     interface ObjectConstructor {
         /**
          * Sets the prototype of a specified object o to object proto or null.
