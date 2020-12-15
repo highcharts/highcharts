@@ -16,10 +16,13 @@
 
 import Highcharts from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+const {
+    createElement,
+    setOptions
+} = U;
 
 // Load the fonts
-Highcharts.createElement('link', {
+createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Dosis:400,600',
     rel: 'stylesheet',
     type: 'text/css'
