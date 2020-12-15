@@ -204,6 +204,24 @@ type PointerClass = typeof Pointer;
  * @type {Array<Highcharts.SelectDataObject>}
  */
 
+/**
+ * Chart position and scale.
+ *
+ * @interface Highcharts.ChartPositionObject
+ *//**
+ * @name Highcharts.ChartPositionObject#left
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleX
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleY
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#top
+ * @type {number}
+ */
+
 ''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
