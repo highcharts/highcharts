@@ -160,6 +160,7 @@ var HistogramSeries = /** @class */ (function (_super) {
     HistogramSeries.prototype.setDerivedData = function () {
         var yData = this.baseSeries.yData;
         if (!yData.length) {
+            this.setData([]);
             return;
         }
         var data = this.derivedData(yData, this.binsNumber(), this.options.binWidth);
