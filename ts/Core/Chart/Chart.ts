@@ -213,7 +213,6 @@ class Chart {
     public colorCounter: number = void 0 as any;
     public container: globalThis.HTMLElement = void 0 as any;
     public containerHeight?: string;
-    public containerScaling?: { scaleX: number; scaleY: number };
     public containerWidth?: string;
     public credits?: SVGElement;
     public caption?: SVGElement;
@@ -1612,6 +1611,8 @@ class Chart {
             height = optionsChart.height || getStyle(renderTo, 'height'),
             target = e ? e.target : win;
 
+        delete chart.pointer.chartPosition;
+
         // Width and height checks for display:none. Target is doc in IE8 and
         // Opera, win in Firefox, Chrome and IE9.
         if (
@@ -2368,9 +2369,6 @@ class Chart {
         // Credits
         chart.addCredits();
 
-        // Handle scaling
-        chart.updateContainerScaling();
-
         // Set flag
         chart.hasRendered = true;
 
@@ -2434,35 +2432,6 @@ class Chart {
                 chart.credits = (chart.credits as any).destroy();
                 chart.addCredits(options);
             };
-        }
-    }
-
-    /**
-     * Handle scaling, #11329 - when there is scaling/transform on the container
-     * or on a parent element, we need to take this into account. We calculate
-     * the scaling once here and it is picked up where we need to use it
-     * (Pointer, Tooltip).
-     *
-     * @private
-     * @function Highcharts.Chart#updateContainerScaling
-     */
-    public updateContainerScaling(): void {
-        const container = this.container;
-        // #13342 - tooltip was not visible in Chrome, when chart
-        // updates height.
-        if (
-            container.offsetWidth > 2 && // #13342
-            container.offsetHeight > 2 && // #13342
-            container.getBoundingClientRect
-        ) {
-            const bb = container.getBoundingClientRect(),
-                scaleX = bb.width / container.offsetWidth,
-                scaleY = bb.height / container.offsetHeight;
-            if (scaleX !== 1 || scaleY !== 1) {
-                this.containerScaling = { scaleX, scaleY };
-            } else {
-                delete this.containerScaling;
-            }
         }
     }
 

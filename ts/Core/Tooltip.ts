@@ -869,12 +869,11 @@ class Tooltip {
                 ) :
                 chart.chartHeight,
             chartPosition = chart.pointer.getChartPosition(),
-            containerScaling = chart.containerScaling,
             scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
-                containerScaling ? val * containerScaling.scaleX : val
+                val * chartPosition.scaleX
             ),
             scaleY = (val: number): number => ( // eslint-disable-line no-confusing-arrow
-                containerScaling ? val * containerScaling.scaleY : val
+                val * chartPosition.scaleY
             ),
             // Build parameter arrays for firstDimension()/secondDimension()
             buildDimensionArray = (dim: 'x' | 'y'): Array<number|string> => {
@@ -1967,17 +1966,16 @@ class Tooltip {
 
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            const containerScaling = chart.containerScaling;
-            if (containerScaling) {
+            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
                 css(this.container, {
                     transform: `scale(${
-                        containerScaling.scaleX
+                        chartPosition.scaleX
                     }, ${
-                        containerScaling.scaleY
+                        chartPosition.scaleY
                     })`
                 });
-                anchorX *= containerScaling.scaleX;
-                anchorY *= containerScaling.scaleY;
+                anchorX *= chartPosition.scaleX;
+                anchorY *= chartPosition.scaleY;
             }
 
             anchorX += chartPosition.left - pos.x;

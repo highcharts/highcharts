@@ -1117,6 +1117,7 @@ var Chart = /** @class */ (function () {
     Chart.prototype.reflow = function (e) {
         var chart = this, optionsChart = chart.options.chart, renderTo = chart.renderTo, hasUserSize = (defined(optionsChart.width) &&
             defined(optionsChart.height)), width = optionsChart.width || getStyle(renderTo, 'width'), height = optionsChart.height || getStyle(renderTo, 'height'), target = e ? e.target : win;
+        delete chart.pointer.chartPosition;
         // Width and height checks for display:none. Target is doc in IE8 and
         // Opera, win in Firefox, Chrome and IE9.
         if (!hasUserSize &&
@@ -1668,8 +1669,6 @@ var Chart = /** @class */ (function () {
         chart.renderLabels();
         // Credits
         chart.addCredits();
-        // Handle scaling
-        chart.updateContainerScaling();
         // Set flag
         chart.hasRendered = true;
     };
@@ -1717,31 +1716,6 @@ var Chart = /** @class */ (function () {
                 chart.credits = chart.credits.destroy();
                 chart.addCredits(options);
             };
-        }
-    };
-    /**
-     * Handle scaling, #11329 - when there is scaling/transform on the container
-     * or on a parent element, we need to take this into account. We calculate
-     * the scaling once here and it is picked up where we need to use it
-     * (Pointer, Tooltip).
-     *
-     * @private
-     * @function Highcharts.Chart#updateContainerScaling
-     */
-    Chart.prototype.updateContainerScaling = function () {
-        var container = this.container;
-        // #13342 - tooltip was not visible in Chrome, when chart
-        // updates height.
-        if (container.offsetWidth > 2 && // #13342
-            container.offsetHeight > 2 && // #13342
-            container.getBoundingClientRect) {
-            var bb = container.getBoundingClientRect(), scaleX = bb.width / container.offsetWidth, scaleY = bb.height / container.offsetHeight;
-            if (scaleX !== 1 || scaleY !== 1) {
-                this.containerScaling = { scaleX: scaleX, scaleY: scaleY };
-            }
-            else {
-                delete this.containerScaling;
-            }
         }
     };
     /**
