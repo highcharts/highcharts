@@ -368,9 +368,12 @@ H.Popup.prototype = {
                 }
             });
             if (isRoot) {
-                storage = storage.sort(function (a) {
+                H.stableSort(storage, function (a) {
                     return a[1].match(/format/g) ? -1 : 1;
                 });
+                if (H.isFirefox) {
+                    storage.reverse(); // (#14691)
+                }
                 storage.forEach(function (genInput) {
                     if (genInput[0] === true) {
                         createElement(SPAN, {
