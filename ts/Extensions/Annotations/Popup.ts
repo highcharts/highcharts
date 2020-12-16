@@ -686,9 +686,13 @@ H.Popup.prototype = {
             });
 
             if (isRoot) {
-                storage = storage.sort(function (a): number {
-                    return (a as any)[1].match(/format/g) ? -1 : 1;
+                H.stableSort(storage, function (a: any): number {
+                    return a[1].match(/format/g) ? -1 : 1;
                 });
+
+                if (H.isFirefox) {
+                    storage.reverse(); // (#14691)
+                }
 
                 storage.forEach(function (genInput): void {
                     if ((genInput as any)[0] === true) {
