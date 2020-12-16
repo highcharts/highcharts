@@ -99,3 +99,60 @@ QUnit.test('ChainDataModifier.execute', function (assert) {
     );
 
 });
+
+QUnit.test('benchmark', function (assert) {
+    const modifier = new ChainDataModifier(
+        {},
+        new GroupDataModifier({
+            groupColumn: 'y'
+        }),
+        new RangeDataModifier({
+            modifier: 'Range',
+            ranges: [{
+                column: 'value',
+                minValue: 'A',
+                maxValue: 'b'
+            }]
+        })
+    );
+    const table = DataTable.fromJSON({
+        $class: 'DataTable',
+        rows: [{
+            $class: 'DataTableRow',
+            x: 1,
+            y: 'a'
+        }, {
+            $class: 'DataTableRow',
+            x: 2,
+            y: 'a'
+        }, {
+            $class: 'DataTableRow',
+            x: 3,
+            y: 'b'
+        }, {
+            $class: 'DataTableRow',
+            x: 4,
+            y: 'b'
+        }, {
+            $class: 'DataTableRow',
+            x: 5,
+            y: 'c'
+        }, {
+            $class: 'DataTableRow',
+            x: 6,
+            y: 'c'
+        }]
+    });
+
+    const options = {
+        iterations: 10
+    }
+    const result = modifier.benchmark(table, options);
+
+    assert.strictEqual(
+        result.length,
+        options.iterations,
+        'Ran for correct amount of iterations'
+    );
+
+});
