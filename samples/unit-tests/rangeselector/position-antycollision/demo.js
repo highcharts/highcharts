@@ -35,7 +35,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
                 },
                 inputPosition: {
                     align: align[align.length - i - 1]
-                }
+                },
+                dropdown: 'never'
             },
 
             series: series
@@ -183,7 +184,8 @@ QUnit.test('Aligning after updates.', function (assert) {
             },
             inputPosition: {
                 align: 'right'
-            }
+            },
+            dropdown: 'never'
         },
 
         series: series
@@ -385,7 +387,8 @@ QUnit.test('button width', function (assert) {
                     type: 'all',
                     text: 'All'
                 }
-            ]
+            ],
+            dropdown: 'never'
         },
 
         series: series
@@ -439,5 +442,30 @@ QUnit.test('Rangeselector update', function (assert) {
         240,
         2,
         'Range selector should have enough space'
+    );
+});
+
+
+QUnit.test('Chart setSize', assert => {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 800
+        },
+        rangeSelector: {
+            dropdown: 'never'
+        },
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
+    });
+    const plotHeight = chart.plotHeight;
+
+    chart.setSize(400);
+    assert.notStrictEqual(
+        chart.plotHeight,
+        plotHeight,
+        'The plot height should change after a single resize'
     );
 });
