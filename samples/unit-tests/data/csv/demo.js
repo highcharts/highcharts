@@ -643,34 +643,6 @@ QUnit.test('startRow, endRow, startColumn, endColumn', function (assert) {
     });
 });
 
-QUnit.test('Comments in CSV', function (assert) {
-    var data = [
-        '# -------',
-        '# Comment',
-        '# ----',
-        'Apples,Pears',
-        '1,2# Inline comment',
-        '3,4',
-        '5,6'
-    ].join('\n');
-
-    Highcharts.data({
-        csv: data,
-        parsed: function () {
-            assert.strictEqual(
-                this.columns[0].join(','),
-                'Apples,1,3,5',
-                'First column ok'
-            );
-            assert.strictEqual(
-                this.columns[1].join(','),
-                'Pears,2,4,6',
-                'Second column ok'
-            );
-        }
-    });
-});
-
 // Highcharts 4.0.4, Issue #3437
 // Data module fails with numeric data in first column
 QUnit.test('Data module numeric x (#3437)', function (assert) {
@@ -713,3 +685,27 @@ QUnit.test('Dot date format', function (assert) {
         }
     });
 });
+
+QUnit.test(
+    'Hex values are not treated as comments (#13283).',
+    function (assert) {
+        Highcharts.data({
+            csv:
+                'x;y;color\n' +
+                '0;1;#F0F\n',
+
+            itemDelimiter: ';',
+            seriesMapping: [{
+                color: 2
+            }],
+
+            parsed: function () {
+                assert.strictEqual(
+                    this.columns[2][1],
+                    '#F0F',
+                    'Color should be a hex value.'
+                );
+            }
+        });
+    }
+);

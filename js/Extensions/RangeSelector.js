@@ -215,6 +215,22 @@ extend(defaultOptions, {
          */
         buttonSpacing: 5,
         /**
+         * Whether to collapse the range selector buttons into a dropdown when
+         * there is not enough room to show everything in a single row, instead
+         * of dividing the range selector into multiple rows.
+         * Can be one of the following:
+         *  - `always`: Always collapse
+         *  - `responsive`: Only collapse when there is not enough room
+         *  - `never`: Never collapse
+         *
+         * @sample {highstock} stock/rangeselector/dropdown/
+         *         Dropdown option
+         *
+         * @validvalue ["always", "responsive", "never"]
+         * @since next
+         */
+        dropdown: 'responsive',
+        /**
          * Enable or disable the range selector. Default to `true` for stock
          * charts, using the `stockChart` factory.
          *
@@ -545,6 +561,7 @@ var RangeSelector = /** @class */ (function () {
          * */
         this.buttons = void 0;
         this.buttonOptions = RangeSelector.prototype.defaultButtons;
+        this.initialButtonGroupWidth = 0;
         this.options = void 0;
         this.chart = chart;
         // Run RangeSelector
@@ -645,6 +662,9 @@ var RangeSelector = /** @class */ (function () {
             newMax += rangeOptions._offsetMax;
         }
         rangeSelector.setSelected(i);
+        if (this.dropdown) {
+            this.dropdown.selectedIndex = i + 1;
+        }
         // Update the chart
         if (!baseAxis) {
             // Axis not yet instanciated. Temporarily set min and range
@@ -739,7 +759,7 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.updateButtonStates = function () {
-        var rangeSelector = this, chart = this.chart, baseAxis = chart.xAxis[0], actualRange = Math.round(baseAxis.max - baseAxis.min), hasNoData = !baseAxis.hasVisibleSeries, day = 24 * 36e5, // A single day in milliseconds
+        var rangeSelector = this, chart = this.chart, dropdown = this.dropdown, baseAxis = chart.xAxis[0], actualRange = Math.round(baseAxis.max - baseAxis.min), hasNoData = !baseAxis.hasVisibleSeries, day = 24 * 36e5, // A single day in milliseconds
         unionExtremes = (chart.scroller &&
             chart.scroller.getUnionExtremes()) || baseAxis, dataMin = unionExtremes.dataMin, dataMax = unionExtremes.dataMax, ytdExtremes = rangeSelector.getYTDExtremes(dataMax, dataMin, chart.time.useUTC), ytdMin = ytdExtremes.min, ytdMax = ytdExtremes.max, selected = rangeSelector.selected, selectedExists = isNumber(selected), allButtonsEnabled = rangeSelector.options.allButtonsEnabled, buttons = rangeSelector.buttons;
         rangeSelector.buttonOptions.forEach(function (rangeOptions, i) {
@@ -797,6 +817,12 @@ var RangeSelector = /** @class */ (function () {
             // If state has changed, update the button
             if (button.state !== state) {
                 button.setState(state);
+                if (dropdown) {
+                    dropdown.options[i + 1].disabled = disable;
+                    if (state === 2) {
+                        dropdown.selectedIndex = i + 1;
+                    }
+                }
                 // Reset (#9209)
                 if (state === 0 && selected === i) {
                     rangeSelector.setSelected();
@@ -1082,9 +1108,11 @@ var RangeSelector = /** @class */ (function () {
         // to the right size when focused.
         var input = createElement('input', {
             name: name,
-            className: 'highcharts-range-selector',
-            type: preferredInputType(options.inputDateFormat || '%b %e, %Y')
+            className: 'highcharts-range-selector'
         }, void 0, div);
+        // #14788: Setting input.type to an unsupported type throws in IE, so
+        // we need to use setAttribute instead
+        input.setAttribute('type', preferredInputType(options.inputDateFormat || '%b %e, %Y'));
         if (!chart.styledMode) {
             // Styles
             label.css(merge(chartStyle, options.labelStyle));
@@ -1225,8 +1253,10 @@ var RangeSelector = /** @class */ (function () {
             this.renderButtons();
             // First create a wrapper outside the container in order to make
             // the inputs work and make export correct
-            if (inputEnabled && container.parentNode) {
+            if (container.parentNode) {
                 container.parentNode.insertBefore(this.div, container);
+            }
+            if (inputEnabled) {
                 // Create the group to keep the inputs
                 this.inputGroup = renderer.g('input-group').add(this.group);
                 var minElems = this.drawInput('min');
@@ -1283,13 +1313,45 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.renderButtons = function () {
         var _this = this;
+        var _a = this, buttons = _a.buttons, chart = _a.chart, options = _a.options;
         var lang = defaultOptions.lang;
-        var renderer = this.chart.renderer;
-        var options = this.options;
-        var buttons = this.buttons;
-        var buttonTheme = options.buttonTheme;
+        var renderer = chart.renderer;
+        var buttonTheme = merge(options.buttonTheme);
         var states = buttonTheme && buttonTheme.states;
+        // Prevent the button from resetting the width when the button state
+        // changes since we need more control over the width when collapsing
+        // the buttons
+        var width = buttonTheme.width || 28;
+        delete buttonTheme.width;
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
+        var dropdown = this.dropdown = createElement('select', void 0, {
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            border: 0,
+            top: '-9999em',
+            cursor: 'pointer',
+            opacity: 0.0001
+        }, this.div);
+        // Prevent page zoom on iPhone
+        addEvent(dropdown, 'touchstart', function () {
+            dropdown.style.fontSize = '16px';
+        });
+        // Forward events from select to button
+        [
+            [H.isMS ? 'mouseover' : 'mouseenter'],
+            [H.isMS ? 'mouseout' : 'mouseleave'],
+            ['change', 'click']
+        ].forEach(function (_a) {
+            var from = _a[0], to = _a[1];
+            addEvent(dropdown, from, function () {
+                var button = buttons[_this.currentButtonIndex()];
+                if (button) {
+                    fireEvent(button.element, to || from);
+                }
+            });
+        });
         this.zoomText = renderer
             .text(lang.rangeSelectorZoom, 0, 15)
             .add(this.buttonGroup);
@@ -1297,7 +1359,14 @@ var RangeSelector = /** @class */ (function () {
             this.zoomText.css(options.labelStyle);
             buttonTheme['stroke-width'] = pick(buttonTheme['stroke-width'], 0);
         }
+        createElement('option', {
+            textContent: this.zoomText.textStr,
+            disabled: true
+        }, void 0, dropdown);
         this.buttonOptions.forEach(function (rangeOptions, i) {
+            createElement('option', {
+                textContent: rangeOptions.text
+            }, void 0, dropdown);
             buttons[i] = renderer
                 .button(rangeOptions.text, 0, 0, function (e) {
                 // extract events from button object and call
@@ -1313,7 +1382,8 @@ var RangeSelector = /** @class */ (function () {
                 _this.isActive = true;
             }, buttonTheme, states && states.hover, states && states.select, states && states.disabled)
                 .attr({
-                'text-align': 'center'
+                'text-align': 'center',
+                width: width
             })
                 .add(_this.buttonGroup);
             if (rangeOptions.title) {
@@ -1336,7 +1406,6 @@ var RangeSelector = /** @class */ (function () {
             chartOptions.exporting.enabled !== false &&
             chartOptions.navigation &&
             chartOptions.navigation.buttonOptions);
-        var verb = chart.hasLoaded ? 'animate' : 'attr';
         var buttonPosition = options.buttonPosition, inputPosition = options.inputPosition, verticalAlign = options.verticalAlign;
         // Get the X offset required to avoid overlapping with the exporting
         // button. This is is used both by the buttonGroup and the inputGroup.
@@ -1354,30 +1423,29 @@ var RangeSelector = /** @class */ (function () {
             return 0;
         };
         var plotLeft = chart.plotLeft;
-        var buttonLeft = plotLeft;
         if (group && buttonPosition && inputPosition) {
             var translateX = buttonPosition.x - chart.spacing[3];
             if (buttonGroup) {
-                if (zoomText) {
-                    // #8769, allow dynamically updating margins
-                    zoomText[verb]({
-                        x: pick(plotLeft + buttonPosition.x, plotLeft)
+                this.positionButtons();
+                if (!this.initialButtonGroupWidth) {
+                    var width_1 = 0;
+                    if (zoomText) {
+                        width_1 += zoomText.getBBox().width + 5;
+                    }
+                    buttons.forEach(function (button, i) {
+                        width_1 += button.width;
+                        if (i !== buttons.length - 1) {
+                            width_1 += options.buttonSpacing;
+                        }
                     });
-                    // Button start position
-                    buttonLeft += buttonPosition.x +
-                        zoomText.getBBox().width + 5;
+                    this.initialButtonGroupWidth = width_1;
                 }
-                this.buttonOptions.forEach(function (rangeOptions, i) {
-                    buttons[i][verb]({ x: buttonLeft });
-                    // increase button position for the next button
-                    buttonLeft += buttons[i].width + options.buttonSpacing;
-                });
                 plotLeft -= chart.spacing[3];
                 this.updateButtonStates();
                 // Detect collision between button group and exporting
-                var xOffsetForExportButton = getXOffsetForExportButton(buttonGroup, buttonPosition);
+                var xOffsetForExportButton_1 = getXOffsetForExportButton(buttonGroup, buttonPosition);
                 if (buttonPosition.align === 'right') {
-                    translateX += xOffsetForExportButton - plotLeft; // #13014
+                    translateX += xOffsetForExportButton_1 - plotLeft; // #13014
                 }
                 else if (buttonPosition.align === 'center') {
                     translateX -= plotLeft / 2;
@@ -1392,9 +1460,10 @@ var RangeSelector = /** @class */ (function () {
                 // Skip animation
                 group.placed = buttonGroup.placed = chart.hasLoaded;
             }
+            var xOffsetForExportButton = 0;
             if (inputGroup) {
                 // Detect collision between the input group and exporting button
-                var xOffsetForExportButton = getXOffsetForExportButton(inputGroup, inputPosition);
+                xOffsetForExportButton = getXOffsetForExportButton(inputGroup, inputPosition);
                 if (inputPosition.align === 'left') {
                     translateX = plotLeft;
                 }
@@ -1409,12 +1478,10 @@ var RangeSelector = /** @class */ (function () {
                     // fix wrong getBBox() value on right align
                     x: inputPosition.x + translateX - 2
                 }, true, chart.spacingBox);
-                if (buttonGroup) {
-                    this.handleCollision(xOffsetForExportButton);
-                }
                 // Skip animation
                 inputGroup.placed = chart.hasLoaded;
             }
+            this.handleCollision(xOffsetForExportButton);
             // Vertical align
             group.align({
                 verticalAlign: verticalAlign
@@ -1466,12 +1533,46 @@ var RangeSelector = /** @class */ (function () {
             }
             group.translate(options.x, options.y + Math.floor(translateY));
             // Translate HTML inputs
-            var _b = this, minInput = _b.minInput, maxInput = _b.maxInput;
+            var _b = this, minInput = _b.minInput, maxInput = _b.maxInput, dropdown = _b.dropdown;
             if (options.inputEnabled && minInput && maxInput) {
                 minInput.style.marginTop = group.translateY + 'px';
                 maxInput.style.marginTop = group.translateY + 'px';
             }
+            if (dropdown) {
+                dropdown.style.marginTop = group.translateY + 'px';
+            }
         }
+    };
+    /**
+     * @private
+     * @function Highcharts.RangeSelector#positionButtons
+     * @return {void}
+     */
+    RangeSelector.prototype.positionButtons = function () {
+        var _a = this, buttons = _a.buttons, chart = _a.chart, options = _a.options, zoomText = _a.zoomText;
+        var verb = chart.hasLoaded ? 'animate' : 'attr';
+        var buttonPosition = options.buttonPosition;
+        var plotLeft = chart.plotLeft;
+        var buttonLeft = this.chart.plotLeft;
+        if (zoomText && zoomText.visibility !== 'hidden') {
+            // #8769, allow dynamically updating margins
+            zoomText[verb]({
+                x: pick(plotLeft + buttonPosition.x, plotLeft)
+            });
+            // Button start position
+            buttonLeft += buttonPosition.x +
+                zoomText.getBBox().width + 5;
+        }
+        this.buttonOptions.forEach(function (rangeOptions, i) {
+            if (buttons[i].visibility !== 'hidden') {
+                buttons[i][verb]({ x: buttonLeft });
+                // increase button position for the next button
+                buttonLeft += buttons[i].width + options.buttonSpacing;
+            }
+            else {
+                buttons[i][verb]({ x: plotLeft });
+            }
+        });
     };
     /**
      * Handle collision between the button group and the input group
@@ -1485,29 +1586,41 @@ var RangeSelector = /** @class */ (function () {
      * @return {void}
      */
     RangeSelector.prototype.handleCollision = function (xOffsetForExportButton) {
+        var _this = this;
         var _a = this, chart = _a.chart, buttonGroup = _a.buttonGroup, inputGroup = _a.inputGroup;
-        var _b = this.options, buttonPosition = _b.buttonPosition, inputPosition = _b.inputPosition;
-        // Detect collision
-        if (inputGroup && buttonGroup) {
-            var inputGroupX = (inputGroup.alignAttr.translateX +
-                inputGroup.alignOptions.x -
-                xOffsetForExportButton +
-                // getBBox for detecing left margin
-                inputGroup.getBBox().x +
-                // 2px padding to not overlap input and label
-                2);
-            var inputGroupWidth = inputGroup.alignOptions.width;
-            var buttonGroupX = buttonGroup.alignAttr.translateX +
-                buttonGroup.getBBox().x;
-            // 20 is minimal spacing between elements
-            var buttonGroupWidth = buttonGroup.getBBox().width + 20;
-            if ((inputPosition.align === buttonPosition.align) ||
-                ((buttonGroupX + buttonGroupWidth > inputGroupX) &&
+        var _b = this.options, buttonPosition = _b.buttonPosition, dropdown = _b.dropdown, inputPosition = _b.inputPosition;
+        var maxButtonWidth = function () {
+            var buttonWidth = 0;
+            _this.buttons.forEach(function (button) {
+                var bBox = button.getBBox();
+                if (bBox.width > buttonWidth) {
+                    buttonWidth = bBox.width;
+                }
+            });
+            return buttonWidth;
+        };
+        var groupsOverlap = function (buttonGroupWidth) {
+            if (inputGroup && buttonGroup) {
+                var inputGroupX = (inputGroup.alignAttr.translateX +
+                    inputGroup.alignOptions.x -
+                    xOffsetForExportButton +
+                    // getBBox for detecing left margin
+                    inputGroup.getBBox().x +
+                    // 2px padding to not overlap input and label
+                    2);
+                var inputGroupWidth = inputGroup.alignOptions.width;
+                var buttonGroupX = buttonGroup.alignAttr.translateX +
+                    buttonGroup.getBBox().x;
+                return (buttonGroupX + buttonGroupWidth > inputGroupX) &&
                     (inputGroupX + inputGroupWidth > buttonGroupX) &&
                     (buttonPosition.y <
                         (inputPosition.y +
-                            inputGroup.getBBox().height)))) {
-                // Move the input group down
+                            inputGroup.getBBox().height));
+            }
+            return false;
+        };
+        var moveInputsDown = function () {
+            if (inputGroup && buttonGroup) {
                 inputGroup.attr({
                     translateX: inputGroup.alignAttr.translateX + (chart.axisOffset[1] >= -xOffsetForExportButton ?
                         0 :
@@ -1516,6 +1629,165 @@ var RangeSelector = /** @class */ (function () {
                         buttonGroup.getBBox().height + 10
                 });
             }
+        };
+        if (buttonGroup) {
+            if (dropdown === 'always') {
+                this.collapseButtons();
+                if (groupsOverlap(maxButtonWidth())) {
+                    // Move the inputs down if there is still a collision
+                    // after collapsing the buttons
+                    moveInputsDown();
+                }
+                return;
+            }
+            if (dropdown === 'never') {
+                this.expandButtons();
+            }
+        }
+        // Detect collision
+        if (inputGroup && buttonGroup) {
+            if ((inputPosition.align === buttonPosition.align) ||
+                // 20 is minimal spacing between elements
+                groupsOverlap(this.initialButtonGroupWidth + 20)) {
+                if (dropdown === 'responsive') {
+                    this.collapseButtons();
+                    if (groupsOverlap(maxButtonWidth())) {
+                        moveInputsDown();
+                    }
+                }
+                else {
+                    moveInputsDown();
+                }
+            }
+            else if (dropdown === 'responsive') {
+                this.expandButtons();
+            }
+        }
+        else if (buttonGroup && dropdown === 'responsive') {
+            if (this.initialButtonGroupWidth > chart.plotWidth) {
+                this.collapseButtons();
+            }
+            else {
+                this.expandButtons();
+            }
+        }
+    };
+    /**
+     * Collapse the buttons and put the select element on top.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#collapseButtons
+     * @return {void}
+     */
+    RangeSelector.prototype.collapseButtons = function () {
+        var _a;
+        var _b = this, buttons = _b.buttons, buttonOptions = _b.buttonOptions, dropdown = _b.dropdown, zoomText = _b.zoomText;
+        var getAttribs = function (text) { return ({
+            text: text ? text + " \u25BE" : '▾',
+            width: 'auto',
+            paddingLeft: 8,
+            paddingRight: 8
+        }); };
+        if (zoomText) {
+            zoomText.hide();
+        }
+        var hasActiveButton = false;
+        buttonOptions.forEach(function (rangeOptions, i) {
+            var button = buttons[i];
+            if (button.state !== 2) {
+                button.hide();
+            }
+            else {
+                button.show();
+                button.attr(getAttribs(rangeOptions.text));
+                hasActiveButton = true;
+            }
+        });
+        if (!hasActiveButton && buttons.length > 0) {
+            if (dropdown) {
+                dropdown.selectedIndex = 0;
+            }
+            buttons[0].show();
+            buttons[0].attr(getAttribs((_a = this.zoomText) === null || _a === void 0 ? void 0 : _a.textStr));
+        }
+        this.positionButtons();
+        this.showDropdown();
+    };
+    /**
+     * Show all the buttons and hide the select element.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#expandButtons
+     * @return {void}
+     */
+    RangeSelector.prototype.expandButtons = function () {
+        var _a = this, buttons = _a.buttons, buttonOptions = _a.buttonOptions, options = _a.options, zoomText = _a.zoomText;
+        this.hideDropdown();
+        if (zoomText) {
+            zoomText.show();
+        }
+        buttonOptions.forEach(function (rangeOptions, i) {
+            var button = buttons[i];
+            button.show();
+            button.attr({
+                text: rangeOptions.text,
+                width: options.buttonTheme.width || 28,
+                paddingLeft: 'unset',
+                paddingRight: 'unset'
+            });
+            if (button.state < 2) {
+                button.setState(0);
+            }
+        });
+        this.positionButtons();
+    };
+    /**
+     * Get the index of the visible button when the buttons are collapsed.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#currentButtonIndex
+     * @return {number}
+     */
+    RangeSelector.prototype.currentButtonIndex = function () {
+        var dropdown = this.dropdown;
+        if (dropdown && dropdown.selectedIndex > 0) {
+            return dropdown.selectedIndex - 1;
+        }
+        return 0;
+    };
+    /**
+     * Position the select element on top of the button.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#showDropdown
+     * @return {void}
+     */
+    RangeSelector.prototype.showDropdown = function () {
+        var _a = this, buttonGroup = _a.buttonGroup, buttons = _a.buttons, chart = _a.chart, dropdown = _a.dropdown;
+        if (buttonGroup && dropdown) {
+            var translateX = buttonGroup.translateX, translateY = buttonGroup.translateY;
+            var bBox = buttons[this.currentButtonIndex()].getBBox();
+            css(dropdown, {
+                left: (chart.plotLeft + translateX) + 'px',
+                top: (translateY + 0.5) + 'px',
+                width: bBox.width + 'px',
+                height: bBox.height + 'px'
+            });
+        }
+    };
+    /**
+     * @private
+     * @function Highcharts.RangeSelector#hideDropdown
+     * @return {void}
+     */
+    RangeSelector.prototype.hideDropdown = function () {
+        var dropdown = this.dropdown;
+        if (dropdown) {
+            css(dropdown, {
+                top: '-9999em',
+                width: '1px',
+                height: '1px'
+            });
         }
     };
     /**
@@ -1531,6 +1803,9 @@ var RangeSelector = /** @class */ (function () {
         if (options.height) {
             return options.height;
         }
+        // Align the elements before we read the height in case we're switching
+        // between wrapped and non-wrapped layout
+        this.alignElements();
         rangeSelectorHeight = rangeSelectorGroup ?
             // 13px to keep back compatibility
             (rangeSelectorGroup.getBBox(true).height) + 13 +

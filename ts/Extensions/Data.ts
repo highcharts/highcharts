@@ -1119,13 +1119,6 @@ class Data {
             for (; i < columnStr.length; i++) {
                 read(i);
 
-                // Quoted string
-                if (c === '#') {
-                    // The rest of the row is a comment
-                    push();
-                    return;
-                }
-
                 if (c === '"') {
                     read(++i);
 

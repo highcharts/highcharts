@@ -622,3 +622,29 @@ QUnit.test(
         assert.deepEqual(iterator, 1, "Just one 'updatedData' call");
     }
 );
+
+QUnit.test('#8795: Hovering after zooming in and using setData with redraw set to false threw', assert => {
+    const data = () => {
+        const ret = [];
+        for (let i = 0; i < 500; i++) {
+            ret[i] = Math.random();
+        }
+        return ret;
+    };
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'x'
+        },
+        series: [{
+            data: data()
+        }]
+    });
+
+    const controller = new TestController(chart);
+    controller.pan([200, 150], [250, 150]);
+    chart.series[0].setData(data(), false);
+    controller.moveTo(150, 150);
+
+    assert.ok(true, 'It should not throw');
+});

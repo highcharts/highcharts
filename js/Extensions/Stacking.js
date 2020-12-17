@@ -150,7 +150,7 @@ var StackItem = /** @class */ (function () {
             }
         }
         // Rank it higher than data labels (#8742)
-        this.label.labelrank = chart.plotHeight;
+        this.label.labelrank = chart.plotSizeY;
     };
     /**
      * Sets the offset that the stack has from the x value and repositions the

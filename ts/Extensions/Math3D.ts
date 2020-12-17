@@ -170,7 +170,7 @@ H.perspective3D = perspective3D;
  * The chart
  *
  * @param {boolean} [insidePlotArea]
- * Whether to verifiy that the points are inside the plotArea
+ * Whether to verify that the points are inside the plotArea
  *
  * @param {boolean} [useInvertedPersp]
  * Whether to use inverted perspective in calculations
@@ -320,7 +320,7 @@ H.shapeArea = shapeArea;
  * Related chart
  *
  * @param {boolean} [insidePlotArea]
- * Whether to verifiy that the points are inside the plotArea
+ * Whether to verify that the points are inside the plotArea
  *
  * @return {number}
  * Calculated area
