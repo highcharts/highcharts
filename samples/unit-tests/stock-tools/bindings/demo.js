@@ -46,7 +46,8 @@ QUnit.test('Bindings general tests', function (assert) {
         'highcharts-stocktools-wrapper'
     )[0].style.display = 'none';
 
-    // Number of tests is so high that events are not triggered on a chart, temporary hide it:
+    // Number of tests is so high that events are not triggered on a chart,
+    // temporary hide it:
     var qunitContainer = document.getElementById('qunit');
     if (qunitContainer) {
         qunitContainer.style.display = 'none';
@@ -259,7 +260,8 @@ QUnit.test('Bindings general tests', function (assert) {
 
                 assert.ok(
                     1,
-                    'No errors should be thrown after setting the basic annotations (#12054)'
+                    'No errors should be thrown after setting the basic' +
+                    'annotations (#12054)'
                 );
                 ++annotationsCounter;
             }
@@ -286,11 +288,16 @@ QUnit.test('Bindings general tests', function (assert) {
     controller.click(buttonOffset.left + 5, buttonOffset.top + 5);
 
     var popupEditor = document.querySelectorAll('.highcharts-popup-lhs-col');
-
     assert.strictEqual(
         popupEditor[0].children.length > 0,
         true,
         'The popup should includes the edit elements #13532'
+    );
+
+    assert.strictEqual(
+        popupEditor[0].children[0].textContent,
+        'Shape options',
+        'The labels should be in the correct order in Firefox #14691'
     );
 
     // Point out the other point to close the editor popup
