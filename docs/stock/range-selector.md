@@ -81,6 +81,11 @@ rangeSelector: {
 },
 ```
 
+Responsive
+----------
+
+By default the range selector buttons will collapse into a dropdown when there is not enough room to show everything in a single row, this behaviour can be controlled using the `dropdown` option. More info on this can be found in the [API docs](https://api.highcharts.com/highstock/rangeSelector.dropdown)
+
 Custom button click event
 -------------------------
 
