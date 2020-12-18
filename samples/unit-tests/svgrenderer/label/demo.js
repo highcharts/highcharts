@@ -521,3 +521,42 @@ QUnit.test('Labels and styled mode', assert => {
         labels text before adding to DOM (#11758)`
     );
 });
+
+QUnit.test('Label padding', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    const label = ren.label('Hello', 10, 30)
+        .attr({ padding: 5 })
+        .add();
+
+    let width = label.getBBox().width;
+    label.attr({ padding: 0 });
+
+    assert.strictEqual(
+        label.getBBox().width,
+        width - 10,
+        'Width should have updated'
+    );
+
+    width = label.getBBox().width;
+
+    [
+        [10],
+        [0, 10, 10],
+        [10, 10, 10]
+    ].forEach(([padding, paddingLeft, paddingRight]) => {
+        const label = ren.label('Hello', 10, 60)
+            .attr({ padding, paddingLeft, paddingRight })
+            .add();
+
+        assert.strictEqual(
+            label.getBBox().width,
+            width + 20,
+            'Padding should increase width by 20'
+        );
+    });
+});
