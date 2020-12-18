@@ -11,8 +11,6 @@
 'use strict';
 
 import type AnimationOptions from './Animation/AnimationOptions';
-import type AreaSeries from '../Series/Area/AreaSeries';
-import type AreaRangeSeriesOptions from '../Series/AreaRange/AreaRangeSeriesOptions';
 import type PointerEvent from './PointerEvent';
 import type {
     PointEventsOptions,
@@ -23,8 +21,6 @@ import type { SeriesStatesOptions } from './Series/SeriesOptions';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
-import BaseSeries from './Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import Chart from './Chart/Chart.js';
 import Legend from './Legend.js';
 import LineSeries from '../Series/Line/LineSeries.js';
@@ -34,12 +30,10 @@ import Point from './Series/Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
-    createElement,
     css,
     defined,
     extend,
     fireEvent,
-    isArray,
     isFunction,
     isNumber,
     isObject,
@@ -116,11 +110,6 @@ declare global {
         }
         interface Legend {
             createCheckboxForItem(item: (BubbleLegend|LineSeries|Point)): void;
-            setItemEvents(
-                item: (BubbleLegend|LineSeries|Point),
-                legendItem: SVGElement,
-                useHTML?: boolean
-            ): void;
         }
         interface AxisPanningState {
             startMin: (number);
@@ -204,169 +193,6 @@ declare global {
 ''; // detach doclets above
 
 /* eslint-disable valid-jsdoc */
-
-// Extend Legend for item events.
-extend(Legend.prototype, {
-
-    /**
-     * @private
-     * @function Highcharts.Legend#setItemEvents
-     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
-     * @param {Highcharts.SVGElement} legendItem
-     * @param {boolean} [useHTML=false]
-     * @fires Highcharts.Point#event:legendItemClick
-     * @fires Highcharts.Series#event:legendItemClick
-     */
-    setItemEvents: function (
-        this: Highcharts.Legend,
-        item: (Highcharts.BubbleLegend|LineSeries|Point),
-        legendItem: SVGElement,
-        useHTML?: boolean
-    ): void {
-        var legend = this,
-            boxWrapper = legend.chart.renderer.boxWrapper,
-            isPoint = item instanceof Point,
-            activeClass = 'highcharts-legend-' +
-                (isPoint ? 'point' : 'series') + '-active',
-            styledMode = legend.chart.styledMode,
-            // When `useHTML`, the symbol is rendered in other group, so
-            // we need to apply events listeners to both places
-            legendItems = useHTML ?
-                [legendItem, item.legendSymbol] :
-                [item.legendGroup];
-
-        // Set the events on the item group, or in case of useHTML, the item
-        // itself (#1249)
-        legendItems.forEach(function (element): void {
-            if (element) {
-                element
-                    .on('mouseover', function (): void {
-                        if (item.visible) {
-                            legend.allItems.forEach(function (inactiveItem): void {
-                                if (item !== inactiveItem) {
-                                    inactiveItem.setState('inactive', !isPoint);
-                                }
-                            });
-                        }
-
-                        item.setState('hover');
-
-                        // A CSS class to dim or hide other than the hovered
-                        // series.
-                        // Works only if hovered series is visible (#10071).
-                        if (item.visible) {
-                            boxWrapper.addClass(activeClass);
-                        }
-
-                        if (!styledMode) {
-                            legendItem.css(
-                                legend.options.itemHoverStyle as any
-                            );
-                        }
-                    })
-                    .on('mouseout', function (): void {
-                        if (!legend.chart.styledMode) {
-                            legendItem.css(
-                                merge(
-                                    item.visible ?
-                                        legend.itemStyle as any :
-                                        legend.itemHiddenStyle as any
-                                )
-                            );
-                        }
-
-                        legend.allItems.forEach(function (inactiveItem): void {
-                            if (item !== inactiveItem) {
-                                inactiveItem.setState('', !isPoint);
-                            }
-                        });
-
-                        // A CSS class to dim or hide other than the hovered
-                        // series.
-                        boxWrapper.removeClass(activeClass);
-
-                        item.setState();
-                    })
-                    .on('click', function (event: PointerEvent): void {
-                        var strLegendItemClick = 'legendItemClick',
-                            fnLegendItemClick = function (): void {
-                                if ((item as any).setVisible) {
-                                    (item as any).setVisible();
-                                }
-                                // Reset inactive state
-                                legend.allItems.forEach(function (inactiveItem): void {
-                                    if (item !== inactiveItem) {
-                                        inactiveItem.setState(
-                                            item.visible ? 'inactive' : '',
-                                            !isPoint
-                                        );
-                                    }
-                                });
-                            };
-
-                        // A CSS class to dim or hide other than the hovered
-                        // series. Event handling in iOS causes the activeClass
-                        // to be added prior to click in some cases (#7418).
-                        boxWrapper.removeClass(activeClass);
-
-                        // Pass over the click/touch event. #4.
-                        event = {
-                            browserEvent: event
-                        } as any;
-
-                        // click the name or symbol
-                        if ((item as any).firePointEvent) { // point
-                            (item as any).firePointEvent(
-                                strLegendItemClick,
-                                event,
-                                fnLegendItemClick
-                            );
-                        } else {
-                            fireEvent(
-                                item, strLegendItemClick, event, fnLegendItemClick
-                            );
-                        }
-                    });
-            }
-        });
-    },
-
-    /**
-     * @private
-     * @function Highcharts.Legend#createCheckboxForItem
-     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
-     * @fires Highcharts.Series#event:checkboxClick
-     */
-    createCheckboxForItem: function (
-        this: Highcharts.Legend,
-        item: (Highcharts.BubbleLegend|LineSeries|Point)
-    ): void {
-        var legend = this;
-
-        item.checkbox = createElement('input', {
-            type: 'checkbox',
-            className: 'highcharts-legend-checkbox',
-            checked: (item as any).selected,
-            defaultChecked: (item as any).selected // required by IE7
-        }, legend.options.itemCheckboxStyle, legend.chart.container) as any;
-
-        addEvent(item.checkbox, 'click', function (event: PointerEvent): void {
-            var target = event.target as Highcharts.LegendCheckBoxElement;
-
-            fireEvent(
-                (item as any).series || item,
-                'checkboxClick',
-                { // #3712
-                    checked: target.checked,
-                    item: item
-                },
-                function (): void {
-                    (item as any).select();
-                }
-            );
-        });
-    }
-});
 
 // Extend the Chart object with interaction
 extend(Chart.prototype, /** @lends Chart.prototype */ {
