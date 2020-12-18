@@ -175,6 +175,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    fireEvent,
     merge,
     objectEach,
     pick
@@ -221,7 +222,7 @@ class PlotLineOrBand {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     public render(): (Highcharts.PlotLineOrBand|undefined) {
-        H.fireEvent(this, 'render');
+        fireEvent(this, 'render');
 
         var plotLine = this,
             axis = plotLine.axis,

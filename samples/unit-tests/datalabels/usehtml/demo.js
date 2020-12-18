@@ -73,7 +73,8 @@ QUnit.test(
             point = chart.series[0].points[0];
 
         assert.strictEqual(
-            point.dataLabel.div.children[0].style.cursor,
+            window.getComputedStyle(point.dataLabel.div.children[0])
+                .getPropertyValue('cursor'),
             'pointer',
             "Data label's 'cursor' attribute equals to 'pointer'"
         );

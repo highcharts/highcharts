@@ -16,17 +16,21 @@
 
 import Highcharts from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+const {
+    addEvent,
+    createElement,
+    setOptions
+} = U;
 
 // Load the fonts
-Highcharts.createElement('link', {
+createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Signika:400,700',
     rel: 'stylesheet',
     type: 'text/css'
 }, null as any, document.getElementsByTagName('head')[0]);
 
 // Add the background image to the container
-Highcharts.addEvent(Highcharts.Chart, 'afterGetContainer', function (): void {
+addEvent(Highcharts.Chart, 'afterGetContainer', function (): void {
     // eslint-disable-next-line no-invalid-this
     this.container.style.background =
         'url(https://www.highcharts.com/samples/graphics/sand.png)';
