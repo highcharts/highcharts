@@ -70,6 +70,7 @@ declare global {
             repulsiveForce?: Function;
             theta?: number;
             type?: string;
+            flowChart?: boolean;
         }
         interface NetworkgraphPoint {
             dispX?: number;
@@ -150,6 +151,7 @@ declare global {
             public restartSimulation(): void;
             public setArea(x: number, y: number, w: number, h: number): void;
             public setCircularPositions(): void;
+            public placeOnBitmap(): void;
             public setDiffTemperature(): void;
             public setInitialRendering(enable: boolean): void;
             public setK(): void;
@@ -167,6 +169,7 @@ declare global {
 
 import './Integrations.js';
 import './QuadTree.js';
+import chartNavigation from '../../Mixins/Navigation';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -287,6 +290,7 @@ extend(
                         s.render();
                     }
                 });
+
                 if (
                     (layout.maxIterations as any)-- &&
                     isFinite(layout.temperature) &&
@@ -301,6 +305,7 @@ extend(
                             layout.step();
                         }
                     );
+
                 } else {
                     layout.simulation = false;
                 }
@@ -324,6 +329,98 @@ extend(
                 width: w,
                 height: h
             };
+        },
+        placeOnBitmap: function (this: Highcharts.NetworkgraphLayout): void {
+
+            const createBitmap = function (
+                chart: Chart,
+                columnNumb: number,
+                rawNumb: number,
+                startingColumn?: number
+            ): Array<Array<Array<number>>> {
+                // start the bitmapArr with an empty column
+                const bitmapArr: Array<Array<Array<number>>> = [],
+                    columnWidth = (chart.chartWidth || 1) / columnNumb,
+                    rawHeight = (chart.chartHeight || 1) / rawNumb;
+
+                let columnInd = 0,
+                    rawInd = 0;
+                for (
+                    var column = 0;
+                    column < (chart.chartWidth || 0);
+                    column += columnWidth
+                ) {
+                    bitmapArr.push([]);
+                    for (
+                        var raw = 0;
+                        raw < (chart.chartHeight || 0);
+                        raw += rawHeight
+                    ) {
+                        // Create the bitmap for snapping flowChart nodes
+                        // [centerX, centerY, placed]
+                        bitmapArr[columnInd].push([column + columnWidth / 2, raw + rawHeight / 2, 0]);
+                        rawInd++;
+                    }
+                    columnInd++;
+                }
+                return bitmapArr;
+            };
+
+
+            const placeNode = function (
+                chart: Chart,
+                node: Point,
+                bitmapArr: Array<Array<Array<number>>>,
+                acceptableDistanceX: number,
+                acceptableDistanceY: number,
+                firstNode?: boolean,
+                startingColumn?: number
+            ): void {
+                let nodePlaced = false;
+                let distanceX = acceptableDistanceX;
+                const distanceY = acceptableDistanceY;
+
+                // // Place first node in the middle TODO REBUILD
+                // if (firstNode) {
+                //     node.plotX = chart.chartWidth / 2;
+                //     node.plotY = chart.plotTop;
+                //     (node as any).fixedPosition = true;
+                // }
+
+                for (var cI = 0 || 0; cI < bitmapArr.length; cI++) {
+                    for (var rI = startingColumn || 0; rI < bitmapArr[cI].length; rI++) {
+                        if (
+                            !nodePlaced &&
+                            Math.abs(((node.plotY || 0) + chart.plotTop) -
+                                bitmapArr[cI][rI][0]) <= distanceY &&
+                            Math.abs(((node.plotX || 0) + chart.plotLeft) -
+                                bitmapArr[cI][rI][1]) <= distanceX
+                        ) {
+                            if (!bitmapArr[cI][rI][2]) {
+                                node.plotX = bitmapArr[cI][rI][1] - chart.plotLeft;
+                                node.plotY = bitmapArr[cI][rI][0] - chart.plotTop;
+                                nodePlaced = true;
+                                (node as any).fixedPosition = true;
+                                bitmapArr[cI][rI][2] = 1;
+                            } else {
+                                // if already taken, try with further diameter
+                                distanceX += Math.max(bitmapArr[cI][rI][0], bitmapArr[cI][rI][1]);
+                            }
+                        }
+                    }
+                }
+                // If node was not placed, start again with further distance
+                if (!nodePlaced) {
+                    distanceX += Math.max(bitmapArr[0][0][0], bitmapArr[0][0][1]);
+                    placeNode(chart, node, bitmapArr, distanceX, distanceX, firstNode, 0);
+                }
+            };
+            if (this.chart) {
+                const bitmapArr = createBitmap(this.chart, 10, 10);
+                for (var i = 0; i < this.nodes.length; i++) {
+                    placeNode(this.chart, this.nodes[i], bitmapArr, 10, 10, !i, 0);
+                }
+            }
         },
         setK: function (this: Highcharts.NetworkgraphLayout): void {
             // Optimal distance between nodes,
@@ -573,6 +670,9 @@ extend(
         barycenterForces: function (this: Highcharts.NetworkgraphLayout): void {
             this.getBarycenter();
             this.force('barycenter');
+        },
+        gravityForces: function (this: Highcharts.NetworkgraphLayout): void {
+            this.force('gravity');
         },
         getBarycenter: function (
             this: Highcharts.NetworkgraphLayout
@@ -939,6 +1039,11 @@ addEvent(Chart as any, 'render', function (
         }
 
         if (afterRender) {
+            this.graphLayoutsLookup.forEach(
+                function (layout: Highcharts.NetworkgraphLayout): void {
+                    layout.options.flowChart && layout.placeOnBitmap();
+                }
+            );
             this.series.forEach(function (s): void {
                 if (s && s.layout) {
                     s.render();

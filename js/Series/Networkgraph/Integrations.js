@@ -67,6 +67,30 @@ H.networkgraphIntegrations = {
             });
         },
         /**
+         * Gravity force. Calculate and applys gravity forces on the
+         * nodes, directed down or right.
+         *
+         * In Verlet integration, force is applied on a node immidatelly to it's
+         * `plotX` and `plotY` position.
+         *
+         * @private
+         * @return {void}
+         */
+        gravity: function () {
+            var gravitationalConstant = this.options.gravitationalConstant, xFactor = this.barycenter.xFactor, yFactor = this.barycenter.yFactor;
+            // To consider:
+            xFactor = 0;
+            yFactor = 10;
+            this.nodes.forEach(function (node) {
+                if (!node.fixedPosition) {
+                    node.plotX -=
+                        xFactor / node.mass / node.degree;
+                    node.plotY -=
+                        yFactor / node.mass / node.degree;
+                }
+            });
+        },
+        /**
          * Repulsive force.
          *
          * In Verlet integration, force is applied on a node immidatelly to it's
@@ -249,6 +273,35 @@ H.networkgraphIntegrations = {
             });
         },
         /**
+         * Gravity force. Calculate and applys gravity forces on the
+         * nodes, directed down or right.
+         *
+         * In Verlet integration, force is applied on a node immidatelly to it's
+         * `plotX` and `plotY` position.
+         *
+         * @private
+         * @return {void}
+         */
+        gravity: function () {
+            var xFactor = 0, yFactor = 1000, columnsWidth = this.chart ? this.chart.chartWidth / 10 : 0;
+            this.columns = this.columns || [];
+            this.nodes.forEach(function (node, index) {
+                if (index === 0) { // center first node, don't use gravity
+                    node.dispX -=
+                        ((node.plotX || 0) - (columnsWidth * 5));
+                    node.dispY -=
+                        ((node.plotY || 0) - 20);
+                }
+                else if (!node.fixedPosition) {
+                    // if node is not fixed, attach gravity force in y direction
+                    node.dispY += yFactor / node.mass / node.degree;
+                    // also, move it to the center column
+                    node.dispX -=
+                        0 * ((node.plotX || 0) - (columnsWidth * 5));
+                }
+            });
+        },
+        /**
          * Repulsive force.
          *
          * @private
@@ -283,7 +336,7 @@ H.networkgraphIntegrations = {
          * @return {void}
          */
         attractive: function (link, force, distanceXY, distanceR) {
-            var massFactor = link.getMass(), translatedX = (distanceXY.x / distanceR) * force, translatedY = (distanceXY.y / distanceR) * force;
+            var massFactor = link.getMass(), translatedX = ((distanceXY.x) / distanceR) * force / 1, translatedY = ((distanceXY.y) / distanceR) * force / 1;
             if (!link.fromNode.fixedPosition) {
                 link.fromNode.dispX -=
                     translatedX * massFactor.fromNode / link.fromNode.degree;
@@ -296,6 +349,16 @@ H.networkgraphIntegrations = {
                 link.toNode.dispY +=
                     translatedY * massFactor.toNode / link.toNode.degree;
             }
+            /*
+            // attractive force is using spring forces,
+            // treating links as springs
+            if ((link.toNode.plotY || 0) - (link.fromNode.plotY || 0) > 50) {
+                (link.toNode.plotY as any) -=
+                (((distanceXY.y) / distanceR) * 100 - distanceXY.y) * 0.1;
+                (link.toNode.plotX as any) -=
+                    (((distanceXY.x) / distanceR) - distanceXY.x) * 0.01;
+            }
+            */
         },
         /**
          * Integration method.
