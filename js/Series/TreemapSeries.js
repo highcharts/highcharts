@@ -967,7 +967,6 @@ BaseSeries.seriesType('treemap', 'scatter'
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
         rootNode = series.nodeMap[rootId];
-        series.renderTraverseUpButton(rootId);
         series.mapOptionsToLevel = getLevelOptions({
             from: rootNode.level + 1,
             levels: options.levels,
@@ -1328,38 +1327,6 @@ BaseSeries.seriesType('treemap', 'scatter'
         };
         // Fire setRootNode event.
         fireEvent(series, 'setRootNode', eventArgs, defaultFn);
-    },
-    renderTraverseUpButton: function (rootId) {
-        var series = this, nodeMap = series.nodeMap, node = nodeMap[rootId], name = node.name, buttonOptions = series.options.traverseUpButton, backText = pick(buttonOptions.text, name, '◁ Back'), attr, states;
-        if (rootId === '' || (series.is('sunburst') &&
-            series.tree.children.length === 1 &&
-            rootId === series.tree.children[0].id)) {
-            if (series.drillUpButton) {
-                series.drillUpButton = series.drillUpButton.destroy();
-            }
-        }
-        else if (!this.drillUpButton) {
-            attr = buttonOptions.theme;
-            states = attr && attr.states;
-            this.drillUpButton = this.chart.renderer
-                .button(backText, 0, 0, function () {
-                series.drillUp();
-            }, attr, states && states.hover, states && states.select)
-                .addClass('highcharts-drillup-button')
-                .attr({
-                align: buttonOptions.position.align,
-                zIndex: 7
-            })
-                .add()
-                .align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
-        }
-        else {
-            this.drillUpButton.placed = false;
-            this.drillUpButton.attr({
-                text: backText
-            })
-                .align();
-        }
     },
     buildKDTree: noop,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,

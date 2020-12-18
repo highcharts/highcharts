@@ -844,7 +844,6 @@ Chart.prototype.applyDrilldown = function (): void {
 
     this.pointer.reset();
     this.redraw();
-    this.showDrillUpButton();
     fireEvent(this, 'afterDrilldown');
 };
 
@@ -1014,15 +1013,6 @@ Chart.prototype.drillUp = function (): void {
     }
 
     this.redraw();
-
-    if (this.drilldownLevels.length === 0 && !chart.options.drilldown?.breadcrumbs?.enabled) {
-        this.drillUpButton = (this.drillUpButton as any).destroy();
-    } else if (this.drillUpButton) {
-        (this.drillUpButton as any).attr({
-            text: this.getDrilldownBackText()
-        })
-            .align();
-    }
 
     (this.ddDupes as any).length = []; // #3315
 

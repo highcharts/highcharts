@@ -31,6 +31,7 @@
 	"code/modules/treemap.src.js",
 	"code/modules/item-series.src.js",
 	"code/modules/drilldown.src.js",
+	"code/modules/breadcrumbs.src.js",
 	"code/modules/histogram-bellcurve.src.js",
 	"code/modules/bullet.src.js",
 	"code/modules/funnel.src.js",

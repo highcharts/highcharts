@@ -82,15 +82,13 @@ QUnit.test('Breadcrumbs button', function (assert) {
     chart.series[0].points[0].doDrilldown();
     assert.ok(
         chart.drillUpButton.element,
-        'Initially, the breadcrumbs should be disabled and the classic drillUp button should exist.'
+        'Initially, the breadcrumbs should be disabled and the drillUp button should exist.'
     );
     chart.drillUp();
 
     chart.update({
-        drilldown: {
-            breadcrumbs: {
-                enabled: true
-            }
+        breadcrumbs: {
+            showOnlyLast: false
         }
     });
 
@@ -100,26 +98,26 @@ QUnit.test('Breadcrumbs button', function (assert) {
         'Clasic button should not exist.'
     );
     assert.ok(
-        chart.drilldown.breadcrumbs.breadcrumbsGroup,
+        chart.breadcrumbs.breadcrumbsGroup,
         'Breadcrumbs group should be created.'
     );
     chart.series[0].points[0].doDrilldown();
     chart.series[0].points[0].doDrilldown();
 
-    const buttons = chart.drilldown.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
 
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Lemon',
         'The last button should have text Lemon.'
     );
-    chart.drilldown.breadcrumbs.multipleDrillUp(0);
+    chart.breadcrumbs.multipleDrillUp(0);
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Fruits',
         'The last button should have text Fruits.'
     );
-    chart.drilldown.breadcrumbs.multipleDrillUp(null);
+    chart.breadcrumbs.multipleDrillUp(null);
     assert.notOk(
         buttons.length,
         'The breadcrumbsButtonGroup should be empty.'
@@ -155,12 +153,13 @@ QUnit.test('Breadcrumbs format', function (assert) {
                 y: 3
             }]
         }],
+        breadcrumbs: {
+            enabled: true,
+            showOnlyLast: false,
+            format: 'Go to {value}'
+        },
         drilldown: {
             animation: false,
-            breadcrumbs: {
-                enabled: true,
-                format: 'Go to {value}'
-            },
             series: [{
                 name: "Fruits",
                 id: "Fruits",
@@ -179,7 +178,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
     });
     chart.series[0].points[0].doDrilldown();
 
-    const buttons = chart.drilldown.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
 
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
@@ -212,21 +211,22 @@ QUnit.test('Breadcrumbs formatter', function (assert) {
                     y: 3
                 }]
             }],
+            breadcrumbs: {
+                enabled: true,
+                showOnlyLast: false,
+                formatter: function (breadcrumb) {
+                    let index;
+
+                    if (breadcrumb[0] === null) {
+                        index = 0;
+                    } else {
+                        index = breadcrumb[0] + 1;
+                    }
+                    return labels[index];
+                }
+            },
             drilldown: {
                 animation: false,
-                breadcrumbs: {
-                    enabled: true,
-                    formatter: function (breadcrumb) {
-                        let index;
-
-                        if (breadcrumb[0] === null) {
-                            index = 0;
-                        } else {
-                            index = breadcrumb[0] + 1;
-                        }
-                        return labels[index];
-                    }
-                },
                 series: [{
                     name: "Fruits",
                     id: "Fruits",
@@ -245,7 +245,7 @@ QUnit.test('Breadcrumbs formatter', function (assert) {
         });
     chart.series[0].points[0].doDrilldown();
 
-    const buttons = chart.drilldown.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
 
     assert.strictEqual(
         buttons[0].textContent,

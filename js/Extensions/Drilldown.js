@@ -572,7 +572,6 @@ Chart.prototype.applyDrilldown = function () {
     }
     this.pointer.reset();
     this.redraw();
-    this.showDrillUpButton();
     fireEvent(this, 'afterDrilldown');
 };
 Chart.prototype.getDrilldownBackText = function () {
@@ -616,7 +615,6 @@ Chart.prototype.showDrillUpButton = function () {
  * @function Highcharts.Chart#drillUp
  */
 Chart.prototype.drillUp = function () {
-    var _a, _b;
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
         return;
     }
@@ -685,15 +683,6 @@ Chart.prototype.drillUp = function () {
         }
     }
     this.redraw();
-    if (this.drilldownLevels.length === 0 && !((_b = (_a = chart.options.drilldown) === null || _a === void 0 ? void 0 : _a.breadcrumbs) === null || _b === void 0 ? void 0 : _b.enabled)) {
-        this.drillUpButton = this.drillUpButton.destroy();
-    }
-    else if (this.drillUpButton) {
-        this.drillUpButton.attr({
-            text: this.getDrilldownBackText()
-        })
-            .align();
-    }
     this.ddDupes.length = []; // #3315
     // Fire a once-off event after all series have been drilled up (#5158)
     fireEvent(chart, 'drillupall');
