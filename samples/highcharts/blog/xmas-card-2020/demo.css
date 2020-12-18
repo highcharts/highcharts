@@ -96,6 +96,7 @@ body{
     width:100%;
     z-index: 20;
     transition: all 0.3s ;
+    flex-wrap: wrap;
 }
 #controls .btn{
     margin-right:6px;
@@ -122,6 +123,10 @@ body{
 
 #controls #play{
     display: inline;
+}
+
+#controls #speed {
+    margin-top: 0.5em;
 }
 
 .highcharts-line-series{
