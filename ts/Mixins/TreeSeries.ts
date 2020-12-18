@@ -76,7 +76,7 @@ declare global {
             before?: TreeValuesBeforeCallbackFunction<T>;
             idRoot: string;
             levelIsConstant?: boolean;
-            mapIdToNode: Dictionary<TreeNodeObject>;
+            mapIdToNode: Record<string, TreeNodeObject>;
             points: T['points'];
             series: T;
             visible?: boolean;
@@ -189,7 +189,7 @@ const getColor = function getColor(
         chartOptionsChart: Highcharts.ChartOptions =
             series.chart.options.chart as any,
         point,
-        level: Highcharts.Dictionary<any>,
+        level: Record<string, any>,
         colorByPoint,
         colorIndexByPoint,
         color,

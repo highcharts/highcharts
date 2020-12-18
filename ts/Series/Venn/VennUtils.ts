@@ -94,9 +94,9 @@ namespace VennUtils {
             })
             // Sum up the amount of overlap for each set.
             .reduce(function (
-                map: Highcharts.Dictionary<Highcharts.VennPropsObject>,
+                map: Record<string, Highcharts.VennPropsObject>,
                 relation: Highcharts.VennRelationObject
-            ): Highcharts.Dictionary<Highcharts.VennPropsObject> {
+            ): Record<string, Highcharts.VennPropsObject> {
                 var sets = relation.sets;
 
                 sets.forEach(function (
@@ -377,7 +377,7 @@ namespace VennUtils {
     function isValidRelation(
         x: (VennPointOptions|Highcharts.VennRelationObject)
     ): boolean {
-        var map: Highcharts.Dictionary<boolean> = {};
+        var map: Record<string, boolean> = {};
 
         return (
             isObject(x) &&
@@ -413,9 +413,9 @@ namespace VennUtils {
      */
     export function layoutGreedyVenn(
         relations: Array<Highcharts.VennRelationObject>
-    ): Highcharts.Dictionary<Highcharts.CircleObject> {
+    ): Record<string, Highcharts.CircleObject> {
         var positionedSets: Array<Highcharts.VennRelationObject> = [],
-            mapOfIdToCircles: Highcharts.Dictionary<Highcharts.CircleObject> =
+            mapOfIdToCircles: Record<string, Highcharts.CircleObject> =
                 {};
 
         // Define a circle for each set.
@@ -574,7 +574,7 @@ namespace VennUtils {
      * relations.
      */
     export function loss(
-        mapOfIdToCircle: Highcharts.Dictionary<Highcharts.CircleObject>,
+        mapOfIdToCircle: Record<string, Highcharts.CircleObject>,
         relations: Array<Highcharts.VennRelationObject>
     ): number {
         var precision = 10e10;
@@ -636,7 +636,7 @@ namespace VennUtils {
             .sort();
 
         var mapOfIdToRelation = d.reduce(function (
-            mapOfIdToRelation: Highcharts.Dictionary<Highcharts.VennRelationObject>,
+            mapOfIdToRelation: Record<string, Highcharts.VennRelationObject>,
             relation: VennPointOptions
         ): Record<string, Highcharts.VennRelationObject> {
             if (

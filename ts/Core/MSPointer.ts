@@ -42,7 +42,7 @@ declare global {
 /* globals MSPointerEvent, PointerEvent */
 
 // The touches object keeps track of the points being touched at all times
-const touches = {} as Highcharts.Dictionary<PointerEvent>;
+const touches = {} as Record<string, PointerEvent>;
 const hasPointerEvent = !!win.PointerEvent;
 
 /* eslint-disable valid-jsdoc */

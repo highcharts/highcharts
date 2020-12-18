@@ -35,11 +35,11 @@ declare global {
             public cursor: number;
             public options: TimelineOptionsObject;
             public paths: Array<(TimelinePath|Array<TimelinePath>)>;
-            public pathsPlaying: Dictionary<TimelinePath>;
+            public pathsPlaying: Record<string, TimelinePath>;
             public signalHandler: SignalHandler;
             public atStart(): boolean;
             public getCurrentPlayingPaths(): Array<TimelinePath>;
-            public getCursor(): Dictionary<TimelineEvent>;
+            public getCursor(): Record<string, TimelineEvent>;
             public init(options: TimelineOptionsObject): void;
             public pause(fadeOut?: boolean): void;
             public play(onEnd?: Function): void;
@@ -86,8 +86,8 @@ declare global {
             public constructor(options: TimelinePathOptionsObject);
             public cursor: number;
             public events: Array<TimelineEvent>;
-            public eventIdMap: Dictionary<(number|undefined)>;
-            public eventsPlaying: Dictionary<TimelineEvent>;
+            public eventIdMap: Record<string, (number|undefined)>;
+            public eventsPlaying: Record<string, TimelineEvent>;
             public id: string;
             public nextScheduledPlay?: number;
             public options: TimelinePathOptionsObject;
@@ -371,10 +371,10 @@ TimelinePath.prototype.updateEventIdMap = function (
     this: Highcharts.TimelinePath
 ): void {
     this.eventIdMap = this.events.reduce(function (
-        acc: Highcharts.Dictionary<number>,
+        acc: Record<string, number>,
         cur: Highcharts.TimelineEvent,
         i: number
-    ): Highcharts.Dictionary<number> {
+    ): Record<string, number> {
         acc[cur.id] = i;
         return acc;
     }, {});
@@ -880,11 +880,11 @@ Timeline.prototype.setCursor = function (
  */
 Timeline.prototype.getCursor = function (
     this: Highcharts.Timeline
-): Highcharts.Dictionary<Highcharts.TimelineEvent> {
+): Record<string, Highcharts.TimelineEvent> {
     return this.getCurrentPlayingPaths().reduce(function (
-        acc: Highcharts.Dictionary<Highcharts.TimelineEvent>,
+        acc: Record<string, Highcharts.TimelineEvent>,
         cur: Highcharts.TimelinePath
-    ): Highcharts.Dictionary<Highcharts.TimelineEvent> {
+    ): Record<string, Highcharts.TimelineEvent> {
         acc[cur.id] = cur.getCursor();
         return acc;
     }, {});

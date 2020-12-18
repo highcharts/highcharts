@@ -125,7 +125,7 @@ declare module '../Core/Series/SeriesOptions' {
 declare global {
     namespace Highcharts {
         interface Axis {
-            ddPoints?: Dictionary<Array<(false|Point)>>;
+            ddPoints?: Record<string, Array<(false|Point)>>;
             oldPos?: number;
             drilldownCategory(x: number, e: MouseEvent): void;
             getDDPoints(x: number): Array<(false|Point)>;
@@ -179,7 +179,7 @@ declare global {
             series?: Array<SeriesTypeOptions>;
         }
         interface DrilldownLevelObject {
-            bBox: (BBoxObject|Dictionary<undefined>);
+            bBox: (BBoxObject|Record<string, undefined>);
             color?: ColorType;
             colorIndex?: number;
             levelNumber: number;
@@ -187,7 +187,7 @@ declare global {
             levelSeriesOptions: Array<SeriesOptions>;
             lowerSeries: LineSeries;
             lowerSeriesOptions: SeriesOptions;
-            oldExtremes: Dictionary<(number|undefined)>;
+            oldExtremes: Record<string, (number|undefined)>;
             pointIndex: number;
             pointOptions: (PointOptions|PointShortOptions);
             seriesOptions: SeriesOptions;

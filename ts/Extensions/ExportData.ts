@@ -85,8 +85,8 @@ declare module '../Core/Series/SeriesLike' {
  */
 declare global {
     namespace Highcharts {
-        type ExportingCategoryMap = Dictionary<Array<(number|string|null)>>;
-        type ExportingDateTimeMap = Dictionary<Array<string>>;
+        type ExportingCategoryMap = Record<string, Array<(number|string|null)>>;
+        type ExportingDateTimeMap = Record<string, Array<string>>;
 
         interface ExportingCategoryDateTimeMap {
             categoryMap: ExportingCategoryMap;
@@ -519,7 +519,7 @@ Chart.prototype.getDataRows = function (
         ),
         xAxis: Highcharts.Axis,
         xAxes = this.xAxis,
-        rows: Highcharts.Dictionary<(Array<any>&Highcharts.Dictionary<any>)> =
+        rows: Record<string, (Array<any>&Record<string, any>)> =
             {},
         rowArr = [],
         dataRows,
@@ -639,7 +639,7 @@ Chart.prototype.getDataRows = function (
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
-            xTaken: (false|Highcharts.Dictionary<unknown>) =
+            xTaken: (false|Record<string, unknown>) =
                 !series.requireSorting && {},
             xAxisIndex = xAxes.indexOf(xAxis),
             categoryAndDatetimeMap = getCategoryAndDateTimeMap(
@@ -797,8 +797,8 @@ Chart.prototype.getDataRows = function (
 
         // Sort it by X values
         rowArr.sort(function ( // eslint-disable-line no-loop-func
-            a: Highcharts.Dictionary<any>,
-            b: Highcharts.Dictionary<any>
+            a: Record<string, any>,
+            b: Record<string, any>
         ): number {
             return a.xValues[xAxisIndex] - b.xValues[xAxisIndex];
         });
@@ -814,7 +814,7 @@ Chart.prototype.getDataRows = function (
 
         // Add the category column
         rowArr.forEach(function ( // eslint-disable-line no-loop-func
-            row: Highcharts.Dictionary<any>
+            row: Record<string, any>
         ): void {
             var category = row.name;
 
@@ -1319,7 +1319,7 @@ if (exportingOptions) {
                 this.toggleDataTable();
             }
         }
-    } as Highcharts.Dictionary<Highcharts.ExportingMenuObject>);
+    } as Record<string, Highcharts.ExportingMenuObject>);
 
     if (exportingOptions.buttons) {
         (exportingOptions.buttons.contextButton.menuItems as any).push(

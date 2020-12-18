@@ -53,7 +53,7 @@ declare global {
             public chart: AccessibilityChart;
             public domElementProvider: DOMElementProvider;
             public eventProvider: EventProvider;
-            public keyCodes: Dictionary<number>;
+            public keyCodes: Record<string, number>;
             public addEvent: EventProvider['addEvent'];
             public createElement: DOMElementProvider['createElement'];
             public addProxyGroup(attrs?: HTMLAttributes): HTMLDOMElement;

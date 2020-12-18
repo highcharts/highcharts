@@ -89,7 +89,7 @@ var whcm = {
         chart.highContrastModeActive = true;
 
         // Apply theme to chart
-        var theme: Highcharts.Dictionary<any> = (
+        var theme: Record<string, any> = (
             chart.options.accessibility.highContrastTheme
         );
         chart.update(theme, false);

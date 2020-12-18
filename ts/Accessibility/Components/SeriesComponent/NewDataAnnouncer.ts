@@ -69,7 +69,7 @@ declare global {
             ): void;
         }
         interface NewDataAnnouncerDirtyObject {
-            allSeries: Dictionary<LineSeries>;
+            allSeries: Record<string, LineSeries>;
             hasDirty?: boolean;
             newPoint?: Point;
             newSeries?: LineSeries;
@@ -119,9 +119,9 @@ function getUniqueSeries(
 ): Array<LineSeries> {
     var uniqueSeries = (arrayA || []).concat(arrayB || [])
         .reduce(function (
-            acc: Highcharts.Dictionary<LineSeries>,
+            acc: Record<string, LineSeries>,
             cur: LineSeries
-        ): Highcharts.Dictionary<LineSeries> {
+        ): Record<string, LineSeries> {
             acc[cur.name + cur.index] = cur;
             return acc;
         }, {});

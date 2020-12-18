@@ -33,7 +33,7 @@ declare global {
             );
             public chart: Chart;
             public fromPoint: Point;
-            public graphics: Dictionary<SVGElement>;
+            public graphics: Record<string, SVGElement>;
             public options?: ConnectorsOptions;
             public pathfinder: Pathfinder;
             public toPoint: Point;
@@ -398,7 +398,7 @@ extend(defaultOptions, {
  * @return {Highcharts.Dictionary<number>|null}
  *         Result xMax, xMin, yMax, yMin.
  */
-function getPointBB(point: Point): (Highcharts.Dictionary<number>|null) {
+function getPointBB(point: Point): (Record<string, number>|null) {
     var shapeArgs = point.shapeArgs,
         bb;
 
@@ -444,8 +444,8 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
         distances = [],
         // Compute smallest distance between two rectangles
         distance = function (
-            a: Highcharts.Dictionary<number>,
-            b: Highcharts.Dictionary<number>,
+            a: Record<string, number>,
+            b: Record<string, number>,
             bbMargin?: number
         ): number {
             // Count the distance even if we are slightly off
@@ -985,7 +985,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         v1: PositionObject,
         v2: PositionObject
     ): number {
-        var box: (Highcharts.Dictionary<number>|null);
+        var box: (Record<string, number>|null);
 
         if (!defined(v2)) {
             box = getPointBB(this);

@@ -121,8 +121,8 @@ declare global {
         }
         interface Legend {
             bubbleLegend?: BubbleLegend;
-            getLinesHeights(): Array<Dictionary<number>>;
-            retranslateItems(lines: Array<Dictionary<number>>): void;
+            getLinesHeights(): Array<Record<string, number>>;
+            retranslateItems(lines: Array<Record<string, number>>): void;
         }
         interface LegendItemObject {
             ignoreSeries?: boolean;
@@ -144,7 +144,7 @@ declare global {
             public movementX: number;
             public ranges: Array<BubbleLegendRangesOptions>;
             public setState: Function;
-            public symbols: Dictionary<Array<SVGElement>>;
+            public symbols: Record<string, Array<SVGElement>>;
             public options: BubbleLegendOptions;
             public visible: boolean;
             public addToLegend(items: Array<(LineSeries|Point)>): void;
@@ -467,7 +467,7 @@ class BubbleLegend {
     public movementX: number = void 0 as any;
     public ranges: Array<Highcharts.BubbleLegendRangesOptions> = void 0 as any;
     public visible: boolean = void 0 as any;
-    public symbols: Highcharts.Dictionary<Array<SVGElement>>= void 0 as any;
+    public symbols: Record<string, Array<SVGElement>>= void 0 as any;
     public options: Highcharts.BubbleLegendOptions = void 0 as any;
 
 
@@ -1188,9 +1188,9 @@ Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
  */
 Legend.prototype.getLinesHeights = function (
     this: Highcharts.Legend
-): Array<Highcharts.Dictionary<number>> {
+): Array<Record<string, number>> {
     var items = this.allItems,
-        lines = [] as Array<Highcharts.Dictionary<number>>,
+        lines = [] as Array<Record<string, number>>,
         lastLine,
         length = items.length,
         i = 0,

@@ -55,7 +55,7 @@ const {
 // Utils
 function arrayExtremesOHLC(
     data: Array<Array<number>>
-): Highcharts.Dictionary<number> {
+): Record<string, number> {
     var dataLength: number = data.length,
         min: number = data[0][3],
         max: number = min,
@@ -556,7 +556,7 @@ class VBPIndicator extends SMAIndicator {
         volumeSeries: LineSeries
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
         var indicator = this,
-            rangeExtremes: (boolean|Highcharts.Dictionary<number>) = (
+            rangeExtremes: (boolean|Record<string, number>) = (
                 isOHLC ? arrayExtremesOHLC(yValues) : false
             ),
             lowRange: number = rangeExtremes ?

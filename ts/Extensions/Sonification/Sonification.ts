@@ -58,7 +58,7 @@ declare global {
         }
         interface PointSonificationStateObject {
             currentlyPlayingPoint?: SonifyablePoint;
-            instrumentsPlaying?: Dictionary<Instrument>;
+            instrumentsPlaying?: Record<string, Instrument>;
             signalHandler?: SignalHandler;
         }
         interface SonificationObject {
@@ -68,7 +68,7 @@ declare global {
             TimelineEvent: typeof TimelineEvent;
             TimelinePath: typeof TimelinePath;
             fadeOutDuration: number;
-            instruments: Dictionary<Instrument>;
+            instruments: Record<string, Instrument>;
             utilities: SonificationUtilitiesObject;
         }
         interface SonifyableChart extends Chart {

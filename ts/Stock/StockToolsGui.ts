@@ -48,7 +48,7 @@ declare global {
             stockTools?: LangStockToolsOptions;
         }
         interface LangStockToolsOptions {
-            gui?: Dictionary<string>;
+            gui?: Record<string, string>;
         }
         interface Options {
             stockTools?: StockToolsOptions;
@@ -97,18 +97,18 @@ declare global {
         class Toolbar {
             public constructor(
                 options: StockToolsGuiOptions,
-                langOptions: (Dictionary<string>|undefined),
+                langOptions: (Record<string, string>|undefined),
                 chart: Chart
             );
             public arrowDown: HTMLDOMElement;
             public arrowUp: HTMLDOMElement;
             public arrowWrapper: HTMLDOMElement;
             public chart: Chart;
-            public classMapping: Dictionary<string>;
+            public classMapping: Record<string, string>;
             public eventsToUnbind: Array<Function>;
             public guiEnabled: (boolean|undefined);
             public iconsURL: string;
-            public lang: (Dictionary<string>|undefined);
+            public lang: (Record<string, string>|undefined);
             public listWrapper: HTMLDOMElement;
             public options: StockToolsGuiOptions;
             public placed: boolean;
@@ -124,11 +124,11 @@ declare global {
                     StockToolsGuiDefinitionsOptions
                 ),
                 btnName: string,
-                lang: Dictionary<string>
-            ): Dictionary<HTMLDOMElement>;
+                lang: Record<string, string>
+            ): Record<string, HTMLDOMElement>;
             public addNavigation(): void;
             public addSubmenu(
-                parentBtn: Dictionary<HTMLDOMElement>,
+                parentBtn: Record<string, HTMLDOMElement>,
                 button: StockToolsGuiDefinitionsButtonsOptions
             ): void;
             public addSubmenuItems(
@@ -1210,7 +1210,7 @@ class Toolbar {
             Highcharts.StockToolsGuiDefinitionsOptions
         ),
         btnName: string,
-        lang: Highcharts.Dictionary<string> = {}
+        lang: Record<string, string> = {}
     ): Record<string, HTMLDOMElement> {
         var btnOptions: Highcharts.StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,

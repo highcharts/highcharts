@@ -50,7 +50,7 @@ declare global {
         /** @requires modules/accessibility */
         function i18nFormat(
             formatString: string,
-            context: Dictionary<any>,
+            context: Record<string, any>,
             chart: Chart
         ): string;
     }
@@ -92,7 +92,7 @@ function stringTrim(str: string): string {
  */
 function formatExtendedStatement(
     statement: string,
-    ctx: Highcharts.Dictionary<any>
+    ctx: Record<string, any>
 ): string {
     var eachStart = statement.indexOf('#each('),
         pluralStart = statement.indexOf('#plural('),
@@ -254,7 +254,7 @@ function formatExtendedStatement(
  */
 H.i18nFormat = function (
     formatString: string,
-    context: Highcharts.Dictionary<any>,
+    context: Record<string, any>,
     chart: Chart
 ): string {
     var getFirstBracketStatement = function (
@@ -343,7 +343,7 @@ H.i18nFormat = function (
  */
 H.Chart.prototype.langFormat = function (
     langKey: string,
-    context: Highcharts.Dictionary<any>
+    context: Record<string, any>
 ): string {
     var keys = langKey.split('.'),
         formatString: string = this.options.lang as any,

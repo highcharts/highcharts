@@ -625,3 +625,43 @@ QUnit.test(
         }
     }
 );
+
+QUnit.test('#8742: Some stackLabels did not render with dataLabels enabled', assert => {
+    [
+        'column',
+        'bar'
+    ].forEach(type => {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type
+            },
+            yAxis: {
+                stackLabels: {
+                    enabled: true
+                }
+            },
+            plotOptions: {
+                [type]: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true,
+                        inside: false
+                    }
+                }
+            },
+            series: [{
+                data: [0, 99, 454, 297, 409]
+            }, {
+                data: [51, 150, 155, 106, 97]
+            }, {
+                data: [19, 107, 184, 138, 150]
+            }]
+        });
+
+        const stack = chart.yAxis[0].stacking.stacks[`${type},,,`];
+        assert.ok(
+            Object.values(stack).every(item => item.label.visibility !== 'hidden'),
+            `${type}: All stackLabels should be visible`
+        );
+    });
+});

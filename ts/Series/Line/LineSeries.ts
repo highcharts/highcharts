@@ -4802,7 +4802,7 @@ class LineSeries {
     public getClipBox(
         animation?: (boolean|Partial<AnimationOptions>),
         finalBox?: boolean
-    ): Highcharts.Dictionary<number> {
+    ): Record<string, number> {
         var series = this,
             options = series.options,
             chart = series.chart,
@@ -6970,7 +6970,7 @@ class LineSeries {
             // directly after chart initialization, or when applying responsive
             // rules (#6912).
             animation = series.finishedAnimating && { animation: false },
-            kinds = {} as Highcharts.Dictionary<number>;
+            kinds = {} as Record<string, number>;
 
         if (keepPoints) {
             preserve.push(

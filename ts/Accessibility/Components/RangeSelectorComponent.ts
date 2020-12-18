@@ -32,6 +32,7 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 import RangeSelector from '../../Extensions/RangeSelector.js';
 const {
+    addEvent,
     extend
 } = U;
 
@@ -145,7 +146,7 @@ H.Chart.prototype.highlightRangeSelectorButton = function (
 
 // Range selector does not have destroy-setup for class instance events - so
 // we set it on the class and call the component from here.
-H.addEvent(RangeSelector, 'afterBtnClick', function (): void {
+addEvent(RangeSelector, 'afterBtnClick', function (): void {
     const component = this.chart.accessibility?.components.rangeSelector;
     return component?.onAfterBtnClick();
 });

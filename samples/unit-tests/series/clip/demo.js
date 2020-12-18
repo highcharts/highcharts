@@ -75,3 +75,43 @@ QUnit.test('General series clip tests', assert => {
         TestUtilities.lolexUninstall(clock);
     }
 });
+
+QUnit.test('Each series should have their own clip-path, (#14549).', assert => {
+    const chart = Highcharts.stockChart('container', {
+
+    });
+
+    chart.addAxis({
+        id: 'line',
+        height: '60%',
+        min: 4,
+        max: 6
+    }, false, false);
+
+    chart.addAxis({
+        id: 'column',
+        top: '65%',
+        height: '35%',
+        offset: 0
+    }, false, false);
+
+    chart.addSeries({
+        type: 'line',
+        data: [5, 7, 5, 2, 3, 7],
+        yAxis: 'line'
+    }, false, false);
+
+    chart.addSeries({
+        type: 'column',
+        data: [23, 45, 37, 22, 39, 65],
+        yAxis: 'column'
+    }, false, false);
+
+    chart.redraw(false);
+
+    assert.ok(
+        chart.series[0].clipBox.height + chart.series[1].clipBox.height <=
+        chart.plotHeight,
+        "The sum of the series clip-paths should not be bigger than the plot height."
+    );
+});

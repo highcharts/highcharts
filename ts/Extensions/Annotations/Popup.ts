@@ -45,7 +45,7 @@ declare global {
             public container: HTMLDOMElement;
             public iconsURL: string;
             public indicators: PopupIndicatorsObject;
-            public lang: Dictionary<string>;
+            public lang: Record<string, string>;
             public popup: Popup;
             public tabs: PopupTabsObject;
             public addButton (
@@ -56,12 +56,12 @@ declare global {
                 fieldsDiv: HTMLDOMElement
             ): HTMLDOMElement;
             public addCloseBtn(): void;
-            public addColsContainer(container: HTMLDOMElement): Dictionary<HTMLDOMElement>;
+            public addColsContainer(container: HTMLDOMElement): Record<string, HTMLDOMElement>;
             public addInput(option: string, type: string, parentDiv: HTMLDOMElement, value: string): void;
             public closePopup(): void;
             public deselectAll(): void;
             public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
-            public getLangpack(): Dictionary<string>;
+            public getLangpack(): Record<string, string>;
             public init(parentDiv: HTMLDOMElement, iconsURL: string): void;
             public showForm(
                 type: string,
@@ -96,7 +96,9 @@ declare global {
             onSubmit: Function;
             options: AnnotationsOptions;
         }
-        type PopupFieldsDictionary<T> = Dictionary<(T|PopupFieldsDictionary<T>)>;
+        interface PopupFieldsDictionary<T> {
+            [key: string]: (T | PopupFieldsDictionary<T>);
+        }
         interface PopupFieldsObject {
             actionType: string;
             fields: PopupFieldsDictionary<string>;
@@ -123,7 +125,7 @@ declare global {
                 parentDiv: HTMLDOMElement
             ): void;
             getAmount(this: Chart): number;
-            getNameType(series: SMAIndicator, type: string): Dictionary<string>;
+            getNameType(series: SMAIndicator, type: string): Record<string, string>;
             listAllSeries(
                 this: Popup,
                 type: string,
@@ -470,7 +472,7 @@ H.Popup.prototype = {
      * @private
      * @return {Highcharts.Dictionary<string>} - elements translations.
      */
-    getLangpack: function (this: Highcharts.Popup): Highcharts.Dictionary<string> {
+    getLangpack: function (this: Highcharts.Popup): Record<string, string> {
         return (getOptions().lang as any).navigation.popup;
     },
     annotations: {
@@ -870,7 +872,7 @@ H.Popup.prototype = {
         getNameType: function (
             series: SMAIndicator,
             type: string
-        ): Highcharts.Dictionary<string> {
+        ): Record<string, string> {
             var options = series.options,
                 seriesTypes = H.seriesTypes,
                 // add mode

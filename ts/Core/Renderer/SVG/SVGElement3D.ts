@@ -109,13 +109,13 @@ namespace SVGElement3D {
             this: SVGElement,
             prop: string,
             val: any,
-            values?: Highcharts.Dictionary<any>,
+            values?: Record<string, any>,
             verb?: string,
             duration?: any,
             complete?: any
         ): SVGElement {
             var elem3d = this,
-                newAttr = {} as Highcharts.Dictionary<any>,
+                newAttr = {} as Record<string, any>,
                 optionsToApply = [null, null, (verb || 'attr'), duration, complete],
                 hasZIndexes = values && values.zIndexes;
 
@@ -152,7 +152,7 @@ namespace SVGElement3D {
         processParts: function (
             this: SVGElement,
             props: any,
-            partsProps: Highcharts.Dictionary<any>,
+            partsProps: Record<string, any>,
             verb: string,
             duration?: any,
             complete?: any

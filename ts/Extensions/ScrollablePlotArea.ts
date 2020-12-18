@@ -135,7 +135,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
         scrollablePixelsX,
         scrollablePixelsY,
         corrections: (
-            Highcharts.Dictionary<Highcharts.Dictionary<(number|string)>>|
+            Record<string, Record<string, (number|string)>>|
             undefined
         );
 

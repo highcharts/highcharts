@@ -20,7 +20,7 @@ var setElAttrs = HTMLUtilities.setElAttrs;
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import U from '../../Core/Utilities.js';
 import RangeSelector from '../../Extensions/RangeSelector.js';
-var extend = U.extend;
+var addEvent = U.addEvent, extend = U.extend;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -69,7 +69,7 @@ H.Chart.prototype.highlightRangeSelectorButton = function (ix) {
 };
 // Range selector does not have destroy-setup for class instance events - so
 // we set it on the class and call the component from here.
-H.addEvent(RangeSelector, 'afterBtnClick', function () {
+addEvent(RangeSelector, 'afterBtnClick', function () {
     var _a;
     var component = (_a = this.chart.accessibility) === null || _a === void 0 ? void 0 : _a.components.rangeSelector;
     return component === null || component === void 0 ? void 0 : component.onAfterBtnClick();

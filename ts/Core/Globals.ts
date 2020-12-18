@@ -51,7 +51,7 @@ declare global {
         }
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;
-        const dateFormats: Dictionary<TimeFormatCallbackFunction>;
+        const dateFormats: Record<string, TimeFormatCallbackFunction>;
         const deg2rad: number;
         const doc: Document;
         const hasBidiBug: boolean;
@@ -66,7 +66,7 @@ declare global {
         const noop: () => void;
         const product: string;
         const supportsPassiveEvents: boolean;
-        const symbolSizes: Dictionary<SizeObject>;
+        const symbolSizes: Record<string, SizeObject>;
         const win: GlobalWindow;
         const svg: boolean;
         const version: string;

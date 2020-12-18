@@ -207,7 +207,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             align = wrapper.textAlign || 'left',
             alignCorrection = ({
                 left: 0, center: 0.5, right: 1
-            } as Highcharts.Dictionary<number>)[align],
+            } as Record<string, number>)[align],
             styles = wrapper.styles,
             whiteSpace = styles && styles.whiteSpace;
 

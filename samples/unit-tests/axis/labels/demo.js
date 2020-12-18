@@ -2057,3 +2057,35 @@ QUnit.test(
         );
     }
 );
+
+// Issue #14769
+QUnit.test(
+    "Formatter should not be called when labels don't exist (#14769)",
+    assert => {
+        var results = [];
+
+        Highcharts.chart('container', {
+            chart: {
+                height: 150,
+                width: 500
+            },
+
+            yAxis: {
+                labels: {
+                    formatter: function () {
+                        results.push(this.value);
+                    }
+                }
+            },
+
+            series: [{
+                data: [null, null]
+            }]
+        });
+
+        assert.deepEqual(
+            results,
+            [],
+            "No values"
+        );
+    });

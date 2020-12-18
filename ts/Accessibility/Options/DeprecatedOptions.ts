@@ -101,7 +101,7 @@ declare global {
  * @return {void}
  */
 function traverseSetOption<T>(
-    root: Highcharts.Dictionary<T>,
+    root: Record<string, T>,
     optionAsArray: Array<string>,
     val: T
 ): void {
@@ -123,7 +123,7 @@ function deprecateFromOptionsMap(
     chart: Chart,
     rootOldAsArray: Array<string>,
     rootNewAsArray: Array<string>,
-    mapToNewOptions: Highcharts.Dictionary<Array<string>>
+    mapToNewOptions: Record<string, Array<string>>
 ): void {
     /**
      * @private
@@ -131,11 +131,11 @@ function deprecateFromOptionsMap(
     function getChildProp(
         root: Highcharts.Options,
         propAsArray: Array<string>
-    ): Highcharts.Dictionary<unknown> {
+    ): Record<string, unknown> {
         return propAsArray.reduce(function (
-            acc: Highcharts.Dictionary<unknown>,
+            acc: Record<string, unknown>,
             cur: string
-        ): Highcharts.Dictionary<unknown> {
+        ): Record<string, unknown> {
             return acc[cur] as any;
         }, root as any);
     }

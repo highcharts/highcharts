@@ -74,7 +74,7 @@ namespace SunburstUtilities {
      */
     export function calculateLevelSizes(
         levelOptions: SunburstSeriesLevelOptions,
-        params: Highcharts.Dictionary<number>
+        params: Record<string, number>
     ): (SunburstSeriesLevelOptions|undefined) {
         var result: (SunburstSeriesLevelOptions|undefined),
             p = isObject(params) ? params : {},

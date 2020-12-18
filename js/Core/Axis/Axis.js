@@ -1696,7 +1696,8 @@ var Axis = /** @class */ (function () {
     Axis.prototype.getTickAmount = function () {
         var axis = this, options = this.options, tickAmount = options.tickAmount, tickPixelInterval = options.tickPixelInterval;
         if (!defined(options.tickInterval) &&
-            !tickAmount && this.len < tickPixelInterval &&
+            !tickAmount &&
+            this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
@@ -1725,15 +1726,14 @@ var Axis = /** @class */ (function () {
      * @function Highcharts.Axis#adjustTickAmount
      */
     Axis.prototype.adjustTickAmount = function () {
-        var axis = this, axisOptions = axis.options, tickInterval = axis.tickInterval, tickPositions = axis.tickPositions, tickAmount = axis.tickAmount, finalTickAmt = axis.finalTickAmt, currentTickAmount = tickPositions && tickPositions.length, threshold = pick(axis.threshold, axis.softThreshold ? 0 : null), min, len, i;
-        if (axis.hasData()) {
+        var axis = this, axisOptions = axis.options, tickInterval = axis.tickInterval, tickPositions = axis.tickPositions, tickAmount = axis.tickAmount, finalTickAmt = axis.finalTickAmt, currentTickAmount = tickPositions && tickPositions.length, threshold = pick(axis.threshold, axis.softThreshold ? 0 : null), len, i;
+        if (axis.hasData() && isNumber(axis.min) && isNumber(axis.max)) { // #14769
             if (currentTickAmount < tickAmount) {
-                min = axis.min;
                 while (tickPositions.length < tickAmount) {
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
                     if (tickPositions.length % 2 ||
-                        min === threshold) {
+                        axis.min === threshold) {
                         // to the end
                         tickPositions.push(correctFloat(tickPositions[tickPositions.length - 1] +
                             tickInterval));

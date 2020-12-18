@@ -191,7 +191,7 @@ declare global {
             filename?: string;
             formAttributes?: HTMLAttributes;
             libURL?: string;
-            menuItemDefinitions?: Dictionary<ExportingMenuObject>;
+            menuItemDefinitions?: Record<string, ExportingMenuObject>;
             printMaxWidth?: number;
             scale?: number;
             sourceHeight?: number;
@@ -244,7 +244,7 @@ declare global {
         function post(
             url: string,
             data: object,
-            formAttributes?: Dictionary<string>
+            formAttributes?: Record<string, string>
         ): void;
 
         let printingChart: (Chart|undefined);
@@ -2126,7 +2126,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (onclick) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Highcharts.Dictionary<any>)
+                e: (Event|Record<string, any>)
             ): void {
                 if (e) {
                     e.stopPropagation();
@@ -2137,7 +2137,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else if (menuItems) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Highcharts.Dictionary<any>)
+                e: (Event|Record<string, any>)
             ): void {
                 // consistent with onclick call (#3495)
                 if (e) {
@@ -2158,7 +2158,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 
         if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 25);
+            attr.paddingLeft = pick(attr.paddingLeft, 30);
 
         } else if (!btnOptions.text) {
             extend(attr, {

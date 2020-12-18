@@ -74,6 +74,14 @@ class Fx {
 
     /* *
      *
+     * Static properties
+     *
+     * */
+
+    public static timers: Array<Highcharts.Timer> = [];
+
+    /* *
+     *
      *  Constructors
      *
      * */
@@ -244,13 +252,13 @@ class Fx {
                     setTimeout(step, 13);
                 },
             step = function (): void {
-                for (var i = 0; i < H.timers.length; i++) {
-                    if (!H.timers[i]()) {
-                        H.timers.splice(i--, 1);
+                for (var i = 0; i < Fx.timers.length; i++) {
+                    if (!Fx.timers[i]()) {
+                        Fx.timers.splice(i--, 1);
                     }
                 }
 
-                if (H.timers.length) {
+                if (Fx.timers.length) {
                     requestAnimationFrame(step);
                 }
             };
@@ -271,7 +279,7 @@ class Fx {
             timer.elem = this.elem;
             timer.prop = this.prop;
 
-            if (timer() && H.timers.push(timer) === 1) {
+            if (timer() && Fx.timers.push(timer) === 1) {
                 requestAnimationFrame(step);
             }
         }
@@ -296,7 +304,7 @@ class Fx {
             elem = this.elem,
             complete = options.complete,
             duration: number = options.duration as any,
-            curAnim: Highcharts.Dictionary<boolean> = options.curAnim as any;
+            curAnim: Record<string, boolean> = options.curAnim as any;
 
         if (elem.attr && !elem.element) { // #2616, element is destroyed
             ret = false;
@@ -533,6 +541,19 @@ interface Fx extends FxLike {
     // Nothing here yet
 }
 
+/* *
+ *
+ *  Compatibility
+ *
+ * */
+
 H.Fx = Fx;
+(H as any).timers = Fx.timers;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Fx;

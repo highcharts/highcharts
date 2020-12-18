@@ -90,7 +90,7 @@ declare global {
             hasNulls?: boolean;
         }
         interface DataGroupingApproximationsDictionary
-            extends Dictionary<(Function|undefined)>
+            extends Record<string, (Function|undefined)>
         {
             average: (
                 arr: DataGroupingApproximationsArray
@@ -135,7 +135,7 @@ declare global {
         }
         interface DataGroupingOptionsObject {
             approximation?: (DataGroupingApproximationValue|Function);
-            dateTimeLabelFormats?: Dictionary<Array<string>>;
+            dateTimeLabelFormats?: Record<string, Array<string>>;
             enabled?: boolean;
             forced?: boolean;
             groupAll?: boolean;

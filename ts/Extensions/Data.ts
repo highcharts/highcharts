@@ -95,7 +95,7 @@ declare global {
             parseDate?: DataParseDateCallbackFunction;
             rows?: Array<Array<DataValueType>>;
             rowsURL?: string;
-            seriesMapping?: Array<Dictionary<number>>;
+            seriesMapping?: Array<Record<string, number>>;
             sort?: boolean;
             startColumn?: number;
             startRow?: number;
@@ -133,7 +133,7 @@ declare global {
             public chartOptions: Options;
             public columns?: Array<Array<DataValueType>>;
             public dateFormat?: string;
-            public dateFormats: Dictionary<Highcharts.DataDateFormatObject>;
+            public dateFormats: Record<string, Highcharts.DataDateFormatObject>;
             public decimalRegex?: RegExp;
             public firstRowAsNames: boolean;
             public liveDataTimeout?: number;
@@ -183,7 +183,7 @@ declare global {
             public read<DataItemType>(
                 columns: Array<Array<DataItemType>>,
                 rowIndex: number
-            ): (Array<DataItemType>|Dictionary<DataItemType>);
+            ): (Array<DataItemType>|Record<string, DataItemType>);
         }
         function data(
             dataOptions: DataOptions,
@@ -837,7 +837,7 @@ class Data {
                     chartOptions &&
                     chartOptions.series &&
                     chartOptions.series.map(function (
-                    ): Highcharts.Dictionary<number> {
+                    ): Record<string, number> {
                         return { x: 0 };
                     })
                 ) ||
@@ -853,7 +853,7 @@ class Data {
 
         // Collect the x-column indexes from seriesMapping
         seriesMapping.forEach(function (
-            mapping: Highcharts.Dictionary<number>
+            mapping: Record<string, number>
         ): void {
             xColumns.push(mapping.x || 0);
         });
@@ -867,7 +867,7 @@ class Data {
         // Loop all seriesMappings and constructs SeriesBuilders from
         // the mapping options.
         seriesMapping.forEach(function (
-            mapping: Highcharts.Dictionary<number>
+            mapping: Record<string, number>
         ): void {
             var builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
@@ -987,7 +987,7 @@ class Data {
             dataTypes: Array<Array<string>> = [],
             // We count potential delimiters in the prepass, and use the
             // result as the basis of half-intelligent guesses.
-            potDelimiters: Highcharts.Dictionary<number> = {
+            potDelimiters: Record<string, number> = {
                 ',': 0,
                 ';': 0,
                 '\t': 0
@@ -1041,7 +1041,7 @@ class Data {
             columnStr: string,
             rowNumber: number,
             noAdd?: boolean,
-            callbacks?: Highcharts.Dictionary<Function>
+            callbacks?: Record<string, Function>
         ): void {
             var i = 0,
                 c = '',
@@ -1118,13 +1118,6 @@ class Data {
 
             for (; i < columnStr.length; i++) {
                 read(i);
-
-                // Quoted string
-                if (c === '#') {
-                    // The rest of the row is a comment
-                    push();
-                    return;
-                }
 
                 if (c === '"') {
                     read(++i);
@@ -2083,7 +2076,7 @@ class Data {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    public dateFormats: Highcharts.Dictionary<Highcharts.DataDateFormatObject> = {
+    public dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
@@ -2714,11 +2707,11 @@ class SeriesBuilder {
     public read <T>(
         columns: Array<Array<T>>,
         rowIndex: number
-    ): (Array<T>|Highcharts.Dictionary<T>) {
+    ): (Array<T>|Record<string, T>) {
         var builder = this,
             pointIsArray = builder.pointIsArray,
             point =
-                pointIsArray ? [] as Array<T> : {} as Highcharts.Dictionary<T>,
+                pointIsArray ? [] as Array<T> : {} as Record<string, T>,
             columnIndexes;
 
         // Loop each reader and ask it to read its value.
