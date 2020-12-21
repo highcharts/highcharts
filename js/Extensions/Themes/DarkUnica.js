@@ -12,9 +12,9 @@
 'use strict';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-var setOptions = U.setOptions;
+var createElement = U.createElement, setOptions = U.setOptions;
 // Load the fonts
-H.createElement('link', {
+createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Unica+One',
     rel: 'stylesheet',
     type: 'text/css'

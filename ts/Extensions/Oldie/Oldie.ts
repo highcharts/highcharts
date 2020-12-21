@@ -377,7 +377,7 @@ let VMLRenderer: typeof Highcharts.VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = U.getStyle = function (
+    (H as any).getStyle = U.getStyle = function (
         el: HTMLDOMElement,
         prop: string
     ): number {
