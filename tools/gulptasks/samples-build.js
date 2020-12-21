@@ -14,6 +14,7 @@ const { uploadFiles } = require('./lib/uploadS3');
 const { handle: builder } = require('highcharts-demo-manager/lib/cli/cmd.builder');
 const { handle: deployer } = require('highcharts-demo-manager/lib/cli/cmd.demo-deploy');
 const { getFilesChanged } = require('./lib/git');
+const { distUploadSamplesData } = require('./dist-upload-samples-resources');
 
 const SAMPLES_PATH = 'samples',
     TMP_PATH = 'tmp/samples-html',
@@ -56,7 +57,7 @@ async function cleanSampleHTML() {
  */
 async function deploySamples(paths = void 0) {
     const { all, profile, dryrun } = argv;
-    if (!paths.length && argv.paths.length) {
+    if (!paths.length && argv.paths && argv.paths.length) {
         paths = argv.paths.split(',');
     }
 
@@ -123,6 +124,13 @@ async function deploySamples(paths = void 0) {
 async function updateSamples() {
     const allChanges = await getFilesChanged();
     const shouldBeUpdated = allChanges.match(/.*samples\/.*?(?=demo\.)/gm);
+    const shouldUpdateResources = allChanges.match(/samples\/(graphics|static|data)/);
+
+    // We could get more specific with this, but it's not a huge amount of files
+    if (shouldUpdateResources) {
+        message('Uploading sample resources');
+        await distUploadSamplesData();
+    }
 
     if (!shouldBeUpdated) {
         message('No changes found in `/samples`');
@@ -151,7 +159,7 @@ async function updateSamples() {
 }
 
 task('samples-build', series(cleanSampleHTML, buildAllSamples));
-task('samples-deploy', deploySamples);
+task('samples-deploy', deploySamples, 'dist-upload-samples-resources');
 task('samples-clean', cleanSampleHTML);
 task('samples-build-and-deploy', series('samples-build', 'samples-deploy'));
 task('samples-update', updateSamples);

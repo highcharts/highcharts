@@ -38,6 +38,11 @@ async function distUploadSamplesData() {
         return sourceFiles.map(file => toS3Path(file, dir + '/', S3_DEST_PATH));
     });
 
+    if (argv.dryrun) {
+        console.log('Skipping upload...');
+        return Promise.resolve();
+    }
+
     return uploadFiles({
         files: [...rootFiles],
         name: 'highcharts-samples-data',
@@ -53,3 +58,7 @@ distUploadSamplesData.flags = {
 };
 
 gulp.task('dist-upload-samples-resources', distUploadSamplesData);
+
+module.exports = {
+    distUploadSamplesData
+};
