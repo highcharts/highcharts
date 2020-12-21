@@ -40,6 +40,7 @@ import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
+import { param } from 'jquery';
 const {
     addEvent,
     erase,
@@ -1292,12 +1293,12 @@ class ColorAxis extends Axis implements AxisLike {
         chart.isDirtyLegend = true;
     }
 
-    // Removing the whole axis (#14283)
+    //   Removing the whole axis (#14283)
     public destroy(): void {
         this.chart.isDirtyLegend = true;
 
         this.destroyItems();
-        H.Axis.prototype.destroy.call(this);
+        super.destroy(...[].slice.call(arguments));
     }
 
     /**
