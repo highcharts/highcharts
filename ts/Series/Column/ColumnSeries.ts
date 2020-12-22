@@ -1115,7 +1115,7 @@ class ColumnSeries extends LineSeries {
                 verb = graphic && chart.pointCount < animationLimit ?
                     'animate' : 'attr';
 
-            if (isNumber(plotY) && point.y !== null) {
+            if (isNumber(plotY) && point.y !== null && point.visible !== false) {
                 shapeArgs = point.shapeArgs;
 
                 // When updating a series between 2d and 3d or cartesian and
