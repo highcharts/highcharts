@@ -160,7 +160,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (
 
     // Post-translate
     if (this.axis.variwide && this.axis.categories) {
-        this.postTranslate(xy, xOrY, index);
+        this.postTranslate(xy, xOrY, this.pos);
     }
     return xy;
 });
