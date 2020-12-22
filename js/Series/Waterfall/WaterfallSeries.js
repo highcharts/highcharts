@@ -161,12 +161,12 @@ var WaterfallSeries = /** @class */ (function (_super) {
                     shapeArgs.y = yAxis.translate(yPos, 0, 1, 0, 1);
                     shapeArgs.height = Math.abs(shapeArgs.y -
                         yAxis.translate(hPos, 0, 1, 0, 1));
-                }
-                dummyStackItem = yAxis.waterfall.dummyStackItem;
-                if (dummyStackItem) {
-                    dummyStackItem.x = i;
-                    dummyStackItem.label = actualStack[i].label;
-                    dummyStackItem.setOffset(series.pointXOffset || 0, series.barW || 0, series.stackedYNeg[i], series.stackedYPos[i]);
+                    dummyStackItem = yAxis.waterfall.dummyStackItem;
+                    if (dummyStackItem) {
+                        dummyStackItem.x = i;
+                        dummyStackItem.label = actualStack[i].label;
+                        dummyStackItem.setOffset(series.pointXOffset || 0, series.barW || 0, series.stackedYNeg[i], series.stackedYPos[i]);
+                    }
                 }
             }
             else {

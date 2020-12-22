@@ -350,18 +350,18 @@ class WaterfallSeries extends ColumnSeries {
                             1 as any
                         ) as any)
                     );
-                }
 
-                dummyStackItem = yAxis.waterfall.dummyStackItem;
-                if (dummyStackItem) {
-                    dummyStackItem.x = i;
-                    dummyStackItem.label = (actualStack as any)[i].label;
-                    dummyStackItem.setOffset(
-                        series.pointXOffset || 0,
-                        series.barW || 0,
-                        series.stackedYNeg[i],
-                        series.stackedYPos[i]
-                    );
+                    dummyStackItem = yAxis.waterfall.dummyStackItem;
+                    if (dummyStackItem) {
+                        dummyStackItem.x = i;
+                        dummyStackItem.label = actualStack[i].label;
+                        dummyStackItem.setOffset(
+                            series.pointXOffset || 0,
+                            series.barW || 0,
+                            series.stackedYNeg[i],
+                            series.stackedYPos[i]
+                        );
+                    }
                 }
             } else {
                 // up points
