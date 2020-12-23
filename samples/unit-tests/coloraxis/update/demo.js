@@ -135,3 +135,43 @@ QUnit.test('Color axis update (#3207)', function (assert) {
         'Export has two legend items'
     );
 });
+
+QUnit.test('#14834: Reversed option ignored on update', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'heatmap'
+        },
+        colorAxis: {
+            reversed: false
+        },
+        legend: {
+            layout: 'vertical'
+        },
+        series: [{
+            data: [
+                [0, 0, 10],
+                [0, 1, 19]
+            ]
+        }]
+    });
+
+    chart.colorAxis[0].update({
+        minColor: '#ff00ff'
+    });
+
+    assert.strictEqual(
+        chart.options.colorAxis.reversed,
+        false,
+        'Reversed should still be false'
+    );
+
+    chart.colorAxis[0].update({
+        reversed: true
+    });
+
+    assert.strictEqual(
+        chart.options.colorAxis.reversed,
+        true,
+        'Updating reversed should also work'
+    );
+});

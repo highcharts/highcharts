@@ -101,7 +101,7 @@ var ColorAxis = /** @class */ (function (_super) {
             legend.layout !== 'vertical';
         return merge(options, {
             side: horiz ? 2 : 1,
-            reversed: !horiz
+            reversed: pick(options.reversed, !horiz)
         }, userOptions, {
             opposite: !horiz,
             showEmpty: false,
@@ -523,7 +523,9 @@ var ColorAxis = /** @class */ (function (_super) {
      * and call {@link Highcharts.Chart#redraw} after.
      */
     ColorAxis.prototype.update = function (newOptions, redraw) {
-        var axis = this, chart = axis.chart, legend = chart.legend, updatedOptions = ColorAxis.buildOptions(chart, {}, newOptions);
+        var axis = this, chart = axis.chart, legend = chart.legend, updatedOptions = ColorAxis.buildOptions(chart, {
+            reversed: axis.userOptions.reversed
+        }, newOptions);
         this.series.forEach(function (series) {
             // Needed for Axis.update when choropleth colors change
             series.isDirtyData = true;

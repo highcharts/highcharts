@@ -620,7 +620,7 @@ class ColorAxis extends Axis implements AxisLike {
             options,
             {
                 side: horiz ? 2 : 1,
-                reversed: !horiz
+                reversed: pick(options.reversed, !horiz)
             },
             userOptions,
             {
@@ -1246,7 +1246,9 @@ class ColorAxis extends Axis implements AxisLike {
         const axis = this,
             chart = axis.chart,
             legend = chart.legend,
-            updatedOptions = ColorAxis.buildOptions(chart, {}, newOptions);
+            updatedOptions = ColorAxis.buildOptions(chart, {
+                reversed: axis.userOptions.reversed
+            }, newOptions);
 
         this.series.forEach(function (series): void {
             // Needed for Axis.update when choropleth colors change
