@@ -2804,6 +2804,68 @@ Axis.prototype.minFromRange = function (
 };
 
 if (!H.RangeSelector) {
+    let unbindRedraw: Function|undefined,
+        unbindSetExtremes: Function|undefined;
+
+    const initRangeSelector = (chart: Chart): void => {
+        var extremes,
+            rangeSelector = chart.rangeSelector,
+            legend,
+            alignTo,
+            verticalAlign: VerticalAlignValue|undefined;
+
+        /**
+         * @private
+         */
+        function render(): void {
+            if (rangeSelector) {
+                extremes = chart.xAxis[0].getExtremes();
+                legend = chart.legend;
+                verticalAlign = rangeSelector?.options.verticalAlign;
+
+                if (isNumber(extremes.min)) {
+                    rangeSelector.render(extremes.min, extremes.max);
+                }
+
+                // Re-align the legend so that it's below the rangeselector
+                if (
+                    legend.display &&
+                    verticalAlign === 'top' &&
+                    verticalAlign === legend.options.verticalAlign
+                ) {
+                    // Create a new alignment box for the legend.
+                    alignTo = merge(chart.spacingBox);
+                    if (legend.options.layout === 'vertical') {
+                        alignTo.y = chart.plotTop;
+                    } else {
+                        alignTo.y += rangeSelector.getHeight();
+                    }
+                    legend.group.placed = false; // Don't animate the alignment.
+                    legend.align(alignTo);
+                }
+            }
+        }
+
+        if (rangeSelector) {
+            // redraw the scroller on setExtremes
+            unbindSetExtremes = unbindSetExtremes || addEvent(
+                chart.xAxis[0],
+                'afterSetExtremes',
+                function (e: Highcharts.RangeObject): void {
+                    if (rangeSelector) {
+                        rangeSelector.render(e.min, e.max);
+                    }
+                }
+            );
+
+            // redraw the scroller chart resize
+            unbindRedraw = unbindRedraw || addEvent(chart, 'redraw', render);
+
+            // do it now
+            render();
+        }
+    };
+
     // Initialize rangeselector for stock charts
     addEvent(Chart, 'afterGetContainer', function (): void {
         if (this.options.rangeSelector?.enabled) {
@@ -2863,15 +2925,14 @@ if (!H.RangeSelector) {
             this.options.rangeSelector
         ) {
             this.options.rangeSelector.enabled = true;
-            this.rangeSelector = new RangeSelector(this);
+            this.rangeSelector = rangeSelector = new RangeSelector(this);
         }
 
         this.extraBottomMargin = false;
         this.extraTopMargin = false;
 
         if (rangeSelector) {
-
-            rangeSelector.render();
+            initRangeSelector(this);
 
             verticalAlign = (
                 optionsRangeSelector &&
@@ -2933,71 +2994,12 @@ if (!H.RangeSelector) {
         }
     });
 
-    Chart.prototype.callbacks.push(function (chart: Chart): void {
-        var extremes,
-            rangeSelector = chart.rangeSelector,
-            unbindRender: Function,
-            unbindSetExtremes: Function,
-            legend,
-            alignTo,
-            verticalAlign: VerticalAlignValue|undefined;
+    Chart.prototype.callbacks.push(initRangeSelector);
 
-        /**
-         * @private
-         */
-        function renderRangeSelector(): void {
-            if (rangeSelector) {
-                extremes = chart.xAxis[0].getExtremes();
-                legend = chart.legend;
-                verticalAlign = rangeSelector?.options.verticalAlign;
-
-                if (isNumber(extremes.min)) {
-                    rangeSelector.render(extremes.min, extremes.max);
-                }
-
-                // Re-align the legend so that it's below the rangeselector
-                if (
-                    legend.display &&
-                    verticalAlign === 'top' &&
-                    verticalAlign === legend.options.verticalAlign
-                ) {
-                    // Create a new alignment box for the legend.
-                    alignTo = merge(chart.spacingBox);
-                    if (legend.options.layout === 'vertical') {
-                        alignTo.y = chart.plotTop;
-                    } else {
-                        alignTo.y += rangeSelector.getHeight();
-                    }
-                    legend.group.placed = false; // Don't animate the alignment.
-                    legend.align(alignTo);
-                }
-            }
-        }
-
-        if (rangeSelector) {
-            // redraw the scroller on setExtremes
-            unbindSetExtremes = addEvent(
-                chart.xAxis[0],
-                'afterSetExtremes',
-                function (e: Highcharts.RangeObject): void {
-                    (rangeSelector as any).render(e.min, e.max);
-                }
-            );
-
-            // redraw the scroller chart resize
-            unbindRender = addEvent(chart, 'redraw', renderRangeSelector);
-
-            // do it now
-            renderRangeSelector();
-        }
-
-        // Remove resize/afterSetExtremes at chart destroy
-        addEvent(chart, 'destroy', function destroyEvents(): void {
-            if (rangeSelector) {
-                unbindRender();
-                unbindSetExtremes();
-            }
-        });
+    // Remove resize/afterSetExtremes at chart destroy
+    addEvent(Chart, 'destroy', function destroyEvents(): void {
+        unbindRedraw = unbindRedraw && unbindRedraw();
+        unbindSetExtremes = unbindSetExtremes && unbindSetExtremes();
     });
     H.RangeSelector = RangeSelector;
 }

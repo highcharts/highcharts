@@ -2012,6 +2012,50 @@ Axis.prototype.minFromRange = function () {
     return min;
 };
 if (!H.RangeSelector) {
+    var unbindRedraw_1, unbindSetExtremes_1;
+    var initRangeSelector_1 = function (chart) {
+        var extremes, rangeSelector = chart.rangeSelector, legend, alignTo, verticalAlign;
+        /**
+         * @private
+         */
+        function render() {
+            if (rangeSelector) {
+                extremes = chart.xAxis[0].getExtremes();
+                legend = chart.legend;
+                verticalAlign = rangeSelector === null || rangeSelector === void 0 ? void 0 : rangeSelector.options.verticalAlign;
+                if (isNumber(extremes.min)) {
+                    rangeSelector.render(extremes.min, extremes.max);
+                }
+                // Re-align the legend so that it's below the rangeselector
+                if (legend.display &&
+                    verticalAlign === 'top' &&
+                    verticalAlign === legend.options.verticalAlign) {
+                    // Create a new alignment box for the legend.
+                    alignTo = merge(chart.spacingBox);
+                    if (legend.options.layout === 'vertical') {
+                        alignTo.y = chart.plotTop;
+                    }
+                    else {
+                        alignTo.y += rangeSelector.getHeight();
+                    }
+                    legend.group.placed = false; // Don't animate the alignment.
+                    legend.align(alignTo);
+                }
+            }
+        }
+        if (rangeSelector) {
+            // redraw the scroller on setExtremes
+            unbindSetExtremes_1 = unbindSetExtremes_1 || addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
+                if (rangeSelector) {
+                    rangeSelector.render(e.min, e.max);
+                }
+            });
+            // redraw the scroller chart resize
+            unbindRedraw_1 = unbindRedraw_1 || addEvent(chart, 'redraw', render);
+            // do it now
+            render();
+        }
+    };
     // Initialize rangeselector for stock charts
     addEvent(Chart, 'afterGetContainer', function () {
         var _a;
@@ -2050,12 +2094,12 @@ if (!H.RangeSelector) {
             !defined(rangeSelector) &&
             this.options.rangeSelector) {
             this.options.rangeSelector.enabled = true;
-            this.rangeSelector = new RangeSelector(this);
+            this.rangeSelector = rangeSelector = new RangeSelector(this);
         }
         this.extraBottomMargin = false;
         this.extraTopMargin = false;
         if (rangeSelector) {
-            rangeSelector.render();
+            initRangeSelector_1(this);
             verticalAlign = (optionsRangeSelector &&
                 optionsRangeSelector.verticalAlign) || (rangeSelector.options && rangeSelector.options.verticalAlign);
             if (!rangeSelector.options.floating) {
@@ -2097,53 +2141,11 @@ if (!H.RangeSelector) {
             }
         }
     });
-    Chart.prototype.callbacks.push(function (chart) {
-        var extremes, rangeSelector = chart.rangeSelector, unbindRender, unbindSetExtremes, legend, alignTo, verticalAlign;
-        /**
-         * @private
-         */
-        function renderRangeSelector() {
-            if (rangeSelector) {
-                extremes = chart.xAxis[0].getExtremes();
-                legend = chart.legend;
-                verticalAlign = rangeSelector === null || rangeSelector === void 0 ? void 0 : rangeSelector.options.verticalAlign;
-                if (isNumber(extremes.min)) {
-                    rangeSelector.render(extremes.min, extremes.max);
-                }
-                // Re-align the legend so that it's below the rangeselector
-                if (legend.display &&
-                    verticalAlign === 'top' &&
-                    verticalAlign === legend.options.verticalAlign) {
-                    // Create a new alignment box for the legend.
-                    alignTo = merge(chart.spacingBox);
-                    if (legend.options.layout === 'vertical') {
-                        alignTo.y = chart.plotTop;
-                    }
-                    else {
-                        alignTo.y += rangeSelector.getHeight();
-                    }
-                    legend.group.placed = false; // Don't animate the alignment.
-                    legend.align(alignTo);
-                }
-            }
-        }
-        if (rangeSelector) {
-            // redraw the scroller on setExtremes
-            unbindSetExtremes = addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
-                rangeSelector.render(e.min, e.max);
-            });
-            // redraw the scroller chart resize
-            unbindRender = addEvent(chart, 'redraw', renderRangeSelector);
-            // do it now
-            renderRangeSelector();
-        }
-        // Remove resize/afterSetExtremes at chart destroy
-        addEvent(chart, 'destroy', function destroyEvents() {
-            if (rangeSelector) {
-                unbindRender();
-                unbindSetExtremes();
-            }
-        });
+    Chart.prototype.callbacks.push(initRangeSelector_1);
+    // Remove resize/afterSetExtremes at chart destroy
+    addEvent(Chart, 'destroy', function destroyEvents() {
+        unbindRedraw_1 = unbindRedraw_1 && unbindRedraw_1();
+        unbindSetExtremes_1 = unbindSetExtremes_1 && unbindSetExtremes_1();
     });
     H.RangeSelector = RangeSelector;
 }
