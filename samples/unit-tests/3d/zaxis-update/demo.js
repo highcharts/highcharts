@@ -85,3 +85,25 @@ QUnit.test('zAxis update through chart.update() (#6566)', function (assert) {
         'zAxis updated'
     );
 });
+
+QUnit.test('#14793: isZAxis lost on update', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            options3d: {
+                enabled: true
+            }
+        },
+        series: [{
+            data: [
+                [1, 6, 5]
+            ]
+        }]
+    });
+
+    chart.zAxis[0].update({});
+    assert.strictEqual(
+        chart.zAxis[0].isZAxis,
+        true,
+        'isZAxis should still be true after update'
+    );
+});

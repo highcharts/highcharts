@@ -141,6 +141,8 @@ var ZAxis = /** @class */ (function (_super) {
             offset: 0,
             lineWidth: 0
         }, userOptions);
+        // #14793, this used to be set on the prototype
+        this.isZAxis = true;
         _super.prototype.setOptions.call(this, userOptions);
         this.coll = 'zAxis';
     };
