@@ -3080,7 +3080,7 @@ class Chart {
 
         options = cleanRecursively(options, chart.options);
 
-        merge(true, chart.userOptions, options);
+        chart.userOptions = merge(chart.userOptions, options);
 
         // If the top-level chart option is present, some special updates are
         // required

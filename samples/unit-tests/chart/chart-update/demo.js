@@ -394,6 +394,18 @@
                 JSON.stringify(options, null, '  '),
                 'Options should not be mutated after chart.update'
             );
+
+            chart.update({
+                title: {
+                    text: 'Ohai'
+                }
+            });
+
+            assert.strictEqual(
+                cfg,
+                JSON.stringify(options, null, '  '),
+                '#14305: Options should not be mutated after actually changing something with chart.update'
+            );
         }
     );
 }());
