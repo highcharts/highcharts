@@ -141,6 +141,7 @@ declare global {
             public deferredYTDClick?: number;
             public div?: HTMLDOMElement;
             public dropdown?: HTMLSelectElement;
+            public eventsToUnbind?: Array<Function>;
             public forcedDataGrouping?: boolean;
             public frozenStates?: boolean;
             public group?: SVGElement;
@@ -151,8 +152,6 @@ declare global {
             public options: RangeSelectorOptions;
             public rendered?: boolean;
             public selected?: number;
-            public unMouseDown?: Function;
-            public unResize?: Function;
             public zoomText?: SVGElement;
             public clickButton(i: number, redraw?: boolean): void;
             public computeButtonRange(
@@ -791,6 +790,7 @@ class RangeSelector {
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
     public dropdown?: HTMLSelectElement;
+    public eventsToUnbind?: Array<Function>;
     public forcedDataGrouping?: boolean;
     public frozenStates?: boolean;
     public group?: SVGElement;
@@ -806,8 +806,6 @@ class RangeSelector {
     public options: Highcharts.RangeSelectorOptions = void 0 as any;
     public rendered?: boolean;
     public selected?: number;
-    public unMouseDown?: Function;
-    public unResize?: Function;
     public zoomText?: SVGElement;
 
     /**
@@ -1032,8 +1030,9 @@ class RangeSelector {
 
         rangeSelector.buttonOptions = buttonOptions;
 
-        this.unMouseDown = addEvent(chart.container, 'mousedown', blurInputs);
-        this.unResize = addEvent(chart, 'resize', blurInputs);
+        this.eventsToUnbind = [];
+        this.eventsToUnbind.push(addEvent(chart.container, 'mousedown', blurInputs));
+        this.eventsToUnbind.push(addEvent(chart, 'resize', blurInputs));
 
         // Extend the buttonOptions with actual range
         buttonOptions.forEach(rangeSelector.computeButtonRange);
@@ -1046,8 +1045,7 @@ class RangeSelector {
             this.clickButton(selectedOption, false);
         }
 
-
-        addEvent(chart, 'load', function (): void {
+        this.eventsToUnbind.push(addEvent(chart, 'load', function (): void {
             // If a data grouping is applied to the current button, release it
             // when extremes change
             if (chart.xAxis && chart.xAxis[0]) {
@@ -1067,7 +1065,7 @@ class RangeSelector {
                     }
                 });
             }
-        });
+        }));
     }
 
     /**
@@ -2615,11 +2613,9 @@ class RangeSelector {
             minInput = rSelector.minInput,
             maxInput = rSelector.maxInput;
 
-        if (rSelector.unMouseDown) {
-            rSelector.unMouseDown();
-        }
-        if (rSelector.unResize) {
-            rSelector.unResize();
+        if (rSelector.eventsToUnbind) {
+            rSelector.eventsToUnbind.forEach((unbind: Function): void => unbind());
+            rSelector.eventsToUnbind = void 0;
         }
 
         // Destroy elements in collections
