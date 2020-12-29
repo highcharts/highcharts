@@ -64,7 +64,7 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
 addEvent(Legend, 'afterColorizeItem', function (e) {
     var chart = this.chart, a11yOptions = chart.options.accessibility, legendItem = e.item;
     if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
-        legendItem.a11yProxyElement.setAttribute('aria-pressed', e.visible ? 'false' : 'true');
+        legendItem.a11yProxyElement.setAttribute('aria-pressed', e.visible ? 'true' : 'false');
     }
 });
 /**
@@ -197,7 +197,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             itemName: stripHTMLTags(item.name)
         }), attribs = {
             tabindex: -1,
-            'aria-pressed': !item.visible,
+            'aria-pressed': item.visible,
             'aria-label': itemLabel
         }, 
         // Considers useHTML
