@@ -16,7 +16,7 @@ var defaultOptions = O.defaultOptions;
 import palette from '../Core/Color/Palette.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pad = U.pad, pick = U.pick, pInt = U.pInt, splat = U.splat;
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pad = U.pad, pick = U.pick, pInt = U.pInt, splat = U.splat;
 /**
  * Define the time span for the button
  *
@@ -2012,7 +2012,7 @@ Axis.prototype.minFromRange = function () {
     return min;
 };
 if (!H.RangeSelector) {
-    var unbindRedraw_1, unbindSetExtremes_1;
+    var chartDestroyEvents_1 = [];
     var initRangeSelector_1 = function (chart) {
         var extremes, rangeSelector = chart.rangeSelector, legend, alignTo, verticalAlign;
         /**
@@ -2044,14 +2044,19 @@ if (!H.RangeSelector) {
             }
         }
         if (rangeSelector) {
-            // redraw the scroller on setExtremes
-            unbindSetExtremes_1 = unbindSetExtremes_1 || addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
-                if (rangeSelector) {
-                    rangeSelector.render(e.min, e.max);
-                }
-            });
-            // redraw the scroller chart resize
-            unbindRedraw_1 = unbindRedraw_1 || addEvent(chart, 'redraw', render);
+            var events = find(chartDestroyEvents_1, function (e) { return e[0] === chart; });
+            if (!events) {
+                chartDestroyEvents_1.push([chart, [
+                        // redraw the scroller on setExtremes
+                        addEvent(chart.xAxis[0], 'afterSetExtremes', function (e) {
+                            if (rangeSelector) {
+                                rangeSelector.render(e.min, e.max);
+                            }
+                        }),
+                        // redraw the scroller chart resize
+                        addEvent(chart, 'redraw', render)
+                    ]]);
+            }
             // do it now
             render();
         }
@@ -2144,8 +2149,11 @@ if (!H.RangeSelector) {
     Chart.prototype.callbacks.push(initRangeSelector_1);
     // Remove resize/afterSetExtremes at chart destroy
     addEvent(Chart, 'destroy', function destroyEvents() {
-        unbindRedraw_1 = unbindRedraw_1 && unbindRedraw_1();
-        unbindSetExtremes_1 = unbindSetExtremes_1 && unbindSetExtremes_1();
+        var _this = this;
+        var events = find(chartDestroyEvents_1, function (e) { return e[0] === _this; });
+        if (events) {
+            events[1].forEach(function (unbind) { return unbind(); });
+        }
     });
     H.RangeSelector = RangeSelector;
 }
