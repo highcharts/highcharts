@@ -36,6 +36,7 @@ const {
     destroyObjectProperties,
     discardElement,
     extend,
+    find,
     fireEvent,
     isNumber,
     merge,
@@ -2836,8 +2837,7 @@ Axis.prototype.minFromRange = function (
 };
 
 if (!H.RangeSelector) {
-    let unbindRedraw: Function|undefined,
-        unbindSetExtremes: Function|undefined;
+    const chartDestroyEvents: [Chart, Function[]][] = [];
 
     const initRangeSelector = (chart: Chart): void => {
         var extremes,
@@ -2879,19 +2879,24 @@ if (!H.RangeSelector) {
         }
 
         if (rangeSelector) {
-            // redraw the scroller on setExtremes
-            unbindSetExtremes = unbindSetExtremes || addEvent(
-                chart.xAxis[0],
-                'afterSetExtremes',
-                function (e: Highcharts.RangeObject): void {
-                    if (rangeSelector) {
-                        rangeSelector.render(e.min, e.max);
-                    }
-                }
-            );
+            const events = find(chartDestroyEvents, (e: [Chart, Function[]]): boolean => e[0] === chart);
 
-            // redraw the scroller chart resize
-            unbindRedraw = unbindRedraw || addEvent(chart, 'redraw', render);
+            if (!events) {
+                chartDestroyEvents.push([chart, [
+                    // redraw the scroller on setExtremes
+                    addEvent(
+                        chart.xAxis[0],
+                        'afterSetExtremes',
+                        function (e: Highcharts.RangeObject): void {
+                            if (rangeSelector) {
+                                rangeSelector.render(e.min, e.max);
+                            }
+                        }
+                    ),
+                    // redraw the scroller chart resize
+                    addEvent(chart, 'redraw', render)
+                ]]);
+            }
 
             // do it now
             render();
@@ -3030,8 +3035,11 @@ if (!H.RangeSelector) {
 
     // Remove resize/afterSetExtremes at chart destroy
     addEvent(Chart, 'destroy', function destroyEvents(): void {
-        unbindRedraw = unbindRedraw && unbindRedraw();
-        unbindSetExtremes = unbindSetExtremes && unbindSetExtremes();
+        const events = find(chartDestroyEvents, (e: [Chart, Function[]]): boolean => e[0] === this);
+
+        if (events) {
+            events[1].forEach((unbind: Function): void => unbind());
+        }
     });
     H.RangeSelector = RangeSelector;
 }
