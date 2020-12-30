@@ -2028,24 +2028,24 @@ class RangeSelector {
             if (buttonGroup) {
                 this.positionButtons();
 
-                if (!this.initialButtonGroupWidth) {
-                    let width = 0;
+                let buttonGroupWidth = 0;
 
-                    if (zoomText) {
-                        width += zoomText.getBBox().width + 5;
+                if (zoomText) {
+                    buttonGroupWidth += zoomText.getBBox().width + 5;
+                }
+
+                buttons.forEach((
+                    button: SVGElement,
+                    i: number
+                ): void => {
+                    buttonGroupWidth += button.width;
+                    if (i !== buttons.length - 1) {
+                        buttonGroupWidth += options.buttonSpacing;
                     }
+                });
 
-                    buttons.forEach((
-                        button: SVGElement,
-                        i: number
-                    ): void => {
-                        width += button.width;
-                        if (i !== buttons.length - 1) {
-                            width += options.buttonSpacing;
-                        }
-                    });
-
-                    this.initialButtonGroupWidth = width;
+                if (!this.initialButtonGroupWidth) {
+                    this.initialButtonGroupWidth = buttonGroupWidth;
                 }
 
                 plotLeft -= chart.spacing[3];
@@ -2066,7 +2066,7 @@ class RangeSelector {
                 // Align button group
                 buttonGroup.align({
                     y: buttonPosition.y,
-                    width: buttonGroup.getBBox().width,
+                    width: buttonGroupWidth,
                     align: buttonPosition.align,
                     x: translateX
                 }, true, chart.spacingBox);
