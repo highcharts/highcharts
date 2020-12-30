@@ -2172,10 +2172,13 @@ if (!H.RangeSelector) {
     Chart.prototype.callbacks.push(initRangeSelector_1);
     // Remove resize/afterSetExtremes at chart destroy
     addEvent(Chart, 'destroy', function destroyEvents() {
-        var _this = this;
-        var events = find(chartDestroyEvents_1, function (e) { return e[0] === _this; });
-        if (events) {
-            events[1].forEach(function (unbind) { return unbind(); });
+        for (var i = 0; i < chartDestroyEvents_1.length; i++) {
+            var events = chartDestroyEvents_1[i];
+            if (events[0] === this) {
+                events[1].forEach(function (unbind) { return unbind(); });
+                chartDestroyEvents_1.splice(i, 1);
+                return;
+            }
         }
     });
     H.RangeSelector = RangeSelector;

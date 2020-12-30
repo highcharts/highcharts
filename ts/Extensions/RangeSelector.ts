@@ -3035,10 +3035,13 @@ if (!H.RangeSelector) {
 
     // Remove resize/afterSetExtremes at chart destroy
     addEvent(Chart, 'destroy', function destroyEvents(): void {
-        const events = find(chartDestroyEvents, (e: [Chart, Function[]]): boolean => e[0] === this);
-
-        if (events) {
-            events[1].forEach((unbind: Function): void => unbind());
+        for (let i = 0; i < chartDestroyEvents.length; i++) {
+            const events = chartDestroyEvents[i];
+            if (events[0] === this) {
+                events[1].forEach((unbind: Function): void => unbind());
+                chartDestroyEvents.splice(i, 1);
+                return;
+            }
         }
     });
     H.RangeSelector = RangeSelector;
