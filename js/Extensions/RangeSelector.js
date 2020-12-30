@@ -1427,18 +1427,18 @@ var RangeSelector = /** @class */ (function () {
             var translateX = buttonPosition.x - chart.spacing[3];
             if (buttonGroup) {
                 this.positionButtons();
-                if (!this.initialButtonGroupWidth) {
-                    var width_1 = 0;
-                    if (zoomText) {
-                        width_1 += zoomText.getBBox().width + 5;
+                var buttonGroupWidth_1 = 0;
+                if (zoomText) {
+                    buttonGroupWidth_1 += zoomText.getBBox().width + 5;
+                }
+                buttons.forEach(function (button, i) {
+                    buttonGroupWidth_1 += button.width;
+                    if (i !== buttons.length - 1) {
+                        buttonGroupWidth_1 += options.buttonSpacing;
                     }
-                    buttons.forEach(function (button, i) {
-                        width_1 += button.width;
-                        if (i !== buttons.length - 1) {
-                            width_1 += options.buttonSpacing;
-                        }
-                    });
-                    this.initialButtonGroupWidth = width_1;
+                });
+                if (!this.initialButtonGroupWidth) {
+                    this.initialButtonGroupWidth = buttonGroupWidth_1;
                 }
                 plotLeft -= chart.spacing[3];
                 this.updateButtonStates();
@@ -1453,7 +1453,7 @@ var RangeSelector = /** @class */ (function () {
                 // Align button group
                 buttonGroup.align({
                     y: buttonPosition.y,
-                    width: buttonGroup.getBBox().width,
+                    width: buttonGroupWidth_1,
                     align: buttonPosition.align,
                     x: translateX
                 }, true, chart.spacingBox);
