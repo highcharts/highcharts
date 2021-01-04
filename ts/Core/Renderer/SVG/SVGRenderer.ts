@@ -3244,7 +3244,7 @@ SVGRenderer.prototype.symbols = {
             halfDistance = 6,
             r = Math.min((options && options.r) || 0, w, h),
             safeDistance = r + halfDistance,
-            anchorX = options && options.anchorX || 0,
+            anchorX = options && options.anchorX,
             anchorY = options && options.anchorY || 0,
             path: SVGPath;
 
@@ -3259,6 +3259,10 @@ SVGRenderer.prototype.symbols = {
             ['L', x, y + r], // left side
             ['C', x, y, x, y, x + r, y] // top-left corner
         ];
+
+        if (!isNumber(anchorX)) {
+            return path;
+        }
 
         // Anchor on right side
         if (x + anchorX >= w) {
