@@ -2334,15 +2334,15 @@ SVGRenderer.prototype.symbols = {
             // Chevron
             if (anchorX > x + safeDistance &&
                 anchorX < x + w - safeDistance) {
-                path.splice(1, 1, ['L', anchorX - halfDistance, y], ['L', anchorX, y - arrowLength], ['L', anchorX + halfDistance, y], ['L', x + w - r, y]);
+                path.splice(1, 1, ['L', anchorX - halfDistance, y], ['L', anchorX, y - arrowLength], ['L', anchorX + halfDistance, y], ['L', w - r, y]);
                 // Simple connector left corner
             }
             else if (anchorX <= x + safeDistance) {
-                path.splice(1, 1, ['L', anchorX, anchorY], ['L', x + r, y], ['L', x + w - r, y]);
+                path.splice(1, 1, ['L', anchorX, anchorY], ['L', x + r, y], ['L', w - r, y]);
                 // Simple connector right corner
             }
             else {
-                path.splice(1, 1, ['L', x + w - r, y], ['L', anchorX, anchorY], ['L', x + w - r, y]);
+                path.splice(1, 1, ['L', w - r, y], ['L', anchorX, anchorY], ['L', w - r, y]);
             }
         }
         return path;
