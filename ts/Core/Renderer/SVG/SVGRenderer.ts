@@ -3366,7 +3366,7 @@ SVGRenderer.prototype.symbols = {
                     ['L', anchorX - halfDistance, y],
                     ['L', anchorX, y - arrowLength],
                     ['L', anchorX + halfDistance, y],
-                    ['L', x + w - r, y]
+                    ['L', w - r, y]
                 );
             // Simple connector left corner
             } else if (anchorX <= x + safeDistance) {
@@ -3375,16 +3375,16 @@ SVGRenderer.prototype.symbols = {
                     1,
                     ['L', anchorX, anchorY],
                     ['L', x + r, y],
-                    ['L', x + w - r, y]
+                    ['L', w - r, y]
                 );
             // Simple connector right corner
             } else {
                 path.splice(
                     1,
                     1,
-                    ['L', x + w - r, y],
+                    ['L', w - r, y],
                     ['L', anchorX, anchorY],
-                    ['L', x + w - r, y]
+                    ['L', w - r, y]
                 );
             }
         }
