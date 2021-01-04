@@ -908,6 +908,7 @@ var Tooltip = /** @class */ (function () {
                 if (!styledMode) {
                     label.attr({
                         stroke: (options.borderColor ||
+                            point.upColor || // (#14826)
                             point.color ||
                             currentSeries.color ||
                             palette.neutralColor60)
@@ -1062,6 +1063,7 @@ var Tooltip = /** @class */ (function () {
                     .shadow(options.shadow)
                     .attr({
                     stroke: (options.borderColor ||
+                        point.upColor || // (#14826)
                         point.color ||
                         series.color ||
                         palette.neutralColor80)

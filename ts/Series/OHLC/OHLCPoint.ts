@@ -18,6 +18,7 @@
 
 import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
+import type ColorString from '../../Core/Color/ColorString';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -60,6 +61,8 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
     public series: OHLCSeries = void 0 as any;
 
     public yBottom?: number;
+
+    public upColor?: ColorString;
 
     /* *
      *

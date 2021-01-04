@@ -21,6 +21,7 @@ import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import type ColorString from '../../Core/Color/ColorString';
 import BaseSeries from '../../Core/Series/Series.js';
 const {
     seriesTypes: {
@@ -209,14 +210,20 @@ class CandlestickSeries extends OHLCSeries {
             options = this.options,
             isUp = point.open < point.close,
             stroke = options.lineColor || this.color,
+            color = point.color || this.color, // (#14826)
             stateOptions;
 
         attribs['stroke-width'] = options.lineWidth;
 
         attribs.fill = point.options.color ||
-            (isUp ? (options.upColor || this.color) : this.color);
+            (isUp ? (options.upColor || color) : color);
         attribs.stroke = point.options.lineColor ||
             (isUp ? (options.upLineColor || stroke) : stroke);
+
+        // Save upColor if set (#14826).
+        if (attribs.fill === options.upColor) {
+            point.upColor = options.upColor as ColorString;
+        }
 
         // Select or hover states
         if (state) {
