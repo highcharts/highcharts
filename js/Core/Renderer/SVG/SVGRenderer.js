@@ -392,17 +392,7 @@ var SVGRenderer = /** @class */ (function () {
         this.box = element;
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
-        // #24, #672, #1070
-        this.url = ((isFirefox || isWebKit) &&
-            doc.getElementsByTagName('base').length) ?
-            win.location.href
-                .split('#')[0] // remove the hash
-                .replace(/<[^>]*>/g, '') // wing cut HTML
-                // escape parantheses and quotes
-                .replace(/([\('\)])/g, '\\$1')
-                // replace spaces (needed for Safari only)
-                .replace(/ /g, '%20') :
-            '';
+        this.setURL();
         // Add description
         desc = this.createElement('desc').add();
         desc.element.appendChild(doc.createTextNode('Created with @product.name@ @product.version@'));
@@ -1149,6 +1139,22 @@ var SVGRenderer = /** @class */ (function () {
                 Math[roundingFunction](start[2]) + (width % 2 / 2);
         }
         return points;
+    };
+    /**
+     * Sets the internal URL
+     */
+    SVGRenderer.prototype.setURL = function () {
+        // #24, #672, #1070
+        this.url = ((isFirefox || isWebKit) &&
+            doc.getElementsByTagName('base').length) ?
+            win.location.href
+                .split('#')[0] // remove the hash
+                .replace(/<[^>]*>/g, '') // wing cut HTML
+                // escape parantheses and quotes
+                .replace(/([\('\)])/g, '\\$1')
+                // replace spaces (needed for Safari only)
+                .replace(/ /g, '%20') :
+            '';
     };
     /**
      * Draw a path, wraps the SVG `path` element.

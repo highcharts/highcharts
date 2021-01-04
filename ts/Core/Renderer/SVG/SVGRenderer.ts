@@ -241,6 +241,7 @@ declare global {
                 animate?: (boolean|Partial<AnimationOptions>)
             ): void;
             public setStyle(style: CSSObject): void;
+            public setURL(): void;
             public symbol(
                 symbol: string,
                 x?: number,
@@ -715,19 +716,7 @@ class SVGRenderer {
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
 
-        // #24, #672, #1070
-        this.url = (
-            (isFirefox || isWebKit) &&
-            doc.getElementsByTagName('base').length
-        ) ?
-            win.location.href
-                .split('#')[0] // remove the hash
-                .replace(/<[^>]*>/g, '') // wing cut HTML
-                // escape parantheses and quotes
-                .replace(/([\('\)])/g, '\\$1')
-                // replace spaces (needed for Safari only)
-                .replace(/ /g, '%20') :
-            '';
+        this.setURL();
 
         // Add description
         desc = this.createElement('desc').add();
@@ -1786,6 +1775,25 @@ class SVGRenderer {
                 Math[roundingFunction](start[2]) + (width % 2 / 2);
         }
         return points;
+    }
+
+    /**
+     * Sets the internal URL
+     */
+    public setURL(): void {
+        // #24, #672, #1070
+        this.url = (
+            (isFirefox || isWebKit) &&
+            doc.getElementsByTagName('base').length
+        ) ?
+            win.location.href
+                .split('#')[0] // remove the hash
+                .replace(/<[^>]*>/g, '') // wing cut HTML
+                // escape parantheses and quotes
+                .replace(/([\('\)])/g, '\\$1')
+                // replace spaces (needed for Safari only)
+                .replace(/ /g, '%20') :
+            '';
     }
 
 
