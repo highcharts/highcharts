@@ -681,6 +681,21 @@ declare global {
  * @param {Highcharts.Chart} [chart]
  */
 class Data {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    private static timezoneOffset = (new Date()).getTimezoneOffset();
+
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
     public constructor(
         dataOptions: Highcharts.DataOptions,
         chartOptions?: Highcharts.Options,
@@ -688,6 +703,12 @@ class Data {
     ) {
         this.init(dataOptions, chartOptions, chart);
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public alternativeFormat?: string;
     public chart: Chart = void 0 as any;
@@ -700,6 +721,12 @@ class Data {
     public rawColumns: Array<Array<string>> = void 0 as any;
     public options: Highcharts.DataOptions= void 0 as any;
     public valueCount?: Highcharts.DataValueCountObject;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Initialize the Data object with the given options
@@ -2149,12 +2176,14 @@ class Data {
      * @return {number}
      */
     public parseDate(val: string): number {
-        var parseDate = this.options.parseDate,
-            ret,
+        const parseDate = this.options.parseDate;
+
+        let ret,
             key,
             format,
             dateFormat = this.options.dateFormat || this.dateFormat,
-            match;
+            match,
+            timezoneOffset = Data.timezoneOffset;
 
         if (parseDate) {
             ret = parseDate(val);
@@ -2190,6 +2219,13 @@ class Data {
             }
             // Fall back to Date.parse
             if (!match) {
+                if (val.match(/:.+[Z+-]/)) {
+                    val = val
+                        .replace(/(\d)\s*(?:Z)/, '$1+00:00')
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)/, '$1$2:$3')
+                        .replace(/\s*(?:GMT|UTC)?([+-])/, '$1');
+                    timezoneOffset = 0;
+                }
                 match = Date.parse(val);
                 // External tools like Date.js and MooTools extend Date object
                 // and returns a date.
@@ -2200,13 +2236,13 @@ class Data {
                 ) {
                     ret = (
                         (match as any).getTime() -
-                        (match as any).getTimezoneOffset() *
+                        timezoneOffset *
                         60000
                     );
 
                 // Timestamp
                 } else if (isNumber(match)) {
-                    ret = match - (new Date(match)).getTimezoneOffset() * 60000;
+                    ret = match - timezoneOffset * 60000;
                 }
             }
         }

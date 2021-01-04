@@ -472,6 +472,11 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U
  * @param {Highcharts.Chart} [chart]
  */
 var Data = /** @class */ (function () {
+    /* *
+     *
+     *  Constructors
+     *
+     * */
     function Data(dataOptions, chartOptions, chart) {
         this.chart = void 0;
         this.chartOptions = void 0;
@@ -539,6 +544,11 @@ var Data = /** @class */ (function () {
         };
         this.init(dataOptions, chartOptions, chart);
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Initialize the Data object with the given options
      *
@@ -1550,7 +1560,8 @@ var Data = /** @class */ (function () {
      * @return {number}
      */
     Data.prototype.parseDate = function (val) {
-        var parseDate = this.options.parseDate, ret, key, format, dateFormat = this.options.dateFormat || this.dateFormat, match;
+        var parseDate = this.options.parseDate;
+        var ret, key, format, dateFormat = this.options.dateFormat || this.dateFormat, match, timezoneOffset = Data.timezoneOffset;
         if (parseDate) {
             ret = parseDate(val);
         }
@@ -1582,6 +1593,13 @@ var Data = /** @class */ (function () {
             }
             // Fall back to Date.parse
             if (!match) {
+                if (val.match(/:.+[Z+-]/)) {
+                    val = val
+                        .replace(/(\d)\s*(?:Z)/, '$1+00:00')
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)/, '$1$2:$3')
+                        .replace(/\s*(?:GMT|UTC)?([+-])/, '$1');
+                    timezoneOffset = 0;
+                }
                 match = Date.parse(val);
                 // External tools like Date.js and MooTools extend Date object
                 // and returns a date.
@@ -1589,12 +1607,12 @@ var Data = /** @class */ (function () {
                     match !== null &&
                     match.getTime) {
                     ret = (match.getTime() -
-                        match.getTimezoneOffset() *
+                        timezoneOffset *
                             60000);
                     // Timestamp
                 }
                 else if (isNumber(match)) {
-                    ret = match - (new Date(match)).getTimezoneOffset() * 60000;
+                    ret = match - timezoneOffset * 60000;
                 }
             }
         }
@@ -1830,6 +1848,12 @@ var Data = /** @class */ (function () {
             this.init(chart.options.data);
         }
     };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    Data.timezoneOffset = (new Date()).getTimezoneOffset();
     return Data;
 }());
 // Register the Data prototype and data function on Highcharts
