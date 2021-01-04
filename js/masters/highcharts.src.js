@@ -32,7 +32,6 @@ import '../Series/Scatter/ScatterSeries.js';
 import '../Series/Pie/PieSeries.js';
 import '../Core/Series/DataLabels.js';
 import '../Extensions/OverlappingDataLabels.js';
-import '../Core/Interaction.js';
 import '../Core/Responsive.js';
 Highcharts.addEvent = Utilities.addEvent;
 Highcharts.arrayMax = Utilities.arrayMax;

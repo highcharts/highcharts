@@ -316,6 +316,10 @@ declare global {
             title?: TitleOptions;
             tooltip?: TooltipOptions;
         }
+        interface PanningOptions {
+            type: ('x'|'y'|'xy');
+            enabled: boolean;
+        }
         interface SubtitleOptions {
             align?: AlignValue;
             floating?: boolean;
