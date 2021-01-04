@@ -569,16 +569,20 @@ QUnit.test('#14858: Callout missing line when anchorX within width and no room f
     );
 
     [
-        ['left', 101, 100],
-        ['right', 99, 100],
-        ['left', 101, 20],
-        ['right', 99, 20]
-    ].forEach(([align, anchorX, anchorY]) => {
+        [1, 'left', 100],
+        [1, 'right', 100],
+        [1, 'left', 20],
+        [1, 'right', 20],
+        [2, 'left', 100],
+        [2, 'right', 100],
+        [2, 'left', 20],
+        [2, 'right', 20]
+    ].forEach(([strokeWidth, align, anchorY]) => {
         const label = ren
-            .label('Some text', 100, 50, 'callout', anchorX, anchorY)
+            .label('Some text', 100, 50, 'callout', 100, anchorY)
             .attr({
                 align,
-                'stroke-width': 2,
+                'stroke-width': strokeWidth,
                 stroke: 'black'
             })
             .add();

@@ -2288,7 +2288,7 @@ SVGRenderer.prototype.symbols = {
             ['C', x, y, x, y, x + r, y] // top-left corner
         ];
         // Anchor on right side
-        if (anchorX && anchorX > w) {
+        if (x + anchorX >= w) {
             // Chevron
             if (anchorY > y + safeDistance &&
                 anchorY < y + h - safeDistance) {
@@ -2300,7 +2300,7 @@ SVGRenderer.prototype.symbols = {
             }
             // Anchor on left side
         }
-        else if (anchorX && anchorX < 0) {
+        else if (x + anchorX <= 0) {
             // Chevron
             if (anchorY > y + safeDistance &&
                 anchorY < y + h - safeDistance) {
@@ -2313,37 +2313,17 @@ SVGRenderer.prototype.symbols = {
         }
         else if ( // replace bottom
         anchorY &&
-            anchorY > h) {
-            // Chevron
-            if (anchorX > x + safeDistance &&
-                anchorX < x + w - safeDistance) {
-                path.splice(5, 1, ['L', anchorX + halfDistance, y + h], ['L', anchorX, y + h + arrowLength], ['L', anchorX - halfDistance, y + h], ['L', x + r, y + h]);
-                // Simple connector left corner
-            }
-            else if (anchorX <= x + safeDistance) {
-                path.splice(5, 1, ['L', x + r, y + h], ['L', anchorX, anchorY], ['L', x + r, y + h]);
-                // Simple connector right corner
-            }
-            else {
-                path.splice(5, 1, ['L', anchorX, anchorY], ['L', x + w - r, y + h], ['L', x + r, y + h]);
-            }
+            anchorY > h &&
+            anchorX > x + safeDistance &&
+            anchorX < x + w - safeDistance) {
+            path.splice(5, 1, ['L', anchorX + halfDistance, y + h], ['L', anchorX, y + h + arrowLength], ['L', anchorX - halfDistance, y + h], ['L', x + r, y + h]);
         }
         else if ( // replace top
         anchorY &&
-            anchorY < 0) {
-            // Chevron
-            if (anchorX > x + safeDistance &&
-                anchorX < x + w - safeDistance) {
-                path.splice(1, 1, ['L', anchorX - halfDistance, y], ['L', anchorX, y - arrowLength], ['L', anchorX + halfDistance, y], ['L', w - r, y]);
-                // Simple connector left corner
-            }
-            else if (anchorX <= x + safeDistance) {
-                path.splice(1, 1, ['L', anchorX, anchorY], ['L', x + r, y], ['L', w - r, y]);
-                // Simple connector right corner
-            }
-            else {
-                path.splice(1, 1, ['L', w - r, y], ['L', anchorX, anchorY], ['L', w - r, y]);
-            }
+            anchorY < 0 &&
+            anchorX > x + safeDistance &&
+            anchorX < x + w - safeDistance) {
+            path.splice(1, 1, ['L', anchorX - halfDistance, y], ['L', anchorX, y - arrowLength], ['L', anchorX + halfDistance, y], ['L', w - r, y]);
         }
         return path;
     }
