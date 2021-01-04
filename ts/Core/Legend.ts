@@ -126,6 +126,9 @@ declare global {
                 item: (BubbleLegend|LineSeries|Point),
                 visible?: boolean
             ): void;
+            public createCheckboxForItem(
+                item: (BubbleLegend|LineSeries|Point)
+            ): void;
             public destroy(): void;
             public destroyItem(
                 item: (BubbleLegend|ColorAxis|ColorAxis.LegendItemObject|LineSeries|Point)

@@ -82,6 +82,7 @@ export interface SeriesOptions {
     events?: SeriesEventsOptions;
     id?: string;
     index?: number;
+    inactiveOtherPoints?: boolean;
     /** @private */
     isInternal?: boolean;
     linkedTo?: string;
@@ -92,6 +93,7 @@ export interface SeriesOptions {
     point?: SeriesPointOptions;
     pointStart?: number;
     states?: SeriesStatesOptions<LineSeries>;
+    stickyTracking?: boolean;
     turboThreshold?: number;
     type?: string;
     visible?: boolean;

@@ -9,6 +9,7 @@
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import H from '../Core/Globals.js';
 import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
@@ -49,7 +50,7 @@ declare global {
                 animation?: (boolean|Partial<AnimationOptions>),
                 updatePoints?: boolean
             ): void;
-            setNodeState(this: NodesPoint, state: string): void;
+            setNodeState(this: NodesPoint, state: StatesOptionsKey): void;
         }
         interface NodesPointOptions extends PointOptions {
             id?: string;
@@ -298,7 +299,7 @@ const NodesMixin = H.NodesMixin = {
      * When hovering node, highlight all connected links. When hovering a link,
      * highlight all connected nodes.
      */
-    setNodeState: function (this: Highcharts.NodesPoint, state: string): void {
+    setNodeState: function (this: Highcharts.NodesPoint, state?: StatesOptionsKey): void {
         var args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];
