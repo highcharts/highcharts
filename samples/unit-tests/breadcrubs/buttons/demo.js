@@ -104,7 +104,7 @@ QUnit.test('Breadcrumbs button', function (assert) {
     chart.series[0].points[0].doDrilldown();
     chart.series[0].points[0].doDrilldown();
 
-    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
+    let buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
 
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
@@ -123,6 +123,7 @@ QUnit.test('Breadcrumbs button', function (assert) {
         'The breadcrumbsButtonGroup should be empty.'
     );
     chart.series[0].points[1].doDrilldown();
+    buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Vegetables',
