@@ -790,7 +790,7 @@ QUnit.test('#14833: Column series axis break regression', assert => {
     });
 
     assert.ok(
-        chart.series[0].points.slice(6, 10).every(point => !point.graphic),
+        chart.series[0].points.slice(6, 10).every(point => point.graphic.visibility === 'hidden'),
         'Points in break should not render'
     );
 });
