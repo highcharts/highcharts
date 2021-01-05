@@ -40,7 +40,6 @@ import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 import U from '../Utilities.js';
-import { param } from 'jquery';
 const {
     addEvent,
     erase,
