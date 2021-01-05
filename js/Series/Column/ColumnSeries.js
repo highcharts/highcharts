@@ -479,7 +479,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         series.points.forEach(function (point) {
             var plotY = point.plotY, graphic = point.graphic, hasGraphic = !!graphic, verb = graphic && chart.pointCount < animationLimit ?
                 'animate' : 'attr';
-            if (isNumber(plotY) && point.y !== null && point.visible !== false) {
+            if (isNumber(plotY) && point.y !== null) {
                 shapeArgs = point.shapeArgs;
                 // When updating a series between 2d and 3d or cartesian and
                 // polar, the shape type changes.
@@ -521,7 +521,12 @@ var ColumnSeries = /** @class */ (function (_super) {
                     graphic[verb](series.pointAttribs(point, (point.selected && 'select')))
                         .shadow(point.allowShadow !== false && options.shadow, null, options.stacking && !options.borderRadius);
                 }
-                graphic.addClass(point.getClassName(), true);
+                if (graphic) {
+                    graphic.addClass(point.getClassName(), true);
+                    graphic.attr({
+                        visibility: point.visible ? 'inherit' : 'hidden'
+                    });
+                }
             }
             else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269
