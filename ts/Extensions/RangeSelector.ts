@@ -73,6 +73,11 @@ declare global {
         interface Options {
             rangeSelector?: DeepPartial<RangeSelectorOptions>;
         }
+        interface LangOptions {
+            rangeSelectorFrom?: string;
+            rangeSelectorTo?: string;
+            rangeSelectorZoom?: string;
+        }
         interface RangeSelectorClickCallbackFunction {
             (e: Event): (boolean|undefined);
         }
@@ -146,9 +151,12 @@ declare global {
             public forcedDataGrouping?: boolean;
             public frozenStates?: boolean;
             public group?: SVGElement;
+            public hasVisibleDropdown?: boolean;
             public inputGroup?: SVGElement;
             public isActive?: boolean;
+            public maxDateBox?: SVGElement;
             public maxInput?: HTMLInputElement;
+            public minDateBox?: SVGElement;
             public minInput?: HTMLInputElement;
             public options: RangeSelectorOptions;
             public rendered?: boolean;
@@ -795,6 +803,7 @@ class RangeSelector {
     public forcedDataGrouping?: boolean;
     public frozenStates?: boolean;
     public group?: SVGElement;
+    public hasVisibleDropdown?: boolean;
     public initialButtonGroupWidth = 0;
     public inputGroup?: SVGElement;
     public isActive?: boolean;
@@ -1916,7 +1925,7 @@ class RangeSelector {
             i: number
         ): void => {
             createElement('option', {
-                textContent: rangeOptions.text
+                textContent: rangeOptions.title || rangeOptions.text
             }, void 0, dropdown);
 
             buttons[i] = renderer
@@ -2529,6 +2538,7 @@ class RangeSelector {
                 width: bBox.width + 'px',
                 height: bBox.height + 'px'
             });
+            this.hasVisibleDropdown = true;
         }
     }
 
@@ -2546,6 +2556,7 @@ class RangeSelector {
                 width: '1px',
                 height: '1px'
             });
+            this.hasVisibleDropdown = false;
         }
     }
 
