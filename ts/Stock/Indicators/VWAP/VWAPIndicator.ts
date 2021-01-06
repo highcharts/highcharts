@@ -20,12 +20,12 @@ import type {
     VWAPParamsOptions
 } from './VWAPOptions';
 import type VWAPPoint from './VWAPPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     error,
@@ -239,7 +239,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('vwap', VWAPIndicator);
+SeriesRegistry.registerSeriesType('vwap', VWAPIndicator);
 
 /* *
  *

@@ -31,7 +31,7 @@ import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import './DotPlotSymbols.js';
 import U from '../../Core/Utilities.js';
@@ -220,7 +220,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('dotplot', DotPlotSeries);
+SeriesRegistry.registerSeriesType('dotplot', DotPlotSeries);
 
 /* *
  *

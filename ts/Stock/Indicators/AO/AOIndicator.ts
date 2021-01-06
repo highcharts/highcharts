@@ -10,13 +10,13 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import type {
     AOOptions
 } from './AOOptions';
@@ -264,7 +264,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('ao', AOIndicator);
+SeriesRegistry.registerSeriesType('ao', AOIndicator);
 
 /* *
  *

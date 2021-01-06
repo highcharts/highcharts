@@ -20,13 +20,13 @@ import type BubbleSeriesOptions from './BubbleSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Axis from '../../Core/Axis/Axis.js';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -759,7 +759,7 @@ declare module '../../Core/Series/SeriesType' {
         bubble: typeof BubbleSeries;
     }
 }
-BaseSeries.registerSeriesType('bubble', BubbleSeries);
+SeriesRegistry.registerSeriesType('bubble', BubbleSeries);
 
 /* *
  *

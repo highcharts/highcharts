@@ -19,8 +19,8 @@ const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
-import BaseSeries from '../../../Core/Series/Series.js';
+} = SeriesRegistry;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -173,7 +173,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('trendline', TrendLineIndicator);
+SeriesRegistry.registerSeriesType('trendline', TrendLineIndicator);
 
 /* *
  *

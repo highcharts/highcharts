@@ -28,12 +28,12 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import A from '../../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import H from '../../../Core/Globals.js';
 const {
     noop
@@ -82,7 +82,7 @@ function arrayExtremesOHLC(
 /* eslint-enable require-jsdoc */
 
 var abs = Math.abs,
-    columnPrototype = BaseSeries.seriesTypes.column.prototype;
+    columnPrototype = SeriesRegistry.seriesTypes.column.prototype;
 
 /**
  * The Volume By Price (VBP) series type.
@@ -799,7 +799,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('vbp', VBPIndicator);
+SeriesRegistry.registerSeriesType('vbp', VBPIndicator);
 
 /* *
  *

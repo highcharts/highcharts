@@ -15,12 +15,12 @@ import type {
     StochasticParamsOptions
 } from './StochasticOptions';
 import type StochasticPoint from './StochasticPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 import U from '../../../Core/Utilities.js';
@@ -108,7 +108,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
     public points: Array<StochasticPoint> = void 0 as any;
 
     public init(): void {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
         this.options = merge({
@@ -177,7 +177,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
 
             // Calculate smoothed %D, which is SMA of %K
             if (i >= (periodK - 1) + (periodD - 1)) {
-                points = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, ({
+                points = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
                     xData: xData.slice(-periodD),
                     yData: yData.slice(-periodD)
                 } as any), {
@@ -232,7 +232,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('stochastic', StochasticIndicator);
+SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
 
 /* *
  *

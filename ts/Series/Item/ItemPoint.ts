@@ -21,13 +21,13 @@
 import type ItemPointOptions from './ItemPointOptions';
 import type ItemSeries from './ItemSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries,
         pie: PieSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

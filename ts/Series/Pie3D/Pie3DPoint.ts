@@ -20,7 +20,7 @@
 
 import type Pie3DSeries from './Pie3DSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         pie: {
@@ -29,7 +29,7 @@ const {
             }
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 
 /* *
  *

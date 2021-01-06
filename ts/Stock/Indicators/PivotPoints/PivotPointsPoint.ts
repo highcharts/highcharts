@@ -12,12 +12,12 @@
  *
  * */
 
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import PivotPointsIndicator from './PivotPointsIndicator';
 
 /* eslint-disable valid-jsdoc */
@@ -33,7 +33,7 @@ function destroyExtraLabels(
         prop: string,
         i: number = props.length;
 
-    (BaseSeries.seriesTypes.sma.prototype.pointClass.prototype as any)[functionName].call(point);
+    (SeriesRegistry.seriesTypes.sma.prototype.pointClass.prototype as any)[functionName].call(point);
 
     while (i--) {
         prop = 'dataLabel' + props[i];

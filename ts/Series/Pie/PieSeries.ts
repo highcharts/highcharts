@@ -20,7 +20,7 @@ import type PieSeriesOptions from './PieSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const { getStartAndEndRadians } = CenteredSeriesMixin;
 import ColumnSeries from '../Column/ColumnSeries.js';
@@ -1235,7 +1235,7 @@ declare module '../../Core/Series/SeriesType' {
         pie: typeof PieSeries;
     }
 }
-BaseSeries.registerSeriesType('pie', PieSeries);
+SeriesRegistry.registerSeriesType('pie', PieSeries);
 
 /* *
  *

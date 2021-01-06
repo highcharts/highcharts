@@ -12,12 +12,12 @@ import type {
     TRIXParamsOptions
 } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         tema: TEMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
@@ -66,7 +66,7 @@ class TRIXIndicator extends TEMAIndicator {
             ctx = this;
 
         RequiredIndicatorMixin.isParentLoaded(
-            (BaseSeries.seriesTypes.tema as any),
+            (SeriesRegistry.seriesTypes.tema as any),
             'tema',
             ctx.type,
             function (indicator: Highcharts.Indicator): undefined {
@@ -106,7 +106,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('trix', TRIXIndicator);
+SeriesRegistry.registerSeriesType('trix', TRIXIndicator);
 
 /* *
  *

@@ -13,12 +13,12 @@
 import type ErrorBarPoint from './ErrorBarPoint';
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         arearange: AreaRangeSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
@@ -190,7 +190,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('errorbar', ErrorBarSeries);
+SeriesRegistry.registerSeriesType('errorbar', ErrorBarSeries);
 
 /* *
  *

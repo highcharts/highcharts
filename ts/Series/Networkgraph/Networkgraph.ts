@@ -34,8 +34,8 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import H from '../../Core/Globals.js';
 import LineSeries from '../Line/LineSeries.js';
 import NodesMixin from '../../Mixins/Nodes.js';
@@ -1494,7 +1494,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 NetworkgraphSeries.prototype.pointClass = NetworkgraphPoint;
-BaseSeries.registerSeriesType('networkgraph', NetworkgraphSeries);
+SeriesRegistry.registerSeriesType('networkgraph', NetworkgraphSeries);
 
 /* *
  *

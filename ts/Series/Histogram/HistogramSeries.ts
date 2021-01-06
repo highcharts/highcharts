@@ -21,12 +21,12 @@ import type HistogramPoint from './HistogramPoint';
 import type HistogramPointOptions from './HistogramPointOptions';
 import type HistogramSeriesOptions from './HistogramSeriesOptions';
 import type LineSeries from '../Line/LineSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -340,7 +340,7 @@ declare module '../../Core/Series/SeriesType' {
         histogram: typeof HistogramSeries;
     }
 }
-BaseSeries.registerSeriesType('histogram', HistogramSeries);
+SeriesRegistry.registerSeriesType('histogram', HistogramSeries);
 
 /* *
  *

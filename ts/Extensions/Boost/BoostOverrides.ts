@@ -21,8 +21,8 @@ import type {
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import Chart from '../../Core/Chart/Chart.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
 import Point from '../../Core/Series/Point.js';

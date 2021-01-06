@@ -29,7 +29,7 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
@@ -1337,7 +1337,7 @@ declare module '../../Core/Series/SeriesType' {
         column: typeof ColumnSeries;
     }
 }
-BaseSeries.registerSeriesType('column', ColumnSeries);
+SeriesRegistry.registerSeriesType('column', ColumnSeries);
 
 /* *
  *

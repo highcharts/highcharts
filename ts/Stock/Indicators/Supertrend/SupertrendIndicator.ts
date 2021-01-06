@@ -23,13 +23,13 @@ import type {
 } from './SupertrendOptions';
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         atr: ATRIndicator,
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import palette from '../../../Core/Color/Palette.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -641,7 +641,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('supertrend', SupertrendIndicator);
+SeriesRegistry.registerSeriesType('supertrend', SupertrendIndicator);
 
 /* *
  *

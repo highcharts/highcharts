@@ -18,12 +18,12 @@
 
 import type BulletSeriesOptions from './BulletSeriesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import BulletPoint from './BulletPoint.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -361,7 +361,7 @@ declare module '../../Core/Series/SeriesType' {
         bullet: typeof BulletSeries;
     }
 }
-BaseSeries.registerSeriesType('bullet', BulletSeries);
+SeriesRegistry.registerSeriesType('bullet', BulletSeries);
 
 /* *
  *

@@ -21,12 +21,12 @@ import type {
 import type ABandsPoint from './ABandsPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -279,7 +279,7 @@ declare module '../../../Core/Series/SeriesType' {
         abands: typeof ABandsIndicator;
     }
 }
-BaseSeries.registerSeriesType('abands', ABandsIndicator);
+SeriesRegistry.registerSeriesType('abands', ABandsIndicator);
 
 /* *
  *

@@ -15,12 +15,12 @@ import type {
     MomentumParamsOptions
 } from './MomentumOptions';
 import type MomentumPoint from './MomentumPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -163,7 +163,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('momentum', MomentumIndicator);
+SeriesRegistry.registerSeriesType('momentum', MomentumIndicator);
 
 /* *
  *

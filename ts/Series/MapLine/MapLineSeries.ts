@@ -20,12 +20,12 @@ import type MapLinePoint from './MapLinePoint.js';
 import type MapLineSeriesOptions from './MapLineSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import MapSeries from '../Map/MapSeries.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -167,7 +167,7 @@ declare module '../../Core/Series/SeriesType' {
         mapline: typeof MapLineSeries;
     }
 }
-BaseSeries.registerSeriesType('mapline', MapLineSeries);
+SeriesRegistry.registerSeriesType('mapline', MapLineSeries);
 
 /* *
  *

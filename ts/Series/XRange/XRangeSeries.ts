@@ -26,13 +26,13 @@ import type {
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import H from '../../Core/Globals.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -725,7 +725,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('xrange', XRangeSeries);
+SeriesRegistry.registerSeriesType('xrange', XRangeSeries);
 
 /* *
  *

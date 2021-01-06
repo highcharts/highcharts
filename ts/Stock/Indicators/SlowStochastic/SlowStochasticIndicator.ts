@@ -15,13 +15,13 @@ import type {
 import type SlowStochasticPoint from './SlowStochasticPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         stochastic: StochasticIndicator
     }
-} = BaseSeries;
-const { seriesTypes } = BaseSeries;
+} = SeriesRegistry;
+const { seriesTypes } = SeriesRegistry;
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -166,7 +166,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('slowstochastic', SlowStochasticIndicator);
+SeriesRegistry.registerSeriesType('slowstochastic', SlowStochasticIndicator);
 
 /* *
  *

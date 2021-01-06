@@ -18,12 +18,12 @@
  *
  * */
 
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import TreemapUtilities from './TreemapUtilities.js';
 import U from '../../Core/Utilities.js';
 const {

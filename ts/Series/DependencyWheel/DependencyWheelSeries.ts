@@ -22,13 +22,13 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 import type SankeySeriesType from '../Sankey/SankeySeries';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         pie: PieSeries,
         sankey: SankeySeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import DependencyWheelPoint from './DependencyWheelPoint.js';
 import H from '../../Core/Globals.js';
 const { deg2rad } = H;
@@ -411,7 +411,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 DependencyWheelSeries.prototype.pointClass = DependencyWheelPoint;
-BaseSeries.registerSeriesType('dependencywheel', DependencyWheelSeries);
+SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
 
 /* *
  *

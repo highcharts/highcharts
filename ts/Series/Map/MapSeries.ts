@@ -28,14 +28,14 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
     seriesTypes: {
         column: ColumnSeries,
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
@@ -1388,7 +1388,7 @@ declare module '../../Core/Series/SeriesType' {
         map: typeof MapSeries;
     }
 }
-BaseSeries.registerSeriesType('map', MapSeries);
+SeriesRegistry.registerSeriesType('map', MapSeries);
 
 /* *
  *

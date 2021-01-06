@@ -18,12 +18,12 @@
 
 import type ParetoPoint from './ParetoPoint';
 import type ParetoSeriesOptions from './ParetoSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -229,7 +229,7 @@ declare module '../../Core/Series/SeriesType' {
         pareto: typeof ParetoSeries;
     }
 }
-BaseSeries.registerSeriesType('pareto', ParetoSeries);
+SeriesRegistry.registerSeriesType('pareto', ParetoSeries);
 
 /* *
  *

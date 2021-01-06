@@ -20,13 +20,13 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -718,7 +718,7 @@ declare module '../../Core/Series/SeriesType' {
         flags: typeof FlagsSeries;
     }
 }
-BaseSeries.registerSeriesType('flags', FlagsSeries);
+SeriesRegistry.registerSeriesType('flags', FlagsSeries);
 
 /* *
  *

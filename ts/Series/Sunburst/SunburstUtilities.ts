@@ -22,12 +22,12 @@
 
 import type SunburstSeries from './SunburstSeries';
 import type { SunburstSeriesLevelOptions } from './SunburstSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         treemap: TreemapSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     isNumber,

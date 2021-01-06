@@ -26,7 +26,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import AreaRangePoint from './AreaRangePoint.js';
 import AreaSeries from '../Area/AreaSeries.js';
 const { prototype: areaProto } = AreaSeries;
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
@@ -674,7 +674,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('arearange', AreaRangeSeries);
+SeriesRegistry.registerSeriesType('arearange', AreaRangeSeries);
 
 
 /* *

@@ -16,12 +16,12 @@ import type {
 } from './PriceEnvelopesOptions';
 import type PriceEnvelopesPoint from './PriceEnvelopesPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -127,7 +127,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
     public points: Array<PriceEnvelopesPoint> = void 0 as any;
 
     public init(): void {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
         this.options = merge({
@@ -154,7 +154,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         var indicator = this,
             translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
 
-        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
+        SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
         indicator.points.forEach(
             function (
@@ -219,7 +219,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
                     gappedExtend
                 );
                 indicator.graph = (indicator as any)['graph' + lineName];
-                BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
 
                 // Now save lines:
                 (indicator as any)['graph' + lineName] = indicator.graph;
@@ -230,7 +230,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         indicator.points = middleLinePoints;
         indicator.options = middleLineOptions;
         indicator.graph = middleLinePath;
-        BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+        SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
     }
 
     public getValues <TLinkedSeries extends LineSeries>(
@@ -270,7 +270,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
             slicedX = xVal.slice(i - period, i);
             slicedY = yVal.slice(i - period, i);
 
-            point = (BaseSeries.seriesTypes.sma.prototype.getValues.call(this, ({
+            point = (SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
                 xData: slicedX,
                 yData: slicedY
             } as any), params) as any);
@@ -315,7 +315,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
+SeriesRegistry.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
 
 /* *
  *

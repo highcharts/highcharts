@@ -21,9 +21,9 @@ const {
         ad: AD,
         ema: EMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -230,7 +230,7 @@ declare module '../../../Core/Series/SeriesType' {
         chaikin: typeof ChaikinIndicator;
     }
 }
-BaseSeries.registerSeriesType('chaikin', ChaikinIndicator);
+SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
 
 /* *
  *

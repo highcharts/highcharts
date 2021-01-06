@@ -20,9 +20,9 @@ const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -248,7 +248,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('aroon', AroonIndicator);
+SeriesRegistry.registerSeriesType('aroon', AroonIndicator);
 
 /* *
  *

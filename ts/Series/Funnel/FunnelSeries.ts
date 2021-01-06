@@ -25,13 +25,13 @@ import type FunnelPoint from './FunnelPoint';
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries,
         pie: PieSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -380,7 +380,7 @@ class FunnelSeries extends PieSeries {
             };
         }
 
-        BaseSeries.seriesTypes[
+        SeriesRegistry.seriesTypes[
             (series.options.dataLabels as any).inside ? 'column' : 'pie'
         ].prototype.drawDataLabels.call(this);
     }
@@ -662,7 +662,7 @@ declare module '../../Core/Series/SeriesType' {
         funnel: typeof FunnelSeries;
     }
 }
-BaseSeries.registerSeriesType('funnel', FunnelSeries);
+SeriesRegistry.registerSeriesType('funnel', FunnelSeries);
 
 /* *
  *

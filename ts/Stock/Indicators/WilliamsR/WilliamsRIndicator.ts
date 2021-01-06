@@ -15,12 +15,12 @@ import type {
     WilliamsRParamsOptions
 } from './WilliamsROptions';
 import type WilliamsRPoint from './WilliamsRPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 const {
     getArrayExtremes
@@ -149,7 +149,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('williamsr', WilliamsRIndicator);
+SeriesRegistry.registerSeriesType('williamsr', WilliamsRIndicator);
 
 /* *
  *

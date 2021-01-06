@@ -15,12 +15,12 @@
 import type StreamgraphPoint from './StreamgraphPoint';
 import type StreamgraphSeriesOptions from './StreamgraphSeriesOptions';
 
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         areaspline: AreaSplineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -136,7 +136,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('streamgraph', StreamgraphSeries);
+SeriesRegistry.registerSeriesType('streamgraph', StreamgraphSeries);
 
 /* *
  *

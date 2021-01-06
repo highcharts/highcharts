@@ -18,13 +18,13 @@ const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import type {
     MFIOptions,
     MFIParamsOptions
 } from '../MFI/MFIOptions';
 import type MFIPoint from './MFIPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -259,7 +259,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('mfi', MFIIndicator);
+SeriesRegistry.registerSeriesType('mfi', MFIIndicator);
 
 /* *
  *

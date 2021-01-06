@@ -17,12 +17,12 @@ import type {
     WMAParamsOptions
 } from './WMAOptions';
 import type WMAPoint from './WMAPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -195,7 +195,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('wma', WMAIndicator);
+SeriesRegistry.registerSeriesType('wma', WMAIndicator);
 
 /* *
  *
