@@ -521,7 +521,12 @@ var ColumnSeries = /** @class */ (function (_super) {
                     graphic[verb](series.pointAttribs(point, (point.selected && 'select')))
                         .shadow(point.allowShadow !== false && options.shadow, null, options.stacking && !options.borderRadius);
                 }
-                graphic.addClass(point.getClassName(), true);
+                if (graphic) {
+                    graphic.addClass(point.getClassName(), true);
+                    graphic.attr({
+                        visibility: point.visible ? 'inherit' : 'hidden'
+                    });
+                }
             }
             else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269

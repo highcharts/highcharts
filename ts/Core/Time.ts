@@ -10,7 +10,36 @@
 
 'use strict';
 
-import Highcharts from './Globals.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
+import H from './Globals.js';
+const {
+    win
+} = H;
+import U from './Utilities.js';
+const {
+    defined,
+    error,
+    extend,
+    isObject,
+    merge,
+    objectEach,
+    pad,
+    pick,
+    splat,
+    timeUnits
+} = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -49,10 +78,6 @@ declare global {
         }
         interface TimeFormatCallbackFunction {
             (timestamp: number): string;
-        }
-        interface TimeTicksInfoObject extends TimeNormalizedObject {
-            higherRanks: Array<string>;
-            totalRange: number;
         }
         class Time {
             public constructor(options: TimeOptions);
@@ -121,19 +146,6 @@ declare global {
  */
 
 /**
- * Additonal time tick information.
- *
- * @interface Highcharts.TimeTicksInfoObject
- * @extends Highcharts.TimeNormalizedObject
- *//**
- * @name Highcharts.TimeTicksInfoObject#higherRanks
- * @type {Array<string>}
- *//**
- * @name Highcharts.TimeTicksInfoObject#totalRange
- * @type {number}
- */
-
-/**
  * Time ticks.
  *
  * @interface Highcharts.AxisTickPositionsArray
@@ -170,22 +182,7 @@ declare global {
  * @apioption time.moment
  */
 
-import U from './Utilities.js';
-const {
-    defined,
-    error,
-    extend,
-    isObject,
-    merge,
-    objectEach,
-    pad,
-    pick,
-    splat,
-    timeUnits
-} = U;
-
-var H = Highcharts,
-    win = H.win;
+''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -947,7 +944,7 @@ class Time {
         tickPositions.info = extend(normalizedInterval, {
             higherRanks: higherRanks,
             totalRange: interval * count
-        }) as Highcharts.TimeTicksInfoObject;
+        }) as TimeTicksInfoObject;
 
         return tickPositions;
     }

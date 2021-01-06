@@ -97,11 +97,6 @@ var LineSeries = /** @class */ (function () {
          *  Static Functions
          *
          * */
-        /* *
-         *
-         *  Properties
-         *
-         * */
         this._i = void 0;
         this.chart = void 0;
         this.data = void 0;
@@ -3201,6 +3196,292 @@ var LineSeries = /** @class */ (function () {
         }
         return option !==
             pick(plotOptions && plotOptions[this.type] && plotOptions[this.type][optionName], plotOptions && plotOptions.series && plotOptions.series[optionName], option);
+    };
+    /**
+     * Runs on mouse over the series graphical items.
+     *
+     * @function Highcharts.Series#onMouseOver
+     * @fires Highcharts.Series#event:mouseOver
+     */
+    LineSeries.prototype.onMouseOver = function () {
+        var series = this, chart = series.chart, hoverSeries = chart.hoverSeries, pointer = chart.pointer;
+        pointer.setHoverChartIndex();
+        // set normal state to previous series
+        if (hoverSeries && hoverSeries !== series) {
+            hoverSeries.onMouseOut();
+        }
+        // trigger the event, but to save processing time,
+        // only if defined
+        if (series.options.events.mouseOver) {
+            fireEvent(series, 'mouseOver');
+        }
+        // hover this
+        series.setState('hover');
+        /**
+         * Contains the original hovered series.
+         *
+         * @name Highcharts.Chart#hoverSeries
+         * @type {Highcharts.Series|null}
+         */
+        chart.hoverSeries = series;
+    };
+    /**
+     * Runs on mouse out of the series graphical items.
+     *
+     * @function Highcharts.Series#onMouseOut
+     *
+     * @fires Highcharts.Series#event:mouseOut
+     */
+    LineSeries.prototype.onMouseOut = function () {
+        // trigger the event only if listeners exist
+        var series = this, options = series.options, chart = series.chart, tooltip = chart.tooltip, hoverPoint = chart.hoverPoint;
+        // #182, set to null before the mouseOut event fires
+        chart.hoverSeries = null;
+        // trigger mouse out on the point, which must be in this series
+        if (hoverPoint) {
+            hoverPoint.onMouseOut();
+        }
+        // fire the mouse out event
+        if (series && options.events.mouseOut) {
+            fireEvent(series, 'mouseOut');
+        }
+        // hide the tooltip
+        if (tooltip &&
+            !series.stickyTracking &&
+            (!tooltip.shared || series.noSharedTooltip)) {
+            tooltip.hide();
+        }
+        // Reset all inactive states
+        chart.series.forEach(function (s) {
+            s.setState('', true);
+        });
+    };
+    /**
+     * Set the state of the series. Called internally on mouse interaction
+     * operations, but it can also be called directly to visually
+     * highlight a series.
+     *
+     * @function Highcharts.Series#setState
+     *
+     * @param {Highcharts.SeriesStateValue|""} [state]
+     *        The new state, can be either `'hover'`, `'inactive'`, `'select'`,
+     *        or `''` (an empty string), `'normal'` or `undefined` to set to
+     *        normal state.
+     * @param {boolean} [inherit]
+     *        Determines if state should be inherited by points too.
+     */
+    LineSeries.prototype.setState = function (state, inherit) {
+        var series = this, options = series.options, graph = series.graph, inactiveOtherPoints = options.inactiveOtherPoints, stateOptions = options.states, lineWidth = options.lineWidth, opacity = options.opacity, 
+        // By default a quick animation to hover/inactive,
+        // slower to un-hover
+        stateAnimation = pick((stateOptions[state || 'normal'] &&
+            stateOptions[state || 'normal'].animation), series.chart.options.chart.animation), attribs, i = 0;
+        state = state || '';
+        if (series.state !== state) {
+            // Toggle class names
+            [
+                series.group,
+                series.markerGroup,
+                series.dataLabelsGroup
+            ].forEach(function (group) {
+                if (group) {
+                    // Old state
+                    if (series.state) {
+                        group.removeClass('highcharts-series-' + series.state);
+                    }
+                    // New state
+                    if (state) {
+                        group.addClass('highcharts-series-' + state);
+                    }
+                }
+            });
+            series.state = state;
+            if (!series.chart.styledMode) {
+                if (stateOptions[state] &&
+                    stateOptions[state].enabled === false) {
+                    return;
+                }
+                if (state) {
+                    lineWidth = (stateOptions[state].lineWidth ||
+                        lineWidth + (stateOptions[state].lineWidthPlus || 0)); // #4035
+                    opacity = pick(stateOptions[state].opacity, opacity);
+                }
+                if (graph && !graph.dashstyle) {
+                    attribs = {
+                        'stroke-width': lineWidth
+                    };
+                    // Animate the graph stroke-width.
+                    graph.animate(attribs, stateAnimation);
+                    while (series['zone-graph-' + i]) {
+                        series['zone-graph-' + i].attr(attribs);
+                        i = i + 1;
+                    }
+                }
+                // For some types (pie, networkgraph, sankey) opacity is
+                // resolved on a point level
+                if (!inactiveOtherPoints) {
+                    [
+                        series.group,
+                        series.markerGroup,
+                        series.dataLabelsGroup,
+                        series.labelBySeries
+                    ].forEach(function (group) {
+                        if (group) {
+                            group.animate({
+                                opacity: opacity
+                            }, stateAnimation);
+                        }
+                    });
+                }
+            }
+        }
+        // Don't loop over points on a series that doesn't apply inactive state
+        // to siblings markers (e.g. line, column)
+        if (inherit && inactiveOtherPoints && series.points) {
+            series.setAllPointsToState(state || void 0);
+        }
+    };
+    /**
+     * Set the state for all points in the series.
+     *
+     * @function Highcharts.Series#setAllPointsToState
+     *
+     * @private
+     *
+     * @param {string} [state]
+     *        Can be either `hover` or undefined to set to normal state.
+     */
+    LineSeries.prototype.setAllPointsToState = function (state) {
+        this.points.forEach(function (point) {
+            if (point.setState) {
+                point.setState(state);
+            }
+        });
+    };
+    /**
+     * Show or hide the series.
+     *
+     * @function Highcharts.Series#setVisible
+     *
+     * @param {boolean} [visible]
+     * True to show the series, false to hide. If undefined, the visibility is
+     * toggled.
+     *
+     * @param {boolean} [redraw=true]
+     * Whether to redraw the chart after the series is altered. If doing more
+     * operations on the chart, it is a good idea to set redraw to false and
+     * call {@link Chart#redraw|chart.redraw()} after.
+     *
+     * @fires Highcharts.Series#event:hide
+     * @fires Highcharts.Series#event:show
+     */
+    LineSeries.prototype.setVisible = function (vis, redraw) {
+        var series = this, chart = series.chart, legendItem = series.legendItem, showOrHide, ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries, oldVisibility = series.visible;
+        // if called without an argument, toggle visibility
+        series.visible =
+            vis =
+                series.options.visible =
+                    series.userOptions.visible =
+                        typeof vis === 'undefined' ? !oldVisibility : vis; // #5618
+        showOrHide = vis ? 'show' : 'hide';
+        // show or hide elements
+        [
+            'group',
+            'dataLabelsGroup',
+            'markerGroup',
+            'tracker',
+            'tt'
+        ].forEach(function (key) {
+            if (series[key]) {
+                series[key][showOrHide]();
+            }
+        });
+        // hide tooltip (#1361)
+        if (chart.hoverSeries === series ||
+            (chart.hoverPoint && chart.hoverPoint.series) === series) {
+            series.onMouseOut();
+        }
+        if (legendItem) {
+            chart.legend.colorizeItem(series, vis);
+        }
+        // rescale or adapt to resized chart
+        series.isDirty = true;
+        // in a stack, all other series are affected
+        if (series.options.stacking) {
+            chart.series.forEach(function (otherSeries) {
+                if (otherSeries.options.stacking && otherSeries.visible) {
+                    otherSeries.isDirty = true;
+                }
+            });
+        }
+        // show or hide linked series
+        series.linkedSeries.forEach(function (otherSeries) {
+            otherSeries.setVisible(vis, false);
+        });
+        if (ignoreHiddenSeries) {
+            chart.isDirtyBox = true;
+        }
+        fireEvent(series, showOrHide);
+        if (redraw !== false) {
+            chart.redraw();
+        }
+    };
+    /**
+     * Show the series if hidden.
+     *
+     * @sample highcharts/members/series-hide/
+     *         Toggle visibility from a button
+     *
+     * @function Highcharts.Series#show
+     * @fires Highcharts.Series#event:show
+     */
+    LineSeries.prototype.show = function () {
+        this.setVisible(true);
+    };
+    /**
+     * Hide the series if visible. If the
+     * [chart.ignoreHiddenSeries](https://api.highcharts.com/highcharts/chart.ignoreHiddenSeries)
+     * option is true, the chart is redrawn without this series.
+     *
+     * @sample highcharts/members/series-hide/
+     *         Toggle visibility from a button
+     *
+     * @function Highcharts.Series#hide
+     * @fires Highcharts.Series#event:hide
+     */
+    LineSeries.prototype.hide = function () {
+        this.setVisible(false);
+    };
+    /**
+     * Select or unselect the series. This means its
+     * {@link Highcharts.Series.selected|selected}
+     * property is set, the checkbox in the legend is toggled and when selected,
+     * the series is returned by the {@link Highcharts.Chart#getSelectedSeries}
+     * function.
+     *
+     * @sample highcharts/members/series-select/
+     *         Select a series from a button
+     *
+     * @function Highcharts.Series#select
+     *
+     * @param {boolean} [selected]
+     * True to select the series, false to unselect. If undefined, the selection
+     * state is toggled.
+     *
+     * @fires Highcharts.Series#event:select
+     * @fires Highcharts.Series#event:unselect
+     */
+    LineSeries.prototype.select = function (selected) {
+        var series = this;
+        series.selected =
+            selected =
+                this.options.selected = (typeof selected === 'undefined' ?
+                    !series.selected :
+                    selected);
+        if (series.checkbox) {
+            series.checkbox.checked = selected;
+        }
+        fireEvent(series, selected ? 'select' : 'unselect');
     };
     /**
      * General options for all series types.

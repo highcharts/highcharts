@@ -94,8 +94,6 @@ declare global {
 import '../../Series/Line/LineSeries.js';
 import '../../Core/Options.js';
 
-import '../../Core/Interaction.js';
-
 import butils from './BoostUtils.js';
 import boostable from './Boostables.js';
 import boostableMap from './BoostableMap.js';

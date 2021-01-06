@@ -94,7 +94,7 @@ if (!svg) {
         }
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = offset(this.chart.container);
+            this.chartPosition = chartPosition = this.getChartPosition();
         }
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within

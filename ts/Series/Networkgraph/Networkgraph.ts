@@ -691,7 +691,7 @@ interface NetworkgraphSeries {
         state?: StatesOptionsKey
     ): SVGAttributes;
     render(): void;
-    setState(state: string, inherit?: boolean): void;
+    setState(state: StatesOptionsKey, inherit?: boolean): void;
     translate(): void;
 }
 extend(NetworkgraphSeries.prototype, {
@@ -1062,7 +1062,7 @@ extend(NetworkgraphSeries.prototype, {
      */
     setState: function (
         this: NetworkgraphSeries,
-        state: string,
+        state?: StatesOptionsKey,
         inherit?: boolean
     ): void {
         if (inherit) {

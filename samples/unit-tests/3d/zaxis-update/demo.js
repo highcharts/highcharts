@@ -84,4 +84,10 @@ QUnit.test('zAxis update through chart.update() (#6566)', function (assert) {
         true,
         'zAxis updated'
     );
+
+    assert.strictEqual(
+        chart.zAxis[0].isZAxis,
+        true,
+        '#14793: isZAxis should still be true after update'
+    );
 });

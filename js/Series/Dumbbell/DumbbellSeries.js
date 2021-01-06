@@ -35,7 +35,6 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
-import '../../Core/Interaction.js';
 /**
  * The dumbbell series type
  *

@@ -234,6 +234,9 @@ class ZAxis extends Axis implements AxisLike {
             lineWidth: 0 as any
         }, userOptions);
 
+        // #14793, this used to be set on the prototype
+        this.isZAxis = true;
+
         super.setOptions(userOptions);
 
         this.coll = 'zAxis';

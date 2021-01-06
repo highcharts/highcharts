@@ -26,40 +26,47 @@ const {
     timeUnits
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            getTimeTicks(
-                normalizedInterval: DateTimeAxisNormalizedObject,
-                min: number,
-                max: number,
-                startOfWeek?: number,
-                positions?: Array<number>,
-                closestDistance?: number,
-                findHigherRanks?: boolean
-            ): AxisTickPositionsArray;
-            lin2val(val: number, fromIndex?: boolean): number;
-            val2lin(val: number, toIndex?: boolean): number;
-        }
-        interface TimeTicksInfoObject extends DateTimeAxisNormalizedObject {
-            segmentStarts?: Array<number>;
-        }
         interface XAxisOptions {
             keepOrdinalPadding?: boolean;
         }
     }
 }
 
-/**
- * @private
- */
+declare module './TimeTicksInfoObject' {
+    interface TimeTicksInfoObject extends Highcharts.DateTimeAxisNormalizedObject {
+        segmentStarts?: Array<number>;
+    }
+}
+
 declare module './Types' {
     interface AxisComposition {
         ordinal?: OrdinalAxis['ordinal'];
+        /** @deprecated */
+        getTimeTicks(
+            normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+            min: number,
+            max: number,
+            startOfWeek?: number,
+            positions?: Array<number>,
+            closestDistance?: number,
+            findHigherRanks?: boolean
+        ): Highcharts.AxisTickPositionsArray;
+        /** @deprecated */
+        lin2val(val: number, fromIndex?: boolean): number;
+        /** @deprecated */
+        val2lin(val: number, toIndex?: boolean): number;
     }
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis;

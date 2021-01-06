@@ -19,6 +19,7 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from '../Core/Series/SeriesType';
+import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
@@ -42,11 +43,16 @@ const {
     pick
 } = U;
 
+declare module '../Core/Axis/TimeTicksInfoObject' {
+    interface TimeTicksInfoObject {
+        gapSize?: number;
+    }
+}
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         cropStart?: number;
-        currentDataGrouping?: Highcharts.TimeTicksInfoObject;
+        currentDataGrouping?: TimeTicksInfoObject;
         dataGroupInfo?: Highcharts.DataGroupingInfoObject;
         forceCrop?: boolean;
         groupedData?: (Array<Point>|null);
@@ -150,9 +156,6 @@ declare global {
                 Array<Array<(number|null|undefined)>>
             );
             groupMap: Array<DataGroupingInfoObject>;
-        }
-        interface TimeTicksInfoObject {
-            gapSize?: number;
         }
         let approximations: DataGroupingApproximationsDictionary;
         let dataGrouping: DataGroupingFunctionsObject;
@@ -897,7 +900,7 @@ addEvent(Tooltip, 'headerFormatter', function (
         xDateFormat = tooltipOptions.xDateFormat,
         xDateFormatEnd,
         xAxis = series.xAxis,
-        currentDataGrouping: (Highcharts.TimeTicksInfoObject|undefined),
+        currentDataGrouping: (TimeTicksInfoObject|undefined),
         dateTimeLabelFormats,
         labelFormats,
         formattedKey,

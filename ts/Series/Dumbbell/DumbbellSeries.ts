@@ -48,8 +48,6 @@ const {
     pick
 } = U;
 
-import '../../Core/Interaction.js';
-
 /* *
  *
  *  Declarations
