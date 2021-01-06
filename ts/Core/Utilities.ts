@@ -611,6 +611,11 @@ function merge<T>(): T {
 
             objectEach(original, function (value, key): void {
 
+                // Prototype pollution (#14883)
+                if (key === '__proto__' || key === 'constructor') {
+                    return;
+                }
+
                 // Copy the contents of objects, but not arrays or DOM nodes
                 if (isObject(value, true) &&
                     !isClass(value) &&
