@@ -1104,3 +1104,45 @@ addEvent(Point, 'afterSetState', function () {
         applyCursorCSS(this.series.halo, 'auto', false, styledMode);
     }
 });
+addEvent(H.Chart, 'beforeShowResetZoom', function () {
+    if (this.drillUpButton) {
+        this.temporaryDrillUpButton = this.drillUpButton;
+        delete this.drillUpButton;
+    }
+}, {
+    order: 0
+});
+addEvent(H.Chart, 'afterShowResetZoom', function () {
+    if (this.temporaryDrillUpButton && this.resetZoomButton) {
+        var buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton, bbox = this.resetZoomButton.getBBox();
+        if (buttonOptions && buttonOptions.position && buttonOptions.position.x) {
+            this.temporaryDrillUpButton.align({
+                x: buttonOptions.position.x - bbox.width - 20,
+                y: buttonOptions.position.y,
+                align: 'right'
+            }, false, buttonOptions.relativeTo || 'plotBox');
+        }
+        this.drillUpButton = this.temporaryDrillUpButton;
+        delete this.temporaryDrillUpButton;
+    }
+});
+addEvent(H.Chart, 'selection', function (event) {
+    if (event.resetSelection === true && this.drillUpButton) {
+        var buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
+        if (buttonOptions && buttonOptions.position) {
+            this.drillUpButton.align({
+                x: buttonOptions.position.x,
+                y: buttonOptions.position.y,
+                align: 'right'
+            }, false, buttonOptions.relativeTo || 'plotBox');
+        }
+    }
+    if (event.resetSelection === true && this.resetZoomButton) {
+        this.resetZoomButton = this.resetZoomButton.destroy();
+    }
+});
+addEvent(H.Chart, 'drillup', function () {
+    if (this.resetZoomButton) {
+        this.resetZoomButton = this.resetZoomButton.destroy();
+    }
+});
