@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2020 Torstein Honsi
+ *  (c) 2018-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *

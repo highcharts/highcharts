@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Sebastian Bochan
+ *  (c) 2010-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *

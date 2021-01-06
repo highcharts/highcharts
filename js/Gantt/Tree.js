@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *

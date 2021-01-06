@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Highsoft AS
+ *  (c) 2009-2021 Highsoft AS
  *
  *  Authors: Øystein Moseng, Torstein Hønsi, Jon A. Nygård
  *

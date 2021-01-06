@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2020 Kamil Kulig
+ *  (c) 2010-2021 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *

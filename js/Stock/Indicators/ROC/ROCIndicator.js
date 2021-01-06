@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Kacper Madej
+ *  (c) 2010-2021 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
