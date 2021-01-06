@@ -1365,7 +1365,7 @@ var RangeSelector = /** @class */ (function () {
         }, void 0, dropdown);
         this.buttonOptions.forEach(function (rangeOptions, i) {
             createElement('option', {
-                textContent: rangeOptions.text
+                textContent: rangeOptions.title || rangeOptions.text
             }, void 0, dropdown);
             buttons[i] = renderer
                 .button(rangeOptions.text, 0, 0, function (e) {
@@ -1796,6 +1796,7 @@ var RangeSelector = /** @class */ (function () {
                 width: bBox.width + 'px',
                 height: bBox.height + 'px'
             });
+            this.hasVisibleDropdown = true;
         }
     };
     /**
@@ -1811,6 +1812,7 @@ var RangeSelector = /** @class */ (function () {
                 width: '1px',
                 height: '1px'
             });
+            this.hasVisibleDropdown = false;
         }
     };
     /**

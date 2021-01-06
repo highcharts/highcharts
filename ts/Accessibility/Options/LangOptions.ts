@@ -95,6 +95,7 @@ declare global {
             zoom: LangAccessibilityZoomOptions;
         }
         interface LangAccessibilityRangeSelectorOptions {
+            dropdownLabel: string;
             maxInputLabel: string;
             minInputLabel: string;
             clickButtonAnnouncement: string;
@@ -299,6 +300,7 @@ var langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         rangeSelector: {
+            dropdownLabel: '{rangeTitle}',
             minInputLabel: 'Select start date.',
             maxInputLabel: 'Select end date.',
             clickButtonAnnouncement: 'Viewing {axisRangeDescription}'

@@ -123,6 +123,7 @@ var langOptions = {
          * @since 8.0.0
          */
         rangeSelector: {
+            dropdownLabel: '{rangeTitle}',
             minInputLabel: 'Select start date.',
             maxInputLabel: 'Select end date.',
             clickButtonAnnouncement: 'Viewing {axisRangeDescription}'
