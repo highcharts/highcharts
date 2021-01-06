@@ -155,6 +155,11 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
         'object',
         'We have a drillUp button'
     );
+    assert.strictEqual(
+        typeof chart.resetZoomButton,
+        'object',
+        'Reset zoom button should also be visible.'
+    );
 
     // Drill up
     chart.drillUp();
