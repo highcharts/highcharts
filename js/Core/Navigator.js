@@ -9,8 +9,8 @@
  * */
 'use strict';
 import Axis from './Axis/Axis.js';
-import BaseSeries from './Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import SeriesRegistry from './Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
 var color = Color.parse;

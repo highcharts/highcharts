@@ -24,8 +24,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, HeatmapSeries = _a.heatmap, ScatterSeries = _a.scatter;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, HeatmapSeries = _a.heatmap, ScatterSeries = _a.scatter;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import TilemapPoint from './TilemapPoint.js';
@@ -238,7 +238,7 @@ extend(TilemapSeries.prototype, {
     pointAttribs: ColumnSeries.prototype.pointAttribs,
     pointClass: TilemapPoint
 });
-BaseSeries.registerSeriesType('tilemap', TilemapSeries);
+SeriesRegistry.registerSeriesType('tilemap', TilemapSeries);
 /* *
  *
  *  Default Export

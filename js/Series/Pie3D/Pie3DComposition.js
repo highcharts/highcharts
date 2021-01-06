@@ -14,7 +14,7 @@
  *  Imports
  *
  * */
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Pie3DPoint from './Pie3DPoint.js';
 import Pie3DSeries from './Pie3DSeries.js';
 /* *
@@ -22,5 +22,5 @@ import Pie3DSeries from './Pie3DSeries.js';
  *  Composition
  *
  * */
-BaseSeries.seriesTypes.pie.prototype.pointClass.prototype.haloPath = Pie3DPoint.prototype.haloPath;
-BaseSeries.seriesTypes.pie = Pie3DSeries;
+SeriesRegistry.seriesTypes.pie.prototype.pointClass.prototype.haloPath = Pie3DPoint.prototype.haloPath;
+SeriesRegistry.seriesTypes.pie = Pie3DSeries;

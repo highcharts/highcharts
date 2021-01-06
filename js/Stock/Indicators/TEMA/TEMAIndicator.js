@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var EMAIndicator = BaseSeries.seriesTypes.ema;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var EMAIndicator = SeriesRegistry.seriesTypes.ema;
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 var correctFloat = U.correctFloat, isArray = U.isArray, merge = U.merge;
@@ -168,7 +168,7 @@ var TEMAIndicator = /** @class */ (function (_super) {
     TEMAIndicator.defaultOptions = merge(EMAIndicator.defaultOptions);
     return TEMAIndicator;
 }(EMAIndicator));
-BaseSeries.registerSeriesType('tema', TEMAIndicator);
+SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
 /* *
  *
  *  Default Export

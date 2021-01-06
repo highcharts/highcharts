@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var PieSeries = BaseSeries.seriesTypes.pie;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var PieSeries = SeriesRegistry.seriesTypes.pie;
 import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
 import O from '../../Core/Options.js';
@@ -429,7 +429,7 @@ extend(ItemSeries.prototype, {
     markerAttribs: void 0
 });
 ItemSeries.prototype.pointClass = ItemPoint;
-BaseSeries.registerSeriesType('item', ItemSeries);
+SeriesRegistry.registerSeriesType('item', ItemSeries);
 /* *
  *
  *  Default Export

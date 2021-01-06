@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var XRangePoint = BaseSeries.seriesTypes.xrange.prototype.pointClass;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var XRangePoint = SeriesRegistry.seriesTypes.xrange.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 var pick = U.pick;
 /* *

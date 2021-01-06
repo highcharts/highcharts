@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import FunnelSeries from '../Funnel/FunnelSeries.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
@@ -97,7 +97,7 @@ var PyramidSeries = /** @class */ (function (_super) {
     });
     return PyramidSeries;
 }(FunnelSeries));
-BaseSeries.registerSeriesType('pyramid', PyramidSeries);
+SeriesRegistry.registerSeriesType('pyramid', PyramidSeries);
 /* *
  *
  *  Default Export

@@ -21,10 +21,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var 
 // indirect dependency to keep product size low
-_a = BaseSeries.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
+_a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../../Core/Globals.js';
@@ -947,7 +947,7 @@ extend(MapSeries.prototype, {
     // Get axis extremes from paths, not values
     useMapGeometry: true
 });
-BaseSeries.registerSeriesType('map', MapSeries);
+SeriesRegistry.registerSeriesType('map', MapSeries);
 /* *
  *
  *  Default Export

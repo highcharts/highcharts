@@ -21,7 +21,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
@@ -229,7 +229,7 @@ extend(ScatterSeries.prototype, {
 addEvent(ScatterSeries, 'afterTranslate', function () {
     this.applyJitter();
 });
-BaseSeries.registerSeriesType('scatter', ScatterSeries);
+SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
 /* *
  *
  *  Default Export

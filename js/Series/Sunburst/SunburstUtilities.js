@@ -12,8 +12,8 @@
  *
  * */
 'use strict';
-import BaseSeries from '../../Core/Series/Series.js';
-var TreemapSeries = BaseSeries.seriesTypes.treemap;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var TreemapSeries = SeriesRegistry.seriesTypes.treemap;
 import U from '../../Core/Utilities.js';
 var isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
 /* *

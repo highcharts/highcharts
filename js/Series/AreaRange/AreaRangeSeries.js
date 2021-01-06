@@ -24,7 +24,7 @@ var __extends = (this && this.__extends) || (function () {
 import AreaRangePoint from './AreaRangePoint.js';
 import AreaSeries from '../Area/AreaSeries.js';
 var areaProto = AreaSeries.prototype;
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import H from '../../Core/Globals.js';
@@ -519,7 +519,7 @@ extend(AreaRangeSeries.prototype, {
     deferTranslatePolar: true,
     pointClass: AreaRangePoint
 });
-BaseSeries.registerSeriesType('arearange', AreaRangeSeries);
+SeriesRegistry.registerSeriesType('arearange', AreaRangeSeries);
 /* *
  *
  *  Default export

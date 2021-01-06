@@ -21,7 +21,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 var getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import ColumnSeries from '../Column/ColumnSeries.js';
@@ -969,7 +969,7 @@ extend(PieSeries.prototype, {
     searchPoint: noop,
     trackerGroups: ['group', 'dataLabelsGroup']
 });
-BaseSeries.registerSeriesType('pie', PieSeries);
+SeriesRegistry.registerSeriesType('pie', PieSeries);
 /* *
  *
  *  Default Export

@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var ColumnSeries = BaseSeries.seriesTypes.column;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from '../Line/LineSeries.js';
@@ -419,7 +419,7 @@ extend(WordcloudSeries.prototype, {
         rotate2DToPoint: rotate2DToPoint
     }
 });
-BaseSeries.registerSeriesType('wordcloud', WordcloudSeries);
+SeriesRegistry.registerSeriesType('wordcloud', WordcloudSeries);
 /* *
  *
  * Export Default

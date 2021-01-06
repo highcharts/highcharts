@@ -10,8 +10,8 @@
 'use strict';
 import A from '../Animation/AnimationUtilities.js';
 var getDeferredAnimation = A.getDeferredAnimation;
-import BaseSeries from './Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import SeriesRegistry from './SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import H from '../Globals.js';
 var noop = H.noop;
 import LineSeries from '../../Series/Line/LineSeries.js';

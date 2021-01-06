@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var ColumnSeries = BaseSeries.seriesTypes.column;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
@@ -66,7 +66,7 @@ var VariwideSeries = /** @class */ (function (_super) {
     VariwideSeries.prototype.processData = function (force) {
         this.totalZ = 0;
         this.relZ = [];
-        BaseSeries.seriesTypes.column.prototype.processData.call(this, force);
+        SeriesRegistry.seriesTypes.column.prototype.processData.call(this, force);
         (this.xAxis.reversed ?
             this.zData.slice().reverse() :
             this.zData).forEach(function (z, i) {
@@ -117,7 +117,7 @@ var VariwideSeries = /** @class */ (function (_super) {
         // Temporarily disable crisping when computing original shapeArgs
         var crispOption = this.options.crisp, xAxis = this.xAxis;
         this.options.crisp = false;
-        BaseSeries.seriesTypes.column.prototype.translate.call(this);
+        SeriesRegistry.seriesTypes.column.prototype.translate.call(this);
         // Reset option
         this.options.crisp = crispOption;
         var inverted = this.chart.inverted, crisp = this.borderWidth % 2 / 2;
@@ -224,7 +224,7 @@ extend(VariwideSeries.prototype, {
     parallelArrays: ['x', 'y', 'z'],
     pointClass: VariwidePoint
 });
-BaseSeries.registerSeriesType('variwide', VariwideSeries);
+SeriesRegistry.registerSeriesType('variwide', VariwideSeries);
 /* *
  *
  * Default export

@@ -21,7 +21,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
@@ -500,7 +500,7 @@ extend(BoxPlotSeries.prototype, {
  * Registry
  *
  * */
-BaseSeries.registerSeriesType('boxplot', BoxPlotSeries);
+SeriesRegistry.registerSeriesType('boxplot', BoxPlotSeries);
 /* *
  *
  * Default Export

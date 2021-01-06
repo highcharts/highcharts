@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var SMAIndicator = BaseSeries.seriesTypes.sma;
-import BaseSeries from '../../../Core/Series/Series.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import palette from '../../../Core/Color/Palette.js';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
@@ -159,7 +159,7 @@ extend(PCIndicator.prototype, {
     linesApiNames: ['topLine', 'bottomLine'],
     translate: MultipleLinesMixin.translate
 });
-BaseSeries.registerSeriesType('pc', PCIndicator);
+SeriesRegistry.registerSeriesType('pc', PCIndicator);
 /* *
  *
  *  Default Export

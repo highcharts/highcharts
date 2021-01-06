@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
@@ -994,7 +994,7 @@ extend(ColumnSeries.prototype, {
     negStacks: true,
     trackerGroups: ['group', 'dataLabelsGroup']
 });
-BaseSeries.registerSeriesType('column', ColumnSeries);
+SeriesRegistry.registerSeriesType('column', ColumnSeries);
 /* *
  *
  *  Export

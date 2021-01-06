@@ -12,14 +12,14 @@
 'use strict';
 import Ajax from '../Extensions/Ajax.js';
 var ajax = Ajax.ajax;
-import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var doc = H.doc;
 import Point from '../Core/Series/Point.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
-var seriesTypes = BaseSeries.seriesTypes;
 /**
  * Callback function to modify the CSV before parsing it by the data module.
  *

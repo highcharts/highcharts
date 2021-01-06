@@ -25,8 +25,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -437,7 +437,7 @@ extend(TimelineSeries.prototype, {
     pointClass: TimelinePoint,
     trackerGroups: ['markerGroup', 'dataLabelsGroup']
 });
-BaseSeries.registerSeriesType('timeline', TimelineSeries);
+SeriesRegistry.registerSeriesType('timeline', TimelineSeries);
 /* *
  *
  *  Default Export

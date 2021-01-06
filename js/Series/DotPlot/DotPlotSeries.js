@@ -30,7 +30,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import './DotPlotSymbols.js';
 import U from '../../Core/Utilities.js';
@@ -150,7 +150,7 @@ var DotPlotSeries = /** @class */ (function (_super) {
 extend(DotPlotSeries.prototype, {
     markerAttribs: void 0
 });
-BaseSeries.registerSeriesType('dotplot', DotPlotSeries);
+SeriesRegistry.registerSeriesType('dotplot', DotPlotSeries);
 /* *
  *
  * Default Export

@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import Series from '../../../Core/Series/Series.js';
-var seriesTypes = Series.seriesTypes;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import Chart from '../../../Core/Chart/Chart.js';
 import LineSeries from '../../../Series/Line/LineSeries.js';
 import Point from '../../../Core/Series/Point.js';

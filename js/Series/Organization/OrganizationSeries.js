@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var SankeySeries = BaseSeries.seriesTypes.sankey;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var SankeySeries = SeriesRegistry.seriesTypes.sankey;
 import OrganizationPoint from './OrganizationPoint.js';
 import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
@@ -460,7 +460,7 @@ var OrganizationSeries = /** @class */ (function (_super) {
 extend(OrganizationSeries.prototype, {
     pointClass: OrganizationPoint
 });
-BaseSeries.registerSeriesType('organization', OrganizationSeries);
+SeriesRegistry.registerSeriesType('organization', OrganizationSeries);
 /* *
  *
  *  Default Export

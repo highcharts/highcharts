@@ -10,8 +10,8 @@
 'use strict';
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject, setAnimation = A.setAnimation;
-import BaseSeries from '../../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import H from '../../Core/Globals.js';
 var hasTouch = H.hasTouch, svg = H.svg, win = H.win;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -5731,7 +5731,7 @@ extend(LineSeries.prototype, {
     // requires the data to be sorted
     sorted: true
 });
-BaseSeries.registerSeriesType('line', LineSeries);
+SeriesRegistry.registerSeriesType('line', LineSeries);
 /* *
  *
  *  Compatibility

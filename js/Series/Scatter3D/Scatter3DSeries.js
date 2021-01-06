@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Scatter3DPoint from './Scatter3DPoint.js';
 import ScatterSeries from '../Scatter/ScatterSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
@@ -106,7 +106,7 @@ extend(Scatter3DSeries.prototype, {
     pointArrayMap: ['x', 'y', 'z'],
     pointClass: Scatter3DPoint
 });
-BaseSeries.registerSeriesType('scatter3d', Scatter3DSeries);
+SeriesRegistry.registerSeriesType('scatter3d', Scatter3DSeries);
 /* *
  *
  *  Default Export

@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import PivotPointsPoint from './PivotPointsPoint.js';
 import U from '../../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend, defined = U.defined, isArray = U.isArray;
@@ -64,7 +64,7 @@ var PivotPointsIndicator = /** @class */ (function (_super) {
     };
     PivotPointsIndicator.prototype.translate = function () {
         var indicator = this;
-        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
+        SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
         indicator.points.forEach(function (point) {
             indicator.pointArrayMap.forEach(function (value) {
                 if (defined(point[value])) {
@@ -105,7 +105,7 @@ var PivotPointsIndicator = /** @class */ (function (_super) {
             endPoint = point.plotX;
         }
         allPivotPoints.forEach(function (pivotPoints) {
-            path = path.concat(BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(indicator, pivotPoints));
+            path = path.concat(SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, pivotPoints));
         });
         return path;
     };
@@ -145,7 +145,7 @@ var PivotPointsIndicator = /** @class */ (function (_super) {
                                     null;
                     }
                 }
-                BaseSeries.seriesTypes.sma.prototype.drawDataLabels.apply(indicator, arguments);
+                SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels.apply(indicator, arguments);
             });
         }
     };
@@ -286,7 +286,7 @@ extend(PivotPointsIndicator.prototype, {
  *  Registry
  *
  * */
-BaseSeries.registerSeriesType('pivotpoints', PivotPointsIndicator);
+SeriesRegistry.registerSeriesType('pivotpoints', PivotPointsIndicator);
 /* *
  *
  *  Default Export

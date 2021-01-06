@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
  *  Imports
  *
  * */
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import Point from '../../../Core/Series/Point.js';
 var VBPPoint = /** @class */ (function (_super) {
     __extends(VBPPoint, _super);

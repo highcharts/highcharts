@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import Color from '../../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../../Core/Globals.js';
@@ -94,7 +94,7 @@ function drawSenkouSpan(opt) {
     indicator.options = merge(opt.options.senkouSpan.styles, opt.gap);
     indicator.graph = opt.graph;
     indicator.fillGraph = true;
-    BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
 }
 // Data integrity in Ichimoku is different than default 'averages':
 // Point: [undefined, value, value, ...] is correct
@@ -148,7 +148,7 @@ var IKHIndicator = /** @class */ (function (_super) {
     *
     * */
     IKHIndicator.prototype.init = function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             tenkanLine: {
@@ -196,7 +196,7 @@ var IKHIndicator = /** @class */ (function (_super) {
     };
     IKHIndicator.prototype.translate = function () {
         var indicator = this;
-        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
+        SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
         indicator.points.forEach(function (point) {
             indicator.pointArrayMap.forEach(function (value) {
                 if (defined(point[value])) {
@@ -287,7 +287,7 @@ var IKHIndicator = /** @class */ (function (_super) {
                 indicator.graph = indicator['graph' + lineName];
                 indicator.fillGraph = false;
                 indicator.color = mainColor;
-                BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
                 // Now save line
                 indicator['graph' + lineName] = indicator.graph;
             }
@@ -395,12 +395,12 @@ var IKHIndicator = /** @class */ (function (_super) {
         points = points || this.points;
         // Render Senkou Span
         if (indicator.fillGraph && indicator.nextPoints) {
-            spanA = BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(indicator, 
+            spanA = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, 
             // Reverse points, so Senkou Span A will start from the end:
             indicator.nextPoints);
             if (spanA && spanA.length) {
                 spanA[0][0] = 'L';
-                path = BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
+                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
                 spanAarr = spanA.slice(0, path.length);
                 for (var i = spanAarr.length - 1; i >= 0; i--) {
                     path.push(spanAarr[i]);
@@ -408,7 +408,7 @@ var IKHIndicator = /** @class */ (function (_super) {
             }
         }
         else {
-            path = BaseSeries.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
+            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
         }
         return path;
     };
@@ -659,7 +659,7 @@ extend(IKHIndicator.prototype, {
     pointValKey: 'tenkanSen',
     nameComponents: ['periodSenkouSpanB', 'period', 'periodTenkan']
 });
-BaseSeries.registerSeriesType('ikh', IKHIndicator);
+SeriesRegistry.registerSeriesType('ikh', IKHIndicator);
 export default IKHIndicator;
 /**
  * A `IKH` series. If the [type](#series.ikh.type) option is not
