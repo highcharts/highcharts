@@ -9,16 +9,25 @@ QUnit.test('Highcharts', function (assert) {
         }
     });
 
-    chart = new Highcharts.Chart({
-        chart: {
-            renderTo: 'container'
+    const options = JSON.parse(`{
+        "chart": {
+            "__proto__": {
+                "prototypePollution": true
+            },
+            "renderTo": "container"
         },
-        series: [
-            {
-                data: [1, 2, 3, 4]
-            }
-        ]
-    });
+        "series": [{
+            "data": [1, 2, 3, 4]
+        }]
+    }`);
+
+    chart = new Highcharts.Chart(options);
+
+    assert.strictEqual(
+        window.prototypePollution,
+        undefined,
+        'Prototype pollution through JSON options should not be possible'
+    );
 
     assert.strictEqual(
         chart.series[0].yData.join(','),
