@@ -23,7 +23,7 @@ import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         gauge: GaugeSeries,
@@ -31,7 +31,7 @@ const {
             prototype: pieProto
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -401,7 +401,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('solidgauge', SolidGaugeSeries);
+SeriesRegistry.registerSeriesType('solidgauge', SolidGaugeSeries);
 
 /* *
  *

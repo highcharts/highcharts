@@ -17,13 +17,16 @@ import Ajax from '../Extensions/Ajax.js';
 const {
     ajax
 } = Ajax;
-import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     doc
 } = H;
 import Point from '../Core/Series/Point.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes
+} = SeriesRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -192,8 +195,6 @@ declare global {
         ): Data;
     }
 }
-
-const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
 
 /**
  * Callback function to modify the CSV before parsing it by the data module.

@@ -21,7 +21,7 @@
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: {
@@ -40,7 +40,7 @@ const {
             }
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import U from '../../Core/Utilities.js';
 const {

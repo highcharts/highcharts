@@ -17,13 +17,13 @@
  * */
 
 import type MapBubblePointOptions from './MapBubblePointOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         bubble: BubbleSeries,
         map: MapSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,

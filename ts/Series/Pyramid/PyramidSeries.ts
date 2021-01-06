@@ -20,7 +20,7 @@
 
 import type PyramidPoint from './PyramidPoint';
 import type PyramidSeriesOptions from './PyramidSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import FunnelSeries from '../Funnel/FunnelSeries.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -121,7 +121,7 @@ declare module '../../Core/Series/SeriesType' {
         pyramid: typeof PyramidSeries;
     }
 }
-BaseSeries.registerSeriesType('pyramid', PyramidSeries);
+SeriesRegistry.registerSeriesType('pyramid', PyramidSeries);
 
 /* *
  *

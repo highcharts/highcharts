@@ -24,13 +24,13 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries,
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -367,7 +367,7 @@ declare module '../../Core/Series/SeriesType' {
         vector: typeof VectorSeries;
     }
 }
-BaseSeries.registerSeriesType('vector', VectorSeries);
+SeriesRegistry.registerSeriesType('vector', VectorSeries);
 
 /* *
  *

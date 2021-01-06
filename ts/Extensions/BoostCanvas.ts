@@ -34,7 +34,10 @@ const {
 } = H;
 import LineSeries from '../Series/Line/LineSeries.js';
 import palette from '../Core/Color/Palette.js';
-import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes
+} = SeriesRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -106,11 +109,7 @@ declare global {
     }
 }
 
-
-import '../Core/Options.js';
-
-var seriesTypes = Series.seriesTypes,
-    CHUNK_SIZE = 50000,
+var CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

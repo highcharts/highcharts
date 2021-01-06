@@ -19,8 +19,8 @@ const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
-import BaseSeries from '../../../Core/Series/Series.js';
+} = SeriesRegistry;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import palette from '../../../Core/Color/Palette.js';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
@@ -214,7 +214,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('pc', PCIndicator);
+SeriesRegistry.registerSeriesType('pc', PCIndicator);
 
 /* *
  *

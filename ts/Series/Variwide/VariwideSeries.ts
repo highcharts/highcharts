@@ -20,12 +20,12 @@
 
 import type StackingAxis from '../../Core/Axis/StackingAxis';
 import type VariwideSeriesOptions from './VariwideSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -110,7 +110,7 @@ class VariwideSeries extends ColumnSeries {
     public processData(force?: boolean): undefined {
         this.totalZ = 0;
         this.relZ = [];
-        BaseSeries.seriesTypes.column.prototype.processData.call(this, force);
+        SeriesRegistry.seriesTypes.column.prototype.processData.call(this, force);
 
         (this.xAxis.reversed ?
             (this.zData as any).slice().reverse() :
@@ -199,7 +199,7 @@ class VariwideSeries extends ColumnSeries {
 
         this.options.crisp = false;
 
-        BaseSeries.seriesTypes.column.prototype.translate.call(this);
+        SeriesRegistry.seriesTypes.column.prototype.translate.call(this);
 
         // Reset option
         this.options.crisp = crispOption;
@@ -340,7 +340,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('variwide', VariwideSeries);
+SeriesRegistry.registerSeriesType('variwide', VariwideSeries);
 
 /* *
  *

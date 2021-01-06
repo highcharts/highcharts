@@ -15,12 +15,12 @@ import type {
 import type DEMAPoint from './DEMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         ema: EMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -213,7 +213,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('dema', DEMAIndicator);
+SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
 
 /* *
  *

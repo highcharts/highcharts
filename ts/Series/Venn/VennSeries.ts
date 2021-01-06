@@ -34,12 +34,12 @@ import type VennPointOptions from './VennPointOptions';
 import type VennSeriesOptions from './VennSeriesOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
@@ -822,7 +822,7 @@ declare module '../../Core/Series/SeriesType' {
         venn: typeof VennSeries;
     }
 }
-BaseSeries.registerSeriesType('venn', VennSeries);
+SeriesRegistry.registerSeriesType('venn', VennSeries);
 
 /* *
  *

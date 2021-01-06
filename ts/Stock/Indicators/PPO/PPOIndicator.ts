@@ -19,8 +19,8 @@ const {
     seriesTypes: {
         ema: EMAIndicator
     }
-} = BaseSeries;
-import BaseSeries from '../../../Core/Series/Series.js';
+} = SeriesRegistry;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -214,7 +214,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('ppo', PPOIndicator);
+SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
 
 /* *
  *

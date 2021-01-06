@@ -17,12 +17,12 @@ import type {
     ZigzagParamsOptions
 } from './ZigzagOptions';
 import type ZigzagPoint from './ZigzagPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -277,7 +277,7 @@ declare module '../../../Core/Series/SeriesType' {
 }
 
 
-BaseSeries.registerSeriesType('zigzag', ZigzagIndicator);
+SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
 
 /* *
  *

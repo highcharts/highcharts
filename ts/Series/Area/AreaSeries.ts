@@ -22,7 +22,7 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/StackingAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -645,7 +645,7 @@ declare module '../../Core/Series/SeriesType' {
         area: typeof AreaSeries;
     }
 }
-BaseSeries.registerSeriesType('area', AreaSeries);
+SeriesRegistry.registerSeriesType('area', AreaSeries);
 
 /* *
  *

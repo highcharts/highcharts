@@ -15,12 +15,12 @@ import type {
     NATRParamsOptions
 } from './NATROptions';
 import type NATRPoint from './NATRPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         atr: ATRIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -134,7 +134,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('natr', NATRIndicator);
+SeriesRegistry.registerSeriesType('natr', NATRIndicator);
 
 /* *
  *

@@ -22,12 +22,12 @@ import type {
     WordcloudSeriesOptions,
     WordcloudSeriesRotationOptions
 } from './WordcloudSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LineSeries from '../Line/LineSeries.js';
@@ -566,7 +566,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('wordcloud', WordcloudSeries);
+SeriesRegistry.registerSeriesType('wordcloud', WordcloudSeries);
 
 /* *
  *

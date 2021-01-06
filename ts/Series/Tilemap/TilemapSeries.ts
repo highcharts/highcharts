@@ -21,14 +21,14 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type TilemapSeriesOptions from './TilemapSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         heatmap: HeatmapSeries,
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import TilemapPoint from './TilemapPoint.js';
@@ -350,7 +350,7 @@ declare module '../../Core/Series/SeriesType' {
         tilemap: typeof TilemapSeries;
     }
 }
-BaseSeries.registerSeriesType('tilemap', TilemapSeries);
+SeriesRegistry.registerSeriesType('tilemap', TilemapSeries);
 
 /* *
  *

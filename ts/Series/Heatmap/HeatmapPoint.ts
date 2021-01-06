@@ -19,7 +19,7 @@
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         scatter: {
@@ -28,7 +28,7 @@ const {
             }
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapPointMixin } = ColorMapMixin;
 import U from '../../Core/Utilities.js';

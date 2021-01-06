@@ -18,7 +18,7 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
@@ -296,7 +296,7 @@ declare module '../../Core/Series/SeriesType' {
         scatter: typeof ScatterSeries;
     }
 }
-BaseSeries.registerSeriesType('scatter', ScatterSeries);
+SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
 
 /* *
  *

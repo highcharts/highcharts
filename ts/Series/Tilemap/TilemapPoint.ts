@@ -22,7 +22,7 @@
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TilemapPointOptions from './TilemapPointOptions';
 import type TilemapSeries from './TilemapSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: {
@@ -36,7 +36,7 @@ const {
             }
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import ColorSeriesModule from '../../Mixins/ColorSeries.js';
 const { colorPointMixin } = ColorSeriesModule;
 import U from '../../Core/Utilities.js';

@@ -50,8 +50,8 @@ const {
     animObject,
     setAnimation
 } = A;
-import BaseSeries from '../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import H from '../../Core/Globals.js';
 const {
     hasTouch,
@@ -7594,7 +7594,7 @@ declare module '../../Core/Series/SeriesType' {
         line: typeof LineSeries;
     }
 }
-BaseSeries.registerSeriesType('line', LineSeries);
+SeriesRegistry.registerSeriesType('line', LineSeries);
 
 /* *
  *

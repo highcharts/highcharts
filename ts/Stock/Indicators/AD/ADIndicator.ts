@@ -20,12 +20,12 @@ import type {
 import type ADPoint from './ADPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     error,
@@ -202,7 +202,7 @@ declare module '../../../Core/Series/SeriesType' {
         ad: typeof ADIndicator;
     }
 }
-BaseSeries.registerSeriesType('ad', ADIndicator);
+SeriesRegistry.registerSeriesType('ad', ADIndicator);
 
 /* *
  *

@@ -19,8 +19,8 @@ const {
     seriesTypes: {
         aroon: AroonIndicator
     }
-} = BaseSeries;
-import BaseSeries from '../../../Core/Series/Series.js';
+} = SeriesRegistry;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
@@ -29,7 +29,7 @@ const {
     merge
 } = U;
 
-const AROON = BaseSeries.seriesTypes.aroon;
+const AROON = SeriesRegistry.seriesTypes.aroon;
 
 /* *
  *
@@ -188,7 +188,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
+SeriesRegistry.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
 
 /* *
  *

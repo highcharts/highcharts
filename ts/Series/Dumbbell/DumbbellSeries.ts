@@ -27,7 +27,7 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import LineSeries from '../Line/LineSeries.js';
 const { prototype: seriesProto } = LineSeries;
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         arearange: AreaRangeSeries,
@@ -35,7 +35,7 @@ const {
             prototype: columnRangeProto
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 const { prototype: areaRangeProto } = AreaRangeSeries;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import palette from '../../Core/Color/Palette.js';
@@ -507,7 +507,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('dumbbell', DumbbellSeries);
+SeriesRegistry.registerSeriesType('dumbbell', DumbbellSeries);
 
 /* *
  *

@@ -28,14 +28,14 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeriesOptions from './SunburstSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TreemapSeriesType from '../Treemap/TreemapSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries,
         treemap: TreemapSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const {
     getCenter,
@@ -1198,7 +1198,7 @@ declare module '../../Core/Series/SeriesType' {
         sunburst: typeof SunburstSeries;
     }
 }
-BaseSeries.registerSeriesType('sunburst', SunburstSeries);
+SeriesRegistry.registerSeriesType('sunburst', SunburstSeries);
 
 /* *
  *

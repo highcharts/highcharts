@@ -20,12 +20,12 @@
 
 import type SankeyPointOptions from './SankeyPointOptions';
 import type SankeySeries from './SankeySeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';

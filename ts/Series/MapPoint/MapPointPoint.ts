@@ -18,12 +18,12 @@
 
 import type MapPointPointOptions from './MapPointPointOptions';
 import type MapPointSeries from './MapPointSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 

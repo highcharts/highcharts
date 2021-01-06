@@ -17,10 +17,10 @@ import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
-import BaseSeries from './Series/Series.js';
+import SeriesRegistry from './Series/SeriesRegistry.js';
 const {
     seriesTypes
-} = BaseSeries;
+} = SeriesRegistry;
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
 const {

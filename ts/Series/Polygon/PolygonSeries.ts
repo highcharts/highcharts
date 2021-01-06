@@ -13,14 +13,14 @@
 import type PolygonPoint from './PolygonPoint';
 import type PolygonSeriesOptions from './PolygonSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         area: AreaSeries,
         line: LineSeries,
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -140,7 +140,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('polygon', PolygonSeries);
+SeriesRegistry.registerSeriesType('polygon', PolygonSeries);
 
 /* *
  *

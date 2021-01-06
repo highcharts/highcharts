@@ -20,12 +20,12 @@
 
 import type VariablePiePoint from './VariablePiePoint';
 import type VariablePieSeriesOptions from './VariablePieSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         pie: PieSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -504,7 +504,7 @@ declare module '../../Core/Series/SeriesType' {
         variablepie: typeof VariablePieSeries;
     }
 }
-BaseSeries.registerSeriesType('variablepie', VariablePieSeries);
+SeriesRegistry.registerSeriesType('variablepie', VariablePieSeries);
 
 /* *
  *

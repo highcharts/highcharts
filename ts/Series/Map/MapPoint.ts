@@ -22,13 +22,13 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
     seriesTypes: {
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapPointMixin } = ColorMapMixin;
 import U from '../../Core/Utilities.js';

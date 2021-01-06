@@ -24,14 +24,14 @@ import type Point from '../../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries,
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
@@ -762,7 +762,7 @@ declare module '../../Core/Series/SeriesType' {
         heatmap: typeof HeatmapSeries;
     }
 }
-BaseSeries.registerSeriesType('heatmap', HeatmapSeries);
+SeriesRegistry.registerSeriesType('heatmap', HeatmapSeries);
 
 /* *
  *

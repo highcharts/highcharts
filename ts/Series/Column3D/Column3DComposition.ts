@@ -26,7 +26,7 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Position3DObject from '../../Core/Renderer/Position3DObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
@@ -506,8 +506,8 @@ wrap(columnProto.pointClass.prototype,
     hasNewShapeType
 );
 
-if (BaseSeries.seriesTypes.columnRange) {
-    const columnRangeProto = BaseSeries.seriesTypes.columnrange.prototype;
+if (SeriesRegistry.seriesTypes.columnRange) {
+    const columnRangeProto = SeriesRegistry.seriesTypes.columnrange.prototype;
     wrap(columnRangeProto, 'pointAttribs', pointAttribs);
     wrap(columnRangeProto, 'setState', setState);
     wrap(
@@ -601,7 +601,7 @@ wrap(StackItem.prototype, 'getStackBox', function (
         // for correct stackLabels position calculation
         if (
             columnSeries &&
-            columnSeries instanceof BaseSeries.seriesTypes.column
+            columnSeries instanceof SeriesRegistry.seriesTypes.column
         ) {
             let dLPosition = {
                 x: stackBox.x + (chart.inverted ? h : xWidth / 2),

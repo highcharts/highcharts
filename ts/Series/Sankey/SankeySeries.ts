@@ -31,13 +31,13 @@ import type {
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
@@ -1204,7 +1204,7 @@ declare module '../../Core/Series/SeriesType' {
         sankey: typeof SankeySeries;
     }
 }
-BaseSeries.registerSeriesType('sankey', SankeySeries);
+SeriesRegistry.registerSeriesType('sankey', SankeySeries);
 
 /* *
  *

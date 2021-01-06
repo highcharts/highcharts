@@ -21,12 +21,12 @@ import type {
     EMAParamsOptions
 } from './EMAOptions';
 import type EMAPoint from './EMAPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -225,7 +225,7 @@ declare module '../../../Core/Series/SeriesType' {
         ema: typeof EMAIndicator;
     }
 }
-BaseSeries.registerSeriesType('ema', EMAIndicator);
+SeriesRegistry.registerSeriesType('ema', EMAIndicator);
 
 /* *
  *

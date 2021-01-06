@@ -17,12 +17,12 @@
  * */
 
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import palette from '../../Core/Color/Palette.js';
 import MapPointPoint from './MapPointPoint.js';
 import Point from '../../Core/Series/Point.js';
@@ -142,7 +142,7 @@ declare module '../../Core/Series/SeriesType' {
         mappoint: typeof MapPointSeries;
     }
 }
-BaseSeries.registerSeriesType('mappoint', MapPointSeries);
+SeriesRegistry.registerSeriesType('mappoint', MapPointSeries);
 
 /* *
  *

@@ -15,9 +15,9 @@ import type AreaPoint from './Area/AreaPoint';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import LineSeries from './Line/LineSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 
-const { seriesTypes } = BaseSeries;
+const { seriesTypes } = SeriesRegistry;
 
 import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;

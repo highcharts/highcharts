@@ -20,7 +20,7 @@ import type BoxPlotPoint from './BoxPlotPoint';
 import type BoxPlotSeriesOptions from './BoxPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -629,7 +629,7 @@ extend(BoxPlotSeries.prototype, {
  *
  * */
 
-BaseSeries.registerSeriesType('boxplot', BoxPlotSeries);
+SeriesRegistry.registerSeriesType('boxplot', BoxPlotSeries);
 
 /**
  * @private

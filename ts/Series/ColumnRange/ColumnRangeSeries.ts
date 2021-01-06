@@ -21,13 +21,13 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import ColumnRangePoint from './ColumnRangePoint.js';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         arearange: AreaRangeSeries,
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 const { prototype: columnProto } = ColumnSeries;
 const { prototype: arearangeProto } = AreaRangeSeries;
 import H from '../../Core/Globals.js';
@@ -293,7 +293,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('columnrange', ColumnRangeSeries);
+SeriesRegistry.registerSeriesType('columnrange', ColumnRangeSeries);
 
 /* *
  *

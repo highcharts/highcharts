@@ -18,12 +18,12 @@ import type {
     RegressionLineParametersObject
 } from './LinearRegressionOptions';
 import type LinearRegressionPoint from './LinearRegressionPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -346,7 +346,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
+SeriesRegistry.registerSeriesType('linearRegression', LinearRegressionIndicator);
 
 /* *
  *

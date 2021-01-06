@@ -43,7 +43,6 @@ const {
     setAnimation
 } = A;
 import Axis from '../Axis/Axis.js';
-import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
 const {
     charts,
@@ -59,6 +58,10 @@ const {
 } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
+import SeriesRegistry from '../Series/SeriesRegistry.js';
+const {
+    seriesTypes
+} = SeriesRegistry;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
@@ -538,7 +541,7 @@ class Chart {
                 optionsChart.defaultSeriesType
             ) as string,
             series: LineSeries,
-            SeriesClass = BaseSeries.seriesTypes[type];
+            SeriesClass = seriesTypes[type];
 
         // No such series type
         if (!SeriesClass) {
@@ -2151,8 +2154,7 @@ class Chart {
         ['inverted', 'angular', 'polar'].forEach(function (key: string): void {
 
             // The default series type's class
-            klass = BaseSeries.seriesTypes[(optionsChart.type ||
-                optionsChart.defaultSeriesType) as any];
+            klass = seriesTypes[(optionsChart.type || optionsChart.defaultSeriesType) as any];
 
             // Get the value from available chart-wide properties
             value =
@@ -2165,7 +2167,7 @@ class Chart {
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
             while (!value && i--) {
-                klass = BaseSeries.seriesTypes[seriesOptions[i].type as any];
+                klass = seriesTypes[seriesOptions[i].type as any];
                 if (klass && (klass.prototype as any)[key]) {
                     value = true;
                 }

@@ -25,13 +25,13 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
@@ -477,7 +477,7 @@ declare module '../../Core/Series/SeriesType' {
         funnel3d: typeof Funnel3DSeries;
     }
 }
-BaseSeries.registerSeriesType('funnel3d', Funnel3DSeries);
+SeriesRegistry.registerSeriesType('funnel3d', Funnel3DSeries);
 
 /* *
  *

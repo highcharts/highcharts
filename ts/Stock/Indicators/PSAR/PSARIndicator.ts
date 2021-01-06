@@ -19,12 +19,12 @@ import type {
     PSARParamsOptions
 } from './PSAROptions';
 import type PSARPoint from './PSARPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -403,7 +403,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('psar', PSARIndicator);
+SeriesRegistry.registerSeriesType('psar', PSARIndicator);
 
 /* *
  *

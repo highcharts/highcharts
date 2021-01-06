@@ -25,13 +25,13 @@ import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         bubble: BubbleSeries,
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -1577,7 +1577,7 @@ declare module '../../Core/Series/SeriesType' {
         packedbubble: typeof PackedBubbleSeries;
     }
 }
-BaseSeries.registerSeriesType('packedbubble', PackedBubbleSeries);
+SeriesRegistry.registerSeriesType('packedbubble', PackedBubbleSeries);
 
 /* *
  *

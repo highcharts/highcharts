@@ -18,7 +18,7 @@
 
 import type ColumnPyramidPoint from './ColumnPyramidPoint';
 import type ColumnPyramidSeriesOptions from './ColumnPyramidSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
 import U from '../../Core/Utilities.js';
@@ -293,7 +293,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('columnpyramid', ColumnPyramidSeries);
+SeriesRegistry.registerSeriesType('columnpyramid', ColumnPyramidSeries);
 
 /* *
  *
