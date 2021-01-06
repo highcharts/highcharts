@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
@@ -836,7 +836,7 @@ extend(SankeySeries.prototype, {
     searchPoint: H.noop,
     setData: NodesMixin.setData
 });
-BaseSeries.registerSeriesType('sankey', SankeySeries);
+SeriesRegistry.registerSeriesType('sankey', SankeySeries);
 /* *
  *
  *  Default Export

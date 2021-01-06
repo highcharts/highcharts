@@ -21,7 +21,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -459,7 +459,7 @@ extend(AreaSeries.prototype, {
     singleStacks: false,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
-BaseSeries.registerSeriesType('area', AreaSeries);
+SeriesRegistry.registerSeriesType('area', AreaSeries);
 /* *
  *
  *  Default Export

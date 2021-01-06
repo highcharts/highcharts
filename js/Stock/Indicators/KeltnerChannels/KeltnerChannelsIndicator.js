@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema, ATRIndicator = _a.atr;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema, ATRIndicator = _a.atr;
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import U from '../../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge;
@@ -43,7 +43,7 @@ var KeltnerChannelsIndicator = /** @class */ (function (_super) {
         return _this;
     }
     KeltnerChannelsIndicator.prototype.init = function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             topLine: {
@@ -64,10 +64,10 @@ var KeltnerChannelsIndicator = /** @class */ (function (_super) {
         // 0-date, 1-top line, 2-middle line, 3-bottom line
         KC = [], 
         // middle line, top line and bottom lineI
-        ML, TL, BL, date, seriesEMA = BaseSeries.seriesTypes.ema.prototype.getValues(series, {
+        ML, TL, BL, date, seriesEMA = SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
             period: period,
             index: index
-        }), seriesATR = BaseSeries.seriesTypes.atr.prototype.getValues(series, {
+        }), seriesATR = SeriesRegistry.seriesTypes.atr.prototype.getValues(series, {
             period: periodATR
         }), pointEMA, pointATR, xData = [], yData = [], i;
         if (yValLen < period) {
@@ -178,7 +178,7 @@ extend(KeltnerChannelsIndicator.prototype, {
     translate: MultipleLinesMixin.translate,
     toYData: MultipleLinesMixin.toYData
 });
-BaseSeries.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
+SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
 /* *
  *
  *  Default Export

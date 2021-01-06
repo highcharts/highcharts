@@ -25,8 +25,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
@@ -354,7 +354,7 @@ extend(Funnel3DSeries.prototype, {
     pointClass: Funnel3DPoint,
     translate3dShapes: noop
 });
-BaseSeries.registerSeriesType('funnel3d', Funnel3DSeries);
+SeriesRegistry.registerSeriesType('funnel3d', Funnel3DSeries);
 /* *
  *
  *  Default Export

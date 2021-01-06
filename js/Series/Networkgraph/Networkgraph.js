@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import H from '../../Core/Globals.js';
 import LineSeries from '../Line/LineSeries.js';
 import NodesMixin from '../../Mixins/Nodes.js';
@@ -1017,7 +1017,7 @@ extend(NetworkgraphPoint.prototype, {
     }
 });
 NetworkgraphSeries.prototype.pointClass = NetworkgraphPoint;
-BaseSeries.registerSeriesType('networkgraph', NetworkgraphSeries);
+SeriesRegistry.registerSeriesType('networkgraph', NetworkgraphSeries);
 /* *
  *
  *  Default Export

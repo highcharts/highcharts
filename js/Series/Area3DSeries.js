@@ -9,8 +9,8 @@
  * */
 'use strict';
 import LineSeries from './Line/LineSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import U from '../Core/Utilities.js';

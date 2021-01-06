@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema, ColumnSeries = _a.column;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, EMAIndicator = _a.ema, ColumnSeries = _a.column;
 import H from '../../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../../Core/Utilities.js';
@@ -64,7 +64,7 @@ var MACDIndicator = /** @class */ (function (_super) {
      *
      */
     MACDIndicator.prototype.init = function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
         if (this.options) {
@@ -114,7 +114,7 @@ var MACDIndicator = /** @class */ (function (_super) {
         this.graph = null;
         this.graphmacd = this.graphmacd && this.graphmacd.destroy();
         this.graphsignal = this.graphsignal && this.graphsignal.destroy();
-        BaseSeries.seriesTypes.sma.prototype.destroy.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.destroy.apply(this, arguments);
     };
     MACDIndicator.prototype.drawGraph = function () {
         var indicator = this, mainLinePoints = indicator.points, pointsLength = mainLinePoints.length, mainLineOptions = indicator.options, histogramZones = indicator.zones, gappedExtend = {
@@ -149,7 +149,7 @@ var MACDIndicator = /** @class */ (function (_super) {
             indicator.currentLineZone = lineName + 'Zones';
             indicator.zones =
                 indicator[indicator.currentLineZone].zones;
-            BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+            SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
             indicator['graph' + lineName] = indicator.graph;
         });
         // Restore options:
@@ -160,7 +160,7 @@ var MACDIndicator = /** @class */ (function (_super) {
         // indicator.graph = null;
     };
     MACDIndicator.prototype.getZonesGraphs = function (props) {
-        var allZones = BaseSeries.seriesTypes.sma.prototype.getZonesGraphs.call(this, props), currentZones = allZones;
+        var allZones = SeriesRegistry.seriesTypes.sma.prototype.getZonesGraphs.call(this, props), currentZones = allZones;
         if (this.currentLineZone) {
             currentZones = allZones.splice(this[this.currentLineZone].startIndex + 1);
             if (!currentZones.length) {
@@ -180,7 +180,7 @@ var MACDIndicator = /** @class */ (function (_super) {
         var histogramZones = this.zones;
         // signalZones.zones contains all zones:
         this.zones = this.signalZones.zones;
-        BaseSeries.seriesTypes.sma.prototype.applyZones.call(this);
+        SeriesRegistry.seriesTypes.sma.prototype.applyZones.call(this);
         // applyZones hides only main series.graph, hide macd line manually
         if (this.graphmacd && this.options.macdLine.zones.length) {
             this.graphmacd.hide();
@@ -194,10 +194,10 @@ var MACDIndicator = /** @class */ (function (_super) {
             return;
         }
         // Calculating the short and long EMA used when calculating the MACD
-        shortEMA = BaseSeries.seriesTypes.ema.prototype.getValues(series, {
+        shortEMA = SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
             period: params.shortPeriod
         });
-        longEMA = BaseSeries.seriesTypes.ema.prototype.getValues(series, {
+        longEMA = SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
             period: params.longPeriod
         });
         shortEMA = shortEMA.values;
@@ -225,7 +225,7 @@ var MACDIndicator = /** @class */ (function (_super) {
             yMACD.push([0, null, MACD[i][3]]);
         }
         // Setting the signalline (Signal Line: X-day EMA of MACD line).
-        signalLine = BaseSeries.seriesTypes.ema.prototype.getValues({
+        signalLine = SeriesRegistry.seriesTypes.ema.prototype.getValues({
             xData: xMACD,
             yData: yMACD
         }, {
@@ -378,7 +378,7 @@ extend(MACDIndicator.prototype, {
     crispCol: H.seriesTypes.column.prototype.crispCol,
     drawPoints: H.seriesTypes.column.prototype.drawPoints
 });
-BaseSeries.registerSeriesType('macd', MACDIndicator);
+SeriesRegistry.registerSeriesType('macd', MACDIndicator);
 /* *
  *
  *  Default Export

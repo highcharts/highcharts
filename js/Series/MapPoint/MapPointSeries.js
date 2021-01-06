@@ -21,8 +21,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var ScatterSeries = BaseSeries.seriesTypes.scatter;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ScatterSeries = SeriesRegistry.seriesTypes.scatter;
 import palette from '../../Core/Color/Palette.js';
 import MapPointPoint from './MapPointPoint.js';
 import U from '../../Core/Utilities.js';
@@ -106,7 +106,7 @@ extend(MapPointSeries.prototype, {
     forceDL: true,
     pointClass: MapPointPoint
 });
-BaseSeries.registerSeriesType('mappoint', MapPointSeries);
+SeriesRegistry.registerSeriesType('mappoint', MapPointSeries);
 /* *
  *
  *  Default Export

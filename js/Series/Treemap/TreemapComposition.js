@@ -15,8 +15,8 @@
  *  Imports
  *
  * */
-import BaseSeries from '../../Core/Series/Series.js';
-var LineSeries = BaseSeries.seriesTypes.line;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var LineSeries = SeriesRegistry.seriesTypes.line;
 import TreemapUtilities from './TreemapUtilities.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend;

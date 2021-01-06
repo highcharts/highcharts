@@ -24,8 +24,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, GaugeSeries = _a.gauge, pieProto = _a.pie.prototype;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, GaugeSeries = _a.gauge, pieProto = _a.pie.prototype;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt;
@@ -269,7 +269,7 @@ var SolidGaugeSeries = /** @class */ (function (_super) {
 extend(SolidGaugeSeries.prototype, {
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
-BaseSeries.registerSeriesType('solidgauge', SolidGaugeSeries);
+SeriesRegistry.registerSeriesType('solidgauge', SolidGaugeSeries);
 /* *
  *
  *  Default export

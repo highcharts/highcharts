@@ -19,9 +19,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var StochasticIndicator = BaseSeries.seriesTypes.stochastic;
-var seriesTypes = BaseSeries.seriesTypes;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var StochasticIndicator = SeriesRegistry.seriesTypes.stochastic;
+var seriesTypes = SeriesRegistry.seriesTypes;
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
@@ -120,7 +120,7 @@ var SlowStochasticIndicator = /** @class */ (function (_super) {
 extend(SlowStochasticIndicator.prototype, {
     nameBase: 'Slow Stochastic'
 });
-BaseSeries.registerSeriesType('slowstochastic', SlowStochasticIndicator);
+SeriesRegistry.registerSeriesType('slowstochastic', SlowStochasticIndicator);
 /* *
  *
  *  Default Export

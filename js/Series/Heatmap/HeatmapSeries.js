@@ -21,8 +21,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line, ScatterSeries = _a.scatter;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line, ScatterSeries = _a.scatter;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../../Core/Globals.js';
@@ -555,7 +555,7 @@ extend(HeatmapSeries.prototype, {
     pointClass: HeatmapPoint,
     trackerGroups: colorMapSeriesMixin.trackerGroups
 });
-BaseSeries.registerSeriesType('heatmap', HeatmapSeries);
+SeriesRegistry.registerSeriesType('heatmap', HeatmapSeries);
 /* *
  *
  *  Default Export

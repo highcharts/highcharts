@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, SMAIndicator = _a.sma, ColumnSeries = _a.column;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, ColumnSeries = _a.column;
 import H from '../../../Core/Globals.js';
 var noop = H.noop;
 import U from '../../../Core/Utilities.js';
@@ -183,7 +183,7 @@ extend(AOIndicator.prototype, {
     translate: ColumnSeries.prototype.translate,
     drawPoints: ColumnSeries.prototype.drawPoints
 });
-BaseSeries.registerSeriesType('ao', AOIndicator);
+SeriesRegistry.registerSeriesType('ao', AOIndicator);
 /* *
  *
  *  Default Export

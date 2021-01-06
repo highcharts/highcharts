@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import H from '../../Core/Globals.js';
@@ -317,8 +317,8 @@ function hasNewShapeType(proceed) {
 wrap(columnProto, 'pointAttribs', pointAttribs);
 wrap(columnProto, 'setState', setState);
 wrap(columnProto.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
-if (BaseSeries.seriesTypes.columnRange) {
-    var columnRangeProto = BaseSeries.seriesTypes.columnrange.prototype;
+if (SeriesRegistry.seriesTypes.columnRange) {
+    var columnRangeProto = SeriesRegistry.seriesTypes.columnrange.prototype;
     wrap(columnRangeProto, 'pointAttribs', pointAttribs);
     wrap(columnRangeProto, 'setState', setState);
     wrap(columnRangeProto.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
@@ -375,7 +375,7 @@ wrap(StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x,
         // use its barW, z and depth parameters
         // for correct stackLabels position calculation
         if (columnSeries &&
-            columnSeries instanceof BaseSeries.seriesTypes.column) {
+            columnSeries instanceof SeriesRegistry.seriesTypes.column) {
             var dLPosition = {
                 x: stackBox.x + (chart.inverted ? h : xWidth / 2),
                 y: stackBox.y,

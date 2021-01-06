@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var AreaSplineSeries = BaseSeries.seriesTypes.areaspline;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var AreaSplineSeries = SeriesRegistry.seriesTypes.areaspline;
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, merge = U.merge;
@@ -188,7 +188,7 @@ extend(BellcurveSeries.prototype, {
     init: DerivedSeriesMixin.init,
     setBaseSeries: DerivedSeriesMixin.setBaseSeries
 });
-BaseSeries.registerSeriesType('bellcurve', BellcurveSeries);
+SeriesRegistry.registerSeriesType('bellcurve', BellcurveSeries);
 /* *
  *
  *  Default Export

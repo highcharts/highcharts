@@ -30,8 +30,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../../Core/Series/Series.js';
-var ScatterSeries = BaseSeries.seriesTypes.scatter;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ScatterSeries = SeriesRegistry.seriesTypes.scatter;
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import GeometryMixin from '../../Mixins/Geometry.js';
@@ -539,7 +539,7 @@ extend(VennSeries.prototype, {
     pointClass: VennPoint,
     utils: VennUtils
 });
-BaseSeries.registerSeriesType('venn', VennSeries);
+SeriesRegistry.registerSeriesType('venn', VennSeries);
 /* *
  *
  *  Default Export

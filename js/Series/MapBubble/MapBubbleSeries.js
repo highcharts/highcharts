@@ -21,7 +21,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
@@ -198,7 +198,7 @@ extend(MapBubbleSeries.prototype, {
     setOptions: MapSeries.prototype.setOptions,
     xyFromShape: true
 });
-BaseSeries.registerSeriesType('mapbubble', MapBubbleSeries);
+SeriesRegistry.registerSeriesType('mapbubble', MapBubbleSeries);
 /* *
  *
  *  Default Export

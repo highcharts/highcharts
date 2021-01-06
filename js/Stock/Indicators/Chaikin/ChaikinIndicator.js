@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var _a = BaseSeries.seriesTypes, AD = _a.ad, EMAIndicator = _a.ema;
-import BaseSeries from '../../../Core/Series/Series.js';
+var _a = SeriesRegistry.seriesTypes, AD = _a.ad, EMAIndicator = _a.ema;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U.error;
@@ -160,7 +160,7 @@ extend(ChaikinIndicator.prototype, {
     nameBase: 'Chaikin Osc',
     nameComponents: ['periods']
 });
-BaseSeries.registerSeriesType('chaikin', ChaikinIndicator);
+SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
 /* *
  *
  *  Default Export

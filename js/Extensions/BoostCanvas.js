@@ -20,11 +20,11 @@ import H from '../Core/Globals.js';
 var doc = H.doc, noop = H.noop;
 import LineSeries from '../Series/Line/LineSeries.js';
 import palette from '../Core/Color/Palette.js';
-import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;
-import '../Core/Options.js';
-var seriesTypes = Series.seriesTypes, CHUNK_SIZE = 50000, destroyLoadingDiv;
+var CHUNK_SIZE = 50000, destroyLoadingDiv;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Initialize the canvas boost.

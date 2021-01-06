@@ -25,8 +25,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line, TreemapSeries = _a.treemap;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line, TreemapSeries = _a.treemap;
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 var getCenter = CenteredSeriesMixin.getCenter, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import H from '../../Core/Globals.js';
@@ -849,7 +849,7 @@ extend(SunburstSeries.prototype, {
     pointClass: SunburstPoint,
     utils: SunburstUtilities
 });
-BaseSeries.registerSeriesType('sunburst', SunburstSeries);
+SeriesRegistry.registerSeriesType('sunburst', SunburstSeries);
 /* *
  *
  *  Default Export

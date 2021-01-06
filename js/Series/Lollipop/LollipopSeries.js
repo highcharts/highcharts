@@ -22,8 +22,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import LollipopPoint from './LollipopPoint.js';
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, areaProto = _a.area.prototype, colProto = _a.column.prototype, DumbbellSeries = _a.dumbbell;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, areaProto = _a.area.prototype, colProto = _a.column.prototype, DumbbellSeries = _a.dumbbell;
 import U from '../../Core/Utilities.js';
 var pick = U.pick, merge = U.merge, extend = U.extend;
 /* *
@@ -118,7 +118,7 @@ extend(LollipopSeries.prototype, {
     setShapeArgs: colProto.translate,
     pointClass: LollipopPoint
 });
-BaseSeries.registerSeriesType('lollipop', LollipopSeries);
+SeriesRegistry.registerSeriesType('lollipop', LollipopSeries);
 /* *
  *
  *  Default export

@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
-import BaseSeries from '../../Core/Series/Series.js';
-var ColumnSeries = BaseSeries.seriesTypes.column;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
 var WordcloudPoint = /** @class */ (function (_super) {

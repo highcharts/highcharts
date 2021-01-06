@@ -6,8 +6,8 @@
  *
  * */
 'use strict';
-import BaseSeries from '../../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ohlcProto = _a.ohlc.prototype;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, ohlcProto = _a.ohlc.prototype;
 import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend;
 /* *

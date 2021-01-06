@@ -14,8 +14,8 @@
 'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';

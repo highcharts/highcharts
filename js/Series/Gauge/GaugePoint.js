@@ -21,8 +21,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var LinePoint = BaseSeries.seriesTypes.line.prototype.pointClass;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var LinePoint = SeriesRegistry.seriesTypes.line.prototype.pointClass;
 /* *
  *
  *  Class

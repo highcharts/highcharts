@@ -26,8 +26,8 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
 import LineSeries from '../Line/LineSeries.js';
 var seriesProto = LineSeries.prototype;
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, AreaRangeSeries = _a.arearange, columnRangeProto = _a.columnrange.prototype;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, AreaRangeSeries = _a.arearange, columnRangeProto = _a.columnrange.prototype;
 var areaRangeProto = AreaRangeSeries.prototype;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import palette from '../../Core/Color/Palette.js';
@@ -358,7 +358,7 @@ extend(DumbbellSeries.prototype, {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     translatePoint: areaRangeProto.translate
 });
-BaseSeries.registerSeriesType('dumbbell', DumbbellSeries);
+SeriesRegistry.registerSeriesType('dumbbell', DumbbellSeries);
 /* *
  *
  *  Default export

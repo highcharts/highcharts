@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
@@ -159,7 +159,7 @@ var FunnelSeries = /** @class */ (function (_super) {
                 }
             };
         }
-        BaseSeries.seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie'].prototype.drawDataLabels.call(this);
+        SeriesRegistry.seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie'].prototype.drawDataLabels.call(this);
     };
     /**
      * Overrides the pie translate method.
@@ -445,7 +445,7 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function () {
         }
     });
 });
-BaseSeries.registerSeriesType('funnel', FunnelSeries);
+SeriesRegistry.registerSeriesType('funnel', FunnelSeries);
 /* *
  *
  *  Default Export

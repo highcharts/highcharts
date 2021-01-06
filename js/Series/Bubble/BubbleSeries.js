@@ -22,8 +22,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import Axis from '../../Core/Axis/Axis.js';
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
@@ -525,7 +525,7 @@ Axis.prototype.beforePadding = function () {
     }
     /* eslint-enable valid-jsdoc */
 };
-BaseSeries.registerSeriesType('bubble', BubbleSeries);
+SeriesRegistry.registerSeriesType('bubble', BubbleSeries);
 /* *
  *
  *  Default Export
