@@ -88,30 +88,6 @@ var ColorAxis = /** @class */ (function (_super) {
     }
     /* *
      *
-     *  Static Functions
-     *
-     * */
-    /**
-     * Build options to keep layout params on init and update.
-     * @private
-     */
-    ColorAxis.buildOptions = function (chart, options, userOptions) {
-        var legend = chart.options.legend || {}, horiz = userOptions.layout ?
-            userOptions.layout !== 'vertical' :
-            legend.layout !== 'vertical';
-        return merge(options, {
-            side: horiz ? 2 : 1,
-            reversed: pick(options.reversed, !horiz)
-        }, userOptions, {
-            opposite: !horiz,
-            showEmpty: false,
-            title: null,
-            visible: legend.enabled &&
-                (userOptions ? userOptions.visible !== false : true)
-        });
-    };
-    /* *
-     *
      *  Functions
      *
      * */
@@ -128,9 +104,19 @@ var ColorAxis = /** @class */ (function (_super) {
      */
     ColorAxis.prototype.init = function (chart, userOptions) {
         var axis = this;
-        var options = ColorAxis.buildOptions(// Build the options
-        chart, ColorAxis.defaultOptions, userOptions);
+        var legend = chart.options.legend || {}, horiz = userOptions.layout ?
+            userOptions.layout !== 'vertical' :
+            legend.layout !== 'vertical';
+        var options = merge(ColorAxis.defaultOptions, userOptions, {
+            showEmpty: false,
+            title: null,
+            visible: legend.enabled &&
+                (userOptions ? userOptions.visible !== false : true)
+        });
         axis.coll = 'colorAxis';
+        axis.side = userOptions.side || horiz ? 2 : 1;
+        axis.reversed = userOptions.reversed || !horiz;
+        axis.opposite = !horiz;
         _super.prototype.init.call(this, chart, options);
         // Base init() pushes it to the xAxis array, now pop it again
         // chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
@@ -140,7 +126,7 @@ var ColorAxis = /** @class */ (function (_super) {
         }
         axis.initStops();
         // Override original axis properties
-        axis.horiz = !options.opposite;
+        axis.horiz = horiz;
         axis.zoomEnabled = false;
     };
     /**
@@ -523,9 +509,7 @@ var ColorAxis = /** @class */ (function (_super) {
      * and call {@link Highcharts.Chart#redraw} after.
      */
     ColorAxis.prototype.update = function (newOptions, redraw) {
-        var axis = this, chart = axis.chart, legend = chart.legend, updatedOptions = ColorAxis.buildOptions(chart, {
-            reversed: axis.userOptions.reversed
-        }, newOptions);
+        var axis = this, chart = axis.chart, legend = chart.legend;
         this.series.forEach(function (series) {
             // Needed for Axis.update when choropleth colors change
             series.isDirtyData = true;
@@ -537,9 +521,8 @@ var ColorAxis = /** @class */ (function (_super) {
         }
         // Keep the options structure updated for export. Unlike xAxis and
         // yAxis, the colorAxis is not an array. (#3207)
-        chart.options[axis.coll] =
-            merge(axis.userOptions, updatedOptions);
-        _super.prototype.update.call(this, updatedOptions, redraw);
+        chart.options[axis.coll] = merge(axis.userOptions, newOptions);
+        _super.prototype.update.call(this, newOptions, redraw);
         if (axis.legendItem) {
             axis.setLegendColor();
             legend.colorizeItem(this, true);

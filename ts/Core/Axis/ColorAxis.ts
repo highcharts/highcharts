@@ -598,43 +598,6 @@ class ColorAxis extends Axis implements AxisLike {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Build options to keep layout params on init and update.
-     * @private
-     */
-    public static buildOptions(
-        chart: Chart,
-        options: ColorAxis.Options,
-        userOptions: ColorAxis.Options
-    ): ColorAxis.Options {
-        var legend = chart.options.legend || {},
-            horiz = userOptions.layout ?
-                userOptions.layout !== 'vertical' :
-                legend.layout !== 'vertical';
-
-        return merge<ColorAxis.Options>(
-            options,
-            {
-                side: horiz ? 2 : 1,
-                reversed: pick(options.reversed, !horiz)
-            },
-            userOptions,
-            {
-                opposite: !horiz,
-                showEmpty: false,
-                title: null as any,
-                visible: (legend as any).enabled &&
-                    (userOptions ? userOptions.visible !== false : true)
-            }
-        );
-    }
-
-    /* *
-     *
      *  Constructors
      *
      * */
@@ -691,14 +654,27 @@ class ColorAxis extends Axis implements AxisLike {
         chart: Chart,
         userOptions: ColorAxis.Options
     ): void {
-        const axis = this as unknown as ColorAxis;
-        const options = ColorAxis.buildOptions( // Build the options
-            chart,
+        const axis = this;
+        const legend = chart.options.legend || {},
+            horiz = userOptions.layout ?
+                userOptions.layout !== 'vertical' :
+                legend.layout !== 'vertical';
+
+        const options = merge<ColorAxis.Options>(
             ColorAxis.defaultOptions,
-            userOptions
+            userOptions,
+            {
+                showEmpty: false,
+                title: null,
+                visible: legend.enabled &&
+                    (userOptions ? userOptions.visible !== false : true)
+            }
         );
 
         axis.coll = 'colorAxis';
+        axis.side = userOptions.side || horiz ? 2 : 1;
+        axis.reversed = userOptions.reversed || !horiz;
+        axis.opposite = !horiz;
 
         super.init(chart, options);
 
@@ -712,7 +688,7 @@ class ColorAxis extends Axis implements AxisLike {
         axis.initStops();
 
         // Override original axis properties
-        axis.horiz = !options.opposite;
+        axis.horiz = horiz;
         axis.zoomEnabled = false;
     }
 
@@ -1245,10 +1221,7 @@ class ColorAxis extends Axis implements AxisLike {
     ): void {
         const axis = this,
             chart = axis.chart,
-            legend = chart.legend,
-            updatedOptions = ColorAxis.buildOptions(chart, {
-                reversed: axis.userOptions.reversed
-            }, newOptions);
+            legend = chart.legend;
 
         this.series.forEach(function (series): void {
             // Needed for Axis.update when choropleth colors change
@@ -1263,10 +1236,9 @@ class ColorAxis extends Axis implements AxisLike {
 
         // Keep the options structure updated for export. Unlike xAxis and
         // yAxis, the colorAxis is not an array. (#3207)
-        (chart.options as any)[axis.coll] =
-            merge(axis.userOptions, updatedOptions);
+        chart.options[axis.coll] = merge(axis.userOptions, newOptions);
 
-        super.update(updatedOptions, redraw);
+        super.update(newOptions, redraw);
 
         if (axis.legendItem) {
             axis.setLegendColor();
