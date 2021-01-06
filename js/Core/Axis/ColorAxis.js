@@ -545,6 +545,12 @@ var ColorAxis = /** @class */ (function (_super) {
         }
         chart.isDirtyLegend = true;
     };
+    //   Removing the whole axis (#14283)
+    ColorAxis.prototype.destroy = function () {
+        this.chart.isDirtyLegend = true;
+        this.destroyItems();
+        _super.prototype.destroy.apply(this, [].slice.call(arguments));
+    };
     /**
      * Removes the color axis and the related legend item.
      *

@@ -19,6 +19,7 @@ import type {
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CSSObject,

@@ -762,3 +762,35 @@ QUnit.test('#14236: Stacked area chart null yBottom', assert => {
         'There should be no null yBottoms'
     );
 });
+
+QUnit.test('#14833: Column series axis break regression', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            tickInterval: 1,
+            breaks: [{
+                from: 5,
+                to: 10,
+                breakSize: 1
+            }]
+        },
+        series: [{
+            gapSize: 1,
+            data: (function () {
+                var data = [],
+                    i;
+                for (i = 0; i < 20; i = i + 1) {
+                    data.push(i);
+                }
+                return data;
+            }())
+        }]
+    });
+
+    assert.ok(
+        chart.series[0].points.slice(6, 10).every(point => point.graphic.visibility === 'hidden'),
+        'Points in break should not render'
+    );
+});

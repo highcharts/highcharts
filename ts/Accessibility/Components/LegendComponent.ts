@@ -177,7 +177,7 @@ addEvent(Legend, 'afterColorizeItem', function (
 
     if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
         legendItem.a11yProxyElement.setAttribute(
-            'aria-pressed', e.visible ? 'false' : 'true'
+            'aria-pressed', e.visible ? 'true' : 'false'
         );
     }
 });
@@ -365,7 +365,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             ),
             attribs = {
                 tabindex: -1,
-                'aria-pressed': !item.visible,
+                'aria-pressed': item.visible,
                 'aria-label': itemLabel
             },
             // Considers useHTML

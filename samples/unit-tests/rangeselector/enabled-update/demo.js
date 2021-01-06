@@ -14,11 +14,23 @@ QUnit.test('RangeSelector enabled', function (assert) {
         ]
     });
 
+    const plotTop = chart.plotTop;
+
     chart.update({
         rangeSelector: {
             enabled: true
         }
     });
 
-    assert.strictEqual(chart.rangeSelector !== undefined, true, 'enabled');
+    assert.ok(chart.rangeSelector, 'chart.rangeSelector should be set');
+
+    // #11669
+    assert.ok(
+        chart.plotTop > plotTop,
+        'plotTop should have increased to make room for range selector'
+    );
+    assert.ok(
+        chart.rangeSelector.minDateBox.text.textStr,
+        'dateBox text should be set'
+    );
 });

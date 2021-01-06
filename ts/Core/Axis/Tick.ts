@@ -16,7 +16,24 @@ import type { TickLike } from '../Axis/Types';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type TimeTicksInfoObject from './TimeTicksInfoObject';
 import H from '../Globals.js';
+const {
+    deg2rad
+} = H;
+import U from '../Utilities.js';
+const {
+    clamp,
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -141,22 +158,20 @@ declare global {
  * @type {number|undefined}
  */
 
+/**
+ * Additonal time tick information.
+ *
+ * @interface Highcharts.TimeTicksInfoObject
+ * @extends Highcharts.TimeNormalizedObject
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @type {Array<string>}
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#totalRange
+ * @type {number}
+ */
 
-import U from '../Utilities.js';
-const {
-    clamp,
-    correctFloat,
-    defined,
-    destroyObjectProperties,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-var deg2rad = H.deg2rad;
+''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
