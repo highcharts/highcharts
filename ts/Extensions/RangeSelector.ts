@@ -36,6 +36,7 @@ const {
     destroyObjectProperties,
     discardElement,
     extend,
+    find,
     fireEvent,
     isNumber,
     merge,
@@ -2055,19 +2056,7 @@ class RangeSelector {
                     buttonPosition
                 );
 
-                if (buttonPosition.align === 'right') {
-                    translateX += xOffsetForExportButton - plotLeft; // #13014
-                } else if (buttonPosition.align === 'center') {
-                    translateX -= plotLeft / 2;
-                }
-
-                // Align button group
-                buttonGroup.align({
-                    y: buttonPosition.y,
-                    width: buttonGroup.getBBox().width,
-                    align: buttonPosition.align,
-                    x: translateX
-                }, true, chart.spacingBox);
+                this.alignButtonGroup(xOffsetForExportButton);
 
                 // Skip animation
                 group.placed = buttonGroup.placed = chart.hasLoaded;
@@ -2189,6 +2178,38 @@ class RangeSelector {
     }
 
     /**
+     * Align the button group horizontally and vertically.
+     *
+     * @private
+     * @function Highcharts.RangeSelector#alignButtonGroup
+     * @param {number} xOffsetForExportButton
+     * @param {number} [width]
+     * @return {void}
+     */
+    public alignButtonGroup(xOffsetForExportButton: number, width?: number): void {
+        const { chart, options, buttonGroup, buttons } = this;
+        const { buttonPosition } = options;
+        const plotLeft = chart.plotLeft - chart.spacing[3];
+        let translateX = buttonPosition.x - chart.spacing[3];
+
+        if (buttonPosition.align === 'right') {
+            translateX += xOffsetForExportButton - plotLeft; // #13014
+        } else if (buttonPosition.align === 'center') {
+            translateX -= plotLeft / 2;
+        }
+
+        if (buttonGroup) {
+            // Align button group
+            buttonGroup.align({
+                y: buttonPosition.y,
+                width: pick(width, this.initialButtonGroupWidth),
+                align: buttonPosition.align,
+                x: translateX
+            }, true, chart.spacingBox);
+        }
+    }
+
+    /**
      * @private
      * @function Highcharts.RangeSelector#positionButtons
      * @return {void}
@@ -2204,7 +2225,7 @@ class RangeSelector {
         const { buttonPosition } = options;
 
         const plotLeft = chart.plotLeft;
-        let buttonLeft = this.chart.plotLeft;
+        let buttonLeft = plotLeft;
 
         if (zoomText && zoomText.visibility !== 'hidden') {
             // #8769, allow dynamically updating margins
@@ -2315,7 +2336,7 @@ class RangeSelector {
 
         if (buttonGroup) {
             if (dropdown === 'always') {
-                this.collapseButtons();
+                this.collapseButtons(xOffsetForExportButton);
 
                 if (groupsOverlap(maxButtonWidth())) {
                     // Move the inputs down if there is still a collision
@@ -2337,7 +2358,7 @@ class RangeSelector {
                 groupsOverlap(this.initialButtonGroupWidth + 20)
             ) {
                 if (dropdown === 'responsive') {
-                    this.collapseButtons();
+                    this.collapseButtons(xOffsetForExportButton);
 
                     if (groupsOverlap(maxButtonWidth())) {
                         moveInputsDown();
@@ -2350,7 +2371,7 @@ class RangeSelector {
             }
         } else if (buttonGroup && dropdown === 'responsive') {
             if (this.initialButtonGroupWidth > chart.plotWidth) {
-                this.collapseButtons();
+                this.collapseButtons(xOffsetForExportButton);
             } else {
                 this.expandButtons();
             }
@@ -2362,13 +2383,15 @@ class RangeSelector {
      *
      * @private
      * @function Highcharts.RangeSelector#collapseButtons
+     * @param {number} xOffsetForExportButton
      * @return {void}
      */
-    public collapseButtons(): void {
+    public collapseButtons(xOffsetForExportButton: number): void {
         const {
             buttons,
             buttonOptions,
             dropdown,
+            options,
             zoomText
         } = this;
 
@@ -2409,7 +2432,17 @@ class RangeSelector {
             buttons[0].attr(getAttribs(this.zoomText?.textStr));
         }
 
+        const { align } = options.buttonPosition;
+
         this.positionButtons();
+
+        if (align === 'right' || align === 'center') {
+            this.alignButtonGroup(
+                xOffsetForExportButton,
+                buttons[this.currentButtonIndex()].getBBox().width
+            );
+        }
+
         this.showDropdown();
     }
 
@@ -2800,6 +2833,72 @@ Axis.prototype.minFromRange = function (
 };
 
 if (!H.RangeSelector) {
+    const chartDestroyEvents: [Chart, Function[]][] = [];
+
+    const initRangeSelector = (chart: Chart): void => {
+        var extremes,
+            rangeSelector = chart.rangeSelector,
+            legend,
+            alignTo,
+            verticalAlign: VerticalAlignValue|undefined;
+
+        /**
+         * @private
+         */
+        function render(): void {
+            if (rangeSelector) {
+                extremes = chart.xAxis[0].getExtremes();
+                legend = chart.legend;
+                verticalAlign = rangeSelector?.options.verticalAlign;
+
+                if (isNumber(extremes.min)) {
+                    rangeSelector.render(extremes.min, extremes.max);
+                }
+
+                // Re-align the legend so that it's below the rangeselector
+                if (
+                    legend.display &&
+                    verticalAlign === 'top' &&
+                    verticalAlign === legend.options.verticalAlign
+                ) {
+                    // Create a new alignment box for the legend.
+                    alignTo = merge(chart.spacingBox);
+                    if (legend.options.layout === 'vertical') {
+                        alignTo.y = chart.plotTop;
+                    } else {
+                        alignTo.y += rangeSelector.getHeight();
+                    }
+                    legend.group.placed = false; // Don't animate the alignment.
+                    legend.align(alignTo);
+                }
+            }
+        }
+
+        if (rangeSelector) {
+            const events = find(chartDestroyEvents, (e: [Chart, Function[]]): boolean => e[0] === chart);
+
+            if (!events) {
+                chartDestroyEvents.push([chart, [
+                    // redraw the scroller on setExtremes
+                    addEvent(
+                        chart.xAxis[0],
+                        'afterSetExtremes',
+                        function (e: Highcharts.RangeObject): void {
+                            if (rangeSelector) {
+                                rangeSelector.render(e.min, e.max);
+                            }
+                        }
+                    ),
+                    // redraw the scroller chart resize
+                    addEvent(chart, 'redraw', render)
+                ]]);
+            }
+
+            // do it now
+            render();
+        }
+    };
+
     // Initialize rangeselector for stock charts
     addEvent(Chart, 'afterGetContainer', function (): void {
         if (this.options.rangeSelector?.enabled) {
@@ -2859,15 +2958,14 @@ if (!H.RangeSelector) {
             this.options.rangeSelector
         ) {
             this.options.rangeSelector.enabled = true;
-            this.rangeSelector = new RangeSelector(this);
+            this.rangeSelector = rangeSelector = new RangeSelector(this);
         }
 
         this.extraBottomMargin = false;
         this.extraTopMargin = false;
 
         if (rangeSelector) {
-
-            rangeSelector.render();
+            initRangeSelector(this);
 
             verticalAlign = (
                 optionsRangeSelector &&
@@ -2929,71 +3027,18 @@ if (!H.RangeSelector) {
         }
     });
 
-    Chart.prototype.callbacks.push(function (chart: Chart): void {
-        var extremes,
-            rangeSelector = chart.rangeSelector,
-            unbindRender: Function,
-            unbindSetExtremes: Function,
-            legend,
-            alignTo,
-            verticalAlign: VerticalAlignValue|undefined;
+    Chart.prototype.callbacks.push(initRangeSelector);
 
-        /**
-         * @private
-         */
-        function renderRangeSelector(): void {
-            if (rangeSelector) {
-                extremes = chart.xAxis[0].getExtremes();
-                legend = chart.legend;
-                verticalAlign = rangeSelector?.options.verticalAlign;
-
-                if (isNumber(extremes.min)) {
-                    rangeSelector.render(extremes.min, extremes.max);
-                }
-
-                // Re-align the legend so that it's below the rangeselector
-                if (
-                    legend.display &&
-                    verticalAlign === 'top' &&
-                    verticalAlign === legend.options.verticalAlign
-                ) {
-                    // Create a new alignment box for the legend.
-                    alignTo = merge(chart.spacingBox);
-                    if (legend.options.layout === 'vertical') {
-                        alignTo.y = chart.plotTop;
-                    } else {
-                        alignTo.y += rangeSelector.getHeight();
-                    }
-                    legend.group.placed = false; // Don't animate the alignment.
-                    legend.align(alignTo);
-                }
+    // Remove resize/afterSetExtremes at chart destroy
+    addEvent(Chart, 'destroy', function destroyEvents(): void {
+        for (let i = 0; i < chartDestroyEvents.length; i++) {
+            const events = chartDestroyEvents[i];
+            if (events[0] === this) {
+                events[1].forEach((unbind: Function): void => unbind());
+                chartDestroyEvents.splice(i, 1);
+                return;
             }
         }
-
-        if (rangeSelector) {
-            // redraw the scroller on setExtremes
-            unbindSetExtremes = addEvent(
-                chart.xAxis[0],
-                'afterSetExtremes',
-                function (e: Highcharts.RangeObject): void {
-                    (rangeSelector as any).render(e.min, e.max);
-                }
-            );
-
-            // redraw the scroller chart resize
-            unbindRender = addEvent(chart, 'redraw', renderRangeSelector);
-
-            // do it now
-            renderRangeSelector();
-        }
-
-        // Remove resize/afterSetExtremes at chart destroy
-        addEvent(chart, 'destroy', function destroyEvents(): void {
-            if (rangeSelector) {
-                unbindRender();
-                unbindSetExtremes();
-            }
-        });
     });
     H.RangeSelector = RangeSelector;
 }

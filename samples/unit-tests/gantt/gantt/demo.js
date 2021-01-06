@@ -707,4 +707,43 @@
             'The processedYData should be applied by using the keys feature #13768'
         );
     });
+
+    QUnit.test('Gantt with scrollbar using uniqueNames, #14808.', function (assert) {
+        Highcharts.ganttChart('container', {
+            yAxis: {
+                min: 0,
+                max: 1,
+                uniqueNames: true,
+                scrollbar: {
+                    enabled: true
+                }
+            },
+            series: [{
+                type: 'gantt',
+                name: 's1',
+                data: [{
+                    name: 'Task 1',
+                    start: Date.UTC(2020, 5, 1),
+                    end: Date.UTC(2020, 5, 3)
+                }, {
+                    name: 'Task 2',
+                    start: Date.UTC(2020, 5, 1),
+                    end: Date.UTC(2020, 5, 3)
+                }]
+            }, {
+                type: 'gantt',
+                name: 's2',
+                data: [{
+                    name: 'Task 3',
+                    start: Date.UTC(2020, 5, 1),
+                    end: Date.UTC(2020, 5, 3)
+                }]
+            }]
+        });
+
+        assert.ok(
+            true,
+            'There should be no errors in the console.'
+        );
+    });
 }());

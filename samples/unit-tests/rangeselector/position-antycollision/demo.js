@@ -469,3 +469,26 @@ QUnit.test('Chart setSize', assert => {
         'The plot height should change after a single resize'
     );
 });
+
+QUnit.test('#14292: Right-aligned button position after animating', assert => {
+    const chart = Highcharts.stockChart('container', {
+        chart: {
+            animation: 500
+        },
+        rangeSelector: {
+            buttonPosition: {
+                align: 'right'
+            },
+            inputEnabled: false
+        }
+    });
+
+    const width = chart.rangeSelector.buttonGroup.getBBox().width;
+
+    chart.rangeSelector.update();
+
+    assert.ok(
+        chart.rangeSelector.buttonGroup.translateX + width <= chart.plotWidth,
+        'Buttons should be inside the chart'
+    );
+});

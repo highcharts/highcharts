@@ -96,6 +96,12 @@ declare global {
             xAxis: Array<SelectDataObject>;
             yAxis: Array<SelectDataObject>;
         }
+        interface ChartPositionObject {
+            left: number;
+            scaleX: number;
+            scaleY: number;
+            top: number;
+        }
         let Pointer: PointerClass;
         let chartCount: number;
         let hoverChartIndex: (number|undefined);
@@ -198,6 +204,24 @@ type PointerClass = typeof Pointer;
  * @type {Array<Highcharts.SelectDataObject>}
  */
 
+/**
+ * Chart position and scale.
+ *
+ * @interface Highcharts.ChartPositionObject
+ *//**
+ * @name Highcharts.ChartPositionObject#left
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleX
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#scaleY
+ * @type {number}
+ *//**
+ * @name Highcharts.ChartPositionObject#top
+ * @type {number}
+ */
+
 ''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -242,7 +266,7 @@ class Pointer {
 
     public chart: Chart;
 
-    public chartPosition?: Highcharts.OffsetObject;
+    public chartPosition?: Highcharts.ChartPositionObject;
 
     public followTouchMove?: boolean;
 
@@ -777,14 +801,36 @@ class Pointer {
      *
      * @function Highcharts.Pointer#getChartPosition
      *
-     * @return {Highcharts.OffsetObject}
+     * @return {Highcharts.ChartPositionObject}
      *         The offset of the chart container within the page
      */
-    public getChartPosition(): Highcharts.OffsetObject {
-        return (
-            this.chartPosition ||
-            (this.chartPosition = offset(this.chart.container))
-        );
+    public getChartPosition(): Highcharts.ChartPositionObject {
+        if (this.chartPosition) {
+            return this.chartPosition;
+        }
+
+        const { container } = this.chart;
+        const pos = offset(container);
+        this.chartPosition = {
+            left: pos.left,
+            top: pos.top,
+            scaleX: 1,
+            scaleY: 1
+        };
+
+        // #13342 - tooltip was not visible in Chrome, when chart
+        // updates height.
+        if (
+            container.offsetWidth > 2 && // #13342
+            container.offsetHeight > 2 && // #13342
+            container.getBoundingClientRect
+        ) {
+            const bb = container.getBoundingClientRect();
+            this.chartPosition.scaleX = bb.width / container.offsetWidth;
+            this.chartPosition.scaleY = bb.height / container.offsetHeight;
+        }
+
+        return this.chartPosition;
     }
 
     /**
@@ -1080,7 +1126,7 @@ class Pointer {
      */
     public normalize<T extends PointerEvent>(
         e: (T|MouseEvent|PointerEvent|TouchEvent),
-        chartPosition?: Highcharts.OffsetObject
+        chartPosition?: Highcharts.ChartPositionObject
     ): T {
         const touches = (e as TouchEvent).touches;
 
@@ -1106,11 +1152,8 @@ class Pointer {
 
         // #11329 - when there is scaling on a parent element, we need to take
         // this into account
-        const containerScaling = this.chart.containerScaling;
-        if (containerScaling) {
-            chartX /= containerScaling.scaleX;
-            chartY /= containerScaling.scaleY;
-        }
+        chartX /= chartPosition.scaleX;
+        chartY /= chartPosition.scaleY;
 
         return extend(e, {
             chartX: Math.round(chartX),

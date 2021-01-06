@@ -279,7 +279,7 @@ var langOptions: Highcharts.LangOptions = {
          */
         legend: {
             legendLabel: 'Toggle series visibility',
-            legendItem: 'Hide {itemName}'
+            legendItem: 'Show {itemName}'
         },
 
         /**

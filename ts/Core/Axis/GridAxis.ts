@@ -893,7 +893,7 @@ class GridAxis {
 
                 if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
                     (axis.ticks[lastTick].mark as any).hide();
-                } else {
+                } else if (axis.ticks[lastTick - 1]) {
                     (axis.ticks[lastTick - 1].mark as any).show();
                 }
             }

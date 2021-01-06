@@ -100,6 +100,23 @@ var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, exte
 * @name Highcharts.SelectEventObject#yAxis
 * @type {Array<Highcharts.SelectDataObject>}
 */
+/**
+ * Chart position and scale.
+ *
+ * @interface Highcharts.ChartPositionObject
+ */ /**
+* @name Highcharts.ChartPositionObject#left
+* @type {number}
+*/ /**
+* @name Highcharts.ChartPositionObject#scaleX
+* @type {number}
+*/ /**
+* @name Highcharts.ChartPositionObject#scaleY
+* @type {number}
+*/ /**
+* @name Highcharts.ChartPositionObject#top
+* @type {number}
+*/
 ''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -481,12 +498,31 @@ var Pointer = /** @class */ (function () {
      *
      * @function Highcharts.Pointer#getChartPosition
      *
-     * @return {Highcharts.OffsetObject}
+     * @return {Highcharts.ChartPositionObject}
      *         The offset of the chart container within the page
      */
     Pointer.prototype.getChartPosition = function () {
-        return (this.chartPosition ||
-            (this.chartPosition = offset(this.chart.container)));
+        if (this.chartPosition) {
+            return this.chartPosition;
+        }
+        var container = this.chart.container;
+        var pos = offset(container);
+        this.chartPosition = {
+            left: pos.left,
+            top: pos.top,
+            scaleX: 1,
+            scaleY: 1
+        };
+        // #13342 - tooltip was not visible in Chrome, when chart
+        // updates height.
+        if (container.offsetWidth > 2 && // #13342
+            container.offsetHeight > 2 && // #13342
+            container.getBoundingClientRect) {
+            var bb = container.getBoundingClientRect();
+            this.chartPosition.scaleX = bb.width / container.offsetWidth;
+            this.chartPosition.scaleY = bb.height / container.offsetHeight;
+        }
+        return this.chartPosition;
     };
     /**
      * Get the click position in terms of axis values.
@@ -742,11 +778,8 @@ var Pointer = /** @class */ (function () {
         var chartX = ePos.pageX - chartPosition.left, chartY = ePos.pageY - chartPosition.top;
         // #11329 - when there is scaling on a parent element, we need to take
         // this into account
-        var containerScaling = this.chart.containerScaling;
-        if (containerScaling) {
-            chartX /= containerScaling.scaleX;
-            chartY /= containerScaling.scaleY;
-        }
+        chartX /= chartPosition.scaleX;
+        chartY /= chartPosition.scaleY;
         return extend(e, {
             chartX: Math.round(chartX),
             chartY: Math.round(chartY)

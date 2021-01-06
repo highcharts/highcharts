@@ -16,6 +16,7 @@ import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
 import type PointerEvent from '../PointerEvent';
+import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
@@ -1031,7 +1032,7 @@ class ColorAxis extends Axis implements AxisLike {
      * Fool the legend.
      * @private
      */
-    public setState(state?: string): void {
+    public setState(state?: StatesOptionsKey): void {
         this.series.forEach(function (series): void {
             series.setState(state);
         });
@@ -1290,6 +1291,14 @@ class ColorAxis extends Axis implements AxisLike {
         }
 
         chart.isDirtyLegend = true;
+    }
+
+    //   Removing the whole axis (#14283)
+    public destroy(): void {
+        this.chart.isDirtyLegend = true;
+
+        this.destroyItems();
+        super.destroy(...[].slice.call(arguments));
     }
 
     /**

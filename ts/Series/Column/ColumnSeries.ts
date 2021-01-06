@@ -1177,7 +1177,13 @@ class ColumnSeries extends LineSeries {
                         );
                 }
 
-                (graphic as any).addClass(point.getClassName(), true);
+                if (graphic) {
+                    graphic.addClass(point.getClassName(), true);
+
+                    graphic.attr({
+                        visibility: point.visible ? 'inherit' : 'hidden'
+                    });
+                }
 
             } else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269

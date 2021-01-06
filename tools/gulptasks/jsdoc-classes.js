@@ -32,7 +32,6 @@ const SOURCE_GLOBS = [
     'js/Core/Series/Point.js',
     'js/Core/Series/Series.js',
     'js/Core/Globals.js',
-    'js/Core/Interaction.js',
     'js/Core/Legend.js',
     'js/Core/Options.js',
     'js/Core/Pointer.js',

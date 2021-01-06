@@ -7,11 +7,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var doc = H.doc;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+import './MapNavigationOptionsDefault.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private

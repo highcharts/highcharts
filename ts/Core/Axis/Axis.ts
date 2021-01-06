@@ -327,6 +327,13 @@ declare global {
             stops?: GradientColor['stops'];
             tooltipValueFormat?: string;
         }
+        interface Axis {
+        }
+        interface AxisPanningState {
+            startMin: (number);
+            startMax: (number);
+            isDirty?: boolean;
+        }
         class Axis implements AxisLike {
             public static defaultBottomAxisOptions: AxisOptions;
             public static defaultLeftAxisOptions: AxisOptions;
@@ -404,6 +411,7 @@ declare global {
             public options: AxisOptions;
             public overlap: boolean;
             public paddedTicks: Array<number>;
+            public panningState?: AxisPanningState;
             public plotLinesAndBands: Array<PlotLineOrBand>;
             public plotLinesAndBandsGroups: Record<string, SVGElement>;
             public pointRange: number;
@@ -3963,12 +3971,14 @@ class Axis {
     public minRange?: (null|number);
     public names: Array<string> = void 0 as any;
     public offset: number = void 0 as any;
-    public oldAxisLength?: number;
-    public oldMax: (null|number) = void 0 as any;
-    public oldMin: (null|number) = void 0 as any;
-    public oldTransA?: number;
-    public oldUserMax?: number;
-    public oldUserMin?: number;
+    public old?: { // @todo create a type
+        len: number;
+        max: number|null;
+        min: number|null;
+        transA: number;
+        userMax?: number;
+        userMin?: number;
+    };
     public opposite?: boolean;
     public options: Highcharts.AxisOptions = void 0 as any;
     public ordinal?: AxisComposition['ordinal'];
