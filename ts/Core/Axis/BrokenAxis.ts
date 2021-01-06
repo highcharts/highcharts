@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *

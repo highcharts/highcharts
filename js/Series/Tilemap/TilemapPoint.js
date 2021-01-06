@@ -2,7 +2,7 @@
  *
  *  Tilemaps module
  *
- *  (c) 2010-2017 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license

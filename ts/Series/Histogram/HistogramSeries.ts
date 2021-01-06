@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2010-2017 Highsoft AS
+ *  Copyright (c) 2010-2021 Highsoft AS
  *  Author: Sebastian Domas
  *
  *  License: www.highcharts.com/license
