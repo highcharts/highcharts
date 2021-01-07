@@ -19,9 +19,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+import PivotPointsPoint from './PivotPointsPoint.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
-import PivotPointsPoint from './PivotPointsPoint.js';
 import U from '../../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend, defined = U.defined, isArray = U.isArray;
 /**

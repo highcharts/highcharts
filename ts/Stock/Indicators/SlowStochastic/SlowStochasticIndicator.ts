@@ -8,13 +8,15 @@
 
 'use strict';
 
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     SlowStochasticOptions,
     SlowStochasticParamsOptions
 } from './SlowStochasticOptions';
 import type SlowStochasticPoint from './SlowStochasticPoint';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -22,7 +24,6 @@ const {
     }
 } = SeriesRegistry;
 const { seriesTypes } = SeriesRegistry;
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,

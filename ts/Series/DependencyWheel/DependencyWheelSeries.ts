@@ -22,6 +22,9 @@ import type DependencyWheelSeriesOptions from './DependencyWheelSeriesOptions';
 import type SankeySeriesType from '../Sankey/SankeySeries';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import DependencyWheelPoint from './DependencyWheelPoint.js';
+import H from '../../Core/Globals.js';
+const { deg2rad } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -29,9 +32,6 @@ const {
         sankey: SankeySeries
     }
 } = SeriesRegistry;
-import DependencyWheelPoint from './DependencyWheelPoint.js';
-import H from '../../Core/Globals.js';
-const { deg2rad } = H;
 import U from '../../Core/Utilities.js';
 const {
     extend,

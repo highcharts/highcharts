@@ -21,11 +21,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var AreaRangeSeries = SeriesRegistry.seriesTypes.arearange;
 import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var AreaRangeSeries = SeriesRegistry.seriesTypes.arearange;
 import U from '../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend;
 /**

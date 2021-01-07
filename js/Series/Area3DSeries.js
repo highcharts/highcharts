@@ -9,10 +9,10 @@
  * */
 'use strict';
 import LineSeries from './Line/LineSeries.js';
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-var seriesTypes = SeriesRegistry.seriesTypes;
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Core/Utilities.js';
 var pick = U.pick, wrap = U.wrap;
 /* eslint-disable no-invalid-this */

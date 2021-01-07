@@ -15,16 +15,17 @@ import type {
     WilliamsRParamsOptions
 } from './WilliamsROptions';
 import type WilliamsRPoint from './WilliamsRPoint';
+
+import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+const {
+    getArrayExtremes
+} = ReduceArrayMixin;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = SeriesRegistry;
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
-const {
-    getArrayExtremes
-} = ReduceArrayMixin;
 import U from '../../../Core/Utilities.js';
 const {
     extend,

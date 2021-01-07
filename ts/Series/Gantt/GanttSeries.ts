@@ -21,6 +21,7 @@
 import type GanttSeriesOptions from './GanttSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import GanttPoint from './GanttPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -28,7 +29,6 @@ const {
         xrange: XRangeSeries
     }
 } = SeriesRegistry;
-import GanttPoint from './GanttPoint.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,

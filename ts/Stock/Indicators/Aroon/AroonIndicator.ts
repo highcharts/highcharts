@@ -16,14 +16,13 @@ import type {
 } from '../Aroon/AroonOptions';
 import type AroonPoint from '../Aroon/AroonPoint';
 
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = SeriesRegistry;
-
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,

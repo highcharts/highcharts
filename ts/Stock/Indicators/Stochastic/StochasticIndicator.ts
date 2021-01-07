@@ -15,14 +15,15 @@ import type {
     StochasticParamsOptions
 } from './StochasticOptions';
 import type StochasticPoint from './StochasticPoint';
+
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = SeriesRegistry;
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,

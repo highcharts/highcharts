@@ -25,11 +25,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, PieSeries = _a.pie, SankeySeries = _a.sankey;
 import DependencyWheelPoint from './DependencyWheelPoint.js';
 import H from '../../Core/Globals.js';
 var deg2rad = H.deg2rad;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, PieSeries = _a.pie, SankeySeries = _a.sankey;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 /* *

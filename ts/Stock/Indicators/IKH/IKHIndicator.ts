@@ -19,16 +19,6 @@ import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import type Point from '../../../Core/Series/Point';
 import type IKHPoint from './IKHPoint';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: { sma: SMAIndicator }
-} = SeriesRegistry;
-import Color from '../../../Core/Color/Color.js';
-const color = Color.parse;
-import H from '../../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
 import type {
     IKHDrawSenkouSpanObject,
     IKHGapExtensionObject,
@@ -36,6 +26,16 @@ import type {
     IKHParamsOptions,
     IKHSenkouSpanOptions
 } from './IKHOptions';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import Color from '../../../Core/Color/Color.js';
+const color = Color.parse;
+import H from '../../../Core/Globals.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: { sma: SMAIndicator }
+} = SeriesRegistry;
+import U from '../../../Core/Utilities.js';
 const { defined, extend, isArray, merge, objectEach } = U;
 
 declare module '../../../Core/Series/SeriesLike' {

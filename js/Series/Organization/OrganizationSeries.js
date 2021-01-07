@@ -23,10 +23,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var SankeySeries = SeriesRegistry.seriesTypes.sankey;
 import OrganizationPoint from './OrganizationPoint.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var SankeySeries = SeriesRegistry.seriesTypes.sankey;
 import U from '../../Core/Utilities.js';
 var css = U.css, extend = U.extend, merge = U.merge, pick = U.pick, wrap = U.wrap;
 /* *

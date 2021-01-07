@@ -21,6 +21,8 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import ColumnRangePoint from './ColumnRangePoint.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -30,8 +32,6 @@ const {
 } = SeriesRegistry;
 const { prototype: columnProto } = ColumnSeries;
 const { prototype: arearangeProto } = AreaRangeSeries;
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import U from '../../Core/Utilities.js';
 const {
     clamp,

@@ -11,12 +11,6 @@
 import type Point from '../../../Core/Series/Point';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
 import type {
     PivotPointsOptions,
     PivotPointsParamsOptions
@@ -24,6 +18,12 @@ import type {
 import PivotPointsPoint from './PivotPointsPoint.js';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     merge,

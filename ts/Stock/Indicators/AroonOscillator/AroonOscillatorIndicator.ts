@@ -15,14 +15,14 @@ import type {
     AroonOscillatorParamsOptions
 } from '../AroonOscillator/AroonOscillatorOptions';
 import type AroonOscillatorPoint from '../AroonOscillator/AroonOscillatorPoint';
+import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         aroon: AroonIndicator
     }
 } = SeriesRegistry;
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,

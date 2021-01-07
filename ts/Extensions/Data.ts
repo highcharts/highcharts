@@ -24,9 +24,7 @@ const {
 } = H;
 import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes
-} = SeriesRegistry;
+const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,

@@ -16,9 +16,9 @@
  *
  * */
 
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import Pie3DPoint from './Pie3DPoint.js';
 import Pie3DSeries from './Pie3DSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 /* *
  *

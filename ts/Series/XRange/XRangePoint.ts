@@ -22,13 +22,13 @@ import type {
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 
+import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import Point from '../../Core/Series/Point.js';
 import XRangeSeries from './XRangeSeries.js';
 
 /* *

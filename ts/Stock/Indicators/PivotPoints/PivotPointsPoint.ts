@@ -12,13 +12,13 @@
  *
  * */
 
+import PivotPointsIndicator from './PivotPointsIndicator';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = SeriesRegistry;
-import PivotPointsIndicator from './PivotPointsIndicator';
 
 /* eslint-disable valid-jsdoc */
 

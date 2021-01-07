@@ -59,9 +59,7 @@ const {
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
 import SeriesRegistry from '../Series/SeriesRegistry.js';
-const {
-    seriesTypes
-} = SeriesRegistry;
+const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';

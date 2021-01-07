@@ -28,6 +28,13 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeriesOptions from './SunburstSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TreemapSeriesType from '../Treemap/TreemapSeries';
+import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
+const {
+    getCenter,
+    getStartAndEndRadians
+} = CenteredSeriesMixin;
+import H from '../../Core/Globals.js';
+const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -36,13 +43,6 @@ const {
         treemap: TreemapSeries
     }
 } = SeriesRegistry;
-import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
-const {
-    getCenter,
-    getStartAndEndRadians
-} = CenteredSeriesMixin;
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import SunburstPoint from './SunburstPoint.js';
 import SunburstUtilities from './SunburstUtilities.js';
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';

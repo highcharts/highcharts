@@ -13,12 +13,12 @@
 'use strict';
 
 import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { seriesTypes } = SeriesRegistry;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LineSeries from '../../Series/Line/LineSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

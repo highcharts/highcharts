@@ -50,8 +50,6 @@ const {
     animObject,
     setAnimation
 } = A;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { seriesTypes } = SeriesRegistry;
 import H from '../../Core/Globals.js';
 const {
     hasTouch,
@@ -62,6 +60,8 @@ import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {

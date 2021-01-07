@@ -21,10 +21,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var BubbleSeries = SeriesRegistry.seriesTypes.bubble;
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var BubbleSeries = SeriesRegistry.seriesTypes.bubble;
 /* *
  *
  *  Class

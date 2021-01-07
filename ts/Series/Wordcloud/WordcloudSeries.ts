@@ -22,12 +22,6 @@ import type {
     WordcloudSeriesOptions,
     WordcloudSeriesRotationOptions
 } from './WordcloudSeriesOptions';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LineSeries from '../Line/LineSeries.js';
@@ -39,6 +33,12 @@ const {
     rotate2DToOrigin,
     rotate2DToPoint
 } = PolygonMixin;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,

@@ -13,6 +13,9 @@
 import type PolygonPoint from './PolygonPoint';
 import type PolygonSeriesOptions from './PolygonSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -21,9 +24,6 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,

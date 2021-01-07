@@ -23,12 +23,12 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
-import SeriesRegistry from './SeriesRegistry.js';
-const { seriesTypes } = SeriesRegistry;
 import H from '../Globals.js';
 const { noop } = H;
 import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../Color/Palette.js';
+import SeriesRegistry from './SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../Utilities.js';
 const {
     arrayMax,

@@ -19,11 +19,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import Color from '../../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../../Core/Globals.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach;
 /* eslint-disable require-jsdoc */

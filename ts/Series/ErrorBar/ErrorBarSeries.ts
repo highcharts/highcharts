@@ -13,16 +13,15 @@
 import type ErrorBarPoint from './ErrorBarPoint';
 import type ErrorBarSeriesOptions from './ErrorBarSeriesOptions';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
+import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
+import ColumnSeries from '../Column/ColumnSeries.js';
+import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         arearange: AreaRangeSeries
     }
 } = SeriesRegistry;
-
-import BoxPlotSeries from '../BoxPlot/BoxPlotSeries.js';
-import ColumnSeries from '../Column/ColumnSeries.js';
-import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,

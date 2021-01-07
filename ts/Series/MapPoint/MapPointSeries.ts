@@ -17,15 +17,15 @@
  * */
 
 import type MapPointSeriesOptions from './MapPointSeriesOptions';
+import MapPointPoint from './MapPointPoint.js';
+import palette from '../../Core/Color/Palette.js';
+import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import palette from '../../Core/Color/Palette.js';
-import MapPointPoint from './MapPointPoint.js';
-import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,

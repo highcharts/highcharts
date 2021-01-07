@@ -15,12 +15,13 @@ import type {
     TrendLineParamsOptions
 } from './TrendLineOptions';
 import type TrendLinePoint from './TrendLinePoint';
+
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = SeriesRegistry;
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,

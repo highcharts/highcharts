@@ -9,15 +9,6 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import LineSeries from '../../../Series/Line/LineSeries.js';
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        ema: EMAIndicator,
-        column: ColumnSeries
-    }
-} = SeriesRegistry;
 import type {
     MACDOptions,
     MACDGappedExtensionObject,
@@ -31,6 +22,15 @@ import type {
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import H from '../../../Core/Globals.js';
 const { noop } = H;
+import LineSeries from '../../../Series/Line/LineSeries.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator,
+        ema: EMAIndicator,
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,

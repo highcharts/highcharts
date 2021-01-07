@@ -25,9 +25,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
+import H from '../../Core/Globals.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, ScatterSeries = _a.scatter;
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, extend = U.extend, merge = U.merge, pick = U.pick;
 /* *

@@ -21,10 +21,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapPointMixin = ColorMapMixin.colorMapPointMixin;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ScatterPoint = SeriesRegistry.seriesTypes.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, pick = U.pick;
 /* *

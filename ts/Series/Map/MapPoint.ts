@@ -22,6 +22,8 @@ import type PointerEvent from '../../Core/PointerEvent';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
+const { colorMapPointMixin } = ColorMapMixin;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -29,8 +31,6 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapPointMixin } = ColorMapMixin;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

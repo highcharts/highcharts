@@ -21,12 +21,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, OHLCSeries = _a.ohlc;
-var columnProto = ColumnSeries.prototype;
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, OHLCSeries = _a.ohlc;
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /* *
@@ -82,7 +81,7 @@ var CandlestickSeries = /** @class */ (function (_super) {
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
      */
     CandlestickSeries.prototype.pointAttribs = function (point, state) {
-        var attribs = columnProto.pointAttribs.call(this, point, state), options = this.options, isUp = point.open < point.close, stroke = options.lineColor || this.color, stateOptions;
+        var attribs = ColumnSeries.prototype.pointAttribs.call(this, point, state), options = this.options, isUp = point.open < point.close, stroke = options.lineColor || this.color, stateOptions;
         attribs['stroke-width'] = options.lineWidth;
         attribs.fill = point.options.color ||
             (isUp ? (options.upColor || this.color) : this.color);

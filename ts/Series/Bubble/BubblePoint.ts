@@ -19,6 +19,7 @@
 import type BubblePointOptions from './BubblePointOptions';
 import type BubbleSeries from './BubbleSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -29,7 +30,6 @@ const {
         }
     }
 } = SeriesRegistry;
-import Point from '../../Core/Series/Point.js';
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

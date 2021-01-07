@@ -25,6 +25,8 @@ import type {
     SMAParamsOptions
 } from './SMAOptions';
 import type SMAPoint from './SMAPoint';
+
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -34,7 +36,6 @@ const {
         }
     }
 } = SeriesRegistry;
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,

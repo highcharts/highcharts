@@ -12,13 +12,13 @@
 
 import type AreaSplineRangePoint from './AreaSplineRangePoint';
 import type AreaSplineRangeSeriesOptions from './AreaSplineRangeSeriesOptions';
+import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         spline: SplineSeries
     }
 } = SeriesRegistry;
-import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     merge,

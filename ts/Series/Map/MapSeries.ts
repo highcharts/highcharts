@@ -28,6 +28,19 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
+const { colorMapSeriesMixin } = ColorMapMixin;
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import LineSeries from '../Line/LineSeries.js';
+import mapModule from '../../Maps/Map.js';
+const {
+    maps,
+    splitPath
+} = mapModule;
+import MapPoint from './MapPoint.js';
+import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -36,19 +49,6 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
-import mapModule from '../../Maps/Map.js';
-import palette from '../../Core/Color/Palette.js';
-const {
-    maps,
-    splitPath
-} = mapModule;
-import MapPoint from './MapPoint.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {

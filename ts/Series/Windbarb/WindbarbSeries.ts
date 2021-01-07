@@ -20,6 +20,9 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -27,9 +30,6 @@ const {
         line: LineSeries
     }
 } = SeriesRegistry;
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,

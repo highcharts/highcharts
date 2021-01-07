@@ -24,10 +24,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, LinePoint = _a.line.prototype.pointClass, HeatmapPoint = _a.heatmap.prototype.pointClass;
 import ColorSeriesModule from '../../Mixins/ColorSeries.js';
 var colorPointMixin = ColorSeriesModule.colorPointMixin;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, LinePoint = _a.line.prototype.pointClass, HeatmapPoint = _a.heatmap.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
 /* *

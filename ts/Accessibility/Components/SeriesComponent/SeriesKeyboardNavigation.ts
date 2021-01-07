@@ -12,13 +12,11 @@
 
 'use strict';
 
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes
-} = SeriesRegistry;
 import Chart from '../../../Core/Chart/Chart.js';
 import LineSeries from '../../../Series/Line/LineSeries.js';
 import Point from '../../../Core/Series/Point.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     defined,

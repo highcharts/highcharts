@@ -7,19 +7,21 @@
  * */
 
 'use strict';
+
+import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
 import type {
     TRIXOptions,
     TRIXParamsOptions
 } from './TRIXOptions';
 import type TRIXPoint from './TRIXPoint';
+
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         tema: TEMAIndicator
     }
 } = SeriesRegistry;
-import type TEMAIndicatorType from '../TEMA/TEMAIndicator';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,

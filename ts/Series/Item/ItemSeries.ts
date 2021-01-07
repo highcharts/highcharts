@@ -22,16 +22,16 @@ import type { ItemPointMarkerOptions } from './ItemPointOptions';
 import type ItemSeriesOptions from './ItemSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import H from '../../Core/Globals.js';
+import ItemPoint from './ItemPoint.js';
+import O from '../../Core/Options.js';
+const { defaultOptions } = O;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         pie: PieSeries
     }
 } = SeriesRegistry;
-import H from '../../Core/Globals.js';
-import ItemPoint from './ItemPoint.js';
-import O from '../../Core/Options.js';
-const { defaultOptions } = O;
 import U from '../../Core/Utilities.js';
 const {
     defined,

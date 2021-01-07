@@ -25,6 +25,10 @@ import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import Color from '../../Core/Color/Color.js';
+const { parse: color } = Color;
+import H from '../../Core/Globals.js';
+import PackedBubblePoint from './PackedBubblePoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -32,11 +36,6 @@ const {
         line: LineSeries
     }
 } = SeriesRegistry;
-import Chart from '../../Core/Chart/Chart.js';
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
-import H from '../../Core/Globals.js';
-import PackedBubblePoint from './PackedBubblePoint.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
