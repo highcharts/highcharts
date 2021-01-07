@@ -25,15 +25,15 @@ const NEXT_TARGET = 'tree-next.json';
 function task() {
 
     const fs = require('fs');
-    const generator = require('highcharts-documentation-generators').TypeScript;
+    const generator = require('highcharts-documentation-generators').TypeScript4;
     const logLib = require('./lib/log');
 
     return Promise
         .resolve()
         .then(() => fs.writeFileSync(
             NEXT_TARGET,
-            generator.JSONUtilities.stringify(
-                generator.Project.loadFromDirectory('ts').toJSON()
+            generator.JSON.stringify(
+                generator.Project.load('ts').toJSON()
             )
         ))
         .then(logLib.success)
