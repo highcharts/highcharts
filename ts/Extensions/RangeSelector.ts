@@ -73,6 +73,11 @@ declare global {
         interface Options {
             rangeSelector?: DeepPartial<RangeSelectorOptions>;
         }
+        interface LangOptions {
+            rangeSelectorFrom?: string;
+            rangeSelectorTo?: string;
+            rangeSelectorZoom?: string;
+        }
         interface RangeSelectorClickCallbackFunction {
             (e: Event): (boolean|undefined);
         }
@@ -142,18 +147,20 @@ declare global {
             public deferredYTDClick?: number;
             public div?: HTMLDOMElement;
             public dropdown?: HTMLSelectElement;
+            public eventsToUnbind?: Array<Function>;
             public forcedDataGrouping?: boolean;
             public frozenStates?: boolean;
             public group?: SVGElement;
+            public hasVisibleDropdown?: boolean;
             public inputGroup?: SVGElement;
             public isActive?: boolean;
+            public maxDateBox?: SVGElement;
             public maxInput?: HTMLInputElement;
+            public minDateBox?: SVGElement;
             public minInput?: HTMLInputElement;
             public options: RangeSelectorOptions;
             public rendered?: boolean;
             public selected?: number;
-            public unMouseDown?: Function;
-            public unResize?: Function;
             public zoomText?: SVGElement;
             public clickButton(i: number, redraw?: boolean): void;
             public computeButtonRange(
@@ -792,9 +799,11 @@ class RangeSelector {
     public deferredYTDClick?: number;
     public div?: HTMLDOMElement;
     public dropdown?: HTMLSelectElement;
+    public eventsToUnbind?: Array<Function>;
     public forcedDataGrouping?: boolean;
     public frozenStates?: boolean;
     public group?: SVGElement;
+    public hasVisibleDropdown?: boolean;
     public initialButtonGroupWidth = 0;
     public inputGroup?: SVGElement;
     public isActive?: boolean;
@@ -807,8 +816,6 @@ class RangeSelector {
     public options: Highcharts.RangeSelectorOptions = void 0 as any;
     public rendered?: boolean;
     public selected?: number;
-    public unMouseDown?: Function;
-    public unResize?: Function;
     public zoomText?: SVGElement;
 
     /**
@@ -1033,8 +1040,9 @@ class RangeSelector {
 
         rangeSelector.buttonOptions = buttonOptions;
 
-        this.unMouseDown = addEvent(chart.container, 'mousedown', blurInputs);
-        this.unResize = addEvent(chart, 'resize', blurInputs);
+        this.eventsToUnbind = [];
+        this.eventsToUnbind.push(addEvent(chart.container, 'mousedown', blurInputs));
+        this.eventsToUnbind.push(addEvent(chart, 'resize', blurInputs));
 
         // Extend the buttonOptions with actual range
         buttonOptions.forEach(rangeSelector.computeButtonRange);
@@ -1047,8 +1055,7 @@ class RangeSelector {
             this.clickButton(selectedOption, false);
         }
 
-
-        addEvent(chart, 'load', function (): void {
+        this.eventsToUnbind.push(addEvent(chart, 'load', function (): void {
             // If a data grouping is applied to the current button, release it
             // when extremes change
             if (chart.xAxis && chart.xAxis[0]) {
@@ -1068,7 +1075,7 @@ class RangeSelector {
                     }
                 });
             }
-        });
+        }));
     }
 
     /**
@@ -1918,7 +1925,7 @@ class RangeSelector {
             i: number
         ): void => {
             createElement('option', {
-                textContent: rangeOptions.text
+                textContent: rangeOptions.title || rangeOptions.text
             }, void 0, dropdown);
 
             buttons[i] = renderer
@@ -2531,6 +2538,7 @@ class RangeSelector {
                 width: bBox.width + 'px',
                 height: bBox.height + 'px'
             });
+            this.hasVisibleDropdown = true;
         }
     }
 
@@ -2548,6 +2556,7 @@ class RangeSelector {
                 width: '1px',
                 height: '1px'
             });
+            this.hasVisibleDropdown = false;
         }
     }
 
@@ -2648,11 +2657,9 @@ class RangeSelector {
             minInput = rSelector.minInput,
             maxInput = rSelector.maxInput;
 
-        if (rSelector.unMouseDown) {
-            rSelector.unMouseDown();
-        }
-        if (rSelector.unResize) {
-            rSelector.unResize();
+        if (rSelector.eventsToUnbind) {
+            rSelector.eventsToUnbind.forEach((unbind: Function): void => unbind());
+            rSelector.eventsToUnbind = void 0;
         }
 
         // Destroy elements in collections

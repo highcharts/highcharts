@@ -97,6 +97,7 @@ function isSkipPoint(point) {
     return point.isNull &&
         a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
         point.visible === false ||
+        point.isInside === false ||
         isSkipSeries(point.series);
 }
 /**

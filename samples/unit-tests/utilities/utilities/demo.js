@@ -63,6 +63,38 @@
         );
     });
 
+    QUnit.test('Merge', assert => {
+
+        // test filtering of __proto__
+        const objProto = JSON.parse(`{
+            "__proto__": {
+                "pollutedByProto": true
+            }
+        }`);
+        Highcharts.merge({}, objProto);
+        assert.strictEqual(
+            typeof pollutedByProto, // eslint-disable-line no-undef
+            'undefined',
+            'The prototype (and window) should not be polluted through merge'
+        );
+
+        // test filtering of constructor
+        const objConstructor = JSON.parse(`{
+            "constructor": {
+                "prototype": {
+                    "pollutedByConstructor": true
+                }
+            }
+        }`);
+        Highcharts.merge({}, objConstructor);
+        assert.strictEqual(
+            typeof {}.pollutedByConstructor, // eslint-disable-line no-undef
+            'undefined',
+            'The prototype (and window) should not be polluted through merge'
+        );
+
+    });
+
     QUnit.test('PInt', function (assert) {
         // test without a base defined
         assertEquals(assert, 'base not defined', 15, pInt('15'));
