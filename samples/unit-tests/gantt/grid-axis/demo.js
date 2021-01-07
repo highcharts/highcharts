@@ -2070,3 +2070,46 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Grid axis code should not interfere with non-Gantt type charts, 14868.',
+    assert => {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                zoomType: 'x'
+            },
+            xAxis: {
+                type: 'datetime'
+            },
+            series: [{
+                type: 'xrange',
+                data: [{
+                    x: Date.UTC(2014, 11, 8),
+                    x2: Date.UTC(2014, 11, 9),
+                    y: 0
+                }, {
+                    x: Date.UTC(2014, 11, 9),
+                    x2: Date.UTC(2014, 11, 19),
+                    y: 1
+                }, {
+                    x: Date.UTC(2014, 11, 10),
+                    x2: Date.UTC(2014, 11, 23),
+                    y: 2
+                }]
+            }]
+        });
+
+        assert.notOk(
+            chart.xAxis[0].options.labels.align,
+            'Label align options should not be defined.'
+        );
+        chart.xAxis[0].setExtremes(
+            Date.UTC(2014, 11, 8),
+            Date.UTC(2014, 11, 10)
+        );
+        assert.notOk(
+            chart.xAxis[0].options.labels.align,
+            'Label align options should still not be defined.'
+        );
+    }
+);
