@@ -17,7 +17,7 @@
  * */
 
 import type Chart from '../Chart/Chart';
-import type LineSeries from '../../Series/Line/LineSeries.js';
+import type Series from './Series.js';
 import type SeriesOptions from './SeriesOptions';
 import type {
     SeriesTypeOptions,
@@ -48,7 +48,7 @@ const {
 declare global {
     namespace Highcharts {
         let seriesTypes: SeriesTypeRegistry;
-        function seriesType<T extends typeof LineSeries>(
+        function seriesType<T extends typeof Series>(
             type: keyof SeriesTypeRegistry,
             parent: (keyof SeriesTypeRegistry|undefined),
             options: T['prototype']['options'],
@@ -89,7 +89,7 @@ namespace SeriesRegistry {
     export function getSeries(
         chart: Chart,
         options: DeepPartial<SeriesTypeOptions> = {}
-    ): LineSeries {
+    ): Series {
         const optionsChart = chart.options.chart as Highcharts.ChartOptions,
             type = (
                 options.type ||
@@ -97,7 +97,7 @@ namespace SeriesRegistry {
                 optionsChart.defaultSeriesType ||
                 ''
             ),
-            SeriesClass: typeof LineSeries = seriesTypes[type] as any;
+            SeriesClass: typeof Series = seriesTypes[type] as any;
 
         // No such series type
         if (!SeriesRegistry) {
@@ -120,7 +120,7 @@ namespace SeriesRegistry {
      */
     export function registerSeriesType(
         seriesType: string,
-        seriesClass: typeof LineSeries
+        seriesClass: typeof Series
     ): void {
         const defaultPlotOptions = defaultOptions.plotOptions || {},
             seriesOptions: SeriesOptions = (seriesClass as any).defaultOptions;
@@ -165,7 +165,7 @@ namespace SeriesRegistry {
      * The newly created prototype as extended from {@link Series} or its
      * derivatives.
      */
-    export function seriesType<T extends typeof LineSeries>(
+    export function seriesType<T extends typeof Series>(
         type: keyof SeriesTypeRegistry,
         parent: (keyof SeriesTypeRegistry|undefined),
         options: T['prototype']['options'],

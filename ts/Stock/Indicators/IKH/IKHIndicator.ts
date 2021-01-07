@@ -15,10 +15,6 @@
 * */
 
 import type ColorType from '../../../Core/Color/ColorType';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type Point from '../../../Core/Series/Point';
-import type IKHPoint from './IKHPoint';
 import type {
     IKHDrawSenkouSpanObject,
     IKHGapExtensionObject,
@@ -26,8 +22,12 @@ import type {
     IKHParamsOptions,
     IKHSenkouSpanOptions
 } from './IKHOptions';
+import type IKHPoint from './IKHPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
+import type Point from '../../../Core/Series/Point';
 import Color from '../../../Core/Color/Color.js';
 const color = Color.parse;
 import H from '../../../Core/Globals.js';
