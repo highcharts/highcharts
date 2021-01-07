@@ -52,6 +52,7 @@ const {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
+        legendIndex?: number;
         legendType?: ('point'|'series');
         showCheckbox?: boolean;
         showInLegend?: boolean;

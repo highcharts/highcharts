@@ -68,6 +68,13 @@ declare module './Series/SeriesLike' {
     }
 }
 
+declare module './Series/SeriesOptions' {
+    interface SeriesOptions {
+        navigatorOptions?: SeriesOptions;
+        showInNavigator?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private

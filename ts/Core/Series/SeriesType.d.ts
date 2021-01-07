@@ -14,7 +14,7 @@
  *
  * */
 
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from './Series';
 
 /* *
  *
@@ -51,7 +51,7 @@ export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype
  * definition file.
  */
 export interface SeriesTypeRegistry {
-    [key: string]: typeof LineSeries;
+    [key: string]: typeof Series;
 }
 
 export default SeriesType;
