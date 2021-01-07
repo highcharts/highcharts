@@ -18,14 +18,14 @@
 
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
+import Chart from '../../Core/Chart/Chart.js';
+import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         bubble: BubbleSeries
     }
 } = SeriesRegistry;
-import Chart from '../../Core/Chart/Chart.js';
-import Point from '../../Core/Series/Point.js';
 
 /* *
  *

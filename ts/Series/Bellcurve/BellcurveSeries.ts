@@ -24,13 +24,13 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
+import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         areaspline: AreaSplineSeries
     }
 } = SeriesRegistry;
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,

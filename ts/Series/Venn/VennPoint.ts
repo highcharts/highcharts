@@ -6,13 +6,13 @@
 
 import type VennPointOptions from './VennPointOptions';
 import type VennSeries from './VennSeries';
+import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,

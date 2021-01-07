@@ -34,12 +34,6 @@ import type VennPointOptions from './VennPointOptions';
 import type VennSeriesOptions from './VennSeriesOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        scatter: ScatterSeries
-    }
-} = SeriesRegistry;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
@@ -63,6 +57,12 @@ const {
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
 const { nelderMead } = NelderMeadMixin;
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        scatter: ScatterSeries
+    }
+} = SeriesRegistry;
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
 import U from '../../Core/Utilities.js';

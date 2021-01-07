@@ -21,13 +21,13 @@ import type HistogramPoint from './HistogramPoint';
 import type HistogramPointOptions from './HistogramPointOptions';
 import type HistogramSeriesOptions from './HistogramSeriesOptions';
 import type LineSeries from '../Line/LineSeries';
+import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,

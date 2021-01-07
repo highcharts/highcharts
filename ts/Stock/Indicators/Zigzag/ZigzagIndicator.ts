@@ -17,6 +17,7 @@ import type {
     ZigzagParamsOptions
 } from './ZigzagOptions';
 import type ZigzagPoint from './ZigzagPoint';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

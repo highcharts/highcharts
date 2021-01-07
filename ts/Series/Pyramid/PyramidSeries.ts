@@ -20,8 +20,8 @@
 
 import type PyramidPoint from './PyramidPoint';
 import type PyramidSeriesOptions from './PyramidSeriesOptions';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import FunnelSeries from '../Funnel/FunnelSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 

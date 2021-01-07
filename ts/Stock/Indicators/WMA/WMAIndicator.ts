@@ -17,6 +17,7 @@ import type {
     WMAParamsOptions
 } from './WMAOptions';
 import type WMAPoint from './WMAPoint';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

@@ -21,8 +21,8 @@ import type AreaSplinePoint from './AreaSplinePoint';
 import AreaSeries from '../Area/AreaSeries.js';
 const { prototype: areaProto } = AreaSeries;
 import SplineSeries from '../Spline/SplineSeries.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,

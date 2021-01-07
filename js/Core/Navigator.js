@@ -9,8 +9,6 @@
  * */
 'use strict';
 import Axis from './Axis/Axis.js';
-import SeriesRegistry from './Series/SeriesRegistry.js';
-var seriesTypes = SeriesRegistry.seriesTypes;
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
 var color = Color.parse;
@@ -22,6 +20,8 @@ import O from './Options.js';
 var defaultOptions = O.defaultOptions;
 import palette from './Color/Palette.js';
 import Scrollbar from './Scrollbar.js';
+import SeriesRegistry from './Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from './Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
 var defaultSeriesType, 

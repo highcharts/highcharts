@@ -10,6 +10,12 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import type {
+    AOOptions
+} from './AOOptions';
+import type AOPoint from './AOPoint';
+import H from '../../../Core/Globals.js';
+const { noop } = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -17,12 +23,6 @@ const {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import type {
-    AOOptions
-} from './AOOptions';
-import type AOPoint from './AOPoint';
-import H from '../../../Core/Globals.js';
-const { noop } = H;
 import U from '../../../Core/Utilities.js';
 const {
     extend,

@@ -13,20 +13,20 @@ import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import U from '../Utilities.js';
-var error = U.error, extendClass = U.extendClass, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach;
+var error = U.error, extendClass = U.extendClass, merge = U.merge;
 /* *
  *
  *  Namespace
  *
  * */
-var Series;
-(function (Series) {
+var SeriesRegistry;
+(function (SeriesRegistry) {
     /* *
      *
      *  Static Properties
      *
      * */
-    Series.seriesTypes = {};
+    SeriesRegistry.seriesTypes = {};
     /* *
      *
      *  Static Functions
@@ -42,9 +42,9 @@ var Series;
         var optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
             optionsChart.defaultSeriesType ||
-            ''), SeriesClass = Series.seriesTypes[type];
+            ''), SeriesClass = SeriesRegistry.seriesTypes[type];
         // No such series type
-        if (!Series) {
+        if (!SeriesRegistry) {
             error(17, true, chart, { missingModuleFor: type });
         }
         var series = new SeriesClass();
@@ -53,7 +53,7 @@ var Series;
         }
         return series;
     }
-    Series.getSeries = getSeries;
+    SeriesRegistry.getSeries = getSeries;
     /**
      * Registers class pattern of a series.
      *
@@ -68,9 +68,9 @@ var Series;
         if (seriesOptions) {
             defaultPlotOptions[seriesType] = seriesOptions;
         }
-        Series.seriesTypes[seriesType] = seriesClass;
+        SeriesRegistry.seriesTypes[seriesType] = seriesClass;
     }
-    Series.registerSeriesType = registerSeriesType;
+    SeriesRegistry.registerSeriesType = registerSeriesType;
     /**
      * Old factory to create new series prototypes.
      *
@@ -104,28 +104,28 @@ var Series;
         // Merge the options
         defaultPlotOptions[type] = merge(defaultPlotOptions[parent], options);
         // Create the class
-        registerSeriesType(type, extendClass(Series.seriesTypes[parent] || function () { }, seriesProto));
-        Series.seriesTypes[type].prototype.type = type;
+        registerSeriesType(type, extendClass(SeriesRegistry.seriesTypes[parent] || function () { }, seriesProto));
+        SeriesRegistry.seriesTypes[type].prototype.type = type;
         // Create the point class if needed
         if (pointProto) {
-            Series.seriesTypes[type].prototype.pointClass =
+            SeriesRegistry.seriesTypes[type].prototype.pointClass =
                 extendClass(Point, pointProto);
         }
-        return Series.seriesTypes[type];
+        return SeriesRegistry.seriesTypes[type];
     }
-    Series.seriesType = seriesType;
+    SeriesRegistry.seriesType = seriesType;
     /* eslint-enable valid-jsdoc */
-})(Series || (Series = {}));
+})(SeriesRegistry || (SeriesRegistry = {}));
 /* *
  *
  *  Compatibility
  *
  * */
-H.seriesType = Series.seriesType;
-H.seriesTypes = Series.seriesTypes;
+H.seriesType = SeriesRegistry.seriesType;
+H.seriesTypes = SeriesRegistry.seriesTypes;
 /* *
  *
  *  Export
  *
  * */
-export default Series;
+export default SeriesRegistry;

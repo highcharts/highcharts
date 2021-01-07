@@ -25,10 +25,10 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import H from '../../../Core/Globals.js';
 var noop = H.noop;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray, merge = U.merge;
 /* eslint-disable require-jsdoc */

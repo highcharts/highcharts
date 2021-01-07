@@ -31,6 +31,11 @@ import type {
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import Color from '../../Core/Color/Color.js';
+import H from '../../Core/Globals.js';
+import NodesMixin from '../../Mixins/Nodes.js';
+import Point from '../../Core/Series/Point.js';
+import SankeyPoint from './SankeyPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -38,11 +43,6 @@ const {
         line: LineSeries
     }
 } = SeriesRegistry;
-import Color from '../../Core/Color/Color.js';
-import H from '../../Core/Globals.js';
-import NodesMixin from '../../Mixins/Nodes.js';
-import Point from '../../Core/Series/Point.js';
-import SankeyPoint from './SankeyPoint.js';
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 const { getLevelOptions } = TreeSeriesMixin;
 import U from '../../Core/Utilities.js';

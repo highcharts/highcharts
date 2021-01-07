@@ -36,14 +36,14 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import OrganizationPoint from './OrganizationPoint.js';
+import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sankey: SankeySeries
     }
 } = SeriesRegistry;
-import OrganizationPoint from './OrganizationPoint.js';
-import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     css,

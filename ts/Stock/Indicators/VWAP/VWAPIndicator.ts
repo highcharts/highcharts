@@ -20,6 +20,7 @@ import type {
     VWAPParamsOptions
 } from './VWAPOptions';
 import type VWAPPoint from './VWAPPoint';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {

@@ -22,12 +22,12 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import ColumnRangePoint from './ColumnRangePoint.js';
+import H from '../../Core/Globals.js';
+var noop = H.noop;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var _a = SeriesRegistry.seriesTypes, AreaRangeSeries = _a.arearange, ColumnSeries = _a.column;
 var columnProto = ColumnSeries.prototype;
 var arearangeProto = AreaRangeSeries.prototype;
-import H from '../../Core/Globals.js';
-var noop = H.noop;
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, merge = U.merge, pick = U.pick, extend = U.extend;
 /**

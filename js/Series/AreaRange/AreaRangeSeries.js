@@ -24,13 +24,13 @@ var __extends = (this && this.__extends) || (function () {
 import AreaRangePoint from './AreaRangePoint.js';
 import AreaSeries from '../Area/AreaSeries.js';
 var areaProto = AreaSeries.prototype;
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from '../Line/LineSeries.js';
 var seriesProto = LineSeries.prototype;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, isArray = U.isArray, pick = U.pick, merge = U.merge;
 /* *

@@ -10,12 +10,12 @@
  *
  * */
 'use strict';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var seriesTypes = SeriesRegistry.seriesTypes;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LineSeries from '../../Series/Line/LineSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, wrap = U.wrap;
 import '../../Series/Line/LineSeries.js';

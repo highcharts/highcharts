@@ -17,10 +17,6 @@ import type { SeriesTypeOptions } from './Series/SeriesType';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
-import SeriesRegistry from './Series/SeriesRegistry.js';
-const {
-    seriesTypes
-} = SeriesRegistry;
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
 const {
@@ -37,6 +33,8 @@ import O from './Options.js';
 const { defaultOptions } = O;
 import palette from './Color/Palette.js';
 import Scrollbar from './Scrollbar.js';
+import SeriesRegistry from './Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from './Utilities.js';
 const {
     addEvent,

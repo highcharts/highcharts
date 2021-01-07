@@ -34,6 +34,14 @@ import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import Color from '../../Core/Color/Color.js';
+const { parse: color } = Color;
+import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
+const { colorMapSeriesMixin } = ColorMapMixin;
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -44,14 +52,6 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapSeriesMixin } = ColorMapMixin;
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';

@@ -19,6 +19,8 @@
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
+const { colorMapPointMixin } = ColorMapMixin;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -29,8 +31,6 @@ const {
         }
     }
 } = SeriesRegistry;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapPointMixin } = ColorMapMixin;
 import U from '../../Core/Utilities.js';
 const {
     clamp,

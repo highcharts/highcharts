@@ -21,10 +21,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var 
-// indirect dependency to keep product size low
-_a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../../Core/Globals.js';
@@ -32,9 +28,13 @@ var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../Line/LineSeries.js';
 import mapModule from '../../Maps/Map.js';
-import palette from '../../Core/Color/Palette.js';
 var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import MapPoint from './MapPoint.js';
+import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var 
+// indirect dependency to keep product size low
+_a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;

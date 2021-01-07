@@ -22,7 +22,7 @@ import type SolidGaugePoint from './SolidGaugePoint';
 import type SolidGaugeSeriesOptions from './SolidGaugeSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -32,7 +32,7 @@ const {
         }
     }
 } = SeriesRegistry;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import SolidGaugeAxis from '../../Core/Axis/SolidGaugeAxis.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,

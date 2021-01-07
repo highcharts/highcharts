@@ -25,6 +25,10 @@ import type FunnelPoint from './FunnelPoint';
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -32,10 +36,6 @@ const {
         pie: PieSeries
     }
 } = SeriesRegistry;
-import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,

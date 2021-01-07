@@ -21,13 +21,13 @@
  * */
 
 import type CylinderSeriesOptions from './CylinderSeriesOptions';
+import CylinderPoint from './CylinderPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import CylinderPoint from './CylinderPoint.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,

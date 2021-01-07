@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var seriesTypes = SeriesRegistry.seriesTypes;
 import Chart from '../../Core/Chart/Chart.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
 import Point from '../../Core/Series/Point.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../../Series/Line/LineSeries.js';

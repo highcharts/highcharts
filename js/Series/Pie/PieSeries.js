@@ -21,7 +21,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 var getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import ColumnSeries from '../Column/ColumnSeries.js';
@@ -31,6 +30,7 @@ import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import PiePoint from './PiePoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;

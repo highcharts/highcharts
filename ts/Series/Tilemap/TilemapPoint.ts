@@ -22,6 +22,8 @@
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TilemapPointOptions from './TilemapPointOptions';
 import type TilemapSeries from './TilemapSeries';
+import ColorSeriesModule from '../../Mixins/ColorSeries.js';
+const { colorPointMixin } = ColorSeriesModule;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -37,8 +39,6 @@ const {
         }
     }
 } = SeriesRegistry;
-import ColorSeriesModule from '../../Mixins/ColorSeries.js';
-const { colorPointMixin } = ColorSeriesModule;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

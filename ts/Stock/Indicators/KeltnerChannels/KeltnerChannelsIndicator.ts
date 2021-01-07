@@ -17,6 +17,7 @@ import type {
     KeltnerChannelsParamsOptions
 } from './KeltnerChannelsOptions';
 import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -25,7 +26,6 @@ const {
         atr: ATRIndicator
     }
 } = SeriesRegistry;
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,

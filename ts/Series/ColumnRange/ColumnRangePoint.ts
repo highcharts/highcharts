@@ -34,7 +34,6 @@ const {
         }
     }
 } = SeriesRegistry;
-
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

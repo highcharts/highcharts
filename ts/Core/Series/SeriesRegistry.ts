@@ -16,13 +16,13 @@
  *
  * */
 
+import type Chart from '../Chart/Chart';
 import type LineSeries from '../../Series/Line/LineSeries.js';
 import type SeriesOptions from './SeriesOptions';
 import type {
     SeriesTypeOptions,
     SeriesTypeRegistry
 } from './SeriesType';
-import type Chart from '../Chart/Chart';
 import H from '../Globals.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
@@ -31,9 +31,7 @@ import U from '../Utilities.js';
 const {
     error,
     extendClass,
-    isObject,
-    merge,
-    objectEach
+    merge
 } = U;
 
 /* *
@@ -66,7 +64,7 @@ declare global {
  *
  * */
 
-namespace Series {
+namespace SeriesRegistry {
 
     /* *
      *
@@ -102,7 +100,7 @@ namespace Series {
             SeriesClass: typeof LineSeries = seriesTypes[type] as any;
 
         // No such series type
-        if (!Series) {
+        if (!SeriesRegistry) {
             error(17, true, chart as any, { missingModuleFor: type });
         }
 
@@ -210,8 +208,8 @@ namespace Series {
  *
  * */
 
-H.seriesType = Series.seriesType;
-H.seriesTypes = Series.seriesTypes;
+H.seriesType = SeriesRegistry.seriesType;
+H.seriesTypes = SeriesRegistry.seriesTypes;
 
 /* *
  *
@@ -219,4 +217,4 @@ H.seriesTypes = Series.seriesTypes;
  *
  * */
 
-export default Series;
+export default SeriesRegistry;

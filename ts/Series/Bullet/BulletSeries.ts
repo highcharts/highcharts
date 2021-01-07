@@ -18,13 +18,13 @@
 
 import type BulletSeriesOptions from './BulletSeriesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
+import BulletPoint from './BulletPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
 } = SeriesRegistry;
-import BulletPoint from './BulletPoint.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,

@@ -23,11 +23,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import Scatter3DPoint from './Scatter3DPoint.js';
-import ScatterSeries from '../Scatter/ScatterSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 var pointCameraDistance = Math3D.pointCameraDistance;
+import Scatter3DPoint from './Scatter3DPoint.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 /* *

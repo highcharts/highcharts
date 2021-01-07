@@ -20,6 +20,11 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import FlagsPoint from './FlagsPoint.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -27,11 +32,6 @@ const {
         line: LineSeries
     }
 } = SeriesRegistry;
-import FlagsPoint from './FlagsPoint.js';
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import OnSeriesMixin from '../../Mixins/OnSeries.js';
-import palette from '../../Core/Color/Palette.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {

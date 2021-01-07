@@ -21,6 +21,8 @@
 
 import type Axis from '../../Core/Axis/Axis';
 import type TilemapSeriesOptions from './TilemapSeriesOptions';
+import H from '../../Core/Globals.js';
+const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -29,8 +31,6 @@ const {
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import TilemapPoint from './TilemapPoint.js';
 import TilemapShapes from './TilemapShapes.js';
 import U from '../../Core/Utilities.js';

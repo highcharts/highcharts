@@ -8,20 +8,21 @@
 
 'use strict';
 
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     PPOOptions,
     PPOParamsOptions
 } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         ema: EMAIndicator
     }
 } = SeriesRegistry;
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,

@@ -20,8 +20,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 var EMAIndicator = SeriesRegistry.seriesTypes.ema;
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, error = U.error;
 /* *

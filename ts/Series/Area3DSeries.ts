@@ -9,18 +9,18 @@
  * */
 
 'use strict';
+
 import type AreaSeries from '../Series/Area/AreaSeries';
 import type AreaPoint from './Area/AreaPoint';
-
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
 import LineSeries from './Line/LineSeries.js';
-import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-
-const { seriesTypes } = SeriesRegistry;
 
 import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
+
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 
 import U from '../Core/Utilities.js';
 const {

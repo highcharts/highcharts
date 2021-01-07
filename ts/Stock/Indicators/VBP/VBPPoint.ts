@@ -11,6 +11,8 @@
  *  Imports
  *
  * */
+
+import Point from '../../../Core/Series/Point.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -18,7 +20,6 @@ const {
     }
 } = SeriesRegistry;
 import VBPIndicator from './VBPIndicator';
-import Point from '../../../Core/Series/Point.js';
 
 class VBPPoint extends SMAIndicator.prototype.pointClass {
 

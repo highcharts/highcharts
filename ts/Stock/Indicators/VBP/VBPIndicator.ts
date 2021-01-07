@@ -26,18 +26,19 @@ import VBPPoint from './VBPPoint';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+
 import A from '../../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
+import H from '../../../Core/Globals.js';
+const {
+    noop
+} = H;
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
 } = SeriesRegistry;
-import H from '../../../Core/Globals.js';
-const {
-    noop
-} = H;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,

@@ -16,15 +16,14 @@ import type ChaikinPoint from './ChaikinPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         ad: AD,
         ema: EMAIndicator
     }
 } = SeriesRegistry;
-
-import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,

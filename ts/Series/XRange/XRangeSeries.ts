@@ -26,6 +26,9 @@ import type {
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
+import H from '../../Core/Globals.js';
+import Color from '../../Core/Color/Color.js';
+const { parse: color } = Color;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -33,9 +36,6 @@ const {
         line: LineSeries
     }
 } = SeriesRegistry;
-import H from '../../Core/Globals.js';
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
 const { prototype: columnProto } = ColumnSeries;
 import U from '../../Core/Utilities.js';
 const {

@@ -23,6 +23,8 @@ import type {
 } from './SupertrendOptions';
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
+import palette from '../../../Core/Color/Palette.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -30,7 +32,6 @@ const {
         sma: SMAIndicator
     }
 } = SeriesRegistry;
-import palette from '../../../Core/Color/Palette.js';
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
