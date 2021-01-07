@@ -8,16 +8,16 @@
 
 'use strict';
 
-import type Point from '../../../Core/Series/Point';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     PivotPointsOptions,
     PivotPointsParamsOptions
 } from './PivotPointsOptions';
-import PivotPointsPoint from './PivotPointsPoint.js';
+import type Point from '../../../Core/Series/Point';
+import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import PivotPointsPoint from './PivotPointsPoint.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -258,7 +258,7 @@ class PivotPointsIndicator extends SMAIndicator {
         }
     }
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         this: PivotPointsIndicator,
         series: TLinkedSeries,
         params: PivotPointsParamsOptions

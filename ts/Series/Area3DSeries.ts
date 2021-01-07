@@ -14,10 +14,10 @@ import type AreaSeries from '../Series/Area/AreaSeries';
 import type AreaPoint from './Area/AreaPoint';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 
-import LineSeries from './Line/LineSeries.js';
-
 import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
+
+import Series from '../Core/Series/Series.js';
 
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
@@ -43,7 +43,7 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
         return svgPath;
     }
 
-    var getGraphPath = LineSeries.prototype.getGraphPath,
+    var getGraphPath = Series.prototype.getGraphPath,
         graphPath: SVGPath = [],
         options = series.options,
         stacking = options.stacking,

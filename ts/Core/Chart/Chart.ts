@@ -25,9 +25,9 @@ import type {
 } from '../Renderer/CSSObject';
 import type ChartLike from './ChartLike';
 import type ColorAxis from '../Axis/ColorAxis';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
+import type Series from '../Series/Series';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions,
@@ -273,7 +273,7 @@ class Chart {
     public reflowTimeout?: number;
     public renderer: Chart.Renderer = void 0 as any;
     public renderTo: globalThis.HTMLElement = void 0 as any;
-    public series: Array<LineSeries> = void 0 as any;
+    public series: Array<Series> = void 0 as any;
     public seriesGroup?: SVGElement;
     public spacing: Array<number> = void 0 as any;
     public spacingBox: BBoxObject = void 0 as any;
@@ -530,7 +530,7 @@ class Chart {
      * @private
      * @function Highcharts.Chart#initSeries
      */
-    public initSeries(options: SeriesOptions): LineSeries {
+    public initSeries(options: SeriesOptions): Series {
         var chart = this,
             optionsChart = chart.options.chart as Highcharts.ChartOptions,
             type = (
@@ -538,7 +538,7 @@ class Chart {
                 optionsChart.type ||
                 optionsChart.defaultSeriesType
             ) as string,
-            series: LineSeries,
+            series: Series,
             SeriesClass = seriesTypes[type];
 
         // No such series type
@@ -576,7 +576,7 @@ class Chart {
      * @function Highcharts.Series#getSeriesOrderByLinks
      * @return {Array<Highcharts.Series>}
      */
-    public getSeriesOrderByLinks(): Array<LineSeries> {
+    public getSeriesOrderByLinks(): Array<Series> {
         return this.series.concat().sort(function (a, b): number {
             if (a.linkedSeries.length || b.linkedSeries.length) {
                 return b.linkedSeries.length - a.linkedSeries.length;
@@ -871,9 +871,9 @@ class Chart {
      * @return {Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined}
      * The retrieved item.
      */
-    public get(id: string): (Axis|LineSeries|Point|undefined) {
+    public get(id: string): (Axis|Series|Point|undefined) {
 
-        var ret: (Axis|LineSeries|Point|undefined),
+        var ret: (Axis|Series|Point|undefined),
             series = this.series,
             i;
 
@@ -882,9 +882,9 @@ class Chart {
          * @param {Highcharts.Axis|Highcharts.Series} item
          * @return {boolean}
          */
-        function itemById(item: (Axis|LineSeries)): boolean {
+        function itemById(item: (Axis|Series)): boolean {
             return (
-                (item as LineSeries).id === id ||
+                (item as Series).id === id ||
                 (item.options && item.options.id === id)
             );
         }
@@ -993,7 +993,7 @@ class Chart {
      * @return {Array<Highcharts.Series>}
      *         The currently selected series.
      */
-    public getSelectedSeries(): Array<LineSeries> {
+    public getSelectedSeries(): Array<Series> {
         return this.series.filter(function (serie): (boolean|undefined) {
             return serie.selected;
         });
@@ -2696,8 +2696,8 @@ class Chart {
         options: SeriesTypeOptions,
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptions>)
-    ): LineSeries {
-        var series: (LineSeries|undefined),
+    ): Series {
+        var series: (Series|undefined),
             chart = this;
 
         if (options) { // <- not necessary
@@ -3220,7 +3220,7 @@ class Chart {
 
                 splat((options as any)[coll]).forEach(function (newOptions, i): void {
                     const hasId = defined(newOptions.id);
-                    let item: (Axis|LineSeries|Point|undefined);
+                    let item: (Axis|Series|Point|undefined);
 
                     // Match by id
                     if (hasId) {

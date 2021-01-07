@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Axis from './Axis.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../Series/Series.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
@@ -317,7 +317,7 @@ var BrokenAxis = /** @class */ (function () {
      */
     BrokenAxis.compose = function (AxisClass, SeriesClass) {
         AxisClass.keepProps.push('brokenAxis');
-        var seriesProto = LineSeries.prototype;
+        var seriesProto = Series.prototype;
         /**
          * @private
          */
@@ -528,5 +528,5 @@ var BrokenAxis = /** @class */ (function () {
     };
     return BrokenAxis;
 }());
-BrokenAxis.compose(Axis, LineSeries); // @todo remove automatism
+BrokenAxis.compose(Axis, Series); // @todo remove automatism
 export default BrokenAxis;

@@ -24,7 +24,6 @@ import type {
 } from './WordcloudSeriesOptions';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Line/LineSeries.js';
 import PolygonMixin from '../../Mixins/Polygon.js';
 const {
     getBoundingBoxFromPolygon,
@@ -33,6 +32,7 @@ const {
     rotate2DToOrigin,
     rotate2DToPoint
 } = PolygonMixin;
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -211,7 +211,7 @@ class WordcloudSeries extends ColumnSeries {
             tickPositions: []
         };
 
-        LineSeries.prototype.bindAxes.call(this);
+        Series.prototype.bindAxes.call(this);
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
     }
@@ -501,7 +501,7 @@ interface WordcloudSeries {
 }
 
 extend(WordcloudSeries.prototype, {
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     animateDrilldown: noop as any,
     animateDrillupFrom: noop as any,
     pointClass: WordcloudPoint,

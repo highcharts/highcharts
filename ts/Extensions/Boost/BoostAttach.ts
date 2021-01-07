@@ -17,7 +17,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
 const { doc } = H;
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     error
@@ -73,7 +73,7 @@ let mainCanvas: HTMLCanvasElement|undefined;
  */
 function createAndAttachRenderer(
     chart: Chart,
-    series: LineSeries
+    series: Series
 ): Highcharts.BoostGLRenderer {
     var width = chart.chartWidth,
         height = chart.chartHeight,

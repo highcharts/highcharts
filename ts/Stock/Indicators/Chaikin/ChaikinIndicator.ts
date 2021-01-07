@@ -14,7 +14,7 @@ import type {
 } from './ChaikinOptions';
 import type ChaikinPoint from './ChaikinPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -122,7 +122,7 @@ class ChaikinIndicator extends EMAIndicator {
         );
     }
 
-    getValues<TLinkedSeries extends LineSeries>(
+    getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: ChaikinParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

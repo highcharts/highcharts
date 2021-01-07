@@ -24,7 +24,7 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
 const {
@@ -479,7 +479,7 @@ class StackItem {
 
             if (isJustify) {
                 // Justify stackLabel into the stackBox
-                LineSeries.prototype.justifyDataLabel.call(
+                Series.prototype.justifyDataLabel.call(
                     this.axis,
                     label,
                     stackItem.alignOptions,
@@ -612,7 +612,7 @@ StackingAxis.compose(Axis);
  * @function Highcharts.Series#setStackedPoints
  * @return {void}
  */
-LineSeries.prototype.setGroupedPoints = function (): void {
+Series.prototype.setGroupedPoints = function (): void {
     if (
         this.options.centerInCategory &&
         (this.is('column') || this.is('columnrange')) &&
@@ -622,7 +622,7 @@ LineSeries.prototype.setGroupedPoints = function (): void {
         // With only one series, we don't need to consider centerInCategory
         this.chart.series.length > 1
     ) {
-        LineSeries.prototype.setStackedPoints.call(this, 'group');
+        Series.prototype.setStackedPoints.call(this, 'group');
     }
 };
 
@@ -632,7 +632,7 @@ LineSeries.prototype.setGroupedPoints = function (): void {
  * @private
  * @function Highcharts.Series#setStackedPoints
  */
-LineSeries.prototype.setStackedPoints = function (stackingParam?: string): void {
+Series.prototype.setStackedPoints = function (stackingParam?: string): void {
 
     const stacking = stackingParam || this.options.stacking;
 
@@ -800,7 +800,7 @@ LineSeries.prototype.setStackedPoints = function (stackingParam?: string): void 
  * @private
  * @function Highcharts.Series#modifyStacks
  */
-LineSeries.prototype.modifyStacks = function (): void {
+Series.prototype.modifyStacks = function (): void {
     var series = this,
         yAxis = series.yAxis as StackingAxis,
         stackKey = series.stackKey,
@@ -845,7 +845,7 @@ LineSeries.prototype.modifyStacks = function (): void {
  * @private
  * @function Highcharts.Series#percentStacker
  */
-LineSeries.prototype.percentStacker = function (
+Series.prototype.percentStacker = function (
     pointExtremes: Array<number>,
     stack: Highcharts.StackItem,
     i: number
@@ -871,7 +871,7 @@ LineSeries.prototype.percentStacker = function (
  * @param {string} [key]
  * @return {Highcharts.StackItemIndicatorObject}
  */
-LineSeries.prototype.getStackIndicator = function (
+Series.prototype.getStackIndicator = function (
     stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
     x: number,
     index: number,

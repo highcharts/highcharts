@@ -27,9 +27,9 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import PiePoint from './PiePoint.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
@@ -431,7 +431,7 @@ var PieSeries = /** @class */ (function (_super) {
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
-    PieSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+    PieSeries.defaultOptions = merge(Series.defaultOptions, {
         /**
          * @excluding legendItemClick
          * @apioption plotOptions.pie.events
@@ -952,7 +952,7 @@ var PieSeries = /** @class */ (function (_super) {
         }
     });
     return PieSeries;
-}(LineSeries));
+}(Series));
 extend(PieSeries.prototype, {
     axisTypes: [],
     directTouch: true,

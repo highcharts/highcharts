@@ -9,7 +9,7 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     StochasticOptions,
     StochasticParamsOptions
@@ -121,7 +121,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
         }, this.options);
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: StochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -144,7 +144,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
             K: number,
             D: number|null = null,
             points: (
-                IndicatorValuesObject<LineSeries>|
+                IndicatorValuesObject<Series>|
                 undefined
             ),
             extremes: [number, number],

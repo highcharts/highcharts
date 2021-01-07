@@ -11,7 +11,7 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     ZigzagOptions,
     ZigzagParamsOptions
@@ -107,7 +107,7 @@ class ZigzagIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-    getValues<TLinkedSeries extends LineSeries>(
+    getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: ZigzagParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

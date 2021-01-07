@@ -27,12 +27,12 @@ const {
     hasTouch,
     isTouchDevice
 } = H;
-import LineSeries from '../Series/Line/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 const { defaultOptions } = O;
 import palette from './Color/Palette.js';
 import Scrollbar from './Scrollbar.js';
+import Series from './Series/Series.js';
 import SeriesRegistry from './Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from './Utilities.js';
@@ -63,8 +63,8 @@ declare module './Chart/ChartLike'{
 
 declare module './Series/SeriesLike' {
     interface SeriesLike {
-        baseSeries?: LineSeries;
-        navigatorSeries?: LineSeries;
+        baseSeries?: Series;
+        navigatorSeries?: Series;
     }
 }
 
@@ -122,7 +122,7 @@ declare global {
         }
         class Navigator {
             public constructor(chart: Chart);
-            public baseSeries: Array<LineSeries>;
+            public baseSeries: Array<Series>;
             public chart: Chart;
             public dragOffset?: number;
             public eventsToUnbind?: Array<Function>;
@@ -141,7 +141,7 @@ declare global {
             public navigatorEnabled: boolean;
             public navigatorGroup: SVGElement;
             public navigatorOptions: NavigatorOptions;
-            public navigatorSeries: LineSeries;
+            public navigatorSeries: Series;
             public navigatorSize: number;
             public opposite: boolean;
             public otherHandlePos?: number;
@@ -154,7 +154,7 @@ declare global {
             public scrollbarEnabled?: boolean;
             public scrollbarHeight?: number;
             public scrollbarOptions?: ScrollbarOptions;
-            public series?: Array<LineSeries>;
+            public series?: Array<Series>;
             public shades: Array<SVGElement>;
             public size: number;
             public stickToMax?: boolean;
@@ -804,7 +804,7 @@ class Navigator {
         this.init(chart);
     }
 
-    public baseSeries: Array<LineSeries> = void 0 as any;
+    public baseSeries: Array<Series> = void 0 as any;
     public chart: Chart = void 0 as any;
     public dragOffset?: number;
     public eventsToUnbind?: Array<Function>;
@@ -823,7 +823,7 @@ class Navigator {
     public navigatorEnabled: boolean = void 0 as any;
     public navigatorGroup: SVGElement = void 0 as any;
     public navigatorOptions: Highcharts.NavigatorOptions = void 0 as any;
-    public navigatorSeries: LineSeries = void 0 as any;
+    public navigatorSeries: Series = void 0 as any;
     public navigatorSize: number = void 0 as any;
     public opposite: boolean = void 0 as any;
     public otherHandlePos?: number;
@@ -836,7 +836,7 @@ class Navigator {
     public scrollbarEnabled?: boolean;
     public scrollbarHeight?: number;
     public scrollbarOptions?: Highcharts.ScrollbarOptions;
-    public series?: Array<LineSeries>;
+    public series?: Array<Series>;
     public shades: Array<SVGElement> = void 0 as any;
     public size: number = void 0 as any;
     public top: number = void 0 as any;
@@ -2111,14 +2111,14 @@ class Navigator {
         redraw?: boolean
     ): void {
         var chart = this.chart,
-            baseSeries = this.baseSeries = [] as Array<LineSeries>;
+            baseSeries = this.baseSeries = [] as Array<Series>;
 
         baseSeriesOptions = (
             baseSeriesOptions ||
             chart.options && (chart.options.navigator as any).baseSeries ||
             (chart.series.length ?
                 // Find the first non-navigator series (#8430)
-                (find(chart.series, function (s: LineSeries): boolean {
+                (find(chart.series, function (s: Series): boolean {
                     return !s.options.isInternal;
                 }) as any).index :
                 0
@@ -2404,7 +2404,7 @@ class Navigator {
         currentSeriesMin: number
     ): number {
         return this.baseSeries.reduce(
-            function (min: number, series: LineSeries): number {
+            function (min: number, series: Series): number {
                 // (#10193)
                 return Math.min(min, series.xData ? series.xData[0] : min);
             },
@@ -2519,7 +2519,7 @@ class Navigator {
      * @private
      * @function Highcharts.Navigator#updateDataHandler
      */
-    public updatedDataHandler(this: LineSeries): void {
+    public updatedDataHandler(this: Series): void {
         var navigator = this.chart.navigator as Highcharts.Navigator,
             baseSeries = this,
             navigatorSeries = this.navigatorSeries,
@@ -2802,7 +2802,7 @@ if (!H.Navigator) {
     });
 
     // Handle updating series
-    addEvent(LineSeries, 'afterUpdate', function (): void {
+    addEvent(Series, 'afterUpdate', function (): void {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null as any, false);
         }

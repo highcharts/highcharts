@@ -13,13 +13,13 @@
  *
  * */
 
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     CCIOptions,
     CCIParamsOptions
 } from './CCIOptions';
 import type CCIPoint from './CCIPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type Series from '../../../Core/Series/Series';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -113,7 +113,7 @@ class CCIIndicator extends SMAIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: CCIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

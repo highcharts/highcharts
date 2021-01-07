@@ -24,7 +24,7 @@ var __extends = (this && this.__extends) || (function () {
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
@@ -73,7 +73,7 @@ var AreaSeries = /** @class */ (function (_super) {
         // Define or reset areaPath
         this.areaPath = [];
         // Call the base method
-        LineSeries.prototype.drawGraph.apply(this);
+        Series.prototype.drawGraph.apply(this);
         // Define local variables
         var series = this, areaPath = this.areaPath, options = this.options, zones = this.zones, props = [[
                 'area',
@@ -121,7 +121,7 @@ var AreaSeries = /** @class */ (function (_super) {
      * @private
      */
     AreaSeries.prototype.getGraphPath = function (points) {
-        var getGraphPath = LineSeries.prototype.getGraphPath, graphPath, options = this.options, stacking = options.stacking, yAxis = this.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = this.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[this.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
+        var getGraphPath = Series.prototype.getGraphPath, graphPath, options = this.options, stacking = options.stacking, yAxis = this.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = this.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[this.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
         yAxis.getThreshold(options.threshold)), isNull, yBottom, connectNulls = pick(// #10574
         options.connectNulls, stacking === 'percent'), 
         // To display null points in underlying stacked series, this
@@ -339,7 +339,7 @@ var AreaSeries = /** @class */ (function (_super) {
      * @product      highcharts highstock
      * @optionparent plotOptions.area
      */
-    AreaSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+    AreaSeries.defaultOptions = merge(Series.defaultOptions, {
         /**
          * @see [fillColor](#plotOptions.area.fillColor)
          * @see [fillOpacity](#plotOptions.area.fillOpacity)
@@ -454,7 +454,7 @@ var AreaSeries = /** @class */ (function (_super) {
         threshold: 0
     });
     return AreaSeries;
-}(LineSeries));
+}(Series));
 extend(AreaSeries.prototype, {
     singleStacks: false,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle

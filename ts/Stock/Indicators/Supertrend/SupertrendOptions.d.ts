@@ -15,13 +15,13 @@
 import type ColorType from '../../../Core/Color/ColorType';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type Point from '../../../Core/Series/Point';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type SupertrendPoint from './SupertrendPoint';
-import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
+import type Series from '../../../Core/Series/Series';
 import type {
     SMAOptions,
     SMAParamsOptions
 } from '../SMA/SMAOptions';
+import type SupertrendPoint from './SupertrendPoint';
+import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 
 /* *
 *
@@ -46,7 +46,7 @@ export interface SupertrendLinkedParentPointObject extends Point {
     x: number;
 }
 
-export interface SupertrendLinkedParentObject extends LineSeries {
+export interface SupertrendLinkedParentObject extends Series {
     data: Array<SupertrendLinkedParentPointObject>;
     points: Array<SupertrendLinkedParentPointObject>;
     xData: Array<number>;

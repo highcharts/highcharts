@@ -25,8 +25,8 @@ import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Line/LineSeries.js';
 import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -520,7 +520,7 @@ class BubbleSeries extends ScatterSeries {
     ): SVGAttributes {
         var markerOptions = this.options.marker,
             fillOpacity = (markerOptions as any).fillOpacity,
-            attr = LineSeries.prototype.pointAttribs.call(this, point, state);
+            attr = Series.prototype.pointAttribs.call(this, point, state);
 
         if (fillOpacity !== 1) {
             attr.fill = color(attr.fill as any)

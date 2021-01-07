@@ -33,8 +33,8 @@ import type WaterfallPoint from '../Series/Waterfall/WaterfallPoint';
 import type XRangePoint from '../Series/XRange/XRangePoint';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -397,8 +397,6 @@ declare global {
  */
 
 ''; // detaches doclets above
-
-import '../Series/Line/LineSeries.js';
 
 var seriesTypes = H.seriesTypes;
 
@@ -1612,7 +1610,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * @return {boolean}
  *         True if the series is using drag/drop.
  */
-function isSeriesDraggable(series: LineSeries): (boolean|undefined) {
+function isSeriesDraggable(series: Series): (boolean|undefined) {
     var props = ['draggableX', 'draggableY'],
         i;
 
@@ -2423,7 +2421,7 @@ Point.prototype.getDropValues = function (
  * @return {Highcharts.SVGElement}
  *         An SVG element for the guide box, not added to DOM.
  */
-LineSeries.prototype.getGuideBox = function (
+Series.prototype.getGuideBox = function (
     points: Array<Point>
 ): SVGElement {
     var chart = this.chart,

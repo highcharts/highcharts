@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from '../Series/Line/LineSeries';
+import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -105,7 +105,7 @@ declare global {
         function geojson(
             geojson: GeoJSON,
             hType?: string,
-            series?: LineSeries
+            series?: Series
         ): Array<any>;
     }
     interface Window {
@@ -552,7 +552,7 @@ Chart.prototype.fromLatLonToPoint = function (
 H.geojson = function (
     geojson: Highcharts.GeoJSON,
     hType?: string,
-    series?: LineSeries
+    series?: Series
 ): Array<any> {
     var mapData = [] as Array<any>,
         path = [] as SVGPath,

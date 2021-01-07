@@ -37,8 +37,8 @@ const {
     noop
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -76,7 +76,7 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * @augments Highcharts.Series
  */
-class ColumnSeries extends LineSeries {
+class ColumnSeries extends Series {
 
     /* *
      *
@@ -98,7 +98,7 @@ class ColumnSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
-    public static defaultOptions: ColumnSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: ColumnSeriesOptions = merge(Series.defaultOptions, {
 
         /**
          * The corner radius of the border surrounding each column or bar.
@@ -879,7 +879,7 @@ class ColumnSeries extends LineSeries {
             seriesBarW = Math.ceil(seriesBarW);
         }
 
-        LineSeries.prototype.translate.apply(series);
+        Series.prototype.translate.apply(series);
 
         // Record the new values
         series.points.forEach(function (point): void {
@@ -1280,7 +1280,7 @@ class ColumnSeries extends LineSeries {
             });
         }
 
-        LineSeries.prototype.remove.apply(series, arguments as any);
+        Series.prototype.remove.apply(series, arguments as any);
     }
 
     /* eslint-enable valid-jsdoc */

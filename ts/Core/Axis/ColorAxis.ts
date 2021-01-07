@@ -37,9 +37,9 @@ const {
 } = H;
 import Legend from '../Legend.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
-import palette from '../../Core/Color/Palette.js';
+import palette from '../Color/Palette.js';
 import Point from '../Series/Point.js';
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -105,7 +105,7 @@ type ColorAxisClass = typeof ColorAxis;
 
 ''; // detach doclet above
 
-extend(LineSeries.prototype, colorSeriesMixin);
+extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
@@ -1108,7 +1108,7 @@ class ColorAxis extends Axis implements AxisLike {
                 cSeries.maxColorValue = (cSeries as any)[colorKey + 'Max'];
 
             } else {
-                const cExtremes = LineSeries.prototype.getExtremes.call(
+                const cExtremes = Series.prototype.getExtremes.call(
                     cSeries,
                     colorValArray
                 );
@@ -1125,7 +1125,7 @@ class ColorAxis extends Axis implements AxisLike {
             }
 
             if (!calculatedExtremes) {
-                LineSeries.prototype.applyExtremes.call(cSeries);
+                Series.prototype.applyExtremes.call(cSeries);
             }
         }
     }
@@ -1436,7 +1436,7 @@ addEvent(Chart, 'afterGetAxes', function (): void {
 
 
 // Add colorAxis to series axisTypes
-addEvent(LineSeries, 'bindAxes', function (): void {
+addEvent(Series, 'bindAxes', function (): void {
     var axisTypes = this.axisTypes;
 
     if (!axisTypes) {
@@ -1526,7 +1526,7 @@ addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
 });
 
 // Calculate and set colors for points
-addEvent(LineSeries as any, 'afterTranslate', function (): void {
+addEvent(Series as any, 'afterTranslate', function (): void {
     if (
         this.chart.colorAxis &&
         this.chart.colorAxis.length ||

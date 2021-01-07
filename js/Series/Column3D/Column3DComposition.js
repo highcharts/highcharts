@@ -12,7 +12,7 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import H from '../../Core/Globals.js';
 var svg = H.svg;
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -57,7 +57,7 @@ wrap(columnProto, 'translate', function (proceed) {
     }
 });
 // Don't use justifyDataLabel when point is outsidePlot
-wrap(LineSeries.prototype, 'justifyDataLabel', function (proceed) {
+wrap(Series.prototype, 'justifyDataLabel', function (proceed) {
     return !(arguments[2].outside3dPlot) ?
         proceed.apply(this, [].slice.call(arguments, 1)) :
         false;
@@ -325,7 +325,7 @@ if (SeriesRegistry.seriesTypes.columnRange) {
     columnRangeProto.plotGroup = columnProto.plotGroup;
     columnRangeProto.setVisible = columnProto.setVisible;
 }
-wrap(LineSeries.prototype, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo) {
+wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo) {
     var chart = this.chart;
     // In 3D we need to pass point.outsidePlot option to the justifyDataLabel
     // method for disabling justifying dataLabels in columns outside plot

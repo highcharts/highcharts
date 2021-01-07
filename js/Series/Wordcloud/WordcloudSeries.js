@@ -25,9 +25,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Line/LineSeries.js';
 import PolygonMixin from '../../Mixins/Polygon.js';
 var getBoundingBoxFromPolygon = PolygonMixin.getBoundingBoxFromPolygon, getPolygon = PolygonMixin.getPolygon, isPolygonsColliding = PolygonMixin.isPolygonsColliding, rotate2DToOrigin = PolygonMixin.rotate2DToOrigin, rotate2DToPoint = PolygonMixin.rotate2DToPoint;
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
@@ -75,7 +75,7 @@ var WordcloudSeries = /** @class */ (function (_super) {
             title: null,
             tickPositions: []
         };
-        LineSeries.prototype.bindAxes.call(this);
+        Series.prototype.bindAxes.call(this);
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
     };
@@ -376,7 +376,7 @@ var WordcloudSeries = /** @class */ (function (_super) {
     return WordcloudSeries;
 }(ColumnSeries));
 extend(WordcloudSeries.prototype, {
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     animateDrilldown: noop,
     animateDrillupFrom: noop,
     pointClass: WordcloudPoint,

@@ -22,7 +22,7 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -39,7 +39,7 @@ const {
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         boxesToAvoid?: Array<Highcharts.LabelIntersectBoxObject>;
-        labelSeries?: Array<LineSeries>;
+        labelSeries?: Array<Series>;
         labelSeriesMaxSum?: number;
         seriesLabelTimer?: number;
         drawSeriesLabels(): void;
@@ -99,7 +99,7 @@ declare global {
             connectorNeighbourDistance?: number;
             enabled?: boolean;
             format?: string;
-            formatter?: FormatterCallbackFunction<LineSeries>;
+            formatter?: FormatterCallbackFunction<Series>;
             maxFontSize?: (number|null);
             minFontSize?: (number|null);
             onArea?: (boolean|null);
@@ -398,7 +398,7 @@ SVGRenderer.prototype.symbols.connector = function (
  * @private
  * @function Highcharts.Series#getPointsOnGraph
  */
-LineSeries.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
+Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
 
     if (!this.xAxis && !this.yAxis) {
         return;
@@ -555,7 +555,7 @@ LineSeries.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
  * @private
  * @function Highcharts.Series#labelFontSize
  */
-LineSeries.prototype.labelFontSize = function (
+Series.prototype.labelFontSize = function (
     minFontSize: number,
     maxFontSize: number
 ): string {
@@ -571,7 +571,7 @@ LineSeries.prototype.labelFontSize = function (
  * @private
  * @function Highcharts.Series#checkClearPoint
  */
-LineSeries.prototype.checkClearPoint = function (
+Series.prototype.checkClearPoint = function (
     x: number,
     y: number,
     bBox: BBoxObject,
@@ -586,7 +586,7 @@ LineSeries.prototype.checkClearPoint = function (
             onArea || (this.options.label as any).connectorAllowed
         ),
         chart = this.chart,
-        series: (LineSeries|undefined),
+        series: (Series|undefined),
         points: (Array<Point>|undefined),
         leastDistance = 16,
         withinRange: (boolean|undefined),
@@ -790,7 +790,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
     // console.time('drawSeriesLabels');
 
     var chart = this,
-        labelSeries: Array<LineSeries> = this.labelSeries as any;
+        labelSeries: Array<Series> = this.labelSeries as any;
 
     chart.boxesToAvoid = [];
 

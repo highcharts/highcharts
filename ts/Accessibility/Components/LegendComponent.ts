@@ -14,8 +14,8 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
 import U from '../../Core/Utilities.js';
@@ -33,7 +33,7 @@ import HTMLUtilities from '../Utils/HTMLUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
     removeElement = HTMLUtilities.removeElement;
 
-type LegendItem = (Highcharts.BubbleLegend|LineSeries|Point);
+type LegendItem = (Highcharts.BubbleLegend|Series|Point);
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {

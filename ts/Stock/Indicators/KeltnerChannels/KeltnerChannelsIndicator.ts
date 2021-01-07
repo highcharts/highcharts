@@ -8,15 +8,13 @@
 
 'use strict';
 
-import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type {
     KeltnerChannelsOptions,
     KeltnerChannelsParamsOptions
 } from './KeltnerChannelsOptions';
 import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
+import type Series from '../../../Core/Series/Series';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -139,7 +137,7 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
         }, this.options);
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: KeltnerChannelsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

@@ -9,7 +9,7 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     SlowStochasticOptions,
     SlowStochasticParamsOptions
@@ -88,7 +88,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
         );
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: SlowStochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -115,7 +115,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
 
         // Get SMA(%D)
         const smoothedValues: (
-            undefined|IndicatorValuesObject<LineSeries>
+            undefined|IndicatorValuesObject<Series>
         ) = seriesTypes.sma.prototype.getValues.call(
             this,
             ({

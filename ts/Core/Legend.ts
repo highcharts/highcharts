@@ -16,7 +16,7 @@ import type Chart from './Chart/Chart';
 import type ColorAxis from './Axis/ColorAxis';
 import type CSSObject from './Renderer/CSSObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/Line/LineSeries';
+import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import A from './Animation/AnimationUtilities.js';
@@ -72,7 +72,7 @@ declare global {
         }
         class Legend {
             public constructor(chart: Chart, options: LegendOptions);
-            public allItems: Array<(BubbleLegend|LineSeries|Point)>;
+            public allItems: Array<(BubbleLegend|Series|Point)>;
             public baseline?: number;
             public box: SVGElement;
             public chart: Chart;
@@ -124,34 +124,34 @@ declare global {
             ): void;
             public align(alignTo?: BBoxObject): void;
             public colorizeItem(
-                item: (BubbleLegend|LineSeries|Point),
+                item: (BubbleLegend|Series|Point),
                 visible?: boolean
             ): void;
             public createCheckboxForItem(
-                item: (BubbleLegend|LineSeries|Point)
+                item: (BubbleLegend|Series|Point)
             ): void;
             public destroy(): void;
             public destroyItem(
-                item: (BubbleLegend|ColorAxis|ColorAxis.LegendItemObject|LineSeries|Point)
+                item: (BubbleLegend|ColorAxis|ColorAxis.LegendItemObject|Series|Point)
             ): void;
             public getAlignment(): string;
-            public getAllItems(): Array<(BubbleLegend|LineSeries|Point)>;
+            public getAllItems(): Array<(BubbleLegend|Series|Point)>;
             public handleOverflow(legendHeight: number): number;
             public init(chart: Chart, options: LegendOptions): void;
-            public layoutItem(item: (BubbleLegend|LineSeries|Point)): void;
+            public layoutItem(item: (BubbleLegend|Series|Point)): void;
             public render(): void;
             public positionCheckboxes(): void;
-            public positionItem(item: (BubbleLegend|LineSeries|Point)): void;
+            public positionItem(item: (BubbleLegend|Series|Point)): void;
             public positionItems(): void;
             public proximatePositions(): void;
-            public renderItem(item: (BubbleLegend|LineSeries|Point)): void;
+            public renderItem(item: (BubbleLegend|Series|Point)): void;
             public renderTitle(): void;
             public scroll(
                 scrollBy: number,
                 animation?: (boolean|Partial<AnimationOptions>)
             ): void;
             public setOptions(options: LegendOptions): void;
-            public setText(item: (BubbleLegend|LineSeries|Point)): void;
+            public setText(item: (BubbleLegend|Series|Point)): void;
             public update(options: LegendOptions, redraw?: boolean): void;
         }
     }
@@ -264,7 +264,7 @@ class Legend {
      *
      * */
 
-    public allItems: Array<(Highcharts.BubbleLegend|LineSeries|Point)> = [];
+    public allItems: Array<(Highcharts.BubbleLegend|Series|Point)> = [];
 
     public baseline?: number;
 
@@ -494,7 +494,7 @@ class Legend {
      * Make events official: Fires the event `afterColorizeItem`.
      */
     public colorizeItem(
-        item: (Highcharts.BubbleLegend|LineSeries|Point),
+        item: (Highcharts.BubbleLegend|Series|Point),
         visible?: boolean
     ): void {
         (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
@@ -568,7 +568,7 @@ class Legend {
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * The item to position
      */
-    public positionItem(item: (Highcharts.BubbleLegend|LineSeries|Point)): void {
+    public positionItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
         var legend = this,
             options = legend.options,
             symbolPadding = options.symbolPadding,
@@ -615,7 +615,7 @@ class Legend {
     public destroyItem(
         item: (
             Highcharts.BubbleLegend|ColorAxis|ColorAxis.LegendItemObject|
-            LineSeries|Point
+            Series|Point
         )
     ): void {
         var checkbox = item.checkbox;
@@ -773,7 +773,7 @@ class Legend {
      * @param {Highcharts.Point|Highcharts.Series} item
      *        The item for which to update the text in the legend.
      */
-    public setText(item: (Highcharts.BubbleLegend|LineSeries|Point)): void {
+    public setText(item: (Highcharts.BubbleLegend|Series|Point)): void {
         var options = this.options;
 
         (item.legendItem as any).attr({
@@ -792,7 +792,7 @@ class Legend {
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * The item to render.
      */
-    public renderItem(item: (Highcharts.BubbleLegend|LineSeries|Point)): void {
+    public renderItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
         var legend = this,
             chart = legend.chart,
             renderer = chart.renderer,
@@ -934,7 +934,7 @@ class Legend {
      * @function Highcharts.Legend#layoutItem
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      */
-    public layoutItem(item: (Highcharts.BubbleLegend|LineSeries|Point)): void {
+    public layoutItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
 
         var options = this.options,
             padding = this.padding,
@@ -1011,8 +1011,8 @@ class Legend {
      * The current items in the legend.
      * @fires Highcharts.Legend#event:afterGetAllItems
      */
-    public getAllItems(): Array<(Highcharts.BubbleLegend|LineSeries|Point)> {
-        var allItems = [] as Array<(Highcharts.BubbleLegend|LineSeries|Point)>;
+    public getAllItems(): Array<(Highcharts.BubbleLegend|Series|Point)> {
+        var allItems = [] as Array<(Highcharts.BubbleLegend|Series|Point)>;
 
         this.chart.series.forEach(function (series): void {
             var seriesOptions = series && series.options;
@@ -1186,7 +1186,7 @@ class Legend {
             chart = legend.chart,
             renderer = chart.renderer,
             legendGroup = legend.group,
-            allItems: Array<(Highcharts.BubbleLegend|LineSeries|Point)>,
+            allItems: Array<(Highcharts.BubbleLegend|Series|Point)>,
             display,
             legendWidth,
             legendHeight,
@@ -1237,8 +1237,8 @@ class Legend {
 
         // sort by legendIndex
         stableSort(allItems, function (
-            a: (LineSeries|Point),
-            b: (LineSeries|Point)
+            a: (Series|Point),
+            b: (Series|Point)
         ): number {
             return ((a.options && a.options.legendIndex) || 0) -
                 ((b.options && b.options.legendIndex) || 0);
@@ -1686,7 +1686,7 @@ class Legend {
      * @fires Highcharts.Series#event:legendItemClick
      */
     public setItemEvents(
-        item: (Highcharts.BubbleLegend|LineSeries|Point),
+        item: (Highcharts.BubbleLegend|Series|Point),
         legendItem: SVGElement,
         useHTML?: boolean
     ): void {
@@ -1805,7 +1805,7 @@ class Legend {
      * @fires Highcharts.Series#event:checkboxClick
      */
     public createCheckboxForItem(
-        item: (Highcharts.BubbleLegend|LineSeries|Point)
+        item: (Highcharts.BubbleLegend|Series|Point)
     ): void {
         var legend = this;
 
@@ -1847,7 +1847,7 @@ if (
     wrap(Legend.prototype, 'positionItem', function (
         this: Highcharts.Legend,
         proceed: Function,
-        item: (LineSeries|Point)
+        item: (Series|Point)
     ): void {
         var legend = this,
             // If chart destroyed in sync, this is undefined (#2030)

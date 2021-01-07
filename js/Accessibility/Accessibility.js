@@ -14,10 +14,10 @@ import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
 var doc = H.doc;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
 import AccessibilityComponent from './AccessibilityComponent.js';
@@ -259,7 +259,7 @@ addEvent(Point, 'update', function () {
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event) {
-    addEvent(LineSeries, event, function () {
+    addEvent(Series, event, function () {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

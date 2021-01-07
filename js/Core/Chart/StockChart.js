@@ -11,11 +11,11 @@
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
-var _a = LineSeries.prototype, seriesInit = _a.init, seriesProcessData = _a.processData;
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 var pointTooltipFormatter = Point.prototype.tooltipFormatter;
+import Series from '../Series/Series.js';
+var _a = Series.prototype, seriesInit = _a.init, seriesProcessData = _a.processData;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, getOptions = U.getOptions, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
@@ -176,7 +176,7 @@ function stockChart(a, b, c) {
  * */
 // Handle som Stock-specific series defaults, override the plotOptions before
 // series options are handled.
-addEvent(LineSeries, 'setOptions', function (e) {
+addEvent(Series, 'setOptions', function (e) {
     var overrides;
     if (this.chart.options.isStock) {
         if (this.is('column') || this.is('columnrange')) {
@@ -517,7 +517,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
  * @ignore
  * @function Highcharts.Series#init
  */
-LineSeries.prototype.init = function () {
+Series.prototype.init = function () {
     // Call base method
     seriesInit.apply(this, arguments);
     // Set comparison mode
@@ -534,7 +534,7 @@ LineSeries.prototype.init = function () {
  * @param {string} [compare]
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
-LineSeries.prototype.setCompare = function (compare) {
+Series.prototype.setCompare = function (compare) {
     // Set or unset the modifyValue method
     this.modifyValue = (compare === 'value' || compare === 'percent') ?
         function (value, point) {
@@ -573,7 +573,7 @@ LineSeries.prototype.setCompare = function (compare) {
  * @ignore
  * @function Highcharts.Series#processData
  */
-LineSeries.prototype.processData = function (force) {
+Series.prototype.processData = function (force) {
     var series = this, i, keyIndex = -1, processedXData, processedYData, compareStart = series.options.compareStart === true ? 0 : 1, length, compareValue;
     // call base method
     seriesProcessData.apply(this, arguments);
@@ -604,7 +604,7 @@ LineSeries.prototype.processData = function (force) {
     return;
 };
 // Modify series extremes
-addEvent(LineSeries, 'afterGetExtremes', function (e) {
+addEvent(Series, 'afterGetExtremes', function (e) {
     var dataExtremes = e.dataExtremes;
     if (this.modifyValue && dataExtremes) {
         var extremes = [
@@ -665,7 +665,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 // Extend the Series prototype to create a separate series clip box. This is
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
-addEvent(LineSeries, 'render', function () {
+addEvent(Series, 'render', function () {
     var chart = this.chart, clipHeight;
     // Only do this on not 3d (#2939, #5904) nor polar (#6057) charts, and only
     // if the series type handles clipping in the animate method (#2975).

@@ -21,9 +21,9 @@
 import type Point from './Point';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type ZAxis from '../Axis/ZAxis';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -62,7 +62,7 @@ declare module './SeriesLike' {
  *
  * */
 
-class Series3D extends LineSeries {
+class Series3D extends Series {
 
     /* *
      *
@@ -70,7 +70,7 @@ class Series3D extends LineSeries {
      *
      * */
 
-    public static defaultOptions = merge(LineSeries.defaultOptions);
+    public static defaultOptions = merge(Series.defaultOptions);
 
     /* *
      *
@@ -164,7 +164,7 @@ class Series3D extends LineSeries {
 
 /* eslint-disable no-invalid-this */
 
-addEvent(LineSeries, 'afterTranslate', function (): void {
+addEvent(Series, 'afterTranslate', function (): void {
     if (this.chart.is3d()) {
         this.translate3dPoints();
     }
@@ -172,7 +172,7 @@ addEvent(LineSeries, 'afterTranslate', function (): void {
 
 /* eslint-enable no-invalid-this */
 
-extend(LineSeries.prototype, {
+extend(Series.prototype, {
     translate3dPoints: Series3D.prototype.translate3dPoints
 });
 

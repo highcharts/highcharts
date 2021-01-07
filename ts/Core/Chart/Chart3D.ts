@@ -20,7 +20,6 @@ import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
 import Fx from '../Animation/Fx.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 const {
     perspective,
@@ -30,6 +29,7 @@ import O from '../Options.js';
 const {
     defaultOptions: genericDefaultOptions
 } = O;
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -70,7 +70,7 @@ declare global {
         }
         interface Stack3DDictionaryObject {
             position: number;
-            series: Array<LineSeries>;
+            series: Array<Series>;
         }
     }
 }
