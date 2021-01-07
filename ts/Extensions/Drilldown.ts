@@ -1624,7 +1624,6 @@ addEvent(LineSeries, 'afterDrawTracker', function (): void {
     });
 });
 
-
 addEvent(Point, 'afterSetState', function (): void {
     var styledMode = this.series.chart.styledMode;
 
@@ -1662,26 +1661,6 @@ addEvent(H.Chart, 'afterShowResetZoom', function (): void {
 
         this.drillUpButton = this.temporaryDrillUpButton;
         delete this.temporaryDrillUpButton;
-    }
-});
-
-addEvent(H.Chart, 'selection', function (event: any): void {
-    if (event.resetSelection === true && this.drillUpButton) {
-        var buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
-
-        if (buttonOptions && buttonOptions.position) {
-            this.drillUpButton.align({
-                x: buttonOptions.position.x,
-                y: buttonOptions.position.y,
-                align: 'right'
-            },
-            false,
-            buttonOptions.relativeTo || 'plotBox'
-            );
-        }
-    }
-    if (event.resetSelection === true && this.resetZoomButton) {
-        this.resetZoomButton = this.resetZoomButton.destroy();
     }
 });
 
