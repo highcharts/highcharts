@@ -104,7 +104,8 @@ var langOptions = {
          * @since 8.0.0
          */
         legend: {
-            legendLabel: 'Toggle series visibility',
+            legendLabelNoTitle: 'Toggle series visibility',
+            legendLabel: 'Chart legend: {legendTitle}',
             legendItem: 'Show {itemName}'
         },
         /**

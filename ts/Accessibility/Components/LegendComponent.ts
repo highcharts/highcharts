@@ -85,6 +85,7 @@ declare global {
             public removeProxies(): void;
             public shouldHaveLegendNavigation(): (boolean);
             public updateLegendItemProxyVisibility(): void;
+            public updateLegendTitle(): void;
             public updateProxiesPositions(): void;
             public updateProxyPositionForItem(item: LegendItem): void;
         }
@@ -262,6 +263,14 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    onChartUpdate: function (this: Highcharts.LegendComponent): void {
+        this.updateLegendTitle();
+    },
+
+
+    /**
+     * @private
+     */
     updateProxiesPositions: function (this: Highcharts.LegendComponent): void {
         for (const { element, posElement } of this.proxyElementsList) {
             this.updateProxyButtonPosition(element, posElement);
@@ -311,17 +320,35 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    updateLegendTitle: function (this: Highcharts.LegendComponent): void {
+        const chart = this.chart;
+        const legendTitle = stripHTMLTags(
+            (chart.legend?.options.title?.text || '').replace(/<br ?\/?>/g, ' ')
+        );
+        const legendLabel = chart.langFormat(
+            'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
+                chart,
+                legendTitle
+            }
+        );
+
+        if (this.legendProxyGroup) {
+            this.legendProxyGroup.setAttribute('aria-label', legendLabel);
+        }
+    },
+
+
+    /**
+     * @private
+     */
     addLegendProxyGroup: function (this: Highcharts.LegendComponent): void {
         var a11yOptions = this.chart.options.accessibility,
-            groupLabel = this.chart.langFormat(
-                'accessibility.legend.legendLabel', {}
-            ),
             groupRole = a11yOptions.landmarkVerbosity === 'all' ?
                 'region' : null;
 
         this.legendProxyGroup = this.addProxyGroup({
-            'aria-label': groupLabel,
-            'role': groupRole as any
+            'aria-label': '_placeholder_', // Filled in by updateLegendTitle
+            role: groupRole as any
         });
     },
 
