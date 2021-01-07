@@ -32,9 +32,9 @@ import H from '../Globals.js';
 var noop = H.noop;
 import Legend from '../Legend.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
-import palette from '../../Core/Color/Palette.js';
+import palette from '../Color/Palette.js';
 import Point from '../Series/Point.js';
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, erase = U.erase, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
 /**
@@ -43,7 +43,7 @@ var addEvent = U.addEvent, erase = U.erase, extend = U.extend, isNumber = U.isNu
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 ''; // detach doclet above
-extend(LineSeries.prototype, colorSeriesMixin);
+extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
 Chart.prototype.collectionsWithInit.colorAxis = [Chart.prototype.addColorAxis];
@@ -420,7 +420,7 @@ var ColorAxis = /** @class */ (function (_super) {
                 cSeries.maxColorValue = cSeries[colorKey + 'Max'];
             }
             else {
-                var cExtremes = LineSeries.prototype.getExtremes.call(cSeries, colorValArray);
+                var cExtremes = Series.prototype.getExtremes.call(cSeries, colorValArray);
                 cSeries.minColorValue = cExtremes.dataMin;
                 cSeries.maxColorValue = cExtremes.dataMax;
             }
@@ -431,7 +431,7 @@ var ColorAxis = /** @class */ (function (_super) {
                     Math.max(this.dataMax, cSeries.maxColorValue);
             }
             if (!calculatedExtremes) {
-                LineSeries.prototype.applyExtremes.call(cSeries);
+                Series.prototype.applyExtremes.call(cSeries);
             }
         }
     };
@@ -1100,7 +1100,7 @@ addEvent(Chart, 'afterGetAxes', function () {
     }
 });
 // Add colorAxis to series axisTypes
-addEvent(LineSeries, 'bindAxes', function () {
+addEvent(Series, 'bindAxes', function () {
     var axisTypes = this.axisTypes;
     if (!axisTypes) {
         this.axisTypes = ['colorAxis'];
@@ -1163,7 +1163,7 @@ addEvent(Legend, 'afterUpdate', function () {
     }
 });
 // Calculate and set colors for points
-addEvent(LineSeries, 'afterTranslate', function () {
+addEvent(Series, 'afterTranslate', function () {
     if (this.chart.colorAxis &&
         this.chart.colorAxis.length ||
         this.colorAttribs) {

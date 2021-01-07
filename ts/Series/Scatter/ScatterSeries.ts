@@ -19,7 +19,7 @@
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import LineSeries from '../Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -43,7 +43,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-class ScatterSeries extends LineSeries {
+class ScatterSeries extends Series {
 
     /**
      * A scatter plot uses cartesian coordinates to display values for two
@@ -57,7 +57,7 @@ class ScatterSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.scatter
      */
-    public static defaultOptions: ScatterSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: ScatterSeriesOptions = merge(Series.defaultOptions, {
 
         /**
          * The width of the line connecting the data points.
@@ -243,7 +243,7 @@ class ScatterSeries extends LineSeries {
                 this.graph.strokeWidth()
             )
         ) {
-            LineSeries.prototype.drawGraph.call(this);
+            Series.prototype.drawGraph.call(this);
         }
     }
 

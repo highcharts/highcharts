@@ -32,8 +32,8 @@ const {
     doc,
     noop
 } = H;
-import LineSeries from '../Series/Line/LineSeries.js';
 import palette from '../Core/Color/Palette.js';
+import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
@@ -186,7 +186,7 @@ const initCanvasBoost = function (): void {
     }
 
 
-    extend(LineSeries.prototype, {
+    extend(Series.prototype, {
 
         /**
          * Create a hidden canvas to draw the graph on. The contents is later
@@ -196,7 +196,7 @@ const initCanvasBoost = function (): void {
          * @function Highcharts.Series#getContext
          */
         getContext: function (
-            this: LineSeries
+            this: Series
         ): (CanvasRenderingContext2D|null|undefined) {
             var chart = this.chart,
                 width = chart.chartWidth,
@@ -297,7 +297,7 @@ const initCanvasBoost = function (): void {
          * @private
          * @function Highcharts.Series#canvasToSVG
          */
-        canvasToSVG: function (this: LineSeries): void {
+        canvasToSVG: function (this: Series): void {
             if (!this.chart.isChartSeriesBoosting()) {
                 if (this.boostCopy || this.chart.boostCopy) {
                     (this.boostCopy || this.chart.boostCopy)();
@@ -310,7 +310,7 @@ const initCanvasBoost = function (): void {
         },
 
         cvsLineTo: function (
-            this: LineSeries,
+            this: Series,
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number
@@ -318,7 +318,7 @@ const initCanvasBoost = function (): void {
             ctx.lineTo(clientX, plotY);
         },
 
-        renderCanvas: function (this: LineSeries): void {
+        renderCanvas: function (this: Series): void {
             var series = this,
                 options = series.options,
                 chart = series.chart,

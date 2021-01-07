@@ -11,8 +11,8 @@ import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -83,10 +83,10 @@ declare global {
             public y?: (number|null);
             public getSum(): number;
             public hasShape(): boolean;
-            public init(series: LineSeries, options: NodesPointOptions): NodesPoint;
+            public init(series: Series, options: NodesPointOptions): NodesPoint;
             public offset(point: NodesPoint, coll: string): (number|undefined);
         }
-        class NodesSeries extends LineSeries {
+        class NodesSeries extends Series {
             public createNode: NodesMixin['createNode'];
             public data: Array<NodesPoint>;
             public generatePoints: NodesMixin['generatePoints'];
@@ -100,8 +100,6 @@ declare global {
         let NodesMixin: NodesMixin;
     }
 }
-
-import '../Series/Line/LineSeries.js';
 
 const NodesMixin = H.NodesMixin = {
 
@@ -225,7 +223,7 @@ const NodesMixin = H.NodesMixin = {
         var chart = this.chart,
             nodeLookup = {} as Record<string, Highcharts.NodesPoint>;
 
-        LineSeries.prototype.generatePoints.call(this);
+        Series.prototype.generatePoints.call(this);
 
         if (!this.nodes) {
             this.nodes = []; // List of Point-like node items
@@ -283,7 +281,7 @@ const NodesMixin = H.NodesMixin = {
             });
             this.nodes.length = 0;
         }
-        LineSeries.prototype.setData.apply(this, arguments as any);
+        Series.prototype.setData.apply(this, arguments as any);
     },
 
     // Destroy alll nodes and links
@@ -292,7 +290,7 @@ const NodesMixin = H.NodesMixin = {
         this.data = ([] as Array<Highcharts.NodesPoint>)
             .concat(this.points || [], this.nodes);
 
-        return LineSeries.prototype.destroy.apply(this, arguments as any);
+        return Series.prototype.destroy.apply(this, arguments as any);
     },
 
     /**

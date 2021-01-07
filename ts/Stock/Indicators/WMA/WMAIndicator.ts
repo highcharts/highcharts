@@ -11,7 +11,7 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     WMAOptions,
     WMAParamsOptions
@@ -126,7 +126,7 @@ class WMAIndicator extends SMAIndicator {
     public points: Array<WMAPoint> = void 0 as any;
 
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: WMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

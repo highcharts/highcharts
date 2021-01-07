@@ -19,7 +19,6 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { EventCallback } from '../Callback';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type PointLike from './PointLike';
 import type {
     PointEventsOptions,
@@ -28,6 +27,7 @@ import type {
     PointShortOptions
 } from './PointOptions';
 import type { PointTypeOptions } from './PointType';
+import type Series from './Series';
 import type { SeriesZonesOptions } from './SeriesOptions';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
@@ -430,7 +430,7 @@ class Point {
      * @name Highcharts.Point#series
      * @type {Highcharts.Series}
      */
-    public series: LineSeries = void 0 as any;
+    public series: Series = void 0 as any;
 
     public shapeArgs?: SVGAttributes;
 
@@ -912,7 +912,7 @@ class Point {
      * @fires Highcharts.Point#event:afterInit
      */
     public init(
-        series: LineSeries,
+        series: Series,
         options: (PointOptions|PointShortOptions),
         x?: number
     ): Point {
@@ -1769,7 +1769,7 @@ namespace Point {
         color?: ColorType;
         colorIndex?: number;
         key?: string;
-        series: LineSeries;
+        series: Series;
         point: Point;
         percentage?: number;
         total?: number;

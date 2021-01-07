@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../Series/Series';
 import type StackItem from '../../Extensions/Stacking';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
@@ -86,7 +86,7 @@ class StackingAxisAdditions {
         const reversedStacks = pick(axis.options.reversedStacks, true);
         const len = axisSeries.length;
 
-        let actualSeries: LineSeries,
+        let actualSeries: Series,
             i: number;
 
         if (!axis.isXAxis) {

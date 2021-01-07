@@ -23,10 +23,10 @@ import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
-const { prototype: seriesProto } = LineSeries;
 import O from '../Core/Options.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+const { prototype: seriesProto } = Series;
 import Tooltip from '../Core/Tooltip.js';
 import U from '../Core/Utilities.js';
 const {
@@ -132,7 +132,7 @@ declare global {
         }
         interface DataGroupingFunctionsObject {
             approximations: DataGroupingApproximationsDictionary;
-            groupData: LineSeries['groupData'];
+            groupData: Series['groupData'];
         }
         interface DataGroupingInfoObject {
             length?: number;
@@ -326,7 +326,7 @@ H.approximations = {
 };
 
 const groupData = function (
-    this: LineSeries,
+    this: Series,
     xData: Array<number>,
     yData: (
         Array<(number|null|undefined)>|
@@ -893,7 +893,7 @@ addEvent(Tooltip, 'headerFormatter', function (
         chart = this.chart,
         time = chart.time,
         labelConfig = e.labelConfig,
-        series = labelConfig.series as LineSeries,
+        series = labelConfig.series as Series,
         options = series.options,
         tooltipOptions = series.tooltipOptions,
         dataGroupingOptions = options.dataGrouping,
@@ -973,12 +973,12 @@ addEvent(Tooltip, 'headerFormatter', function (
 });
 
 // Destroy grouped data on series destroy
-addEvent(LineSeries, 'destroy', seriesProto.destroyGroupedData);
+addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 
 
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
-addEvent(LineSeries, 'afterSetOptions', function (
+addEvent(Series, 'afterSetOptions', function (
     e: { options: SeriesTypeOptions }
 ): void {
 

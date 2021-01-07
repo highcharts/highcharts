@@ -26,13 +26,6 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
-const {
-    prototype: {
-        init: seriesInit,
-        processData: seriesProcessData
-    }
-} = LineSeries;
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
@@ -40,6 +33,13 @@ const {
         tooltipFormatter: pointTooltipFormatter
     }
 } = Point;
+import Series from '../Series/Series.js';
+const {
+    prototype: {
+        init: seriesInit,
+        processData: seriesProcessData
+    }
+} = Series;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
@@ -327,7 +327,7 @@ function stockChart(
 
 // Handle som Stock-specific series defaults, override the plotOptions before
 // series options are handled.
-addEvent(LineSeries, 'setOptions', function (
+addEvent(Series, 'setOptions', function (
     e: { plotOptions: SeriesTypePlotOptions }
 ): void {
     var overrides;
@@ -445,7 +445,7 @@ addEvent(Axis, 'getPlotLinePath', function (
         }
 
         // Auto detect based on existing series
-        return series.map(function (s: LineSeries): Highcharts.Axis {
+        return series.map(function (s: Series): Highcharts.Axis {
             return (s as any)[otherColl];
         });
     }
@@ -802,7 +802,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
  * @ignore
  * @function Highcharts.Series#init
  */
-LineSeries.prototype.init = function (): void {
+Series.prototype.init = function (): void {
 
     // Call base method
     seriesInit.apply(this, arguments as any);
@@ -822,12 +822,12 @@ LineSeries.prototype.init = function (): void {
  * @param {string} [compare]
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
-LineSeries.prototype.setCompare = function (compare?: string): void {
+Series.prototype.setCompare = function (compare?: string): void {
 
     // Set or unset the modifyValue method
     this.modifyValue = (compare === 'value' || compare === 'percent') ?
         function (
-            this: LineSeries,
+            this: Series,
             value?: number,
             point?: Point
         ): (number|undefined) {
@@ -876,7 +876,7 @@ LineSeries.prototype.setCompare = function (compare?: string): void {
  * @ignore
  * @function Highcharts.Series#processData
  */
-LineSeries.prototype.processData = function (force?: boolean): (boolean|undefined) {
+Series.prototype.processData = function (force?: boolean): (boolean|undefined) {
     var series = this,
         i,
         keyIndex = -1,
@@ -926,7 +926,7 @@ LineSeries.prototype.processData = function (force?: boolean): (boolean|undefine
 
 // Modify series extremes
 addEvent(
-    LineSeries,
+    Series,
     'afterGetExtremes',
     function (e): void {
         const dataExtremes: DataExtremesObject = (e as any).dataExtremes;
@@ -1007,7 +1007,7 @@ Point.prototype.tooltipFormatter = function (pointFormat: string): string {
 // Extend the Series prototype to create a separate series clip box. This is
 // related to using multiple panes, and a future pane logic should incorporate
 // this feature (#2754).
-addEvent(LineSeries, 'render', function (): void {
+addEvent(Series, 'render', function (): void {
     var chart = this.chart,
         clipHeight;
 

@@ -30,7 +30,7 @@ import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
 const { svg } = H;
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -107,7 +107,7 @@ function retrieveStacks(
     chart: Chart,
     stacking?: string
 ): Highcharts.Stack3DDictionary {
-    const series = chart.series as Array<LineSeries>,
+    const series = chart.series as Array<Series>,
         stacks = {} as Highcharts.Stack3DDictionary;
 
     let stackNumber: number,
@@ -143,7 +143,7 @@ wrap(columnProto, 'translate', function (
 });
 
 // Don't use justifyDataLabel when point is outsidePlot
-wrap(LineSeries.prototype, 'justifyDataLabel', function (
+wrap(Series.prototype, 'justifyDataLabel', function (
     this: ColumnSeries,
     proceed: Function
 ): void {
@@ -519,8 +519,8 @@ if (SeriesRegistry.seriesTypes.columnRange) {
     columnRangeProto.setVisible = columnProto.setVisible;
 }
 
-wrap(LineSeries.prototype, 'alignDataLabel', function (
-    this: LineSeries,
+wrap(Series.prototype, 'alignDataLabel', function (
+    this: Series,
     proceed: Function,
     point: ColumnPoint,
     dataLabel: SVGElement,

@@ -26,11 +26,11 @@ var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
 import mapModule from '../../Maps/Map.js';
 var maps = mapModule.maps, splitPath = mapModule.splitPath;
 import MapPoint from './MapPoint.js';
 import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var 
 // indirect dependency to keep product size low
@@ -178,7 +178,7 @@ var MapSeries = /** @class */ (function (_super) {
      * @private
      */
     MapSeries.prototype.drawMapDataLabels = function () {
-        LineSeries.prototype.drawDataLabels.call(this);
+        Series.prototype.drawDataLabels.call(this);
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }
@@ -403,7 +403,7 @@ var MapSeries = /** @class */ (function (_super) {
     };
     MapSeries.prototype.getExtremes = function () {
         // Get the actual value extremes for colors
-        var _a = LineSeries.prototype.getExtremes
+        var _a = Series.prototype.getExtremes
             .call(this, this.valueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
         // Recalculate box on updated data
         if (this.chart.hasRendered && this.isDirtyData) {
@@ -449,7 +449,7 @@ var MapSeries = /** @class */ (function (_super) {
      * @private
      */
     MapSeries.prototype.render = function () {
-        var series = this, render = LineSeries.prototype.render;
+        var series = this, render = Series.prototype.render;
         // Give IE8 some time to breathe.
         if (series.chart.renderer.isVML && series.data.length > 3000) {
             setTimeout(function () {
@@ -587,7 +587,7 @@ var MapSeries = /** @class */ (function (_super) {
                 this.getBox(dataUsed); // Issue #4784
             }
         }
-        LineSeries.prototype.setData.call(this, data, redraw, animation, updatePoints);
+        Series.prototype.setData.call(this, data, redraw, animation, updatePoints);
     };
     /**
      * Extend setOptions by picking up the joinBy option and applying it to a
@@ -595,7 +595,7 @@ var MapSeries = /** @class */ (function (_super) {
      * @private
      */
     MapSeries.prototype.setOptions = function (itemOptions) {
-        var options = LineSeries.prototype.setOptions.call(this, itemOptions), joinBy = options.joinBy, joinByNull = joinBy === null;
+        var options = Series.prototype.setOptions.call(this, itemOptions), joinBy = options.joinBy, joinByNull = joinBy === null;
         if (joinByNull) {
             joinBy = '_i';
         }

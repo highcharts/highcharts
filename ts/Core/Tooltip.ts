@@ -13,11 +13,11 @@
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
 import type RectangleObject from './Renderer/RectangleObject';
+import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
@@ -90,7 +90,7 @@ declare global {
             public tracker?: SVGElement;
             public tt?: SVGElement;
             public applyFilter(): void;
-            public bodyFormatter(items: Array<(LineSeries|Point)>): Array<string>;
+            public bodyFormatter(items: Array<(Series|Point)>): Array<string>;
             public cleanSplit(force?: boolean): void;
             public defaultFormatter(
                 this: TooltipFormatterContextObject,
@@ -156,7 +156,7 @@ declare global {
             percentage?: number;
             point: Point;
             points?: Array<Highcharts.TooltipFormatterContextObject>;
-            series: LineSeries;
+            series: Series;
             total?: number;
             x: number;
             y: number;

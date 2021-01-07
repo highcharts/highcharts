@@ -20,8 +20,8 @@ import type LineSeriesOptions from '../Series/Line/LineSeriesOptions';
 import type Point from '../Core/Series/Point';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
-import LineSeries from '../Series/Line/LineSeries.js';
-const { prototype: seriesProto } = LineSeries;
+import Series from '../Core/Series/Series.js';
+const { prototype: seriesProto } = Series;
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -48,7 +48,7 @@ declare global {
         interface OnSeriesPoint extends Point {
             stackIndex?: number;
         }
-        interface OnSeriesSeries extends LineSeries {
+        interface OnSeriesSeries extends Series {
             options: OnSeriesSeriesOptions;
             onSeries?: OnSeriesSeries;
         }

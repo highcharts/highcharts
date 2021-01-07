@@ -13,12 +13,11 @@
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, wrap = U.wrap;
-import '../../Series/Line/LineSeries.js';
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';
 var eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler, allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting, renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, index;
@@ -30,7 +29,7 @@ var eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler, al
  * @return {void}
  */
 function init() {
-    extend(LineSeries.prototype, {
+    extend(Series.prototype, {
         /**
          * @private
          * @function Highcharts.Series#renderCanvas

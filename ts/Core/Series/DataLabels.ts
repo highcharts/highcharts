@@ -25,8 +25,8 @@ import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import H from '../Globals.js';
 const { noop } = H;
-import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../Color/Palette.js';
+import Series from '../Series/Series.js';
 import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Utilities.js';
@@ -150,7 +150,7 @@ declare global {
                 seriesCenter: Array<number>
             ): number;
             radialDistributionX(
-                series: LineSeries,
+                series: Series,
                 point: Point,
                 y: number,
                 naturalY: number
@@ -377,7 +377,7 @@ H.distribute = function (
  * @return {void}
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
-LineSeries.prototype.drawDataLabels = function (): void {
+Series.prototype.drawDataLabels = function (): void {
     var series = this,
         chart = series.chart,
         seriesOptions = series.options,
@@ -754,7 +754,7 @@ LineSeries.prototype.drawDataLabels = function (): void {
  * @param {boolean} [isNew]
  * @return {void}
  */
-LineSeries.prototype.alignDataLabel = function (
+Series.prototype.alignDataLabel = function (
     point: Point,
     dataLabel: SVGElement,
     options: DataLabelOptions,
@@ -949,7 +949,7 @@ LineSeries.prototype.alignDataLabel = function (
  *
  * @return {void}
  */
-LineSeries.prototype.setDataLabelStartPos = function (
+Series.prototype.setDataLabelStartPos = function (
     point: ColumnPoint,
     dataLabel: SVGElement,
     isNew: boolean,
@@ -1024,7 +1024,7 @@ LineSeries.prototype.setDataLabelStartPos = function (
  * @param {boolean} [isNew]
  * @return {boolean|undefined}
  */
-LineSeries.prototype.justifyDataLabel = function (
+Series.prototype.justifyDataLabel = function (
     dataLabel: SVGElement,
     options: DataLabelOptions,
     alignAttr: SVGAttributes,
@@ -1241,7 +1241,7 @@ if (seriesTypes.pie) {
 
 
         // run parent method
-        LineSeries.prototype.drawDataLabels.apply(series);
+        Series.prototype.drawDataLabels.apply(series);
 
         data.forEach(function (point): void {
             if (point.dataLabel) {
@@ -1816,7 +1816,7 @@ if (seriesTypes.column) {
         );
 
         // Call the parent method
-        LineSeries.prototype.alignDataLabel.call(
+        Series.prototype.alignDataLabel.call(
             this,
             point,
             dataLabel,

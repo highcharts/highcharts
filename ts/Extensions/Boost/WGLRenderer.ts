@@ -14,9 +14,9 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type PositionObject from '../../Core/Renderer/PositionObject';
+import type Series from '../../Core/Series/Series';
 import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Color from '../../Core/Color/Color.js';
@@ -67,7 +67,7 @@ declare global {
             data: Array<Array<number>>;
             settings: BoostGLOptions;
             allocateBuffer(chart: Chart): void;
-            allocateBufferForSingleSeries(series: LineSeries): void;
+            allocateBufferForSingleSeries(series: Series): void;
             clear(): void;
             destroy(): void;
             flush(): void;
@@ -75,7 +75,7 @@ declare global {
             init(canvas?: HTMLCanvasElement, noFlush?: boolean): boolean;
             inited(): boolean;
             orthoMatrix(width: number, height: number): Array<number>;
-            pushSeries(s: LineSeries): void;
+            pushSeries(s: Series): void;
             render(chart: Chart): (false|undefined);
             setOptions(options: BoostOptions): void;
             setSize(w: number, h: number): void;
@@ -91,7 +91,7 @@ declare global {
             markerFrom: number;
             markerTo?: number;
             segments: Array<Record<string, number>>;
-            series: LineSeries;
+            series: Series;
             showMarkers: boolean;
             skipTranslation?: boolean;
             zMax: number;
@@ -213,7 +213,7 @@ function GLRenderer(
     /**
      * @private
      */
-    function seriesPointCount(series: LineSeries): number {
+    function seriesPointCount(series: Series): number {
         var isStacked: boolean,
             xData: Array<number>,
             s: number;
@@ -253,7 +253,7 @@ function GLRenderer(
             return;
         }
 
-        chart.series.forEach(function (series: LineSeries): void {
+        chart.series.forEach(function (series: Series): void {
             if (series.isSeriesBoosting) {
                 s += seriesPointCount(series);
             }
@@ -265,7 +265,7 @@ function GLRenderer(
     /**
      * @private
      */
-    function allocateBufferForSingleSeries(series: LineSeries): void {
+    function allocateBufferForSingleSeries(series: Series): void {
         var s = 0;
 
         if (!settings.usePreallocated) {
@@ -321,7 +321,7 @@ function GLRenderer(
      * @private
      */
     function pushSeriesData(
-        series: LineSeries,
+        series: Series,
         inst: Highcharts.BoostGLSeriesObject
     ): void {
         var isRange = (
@@ -1034,7 +1034,7 @@ function GLRenderer(
      * @private
      * @param s {Highchart.Series} - the series to push
      */
-    function pushSeries(s: LineSeries): void {
+    function pushSeries(s: Series): void {
         if (series.length > 0) {
             // series[series.length - 1].to = data.length;
             if (series[series.length - 1].hasMarkers) {

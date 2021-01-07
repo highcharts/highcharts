@@ -27,7 +27,7 @@ import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import U from '../../Core/Utilities.js';
@@ -158,7 +158,7 @@ var BubbleSeries = /** @class */ (function (_super) {
      * @private
      */
     BubbleSeries.prototype.pointAttribs = function (point, state) {
-        var markerOptions = this.options.marker, fillOpacity = markerOptions.fillOpacity, attr = LineSeries.prototype.pointAttribs.call(this, point, state);
+        var markerOptions = this.options.marker, fillOpacity = markerOptions.fillOpacity, attr = Series.prototype.pointAttribs.call(this, point, state);
         if (fillOpacity !== 1) {
             attr.fill = color(attr.fill)
                 .setOpacity(fillOpacity)

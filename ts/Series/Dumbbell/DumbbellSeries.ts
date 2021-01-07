@@ -22,11 +22,14 @@ import type ColorType from '../../Core/Color/ColorType';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 
-import DumbbellPoint from './DumbbellPoint.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: colProto } = ColumnSeries;
-import LineSeries from '../Line/LineSeries.js';
-const { prototype: seriesProto } = LineSeries;
+import DumbbellPoint from './DumbbellPoint.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
+const { prototype: seriesProto } = Series;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -38,9 +41,6 @@ const {
 } = SeriesRegistry;
 const { prototype: areaRangeProto } = AreaRangeSeries;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
-import palette from '../../Core/Color/Palette.js';
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import U from '../../Core/Utilities.js';
 const {
     extend,

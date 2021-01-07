@@ -13,7 +13,7 @@ import type {
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -22,7 +22,7 @@ const {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        baseSeries?: LineSeries;
+        baseSeries?: Series;
         eventRemovers?: Array<Function>;
         hasDerivedData?: Highcharts.DerivedSeriesMixin['hasDerivedData'];
         initialised?: boolean;
@@ -40,19 +40,19 @@ declare global {
             addBaseSeriesEvents(): void;
             addEvents(): void;
             destroy(): void;
-            init(this: LineSeries): void;
+            init(this: Series): void;
             setBaseSeries(): void;
             setDerivedData(): Array<(PointOptions|PointShortOptions)>;
         }
         interface DerivedSeriesOptions extends SeriesOptions {
             baseSeries?: (number|string);
         }
-        class DerivedSeries extends LineSeries implements DerivedSeriesMixin {
+        class DerivedSeries extends Series implements DerivedSeriesMixin {
             public addBaseSeriesEvents: DerivedSeriesMixin[
                 'addBaseSeriesEvents'
             ];
             public addEvents: DerivedSeriesMixin['addEvents'];
-            public baseSeries?: LineSeries;
+            public baseSeries?: Series;
             public destroy: DerivedSeriesMixin['destroy'];
             public eventRemovers: Array<Function>;
             public hasDerivedData: boolean;
@@ -92,7 +92,7 @@ const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
      * @return {void}
      */
     init: function (this: Highcharts.DerivedSeries): void {
-        LineSeries.prototype.init.apply(this, arguments as any);
+        Series.prototype.init.apply(this, arguments as any);
 
         this.initialised = false;
         this.baseSeries = null as any;
@@ -212,7 +212,7 @@ const derivedSeriesMixin: Highcharts.DerivedSeriesMixin = {
             remover();
         });
 
-        LineSeries.prototype.destroy.apply(this, arguments as any);
+        Series.prototype.destroy.apply(this, arguments as any);
     }
 
     /* eslint-disable valid-jsdoc */

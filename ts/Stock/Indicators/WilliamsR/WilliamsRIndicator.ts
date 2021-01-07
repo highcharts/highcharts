@@ -9,7 +9,7 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     WilliamsROptions,
     WilliamsRParamsOptions
@@ -77,7 +77,7 @@ class WilliamsRIndicator extends SMAIndicator {
     public options: WilliamsROptions = void 0 as any;
     public points: Array<WilliamsRPoint> = void 0 as any;
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         this: WilliamsRIndicator,
         series: TLinkedSeries,
         params: WilliamsRParamsOptions

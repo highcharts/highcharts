@@ -16,12 +16,12 @@
 
 'use strict';
 
-import type LineSeries from '../Series/Line/LineSeries.js';
 import type Point from '../Core/Series/Point';
 import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type Series from '../Core/Series/Series.js';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -120,7 +120,7 @@ declare global {
             x?: number;
         }
         interface ExportDataSeries {
-            autoIncrement: LineSeries['autoIncrement'];
+            autoIncrement: Series['autoIncrement'];
             chart: Chart;
             options: SeriesOptions;
             pointArrayMap?: Array<string>;
@@ -541,7 +541,7 @@ Chart.prototype.getDataRows = function (
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
         columnHeaderFormatter = function (
-            item: (Axis|LineSeries),
+            item: (Axis|Series),
             key?: string,
             keyLength?: number
         ): (string|Record<string, string>) {
@@ -575,7 +575,7 @@ Chart.prototype.getDataRows = function (
         },
         // Map the categories for value axes
         getCategoryAndDateTimeMap = function (
-            series: LineSeries,
+            series: Series,
             pointArrayMap: Array<string>,
             pIdx?: number
         ): Highcharts.ExportingCategoryDateTimeMap {
@@ -609,7 +609,7 @@ Chart.prototype.getDataRows = function (
         // Create point array depends if xAxis is category
         // or point.name is defined #13293
         getPointArray = function (
-            series: LineSeries,
+            series: Series,
             xAxis: Highcharts.Axis
         ): string[] {
             const namedPoints = series.data.filter((d): string | false =>
@@ -640,7 +640,7 @@ Chart.prototype.getDataRows = function (
 
     this.setUpKeyToAxis();
 
-    this.series.forEach(function (series: LineSeries): void {
+    this.series.forEach(function (series: Series): void {
         var keys = series.options.keys,
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),

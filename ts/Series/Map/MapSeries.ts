@@ -33,7 +33,6 @@ const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
 import mapModule from '../../Maps/Map.js';
 const {
     maps,
@@ -41,6 +40,7 @@ const {
 } = mapModule;
 import MapPoint from './MapPoint.js';
 import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -586,7 +586,7 @@ class MapSeries extends ScatterSeries {
      */
     public drawMapDataLabels(): void {
 
-        LineSeries.prototype.drawDataLabels.call(this);
+        Series.prototype.drawDataLabels.call(this);
         if (this.dataLabelsGroup) {
             this.dataLabelsGroup.clip(this.chart.clipRect);
         }
@@ -931,7 +931,7 @@ class MapSeries extends ScatterSeries {
 
     public getExtremes(): DataExtremesObject {
         // Get the actual value extremes for colors
-        const { dataMin, dataMax } = LineSeries.prototype.getExtremes
+        const { dataMin, dataMax } = Series.prototype.getExtremes
             .call(this, this.valueData);
 
         // Recalculate box on updated data
@@ -998,7 +998,7 @@ class MapSeries extends ScatterSeries {
      */
     public render(): void {
         var series = this,
-            render = LineSeries.prototype.render;
+            render = Series.prototype.render;
 
         // Give IE8 some time to breathe.
         if (series.chart.renderer.isVML && series.data.length > 3000) {
@@ -1175,7 +1175,7 @@ class MapSeries extends ScatterSeries {
                 this.getBox(dataUsed); // Issue #4784
             }
         }
-        LineSeries.prototype.setData.call(
+        Series.prototype.setData.call(
             this,
             data,
             redraw,
@@ -1190,7 +1190,7 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions {
-        var options = LineSeries.prototype.setOptions.call(this, itemOptions),
+        var options = Series.prototype.setOptions.call(this, itemOptions),
             joinBy = options.joinBy,
             joinByNull = joinBy === null;
 

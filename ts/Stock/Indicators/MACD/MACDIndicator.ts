@@ -16,13 +16,14 @@ import type {
     MACDParamsOptions
 } from './MACDOptions';
 import type MACDPoint from './MACDPoint';
+import type Series from '../../../Core/Series/Series';
 import type {
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
 import H from '../../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../../../Series/Line/LineSeries.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -374,7 +375,7 @@ class MACDIndicator extends SMAIndicator {
         this.zones = histogramZones;
     }
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

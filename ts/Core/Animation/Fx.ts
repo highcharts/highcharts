@@ -16,7 +16,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type FxLike from './FxLike';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -47,7 +47,7 @@ declare global {
         function getDeferredAnimation(
             chart: Chart,
             animation: Partial<AnimationOptions>,
-            series?: LineSeries
+            series?: Series
         ): Partial<AnimationOptions>;
         function setAnimation(
             animation: (boolean|Partial<AnimationOptions>|undefined),
