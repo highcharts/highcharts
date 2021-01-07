@@ -128,6 +128,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    onChartUpdate: function () {
+        this.updateLegendTitle();
+    },
+    /**
+     * @private
+     */
     updateProxiesPositions: function () {
         for (var _i = 0, _a = this.proxyElementsList; _i < _a.length; _i++) {
             var _b = _a[_i], element = _b.element, posElement = _b.posElement;
@@ -164,12 +170,27 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    updateLegendTitle: function () {
+        var _a, _b;
+        var chart = this.chart;
+        var legendTitle = stripHTMLTags((((_b = (_a = chart.legend) === null || _a === void 0 ? void 0 : _a.options.title) === null || _b === void 0 ? void 0 : _b.text) || '').replace(/<br ?\/?>/g, ' '));
+        var legendLabel = chart.langFormat('accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
+            chart: chart,
+            legendTitle: legendTitle
+        });
+        if (this.legendProxyGroup) {
+            this.legendProxyGroup.setAttribute('aria-label', legendLabel);
+        }
+    },
+    /**
+     * @private
+     */
     addLegendProxyGroup: function () {
-        var a11yOptions = this.chart.options.accessibility, groupLabel = this.chart.langFormat('accessibility.legend.legendLabel', {}), groupRole = a11yOptions.landmarkVerbosity === 'all' ?
+        var a11yOptions = this.chart.options.accessibility, groupRole = a11yOptions.landmarkVerbosity === 'all' ?
             'region' : null;
         this.legendProxyGroup = this.addProxyGroup({
-            'aria-label': groupLabel,
-            'role': groupRole
+            'aria-label': '_placeholder_',
+            role: groupRole
         });
     },
     /**
