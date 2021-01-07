@@ -1,8 +1,5 @@
 QUnit.test('Color axis update (#3207)', function (assert) {
-    var chart;
-
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    const chart = Highcharts.mapChart('container', {
         title: {
             text: 'Map with inline point paths'
         },
@@ -22,7 +19,8 @@ QUnit.test('Color axis update (#3207)', function (assert) {
                     from: 4,
                     color: 'black'
                 }
-            ]
+            ],
+            reversed: false
         },
 
         legend: {
@@ -30,7 +28,8 @@ QUnit.test('Color axis update (#3207)', function (assert) {
             floating: true,
             title: {
                 text: 'Random data'
-            }
+            },
+            layout: 'vertical'
         },
 
         series: [
@@ -94,7 +93,10 @@ QUnit.test('Color axis update (#3207)', function (assert) {
         ]
     });
 
-    chart = $('#container').highcharts();
+    assert.notOk(
+        Array.isArray(chart.options.colorAxis),
+        'chart.options.colorAxis should not be an array'
+    );
 
     assert.equal(
         chart.series[0].points[1].color,
@@ -124,80 +126,10 @@ QUnit.test('Color axis update (#3207)', function (assert) {
     );
     assert.equal(chart.legend.allItems.length, 2, 'Two legend items');
 
-    // Test the SVG
-    var svg = chart.getSVG();
-    chart.destroy();
-    $('#container').html(svg);
-
-    assert.equal(
-        $('.highcharts-legend-item', '#container').length,
-        2,
-        'Export has two legend items'
-    );
-});
-
-QUnit.test('Color axis visibility (#14283)', assert => {
-    const chart = Highcharts.chart('container', {
-        colorAxis: {
-            id: "colorAxis"
-        },
-        series: [{
-            type: "scatter",
-            data: [
-                [0, 2],
-                [1, 4],
-                [2, 6],
-                [3, 8]
-            ]
-        }]
-    });
-
-    assert.equal(
-        $('.highcharts-legend-item', '#container').length,
-        1,
-        "Color axis should be visible."
-    );
-
-    chart.update({
-        colorAxis: {
-            visible: false
-        }
-    });
-
-    assert.equal(
-        $('.highcharts-legend-item', '#container').length,
-        0,
-        "Color axis should be invisible."
-    );
-});
-
-QUnit.test('#14834: Reversed option ignored on update', assert => {
-    const chart = Highcharts.chart('container', {
-        chart: {
-            type: 'heatmap'
-        },
-        colorAxis: {
-            reversed: false
-        },
-        legend: {
-            layout: 'vertical'
-        },
-        series: [{
-            data: [
-                [0, 0, 10],
-                [0, 1, 19]
-            ]
-        }]
-    });
-
-    chart.colorAxis[0].update({
-        minColor: '#ff00ff'
-    });
-
     assert.strictEqual(
         chart.options.colorAxis.reversed,
         false,
-        'Reversed should still be false'
+        '#14834: reversed should still be false'
     );
 
     chart.colorAxis[0].update({
@@ -207,6 +139,37 @@ QUnit.test('#14834: Reversed option ignored on update', assert => {
     assert.strictEqual(
         chart.options.colorAxis.reversed,
         true,
-        'Updating reversed should also work'
+        '#14834: Updating reversed should also work'
+    );
+
+    assert.equal(
+        $('.highcharts-legend-item', '#container').length,
+        2,
+        "#14283: Color axis should be visible."
+    );
+
+    chart.colorAxis[0].update({
+        visible: false
+    });
+
+    assert.equal(
+        $('.highcharts-legend-item', '#container').length,
+        0,
+        "#14283: Color axis should be invisible."
+    );
+
+    chart.colorAxis[0].update({
+        visible: true
+    });
+
+    // Test the SVG
+    var svg = chart.getSVG();
+    chart.destroy();
+    $('#container').html(svg);
+
+    assert.equal(
+        $('.highcharts-legend-item', '#container').length,
+        2,
+        'Export has two legend items'
     );
 });

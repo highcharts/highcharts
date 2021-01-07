@@ -117,6 +117,9 @@ var ColorAxis = /** @class */ (function (_super) {
         axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
+        // Keep the options structure updated for export. Unlike xAxis and
+        // yAxis, the colorAxis is not an array. (#3207)
+        chart.options[axis.coll] = options;
         _super.prototype.init.call(this, chart, options);
         // Base init() pushes it to the xAxis array, now pop it again
         // chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
@@ -519,9 +522,6 @@ var ColorAxis = /** @class */ (function (_super) {
         if (newOptions.dataClasses && legend.allItems || axis.dataClasses) {
             axis.destroyItems();
         }
-        // Keep the options structure updated for export. Unlike xAxis and
-        // yAxis, the colorAxis is not an array. (#3207)
-        chart.options[axis.coll] = merge(axis.userOptions, newOptions);
         _super.prototype.update.call(this, newOptions, redraw);
         if (axis.legendItem) {
             axis.setLegendColor();
