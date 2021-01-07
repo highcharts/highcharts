@@ -1144,6 +1144,7 @@ var SVGRenderer = /** @class */ (function () {
      * Sets the internal URL
      */
     SVGRenderer.prototype.setURL = function () {
+        var previousUrl = this.url;
         // #24, #672, #1070
         this.url = ((isFirefox || isWebKit) &&
             doc.getElementsByTagName('base').length) ?
@@ -1155,6 +1156,33 @@ var SVGRenderer = /** @class */ (function () {
                 // replace spaces (needed for Safari only)
                 .replace(/ /g, '%20') :
             '';
+        // Update internal references if the url has changed
+        // and it is absolute
+        if (this.url.length && previousUrl !== this.url) {
+            this.updateReferences(previousUrl);
+        }
+    };
+    /**
+     * Updates internal url references
+     *
+     * @param {string} previousUrl
+     * The url to update
+     *
+     */
+    SVGRenderer.prototype.updateReferences = function (previousUrl) {
+        var _a = this, currentUrl = _a.url, container = _a.box;
+        ['fill', 'clip-path'].forEach(function (attributeName) {
+            // Get all elements with a URL clip-path
+            var elements = container
+                .querySelectorAll("[" + attributeName + "*=\"" + previousUrl + "\"]");
+            // Update the clip-path with the new url
+            elements.forEach(function (element) {
+                var currentValue = element.getAttribute(attributeName);
+                if (currentValue) {
+                    element.setAttribute(attributeName, currentValue.replace(previousUrl, currentUrl));
+                }
+            });
+        });
     };
     /**
      * Draw a path, wraps the SVG `path` element.

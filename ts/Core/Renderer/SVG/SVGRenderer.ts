@@ -242,6 +242,7 @@ declare global {
             ): void;
             public setStyle(style: CSSObject): void;
             public setURL(): void;
+            public updateReferences(previousUrl: string): void;
             public symbol(
                 symbol: string,
                 x?: number,
@@ -1781,6 +1782,7 @@ class SVGRenderer {
      * Sets the internal URL
      */
     public setURL(): void {
+        const previousUrl = this.url;
         // #24, #672, #1070
         this.url = (
             (isFirefox || isWebKit) &&
@@ -1794,6 +1796,43 @@ class SVGRenderer {
                 // replace spaces (needed for Safari only)
                 .replace(/ /g, '%20') :
             '';
+
+        // Update internal references if the url has changed
+        // and it is absolute
+        if (this.url.length && previousUrl !== this.url) {
+            this.updateReferences(previousUrl);
+        }
+    }
+
+    /**
+     * Updates internal url references
+     *
+     * @param {string} previousUrl
+     * The url to update
+     *
+     */
+    public updateReferences(previousUrl: string): void {
+        const {
+            url: currentUrl,
+            box: container
+        } = this;
+
+        ['fill', 'clip-path'].forEach((attributeName): void => {
+            // Get all elements with a URL clip-path
+            const elements = container
+                .querySelectorAll(`[${attributeName}*="${previousUrl}"]`);
+
+            // Update the clip-path with the new url
+            elements.forEach(function (element: Element): void {
+                const currentValue = element.getAttribute(attributeName);
+                if (currentValue) {
+                    element.setAttribute(
+                        attributeName,
+                        currentValue.replace(previousUrl, currentUrl)
+                    );
+                }
+            });
+        });
     }
 
 

@@ -1846,27 +1846,13 @@ var Chart = /** @class */ (function () {
                 chart.setResponsive(true);
             }
         });
-        // If the window location is changed by the history API,
-        // we have to update the renderer url
-        var updateURL = function () {
-            if (chart.renderer.url !== win.location.href) {
-                // Get all elements with a URL clip-path
-                var elements = chart.container
-                    .querySelectorAll('[clip-path*="' + chart.renderer.url + '"]');
-                // Update the clip-path with the new location.href
-                elements.forEach(function (element) {
-                    var currentValue = element.getAttribute('clip-path');
-                    if (currentValue) {
-                        element.setAttribute('clip-path', currentValue.replace(chart.renderer.url, win.location.href));
-                    }
-                });
-                // Update renderer URL
-                chart.renderer.setURL();
-            }
-        };
         // We only need to add these events if history is available
         if (win.history) {
-            addEvent(chart, 'beforeRedraw', updateURL);
+            addEvent(chart, 'beforeRedraw', function (e) {
+                if (win.history.state) {
+                    chart.renderer.setURL();
+                }
+            });
         }
         chart.render();
         // Fire the load event if there are no external images

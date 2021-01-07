@@ -2615,33 +2615,13 @@ class Chart {
             }
         });
 
-        // If the window location is changed by the history API,
-        // we have to update the renderer url
-        const updateURL = (): void => {
-            if (chart.renderer.url !== win.location.href) {
-                // Get all elements with a URL clip-path
-                const elements = chart.container
-                    .querySelectorAll('[clip-path*="' + chart.renderer.url + '"]');
-
-                // Update the clip-path with the new location.href
-                elements.forEach(function (element: Element): void {
-                    const currentValue = element.getAttribute('clip-path');
-                    if (currentValue) {
-                        element.setAttribute(
-                            'clip-path',
-                            currentValue.replace(chart.renderer.url, win.location.href)
-                        );
-                    }
-                });
-
-                // Update renderer URL
-                chart.renderer.setURL();
-            }
-        };
-
         // We only need to add these events if history is available
         if (win.history) {
-            addEvent(chart, 'beforeRedraw', updateURL);
+            addEvent(chart, 'beforeRedraw', (e): void => {
+                if (win.history.state) {
+                    chart.renderer.setURL();
+                }
+            });
         }
 
         chart.render();
