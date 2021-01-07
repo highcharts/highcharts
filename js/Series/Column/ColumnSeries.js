@@ -346,8 +346,9 @@ var ColumnSeries = /** @class */ (function (_super) {
                     // and if there's room for it (#7311)
                     (yAxis.min || 0) < threshold &&
                     // if all points are the same value (i.e zero) not draw
-                    // as negative points (#10646)
-                    dataMin !== dataMax) {
+                    // as negative points (#10646), but only if there's room
+                    // for it (#14876)
+                    (dataMin !== dataMax || (yAxis.max || 0) <= threshold)) {
                     up = !up;
                 }
                 // If stacked...
