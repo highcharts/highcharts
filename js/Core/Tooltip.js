@@ -289,7 +289,7 @@ var Tooltip = /** @class */ (function () {
      * @return {Array<number>}
      */
     Tooltip.prototype.getAnchor = function (points, mouseEvent) {
-        var ret, chart = this.chart, pointer = chart.pointer, inverted = chart.inverted, plotTop = chart.plotTop, plotLeft = chart.plotLeft, plotX = 0, plotY = 0, yAxis, xAxis;
+        var ret, chart = this.chart, pointer = chart.pointer, inverted = chart.inverted, plotTop = chart.plotTop, plotLeft = chart.plotLeft, plotX = 0, plotY = 0, yAxis, xAxis, plotWidth;
         points = splat(points);
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
@@ -319,8 +319,12 @@ var Tooltip = /** @class */ (function () {
             });
             plotX /= points.length;
             plotY /= points.length;
+            // Calculate plot width if axis width is adjusted (#14771).
+            yAxis = points[0].series.yAxis;
+            plotWidth = !this.shared && yAxis && chart.plotWidth !== yAxis.width ?
+                yAxis.width + yAxis.left - plotLeft : chart.plotWidth;
             ret = [
-                inverted ? chart.plotWidth - plotY : plotX,
+                inverted ? plotWidth - plotY : plotX,
                 this.shared && !inverted && points.length > 1 && mouseEvent ?
                     // place shared tooltip next to the mouse (#424)
                     mouseEvent.chartY - plotTop :
