@@ -66,6 +66,34 @@ var OHLCPoint = /** @class */ (function (_super) {
                 ' highcharts-point-up' :
                 ' highcharts-point-down');
     };
+    /**
+     * Extend the parent method by saving upColor.
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#resolveColor
+     */
+    OHLCPoint.prototype.resolveColor = function () {
+        _super.prototype.resolveColor.call(this);
+        // Save upColor as point color (#14826).
+        if (this.open < this.close && !this.options.color) {
+            this.color = this.series.options.upColor;
+        }
+    };
+    /**
+     * Extend the parent method by saving upColor.
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#getZone
+     *
+     * @return {Highcharts.SeriesZonesOptionsObject}
+     *         The zone item.
+     */
+    OHLCPoint.prototype.getZone = function () {
+        var zone = _super.prototype.getZone.call(this);
+        // Save upColor as point color (#14826).
+        if (this.open < this.close && !this.options.color) {
+            this.color = this.series.options.upColor;
+        }
+        return zone;
+    };
     return OHLCPoint;
 }(ColumnSeries.prototype.pointClass));
 /* *

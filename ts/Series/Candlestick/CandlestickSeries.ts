@@ -220,11 +220,6 @@ class CandlestickSeries extends OHLCSeries {
         attribs.stroke = point.options.lineColor ||
             (isUp ? (options.upLineColor || stroke) : stroke);
 
-        // Save upColor if set (#14826).
-        if (attribs.fill === options.upColor) {
-            point.upColor = options.upColor as ColorString;
-        }
-
         // Select or hover states
         if (state) {
             stateOptions = (options.states as any)[state];

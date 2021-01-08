@@ -89,10 +89,6 @@ var CandlestickSeries = /** @class */ (function (_super) {
             (isUp ? (options.upColor || color) : color);
         attribs.stroke = point.options.lineColor ||
             (isUp ? (options.upLineColor || stroke) : stroke);
-        // Save upColor if set (#14826).
-        if (attribs.fill === options.upColor) {
-            point.upColor = options.upColor;
-        }
         // Select or hover states
         if (state) {
             stateOptions = options.states[state];

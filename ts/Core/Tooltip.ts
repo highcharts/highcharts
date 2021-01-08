@@ -1371,7 +1371,6 @@ class Tooltip {
                     label.attr({
                         stroke: (
                             options.borderColor ||
-                            (point as any).upColor || // (#14826)
                             (point as any).color ||
                             currentSeries.color ||
                             palette.neutralColor60
@@ -1602,7 +1601,6 @@ class Tooltip {
                     .attr({
                         stroke: (
                             options.borderColor ||
-                            (point as any).upColor || // (#14826)
                             point.color ||
                             series.color ||
                             palette.neutralColor80
