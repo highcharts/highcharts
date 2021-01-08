@@ -10,6 +10,12 @@
  *
  * */
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 export type DataValueType = (string | number | null);
 
 export default DataValueType;
