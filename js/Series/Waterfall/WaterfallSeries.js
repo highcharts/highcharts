@@ -355,10 +355,9 @@ var WaterfallSeries = /** @class */ (function (_super) {
                     yPos
                 ]);
             }
-            if (!stacking &&
+            if (prevArgs &&
                 path.length &&
-                prevArgs &&
-                ((prevPoint.y < 0 && !reversedYAxis) ||
+                ((!stacking && prevPoint.y < 0 && !reversedYAxis) ||
                     (prevPoint.y > 0 && reversedYAxis))) {
                 path[path.length - 2][2] += prevArgs.height;
                 path[path.length - 1][2] += prevArgs.height;

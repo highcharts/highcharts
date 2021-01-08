@@ -693,11 +693,10 @@ class WaterfallSeries extends ColumnSeries {
             }
 
             if (
-                !stacking &&
-                path.length &&
                 prevArgs &&
+                path.length &&
                 (
-                    (prevPoint.y < 0 && !reversedYAxis) ||
+                    (!stacking && prevPoint.y < 0 && !reversedYAxis) ||
                     (prevPoint.y > 0 && reversedYAxis)
                 )
             ) {
