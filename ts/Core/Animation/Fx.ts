@@ -166,8 +166,8 @@ class Fx {
 
                     // Tween numbers
                     if (
-                        typeof startItem === 'number' &&
-                        typeof endItem === 'number' &&
+                        isNumber(startItem) &&
+                        isNumber(endItem) &&
                         // Arc boolean flags
                         !(endSeg[0] === 'A' && (j === 4 || j === 5))
                     ) {
