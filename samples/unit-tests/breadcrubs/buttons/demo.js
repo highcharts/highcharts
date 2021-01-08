@@ -147,8 +147,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
                 drilldown: "Fruits"
             }, {
                 name: "Vegetables",
-                y: 6,
-                drilldown: "Vegetables"
+                y: 6
             }, {
                 name: "Meat",
                 y: 3
@@ -164,15 +163,10 @@ QUnit.test('Breadcrumbs format', function (assert) {
             series: [{
                 name: "Fruits",
                 id: "Fruits",
-                data: [{
-                    name: "Citrus",
-                    y: 2,
-                    drilldown: "Citrus"
-                }, {
-                    name: "Tropical",
-                    y: 5,
-                    drilldown: "Tropical"
-                }, ['Other', 1]
+                data: [
+                    ["Citrus", 2],
+                    ["Tropical", 5],
+                    ['Other', 1]
                 ]
             }]
         }
@@ -205,8 +199,7 @@ QUnit.test('Breadcrumbs formatter', function (assert) {
                     drilldown: "Fruits"
                 }, {
                     name: "Vegetables",
-                    y: 6,
-                    drilldown: "Vegetables"
+                    y: 6
                 }, {
                     name: "Meat",
                     y: 3
@@ -231,15 +224,10 @@ QUnit.test('Breadcrumbs formatter', function (assert) {
                 series: [{
                     name: "Fruits",
                     id: "Fruits",
-                    data: [{
-                        name: "Citrus",
-                        y: 2,
-                        drilldown: "Citrus"
-                    }, {
-                        name: "Tropical",
-                        y: 5,
-                        drilldown: "Tropical"
-                    }, ['Other', 1]
+                    data: [
+                        ["Citrus", 2],
+                        ["Tropical", 5],
+                        ['Other', 1]
                     ]
                 }]
             }
@@ -257,5 +245,58 @@ QUnit.test('Breadcrumbs formatter', function (assert) {
         buttons[2].textContent,
         '2',
         'The next button should have text 2.'
+    );
+});
+
+QUnit.test('Breadcrumbs with no series name, lang', function (assert) {
+    Highcharts.setOptions({
+        lang: {
+            mainBreadcrumb: 'Major'
+        }
+    });
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            data: [{
+                name: "Fruits",
+                y: 5,
+                drilldown: "Fruits"
+            }, {
+                name: "Vegetables",
+                y: 6
+            }, {
+                name: "Meat",
+                y: 3
+            }]
+        }],
+        breadcrumbs: {
+            enabled: true
+        },
+        drilldown: {
+            animation: false,
+            series: [{
+                name: "Fruits",
+                id: "Fruits",
+                data: [
+                    ["Citrus", 2],
+                    ["Tropical", 5],
+                    ['Other', 1]
+                ]
+            }]
+        }
+    });
+    chart.series[0].points[0].doDrilldown();
+
+    const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
+
+    assert.strictEqual(
+        buttons[buttons.length - 1].textContent,
+        '◁ Major',
+        'The button should show ◁ Major.'
     );
 });

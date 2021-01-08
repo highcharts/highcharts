@@ -15,7 +15,7 @@ import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, extend = U.extend, format = U.format, merge = U.merge;
+var addEvent = U.addEvent, defined = U.defined, extend = U.extend, format = U.format, merge = U.merge, pick = U.pick;
 // Add language support.
 extend(defaultOptions.lang, 
 /**
@@ -26,7 +26,7 @@ extend(defaultOptions.lang,
      * @since    next
      * @product  highcharts
      */
-    mainBreadCrumb: 'Main'
+    mainBreadcrumb: 'Main'
 });
 extend(defaultOptions, {
     /**
@@ -336,7 +336,7 @@ var Breadcrumbs = /** @class */ (function () {
      *        Number of levels to destoy.
      */
     Breadcrumbs.prototype.destroy = function (lastVisibleLevel) {
-        var breadcrumbs = this, chart = breadcrumbs.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = chart.options.breadcrumbs;
+        var breadcrumbs = this, chart = breadcrumbs.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = breadcrumbs.options;
         // Click the main breadcrumb
         if (breadcrumbsOptions && !breadcrumbsOptions.showOnlyLast) {
             if (!lastVisibleLevel && lastVisibleLevel !== 0) {
@@ -398,7 +398,7 @@ var Breadcrumbs = /** @class */ (function () {
      *        Breadcrumbs class.
      */
     Breadcrumbs.prototype.draw = function () {
-        var breadcrumbs = this, chart = breadcrumbs.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = chart.options.breadcrumbs, lastBreadcrumbs = breadcrumbsList[breadcrumbsList.length - 2] &&
+        var breadcrumbs = this, chart = breadcrumbs.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = breadcrumbs.options, lastBreadcrumbs = breadcrumbsList[breadcrumbsList.length - 2] &&
             breadcrumbsList[breadcrumbsList.length - 2][2], buttonPadding = breadcrumbsOptions && breadcrumbsOptions.buttonPadding;
         // A main group for the breadcrumbs.
         if (!this.breadcrumbsGroup && breadcrumbsOptions) {
@@ -409,7 +409,6 @@ var Breadcrumbs = /** @class */ (function () {
             })
                 .addClass('highcharts-breadcrumbs')
                 .add();
-            chart.redraw();
         }
         // Draw breadcrumbs.
         if (breadcrumbsList && breadcrumbsOptions && buttonPadding) {
@@ -432,9 +431,7 @@ var Breadcrumbs = /** @class */ (function () {
                         this.breadcrumbsList = [];
                     }
                     else {
-                        chart.drillUpButton.attr({
-                            text: '◁ ' + breadcrumbsList[this.level][1].name
-                        });
+                        this.updateSignleButton();
                     }
                 }
                 chart.getMargins();
@@ -477,12 +474,12 @@ var Breadcrumbs = /** @class */ (function () {
      *        A number of drillups that needs to be performed.
      */
     Breadcrumbs.prototype.multipleDrillUp = function (drillAmount) {
-        var chart = this.chart, breadcrumbsList = this.breadcrumbsList, drillNumb = defined(drillAmount) ?
+        var chart = this.chart, breadcrumbsList = this.breadcrumbsList, drillNumber = defined(drillAmount) ?
             breadcrumbsList[breadcrumbsList.length - 1][0] - drillAmount :
             breadcrumbsList[breadcrumbsList.length - 1][0] + 1;
         if (!this.options.showOnlyLast) {
             if (breadcrumbsList && breadcrumbsList.length) {
-                for (var i = 0; i < drillNumb; i++) {
+                for (var i = 0; i < drillNumber; i++) {
                     if (this.isTreemap) {
                         chart.series[0].drillUp();
                     }
@@ -537,15 +534,15 @@ var Breadcrumbs = /** @class */ (function () {
     *        Returns the SVG button
     */
     Breadcrumbs.prototype.renderButton = function (breadcrumb, posX, posY) {
-        var breadcrumbs = this, chart = this.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = chart.options.breadcrumbs, lang = chart.options.lang;
+        var breadcrumbs = this, chart = this.chart, breadcrumbsList = breadcrumbs.breadcrumbsList, breadcrumbsOptions = breadcrumbs.options, lang = chart.options.lang;
         var arrow = '';
         if (breadcrumbsOptions && breadcrumb && breadcrumb[1]) {
             if (breadcrumbsOptions && breadcrumbsOptions.showOnlyLast) {
                 arrow = '◁ ';
             }
             var button_1 = chart.renderer.button(breadcrumbsOptions.formatter ? breadcrumbsOptions.formatter(breadcrumb, breadcrumbs) : void 0 ||
-                format(arrow + breadcrumbsOptions.format, { value: breadcrumb[1].name || (lang && lang.mainBreadCrumb) }, chart), posX, posY, function (e) {
-                // extract events from button object and call
+                arrow + format(breadcrumbsOptions.format, { value: breadcrumb[1].name || (lang && lang.mainBreadcrumb) }, chart), posX, posY, function (e) {
+                // Extract events from button object and call
                 var buttonEvents = breadcrumbsOptions.events && breadcrumbsOptions.events.click;
                 var callDefaultEvent;
                 if (buttonEvents) {
@@ -583,27 +580,25 @@ var Breadcrumbs = /** @class */ (function () {
     *        Initial horizontal position
     * @param {Highcharts.Breadcrumbs} posY
     *        Initial vertical position
-    * @return {SVGElement|void}
+    * @return {SVGElement}
     *        Returns the SVG button
     */
     Breadcrumbs.prototype.renderSeparator = function (posX, posY) {
-        var breadcrumbs = this, chart = this.chart, breadcrumbsOptions = chart.options.breadcrumbs, size = 10;
-        if (breadcrumbsOptions) {
-            var separatorSymbol = breadcrumbsOptions.separator, serparatorRotation = separatorSymbol && separatorSymbol.slice(0, 3) === 'url' ? 0 : 90;
-            var separator = chart.renderer.symbol(separatorSymbol, posX, posY, size, size)
-                .attr({
-                fill: 'white',
-                stroke: 'black',
-                'stroke-width': 1,
-                rotation: serparatorRotation,
-                rotationOriginX: posX,
-                rotationOriginY: posY
-            })
-                .add(breadcrumbs.breadcrumbsGroup)
-                .addClass('highcharts-breadcrumbs-separator'), separatorBBox = separator.getBBox();
-            separator.translate(separatorBBox.width, separatorBBox.height / 2);
-            return separator;
-        }
+        var breadcrumbs = this, chart = this.chart, breadcrumbsOptions = breadcrumbs.options, size = 10;
+        var separatorSymbol = breadcrumbsOptions.separator, serparatorRotation = separatorSymbol && separatorSymbol.slice(0, 3) === 'url' ? 0 : 90;
+        var separator = chart.renderer.symbol(separatorSymbol, posX, posY, size, size)
+            .attr({
+            fill: 'white',
+            stroke: 'black',
+            'stroke-width': 1,
+            rotation: serparatorRotation,
+            rotationOriginX: posX,
+            rotationOriginY: posY
+        })
+            .add(breadcrumbs.breadcrumbsGroup)
+            .addClass('highcharts-breadcrumbs-separator'), separatorBBox = separator.getBBox();
+        separator.translate(separatorBBox.width, separatorBBox.height / 2);
+        return separator;
     };
     /**
     * Update.
@@ -620,10 +615,30 @@ var Breadcrumbs = /** @class */ (function () {
     */
     Breadcrumbs.prototype.update = function (userOptions, redrawFlag) {
         if (redrawFlag === void 0) { redrawFlag = true; }
-        merge(true, this.chart.options.breadcrumbs, userOptions);
+        merge(true, this.options, userOptions);
         if (redrawFlag) {
             this.destroy(-1);
             this.redraw();
+        }
+    };
+    /**
+    * Update button text when the showOnlyLast set to true.
+    * @function Highcharts.Breadcrumbs#updateSignleButton
+    *
+    * @requires  modules/breadcrumbs
+    *
+    * @param {Highcharts.Breadcrumbs} this
+    *        Breadcrumbs class.
+    */
+    Breadcrumbs.prototype.updateSignleButton = function () {
+        var chart = this.chart, breadcrumbsOptions = this.options, breadcrumbsList = this.breadcrumbsList, currentBreadcrumb = breadcrumbsList[this.level], lang = chart.options.lang;
+        if (chart.drillUpButton && breadcrumbsOptions && lang) {
+            var newText = breadcrumbsOptions.formatter ?
+                breadcrumbsOptions.formatter(currentBreadcrumb, this) : void 0 ||
+                format(breadcrumbsOptions.format, { value: currentBreadcrumb[1].name || (lang && lang.mainBreadcrumb) }, chart);
+            chart.drillUpButton.attr({
+                text: '◁ ' + newText
+            });
         }
     };
     return Breadcrumbs;

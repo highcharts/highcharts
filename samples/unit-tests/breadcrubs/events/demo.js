@@ -14,8 +14,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
                     drilldown: "Fruits"
                 }, {
                     name: "Vegetables",
-                    y: 6,
-                    drilldown: "Vegetables"
+                    y: 6
                 }, {
                     name: "Meat",
                     y: 3
@@ -35,15 +34,10 @@ QUnit.test('Breadcrumbs format', function (assert) {
                 series: [{
                     name: "Fruits",
                     id: "Fruits",
-                    data: [{
-                        name: "Citrus",
-                        y: 2,
-                        drilldown: "Citrus"
-                    }, {
-                        name: "Tropical",
-                        y: 5,
-                        drilldown: "Tropical"
-                    }, ['Other', 1]
+                    data: [
+                        ["Citrus", 2],
+                        ["Tropical", 5],
+                        ['Other', 1]
                     ]
                 }]
             }
