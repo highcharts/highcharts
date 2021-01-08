@@ -1,36 +1,55 @@
 QUnit.test('Axis showEmpty', function (assert) {
-
     var chart = Highcharts.chart('container', {
-
         title: {
             text: 'Y axis showEmpty demo'
         },
 
         subtitle: {
-            text: 'Left axis shows even if Series 1 is hidden. Right axis does not show when Series 2 is hidden.'
+            text:
+                'Left axis shows even if Series 1 is hidden. ' +
+                'Right axis does not show when Series 2 is hidden.'
         },
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
+            ]
         },
 
-        yAxis: [{
-            lineWidth: 2
-            // showEmpty: true // by default
-        }, {
-            lineWidth: 2,
-            opposite: true,
-            showEmpty: false
-        }],
+        yAxis: [
+            {
+                lineWidth: 2
+                // showEmpty: true // by default
+            },
+            {
+                lineWidth: 2,
+                opposite: true,
+                showEmpty: false
+            }
+        ],
 
-        series: [{
-            data: [1, 3, 2, 4],
-            yAxis: 0
-        }, {
-            data: [3, 2, 5, 4],
-            yAxis: 1,
-            visible: false
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                yAxis: 0
+            },
+            {
+                data: [3, 2, 5, 4],
+                yAxis: 1,
+                visible: false
+            }
+        ]
     });
 
     function isHidden() {
@@ -71,5 +90,4 @@ QUnit.test('Axis showEmpty', function (assert) {
         isHidden(),
         'Axis should be visible when showEmpty is false and valid data'
     );
-
 });

@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Author: Wojciech Chmiel
  *
@@ -14,13 +14,14 @@
 'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
+import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
@@ -38,8 +39,7 @@ var addEvent = U.addEvent, defined = U.defined, error = U.error, isArray = U.isA
 ''; // detach doclets from following code
 /* eslint-disable no-invalid-this */
 import Axis from '../Core/Axis/Axis.js';
-import '../Series/Line/LineSeries.js';
-var Scatter = seriesTypes.scatter, baseGeneratePoints = LineSeries.prototype.generatePoints, stateIdCounter = 0, 
+var Scatter = seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.
 oldPointsStateId = [];
@@ -239,7 +239,7 @@ var clusterDefaultOptions = {
         /** @internal */
         lineWidth: 0,
         /** @internal */
-        lineColor: '${palette.backgroundColor}'
+        lineColor: palette.backgroundColor
     },
     /**
      * Fires when the cluster point is clicked and `drillToCluster` is enabled.
@@ -1293,7 +1293,9 @@ Scatter.prototype.generatePoints = function () {
     if (clusterOptions &&
         clusterOptions.enabled &&
         series.xData &&
+        series.xData.length &&
         series.yData &&
+        series.yData.length &&
         !chart.polar) {
         type = clusterOptions.layoutAlgorithm.type;
         layoutAlgOptions = clusterOptions.layoutAlgorithm;
@@ -1464,9 +1466,9 @@ addEvent(Point, 'update', function () {
     }
 });
 // Destroy grouped data on series destroy.
-addEvent(LineSeries, 'destroy', Scatter.prototype.destroyClusteredData);
+addEvent(Series, 'destroy', Scatter.prototype.destroyClusteredData);
 // Add classes, change mouse cursor.
-addEvent(LineSeries, 'afterRender', function () {
+addEvent(Series, 'afterRender', function () {
     var series = this, clusterZoomEnabled = (series.options.cluster || {}).drillToCluster;
     if (series.markerClusterInfo && series.markerClusterInfo.clusters) {
         series.markerClusterInfo.clusters.forEach(function (cluster) {

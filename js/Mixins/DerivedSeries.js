@@ -6,7 +6,7 @@
 'use strict';
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined;
 /* ************************************************************************** *
@@ -32,7 +32,7 @@ var derivedSeriesMixin = {
      * @return {void}
      */
     init: function () {
-        LineSeries.prototype.init.apply(this, arguments);
+        Series.prototype.init.apply(this, arguments);
         this.initialised = false;
         this.baseSeries = null;
         this.eventRemovers = [];
@@ -111,7 +111,7 @@ var derivedSeriesMixin = {
         this.eventRemovers.forEach(function (remover) {
             remover();
         });
-        LineSeries.prototype.destroy.apply(this, arguments);
+        Series.prototype.destroy.apply(this, arguments);
     }
     /* eslint-disable valid-jsdoc */
 };

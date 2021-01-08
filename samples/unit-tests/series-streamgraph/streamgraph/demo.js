@@ -9,13 +9,17 @@ QUnit.test('Streamgraph extremes', function (assert) {
             minPadding: 0,
             maxPadding: 0
         },
-        series: [{
-            data: [9, 9, 9, 9, 8, 13]
-        }, {
-            data: [4, 24, 24, 24, 22, 8]
-        }, {
-            data: [15, 15, 15, 5, 13, 5]
-        }]
+        series: [
+            {
+                data: [9, 9, 9, 9, 8, 13]
+            },
+            {
+                data: [4, 24, 24, 24, 22, 8]
+            },
+            {
+                data: [15, 15, 15, 5, 13, 5]
+            }
+        ]
     });
     assert.deepEqual(
         [chart.yAxis[0].min, chart.yAxis[0].max],
@@ -40,7 +44,6 @@ QUnit.test('Streamgraph extremes', function (assert) {
         'Extremes with a single series, previous series hidden (#7896)'
     );
 
-
     chart.series[2].remove();
     chart.series[1].remove();
     chart.series[0].show();
@@ -49,5 +52,4 @@ QUnit.test('Streamgraph extremes', function (assert) {
         [-6.5, 6.5],
         'Extremes with a single series (#7896)'
     );
-
 });

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,6 +12,7 @@ import Color from './Color/Color.js';
 var color = Color.parse;
 import H from './Globals.js';
 var charts = H.charts, noop = H.noop;
+import palette from '../Core/Color/Palette.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
@@ -98,6 +99,23 @@ var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, exte
 */ /**
 * @name Highcharts.SelectEventObject#yAxis
 * @type {Array<Highcharts.SelectDataObject>}
+*/
+/**
+ * Chart position and scale.
+ *
+ * @interface Highcharts.ChartPositionObject
+ */ /**
+* @name Highcharts.ChartPositionObject#left
+* @type {number}
+*/ /**
+* @name Highcharts.ChartPositionObject#scaleX
+* @type {number}
+*/ /**
+* @name Highcharts.ChartPositionObject#scaleY
+* @type {number}
+*/ /**
+* @name Highcharts.ChartPositionObject#top
+* @type {number}
 */
 ''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -257,7 +275,7 @@ var Pointer = /** @class */ (function () {
                     if (!chart.styledMode) {
                         selectionMarker.attr({
                             fill: (chartOptions.selectionMarkerFill ||
-                                color('${palette.highlightColor80}')
+                                color(palette.highlightColor80)
                                     .setOpacity(0.25).get())
                         });
                     }
@@ -438,7 +456,7 @@ var Pointer = /** @class */ (function () {
             var noSharedTooltip = s.noSharedTooltip && shared, compareX = (!noSharedTooltip &&
                 s.options.findNearestPointBy.indexOf('y') < 0), point = s.searchPoint(e, compareX);
             if ( // Check that we actually found a point on the series.
-            isObject(point, true) &&
+            isObject(point, true) && point.series &&
                 // Use the new point if it is closer.
                 (!isObject(closest, true) ||
                     (sort(closest, point) > 0))) {
@@ -480,12 +498,31 @@ var Pointer = /** @class */ (function () {
      *
      * @function Highcharts.Pointer#getChartPosition
      *
-     * @return {Highcharts.OffsetObject}
+     * @return {Highcharts.ChartPositionObject}
      *         The offset of the chart container within the page
      */
     Pointer.prototype.getChartPosition = function () {
-        return (this.chartPosition ||
-            (this.chartPosition = offset(this.chart.container)));
+        if (this.chartPosition) {
+            return this.chartPosition;
+        }
+        var container = this.chart.container;
+        var pos = offset(container);
+        this.chartPosition = {
+            left: pos.left,
+            top: pos.top,
+            scaleX: 1,
+            scaleY: 1
+        };
+        // #13342 - tooltip was not visible in Chrome, when chart
+        // updates height.
+        if (container.offsetWidth > 2 && // #13342
+            container.offsetHeight > 2 && // #13342
+            container.getBoundingClientRect) {
+            var bb = container.getBoundingClientRect();
+            this.chartPosition.scaleX = bb.width / container.offsetWidth;
+            this.chartPosition.scaleY = bb.height / container.offsetHeight;
+        }
+        return this.chartPosition;
     };
     /**
      * Get the click position in terms of axis values.
@@ -741,11 +778,8 @@ var Pointer = /** @class */ (function () {
         var chartX = ePos.pageX - chartPosition.left, chartY = ePos.pageY - chartPosition.top;
         // #11329 - when there is scaling on a parent element, we need to take
         // this into account
-        var containerScaling = this.chart.containerScaling;
-        if (containerScaling) {
-            chartX /= containerScaling.scaleX;
-            chartY /= containerScaling.scaleY;
-        }
+        chartX /= chartPosition.scaleX;
+        chartY /= chartPosition.scaleY;
         return extend(e, {
             chartX: Math.round(chartX),
             chartY: Math.round(chartY)
@@ -873,7 +907,7 @@ var Pointer = /** @class */ (function () {
         if (!pEvt.preventDefault) {
             pEvt.returnValue = false;
         }
-        if (chart.mouseIsDown === 'mousedown') {
+        if (chart.mouseIsDown === 'mousedown' || this.touchSelect(pEvt)) {
             this.drag(pEvt);
         }
         // Show the tooltip and run mouse over events (#977)
@@ -905,7 +939,12 @@ var Pointer = /** @class */ (function () {
      * @return {void}
      */
     Pointer.prototype.onContainerTouchMove = function (e) {
-        this.touch(e);
+        if (this.touchSelect(e)) {
+            this.onContainerMouseMove(e);
+        }
+        else {
+            this.touch(e);
+        }
     };
     /**
      * @private
@@ -916,8 +955,13 @@ var Pointer = /** @class */ (function () {
      * @return {void}
      */
     Pointer.prototype.onContainerTouchStart = function (e) {
-        this.zoomOption(e);
-        this.touch(e, true);
+        if (this.touchSelect(e)) {
+            this.onContainerMouseDown(e);
+        }
+        else {
+            this.zoomOption(e);
+            this.touch(e, true);
+        }
     };
     /**
      * Special handler for mouse move that will hide the tooltip when the mouse
@@ -1380,6 +1424,7 @@ var Pointer = /** @class */ (function () {
      * @function Highcharts.Pointer#setDOMEvents
      */
     Pointer.prototype.setDOMEvents = function () {
+        var _this = this;
         var container = this.chart.container, ownerDoc = container.ownerDocument;
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
@@ -1389,11 +1434,20 @@ var Pointer = /** @class */ (function () {
         if (!H.unbindDocumentMouseUp) {
             H.unbindDocumentMouseUp = addEvent(ownerDoc, 'mouseup', this.onDocumentMouseUp.bind(this));
         }
+        // In case we are dealing with overflow, reset the chart position when
+        // scrolling parent elements
+        var parent = this.chart.renderTo.parentElement;
+        while (parent && parent.tagName !== 'BODY') {
+            addEvent(parent, 'scroll', function () {
+                delete _this.chartPosition;
+            });
+            parent = parent.parentElement;
+        }
         if (H.hasTouch) {
-            addEvent(container, 'touchstart', this.onContainerTouchStart.bind(this));
-            addEvent(container, 'touchmove', this.onContainerTouchMove.bind(this));
+            addEvent(container, 'touchstart', this.onContainerTouchStart.bind(this), { passive: false });
+            addEvent(container, 'touchmove', this.onContainerTouchMove.bind(this), { passive: false });
             if (!H.unbindDocumentTouchEnd) {
-                H.unbindDocumentTouchEnd = addEvent(ownerDoc, 'touchend', this.onDocumentTouchEnd.bind(this));
+                H.unbindDocumentTouchEnd = addEvent(ownerDoc, 'touchend', this.onDocumentTouchEnd.bind(this), { passive: false });
             }
         }
     };
@@ -1457,6 +1511,17 @@ var Pointer = /** @class */ (function () {
         else if (e.touches.length === 2) {
             this.pinch(e);
         }
+    };
+    /**
+     * Returns true if the chart is set up for zooming by single touch and the
+     * event is capable
+     * @param {PointEvent} e
+     *        Event object
+     */
+    Pointer.prototype.touchSelect = function (e) {
+        return Boolean(this.chart.options.chart.zoomBySingleTouch &&
+            e.touches &&
+            e.touches.length === 1);
     };
     /**
      * Resolve the zoomType option, this is reset on all touch start and mouse

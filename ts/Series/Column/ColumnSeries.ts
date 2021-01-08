@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,24 +22,31 @@ import type ColumnMetricsObject from './ColumnMetricsObject';
 import type ColumnPoint from './ColumnPoint';
 import type ColumnSeriesOptions from './ColumnSeriesOptions';
 import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
+import type PointerEvent from '../../Core/PointerEvent';
 import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
-const { noop } = H;
+const {
+    hasTouch,
+    noop
+} = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
+import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
+    css,
     defined,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     merge,
@@ -69,7 +76,7 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * @augments Highcharts.Series
  */
-class ColumnSeries extends LineSeries {
+class ColumnSeries extends Series {
 
     /* *
      *
@@ -91,7 +98,7 @@ class ColumnSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
-    public static defaultOptions: ColumnSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: ColumnSeriesOptions = merge(Series.defaultOptions, {
 
         /**
          * The corner radius of the border surrounding each column or bar.
@@ -383,7 +390,7 @@ class ColumnSeries extends LineSeries {
                  * @default #cccccc
                  * @product highcharts highstock gantt
                  */
-                color: '${palette.neutralColor20}',
+                color: palette.neutralColor20,
 
                 /**
                  * A specific border color for the selected point.
@@ -392,7 +399,7 @@ class ColumnSeries extends LineSeries {
                  * @default #000000
                  * @product highcharts highstock gantt
                  */
-                borderColor: '${palette.neutralColor100}'
+                borderColor: palette.neutralColor100
             }
         },
 
@@ -467,7 +474,7 @@ class ColumnSeries extends LineSeries {
          *
          * @private
          */
-        borderColor: '${palette.backgroundColor}'
+        borderColor: palette.backgroundColor
 
     });
 
@@ -477,6 +484,8 @@ class ColumnSeries extends LineSeries {
      *
      * */
 
+    public borderWidth: number = void 0 as any;
+
     public columnIndex?: number;
 
     public columnMetrics?: ColumnMetricsObject;
@@ -485,7 +494,19 @@ class ColumnSeries extends LineSeries {
 
     public dashStyle?: DashStyleValue;
 
+    public data: Array<ColumnPoint> = void 0 as any;
+
     public dense?: boolean;
+
+    public group: SVGElement = void 0 as any;
+
+    public options: ColumnSeriesOptions = void 0 as any;
+
+    public points: Array<ColumnPoint> = void 0 as any;
+
+    public pointXOffset?: number;
+
+    public translatedThreshold?: number;
 
     /* *
      *
@@ -494,6 +515,65 @@ class ColumnSeries extends LineSeries {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    /**
+     * Animate the column heights one by one from zero.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#animate
+     *
+     * @param {boolean} init
+     *        Whether to initialize the animation or run it
+     */
+    public animate(init: boolean): void {
+        var series = this,
+            yAxis = this.yAxis,
+            options = series.options,
+            inverted = this.chart.inverted,
+            attr: SVGAttributes = {},
+            translateProp = inverted ? 'translateX' : 'translateY',
+            translateStart: number,
+            translatedThreshold;
+
+        if (init) {
+            attr.scaleY = 0.001;
+            translatedThreshold = clamp(
+                yAxis.toPixels(options.threshold as any),
+                yAxis.pos,
+                yAxis.pos + yAxis.len
+            );
+            if (inverted) {
+                attr.translateX = translatedThreshold - yAxis.len;
+            } else {
+                attr.translateY = translatedThreshold;
+            }
+
+            // apply finnal clipping (used in Highstock) (#7083)
+            // animation is done by scaleY, so cliping is for panes
+            if (series.clipBox) {
+                series.setClip();
+            }
+
+            series.group.attr(attr);
+
+        } else { // run the animation
+            translateStart = series.group.attr(translateProp) as any;
+            series.group.animate(
+                { scaleY: 1 },
+                extend(animObject(series.options.animation), {
+                    // Do the scale synchronously to ensure smooth
+                    // updating (#5030, #7228)
+                    step: function (val: any, fx: any): void {
+                        if (series.group) {
+                            attr[translateProp] = translateStart +
+                                fx.pos * (yAxis.pos - translateStart);
+                            series.group.attr(attr);
+                        }
+                    }
+                })
+            );
+        }
+    }
 
     /**
      * Initialize the series. Extends the basic Series.init method by
@@ -799,7 +879,7 @@ class ColumnSeries extends LineSeries {
             seriesBarW = Math.ceil(seriesBarW);
         }
 
-        LineSeries.prototype.translate.apply(series);
+        Series.prototype.translate.apply(series);
 
         // Record the new values
         series.points.forEach(function (point): void {
@@ -836,8 +916,9 @@ class ColumnSeries extends LineSeries {
                     // and if there's room for it (#7311)
                     (yAxis.min || 0) < threshold &&
                     // if all points are the same value (i.e zero) not draw
-                    // as negative points (#10646)
-                    dataMin !== dataMax
+                    // as negative points (#10646), but only if there's room
+                    // for it (#14876)
+                    (dataMin !== dataMax || (yAxis.max || 0) <= threshold)
                 ) {
                     up = !up;
                 }
@@ -885,7 +966,7 @@ class ColumnSeries extends LineSeries {
                     barH
                 ] :
                 [
-                    barX + barW / 2,
+                    xAxis.left - chart.plotLeft + barX + barW / 2,
                     clamp(
                         plotY + (yAxis.pos as any) -
                         chart.plotTop,
@@ -1097,7 +1178,13 @@ class ColumnSeries extends LineSeries {
                         );
                 }
 
-                (graphic as any).addClass(point.getClassName(), true);
+                if (graphic) {
+                    graphic.addClass(point.getClassName(), true);
+
+                    graphic.attr({
+                        visibility: point.visible ? 'inherit' : 'hidden'
+                    });
+                }
 
             } else if (graphic) {
                 point.graphic = graphic.destroy(); // #1269
@@ -1106,62 +1193,72 @@ class ColumnSeries extends LineSeries {
     }
 
     /**
-     * Animate the column heights one by one from zero.
-     *
+     * Draw the tracker for a point.
      * @private
-     * @function Highcharts.seriesTypes.column#animate
-     *
-     * @param {boolean} init
-     *        Whether to initialize the animation or run it
      */
-    public animate(init: boolean): void {
+    public drawTracker(): void {
         var series = this,
-            yAxis = this.yAxis,
-            options = series.options,
-            inverted = this.chart.inverted,
-            attr: SVGAttributes = {},
-            translateProp = inverted ? 'translateX' : 'translateY',
-            translateStart: number,
-            translatedThreshold;
+            chart = series.chart,
+            pointer = chart.pointer,
+            onMouseOver = function (e: PointerEvent): void {
+                var point = pointer.getPointFromEvent(e);
 
-        if (init) {
-            attr.scaleY = 0.001;
-            translatedThreshold = clamp(
-                yAxis.toPixels(options.threshold as any),
-                yAxis.pos,
-                yAxis.pos + yAxis.len
+                // undefined on graph in scatterchart
+                if (typeof point !== 'undefined') {
+                    pointer.isDirectTouch = true;
+                    point.onMouseOver(e);
+                }
+            },
+            dataLabels;
+
+        // Add reference to the point
+        series.points.forEach(function (point): void {
+            dataLabels = (
+                isArray(point.dataLabels) ?
+                    point.dataLabels :
+                    (point.dataLabel ? [point.dataLabel] : [])
             );
-            if (inverted) {
-                attr.translateX = translatedThreshold - yAxis.len;
-            } else {
-                attr.translateY = translatedThreshold;
+
+            if (point.graphic) {
+                (point.graphic.element as any).point = point;
             }
+            (dataLabels as any).forEach(function (
+                dataLabel: SVGElement
+            ): void {
+                if (dataLabel.div) {
+                    dataLabel.div.point = point;
+                } else {
+                    (dataLabel.element as any).point = point;
+                }
+            });
+        });
 
-            // apply finnal clipping (used in Highstock) (#7083)
-            // animation is done by scaleY, so cliping is for panes
-            if (series.clipBox) {
-                series.setClip();
-            }
-
-            series.group.attr(attr);
-
-        } else { // run the animation
-            translateStart = series.group.attr(translateProp) as any;
-            series.group.animate(
-                { scaleY: 1 },
-                extend(animObject(series.options.animation), {
-                    // Do the scale synchronously to ensure smooth
-                    // updating (#5030, #7228)
-                    step: function (val: any, fx: any): void {
-                        if (series.group) {
-                            attr[translateProp] = translateStart +
-                                fx.pos * (yAxis.pos - translateStart);
-                            series.group.attr(attr);
-                        }
+        // Add the event listeners, we need to do this only once
+        if (!series._hasTracking) {
+            (series.trackerGroups as any).forEach(function (key: string): void {
+                if ((series as any)[key]) {
+                    // we don't always have dataLabelsGroup
+                    (series as any)[key]
+                        .addClass('highcharts-tracker')
+                        .on('mouseover', onMouseOver)
+                        .on('mouseout', function (e: PointerEvent): void {
+                            pointer.onTrackerMouseOut(e);
+                        });
+                    if (hasTouch) {
+                        (series as any)[key].on('touchstart', onMouseOver);
                     }
-                })
-            );
+
+                    if (!chart.styledMode && series.options.cursor) {
+                        (series as any)[key]
+                            .css(css)
+                            .css({ cursor: series.options.cursor });
+                    }
+                }
+            });
+            series._hasTracking = true;
         }
+
+        fireEvent(this, 'afterDrawTracker');
     }
 
     /**
@@ -1184,7 +1281,7 @@ class ColumnSeries extends LineSeries {
             });
         }
 
-        LineSeries.prototype.remove.apply(series, arguments as any);
+        Series.prototype.remove.apply(series, arguments as any);
     }
 
     /* eslint-enable valid-jsdoc */
@@ -1197,48 +1294,38 @@ class ColumnSeries extends LineSeries {
  *
  * */
 
-interface ColumnSeries extends LineSeries {
-    borderWidth: number;
-    data: Array<ColumnPoint>;
-    group: SVGElement;
-    options: ColumnSeriesOptions;
+interface ColumnSeries {
     pointClass: typeof ColumnPoint;
-    points: Array<ColumnPoint>;
-    pointXOffset: number;
-    translatedThreshold?: number;
 }
-extend(
-    ColumnSeries.prototype,
-    {
-        cropShoulder: 0,
+extend(ColumnSeries.prototype, {
+    cropShoulder: 0,
 
-        // When tooltip is not shared, this series (and derivatives) requires
-        // direct touch/hover. KD-tree does not apply.
-        directTouch: true,
+    // When tooltip is not shared, this series (and derivatives) requires
+    // direct touch/hover. KD-tree does not apply.
+    directTouch: true,
 
-        /**
-         * Use a solid rectangle like the area series types
-         *
-         * @private
-         * @function Highcharts.seriesTypes.column#drawLegendSymbol
-         *
-         * @param {Highcharts.Legend} legend
-         *        The legend object
-         *
-         * @param {Highcharts.Series|Highcharts.Point} item
-         *        The series (this) or point
-         */
-        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    /**
+     * Use a solid rectangle like the area series types
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#drawLegendSymbol
+     *
+     * @param {Highcharts.Legend} legend
+     *        The legend object
+     *
+     * @param {Highcharts.Series|Highcharts.Point} item
+     *        The series (this) or point
+     */
+    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
-        getSymbol: noop as any,
+    getSymbol: noop as any,
 
-        // use separate negative stacks, unlike area stacks where a negative
-        // point is substracted from previous (#1910)
-        negStacks: true,
+    // use separate negative stacks, unlike area stacks where a negative
+    // point is substracted from previous (#1910)
+    negStacks: true,
 
-        trackerGroups: ['group', 'dataLabelsGroup']
-    }
-);
+    trackerGroups: ['group', 'dataLabelsGroup']
+});
 
 /* *
  *
@@ -1251,7 +1338,7 @@ declare module '../../Core/Series/SeriesType' {
         column: typeof ColumnSeries;
     }
 }
-BaseSeries.registerSeriesType('column', ColumnSeries);
+SeriesRegistry.registerSeriesType('column', ColumnSeries);
 
 /* *
  *

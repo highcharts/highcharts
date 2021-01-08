@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -135,7 +135,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
         scrollablePixelsX,
         scrollablePixelsY,
         corrections: (
-            Highcharts.Dictionary<Highcharts.Dictionary<(number|string)>>|
+            Record<string, Record<string, (number|string)>>|
             undefined
         );
 

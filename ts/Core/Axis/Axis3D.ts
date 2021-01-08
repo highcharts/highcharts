@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Extenstion for 3d axes
  *
@@ -766,19 +766,19 @@ class Axis3D {
 
             // Check whether the tick is not the first one and previous tick
             // exists, then calculate position of previous label.
-            if (tickId !== 0 && prevTick && (prevTick.label as any).xy) {
+            if (tickId !== 0 && prevTick && prevTick.label && prevTick.label.xy) {
                 prevLabelPos = perspective3D({ // #8621
-                    x: (prevTick.label as any).xy.x,
-                    y: (prevTick.label as any).xy.y,
+                    x: prevTick.label.xy.x,
+                    y: prevTick.label.xy.y,
                     z: null as any
                 }, origin, origin.vd);
             }
             // If next label position is defined, then recalculate its position
             // basing on the perspective.
-            if (nextTick && (nextTick.label as any).xy) {
+            if (nextTick && nextTick.label && nextTick.label.xy) {
                 nextLabelPos = perspective3D({
-                    x: (nextTick.label as any).xy.x,
-                    y: (nextTick.label as any).xy.y,
+                    x: nextTick.label.xy.x,
+                    y: nextTick.label.xy.y,
                     z: null as any
                 }, origin, origin.vd);
             }

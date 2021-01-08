@@ -8,11 +8,14 @@ QUnit.test('Negative or positive minPointLength', function (assert) {
                 minPointLength: 10
             }
         },
-        series: [{
-            data: [100]
-        }, {
-            data: [0, 0]
-        }]
+        series: [
+            {
+                data: [100]
+            },
+            {
+                data: [0, 0]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -32,14 +35,26 @@ QUnit.test('All zero values', function (assert) {
                 minPointLength: 10
             }
         },
-        series: [{
-            data: [0, 0, 0, 0, 0]
-        }]
+        series: [
+            {
+                data: [0, 0, 0, 0, 0]
+            }
+        ]
     });
 
     assert.strictEqual(
         chart.series[0].points[0].shapeArgs.y < 145, // 145 value of negative point
         true,
         'Zero values are draw as positive columns (#10646)'
+    );
+
+    chart.addSeries({
+        data: [-1, -2]
+    });
+
+    assert.strictEqual(
+        Math.round(chart.series[0].points[0].shapeArgs.y),
+        0,
+        'Zero values should only be drawn as positive when there is room for it (#14876)'
     );
 });

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,13 +10,13 @@
 
 'use strict';
 
-import type AnimationOptionsObject from './AnimationOptionsObject';
+import type AnimationOptions from './AnimationOptions';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type FxLike from './FxLike';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -39,18 +39,18 @@ declare global {
         function animate(
             el: (HTMLDOMElement|SVGElement),
             params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptionsObject>
+            opt?: Partial<AnimationOptions>
         ): void;
         function animObject(
-            animation?: (boolean|AnimationOptionsObject)
-        ): AnimationOptionsObject;
+            animation?: (boolean|AnimationOptions)
+        ): AnimationOptions;
         function getDeferredAnimation(
             chart: Chart,
-            animation: Partial<AnimationOptionsObject>,
-            series?: LineSeries
-        ): Partial<AnimationOptionsObject>;
+            animation: Partial<AnimationOptions>,
+            series?: Series
+        ): Partial<AnimationOptions>;
         function setAnimation(
-            animation: (boolean|Partial<AnimationOptionsObject>|undefined),
+            animation: (boolean|Partial<AnimationOptions>|undefined),
             chart: Chart
         ): void
     }
@@ -74,6 +74,14 @@ class Fx {
 
     /* *
      *
+     * Static properties
+     *
+     * */
+
+    public static timers: Array<Highcharts.Timer> = [];
+
+    /* *
+     *
      *  Constructors
      *
      * */
@@ -91,7 +99,7 @@ class Fx {
      */
     public constructor(
         elem: (HTMLElement|SVGElement),
-        options: Partial<AnimationOptionsObject>,
+        options: Partial<AnimationOptions>,
         prop: string
     ) {
         this.options = options;
@@ -109,7 +117,7 @@ class Fx {
     public end?: number;
     public from?: number;
     public now?: number;
-    public options: Partial<AnimationOptionsObject>;
+    public options: Partial<AnimationOptions>;
     public paths?: [SVGPath, SVGPath];
     public pos: number = NaN;
     public prop: string;
@@ -244,13 +252,13 @@ class Fx {
                     setTimeout(step, 13);
                 },
             step = function (): void {
-                for (var i = 0; i < H.timers.length; i++) {
-                    if (!H.timers[i]()) {
-                        H.timers.splice(i--, 1);
+                for (var i = 0; i < Fx.timers.length; i++) {
+                    if (!Fx.timers[i]()) {
+                        Fx.timers.splice(i--, 1);
                     }
                 }
 
-                if (H.timers.length) {
+                if (Fx.timers.length) {
                     requestAnimationFrame(step);
                 }
             };
@@ -271,7 +279,7 @@ class Fx {
             timer.elem = this.elem;
             timer.prop = this.prop;
 
-            if (timer() && H.timers.push(timer) === 1) {
+            if (timer() && Fx.timers.push(timer) === 1) {
                 requestAnimationFrame(step);
             }
         }
@@ -296,7 +304,7 @@ class Fx {
             elem = this.elem,
             complete = options.complete,
             duration: number = options.duration as any,
-            curAnim: Highcharts.Dictionary<boolean> = options.curAnim as any;
+            curAnim: Record<string, boolean> = options.curAnim as any;
 
         if (elem.attr && !elem.element) { // #2616, element is destroyed
             ret = false;
@@ -533,6 +541,19 @@ interface Fx extends FxLike {
     // Nothing here yet
 }
 
+/* *
+ *
+ *  Compatibility
+ *
+ * */
+
 H.Fx = Fx;
+(H as any).timers = Fx.timers;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Fx;

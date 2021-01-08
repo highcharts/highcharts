@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,6 +10,7 @@
 'use strict';
 import H from './Globals.js';
 var doc = H.doc;
+import palette from './Color/Palette.js';
 import U from './Utilities.js';
 var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**
@@ -513,9 +514,9 @@ var Tooltip = /** @class */ (function () {
             doc.documentElement.clientWidth - 2 * distance :
             chart.chartWidth, outerHeight = outside ?
             Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, doc.body.offsetHeight, doc.documentElement.offsetHeight, doc.documentElement.clientHeight) :
-            chart.chartHeight, chartPosition = chart.pointer.getChartPosition(), containerScaling = chart.containerScaling, scaleX = function (val) { return ( // eslint-disable-line no-confusing-arrow
-        containerScaling ? val * containerScaling.scaleX : val); }, scaleY = function (val) { return ( // eslint-disable-line no-confusing-arrow
-        containerScaling ? val * containerScaling.scaleY : val); }, 
+            chart.chartHeight, chartPosition = chart.pointer.getChartPosition(), scaleX = function (val) { return ( // eslint-disable-line no-confusing-arrow
+        val * chartPosition.scaleX); }, scaleY = function (val) { return ( // eslint-disable-line no-confusing-arrow
+        val * chartPosition.scaleY); }, 
         // Build parameter arrays for firstDimension()/secondDimension()
         buildDimensionArray = function (dim) {
             var isX = dim === 'x';
@@ -909,7 +910,7 @@ var Tooltip = /** @class */ (function () {
                         stroke: (options.borderColor ||
                             point.color ||
                             currentSeries.color ||
-                            '${palette.neutralColor60}')
+                            palette.neutralColor60)
                     });
                 }
                 tooltip.updatePosition({
@@ -1063,7 +1064,7 @@ var Tooltip = /** @class */ (function () {
                     stroke: (options.borderColor ||
                         point.color ||
                         series.color ||
-                        '${palette.neutralColor80}')
+                        palette.neutralColor80)
                 });
             }
             return tt;
@@ -1312,13 +1313,12 @@ var Tooltip = /** @class */ (function () {
             this.renderer.setSize(label.width + pad, label.height + pad, false);
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            var containerScaling = chart.containerScaling;
-            if (containerScaling) {
+            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
                 css(this.container, {
-                    transform: "scale(" + containerScaling.scaleX + ", " + containerScaling.scaleY + ")"
+                    transform: "scale(" + chartPosition.scaleX + ", " + chartPosition.scaleY + ")"
                 });
-                anchorX *= containerScaling.scaleX;
-                anchorY *= containerScaling.scaleY;
+                anchorX *= chartPosition.scaleX;
+                anchorY *= chartPosition.scaleY;
             }
             anchorX += chartPosition.left - pos.x;
             anchorY += chartPosition.top - pos.y;

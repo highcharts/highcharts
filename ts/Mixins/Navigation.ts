@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2018 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *

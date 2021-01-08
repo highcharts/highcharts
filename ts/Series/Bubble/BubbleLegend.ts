@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -14,6 +14,8 @@
 
 import type { AlignValue } from '../../Core/Renderer/AlignObject';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
+import type BubbleSeries from './BubbleSeries';
+import type { BubbleSizeByValue } from './BubbleSeriesOptions';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type Point from '../../Core/Series/Point';
@@ -25,7 +27,8 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend.js';
-import LineSeries from '../Line/LineSeries.js';
+import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -118,8 +121,8 @@ declare global {
         }
         interface Legend {
             bubbleLegend?: BubbleLegend;
-            getLinesHeights(): Array<Dictionary<number>>;
-            retranslateItems(lines: Array<Dictionary<number>>): void;
+            getLinesHeights(): Array<Record<string, number>>;
+            retranslateItems(lines: Array<Record<string, number>>): void;
         }
         interface LegendItemObject {
             ignoreSeries?: boolean;
@@ -141,10 +144,10 @@ declare global {
             public movementX: number;
             public ranges: Array<BubbleLegendRangesOptions>;
             public setState: Function;
-            public symbols: Dictionary<Array<SVGElement>>;
+            public symbols: Record<string, Array<SVGElement>>;
             public options: BubbleLegendOptions;
             public visible: boolean;
-            public addToLegend(items: Array<(LineSeries|Point)>): void;
+            public addToLegend(items: Array<(Series|Point)>): void;
             public correctSizes(): void;
             public drawLegendSymbol(legend: Legend): void;
             public formatLabel(range: BubbleLegendRangesOptions): string;
@@ -464,7 +467,7 @@ class BubbleLegend {
     public movementX: number = void 0 as any;
     public ranges: Array<Highcharts.BubbleLegendRangesOptions> = void 0 as any;
     public visible: boolean = void 0 as any;
-    public symbols: Highcharts.Dictionary<Array<SVGElement>>= void 0 as any;
+    public symbols: Record<string, Array<SVGElement>>= void 0 as any;
     public options: Highcharts.BubbleLegendOptions = void 0 as any;
 
 
@@ -500,7 +503,7 @@ class BubbleLegend {
      *        All legend items
      * @return {void}
      */
-    public addToLegend(items: Array<(LineSeries|Point)>): void {
+    public addToLegend(items: Array<(Series|Point)>): void {
         // Insert bubbleLegend into legend items
         items.splice(this.options.legendIndex as any, 0, this as any);
     }
@@ -670,7 +673,7 @@ class BubbleLegend {
             'font-size': (options.labels as any).style.fontSize,
             fill: pick(
                 (options.labels as any).style.color,
-                '${palette.neutralColor100}'
+                palette.neutralColor100
             ),
             'z-index': options.zIndex,
             align: rtl || labelsOnLeft ? 'right' : 'left'
@@ -692,9 +695,7 @@ class BubbleLegend {
     public getRangeRadius(value: number): (number|null) {
         var options = this.options,
             seriesIndex = this.options.seriesIndex,
-            bubbleSeries: Highcharts.BubbleSeries = (
-                this.chart.series[seriesIndex as any] as any
-            ),
+            bubbleSeries: BubbleSeries = this.chart.series[seriesIndex as any] as any,
             zMax = (options.ranges as any)[0].value,
             zMin = (options.ranges as any)[
                 (options.ranges as any).length - 1
@@ -974,7 +975,7 @@ class BubbleLegend {
             minZ = Number.MAX_VALUE,
             maxZ = -Number.MAX_VALUE;
 
-        series.forEach(function (s: Highcharts.BubbleSeries): void {
+        series.forEach(function (s: BubbleSeries): void {
             // Find the min and max Z, like in bubble series
             if (s.isBubble && !s.ignoreSeries) {
                 zData = s.zData.filter(isNumber);
@@ -1043,9 +1044,7 @@ class BubbleLegend {
             lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0,
             plotSizeX = chart.plotSizeX,
             plotSizeY = chart.plotSizeY,
-            bubbleSeries = chart.series[this.options.seriesIndex as any] as (
-                Highcharts.BubbleSeries
-            ),
+            bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
             minSize = Math.ceil(bubbleSeries.minPxSize),
             maxPxSize = Math.ceil(bubbleSeries.maxPxSize),
             maxSize = bubbleSeries.options.maxSize,
@@ -1105,11 +1104,7 @@ class BubbleLegend {
     public correctSizes(): void {
         var legend = this.legend,
             chart = this.chart,
-            bubbleSeries = (
-                chart.series[
-                    this.options.seriesIndex as any
-                ] as Highcharts.BubbleSeries
-            ),
+            bubbleSeries: BubbleSeries = chart.series[this.options.seriesIndex as any] as any,
             bubbleSeriesSize = bubbleSeries.maxPxSize,
             bubbleLegendSize = this.options.maxSize;
 
@@ -1128,7 +1123,7 @@ class BubbleLegend {
 // Start the bubble legend creation process.
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
-    e: { allItems: Array<(LineSeries|Point)> }
+    e: { allItems: Array<(Series|Point)> }
 ): void {
     var legend = this,
         bubbleLegend = legend.bubbleLegend,
@@ -1193,9 +1188,9 @@ Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
  */
 Legend.prototype.getLinesHeights = function (
     this: Highcharts.Legend
-): Array<Highcharts.Dictionary<number>> {
+): Array<Record<string, number>> {
     var items = this.allItems,
-        lines = [] as Array<Highcharts.Dictionary<number>>,
+        lines = [] as Array<Record<string, number>>,
         lastLine,
         length = items.length,
         i = 0,
@@ -1247,7 +1242,7 @@ Legend.prototype.retranslateItems = function (
         actualLine = 0;
 
     items.forEach(function (
-        item: (Highcharts.BubbleLegend|LineSeries|Point),
+        item: (Highcharts.BubbleLegend|Series|Point),
         index: number
     ): void {
         orgTranslateX = (item.legendGroup as any).translateX;
@@ -1277,7 +1272,7 @@ Legend.prototype.retranslateItems = function (
 };
 
 // Toggle bubble legend depending on the visible status of bubble series.
-addEvent(LineSeries, 'legendItemClick', function (): void {
+addEvent(Series, 'legendItemClick', function (): void {
     var series = this,
         chart = series.chart,
         visible = series.visible,

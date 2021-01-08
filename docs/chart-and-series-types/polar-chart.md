@@ -5,7 +5,7 @@ Polar charts, also known as radar charts, require the highcharts-more.js file.
 
 We took great care to reuse existing options and patterns when designing the option set of polar charts. The result is one single switch to turn a regular X-Y chart into a polar chart. Add the chart.polar option, and the X axis is wrapped around the perimeter while the Y axis extends from the center to the top.
 
-![Image of a Polar chart](polar.png)
+<iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/polar-wind-rose" allow="fullscreen"></iframe>
 
 To create a polar chart set chart.polar to be true:
 

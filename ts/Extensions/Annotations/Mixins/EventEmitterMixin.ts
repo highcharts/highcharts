@@ -91,7 +91,8 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                     H.isTouchDevice ? 'touchstart' : 'mousedown',
                     (e: Highcharts.AnnotationEventObject): void => {
                         emitter.onMouseDown(e);
-                    }
+                    },
+                    { passive: false }
                 );
             };
 
@@ -121,7 +122,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
                 emitter.graphic.on(type, eventHandler);
             } else {
-                addEvent(emitter, type, eventHandler);
+                addEvent(emitter, type, eventHandler, { passive: false });
             }
         });
 
@@ -207,7 +208,8 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
                 prevChartX = e.chartX;
                 prevChartY = e.chartY;
-            }
+            },
+            H.isTouchDevice ? { passive: false } : void 0
         );
         emitter.removeMouseUp = addEvent(
             H.doc,
@@ -219,7 +221,8 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                 // ControlPoints vs Annotation:
                 fireEvent(pick(emitter.target, emitter), 'afterUpdate');
                 emitter.onMouseUp(e);
-            }
+            },
+            H.isTouchDevice ? { passive: false } : void 0
         );
     },
 

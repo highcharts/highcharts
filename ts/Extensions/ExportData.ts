@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,12 +16,12 @@
 
 'use strict';
 
-import type LineSeries from '../Series/Line/LineSeries.js';
 import type Point from '../Core/Series/Point';
 import type {
     PointOptions,
     PointShortOptions
 } from '../Core/Series/PointOptions';
+import type Series from '../Core/Series/Series.js';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -79,14 +79,20 @@ declare module '../Core/Series/SeriesLike' {
     }
 }
 
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        includeInDataExport?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        type ExportingCategoryMap = Dictionary<Array<(number|string|null)>>;
-        type ExportingDateTimeMap = Dictionary<Array<string>>;
+        type ExportingCategoryMap = Record<string, Array<(number|string|null)>>;
+        type ExportingDateTimeMap = Record<string, Array<string>>;
 
         interface ExportingCategoryDateTimeMap {
             categoryMap: ExportingCategoryMap;
@@ -114,7 +120,7 @@ declare global {
             x?: number;
         }
         interface ExportDataSeries {
-            autoIncrement: LineSeries['autoIncrement'];
+            autoIncrement: Series['autoIncrement'];
             chart: Chart;
             options: SeriesOptions;
             pointArrayMap?: Array<string>;
@@ -519,7 +525,7 @@ Chart.prototype.getDataRows = function (
         ),
         xAxis: Highcharts.Axis,
         xAxes = this.xAxis,
-        rows: Highcharts.Dictionary<(Array<any>&Highcharts.Dictionary<any>)> =
+        rows: Record<string, (Array<any>&Record<string, any>)> =
             {},
         rowArr = [],
         dataRows,
@@ -535,7 +541,7 @@ Chart.prototype.getDataRows = function (
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
         columnHeaderFormatter = function (
-            item: (Axis|LineSeries),
+            item: (Axis|Series),
             key?: string,
             keyLength?: number
         ): (string|Record<string, string>) {
@@ -569,7 +575,7 @@ Chart.prototype.getDataRows = function (
         },
         // Map the categories for value axes
         getCategoryAndDateTimeMap = function (
-            series: LineSeries,
+            series: Series,
             pointArrayMap: Array<string>,
             pIdx?: number
         ): Highcharts.ExportingCategoryDateTimeMap {
@@ -603,7 +609,7 @@ Chart.prototype.getDataRows = function (
         // Create point array depends if xAxis is category
         // or point.name is defined #13293
         getPointArray = function (
-            series: LineSeries,
+            series: Series,
             xAxis: Highcharts.Axis
         ): string[] {
             const namedPoints = series.data.filter((d): string | false =>
@@ -634,12 +640,12 @@ Chart.prototype.getDataRows = function (
 
     this.setUpKeyToAxis();
 
-    this.series.forEach(function (series: LineSeries): void {
+    this.series.forEach(function (series: Series): void {
         var keys = series.options.keys,
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
-            xTaken: (false|Highcharts.Dictionary<unknown>) =
+            xTaken: (false|Record<string, unknown>) =
                 !series.requireSorting && {},
             xAxisIndex = xAxes.indexOf(xAxis),
             categoryAndDatetimeMap = getCategoryAndDateTimeMap(
@@ -797,8 +803,8 @@ Chart.prototype.getDataRows = function (
 
         // Sort it by X values
         rowArr.sort(function ( // eslint-disable-line no-loop-func
-            a: Highcharts.Dictionary<any>,
-            b: Highcharts.Dictionary<any>
+            a: Record<string, any>,
+            b: Record<string, any>
         ): number {
             return a.xValues[xAxisIndex] - b.xValues[xAxisIndex];
         });
@@ -814,7 +820,7 @@ Chart.prototype.getDataRows = function (
 
         // Add the category column
         rowArr.forEach(function ( // eslint-disable-line no-loop-func
-            row: Highcharts.Dictionary<any>
+            row: Record<string, any>
         ): void {
             var category = row.name;
 
@@ -1319,7 +1325,7 @@ if (exportingOptions) {
                 this.toggleDataTable();
             }
         }
-    } as Highcharts.Dictionary<Highcharts.ExportingMenuObject>);
+    } as Record<string, Highcharts.ExportingMenuObject>);
 
     if (exportingOptions.buttons) {
         (exportingOptions.buttons.contextButton.menuItems as any).push(

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,14 +15,15 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from './Renderer/AlignObject';
-import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
+import type AnimationOptions from './Animation/AnimationOptions';
+import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
+import type Series from './Series/Series';
 import type { SeriesTypeOptions, SeriesTypePlotOptions } from './Series/SeriesType';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
@@ -35,6 +36,7 @@ import Color from './Color/Color.js';
 const {
     parse: color
 } = Color;
+import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
@@ -95,7 +97,7 @@ declare global {
         }
         interface ChartOptions {
             alignTicks?: boolean;
-            animation?: (boolean|Partial<AnimationOptionsObject>);
+            animation?: (boolean|Partial<AnimationOptions>);
             backgroundColor?: ColorType;
             borderColor?: ColorType;
             borderRadius?: number;
@@ -140,6 +142,7 @@ declare global {
             styledMode?: boolean;
             type?: string;
             width?: (null|number|string);
+            zoomBySingleTouch?: boolean;
             zoomType?: ('x'|'xy'|'y');
         }
         interface ChartRedrawCallbackFunction {
@@ -229,7 +232,7 @@ declare global {
         }
         interface LegendNavigationOptions {
             activeColor?: ColorType;
-            animation?: (boolean|Partial<AnimationOptionsObject>);
+            animation?: (boolean|Partial<AnimationOptions>);
             arrowSize?: number;
             enabled?: boolean;
             inactiveColor?: ColorType;
@@ -254,7 +257,7 @@ declare global {
             itemWidth?: number;
             layout?: ('horizontal'|'vertical'|'proximate');
             labelFormat?: string;
-            labelFormatter?: FormatterCallbackFunction<LineSeries|Point>;
+            labelFormatter?: FormatterCallbackFunction<Series|Point>;
             /** @deprecated */
             lineHeight?: number;
             margin?: number;
@@ -314,6 +317,10 @@ declare global {
             title?: TitleOptions;
             tooltip?: TooltipOptions;
         }
+        interface PanningOptions {
+            type: ('x'|'y'|'xy');
+            enabled: boolean;
+        }
         interface SubtitleOptions {
             align?: AlignValue;
             floating?: boolean;
@@ -347,7 +354,7 @@ declare global {
             changeDecimals?: number;
             /** @deprecated */
             crosshairs?: any;
-            dateTimeLabelFormats?: Dictionary<string>;
+            dateTimeLabelFormats?: Record<string, string>;
             enabled?: boolean;
             followPointer?: boolean;
             followTouchMove?: boolean;
@@ -613,7 +620,7 @@ H.defaultOptions = {
      * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
      */
-    colors: '${palette.colors}'.split(' '),
+    colors: palette.colors,
 
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
@@ -1957,6 +1964,20 @@ H.defaultOptions = {
          */
 
         /**
+         * Enables zooming by a single touch, in combination with
+         * [chart.zoomType](#chart.zoomType). When enabled, two-finger pinch
+         * will still work as set up by [chart.pinchType](#chart.pinchType).
+         * However, `zoomBySingleTouch` will interfere with touch-dragging the
+         * chart to read the tooltip. And especially when vertical zooming is
+         * enabled, it will make it hard to scroll vertically on the page.
+         * @since      next
+         * @sample     highcharts/chart/zoombysingletouch
+         *             Zoom by single touch enabled, with buttons to toggle
+         * @product    highcharts higstock gantt
+         */
+        zoomBySingleTouch: false,
+
+        /**
          * An explicit width for the chart. By default (when `null`) the width
          * is calculated from the offset width of the containing element.
          *
@@ -2010,7 +2031,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '${palette.highlightColor80}',
+        borderColor: palette.highlightColor80,
 
         /**
          * The pixel width of the outer chart border.
@@ -2051,7 +2072,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: '${palette.backgroundColor}',
+        backgroundColor: palette.backgroundColor,
 
         /**
          * The background color or gradient for the plot area.
@@ -2111,7 +2132,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        plotBorderColor: '${palette.neutralColor20}'
+        plotBorderColor: palette.neutralColor20
 
     },
 
@@ -2580,7 +2601,7 @@ H.defaultOptions = {
             /**
              * @ignore-option
              */
-            color: '${palette.neutralColor80}'
+            color: palette.neutralColor80
         }
     },
 
@@ -2812,7 +2833,7 @@ H.defaultOptions = {
          * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function (
-            this: (LineSeries|Point)
+            this: (Series|Point)
         ): string {
             /** eslint-enable valid-jsdoc */
             return this.name as any;
@@ -2876,7 +2897,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '${palette.neutralColor40}',
+        borderColor: palette.neutralColor40,
 
         /**
          * The border corner radius of the legend.
@@ -2977,7 +2998,7 @@ H.defaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            activeColor: '${palette.highlightColor100}',
+            activeColor: palette.highlightColor100,
 
             /**
              * The color of the inactive up or down arrow in the legend page
@@ -2994,7 +3015,7 @@ H.defaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            inactiveColor: '${palette.neutralColor20}'
+            inactiveColor: palette.neutralColor20
         },
 
         /**
@@ -3075,7 +3096,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             /**
              * @ignore
              */
@@ -3114,7 +3135,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '${palette.neutralColor100}'
+            color: palette.neutralColor100
         },
 
         /**
@@ -3136,7 +3157,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '${palette.neutralColor20}'
+            color: palette.neutralColor20
         },
 
         /**
@@ -3461,7 +3482,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            backgroundColor: '${palette.backgroundColor}',
+            backgroundColor: palette.backgroundColor,
             /**
              * @ignore
              */
@@ -4091,7 +4112,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: color('${palette.neutralColor3}')
+        backgroundColor: color(palette.neutralColor3)
             .setOpacity(0.85).get(),
 
         /**
@@ -4146,7 +4167,7 @@ H.defaultOptions = {
          */
         style: {
             /** @internal */
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             /** @internal */
             cursor: 'default',
             /** @internal */
@@ -4253,7 +4274,7 @@ H.defaultOptions = {
             /** @internal */
             cursor: 'pointer',
             /** @internal */
-            color: '${palette.neutralColor40}',
+            color: palette.neutralColor40,
             /** @internal */
             fontSize: '9px'
         },
@@ -4280,6 +4301,8 @@ H.defaultOptions = {
 /*= if (!build.classic) { =*/
 // Legacy build for styled mode, set the styledMode option to true by default.
 (H.defaultOptions.chart as any).styledMode = true;
+/*= } else { =*/
+(H.defaultOptions.chart as any).styledMode = false;
 /*= } =*/
 '';
 

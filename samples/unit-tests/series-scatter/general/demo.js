@@ -3,13 +3,15 @@ QUnit.test('Scatter series general tests.', function (assert) {
             chart: {
                 type: 'scatter'
             },
-            series: [{
-                lineWidth: 1,
-                data: [
-                    [161.2, 51.6],
-                    [167.5, 59.0]
-                ]
-            }]
+            series: [
+                {
+                    lineWidth: 1,
+                    data: [
+                        [161.2, 51.6],
+                        [167.5, 59.0]
+                    ]
+                }
+            ]
         }),
         series = chart.series[0];
 

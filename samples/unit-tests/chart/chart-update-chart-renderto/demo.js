@@ -1,5 +1,4 @@
 QUnit.test('Chart update with circular renderTo', assert => {
-
     const renderTo = document.createElement('div');
     let chart;
     document.getElementById('container').appendChild(renderTo);
@@ -11,9 +10,11 @@ QUnit.test('Chart update with circular renderTo', assert => {
             chart: {
                 renderTo: renderTo
             },
-            series: [{
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
         };
 
         chart = Highcharts.chart(options);
@@ -25,7 +26,6 @@ QUnit.test('Chart update with circular renderTo', assert => {
             // Issue #10044 caused RangeError: Maximum call stack size exceeded
             'There should be no JS error before this assertion (#10044)'
         );
-
     } finally {
         chart.destroy();
         document.getElementById('container').removeChild(renderTo);

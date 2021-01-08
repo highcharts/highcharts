@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -32,7 +32,7 @@ declare global {
             title: string;
             text: string;
         }
-        const errorMessages: (Dictionary<ErrorMessageObject>|undefined);
+        const errorMessages: (Record<string, ErrorMessageObject>|undefined);
     }
 }
 

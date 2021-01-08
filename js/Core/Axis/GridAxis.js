@@ -448,7 +448,7 @@ var GridAxis = /** @class */ (function () {
                     // For the Gantt set point aliases to the pointCopy
                     // to do not change the original point
                     pointCopy = merge(point);
-                    H.seriesTypes.gantt.prototype.setGanttPointAliases(pointCopy);
+                    H.seriesTypes.gantt.prototype.pointClass.setGanttPointAliases(pointCopy);
                 }
                 // Make additional properties available for the
                 // formatter
@@ -595,7 +595,7 @@ var GridAxis = /** @class */ (function () {
                 if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
                     axis.ticks[lastTick].mark.hide();
                 }
-                else {
+                else if (axis.ticks[lastTick - 1]) {
                     axis.ticks[lastTick - 1].mark.show();
                 }
             }

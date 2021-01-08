@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2017 Sebastian Bochan
+ *  (c) 2009-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -13,9 +13,13 @@
 import type Annotation from './Annotations';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../../Core/Series/Series';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
+import type SMAIndicator from '../../Stock/Indicators/SMA/SMAIndicator';
 import H from '../../Core/Globals.js';
+const {
+    isFirefox
+} = H;
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
@@ -29,6 +33,7 @@ const {
     isString,
     objectEach,
     pick,
+    stableSort,
     wrap
 } = U;
 
@@ -44,7 +49,7 @@ declare global {
             public container: HTMLDOMElement;
             public iconsURL: string;
             public indicators: PopupIndicatorsObject;
-            public lang: Dictionary<string>;
+            public lang: Record<string, string>;
             public popup: Popup;
             public tabs: PopupTabsObject;
             public addButton (
@@ -55,12 +60,12 @@ declare global {
                 fieldsDiv: HTMLDOMElement
             ): HTMLDOMElement;
             public addCloseBtn(): void;
-            public addColsContainer(container: HTMLDOMElement): Dictionary<HTMLDOMElement>;
+            public addColsContainer(container: HTMLDOMElement): Record<string, HTMLDOMElement>;
             public addInput(option: string, type: string, parentDiv: HTMLDOMElement, value: string): void;
             public closePopup(): void;
             public deselectAll(): void;
             public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
-            public getLangpack(): Dictionary<string>;
+            public getLangpack(): Record<string, string>;
             public init(parentDiv: HTMLDOMElement, iconsURL: string): void;
             public showForm(
                 type: string,
@@ -95,7 +100,9 @@ declare global {
             onSubmit: Function;
             options: AnnotationsOptions;
         }
-        type PopupFieldsDictionary<T> = Dictionary<(T|PopupFieldsDictionary<T>)>;
+        interface PopupFieldsDictionary<T> {
+            [key: string]: (T | PopupFieldsDictionary<T>);
+        }
         interface PopupFieldsObject {
             actionType: string;
             fields: PopupFieldsDictionary<string>;
@@ -122,7 +129,7 @@ declare global {
                 parentDiv: HTMLDOMElement
             ): void;
             getAmount(this: Chart): number;
-            getNameType(series: SMAIndicator, type: string): Dictionary<string>;
+            getNameType(series: SMAIndicator, type: string): Record<string, string>;
             listAllSeries(
                 this: Popup,
                 type: string,
@@ -469,7 +476,7 @@ H.Popup.prototype = {
      * @private
      * @return {Highcharts.Dictionary<string>} - elements translations.
      */
-    getLangpack: function (this: Highcharts.Popup): Highcharts.Dictionary<string> {
+    getLangpack: function (this: Highcharts.Popup): Record<string, string> {
         return (getOptions().lang as any).navigation.popup;
     },
     annotations: {
@@ -683,9 +690,13 @@ H.Popup.prototype = {
             });
 
             if (isRoot) {
-                storage = storage.sort(function (a): number {
-                    return (a as any)[1].match(/format/g) ? -1 : 1;
+                stableSort(storage, function (a: any): number {
+                    return a[1].match(/format/g) ? -1 : 1;
                 });
+
+                if (isFirefox) {
+                    storage.reverse(); // (#14691)
+                }
 
                 storage.forEach(function (genInput): void {
                     if ((genInput as any)[0] === true) {
@@ -806,7 +817,7 @@ H.Popup.prototype = {
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
 
             objectEach(series, function (
-                serie: (LineSeries|SeriesTypePlotOptions),
+                serie: (Series|SeriesTypePlotOptions),
                 value: string
             ): void {
                 var seriesOptions = serie.options;
@@ -867,9 +878,9 @@ H.Popup.prototype = {
          * @return {Object} - series name and type like: sma, ema, etc.
          */
         getNameType: function (
-            series: Highcharts.SMAIndicator,
+            series: SMAIndicator,
             type: string
-        ): Highcharts.Dictionary<string> {
+        ): Record<string, string> {
             var options = series.options,
                 seriesTypes = H.seriesTypes,
                 // add mode
@@ -983,7 +994,7 @@ H.Popup.prototype = {
         addFormFields: function (
             this: Highcharts.Popup,
             chart: Highcharts.AnnotationChart,
-            series: Highcharts.SMAIndicator,
+            series: SMAIndicator,
             seriesType: string,
             rhsColWrapper: HTMLDOMElement
         ): void {

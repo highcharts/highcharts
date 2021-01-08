@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/ADIndicator.js';
+import '../../Stock/Indicators/AD/ADIndicator.js';

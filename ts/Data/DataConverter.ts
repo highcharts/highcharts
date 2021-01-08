@@ -106,7 +106,7 @@ class DataConverter {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    private dateFormats: Highcharts.Dictionary<Highcharts.DataDateFormatObject> = {
+    private dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {

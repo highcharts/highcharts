@@ -1,23 +1,24 @@
 QUnit.test('Check last point visible (#5236)', function (assert) {
-
     var chart = Highcharts.chart('container', {
         chart: {
             width: 1000
         },
 
-        series: [{
-            type: "areaspline",
-            data: [
-                [1458428400000, 1452922],
-                [1458514800000, 1568109],
-                [1458601200000, 2486978],
-                [1458687600000, 1683891]
-            ],
-            marker: {
-                enabled: true,
-                radius: 5
+        series: [
+            {
+                type: 'areaspline',
+                data: [
+                    [1458428400000, 1452922],
+                    [1458514800000, 1568109],
+                    [1458601200000, 2486978],
+                    [1458687600000, 1683891]
+                ],
+                marker: {
+                    enabled: true,
+                    radius: 5
+                }
             }
-        }],
+        ],
         yAxis: {
             labels: {
                 enabled: false
@@ -37,5 +38,4 @@ QUnit.test('Check last point visible (#5236)', function (assert) {
         'object',
         'Last point has a marker'
     );
-
 });

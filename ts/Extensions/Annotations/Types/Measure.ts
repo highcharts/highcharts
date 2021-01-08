@@ -242,7 +242,7 @@ class Measure extends Annotation {
             xAxisMax: number,
             yAxisMin: number,
             yAxisMax: number
-        ): Highcharts.Dictionary<number> {
+        ): Record<string, number> {
             return {
                 xAxisMin: Math.min(xAxisMax, xAxisMin),
                 xAxisMax: Math.max(xAxisMax, xAxisMin),

@@ -9,4 +9,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/VennSeries.js';
+import '../../Series/Venn/VennSeries.js';

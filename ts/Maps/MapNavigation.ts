@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,12 +8,19 @@
  *
  * */
 
-import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type CSSObject from '../Core/Renderer/CSSObject';
+import type {
+    MapNavigationButtonOptions,
+    MapNavigationOptions
+} from './MapNavigationOptions';
 import type PointerEvent from '../Core/PointerEvent';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -30,6 +37,13 @@ const {
     objectEach,
     pick
 } = U;
+import './MapNavigationOptionsDefault.js';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -44,22 +58,7 @@ declare module '../Core/Chart/ChartLike'{
  */
 declare global {
     namespace Highcharts {
-        type ButtonRelativeToValue = ('plotBox'|'spacingBox');
 
-        interface MapNavigationButtonOptions {
-            align?: AlignValue;
-            alignTo?: ButtonRelativeToValue;
-            height?: number;
-            onclick?: Function;
-            padding?: number;
-            style?: CSSObject;
-            text?: string;
-            theme?: SVGAttributes;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-            x?: number;
-            y?: number;
-        }
         interface MapNavigationChart extends Chart {
             mapNavButtons: Array<SVGElement>;
             mapNavigation: MapNavigation;
@@ -72,20 +71,6 @@ declare global {
                 mouseX?: number,
                 mouseY?: number
             ): void;
-        }
-        interface MapNavigationOptions {
-            buttonOptions?: MapNavigationButtonOptions;
-            buttons?: Dictionary<MapNavigationButtonOptions>;
-            enableButtons?: boolean;
-            enabled?: boolean;
-            enableDoubleClickZoom?: boolean;
-            enableDoubleClickZoomTo?: boolean;
-            enableMouseWheelZoom?: boolean;
-            enableTouchZoom?: boolean;
-            mouseWheelSensitivity?: number;
-        }
-        interface Options {
-            mapNavigation?: MapNavigationOptions;
         }
         class MapNavigation {
             public constructor(chart: Chart);
@@ -168,10 +153,10 @@ MapNavigation.prototype.init = function (
  */
 MapNavigation.prototype.update = function (
     this: Highcharts.MapNavigation,
-    options?: Highcharts.MapNavigationOptions
+    options?: MapNavigationOptions
 ): void {
     var chart = this.chart,
-        o: Highcharts.MapNavigationOptions = chart.options.mapNavigation as any,
+        o: MapNavigationOptions = chart.options.mapNavigation as any,
         buttonOptions,
         attr: SVGAttributes,
         states: SVGAttributes,
@@ -179,7 +164,7 @@ MapNavigation.prototype.update = function (
         selectStates: SVGAttributes,
         outerHandler = function (
             this: SVGElement,
-            e: (Event|Highcharts.Dictionary<any>)
+            e: (Event|Record<string, any>)
         ): void {
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)
@@ -201,7 +186,7 @@ MapNavigation.prototype.update = function (
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
 
         objectEach(o.buttons, function (
-            button: Highcharts.MapNavigationButtonOptions,
+            button: MapNavigationButtonOptions,
             n: string
         ): void {
             buttonOptions = merge(o.buttonOptions, button);
@@ -233,7 +218,7 @@ MapNavigation.prototype.update = function (
                 .addClass('highcharts-map-navigation highcharts-' + ({
                     zoomIn: 'zoom-in',
                     zoomOut: 'zoom-out'
-                } as Highcharts.Dictionary<string>)[n])
+                } as Record<string, string>)[n])
                 .attr({
                     width: buttonOptions.width,
                     height: buttonOptions.height,
@@ -282,7 +267,7 @@ MapNavigation.prototype.update = function (
  */
 MapNavigation.prototype.updateEvents = function (
     this: Highcharts.MapNavigation,
-    options: Highcharts.MapNavigationOptions
+    options: MapNavigationOptions
 ): void {
     var chart = this.chart;
 

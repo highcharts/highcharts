@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Utility functions for accessibility module.
  *
@@ -205,15 +205,15 @@ function visuallyHideElement(element: HTMLDOMElement): void {
 
 
 var HTMLUtilities = {
-    addClass: addClass,
-    escapeStringForHTML: escapeStringForHTML,
-    getElement: getElement,
-    getFakeMouseEvent: getFakeMouseEvent,
-    removeElement: removeElement,
-    reverseChildNodes: reverseChildNodes,
-    setElAttrs: setElAttrs,
-    stripHTMLTagsFromString: stripHTMLTagsFromString,
-    visuallyHideElement: visuallyHideElement
+    addClass,
+    escapeStringForHTML,
+    getElement,
+    getFakeMouseEvent,
+    removeElement,
+    reverseChildNodes,
+    setElAttrs,
+    stripHTMLTagsFromString,
+    visuallyHideElement
 };
 
 export default HTMLUtilities;

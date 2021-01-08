@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,7 @@
 
 import type Axis from './Axis';
 import type Chart from '../Chart/Chart';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../Series/Series';
 import type Tick from './Tick';
 
 /**
@@ -57,7 +57,7 @@ export interface AxisLike {
     min: (null|number);
     options: Highcharts.AxisOptions;
     reversed?: boolean;
-    series: Array<LineSeries>;
+    series: Array<Series>;
     side: number;
     ticks: Record<string, Tick>;
     userOptions: DeepPartial<Highcharts.AxisOptions>;
@@ -72,4 +72,13 @@ export interface AxisLike {
  */
 export interface AxisTypeRegistry extends Record<string, Axis> {
     Axis: Axis;
+}
+
+/**
+ *
+ * Helper interface for Tick.
+ *
+ */
+export interface TickLike {
+    // Nothing here
 }

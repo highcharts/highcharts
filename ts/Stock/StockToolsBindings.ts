@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2020 Paweł Fus
+ *  (c) 2009-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -15,13 +15,16 @@
 import type Annotation from '../Extensions/Annotations/Annotations';
 import type { AxisType } from '../Core/Axis/Types';
 import type Chart from '../Core/Chart/Chart';
+import type FlagsPoint from '../Series/Flags/FlagsPoint';
+import type { FlagsShapeValue } from '../Series/Flags/FlagsPointOptions';
+import type FlagsSeriesOptions from '../Series/Flags/FlagsSeriesOptions';
 import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
 import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     correctFloat,
@@ -51,18 +54,18 @@ declare global {
                 yAxes: Array<AxisType>,
                 plotHeight: number,
                 defaultHeight: number
-            ): Array<Dictionary<number>>;
+            ): Array<Record<string, number>>;
             /** @requires modules/stock-tools */
             getYAxisResizers(
                 yAxes: Array<AxisType>
             ): Array<NavigationBindingsResizerObject>;
             /** @requires modules/stock-tools */
             recalculateYAxisPositions(
-                positions: Array<Dictionary<number>>,
+                positions: Array<Record<string, number>>,
                 changedSpace: number,
                 modifyHeight?: boolean,
                 adder?: number
-            ): Array<Dictionary<number>>;
+            ): Array<Record<string, number>>;
             /** @requires modules/stock-tools */
             resizeYAxes (defaultHeight?: number): void;
         }
@@ -70,12 +73,12 @@ declare global {
             x: number;
             y: number;
             below: boolean;
-            series: LineSeries;
+            series: Series;
             xAxis: number;
             yAxis: number;
         }
         interface NavigationBindingsResizerObject {
-            controlledAxis?: Dictionary<Array<number>>;
+            controlledAxis?: Record<string, Array<number>>;
             enabled: boolean;
         }
         interface StockToolsNavigationBindingsUtilsObject extends NavigationBindingUtils {
@@ -87,7 +90,7 @@ declare global {
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
         }
         interface NavigationOptions {
-            bindings?: Dictionary<NavigationBindingsOptionsObject>;
+            bindings?: Record<string, NavigationBindingsOptionsObject>;
         }
         interface StockToolsFieldsObject {
             [key: string]: any;
@@ -119,7 +122,7 @@ var bindingsUtils: Highcharts.StockToolsNavigationBindingsUtilsObject = Navigati
  */
 bindingsUtils.addFlagFromForm = function (
     this: Highcharts.StockToolsNavigationBindings,
-    type: Highcharts.FlagsShapeValue
+    type: FlagsShapeValue
 ): Function {
     return function (this: Highcharts.StockToolsNavigationBindings, e: Event): void {
         var navigation = this,
@@ -131,14 +134,14 @@ bindingsUtils.addFlagFromForm = function (
                 x: point.x,
                 y: point.y
             },
-            seriesOptions: Highcharts.FlagsSeriesOptions = {
+            seriesOptions: FlagsSeriesOptions = {
                 type: 'flags',
                 onSeries: point.series.id,
                 shape: type,
                 data: [pointConfig],
                 point: {
                     events: {
-                        click: function (this: Highcharts.FlagsPoint): void {
+                        click: function (this: FlagsPoint): void {
                             var point = this,
                                 options = point.options;
 
@@ -261,7 +264,7 @@ bindingsUtils.manageIndicators = function (
         yAxis,
         parentSeries,
         defaultOptions,
-        series: LineSeries;
+        series: Series;
 
     if (data.actionType === 'edit') {
         navigation.fieldsToOptions(data.fields, seriesConfig);
@@ -298,7 +301,7 @@ bindingsUtils.manageIndicators = function (
         // by parent series (#13950).
         if (
             typeof parentSeries !== 'undefined' &&
-            parentSeries instanceof LineSeries &&
+            parentSeries instanceof Series &&
             parentSeries.getDGApproximation() === 'sum' &&
             // If indicator has defined approx type, use it (e.g. "ranges")
             !defined(
@@ -504,8 +507,8 @@ extend(NavigationBindings.prototype, {
         yAxes: Array<AxisType>,
         plotHeight: number,
         defaultHeight: number
-    ): Array<Highcharts.Dictionary<number>> {
-        var positions: (Array<Highcharts.Dictionary<number>>|undefined),
+    ): Array<Record<string, number>> {
+        var positions: (Array<Record<string, number>>|undefined),
             allAxesHeight = 0;
 
         /** @private */
@@ -515,7 +518,7 @@ extend(NavigationBindings.prototype, {
 
         positions = yAxes.map(function (
             yAxis: AxisType
-        ): Highcharts.Dictionary<number> {
+        ): Record<string, number> {
             var height = isPercentage(yAxis.options.height) ?
                     parseFloat(yAxis.options.height as any) / 100 :
                     yAxis.height / plotHeight,
@@ -687,7 +690,7 @@ extend(NavigationBindings.prototype, {
         }
 
         positions.forEach(function (
-            position: Highcharts.Dictionary<number>,
+            position: Record<string, number>,
             index: number
         ): void {
             // if (index === 0) debugger;
@@ -717,13 +720,13 @@ extend(NavigationBindings.prototype, {
      *         Modified positions,
      */
     recalculateYAxisPositions: function (
-        positions: Array<Highcharts.Dictionary<number>>,
+        positions: Array<Record<string, number>>,
         changedSpace: number,
         modifyHeight?: boolean,
         adder?: number
-    ): Array<Highcharts.Dictionary<number>> {
+    ): Array<Record<string, number>> {
         positions.forEach(function (
-            position: Highcharts.Dictionary<number>,
+            position: Record<string, number>,
             index: number
         ): void {
             var prevPosition = positions[index - 1];
@@ -748,7 +751,7 @@ extend(NavigationBindings.prototype, {
  * @since        7.0.0
  * @optionparent navigation.bindings
  */
-var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject> = {
+var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObject> = {
     // Line type annotations:
     /**
      * A segment annotation bindings. Includes `start` and one event in `steps`

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -33,7 +33,6 @@ export class ColumnPoint extends LinePoint {
     options: ColumnPointOptions;
     pointWidth: number;
     series: ColumnSeries;
-    shapeType: string;
 }
 
 declare module '../../Core/Series/PointLike' {

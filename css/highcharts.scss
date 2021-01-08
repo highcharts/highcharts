@@ -76,8 +76,8 @@ $scrollbar-track-background: $neutral-color-5 !default;
 $scrollbar-track-border: $neutral-color-5 !default;
 
 // Indicators
-$indicator-positive-line: #06B535;
-$indicator-negative-line: #F21313;
+$indicator-positive-line: #06b535; // Positive indicator color
+$indicator-negative-line: #f21313; // Negative indicator color
 
 .highcharts-container {
     position: relative;

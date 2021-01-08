@@ -124,3 +124,18 @@ In addition to x & y coordinates like in a regular [scatter chart](https://highc
     {x: 1, y: 1, z: 1} is the same point as [1,1,1]
 
 <iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/3d/scatter allow="fullscreen"></iframe>
+
+3D Area
+----------
+
+A 3D chart of type [area](https://highcharts.com/docs/chart-and-series-types/area-chart) is working similar to the column series. It will draw each area series as a 3D plane. By default the depth of an area series is set to 25. 
+
+### Displaying multiple areas
+
+Just like in normal area charts, the Highcharts 3D plugin does allow to display multiple area series and to order these as desired with _grouping_ and _stacking_.
+
+**Make sure the depth of the chart is sufficient to display all your area series. You will need at least the following depth: (number of area series - 1) * (depth of single area series)**
+
+Stacking is still available in 3D charts and works in exactly the same way by setting _stacking_ to **true**.
+
+<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-area-stacking allow="fullscreen"></iframe>

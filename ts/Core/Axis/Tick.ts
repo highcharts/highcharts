@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,10 +12,28 @@
 
 import type CSSObject from '../Renderer/CSSObject';
 import type PositionObject from '../Renderer/PositionObject';
+import type { TickLike } from '../Axis/Types';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type TimeTicksInfoObject from './TimeTicksInfoObject';
 import H from '../Globals.js';
+const {
+    deg2rad
+} = H;
+import U from '../Utilities.js';
+const {
+    clamp,
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -28,12 +46,13 @@ declare global {
         }
         interface TickParametersObject {
             category?: string;
-            options?: Dictionary<any>;
+            options?: Record<string, any>;
             tickmarkOffset?: number;
         }
         interface TickPositionObject extends PositionObject {
             opacity?: number;
         }
+        interface Tick extends TickLike {}
         class Tick {
             public constructor(
                 axis: Axis,
@@ -139,22 +158,20 @@ declare global {
  * @type {number|undefined}
  */
 
+/**
+ * Additonal time tick information.
+ *
+ * @interface Highcharts.TimeTicksInfoObject
+ * @extends Highcharts.TimeNormalizedObject
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @type {Array<string>}
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#totalRange
+ * @type {number}
+ */
 
-import U from '../Utilities.js';
-const {
-    clamp,
-    correctFloat,
-    defined,
-    destroyObjectProperties,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-var deg2rad = H.deg2rad;
+''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -318,7 +335,7 @@ class Tick {
             dateTimeLabelFormat,
             dateTimeLabelFormats,
             i,
-            list: Highcharts.Dictionary<any>;
+            list: Record<string, any>;
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.

@@ -12,13 +12,13 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type {
     PointOptions,
     PointShortOptions
 } from '../Series/PointOptions';
 import type PositionObject from '../Renderer/PositionObject';
+import type Series from '../Series/Series';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -48,7 +48,7 @@ declare global {
         interface Axis {
             axisBorder?: SVGElement;
             getMaxLabelDimensions(
-                ticks: Dictionary<Tick>,
+                ticks: Record<string, Tick>,
                 tickPositions: Array<(number|string)>
             ): SizeObject;
             addExtraBorder(
@@ -212,7 +212,7 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
  * @todo Move this to the generic axis implementation, as it is used there.
  */
 Axis.prototype.getMaxLabelDimensions = function (
-    ticks: Highcharts.Dictionary<Highcharts.Tick>,
+    ticks: Record<string, Highcharts.Tick>,
     tickPositions: Array<(number|string)>
 ): SizeObject {
     var dimensions: SizeObject = {
@@ -680,7 +680,7 @@ class GridAxis {
                     value
                 } = this;
                 const tickPos = axis.tickPositions;
-                const series: LineSeries = (
+                const series: Series = (
                     axis.isLinked ?
                         (axis.linkedParent as any) :
                         axis
@@ -699,7 +699,7 @@ class GridAxis {
                     // For the Gantt set point aliases to the pointCopy
                     // to do not change the original point
                     pointCopy = merge(point);
-                    H.seriesTypes.gantt.prototype.setGanttPointAliases(pointCopy as any);
+                    H.seriesTypes.gantt.prototype.pointClass.setGanttPointAliases(pointCopy as any);
                 }
                 // Make additional properties available for the
                 // formatter
@@ -893,7 +893,7 @@ class GridAxis {
 
                 if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
                     (axis.ticks[lastTick].mark as any).hide();
-                } else {
+                } else if (axis.ticks[lastTick - 1]) {
                     (axis.ticks[lastTick - 1].mark as any).show();
                 }
             }

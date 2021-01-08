@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,8 +8,15 @@
  *
  * */
 
-import type AlignObject from '../AlignObject';
-import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type CSSObject from '../CSSObject';
@@ -24,6 +31,7 @@ import type SVGPath from './SVGPath';
 import type SVGRendererLike from './SVGRendererLike';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
+import palette from '../../Color/Palette.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import U from '../../Utilities.js';
@@ -70,6 +78,9 @@ declare global {
             tagName?: string;
             textContent?: string;
         }
+        interface SVGRenderer extends SVGRendererLike {
+            // nothing here yet
+        }
         interface SymbolFunction {
             (
                 x: number,
@@ -93,10 +104,6 @@ declare global {
             start?: number;
             width?: number;
         }
-        interface TranslationAttributes extends SVGAttributes {
-            translateX: number;
-            translateY: number;
-        }
         class SVGRenderer {
             public constructor(
                 container: HTMLDOMElement,
@@ -113,16 +120,16 @@ declare global {
             public allowHTML?: boolean;
             public box: SVGDOMElement;
             public boxWrapper: SVGElement;
-            public cache: Dictionary<BBoxObject>;
+            public cache: Record<string, BBoxObject>;
             public cacheKeys: Array<string>;
             public chartIndex: number;
             public defs: SVGElement;
             /** @deprecated */
             public draw: Function;
-            public escapes: Dictionary<string>;
+            public escapes: Record<string, string>;
             public forExport?: boolean;
-            public globalAnimation: Partial<AnimationOptionsObject>;
-            public gradients: Dictionary<SVGElement>;
+            public globalAnimation: Partial<AnimationOptions>;
+            public gradients: Record<string, SVGElement>;
             public height: number;
             public imgCount: number;
             public isSVG: boolean;
@@ -231,7 +238,7 @@ declare global {
             public setSize(
                 width: number,
                 height: number,
-                animate?: (boolean|Partial<AnimationOptionsObject>)
+                animate?: (boolean|Partial<AnimationOptions>)
             ): void;
             public setStyle(style: CSSObject): void;
             public symbol(
@@ -610,7 +617,7 @@ class SVGRenderer {
      */
     public defs: SVGElement = void 0 as any;
     public forExport?: boolean;
-    public globalAnimation: Partial<AnimationOptionsObject> = void 0 as any;
+    public globalAnimation: Partial<AnimationOptions> = void 0 as any;
     public gradients: Record<string, SVGElement> = void 0 as any;
     public height: number = void 0 as any;
     public imgCount: number = void 0 as any;
@@ -1632,11 +1639,11 @@ class SVGRenderer {
 
             // Normal state - prepare the attributes
             normalState = merge({
-                fill: '${palette.neutralColor3}',
-                stroke: '${palette.neutralColor20}',
+                fill: palette.neutralColor3,
+                stroke: palette.neutralColor20,
                 'stroke-width': 1,
                 style: {
-                    color: '${palette.neutralColor80}',
+                    color: palette.neutralColor80,
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
@@ -1648,16 +1655,16 @@ class SVGRenderer {
 
             // Hover state
             hoverState = merge(normalState, {
-                fill: '${palette.neutralColor10}'
+                fill: palette.neutralColor10
             }, hoverState);
             hoverStyle = hoverState.style;
             delete hoverState.style;
 
             // Pressed state
             pressedState = merge(normalState, {
-                fill: '${palette.highlightColor10}',
+                fill: palette.highlightColor10,
                 style: {
-                    color: '${palette.neutralColor100}',
+                    color: palette.neutralColor100,
                     fontWeight: 'bold'
                 }
             }, pressedState);
@@ -1667,7 +1674,7 @@ class SVGRenderer {
             // Disabled state
             disabledState = merge(normalState, {
                 style: {
-                    color: '${palette.neutralColor20}'
+                    color: palette.neutralColor20
                 }
             }, disabledState);
             disabledStyle = disabledState.style;
@@ -2087,7 +2094,7 @@ class SVGRenderer {
     public setSize(
         width: number,
         height: number,
-        animate?: (boolean|Partial<AnimationOptionsObject>)
+        animate?: (boolean|Partial<AnimationOptions>)
     ): void {
         var renderer = this,
             alignedObjects = renderer.alignedObjects,
@@ -3237,7 +3244,7 @@ SVGRenderer.prototype.symbols = {
             halfDistance = 6,
             r = Math.min((options && options.r) || 0, w, h),
             safeDistance = r + halfDistance,
-            anchorX = options && options.anchorX || 0,
+            anchorX = options && options.anchorX,
             anchorY = options && options.anchorY || 0,
             path: SVGPath;
 
@@ -3253,8 +3260,12 @@ SVGRenderer.prototype.symbols = {
             ['C', x, y, x, y, x + r, y] // top-left corner
         ];
 
+        if (!isNumber(anchorX)) {
+            return path;
+        }
+
         // Anchor on right side
-        if (anchorX && anchorX > w) {
+        if (x + anchorX >= w) {
 
             // Chevron
             if (
@@ -3283,7 +3294,7 @@ SVGRenderer.prototype.symbols = {
             }
 
         // Anchor on left side
-        } else if (anchorX && anchorX < 0) {
+        } else if (x + anchorX <= 0) {
 
             // Chevron
             if (

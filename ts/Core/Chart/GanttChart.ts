@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -41,7 +41,7 @@ const {
     splat
 } = U;
 
-import '../../Series/GanttSeries.js';
+import '../../Series/Gantt/GanttSeries.js';
 
 /**
  * Factory function for Gantt charts.

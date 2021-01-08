@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type { SeriesTypeRegistry } from './Series/SeriesType';
 import type SizeObject from './Renderer/SizeObject';
 
 declare module './Chart/ChartLike' {
@@ -51,7 +52,7 @@ declare global {
         }
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;
-        const dateFormats: Dictionary<TimeFormatCallbackFunction>;
+        const dateFormats: Record<string, TimeFormatCallbackFunction>;
         const deg2rad: number;
         const doc: Document;
         const hasBidiBug: boolean;
@@ -65,7 +66,8 @@ declare global {
         const marginNames: Array<string>;
         const noop: () => void;
         const product: string;
-        const symbolSizes: Dictionary<SizeObject>;
+        const supportsPassiveEvents: boolean;
+        const symbolSizes: Record<string, SizeObject>;
         const win: GlobalWindow;
         const svg: boolean;
         const version: string;
@@ -108,6 +110,21 @@ declare global {
             qualifiedName: string,
             value: (boolean|number|string)
         ): void;
+    }/*
+    interface Highcharts {
+        /**
+         * @deprecated
+         * /
+        [key: string]: any;
+    }*/
+    interface ObjectConstructor {
+        /**
+         * Sets the prototype of a specified object o to object proto or null.
+         * Returns the object o.
+         * @param o The object to change its prototype.
+         * @param proto The value of the new prototype or null.
+         */
+        setPrototypeOf?(o: any, proto: object | null): any;
     }
     interface OscillatorNode extends AudioNode {
     }
@@ -163,29 +180,52 @@ var glob = ( // @todo UMD variable named `window`, and glob named `win`
     hasBidiBug = (
         isFirefox &&
         parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
-    );
+    ),
+    noop = function (): void {},
+    // Checks whether the browser supports passive events, (#11353).
+    checkPassiveEvents = function (): boolean {
+        let supportsPassive = false;
+
+        // Object.defineProperty doesn't work on IE as well as passive events -
+        // instead of using polyfill, we can exclude IE totally.
+        if (!isMS) {
+            const opts = Object.defineProperty({}, 'passive', {
+                get: function (): void {
+                    supportsPassive = true;
+                }
+            });
+
+            if (glob.addEventListener && glob.removeEventListener) {
+                glob.addEventListener('testPassive', noop, opts);
+                glob.removeEventListener('testPassive', noop, opts);
+            }
+        }
+
+        return supportsPassive;
+    };
 
 var H: typeof Highcharts = {
     product: 'Highcharts',
     version: '@product.version@',
     deg2rad: Math.PI * 2 / 360,
-    doc: doc,
+    doc,
     hasBidiBug: hasBidiBug,
     hasTouch: !!glob.TouchEvent,
-    isMS: isMS,
+    isMS,
     isWebKit: userAgent.indexOf('AppleWebKit') !== -1,
-    isFirefox: isFirefox,
-    isChrome: isChrome,
+    isFirefox,
+    isChrome,
     isSafari: !isChrome && userAgent.indexOf('Safari') !== -1,
     isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
-    SVG_NS: SVG_NS,
+    SVG_NS,
     chartCount: 0,
-    seriesTypes: {} as Highcharts.SeriesTypesDictionary,
+    seriesTypes: {} as SeriesTypeRegistry,
+    supportsPassiveEvents: checkPassiveEvents(),
     symbolSizes: {},
-    svg: svg,
+    svg,
     win: glob,
     marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-    noop: function (): void {},
+    noop,
 
     /**
      * Theme options that should get applied to the chart. In module mode it

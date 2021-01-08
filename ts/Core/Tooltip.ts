@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,17 +13,18 @@
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
 import type RectangleObject from './Renderer/RectangleObject';
+import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
 const {
     doc
 } = H;
+import palette from './Color/Palette.js';
 import U from './Utilities.js';
 const {
     clamp,
@@ -79,7 +80,7 @@ declare global {
             public isSticky: boolean;
             public label?: SVGElement;
             public len?: number;
-            public now: Dictionary<number>;
+            public now: Record<string, number>;
             public options: TooltipOptions;
             public outside?: boolean;
             public renderer?: Renderer;
@@ -89,7 +90,7 @@ declare global {
             public tracker?: SVGElement;
             public tt?: SVGElement;
             public applyFilter(): void;
-            public bodyFormatter(items: Array<(LineSeries|Point)>): Array<string>;
+            public bodyFormatter(items: Array<(Series|Point)>): Array<string>;
             public cleanSplit(force?: boolean): void;
             public defaultFormatter(
                 this: TooltipFormatterContextObject,
@@ -104,7 +105,7 @@ declare global {
                 range: number,
                 date: number,
                 startOfWeek: number,
-                dateTimeLabelFormats: Dictionary<string>
+                dateTimeLabelFormats: Record<string, string>
             ): string;
             public getLabel(): SVGElement;
             public getPosition(
@@ -155,7 +156,7 @@ declare global {
             percentage?: number;
             point: Point;
             points?: Array<Highcharts.TooltipFormatterContextObject>;
-            series: LineSeries;
+            series: Series;
             total?: number;
             x: number;
             y: number;
@@ -619,7 +620,7 @@ class Tooltip {
         range: number,
         date: number,
         startOfWeek: number,
-        dateTimeLabelFormats: Highcharts.Dictionary<string>
+        dateTimeLabelFormats: Record<string, string>
     ): string {
         var time = this.chart.time,
             dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date),
@@ -632,7 +633,7 @@ class Tooltip {
                 minute: 9,
                 hour: 6,
                 day: 3
-            } as Highcharts.Dictionary<number>,
+            } as Record<string, number>,
             lastN = 'millisecond'; // for sub-millisecond data, #4223
 
         for (n in timeUnits) { // eslint-disable-line guard-for-in
@@ -868,12 +869,11 @@ class Tooltip {
                 ) :
                 chart.chartHeight,
             chartPosition = chart.pointer.getChartPosition(),
-            containerScaling = chart.containerScaling,
             scaleX = (val: number): number => ( // eslint-disable-line no-confusing-arrow
-                containerScaling ? val * containerScaling.scaleX : val
+                val * chartPosition.scaleX
             ),
             scaleY = (val: number): number => ( // eslint-disable-line no-confusing-arrow
-                containerScaling ? val * containerScaling.scaleY : val
+                val * chartPosition.scaleY
             ),
             // Build parameter arrays for firstDimension()/secondDimension()
             buildDimensionArray = (dim: 'x' | 'y'): Array<number|string> => {
@@ -1372,7 +1372,7 @@ class Tooltip {
                             options.borderColor ||
                             (point as any).color ||
                             currentSeries.color ||
-                            '${palette.neutralColor60}'
+                            palette.neutralColor60
                         )
                     });
                 }
@@ -1602,7 +1602,7 @@ class Tooltip {
                             options.borderColor ||
                             point.color ||
                             series.color ||
-                            '${palette.neutralColor80}'
+                            palette.neutralColor80
                         )
                     });
             }
@@ -1694,7 +1694,7 @@ class Tooltip {
 
         // If overflow left then align all labels to the right
         if (!positioner && boxes.some((box): boolean => box.x < bounds.left)) {
-            boxes = boxes.map((box): Highcharts.Dictionary<any> => {
+            boxes = boxes.map((box): Record<string, any> => {
                 const { x, y } = defaultPositioner(
                     box.anchorX,
                     box.anchorY,
@@ -1714,7 +1714,7 @@ class Tooltip {
 
         // Distribute and put in place
         H.distribute(boxes as any, adjustedPlotHeight);
-        boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
+        boxes.forEach(function (box: Record<string, any>): void {
             const { anchorX, anchorY, pos, x } = box;
             // Put the label in place
             box.tt.attr({
@@ -1869,11 +1869,11 @@ class Tooltip {
             e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
-            } as Highcharts.Dictionary<any>;
+            } as Record<string, any>;
 
         fireEvent(this, 'headerFormatter', e, function (
             this: Highcharts.Tooltip,
-            e: Highcharts.Dictionary<any>
+            e: Record<string, any>
         ): void {
 
             // Guess the best date format based on the closest point distance
@@ -1966,17 +1966,16 @@ class Tooltip {
 
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            const containerScaling = chart.containerScaling;
-            if (containerScaling) {
+            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
                 css(this.container, {
                     transform: `scale(${
-                        containerScaling.scaleX
+                        chartPosition.scaleX
                     }, ${
-                        containerScaling.scaleY
+                        chartPosition.scaleY
                     })`
                 });
-                anchorX *= containerScaling.scaleX;
-                anchorY *= containerScaling.scaleY;
+                anchorX *= chartPosition.scaleX;
+                anchorY *= chartPosition.scaleY;
             }
 
             anchorX += chartPosition.left - pos.x;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2017 Christer Vasseng, Torstein Honsi
+ *  (c) 2010-2021 Christer Vasseng, Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -32,10 +32,10 @@ declare global {
             (response: (string|JSONType)): void;
         }
         interface AjaxSettingsObject {
-            data: (string|Dictionary<any>);
+            data: (string|Record<string, any>);
             dataType: string;
             error: AjaxErrorCallbackFunction;
-            headers: Dictionary<string>;
+            headers: Record<string, string>;
             success: AjaxSuccessCallbackFunction;
             type: ('get'|'post'|'update'|'delete');
             url: string;
@@ -104,7 +104,7 @@ H.ajax = function (
             data: false as any,
             headers: {}
         } as Highcharts.AjaxSettingsObject, attr),
-        headers: Highcharts.Dictionary<string> = {
+        headers: Record<string, string> = {
             json: 'application/json',
             xml: 'application/xml',
             text: 'text/plain',

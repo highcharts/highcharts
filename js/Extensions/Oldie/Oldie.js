@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,6 +15,7 @@ import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, noop = H.noop, svg = H.svg, win = H.win;
+import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
@@ -93,7 +94,7 @@ if (!svg) {
         }
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = offset(this.chart.container);
+            this.chartPosition = chartPosition = this.getChartPosition();
         }
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
@@ -524,7 +525,7 @@ if (!svg) {
                     // apply the opacity
                     markup = [
                         '<stroke color="',
-                        shadowOptions.color || '${palette.neutralColor100}',
+                        shadowOptions.color || palette.neutralColor100,
                         '" opacity="', shadowElementOpacity * i, '"/>'
                     ];
                     createElement(renderer.prepVML(markup), null, null, shadow);

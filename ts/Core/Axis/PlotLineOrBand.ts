@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@ import type SVGElement from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
+import palette from '../../Core/Color/Palette.js';
 
 /**
  * Internal types
@@ -174,6 +175,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    fireEvent,
     merge,
     objectEach,
     pick
@@ -220,7 +222,7 @@ class PlotLineOrBand {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     public render(): (Highcharts.PlotLineOrBand|undefined) {
-        H.fireEvent(this, 'render');
+        fireEvent(this, 'render');
 
         var plotLine = this,
             axis = plotLine.axis,
@@ -261,7 +263,7 @@ class PlotLineOrBand {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || '${palette.neutralColor40}';
+                attribs.stroke = color || palette.neutralColor40;
                 attribs['stroke-width'] = pick(
                     (options as Highcharts.AxisPlotLinesOptions).width,
                     1
@@ -272,7 +274,7 @@ class PlotLineOrBand {
                 }
 
             } else if (isBand) { // plot band
-                attribs.fill = color || '${palette.highlightColor10}';
+                attribs.fill = color || palette.highlightColor10;
                 if ((options as Highcharts.AxisPlotBandsOptions).borderWidth) {
                     attribs.stroke = (
                         options as Highcharts.AxisPlotBandsOptions

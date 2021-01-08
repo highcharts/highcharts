@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -13,7 +13,7 @@ import Chart from './Chart.js';
 import H from '../Globals.js';
 import U from '../Utilities.js';
 var getOptions = U.getOptions, isArray = U.isArray, merge = U.merge, splat = U.splat;
-import '../../Series/GanttSeries.js';
+import '../../Series/Gantt/GanttSeries.js';
 /**
  * Factory function for Gantt charts.
  *

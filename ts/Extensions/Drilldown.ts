@@ -17,8 +17,9 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type ColorType from '../Core/Color/ColorType';
 import type {
     CSSObject,
@@ -35,17 +36,18 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
+import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
@@ -90,6 +92,7 @@ declare module '../Core/Series/PointLike' {
             category: (number|undefined),
             originalEvent: Event
         ): void;
+        unbindDrilldownClick?: Function;
     }
 }
 
@@ -123,7 +126,7 @@ declare module '../Core/Series/SeriesOptions' {
 declare global {
     namespace Highcharts {
         interface Axis {
-            ddPoints?: Dictionary<Array<(false|Point)>>;
+            ddPoints?: Record<string, Array<(false|Point)>>;
             oldPos?: number;
             drilldownCategory(x: number, e: MouseEvent): void;
             getDDPoints(x: number): Array<(false|Point)>;
@@ -172,20 +175,20 @@ declare global {
                 CSSObject|DrilldownActiveDataLabelStyleOptions
             );
             allowPointDrilldown?: boolean;
-            animation?: (boolean|Partial<AnimationOptionsObject>);
+            animation?: (boolean|Partial<AnimationOptions>);
             drillUpButton?: DrilldownDrillUpButtonOptions;
             series?: Array<SeriesTypeOptions>;
         }
         interface DrilldownLevelObject {
-            bBox: (BBoxObject|Dictionary<undefined>);
+            bBox: (BBoxObject|Record<string, undefined>);
             color?: ColorType;
             colorIndex?: number;
             levelNumber: number;
-            levelSeries: Array<LineSeries>;
+            levelSeries: Array<Series>;
             levelSeriesOptions: Array<SeriesOptions>;
-            lowerSeries: LineSeries;
+            lowerSeries: Series;
             lowerSeriesOptions: SeriesOptions;
-            oldExtremes: Dictionary<(number|undefined)>;
+            oldExtremes: Record<string, (number|undefined)>;
             pointIndex: number;
             pointOptions: (PointOptions|PointShortOptions);
             seriesOptions: SeriesOptions;
@@ -216,13 +219,8 @@ declare global {
         interface Options {
             drilldown?: DrilldownOptions;
         }
-        interface PieSeries {
-            animateDrillupFrom: ColumnSeries['animateDrillupFrom'];
-            animateDrillupTo: ColumnSeries['animateDrillupTo'];
-            animateDrilldown(init?: boolean): void;
-        }
         interface SVGElement {
-            fadeIn(animation?: (boolean|Partial<AnimationOptionsObject>)): void;
+            fadeIn(animation?: (boolean|Partial<AnimationOptions>)): void;
         }
         interface Tick {
             drillable(): void;
@@ -349,7 +347,6 @@ declare global {
  * @type {"drillup"}
  */
 
-import '../Series/Line/LineSeries.js';
 import '../Series/Column/ColumnSeries.js';
 
 var PieSeries = seriesTypes.pie,
@@ -441,7 +438,7 @@ defaultOptions.drilldown = {
         /** @ignore-option */
         cursor: 'pointer',
         /** @ignore-option */
-        color: '${palette.highlightColor100}',
+        color: palette.highlightColor100,
         /** @ignore-option */
         fontWeight: 'bold',
         /** @ignore-option */
@@ -466,7 +463,7 @@ defaultOptions.drilldown = {
      */
     activeDataLabelStyle: {
         cursor: 'pointer',
-        color: '${palette.highlightColor100}',
+        color: palette.highlightColor100,
         fontWeight: 'bold',
         textDecoration: 'underline'
     },
@@ -664,7 +661,7 @@ defaultOptions.drilldown = {
  * The animation options for the element fade.
  */
 SVGRenderer.prototype.Element.prototype.fadeIn = function (
-    animation?: (boolean|Partial<AnimationOptionsObject>)
+    animation?: (boolean|Partial<AnimationOptions>)
 ): void {
     this
         .attr({
@@ -711,9 +708,9 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     var oldSeries = point.series,
         xAxis = oldSeries.xAxis,
         yAxis = oldSeries.yAxis,
-        newSeries: LineSeries,
+        newSeries: Series,
         pointIndex: number,
-        levelSeries: Array<LineSeries> = [],
+        levelSeries: Array<Series> = [],
         levelSeriesOptions: Array<SeriesOptions> = [],
         level: (Highcharts.DrilldownLevelObject),
         levelNumber: number,
@@ -743,7 +740,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     pointIndex = oldSeries.points.indexOf(point);
 
     // Record options for all current series
-    oldSeries.chart.series.forEach(function (series: LineSeries): void {
+    oldSeries.chart.series.forEach(function (series: Series): void {
         if (series.xAxis === xAxis && !series.isDrilling) {
             series.options._ddSeriesId =
                 series.options._ddSeriesId || ddSeriesId++;
@@ -926,8 +923,8 @@ Chart.prototype.drillUp = function (): void {
         chartSeries = chart.series,
         seriesI: number,
         level: Highcharts.DrilldownLevelObject,
-        oldSeries: LineSeries,
-        newSeries: (LineSeries|undefined),
+        oldSeries: Series,
+        newSeries: (Series|undefined),
         oldExtremes: Record<string, (number|undefined)>,
         addSeries = function (seriesOptions: SeriesOptions): void {
             var addedSeries;
@@ -1309,7 +1306,7 @@ if (PieSeries) {
         animateDrillupFrom: ColumnSeries.prototype.animateDrillupFrom,
 
         animateDrilldown: function (
-            this: Highcharts.PieSeries,
+            this: typeof PieSeries.prototype,
             init?: boolean
         ): void {
             var level: Highcharts.DrilldownLevelObject =
@@ -1331,10 +1328,7 @@ if (PieSeries) {
                     styledMode = this.chart.styledMode;
 
                 if (!init) {
-                    this.points.forEach(function (
-                        point: Highcharts.PiePoint,
-                        i: number
-                    ): void {
+                    this.points.forEach(function (point, i): void {
                         var animateTo = point.shapeArgs;
 
                         if (!styledMode) {
@@ -1521,31 +1515,52 @@ Tick.prototype.drillable = function (): void {
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
 addEvent(Point, 'afterInit', function (): Point {
-    var point = this,
-        series = point.series;
+    const point = this;
 
-    if (point.drilldown) {
-
+    if (point.drilldown && !point.unbindDrilldownClick) {
         // Add the click event to the point
-        addEvent(point, 'click', function (e: PointerEvent): void {
-            if (
-                series.xAxis &&
-                (series.chart.options.drilldown as any).allowPointDrilldown ===
-                false
-            ) {
-                // #5822, x changed
-                series.xAxis.drilldownCategory(point.x as any, e);
-            } else {
-                point.doDrilldown(void 0, void 0, e);
-            }
-        });
-
+        point.unbindDrilldownClick = addEvent(point, 'click', handlePointClick);
     }
 
     return point;
 });
 
-addEvent(LineSeries, 'afterDrawDataLabels', function (): void {
+addEvent(Point, 'update', function (e: { options: Highcharts.Options }): void {
+    const point = this,
+        options = e.options || {};
+
+    if (options.drilldown && !point.unbindDrilldownClick) {
+        // Add the click event to the point
+        point.unbindDrilldownClick = addEvent(point, 'click', handlePointClick);
+    } else if (
+        !options.drilldown &&
+        options.drilldown !== void 0 &&
+        point.unbindDrilldownClick
+    ) {
+        point.unbindDrilldownClick = point.unbindDrilldownClick();
+    }
+});
+
+const handlePointClick = function (
+    this: Point,
+    e: MouseEvent
+): void {
+    const point = this,
+        series = point.series;
+
+    if (
+        series.xAxis &&
+        (series.chart.options.drilldown as any).allowPointDrilldown ===
+        false
+    ) {
+        // #5822, x changed
+        series.xAxis.drilldownCategory(point.x as any, e);
+    } else {
+        point.doDrilldown(void 0, void 0, e);
+    }
+};
+
+addEvent(Series, 'afterDrawDataLabels', function (): void {
     var css = (this.chart.options.drilldown as any).activeDataLabelStyle,
         renderer = this.chart.renderer,
         styledMode = this.chart.styledMode;
@@ -1598,7 +1613,7 @@ const applyCursorCSS = function (
 };
 
 // Mark the trackers with a pointer
-addEvent(LineSeries, 'afterDrawTracker', function (): void {
+addEvent(Series, 'afterDrawTracker', function (): void {
     var styledMode = this.chart.styledMode;
 
     this.points.forEach(function (point): void {

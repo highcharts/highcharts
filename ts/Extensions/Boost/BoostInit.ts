@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -12,12 +12,13 @@
 
 'use strict';
 
-import BaseSeries from '../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
+import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -29,7 +30,7 @@ const {
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         didBoost?: boolean;
-        markerGroup?: LineSeries['markerGroup'];
+        markerGroup?: Series['markerGroup'];
     }
 }
 
@@ -40,8 +41,6 @@ declare module '../../Core/Series/SeriesLike' {
         sampling?: boolean;
     }
 }
-
-import '../../Series/Line/LineSeries.js';
 
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';
@@ -62,12 +61,12 @@ var eachAsync = butils.eachAsync,
  * @return {void}
  */
 function init(): void {
-    extend(LineSeries.prototype, {
+    extend(Series.prototype, {
         /**
          * @private
          * @function Highcharts.Series#renderCanvas
          */
-        renderCanvas: function (this: LineSeries): void {
+        renderCanvas: function (this: Series): void {
             var series = this,
                 options = series.options || {},
                 renderer: Highcharts.BoostGLRenderer = false as any,
@@ -83,10 +82,10 @@ function init(): void {
                 yExtremes = yAxis.getExtremes(),
                 yMin = yExtremes.min,
                 yMax = yExtremes.max,
-                pointTaken: Highcharts.Dictionary<boolean> = {},
+                pointTaken: Record<string, boolean> = {},
                 lastClientX: (number|undefined),
                 sampling = !!series.sampling,
-                points: Array<Highcharts.Dictionary<number>>,
+                points: Array<Record<string, number>>,
                 enableMouseTracking = options.enableMouseTracking !== false,
                 threshold: number = options.threshold as any,
                 yBottom = yAxis.getThreshold(threshold),
@@ -213,7 +212,7 @@ function init(): void {
              * @private
              */
             function processPoint(
-                d: (number|Array<number>|Highcharts.Dictionary<number>),
+                d: (number|Array<number>|Record<string, number>),
                 i: number
             ): boolean {
                 var x: number,
@@ -368,7 +367,7 @@ function init(): void {
             seriesTypes.bubble.prototype,
             'markerAttribs',
             function (
-                this: Highcharts.BubbleSeries,
+                this: BubbleSeries,
                 proceed: Function
             ): boolean {
                 if (this.isSeriesBoosting) {

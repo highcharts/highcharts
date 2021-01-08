@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -817,7 +817,7 @@ class RadialAxis {
                             high: 0.5,
                             middle: 0.25,
                             low: 0
-                        } as Highcharts.Dictionary<number>)[
+                        } as Record<string, number>)[
                             (titleOptions as any).align
                         ] *
                         center[2]

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2017 Highsoft, Black Label
+ *  (c) 2009-2021 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -63,7 +63,7 @@ declare global {
             fibonacci: Array<string>;
             label: Array<string>;
             measure: Array<string>;
-            nestedOptions: Dictionary<Array<string>>;
+            nestedOptions: Record<string, Array<string>>;
             pitchfork: Array<string>;
             rect: Array<string>;
             tunnel: Array<string>;
@@ -76,7 +76,7 @@ declare global {
             langKey?: string;
         }
         interface LangNavigationOptions {
-            popup?: Dictionary<string>;
+            popup?: Record<string, string>;
         }
         interface LangOptions {
             navigation?: LangNavigationOptions;
@@ -105,7 +105,7 @@ declare global {
         }
         interface NavigationOptions {
             annotationsOptions?: DeepPartial<AnnotationsOptions>;
-            bindings?: Dictionary<NavigationBindingsOptionsObject>;
+            bindings?: Record<string, NavigationBindingsOptionsObject>;
             bindingsClassName?: string;
             events?: NavigationEventsOptions;
             iconsURL?: string;
@@ -225,7 +225,7 @@ const bindingsUtils = {
             'string': 'text',
             'number': 'number',
             'boolean': 'checkbox'
-        } as Highcharts.Dictionary<('checkbox'|'number'|'text')>)[
+        } as Record<string, ('checkbox'|'number'|'text')>)[
             typeof value
         ];
     }
@@ -310,7 +310,7 @@ class NavigationBindings {
      * */
 
     public activeAnnotation?: (false|Annotation);
-    public boundClassNames: Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject> = void 0 as any;
+    public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> = void 0 as any;
     public chart: Highcharts.AnnotationChart;
     public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
@@ -399,7 +399,8 @@ class NavigationBindings {
                     addEvent(
                         navigation,
                         eventName,
-                        callback
+                        callback,
+                        { passive: false }
                     )
                 );
             }
@@ -426,7 +427,7 @@ class NavigationBindings {
                 e: PointerEvent
             ): void {
                 navigation.bindingsContainerMouseMove(this, e);
-            })
+            }, H.isTouchDevice ? { passive: false } : void 0)
         );
     }
 
@@ -653,7 +654,7 @@ class NavigationBindings {
      *         Modified config
      */
     public fieldsToOptions<T>(
-        fields: Highcharts.Dictionary<string>,
+        fields: Record<string, string>,
         config: T
     ): T {
         objectEach(fields, function (value: string, field: string): void {
@@ -717,7 +718,7 @@ class NavigationBindings {
      */
     public annotationToFields(
         annotation: Annotation
-    ): Highcharts.Dictionary<string> {
+    ): Record<string, string> {
         var options = annotation.options,
             editables = NavigationBindings.annotationsEditable,
             nestedEditables = editables.nestedOptions,

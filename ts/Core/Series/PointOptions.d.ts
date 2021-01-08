@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,7 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { EventCallback } from '../Callback';
 import type Point from './Point';
@@ -108,7 +108,7 @@ export type PointShortOptions = (
 );
 
 export interface PointStateHoverOptions extends StateHoverOptions {
-    animation?: (boolean|DeepPartial<AnimationOptionsObject>);
+    animation?: (boolean|DeepPartial<AnimationOptions>);
     enabled?: boolean;
     fillColor?: ColorType;
     lineColor?: ColorType;
@@ -122,7 +122,7 @@ export interface PointStateInactiveOptions extends StateInactiveOptions {
 }
 
 export interface PointStateNormalOptions extends StateNormalOptions {
-    animation?: (boolean|DeepPartial<AnimationOptionsObject>);
+    animation?: (boolean|DeepPartial<AnimationOptions>);
     opacity?: number;
 }
 

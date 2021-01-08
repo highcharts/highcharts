@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,18 +10,19 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type SplineSeries from '../Series/Spline/SplineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -38,7 +39,7 @@ const {
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
         boxesToAvoid?: Array<Highcharts.LabelIntersectBoxObject>;
-        labelSeries?: Array<LineSeries>;
+        labelSeries?: Array<Series>;
         labelSeriesMaxSum?: number;
         seriesLabelTimer?: number;
         drawSeriesLabels(): void;
@@ -98,7 +99,7 @@ declare global {
             connectorNeighbourDistance?: number;
             enabled?: boolean;
             format?: string;
-            formatter?: FormatterCallbackFunction<LineSeries>;
+            formatter?: FormatterCallbackFunction<Series>;
             maxFontSize?: (number|null);
             minFontSize?: (number|null);
             onArea?: (boolean|null);
@@ -397,7 +398,7 @@ SVGRenderer.prototype.symbols.connector = function (
  * @private
  * @function Highcharts.Series#getPointsOnGraph
  */
-LineSeries.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
+Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
 
     if (!this.xAxis && !this.yAxis) {
         return;
@@ -425,7 +426,7 @@ LineSeries.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
         paneTop: number = inverted ? xAxis.pos : (yAxis.pos as any),
         onArea = pick((this.options.label as any).onArea, !!this.area),
         translatedThreshold = yAxis.getThreshold(this.options.threshold as any),
-        grid: Highcharts.Dictionary<number> = {};
+        grid: Record<string, number> = {};
 
     /**
      * Push the point to the interpolated points, but only if that position in
@@ -447,7 +448,7 @@ LineSeries.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
     // For splines, get the point at length (possible caveat: peaks are not
     // correctly detected)
     if (
-        (this as Highcharts.SplineSeries).getPointSpline &&
+        (this as SplineSeries).getPointSpline &&
         node.getPointAtLength &&
         !onArea &&
         // Not performing well on complex series, node.getPointAtLength is too
@@ -554,7 +555,7 @@ LineSeries.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
  * @private
  * @function Highcharts.Series#labelFontSize
  */
-LineSeries.prototype.labelFontSize = function (
+Series.prototype.labelFontSize = function (
     minFontSize: number,
     maxFontSize: number
 ): string {
@@ -570,7 +571,7 @@ LineSeries.prototype.labelFontSize = function (
  * @private
  * @function Highcharts.Series#checkClearPoint
  */
-LineSeries.prototype.checkClearPoint = function (
+Series.prototype.checkClearPoint = function (
     x: number,
     y: number,
     bBox: BBoxObject,
@@ -585,7 +586,7 @@ LineSeries.prototype.checkClearPoint = function (
             onArea || (this.options.label as any).connectorAllowed
         ),
         chart = this.chart,
-        series: (LineSeries|undefined),
+        series: (Series|undefined),
         points: (Array<Point>|undefined),
         leastDistance = 16,
         withinRange: (boolean|undefined),
@@ -789,7 +790,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
     // console.time('drawSeriesLabels');
 
     var chart = this,
-        labelSeries: Array<LineSeries> = this.labelSeries as any;
+        labelSeries: Array<Series> = this.labelSeries as any;
 
     chart.boxesToAvoid = [];
 
@@ -1085,7 +1086,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Default initial animation to a fraction of the series
                     // animation (#9396)
-                    let animationOptions: Partial<AnimationOptionsObject>|undefined;
+                    let animationOptions: Partial<AnimationOptions>|undefined;
                     if (isNew) {
                         animationOptions = animObject(series.options.animation);
                         // @todo: Safely remove any cast after merging #13005
