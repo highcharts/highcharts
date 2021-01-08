@@ -289,7 +289,7 @@ var Tooltip = /** @class */ (function () {
      * @return {Array<number>}
      */
     Tooltip.prototype.getAnchor = function (points, mouseEvent) {
-        var ret, chart = this.chart, pointer = chart.pointer, inverted = chart.inverted, plotTop = chart.plotTop, plotLeft = chart.plotLeft, plotX = 0, plotY = 0, yAxis, xAxis, plotWidth;
+        var ret, chart = this.chart, pointer = chart.pointer, inverted = chart.inverted, plotTop = chart.plotTop, plotLeft = chart.plotLeft, plotX = 0, plotY = 0, yAxis, xAxis;
         points = splat(points);
         // When tooltip follows mouse, relate the position to the mouse
         if (this.followPointer && mouseEvent) {
@@ -305,31 +305,44 @@ var Tooltip = /** @class */ (function () {
         }
         else if (points[0].tooltipPos) {
             ret = points[0].tooltipPos;
-            // When shared, use the average position
+            // Calculate the average position and adjust for axis positions
         }
         else {
             points.forEach(function (point) {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
-                plotX += point.plotX +
-                    (!inverted && xAxis ? xAxis.left - plotLeft : 0);
+                plotX += point.plotX || 0;
                 plotY += (point.plotLow ?
-                    (point.plotLow + point.plotHigh) / 2 :
-                    point.plotY) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
+                    (point.plotLow + (point.plotHigh || 0)) / 2 :
+                    (point.plotY || 0));
+                // Adjust position for positioned axes (top/left settings)
+                if (xAxis && yAxis) {
+                    if (!inverted) { // #1151
+                        plotX += xAxis.pos - plotLeft;
+                        plotY += yAxis.pos - plotTop;
+                    }
+                    else { // #14771
+                        plotX += plotTop + chart.plotHeight - xAxis.len - xAxis.pos;
+                        plotY += plotLeft + chart.plotWidth - yAxis.len - yAxis.pos;
+                    }
+                }
             });
             plotX /= points.length;
             plotY /= points.length;
-            // Calculate plot width if axis width is adjusted (#14771).
-            yAxis = points[0].series.yAxis;
-            plotWidth = !this.shared && yAxis && chart.plotWidth !== yAxis.width ?
-                yAxis.width + yAxis.left - plotLeft : chart.plotWidth;
+            // Use the average position for multiple points
             ret = [
-                inverted ? plotWidth - plotY : plotX,
-                this.shared && !inverted && points.length > 1 && mouseEvent ?
-                    // place shared tooltip next to the mouse (#424)
-                    mouseEvent.chartY - plotTop :
-                    inverted ? chart.plotHeight - plotX : plotY
+                inverted ? chart.plotWidth - plotY : plotX,
+                inverted ? chart.plotHeight - plotX : plotY
             ];
+            // When shared, place the tooltip next to the mouse (#424)
+            if (this.shared && points.length > 1 && mouseEvent) {
+                if (inverted) {
+                    ret[0] = mouseEvent.chartX - plotLeft;
+                }
+                else {
+                    ret[1] = mouseEvent.chartY - plotTop;
+                }
+            }
         }
         return ret.map(Math.round);
     };

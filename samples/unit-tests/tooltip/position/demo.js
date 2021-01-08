@@ -198,7 +198,7 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
 });
 
 QUnit.test('Tooltip position with multiple axes.', assert => {
-    let chart = Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         xAxis: [
             {
                 width: '50%'
@@ -255,10 +255,11 @@ QUnit.test('Tooltip position with multiple axes.', assert => {
         axis.left - chart.plotLeft < point.tooltipPos[0],
         'Tooltip x position should be within correct xAxis (#14244).'
     );
+});
 
-    chart = Highcharts.chart('container', {
+QUnit.test('Tooltip position with inverted multiple axes', assert => {
+    const chart = Highcharts.chart('container', {
         chart: {
-            type: 'area',
             inverted: true
         },
         yAxis: [{
@@ -290,6 +291,6 @@ QUnit.test('Tooltip position with multiple axes.', assert => {
         chart.tooltip.now.anchorX,
         chart.series[0].yAxis.width + chart.plotLeft - point1.plotY,
         0.5,
-        'Tooltip position on inverted area chart with adjusted width should be correct (#14771).'
+        'Tooltip position on inverted chart with multiple axes should appear at point (#14771).'
     );
 });
