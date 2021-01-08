@@ -368,7 +368,7 @@ var Axis = /** @class */ (function () {
          */
         axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
         fireEvent(this, 'init', { userOptions: userOptions });
-        axis.opposite = userOptions.opposite; // needed in setOptions
+        axis.opposite = pick(userOptions.opposite, axis.opposite); // needed in setOptions
         /**
          * The side on which the axis is rendered. 0 is top, 1 is right, 2
          * is bottom and 3 is left.
@@ -376,9 +376,10 @@ var Axis = /** @class */ (function () {
          * @name Highcharts.Axis#side
          * @type {number}
          */
-        axis.side = userOptions.side || (axis.horiz ?
+        axis.side = pick(userOptions.side, axis.side, (axis.horiz ?
             (axis.opposite ? 0 : 2) : // top : bottom
-            (axis.opposite ? 1 : 3)); // right : left
+            (axis.opposite ? 1 : 3)) // right : left
+        );
         /**
          * Current options for the axis after merge of defaults and user's
          * options.
@@ -406,7 +407,7 @@ var Axis = /** @class */ (function () {
          * @name Highcharts.Axis#reversed
          * @type {boolean}
          */
-        axis.reversed = options.reversed;
+        axis.reversed = pick(options.reversed, axis.reversed);
         axis.visible = options.visible !== false;
         axis.zoomEnabled = options.zoomEnabled !== false;
         // Initial categories
