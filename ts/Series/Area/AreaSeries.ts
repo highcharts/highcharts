@@ -446,6 +446,7 @@ class AreaSeries extends Series {
         }
 
         areaPath = topPath.concat(bottomPath);
+        areaPath.push(['Z']);
         // TODO: don't set leftCliff and rightCliff when connectNulls?
         graphPath = getGraphPath
             .call(this, graphPoints, false, connectNulls);

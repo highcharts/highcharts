@@ -295,7 +295,7 @@ var Fx = /** @class */ (function () {
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                var segmentToAdd = arr[arr.length / positionFactor - 1].slice();
+                var segmentToAdd = arr[Math.floor(arr.length / positionFactor) - 1].slice();
                 // Disable the first control point of curve segments
                 if (segmentToAdd[0] === 'C') {
                     segmentToAdd[1] = segmentToAdd[5];
@@ -305,7 +305,7 @@ var Fx = /** @class */ (function () {
                     arr.push(segmentToAdd);
                 }
                 else {
-                    var lowerSegmentToAdd = arr[arr.length / positionFactor].slice();
+                    var lowerSegmentToAdd = arr[Math.floor(arr.length / positionFactor)].slice();
                     arr.splice(arr.length / 2, 0, segmentToAdd, lowerSegmentToAdd);
                 }
             }
