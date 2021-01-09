@@ -64,4 +64,10 @@ QUnit.test('Updating series stacked property', assert => {
         chart.series[0].graph.element.getAttribute('d'),
         'The graph should be back to the initial'
     );
+
+    // Issue #13572
+    assert.ok(
+        chart.series[0].areaPath.slice(-1)[0].includes("Z"),
+        'The last index of the path array contains the closure'
+    );
 });
