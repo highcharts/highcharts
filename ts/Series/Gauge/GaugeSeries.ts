@@ -31,9 +31,9 @@ const { noop } = H;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
+        column: ColumnSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -82,7 +82,7 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * @augments Highcharts.Series
  */
-class GaugeSeries extends LineSeries {
+class GaugeSeries extends Series {
 
     /* *
      *
@@ -109,7 +109,7 @@ class GaugeSeries extends LineSeries {
      * @optionparent plotOptions.gauge
      */
     public static defaultOptions: GaugeSeriesOptions = merge(
-        LineSeries.defaultOptions,
+        Series.defaultOptions,
         {
             /**
              * When this option is `true`, the dial will wrap around the axes.
@@ -581,7 +581,7 @@ class GaugeSeries extends LineSeries {
             this.options.zIndex,
             this.chart.seriesGroup
         );
-        LineSeries.prototype.render.call(this);
+        Series.prototype.render.call(this);
         this.group.clip(this.chart.clipRect);
     }
     /**
@@ -593,7 +593,7 @@ class GaugeSeries extends LineSeries {
         data: Array<(PointOptions|PointShortOptions)>,
         redraw?: boolean
     ): void {
-        LineSeries.prototype.setData.call(this, data, false);
+        Series.prototype.setData.call(this, data, false);
         this.processData();
         this.generatePoints();
         if (pick(redraw, true)) {
@@ -622,7 +622,7 @@ class GaugeSeries extends LineSeries {
 interface GaugeSeries {
     angular: boolean;
     directTouch: boolean;
-    drawGraph: typeof LineSeries.prototype.drawGraph;
+    drawGraph: typeof Series.prototype.drawGraph;
     fixedBox: boolean;
     forceDL: boolean;
     noSharedTooltip: boolean;

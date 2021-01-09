@@ -26,8 +26,8 @@ import type TimelinePointOptions from './TimelinePointOptions';
 import type TimelineSeries from './TimelineSeries';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        line: LineSeries,
         pie: {
             prototype: {
                 pointClass: PiePoint
@@ -51,7 +51,7 @@ const {
  *
  * */
 
-class TimelinePoint extends LineSeries.prototype.pointClass {
+class TimelinePoint extends Series.prototype.pointClass {
 
     /* *
      *

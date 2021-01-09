@@ -29,7 +29,7 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
+var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 import WindbarbPoint from './WindbarbPoint.js';
@@ -98,7 +98,7 @@ var WindbarbSeries = /** @class */ (function (_super) {
      * */
     WindbarbSeries.prototype.init = function (chart, options) {
         WindbarbSeries.registerApproximation();
-        LineSeries.prototype.init.call(this, chart, options);
+        Series.prototype.init.call(this, chart, options);
     };
     // Get presentational attributes.
     WindbarbSeries.prototype.pointAttribs = function (point, state) {

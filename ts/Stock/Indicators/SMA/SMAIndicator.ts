@@ -28,14 +28,7 @@ import type SMAPoint from './SMAPoint';
 
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        line: LineSeries,
-        ohlc: {
-            prototype: ohlcProto
-        }
-    }
-} = SeriesRegistry;
+const { series: Series } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -88,7 +81,7 @@ const generateMessage = RequiredIndicatorMixin.generateMessage;
  *
  * @augments Highcharts.Series
  */
-class SMAIndicator extends LineSeries {
+class SMAIndicator extends Series {
 
     /* *
      *
@@ -125,7 +118,7 @@ class SMAIndicator extends LineSeries {
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
-    public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: SMAOptions = merge(Series.defaultOptions, {
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
          * set, it will be based on a technical indicator type and default
@@ -187,7 +180,7 @@ class SMAIndicator extends LineSeries {
 
     public dataEventsToUnbind: Array<Function> = void 0 as any;
 
-    public linkedParent: typeof LineSeries.prototype = void 0 as any;
+    public linkedParent: typeof Series.prototype = void 0 as any;
 
     public nameBase?: string;
 
@@ -244,7 +237,7 @@ class SMAIndicator extends LineSeries {
     /**
      * @private
      */
-    public getValues<TLinkedSeries extends typeof LineSeries.prototype>(
+    public getValues<TLinkedSeries extends typeof Series.prototype>(
         series: TLinkedSeries,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -335,7 +328,7 @@ class SMAIndicator extends LineSeries {
         function recalculateValues(): void {
             var oldData = indicator.points || [],
                 oldDataLength = (indicator.xData || []).length,
-                processedData: IndicatorValuesObject<typeof LineSeries.prototype> = (
+                processedData: IndicatorValuesObject<typeof Series.prototype> = (
                     indicator.getValues(
                         indicator.linkedParent,
                         indicator.options.params as any

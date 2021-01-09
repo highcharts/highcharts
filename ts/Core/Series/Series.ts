@@ -22,6 +22,7 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from './Point';
 import type PointerEvent from '../PointerEvent';
 import type {
@@ -7533,34 +7534,45 @@ interface Series extends SeriesLike {
     requireSorting: boolean;
     sorted: boolean;
 }
-extend(
-    Series.prototype,
-    {
-        axisTypes: ['xAxis', 'yAxis'],
+extend(Series.prototype, {
+    axisTypes: ['xAxis', 'yAxis'],
+    coll: 'series',
+    colorCounter: 0,
+    cropShoulder: 1,
+    directTouch: false,
+    drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
+    isCartesian: true,
+    kdAxisArray: ['clientX', 'plotY'],
+    // each point's x and y values are stored in this.xData and this.yData:
+    parallelArrays: ['x', 'y'],
+    requireSorting: true,
+    // requires the data to be sorted:
+    sorted: true
+});
 
-        coll: 'series',
+/* *
+ *
+ *  Registry
+ *
+ * */
 
-        colorCounter: 0,
+SeriesRegistry.series = Series;
 
-        cropShoulder: 1,
+/* *
+ *
+ *  Compatibility
+ *
+ * */
 
-        directTouch: false,
+// @todo remove backwards compatibility
 
-        drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
-
-        isCartesian: true,
-
-        kdAxisArray: ['clientX', 'plotY'],
-
-        // each point's x and y values are stored in this.xData and this.yData
-        parallelArrays: ['x', 'y'],
-
-        requireSorting: true,
-
-        // requires the data to be sorted
-        sorted: true
+declare module '../../Core/Series/SeriesType' {
+    interface SeriesTypeRegistry {
+        line: typeof LineSeries;
     }
-);
+}
+SeriesRegistry.registerSeriesType('line', Series);
+(H as any).Series = Series;
 
 /* *
  *

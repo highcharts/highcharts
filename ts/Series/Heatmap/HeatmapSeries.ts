@@ -33,9 +33,9 @@ import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
         column: ColumnSeries,
-        line: LineSeries,
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -416,7 +416,7 @@ class HeatmapSeries extends ScatterSeries {
         var seriesMarkerOptions = this.options.marker || {};
 
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
-            LineSeries.prototype.drawPoints.call(this);
+            Series.prototype.drawPoints.call(this);
             this.points.forEach((point): void => {
                 point.graphic &&
                 (point.graphic as any)[
@@ -431,7 +431,7 @@ class HeatmapSeries extends ScatterSeries {
      */
     getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
-        const { dataMin, dataMax } = LineSeries.prototype.getExtremes
+        const { dataMin, dataMax } = Series.prototype.getExtremes
             .call(this, this.valueData);
 
         if (isNumber(dataMin)) {
@@ -442,7 +442,7 @@ class HeatmapSeries extends ScatterSeries {
         }
 
         // Get the extremes from the y data
-        return LineSeries.prototype.getExtremes.call(this);
+        return Series.prototype.getExtremes.call(this);
     }
 
     /**
@@ -454,7 +454,7 @@ class HeatmapSeries extends ScatterSeries {
         points?: Array<HeatmapPoint>,
         insideOnly?: boolean
     ): Array<Point> {
-        return LineSeries.prototype.getValidPoints.call(
+        return Series.prototype.getValidPoints.call(
             this,
             points,
             insideOnly,
@@ -478,7 +478,7 @@ class HeatmapSeries extends ScatterSeries {
     public init(): void {
         var options;
 
-        LineSeries.prototype.init.apply(this, arguments as any);
+        Series.prototype.init.apply(this, arguments as any);
 
         options = this.options;
         // #3758, prevent resetting in setData
@@ -552,7 +552,7 @@ class HeatmapSeries extends ScatterSeries {
         state?: StatesOptionsKey
     ): SVGAttributes {
         var series = this,
-            attr = LineSeries.prototype.pointAttribs.call(series, point, state),
+            attr = Series.prototype.pointAttribs.call(series, point, state),
             seriesOptions = series.options || {},
             plotOptions = series.chart.options.plotOptions || {},
             seriesPlotOptions = plotOptions.series || {},
@@ -609,7 +609,7 @@ class HeatmapSeries extends ScatterSeries {
         var series = this,
             chart = series.chart;
 
-        LineSeries.prototype.setClip.apply(series, arguments);
+        Series.prototype.setClip.apply(series, arguments);
         if (series.options.clip !== false || animation) {
             (series.markerGroup as any)
                 .clip(
@@ -703,7 +703,7 @@ interface HeatmapSeries {
     colorAttribs: typeof colorMapSeriesMixin.colorAttribs;
     colorKey: typeof colorMapSeriesMixin.colorKey;
     drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
-    getSymbol: typeof LineSeries.prototype.getSymbol;
+    getSymbol: typeof Series.prototype.getSymbol;
     parallelArrays: typeof colorMapSeriesMixin.parallelArrays;
     pointArrayMap: Array<string>;
     pointClass: typeof HeatmapPoint;
@@ -737,7 +737,7 @@ extend(HeatmapSeries.prototype, {
 
     getExtremesFromAll: true,
 
-    getSymbol: LineSeries.prototype.getSymbol,
+    getSymbol: Series.prototype.getSymbol,
 
     hasPointSpecificOptions: true,
 

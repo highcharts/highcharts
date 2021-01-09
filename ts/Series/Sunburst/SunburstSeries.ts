@@ -37,9 +37,9 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
         column: ColumnSeries,
-        line: LineSeries,
         treemap: TreemapSeries
     }
 } = SeriesRegistry;
@@ -895,7 +895,7 @@ class SunburstSeries extends TreemapSeries {
         if (hackDataLabelAnimation && addedHack) {
             series.hasRendered = false;
             (series.options.dataLabels as any).defer = true;
-            LineSeries.prototype.drawDataLabels.call(series);
+            Series.prototype.drawDataLabels.call(series);
             series.hasRendered = true;
             // If animateLabels is called before labels were hidden, then call
             // it again.
@@ -903,7 +903,7 @@ class SunburstSeries extends TreemapSeries {
                 (animateLabels as any)();
             }
         } else {
-            LineSeries.prototype.drawDataLabels.call(series);
+            Series.prototype.drawDataLabels.call(series);
         }
     }
 
@@ -1047,7 +1047,7 @@ class SunburstSeries extends TreemapSeries {
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
-        LineSeries.prototype.translate.call(series);
+        Series.prototype.translate.call(series);
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
 

@@ -32,9 +32,9 @@ import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
+        column: ColumnSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -252,7 +252,7 @@ class Funnel3DSeries extends ColumnSeries {
      * @private
      */
     public bindAxes(): void {
-        LineSeries.prototype.bindAxes.apply(this, arguments);
+        Series.prototype.bindAxes.apply(this, arguments);
 
         extend(this.xAxis.options, {
             gridLineWidth: 0,
@@ -273,7 +273,7 @@ class Funnel3DSeries extends ColumnSeries {
      * @private
      */
     public translate(): void {
-        LineSeries.prototype.translate.apply(this, arguments);
+        Series.prototype.translate.apply(this, arguments);
 
         var sum = 0,
             series = this,

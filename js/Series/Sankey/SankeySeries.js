@@ -28,7 +28,7 @@ import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import SankeyPoint from './SankeyPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
+var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 var getLevelOptions = TreeSeriesMixin.getLevelOptions;
 import U from '../../Core/Utilities.js';
@@ -822,7 +822,7 @@ var SankeySeries = /** @class */ (function (_super) {
     return SankeySeries;
 }(ColumnSeries));
 extend(SankeySeries.prototype, {
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: NodesMixin.createNode,

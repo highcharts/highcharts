@@ -25,7 +25,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, LinePoint = _a.line.prototype.pointClass, PiePoint = _a.pie.prototype.pointClass, ScatterPoint = _a.scatter.prototype.pointClass;
+var Point = SeriesRegistry.series.prototype.pointClass, _a = SeriesRegistry.seriesTypes, PiePoint = _a.pie.prototype.pointClass, ScatterPoint = _a.scatter.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, pick = U.pick;
 /* *
@@ -57,7 +57,7 @@ var TreemapPoint = /** @class */ (function (_super) {
      * */
     /* eslint-disable valid-jsdoc */
     TreemapPoint.prototype.getClassName = function () {
-        var className = LinePoint.prototype.getClassName.call(this), series = this.series, options = series.options;
+        var className = Point.prototype.getClassName.call(this), series = this.series, options = series.options;
         // Above the current level
         if (this.node.level <= series.nodeMap[series.rootNode].level) {
             className += ' highcharts-above-level';
@@ -82,7 +82,7 @@ var TreemapPoint = /** @class */ (function (_super) {
         return Boolean(this.id || isNumber(this.value));
     };
     TreemapPoint.prototype.setState = function (state) {
-        LinePoint.prototype.setState.call(this, state);
+        Point.prototype.setState.call(this, state);
         // Graphic does not exist when point is not visible.
         if (this.graphic) {
             this.graphic.attr({

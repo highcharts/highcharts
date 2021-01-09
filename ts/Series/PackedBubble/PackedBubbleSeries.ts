@@ -31,9 +31,9 @@ import H from '../../Core/Globals.js';
 import PackedBubblePoint from './PackedBubblePoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        bubble: BubbleSeries,
-        line: LineSeries
+        bubble: BubbleSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -766,7 +766,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                     this.parentNode.dataLabel.destroy();
             }
         }
-        LineSeries.prototype.destroy.apply(this, arguments as any);
+        Series.prototype.destroy.apply(this, arguments as any);
     }
 
     /**
@@ -779,7 +779,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             points = this.points;
 
         // Render node labels:
-        LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
+        Series.prototype.drawDataLabels.apply(this, arguments as any);
 
         // Render parentNode labels:
         if (this.parentNode) {
@@ -787,7 +787,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             this.points = [this.parentNode];
             (this.options.dataLabels as any).textPath =
                 (this.options.dataLabels as any).parentNodeTextPath;
-            LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
+            Series.prototype.drawDataLabels.apply(this, arguments as any);
 
             // Restore nodes
             this.points = points;
@@ -956,7 +956,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     }
 
     public init(): PackedBubbleSeries {
-        LineSeries.prototype.init.apply(this, arguments);
+        Series.prototype.init.apply(this, arguments);
 
         /* eslint-disable no-invalid-this */
 
@@ -1221,7 +1221,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
     public render(): void {
         var series = this,
             dataLabels = [] as Array<SVGElement>;
-        LineSeries.prototype.render.apply(this, arguments);
+        Series.prototype.render.apply(this, arguments);
         // #10823 - dataLabels should stay visible
         // when enabled allowOverlap.
         if (!(series.options.dataLabels as any).allowOverlap) {
@@ -1356,7 +1356,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
      */
     public setVisible(): void {
         var series = this;
-        LineSeries.prototype.setVisible.apply(series, arguments as any);
+        Series.prototype.setVisible.apply(series, arguments as any);
         if (series.parentNodeLayout && series.graph) {
             if (series.visible) {
                 series.graph.show();
@@ -1485,7 +1485,7 @@ interface PackedBubbleSeries {
 }
 extend(PackedBubbleSeries.prototype, {
 
-    alignDataLabel: LineSeries.prototype.alignDataLabel,
+    alignDataLabel: Series.prototype.alignDataLabel,
 
     axisTypes: [],
 

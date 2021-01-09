@@ -24,8 +24,8 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import GanttPoint from './GanttPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        line: LineSeries,
         xrange: XRangeSeries
     }
 } = SeriesRegistry;
@@ -274,7 +274,7 @@ extend(GanttSeries.prototype, { // props - series member overrides
 
     pointClass: GanttPoint,
 
-    setData: LineSeries.prototype.setData
+    setData: Series.prototype.setData
 
 });
 

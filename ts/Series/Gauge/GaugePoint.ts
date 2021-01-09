@@ -23,11 +23,9 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        line: {
-            prototype: {
-                pointClass: LinePoint
-            }
+    series: {
+        prototype: {
+            pointClass: Point
         }
     }
 } = SeriesRegistry;
@@ -38,7 +36,7 @@ const {
  *
  * */
 
-class GaugePoint extends LinePoint {
+class GaugePoint extends Point {
 
     /* *
      *
