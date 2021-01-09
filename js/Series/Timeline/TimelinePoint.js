@@ -26,7 +26,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, PiePoint = _a.pie.prototype.pointClass;
+var Series = SeriesRegistry.series, PiePoint = SeriesRegistry.seriesTypes.pie.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 var defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
@@ -153,7 +153,7 @@ var TimelinePoint = /** @class */ (function (_super) {
         }
     };
     return TimelinePoint;
-}(LineSeries.prototype.pointClass));
+}(Series.prototype.pointClass));
 /* *
  *
  *  Default Export

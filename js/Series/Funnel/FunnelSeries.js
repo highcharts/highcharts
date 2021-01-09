@@ -28,7 +28,7 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
+var Series = SeriesRegistry.series, PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, merge = U.merge, pick = U.pick;
 /**
@@ -95,7 +95,7 @@ var FunnelSeries = /** @class */ (function (_super) {
         options.verticalAlign = 'bottom';
         // Call the parent method
         if (!inside || point.visible) {
-            LineSeries.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+            Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
         }
         if (inside) {
             if (!point.visible && point.dataLabel) {

@@ -21,10 +21,15 @@ import type LineSeriesOptions from './LineSeriesOptions';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /* *
  *
- *  Declarations
+ *  Class
  *
  * */
 
@@ -33,11 +38,11 @@ import H from '../../Core/Globals.js';
  *
  * @private
  * @class
- * @name Highcharts.seriesTypes.line
+ * @name Highcharts.seriesTypes._line
  *
  * @augments Highcharts.Series
  */
-declare class LineSeries extends Series {
+class LineSeries extends Series {
 
     /* *
      *
@@ -50,7 +55,9 @@ declare class LineSeries extends Series {
      *
      * @optionparent plotOptions.series
      */
-    public static defaultOptions: LineSeriesOptions;
+    public static defaultOptions: LineSeriesOptions = merge(Series.defaultOptions, {
+        // nothing here yet
+    } as LineSeriesOptions);
 
     /* *
      *
@@ -58,13 +65,19 @@ declare class LineSeries extends Series {
      *
      * */
 
-    public data: Array<LinePoint>;
+    public data: Array<LinePoint> = void 0 as any;
 
-    public options: LineSeriesOptions;
+    public options: LineSeriesOptions = void 0 as any;
 
-    public points: Array<LinePoint>;
+    public points: Array<LinePoint> = void 0 as any;
 
 }
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
 interface LineSeries {
     pointClass: typeof LinePoint;
@@ -78,18 +91,10 @@ interface LineSeries {
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        line: typeof LineSeries;
+        _line: typeof LineSeries;
     }
 }
-SeriesRegistry.registerSeriesType('line', Series);
-
-/* *
- *
- *  Compatibility
- *
- * */
-
-(H as any).Series = Series; // backwards compatibility
+SeriesRegistry.registerSeriesType('_line', LineSeries);
 
 /* *
  *
@@ -97,7 +102,7 @@ SeriesRegistry.registerSeriesType('line', Series);
  *
  * */
 
-export default Series;
+export default LineSeries;
 
 /* *
  *

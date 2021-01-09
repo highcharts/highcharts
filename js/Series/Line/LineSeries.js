@@ -8,22 +8,73 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import H from '../../Core/Globals.js';
-SeriesRegistry.registerSeriesType('line', Series);
+import U from '../../Core/Utilities.js';
+var extend = U.extend, merge = U.merge;
 /* *
  *
- *  Compatibility
+ *  Class
  *
  * */
-H.Series = Series; // backwards compatibility
+/**
+ * The line series is the base type and is therefor the series base prototype.
+ *
+ * @private
+ * @class
+ * @name Highcharts.seriesTypes._line
+ *
+ * @augments Highcharts.Series
+ */
+var LineSeries = /** @class */ (function (_super) {
+    __extends(LineSeries, _super);
+    function LineSeries() {
+        /* *
+         *
+         *  Static Functions
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+    /**
+     * General options for all series types.
+     *
+     * @optionparent plotOptions.series
+     */
+    LineSeries.defaultOptions = merge(Series.defaultOptions, {
+    // nothing here yet
+    });
+    return LineSeries;
+}(Series));
+SeriesRegistry.registerSeriesType('_line', LineSeries);
 /* *
  *
  *  Default Export
  *
  * */
-export default Series;
+export default LineSeries;
 /* *
  *
  *  API Options

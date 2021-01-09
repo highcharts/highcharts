@@ -5717,12 +5717,20 @@ extend(Series.prototype, {
     drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
-    // each point's x and y values are stored in this.xData and this.yData
+    // each point's x and y values are stored in this.xData and this.yData:
     parallelArrays: ['x', 'y'],
     requireSorting: true,
-    // requires the data to be sorted
+    // requires the data to be sorted:
     sorted: true
 });
+/* *
+ *
+ *  Registry
+ *
+ * */
+SeriesRegistry.series = Series;
+SeriesRegistry.registerSeriesType('line', Series);
+H.Series = Series;
 /* *
  *
  *  Default Export

@@ -25,9 +25,9 @@ const { noop } = H;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
+        column: ColumnSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -227,7 +227,7 @@ class WindbarbSeries extends ColumnSeries {
         options: WindbarbSeriesOptions
     ): void {
         WindbarbSeries.registerApproximation();
-        LineSeries.prototype.init.call(this, chart, options);
+        Series.prototype.init.call(this, chart, options);
     }
 
     // Get presentational attributes.

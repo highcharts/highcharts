@@ -9,6 +9,7 @@ export function testMapSeries() {
     // Check if the series are in seriesTypes
     const expected = [
         'line',
+        '_line',
         'area',
         'spline',
         'areaspline',
@@ -47,6 +48,7 @@ export function testStockSeries() {
     // Check if the series are in seriesTypes
     const expected = [
         'line',
+        '_line',
         'area',
         'spline',
         'areaspline',
@@ -82,6 +84,7 @@ export function testGanttSeries() {
     // Check if the series are in seriesTypes
     const expected = [
         'line',
+        '_line',
         'area',
         'spline',
         'areaspline',
@@ -116,6 +119,7 @@ export function testHighchartsSeries() {
     // Check if the series are in seriesTypes
     const expected = [
         'line',
+        '_line',
         'area',
         'spline',
         'areaspline',
@@ -149,6 +153,7 @@ export function testHighchartsMoreSeries() {
     // Check if the series are in seriesTypes
     const expected = [
         'line',
+        '_line',
         'area',
         'spline',
         'areaspline',
@@ -208,6 +213,7 @@ export function testStockIndicators() {
 
     const expected = [
         'line',
+        '_line',
         'area',
         'spline',
         'areaspline',

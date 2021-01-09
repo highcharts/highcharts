@@ -27,8 +27,8 @@ const { animObject } = A;
 import H from '../../Core/Globals.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        line: LineSeries,
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -309,7 +309,7 @@ class VectorSeries extends ScatterSeries {
      * @private
      */
     public translate(): void {
-        LineSeries.prototype.translate.call(this);
+        Series.prototype.translate.call(this);
 
         this.lengthMax = arrayMax(this.lengthData as any);
     }
