@@ -89,17 +89,28 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
     }
 
     /**
+     * Save upColor as point color (#14826).
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#resolveUpColor
+     */
+    public resolveUpColor(): void {
+        if (
+            this.open < this.close &&
+            !this.options.color &&
+            this.series.options.upColor
+        ) {
+            this.color = this.series.options.upColor;
+        }
+    }
+
+    /**
      * Extend the parent method by saving upColor.
      * @private
      * @function Highcharts.seriesTypes.ohlc#resolveColor
      */
     public resolveColor(): void {
         super.resolveColor();
-
-        // Save upColor as point color (#14826).
-        if (this.open < this.close && !this.options.color) {
-            this.color = this.series.options.upColor;
-        }
+        this.resolveUpColor();
     }
 
     /**
@@ -112,11 +123,7 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
      */
     public getZone(): SeriesZonesOptions {
         const zone = super.getZone();
-
-        // Save upColor as point color (#14826).
-        if (this.open < this.close && !this.options.color) {
-            this.color = this.series.options.upColor;
-        }
+        this.resolveUpColor();
 
         return zone;
     }

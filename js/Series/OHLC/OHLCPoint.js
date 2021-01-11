@@ -67,16 +67,25 @@ var OHLCPoint = /** @class */ (function (_super) {
                 ' highcharts-point-down');
     };
     /**
+     * Save upColor as point color (#14826).
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#resolveUpColor
+     */
+    OHLCPoint.prototype.resolveUpColor = function () {
+        if (this.open < this.close &&
+            !this.options.color &&
+            this.series.options.upColor) {
+            this.color = this.series.options.upColor;
+        }
+    };
+    /**
      * Extend the parent method by saving upColor.
      * @private
      * @function Highcharts.seriesTypes.ohlc#resolveColor
      */
     OHLCPoint.prototype.resolveColor = function () {
         _super.prototype.resolveColor.call(this);
-        // Save upColor as point color (#14826).
-        if (this.open < this.close && !this.options.color) {
-            this.color = this.series.options.upColor;
-        }
+        this.resolveUpColor();
     };
     /**
      * Extend the parent method by saving upColor.
@@ -88,10 +97,7 @@ var OHLCPoint = /** @class */ (function (_super) {
      */
     OHLCPoint.prototype.getZone = function () {
         var zone = _super.prototype.getZone.call(this);
-        // Save upColor as point color (#14826).
-        if (this.open < this.close && !this.options.color) {
-            this.color = this.series.options.upColor;
-        }
+        this.resolveUpColor();
         return zone;
     };
     return OHLCPoint;
