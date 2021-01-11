@@ -179,13 +179,11 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
 * */
 
 interface PCIndicator {
-    getTranslatedLinesNames: typeof MultipleLinesMixin[
-        'getTranslatedLinesNames'
-    ];
+    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
     drawGraph: typeof MultipleLinesMixin.drawGraph;
     toYData: typeof MultipleLinesMixin.toYData;
     translate: typeof MultipleLinesMixin.translate;
-    linesApiNames: typeof MultipleLinesMixin['linesApiNames'];
+    linesApiNames: typeof MultipleLinesMixin.linesApiNames;
     nameBase: string;
     nameComponents: Array<string>;
     pointArrayMap: Array<string>;

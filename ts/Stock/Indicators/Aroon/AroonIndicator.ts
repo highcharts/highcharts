@@ -219,7 +219,7 @@ interface AroonIndicator {
     nameComponents: Array<string>;
     linesApiNames: Array<string>;
     drawGraph: typeof MultipleLinesMixin.drawGraph;
-    getTranslatedLinesNames: typeof MultipleLinesMixin['getTranslatedLinesNames'];
+    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
     toYData: typeof MultipleLinesMixin.toYData;
     translate: typeof MultipleLinesMixin.translate;
     pointClass: typeof AroonPoint;
