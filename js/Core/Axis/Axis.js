@@ -2763,12 +2763,12 @@ var Axis = /** @class */ (function () {
             }
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
+                axis._addedPlotLB = true;
                 (options.plotLines || [])
                     .concat(options.plotBands || [])
                     .forEach(function (plotLineOptions) {
                     axis.addPlotBandOrLine(plotLineOptions);
                 });
-                axis._addedPlotLB = true;
             }
         } // end if hasData
         // Remove inactive ticks
