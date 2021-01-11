@@ -911,7 +911,7 @@ class GridAxis {
         const userLabels = axis.userOptions.labels || {};
 
         // Fire this only for the Gantt type chart, #14868.
-        if (axis.userOptions.grid && axis.userOptions.grid.enabled) {
+        if (axis.options.grid && axis.options.grid.enabled) {
             if (axis.horiz) {
                 if (gridOptions.enabled === true) {
                     axis.series.forEach(function (series): void {
