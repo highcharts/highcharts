@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2020 Kamil Kulig
+ *  (c) 2010-2021 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -16,13 +16,13 @@ import type {
     RegressionLineParametersObject
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionInterceptPoint from './LinearRegressionInterceptPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
         linearRegression: LinearRegressionIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -114,7 +114,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType(
+SeriesRegistry.registerSeriesType(
     'linearRegressionIntercept',
     LinearRegressionInterceptIndicator
 );

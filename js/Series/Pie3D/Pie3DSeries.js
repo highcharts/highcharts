@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  3D pie series
  *
@@ -23,11 +23,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var PieSeries = BaseSeries.seriesTypes.pie;
 import H from '../../Core/Globals.js';
 var deg2rad = H.deg2rad, svg = H.svg;
 import Pie3DPoint from './Pie3DPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, pick = U.pick;
 /* *

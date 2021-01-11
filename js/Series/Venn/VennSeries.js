@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -30,8 +30,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../../Core/Series/Series.js';
-var ScatterSeries = BaseSeries.seriesTypes.scatter;
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import GeometryMixin from '../../Mixins/Geometry.js';
@@ -41,6 +39,8 @@ var getAreaOfCircle = GeometryCirclesModule.getAreaOfCircle, getAreaOfIntersecti
 import NelderMeadMixin from '../../Mixins/NelderMead.js';
 var nelderMead = NelderMeadMixin.nelderMead;
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ScatterSeries = SeriesRegistry.seriesTypes.scatter;
 import VennPoint from './VennPoint.js';
 import VennUtils from './VennUtils.js';
 import U from '../../Core/Utilities.js';
@@ -539,7 +539,7 @@ extend(VennSeries.prototype, {
     pointClass: VennPoint,
     utils: VennUtils
 });
-BaseSeries.registerSeriesType('venn', VennSeries);
+SeriesRegistry.registerSeriesType('venn', VennSeries);
 /* *
  *
  *  Default Export

@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2020 Wojciech Chmiel
+ *  (c) 2010-2021 Wojciech Chmiel
  *
  *  License: www.highcharts.com/license
  *
@@ -11,7 +11,7 @@
 'use strict';
 
 import type Point from '../Core/Series/Point';
-import type LineSeries from '../Series/Line/LineSeries';
+import type Series from '../Core/Series/Series';
 import H from '../Core/Globals.js';
 
 declare module '../Core/Series/SeriesLike' {
@@ -26,7 +26,7 @@ declare module '../Core/Series/SeriesLike' {
  */
 declare global {
     namespace Highcharts {
-        interface MultipleLinesIndicator extends LineSeries {
+        interface MultipleLinesIndicator extends Series {
             drawGraph: MultipleLinesMixin['drawGraph'];
             getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'

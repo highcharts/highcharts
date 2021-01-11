@@ -16,7 +16,7 @@
 
 import type LineSeriesOptions from '../../../Series/Line/LineSeriesOptions';
 import type SMAOptions from './SMAOptions';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries,
@@ -24,7 +24,7 @@ const {
             prototype: ohlcProto
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,

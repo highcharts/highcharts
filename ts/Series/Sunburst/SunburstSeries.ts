@@ -2,7 +2,7 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -28,14 +28,6 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeriesOptions from './SunburstSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TreemapSeriesType from '../Treemap/TreemapSeries';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries,
-        treemap: TreemapSeries
-    }
-} = BaseSeries;
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const {
     getCenter,
@@ -43,6 +35,14 @@ const {
 } = CenteredSeriesMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        line: LineSeries,
+        treemap: TreemapSeries
+    }
+} = SeriesRegistry;
 import SunburstPoint from './SunburstPoint.js';
 import SunburstUtilities from './SunburstUtilities.js';
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
@@ -1198,7 +1198,7 @@ declare module '../../Core/Series/SeriesType' {
         sunburst: typeof SunburstSeries;
     }
 }
-BaseSeries.registerSeriesType('sunburst', SunburstSeries);
+SeriesRegistry.registerSeriesType('sunburst', SunburstSeries);
 
 /* *
  *

@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var isArray = U.isArray, merge = U.merge;
 /* eslint-disable require-jsdoc */
@@ -140,7 +140,7 @@ var RSIIndicator = /** @class */ (function (_super) {
     });
     return RSIIndicator;
 }(SMAIndicator));
-BaseSeries.registerSeriesType('rsi', RSIIndicator);
+SeriesRegistry.registerSeriesType('rsi', RSIIndicator);
 /* *
  *
  *  Default Export

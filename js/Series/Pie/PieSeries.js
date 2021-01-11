@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,16 +21,16 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 var getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import PiePoint from './PiePoint.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
@@ -431,7 +431,7 @@ var PieSeries = /** @class */ (function (_super) {
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
-    PieSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+    PieSeries.defaultOptions = merge(Series.defaultOptions, {
         /**
          * @excluding legendItemClick
          * @apioption plotOptions.pie.events
@@ -952,7 +952,7 @@ var PieSeries = /** @class */ (function (_super) {
         }
     });
     return PieSeries;
-}(LineSeries));
+}(Series));
 extend(PieSeries.prototype, {
     axisTypes: [],
     directTouch: true,
@@ -969,7 +969,7 @@ extend(PieSeries.prototype, {
     searchPoint: noop,
     trackerGroups: ['group', 'dataLabelsGroup']
 });
-BaseSeries.registerSeriesType('pie', PieSeries);
+SeriesRegistry.registerSeriesType('pie', PieSeries);
 /* *
  *
  *  Default Export

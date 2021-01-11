@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020 Torstein Honsi
+ *  (c) 2019-2021 Torstein Honsi
  *
  *  Item series type for Highcharts
  *
@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
 /* *

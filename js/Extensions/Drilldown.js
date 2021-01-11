@@ -13,18 +13,18 @@
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
@@ -142,7 +142,6 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, extend = U.extend, fireE
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import '../Series/Line/LineSeries.js';
 import '../Series/Column/ColumnSeries.js';
 var PieSeries = seriesTypes.pie, ddSeriesId = 1;
 // Add language
@@ -1060,7 +1059,7 @@ var handlePointClick = function (e) {
         point.doDrilldown(void 0, void 0, e);
     }
 };
-addEvent(LineSeries, 'afterDrawDataLabels', function () {
+addEvent(Series, 'afterDrawDataLabels', function () {
     var css = this.chart.options.drilldown.activeDataLabelStyle, renderer = this.chart.renderer, styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         var dataLabelsOptions = point.options.dataLabels, pointCSS = pick(point.dlOptions, dataLabelsOptions && dataLabelsOptions.style, {});
@@ -1088,7 +1087,7 @@ var applyCursorCSS = function (element, cursor, addClass, styledMode) {
     }
 };
 // Mark the trackers with a pointer
-addEvent(LineSeries, 'afterDrawTracker', function () {
+addEvent(Series, 'afterDrawTracker', function () {
     var styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         if (point.drilldown && point.graphic) {

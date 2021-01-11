@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -46,7 +46,7 @@ var setAnimation = H.setAnimation = function setAnimation(animation, chart) {
  */
 var animObject = H.animObject = function animObject(animation) {
     return isObject(animation) ?
-        H.merge({ duration: 500, defer: 0 }, animation) :
+        merge({ duration: 500, defer: 0 }, animation) :
         { duration: animation ? 500 : 0, defer: 0 };
 };
 /**
@@ -107,7 +107,7 @@ var getDeferredAnimation = H.getDeferredAnimation = function (chart, animation, 
  *
  * @return {void}
  */
-var animate = H.animate = function (el, params, opt) {
+var animate = function (el, params, opt) {
     var start, unit = '', end, fx, args;
     if (!isObject(opt)) { // Number or undefined/null
         args = arguments;
@@ -175,11 +175,11 @@ var animate = H.animate = function (el, params, opt) {
  * stopping everything, we can just stop the actual attributes we're setting.
  */
 var stop = H.stop = function (el, prop) {
-    var i = H.timers.length;
+    var i = Fx.timers.length;
     // Remove timers related to this element (#4519)
     while (i--) {
-        if (H.timers[i].elem === el && (!prop || prop === H.timers[i].prop)) {
-            H.timers[i].stopped = true; // #4667
+        if (Fx.timers[i].elem === el && (!prop || prop === Fx.timers[i].prop)) {
+            Fx.timers[i].stopped = true; // #4667
         }
     }
 };

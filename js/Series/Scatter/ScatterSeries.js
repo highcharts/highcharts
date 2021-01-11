@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,9 +21,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import LineSeries from '../Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 /* *
@@ -112,7 +112,7 @@ var ScatterSeries = /** @class */ (function (_super) {
             (this.options.lineWidth === 0 &&
                 this.graph &&
                 this.graph.strokeWidth())) {
-            LineSeries.prototype.drawGraph.call(this);
+            Series.prototype.drawGraph.call(this);
         }
     };
     /**
@@ -127,7 +127,7 @@ var ScatterSeries = /** @class */ (function (_super) {
      * @product      highcharts highstock
      * @optionparent plotOptions.scatter
      */
-    ScatterSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+    ScatterSeries.defaultOptions = merge(Series.defaultOptions, {
         /**
          * The width of the line connecting the data points.
          *
@@ -211,7 +211,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         }
     });
     return ScatterSeries;
-}(LineSeries));
+}(Series));
 extend(ScatterSeries.prototype, {
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,
@@ -229,7 +229,7 @@ extend(ScatterSeries.prototype, {
 addEvent(ScatterSeries, 'afterTranslate', function () {
     this.applyJitter();
 });
-BaseSeries.registerSeriesType('scatter', ScatterSeries);
+SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
 /* *
  *
  *  Default Export

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -305,27 +305,44 @@ var Tooltip = /** @class */ (function () {
         }
         else if (points[0].tooltipPos) {
             ret = points[0].tooltipPos;
-            // When shared, use the average position
+            // Calculate the average position and adjust for axis positions
         }
         else {
             points.forEach(function (point) {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
-                plotX += point.plotX +
-                    (!inverted && xAxis ? xAxis.left - plotLeft : 0);
+                plotX += point.plotX || 0;
                 plotY += (point.plotLow ?
-                    (point.plotLow + point.plotHigh) / 2 :
-                    point.plotY) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
+                    (point.plotLow + (point.plotHigh || 0)) / 2 :
+                    (point.plotY || 0));
+                // Adjust position for positioned axes (top/left settings)
+                if (xAxis && yAxis) {
+                    if (!inverted) { // #1151
+                        plotX += xAxis.pos - plotLeft;
+                        plotY += yAxis.pos - plotTop;
+                    }
+                    else { // #14771
+                        plotX += plotTop + chart.plotHeight - xAxis.len - xAxis.pos;
+                        plotY += plotLeft + chart.plotWidth - yAxis.len - yAxis.pos;
+                    }
+                }
             });
             plotX /= points.length;
             plotY /= points.length;
+            // Use the average position for multiple points
             ret = [
                 inverted ? chart.plotWidth - plotY : plotX,
-                this.shared && !inverted && points.length > 1 && mouseEvent ?
-                    // place shared tooltip next to the mouse (#424)
-                    mouseEvent.chartY - plotTop :
-                    inverted ? chart.plotHeight - plotX : plotY
+                inverted ? chart.plotHeight - plotX : plotY
             ];
+            // When shared, place the tooltip next to the mouse (#424)
+            if (this.shared && points.length > 1 && mouseEvent) {
+                if (inverted) {
+                    ret[0] = mouseEvent.chartX - plotLeft;
+                }
+                else {
+                    ret[1] = mouseEvent.chartY - plotTop;
+                }
+            }
         }
         return ret.map(Math.round);
     };
@@ -514,9 +531,9 @@ var Tooltip = /** @class */ (function () {
             doc.documentElement.clientWidth - 2 * distance :
             chart.chartWidth, outerHeight = outside ?
             Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, doc.body.offsetHeight, doc.documentElement.offsetHeight, doc.documentElement.clientHeight) :
-            chart.chartHeight, chartPosition = chart.pointer.getChartPosition(), containerScaling = chart.containerScaling, scaleX = function (val) { return ( // eslint-disable-line no-confusing-arrow
-        containerScaling ? val * containerScaling.scaleX : val); }, scaleY = function (val) { return ( // eslint-disable-line no-confusing-arrow
-        containerScaling ? val * containerScaling.scaleY : val); }, 
+            chart.chartHeight, chartPosition = chart.pointer.getChartPosition(), scaleX = function (val) { return ( // eslint-disable-line no-confusing-arrow
+        val * chartPosition.scaleX); }, scaleY = function (val) { return ( // eslint-disable-line no-confusing-arrow
+        val * chartPosition.scaleY); }, 
         // Build parameter arrays for firstDimension()/secondDimension()
         buildDimensionArray = function (dim) {
             var isX = dim === 'x';
@@ -1313,13 +1330,12 @@ var Tooltip = /** @class */ (function () {
             this.renderer.setSize(label.width + pad, label.height + pad, false);
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            var containerScaling = chart.containerScaling;
-            if (containerScaling) {
+            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
                 css(this.container, {
-                    transform: "scale(" + containerScaling.scaleX + ", " + containerScaling.scaleY + ")"
+                    transform: "scale(" + chartPosition.scaleX + ", " + chartPosition.scaleY + ")"
                 });
-                anchorX *= containerScaling.scaleX;
-                anchorY *= containerScaling.scaleY;
+                anchorX *= chartPosition.scaleX;
+                anchorY *= chartPosition.scaleY;
             }
             anchorX += chartPosition.left - pos.x;
             anchorY += chartPosition.top - pos.y;

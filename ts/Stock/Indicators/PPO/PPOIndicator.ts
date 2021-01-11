@@ -8,20 +8,21 @@
 
 'use strict';
 
+import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type {
     PPOOptions,
     PPOParamsOptions
 } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
+
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         ema: EMAIndicator
     }
-} = BaseSeries;
-import BaseSeries from '../../../Core/Series/Series.js';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -114,7 +115,7 @@ class PPOIndicator extends EMAIndicator {
         );
     }
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: PPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
@@ -214,7 +215,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('ppo', PPOIndicator);
+SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
 
 /* *
  *

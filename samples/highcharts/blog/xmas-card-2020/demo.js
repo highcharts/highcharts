@@ -1567,3 +1567,16 @@ document.getElementById('pause').onclick = function () {
 document.getElementById('rewind').onclick = function () {
     soundChart.rewindSonify();
 };
+
+// Scale to mobile
+function scaleContainer() {
+    const width = $(document.body).width();
+    let scale = 1;
+    if (width < 800) {
+        scale = (width - 46) / 800;
+    }
+    document.getElementById('container').style.transform = `scale(${scale})`;
+}
+document.addEventListener('DOMContentLoaded', scaleContainer);
+window.addEventListener('orientationchange', scaleContainer);
+window.addEventListener('resize', scaleContainer);

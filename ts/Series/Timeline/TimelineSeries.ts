@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -35,15 +35,15 @@ import type {
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
-} = BaseSeries;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import palette from '../../Core/Color/Palette.js';
+} = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TimelinePoint from './TimelinePoint.js';
 import U from '../../Core/Utilities.js';
@@ -646,7 +646,7 @@ declare module '../../Core/Series/SeriesType' {
         timeline: typeof TimelineSeries;
     }
 }
-BaseSeries.registerSeriesType('timeline', TimelineSeries);
+SeriesRegistry.registerSeriesType('timeline', TimelineSeries);
 
 /* *
  *

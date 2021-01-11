@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2020 Torstein Honsi
+ *  (c) 2018-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -36,14 +36,14 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import OrganizationPoint from './OrganizationPoint.js';
+import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sankey: SankeySeries
     }
-} = BaseSeries;
-import OrganizationPoint from './OrganizationPoint.js';
-import palette from '../../Core/Color/Palette.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     css,
@@ -667,7 +667,7 @@ declare module '../../Core/Series/SeriesType' {
         organization: typeof OrganizationSeries;
     }
 }
-BaseSeries.registerSeriesType('organization', OrganizationSeries);
+SeriesRegistry.registerSeriesType('organization', OrganizationSeries);
 
 /* *
  *

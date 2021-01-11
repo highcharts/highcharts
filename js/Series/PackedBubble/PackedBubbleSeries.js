@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -21,12 +21,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, BubbleSeries = _a.bubble, LineSeries = _a.line;
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 import PackedBubblePoint from './PackedBubblePoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, BubbleSeries = _a.bubble, LineSeries = _a.line;
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../../Series/Networkgraph/DraggableNodes.js';
@@ -1129,7 +1129,7 @@ extend(PackedBubbleSeries.prototype, {
     searchPoint: H.noop,
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
 });
-BaseSeries.registerSeriesType('packedbubble', PackedBubbleSeries);
+SeriesRegistry.registerSeriesType('packedbubble', PackedBubbleSeries);
 /* *
  *
  *  Default Export

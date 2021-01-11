@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,18 +20,18 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
-    }
-} = BaseSeries;
 import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        line: LineSeries
+    }
+} = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -718,7 +718,7 @@ declare module '../../Core/Series/SeriesType' {
         flags: typeof FlagsSeries;
     }
 }
-BaseSeries.registerSeriesType('flags', FlagsSeries);
+SeriesRegistry.registerSeriesType('flags', FlagsSeries);
 
 /* *
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Scatter 3D series.
  *
@@ -20,12 +20,11 @@
 
 import type Scatter3DSeriesOptions from './Scatter3DSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
-import Scatter3DPoint from './Scatter3DPoint.js';
-import ScatterSeries from '../Scatter/ScatterSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 const { pointCameraDistance } = Math3D;
-import Point from '../../Core/Series/Point.js';
+import Scatter3DPoint from './Scatter3DPoint.js';
+import ScatterSeries from '../Scatter/ScatterSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -149,7 +148,7 @@ declare module '../../Core/Series/SeriesType' {
         scatter3d: typeof Scatter3DSeries;
     }
 }
-BaseSeries.registerSeriesType('scatter3d', Scatter3DSeries);
+SeriesRegistry.registerSeriesType('scatter3d', Scatter3DSeries);
 
 /* *
  *

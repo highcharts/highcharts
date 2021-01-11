@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,13 +20,13 @@ import type MapLinePoint from './MapLinePoint.js';
 import type MapLineSeriesOptions from './MapLineSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
+import MapSeries from '../Map/MapSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
-} = BaseSeries;
-import MapSeries from '../Map/MapSeries.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -167,7 +167,7 @@ declare module '../../Core/Series/SeriesType' {
         mapline: typeof MapLineSeries;
     }
 }
-BaseSeries.registerSeriesType('mapline', MapLineSeries);
+SeriesRegistry.registerSeriesType('mapline', MapLineSeries);
 
 /* *
  *

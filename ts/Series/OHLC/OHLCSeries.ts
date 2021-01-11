@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,13 +20,13 @@ import type OHLCSeriesOptions from './OHLCSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import OHLCPoint from './OHLCPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
-import OHLCPoint from './OHLCPoint.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -420,7 +420,7 @@ declare module '../../Core/Series/SeriesType' {
         ohlc: typeof OHLCSeries;
     }
 }
-BaseSeries.registerSeriesType('ohlc', OHLCSeries);
+SeriesRegistry.registerSeriesType('ohlc', OHLCSeries);
 
 /* *
  *

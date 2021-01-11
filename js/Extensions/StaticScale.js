@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Torstein Honsi, Lars Cabrera
+ *  (c) 2016-2021 Torstein Honsi, Lars Cabrera
  *
  *  License: www.highcharts.com/license
  *

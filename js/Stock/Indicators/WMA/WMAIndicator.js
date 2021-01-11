@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Kacper Madej
+ *  (c) 2010-2021 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -21,8 +21,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
@@ -131,7 +131,7 @@ var WMAIndicator = /** @class */ (function (_super) {
     });
     return WMAIndicator;
 }(SMAIndicator));
-BaseSeries.registerSeriesType('wma', WMAIndicator);
+SeriesRegistry.registerSeriesType('wma', WMAIndicator);
 /* *
  *
  *  Default Export

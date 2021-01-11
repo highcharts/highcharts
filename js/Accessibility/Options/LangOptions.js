@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -105,7 +105,7 @@ var langOptions = {
          */
         legend: {
             legendLabel: 'Toggle series visibility',
-            legendItem: 'Hide {itemName}'
+            legendItem: 'Show {itemName}'
         },
         /**
          * Chart and map zoom accessibility language options.
@@ -123,6 +123,7 @@ var langOptions = {
          * @since 8.0.0
          */
         rangeSelector: {
+            dropdownLabel: '{rangeTitle}',
             minInputLabel: 'Select start date.',
             maxInputLabel: 'Select end date.',
             clickButtonAnnouncement: 'Viewing {axisRangeDescription}'

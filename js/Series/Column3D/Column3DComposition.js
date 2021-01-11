@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,14 +8,14 @@
  *
  * */
 'use strict';
-import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
 import H from '../../Core/Globals.js';
 var svg = H.svg;
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
@@ -57,7 +57,7 @@ wrap(columnProto, 'translate', function (proceed) {
     }
 });
 // Don't use justifyDataLabel when point is outsidePlot
-wrap(LineSeries.prototype, 'justifyDataLabel', function (proceed) {
+wrap(Series.prototype, 'justifyDataLabel', function (proceed) {
     return !(arguments[2].outside3dPlot) ?
         proceed.apply(this, [].slice.call(arguments, 1)) :
         false;
@@ -317,15 +317,15 @@ function hasNewShapeType(proceed) {
 wrap(columnProto, 'pointAttribs', pointAttribs);
 wrap(columnProto, 'setState', setState);
 wrap(columnProto.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
-if (BaseSeries.seriesTypes.columnRange) {
-    var columnRangeProto = BaseSeries.seriesTypes.columnrange.prototype;
+if (SeriesRegistry.seriesTypes.columnRange) {
+    var columnRangeProto = SeriesRegistry.seriesTypes.columnrange.prototype;
     wrap(columnRangeProto, 'pointAttribs', pointAttribs);
     wrap(columnRangeProto, 'setState', setState);
     wrap(columnRangeProto.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
     columnRangeProto.plotGroup = columnProto.plotGroup;
     columnRangeProto.setVisible = columnProto.setVisible;
 }
-wrap(LineSeries.prototype, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo) {
+wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo) {
     var chart = this.chart;
     // In 3D we need to pass point.outsidePlot option to the justifyDataLabel
     // method for disabling justifying dataLabels in columns outside plot
@@ -375,7 +375,7 @@ wrap(StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x,
         // use its barW, z and depth parameters
         // for correct stackLabels position calculation
         if (columnSeries &&
-            columnSeries instanceof BaseSeries.seriesTypes.column) {
+            columnSeries instanceof SeriesRegistry.seriesTypes.column) {
             var dLPosition = {
                 x: stackBox.x + (chart.inverted ? h : xWidth / 2),
                 y: stackBox.y,

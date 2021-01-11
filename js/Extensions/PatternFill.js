@@ -2,7 +2,7 @@
  *
  *  Module for using patterns or images as point fills.
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *  Author: Torstein Hønsi, Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -15,12 +15,11 @@ import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, erase = U.erase, getOptions = U.getOptions, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
-import '../Series/Line/LineSeries.js';
 /**
  * Pattern options
  *
@@ -367,7 +366,7 @@ SVGRenderer.prototype.addPattern = function (options, animation) {
     return pattern;
 };
 // Make sure we have a series color
-wrap(LineSeries.prototype, 'getColor', function (proceed) {
+wrap(Series.prototype, 'getColor', function (proceed) {
     var oldColor = this.options.color;
     // Temporarely remove color options to get defaults
     if (oldColor &&
@@ -387,7 +386,7 @@ wrap(LineSeries.prototype, 'getColor', function (proceed) {
     }
 });
 // Calculate pattern dimensions on points that have their own pattern.
-addEvent(LineSeries, 'render', function () {
+addEvent(Series, 'render', function () {
     var isResizing = this.chart.isResizing;
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
         (this.points || []).forEach(function (point) {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  3D pie series
  *
@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var PiePoint = BaseSeries.seriesTypes.pie.prototype.pointClass;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var PiePoint = SeriesRegistry.seriesTypes.pie.prototype.pointClass;
 /* *
  *
  *  Constants

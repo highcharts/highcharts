@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -32,7 +32,7 @@ import palette from '../../Core/Color/Palette.js';
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 import U from '../Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The object wrapper for plot lines and plot bands
@@ -61,7 +61,7 @@ var PlotLineOrBand = /** @class */ (function () {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     PlotLineOrBand.prototype.render = function () {
-        H.fireEvent(this, 'render');
+        fireEvent(this, 'render');
         var plotLine = this, axis = plotLine.axis, horiz = axis.horiz, log = axis.logarithmic, options = plotLine.options, optionsLabel = options.label, label = plotLine.label, to = options.to, from = options.from, value = options.value, isBand = defined(from) && defined(to), isLine = defined(value), svgElem = plotLine.svgElem, isNew = !svgElem, path = [], color = options.color, zIndex = pick(options.zIndex, 0), events = options.events, attribs = {
             'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') +
                 (options.className || '')
@@ -952,11 +952,20 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
+        var _this = this;
         var obj = new H.PlotLineOrBand(this, options), userOptions = this.userOptions;
         if (this.visible) {
             obj = obj.render();
         }
         if (obj) { // #2189
+            if (!this._addedPlotLB) {
+                this._addedPlotLB = true;
+                (userOptions.plotLines || [])
+                    .concat(userOptions.plotBands || [])
+                    .forEach(function (plotLineOptions) {
+                    _this.addPlotBandOrLine(plotLineOptions);
+                });
+            }
             // Add it to the user options for exporting and Axis.update
             if (coll) {
                 // Workaround Microsoft/TypeScript issue #32693
@@ -965,7 +974,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
-            this._addedPlotLB = true;
         }
         return obj;
     },

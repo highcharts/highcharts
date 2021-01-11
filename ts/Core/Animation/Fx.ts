@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,7 +16,7 @@ import type CSSObject from '../Renderer/CSSObject';
 import type FxLike from './FxLike';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -47,7 +47,7 @@ declare global {
         function getDeferredAnimation(
             chart: Chart,
             animation: Partial<AnimationOptions>,
-            series?: LineSeries
+            series?: Series
         ): Partial<AnimationOptions>;
         function setAnimation(
             animation: (boolean|Partial<AnimationOptions>|undefined),
@@ -71,6 +71,14 @@ declare global {
  * @name Highcharts.Fx
  */
 class Fx {
+
+    /* *
+     *
+     * Static properties
+     *
+     * */
+
+    public static timers: Array<Highcharts.Timer> = [];
 
     /* *
      *
@@ -244,13 +252,13 @@ class Fx {
                     setTimeout(step, 13);
                 },
             step = function (): void {
-                for (var i = 0; i < H.timers.length; i++) {
-                    if (!H.timers[i]()) {
-                        H.timers.splice(i--, 1);
+                for (var i = 0; i < Fx.timers.length; i++) {
+                    if (!Fx.timers[i]()) {
+                        Fx.timers.splice(i--, 1);
                     }
                 }
 
-                if (H.timers.length) {
+                if (Fx.timers.length) {
                     requestAnimationFrame(step);
                 }
             };
@@ -271,7 +279,7 @@ class Fx {
             timer.elem = this.elem;
             timer.prop = this.prop;
 
-            if (timer() && H.timers.push(timer) === 1) {
+            if (timer() && Fx.timers.push(timer) === 1) {
                 requestAnimationFrame(step);
             }
         }
@@ -533,6 +541,19 @@ interface Fx extends FxLike {
     // Nothing here yet
 }
 
+/* *
+ *
+ *  Compatibility
+ *
+ * */
+
 H.Fx = Fx;
+(H as any).timers = Fx.timers;
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default Fx;

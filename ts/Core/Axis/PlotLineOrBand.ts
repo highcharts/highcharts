@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -175,6 +175,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    fireEvent,
     merge,
     objectEach,
     pick
@@ -221,7 +222,7 @@ class PlotLineOrBand {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     public render(): (Highcharts.PlotLineOrBand|undefined) {
-        H.fireEvent(this, 'render');
+        fireEvent(this, 'render');
 
         var plotLine = this,
             axis = plotLine.axis,
@@ -1302,6 +1303,17 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         }
 
         if (obj) { // #2189
+            if (!this._addedPlotLB) {
+                this._addedPlotLB = true;
+                (userOptions.plotLines || [])
+                    .concat((userOptions.plotBands as any) || [])
+                    .forEach(
+                        (plotLineOptions: any): void => {
+                            this.addPlotBandOrLine(plotLineOptions);
+                        }
+                    );
+            }
+
             // Add it to the user options for exporting and Axis.update
             if (coll) {
                 // Workaround Microsoft/TypeScript issue #32693
@@ -1310,7 +1322,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
-            this._addedPlotLB = true;
         }
 
         return obj;

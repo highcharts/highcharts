@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,9 @@
 import type HeatmapPointOptions from './HeatmapPointOptions';
 import type HeatmapSeries from './HeatmapSeries';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
+const { colorMapPointMixin } = ColorMapMixin;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         scatter: {
@@ -28,9 +30,7 @@ const {
             }
         }
     }
-} = BaseSeries;
-import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
-const { colorMapPointMixin } = ColorMapMixin;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     clamp,

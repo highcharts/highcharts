@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -18,14 +18,14 @@
 
 import type PackedBubblePointOptions from './PackedBubblePointOptions';
 import type PackedBubbleSeries from './PackedBubbleSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import Chart from '../../Core/Chart/Chart.js';
+import Point from '../../Core/Series/Point.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         bubble: BubbleSeries
     }
-} = BaseSeries;
-import Chart from '../../Core/Chart/Chart.js';
-import Point from '../../Core/Series/Point.js';
+} = SeriesRegistry;
 
 /* *
  *

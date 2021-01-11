@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Paweł Dalek
+ *  (c) 2010-2021 Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highstock
  *
@@ -25,10 +25,10 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
 import H from '../../../Core/Globals.js';
 var noop = H.noop;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray, merge = U.merge;
 /* eslint-disable require-jsdoc */
@@ -50,7 +50,7 @@ function arrayExtremesOHLC(data) {
     };
 }
 /* eslint-enable require-jsdoc */
-var abs = Math.abs, columnPrototype = BaseSeries.seriesTypes.column.prototype;
+var abs = Math.abs, columnPrototype = SeriesRegistry.seriesTypes.column.prototype;
 /**
  * The Volume By Price (VBP) series type.
  *
@@ -495,7 +495,7 @@ extend(VBPIndicator.prototype, {
     getColumnMetrics: columnPrototype.getColumnMetrics,
     crispCol: columnPrototype.crispCol
 });
-BaseSeries.registerSeriesType('vbp', VBPIndicator);
+SeriesRegistry.registerSeriesType('vbp', VBPIndicator);
 /* *
  *
  *  Default Export

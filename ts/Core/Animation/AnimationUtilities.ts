@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,7 @@ import type AnimationOptions from './AnimationOptions';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import Fx from './Fx.js';
@@ -48,7 +48,7 @@ declare global {
         function getDeferredAnimation(
             chart: Chart,
             animation: Partial<AnimationOptions>,
-            series?: LineSeries
+            series?: Series
         ): Partial<AnimationOptions>;
         function setAnimation(
             animation: (boolean|Partial<AnimationOptions>|undefined),
@@ -102,7 +102,7 @@ const animObject = H.animObject = function animObject(
     animation?: (boolean|DeepPartial<AnimationOptions>)
 ): AnimationOptions {
     return isObject(animation) ?
-        H.merge(
+        merge(
             { duration: 500, defer: 0 },
             animation as AnimationOptions
         ) as any :
@@ -130,7 +130,7 @@ const animObject = H.animObject = function animObject(
 const getDeferredAnimation = H.getDeferredAnimation = function (
     chart: Chart,
     animation: (false|DeepPartial<AnimationOptions>),
-    series?: LineSeries
+    series?: Series
 ): Partial<AnimationOptions> {
 
     const labelAnimation = animObject(animation);
@@ -180,7 +180,7 @@ const getDeferredAnimation = H.getDeferredAnimation = function (
  *
  * @return {void}
  */
-const animate = H.animate = function (
+const animate = function (
     el: (HTMLDOMElement|SVGElement),
     params: (CSSObject|SVGAttributes),
     opt?: Partial<AnimationOptions>
@@ -265,12 +265,12 @@ const animate = H.animate = function (
  */
 const stop = H.stop = function (el: SVGElement, prop?: string): void {
 
-    var i = H.timers.length;
+    var i = Fx.timers.length;
 
     // Remove timers related to this element (#4519)
     while (i--) {
-        if (H.timers[i].elem === el && (!prop || prop === H.timers[i].prop)) {
-            H.timers[i].stopped = true; // #4667
+        if (Fx.timers[i].elem === el && (!prop || prop === Fx.timers[i].prop)) {
+            Fx.timers[i].stopped = true; // #4667
         }
     }
 };

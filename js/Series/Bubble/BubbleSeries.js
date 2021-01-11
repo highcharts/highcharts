@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,14 +22,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import Axis from '../../Core/Axis/Axis.js';
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt;
 import '../Column/ColumnSeries.js';
@@ -158,7 +158,7 @@ var BubbleSeries = /** @class */ (function (_super) {
      * @private
      */
     BubbleSeries.prototype.pointAttribs = function (point, state) {
-        var markerOptions = this.options.marker, fillOpacity = markerOptions.fillOpacity, attr = LineSeries.prototype.pointAttribs.call(this, point, state);
+        var markerOptions = this.options.marker, fillOpacity = markerOptions.fillOpacity, attr = Series.prototype.pointAttribs.call(this, point, state);
         if (fillOpacity !== 1) {
             attr.fill = color(attr.fill)
                 .setOpacity(fillOpacity)
@@ -525,7 +525,7 @@ Axis.prototype.beforePadding = function () {
     }
     /* eslint-enable valid-jsdoc */
 };
-BaseSeries.registerSeriesType('bubble', BubbleSeries);
+SeriesRegistry.registerSeriesType('bubble', BubbleSeries);
 /* *
  *
  *  Default Export

@@ -20,14 +20,14 @@ import type {
 } from './ABandsOptions';
 import type ABandsPoint from './ABandsPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -150,7 +150,7 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         this: ABandsIndicator,
         series: TLinkedSeries,
         params: ABandsParamsOptions
@@ -286,7 +286,7 @@ declare module '../../../Core/Series/SeriesType' {
         abands: typeof ABandsIndicator;
     }
 }
-BaseSeries.registerSeriesType('abands', ABandsIndicator);
+SeriesRegistry.registerSeriesType('abands', ABandsIndicator);
 
 /* *
  *

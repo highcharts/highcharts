@@ -2,7 +2,7 @@
  *
  *  Highcharts pyramid3d series module
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *  Author: Kacper Madej
  *
  *  License: www.highcharts.com/license
@@ -21,12 +21,12 @@
 
 import type Pyramid3DPoint from './Pyramid3DPoint';
 import type Pyramid3DSeriesOptions from './Pyramid3DSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         funnel3d: Funnel3DSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -122,7 +122,7 @@ declare module '../../Core/Series/SeriesType' {
         pyramid3d: typeof Pyramid3DSeries;
     }
 }
-BaseSeries.registerSeriesType('pyramid3d', Pyramid3DSeries);
+SeriesRegistry.registerSeriesType('pyramid3d', Pyramid3DSeries);
 
 /* *
  *

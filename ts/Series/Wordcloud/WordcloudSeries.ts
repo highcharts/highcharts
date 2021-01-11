@@ -2,7 +2,7 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  License: www.highcharts.com/license
@@ -22,15 +22,8 @@ import type {
     WordcloudSeriesOptions,
     WordcloudSeriesRotationOptions
 } from './WordcloudSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries
-    }
-} = BaseSeries;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Line/LineSeries.js';
 import PolygonMixin from '../../Mixins/Polygon.js';
 const {
     getBoundingBoxFromPolygon,
@@ -39,6 +32,13 @@ const {
     rotate2DToOrigin,
     rotate2DToPoint
 } = PolygonMixin;
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -211,7 +211,7 @@ class WordcloudSeries extends ColumnSeries {
             tickPositions: []
         };
 
-        LineSeries.prototype.bindAxes.call(this);
+        Series.prototype.bindAxes.call(this);
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
     }
@@ -501,7 +501,7 @@ interface WordcloudSeries {
 }
 
 extend(WordcloudSeries.prototype, {
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     animateDrilldown: noop as any,
     animateDrillupFrom: noop as any,
     pointClass: WordcloudPoint,
@@ -566,7 +566,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('wordcloud', WordcloudSeries);
+SeriesRegistry.registerSeriesType('wordcloud', WordcloudSeries);
 
 /* *
  *

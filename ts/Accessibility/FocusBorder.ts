@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.
  *
@@ -225,22 +225,32 @@ extend(SVGElement.prototype, {
 
         const isLabel = this instanceof SVGLabel;
         if (this.element.nodeName === 'text' || isLabel) {
-            const isRotated = !!this.rotation,
-                correction = !isLabel ? getTextAnchorCorrection(this) :
-                    {
-                        x: isRotated ? 1 : 0,
-                        y: 0
-                    };
+            const isRotated = !!this.rotation;
+            const correction = !isLabel ? getTextAnchorCorrection(this) :
+                {
+                    x: isRotated ? 1 : 0,
+                    y: 0
+                };
+            const attrX = +this.attr('x');
+            const attrY = +this.attr('y');
 
-            borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
-            borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
+            if (!isNaN(attrX)) {
+                borderPosX = attrX - (bb.width * correction.x) - pad;
+            }
+            if (!isNaN(attrY)) {
+                borderPosY = attrY - (bb.height * correction.y) - pad;
+            }
 
             if (isLabel && isRotated) {
                 const temp = borderWidth;
                 borderWidth = borderHeight;
                 borderHeight = temp;
-                borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
-                borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
+                if (!isNaN(attrX)) {
+                    borderPosX = attrX - (bb.height * correction.x) - pad;
+                }
+                if (!isNaN(attrY)) {
+                    borderPosY = attrY - (bb.width * correction.y) - pad;
+                }
             }
         }
 

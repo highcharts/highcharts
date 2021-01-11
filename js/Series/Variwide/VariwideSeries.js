@@ -2,7 +2,7 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var ColumnSeries = BaseSeries.seriesTypes.column;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import VariwidePoint from './VariwidePoint.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
@@ -66,7 +66,7 @@ var VariwideSeries = /** @class */ (function (_super) {
     VariwideSeries.prototype.processData = function (force) {
         this.totalZ = 0;
         this.relZ = [];
-        BaseSeries.seriesTypes.column.prototype.processData.call(this, force);
+        SeriesRegistry.seriesTypes.column.prototype.processData.call(this, force);
         (this.xAxis.reversed ?
             this.zData.slice().reverse() :
             this.zData).forEach(function (z, i) {
@@ -100,15 +100,16 @@ var VariwideSeries = /** @class */ (function (_super) {
      *         Distorted X position
      */
     VariwideSeries.prototype.postTranslate = function (index, x, point) {
-        var axis = this.xAxis, relZ = this.relZ, i = axis.reversed ? relZ.length - index : index, goRight = axis.reversed ? -1 : 1, len = axis.len, totalZ = this.totalZ, linearSlotLeft = i / relZ.length * len, linearSlotRight = (i + goRight) / relZ.length * len, slotLeft = (pick(relZ[i], totalZ) / totalZ) * len, slotRight = (pick(relZ[i + goRight], totalZ) / totalZ) * len, xInsideLinearSlot = x - linearSlotLeft, ret;
+        var axis = this.xAxis, relZ = this.relZ, i = axis.reversed ? relZ.length - index : index, goRight = axis.reversed ? -1 : 1, minPx = axis.toPixels(axis.reversed ? (axis.dataMax || 0) + axis.pointRange : (axis.dataMin || 0)), maxPx = axis.toPixels(axis.reversed ? (axis.dataMin || 0) : (axis.dataMax || 0) + axis.pointRange), len = Math.abs(maxPx - minPx), totalZ = this.totalZ, left = this.chart.inverted ?
+            maxPx - (this.chart.plotTop - goRight * axis.minPixelPadding) :
+            minPx - this.chart.plotLeft - goRight * axis.minPixelPadding, linearSlotLeft = i / relZ.length * len, linearSlotRight = (i + goRight) / relZ.length * len, slotLeft = (pick(relZ[i], totalZ) / totalZ) * len, slotRight = (pick(relZ[i + goRight], totalZ) / totalZ) * len, xInsideLinearSlot = (x - (left + linearSlotLeft));
         // Set crosshairWidth for every point (#8173)
         if (point) {
             point.crosshairWidth = slotRight - slotLeft;
         }
-        ret = slotLeft +
+        return left + slotLeft +
             xInsideLinearSlot * (slotRight - slotLeft) /
                 (linearSlotRight - linearSlotLeft);
-        return ret;
     };
     /* eslint-enable valid-jsdoc */
     // Extend translation by distoring X position based on Z.
@@ -116,7 +117,7 @@ var VariwideSeries = /** @class */ (function (_super) {
         // Temporarily disable crisping when computing original shapeArgs
         var crispOption = this.options.crisp, xAxis = this.xAxis;
         this.options.crisp = false;
-        BaseSeries.seriesTypes.column.prototype.translate.call(this);
+        SeriesRegistry.seriesTypes.column.prototype.translate.call(this);
         // Reset option
         this.options.crisp = crispOption;
         var inverted = this.chart.inverted, crisp = this.borderWidth % 2 / 2;
@@ -223,7 +224,7 @@ extend(VariwideSeries.prototype, {
     parallelArrays: ['x', 'y', 'z'],
     pointClass: VariwidePoint
 });
-BaseSeries.registerSeriesType('variwide', VariwideSeries);
+SeriesRegistry.registerSeriesType('variwide', VariwideSeries);
 /* *
  *
  * Default export

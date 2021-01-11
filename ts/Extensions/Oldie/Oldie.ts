@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -377,7 +377,7 @@ let VMLRenderer: typeof Highcharts.VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = U.getStyle = function (
+    (H as any).getStyle = U.getStyle = function (
         el: HTMLDOMElement,
         prop: string
     ): number {
@@ -462,7 +462,7 @@ if (!svg) {
 
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = offset(this.chart.container);
+            this.chartPosition = chartPosition = this.getChartPosition();
         }
 
         return extend(e, {

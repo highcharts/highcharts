@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,13 +16,14 @@ import type {
     VerticalAlignValue
 } from './Renderer/AlignObject';
 import type AnimationOptions from './Animation/AnimationOptions';
+import type { ButtonRelativeToValue } from '../Maps/MapNavigationOptions';
 import type ColorString from './Color/ColorString';
 import type ColorType from './Color/ColorType';
 import type Chart from './Chart/Chart';
 import type CSSObject from './Renderer/CSSObject';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
+import type Series from './Series/Series';
 import type { SeriesTypeOptions, SeriesTypePlotOptions } from './Series/SeriesType';
 import type ShadowOptionsObject from './Renderer/ShadowOptionsObject';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
@@ -256,7 +257,7 @@ declare global {
             itemWidth?: number;
             layout?: ('horizontal'|'vertical'|'proximate');
             labelFormat?: string;
-            labelFormatter?: FormatterCallbackFunction<LineSeries|Point>;
+            labelFormatter?: FormatterCallbackFunction<Series|Point>;
             /** @deprecated */
             lineHeight?: number;
             margin?: number;
@@ -315,6 +316,10 @@ declare global {
             time?: TimeOptions;
             title?: TitleOptions;
             tooltip?: TooltipOptions;
+        }
+        interface PanningOptions {
+            type: ('x'|'y'|'xy');
+            enabled: boolean;
         }
         interface SubtitleOptions {
             align?: AlignValue;
@@ -2828,7 +2833,7 @@ H.defaultOptions = {
          * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function (
-            this: (LineSeries|Point)
+            this: (Series|Point)
         ): string {
             /** eslint-enable valid-jsdoc */
             return this.name as any;

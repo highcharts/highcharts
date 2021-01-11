@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2017 Sebastian Bochan
+ *  (c) 2009-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -13,10 +13,13 @@
 import type Annotation from './Annotations';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../../Core/Series/Series';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SMAIndicator from '../../Stock/Indicators/SMA/SMAIndicator';
 import H from '../../Core/Globals.js';
+const {
+    isFirefox
+} = H;
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
@@ -30,6 +33,7 @@ const {
     isString,
     objectEach,
     pick,
+    stableSort,
     wrap
 } = U;
 
@@ -686,9 +690,13 @@ H.Popup.prototype = {
             });
 
             if (isRoot) {
-                storage = storage.sort(function (a): number {
-                    return (a as any)[1].match(/format/g) ? -1 : 1;
+                stableSort(storage, function (a: any): number {
+                    return a[1].match(/format/g) ? -1 : 1;
                 });
+
+                if (isFirefox) {
+                    storage.reverse(); // (#14691)
+                }
 
                 storage.forEach(function (genInput): void {
                     if ((genInput as any)[0] === true) {
@@ -809,7 +817,7 @@ H.Popup.prototype = {
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
 
             objectEach(series, function (
-                serie: (LineSeries|SeriesTypePlotOptions),
+                serie: (Series|SeriesTypePlotOptions),
                 value: string
             ): void {
                 var seriesOptions = serie.options;

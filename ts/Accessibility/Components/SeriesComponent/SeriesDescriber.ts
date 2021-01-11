@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Place desriptions on a series and its points.
  *
@@ -13,9 +13,9 @@
 'use strict';
 
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const {
@@ -308,7 +308,7 @@ function getSeriesDescriptionText(
  * @return {string}
  */
 function getSeriesAxisDescriptionText(
-    series: LineSeries,
+    series: Series,
     axisCollection: string
 ): string {
     var axis: Highcharts.Axis = (series as any)[axisCollection];

@@ -2,7 +2,7 @@
  *
  *  Organization chart module
  *
- *  (c) 2018-2020 Torstein Honsi
+ *  (c) 2018-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,7 +21,7 @@
 import type OrganizationPointOptions from './OrganizationPointOptions';
 import type OrganizationSeries from './OrganizationSeries';
 import type { OrganizationSeriesNodeOptions } from './OrganizationSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sankey: {
@@ -30,7 +30,7 @@ const {
             }
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 
 /* *
  *

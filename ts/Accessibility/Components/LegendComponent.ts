@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for chart legend.
  *
@@ -14,8 +14,8 @@
 
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
 import U from '../../Core/Utilities.js';
@@ -33,7 +33,7 @@ import HTMLUtilities from '../Utils/HTMLUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
     removeElement = HTMLUtilities.removeElement;
 
-type LegendItem = (Highcharts.BubbleLegend|LineSeries|Point);
+type LegendItem = (Highcharts.BubbleLegend|Series|Point);
 
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -177,7 +177,7 @@ addEvent(Legend, 'afterColorizeItem', function (
 
     if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
         legendItem.a11yProxyElement.setAttribute(
-            'aria-pressed', e.visible ? 'false' : 'true'
+            'aria-pressed', e.visible ? 'true' : 'false'
         );
     }
 });
@@ -365,7 +365,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             ),
             attribs = {
                 tabindex: -1,
-                'aria-pressed': !item.visible,
+                'aria-pressed': item.visible,
                 'aria-label': itemLabel
             },
             // Considers useHTML

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,17 +21,17 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColumnMetricsObject from '../Column/ColumnMetricsObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import ColumnRangePoint from './ColumnRangePoint.js';
-import BaseSeries from '../../Core/Series/Series.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         arearange: AreaRangeSeries,
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 const { prototype: columnProto } = ColumnSeries;
 const { prototype: arearangeProto } = AreaRangeSeries;
-import H from '../../Core/Globals.js';
-const { noop } = H;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -293,7 +293,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('columnrange', ColumnRangeSeries);
+SeriesRegistry.registerSeriesType('columnrange', ColumnRangeSeries);
 
 /* *
  *

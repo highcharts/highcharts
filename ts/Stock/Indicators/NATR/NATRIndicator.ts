@@ -9,18 +9,18 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     NATROptions,
     NATRParamsOptions
 } from './NATROptions';
 import type NATRPoint from './NATRPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         atr: ATRIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -78,12 +78,12 @@ class NATRIndicator extends ATRIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: NATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var atrData: (
-                IndicatorValuesObject<LineSeries>|
+                IndicatorValuesObject<Series>|
                 undefined
             ) = (
                 ATRIndicator.prototype.getValues.apply(this, arguments)
@@ -135,7 +135,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('natr', NATRIndicator);
+SeriesRegistry.registerSeriesType('natr', NATRIndicator);
 
 /* *
  *

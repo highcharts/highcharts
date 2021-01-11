@@ -1,8 +1,5 @@
 QUnit.test('Color axis update (#3207)', function (assert) {
-    var chart;
-
-    // Initiate the chart
-    $('#container').highcharts('Map', {
+    const chart = Highcharts.mapChart('container', {
         title: {
             text: 'Map with inline point paths'
         },
@@ -22,7 +19,8 @@ QUnit.test('Color axis update (#3207)', function (assert) {
                     from: 4,
                     color: 'black'
                 }
-            ]
+            ],
+            reversed: false
         },
 
         legend: {
@@ -30,7 +28,8 @@ QUnit.test('Color axis update (#3207)', function (assert) {
             floating: true,
             title: {
                 text: 'Random data'
-            }
+            },
+            layout: 'vertical'
         },
 
         series: [
@@ -94,7 +93,10 @@ QUnit.test('Color axis update (#3207)', function (assert) {
         ]
     });
 
-    chart = $('#container').highcharts();
+    assert.notOk(
+        Array.isArray(chart.options.colorAxis),
+        'chart.options.colorAxis should not be an array'
+    );
 
     assert.equal(
         chart.series[0].points[1].color,
@@ -123,6 +125,42 @@ QUnit.test('Color axis update (#3207)', function (assert) {
         'Tasmania is now blue'
     );
     assert.equal(chart.legend.allItems.length, 2, 'Two legend items');
+
+    assert.strictEqual(
+        chart.options.colorAxis.reversed,
+        false,
+        '#14834: reversed should still be false'
+    );
+
+    chart.colorAxis[0].update({
+        reversed: true
+    });
+
+    assert.strictEqual(
+        chart.options.colorAxis.reversed,
+        true,
+        '#14834: Updating reversed should also work'
+    );
+
+    assert.equal(
+        $('.highcharts-legend-item', '#container').length,
+        2,
+        "#14283: Color axis should be visible."
+    );
+
+    chart.colorAxis[0].update({
+        visible: false
+    });
+
+    assert.equal(
+        $('.highcharts-legend-item', '#container').length,
+        0,
+        "#14283: Color axis should be invisible."
+    );
+
+    chart.colorAxis[0].update({
+        visible: true
+    });
 
     // Test the SVG
     var svg = chart.getSVG();

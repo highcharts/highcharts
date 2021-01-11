@@ -2,7 +2,7 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -2158,7 +2158,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 
         if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 25);
+            attr.paddingLeft = pick(attr.paddingLeft, 30);
 
         } else if (!btnOptions.text) {
             extend(attr, {

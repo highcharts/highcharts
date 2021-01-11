@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Handle forcing series markers.
  *
@@ -23,7 +23,7 @@ import type {
     PointOptions
 } from '../../../Core/Series/PointOptions';
 import type SeriesOptions from '../../../Core/Series/SeriesOptions';
-import LineSeries from '../../../Series/Line/LineSeries.js';
+import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -86,7 +86,7 @@ function shouldForceMarkers(
 /**
  * @private
  */
-function hasIndividualPointMarkerOptions(series: LineSeries): boolean {
+function hasIndividualPointMarkerOptions(series: Series): boolean {
     return !!(series._hasPointMarkers && series.points && series.points.length);
 }
 
@@ -160,7 +160,7 @@ function unforcePointMarkerOptions(pointOptions: PointOptions): void {
 /**
  * @private
  */
-function handleForcePointMarkers(series: LineSeries): void {
+function handleForcePointMarkers(series: Series): void {
     let i = series.points.length;
 
     while (i--) {
@@ -190,7 +190,7 @@ function addForceMarkersEvents(): void {
      * Keep track of forcing markers.
      * @private
      */
-    addEvent(LineSeries, 'render', function (): void {
+    addEvent(Series, 'render', function (): void {
         const series = this as Highcharts.AccessibilitySeries,
             options = series.options;
 
@@ -215,7 +215,7 @@ function addForceMarkersEvents(): void {
      * Keep track of options to reset markers to if no longer forced.
      * @private
      */
-    addEvent(LineSeries, 'afterSetOptions', function (
+    addEvent(Series, 'afterSetOptions', function (
         e: { options: SeriesOptions }
     ): void {
         this.resetA11yMarkerOptions = merge(
@@ -228,7 +228,7 @@ function addForceMarkersEvents(): void {
      * Process marker graphics after render
      * @private
      */
-    addEvent(LineSeries as any, 'afterRender', function (
+    addEvent(Series as any, 'afterRender', function (
         this: Highcharts.AccessibilitySeries
     ): void {
         const series = this;

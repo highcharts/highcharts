@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  3D pie series
  *
@@ -16,9 +16,9 @@
  *
  * */
 
-import BaseSeries from '../../Core/Series/Series.js';
 import Pie3DPoint from './Pie3DPoint.js';
 import Pie3DSeries from './Pie3DSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 
 /* *
  *
@@ -26,5 +26,5 @@ import Pie3DSeries from './Pie3DSeries.js';
  *
  * */
 
-BaseSeries.seriesTypes.pie.prototype.pointClass.prototype.haloPath = Pie3DPoint.prototype.haloPath;
-BaseSeries.seriesTypes.pie = Pie3DSeries;
+SeriesRegistry.seriesTypes.pie.prototype.pointClass.prototype.haloPath = Pie3DPoint.prototype.haloPath;
+SeriesRegistry.seriesTypes.pie = Pie3DSeries;
