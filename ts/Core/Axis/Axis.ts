@@ -7442,6 +7442,7 @@ class Axis {
 
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
+                axis._addedPlotLB = true;
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
@@ -7449,7 +7450,6 @@ class Axis {
                             axis.addPlotBandOrLine(plotLineOptions);
                         }
                     );
-                axis._addedPlotLB = true;
             }
 
         } // end if hasData
