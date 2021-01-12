@@ -35,10 +35,6 @@ const { merge } = U;
  * The line series is the base type and is therefor the series base prototype.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes._line
- *
- * @augments Highcharts.Series
  */
 class LineSeries extends Series {
 

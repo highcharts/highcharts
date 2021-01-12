@@ -35,10 +35,6 @@ var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
  * Scatter series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.scatter
- *
- * @augments Highcharts.Series
  */
 var ScatterSeries = /** @class */ (function (_super) {
     __extends(ScatterSeries, _super);

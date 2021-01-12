@@ -68,12 +68,19 @@ function ownProp(obj: unknown, key: string): boolean {
 
 // eslint-disable-next-line valid-jsdoc
 
+/**
+ * Waterfall series type.
+ *
+ * @private
+ */
 class WaterfallSeries extends ColumnSeries {
+
     /* *
      *
      * Static properties
      *
      * */
+
     /**
      * A waterfall chart displays sequentially introduced positive or negative
      * values in cumulative columns.

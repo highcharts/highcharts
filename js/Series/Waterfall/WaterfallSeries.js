@@ -43,9 +43,19 @@ function ownProp(obj, key) {
 }
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // eslint-disable-next-line valid-jsdoc
+/**
+ * Waterfall series type.
+ *
+ * @private
+ */
 var WaterfallSeries = /** @class */ (function (_super) {
     __extends(WaterfallSeries, _super);
     function WaterfallSeries() {
+        /* *
+         *
+         * Static properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -512,11 +522,6 @@ var WaterfallSeries = /** @class */ (function (_super) {
             dataMax: this.dataMax
         };
     };
-    /* *
-     *
-     * Static properties
-     *
-     * */
     /**
      * A waterfall chart displays sequentially introduced positive or negative
      * values in cumulative columns.

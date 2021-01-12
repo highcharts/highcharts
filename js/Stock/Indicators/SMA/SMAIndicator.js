@@ -35,10 +35,6 @@ var generateMessage = RequiredIndicatorMixin.generateMessage;
  * The SMA series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.sma
- *
- * @augments Highcharts.Series
  */
 var SMAIndicator = /** @class */ (function (_super) {
     __extends(SMAIndicator, _super);
