@@ -84,6 +84,13 @@ QUnit.test('series.centerInCategory', function (assert) {
         'Point should be on the right side of the tick.'
     );
 
+    chart.yAxis[0].setScale();
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].stacking.stacks).length,
+        1,
+        '#14910: setScale should not clean the centerInCategory stack'
+    );
+
     /*
     chart.series[1].setData([
         [0, 2],
