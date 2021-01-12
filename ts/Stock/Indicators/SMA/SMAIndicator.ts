@@ -75,10 +75,6 @@ const generateMessage = RequiredIndicatorMixin.generateMessage;
  * The SMA series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.sma
- *
- * @augments Highcharts.Series
  */
 class SMAIndicator extends LineSeries {
 

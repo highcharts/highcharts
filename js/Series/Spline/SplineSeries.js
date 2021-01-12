@@ -29,10 +29,6 @@ var merge = U.merge, pick = U.pick;
  * Spline series type.
  *
  * @private
- * @class
- * @name SplineSeries
- *
- * @augments LineSeries
  */
 var SplineSeries = /** @class */ (function (_super) {
     __extends(SplineSeries, _super);

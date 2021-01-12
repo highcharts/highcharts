@@ -35,10 +35,6 @@ const {
  * Spline series type.
  *
  * @private
- * @class
- * @name SplineSeries
- *
- * @augments LineSeries
  */
 class SplineSeries extends LineSeries {
 

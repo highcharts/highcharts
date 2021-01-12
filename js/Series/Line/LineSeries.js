@@ -35,10 +35,6 @@ var merge = U.merge;
  * The line series is the base type and is therefor the series base prototype.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes._line
- *
- * @augments Highcharts.Series
  */
 var LineSeries = /** @class */ (function (_super) {
     __extends(LineSeries, _super);

@@ -38,10 +38,6 @@ const {
  * Scatter series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.scatter
- *
- * @augments Highcharts.Series
  */
 class ScatterSeries extends LineSeries {
 
