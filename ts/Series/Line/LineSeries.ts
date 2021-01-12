@@ -20,12 +20,8 @@ import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -91,10 +87,10 @@ interface LineSeries {
 
 declare module '../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
-        _line: typeof LineSeries;
+        line: typeof LineSeries;
     }
 }
-SeriesRegistry.registerSeriesType('_line', LineSeries);
+SeriesRegistry.registerSeriesType('line', LineSeries);
 
 /* *
  *

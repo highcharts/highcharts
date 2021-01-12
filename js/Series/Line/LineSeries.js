@@ -24,7 +24,7 @@ var __extends = (this && this.__extends) || (function () {
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-var extend = U.extend, merge = U.merge;
+var merge = U.merge;
 /* *
  *
  *  Class
@@ -68,7 +68,7 @@ var LineSeries = /** @class */ (function (_super) {
     });
     return LineSeries;
 }(Series));
-SeriesRegistry.registerSeriesType('_line', LineSeries);
+SeriesRegistry.registerSeriesType('line', LineSeries);
 /* *
  *
  *  Default Export
