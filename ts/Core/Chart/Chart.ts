@@ -288,8 +288,6 @@ class Chart {
     public xAxis: Array<AxisType> = void 0 as any;
     public yAxis: Array<AxisType> = void 0 as any;
 
-    public state = history.state;
-
     /* *
      *
      *  Functions

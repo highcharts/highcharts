@@ -89,7 +89,6 @@ var Chart = /** @class */ (function () {
         this.userOptions = void 0;
         this.xAxis = void 0;
         this.yAxis = void 0;
-        this.state = history.state;
         this.getArgs(a, b, c);
     }
     /* *
