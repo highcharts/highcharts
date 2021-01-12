@@ -28,7 +28,11 @@ import type SMAPoint from './SMAPoint';
 
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
+const {
+    seriesTypes: {
+        line: LineSeries
+    }
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -51,11 +55,6 @@ import './SMAComposition.js';
 interface BindToObject {
     eventName: string;
     series: boolean;
-}
-
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-    }
 }
 
 declare module '../../../Core/Series/SeriesOptions' {
@@ -81,7 +80,7 @@ const generateMessage = RequiredIndicatorMixin.generateMessage;
  *
  * @augments Highcharts.Series
  */
-class SMAIndicator extends Series {
+class SMAIndicator extends LineSeries {
 
     /* *
      *
@@ -118,7 +117,7 @@ class SMAIndicator extends Series {
      * @requires     stock/indicators/indicators
      * @optionparent plotOptions.sma
      */
-    public static defaultOptions: SMAOptions = merge(Series.defaultOptions, {
+    public static defaultOptions: SMAOptions = merge(LineSeries.defaultOptions, {
         /**
          * The name of the series as shown in the legend, tooltip etc. If not
          * set, it will be based on a technical indicator type and default
@@ -180,7 +179,7 @@ class SMAIndicator extends Series {
 
     public dataEventsToUnbind: Array<Function> = void 0 as any;
 
-    public linkedParent: typeof Series.prototype = void 0 as any;
+    public linkedParent: typeof LineSeries.prototype = void 0 as any;
 
     public nameBase?: string;
 
@@ -237,7 +236,7 @@ class SMAIndicator extends Series {
     /**
      * @private
      */
-    public getValues<TLinkedSeries extends typeof Series.prototype>(
+    public getValues<TLinkedSeries extends typeof LineSeries.prototype>(
         series: TLinkedSeries,
         params: SMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -328,7 +327,7 @@ class SMAIndicator extends Series {
         function recalculateValues(): void {
             var oldData = indicator.points || [],
                 oldDataLength = (indicator.xData || []).length,
-                processedData: IndicatorValuesObject<typeof Series.prototype> = (
+                processedData: IndicatorValuesObject<typeof LineSeries.prototype> = (
                     indicator.getValues(
                         indicator.linkedParent,
                         indicator.options.params as any

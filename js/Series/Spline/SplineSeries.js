@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var Series = SeriesRegistry.series;
+var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
 var merge = U.merge, pick = U.pick;
 /**
@@ -30,9 +30,9 @@ var merge = U.merge, pick = U.pick;
  *
  * @private
  * @class
- * @name Highcharts.seriesTypes.spline
+ * @name SplineSeries
  *
- * @augments Highcarts.Series
+ * @augments LineSeries
  */
 var SplineSeries = /** @class */ (function (_super) {
     __extends(SplineSeries, _super);
@@ -205,9 +205,9 @@ var SplineSeries = /** @class */ (function (_super) {
      * @product      highcharts highstock
      * @optionparent plotOptions.spline
      */
-    SplineSeries.defaultOptions = merge(Series.defaultOptions);
+    SplineSeries.defaultOptions = merge(LineSeries.defaultOptions);
     return SplineSeries;
-}(Series));
+}(LineSeries));
 SeriesRegistry.registerSeriesType('spline', SplineSeries);
 /* *
  *

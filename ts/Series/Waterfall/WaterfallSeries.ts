@@ -21,9 +21,9 @@ import palette from '../../Core/Color/Palette.js';
 import Point from '../../Core/Series/Point.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: Series,
     seriesTypes: {
-        column: ColumnSeries
+        column: ColumnSeries,
+        line: LineSeries
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
@@ -545,7 +545,7 @@ class WaterfallSeries extends ColumnSeries {
             dataMax = Math.max(sum, dataMax);
         }
 
-        Series.prototype.processData.call(this, force);
+        super.processData.call(this, force);
 
         // Record extremes only if stacking was not set:
         if (!options.stacking) {
@@ -572,7 +572,7 @@ class WaterfallSeries extends ColumnSeries {
         point: Point,
         i: (number|string)
     ): void {
-        Series.prototype.updateParallelArrays.call(
+        super.updateParallelArrays.call(
             this,
             point,
             i
@@ -712,7 +712,7 @@ class WaterfallSeries extends ColumnSeries {
     // The graph is initially drawn with an empty definition, then updated with
     // crisp rendering.
     public drawGraph(): void {
-        Series.prototype.drawGraph.call(this);
+        LineSeries.prototype.drawGraph.call(this);
         (this.graph as any).attr({
             d: this.getCrispPath()
         });

@@ -25,7 +25,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
@@ -274,7 +274,7 @@ var WaterfallSeries = /** @class */ (function (_super) {
             dataMin = Math.min(sum, dataMin);
             dataMax = Math.max(sum, dataMax);
         }
-        Series.prototype.processData.call(this, force);
+        _super.prototype.processData.call(this, force);
         // Record extremes only if stacking was not set:
         if (!options.stacking) {
             series.dataMin = dataMin + threshold;
@@ -293,7 +293,7 @@ var WaterfallSeries = /** @class */ (function (_super) {
         return pt.y;
     };
     WaterfallSeries.prototype.updateParallelArrays = function (point, i) {
-        Series.prototype.updateParallelArrays.call(this, point, i);
+        _super.prototype.updateParallelArrays.call(this, point, i);
         // Prevent initial sums from triggering an error (#3245, #7559)
         if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
             this.yData[0] = null;
@@ -369,7 +369,7 @@ var WaterfallSeries = /** @class */ (function (_super) {
     // The graph is initially drawn with an empty definition, then updated with
     // crisp rendering.
     WaterfallSeries.prototype.drawGraph = function () {
-        Series.prototype.drawGraph.call(this);
+        LineSeries.prototype.drawGraph.call(this);
         this.graph.attr({
             d: this.getCrispPath()
         });
