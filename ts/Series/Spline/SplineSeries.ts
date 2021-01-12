@@ -20,7 +20,11 @@ import type SplinePoint from './SplinePoint';
 import type SplineSeriesOptions from './SplineSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
+const {
+    seriesTypes: {
+        line: LineSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -32,11 +36,11 @@ const {
  *
  * @private
  * @class
- * @name Highcharts.seriesTypes.spline
+ * @name SplineSeries
  *
- * @augments Highcarts.Series
+ * @augments LineSeries
  */
-class SplineSeries extends Series {
+class SplineSeries extends LineSeries {
 
     /* *
      *
@@ -58,7 +62,7 @@ class SplineSeries extends Series {
      * @product      highcharts highstock
      * @optionparent plotOptions.spline
      */
-    public static defaultOptions: SplineSeriesOptions = merge(Series.defaultOptions);
+    public static defaultOptions: SplineSeriesOptions = merge(LineSeries.defaultOptions);
 
     /* *
      *

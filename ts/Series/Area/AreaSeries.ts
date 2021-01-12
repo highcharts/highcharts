@@ -25,8 +25,12 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        line: LineSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -65,11 +69,11 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * @private
  * @class
- * @name Highcharts.seriesTypes.area
+ * @name AreaSeries
  *
- * @augments Highcharts.Series
+ * @augments LineSeries
  */
-class AreaSeries extends Series {
+class AreaSeries extends LineSeries {
 
     /* *
      *
@@ -90,7 +94,7 @@ class AreaSeries extends Series {
      * @product      highcharts highstock
      * @optionparent plotOptions.area
      */
-    public static defaultOptions: AreaSeriesOptions = merge(Series.defaultOptions, {
+    public static defaultOptions: AreaSeriesOptions = merge(LineSeries.defaultOptions, {
         /**
          * @see [fillColor](#plotOptions.area.fillColor)
          * @see [fillOpacity](#plotOptions.area.fillOpacity)
@@ -245,7 +249,7 @@ class AreaSeries extends Series {
         this.areaPath = [];
 
         // Call the base method
-        Series.prototype.drawGraph.apply(this);
+        super.drawGraph.apply(this);
 
         // Define local variables
         var series = this,
@@ -315,7 +319,7 @@ class AreaSeries extends Series {
      * @private
      */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
-        var getGraphPath = Series.prototype.getGraphPath,
+        var getGraphPath = LineSeries.prototype.getGraphPath,
             graphPath: SVGPath,
             options = this.options,
             stacking = options.stacking,
