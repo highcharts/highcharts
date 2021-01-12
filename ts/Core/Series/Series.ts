@@ -22,25 +22,23 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
-import type LineSeries from '../../Series/Line/LineSeries';
-import type Point from './Point';
 import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
     PointShortOptions,
     PointStateHoverOptions
-} from '../Series/PointOptions';
-import type SeriesLike from '../Series/SeriesLike';
+} from './PointOptions';
+import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
     SeriesZonesOptions
-} from '../../Core/Series/SeriesOptions';
+} from './SeriesOptions';
 import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
-} from '../../Core/Series/SeriesType';
+} from './SeriesType';
 import type SplinePoint from '../../Series/Spline/SplinePoint';
 import type SplineSeries from '../../Series/Spline/SplineSeries';
 import type { StatesOptionsKey } from './StatesOptions';
@@ -51,20 +49,21 @@ const {
     animObject,
     setAnimation
 } = A;
-import H from '../../Core/Globals.js';
+import H from '../Globals.js';
 const {
     hasTouch,
     svg,
     win
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import O from '../../Core/Options.js';
+import O from '../Options.js';
 const { defaultOptions } = O;
-import palette from '../../Core/Color/Palette.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import palette from '../Color/Palette.js';
+import Point from './Point.js';
+import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Core/Utilities.js';
+import SVGElement from '../Renderer/SVG/SVGElement.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     arrayMax,
@@ -7545,6 +7544,7 @@ extend(Series.prototype, {
     kdAxisArray: ['clientX', 'plotY'],
     // each point's x and y values are stored in this.xData and this.yData:
     parallelArrays: ['x', 'y'],
+    pointClass: Point,
     requireSorting: true,
     // requires the data to be sorted:
     sorted: true
@@ -7564,14 +7564,6 @@ SeriesRegistry.series = Series;
  *
  * */
 
-// @todo remove backwards compatibility
-
-declare module '../../Core/Series/SeriesType' {
-    interface SeriesTypeRegistry {
-        line: typeof LineSeries;
-    }
-}
-SeriesRegistry.registerSeriesType('line', Series);
 (H as any).Series = Series;
 
 /* *
