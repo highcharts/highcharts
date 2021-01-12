@@ -19,9 +19,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var SMAIndicator = BaseSeries.seriesTypes.sma;
-import BaseSeries from '../../../Core/Series/Series.js';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 /* eslint-disable valid-jsdoc */
@@ -177,7 +177,7 @@ extend(AroonIndicator.prototype, {
     toYData: MultipleLinesMixin.toYData,
     translate: MultipleLinesMixin.translate
 });
-BaseSeries.registerSeriesType('aroon', AroonIndicator);
+SeriesRegistry.registerSeriesType('aroon', AroonIndicator);
 /* *
  *
  *  Default Export

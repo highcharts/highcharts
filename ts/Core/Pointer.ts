@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,9 +13,9 @@
 import type Axis from './Axis/Axis';
 import type Chart from './Chart/Chart';
 import type { DOMElementType } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
+import type Series from './Series/Series';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import Color from './Color/Color.js';
 const { parse: color } = Color;
@@ -48,7 +48,7 @@ declare module './Chart/ChartLike'{
         cancelClick?: boolean;
         hoverPoint?: Point;
         hoverPoints?: Array<Point>;
-        hoverSeries?: LineSeries;
+        hoverSeries?: Series;
         mouseDownX?: number;
         mouseDownY?: number;
         mouseIsDown?: (boolean|string);
@@ -84,7 +84,7 @@ declare global {
         interface PointerHoverDataObject {
             hoverPoint?: Point;
             hoverPoints: Array<Point>;
-            hoverSeries: LineSeries;
+            hoverSeries: Series;
         }
         interface SelectDataObject {
             axis: Axis;
@@ -331,8 +331,8 @@ class Pointer {
      * Currently hovered points
      */
     public applyInactiveState(points: Array<Point>): void {
-        var activeSeries = [] as Array<LineSeries>,
-            series: LineSeries;
+        var activeSeries = [] as Array<Series>,
+            series: Series;
 
         // Get all active series from the hovered points
         (points || []).forEach(function (item): void {
@@ -682,7 +682,7 @@ class Pointer {
      *         The point closest to given coordinates.
      */
     public findNearestKDPoint(
-        series: Array<LineSeries>,
+        series: Array<Series>,
         shared: (boolean|undefined),
         e: PointerEvent
     ): (Point|undefined) {
@@ -890,8 +890,8 @@ class Pointer {
      */
     public getHoverData(
         existingHoverPoint: (Point|undefined),
-        existingHoverSeries: (LineSeries|undefined),
-        series: Array<LineSeries>,
+        existingHoverSeries: (Series|undefined),
+        series: Array<Series>,
         isDirectTouch?: boolean,
         shared?: boolean,
         e?: PointerEvent
@@ -909,7 +909,7 @@ class Pointer {
                 chartY: e ? e.chartY : void 0,
                 shared: shared
             },
-            filter = function (s: LineSeries): boolean {
+            filter = function (s: Series): boolean {
                 return (
                     s.visible &&
                     !(!shared && s.directTouch) && // #3821

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,7 +11,7 @@
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, isNumber = U.isNumber, pick = U.pick;
@@ -215,7 +215,7 @@ var StackItem = /** @class */ (function () {
             }
             if (isJustify) {
                 // Justify stackLabel into the stackBox
-                LineSeries.prototype.justifyDataLabel.call(this.axis, label, stackItem.alignOptions, label.alignAttr, bBox, stackBox);
+                Series.prototype.justifyDataLabel.call(this.axis, label, stackItem.alignOptions, label.alignAttr, bBox, stackBox);
             }
             label.attr({
                 x: label.alignAttr.x,
@@ -311,7 +311,7 @@ StackingAxis.compose(Axis);
  * @function Highcharts.Series#setStackedPoints
  * @return {void}
  */
-LineSeries.prototype.setGroupedPoints = function () {
+Series.prototype.setGroupedPoints = function () {
     if (this.options.centerInCategory &&
         (this.is('column') || this.is('columnrange')) &&
         // With stacking enabled, we already have stacks that we can compute
@@ -319,7 +319,7 @@ LineSeries.prototype.setGroupedPoints = function () {
         !this.options.stacking &&
         // With only one series, we don't need to consider centerInCategory
         this.chart.series.length > 1) {
-        LineSeries.prototype.setStackedPoints.call(this, 'group');
+        Series.prototype.setStackedPoints.call(this, 'group');
     }
 };
 /**
@@ -328,7 +328,7 @@ LineSeries.prototype.setGroupedPoints = function () {
  * @private
  * @function Highcharts.Series#setStackedPoints
  */
-LineSeries.prototype.setStackedPoints = function (stackingParam) {
+Series.prototype.setStackedPoints = function (stackingParam) {
     var stacking = stackingParam || this.options.stacking;
     if (!stacking ||
         (this.visible !== true &&
@@ -442,7 +442,7 @@ LineSeries.prototype.setStackedPoints = function (stackingParam) {
  * @private
  * @function Highcharts.Series#modifyStacks
  */
-LineSeries.prototype.modifyStacks = function () {
+Series.prototype.modifyStacks = function () {
     var series = this, yAxis = series.yAxis, stackKey = series.stackKey, stacks = yAxis.stacking.stacks, processedXData = series.processedXData, stackIndicator, stacking = series.options.stacking;
     if (series[stacking + 'Stacker']) { // Modifier function exists
         [stackKey, '-' + stackKey].forEach(function (key) {
@@ -466,7 +466,7 @@ LineSeries.prototype.modifyStacks = function () {
  * @private
  * @function Highcharts.Series#percentStacker
  */
-LineSeries.prototype.percentStacker = function (pointExtremes, stack, i) {
+Series.prototype.percentStacker = function (pointExtremes, stack, i) {
     var totalFactor = stack.total ? 100 / stack.total : 0;
     // Y bottom value
     pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor);
@@ -486,7 +486,7 @@ LineSeries.prototype.percentStacker = function (pointExtremes, stack, i) {
  * @param {string} [key]
  * @return {Highcharts.StackItemIndicatorObject}
  */
-LineSeries.prototype.getStackIndicator = function (stackIndicator, x, index, key) {
+Series.prototype.getStackIndicator = function (stackIndicator, x, index, key) {
     // Update stack indicator, when:
     // first point in a stack || x changed || stack type (negative vs positive)
     // changed:

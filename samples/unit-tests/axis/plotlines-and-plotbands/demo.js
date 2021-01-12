@@ -680,70 +680,80 @@ QUnit.test(
     }
 );
 
-QUnit.test(
-    '#14310: Visibility of dynamically added plotbands',
-    function (assert) {
-        var chart = Highcharts.chart('container', {
-            chart: {
-                zoomType: 'xy'
-            },
-            xAxis: {
-                tickInterval: 24 * 3600 * 1000,
-                type: 'datetime',
-                visible: false
-            },
-            series: [
-                {
-                    data: [
-                        29.9,
-                        71.5,
-                        106.4,
-                        129.2,
-                        144.0,
-                        176.0,
-                        135.6,
-                        148.5,
-                        216.4,
-                        100,
-                        110,
-                        120,
-                        101,
-                        115,
-                        128,
-                        99,
-                        80,
-                        132
-                    ],
-                    pointStart: Date.UTC(2010, 0, 1),
-                    pointInterval: 24 * 3600 * 1000
-                }
-            ]
-        });
-
-        chart.xAxis[0].addPlotBand({
-            color: '#FCFFC5',
-            from: Date.UTC(2010, 0, 2),
-            to: Date.UTC(2010, 0, 4)
-        });
-
-        assert.ok(
-            !chart.xAxis[0].plotLinesAndBands[0].svgElem,
-            'plotBand should not render when axis is not visible'
-        );
-
-        chart.update({
-            xAxis: {
-                visible: true
+QUnit.test('Dynamically added plotbands', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            zoomType: 'xy'
+        },
+        xAxis: {
+            tickInterval: 24 * 3600 * 1000,
+            type: 'datetime',
+            visible: false
+        },
+        series: [
+            {
+                data: [
+                    29.9,
+                    71.5,
+                    106.4,
+                    129.2,
+                    144.0,
+                    176.0,
+                    135.6,
+                    148.5,
+                    216.4,
+                    100,
+                    110,
+                    120,
+                    101,
+                    115,
+                    128,
+                    99,
+                    80,
+                    132
+                ],
+                pointStart: Date.UTC(2010, 0, 1),
+                pointInterval: 24 * 3600 * 1000
             }
-        });
+        ]
+    });
 
-        assert.ok(
-            !!chart.xAxis[0].plotLinesAndBands[0].svgElem,
-            'plotBand should render when axis ' +
-                'visibility gets dynamically updated'
-        );
-    }
-);
+    chart.xAxis[0].addPlotBand({
+        color: '#FCFFC5',
+        from: Date.UTC(2010, 0, 2),
+        to: Date.UTC(2010, 0, 4)
+    });
+
+    assert.ok(
+        !chart.xAxis[0].plotLinesAndBands[0].svgElem,
+        '#14310: plotBand should not render when axis is not visible'
+    );
+
+    chart.update({
+        xAxis: {
+            visible: true
+        }
+    });
+
+    assert.ok(
+        !!chart.xAxis[0].plotLinesAndBands[0].svgElem,
+        '#14310: plotBand should render when axis visibility gets dynamically updated'
+    );
+
+    chart.xAxis[0].update({}, false);
+    chart.xAxis[0].addPlotBand({
+        color: '#FCFFC5',
+        from: Date.UTC(2010, 0, 4),
+        to: Date.UTC(2010, 0, 5)
+    });
+    chart.redraw();
+
+    assert.strictEqual(
+        chart.xAxis[0].plotLinesAndBands.length,
+        2,
+        '#14053: plotBands from before update with redraw=false should also be added'
+    );
+});
 
 QUnit.test('#14254: plotBands.acrossPanes', function (assert) {
     var chart = Highcharts.stockChart('container', {

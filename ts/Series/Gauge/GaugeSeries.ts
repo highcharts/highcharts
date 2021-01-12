@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,17 +25,17 @@ import type {
 import type RadialAxis from '../../Core/Axis/RadialAxis';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import GaugePoint from './GaugePoint.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
-} = BaseSeries;
-import GaugePoint from './GaugePoint.js';
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -657,7 +657,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('gauge', GaugeSeries);
+SeriesRegistry.registerSeriesType('gauge', GaugeSeries);
 
 /* *
  *

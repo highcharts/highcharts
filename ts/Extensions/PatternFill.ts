@@ -2,7 +2,7 @@
  *
  *  Module for using patterns or images as point fills.
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *  Author: Torstein Hønsi, Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -25,8 +25,8 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -38,8 +38,6 @@ const {
     removeEvent,
     wrap
 } = U;
-
-import '../Series/Line/LineSeries.js';
 
 declare module '../Core/Series/PointLike' {
     interface PointLike {
@@ -487,9 +485,9 @@ SVGRenderer.prototype.addPattern = function (
 
 
 // Make sure we have a series color
-wrap(LineSeries.prototype, 'getColor', function (
-    this: LineSeries,
-    proceed: LineSeries['getColor']
+wrap(Series.prototype, 'getColor', function (
+    this: Series,
+    proceed: Series['getColor']
 ): void {
     var oldColor = this.options.color;
 
@@ -519,7 +517,7 @@ wrap(LineSeries.prototype, 'getColor', function (
 
 
 // Calculate pattern dimensions on points that have their own pattern.
-addEvent(LineSeries, 'render', function (): void {
+addEvent(Series, 'render', function (): void {
     var isResizing = this.chart.isResizing;
 
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
@@ -690,7 +688,7 @@ addEvent(Chart, 'endResize', function (): void {
     ) {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
-        this.series.forEach(function (series: LineSeries): void {
+        this.series.forEach(function (series: Series): void {
             series.points.forEach(function (point: Point): void {
                 var colorOptions = point.options && point.options.color;
 

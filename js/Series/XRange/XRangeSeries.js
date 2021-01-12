@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2020 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2021 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -23,11 +23,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import H from '../../Core/Globals.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 var columnProto = ColumnSeries.prototype;
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick;
@@ -492,7 +492,7 @@ extend(XRangeSeries.prototype, {
     buildKDTree: H.noop,
     pointClass: XRangePoint
 });
-BaseSeries.registerSeriesType('xrange', XRangeSeries);
+SeriesRegistry.registerSeriesType('xrange', XRangeSeries);
 /* *
  *
  * Default Export

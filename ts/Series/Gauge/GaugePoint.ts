@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,7 +21,7 @@ import type GaugeSeries from './GaugeSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: {
@@ -30,7 +30,7 @@ const {
             }
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 
 /* *
  *

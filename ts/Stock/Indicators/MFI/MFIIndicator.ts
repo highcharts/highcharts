@@ -2,7 +2,7 @@
  *
  *  Money Flow Index indicator for Highstock
  *
- *  (c) 2010-2020 Grzegorz Blachliński
+ *  (c) 2010-2021 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -13,18 +13,18 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import type {
     MFIOptions,
     MFIParamsOptions
 } from '../MFI/MFIOptions';
 import type MFIPoint from './MFIPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -121,7 +121,7 @@ class MFIIndicator extends SMAIndicator {
     *  Functions
     *
     * */
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: MFIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
@@ -133,7 +133,7 @@ class MFIIndicator extends SMAIndicator {
             // MFI starts calculations from the second point
             // Cause we need to calculate change between two points
             range = 1,
-            volumeSeries: (LineSeries | undefined) = (
+            volumeSeries: (Series | undefined) = (
                 series.chart.get((params.volumeSeriesID as any)) as any
             ),
             yValVolume: Array<number> = (
@@ -259,7 +259,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('mfi', MFIIndicator);
+SeriesRegistry.registerSeriesType('mfi', MFIIndicator);
 
 /* *
  *

@@ -19,13 +19,13 @@ import type {
 } from './ADOptions';
 import type ADPoint from './ADPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     error,
@@ -118,7 +118,7 @@ class ADIndicator extends SMAIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: ADParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -126,7 +126,7 @@ class ADIndicator extends SMAIndicator {
             xVal: Array<number> = (series.xData as any),
             yVal: Array<(number|null|undefined)> = (series.yData as any),
             volumeSeriesID: string = (params.volumeSeriesID as any),
-            volumeSeries: LineSeries = (series.chart.get(volumeSeriesID) as any),
+            volumeSeries: Series = (series.chart.get(volumeSeriesID) as any),
             yValVolume = volumeSeries && volumeSeries.yData,
             yValLen = yVal ? yVal.length : 0,
             AD: Array<Array<number>> = [],
@@ -202,7 +202,7 @@ declare module '../../../Core/Series/SeriesType' {
         ad: typeof ADIndicator;
     }
 }
-BaseSeries.registerSeriesType('ad', ADIndicator);
+SeriesRegistry.registerSeriesType('ad', ADIndicator);
 
 /* *
  *

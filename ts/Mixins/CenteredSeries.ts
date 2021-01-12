@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,7 +12,7 @@
 
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 
 /**
  * Internal types
@@ -20,11 +20,11 @@ import LineSeries from '../Series/Line/LineSeries.js';
  */
 declare global {
     namespace Highcharts {
-        interface CenteredSeries extends LineSeries {
+        interface CenteredSeries extends Series {
             options: CenteredSeriesOptions;
         }
         interface CenteredSeriesMixin {
-            getCenter(this: LineSeries): Array<number>;
+            getCenter(this: Series): Array<number>;
             getStartAndEndRadians(
                 start?: number,
                 end?: number
@@ -115,7 +115,7 @@ const centeredSeriesMixin = H.CenteredSeriesMixin = {
 
         // No need for inner size in angular (gauges) series but still required
         // for pie series
-        if (chart.angular && !(this instanceof LineSeries)) {
+        if (chart.angular && !(this instanceof Series)) {
             positions[3] = 0;
         }
 

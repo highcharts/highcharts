@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -34,12 +34,12 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import H from '../../Core/Globals.js';
-import LineSeries from '../Line/LineSeries.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -222,7 +222,7 @@ declare global {
  *
  * @extends Highcharts.Series
  */
-class NetworkgraphSeries extends LineSeries implements Highcharts.DragNodesSeries, Highcharts.NodesSeries {
+class NetworkgraphSeries extends Series implements Highcharts.DragNodesSeries, Highcharts.NodesSeries {
 
     /* *
      *
@@ -249,7 +249,7 @@ class NetworkgraphSeries extends LineSeries implements Highcharts.DragNodesSerie
      * @requires     modules/networkgraph
      * @optionparent plotOptions.networkgraph
      */
-    public static defaultOptions: Highcharts.NetworkgraphSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: Highcharts.NetworkgraphSeriesOptions = merge(Series.defaultOptions, {
         stickyTracking: false,
 
         /**
@@ -740,7 +740,7 @@ extend(NetworkgraphSeries.prototype, {
         this: NetworkgraphSeries
     ): NetworkgraphSeries {
 
-        LineSeries.prototype.init.apply(this, arguments as any);
+        Series.prototype.init.apply(this, arguments as any);
 
         addEvent<NetworkgraphSeries>(this, 'updatedData', function (): void {
             if (this.layout) {
@@ -839,7 +839,7 @@ extend(NetworkgraphSeries.prototype, {
         state?: StatesOptionsKey
     ): SVGAttributes {
         var attribs =
-            LineSeries.prototype.markerAttribs.call(this, point, state);
+            Series.prototype.markerAttribs.call(this, point, state);
 
         // series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {
@@ -978,13 +978,13 @@ extend(NetworkgraphSeries.prototype, {
         var textPath = (this.options.dataLabels as any).textPath;
 
         // Render node labels:
-        LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
+        Series.prototype.drawDataLabels.apply(this, arguments as any);
 
         // Render link labels:
         this.points = this.data;
         (this.options.dataLabels as any).textPath =
             (this.options.dataLabels as any).linkTextPath;
-        LineSeries.prototype.drawDataLabels.apply(this, arguments as any);
+        Series.prototype.drawDataLabels.apply(this, arguments as any);
 
         // Restore nodes
         this.points = this.nodes;
@@ -999,7 +999,7 @@ extend(NetworkgraphSeries.prototype, {
     ): SVGAttributes {
         // By default, only `selected` state is passed on
         var pointState = state || point && point.state || 'normal',
-            attribs = LineSeries.prototype.pointAttribs.call(
+            attribs = Series.prototype.pointAttribs.call(
                 this,
                 point,
                 pointState
@@ -1067,10 +1067,10 @@ extend(NetworkgraphSeries.prototype, {
     ): void {
         if (inherit) {
             this.points = this.nodes.concat(this.data);
-            LineSeries.prototype.setState.apply(this, arguments as any);
+            Series.prototype.setState.apply(this, arguments as any);
             this.points = this.data;
         } else {
-            LineSeries.prototype.setState.apply(this, arguments as any);
+            Series.prototype.setState.apply(this, arguments as any);
         }
 
         // If simulation is done, re-render points with new states:
@@ -1087,7 +1087,7 @@ extend(NetworkgraphSeries.prototype, {
  * */
 
 class NetworkgraphPoint
-    extends LineSeries.prototype.pointClass
+    extends Series.prototype.pointClass
     implements Highcharts.DragNodesPoint, Highcharts.NodesPoint {
 
     /* *
@@ -1411,7 +1411,7 @@ extend(NetworkgraphPoint.prototype, {
                         }
 
                         // Remove link from data/points collections
-                        LineSeries.prototype.removePoint.call(
+                        Series.prototype.removePoint.call(
                             series,
                             series.data.indexOf(linkFromTo),
                             false,
@@ -1494,7 +1494,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 NetworkgraphSeries.prototype.pointClass = NetworkgraphPoint;
-BaseSeries.registerSeriesType('networkgraph', NetworkgraphSeries);
+SeriesRegistry.registerSeriesType('networkgraph', NetworkgraphSeries);
 
 /* *
  *

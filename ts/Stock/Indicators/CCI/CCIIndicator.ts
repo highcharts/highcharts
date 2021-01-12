@@ -13,19 +13,19 @@
  *
  * */
 
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     CCIOptions,
     CCIParamsOptions
 } from './CCIOptions';
 import type CCIPoint from './CCIPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type Series from '../../../Core/Series/Series';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -113,7 +113,7 @@ class CCIIndicator extends SMAIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: CCIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -198,7 +198,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('cci', CCIIndicator);
+SeriesRegistry.registerSeriesType('cci', CCIIndicator);
 
 /* *
  *

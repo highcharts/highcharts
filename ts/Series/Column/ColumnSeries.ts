@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -29,7 +29,6 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
@@ -38,8 +37,9 @@ const {
     noop
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     clamp,
@@ -76,7 +76,7 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * @augments Highcharts.Series
  */
-class ColumnSeries extends LineSeries {
+class ColumnSeries extends Series {
 
     /* *
      *
@@ -98,7 +98,7 @@ class ColumnSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
-    public static defaultOptions: ColumnSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: ColumnSeriesOptions = merge(Series.defaultOptions, {
 
         /**
          * The corner radius of the border surrounding each column or bar.
@@ -879,7 +879,7 @@ class ColumnSeries extends LineSeries {
             seriesBarW = Math.ceil(seriesBarW);
         }
 
-        LineSeries.prototype.translate.apply(series);
+        Series.prototype.translate.apply(series);
 
         // Record the new values
         series.points.forEach(function (point): void {
@@ -916,8 +916,9 @@ class ColumnSeries extends LineSeries {
                     // and if there's room for it (#7311)
                     (yAxis.min || 0) < threshold &&
                     // if all points are the same value (i.e zero) not draw
-                    // as negative points (#10646)
-                    dataMin !== dataMax
+                    // as negative points (#10646), but only if there's room
+                    // for it (#14876)
+                    (dataMin !== dataMax || (yAxis.max || 0) <= threshold)
                 ) {
                     up = !up;
                 }
@@ -1280,7 +1281,7 @@ class ColumnSeries extends LineSeries {
             });
         }
 
-        LineSeries.prototype.remove.apply(series, arguments as any);
+        Series.prototype.remove.apply(series, arguments as any);
     }
 
     /* eslint-enable valid-jsdoc */
@@ -1337,7 +1338,7 @@ declare module '../../Core/Series/SeriesType' {
         column: typeof ColumnSeries;
     }
 }
-BaseSeries.registerSeriesType('column', ColumnSeries);
+SeriesRegistry.registerSeriesType('column', ColumnSeries);
 
 /* *
  *

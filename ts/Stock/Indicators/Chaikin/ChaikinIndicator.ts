@@ -14,17 +14,16 @@ import type {
 } from './ChaikinOptions';
 import type ChaikinPoint from './ChaikinPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         ad: AD,
         ema: EMAIndicator
     }
-} = BaseSeries;
-
-import BaseSeries from '../../../Core/Series/Series.js';
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -123,7 +122,7 @@ class ChaikinIndicator extends EMAIndicator {
         );
     }
 
-    getValues<TLinkedSeries extends LineSeries>(
+    getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: ChaikinParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -230,7 +229,7 @@ declare module '../../../Core/Series/SeriesType' {
         chaikin: typeof ChaikinIndicator;
     }
 }
-BaseSeries.registerSeriesType('chaikin', ChaikinIndicator);
+SeriesRegistry.registerSeriesType('chaikin', ChaikinIndicator);
 
 /* *
  *

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,17 +13,17 @@
 import type PolygonPoint from './PolygonPoint';
 import type PolygonSeriesOptions from './PolygonSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         area: AreaSeries,
         line: LineSeries,
         scatter: ScatterSeries
     }
-} = BaseSeries;
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -140,7 +140,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('polygon', PolygonSeries);
+SeriesRegistry.registerSeriesType('polygon', PolygonSeries);
 
 /* *
  *

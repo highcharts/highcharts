@@ -36,18 +36,18 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
@@ -184,9 +184,9 @@ declare global {
             color?: ColorType;
             colorIndex?: number;
             levelNumber: number;
-            levelSeries: Array<LineSeries>;
+            levelSeries: Array<Series>;
             levelSeriesOptions: Array<SeriesOptions>;
-            lowerSeries: LineSeries;
+            lowerSeries: Series;
             lowerSeriesOptions: SeriesOptions;
             oldExtremes: Record<string, (number|undefined)>;
             pointIndex: number;
@@ -347,7 +347,6 @@ declare global {
  * @type {"drillup"}
  */
 
-import '../Series/Line/LineSeries.js';
 import '../Series/Column/ColumnSeries.js';
 
 var PieSeries = seriesTypes.pie,
@@ -709,9 +708,9 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     var oldSeries = point.series,
         xAxis = oldSeries.xAxis,
         yAxis = oldSeries.yAxis,
-        newSeries: LineSeries,
+        newSeries: Series,
         pointIndex: number,
-        levelSeries: Array<LineSeries> = [],
+        levelSeries: Array<Series> = [],
         levelSeriesOptions: Array<SeriesOptions> = [],
         level: (Highcharts.DrilldownLevelObject),
         levelNumber: number,
@@ -741,7 +740,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     pointIndex = oldSeries.points.indexOf(point);
 
     // Record options for all current series
-    oldSeries.chart.series.forEach(function (series: LineSeries): void {
+    oldSeries.chart.series.forEach(function (series: Series): void {
         if (series.xAxis === xAxis && !series.isDrilling) {
             series.options._ddSeriesId =
                 series.options._ddSeriesId || ddSeriesId++;
@@ -924,8 +923,8 @@ Chart.prototype.drillUp = function (): void {
         chartSeries = chart.series,
         seriesI: number,
         level: Highcharts.DrilldownLevelObject,
-        oldSeries: LineSeries,
-        newSeries: (LineSeries|undefined),
+        oldSeries: Series,
+        newSeries: (Series|undefined),
         oldExtremes: Record<string, (number|undefined)>,
         addSeries = function (seriesOptions: SeriesOptions): void {
             var addedSeries;
@@ -1561,7 +1560,7 @@ const handlePointClick = function (
     }
 };
 
-addEvent(LineSeries, 'afterDrawDataLabels', function (): void {
+addEvent(Series, 'afterDrawDataLabels', function (): void {
     var css = (this.chart.options.drilldown as any).activeDataLabelStyle,
         renderer = this.chart.renderer,
         styledMode = this.chart.styledMode;
@@ -1614,7 +1613,7 @@ const applyCursorCSS = function (
 };
 
 // Mark the trackers with a pointer
-addEvent(LineSeries, 'afterDrawTracker', function (): void {
+addEvent(Series, 'afterDrawTracker', function (): void {
     var styledMode = this.chart.styledMode;
 
     this.points.forEach(function (point): void {

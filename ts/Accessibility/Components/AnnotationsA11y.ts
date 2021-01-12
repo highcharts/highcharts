@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Annotations accessibility code.
  *

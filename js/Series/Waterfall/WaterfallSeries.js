@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,11 +21,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
@@ -355,10 +355,9 @@ var WaterfallSeries = /** @class */ (function (_super) {
                     yPos
                 ]);
             }
-            if (!stacking &&
+            if (prevArgs &&
                 path.length &&
-                prevArgs &&
-                ((prevPoint.y < 0 && !reversedYAxis) ||
+                ((!stacking && prevPoint.y < 0 && !reversedYAxis) ||
                     (prevPoint.y > 0 && reversedYAxis))) {
                 path[path.length - 2][2] += prevArgs.height;
                 path[path.length - 1][2] += prevArgs.height;
@@ -614,7 +613,7 @@ extend(WaterfallSeries.prototype, {
     showLine: true,
     pointClass: WaterfallPoint
 });
-BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
+SeriesRegistry.registerSeriesType('waterfall', WaterfallSeries);
 WaterfallAxis.compose(H.Axis, Chart);
 /* *
  *

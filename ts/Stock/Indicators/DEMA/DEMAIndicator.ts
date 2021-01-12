@@ -14,14 +14,14 @@ import type {
 } from './DEMAOptions';
 import type DEMAPoint from './DEMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         ema: EMAIndicator
     }
-} = BaseSeries;
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -103,7 +103,7 @@ class DEMAIndicator extends EMAIndicator {
     }
 
     public getValues<
-        TLinkedSeries extends LineSeries
+        TLinkedSeries extends Series
     >(
         this: DEMAIndicator,
         series: TLinkedSeries,
@@ -213,7 +213,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('dema', DEMAIndicator);
+SeriesRegistry.registerSeriesType('dema', DEMAIndicator);
 
 /* *
  *

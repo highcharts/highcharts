@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,12 +23,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, merge = U.merge, pick = U.pick;
 /**
@@ -159,7 +159,7 @@ var FunnelSeries = /** @class */ (function (_super) {
                 }
             };
         }
-        BaseSeries.seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie'].prototype.drawDataLabels.call(this);
+        SeriesRegistry.seriesTypes[series.options.dataLabels.inside ? 'column' : 'pie'].prototype.drawDataLabels.call(this);
     };
     /**
      * Overrides the pie translate method.
@@ -445,7 +445,7 @@ addEvent(Chart, 'afterHideAllOverlappingLabels', function () {
         }
     });
 });
-BaseSeries.registerSeriesType('funnel', FunnelSeries);
+SeriesRegistry.registerSeriesType('funnel', FunnelSeries);
 /* *
  *
  *  Default Export

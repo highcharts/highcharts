@@ -14,19 +14,19 @@
  *
  * */
 
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     EMAOptions,
     EMAParamsOptions
 } from './EMAOptions';
 import type EMAPoint from './EMAPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type Series from '../../../Core/Series/Series';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -139,7 +139,7 @@ class EMAIndicator extends SMAIndicator {
         return [x, y];
     }
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: EMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -225,7 +225,7 @@ declare module '../../../Core/Series/SeriesType' {
         ema: typeof EMAIndicator;
     }
 }
-BaseSeries.registerSeriesType('ema', EMAIndicator);
+SeriesRegistry.registerSeriesType('ema', EMAIndicator);
 
 /* *
  *

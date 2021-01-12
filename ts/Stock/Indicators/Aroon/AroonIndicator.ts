@@ -8,22 +8,21 @@
 
 'use strict';
 
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     AroonOptions,
     AroonParamsOptions
 } from '../Aroon/AroonOptions';
 import type AroonPoint from '../Aroon/AroonPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type Series from '../../../Core/Series/Series';
 
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
-
-import BaseSeries from '../../../Core/Series/Series.js';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -153,7 +152,7 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
      *  Functions
      *
      * */
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
@@ -248,7 +247,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('aroon', AroonIndicator);
+SeriesRegistry.registerSeriesType('aroon', AroonIndicator);
 
 /* *
  *

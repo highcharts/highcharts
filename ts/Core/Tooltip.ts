@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,11 +13,11 @@
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
 import type { HTMLDOMElement } from './Renderer/DOMElementType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from './Series/Point';
 import type PointerEvent from './PointerEvent';
 import type PositionObject from './Renderer/PositionObject';
 import type RectangleObject from './Renderer/RectangleObject';
+import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import H from './Globals.js';
@@ -90,7 +90,7 @@ declare global {
             public tracker?: SVGElement;
             public tt?: SVGElement;
             public applyFilter(): void;
-            public bodyFormatter(items: Array<(LineSeries|Point)>): Array<string>;
+            public bodyFormatter(items: Array<(Series|Point)>): Array<string>;
             public cleanSplit(force?: boolean): void;
             public defaultFormatter(
                 this: TooltipFormatterContextObject,
@@ -156,7 +156,7 @@ declare global {
             percentage?: number;
             point: Point;
             points?: Array<Highcharts.TooltipFormatterContextObject>;
-            series: LineSeries;
+            series: Series;
             total?: number;
             x: number;
             y: number;
@@ -537,7 +537,7 @@ class Tooltip {
         points: (Point|Array<Point>),
         mouseEvent?: PointerEvent
     ): Array<number> {
-        var ret,
+        var ret: number[],
             chart = this.chart,
             pointer = chart.pointer,
             inverted = chart.inverted,
@@ -545,8 +545,8 @@ class Tooltip {
             plotLeft = chart.plotLeft,
             plotX = 0,
             plotY = 0,
-            yAxis,
-            xAxis;
+            yAxis: Highcharts.Axis|undefined,
+            xAxis: Highcharts.Axis|undefined;
 
         points = splat(points);
 
@@ -565,33 +565,50 @@ class Tooltip {
         } else if (points[0].tooltipPos) {
             ret = points[0].tooltipPos;
 
-        // When shared, use the average position
+        // Calculate the average position and adjust for axis positions
         } else {
             points.forEach(function (point): void {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
-                plotX += (point.plotX as any) +
-                    (!inverted && xAxis ? xAxis.left - plotLeft : 0);
+                plotX += point.plotX || 0;
                 plotY += (
                     point.plotLow ?
-                        ((point.plotLow as any) + point.plotHigh) / 2 :
-                        (point.plotY as any)
-                ) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
+                        (point.plotLow + (point.plotHigh || 0)) / 2 :
+                        (point.plotY || 0)
+                );
+
+                // Adjust position for positioned axes (top/left settings)
+                if (xAxis && yAxis) {
+                    if (!inverted) { // #1151
+                        plotX += xAxis.pos - plotLeft;
+                        plotY += yAxis.pos - plotTop;
+                    } else { // #14771
+                        plotX += plotTop + chart.plotHeight - xAxis.len - xAxis.pos;
+                        plotY += plotLeft + chart.plotWidth - yAxis.len - yAxis.pos;
+                    }
+                }
             });
 
             plotX /= points.length;
             plotY /= points.length;
 
+            // Use the average position for multiple points
             ret = [
                 inverted ? chart.plotWidth - plotY : plotX,
-                this.shared && !inverted && points.length > 1 && mouseEvent ?
-                    // place shared tooltip next to the mouse (#424)
-                    mouseEvent.chartY - plotTop :
-                    inverted ? chart.plotHeight - plotX : plotY
+                inverted ? chart.plotHeight - plotX : plotY
             ];
-        }
 
+            // When shared, place the tooltip next to the mouse (#424)
+            if (this.shared && points.length > 1 && mouseEvent) {
+                if (inverted) {
+                    ret[0] = mouseEvent.chartX - plotLeft;
+                } else {
+                    ret[1] = mouseEvent.chartY - plotTop;
+                }
+            }
+        }
         return ret.map(Math.round);
+
     }
 
     /**

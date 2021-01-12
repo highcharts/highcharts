@@ -2,7 +2,7 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,11 +25,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 import WindbarbPoint from './WindbarbPoint.js';
@@ -370,7 +370,7 @@ WindbarbSeries.prototype.pointClass = WindbarbPoint;
  *
  * */
 WindbarbSeries.registerApproximation();
-BaseSeries.registerSeriesType('windbarb', WindbarbSeries);
+SeriesRegistry.registerSeriesType('windbarb', WindbarbSeries);
 /* *
  *
  * Export default

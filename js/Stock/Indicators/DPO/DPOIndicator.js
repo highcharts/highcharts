@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var SMAIndicator = BaseSeries.seriesTypes.sma;
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, correctFloat = U.correctFloat, pick = U.pick;
 /* eslint-disable valid-jsdoc */
@@ -138,7 +138,7 @@ var DPOIndicator = /** @class */ (function (_super) {
 extend(DPOIndicator.prototype, {
     nameBase: 'DPO'
 });
-BaseSeries.registerSeriesType('dpo', DPOIndicator);
+SeriesRegistry.registerSeriesType('dpo', DPOIndicator);
 /* *
  *
  *  Default Export

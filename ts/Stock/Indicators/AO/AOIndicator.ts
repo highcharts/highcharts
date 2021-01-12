@@ -8,21 +8,19 @@
 
 'use strict';
 
+import type AOOptions from './AOOptions';
+import type AOPoint from './AOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import H from '../../../Core/Globals.js';
+const { noop } = H;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
         column: ColumnSeries
     }
-} = BaseSeries;
-import type {
-    AOOptions
-} from './AOOptions';
-import type AOPoint from './AOPoint';
-import H from '../../../Core/Globals.js';
-const { noop } = H;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -147,7 +145,7 @@ class AOIndicator extends SMAIndicator {
         }
     }
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var shortPeriod = 5,
@@ -264,7 +262,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('ao', AOIndicator);
+SeriesRegistry.registerSeriesType('ao', AOIndicator);
 
 /* *
  *

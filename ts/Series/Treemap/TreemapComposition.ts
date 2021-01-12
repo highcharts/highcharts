@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2020 Highsoft AS
+ *  (c) 2014-2021 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -18,12 +18,12 @@
  *
  * */
 
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import TreemapUtilities from './TreemapUtilities.js';
 import U from '../../Core/Utilities.js';
 const {

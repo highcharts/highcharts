@@ -15,20 +15,6 @@
 * */
 
 import type ColorType from '../../../Core/Color/ColorType';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type Point from '../../../Core/Series/Point';
-import type IKHPoint from './IKHPoint';
-import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../../Core/Series/Series.js';
-const {
-    seriesTypes: { sma: SMAIndicator }
-} = BaseSeries;
-import Color from '../../../Core/Color/Color.js';
-const color = Color.parse;
-import H from '../../../Core/Globals.js';
-import U from '../../../Core/Utilities.js';
 import type {
     IKHDrawSenkouSpanObject,
     IKHGapExtensionObject,
@@ -36,6 +22,20 @@ import type {
     IKHParamsOptions,
     IKHSenkouSpanOptions
 } from './IKHOptions';
+import type IKHPoint from './IKHPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type Point from '../../../Core/Series/Point';
+import type Series from '../../../Core/Series/Series';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import Color from '../../../Core/Color/Color.js';
+const color = Color.parse;
+import H from '../../../Core/Globals.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: { sma: SMAIndicator }
+} = SeriesRegistry;
+import U from '../../../Core/Utilities.js';
 const { defined, extend, isArray, merge, objectEach } = U;
 
 declare module '../../../Core/Series/SeriesLike' {
@@ -144,7 +144,7 @@ function drawSenkouSpan(
     ) as any;
     indicator.graph = opt.graph;
     indicator.fillGraph = true;
-    BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
 }
 
 // Data integrity in Ichimoku is different than default 'averages':
@@ -379,7 +379,7 @@ class IKHIndicator extends SMAIndicator {
     * */
 
     public init(this: IKHIndicator): void {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
         this.options = merge(
@@ -434,7 +434,7 @@ class IKHIndicator extends SMAIndicator {
     public translate(): void {
         var indicator = this;
 
-        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
+        SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
         indicator.points.forEach(function (
             point: IKHPoint
@@ -599,7 +599,7 @@ class IKHIndicator extends SMAIndicator {
 
                     indicator.fillGraph = false;
                     indicator.color = mainColor;
-                    BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                    SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
 
                     // Now save line
                     (indicator as any)['graph' + lineName] = indicator.graph;
@@ -758,7 +758,7 @@ class IKHIndicator extends SMAIndicator {
 
         // Render Senkou Span
         if (indicator.fillGraph && indicator.nextPoints) {
-            spanA = BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(
+            spanA = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(
                 indicator,
                 // Reverse points, so Senkou Span A will start from the end:
                 indicator.nextPoints
@@ -767,7 +767,7 @@ class IKHIndicator extends SMAIndicator {
             if (spanA && spanA.length) {
                 spanA[0][0] = 'L';
 
-                path = BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
+                path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, points);
 
                 spanAarr = spanA.slice(0, path.length);
 
@@ -776,13 +776,13 @@ class IKHIndicator extends SMAIndicator {
                 }
             }
         } else {
-            path = BaseSeries.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
+            path = SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.apply(indicator, arguments);
         }
 
         return path;
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: IKHParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {
@@ -933,7 +933,7 @@ declare module '../../../Core/Series/SeriesType' {
         ikh: typeof IKHIndicator;
     }
 }
-BaseSeries.registerSeriesType('ikh', IKHIndicator);
+SeriesRegistry.registerSeriesType('ikh', IKHIndicator);
 
 export default IKHIndicator;
 

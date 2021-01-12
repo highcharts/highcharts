@@ -9,18 +9,15 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    MomentumOptions,
-    MomentumParamsOptions
-} from './MomentumOptions';
+import type MomentumOptions from './MomentumOptions';
 import type MomentumPoint from './MomentumPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -80,7 +77,7 @@ class MomentumIndicator extends SMAIndicator {
     public options: MomentumOptions = void 0 as any;
     public points: Array<MomentumPoint> = void 0 as any;
 
-    getValues<TLinkedSeries extends LineSeries>(
+    getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: MomentumOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -163,7 +160,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('momentum', MomentumIndicator);
+SeriesRegistry.registerSeriesType('momentum', MomentumIndicator);
 
 /* *
  *

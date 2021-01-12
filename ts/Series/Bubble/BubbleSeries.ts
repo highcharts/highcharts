@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,20 +20,20 @@ import type BubbleSeriesOptions from './BubbleSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Axis from '../../Core/Axis/Axis.js';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        scatter: ScatterSeries
-    }
-} = BaseSeries;
 import BubblePoint from './BubblePoint.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Line/LineSeries.js';
 import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        scatter: ScatterSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -520,7 +520,7 @@ class BubbleSeries extends ScatterSeries {
     ): SVGAttributes {
         var markerOptions = this.options.marker,
             fillOpacity = (markerOptions as any).fillOpacity,
-            attr = LineSeries.prototype.pointAttribs.call(this, point, state);
+            attr = Series.prototype.pointAttribs.call(this, point, state);
 
         if (fillOpacity !== 1) {
             attr.fill = color(attr.fill as any)
@@ -759,7 +759,7 @@ declare module '../../Core/Series/SeriesType' {
         bubble: typeof BubbleSeries;
     }
 }
-BaseSeries.registerSeriesType('bubble', BubbleSeries);
+SeriesRegistry.registerSeriesType('bubble', BubbleSeries);
 
 /* *
  *

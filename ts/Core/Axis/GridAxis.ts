@@ -12,13 +12,13 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type {
     PointOptions,
     PointShortOptions
 } from '../Series/PointOptions';
 import type PositionObject from '../Renderer/PositionObject';
+import type Series from '../Series/Series';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -680,7 +680,7 @@ class GridAxis {
                     value
                 } = this;
                 const tickPos = axis.tickPositions;
-                const series: LineSeries = (
+                const series: Series = (
                     axis.isLinked ?
                         (axis.linkedParent as any) :
                         axis

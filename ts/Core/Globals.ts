@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type { SeriesTypeRegistry } from './Series/SeriesType';
 import type SizeObject from './Renderer/SizeObject';
 
 declare module './Chart/ChartLike' {
@@ -218,7 +219,7 @@ var H: typeof Highcharts = {
     isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
     SVG_NS,
     chartCount: 0,
-    seriesTypes: {} as Highcharts.SeriesTypesDictionary,
+    seriesTypes: {} as SeriesTypeRegistry,
     supportsPassiveEvents: checkPassiveEvents(),
     symbolSizes: {},
     svg,

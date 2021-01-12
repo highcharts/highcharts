@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  Dot plot series type for Highcharts
  *
@@ -30,9 +30,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import './DotPlotSymbols.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import '../Column/ColumnSeries.js';
@@ -150,7 +150,7 @@ var DotPlotSeries = /** @class */ (function (_super) {
 extend(DotPlotSeries.prototype, {
     markerAttribs: void 0
 });
-BaseSeries.registerSeriesType('dotplot', DotPlotSeries);
+SeriesRegistry.registerSeriesType('dotplot', DotPlotSeries);
 /* *
  *
  * Default Export

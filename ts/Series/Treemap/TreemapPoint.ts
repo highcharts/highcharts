@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2020 Highsoft AS
+ *  (c) 2014-2021 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -21,7 +21,8 @@
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: {
@@ -40,8 +41,7 @@ const {
             }
         }
     }
-} = BaseSeries;
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,

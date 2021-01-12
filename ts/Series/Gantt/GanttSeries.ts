@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -21,14 +21,14 @@
 import type GanttSeriesOptions from './GanttSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import GanttPoint from './GanttPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries,
         xrange: XRangeSeries
     }
-} = BaseSeries;
-import GanttPoint from './GanttPoint.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -289,7 +289,7 @@ declare module '../../Core/Series/SeriesType' {
         gantt: typeof GanttSeries;
     }
 }
-BaseSeries.registerSeriesType('gantt', GanttSeries);
+SeriesRegistry.registerSeriesType('gantt', GanttSeries);
 
 /* *
  *

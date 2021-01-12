@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,8 +11,8 @@
 'use strict';
 
 import type ColorAxis from '../Core/Axis/ColorAxis';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
+import type Series from '../Core/Series/Series';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 
@@ -58,7 +58,7 @@ declare global {
         }
         interface LegendSymbolMixin {
             drawLineMarker(legend: Legend): void;
-            drawRectangle(legend: Legend, item: (LineSeries|Point)): void;
+            drawRectangle(legend: Legend, item: (Series|Point)): void;
         }
         let LegendSymbolMixin: LegendSymbolMixin;
     }
@@ -93,9 +93,9 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
      * The series (this) or point
      */
     drawRectangle: function (
-        this: LineSeries,
+        this: Series,
         legend: Highcharts.Legend,
-        item: (LineSeries|Point)
+        item: (Series|Point)
     ): void {
         var options = legend.options,
             symbolHeight = legend.symbolHeight,
@@ -128,7 +128,7 @@ const LegendSymbolMixin = H.LegendSymbolMixin = {
      * The legend object.
      */
     drawLineMarker: function (
-        this: LineSeries,
+        this: Series,
         legend: Highcharts.Legend
     ): void {
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,8 +12,8 @@
 
 import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
+import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 
 declare module '../Core/Series/SeriesLike' {
@@ -37,7 +37,7 @@ declare global {
         interface ColorPointMixin {
             setVisible: ColorPoint['setVisible'];
         }
-        interface ColorSeries extends LineSeries {
+        interface ColorSeries extends Series {
             colorAxis: ColorAxis;
             data: Array<ColorPoint>;
             points: Array<ColorPoint>;

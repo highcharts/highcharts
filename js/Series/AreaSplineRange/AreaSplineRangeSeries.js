@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,8 +21,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
 import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var SplineSeries = SeriesRegistry.seriesTypes.spline;
 import U from '../../Core/Utilities.js';
 var merge = U.merge, extend = U.extend;
 /* *
@@ -97,9 +98,9 @@ var AreaSplineRangeSeries = /** @class */ (function (_super) {
     return AreaSplineRangeSeries;
 }(AreaRangeSeries));
 extend(AreaSplineRangeSeries.prototype, {
-    getPointSpline: BaseSeries.seriesTypes.spline.prototype.getPointSpline
+    getPointSpline: SplineSeries.prototype.getPointSpline
 });
-BaseSeries.registerSeriesType('areasplinerange', AreaSplineRangeSeries);
+SeriesRegistry.registerSeriesType('areasplinerange', AreaSplineRangeSeries);
 /* *
  *
  *  Default export

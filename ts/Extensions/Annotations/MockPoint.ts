@@ -7,7 +7,7 @@
 'use strict';
 
 import type PositionObject from '../../Core/Renderer/PositionObject';
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 
 /**
  * Internal types.
@@ -59,7 +59,7 @@ declare global {
         }
         interface AnnotationMockSeries {
             chart: AnnotationChart;
-            getPlotBox: LineSeries['getPlotBox'];
+            getPlotBox: Series['getPlotBox'];
             xAxis?: (Axis|null);
             yAxis?: (Axis|null);
             visible: boolean;
@@ -118,7 +118,6 @@ var defined = U.defined,
     fireEvent = U.fireEvent;
 
 import Axis from '../../Core/Axis/Axis.js';
-import '../../Series/Line/LineSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -247,7 +246,7 @@ class MockPoint {
         this.series = {
             visible: true,
             chart: chart,
-            getPlotBox: LineSeries.prototype.getPlotBox
+            getPlotBox: Series.prototype.getPlotBox
         };
 
         /**

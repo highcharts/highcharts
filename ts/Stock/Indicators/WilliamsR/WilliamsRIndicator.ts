@@ -9,22 +9,23 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     WilliamsROptions,
     WilliamsRParamsOptions
 } from './WilliamsROptions';
 import type WilliamsRPoint from './WilliamsRPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = BaseSeries;
+
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
 const {
     getArrayExtremes
 } = ReduceArrayMixin;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -76,7 +77,7 @@ class WilliamsRIndicator extends SMAIndicator {
     public options: WilliamsROptions = void 0 as any;
     public points: Array<WilliamsRPoint> = void 0 as any;
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         this: WilliamsRIndicator,
         series: TLinkedSeries,
         params: WilliamsRParamsOptions
@@ -149,7 +150,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('williamsr', WilliamsRIndicator);
+SeriesRegistry.registerSeriesType('williamsr', WilliamsRIndicator);
 
 /* *
  *

@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
@@ -42,7 +42,7 @@ var PriceEnvelopesIndicator = /** @class */ (function (_super) {
         return _this;
     }
     PriceEnvelopesIndicator.prototype.init = function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             topLine: {
@@ -62,7 +62,7 @@ var PriceEnvelopesIndicator = /** @class */ (function (_super) {
     };
     PriceEnvelopesIndicator.prototype.translate = function () {
         var indicator = this, translatedEnvelopes = ['plotTop', 'plotMiddle', 'plotBottom'];
-        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
+        SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
         indicator.points.forEach(function (point) {
             [point.top, point.middle, point.bottom].forEach(function (value, i) {
                 if (value !== null) {
@@ -98,7 +98,7 @@ var PriceEnvelopesIndicator = /** @class */ (function (_super) {
             indicator.points = deviations[i];
             indicator.options = merge(middleLineOptions[lineName].styles, gappedExtend);
             indicator.graph = indicator['graph' + lineName];
-            BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+            SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
             // Now save lines:
             indicator['graph' + lineName] = indicator.graph;
         });
@@ -106,7 +106,7 @@ var PriceEnvelopesIndicator = /** @class */ (function (_super) {
         indicator.points = middleLinePoints;
         indicator.options = middleLineOptions;
         indicator.graph = middleLinePath;
-        BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+        SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
     };
     PriceEnvelopesIndicator.prototype.getValues = function (series, params) {
         var period = params.period, topPercent = params.topBand, botPercent = params.bottomBand, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, 
@@ -123,7 +123,7 @@ var PriceEnvelopesIndicator = /** @class */ (function (_super) {
         for (i = period; i <= yValLen; i++) {
             slicedX = xVal.slice(i - period, i);
             slicedY = yVal.slice(i - period, i);
-            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
+            point = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, {
                 xData: slicedX,
                 yData: slicedY
             }, params);
@@ -218,7 +218,7 @@ extend(PriceEnvelopesIndicator.prototype, {
     parallelArrays: ['x', 'y', 'top', 'bottom'],
     pointValKey: 'middle'
 });
-BaseSeries.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
+SeriesRegistry.registerSeriesType('priceenvelopes', PriceEnvelopesIndicator);
 /* *
  *
  *  Default Export

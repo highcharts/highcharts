@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,16 +20,16 @@ import type PieSeriesOptions from './PieSeriesOptions';
 import type Point from '../../Core/Series/Point';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const { getStartAndEndRadians } = CenteredSeriesMixin;
 import ColumnSeries from '../Column/ColumnSeries.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
 import PiePoint from './PiePoint.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -77,7 +77,7 @@ declare module '../../Core/Series/SeriesOptions' {
  *
  * @augments Highcharts.Series
  */
-class PieSeries extends LineSeries {
+class PieSeries extends Series {
 
     /* *
      *
@@ -103,7 +103,7 @@ class PieSeries extends LineSeries {
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
-    public static defaultOptions: PieSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: PieSeriesOptions = merge(Series.defaultOptions, {
         /**
          * @excluding legendItemClick
          * @apioption plotOptions.pie.events
@@ -1235,7 +1235,7 @@ declare module '../../Core/Series/SeriesType' {
         pie: typeof PieSeries;
     }
 }
-BaseSeries.registerSeriesType('pie', PieSeries);
+SeriesRegistry.registerSeriesType('pie', PieSeries);
 
 /* *
  *

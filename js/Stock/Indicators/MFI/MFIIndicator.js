@@ -2,7 +2,7 @@
  *
  *  Money Flow Index indicator for Highstock
  *
- *  (c) 2010-2020 Grzegorz Blachliński
+ *  (c) 2010-2021 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var SMAIndicator = BaseSeries.seriesTypes.sma;
-import BaseSeries from '../../../Core/Series/Series.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, error = U.error, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
@@ -176,7 +176,7 @@ var MFIIndicator = /** @class */ (function (_super) {
 extend(MFIIndicator.prototype, {
     nameBase: 'Money Flow Index'
 });
-BaseSeries.registerSeriesType('mfi', MFIIndicator);
+SeriesRegistry.registerSeriesType('mfi', MFIIndicator);
 /* *
  *
  *  Default Export

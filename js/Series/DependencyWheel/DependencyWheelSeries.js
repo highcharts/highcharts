@@ -2,7 +2,7 @@
  *
  *  Dependency wheel module
  *
- *  (c) 2018-2020 Torstein Honsi
+ *  (c) 2018-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,11 +25,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, PieSeries = _a.pie, SankeySeries = _a.sankey;
 import DependencyWheelPoint from './DependencyWheelPoint.js';
 import H from '../../Core/Globals.js';
 var deg2rad = H.deg2rad;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, PieSeries = _a.pie, SankeySeries = _a.sankey;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 /* *
@@ -296,7 +296,7 @@ extend(DependencyWheelSeries.prototype, {
     getCenter: PieSeries.prototype.getCenter
 });
 DependencyWheelSeries.prototype.pointClass = DependencyWheelPoint;
-BaseSeries.registerSeriesType('dependencywheel', DependencyWheelSeries);
+SeriesRegistry.registerSeriesType('dependencywheel', DependencyWheelSeries);
 /* *
  *
  *  Default Export

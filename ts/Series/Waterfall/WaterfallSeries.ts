@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,17 +15,17 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WaterfallSeriesOptions from './WaterfallSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+import palette from '../../Core/Color/Palette.js';
+import Point from '../../Core/Series/Point.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
-} = BaseSeries;
-import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
-import palette from '../../Core/Color/Palette.js';
-import Point from '../../Core/Series/Point.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -693,11 +693,10 @@ class WaterfallSeries extends ColumnSeries {
             }
 
             if (
-                !stacking &&
-                path.length &&
                 prevArgs &&
+                path.length &&
                 (
-                    (prevPoint.y < 0 && !reversedYAxis) ||
+                    (!stacking && prevPoint.y < 0 && !reversedYAxis) ||
                     (prevPoint.y > 0 && reversedYAxis)
                 )
             ) {
@@ -963,7 +962,7 @@ declare module '../../Core/Series/SeriesType' {
         waterfall: typeof WaterfallSeries;
     }
 }
-BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
+SeriesRegistry.registerSeriesType('waterfall', WaterfallSeries);
 WaterfallAxis.compose(H.Axis, Chart);
 
 /* *

@@ -19,9 +19,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var EMAIndicator = BaseSeries.seriesTypes.ema;
-import BaseSeries from '../../../Core/Series/Series.js';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var EMAIndicator = SeriesRegistry.seriesTypes.ema;
 import U from '../../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U.error;
 /* *
@@ -148,7 +148,7 @@ extend(PPOIndicator.prototype, {
     nameBase: 'PPO',
     nameComponents: ['periods']
 });
-BaseSeries.registerSeriesType('ppo', PPOIndicator);
+SeriesRegistry.registerSeriesType('ppo', PPOIndicator);
 /* *
  *
  *  Default Export

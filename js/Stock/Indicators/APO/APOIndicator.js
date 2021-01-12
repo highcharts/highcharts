@@ -19,9 +19,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var EMAIndicator = BaseSeries.seriesTypes.ema;
-import BaseSeries from '../../../Core/Series/Series.js';
+var EMAIndicator = SeriesRegistry.seriesTypes.ema;
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, error = U.error;
 /* *
@@ -147,7 +147,7 @@ extend(APOIndicator.prototype, {
     nameBase: 'APO',
     nameComponents: ['periods']
 });
-BaseSeries.registerSeriesType('apo', APOIndicator);
+SeriesRegistry.registerSeriesType('apo', APOIndicator);
 /* *
  *
  *  Default Export

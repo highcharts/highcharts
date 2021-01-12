@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Extension to the Series object in 3D charts.
  *
@@ -23,9 +23,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import LineSeries from '../../Series/Line/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, isNumber = U.isNumber;
 /* *
@@ -100,22 +100,22 @@ var Series3D = /** @class */ (function (_super) {
      *  Static Properties
      *
      * */
-    Series3D.defaultOptions = merge(LineSeries.defaultOptions);
+    Series3D.defaultOptions = merge(Series.defaultOptions);
     return Series3D;
-}(LineSeries));
+}(Series));
 /* *
  *
  *  Compatibility
  *
  * */
 /* eslint-disable no-invalid-this */
-addEvent(LineSeries, 'afterTranslate', function () {
+addEvent(Series, 'afterTranslate', function () {
     if (this.chart.is3d()) {
         this.translate3dPoints();
     }
 });
 /* eslint-enable no-invalid-this */
-extend(LineSeries.prototype, {
+extend(Series.prototype, {
     translate3dPoints: Series3D.prototype.translate3dPoints
 });
 /* *

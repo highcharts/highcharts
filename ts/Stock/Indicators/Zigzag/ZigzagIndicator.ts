@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Kacper Madej
+ *  (c) 2010-2021 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -11,18 +11,19 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     ZigzagOptions,
     ZigzagParamsOptions
 } from './ZigzagOptions';
 import type ZigzagPoint from './ZigzagPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -106,7 +107,7 @@ class ZigzagIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-    getValues<TLinkedSeries extends LineSeries>(
+    getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: ZigzagParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -277,7 +278,7 @@ declare module '../../../Core/Series/SeriesType' {
 }
 
 
-BaseSeries.registerSeriesType('zigzag', ZigzagIndicator);
+SeriesRegistry.registerSeriesType('zigzag', ZigzagIndicator);
 
 /* *
  *

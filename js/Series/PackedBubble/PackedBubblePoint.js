@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -21,10 +21,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var BubbleSeries = BaseSeries.seriesTypes.bubble;
 import Chart from '../../Core/Chart/Chart.js';
 import Point from '../../Core/Series/Point.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var BubbleSeries = SeriesRegistry.seriesTypes.bubble;
 /* *
  *
  *  Class

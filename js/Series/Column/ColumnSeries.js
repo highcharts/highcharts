@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,14 +23,14 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 var hasTouch = H.hasTouch, noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /**
@@ -325,7 +325,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         if (options.pointPadding) {
             seriesBarW = Math.ceil(seriesBarW);
         }
-        LineSeries.prototype.translate.apply(series);
+        Series.prototype.translate.apply(series);
         // Record the new values
         series.points.forEach(function (point) {
             var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX || 0, 
@@ -346,8 +346,9 @@ var ColumnSeries = /** @class */ (function (_super) {
                     // and if there's room for it (#7311)
                     (yAxis.min || 0) < threshold &&
                     // if all points are the same value (i.e zero) not draw
-                    // as negative points (#10646)
-                    dataMin !== dataMax) {
+                    // as negative points (#10646), but only if there's room
+                    // for it (#14876)
+                    (dataMin !== dataMax || (yAxis.max || 0) <= threshold)) {
                     up = !up;
                 }
                 // If stacked...
@@ -605,7 +606,7 @@ var ColumnSeries = /** @class */ (function (_super) {
                 }
             });
         }
-        LineSeries.prototype.remove.apply(series, arguments);
+        Series.prototype.remove.apply(series, arguments);
     };
     /**
      * Column series display one column per value along an X axis.
@@ -621,7 +622,7 @@ var ColumnSeries = /** @class */ (function (_super) {
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
-    ColumnSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+    ColumnSeries.defaultOptions = merge(Series.defaultOptions, {
         /**
          * The corner radius of the border surrounding each column or bar.
          *
@@ -969,7 +970,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         borderColor: palette.backgroundColor
     });
     return ColumnSeries;
-}(LineSeries));
+}(Series));
 extend(ColumnSeries.prototype, {
     cropShoulder: 0,
     // When tooltip is not shared, this series (and derivatives) requires
@@ -994,7 +995,7 @@ extend(ColumnSeries.prototype, {
     negStacks: true,
     trackerGroups: ['group', 'dataLabelsGroup']
 });
-BaseSeries.registerSeriesType('column', ColumnSeries);
+SeriesRegistry.registerSeriesType('column', ColumnSeries);
 /* *
  *
  *  Export

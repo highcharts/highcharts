@@ -9,20 +9,21 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     StochasticOptions,
     StochasticParamsOptions
 } from './StochasticOptions';
 import type StochasticPoint from './StochasticPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -108,7 +109,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
     public points: Array<StochasticPoint> = void 0 as any;
 
     public init(): void {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
         this.options = merge({
@@ -120,7 +121,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
         }, this.options);
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: StochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -143,7 +144,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
             K: number,
             D: number|null = null,
             points: (
-                IndicatorValuesObject<LineSeries>|
+                IndicatorValuesObject<Series>|
                 undefined
             ),
             extremes: [number, number],
@@ -177,7 +178,7 @@ class StochasticIndicator extends SMAIndicator implements Highcharts.MultipleLin
 
             // Calculate smoothed %D, which is SMA of %K
             if (i >= (periodK - 1) + (periodD - 1)) {
-                points = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, ({
+                points = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, ({
                     xData: xData.slice(-periodD),
                     yData: yData.slice(-periodD)
                 } as any), {
@@ -232,7 +233,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('stochastic', StochasticIndicator);
+SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
 
 /* *
  *

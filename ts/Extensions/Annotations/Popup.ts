@@ -2,7 +2,7 @@
  *
  *  Popup generator for Stock tools
  *
- *  (c) 2009-2017 Sebastian Bochan
+ *  (c) 2009-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -13,7 +13,7 @@
 import type Annotation from './Annotations';
 import type Chart from '../../Core/Chart/Chart';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../../Core/Series/Series';
 import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SMAIndicator from '../../Stock/Indicators/SMA/SMAIndicator';
 import H from '../../Core/Globals.js';
@@ -817,7 +817,7 @@ H.Popup.prototype = {
                 .querySelectorAll('.' + PREFIX + 'popup-rhs-col-wrapper')[0];
 
             objectEach(series, function (
-                serie: (LineSeries|SeriesTypePlotOptions),
+                serie: (Series|SeriesTypePlotOptions),
                 value: string
             ): void {
                 var seriesOptions = serie.options;

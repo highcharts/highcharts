@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -22,12 +22,12 @@
 
 import type Funnel3DPointOptions from './Funnel3DPointOptions';
 import type Funnel3DSeries from './Funnel3DSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

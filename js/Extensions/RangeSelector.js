@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -724,8 +724,9 @@ var RangeSelector = /** @class */ (function () {
         rangeSelector.options = options;
         rangeSelector.buttons = [];
         rangeSelector.buttonOptions = buttonOptions;
-        this.unMouseDown = addEvent(chart.container, 'mousedown', blurInputs);
-        this.unResize = addEvent(chart, 'resize', blurInputs);
+        this.eventsToUnbind = [];
+        this.eventsToUnbind.push(addEvent(chart.container, 'mousedown', blurInputs));
+        this.eventsToUnbind.push(addEvent(chart, 'resize', blurInputs));
         // Extend the buttonOptions with actual range
         buttonOptions.forEach(rangeSelector.computeButtonRange);
         // zoomed range based on a pre-selected button index
@@ -733,7 +734,7 @@ var RangeSelector = /** @class */ (function () {
             buttonOptions[selectedOption]) {
             this.clickButton(selectedOption, false);
         }
-        addEvent(chart, 'load', function () {
+        this.eventsToUnbind.push(addEvent(chart, 'load', function () {
             // If a data grouping is applied to the current button, release it
             // when extremes change
             if (chart.xAxis && chart.xAxis[0]) {
@@ -748,7 +749,7 @@ var RangeSelector = /** @class */ (function () {
                     }
                 });
             }
-        });
+        }));
     };
     /**
      * Dynamically update the range selector buttons after a new range has been
@@ -1365,7 +1366,7 @@ var RangeSelector = /** @class */ (function () {
         }, void 0, dropdown);
         this.buttonOptions.forEach(function (rangeOptions, i) {
             createElement('option', {
-                textContent: rangeOptions.text
+                textContent: rangeOptions.title || rangeOptions.text
             }, void 0, dropdown);
             buttons[i] = renderer
                 .button(rangeOptions.text, 0, 0, function (e) {
@@ -1796,6 +1797,7 @@ var RangeSelector = /** @class */ (function () {
                 width: bBox.width + 'px',
                 height: bBox.height + 'px'
             });
+            this.hasVisibleDropdown = true;
         }
     };
     /**
@@ -1811,6 +1813,7 @@ var RangeSelector = /** @class */ (function () {
                 width: '1px',
                 height: '1px'
             });
+            this.hasVisibleDropdown = false;
         }
     };
     /**
@@ -1879,11 +1882,9 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.destroy = function () {
         var rSelector = this, minInput = rSelector.minInput, maxInput = rSelector.maxInput;
-        if (rSelector.unMouseDown) {
-            rSelector.unMouseDown();
-        }
-        if (rSelector.unResize) {
-            rSelector.unResize();
+        if (rSelector.eventsToUnbind) {
+            rSelector.eventsToUnbind.forEach(function (unbind) { return unbind(); });
+            rSelector.eventsToUnbind = void 0;
         }
         // Destroy elements in collections
         destroyObjectProperties(rSelector.buttons);

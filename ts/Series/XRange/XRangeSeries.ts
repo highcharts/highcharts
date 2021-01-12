@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2020 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2021 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -26,16 +26,16 @@ import type {
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import H from '../../Core/Globals.js';
+import Color from '../../Core/Color/Color.js';
+const { parse: color } = Color;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
-} = BaseSeries;
-import H from '../../Core/Globals.js';
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
+} = SeriesRegistry;
 const { prototype: columnProto } = ColumnSeries;
 import U from '../../Core/Utilities.js';
 const {
@@ -725,7 +725,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('xrange', XRangeSeries);
+SeriesRegistry.registerSeriesType('xrange', XRangeSeries);
 
 /* *
  *

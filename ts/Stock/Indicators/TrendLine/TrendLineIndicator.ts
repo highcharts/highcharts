@@ -9,18 +9,19 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     TrendLineOptions,
     TrendLineParamsOptions
 } from './TrendLineOptions';
 import type TrendLinePoint from './TrendLinePoint';
+
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
-import BaseSeries from '../../../Core/Series/Series.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -91,7 +92,7 @@ class TrendLineIndicator extends SMAIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: TrendLineParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
@@ -173,7 +174,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('trendline', TrendLineIndicator);
+SeriesRegistry.registerSeriesType('trendline', TrendLineIndicator);
 
 /* *
  *

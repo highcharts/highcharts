@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,9 +25,9 @@ import type {
 } from '../Renderer/CSSObject';
 import type ChartLike from './ChartLike';
 import type ColorAxis from '../Axis/ColorAxis';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
+import type Series from '../Series/Series';
 import type SeriesOptions from '../Series/SeriesOptions';
 import type {
     SeriesTypeOptions,
@@ -43,7 +43,6 @@ const {
     setAnimation
 } = A;
 import Axis from '../Axis/Axis.js';
-import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
 const {
     charts,
@@ -59,6 +58,8 @@ const {
 } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
+import SeriesRegistry from '../Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
@@ -272,7 +273,7 @@ class Chart {
     public reflowTimeout?: number;
     public renderer: Chart.Renderer = void 0 as any;
     public renderTo: globalThis.HTMLElement = void 0 as any;
-    public series: Array<LineSeries> = void 0 as any;
+    public series: Array<Series> = void 0 as any;
     public seriesGroup?: SVGElement;
     public spacing: Array<number> = void 0 as any;
     public spacingBox: BBoxObject = void 0 as any;
@@ -531,7 +532,7 @@ class Chart {
      * @private
      * @function Highcharts.Chart#initSeries
      */
-    public initSeries(options: SeriesOptions): LineSeries {
+    public initSeries(options: SeriesOptions): Series {
         var chart = this,
             optionsChart = chart.options.chart as Highcharts.ChartOptions,
             type = (
@@ -539,8 +540,8 @@ class Chart {
                 optionsChart.type ||
                 optionsChart.defaultSeriesType
             ) as string,
-            series: LineSeries,
-            SeriesClass = BaseSeries.seriesTypes[type];
+            series: Series,
+            SeriesClass = seriesTypes[type];
 
         // No such series type
         if (!SeriesClass) {
@@ -577,7 +578,7 @@ class Chart {
      * @function Highcharts.Series#getSeriesOrderByLinks
      * @return {Array<Highcharts.Series>}
      */
-    public getSeriesOrderByLinks(): Array<LineSeries> {
+    public getSeriesOrderByLinks(): Array<Series> {
         return this.series.concat().sort(function (a, b): number {
             if (a.linkedSeries.length || b.linkedSeries.length) {
                 return b.linkedSeries.length - a.linkedSeries.length;
@@ -872,9 +873,9 @@ class Chart {
      * @return {Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined}
      * The retrieved item.
      */
-    public get(id: string): (Axis|LineSeries|Point|undefined) {
+    public get(id: string): (Axis|Series|Point|undefined) {
 
-        var ret: (Axis|LineSeries|Point|undefined),
+        var ret: (Axis|Series|Point|undefined),
             series = this.series,
             i;
 
@@ -883,9 +884,9 @@ class Chart {
          * @param {Highcharts.Axis|Highcharts.Series} item
          * @return {boolean}
          */
-        function itemById(item: (Axis|LineSeries)): boolean {
+        function itemById(item: (Axis|Series)): boolean {
             return (
-                (item as LineSeries).id === id ||
+                (item as Series).id === id ||
                 (item.options && item.options.id === id)
             );
         }
@@ -994,7 +995,7 @@ class Chart {
      * @return {Array<Highcharts.Series>}
      *         The currently selected series.
      */
-    public getSelectedSeries(): Array<LineSeries> {
+    public getSelectedSeries(): Array<Series> {
         return this.series.filter(function (serie): (boolean|undefined) {
             return serie.selected;
         });
@@ -2153,8 +2154,7 @@ class Chart {
         ['inverted', 'angular', 'polar'].forEach(function (key: string): void {
 
             // The default series type's class
-            klass = BaseSeries.seriesTypes[(optionsChart.type ||
-                optionsChart.defaultSeriesType) as any];
+            klass = seriesTypes[(optionsChart.type || optionsChart.defaultSeriesType) as any];
 
             // Get the value from available chart-wide properties
             value =
@@ -2167,7 +2167,7 @@ class Chart {
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
             while (!value && i--) {
-                klass = BaseSeries.seriesTypes[seriesOptions[i].type as any];
+                klass = seriesTypes[seriesOptions[i].type as any];
                 if (klass && (klass.prototype as any)[key]) {
                     value = true;
                 }
@@ -2707,8 +2707,8 @@ class Chart {
         options: SeriesTypeOptions,
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptions>)
-    ): LineSeries {
-        var series: (LineSeries|undefined),
+    ): Series {
+        var series: (Series|undefined),
             chart = this;
 
         if (options) { // <- not necessary
@@ -3231,7 +3231,7 @@ class Chart {
 
                 splat((options as any)[coll]).forEach(function (newOptions, i): void {
                     const hasId = defined(newOptions.id);
-                    let item: (Axis|LineSeries|Point|undefined);
+                    let item: (Axis|Series|Point|undefined);
 
                     // Match by id
                     if (hasId) {

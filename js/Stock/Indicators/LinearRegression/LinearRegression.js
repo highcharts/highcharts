@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2020 Kamil Kulig
+ *  (c) 2010-2021 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -21,8 +21,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var isArray = U.isArray, extend = U.extend, merge = U.merge;
 /* *
@@ -238,7 +238,7 @@ var LinearRegressionIndicator = /** @class */ (function (_super) {
 extend(LinearRegressionIndicator.prototype, {
     nameBase: 'Linear Regression Indicator'
 });
-BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
+SeriesRegistry.registerSeriesType('linearRegression', LinearRegressionIndicator);
 /* *
  *
  *  Default Export

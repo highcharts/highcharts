@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2020 Highsoft AS
+ *  (c) 2014-2021 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -23,8 +23,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, HeatmapSeries = _a.heatmap, LineSeries = _a.line, PieSeries = _a.pie, ScatterSeries = _a.scatter;
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
@@ -33,6 +31,8 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, HeatmapSeries = _a.heatmap, LineSeries = _a.line, PieSeries = _a.pie, ScatterSeries = _a.scatter;
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
@@ -1374,7 +1374,7 @@ extend(TreemapSeries.prototype, {
         recursive: TreemapUtilities.recursive
     }
 });
-BaseSeries.registerSeriesType('treemap', TreemapSeries);
+SeriesRegistry.registerSeriesType('treemap', TreemapSeries);
 /* *
  *
  *  Default Export

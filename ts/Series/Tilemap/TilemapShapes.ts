@@ -2,7 +2,7 @@
  *
  *  Tilemaps module
  *
- *  (c) 2010-2017 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *  Author: Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -27,15 +27,15 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TilemapPoint from './TilemapPoint';
 import type TilemapSeries from './TilemapSeries';
 import type { TilemapShapeValue } from './TilemapSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         heatmap: HeatmapSeries,
         scatter: ScatterSeries
     }
-} = BaseSeries;
-import H from '../../Core/Globals.js';
-const { noop } = H;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     clamp,

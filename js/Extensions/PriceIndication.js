@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2020 Sebastian Bochann
+ * (c) 2009-2021 Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
@@ -8,7 +8,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  */
 'use strict';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge;
 /**
@@ -72,7 +72,7 @@ var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge;
  *
  */
 /* eslint-disable no-invalid-this */
-addEvent(LineSeries, 'afterRender', function () {
+addEvent(Series, 'afterRender', function () {
     var serie = this, seriesOptions = serie.options, pointRange = seriesOptions.pointRange, lastVisiblePrice = seriesOptions.lastVisiblePrice, lastPrice = seriesOptions.lastPrice;
     if ((lastVisiblePrice || lastPrice) &&
         seriesOptions.id !== 'highcharts-navigator-series') {
