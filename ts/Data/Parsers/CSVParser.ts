@@ -333,13 +333,16 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         for (; i < columnStr.length; i++) {
             read(i);
 
-            // Quoted string
             if (c === '#') {
-                // The rest of the row is a comment
-                push();
-                return;
+                // If there are hexvalues remaining (#13283)
+                if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substr(i))) {
+                    // The rest of the row is a comment
+                    push();
+                    return;
+                }
             }
 
+            // Quoted string
             if (c === '"') {
                 read(++i);
 

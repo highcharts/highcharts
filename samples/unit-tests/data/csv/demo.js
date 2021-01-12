@@ -698,7 +698,6 @@ QUnit.test(
             seriesMapping: [{
                 color: 2
             }],
-
             parsed: function () {
                 assert.strictEqual(
                     this.columns[2][1],

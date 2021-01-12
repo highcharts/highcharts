@@ -1128,7 +1128,16 @@ class Data {
             for (; i < columnStr.length; i++) {
                 read(i);
 
-                if (c === '"') {
+                if (c === '#') {
+                    // If there are hexvalues remaining (#13283)
+                    if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substr(i))) {
+                        // The rest of the row is a comment
+                        push();
+                        return;
+                    }
+
+                // Quoted string
+                } else if (c === '"') {
                     read(++i);
 
                     while (i < columnStr.length) {
