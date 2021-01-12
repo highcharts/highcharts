@@ -7560,14 +7560,6 @@ SeriesRegistry.series = Series;
 
 /* *
  *
- *  Compatibility
- *
- * */
-
-(H as any).Series = Series;
-
-/* *
- *
  *  Default Export
  *
  * */
