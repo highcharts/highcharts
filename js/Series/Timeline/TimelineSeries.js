@@ -28,7 +28,7 @@ var __extends = (this && this.__extends) || (function () {
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import TimelinePoint from './TimelinePoint.js';
 import U from '../../Core/Utilities.js';
@@ -299,7 +299,7 @@ var TimelineSeries = /** @class */ (function (_super) {
      * @requires     modules/timeline
      * @optionparent plotOptions.timeline
      */
-    TimelineSeries.defaultOptions = merge(Series.defaultOptions, {
+    TimelineSeries.defaultOptions = merge(LineSeries.defaultOptions, {
         colorByPoint: true,
         stickyTracking: false,
         ignoreHiddenPoint: true,
@@ -428,7 +428,7 @@ var TimelineSeries = /** @class */ (function (_super) {
         colorKey: 'x'
     });
     return TimelineSeries;
-}(Series));
+}(LineSeries));
 extend(TimelineSeries.prototype, {
     // Use a simple symbol from LegendSymbolMixin
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,

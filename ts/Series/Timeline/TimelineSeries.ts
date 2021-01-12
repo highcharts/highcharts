@@ -39,9 +39,9 @@ import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
-    series: Series,
     seriesTypes: {
-        column: ColumnSeries
+        column: ColumnSeries,
+        line: LineSeries
     }
 } = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
@@ -72,7 +72,7 @@ const {
  *
  * @augments Highcharts.Series
  */
-class TimelineSeries extends Series {
+class TimelineSeries extends LineSeries {
 
     /* *
      *
@@ -103,7 +103,7 @@ class TimelineSeries extends Series {
      * @requires     modules/timeline
      * @optionparent plotOptions.timeline
      */
-    public static defaultOptions: TimelineSeriesOptions = merge(Series.defaultOptions, {
+    public static defaultOptions: TimelineSeriesOptions = merge(LineSeries.defaultOptions, {
         colorByPoint: true,
         stickyTracking: false,
         ignoreHiddenPoint: true,
