@@ -10,14 +10,7 @@
 'use strict';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import H from '../../Core/Globals.js';
 SeriesRegistry.registerSeriesType('line', Series);
-/* *
- *
- *  Compatibility
- *
- * */
-H.Series = Series; // backwards compatibility
 /* *
  *
  *  Default Export
