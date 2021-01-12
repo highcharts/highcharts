@@ -414,11 +414,11 @@ var Tooltip = /** @class */ (function () {
      * @return {Highcharts.SVGElement}
      */
     Tooltip.prototype.getLabel = function () {
-        var _a, _b;
+        var _a, _b, _c;
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = ('tooltip' + (defined(options.className) ?
             ' ' + options.className :
             '')), pointerEvents = (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) ||
-            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, set, onMouseEnter = function () {
+            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, onMouseEnter = function () {
             tooltip.inContact = true;
         }, onMouseLeave = function () {
             var series = tooltip.chart.hoverSeries;
@@ -430,6 +430,7 @@ var Tooltip = /** @class */ (function () {
         };
         if (!this.label) {
             if (this.outside) {
+                var chartStyle = (_b = this.chart.options.chart) === null || _b === void 0 ? void 0 : _b.style;
                 /**
                  * Reference to the tooltip's container, when
                  * [Highcharts.Tooltip#outside] is set to true, otherwise
@@ -444,7 +445,7 @@ var Tooltip = /** @class */ (function () {
                     position: 'absolute',
                     top: '1px',
                     pointerEvents: pointerEvents,
-                    zIndex: 3
+                    zIndex: Math.max((((_c = this.options.style) === null || _c === void 0 ? void 0 : _c.zIndex) || 0), ((chartStyle === null || chartStyle === void 0 ? void 0 : chartStyle.zIndex) || 0) + 3)
                 });
                 H.doc.body.appendChild(container);
                 /**
@@ -455,7 +456,7 @@ var Tooltip = /** @class */ (function () {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(container, 0, 0, (_b = this.chart.options.chart) === null || _b === void 0 ? void 0 : _b.style, void 0, void 0, renderer.styledMode);
+                this.renderer = renderer = new H.Renderer(container, 0, 0, chartStyle, void 0, void 0, renderer.styledMode);
             }
             // Create the label
             if (this.split) {

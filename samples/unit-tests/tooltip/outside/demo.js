@@ -30,13 +30,14 @@ QUnit.test('Outside tooltip and styledMode (#11783)', function (assert) {
     );
 });
 
-QUnit.test('Outside tooltip should inherit chart style', function (assert) {
+QUnit.test('Outside tooltip styling', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             width: 400,
             height: 400,
             style: {
-                fontFamily: 'Papyrus'
+                fontFamily: 'Papyrus',
+                zIndex: 1334
             }
         },
         tooltip: {
@@ -59,5 +60,24 @@ QUnit.test('Outside tooltip should inherit chart style', function (assert) {
             .parentNode.style.fontFamily,
         'Papyrus',
         'Tooltip container should inherit chart style'
+    );
+
+    assert.strictEqual(
+        chart.tooltip.container.style.zIndex,
+        '1337',
+        '#11494: Tooltip container zIndex should be based on chart.style.zIndex'
+    );
+
+    chart.tooltip.update({
+        style: {
+            zIndex: 1881
+        }
+    });
+    point.onMouseOver();
+
+    assert.strictEqual(
+        chart.tooltip.container.style.zIndex,
+        '1881',
+        '#11494: Setting tooltip.style.zIndex should also work'
     );
 });
