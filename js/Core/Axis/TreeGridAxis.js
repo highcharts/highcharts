@@ -8,7 +8,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../Globals.js';
+'use strict';
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
@@ -240,7 +240,7 @@ var TreeGridAxis;
                             // For using keys - rebuild the data structure
                             if (s.options.keys && s.options.keys.length) {
                                 data = s.pointClass.prototype.optionsToObject.call({ series: s }, data);
-                                H.seriesTypes.gantt.prototype.setGanttPointAliases(data);
+                                s.pointClass.setGanttPointAliases(data);
                             }
                             if (isObject(data, true)) {
                                 // Set series index on data. Removed again
@@ -529,7 +529,7 @@ var TreeGridAxis;
             fireEvent(axis, 'foundExtremes');
             // setAxisTranslation modifies the min and max according to
             // axis breaks.
-            axis.setAxisTranslation(true);
+            axis.setAxisTranslation();
             axis.tickmarkOffset = 0.5;
             axis.tickInterval = 1;
             axis.tickPositions = axis.treeGrid.mapOfPosToGridNode ?

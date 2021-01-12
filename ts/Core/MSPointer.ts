@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from './Chart/Chart';
+import type PointerEvent from './PointerEvent';
 import H from './Globals.js';
 const {
     charts,
@@ -41,7 +42,7 @@ declare global {
 /* globals MSPointerEvent, PointerEvent */
 
 // The touches object keeps track of the points being touched at all times
-const touches = {} as Highcharts.Dictionary<Highcharts.PointerEventObject>;
+const touches = {} as Record<string, PointerEvent>;
 const hasPointerEvent = !!win.PointerEvent;
 
 /* eslint-disable valid-jsdoc */
@@ -53,9 +54,7 @@ function getWebkitTouches(): void {
     fake.item = function (i: string): any {
         return this[i];
     };
-    objectEach(touches, function (
-        touch: Highcharts.PointerEventObject
-    ): void {
+    objectEach(touches, function (touch: PointerEvent): void {
         fake.push({
             pageX: touch.pageX,
             pageY: touch.pageY,
@@ -157,12 +156,12 @@ class MSPointer extends Pointer {
      *
      * @return {void}
      */
-    private onContainerPointerDown(e: Highcharts.PointerEventObject): void {
+    private onContainerPointerDown(e: PointerEvent): void {
         translateMSPointer(
             e,
             'onContainerTouchStart',
             'touchstart',
-            function (e: Highcharts.PointerEventObject): void {
+            function (e: PointerEvent): void {
                 (touches as any)[e.pointerId] = {
                     pageX: e.pageX,
                     pageY: e.pageY,
@@ -180,12 +179,12 @@ class MSPointer extends Pointer {
      *
      * @return {void}
      */
-    private onContainerPointerMove(e: Highcharts.PointerEventObject): void {
+    private onContainerPointerMove(e: PointerEvent): void {
         translateMSPointer(
             e,
             'onContainerTouchMove',
             'touchmove',
-            function (e: Highcharts.PointerEventObject): void {
+            function (e: PointerEvent): void {
                 (touches as any)[e.pointerId] = (
                     { pageX: e.pageX, pageY: e.pageY }
                 );
@@ -204,12 +203,12 @@ class MSPointer extends Pointer {
      *
      * @return {void}
      */
-    private onDocumentPointerUp(e: Highcharts.PointerEventObject): void {
+    private onDocumentPointerUp(e: PointerEvent): void {
         translateMSPointer(
             e,
             'onDocumentTouchEnd',
             'touchend',
-            function (e: Highcharts.PointerEventObject): void {
+            function (e: PointerEvent): void {
                 delete (touches as any)[e.pointerId];
             }
         );

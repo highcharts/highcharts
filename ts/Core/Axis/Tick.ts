@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,10 +11,29 @@
 'use strict';
 
 import type CSSObject from '../Renderer/CSSObject';
+import type PositionObject from '../Renderer/PositionObject';
+import type { TickLike } from '../Axis/Types';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type TimeTicksInfoObject from './TimeTicksInfoObject';
 import H from '../Globals.js';
+const {
+    deg2rad
+} = H;
+import U from '../Utilities.js';
+const {
+    clamp,
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -27,12 +46,13 @@ declare global {
         }
         interface TickParametersObject {
             category?: string;
-            options?: Dictionary<any>;
+            options?: Record<string, any>;
             tickmarkOffset?: number;
         }
         interface TickPositionObject extends PositionObject {
             opacity?: number;
         }
+        interface Tick extends TickLike {}
         class Tick {
             public constructor(
                 axis: Axis,
@@ -138,22 +158,20 @@ declare global {
  * @type {number|undefined}
  */
 
+/**
+ * Additonal time tick information.
+ *
+ * @interface Highcharts.TimeTicksInfoObject
+ * @extends Highcharts.TimeNormalizedObject
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#higherRanks
+ * @type {Array<string>}
+ *//**
+ * @name Highcharts.TimeTicksInfoObject#totalRange
+ * @type {number}
+ */
 
-import U from '../Utilities.js';
-const {
-    clamp,
-    correctFloat,
-    defined,
-    destroyObjectProperties,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-var deg2rad = H.deg2rad;
+''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -253,7 +271,7 @@ class Tick {
 
     public label?: SVGElement;
 
-    public labelPos?: Highcharts.PositionObject;
+    public labelPos?: PositionObject;
 
     public mark?: SVGElement;
 
@@ -317,7 +335,7 @@ class Tick {
             dateTimeLabelFormat,
             dateTimeLabelFormats,
             i,
-            list: Highcharts.Dictionary<any>;
+            list: Record<string, any>;
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
@@ -437,7 +455,7 @@ class Tick {
      * @return {Highcharts.SVGElement|undefined}
      */
     public createLabel(
-        xy: Highcharts.PositionObject,
+        xy: PositionObject,
         str: string,
         labelOptions: Highcharts.XAxisLabelsOptions
     ): (SVGElement|undefined) {
@@ -506,7 +524,7 @@ class Tick {
         tickPos: number,
         tickmarkOffset: number,
         old?: boolean
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var axis = this.axis,
             chart = axis.chart,
             cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
@@ -573,11 +591,11 @@ class Tick {
         y: number,
         label: SVGElement,
         horiz: boolean,
-        labelOptions: Highcharts.PositionObject,
+        labelOptions: PositionObject,
         tickmarkOffset: number,
         index: number,
         step: number
-    ): Highcharts.PositionObject {
+    ): PositionObject {
 
         var axis = this.axis,
             transA = axis.transA,
@@ -599,7 +617,7 @@ class Tick {
                     0
             ),
             line: number,
-            pos = {} as Highcharts.PositionObject;
+            pos = {} as PositionObject;
 
         if (!defined(yOffset)) {
             if (axis.side === 0) {
@@ -693,7 +711,7 @@ class Tick {
      * @param {Highcharts.PositionObject} xy
      * @return {void}
      */
-    public handleOverflow(xy: Highcharts.PositionObject): void {
+    public handleOverflow(xy: PositionObject): void {
         var tick = this,
             axis = this.axis,
             labelOptions = axis.options.labels,
@@ -997,7 +1015,7 @@ class Tick {
      * @return {void}
      */
     public renderMark(
-        xy: Highcharts.PositionObject,
+        xy: PositionObject,
         opacity: number,
         reverseCrisp: number
     ): void {

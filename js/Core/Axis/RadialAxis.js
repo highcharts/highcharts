@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -64,7 +64,7 @@ var RadialAxis = /** @class */ (function () {
          * @return {RadialAxisPath}
          */
         axis.getLinePath = function (_lineWidth, radius, innerRadius) {
-            var center = this.pane.center, end, chart = this.chart, r = pick(radius, center[2] / 2 - this.offset), path;
+            var center = this.pane.center, end, chart = this.chart, r = pick(radius, center[2] / 2 - this.offset), left = this.left || 0, top = this.top || 0, path;
             if (typeof innerRadius === 'undefined') {
                 innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
             }
@@ -73,7 +73,7 @@ var RadialAxis = /** @class */ (function () {
                 r += innerRadius;
             }
             if (this.isCircular || typeof radius !== 'undefined') {
-                path = this.chart.renderer.symbols.arc(this.left + center[0], this.top + center[1], r, r, {
+                path = this.chart.renderer.symbols.arc(left + center[0], top + center[1], r, r, {
                     start: this.startAngleRad,
                     end: this.endAngleRad,
                     open: true,
@@ -81,8 +81,8 @@ var RadialAxis = /** @class */ (function () {
                 });
                 // Bounds used to position the plotLine label next to the line
                 // (#7117)
-                path.xBounds = [this.left + center[0]];
-                path.yBounds = [this.top + center[1] - r];
+                path.xBounds = [left + center[0]];
+                path.yBounds = [top + center[1] - r];
             }
             else {
                 end = this.postTranslate(this.angleRad, r);
@@ -257,7 +257,7 @@ var RadialAxis = /** @class */ (function () {
                 }
                 return radius;
             };
-            var center = this.center, startAngleRad = this.startAngleRad, fullRadius = center[2] / 2, offset = Math.min(this.offset, 0), percentRegex = /%$/, start, end, angle, xOnPerimeter, open, isCircular = this.isCircular, // X axis in a polar chart
+            var center = this.center, startAngleRad = this.startAngleRad, fullRadius = center[2] / 2, offset = Math.min(this.offset, 0), left = this.left || 0, top = this.top || 0, percentRegex = /%$/, start, end, angle, xOnPerimeter, open, isCircular = this.isCircular, // X axis in a polar chart
             path, outerRadius = pick(radiusToPixels(options.outerRadius), fullRadius), innerRadius = radiusToPixels(options.innerRadius), thickness = pick(radiusToPixels(options.thickness), 10);
             // Polygonal plot bands
             if (this.options.gridLineInterpolation === 'polygon') {
@@ -288,7 +288,7 @@ var RadialAxis = /** @class */ (function () {
                 }
                 outerRadius -= offset; // #5283
                 thickness -= offset; // #5283
-                path = this.chart.renderer.symbols.arc(this.left + center[0], this.top + center[1], outerRadius, outerRadius, {
+                path = this.chart.renderer.symbols.arc(left + center[0], top + center[1], outerRadius, outerRadius, {
                     // Math is for reversed yAxis (#3606)
                     start: Math.min(start, end),
                     end: Math.max(start, end),
@@ -298,7 +298,7 @@ var RadialAxis = /** @class */ (function () {
                 // Provide positioning boxes for the label (#6406)
                 if (isCircular) {
                     angle = (end + start) / 2;
-                    xOnPerimeter = (this.left +
+                    xOnPerimeter = (left +
                         center[0] +
                         (center[2] / 2) * Math.cos(angle));
                     path.xBounds = angle > -Math.PI / 2 && angle < Math.PI / 2 ?
@@ -307,7 +307,7 @@ var RadialAxis = /** @class */ (function () {
                         // Left hemisphere
                         [0, xOnPerimeter];
                     path.yBounds = [
-                        this.top + center[1] + (center[2] / 2) * Math.sin(angle)
+                        top + center[1] + (center[2] / 2) * Math.sin(angle)
                     ];
                     // Shift up or down to get the label clear of the perimeter
                     path.yBounds[0] += ((angle > -Math.PI && angle < 0) ||

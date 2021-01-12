@@ -1,5 +1,4 @@
 QUnit.test('Setting and resetting', assert => {
-
     assert.strictEqual(
         Highcharts.time.options.timezone,
         undefined,
@@ -47,7 +46,6 @@ QUnit.test('Setting and resetting', assert => {
 QUnit[TestUtilities.isCET ? 'test' : 'skip'](
     name + ' - set and get hours across DST transition',
     function (assert) {
-
         function checkHours(name, month, day) {
             var timeTZ = new Highcharts.Time({
                 timezone: 'CET'
@@ -84,7 +82,6 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
                 // Timezone offsets
                 offsetsTZ.push(timeTZ.getTimezoneOffset(dateTZ));
                 offsetsLocal.push(timeLocal.getTimezoneOffset(dateLocal));
-
             }
 
             assert.deepEqual(
@@ -92,7 +89,6 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
                 getsLocal,
                 'Time getters: Specific CET should equal local CET'
             );
-
 
             assert.deepEqual(
                 datesTZ,
@@ -105,7 +101,6 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
                 offsetsLocal,
                 'Time.getTimezoneOffset: Specific CET should equal local CET'
             );
-
 
             /*
             console.table(datesTZ.map((dateTZ, i) => ({
@@ -131,7 +126,6 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
                     }))
                 );
             //*/
-
         }
 
         checkHours('Spring', 2, 26);
@@ -142,9 +136,7 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
 QUnit[TestUtilities.isCET ? 'test' : 'skip'](
     name + ' - set and get days across DST transition',
     function (assert) {
-
         function checkDays(name, month) {
-
             var timeTZ = new Highcharts.Time({
                 timezone: 'CET'
             });
@@ -180,7 +172,6 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
                 // Timezone offsets
                 offsetsTZ.push(timeTZ.getTimezoneOffset(dateTZ));
                 offsetsLocal.push(timeLocal.getTimezoneOffset(dateLocal));
-
             }
 
             assert.deepEqual(
@@ -188,7 +179,6 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
                 getsLocal,
                 'Time getters: Specific CET should equal local CET'
             );
-
 
             assert.deepEqual(
                 datesTZ,
@@ -226,7 +216,6 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
                 }))
             );
             //*/
-
         }
 
         checkDays('Spring', 2);
@@ -237,7 +226,6 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
 QUnit[TestUtilities.isCET ? 'test' : 'skip'](
     'All levels setters',
     function (assert) {
-
         var timeTZ = new Highcharts.Time({
                 timezone: 'CET'
             }),
@@ -266,12 +254,8 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
             'Month',
             'FullYear'
         ].forEach(function (key) {
-            var dateTZ = new Date(
-                    Date.UTC(2022, 11, 31, 22, 59, 59)
-                ),
-                dateLocal = new Date(
-                    Date.UTC(2022, 11, 31, 22, 59, 59)
-                );
+            var dateTZ = new Date(Date.UTC(2022, 11, 31, 22, 59, 59)),
+                dateLocal = new Date(Date.UTC(2022, 11, 31, 22, 59, 59));
 
             timeTZ.set(key, dateTZ, 0);
             timeLocal.set(key, dateLocal, 0);
@@ -285,33 +269,46 @@ QUnit[TestUtilities.isCET ? 'test' : 'skip'](
     }
 );
 
-QUnit[TestUtilities.isCET ? 'test' : 'skip'](
-    'Maketime',
-    function (assert) {
+QUnit[TestUtilities.isCET ? 'test' : 'skip']('Maketime', function (assert) {
+    var timeTZ = new Highcharts.Time({
+            timezone: 'CET'
+        }),
+        timeLocal = new Highcharts.Time({
+            useUTC: false
+        });
 
-        var timeTZ = new Highcharts.Time({
-                timezone: 'CET'
-            }),
-            timeLocal = new Highcharts.Time({
-                useUTC: false
-            });
+    for (var hours = 24; hours < 30; hours++) {
+        for (var minutes = 0; minutes < 60; minutes += 15) {
+            var tz = new Date(
+                timeTZ.makeTime(2017, 9, 28, hours, minutes, 0)
+            ).toString();
 
-        for (var hours = 24; hours < 30; hours++) {
-            for (var minutes = 0; minutes < 60; minutes += 15) {
-                var tz = new Date(
-                    timeTZ.makeTime(2017, 9, 28, hours, minutes, 0)
-                ).toString();
+            var local = new Date(
+                timeLocal.makeTime(2017, 9, 28, hours, minutes, 0)
+            ).toString();
 
-                var local = new Date(
-                    timeLocal.makeTime(2017, 9, 28, hours, minutes, 0)
-                ).toString();
-
-                assert.strictEqual(
-                    tz,
-                    local,
-                    'UTC ' + hours + ':' + minutes + ' - CET time should be same as local'
-                );
-            }
+            assert.strictEqual(
+                tz,
+                local,
+                'UTC ' +
+                    hours +
+                    ':' +
+                    minutes +
+                    ' - CET time should be same as local'
+            );
         }
     }
-);
+});
+
+QUnit.test('useUTC = false (variableTimezone)', assert => {
+    const time = new Highcharts.Time({
+        useUTC: false
+    });
+    time.getTimezoneOffset = () => 60;
+
+    assert.strictEqual(
+        time.get('Hours', new Date(1970, 0, 10, 0, 0)),
+        0,
+        'Time should be intact when useUTC = false'
+    );
+});

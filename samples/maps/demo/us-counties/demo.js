@@ -23,15 +23,15 @@ Highcharts.getJSON(
             ),
             // Filter out the state borders and separator lines, we want these
             // in separate series
-            borderLines = Highcharts.grep(lines, function (l) {
-                return l.properties['hc-group'] === '__border_lines__';
-            }),
-            separatorLines = Highcharts.grep(lines, function (l) {
-                return l.properties['hc-group'] === '__separator_lines__';
-            });
+            borderLines = lines.filter(
+                l => l.properties['hc-group'] === '__border_lines__'
+            ),
+            separatorLines = lines.filter(
+                l => l.properties['hc-group'] === '__separator_lines__'
+            );
 
         // Add state acronym for tooltip
-        Highcharts.each(countiesMap, function (mapPoint) {
+        countiesMap.forEach(function (mapPoint) {
             mapPoint.name = mapPoint.name + ', ' +
                 mapPoint.properties['hc-key'].substr(3, 2);
         });

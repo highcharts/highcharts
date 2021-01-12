@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -9,6 +9,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
+import palette from '../../Core/Color/Palette.js';
 /**
  * Formatter callback for the accessibility announcement.
  *
@@ -479,7 +481,7 @@ var options = {
                  */
                 style: {
                     /** @internal */
-                    color: '${palette.highlightColor80}',
+                    color: palette.highlightColor80,
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */

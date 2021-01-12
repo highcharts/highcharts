@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -207,7 +207,7 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
             align = wrapper.textAlign || 'left',
             alignCorrection = ({
                 left: 0, center: 0.5, right: 1
-            } as Highcharts.Dictionary<number>)[align],
+            } as Record<string, number>)[align],
             styles = wrapper.styles,
             whiteSpace = styles && styles.whiteSpace;
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,6 +11,13 @@
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
+import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+var seriesProto = Series.prototype;
+import Tooltip from '../Core/Tooltip.js';
+import U from '../Core/Utilities.js';
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 /**
  * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
  */
@@ -27,15 +34,7 @@ import H from '../Core/Globals.js';
 * @type {number}
 */
 ''; // detach doclets above
-import O from '../Core/Options.js';
-var defaultOptions = O.defaultOptions;
-import Point from '../Core/Series/Point.js';
-import Tooltip from '../Core/Tooltip.js';
-import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../Core/Axis/Axis.js';
-import '../Series/LineSeries.js';
-var Series = H.Series;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */
@@ -261,7 +260,7 @@ var dataGrouping = {
 };
 // -----------------------------------------------------------------------------
 // The following code applies to implementation of data grouping on a Series
-var seriesProto = Series.prototype, baseProcessData = seriesProto.processData, baseGeneratePoints = seriesProto.generatePoints, 
+var baseProcessData = seriesProto.processData, baseGeneratePoints = seriesProto.generatePoints, 
 /** @ignore */
 commonOptions = {
     // enabled: null, // (true for stock charts, false for basic),

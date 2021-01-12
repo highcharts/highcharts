@@ -10,10 +10,11 @@ QUnit.test('Updating gauge series', assert => {
                 }
             }
         },
-        series: [{
-            data: [93]
-        }]
-
+        series: [
+            {
+                data: [93]
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -33,5 +34,4 @@ QUnit.test('Updating gauge series', assert => {
         '#0000ff',
         'The dial should be blue after update'
     );
-
 });

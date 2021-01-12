@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -36,25 +36,19 @@ const {
     pick
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface ChartLike {
-            fixedDiv?: HTMLDOMElement;
-            fixedRenderer?: Renderer;
-            innerContainer?: HTMLDOMElement;
-            scrollingContainer?: HTMLDOMElement;
-            scrollingParent?: HTMLDOMElement;
-            scrollableMask?: SVGElement;
-            scrollablePixelsX?: number;
-            scrollablePixelsY?: number;
-            applyFixed(): void;
-            moveFixedElements(): void;
-            setUpScrolling(): void;
-        }
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        fixedDiv?: HTMLDOMElement;
+        fixedRenderer?: Highcharts.Renderer;
+        innerContainer?: HTMLDOMElement;
+        scrollingContainer?: HTMLDOMElement;
+        scrollingParent?: HTMLDOMElement;
+        scrollableMask?: Highcharts.SVGElement;
+        scrollablePixelsX?: number;
+        scrollablePixelsY?: number;
+        applyFixed(): void;
+        moveFixedElements(): void;
+        setUpScrolling(): void;
     }
 }
 
@@ -141,7 +135,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
         scrollablePixelsX,
         scrollablePixelsY,
         corrections: (
-            Highcharts.Dictionary<Highcharts.Dictionary<(number|string)>>|
+            Record<string, Record<string, (number|string)>>|
             undefined
         );
 
@@ -331,7 +325,12 @@ Chart.prototype.moveFixedElements = function (): void {
         axisClass = '.highcharts-yaxis';
     }
 
-    fixedSelectors.push(axisClass as any, axisClass + '-labels');
+    if (axisClass) {
+        fixedSelectors.push(
+            `${axisClass}:not(.highcharts-radial-axis)`,
+            `${axisClass}-labels:not(.highcharts-radial-axis-labels)`
+        );
+    }
 
     fixedSelectors.forEach(function (className: string): void {
         [].forEach.call(

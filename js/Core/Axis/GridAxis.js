@@ -11,8 +11,6 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import O from '../Options.js';
-var dateFormat = O.dateFormat;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, erase = U.erase, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
@@ -450,7 +448,7 @@ var GridAxis = /** @class */ (function () {
                     // For the Gantt set point aliases to the pointCopy
                     // to do not change the original point
                     pointCopy = merge(point);
-                    H.seriesTypes.gantt.prototype.setGanttPointAliases(pointCopy);
+                    H.seriesTypes.gantt.prototype.pointClass.setGanttPointAliases(pointCopy);
                 }
                 // Make additional properties available for the
                 // formatter
@@ -597,7 +595,7 @@ var GridAxis = /** @class */ (function () {
                 if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
                     axis.ticks[lastTick].mark.hide();
                 }
-                else {
+                else if (axis.ticks[lastTick - 1]) {
                     axis.ticks[lastTick - 1].mark.show();
                 }
             }

@@ -361,6 +361,12 @@ Available arguments for 'gulp test':
 --ts
     Compile TypeScript-based tests.
 
+--dots
+    Use the less verbose 'dots' reporter
+
+--timeout
+    Set a different disconnect timeout from default config
+
 `);
             return;
         }
@@ -376,10 +382,16 @@ Available arguments for 'gulp test':
 
             const KarmaServer = require('karma').Server;
             const PluginError = require('plugin-error');
+            const {
+                reporters: defaultReporters,
+                browserDisconnectTimeout: defaultTimeout
+            } = require(KARMA_CONFIG_FILE);
 
             new KarmaServer(
                 {
                     configFile: KARMA_CONFIG_FILE,
+                    reporters: argv.dots ? ['dots'] : defaultReporters,
+                    browserDisconnectTimeout: typeof argv.timeout === 'number' ? argv.timeout : defaultTimeout,
                     singleRun: true,
                     client: {
                         cliArgs: argv

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -79,8 +79,8 @@ var Fx = /** @class */ (function () {
                     var startItem = startSeg[j];
                     var endItem = endSeg[j];
                     // Tween numbers
-                    if (typeof startItem === 'number' &&
-                        typeof endItem === 'number' &&
+                    if (isNumber(startItem) &&
+                        isNumber(endItem) &&
                         // Arc boolean flags
                         !(endSeg[0] === 'A' && (j === 4 || j === 5))) {
                         tweenSeg[j] = startItem + now * (endItem - startItem);
@@ -150,12 +150,12 @@ var Fx = /** @class */ (function () {
             function (step) {
                 setTimeout(step, 13);
             }, step = function () {
-            for (var i = 0; i < H.timers.length; i++) {
-                if (!H.timers[i]()) {
-                    H.timers.splice(i--, 1);
+            for (var i = 0; i < Fx.timers.length; i++) {
+                if (!Fx.timers[i]()) {
+                    Fx.timers.splice(i--, 1);
                 }
             }
-            if (H.timers.length) {
+            if (Fx.timers.length) {
                 requestAnimationFrame(step);
             }
         };
@@ -174,7 +174,7 @@ var Fx = /** @class */ (function () {
             this.pos = 0;
             timer.elem = this.elem;
             timer.prop = this.prop;
-            if (timer() && H.timers.push(timer) === 1) {
+            if (timer() && Fx.timers.push(timer) === 1) {
                 requestAnimationFrame(step);
             }
         }
@@ -372,7 +372,24 @@ var Fx = /** @class */ (function () {
     Fx.prototype.strokeSetter = function () {
         this.elem.attr(this.prop, H.color(this.start).tweenTo(H.color(this.end), this.pos), null, true);
     };
+    /* *
+     *
+     * Static properties
+     *
+     * */
+    Fx.timers = [];
     return Fx;
 }());
+/* *
+ *
+ *  Compatibility
+ *
+ * */
 H.Fx = Fx;
+H.timers = Fx.timers;
+/* *
+ *
+ *  Default Export
+ *
+ * */
 export default Fx;

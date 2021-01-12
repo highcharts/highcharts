@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -10,15 +10,17 @@
  *
  * */
 
+'use strict';
+
 import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import Axis from '../Core/Axis/Axis.js';
-import O from '../Core/Options.js';
-const { dateFormat } = O;
+import palette from '../Core/Color/Palette.js';
 
 /**
  * Internal types
@@ -92,7 +94,7 @@ const defaultConfig: (
      * @apioption xAxis.currentDateIndicator
      */
     currentDateIndicator: true,
-    color: '${palette.highlightColor20}',
+    color: palette.highlightColor20,
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions
@@ -109,7 +111,7 @@ const defaultConfig: (
          */
         format: '%a, %b %d %Y, %H:%M',
         formatter: function (value: number, format: string): string {
-            return dateFormat(format, value);
+            return (this as PlotLineOrBand).axis.chart.time.dateFormat(format, value);
         },
         rotation: 0,
         /**
@@ -127,6 +129,7 @@ const defaultConfig: (
 addEvent(Axis, 'afterSetOptions', function (): void {
     var options = this.options,
         cdiOptions = options.currentDateIndicator;
+
 
     if (cdiOptions) {
         cdiOptions = typeof cdiOptions === 'object' ?

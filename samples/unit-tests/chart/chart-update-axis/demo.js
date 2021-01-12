@@ -1,6 +1,5 @@
 /* eslint func-style:0 */
 
-
 QUnit.test('Test updating axis by id', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -15,30 +14,32 @@ QUnit.test('Test updating axis by id', function (assert) {
             }
         },
 
-        xAxis: [{
-            categories: ['One', 'Two', 'Three', 'Four'],
-            id: 'primary'
-        }, {
-            id: 'secondary',
-            categories: ['Einz', 'Zwei', 'Drei', 'Vier'],
-            linkedTo: 0
-        }],
+        xAxis: [
+            {
+                categories: ['One', 'Two', 'Three', 'Four'],
+                id: 'primary'
+            },
+            {
+                id: 'secondary',
+                categories: ['Einz', 'Zwei', 'Drei', 'Vier'],
+                linkedTo: 0
+            }
+        ],
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last',
-            id: 'last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last',
+                id: 'last'
+            }
+        ]
     });
 
-    assert.strictEqual(
-        chart.xAxis[0].categories[0],
-        'One',
-        'Initial category'
-    );
+    assert.strictEqual(chart.xAxis[0].categories[0], 'One', 'Initial category');
 
     assert.strictEqual(
         chart.xAxis[1].categories[0],
@@ -52,11 +53,7 @@ QUnit.test('Test updating axis by id', function (assert) {
         }
     });
 
-    assert.strictEqual(
-        chart.xAxis[0].categories[0],
-        'Ein',
-        'Axis updated'
-    );
+    assert.strictEqual(chart.xAxis[0].categories[0], 'Ein', 'Axis updated');
 
     chart.update({
         xAxis: {
@@ -65,109 +62,193 @@ QUnit.test('Test updating axis by id', function (assert) {
         }
     });
 
-    assert.strictEqual(
-        chart.xAxis[1].categories[0],
-        'Ein',
-        'Updated category'
-    );
-
+    assert.strictEqual(chart.xAxis[1].categories[0], 'Ein', 'Updated category');
 
     chart.update({
-        xAxis: [{
-            id: 'primary',
-            categories: ['Uno', 'Dos', 'Tres', 'Cuatro']
-        }, {
-            id: 'secondary',
-            categories: ['Uno', 'Dos', 'Tres', 'Cuatro']
-        }]
+        xAxis: [
+            {
+                id: 'primary',
+                categories: ['Uno', 'Dos', 'Tres', 'Cuatro']
+            },
+            {
+                id: 'secondary',
+                categories: ['Uno', 'Dos', 'Tres', 'Cuatro']
+            }
+        ]
     });
 
-    assert.strictEqual(
-        chart.xAxis[0].categories[0],
-        'Uno',
-        'Updated category'
-    );
-    assert.strictEqual(
-        chart.xAxis[1].categories[0],
-        'Uno',
-        'Updated category'
-    );
-
+    assert.strictEqual(chart.xAxis[0].categories[0], 'Uno', 'Updated category');
+    assert.strictEqual(chart.xAxis[1].categories[0], 'Uno', 'Updated category');
 });
-
 
 QUnit.test('Updating unidentified axes by index (#6019)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
         },
-        yAxis: [{
-            labels: {
-                x: -15
+        yAxis: [
+            {
+                labels: {
+                    x: -15
+                },
+                title: {
+                    text: 'Items'
+                }
             },
-            title: {
-                text: 'Items'
-            }
-        }, {
-            title: {
-                text: 'ADDITIONAL AXIS 1',
-                style: {
-                    color: 'red'
+            {
+                title: {
+                    text: 'ADDITIONAL AXIS 1',
+                    style: {
+                        color: 'red'
+                    }
+                }
+            },
+            {
+                title: {
+                    text: 'ADDITIONAL AXIS 2',
+                    style: {
+                        color: 'blue'
+                    }
                 }
             }
-        }, {
-            title: {
-                text: 'ADDITIONAL AXIS 2',
-                style: {
-                    color: 'blue'
-                }
+        ],
+        series: [
+            {
+                name: 'Sales',
+                data: [
+                    434,
+                    523,
+                    345,
+                    785,
+                    565,
+                    843,
+                    726,
+                    590,
+                    665,
+                    434,
+                    312,
+                    432
+                ]
             }
-        }],
-        series: [{
-            name: 'Sales',
-            data: [434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432]
-        }]
+        ]
     });
 
     assert.strictEqual(
-        chart.yAxis.map(function (item) {
-            return item.options.title.text;
-        }).toString(),
+        chart.yAxis
+            .map(function (item) {
+                return item.options.title.text;
+            })
+            .toString(),
         'Items,ADDITIONAL AXIS 1,ADDITIONAL AXIS 2',
         'Initial titles'
     );
 
-
     chart.update({
-        yAxis: [{
-            title: {
-                text: 'Items changed',
-                style: {
-                    color: 'yellow'
+        yAxis: [
+            {
+                title: {
+                    text: 'Items changed',
+                    style: {
+                        color: 'yellow'
+                    }
+                }
+            },
+            {
+                title: {
+                    text: 'ADDITONAL AXIS 1 CHANGED',
+                    style: {
+                        color: 'green'
+                    }
+                }
+            },
+            {
+                title: {
+                    text: 'ADDITONAL AXIS 2 CHANGED',
+                    style: {
+                        color: 'purple'
+                    }
                 }
             }
-        }, {
-            title: {
-                text: 'ADDITONAL AXIS 1 CHANGED',
-                style: {
-                    color: 'green'
-                }
-            }
-        }, {
-            title: {
-                text: 'ADDITONAL AXIS 2 CHANGED',
-                style: {
-                    color: 'purple'
-                }
-            }
-        }]
+        ]
     });
 
     assert.strictEqual(
-        chart.yAxis.map(function (item) {
-            return item.options.title.text;
-        }).toString(),
+        chart.yAxis
+            .map(function (item) {
+                return item.options.title.text;
+            })
+            .toString(),
         'Items changed,ADDITONAL AXIS 1 CHANGED,ADDITONAL AXIS 2 CHANGED',
         'Updated titles'
+    );
+});
+
+QUnit.test('Stacking consistent after update', assert => {
+    const options = {
+        chart: {
+            width: 250,
+            type: 'column'
+        },
+        yAxis: {
+            title: {
+                text: 'test 1'
+            }
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal',
+                animation: false
+            }
+        },
+        series: [
+            {
+                data: [500]
+            },
+            {
+                data: [300]
+            }
+        ],
+        legend: {
+            enabled: false
+        }
+    };
+
+    const chart = Highcharts.chart('container', options);
+
+    const getPositions = () => [
+        chart.series[0].points[0].graphic.getBBox().y,
+        chart.series[0].points[0].graphic.getBBox().height,
+        chart.series[1].points[0].graphic.getBBox().y,
+        chart.series[1].points[0].graphic.getBBox().height
+    ];
+    const originalPositions = getPositions();
+    chart.update(
+        {
+            chart: {
+                width: 200
+            },
+            yAxis: {
+                title: {
+                    text: 'test 2'
+                }
+            },
+            series: [
+                {
+                    data: [500]
+                },
+                {
+                    data: [300]
+                }
+            ]
+        },
+        undefined,
+        undefined,
+        false
+    );
+
+    assert.deepEqual(
+        getPositions(),
+        originalPositions,
+        'Horizontal bar positions should not change after update (#14130)'
     );
 });

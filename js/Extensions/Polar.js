@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,13 +14,15 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Pane from './Pane.js';
 import Pointer from '../Core/Pointer.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, find = U.find, isNumber = U.isNumber, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
-import '../Series/LineSeries.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
-var Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto, arearangeProto;
+var seriesProto = Series.prototype, pointerProto = Pointer.prototype, columnProto, arearangeProto;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Search a k-d tree by the point angle, used for shared tooltips in polar
@@ -175,8 +177,7 @@ if (seriesTypes.spline) {
     // #6430 Areasplinerange series use unwrapped getPointSpline method, so
     // we need to set this method again.
     if (seriesTypes.areasplinerange) {
-        seriesTypes.areasplinerange.prototype.getPointSpline =
-            seriesTypes.spline.prototype.getPointSpline;
+        seriesTypes.areasplinerange.prototype.getPointSpline = seriesTypes.spline.prototype.getPointSpline;
     }
 }
 /**
@@ -376,8 +377,8 @@ var polarAnimate = function (proceed, init) {
 wrap(seriesProto, 'animate', polarAnimate);
 if (seriesTypes.column) {
     arearangeProto = seriesTypes.arearange.prototype;
-    colProto = seriesTypes.column.prototype;
-    colProto.polarArc = function (low, high, start, end) {
+    columnProto = seriesTypes.column.prototype;
+    columnProto.polarArc = function (low, high, start, end) {
         var center = this.xAxis.center, len = this.yAxis.len, paneInnerR = center[3] / 2, r = len - high + paneInnerR, innerR = len - pick(low, len) + paneInnerR;
         // Prevent columns from shooting through the pane's center
         if (this.yAxis.reversed) {
@@ -402,12 +403,12 @@ if (seriesTypes.column) {
      * Define the animate method for columnseries
      * @private
      */
-    wrap(colProto, 'animate', polarAnimate);
+    wrap(columnProto, 'animate', polarAnimate);
     /**
      * Extend the column prototype's translate method
      * @private
      */
-    wrap(colProto, 'translate', function (proceed) {
+    wrap(columnProto, 'translate', function (proceed) {
         var series = this, options = series.options, threshold = options.threshold, stacking = options.stacking, chart = series.chart, xAxis = series.xAxis, yAxis = series.yAxis, reversed = yAxis.reversed, center = yAxis.center, startAngleRad = xAxis.startAngleRad, endAngleRad = xAxis.endAngleRad, visibleRange = endAngleRad - startAngleRad, thresholdAngleRad, points, point, i, yMin, yMax, start, end, tooltipPos, pointX, pointY, stackValues, stack, barX, innerR, r;
         series.preventPostTranslate = true;
         // Run uber method
@@ -556,7 +557,7 @@ if (seriesTypes.column) {
      * Find correct align and vertical align based on an angle in polar chart
      * @private
      */
-    colProto.findAlignments = function (angle, options) {
+    columnProto.findAlignments = function (angle, options) {
         var align, verticalAlign;
         if (options.align === null) {
             if (angle > 20 && angle < 160) {
@@ -585,13 +586,13 @@ if (seriesTypes.column) {
         return options;
     };
     if (arearangeProto) {
-        arearangeProto.findAlignments = colProto.findAlignments;
+        arearangeProto.findAlignments = columnProto.findAlignments;
     }
     /**
      * Align column data labels outside the columns. #1199.
      * @private
      */
-    wrap(colProto, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo, isNew) {
+    wrap(columnProto, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo, isNew) {
         var chart = this.chart, inside = pick(options.inside, !!this.options.stacking), angle, shapeArgs, labelPos;
         if (chart.polar) {
             angle = point.rectPlotX / Math.PI * 180;
@@ -704,7 +705,7 @@ addEvent(Chart, 'afterDrawChartBox', function () {
         pane.render();
     });
 });
-addEvent(H.Series, 'afterInit', function () {
+addEvent(Series, 'afterInit', function () {
     var chart = this.chart;
     // Add flags that identifies radial inverted series
     if (chart.inverted && chart.polar) {

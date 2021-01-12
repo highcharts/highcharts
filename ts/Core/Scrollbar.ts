@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,10 +12,12 @@
 
 import type Chart from './Chart/Chart';
 import type ColorType from './Color/ColorType';
+import type PointerEvent from './PointerEvent';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
 import H from './Globals.js';
+import palette from './Color/Palette.js';
 import ScrollbarAxis from './Axis/ScrollbarAxis.js';
 import U from './Utilities.js';
 const {
@@ -29,15 +31,18 @@ const {
     removeEvent
 } = U;
 
+declare module './Chart/ChartLike'{
+    interface ChartLike {
+        scrollbarsOffsets?: [number, number];
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            scrollbarsOffsets?: [number, number];
-        }
         interface Options {
             scrollbar?: ScrollbarOptions;
         }
@@ -84,7 +89,7 @@ declare global {
             public _events: Array<[
                 any,
                 string,
-                (e: PointerEventObject) => void
+                (e: PointerEvent) => void
             ]>;
             public barWidth?: number;
             public calculatedWidth?: number;
@@ -115,8 +120,8 @@ declare global {
             public yOffset?: number;
             public addEvents(): void;
             public cursorToScrollbarPosition(
-                normalizedEvent: PointerEventObject
-            ): Dictionary<number>;
+                normalizedEvent: PointerEvent
+            ): Record<string, number>;
             public destroy(): void;
             public drawScrollbarButton(index: number): void;
             public init(
@@ -141,14 +146,13 @@ declare global {
 }
 
 interface ScrollbarEventCallbackFunction {
-    (e: Highcharts.PointerEventObject): void;
+    (e: PointerEvent): void;
 }
 
 import O from './Options.js';
 const { defaultOptions } = O;
 
-var hasTouch = H.hasTouch,
-    isTouchDevice = H.isTouchDevice;
+const isTouchDevice = H.isTouchDevice;
 
 /**
  * When we have vertical scrollbar, rifles and arrow in buttons should be
@@ -323,7 +327,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        barBackgroundColor: '${palette.neutralColor20}',
+        barBackgroundColor: palette.neutralColor20,
 
         /**
          * The width of the bar's border.
@@ -338,7 +342,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        barBorderColor: '${palette.neutralColor20}',
+        barBorderColor: palette.neutralColor20,
 
         /**
          * The color of the small arrow inside the scrollbar buttons.
@@ -348,7 +352,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        buttonArrowColor: '${palette.neutralColor80}',
+        buttonArrowColor: palette.neutralColor80,
 
         /**
          * The color of scrollbar buttons.
@@ -358,7 +362,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        buttonBackgroundColor: '${palette.neutralColor10}',
+        buttonBackgroundColor: palette.neutralColor10,
 
         /**
          * The color of the border of the scrollbar buttons.
@@ -368,7 +372,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        buttonBorderColor: '${palette.neutralColor20}',
+        buttonBorderColor: palette.neutralColor20,
 
         /**
          * The border width of the scrollbar buttons.
@@ -383,7 +387,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        rifleColor: '${palette.neutralColor80}',
+        rifleColor: palette.neutralColor80,
 
         /**
          * The color of the track background.
@@ -393,7 +397,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        trackBackgroundColor: '${palette.neutralColor5}',
+        trackBackgroundColor: palette.neutralColor5,
 
         /**
          * The color of the border of the scrollbar track.
@@ -403,7 +407,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        trackBorderColor: '${palette.neutralColor5}',
+        trackBorderColor: palette.neutralColor5,
 
         /**
          * The corner radius of the border of the scrollbar track.
@@ -540,7 +544,7 @@ class Scrollbar {
             _events: Array<[
                 any,
                 string,
-                (e: Highcharts.PointerEventObject) => void
+                (e: PointerEvent) => void
             ]>;
 
         // Mouse events
@@ -554,7 +558,7 @@ class Scrollbar {
         ];
 
         // Touch events
-        if (hasTouch) {
+        if (H.hasTouch) {
             _events.push(
                 [bar, 'touchstart', mouseDownHandler],
                 [bar.ownerDocument, 'touchmove', mouseMoveHandler],
@@ -569,7 +573,7 @@ class Scrollbar {
         this._events = _events;
     }
 
-    private buttonToMaxClick(e: Highcharts.PointerEventObject): void {
+    private buttonToMaxClick(e: PointerEvent): void {
         const scroller = this;
         var range = (scroller.to - scroller.from) * pick(scroller.options.step, 0.2);
 
@@ -582,7 +586,7 @@ class Scrollbar {
         });
     }
 
-    private buttonToMinClick(e: Highcharts.PointerEventObject): void {
+    private buttonToMinClick(e: PointerEvent): void {
         const scroller = this;
         var range = correctFloat(scroller.to - scroller.from) *
             pick(scroller.options.step, 0.2);
@@ -611,7 +615,7 @@ class Scrollbar {
      * @return {Highcharts.Dictionary<number>}
      *         Local position {chartX, chartY}
      */
-    public cursorToScrollbarPosition(normalizedEvent: Highcharts.PointerEventObject): Highcharts.Dictionary<number> {
+    public cursorToScrollbarPosition(normalizedEvent: PointerEvent): Record<string, number> {
         var scroller = this,
             options = scroller.options,
             minWidthDifference =
@@ -771,7 +775,7 @@ class Scrollbar {
         }
     }
 
-    private mouseDownHandler(e: Highcharts.PointerEventObject): void {
+    private mouseDownHandler(e: PointerEvent): void {
         const scroller = this;
         var normalizedEvent = scroller.chart.pointer.normalize(e),
             mousePosition = scroller.cursorToScrollbarPosition(
@@ -789,7 +793,7 @@ class Scrollbar {
      * Event handler for the mouse move event.
      * @private
      */
-    private mouseMoveHandler(e: Highcharts.PointerEventObject): void {
+    private mouseMoveHandler(e: PointerEvent): void {
         const scroller = this;
         var normalizedEvent = scroller.chart.pointer.normalize(e),
             options = scroller.options,
@@ -836,7 +840,7 @@ class Scrollbar {
      * Event handler for the mouse up event.
      * @private
      */
-    private mouseUpHandler(e: Highcharts.PointerEventObject): void {
+    private mouseUpHandler(e: PointerEvent): void {
         const scroller = this;
         if (scroller.hasDragged) {
             fireEvent(scroller, 'changed', {
@@ -1115,7 +1119,7 @@ class Scrollbar {
         scroller.rendered = true;
     }
 
-    public trackClick(e: Highcharts.PointerEventObject): void {
+    public trackClick(e: PointerEvent): void {
         const scroller = this;
         var normalizedEvent = scroller.chart.pointer.normalize(e),
             range = scroller.to - scroller.from,

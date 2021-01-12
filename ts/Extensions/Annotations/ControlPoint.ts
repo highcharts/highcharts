@@ -5,6 +5,7 @@
  * */
 
 import type Annotation from './Annotations';
+import type PositionObject from '../../Core/Renderer/PositionObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 /**

@@ -2,7 +2,7 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2017 Sebastian Bochan
+ *  (c) 2009-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -30,22 +30,25 @@ const {
     setOptions
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        stockTools?: Toolbar;
+        /** @requires modules/stock-tools */
+        setStockTools(options?: Highcharts.StockToolsOptions): void;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            stockTools?: Toolbar;
-            /** @requires modules/stock-tools */
-            setStockTools(options?: StockToolsOptions): void;
-        }
         interface LangOptions {
             stockTools?: LangStockToolsOptions;
         }
         interface LangStockToolsOptions {
-            gui?: Dictionary<string>;
+            gui?: Record<string, string>;
         }
         interface Options {
             stockTools?: StockToolsOptions;
@@ -94,18 +97,18 @@ declare global {
         class Toolbar {
             public constructor(
                 options: StockToolsGuiOptions,
-                langOptions: (Dictionary<string>|undefined),
+                langOptions: (Record<string, string>|undefined),
                 chart: Chart
             );
             public arrowDown: HTMLDOMElement;
             public arrowUp: HTMLDOMElement;
             public arrowWrapper: HTMLDOMElement;
             public chart: Chart;
-            public classMapping: Dictionary<string>;
+            public classMapping: Record<string, string>;
             public eventsToUnbind: Array<Function>;
             public guiEnabled: (boolean|undefined);
             public iconsURL: string;
-            public lang: (Dictionary<string>|undefined);
+            public lang: (Record<string, string>|undefined);
             public listWrapper: HTMLDOMElement;
             public options: StockToolsGuiOptions;
             public placed: boolean;
@@ -121,11 +124,11 @@ declare global {
                     StockToolsGuiDefinitionsOptions
                 ),
                 btnName: string,
-                lang: Dictionary<string>
-            ): Dictionary<HTMLDOMElement>;
+                lang: Record<string, string>
+            ): Record<string, HTMLDOMElement>;
             public addNavigation(): void;
             public addSubmenu(
-                parentBtn: Dictionary<HTMLDOMElement>,
+                parentBtn: Record<string, HTMLDOMElement>,
                 button: StockToolsGuiDefinitionsButtonsOptions
             ): void;
             public addSubmenuItems(
@@ -340,9 +343,10 @@ setOptions({
             toolbarClassName: 'stocktools-toolbar',
             /**
              * A collection of strings pointing to config options for the
-             * toolbar items. Each name refers to unique key from definitions
-             * object.
+             * toolbar items. Each name refers to a unique key from the
+             * definitions object.
              *
+             * @type    {Array<string>}
              * @default [
              *   'indicators',
              *   'separator',
@@ -1206,7 +1210,7 @@ class Toolbar {
             Highcharts.StockToolsGuiDefinitionsOptions
         ),
         btnName: string,
-        lang: Highcharts.Dictionary<string> = {}
+        lang: Record<string, string> = {}
     ): Record<string, HTMLDOMElement> {
         var btnOptions: Highcharts.StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,

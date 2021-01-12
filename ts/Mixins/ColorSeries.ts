@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,18 @@
 
 'use strict';
 
+import type ColorAxis from '../Core/Axis/ColorAxis';
 import type ColorType from '../Core/Color/ColorType';
 import type Point from '../Core/Series/Point';
+import type Series from '../Core/Series/Series';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        /** @requires ColorSeriesMixin */
+        translateColors(): void;
+    }
+}
 
 /**
  * Internal types

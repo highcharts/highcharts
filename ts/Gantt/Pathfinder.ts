@@ -18,10 +18,56 @@ import type {
 import type Axis from '../Core/Axis/Axis';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
+import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
+import type PositionObject from '../Core/Renderer/PositionObject';
+import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        pathfinder?: Pathfinder;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        getMarkerVector(
+            radians: number,
+            markerRadius: number,
+            anchor: PositionObject
+        ): PositionObject;
+        getPathfinderAnchorPoint(
+            markerOptions: Highcharts.ConnectorsMarkerOptions
+        ): PositionObject;
+        getRadiansToVector(v1: PositionObject, v2: PositionObject): number;
+    }
+}
+
+declare module '../Core/Series/PointOptions' {
+    interface PointOptions {
+        connect?: (
+            Highcharts.PointConnectOptionsObject|
+            GanttDependencyOptions
+        );
+        connectors?: Highcharts.ConnectorsOptions;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        pathfinderRemoveRenderEvent?: Function;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        connectors?: Highcharts.ConnectorsOptions;
+    }
+}
 
 /**
  * Internal types
@@ -35,9 +81,6 @@ declare global {
             'simpleConnect'|
             string
         );
-        interface ChartLike {
-            pathfinder?: Pathfinder;
-        }
         interface ConnectorsEndMarkerOptions {
             align?: AlignValue;
             color?: ColorType;
@@ -91,36 +134,15 @@ declare global {
         interface Options {
             connectors?: ConnectorsOptions;
         }
-        interface PointLike {
-            getMarkerVector(
-                radians: number,
-                markerRadius: number,
-                anchor: PositionObject
-            ): PositionObject;
-            getPathfinderAnchorPoint(
-                markerOptions: ConnectorsMarkerOptions
-            ): PositionObject;
-            getRadiansToVector(v1: PositionObject, v2: PositionObject): number;
-        }
         interface PointConnectOptionsObject {
             to?: string;
-        }
-        interface PointOptionsObject {
-            connect?: PointConnectOptionsObject | GanttDependencyOption;
-            connectors?: ConnectorsOptions;
-        }
-        interface Series {
-            pathfinderRemoveRenderEvent?: Function;
-        }
-        interface SeriesOptions {
-            connectors?: ConnectorsOptions;
         }
         class Pathfinder {
             public constructor(chart: Chart);
             public algorithms: Record<string, PathfinderAlgorithmFunction>;
             public chart: Chart;
             public chartObstacles: Array<any>;
-            public chartObstacleMetrics: Dictionary<number>;
+            public chartObstacleMetrics: Record<string, number>;
             public connections: Array<Connection>;
             public group: SVGElement;
             public lineObstacles: Array<any>;
@@ -132,7 +154,7 @@ declare global {
             ): Array<any>;
             public getObstacleMetrics(
                 obstacles: Array<any>
-            ): Dictionary<number>;
+            ): Record<string, number>;
             public init(chart: Chart): void;
             public renderConnections(deferRender?: boolean): void;
             public update(deferRender?: boolean): void;
@@ -476,7 +498,7 @@ extend(defaultOptions, {
  * @return {Highcharts.Dictionary<number>|null}
  *         Result xMax, xMin, yMax, yMin.
  */
-function getPointBB(point: Point): (Highcharts.Dictionary<number>|null) {
+function getPointBB(point: Point): (Record<string, number>|null) {
     var shapeArgs = point.shapeArgs,
         bb;
 
@@ -522,8 +544,8 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
         distances = [],
         // Compute smallest distance between two rectangles
         distance = function (
-            a: Highcharts.Dictionary<number>,
-            b: Highcharts.Dictionary<number>,
+            a: Record<string, number>,
+            b: Record<string, number>,
             bbMargin?: number
         ): number {
             // Count the distance even if we are slightly off
@@ -608,7 +630,7 @@ class Pathfinder {
 
     public chart: Chart = void 0 as any;
     public chartObstacles: Array<any> = void 0 as any;
-    public chartObstacleMetrics: Highcharts.Dictionary<number> = void 0 as any;
+    public chartObstacleMetrics: Record<string, number> = void 0 as any;
     public connections: Array<Highcharts.Connection> = void 0 as any;
     public group: SVGElement = void 0 as any;
     public lineObstacles: Array<any> = void 0 as any;
@@ -655,10 +677,10 @@ class Pathfinder {
 
         // Rebuild pathfinder connections from options
         pathfinder.connections = [];
-        chart.series.forEach(function (series: Highcharts.Series): void {
+        chart.series.forEach(function (series): void {
             if (series.visible && !series.options.isInternal) {
                 series.points.forEach(function (point: Point): void {
-                    const ganttPointOptions: Highcharts.GanttPointOptions = point.options;
+                    const ganttPointOptions: GanttPointOptions = point.options;
                     // For Gantt series the connect could be
                     // defined as a dependency
                     if (ganttPointOptions && ganttPointOptions.dependency) {
@@ -666,8 +688,8 @@ class Pathfinder {
                     }
                     var to: (
                             Axis|
+                            Series|
                             Point|
-                            Highcharts.Series|
                             undefined
                         ),
                         connects = (
@@ -678,7 +700,7 @@ class Pathfinder {
 
                     if (point.visible && point.isInside !== false && connects) {
                         connects.forEach(function (
-                            connect: (string|Highcharts.Dictionary<string>)
+                            connect: (string|Record<string, string>)
                         ): void {
                             to = chart.get(
                                 typeof connect === 'string' ?
@@ -758,18 +780,14 @@ class Pathfinder {
     ): void {
         if (deferRender) {
             // Render after series are done animating
-            this.chart.series.forEach(function (
-                series: Highcharts.Series
-            ): void {
+            this.chart.series.forEach(function (series): void {
                 var render = function (): void {
                     // Find pathfinder connections belonging to this series
                     // that haven't rendered, and render them now.
                     var pathfinder = series.chart.pathfinder,
                         conns = pathfinder && pathfinder.connections || [];
 
-                    conns.forEach(function (
-                        connection: Highcharts.Connection
-                    ): void {
+                    conns.forEach(function (connection): void {
                         if (
                             connection.fromPoint &&
                             connection.fromPoint.series === series
@@ -793,9 +811,7 @@ class Pathfinder {
             });
         } else {
             // Go through connections and render them
-            this.connections.forEach(function (
-                connection: Highcharts.Connection
-            ): void {
+            this.connections.forEach(function (connection): void {
                 connection.render();
             });
         }
@@ -845,7 +861,7 @@ class Pathfinder {
         }
 
         // Sort obstacles by xMin for optimization
-        obstacles = obstacles.sort(function (a: any, b: any): number {
+        obstacles = obstacles.sort(function (a, b): number {
             return a.xMin - b.xMin;
         });
 
@@ -854,7 +870,7 @@ class Pathfinder {
             calculatedMargin =
                 options.algorithmMargin =
                 calculateObstacleMargin(obstacles);
-            obstacles.forEach(function (obstacle: any): void {
+            obstacles.forEach(function (obstacle): void {
                 obstacle.xMin -= calculatedMargin;
                 obstacle.xMax += calculatedMargin;
                 obstacle.yMin -= calculatedMargin;
@@ -879,7 +895,7 @@ class Pathfinder {
      *         The calculated metrics, as an object with maxHeight and maxWidth
      *         properties.
      */
-    public getObstacleMetrics(obstacles: Array<any>): Highcharts.Dictionary<number> {
+    public getObstacleMetrics(obstacles: Array<any>): Record<string, number> {
         var maxWidth = 0,
             maxHeight = 0,
             width,
@@ -956,7 +972,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
     getPathfinderAnchorPoint: function (
         this: Point,
         markerOptions: Highcharts.ConnectorsMarkerOptions
-    ): Highcharts.PositionObject {
+    ): PositionObject {
         var bb = getPointBB(this),
             x,
             y;
@@ -1000,10 +1016,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      */
     getRadiansToVector: function (
         this: Point,
-        v1: Highcharts.PositionObject,
-        v2: Highcharts.PositionObject
+        v1: PositionObject,
+        v2: PositionObject
     ): number {
-        var box: (Highcharts.Dictionary<number>|null);
+        var box: (Record<string, number>|null);
 
         if (!defined(v2)) {
             box = getPointBB(this);
@@ -1043,8 +1059,8 @@ extend(Point.prototype, /** @lends Point.prototype */ {
         this: Point,
         radians: number,
         markerRadius: number,
-        anchor: Highcharts.PositionObject
-    ): Highcharts.PositionObject {
+        anchor: PositionObject
+    ): PositionObject {
         var twoPI = Math.PI * 2.0,
             theta = radians,
             bb = getPointBB(this),
@@ -1061,7 +1077,6 @@ extend(Point.prototype, /** @lends Point.prototype */ {
                 x: rectHorizontalCenter,
                 y: rectVerticalCenter
             },
-            markerPoint = {} as Highcharts.PositionObject,
             xFactor = 1,
             yFactor = 1;
 
@@ -1107,10 +1122,10 @@ extend(Point.prototype, /** @lends Point.prototype */ {
             edgePoint.y = anchor.y;
         }
 
-        markerPoint.x = edgePoint.x + (markerRadius * Math.cos(theta));
-        markerPoint.y = edgePoint.y - (markerRadius * Math.sin(theta));
-
-        return markerPoint;
+        return {
+            x: edgePoint.x + (markerRadius * Math.cos(theta)),
+            y: edgePoint.y - (markerRadius * Math.sin(theta))
+        };
     }
 });
 
@@ -1123,10 +1138,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 function warnLegacy(chart: Chart): void {
     if (
         (chart.options as any).pathfinder ||
-        chart.series.reduce(function (
-            acc: boolean,
-            series: Highcharts.Series
-        ): boolean {
+        chart.series.reduce(function (acc, series): boolean {
             if (series.options) {
                 merge(
                     true,

@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -928,7 +928,6 @@ Chart.prototype.hideData = function () {
     this.toggleDataTable(false);
 };
 Chart.prototype.toggleDataTable = function (show) {
-    var _a;
     show = pick(show, !this.isDataTableVisible);
     // Create the div
     if (show && !this.dataTableDiv) {
@@ -951,7 +950,9 @@ Chart.prototype.toggleDataTable = function (show) {
     // Set the flag
     this.isDataTableVisible = show;
     // Change the menu item text
-    var exportDivElements = this.exportDivElements, menuItems = (_a = exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.buttons) === null || _a === void 0 ? void 0 : _a.contextButton.menuItems, lang = this.options.lang;
+    var exportDivElements = this.exportDivElements, options = this.options.exporting, menuItems = options &&
+        options.buttons &&
+        options.buttons.contextButton.menuItems, lang = this.options.lang;
     if (exportingOptions &&
         exportingOptions.menuItemDefinitions && (lang === null || lang === void 0 ? void 0 : lang.viewData) &&
         lang.hideData &&

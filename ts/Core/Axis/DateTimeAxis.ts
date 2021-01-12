@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,6 +18,13 @@ const {
     normalizeTickInterval,
     timeUnits
 } = U;
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        pointInterval?: number;
+        pointIntervalUnit?: Highcharts.SeriesPointIntervalUnitValue;
+    }
+}
 
 /**
  * Internal types

@@ -1,5 +1,5 @@
 /* *
- * (c) 2009-2020 Rafal Sebestjanski
+ * (c) 2009-2021 Rafal Sebestjanski
  *
  * Full screen for Highcharts
  *

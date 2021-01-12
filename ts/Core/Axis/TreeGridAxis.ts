@@ -9,10 +9,19 @@
  *
  * */
 
+'use strict';
+
 import type AxisTypes from './Types';
 import type Chart from '../Chart/Chart';
+import type GanttPoint from '../../Series/Gantt/GanttPoint';
+import type GanttPointOptions from '../../Series/Gantt/GanttPointOptions';
+import type GanttSeries from '../../Series/Gantt/GanttSeries';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Series/PointOptions';
+import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import H from '../Globals.js';
 import Axis from './Axis.js';
 import Tick from './Tick.js';
 import Tree from '../../Gantt/Tree.js';
@@ -35,6 +44,13 @@ const {
 
 import './GridAxis.js';
 import './BrokenAxis.js';
+
+declare module '../Series/PointOptions' {
+    interface PointOptions extends Highcharts.TreePointOptionsObject {
+        collapsed?: boolean;
+        seriesIndex?: number;
+    }
+}
 
 /**
  * Internal types
@@ -74,7 +90,7 @@ interface TreeGridAxis extends Axis {
     max: number;
     min: number;
     options: TreeGridAxis.Options;
-    series: Array<Highcharts.GanttSeries>;
+    series: Array<GanttSeries>;
     treeGrid: TreeGridAxis.Additions;
 }
 
@@ -117,13 +133,8 @@ namespace TreeGridAxis {
         labels?: LabelsOptions;
     }
 
-    export interface PointOptionsObject extends Highcharts.TreePointOptionsObject {
-        collapsed?: boolean;
-        seriesIndex?: number;
-    }
-
     export interface TreeGridNode extends Highcharts.TreeNode {
-        data: PointOptionsObject;
+        data: PointOptions;
         pos: number;
         seriesIndex: number;
     }
@@ -220,7 +231,7 @@ namespace TreeGridAxis {
      * @todo Add unit-tests.
      */
     function getTreeGridFromData(
-        data: Array<Highcharts.GanttPointOptions>,
+        data: Array<GanttPointOptions>,
         uniqueNames: boolean,
         numberOfSeries: number
     ): TreeGridObject {
@@ -323,14 +334,14 @@ namespace TreeGridAxis {
         };
 
         const updateYValuesAndTickPos = function (
-            map: Highcharts.Dictionary<GridNode>,
+            map: Record<string, GridNode>,
             numberOfSeries: number
-        ): Highcharts.Dictionary<GridNode> {
+        ): Record<string, GridNode> {
             const setValues = function (
                 gridNode: GridNode,
                 start: number,
-                result: Highcharts.Dictionary<GridNode>
-            ): Highcharts.Dictionary<GridNode> {
+                result: Record<string, GridNode>
+            ): Record<string, GridNode> {
                 var nodes = gridNode.nodes,
                     end = start + (start === -1 ? 0 : numberOfSeries - 1),
                     diff = (end - start) / 2,
@@ -413,7 +424,7 @@ namespace TreeGridAxis {
                     uniqueNames = options.uniqueNames,
                     numberOfSeries = 0,
                     isDirty: (boolean | undefined),
-                    data: Array<PointOptionsObject>,
+                    data: Array<PointOptions>,
                     treeGrid: TreeGridObject,
                     max = options.max;
                 // Check whether any of series is rendering for the first time,
@@ -422,7 +433,7 @@ namespace TreeGridAxis {
                 // Also check if mapOfPosToGridNode exists. #10887
                 isDirty = (
                     !axis.treeGrid.mapOfPosToGridNode ||
-                    axis.series.some(function (series: Highcharts.GanttSeries): boolean {
+                    axis.series.some(function (series): (boolean|undefined) {
                         return !series.hasRendered ||
                             series.isDirtyData ||
                             series.isDirty;
@@ -431,10 +442,7 @@ namespace TreeGridAxis {
 
                 if (isDirty) {
                     // Concatenate data from all series assigned to this axis.
-                    data = axis.series.reduce(function (
-                        arr: Array<PointOptionsObject>,
-                        s: Highcharts.GanttSeries
-                    ): Array<PointOptionsObject> {
+                    data = axis.series.reduce(function (arr, s): Array<PointOptions> {
                         if (s.visible) {
                             // Push all data to array
                             (s.options.data || []).forEach(function (data): void {
@@ -442,14 +450,14 @@ namespace TreeGridAxis {
                                 if (s.options.keys && s.options.keys.length) {
 
                                     data = s.pointClass.prototype.optionsToObject.call({ series: s }, data);
-                                    H.seriesTypes.gantt.prototype.setGanttPointAliases(data);
+                                    s.pointClass.setGanttPointAliases(data);
 
                                 }
                                 if (isObject(data, true)) {
                                     // Set series index on data. Removed again
                                     // after use.
-                                    (data as PointOptionsObject).seriesIndex = numberOfSeries;
-                                    arr.push(data as PointOptionsObject);
+                                    (data as PointOptions).seriesIndex = numberOfSeries;
+                                    arr.push(data as PointOptions);
                                 }
                             });
 
@@ -459,7 +467,7 @@ namespace TreeGridAxis {
                             }
                         }
                         return arr;
-                    }, []);
+                    }, [] as Array<PointOptions>);
 
                     // If max is higher than set data - add a
                     // dummy data to render categories #10779
@@ -488,15 +496,15 @@ namespace TreeGridAxis {
                     axis.treeGrid.tree = treeGrid.tree;
 
                     // Update yData now that we have calculated the y values
-                    axis.series.forEach(function (series: Highcharts.Series): void {
+                    axis.series.forEach(function (series): void {
                         var axisData = (series.options.data || []).map(function (
-                            d: Highcharts.PointOptionsType
-                        ): Highcharts.PointOptionsType {
+                            d: (PointOptions|PointShortOptions)
+                        ): (PointOptions|PointShortOptions) {
 
                             if (isArray(d) && series.options.keys && series.options.keys.length) {
                                 // Get the axisData from the data array used to
                                 // build the treeGrid where has been modified
-                                data.forEach(function (point: Highcharts.GanttPointOptions): void {
+                                data.forEach(function (point: GanttPointOptions): void {
                                     if ((d as any).indexOf(point.x) >= 0 && (d as any).indexOf(point.x2) >= 0) {
                                         d = point;
                                     }
@@ -599,7 +607,7 @@ namespace TreeGridAxis {
     function wrapGetMaxLabelDimensions(
         this: TreeGridAxis,
         proceed: Function
-    ): Highcharts.SizeObject {
+    ): SizeObject {
         const axis = this,
             options = axis.options,
             labelOptions = options && options.labels,
@@ -807,7 +815,7 @@ namespace TreeGridAxis {
 
             // setAxisTranslation modifies the min and max according to
             // axis breaks.
-            axis.setAxisTranslation(true);
+            axis.setAxisTranslation();
 
             axis.tickmarkOffset = 0.5;
             axis.tickInterval = 1;
@@ -881,11 +889,11 @@ namespace TreeGridAxis {
                 const data = series.options.data;
                 if (node.id && data) {
                     const point = chart.get(node.id),
-                        dataPoint = data[series.data.indexOf(point as Highcharts.GanttPoint)];
+                        dataPoint = data[series.data.indexOf(point as GanttPoint)];
 
                     if (point && dataPoint) {
-                        (point as Highcharts.GanttPoint).collapsed = node.collapsed;
-                        (dataPoint as Highcharts.GanttPoint).collapsed = node.collapsed;
+                        (point as GanttPoint).collapsed = node.collapsed;
+                        (dataPoint as GanttPoint).collapsed = node.collapsed;
                     }
                 }
             });

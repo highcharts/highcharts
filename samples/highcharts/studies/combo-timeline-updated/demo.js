@@ -147,13 +147,12 @@ function onChartLoad() {
         y: centerY + 62
     });
 
-
     // Prepare mouseover
     renderer = this.renderer;
     if (renderer.defs) { // is SVG
-        $.each(this.get('employees').points, function () {
-            var point = this,
-                pattern;
+        this.get('employees').points.forEach(point => {
+            let pattern;
+
             if (point.image) {
                 pattern = renderer.createElement('pattern').attr({
                     id: 'pattern-' + point.image,
@@ -221,8 +220,7 @@ function getTurnover() {
 
             return turnover;
         },
-        []
-    )
+        [])
         .sort((a, b) => a.x - b.x)
         .map(event => Object.assign(
             event, {
@@ -231,16 +229,13 @@ function getTurnover() {
         ));
 }
 
-
-var options = {
-
+const options = {
     chart: {
         events: {
             load: onChartLoad
         },
         height: '56%'
     },
-
     xAxis: {
         type: 'datetime',
         minTickInterval: 365 * 24 * 36e5,
@@ -294,19 +289,15 @@ var options = {
                 x: 20
             }
         }]
-
     },
-
     title: {
         text: 'Highcharts and Highsoft timeline'
     },
-
     tooltip: {
         style: {
             width: '250px'
         }
     },
-
     yAxis: [{
         max: 100,
         labels: {
@@ -324,7 +315,6 @@ var options = {
         opposite: true,
         gridLineWidth: 0
     }],
-
     plotOptions: {
         series: {
             marker: {
@@ -342,7 +332,6 @@ var options = {
             allowOverlapX: true
         }
     },
-
     series: [{
         name: 'Revenue',
         id: 'revenue',
@@ -473,7 +462,6 @@ var options = {
             xDateFormat: '%B %Y',
             valueSuffix: ' % of best month'
         }
-
     }, {
         yAxis: 1,
         name: 'Highsoft employees',
@@ -639,4 +627,4 @@ if (Highcharts.seriesTypes.flags) {
     });
 }
 
-$('#container').highcharts(options);
+Highcharts.chart('container', options);

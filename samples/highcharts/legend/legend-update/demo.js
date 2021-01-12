@@ -1,17 +1,13 @@
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
-
     title: {
         text: 'Legend update'
     },
-
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     },
-
     series: [{
         data: [1, 4, 3, 5],
         name: 'First'
@@ -24,9 +20,9 @@ var chart = Highcharts.chart('container', {
     }]
 });
 
-var i = 0;
+let i = 0;
 
-$('#update-legend').click(function () {
+document.getElementById('update-legend').addEventListener('click', () =>  {
     chart.legend.update(i++ % 2 ? {
         align: 'center',
         verticalAlign: 'bottom',

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,16 +19,19 @@ const {
     splat
 } = U;
 
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        zAxis?: Array<ZAxis>;
+        addZAxis(options: Highcharts.AxisOptions): Axis;
+    }
+}
+
 /**
  * Internal types.
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            zAxis?: Array<ZAxis>;
-            addZAxis(options: Highcharts.AxisOptions): Axis;
-        }
         interface Options {
             zAxis?: (Highcharts.AxisOptions|Array<Highcharts.AxisOptions>);
         }
@@ -168,7 +171,7 @@ class ZAxis extends Axis implements AxisLike {
         }
 
         // loop through this axis' series
-        axis.series.forEach(function (series: Highcharts.Series): void {
+        axis.series.forEach(function (series): void {
 
             if (
                 series.visible ||
@@ -230,6 +233,9 @@ class ZAxis extends Axis implements AxisLike {
             offset: 0 as any,
             lineWidth: 0 as any
         }, userOptions);
+
+        // #14793, this used to be set on the prototype
+        this.isZAxis = true;
 
         super.setOptions(userOptions);
 

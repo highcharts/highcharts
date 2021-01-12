@@ -1,7 +1,7 @@
 Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-density.json', function (data) {
 
     // Initiate the chart
-    var chart = Highcharts.mapChart('container', {
+    const chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Destroy chart from button'
@@ -37,11 +37,14 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
     });
 
     // Activate the button
-    $('#destroy')
-        .attr('disabled', false)
-        .click(function () {
-            chart.destroy();
-            $(this).attr('disabled', true);
-        });
+    const button = document.getElementById('destroy');
+    console.log(button);
+    button.disabled = false;
+    console.log(button);
 
+    // Disable the button when map has been destroyed
+    button.onclick = () => {
+        chart.destroy();
+        button.disabled = true;
+    };
 });

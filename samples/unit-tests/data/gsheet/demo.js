@@ -1,15 +1,15 @@
 QUnit.skip('data-google-spreadsheetloading', function (assert) {
-
     var done = assert.async(),
         chart;
 
     function chartLoad() {
-
         var options = chart.options;
 
-
         assert.strictEqual(
-            (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
+            (Highcharts.isArray(options.xAxis) ?
+                options.xAxis[0] :
+                options.xAxis
+            ).type,
             'datetime',
             'X axis is date/time'
         );

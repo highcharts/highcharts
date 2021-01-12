@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,10 +11,73 @@
 'use strict';
 
 import type { AxisType } from '../Core/Axis/Types';
-import type { SeriesOptionsType, SeriesPlotOptionsType } from '../Core/Series/Types';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
+import type {
+    SeriesTypeOptions,
+    SeriesTypePlotOptions
+} from '../Core/Series/SeriesType';
+import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
+import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+const { prototype: seriesProto } = Series;
+import Tooltip from '../Core/Tooltip.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    defined,
+    error,
+    extend,
+    format,
+    isNumber,
+    merge,
+    pick
+} = U;
+
+declare module '../Core/Axis/TimeTicksInfoObject' {
+    interface TimeTicksInfoObject {
+        gapSize?: number;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        cropStart?: number;
+        currentDataGrouping?: TimeTicksInfoObject;
+        dataGroupInfo?: Highcharts.DataGroupingInfoObject;
+        forceCrop?: boolean;
+        groupedData?: (Array<Point>|null);
+        groupMap?: Array<Highcharts.DataGroupingInfoObject>;
+        groupPixelWidth?: number;
+        hasGroupedData?: boolean;
+        hasProcessed?: boolean;
+        preventGraphAnimation?: boolean;
+        destroyGroupedData(): void;
+        generatePoints(): void;
+        getDGApproximation(): string;
+        groupData(
+            xData: Array<number>,
+            yData: (Array<number>|Array<Array<number>>),
+            groupPosition: Array<number>,
+            approximation: (string|Function)
+        ): Highcharts.DataGroupingResultObject;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        dataGrouping?: Highcharts.DataGroupingOptionsObject;
+    }
+}
 
 /**
  * Internal types
@@ -33,7 +96,7 @@ declare global {
             hasNulls?: boolean;
         }
         interface DataGroupingApproximationsDictionary
-            extends Dictionary<(Function|undefined)>
+            extends Record<string, (Function|undefined)>
         {
             average: (
                 arr: DataGroupingApproximationsArray
@@ -73,12 +136,12 @@ declare global {
         }
         interface DataGroupingInfoObject {
             length?: number;
-            options?: SeriesOptionsType;
+            options?: (PointOptions|PointShortOptions|SeriesTypeOptions);
             start?: number;
         }
         interface DataGroupingOptionsObject {
             approximation?: (DataGroupingApproximationValue|Function);
-            dateTimeLabelFormats?: Dictionary<Array<string>>;
+            dateTimeLabelFormats?: Record<string, Array<string>>;
             enabled?: boolean;
             forced?: boolean;
             groupAll?: boolean;
@@ -93,30 +156,6 @@ declare global {
                 Array<Array<(number|null|undefined)>>
             );
             groupMap: Array<DataGroupingInfoObject>;
-        }
-        interface Series {
-            cropStart?: number;
-            currentDataGrouping?: TimeTicksInfoObject;
-            dataGroupInfo?: DataGroupingInfoObject;
-            forceCrop?: boolean;
-            groupedData?: (Array<Point>|null);
-            groupMap?: Array<DataGroupingInfoObject>;
-            groupPixelWidth?: number;
-            hasGroupedData?: boolean;
-            hasProcessed?: boolean;
-            preventGraphAnimation?: boolean;
-            destroyGroupedData(): void;
-            generatePoints(): void;
-            getDGApproximation(): string;
-            groupData(
-                xData: Array<number>,
-                yData: (Array<number>|Array<Array<number>>),
-                groupPosition: Array<number>,
-                approximation: (string|Function)
-            ): DataGroupingResultObject;
-        }
-        interface TimeTicksInfoObject {
-            gapSize?: number;
         }
         let approximations: DataGroupingApproximationsDictionary;
         let dataGrouping: DataGroupingFunctionsObject;
@@ -147,29 +186,8 @@ declare global {
 
 ''; // detach doclets above
 
-import O from '../Core/Options.js';
-const { defaultOptions } = O;
-import Point from '../Core/Series/Point.js';
-import Tooltip from '../Core/Tooltip.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    defined,
-    error,
-    extend,
-    format,
-    isNumber,
-    merge,
-    pick
-} = U;
-
 import '../Core/Axis/Axis.js';
-import '../Series/LineSeries.js';
 
-var Series = H.Series;
 
 /* ************************************************************************** *
  *  Start data grouping module                                                *
@@ -308,7 +326,7 @@ H.approximations = {
 };
 
 const groupData = function (
-    this: Highcharts.Series,
+    this: Series,
     xData: Array<number>,
     yData: (
         Array<(number|null|undefined)>|
@@ -494,8 +512,7 @@ var dataGrouping = {
 // -----------------------------------------------------------------------------
 // The following code applies to implementation of data grouping on a Series
 
-const seriesProto = Series.prototype,
-    baseProcessData = seriesProto.processData,
+const baseProcessData = seriesProto.processData,
     baseGeneratePoints = seriesProto.generatePoints,
     /** @ignore */
     commonOptions = {
@@ -567,7 +584,7 @@ const seriesProto = Series.prototype,
         ohlc: {
             groupPixelWidth: 5
         }
-    } as SeriesPlotOptionsType,
+    } as SeriesTypePlotOptions,
 
     // units are defined in a separate array to allow complete overriding in
     // case of a user option
@@ -602,7 +619,7 @@ const seriesProto = Series.prototype,
 
 // Set default approximations to the prototypes if present. Properties are
 // inherited down. Can be overridden for individual series types.
-seriesProto.getDGApproximation = function (this: Highcharts.Series): string {
+seriesProto.getDGApproximation = function (): string {
     if (this.is('arearange')) {
         return 'range';
     }
@@ -636,7 +653,7 @@ seriesProto.groupData = groupData;
 
 // Extend the basic processData method, that crops the data to the current zoom
 // range, with data grouping logic.
-seriesProto.processData = function (this: Highcharts.Series): any {
+seriesProto.processData = function (): any {
     var series = this,
         chart = series.chart,
         options = series.options,
@@ -825,7 +842,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
 };
 
 // Destroy the grouped data points. #622, #740
-seriesProto.destroyGroupedData = function (this: Highcharts.Series): void {
+seriesProto.destroyGroupedData = function (): void {
     // Clear previous groups
     if (this.groupedData) {
         this.groupedData.forEach(function (
@@ -847,7 +864,7 @@ seriesProto.destroyGroupedData = function (this: Highcharts.Series): void {
 };
 
 // Override the generatePoints method by adding a reference to grouped data
-seriesProto.generatePoints = function (this: Highcharts.Series): void {
+seriesProto.generatePoints = function (): void {
 
     baseGeneratePoints.apply(this);
 
@@ -870,20 +887,20 @@ addEvent(Point, 'update', function (): (boolean|undefined) {
 // range.
 addEvent(Tooltip, 'headerFormatter', function (
     this: Highcharts.Tooltip,
-    e: Highcharts.Dictionary<any>
+    e: Record<string, any>
 ): void {
     var tooltip = this,
         chart = this.chart,
         time = chart.time,
         labelConfig = e.labelConfig,
-        series = labelConfig.series as Highcharts.Series,
+        series = labelConfig.series as Series,
         options = series.options,
         tooltipOptions = series.tooltipOptions,
         dataGroupingOptions = options.dataGrouping,
         xDateFormat = tooltipOptions.xDateFormat,
         xDateFormatEnd,
         xAxis = series.xAxis,
-        currentDataGrouping: (Highcharts.TimeTicksInfoObject|undefined),
+        currentDataGrouping: (TimeTicksInfoObject|undefined),
         dateTimeLabelFormats,
         labelFormats,
         formattedKey,
@@ -962,14 +979,12 @@ addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
 addEvent(Series, 'afterSetOptions', function (
-    this: Highcharts.Series,
-    e: { options: Highcharts.SeriesOptions }
+    e: { options: SeriesTypeOptions }
 ): void {
 
     var options = e.options,
         type = this.type,
-        plotOptions: SeriesPlotOptionsType =
-            this.chart.options.plotOptions as any,
+        plotOptions: SeriesTypePlotOptions = this.chart.options.plotOptions as any,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
             (O.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also
@@ -982,7 +997,7 @@ addEvent(Series, 'afterSetOptions', function (
         }
 
         options.dataGrouping = merge(
-            baseOptions,
+            baseOptions as any,
             defaultOptions,
             plotOptions.series && plotOptions.series.dataGrouping, // #1228
             // Set by the StockChart constructor:
@@ -995,8 +1010,8 @@ addEvent(Series, 'afterSetOptions', function (
 // When resetting the scale reset the hasProccessed flag to avoid taking
 // previous data grouping of neighbour series into accound when determining
 // group pixel width (#2692).
-addEvent(Axis, 'afterSetScale', function (this: Highcharts.Axis): void {
-    this.series.forEach(function (series: Highcharts.Series): void {
+addEvent(Axis, 'afterSetScale', function (): void {
+    this.series.forEach(function (series): void {
         series.hasProcessed = false;
     });
 });

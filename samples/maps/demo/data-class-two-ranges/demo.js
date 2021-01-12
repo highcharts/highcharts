@@ -33,11 +33,11 @@ Highcharts.data({
                     name: 'Votes',
                     data: [{
                         name: 'Trump',
-                        color: '#0200D0',
+                        color: '#C40401',
                         y: parseInt(columns[3][row], 10)
                     }, {
                         name: 'Clinton',
-                        color: '#C40401',
+                        color: '#0200D0',
                         y: parseInt(columns[2][row], 10)
                     }],
                     dataLabels: {
@@ -93,12 +93,12 @@ Highcharts.data({
                     dataClasses: [{
                         from: -100,
                         to: 0,
-                        color: '#C40401',
+                        color: '#0200D0',
                         name: 'Clinton'
                     }, {
                         from: 0,
                         to: 100,
-                        color: '#0200D0',
+                        color: '#C40401',
                         name: 'Trump'
                     }]
                 },

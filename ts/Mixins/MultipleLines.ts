@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2020 Wojciech Chmiel
+ *  (c) 2010-2021 Wojciech Chmiel
  *
  *  License: www.highcharts.com/license
  *
@@ -11,7 +11,14 @@
 'use strict';
 
 import type Point from '../Core/Series/Point';
+import type Series from '../Core/Series/Series';
 import H from '../Core/Globals.js';
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        toYData?(point: Point): Array<number>;
+    }
+}
 
 /**
  * Internal types
@@ -29,7 +36,7 @@ declare global {
             pointArrayMap?: MultipleLinesMixin['pointArrayMap'];
             pointValKey?: MultipleLinesMixin['pointValKey'];
             translate: MultipleLinesMixin['translate'];
-            toYData: MultipleLinesMixin['toYData'];
+            toYData?(point: Point): Array<number>;
         }
         interface MultipleLinesIndicatorOptions {
             gapSize?: number;

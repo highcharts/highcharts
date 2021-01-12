@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -16,13 +16,20 @@ import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import Chart from '../../Core/Chart/Chart.js';
 import GLRenderer from './WGLRenderer.js';
 import H from '../../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
+import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     error
 } = U;
+
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike extends Highcharts.BoostTargetObject {}
+}
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike extends Highcharts.BoostTargetObject {}
+}
 
 /**
  * Internal types
@@ -44,16 +51,10 @@ declare global {
             /** @requires modules/boost */
             boostResizeTarget(): void;
         }
-        interface ChartLike extends BoostTargetObject {
-        }
-        interface Series extends BoostTargetObject {
-        }
     }
 }
 
-import '../../Series/LineSeries.js';
-
-const mainCanvas = doc.createElement('canvas');
+let mainCanvas: HTMLCanvasElement|undefined;
 
 /**
  * Create a canvas + context and attach it to the target
@@ -72,7 +73,7 @@ const mainCanvas = doc.createElement('canvas');
  */
 function createAndAttachRenderer(
     chart: Chart,
-    series: Highcharts.Series
+    series: Series
 ): Highcharts.BoostGLRenderer {
     var width = chart.chartWidth,
         height = chart.chartHeight,
@@ -96,6 +97,10 @@ function createAndAttachRenderer(
     // As such, we force the Image fallback for now, but leaving the
     // actual Canvas path in-place in case this changes in the future.
     foSupported = false;
+
+    if (!mainCanvas) {
+        mainCanvas = doc.createElement('canvas');
+    }
 
     if (!target.renderTarget) {
         target.canvas = mainCanvas;

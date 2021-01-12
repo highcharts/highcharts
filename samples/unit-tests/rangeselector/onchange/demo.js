@@ -2,9 +2,11 @@ QUnit.test('RangeSelector update extremes on enter (#3477)', function (assert) {
     var $min,
         $enter = jQuery.Event('keypress', { keyCode: 13 }),
         chart = Highcharts.stockChart('container', {
-            series: [{
-                data: usdeur
-            }]
+            series: [
+                {
+                    data: usdeur
+                }
+            ]
         });
     $min = jQuery('.highcharts-range-selector[name="min"]');
     assert.strictEqual(

@@ -6,13 +6,12 @@
 
 'use strict';
 
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import Annotation from '../Annotations.js';
 import ControlPoint from '../ControlPoint.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
-const {
-    merge
-} = U;
+const { merge } = U;
 
 /**
  * Internal types.
@@ -212,7 +211,7 @@ CrookedLine.prototype.defaultOptions = merge(
             positioner: function (
                 this: Highcharts.AnnotationControlPoint,
                 target: Highcharts.AnnotationControllable
-            ): Highcharts.PositionObject {
+            ): PositionObject {
                 var graphic = this.graphic,
                     xy = MockPoint.pointToPixels(target.points[this.index]);
 

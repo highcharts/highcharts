@@ -2,7 +2,7 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2017 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -25,6 +25,7 @@ const {
     hasTouch
 } = H;
 import Axis from '../Core/Axis/Axis.js';
+import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -37,6 +38,12 @@ const {
     wrap
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        activeResizer?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -45,9 +52,6 @@ declare global {
     namespace Highcharts {
         interface Axis {
             resizer?: AxisResizer;
-        }
-        interface ChartLike {
-            activeResizer?: boolean;
         }
         interface XAxisOptions {
             maxLength?: (number|string);
@@ -83,9 +87,9 @@ declare global {
             public addMouseEvents(): void;
             public destroy(): void;
             public init(axis: Axis, update?: boolean): void;
-            public onMouseDown(e: PointerEventObject): void;
-            public onMouseMove(e: PointerEventObject): void;
-            public onMouseUp(e: PointerEventObject): void;
+            public onMouseDown(e: PointerEvent): void;
+            public onMouseMove(e: PointerEvent): void;
+            public onMouseUp(e: PointerEvent): void;
             public render(): void;
             public updateAxes(chartY: number): void;
         }
@@ -219,7 +223,7 @@ class AxisResizer {
              * @type     {Highcharts.ColorString}
              * @requires modules/drag-panes
              */
-            lineColor: '${palette.neutralColor20}',
+            lineColor: palette.neutralColor20,
 
             /**
              * Dash style of the control line.
@@ -384,17 +388,17 @@ class AxisResizer {
         // Make them as separate functions to enable wrapping them:
 
         resizer.mouseMoveHandler = mouseMoveHandler = function (
-            e: Highcharts.PointerEventObject
+            e: PointerEvent
         ): void {
             resizer.onMouseMove(e);
         };
         resizer.mouseUpHandler = mouseUpHandler = function (
-            e: Highcharts.PointerEventObject
+            e: PointerEvent
         ): void {
             resizer.onMouseUp(e);
         };
         resizer.mouseDownHandler = mouseDownHandler = function (
-            e: Highcharts.PointerEventObject
+            e: PointerEvent
         ): void {
             resizer.onMouseDown(e);
         };
@@ -427,7 +431,7 @@ class AxisResizer {
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event.
      */
-    public onMouseMove(e: Highcharts.PointerEventObject): void {
+    public onMouseMove(e: PointerEvent): void {
         /*
          * In iOS, a mousemove event with e.pageX === 0 is fired when holding
          * the finger down in the center of the scrollbar. This should
@@ -453,7 +457,7 @@ class AxisResizer {
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event.
      */
-    public onMouseUp(e: Highcharts.PointerEventObject): void {
+    public onMouseUp(e: PointerEvent): void {
         if (this.hasDragged) {
             this.updateAxes(
                 this.axis.chart.pointer.normalize(e).chartY -
@@ -472,7 +476,7 @@ class AxisResizer {
      *
      * @function Highcharts.AxisResizer#onMouseDown
      */
-    public onMouseDown(e: Highcharts.PointerEventObject): void {
+    public onMouseDown(e: PointerEvent): void {
         // Clear all hover effects.
         this.axis.chart.pointer.reset(false, 0);
 
@@ -497,7 +501,7 @@ class AxisResizer {
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
             // prev and next configs
-            axesConfigs: Array<Highcharts.Dictionary<any>> = [],
+            axesConfigs: Array<Record<string, any>> = [],
             stopDrag = false,
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
@@ -639,7 +643,7 @@ class AxisResizer {
         if (!stopDrag) {
             // Now update axes:
             axesConfigs.forEach(function (
-                config: Highcharts.Dictionary<any>
+                config: Record<string, any>
             ): void {
                 config.axis.update(config.options, false);
             });

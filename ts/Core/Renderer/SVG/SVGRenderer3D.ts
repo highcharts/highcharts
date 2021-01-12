@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Extensions to the SVGRenderer class to enable 3D shapes
  *
@@ -10,11 +10,21 @@
  *
  * */
 
-import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type AnimationOptions from '../../Animation/AnimationOptions';
 import type ColorType from '../../Color/ColorType';
 import type Position3DObject from '../../Renderer/Position3DObject';
 import type PositionObject from '../../Renderer/PositionObject';
+import type SVGArc3D from './SVGArc3D';
 import type SVGAttributes from './SVGAttributes';
+import type SVGCuboid from './SVGCuboid';
 import type SVGPath from './SVGPath';
 import A from '../../Animation/AnimationUtilities.js';
 const { animObject } = A;
@@ -22,129 +32,79 @@ import Color from '../../Color/Color.js';
 const color = Color.parse;
 import type Fx from '../../Animation/Fx';
 import H from '../../Globals.js';
+const {
+    charts,
+    deg2rad
+} = H;
 import Math3D from '../../../Extensions/Math3D.js';
 const {
     perspective,
     shapeArea
 } = Math3D;
 import SVGElement from './SVGElement.js';
+import SVGElement3D from './SVGElement3D.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from '../../Utilities.js';
 const {
     defined,
     extend,
     merge,
-    objectEach,
     pick
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Arc3dPaths {
-            out: SVGPath;
-            inn: SVGPath;
-            side1: SVGPath;
-            side2: SVGPath;
-            top: SVGPath;
-            zInn: number;
-            zOut: number;
-            zSide1: number;
-            zSide2: number;
-            zTop: number;
-        }
-        interface CuboidMethodsObject extends Element3dMethodsObject {
-            parts: Array<string>;
-            pathType: string;
-            animate(
-                this: SVGElement,
-                args: SVGAttributes,
-                duration?: (boolean|Partial<AnimationOptionsObject>),
-                complete?: Function
-            ): SVGElement;
-            attr(
-                this: SVGElement,
-                args: (string|SVGAttributes),
-                val?: (number|string),
-                complete?: any,
-                continueAnimation?: any
-            ): SVGElement;
-            fillSetter(this: SVGElement, fill: ColorType): SVGElement;
-        }
-        interface CuboidPathsObject extends SVGPath3dObject {
-            front: SVGPath;
-            isFront: number;
-            isTop: number;
-            side: SVGPath;
-            top: SVGPath;
-            zIndexes: Dictionary<number>;
-            forcedSides?: Array<string>;
-        }
-        interface Element3dMethodsObject {
-            processParts: Function;
-            singleSetterForParts: Function;
-            destroyParts(this: SVGElement): void;
-            initArgs(this: SVGElement, args: SVGAttributes): void;
-        }
-        interface Elements3dObject {
-            base: Element3dMethodsObject;
-            cuboid: CuboidMethodsObject;
-        }
-        interface SVGPath3dObject {
-            back?: SVGPath;
-            bottom?: SVGPath;
-            front?: SVGPath;
-            side?: SVGPath;
-            top?: SVGPath;
-            zIndexes?: Dictionary<number>;
-        }
-        interface SVGElement {
-            attribs?: SVGAttributes;
-            parts?: Array<string>;
-            pathType?: string;
-            vertexes?: Array<Position3DObject>;
-            initArgs: Element3dMethodsObject['initArgs'];
-            setPaths(attribs: SVGAttributes): void;
-        }
-        interface SVGRenderer {
-            elements3d: Elements3dObject;
-            arc3d(attribs: SVGAttributes): SVGElement;
-            arc3dPath(shapeArgs: SVGAttributes): Arc3dPaths;
-            cuboid(shapeArgs: SVGAttributes): SVGElement;
-            cuboidPath(shapeArgs: SVGAttributes): CuboidPathsObject;
-            element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
-            face3d(args?: SVGAttributes): SVGElement;
-            polyhedron(args?: SVGAttributes): SVGElement;
-            toLinePath(
-                points: Array<PositionObject>,
-                closed?: boolean
-            ): SVGPath;
-            toLineSegments(points: Array<PositionObject>): SVGPath;
-        }
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module './SVGElementLike' {
+    interface SVGElementLike {
+        attribs?: SVGAttributes;
+        parts?: Array<string>;
+        pathType?: string;
+        vertexes?: Array<Position3DObject>;
+        initArgs: typeof SVGElement3D.base.initArgs;
+        setPaths(attribs: SVGAttributes): void;
     }
 }
 
-var cos = Math.cos,
+declare module './SVGRendererLike' {
+    interface SVGRendererLike {
+        elements3d: SVGElement3D;
+        arc3d(attribs: SVGAttributes): SVGElement;
+        arc3dPath(shapeArgs: SVGAttributes): SVGArc3D;
+        cuboid(shapeArgs: SVGAttributes): SVGElement;
+        cuboidPath(shapeArgs: SVGAttributes): SVGCuboid;
+        element3d(type: string, shapeArgs: SVGAttributes): SVGElement;
+        face3d(args?: SVGAttributes): SVGElement;
+        polyhedron(args?: SVGAttributes): SVGElement;
+        toLinePath(
+            points: Array<PositionObject>,
+            closed?: boolean
+        ): SVGPath;
+        toLineSegments(points: Array<PositionObject>): SVGPath;
+    }
+}
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const cos = Math.cos,
+    sin = Math.sin,
     PI = Math.PI,
-    sin = Math.sin;
+    dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
-var charts = H.charts,
-    deg2rad = H.deg2rad,
-    // internal:
-    dFactor: number,
-    element3dMethods: Highcharts.Element3dMethodsObject,
-    cuboidMethods: Highcharts.CuboidMethodsObject;
+/* *
+ *
+ *  Functions
+ *
+ * */
 
-/*
-    EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
-*/
-// HELPER METHODS
-dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
-
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 /**
  * Method to construct a curved path. Can 'wrap' around more then 180 degrees.
@@ -197,6 +157,14 @@ function curveTo(
     ]];
 }
 
+/* *
+ *
+ *  Composition
+ *
+ * */
+
+SVGRenderer.prototype.elements3d = SVGElement3D;
+
 SVGRenderer.prototype.toLinePath = function (
     points: Array<PositionObject>,
     closed?: boolean
@@ -245,6 +213,8 @@ SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
     ret.vertexes = [];
     ret.insidePlotArea = false;
     ret.enabled = true;
+
+    /* eslint-disable no-invalid-this */
 
     ret.attr = function (
         this: SVGElement,
@@ -324,6 +294,8 @@ SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
         return SVGElement.prototype.animate.apply(this, arguments as any);
     };
 
+    /* eslint-enable no-invalid-this */
+
     return ret.attr(args);
 };
 
@@ -343,6 +315,7 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
 
     result.faces = [];
 
+    /* eslint-disable no-invalid-this */
 
     // destroy all children
     result.destroy = function (): undefined {
@@ -385,7 +358,7 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
     result.animate = function (
         this: SVGElement,
         params: SVGAttributes,
-        duration?: (boolean|Partial<AnimationOptionsObject>),
+        duration?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement {
         if (params && params.faces) {
@@ -403,217 +376,9 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
         return SVGElement.prototype.animate.apply(this, arguments as any);
     };
 
+    /* eslint-enable no-invalid-this */
+
     return result.attr(args);
-};
-
-// Base, abstract prototype member for 3D elements
-element3dMethods = {
-    /**
-     * The init is used by base - renderer.Element
-     * @private
-     */
-    initArgs: function (
-        this: SVGElement,
-        args: SVGAttributes
-    ): void {
-        var elem3d = this,
-            renderer = elem3d.renderer,
-            paths: (Highcharts.Arc3dPaths|Highcharts.CuboidPathsObject) =
-                (renderer as any)[elem3d.pathType + 'Path'](args),
-            zIndexes = (paths as any).zIndexes;
-
-        // build parts
-        (elem3d.parts as any).forEach(function (part: string): void {
-            elem3d[part] = renderer.path((paths as any)[part]).attr({
-                'class': 'highcharts-3d-' + part,
-                zIndex: zIndexes[part] || 0
-            }).add(elem3d);
-        });
-
-        elem3d.attr({
-            'stroke-linejoin': 'round',
-            zIndex: zIndexes.group
-        });
-
-        // store original destroy
-        elem3d.originalDestroy = elem3d.destroy;
-        elem3d.destroy = elem3d.destroyParts;
-        // Store information if any side of element was rendered by force.
-        elem3d.forcedSides = (paths as any).forcedSides;
-
-    },
-
-    /**
-     * Single property setter that applies options to each part
-     * @private
-     */
-    singleSetterForParts: function (
-        this: SVGElement,
-        prop: string,
-        val: any,
-        values?: Highcharts.Dictionary<any>,
-        verb?: string,
-        duration?: any,
-        complete?: any
-    ): SVGElement {
-        var elem3d = this,
-            newAttr = {} as Highcharts.Dictionary<any>,
-            optionsToApply = [null, null, (verb || 'attr'), duration, complete],
-            hasZIndexes = values && values.zIndexes;
-
-        if (!values) {
-            newAttr[prop] = val;
-            optionsToApply[0] = newAttr;
-        } else {
-            // It is needed to deal with the whole group zIndexing
-            // in case of graph rotation
-            if (hasZIndexes && hasZIndexes.group) {
-                this.attr({
-                    zIndex: hasZIndexes.group
-                });
-            }
-            objectEach(values, function (partVal: any, part: string): void {
-                newAttr[part] = {};
-                newAttr[part][prop] = partVal;
-
-                // include zIndexes if provided
-                if (hasZIndexes) {
-                    newAttr[part].zIndex = values.zIndexes[part] || 0;
-                }
-            });
-            optionsToApply[1] = newAttr;
-        }
-
-        return elem3d.processParts.apply(elem3d, optionsToApply);
-    },
-
-    /**
-     * Calls function for each part. Used for attr, animate and destroy.
-     * @private
-     */
-    processParts: function (
-        this: SVGElement,
-        props: any,
-        partsProps: Highcharts.Dictionary<any>,
-        verb: string,
-        duration?: any,
-        complete?: any
-    ): SVGElement {
-        var elem3d = this;
-
-        (elem3d.parts as any).forEach(function (part: string): void {
-            // if different props for different parts
-            if (partsProps) {
-                props = pick(partsProps[part], false);
-            }
-
-            // only if something to set, but allow undefined
-            if (props !== false) {
-                elem3d[part][verb](props, duration, complete);
-            }
-        });
-        return elem3d;
-    },
-
-    /**
-     * Destroy all parts
-     * @private
-     */
-    destroyParts: function (this: SVGElement): void {
-        this.processParts(null, null, 'destroy');
-        return this.originalDestroy();
-    }
-};
-
-// CUBOID
-cuboidMethods = merge(element3dMethods, {
-    parts: ['front', 'top', 'side'],
-    pathType: 'cuboid',
-
-    attr: function (
-        this: SVGElement,
-        args: (string|SVGAttributes),
-        val?: (number|string),
-        complete?: any,
-        continueAnimation?: any
-    ): SVGElement {
-        // Resolve setting attributes by string name
-        if (typeof args === 'string' && typeof val !== 'undefined') {
-            var key = args;
-
-            args = {} as SVGAttributes;
-            args[key] = val;
-        }
-
-        if ((args as any).shapeArgs || defined((args as any).x)) {
-            return this.singleSetterForParts(
-                'd',
-                null,
-                (this.renderer as any)[this.pathType + 'Path'](
-                    (args as any).shapeArgs || args
-                )
-            );
-        }
-
-        return SVGElement.prototype.attr.call(
-            this, args, void 0, complete, continueAnimation
-        );
-    },
-    animate: function (
-        this: SVGElement,
-        args: SVGAttributes,
-        duration?: (boolean|Partial<AnimationOptionsObject>),
-        complete?: Function
-    ): SVGElement {
-        if (defined(args.x) && defined(args.y)) {
-            var paths = (this.renderer as any)[this.pathType + 'Path'](args),
-                forcedSides = paths.forcedSides;
-            this.singleSetterForParts(
-                'd', null, paths, 'animate', duration, complete
-            );
-
-            this.attr({
-                zIndex: paths.zIndexes.group
-            });
-
-            // If sides that are forced to render changed, recalculate colors.
-            if (forcedSides !== this.forcedSides) {
-                this.forcedSides = forcedSides;
-                cuboidMethods.fillSetter.call(this, this.fill);
-            }
-        } else {
-            SVGElement.prototype.animate.call(this, args, duration, complete);
-        }
-        return this;
-    },
-    fillSetter: function (
-        this: SVGElement,
-        fill: ColorType
-    ): SVGElement {
-        var elem3d = this;
-        elem3d.forcedSides = elem3d.forcedSides || [];
-        elem3d.singleSetterForParts('fill', null, {
-            front: fill,
-            // Do not change color if side was forced to render.
-            top: color(fill).brighten(
-                elem3d.forcedSides.indexOf('top') >= 0 ? 0 : 0.1
-            ).get(),
-            side: color(fill).brighten(
-                elem3d.forcedSides.indexOf('side') >= 0 ? 0 : -0.1
-            ).get()
-        });
-
-        // fill for animation getter (#6776)
-        elem3d.color = elem3d.fill = fill;
-
-        return elem3d;
-    }
-});
-
-// set them up
-SVGRenderer.prototype.elements3d = {
-    base: element3dMethods,
-    cuboid: cuboidMethods
 };
 
 /**
@@ -651,7 +416,7 @@ SVGRenderer.prototype.cuboid = function (
 SVGRenderer.prototype.cuboidPath = function (
     this: Highcharts.SVGRenderer,
     shapeArgs: SVGAttributes
-): Highcharts.CuboidPathsObject {
+): SVGCuboid {
     var x = shapeArgs.x,
         y = shapeArgs.y,
         z = shapeArgs.z || 0,
@@ -934,6 +699,8 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
     wrapper.inn = renderer.path();
     wrapper.out = renderer.path();
 
+    /* eslint-disable no-invalid-this */
+
     // Add all faces
     wrapper.onAdd = function (): void {
         var parent = wrapper.parentGroup,
@@ -1058,7 +825,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
     wrapper.animate = function (
         this: SVGElement,
         params: SVGAttributes,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement {
         var paramArr,
@@ -1131,6 +898,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
 
         return SVGElement.prototype.destroy.call(this);
     };
+
     // hide all children
     wrapper.hide = function (this: SVGElement): void {
         this.top.hide();
@@ -1139,6 +907,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
         this.side1.hide();
         this.side2.hide();
     } as any;
+
     wrapper.show = function (
         this: SVGElement,
         inherit?: boolean
@@ -1149,13 +918,16 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
         this.side1.show(inherit);
         this.side2.show(inherit);
     } as any;
+
+    /* eslint-enable no-invalid-this */
+
     return wrapper;
 };
 
 // Generate the paths required to draw a 3D arc
 SVGRenderer.prototype.arc3dPath = function (
     shapeArgs: SVGAttributes
-): Highcharts.Arc3dPaths {
+): SVGArc3D {
     var cx: number = shapeArgs.x, // x coordinate of the center
         cy: number = shapeArgs.y, // y coordinate of the center
         start = shapeArgs.start, // start angle
@@ -1349,5 +1121,11 @@ SVGRenderer.prototype.arc3dPath = function (
         zSide2: a2 * 0.99
     };
 };
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default SVGRenderer;

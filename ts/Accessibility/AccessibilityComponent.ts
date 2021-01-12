@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component class definition
  *
@@ -10,17 +10,19 @@
  *
  * */
 
+'use strict';
+
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type {
     DOMElementType,
     HTMLDOMElement
 } from '../Core/Renderer/DOMElementType';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import ChartUtilities from './Utils/ChartUtilities.js';
-const {
-    unhideChartElementFromAT
-} = ChartUtilities;
+const { unhideChartElementFromAT } = ChartUtilities;
 import DOMElementProvider from './Utils/DOMElementProvider.js';
 import EventProvider from './Utils/EventProvider.js';
 import H from '../Core/Globals.js';
@@ -51,7 +53,7 @@ declare global {
             public chart: AccessibilityChart;
             public domElementProvider: DOMElementProvider;
             public eventProvider: EventProvider;
-            public keyCodes: Dictionary<number>;
+            public keyCodes: Record<string, number>;
             public addEvent: EventProvider['addEvent'];
             public createElement: DOMElementProvider['createElement'];
             public addProxyGroup(attrs?: HTMLAttributes): HTMLDOMElement;
@@ -258,7 +260,7 @@ AccessibilityComponent.prototype = {
      */
     addProxyGroup: function (
         this: Highcharts.AccessibilityComponent,
-        attrs?: Highcharts.HTMLAttributes
+        attrs?: HTMLAttributes
     ): HTMLDOMElement {
         this.createOrUpdateProxyContainer();
 
@@ -376,7 +378,7 @@ AccessibilityComponent.prototype = {
     getElementPosition: function (
         this: Highcharts.AccessibilityComponent,
         element: SVGElement
-    ): Highcharts.BBoxObject {
+    ): BBoxObject {
         var el = element.element,
             div: HTMLDOMElement = (this.chart as any).renderTo;
 
@@ -470,7 +472,7 @@ AccessibilityComponent.prototype = {
 
                 e.stopPropagation();
                 e.preventDefault();
-            });
+            }, { passive: false });
         });
     },
 

@@ -9,7 +9,7 @@
  * */
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
-var attr = U.attr, error = U.error, objectEach = U.objectEach, splat = U.splat;
+var attr = U.attr, createElement = U.createElement, discardElement = U.discardElement, error = U.error, objectEach = U.objectEach, splat = U.splat;
 /**
  * Serialized form of an SVG/HTML definition, including children. Some key
  * property names are reserved: tagName, textContent, and children.
@@ -168,7 +168,7 @@ var AST = /** @class */ (function () {
         /MSIE 9.0/.test(navigator.userAgent) ||
             // IE8-
             typeof DOMParser === 'undefined') {
-            body = H.createElement('div');
+            body = createElement('div');
             body.innerHTML = markup;
             doc = { body: body };
         }
@@ -212,7 +212,7 @@ var AST = /** @class */ (function () {
         };
         [].forEach.call(doc.body.childNodes, function (childNode) { return appendChildNodes(childNode, nodes); });
         if (body) {
-            H.discardElement(body);
+            discardElement(body);
         }
         return nodes;
     };

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2017 Highsoft, Black Label
+ *  (c) 2009-2021 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -10,13 +10,12 @@
 
 'use strict';
 
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
+import type PointerEvent from '../../Core/PointerEvent';
 import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
-import {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -34,6 +33,20 @@ const {
     setOptions
 } = U;
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        navigationBindings?: NavigationBindings;
+        /** @requires modules/annotations */
+        initNavigationBindings(): void;
+    }
+}
+
+declare module '../../Core/PointerEvent' {
+    interface PointerEvent {
+        activeAnnotation?: boolean;
+    }
+}
+
 /**
  * Internal types.
  * @private
@@ -50,7 +63,7 @@ declare global {
             fibonacci: Array<string>;
             label: Array<string>;
             measure: Array<string>;
-            nestedOptions: Dictionary<Array<string>>;
+            nestedOptions: Record<string, Array<string>>;
             pitchfork: Array<string>;
             rect: Array<string>;
             tunnel: Array<string>;
@@ -62,13 +75,8 @@ declare global {
         interface AnnotationsOptions {
             langKey?: string;
         }
-        interface ChartLike {
-            navigationBindings?: NavigationBindings;
-            /** @requires modules/annotations */
-            initNavigationBindings(): void;
-        }
         interface LangNavigationOptions {
-            popup?: Dictionary<string>;
+            popup?: Record<string, string>;
         }
         interface LangOptions {
             navigation?: LangNavigationOptions;
@@ -87,7 +95,7 @@ declare global {
         }
         interface NavigationBindingsUtilsObject {
             getFieldType(value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text');
-            updateRectSize(event: PointerEventObject, annotation: Annotation): void;
+            updateRectSize(event: PointerEvent, annotation: Annotation): void;
         }
         interface NavigationEventsOptions {
             closePopup?: Function;
@@ -97,13 +105,10 @@ declare global {
         }
         interface NavigationOptions {
             annotationsOptions?: DeepPartial<AnnotationsOptions>;
-            bindings?: Dictionary<NavigationBindingsOptionsObject>;
+            bindings?: Record<string, NavigationBindingsOptionsObject>;
             bindingsClassName?: string;
             events?: NavigationEventsOptions;
             iconsURL?: string;
-        }
-        interface PointerEventObject {
-            activeAnnotation?: boolean;
         }
     }
 }
@@ -186,7 +191,7 @@ const bindingsUtils = {
      * @param {Highcharts.Annotation} annotation
      * Annotation to be updated
      */
-    updateRectSize: function (event: Highcharts.PointerEventObject, annotation: Annotation): void {
+    updateRectSize: function (event: PointerEvent, annotation: Annotation): void {
         var chart = annotation.chart,
             options = annotation.options.typeOptions,
             coords = chart.pointer.getCoordinates(event),
@@ -220,7 +225,7 @@ const bindingsUtils = {
             'string': 'text',
             'number': 'number',
             'boolean': 'checkbox'
-        } as Highcharts.Dictionary<('checkbox'|'number'|'text')>)[
+        } as Record<string, ('checkbox'|'number'|'text')>)[
             typeof value
         ];
     }
@@ -305,7 +310,7 @@ class NavigationBindings {
      * */
 
     public activeAnnotation?: (false|Annotation);
-    public boundClassNames: Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject> = void 0 as any;
+    public boundClassNames: Record<string, Highcharts.NavigationBindingsOptionsObject> = void 0 as any;
     public chart: Highcharts.AnnotationChart;
     public container: HTMLCollectionOf<HTMLDOMElement>;
     public currentUserDetails?: Annotation;
@@ -371,7 +376,7 @@ class NavigationBindings {
         // Handle multiple containers with the same class names:
         ([] as Array<HTMLElement>).forEach.call(bindingsContainer, function (subContainer: HTMLElement): void {
             navigation.eventsToUnbind.push(
-                addEvent(subContainer, 'click', function (event: Highcharts.PointerEventObject): void {
+                addEvent(subContainer, 'click', function (event: PointerEvent): void {
                     var bindings = navigation.getButtonEvents(
                         subContainer,
                         event
@@ -394,7 +399,8 @@ class NavigationBindings {
                     addEvent(
                         navigation,
                         eventName,
-                        callback
+                        callback,
+                        { passive: false }
                     )
                 );
             }
@@ -403,7 +409,7 @@ class NavigationBindings {
         navigation.eventsToUnbind.push(
             addEvent(chart.container, 'click', function (
                 this: HTMLDOMElement,
-                e: Highcharts.PointerEventObject
+                e: PointerEvent
             ): void {
                 if (
                     !chart.cancelClick &&
@@ -418,10 +424,10 @@ class NavigationBindings {
         );
         navigation.eventsToUnbind.push(
             addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (
-                e: Highcharts.PointerEventObject
+                e: PointerEvent
             ): void {
                 navigation.bindingsContainerMouseMove(this, e);
-            })
+            }, H.isTouchDevice ? { passive: false } : void 0)
         );
     }
 
@@ -460,7 +466,7 @@ class NavigationBindings {
     public bindingsButtonClick(
         button: HTMLDOMElement,
         events: Highcharts.NavigationBindingsOptionsObject,
-        clickEvent: Highcharts.PointerEventObject
+        clickEvent: PointerEvent
     ): void {
         var navigation = this,
             chart = navigation.chart;
@@ -513,7 +519,7 @@ class NavigationBindings {
      */
     public bindingsChartClick(
         chart: Highcharts.AnnotationChart,
-        clickEvent: Highcharts.PointerEventObject
+        clickEvent: PointerEvent
     ): void {
         var navigation = this,
             chart = navigation.chart,
@@ -648,7 +654,7 @@ class NavigationBindings {
      *         Modified config
      */
     public fieldsToOptions<T>(
-        fields: Highcharts.Dictionary<string>,
+        fields: Record<string, string>,
         config: T
     ): T {
         objectEach(fields, function (value: string, field: string): void {
@@ -712,7 +718,7 @@ class NavigationBindings {
      */
     public annotationToFields(
         annotation: Annotation
-    ): Highcharts.Dictionary<string> {
+    ): Record<string, string> {
         var options = annotation.options,
             editables = NavigationBindings.annotationsEditable,
             nestedEditables = editables.nestedOptions,
@@ -1026,7 +1032,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
     /**
      * @private
      */
-    function selectAndshowPopup(this: Annotation, event: Highcharts.PointerEventObject): void {
+    function selectAndshowPopup(this: Annotation, event: PointerEvent): void {
         var annotation = this,
             navigation = annotation.chart.navigationBindings,
             prevAnnotation = navigation.activeAnnotation;
@@ -1209,7 +1215,7 @@ setOptions({
                 /** @ignore-option */
                 start: function (
                     this: NavigationBindings,
-                    e: Highcharts.PointerEventObject
+                    e: PointerEvent
                 ): Annotation {
                     var coords = this.chart.pointer.getCoordinates(e),
                         navigation = this.chart.options.navigation;
@@ -1243,7 +1249,7 @@ setOptions({
                 steps: [
                     function (
                         this: NavigationBindings,
-                        e: Highcharts.PointerEventObject,
+                        e: PointerEvent,
                         annotation: Annotation
                     ): void {
                         var point = annotation.options.shapes[0].point,
@@ -1285,7 +1291,7 @@ setOptions({
                 /** @ignore-option */
                 start: function (
                     this: NavigationBindings,
-                    e: Highcharts.PointerEventObject
+                    e: PointerEvent
                 ): Annotation {
                     var coords = this.chart.pointer.getCoordinates(e),
                         navigation = this.chart.options.navigation,
@@ -1335,7 +1341,7 @@ setOptions({
                 steps: [
                     function (
                         this: NavigationBindings,
-                        e: Highcharts.PointerEventObject,
+                        e: PointerEvent,
                         annotation: Annotation
                     ): void {
                         var points: Array<Highcharts.AnnotationMockPointOptionsObject> =
@@ -1372,7 +1378,7 @@ setOptions({
                 /** @ignore-option */
                 start: function (
                     this: NavigationBindings,
-                    e: Highcharts.PointerEventObject
+                    e: PointerEvent
                 ): Annotation {
                     var coords = this.chart.pointer.getCoordinates(e),
                         navigation = this.chart.options.navigation;

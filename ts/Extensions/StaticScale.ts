@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Torstein Honsi, Lars Cabrera
+ *  (c) 2016-2021 Torstein Honsi, Lars Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -9,7 +9,17 @@
  * */
 
 'use strict';
-import H from '../Core/Globals.js';
+
+import type Series from '../Core/Series/Series';
+
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        redrawTrigger?: string;
+        initiatedScale?: boolean;
+        /** @requires modules/static-scale */
+        adjustHeight(): void;
+    }
+}
 
 /**
  * Internal types
@@ -17,12 +27,6 @@ import H from '../Core/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            redrawTrigger?: string;
-            initiatedScale?: boolean;
-            /** @requires modules/static-scale */
-            adjustHeight(): void;
-        }
         interface XAxisOptions {
             staticScale?: number;
         }
@@ -106,7 +110,7 @@ Chart.prototype.adjustHeight = function (): void {
 
                 // Make sure clip rects have the right height before initial
                 // animation.
-                axis.series.forEach(function (series: Highcharts.Series): void {
+                axis.series.forEach(function (series: Series): void {
                     var clipRect = series.sharedClipKey &&
                         (chart as any)[series.sharedClipKey];
 

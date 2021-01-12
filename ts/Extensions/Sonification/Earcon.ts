@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Earcons for the sonification module in Highcharts.
  *
@@ -30,7 +30,7 @@ declare global {
         class Earcon {
             public constructor(options: EarconOptionsObject);
             public id: string;
-            public instrumentsPlaying: Dictionary<Instrument>;
+            public instrumentsPlaying: Record<string, Instrument>;
             public options: EarconOptionsObject;
             public cancelSonify(fadeOut?: boolean): void;
             public init(options: EarconOptionsObject): void;

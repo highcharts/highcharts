@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,11 +17,13 @@ import type {
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
+import type DashStyleValue from '../Renderer/DashStyleValue';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
+import palette from '../../Core/Color/Palette.js';
 
 /**
  * Internal types
@@ -173,6 +175,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    fireEvent,
     merge,
     objectEach,
     pick
@@ -219,7 +222,7 @@ class PlotLineOrBand {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     public render(): (Highcharts.PlotLineOrBand|undefined) {
-        H.fireEvent(this, 'render');
+        fireEvent(this, 'render');
 
         var plotLine = this,
             axis = plotLine.axis,
@@ -260,7 +263,7 @@ class PlotLineOrBand {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = color || '${palette.neutralColor40}';
+                attribs.stroke = color || palette.neutralColor40;
                 attribs['stroke-width'] = pick(
                     (options as Highcharts.AxisPlotLinesOptions).width,
                     1
@@ -271,7 +274,7 @@ class PlotLineOrBand {
                 }
 
             } else if (isBand) { // plot band
-                attribs.fill = color || '${palette.highlightColor10}';
+                attribs.fill = color || palette.highlightColor10;
                 if ((options as Highcharts.AxisPlotBandsOptions).borderWidth) {
                     attribs.stroke = (
                         options as Highcharts.AxisPlotBandsOptions
@@ -1141,23 +1144,27 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @param {number} to
      *        The axis value to end on.
      *
+     * @param {Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions} options
+     *        The plotBand or plotLine configuration object.
+     *
      * @return {Highcharts.SVGPathArray}
      *         The SVG path definition in array form.
      */
     getPlotBandPath: function (
         this: Highcharts.Axis,
         from: number,
-        to: number
+        to: number,
+        options: (Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions) = this.options
     ): SVGPath {
         var toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
-                acrossPanes: (this.options as any).acrossPanes
+                acrossPanes: options.acrossPanes
             } as Highcharts.AxisPlotLinePathOptionsObject),
             path = this.getPlotLinePath({
                 value: from,
                 force: true,
-                acrossPanes: (this.options as any).acrossPanes
+                acrossPanes: options.acrossPanes
             } as Highcharts.AxisPlotLinePathOptionsObject),
             result = [] as SVGPath,
             i,
@@ -1288,7 +1295,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj: Highcharts.PlotLineOrBand|undefined = new Highcharts.PlotLineOrBand(this, options),
+        var obj: Highcharts.PlotLineOrBand|undefined = new H.PlotLineOrBand(this, options),
             userOptions = this.userOptions;
 
         if (this.visible) {
@@ -1296,6 +1303,17 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         }
 
         if (obj) { // #2189
+            if (!this._addedPlotLB) {
+                this._addedPlotLB = true;
+                (userOptions.plotLines || [])
+                    .concat((userOptions.plotBands as any) || [])
+                    .forEach(
+                        (plotLineOptions: any): void => {
+                            this.addPlotBandOrLine(plotLineOptions);
+                        }
+                    );
+            }
+
             // Add it to the user options for exporting and Axis.update
             if (coll) {
                 // Workaround Microsoft/TypeScript issue #32693
@@ -1304,7 +1322,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
-            this._addedPlotLB = true;
         }
 
         return obj;

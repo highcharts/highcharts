@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,16 +8,21 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+'use strict';
+
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type Point from '../Core/Series/Point';
+import type PositionObject from '../Core/Renderer/PositionObject';
+import type SplineSeries from '../Series/Spline/SplineSeries';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -31,19 +36,53 @@ const {
     syncTimeout
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        boxesToAvoid?: Array<Highcharts.LabelIntersectBoxObject>;
+        labelSeries?: Array<Series>;
+        labelSeriesMaxSum?: number;
+        seriesLabelTimer?: number;
+        drawSeriesLabels(): void;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        chartCenterY?: number;
+        chartX?: number;
+        chartY?: number;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        interpolatedPoints?: Array<Point>;
+        labelBySeries?: SVGElement;
+        sum?: number;
+        checkClearPoint(
+            x: number,
+            y: number,
+            bBox: BBoxObject,
+            checkDistance?: boolean
+        ): (boolean|Highcharts.LabelClearPointObject);
+        drawSeriesLabels(): void;
+        getPointsOnGraph(): (Array<Point>|undefined);
+        labelFontSize(minFontSize: number, maxFontSize: number): string;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        label?: Highcharts.SeriesLabelOptionsObject;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            boxesToAvoid?: Array<LabelIntersectBoxObject>;
-            labelSeries?: Array<Series>;
-            labelSeriesMaxSum?: number;
-            seriesLabelTimer?: number;
-            drawSeriesLabels(): void;
-        }
         interface LabelClearPointObject extends PositionObject {
             connectorPoint?: Point;
             weight: number;
@@ -53,25 +92,6 @@ declare global {
             left: number;
             right: number;
             top: number;
-        }
-        interface PointLike {
-            chartCenterY?: number;
-            chartX?: number;
-            chartY?: number;
-        }
-        interface Series {
-            interpolatedPoints?: Array<Point>;
-            labelBySeries?: SVGElement;
-            sum?: number;
-            checkClearPoint(
-                x: number,
-                y: number,
-                bBox: BBoxObject,
-                checkDistance?: boolean
-            ): (boolean|LabelClearPointObject);
-            drawSeriesLabels(): void;
-            getPointsOnGraph(): (Array<Point>|undefined);
-            labelFontSize(minFontSize: number, maxFontSize: number): string;
         }
         interface SeriesLabelOptionsObject {
             boxesToAvoid?: Array<LabelIntersectBoxObject>;
@@ -84,9 +104,6 @@ declare global {
             minFontSize?: (number|null);
             onArea?: (boolean|null);
             style?: CSSObject;
-        }
-        interface SeriesOptions {
-            label?: SeriesLabelOptionsObject;
         }
     }
 }
@@ -125,10 +142,7 @@ declare global {
 
 ''; // detach doclets above
 
-import '../Series/LineSeries.js';
-
-const labelDistance = 3,
-    Series = H.Series;
+const labelDistance = 3;
 
 setOptions({
 
@@ -384,8 +398,7 @@ SVGRenderer.prototype.symbols.connector = function (
  * @private
  * @function Highcharts.Series#getPointsOnGraph
  */
-Series.prototype.getPointsOnGraph = function (
-): (Array<Point>|undefined) {
+Series.prototype.getPointsOnGraph = function (): (Array<Point>|undefined) {
 
     if (!this.xAxis && !this.yAxis) {
         return;
@@ -413,7 +426,7 @@ Series.prototype.getPointsOnGraph = function (
         paneTop: number = inverted ? xAxis.pos : (yAxis.pos as any),
         onArea = pick((this.options.label as any).onArea, !!this.area),
         translatedThreshold = yAxis.getThreshold(this.options.threshold as any),
-        grid: Highcharts.Dictionary<number> = {};
+        grid: Record<string, number> = {};
 
     /**
      * Push the point to the interpolated points, but only if that position in
@@ -435,7 +448,7 @@ Series.prototype.getPointsOnGraph = function (
     // For splines, get the point at length (possible caveat: peaks are not
     // correctly detected)
     if (
-        (this as Highcharts.SplineSeries).getPointSpline &&
+        (this as SplineSeries).getPointSpline &&
         node.getPointAtLength &&
         !onArea &&
         // Not performing well on complex series, node.getPointAtLength is too
@@ -561,7 +574,7 @@ Series.prototype.labelFontSize = function (
 Series.prototype.checkClearPoint = function (
     x: number,
     y: number,
-    bBox: Highcharts.BBoxObject,
+    bBox: BBoxObject,
     checkDistance?: boolean
 ): (boolean|Highcharts.LabelClearPointObject) {
     var distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
@@ -573,7 +586,7 @@ Series.prototype.checkClearPoint = function (
             onArea || (this.options.label as any).connectorAllowed
         ),
         chart = this.chart,
-        series: (Highcharts.Series|undefined),
+        series: (Series|undefined),
         points: (Array<Point>|undefined),
         leastDistance = 16,
         withinRange: (boolean|undefined),
@@ -777,14 +790,12 @@ Chart.prototype.drawSeriesLabels = function (): void {
     // console.time('drawSeriesLabels');
 
     var chart = this,
-        labelSeries: Array<Highcharts.Series> = this.labelSeries as any;
+        labelSeries: Array<Series> = this.labelSeries as any;
 
     chart.boxesToAvoid = [];
 
     // Build the interpolated points
-    labelSeries.forEach(function (
-        series: Highcharts.Series
-    ): void {
+    labelSeries.forEach(function (series): void {
         series.interpolatedPoints = series.getPointsOnGraph();
 
         ((series.options.label as any).boxesToAvoid || []).forEach(function (
@@ -794,9 +805,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
         });
     });
 
-    chart.series.forEach(function (
-        series: Highcharts.Series
-    ): void {
+    chart.series.forEach(function (series): void {
 
         const labelOptions = series.options.label;
 
@@ -804,7 +813,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             return;
         }
 
-        var bBox: (Highcharts.BBoxObject|undefined),
+        var bBox: (BBoxObject|undefined),
             x: (number|undefined),
             y: (number|undefined),
             results: Array<Highcharts.LabelClearPointObject> = [],
@@ -849,7 +858,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
         function insidePane(
             x: number,
             y: number,
-            bBox: Highcharts.BBoxObject
+            bBox: BBoxObject
         ): boolean {
             var leftBound = Math.max(paneLeft as any, pick(areaMin, -Infinity)),
                 rightBound = Math.min(
@@ -1077,7 +1086,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Default initial animation to a fraction of the series
                     // animation (#9396)
-                    let animationOptions: Partial<AnimationOptionsObject>|undefined;
+                    let animationOptions: Partial<AnimationOptions>|undefined;
                     if (isNew) {
                         animationOptions = animObject(series.options.animation);
                         // @todo: Safely remove any cast after merging #13005
@@ -1143,7 +1152,7 @@ function drawLabels(this: Chart, e: Event): void {
         U.clearTimeout(chart.seriesLabelTimer as any);
 
         // Which series should have labels
-        chart.series.forEach(function (series: Highcharts.Series): void {
+        chart.series.forEach(function (series): void {
             var options: Highcharts.SeriesLabelOptionsObject =
                     series.options.label as any,
                 label: SVGElement = series.labelBySeries as any,

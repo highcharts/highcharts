@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,13 +10,18 @@
  *
  * */
 
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+'use strict';
+
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-const { setOptions } = U;
+const {
+    createElement,
+    setOptions
+} = U;
 
 // Load the fonts
-H.createElement('link', {
+createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Unica+One',
     rel: 'stylesheet',
     type: 'text/css'
@@ -112,7 +117,7 @@ H.theme = {
         errorbar: {
             color: 'white'
         }
-    } as SeriesPlotOptionsType,
+    } as SeriesTypePlotOptions,
     legend: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         itemStyle: {

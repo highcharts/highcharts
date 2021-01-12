@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component class definition
  *
@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import ChartUtilities from './Utils/ChartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import DOMElementProvider from './Utils/DOMElementProvider.js';
@@ -297,7 +298,7 @@ AccessibilityComponent.prototype = {
                 }
                 e.stopPropagation();
                 e.preventDefault();
-            });
+            }, { passive: false });
         });
     },
     /**

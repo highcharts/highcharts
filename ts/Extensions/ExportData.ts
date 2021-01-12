@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,12 @@
 
 import type Point from '../Core/Series/Point';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
-
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
+import type Series from '../Core/Series/Series.js';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -41,45 +46,61 @@ const {
     setOptions
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        dataTableDiv?: HTMLDivElement;
+        /** @requires modules/export-data */
+        downloadCSV(): void;
+        /** @requires modules/export-data */
+        downloadXLS(): void;
+        /** @requires modules/export-data */
+        getCSV(useLocalDecimalPoint?: boolean): string;
+        /** @requires modules/export-data */
+        getDataRows(
+            multiLevelHeaders?: boolean
+        ): Array<Array<(number|string)>>;
+        /** @requires modules/export-data */
+        getTable(useLocalDecimalPoint?: boolean): string;
+        /** @requires modules/export-data */
+        getTableAST(useLocalDecimalPoint?: boolean): Highcharts.ASTNode;
+        /** @requires modules/export-data */
+        setUpKeyToAxis(): void;
+        /** @requires modules/export-data */
+        viewData(): void;
+        /** @requires modules/export-data */
+        toggleDataTable(show?: boolean): void;
+        /** @requires modules/export-data */
+        hideData(): void;
+        /** @requires modules/export-data */
+        isDataTableVisible: boolean;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        exportKey?: string;
+        keyToAxis?: Record<string, string>;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        includeInDataExport?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        type ExportingCategoryMap = Dictionary<Array<(number|string|null)>>;
-        type ExportingDateTimeMap = Dictionary<Array<string>>;
+        type ExportingCategoryMap = Record<string, Array<(number|string|null)>>;
+        type ExportingDateTimeMap = Record<string, Array<string>>;
 
         interface ExportingCategoryDateTimeMap {
             categoryMap: ExportingCategoryMap;
             dateTimeValueAxisMap: ExportingDateTimeMap;
-        }
-        interface ChartLike {
-            dataTableDiv?: HTMLDivElement;
-            /** @requires modules/export-data */
-            downloadCSV(): void;
-            /** @requires modules/export-data */
-            downloadXLS(): void;
-            /** @requires modules/export-data */
-            getCSV(useLocalDecimalPoint?: boolean): string;
-            /** @requires modules/export-data */
-            getDataRows(
-                multiLevelHeaders?: boolean
-            ): Array<Array<(number|string)>>;
-            /** @requires modules/export-data */
-            getTable(useLocalDecimalPoint?: boolean): string;
-            /** @requires modules/export-data */
-            getTableAST(useLocalDecimalPoint?: boolean): ASTNode;
-            /** @requires modules/export-data */
-            setUpKeyToAxis(): void;
-            /** @requires modules/export-data */
-            viewData(): void;
-            /** @requires modules/export-data */
-            toggleDataTable(show?: boolean): void;
-            /** @requires modules/export-data */
-            hideData(): void;
-            /** @requires modules/export-data */
-            isDataTableVisible: boolean;
         }
         interface AnnotationInDataTable {
             itemDelimiter?: string;
@@ -119,10 +140,6 @@ declare global {
             exportData?: ExportDataOptions;
             viewData?: string;
             hideData?: string;
-        }
-        interface Series {
-            exportKey?: string;
-            keyToAxis?: Dictionary<string>;
         }
     }
     interface MSBlobBuilder extends Blob {
@@ -512,13 +529,13 @@ Chart.prototype.getDataRows = function (
         ),
         xAxis: Highcharts.Axis,
         xAxes = this.xAxis,
-        rows: Highcharts.Dictionary<(Array<any>&Highcharts.Dictionary<any>)> =
+        rows: Record<string, (Array<any>&Record<string, any>)> =
             {},
         rowArr = [],
         dataRows,
         topLevelColumnTitles: Array<string> = [],
         columnTitles: Array<string> = [],
-        columnTitleObj: (string|Highcharts.Dictionary<string>),
+        columnTitleObj: (string|Record<string, string>),
         i: number,
         x,
         xTitle: string,
@@ -528,10 +545,10 @@ Chart.prototype.getDataRows = function (
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
         columnHeaderFormatter = function (
-            item: (Highcharts.Axis|Highcharts.Series),
+            item: (Axis|Series),
             key?: string,
             keyLength?: number
-        ): (string|Highcharts.Dictionary<string>) {
+        ): (string|Record<string, string>) {
             if (csvOptions.columnHeaderFormatter) {
                 var s = csvOptions.columnHeaderFormatter(item, key, keyLength);
 
@@ -562,7 +579,7 @@ Chart.prototype.getDataRows = function (
         },
         // Map the categories for value axes
         getCategoryAndDateTimeMap = function (
-            series: Highcharts.Series,
+            series: Series,
             pointArrayMap: Array<string>,
             pIdx?: number
         ): Highcharts.ExportingCategoryDateTimeMap {
@@ -596,7 +613,7 @@ Chart.prototype.getDataRows = function (
         // Create point array depends if xAxis is category
         // or point.name is defined #13293
         getPointArray = function (
-            series: Highcharts.Series,
+            series: Series,
             xAxis: Highcharts.Axis
         ): string[] {
             const namedPoints = series.data.filter((d): string | false =>
@@ -627,12 +644,12 @@ Chart.prototype.getDataRows = function (
 
     this.setUpKeyToAxis();
 
-    this.series.forEach(function (series: Highcharts.Series): void {
+    this.series.forEach(function (series: Series): void {
         var keys = series.options.keys,
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
-            xTaken: (false|Highcharts.Dictionary<unknown>) =
+            xTaken: (false|Record<string, unknown>) =
                 !series.requireSorting && {},
             xAxisIndex = xAxes.indexOf(xAxis),
             categoryAndDatetimeMap = getCategoryAndDateTimeMap(
@@ -693,7 +710,7 @@ Chart.prototype.getDataRows = function (
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
-                options: Highcharts.PointOptionsType,
+                options: (PointOptions|PointShortOptions),
                 pIdx: number
             ): void {
                 var key: (number|string),
@@ -790,8 +807,8 @@ Chart.prototype.getDataRows = function (
 
         // Sort it by X values
         rowArr.sort(function ( // eslint-disable-line no-loop-func
-            a: Highcharts.Dictionary<any>,
-            b: Highcharts.Dictionary<any>
+            a: Record<string, any>,
+            b: Record<string, any>
         ): number {
             return a.xValues[xAxisIndex] - b.xValues[xAxisIndex];
         });
@@ -807,7 +824,7 @@ Chart.prototype.getDataRows = function (
 
         // Add the category column
         rowArr.forEach(function ( // eslint-disable-line no-loop-func
-            row: Highcharts.Dictionary<any>
+            row: Record<string, any>
         ): void {
             var category = row.name;
 
@@ -1369,7 +1386,10 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
 
     // Change the menu item text
     const exportDivElements = this.exportDivElements,
-        menuItems = exportingOptions?.buttons?.contextButton.menuItems,
+        options = this.options.exporting,
+        menuItems = options &&
+            options.buttons &&
+            options.buttons.contextButton.menuItems,
         lang = this.options.lang;
 
     if (
@@ -1412,7 +1432,7 @@ if (exportingOptions) {
                 this.toggleDataTable();
             }
         }
-    } as Highcharts.Dictionary<Highcharts.ExportingMenuObject>);
+    } as Record<string, Highcharts.ExportingMenuObject>);
 
     if (exportingOptions.buttons) {
         (exportingOptions.buttons.contextButton.menuItems as any).push(

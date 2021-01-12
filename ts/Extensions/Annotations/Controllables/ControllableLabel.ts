@@ -6,10 +6,10 @@
 
 'use strict';
 
-import type {
-    AlignObject
-} from '../../../Core/Renderer/AlignObject';
+import type { AlignObject } from '../../../Core/Renderer/AlignObject';
 import type Annotation from '../Annotations';
+import type BBoxObject from '../../../Core/Renderer/BBoxObject';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -114,8 +114,8 @@ class ControllableLabel implements ControllableMixin.Type {
      */
     public static alignedPosition(
         alignOptions: Highcharts.AnnotationAlignObject,
-        box: Highcharts.BBoxObject
-    ): Highcharts.PositionObject {
+        box: BBoxObject
+    ): PositionObject {
         var align = alignOptions.align,
             vAlign = alignOptions.verticalAlign,
             x = (box.x || 0) + (alignOptions.x || 0),
@@ -422,14 +422,14 @@ class ControllableLabel implements ControllableMixin.Type {
      */
     public position(
         anchor: Highcharts.AnnotationAnchorObject
-    ): (Highcharts.PositionObject|null|undefined) {
+    ): (PositionObject|null|undefined) {
         var item = this.graphic,
             chart = this.annotation.chart,
             point = this.points[0],
             itemOptions = this.options,
             anchorAbsolutePosition = anchor.absolutePosition,
             anchorRelativePosition = anchor.relativePosition,
-            itemPosition: (Highcharts.PositionObject|undefined),
+            itemPosition: (PositionObject|undefined),
             alignTo,
             itemPosRelativeX,
             itemPosRelativeY,

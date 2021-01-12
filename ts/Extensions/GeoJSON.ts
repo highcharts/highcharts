@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -25,6 +26,33 @@ const {
     merge,
     wrap
 } = U;
+
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        /** @requires modules/maps */
+        mapCredits?: string;
+        /** @requires modules/maps */
+        mapCreditsFull?: string;
+        /** @requires modules/maps */
+        mapTransforms?: any;
+        /** @requires modules/maps */
+        fromLatLonToPoint(latLon: Highcharts.MapLatLonObject): Highcharts.MapCoordinateObject;
+        /** @requires modules/maps */
+        fromPointToLatLon(
+            point: Highcharts.MapCoordinateObject
+        ): (Highcharts.MapLatLonObject|undefined);
+        /** @requires modules/maps */
+        transformFromLatLon(
+            latLon: Highcharts.MapLatLonObject,
+            transform: any
+        ): Highcharts.MapCoordinateObject;
+        /** @requires modules/maps */
+        transformToLatLon(
+            point: Highcharts.MapCoordinateObject,
+            transform: any
+        ): (Highcharts.MapLatLonObject|undefined);
+    }
+}
 
 /**
  * Internal types
@@ -42,30 +70,6 @@ declare global {
         interface MapLatLonObject {
             lat: number;
             lon: number;
-        }
-        interface ChartLike {
-            /** @requires modules/maps */
-            mapCredits?: string;
-            /** @requires modules/maps */
-            mapCreditsFull?: string;
-            /** @requires modules/maps */
-            mapTransforms?: any;
-            /** @requires modules/maps */
-            fromLatLonToPoint(latLon: MapLatLonObject): MapCoordinateObject;
-            /** @requires modules/maps */
-            fromPointToLatLon(
-                point: MapCoordinateObject
-            ): (MapLatLonObject|undefined);
-            /** @requires modules/maps */
-            transformFromLatLon(
-                latLon: MapLatLonObject,
-                transform: any
-            ): MapCoordinateObject;
-            /** @requires modules/maps */
-            transformToLatLon(
-                point: MapCoordinateObject,
-                transform: any
-            ): (MapLatLonObject|undefined);
         }
         interface ChartOptions {
             /** @requires modules/map */
@@ -548,7 +552,7 @@ Chart.prototype.fromLatLonToPoint = function (
 H.geojson = function (
     geojson: Highcharts.GeoJSON,
     hType?: string,
-    series?: Highcharts.Series
+    series?: Series
 ): Array<any> {
     var mapData = [] as Array<any>,
         path = [] as SVGPath,

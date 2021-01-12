@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2020 Sebastian Bochann
+ * (c) 2009-2021 Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
@@ -9,7 +9,31 @@
  */
 
 'use strict';
-import H from '../Core/Globals.js';
+
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+import Series from '../Core/Series/Series.js';
+import U from '../Core/Utilities.js';
+const {
+    addEvent,
+    isArray,
+    merge
+} = U;
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        lastPrice?: SVGElement;
+        lastVisiblePrice?: SVGElement;
+        crossLabel?: SVGElement;
+    }
+
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        lastPrice?: Highcharts.LastPriceOptions;
+        lastVisiblePrice?: Highcharts.LastVisiblePriceOptions;
+    }
+}
 
 declare global {
     namespace Highcharts {
@@ -23,24 +47,8 @@ declare global {
         interface LastVisiblePriceLabelOptions {
             enabled: true;
         }
-        interface Series {
-            lastPrice?: SVGElement;
-            lastVisiblePrice?: SVGElement;
-            crossLabel?: SVGElement;
-        }
-        interface SeriesOptions {
-            lastPrice?: LastPriceOptions;
-            lastVisiblePrice?: LastVisiblePriceOptions;
-        }
     }
 }
-
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    isArray,
-    merge
-} = U;
 
 /**
  * The line marks the last price from visible range of points.
@@ -111,7 +119,7 @@ const {
 
 /* eslint-disable no-invalid-this */
 
-addEvent(H.Series, 'afterRender', function (): void {
+addEvent(Series, 'afterRender', function (): void {
     var serie = this,
         seriesOptions = serie.options,
         pointRange = seriesOptions.pointRange,
@@ -188,11 +196,10 @@ addEvent(H.Series, 'afterRender', function (): void {
             }
 
             serie.crossLabel = yAxis.crossLabel;
-
         }
 
         // Restore crosshair:
-        yAxis.crosshair = origOptions;
+        yAxis.crosshair = yAxis.options.crosshair = origOptions;
         yAxis.cross = origGraphic;
         yAxis.crossLabel = origLabel;
 

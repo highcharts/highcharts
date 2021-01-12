@@ -1,14 +1,16 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
+import palette from '../../Color/Palette.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
 import AST from '../HTML/AST.js';
@@ -637,11 +639,11 @@ var SVGRenderer = /** @class */ (function () {
             var normalStyle, hoverStyle, pressedStyle, disabledStyle;
             // Normal state - prepare the attributes
             normalState = merge({
-                fill: '${palette.neutralColor3}',
-                stroke: '${palette.neutralColor20}',
+                fill: palette.neutralColor3,
+                stroke: palette.neutralColor20,
                 'stroke-width': 1,
                 style: {
-                    color: '${palette.neutralColor80}',
+                    color: palette.neutralColor80,
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
@@ -652,15 +654,15 @@ var SVGRenderer = /** @class */ (function () {
             delete normalState.style;
             // Hover state
             hoverState = merge(normalState, {
-                fill: '${palette.neutralColor10}'
+                fill: palette.neutralColor10
             }, AST.filterUserAttributes(hoverState || {}));
             hoverStyle = hoverState.style;
             delete hoverState.style;
             // Pressed state
             pressedState = merge(normalState, {
-                fill: '${palette.highlightColor10}',
+                fill: palette.highlightColor10,
                 style: {
-                    color: '${palette.neutralColor100}',
+                    color: palette.neutralColor100,
                     fontWeight: 'bold'
                 }
             }, AST.filterUserAttributes(pressedState || {}));
@@ -669,7 +671,7 @@ var SVGRenderer = /** @class */ (function () {
             // Disabled state
             disabledState = merge(normalState, {
                 style: {
-                    color: '${palette.neutralColor20}'
+                    color: palette.neutralColor20
                 }
             }, AST.filterUserAttributes(disabledState || {}));
             disabledStyle = disabledState.style;
@@ -1886,7 +1888,7 @@ SVGRenderer.prototype.symbols = {
      * rectangles in VML
      */
     callout: function (x, y, w, h, options) {
-        var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX || 0, anchorY = options && options.anchorY || 0, path;
+        var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX, anchorY = options && options.anchorY || 0, path;
         path = [
             ['M', x + r, y],
             ['L', x + w - r, y],
@@ -1898,8 +1900,11 @@ SVGRenderer.prototype.symbols = {
             ['L', x, y + r],
             ['C', x, y, x, y, x + r, y] // top-left corner
         ];
+        if (!isNumber(anchorX)) {
+            return path;
+        }
         // Anchor on right side
-        if (anchorX && anchorX > w) {
+        if (x + anchorX >= w) {
             // Chevron
             if (anchorY > y + safeDistance &&
                 anchorY < y + h - safeDistance) {
@@ -1911,7 +1916,7 @@ SVGRenderer.prototype.symbols = {
             }
             // Anchor on left side
         }
-        else if (anchorX && anchorX < 0) {
+        else if (x + anchorX <= 0) {
             // Chevron
             if (anchorY > y + safeDistance &&
                 anchorY < y + h - safeDistance) {

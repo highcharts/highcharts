@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,13 +15,16 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorType from '../Core/Color/ColorType';
 import type CSSObject from '../Core/Renderer/CSSObject';
+import type { DataLabelOverflowValue } from '../Core/Series/DataLabelOptions';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
 const {
@@ -33,6 +36,53 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        getStacks(): void;
+    }
+}
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        leftCliff?: number;
+        rightCliff?: number;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        isRadialBar?: boolean;
+        negStacks?: any; // @todo
+        singleStacks?: any; // @todo
+        stack?: Highcharts.OptionsStackingValue;
+        stackedYData?: Array<number>;
+        stackKey?: string;
+        getStackIndicator(
+            stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
+            x: number,
+            index: number,
+            key?: string
+        ): Highcharts.StackItemIndicatorObject;
+        modifyStacks(): void;
+        percentStacker(
+            pointExtremes: Array<number>,
+            stack: StackItem,
+            i: number
+        ): void;
+        setGroupedPoints(): void;
+        setStackedPoints(
+            stackingParam?: string
+        ): void;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        stack?: (number|string);
+        stacking?: Highcharts.OptionsStackingValue;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -40,37 +90,6 @@ const {
 declare global {
     namespace Highcharts {
         type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'group');
-        interface ChartLike {
-            getStacks(): void;
-        }
-        interface PointLike {
-            leftCliff?: number;
-            rightCliff?: number;
-        }
-        interface Series {
-            isRadialBar?: boolean;
-            negStacks?: any; // @todo
-            singleStacks?: any; // @todo
-            stack?: OptionsStackingValue;
-            stackedYData?: Array<number>;
-            stackKey?: string;
-            getStackIndicator(
-                stackIndicator: (StackItemIndicatorObject|undefined),
-                x: number,
-                index: number,
-                key?: string
-            ): StackItemIndicatorObject;
-            modifyStacks(): void;
-            percentStacker(
-                pointExtremes: Array<number>,
-                stack: StackItem,
-                i: number
-            ): void;
-            setGroupedPoints(): void;
-            setStackedPoints(
-                stackingParam?: string
-            ): void;
-        }
         interface StackItemIndicatorObject {
             index: number;
             key?: string;
@@ -94,7 +113,7 @@ declare global {
             stackLabels?: YAxisStackLabelsOptions;
         }
         interface YAxisStackLabelsOptions {
-            animation?: (boolean|Partial<AnimationOptionsObject>);
+            animation?: (boolean|Partial<AnimationOptions>);
             align?: AlignValue;
             allowOverlap?: boolean;
             backgroundColor?: ColorType;
@@ -105,7 +124,7 @@ declare global {
             enabled?: boolean;
             format?: string;
             formatter?: FormatterCallbackFunction<StackItemObject>;
-            overflow?: DataLabelsOverflowValue;
+            overflow?: DataLabelOverflowValue;
             rotation?: number;
             style?: CSSObject;
             textAlign?: AlignValue;
@@ -134,7 +153,7 @@ declare global {
             public label?: SVGElement;
             public leftCliff: number;
             public options: YAxisStackLabelsOptions;
-            public points: Dictionary<Array<number>>;
+            public points: Record<string, Array<number>>;
             public rightCliff: number;
             public stack?: OptionsStackingValue;
             public textAlign: AlignValue;
@@ -204,10 +223,6 @@ declare global {
  */
 
 ''; // detached doclets above
-
-import '../Series/LineSeries.js';
-
-var Series = H.Series;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -284,7 +299,7 @@ class StackItem {
     public label?: SVGElement;
     public leftCliff: number;
     public options: Highcharts.YAxisStackLabelsOptions;
-    public points: Highcharts.Dictionary<Array<number>>;
+    public points: Record<string, Array<number>>;
     public rightCliff: number;
     public stack?: Highcharts.OptionsStackingValue;
     public textAlign: AlignValue;
@@ -358,7 +373,7 @@ class StackItem {
         }
 
         // Rank it higher than data labels (#8742)
-        this.label.labelrank = chart.plotHeight;
+        this.label.labelrank = chart.plotSizeY;
     }
 
     /**
@@ -520,7 +535,7 @@ class StackItem {
         xWidth: number,
         h: number,
         axis: Highcharts.Axis
-    ): Highcharts.BBoxObject {
+    ): BBoxObject {
         var reversed = stackItem.axis.reversed,
             inverted = chart.inverted,
             axisPos = axis.height + (axis.pos as any) -
@@ -554,13 +569,13 @@ Chart.prototype.getStacks = function (this: Chart): void {
         inverted = chart.inverted;
 
     // reset stacks for each yAxis
-    chart.yAxis.forEach(function (axis: Highcharts.Axis): void {
+    chart.yAxis.forEach(function (axis): void {
         if (axis.stacking && axis.stacking.stacks && axis.hasVisibleSeries) {
             axis.stacking.oldStacks = axis.stacking.stacks;
         }
     });
 
-    chart.series.forEach(function (series: Highcharts.Series): void {
+    chart.series.forEach(function (series): void {
         var xAxisOptions = series.xAxis && series.xAxis.options || {};
 
         if (
@@ -597,7 +612,7 @@ StackingAxis.compose(Axis);
  * @function Highcharts.Series#setStackedPoints
  * @return {void}
  */
-Series.prototype.setGroupedPoints = function (this: Highcharts.Series): void {
+Series.prototype.setGroupedPoints = function (): void {
     if (
         this.options.centerInCategory &&
         (this.is('column') || this.is('columnrange')) &&
@@ -617,10 +632,7 @@ Series.prototype.setGroupedPoints = function (this: Highcharts.Series): void {
  * @private
  * @function Highcharts.Series#setStackedPoints
  */
-Series.prototype.setStackedPoints = function (
-    this: Highcharts.Series,
-    stackingParam?: string
-): void {
+Series.prototype.setStackedPoints = function (stackingParam?: string): void {
 
     const stacking = stackingParam || this.options.stacking;
 
@@ -678,7 +690,7 @@ Series.prototype.setStackedPoints = function (
         // Create empty object for this stack if it doesn't exist yet
         if (!stacks[key as any]) {
             stacks[key as any] =
-                {} as Highcharts.Dictionary<Highcharts.StackItem>;
+                {} as Record<string, Highcharts.StackItem>;
         }
 
         // Initialize StackItem for this x
@@ -788,7 +800,7 @@ Series.prototype.setStackedPoints = function (
  * @private
  * @function Highcharts.Series#modifyStacks
  */
-Series.prototype.modifyStacks = function (this: Highcharts.Series): void {
+Series.prototype.modifyStacks = function (): void {
     var series = this,
         yAxis = series.yAxis as StackingAxis,
         stackKey = series.stackKey,
@@ -832,12 +844,8 @@ Series.prototype.modifyStacks = function (this: Highcharts.Series): void {
  *
  * @private
  * @function Highcharts.Series#percentStacker
- * @param {Array<number>} pointExtremes
- * @param {Highcharts.StackItem} stack
- * @param {number} i
  */
 Series.prototype.percentStacker = function (
-    this: Highcharts.Series,
     pointExtremes: Array<number>,
     stack: Highcharts.StackItem,
     i: number
@@ -864,7 +872,6 @@ Series.prototype.percentStacker = function (
  * @return {Highcharts.StackItemIndicatorObject}
  */
 Series.prototype.getStackIndicator = function (
-    this: Highcharts.Series,
     stackIndicator: (Highcharts.StackItemIndicatorObject|undefined),
     x: number,
     index: number,
@@ -893,4 +900,5 @@ Series.prototype.getStackIndicator = function (
 };
 
 H.StackItem = StackItem;
+
 export default H.StackItem;

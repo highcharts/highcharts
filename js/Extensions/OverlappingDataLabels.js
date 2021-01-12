@@ -3,7 +3,7 @@
  *  Highcharts module to hide overlapping data labels.
  *  This module is included in Highcharts.
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,6 +14,10 @@
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
+/**
+ * Internal type
+ * @private
+ */
 /* eslint-disable no-invalid-this */
 // Collect potensial overlapping data labels. Stack labels probably don't need
 // to be considered because they are usually accompanied by data labels that lie
@@ -39,20 +43,24 @@ addEvent(Chart, 'render', function collectAndHide() {
         var dlOptions = series.options.dataLabels;
         if (series.visible &&
             !(dlOptions.enabled === false && !series._hasPointLabels)) { // #3866
-            (series.nodes || series.points).forEach(function (point) {
-                if (point.visible) {
-                    var dataLabels = (isArray(point.dataLabels) ?
-                        point.dataLabels :
-                        (point.dataLabel ? [point.dataLabel] : []));
-                    dataLabels.forEach(function (label) {
-                        var options = label.options;
-                        label.labelrank = pick(options.labelrank, point.labelrank, point.shapeArgs && point.shapeArgs.height); // #4118
-                        if (!options.allowOverlap) {
-                            labels.push(label);
-                        }
-                    });
-                }
-            });
+            var push = function (points) {
+                return points.forEach(function (point) {
+                    if (point.visible) {
+                        var dataLabels = (isArray(point.dataLabels) ?
+                            point.dataLabels :
+                            (point.dataLabel ? [point.dataLabel] : []));
+                        dataLabels.forEach(function (label) {
+                            var options = label.options;
+                            label.labelrank = pick(options.labelrank, point.labelrank, point.shapeArgs && point.shapeArgs.height); // #4118
+                            if (!options.allowOverlap) {
+                                labels.push(label);
+                            }
+                        });
+                    }
+                });
+            };
+            push(series.nodes || []);
+            push(series.points);
         }
     });
     this.hideOverlappingLabels(labels);

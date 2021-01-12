@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,18 +11,26 @@
 'use strict';
 
 import type NavigatorAxis from './NavigatorAxis';
+import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import CartesianSeries from '../Series/CartesianSeries.js';
 import Point from '../Series/Point.js';
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
     addEvent,
     css,
     defined,
+    error,
     pick,
     timeUnits
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -30,34 +38,35 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            getTimeTicks(
-                normalizedInterval: DateTimeAxisNormalizedObject,
-                min: number,
-                max: number,
-                startOfWeek?: number,
-                positions?: Array<number>,
-                closestDistance?: number,
-                findHigherRanks?: boolean
-            ): AxisTickPositionsArray;
-            lin2val(val: number, fromIndex?: boolean): number;
-            val2lin(val: number, toIndex?: boolean): number;
-        }
-        interface TimeTicksInfoObject extends DateTimeAxisNormalizedObject {
-            segmentStarts?: Array<number>;
-        }
         interface XAxisOptions {
             keepOrdinalPadding?: boolean;
         }
     }
 }
 
-/**
- * @private
- */
+declare module './TimeTicksInfoObject' {
+    interface TimeTicksInfoObject extends Highcharts.DateTimeAxisNormalizedObject {
+        segmentStarts?: Array<number>;
+    }
+}
+
 declare module './Types' {
     interface AxisComposition {
         ordinal?: OrdinalAxis['ordinal'];
+        /** @deprecated */
+        getTimeTicks(
+            normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+            min: number,
+            max: number,
+            startOfWeek?: number,
+            positions?: Array<number>,
+            closestDistance?: number,
+            findHigherRanks?: boolean
+        ): Highcharts.AxisTickPositionsArray;
+        /** @deprecated */
+        lin2val(val: number, fromIndex?: boolean): number;
+        /** @deprecated */
+        val2lin(val: number, toIndex?: boolean): number;
     }
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis;
@@ -170,15 +179,12 @@ namespace OrdinalAxis {
             // Apply the ordinal logic
             if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
-                axis.series.forEach(function (
-                    series: Highcharts.Series,
-                    i: number
-                ): void {
+                axis.series.forEach(function (series, i): void {
                     uniqueOrdinalPositions = [];
 
                     if (
                         (!ignoreHiddenSeries || series.visible !== false) &&
-                        (series.takeOrdinalPosition !== false || hasBreaks)
+                        ((series as ScatterSeries).takeOrdinalPosition !== false || hasBreaks)
                     ) {
 
                         // concatenate the processed X data into the existing
@@ -369,7 +375,7 @@ namespace OrdinalAxis {
                 overscroll = axis.options.overscroll,
                 extremes = axis.getExtremes(),
                 fakeAxis: OrdinalAxis,
-                fakeSeries: Highcharts.Series;
+                fakeSeries: Series;
 
             // If this is the first time, or the ordinal index is deleted by
             // updatedData,
@@ -403,13 +409,13 @@ namespace OrdinalAxis {
 
                 // Add the fake series to hold the full data, then apply
                 // processData to it
-                axis.series.forEach(function (series: Highcharts.Series): void {
+                axis.series.forEach(function (series): void {
                     fakeSeries = {
                         xAxis: fakeAxis,
                         xData: (series.xData as any).slice(),
                         chart: chart,
                         destroyGroupedData: H.noop,
-                        getProcessedData: CartesianSeries.prototype.getProcessedData
+                        getProcessedData: Series.prototype.getProcessedData
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(
@@ -472,7 +478,7 @@ namespace OrdinalAxis {
         public getGroupIntervalFactor(
             xMin: number,
             xMax: number,
-            series: Highcharts.Series
+            series: Series
         ): number {
             var ordinal = this,
                 axis = ordinal.axis,
@@ -602,7 +608,7 @@ namespace OrdinalAxis {
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        SeriesClass: typeof CartesianSeries
+        SeriesClass: typeof Series
     ): void {
 
         AxisClass.keepProps.push('ordinal');
@@ -633,7 +639,7 @@ namespace OrdinalAxis {
             var start = 0,
                 end,
                 segmentPositions,
-                higherRanks = {} as Highcharts.Dictionary<string>,
+                higherRanks = {} as Record<string, string>,
                 hasCrossedHigherRank,
                 info,
                 posLength,
@@ -716,36 +722,40 @@ namespace OrdinalAxis {
 
             // Get the grouping info from the last of the segments. The info is
             // the same for all segments.
-            info = (segmentPositions as any).info;
+            if (segmentPositions) {
+                info = (segmentPositions as any).info;
 
-            // Optionally identify ticks with higher rank, for example when the
-            // ticks have crossed midnight.
-            if (findHigherRanks && info.unitRange <= timeUnits.hour) {
-                end = groupPositions.length - 1;
+                // Optionally identify ticks with higher rank, for example
+                // when the ticks have crossed midnight.
+                if (findHigherRanks && info.unitRange <= timeUnits.hour) {
+                    end = groupPositions.length - 1;
 
-                // Compare points two by two
-                for (start = 1; start < end; start++) {
-                    if (
-                        time.dateFormat('%d', groupPositions[start]) !==
-                        time.dateFormat('%d', groupPositions[start - 1])
-                    ) {
-                        higherRanks[groupPositions[start]] = 'day';
-                        hasCrossedHigherRank = true;
+                    // Compare points two by two
+                    for (start = 1; start < end; start++) {
+                        if (
+                            time.dateFormat('%d', groupPositions[start]) !==
+                            time.dateFormat('%d', groupPositions[start - 1])
+                        ) {
+                            higherRanks[groupPositions[start]] = 'day';
+                            hasCrossedHigherRank = true;
+                        }
                     }
+
+                    // If the complete array has crossed midnight, we want
+                    // to mark the first positions also as higher rank
+                    if (hasCrossedHigherRank) {
+                        higherRanks[groupPositions[0]] = 'day';
+                    }
+                    info.higherRanks = higherRanks;
                 }
 
-                // If the complete array has crossed midnight, we want to mark
-                // the first positions also as higher rank
-                if (hasCrossedHigherRank) {
-                    higherRanks[groupPositions[0]] = 'day';
-                }
-                info.higherRanks = higherRanks;
+                // Save the info
+                info.segmentStarts = segmentStarts;
+                groupPositions.info = info;
+
+            } else {
+                error(12, false, this.chart);
             }
-
-            // Save the info
-            info.segmentStarts = segmentStarts;
-            groupPositions.info = info;
-
             // Don't show ticks within a gap in the ordinal axis, where the
             // space between two points is greater than a portion of the tick
             // pixel interval
@@ -1179,6 +1189,6 @@ namespace OrdinalAxis {
     }
 }
 
-OrdinalAxis.compose(Axis, Chart, CartesianSeries); // @todo move to StockChart, remove from master
+OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master
 
 export default OrdinalAxis;

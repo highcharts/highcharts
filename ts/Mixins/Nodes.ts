@@ -4,9 +4,15 @@
  *
  * */
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+'use strict';
+
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type PointOptions from '../Core/Series/PointOptions';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -14,6 +20,18 @@ const {
     find,
     pick
 } = U;
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        name?: string;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        nodes?: Array<Highcharts.NodesPoint>;
+    }
+}
 
 /**
  * Internal types
@@ -29,18 +47,12 @@ declare global {
                 this: NodesSeries,
                 data: Array<NodesPointOptions>,
                 redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
+                animation?: (boolean|Partial<AnimationOptions>),
                 updatePoints?: boolean
             ): void;
-            setNodeState(this: NodesPoint, state: string): void;
+            setNodeState(this: NodesPoint, state: StatesOptionsKey): void;
         }
-        interface PointLike {
-            name?: string;
-        }
-        interface Series {
-            nodes?: Array<NodesPoint>;
-        }
-        interface NodesPointOptions extends PointOptionsObject {
+        interface NodesPointOptions extends PointOptions {
             id?: string;
             level?: number;
             mass?: number;
@@ -78,7 +90,7 @@ declare global {
             public createNode: NodesMixin['createNode'];
             public data: Array<NodesPoint>;
             public generatePoints: NodesMixin['generatePoints'];
-            public nodeLookup: Dictionary<NodesPoint>;
+            public nodeLookup: Record<string, NodesPoint>;
             public nodes: Array<NodesPoint>;
             public options: NodesSeriesOptions;
             public pointClass: typeof NodesPoint;
@@ -88,8 +100,6 @@ declare global {
         let NodesMixin: NodesMixin;
     }
 }
-
-import '../Series/LineSeries.js';
 
 const NodesMixin = H.NodesMixin = {
 
@@ -211,9 +221,9 @@ const NodesMixin = H.NodesMixin = {
      */
     generatePoints: function (this: Highcharts.NodesSeries): void {
         var chart = this.chart,
-            nodeLookup = {} as Highcharts.Dictionary<Highcharts.NodesPoint>;
+            nodeLookup = {} as Record<string, Highcharts.NodesPoint>;
 
-        H.Series.prototype.generatePoints.call(this);
+        Series.prototype.generatePoints.call(this);
 
         if (!this.nodes) {
             this.nodes = []; // List of Point-like node items
@@ -271,7 +281,7 @@ const NodesMixin = H.NodesMixin = {
             });
             this.nodes.length = 0;
         }
-        H.Series.prototype.setData.apply(this, arguments as any);
+        Series.prototype.setData.apply(this, arguments as any);
     },
 
     // Destroy alll nodes and links
@@ -280,14 +290,14 @@ const NodesMixin = H.NodesMixin = {
         this.data = ([] as Array<Highcharts.NodesPoint>)
             .concat(this.points || [], this.nodes);
 
-        return H.Series.prototype.destroy.apply(this, arguments as any);
+        return Series.prototype.destroy.apply(this, arguments as any);
     },
 
     /**
      * When hovering node, highlight all connected links. When hovering a link,
      * highlight all connected nodes.
      */
-    setNodeState: function (this: Highcharts.NodesPoint, state: string): void {
+    setNodeState: function (this: Highcharts.NodesPoint, state?: StatesOptionsKey): void {
         var args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];

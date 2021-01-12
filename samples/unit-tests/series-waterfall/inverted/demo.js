@@ -10,14 +10,21 @@ QUnit.test('#5911 - inverted and reversed axes.', function (assert) {
             xAxis: {
                 reversed: true
             },
-            series: [{
-                type: 'waterfall',
-                data: [10, 10, 10]
-            }, {
-                type: 'columnrange',
-                pointPadding: 0.3,
-                data: [[0, 10], [10, 20], [20, 30]]
-            }]
+            series: [
+                {
+                    type: 'waterfall',
+                    data: [10, 10, 10]
+                },
+                {
+                    type: 'columnrange',
+                    pointPadding: 0.3,
+                    data: [
+                        [0, 10],
+                        [10, 20],
+                        [20, 30]
+                    ]
+                }
+            ]
         }),
         columnRange = chart.series[1],
         xAxisReversed = chart.xAxis[0].reversed,
@@ -46,10 +53,14 @@ QUnit.test('#5911 - inverted and reversed axes.', function (assert) {
                             columnRange.points[index][prop[1]]
                         ),
                         1,
-                        'xAxis.reversed=' + xAxisReversed +
-                            ' yAxis.reversed=' + yAxisReversed +
-                            ' Property: ' + prop[0] +
-                            ' for a point x=' + point.x +
+                        'xAxis.reversed=' +
+                            xAxisReversed +
+                            ' yAxis.reversed=' +
+                            yAxisReversed +
+                            ' Property: ' +
+                            prop[0] +
+                            ' for a point x=' +
+                            point.x +
                             ' for waterfall and columnrange are the same.'
                     );
                 }
@@ -88,6 +99,6 @@ QUnit.test('#5911 - inverted and reversed axes.', function (assert) {
     assert.deepEqual(
         lineLength,
         distanceBetweenPoints,
-        "Connector line is equal to distance between points (#4699)."
+        'Connector line is equal to distance between points (#4699).'
     );
 });

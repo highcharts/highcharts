@@ -9,69 +9,101 @@ QUnit.test('Bullet chart', function (assert) {
             }
         },
         xAxis: {
-            categories: [2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016],
+            categories: [
+                2005,
+                2006,
+                2007,
+                2008,
+                2009,
+                2010,
+                2011,
+                2012,
+                2013,
+                2014,
+                2015,
+                2016
+            ],
             title: {
                 text: 'Year'
             }
         },
-        series: [{
-            name: 'Bullet Series 1',
-            data: [{
-                x: 7,
-                y: 28,
-                target: 33.6
-            }, {
-                x: 8,
-                y: 27,
-                target: 32.8
-            }]
-        }, {
-            name: 'Bullet Series 2',
-            data: [{
-                x: 7,
-                y: 50.9,
-                target: 60.5
-            }, {
-                x: 8,
-                y: 49.3,
-                target: 56.3
-            }]
-        }, {
-            name: 'Line series',
-            data: [
-                [6, 62],
-                [7, 62],
-                [8, 62]
-            ],
-            type: 'line'
-        }, {
-            name: 'Bullet Series 3',
-            data: [{
-                x: 8,
-                y: 6.5,
-                target: 8
-            }]
-        }, {
-            name: 'Bullet Series 4',
-            data: [{
-                x: 7,
-                y: 2.4,
-                target: 1.4
-            }, {
-                x: 8,
-                y: 3.7,
-                target: 1.3
-            }, {
-                x: 9,
-                y: 1.9,
-                target: 1.3
-            }]
-        }]
+        series: [
+            {
+                name: 'Bullet Series 1',
+                data: [
+                    {
+                        x: 7,
+                        y: 28,
+                        target: 33.6
+                    },
+                    {
+                        x: 8,
+                        y: 27,
+                        target: 32.8
+                    }
+                ]
+            },
+            {
+                name: 'Bullet Series 2',
+                data: [
+                    {
+                        x: 7,
+                        y: 50.9,
+                        target: 60.5
+                    },
+                    {
+                        x: 8,
+                        y: 49.3,
+                        target: 56.3
+                    }
+                ]
+            },
+            {
+                name: 'Line series',
+                data: [
+                    [6, 62],
+                    [7, 62],
+                    [8, 62]
+                ],
+                type: 'line'
+            },
+            {
+                name: 'Bullet Series 3',
+                data: [
+                    {
+                        x: 8,
+                        y: 6.5,
+                        target: 8
+                    }
+                ]
+            },
+            {
+                name: 'Bullet Series 4',
+                data: [
+                    {
+                        x: 7,
+                        y: 2.4,
+                        target: 1.4
+                    },
+                    {
+                        x: 8,
+                        y: 3.7,
+                        target: 1.3
+                    },
+                    {
+                        x: 9,
+                        y: 1.9,
+                        target: 1.3
+                    }
+                ]
+            }
+        ]
     });
     chart.viewData();
 
     assert.equal(
-        chart.getTable()
+        chart
+            .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -215,7 +247,8 @@ target</th>
     chart.viewData();
 
     assert.equal(
-        chart.getTable()
+        chart
+            .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -350,24 +383,31 @@ QUnit.test('Pie chart', function (assert) {
         title: {
             text: 'WEBAIM survey'
         },
-        series: [{
-            name: 'Percentage usage',
-            data: [{
-                name: 'Full time employment',
-                y: 40.7
-            }, {
-                name: 'Part time employment',
-                y: 13.9
-            }, {
-                name: 'Unemployed',
-                y: 45.4
-            }]
-        }]
+        series: [
+            {
+                name: 'Percentage usage',
+                data: [
+                    {
+                        name: 'Full time employment',
+                        y: 40.7
+                    },
+                    {
+                        name: 'Part time employment',
+                        y: 13.9
+                    },
+                    {
+                        name: 'Unemployed',
+                        y: 45.4
+                    }
+                ]
+            }
+        ]
     });
     chart.viewData();
 
     assert.equal(
-        chart.getTable()
+        chart
+            .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -449,21 +489,25 @@ QUnit.test('Custom columnHeaderFormatter', function (assert) {
                     text: null
                 }
             },
-            series: [{
-                name: 'Temperature',
-                data: averages
-            }, {
-                name: 'Range',
-                data: ranges,
-                type: 'arearange',
-                linkedTo: ':previous',
-                fillOpacity: 0.3
-            }]
+            series: [
+                {
+                    name: 'Temperature',
+                    data: averages
+                },
+                {
+                    name: 'Range',
+                    data: ranges,
+                    type: 'arearange',
+                    linkedTo: ':previous',
+                    fillOpacity: 0.3
+                }
+            ]
         });
     chart.viewData();
 
     assert.equal(
-        chart.getTable()
+        chart
+            .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -558,27 +602,34 @@ high</th>
 
 QUnit.test('Internationalize export-data table words.', function (assert) {
     var chart = Highcharts.chart('container', {
-        xAxis: [{
-            categories: ['First', 'Second', 'Third'],
-            width: '45%'
-        }, {
-            type: "datetime",
-            width: '45%',
-            left: '50%',
-            offset: 0
-        }],
-        series: [{
-            data: [4, 3, 5]
-        }, {
-            name: 'Test series',
-            data: [5, 10, 8],
-            xAxis: 1
-        }]
+        xAxis: [
+            {
+                categories: ['First', 'Second', 'Third'],
+                width: '45%'
+            },
+            {
+                type: 'datetime',
+                width: '45%',
+                left: '50%',
+                offset: 0
+            }
+        ],
+        series: [
+            {
+                data: [4, 3, 5]
+            },
+            {
+                name: 'Test series',
+                data: [5, 10, 8],
+                xAxis: 1
+            }
+        ]
     });
     chart.viewData();
 
     assert.equal(
-        chart.getTable()
+        chart
+            .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>')
@@ -636,69 +687,93 @@ Third</th>
 });
 
 QUnit.test('Annotation labels in export-data table.', function (assert) {
-
     var chart = Highcharts.chart('container', {
-
         title: {
             text: 'Annotation labels in export-data table.'
         },
 
-        series: [{
-            data: [29, {
-                y: 71,
-                id: 'pointI'
-            }, 106, 129, 144]
-        }, {
-            data: [2, 11, 60, {
-                y: 44,
-                id: 'pointII'
-            }, 44]
-        }],
+        series: [
+            {
+                data: [
+                    29,
+                    {
+                        y: 71,
+                        id: 'pointI'
+                    },
+                    106,
+                    129,
+                    144
+                ]
+            },
+            {
+                data: [
+                    2,
+                    11,
+                    60,
+                    {
+                        y: 44,
+                        id: 'pointII'
+                    },
+                    44
+                ]
+            }
+        ],
 
-        annotations: [{
-            labels: [{
-                point: 'pointI',
-                text: 'Annotation I for pointI'
-            }, {
-                point: 'pointII',
-                text: 'Annotation II for pointII'
-            }, {
-                point: {
-                    xAxis: 0,
-                    x: 1.5,
-                    yAxis: 0,
-                    y: 50
-                },
-                text: 'Annotation I connected with axis'
-            }, {
-                point: {
-                    xAxis: 0,
-                    x: 1,
-                    yAxis: 0,
-                    y: 50
-                },
-                text: 'Annotation II connected with axis'
-            }, {
-                point: {
-                    x: 1,
-                    y: 50
-                },
-                text: 'Freestanding annotation'
-            }, {
-                point: {
-                    xAxis: 0,
-                    x: 2.5,
-                    yAxis: 0,
-                    y: 50
-                },
-                text: 'Annotation I connected with axis, and having the same point as other annotation.'
-            }]
-        }]
+        annotations: [
+            {
+                labels: [
+                    {
+                        point: 'pointI',
+                        text: 'Annotation I for pointI'
+                    },
+                    {
+                        point: 'pointII',
+                        text: 'Annotation II for pointII'
+                    },
+                    {
+                        point: {
+                            xAxis: 0,
+                            x: 1.5,
+                            yAxis: 0,
+                            y: 50
+                        },
+                        text: 'Annotation I connected with axis'
+                    },
+                    {
+                        point: {
+                            xAxis: 0,
+                            x: 1,
+                            yAxis: 0,
+                            y: 50
+                        },
+                        text: 'Annotation II connected with axis'
+                    },
+                    {
+                        point: {
+                            x: 1,
+                            y: 50
+                        },
+                        text: 'Freestanding annotation'
+                    },
+                    {
+                        point: {
+                            xAxis: 0,
+                            x: 2.5,
+                            yAxis: 0,
+                            y: 50
+                        },
+                        text:
+                            'Annotation I connected with axis, and having the same point as other annotation.'
+                    }
+                ]
+            }
+        ]
     });
 
     // Enhancement #12789
     assert.equal(
-        chart.getTable()
+        chart
+            .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
@@ -707,28 +782,36 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
     );
 
     chart.update({
-        annotations: [{
-            labelOptions: {
-                includeInDataExport: true
+        annotations: [
+            {
+                labelOptions: {
+                    includeInDataExport: true
+                },
+                labels: [
+                    {
+                        point: 'pointI',
+                        text: 'This is my annotation I'
+                    }
+                ]
             },
-            labels: [{
-                point: 'pointI',
-                text: 'This is my annotation I'
-            }]
-        }, {
-            labelOptions: {
-                includeInDataExport: false
-            },
-            labels: [{
-                point: 'pointII',
-                text: 'This is my annotation II'
-            }]
-        }]
+            {
+                labelOptions: {
+                    includeInDataExport: false
+                },
+                labels: [
+                    {
+                        point: 'pointII',
+                        text: 'This is my annotation II'
+                    }
+                ]
+            }
+        ]
     });
 
     // Enhancement #12789
     assert.equal(
-        chart.getTable()
+        chart
+            .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),
@@ -737,19 +820,25 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
     );
 
     chart.update({
-        annotations: [{
-            labels: [{
-                point: 'pointI',
-                text: 'This is my annotation I for point I',
-                y: -50
-            }, {
-                point: 'pointI',
-                text: 'This is my annotation II for point I'
-            }, {
-                point: 'pointII',
-                text: 'This is my annotation I for point II'
-            }]
-        }],
+        annotations: [
+            {
+                labels: [
+                    {
+                        point: 'pointI',
+                        text: 'This is my annotation I for point I',
+                        y: -50
+                    },
+                    {
+                        point: 'pointI',
+                        text: 'This is my annotation II for point I'
+                    },
+                    {
+                        point: 'pointII',
+                        text: 'This is my annotation I for point II'
+                    }
+                ]
+            }
+        ],
 
         exporting: {
             csv: {
@@ -763,7 +852,8 @@ QUnit.test('Annotation labels in export-data table.', function (assert) {
 
     // Enhancement #12789
     assert.equal(
-        chart.getTable()
+        chart
+            .getTable()
             // Remove the extra attributes from accessibility module, needed if
             // running as "gulp test".
             .replace(/<table[^>]+>/g, '<table>'),

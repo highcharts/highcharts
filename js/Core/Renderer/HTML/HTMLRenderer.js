@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -176,6 +176,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                             }
                             // Create a HTML div and append it to the parent div
                             // to emulate the SVG group structure
+                            var parentGroupStyles = parentGroup.styles || {};
                             htmlGroup =
                                 parentGroup.div =
                                     parentGroup.div || createElement('div', cls ? { className: cls } : void 0, {
@@ -184,8 +185,8 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                         top: (parentGroup.translateY || 0) + 'px',
                                         display: parentGroup.display,
                                         opacity: parentGroup.opacity,
-                                        pointerEvents: (parentGroup.styles &&
-                                            parentGroup.styles.pointerEvents) // #5595
+                                        cursor: parentGroupStyles.cursor,
+                                        pointerEvents: parentGroupStyles.pointerEvents // #5595
                                         // the top group is appended to container
                                     }, htmlGroup || container);
                             // Shortcut

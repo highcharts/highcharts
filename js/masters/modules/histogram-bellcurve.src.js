@@ -9,5 +9,5 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/HistogramSeries.js';
-import '../../Series/BellcurveSeries.js';
+import '../../Series/Histogram/HistogramSeries.js';
+import '../../Series/Bellcurve/BellcurveSeries.js';

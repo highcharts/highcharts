@@ -14,6 +14,8 @@ import H from '../../Globals.js';
 import U from '../../Utilities.js';
 const {
     attr,
+    createElement,
+    discardElement,
     error,
     objectEach,
     splat
@@ -357,7 +359,7 @@ class AST {
             // IE8-
             typeof DOMParser === 'undefined'
         ) {
-            body = H.createElement('div');
+            body = createElement('div');
             body.innerHTML = markup;
             doc = { body };
         } else {
@@ -418,7 +420,7 @@ class AST {
         );
 
         if (body) {
-            H.discardElement(body);
+            discardElement(body);
         }
 
         return nodes;

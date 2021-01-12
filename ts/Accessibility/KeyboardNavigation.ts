@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Main keyboard navigation handling.
  *
@@ -32,6 +32,13 @@ import HTMLUtilities from './Utils/HTMLUtilities.js';
 const getElement = HTMLUtilities.getElement;
 
 import EventProvider from './Utils/EventProvider.js';
+
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        /** @requires modules/accessibility */
+        dismissPopupContent(): void;
+    }
+}
 
 /**
  * Internal types.
@@ -73,10 +80,6 @@ declare global {
             public update(order?: Array<string>): void;
             public updateExitAnchor(): void;
             public updateContainerTabindex(): void;
-        }
-        interface ChartLike {
-            /** @requires modules/accessibility */
-            dismissPopupContent(): void;
         }
     }
 }

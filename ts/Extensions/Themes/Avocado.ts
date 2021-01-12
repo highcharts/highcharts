@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Øystein Moseng
  *
@@ -13,7 +13,7 @@
  *
  * */
 
-import type { SeriesPlotOptionsType } from '../../Core/Series/Types';
+import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const { setOptions } = U;
@@ -30,7 +30,7 @@ H.theme = {
         map: {
             nullColor: '#FCFEFE'
         }
-    } as SeriesPlotOptionsType,
+    } as SeriesTypePlotOptions,
 
     navigator: {
         maskFill: 'rgba(170, 205, 170, 0.5)',

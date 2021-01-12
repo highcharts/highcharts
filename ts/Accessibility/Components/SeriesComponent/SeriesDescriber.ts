@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Place desriptions on a series and its points.
  *
@@ -12,10 +12,11 @@
 
 'use strict';
 
-import type {
-    DOMElementType
-} from '../../../Core/Renderer/DOMElementType';
+import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
 import type Point from '../../../Core/Series/Point';
+import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type Series from '../../../Core/Series/Series';
+import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const {
     getPointAnnotationTexts
@@ -43,17 +44,10 @@ const {
     defined
 } = U;
 
-
-/**
- * Internal types.
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface PointLike {
-            /** @requires modules/accessibility */
-            hasDummyGraphic?: boolean;
-        }
+declare module '../../../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/accessibility */
+        hasDummyGraphic?: boolean;
     }
 }
 
@@ -65,6 +59,7 @@ declare global {
     namespace Highcharts {
         interface AccessibilityPoint {
             accessibility?: AccessibilityPointStateObject;
+            value?: (number|null);
         }
         interface AccessibilityPointStateObject {
             valueDescription?: string;
@@ -116,8 +111,8 @@ function shouldAddDummyPoint(point: Point): boolean {
  */
 function makeDummyElement(
     point: Point,
-    pos: Highcharts.PositionObject
-): Highcharts.SVGElement {
+    pos: PositionObject
+): SVGElement {
     var renderer = point.series.chart.renderer,
         dummy = renderer.rect(pos.x, pos.y, 1, 1);
 
@@ -312,7 +307,7 @@ function getSeriesDescriptionText(
  * @return {string}
  */
 function getSeriesAxisDescriptionText(
-    series: Highcharts.Series,
+    series: Series,
     axisCollection: string
 ): string {
     var axis: Highcharts.Axis = (series as any)[axisCollection];
@@ -429,7 +424,7 @@ function getPointValue(
         valueSuffix = a11yPointOpts.valueSuffix ||
             tooltipOptions.valueSuffix || '',
         fallbackKey: ('value'|'y') = (
-            typeof (point as Highcharts.PackedBubblePoint).value !==
+            typeof point.value !==
             'undefined' ?
                 'value' : 'y'
         ),

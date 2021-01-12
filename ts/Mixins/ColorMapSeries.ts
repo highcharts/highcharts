@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,8 +8,19 @@
  *
  * */
 
+'use strict';
+
+import type ScatterPoint from '../Series/Scatter/ScatterPoint';
+import type ScatterSeries from '../Series/Scatter/ScatterSeries';
+import type { StatesOptionsKey } from '../Core/Series/StatesOptions';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
+
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        dataLabelOnNull?: boolean;
+    }
+}
 
 /**
  * Internal types
@@ -17,39 +28,35 @@ import H from '../Core/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ColorMapPoint extends Point {
+        interface ColorMapPoint extends ScatterPoint {
             dataLabelOnNull: boolean;
             series: ColorMapSeries;
             value: (number|null);
             isValid(): boolean;
-            setState(state?: string): void;
+            setState(state?: StatesOptionsKey): void;
         }
         interface ColorMapPointMixin {
             dataLabelOnNull: ColorMapPoint['dataLabelOnNull'];
             isValid: ColorMapPoint['isValid'];
             setState: ColorMapPoint['setState'];
         }
-        interface ColorMapSeries extends Series {
+        interface ColorMapSeries extends ScatterSeries {
             colorProp?: string;
             data: Array<ColorMapPoint>;
             parallelArrays: Array<string>;
             pointArrayMap: Array<string>;
-            pointAttribs: ColumnSeries['pointAttribs'];
             trackerGroups: Array<string>;
             colorAttribs(point: ColorMapPoint): SVGAttributes;
         }
         interface ColorMapSeriesMixin {
             axisTypes: ColorSeries['axisTypes'];
             colorAttribs: ColorMapSeries['colorAttribs'];
-            colorKey: ColorSeries['colorKey'];
+            colorKey?: ColorSeries['colorKey'];
             getSymbol: () => void;
             parallelArrays: ColorMapSeries['parallelArrays'];
             pointArrayMap: ColorMapSeries['pointArrayMap'];
             pointAttribs: ColorMapSeries['pointAttribs'];
             trackerGroups: ColorMapSeries['trackerGroups'];
-        }
-        interface PointLike {
-            dataLabelOnNull?: ColorMapPoint['dataLabelOnNull'];
         }
         let colorMapPointMixin: ColorMapPointMixin;
         let colorMapSeriesMixin: ColorMapSeriesMixin;
@@ -78,8 +85,6 @@ const colorMapPointMixin = {
      * Color points have a value option that determines whether or not it is
      * a null point
      * @private
-     * @function Highcharts.colorMapPointMixin.isValid
-     * @return {boolean}
      */
     isValid: function (this: Highcharts.ColorMapPoint): boolean {
         // undefined is allowed
@@ -92,11 +97,11 @@ const colorMapPointMixin = {
 
     /**
      * @private
-     * @function Highcharts.colorMapPointMixin.setState
-     * @param {string} state
-     * @return {void}
      */
-    setState: function (this: Highcharts.ColorMapPoint, state?: string): void {
+    setState: function (
+        this: Highcharts.ColorMapPoint,
+        state?: StatesOptionsKey
+    ): void {
         Point.prototype.setState.call(this, state);
         if (this.graphic) {
             this.graphic.attr({

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,7 +11,17 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type Position3DObject from '../Core/Renderer/Position3DObject';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import H from '../Core/Globals.js';
+import U from '../Core/Utilities.js';
+const { pick } = U;
+
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        scale3d?: number;
+    }
+}
 
 /**
  * Internal types
@@ -19,46 +29,36 @@ import H from '../Core/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            scale3d?: number;
-        }
-        interface Position3dObject extends PositionObject {
-            z: number;
-        }
-        interface Rotation3dObject {
-            cosA: number;
-            cosB: number;
-            sinA: number;
-            sinB: number;
-        }
         function perspective(
-            points: Array<Position3dObject>,
+            points: Array<Position3DObject>,
             chart: Chart,
             insidePlotArea?: boolean,
             useInvertedPersp?: boolean
-        ): Array<Position3dObject>;
+        ): Array<Position3DObject>;
         function perspective3D(
-            coordinate: Position3dObject,
-            origin: Position3dObject,
+            coordinate: Position3DObject,
+            origin: Position3DObject,
             distance: number
         ): PositionObject;
         function pointCameraDistance(
-            coordinates: Dictionary<number>,
+            coordinates: Record<string, number>,
             chart: Chart
         ): number;
         function shapeArea(vertexes: Array<PositionObject>): number;
         function shapeArea3d(
-            vertexes: Array<Position3dObject>,
+            vertexes: Array<Position3DObject>,
             chart: Chart,
             insidePlotArea?: boolean
         ): number;
     }
 }
 
-import U from '../Core/Utilities.js';
-const {
-    pick
-} = U;
+interface Rotation3DObject {
+    cosA: number;
+    cosB: number;
+    sinA: number;
+    sinB: number;
+}
 
 // Mathematical Functionility
 var deg2rad = H.deg2rad;
@@ -110,8 +110,8 @@ function rotate3D(
     x: number,
     y: number,
     z: number,
-    angles: Highcharts.Rotation3dObject
-): Highcharts.Position3dObject {
+    angles: Rotation3DObject
+): Position3DObject {
     return {
         x: angles.cosB * x - angles.sinB * z,
         y: -angles.sinA * angles.sinB * x + angles.cosA * y -
@@ -127,10 +127,10 @@ function rotate3D(
  * @private
  * @function Highcharts.perspective3D
  *
- * @param {Highcharts.Position3dObject} coordinate
+ * @param {Highcharts.Position3DObject} coordinate
  * 3D position
  *
- * @param {Highcharts.Position3dObject} origin
+ * @param {Highcharts.Position3DObject} origin
  * 3D root position
  *
  * @param {number} distance
@@ -141,11 +141,11 @@ function rotate3D(
  *
  * @requires highcharts-3d
  */
-const perspective3D = H.perspective3D = function (
-    coordinate: Highcharts.Position3dObject,
-    origin: Highcharts.Position3dObject,
+function perspective3D(
+    coordinate: Position3DObject,
+    origin: Position3DObject,
     distance: number
-): Highcharts.PositionObject {
+): PositionObject {
     var projection = ((distance > 0) && (distance < Number.POSITIVE_INFINITY)) ?
         distance / (coordinate.z + origin.z + distance) :
         1;
@@ -154,7 +154,8 @@ const perspective3D = H.perspective3D = function (
         x: coordinate.x * projection,
         y: coordinate.y * projection
     };
-};
+}
+H.perspective3D = perspective3D;
 
 /**
  * Transforms a given array of points according to the angles in chart.options.
@@ -162,29 +163,29 @@ const perspective3D = H.perspective3D = function (
  * @private
  * @function Highcharts.perspective
  *
- * @param {Array<Highcharts.Position3dObject>} points
+ * @param {Array<Highcharts.Position3DObject>} points
  * The array of points
  *
  * @param {Highcharts.Chart} chart
  * The chart
  *
  * @param {boolean} [insidePlotArea]
- * Whether to verifiy that the points are inside the plotArea
+ * Whether to verify that the points are inside the plotArea
  *
  * @param {boolean} [useInvertedPersp]
  * Whether to use inverted perspective in calculations
  *
- * @return {Array<Highcharts.Position3dObject>}
+ * @return {Array<Highcharts.Position3DObject>}
  * An array of transformed points
  *
  * @requires highcharts-3d
  */
-const perspective = H.perspective = function (
-    points: Array<Highcharts.Position3dObject>,
+function perspective(
+    points: Array<Position3DObject>,
     chart: Chart,
     insidePlotArea?: boolean,
     useInvertedPersp?: boolean
-): Array<Highcharts.Position3dObject> {
+): Array<Position3DObject> {
     var options3d = (chart.options.chart as any).options3d,
         /* The useInvertedPersp argument is used for
          * inverted charts with already inverted elements,
@@ -213,9 +214,7 @@ const perspective = H.perspective = function (
     }
 
     // Transform each point
-    return points.map(function (
-        point: Highcharts.Position3dObject
-    ): Highcharts.Position3dObject {
+    return points.map(function (point): Position3DObject {
         var rotated = rotate3D(
                 (inverted ? point.y : point.x) - origin.x,
                 (inverted ? point.x : point.y) - origin.y,
@@ -223,7 +222,7 @@ const perspective = H.perspective = function (
                 angles
             ),
             // Apply perspective
-            coordinate: Highcharts.Position3dObject =
+            coordinate: Position3DObject =
                 perspective3D(rotated, origin, origin.vd) as any;
 
         // Apply translation
@@ -237,7 +236,8 @@ const perspective = H.perspective = function (
             z: coordinate.z
         };
     });
-};
+}
+H.perspective = perspective;
 
 /**
  * Calculate a distance from camera to points - made for calculating zIndex of
@@ -257,8 +257,8 @@ const perspective = H.perspective = function (
  *
  * @requires highcharts-3d
  */
-const pointCameraDistance = H.pointCameraDistance = function (
-    coordinates: Highcharts.Dictionary<number>,
+function pointCameraDistance(
+    coordinates: Record<string, number>,
     chart: Chart
 ): number {
     var options3d = (chart.options.chart as any).options3d,
@@ -276,7 +276,8 @@ const pointCameraDistance = H.pointCameraDistance = function (
         );
 
     return distance;
-};
+}
+H.pointCameraDistance = pointCameraDistance;
 
 /**
  * Calculate area of a 2D polygon using Shoelace algorithm
@@ -293,7 +294,7 @@ const pointCameraDistance = H.pointCameraDistance = function (
  *
  * @requires highcharts-3d
  */
-const shapeArea = H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
+function shapeArea(vertexes: Array<PositionObject>): number {
     var area = 0,
         i,
         j;
@@ -303,7 +304,8 @@ const shapeArea = H.shapeArea = function (vertexes: Array<Highcharts.PositionObj
         area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
     }
     return area / 2;
-};
+}
+H.shapeArea = shapeArea;
 
 /**
  * Calculate area of a 3D polygon after perspective projection
@@ -311,27 +313,28 @@ const shapeArea = H.shapeArea = function (vertexes: Array<Highcharts.PositionObj
  * @private
  * @function Highcharts.shapeArea3d
  *
- * @param {Array<Highcharts.Position3dObject>} vertexes
+ * @param {Array<Highcharts.Position3DObject>} vertexes
  * 3D Polygon
  *
  * @param {Highcharts.Chart} chart
  * Related chart
  *
  * @param {boolean} [insidePlotArea]
- * Whether to verifiy that the points are inside the plotArea
+ * Whether to verify that the points are inside the plotArea
  *
  * @return {number}
  * Calculated area
  *
  * @requires highcharts-3d
  */
-const shapeArea3D = H.shapeArea3d = function (
-    vertexes: Array<Highcharts.Position3dObject>,
+function shapeArea3D(
+    vertexes: Array<Position3DObject>,
     chart: Chart,
     insidePlotArea?: boolean
 ): number {
     return shapeArea(perspective(vertexes, chart, insidePlotArea));
-};
+}
+H.shapeArea3d = shapeArea3D;
 
 const mathModule = {
     perspective,

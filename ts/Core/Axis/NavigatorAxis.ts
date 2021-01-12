@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -182,7 +182,7 @@ class NavigatorAxis {
         // For Stock charts, override selection zooming with some special
         // features because X axis zooming is already allowed by the Navigator
         // and Range selector.
-        addEvent(AxisClass, 'zoom', function (e: Highcharts.Dictionary<any>): void {
+        addEvent(AxisClass, 'zoom', function (e: Record<string, any>): void {
             const axis = this as NavigatorAxis;
             const chart = axis.chart;
             const chartOptions = chart.options;

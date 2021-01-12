@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -14,7 +14,6 @@
 'use strict';
 import H from '../../Core/Globals.js';
 var win = H.win, doc = H.doc;
-import '../../Series/LineSeries.js';
 import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 import U from '../../Core/Utilities.js';

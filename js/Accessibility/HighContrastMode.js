@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Handling for Windows High Contrast Mode.
  *
@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-var isMS = H.isMS, win = H.win, doc = win.document;
+var doc = H.doc, isMS = H.isMS, win = H.win;
 var whcm = {
     /**
      * Detect WHCM in the browser.
