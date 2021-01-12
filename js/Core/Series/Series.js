@@ -5733,12 +5733,6 @@ extend(Series.prototype, {
 SeriesRegistry.series = Series;
 /* *
  *
- *  Compatibility
- *
- * */
-H.Series = Series;
-/* *
- *
  *  Default Export
  *
  * */
