@@ -217,7 +217,7 @@ var CSVStore = /** @class */ (function (_super) {
         if (!itemDelimiter) {
             itemDelimiter = decimalPoint === ',' ? ';' : ',';
         }
-        var _a = this.getColumnsForExport(exportOptions.exportIDColumn), columnNames = _a.columnNames, columnValues = _a.columnValues;
+        var _a = this.getColumnsForExport(exportOptions.exportIDColumn, exportOptions.usePresentationOrder), columnNames = _a.columnNames, columnValues = _a.columnValues;
         var csvRows = [], columnsCount = columnNames.length;
         var rowArray = [];
         // Add the names as the first row if they should be exported

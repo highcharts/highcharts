@@ -97,6 +97,7 @@ var DataTable = /** @class */ (function () {
         while (headers.length < columnsLength) {
             headers.push(uniqueKey());
         }
+        table.presentationState.setColumnOrder(headers);
         if (columnsLength) {
             var rowsLength = columns[0].length;
             var i = 0;
@@ -557,11 +558,14 @@ var DataTable = /** @class */ (function () {
     /**
      * Converts the DataTable instance to a record of columns
      *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state.
+     *
      * @return {DataTable.ColumnCollection}
      * A record of columns, where the key is the name of the column,
      * and the values are the content of the column.
      */
-    DataTable.prototype.toColumns = function () {
+    DataTable.prototype.toColumns = function (usePresentationOrder) {
         var columnsObject = {
             id: []
         }, dataTable = this;
@@ -591,6 +595,19 @@ var DataTable = /** @class */ (function () {
                     columnsObject[columnName].push(void 0);
                 }
             }
+        }
+        if (usePresentationOrder) {
+            var sortedColumnsObject_1 = {
+                id: columnsObject.id
+            };
+            Object
+                .keys(columnsObject)
+                .slice(1)
+                .sort(dataTable.presentationState.getColumnSorter())
+                .forEach(function (column) {
+                sortedColumnsObject_1[column] = columnsObject[column];
+            });
+            return sortedColumnsObject_1;
         }
         return columnsObject;
     };

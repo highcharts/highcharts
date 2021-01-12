@@ -10,7 +10,7 @@
  *
  * */
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent, merge = U.merge;
+var addEvent = U.addEvent, fireEvent = U.fireEvent;
 /* *
  *
  *  Class
@@ -44,14 +44,33 @@ var DataPresentationState = /** @class */ (function () {
      * Emits an event on this table to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.EventObject} e
+     * @param {DataPresentationState.EventObject} e
      * Event object with event information.
      */
     DataPresentationState.prototype.emit = function (e) {
         fireEvent(this, e.type, e);
     };
     DataPresentationState.prototype.getColumnOrder = function () {
-        return merge(this.columnOrder);
+        return (this.columnOrder || []).slice();
+    };
+    DataPresentationState.prototype.getColumnSorter = function () {
+        var columnOrder = (this.columnOrder || []).slice();
+        if (!columnOrder.length) {
+            return function () { return 0; };
+        }
+        return function (a, b) {
+            var aIndex = columnOrder.indexOf(a), bIndex = columnOrder.indexOf(b);
+            if (aIndex > -1 && bIndex > -1) {
+                return aIndex - bIndex;
+            }
+            if (bIndex > -1) {
+                return 1;
+            }
+            if (aIndex > -1) {
+                return -1;
+            }
+            return 0;
+        };
     };
     DataPresentationState.prototype.isSet = function () {
         return this.isModified === true;
@@ -72,7 +91,7 @@ var DataPresentationState = /** @class */ (function () {
         return addEvent(this, type, callback);
     };
     DataPresentationState.prototype.setColumnOrder = function (columnOrder, eventDetail) {
-        var presentationState = this, oldColumnOrder = merge(presentationState.columnOrder), newColumnOrder = merge(columnOrder);
+        var presentationState = this, oldColumnOrder = (presentationState.columnOrder || []).slice(), newColumnOrder = columnOrder.slice();
         presentationState.emit({
             type: 'columnOrderChange',
             detail: eventDetail,
@@ -99,7 +118,7 @@ var DataPresentationState = /** @class */ (function () {
             $class: 'DataPresentationState'
         };
         if (this.columnOrder) {
-            json.columnOrder = merge(this.columnOrder);
+            json.columnOrder = this.columnOrder.slice();
         }
         return json;
     };

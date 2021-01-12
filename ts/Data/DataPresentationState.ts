@@ -21,8 +21,7 @@ import DataJSON from './DataJSON.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent,
-    merge
+    fireEvent
 } = U;
 
 /* *
@@ -74,7 +73,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * Emits an event on this table to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.EventObject} e
+     * @param {DataPresentationState.EventObject} e
      * Event object with event information.
      */
     public emit(e: DataPresentationState.EventObject): void {
@@ -82,7 +81,34 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
     }
 
     public getColumnOrder(): Array<string> {
-        return merge(this.columnOrder);
+        return (this.columnOrder || []).slice();
+    }
+
+    public getColumnSorter(): DataPresentationState.ColumnOrderCallback {
+        const columnOrder = (this.columnOrder || []).slice();
+
+        if (!columnOrder.length) {
+            return (): number => 0;
+        }
+
+        return (a: string, b: string): number => {
+            const aIndex = columnOrder.indexOf(a),
+                bIndex = columnOrder.indexOf(b);
+
+            if (aIndex > -1 && bIndex > -1) {
+                return aIndex - bIndex;
+            }
+
+            if (bIndex > -1) {
+                return 1;
+            }
+
+            if (aIndex > -1) {
+                return -1;
+            }
+
+            return 0;
+        };
     }
 
     public isSet(): boolean {
@@ -113,8 +139,8 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const presentationState = this,
-            oldColumnOrder = merge(presentationState.columnOrder),
-            newColumnOrder = merge(columnOrder);
+            oldColumnOrder = (presentationState.columnOrder || []).slice(),
+            newColumnOrder = columnOrder.slice();
 
         presentationState.emit({
             type: 'columnOrderChange',
@@ -146,7 +172,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         };
 
         if (this.columnOrder) {
-            json.columnOrder = merge(this.columnOrder);
+            json.columnOrder = this.columnOrder.slice();
         }
 
         return json;
@@ -172,7 +198,7 @@ namespace DataPresentationState {
      * */
 
     /**
-     * Describes the class JSON of a DataTable.
+     * Describes the class JSON of a DataPresentationState.
      */
     export interface ClassJSON extends DataJSON.ClassJSON {
         columnOrder?: Array<string>;
@@ -184,6 +210,10 @@ namespace DataPresentationState {
     export type ColumnOrderEventType = (
         'columnOrderChange'|'afterColumnOrderChange'
     );
+
+    export interface ColumnOrderCallback {
+        (a: string, b: string): number;
+    }
 
     /**
      * All information objects of DataPrsentationState events.

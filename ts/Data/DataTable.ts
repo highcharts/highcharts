@@ -75,6 +75,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             headers.push(uniqueKey());
         }
 
+        table.presentationState.setColumnOrder(headers);
+
         if (columnsLength) {
             const rowsLength = columns[0].length;
             let i = 0;
@@ -740,11 +742,14 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Converts the DataTable instance to a record of columns
      *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state.
+     *
      * @return {DataTable.ColumnCollection}
      * A record of columns, where the key is the name of the column,
      * and the values are the content of the column.
      */
-    public toColumns(): DataTable.ColumnCollection {
+    public toColumns(usePresentationOrder?: boolean): DataTable.ColumnCollection {
         const columnsObject: DataTable.ColumnCollection = {
                 id: []
             },
@@ -789,6 +794,22 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                     columnsObject[columnName].push(void 0);
                 }
             }
+        }
+
+        if (usePresentationOrder) {
+            const sortedColumnsObject: DataTable.ColumnCollection = {
+                id: columnsObject.id
+            };
+
+            Object
+                .keys(columnsObject)
+                .slice(1)
+                .sort(dataTable.presentationState.getColumnSorter())
+                .forEach((column: string): void => {
+                    sortedColumnsObject[column] = columnsObject[column];
+                });
+
+            return sortedColumnsObject;
         }
 
         return columnsObject;
