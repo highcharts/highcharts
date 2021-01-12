@@ -85,6 +85,14 @@ SeriesRegistry.registerSeriesType('line', Series);
 
 /* *
  *
+ *  Compatibility
+ *
+ * */
+
+(H as any).Series = Series; // backwards compatibility
+
+/* *
+ *
  *  Default Export
  *
  * */
