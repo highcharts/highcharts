@@ -17,7 +17,7 @@ var addEvent = U.addEvent, extend = U.extend, find = U.find, fireEvent = U.fireE
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString, removeElement = HTMLUtilities.removeElement;
+var removeElement = HTMLUtilities.removeElement;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -215,7 +215,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         }
         var itemLabel = this.chart.langFormat('accessibility.legend.legendItem', {
             chart: this.chart,
-            itemName: stripHTMLTags(item.name)
+            itemName: item.name
         }), attribs = {
             tabindex: -1,
             'aria-pressed': item.visible,

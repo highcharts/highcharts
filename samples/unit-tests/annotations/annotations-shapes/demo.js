@@ -147,7 +147,9 @@ QUnit.test('Drawing path with a marker', function (assert) {
 
         defs: {
             marker0: {
-                render: false,
+                attributes: {
+                    style: 'display: none'
+                },
                 id: 'arrow-marker',
                 tagName: 'marker',
                 refY: 5,
@@ -199,7 +201,7 @@ QUnit.test('Drawing path with a marker', function (assert) {
 
     assert.notOk(
         document.getElementById('arrow-marker'),
-        'The base marker is not created with the render = false'
+        'The base marker should not be created with render = false'
     );
 
     var marker = document.getElementById('shape-arrow-marker');

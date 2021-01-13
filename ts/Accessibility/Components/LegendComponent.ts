@@ -30,8 +30,7 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
-    removeElement = HTMLUtilities.removeElement;
+const removeElement = HTMLUtilities.removeElement;
 
 type LegendItem = (Highcharts.BubbleLegend|Series|Point);
 
@@ -387,7 +386,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 'accessibility.legend.legendItem',
                 {
                     chart: this.chart,
-                    itemName: stripHTMLTags((item as any).name)
+                    itemName: (item as any).name
                 }
             ),
             attribs = {

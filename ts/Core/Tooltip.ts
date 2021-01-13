@@ -382,22 +382,30 @@ class Tooltip {
 
         chart.renderer.definition({
             tagName: 'filter',
-            id: 'drop-shadow-' + chart.index,
-            opacity: 0.5,
+            attributes: {
+                id: 'drop-shadow-' + chart.index,
+                opacity: 0.5
+            },
             children: [{
                 tagName: 'feGaussianBlur',
-                'in': 'SourceAlpha',
-                stdDeviation: 1
+                attributes: {
+                    'in': 'SourceAlpha',
+                    stdDeviation: 1
+                }
             }, {
                 tagName: 'feOffset',
-                dx: 1,
-                dy: 1
+                attributes: {
+                    dx: 1,
+                    dy: 1
+                }
             }, {
                 tagName: 'feComponentTransfer',
                 children: [{
                     tagName: 'feFuncA',
-                    type: 'linear',
-                    slope: 0.3
+                    attributes: {
+                        type: 'linear',
+                        slope: 0.3
+                    }
                 }]
             }, {
                 tagName: 'feMerge',
@@ -405,7 +413,9 @@ class Tooltip {
                     tagName: 'feMergeNode'
                 }, {
                     tagName: 'feMergeNode',
-                    'in': 'SourceGraphic'
+                    attributes: {
+                        'in': 'SourceGraphic'
+                    }
                 }]
             }]
         });

@@ -74,7 +74,7 @@ declare global {
         }
         interface AnnotationChartOptionsObject extends Options {
             annotations: Array<AnnotationsOptions>;
-            defs: Record<string, SVGDefinitionObject>;
+            defs: Record<string, ASTNode>;
             navigation: NavigationOptions;
         }
         interface AnnotationControlPointEventsOptionsObject {

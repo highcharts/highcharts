@@ -8,6 +8,8 @@
 'use strict';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+var doc = H.doc;
+import AST from '../Core/Renderer/HTML/AST.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent;
 /**
@@ -170,10 +172,9 @@ var Fullscreen = /** @class */ (function () {
             menuItems &&
             exportDivElements &&
             exportDivElements.length) {
-            exportDivElements[menuItems.indexOf('viewFullscreen')]
-                .innerHTML = !this.isOpen ?
+            AST.setElementHTML(exportDivElements[menuItems.indexOf('viewFullscreen')], !this.isOpen ?
                 (exportingOptions.menuItemDefinitions.viewFullscreen.text ||
-                    lang.viewFullscreen) : lang.exitFullscreen;
+                    lang.viewFullscreen) : lang.exitFullscreen);
         }
     };
     /**

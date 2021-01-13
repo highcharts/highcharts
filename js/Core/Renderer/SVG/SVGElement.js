@@ -8,6 +8,7 @@
  *
  * */
 import A from '../../Animation/AnimationUtilities.js';
+import AST from '../HTML/AST.js';
 var animate = A.animate, animObject = A.animObject, stop = A.stop;
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
@@ -1605,7 +1606,7 @@ var SVGElement = /** @class */ (function () {
                 textAnchor: 'middle'
             }
         }, textPathOptions);
-        attrs = textPathOptions.attributes;
+        attrs = AST.filterUserAttributes(textPathOptions.attributes);
         if (path && textPathOptions && textPathOptions.enabled) {
             // In case of fixed width for a text, string is rebuilt
             // (e.g. ellipsis is applied), so we need to rebuild textPath too

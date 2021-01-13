@@ -63,6 +63,7 @@ const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import Time from '../Time.js';
 import U from '../Utilities.js';
+import AST from '../Renderer/HTML/AST.js';
 const {
     addEvent,
     attr,
@@ -2889,6 +2890,7 @@ class Chart {
         var chart = this,
             options = chart.options,
             loadingDiv = chart.loadingDiv,
+            loadingSpan = chart.loadingSpan,
             loadingOptions = options.loading,
             setLoadingSize = function (): void {
                 if (loadingDiv) {
@@ -2906,8 +2908,10 @@ class Chart {
             chart.loadingDiv = loadingDiv = createElement('div', {
                 className: 'highcharts-loading highcharts-loading-hidden'
             }, null as any, chart.container);
+        }
 
-            chart.loadingSpan = createElement(
+        if (!loadingSpan) {
+            chart.loadingSpan = loadingSpan = createElement(
                 'span',
                 { className: 'highcharts-loading-inner' },
                 null as any,
@@ -2919,15 +2923,17 @@ class Chart {
         loadingDiv.className = 'highcharts-loading';
 
         // Update text
-        (chart.loadingSpan as any).innerHTML =
-            pick(str, (options.lang as any).loading, '');
+        AST.setElementHTML(
+            loadingSpan,
+            pick(str, (options.lang as any).loading, '')
+        );
 
         if (!chart.styledMode) {
             // Update visuals
             css(loadingDiv, extend((loadingOptions as any).style, {
                 zIndex: 10
             }));
-            css((chart.loadingSpan as any), (loadingOptions as any).labelStyle);
+            css(loadingSpan, (loadingOptions as any).labelStyle);
 
             // Show it
             if (!chart.loadingShown) {
