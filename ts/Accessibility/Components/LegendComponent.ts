@@ -30,7 +30,10 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-const removeElement = HTMLUtilities.removeElement;
+const {
+    removeElement,
+    stripHTMLTagsFromString: stripHTMLTags
+} = HTMLUtilities;
 
 type LegendItem = (Highcharts.BubbleLegend|Series|Point);
 

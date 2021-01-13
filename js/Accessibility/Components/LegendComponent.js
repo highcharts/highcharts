@@ -17,7 +17,7 @@ var addEvent = U.addEvent, extend = U.extend, find = U.find, fireEvent = U.fireE
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var removeElement = HTMLUtilities.removeElement;
+var removeElement = HTMLUtilities.removeElement, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
