@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Sebastian Bochan
+ *  (c) 2010-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -18,13 +18,13 @@
 
 import type ParetoPoint from './ParetoPoint';
 import type ParetoSeriesOptions from './ParetoSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
-} = BaseSeries;
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
@@ -229,7 +229,7 @@ declare module '../../Core/Series/SeriesType' {
         pareto: typeof ParetoSeries;
     }
 }
-BaseSeries.registerSeriesType('pareto', ParetoSeries);
+SeriesRegistry.registerSeriesType('pareto', ParetoSeries);
 
 /* *
  *

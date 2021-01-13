@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,7 +11,7 @@
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Chart from '../Core/Chart/Chart.js';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, setOptions = U.setOptions, syncTimeout = U.syncTimeout;
@@ -238,7 +238,7 @@ SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
  * @private
  * @function Highcharts.Series#getPointsOnGraph
  */
-LineSeries.prototype.getPointsOnGraph = function () {
+Series.prototype.getPointsOnGraph = function () {
     if (!this.xAxis && !this.yAxis) {
         return;
     }
@@ -355,7 +355,7 @@ LineSeries.prototype.getPointsOnGraph = function () {
  * @private
  * @function Highcharts.Series#labelFontSize
  */
-LineSeries.prototype.labelFontSize = function (minFontSize, maxFontSize) {
+Series.prototype.labelFontSize = function (minFontSize, maxFontSize) {
     return minFontSize + ((this.sum / this.chart.labelSeriesMaxSum) *
         (maxFontSize - minFontSize)) + 'px';
 };
@@ -365,7 +365,7 @@ LineSeries.prototype.labelFontSize = function (minFontSize, maxFontSize) {
  * @private
  * @function Highcharts.Series#checkClearPoint
  */
-LineSeries.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
+Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
     var distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
     distToPointSquared = Number.MAX_VALUE, dist, connectorPoint, onArea = pick(this.options.label.onArea, !!this.area), findDistanceToOthers = (onArea || this.options.label.connectorAllowed), chart = this.chart, series, points, leastDistance = 16, withinRange, xDist, yDist, i, j;
     /**

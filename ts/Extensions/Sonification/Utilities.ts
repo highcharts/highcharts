@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Utility functions for sonification.
  *
@@ -13,8 +13,8 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
 import musicalFrequencies from './MusicalFrequencies.js';
 import U from '../../Core/Utilities.js';
 const { clamp } = U;
@@ -213,7 +213,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
     ): Highcharts.RangeObject {
         return chart.series.reduce(function (
             extremes: Highcharts.RangeObject,
-            series: LineSeries
+            series: Series
         ): Highcharts.RangeObject {
             // We use cropped points rather than series.data here, to allow
             // users to zoom in for better fidelity.

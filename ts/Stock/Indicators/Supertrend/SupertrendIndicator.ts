@@ -10,7 +10,7 @@
 
 import type ColorType from '../../../Core/Color/ColorType';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type { SeriesOptions } from '../../../Core/Series/SeriesOptions';
 import type {
     SupertrendOptions,
@@ -23,14 +23,15 @@ import type {
 } from './SupertrendOptions';
 import type SupertrendPoint from './SupertrendPoint';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../../Core/Series/Series.js';
+
+import palette from '../../../Core/Color/Palette.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         atr: ATRIndicator,
         sma: SMAIndicator
     }
-} = BaseSeries;
-import palette from '../../../Core/Color/Palette.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -512,7 +513,7 @@ class SupertrendIndicator extends SMAIndicator {
     //      Current Close > Current FINAL LOWERBAND
     //     ) THAN Current FINAL LOWERBAND
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: SupertrendParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -641,7 +642,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('supertrend', SupertrendIndicator);
+SeriesRegistry.registerSeriesType('supertrend', SupertrendIndicator);
 
 /* *
  *

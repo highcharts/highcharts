@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,7 +11,6 @@
 import A from '../Animation/AnimationUtilities.js';
 var animate = A.animate, animObject = A.animObject, setAnimation = A.setAnimation;
 import Axis from '../Axis/Axis.js';
-import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
 var charts = H.charts, doc = H.doc, win = H.win;
 import Legend from '../Legend.js';
@@ -20,6 +19,8 @@ import O from '../Options.js';
 var defaultOptions = O.defaultOptions, time = O.time;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
+import SeriesRegistry from '../Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import Time from '../Time.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, cleanRecursively = U.cleanRecursively, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
@@ -289,7 +290,7 @@ var Chart = /** @class */ (function () {
     Chart.prototype.initSeries = function (options) {
         var chart = this, optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
-            optionsChart.defaultSeriesType), series, SeriesClass = BaseSeries.seriesTypes[type];
+            optionsChart.defaultSeriesType), series, SeriesClass = seriesTypes[type];
         // No such series type
         if (!SeriesClass) {
             error(17, true, chart, { missingModuleFor: type });
@@ -1117,6 +1118,7 @@ var Chart = /** @class */ (function () {
     Chart.prototype.reflow = function (e) {
         var chart = this, optionsChart = chart.options.chart, renderTo = chart.renderTo, hasUserSize = (defined(optionsChart.width) &&
             defined(optionsChart.height)), width = optionsChart.width || getStyle(renderTo, 'width'), height = optionsChart.height || getStyle(renderTo, 'height'), target = e ? e.target : win;
+        delete chart.pointer.chartPosition;
         // Width and height checks for display:none. Target is doc in IE8 and
         // Opera, win in Firefox, Chrome and IE9.
         if (!hasUserSize &&
@@ -1490,8 +1492,7 @@ var Chart = /** @class */ (function () {
          */
         ['inverted', 'angular', 'polar'].forEach(function (key) {
             // The default series type's class
-            klass = BaseSeries.seriesTypes[(optionsChart.type ||
-                optionsChart.defaultSeriesType)];
+            klass = seriesTypes[(optionsChart.type || optionsChart.defaultSeriesType)];
             // Get the value from available chart-wide properties
             value =
                 // It is set in the options:
@@ -1502,7 +1503,7 @@ var Chart = /** @class */ (function () {
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
             while (!value && i--) {
-                klass = BaseSeries.seriesTypes[seriesOptions[i].type];
+                klass = seriesTypes[seriesOptions[i].type];
                 if (klass && klass.prototype[key]) {
                     value = true;
                 }
@@ -1668,8 +1669,6 @@ var Chart = /** @class */ (function () {
         chart.renderLabels();
         // Credits
         chart.addCredits();
-        // Handle scaling
-        chart.updateContainerScaling();
         // Set flag
         chart.hasRendered = true;
     };
@@ -1717,31 +1716,6 @@ var Chart = /** @class */ (function () {
                 chart.credits = chart.credits.destroy();
                 chart.addCredits(options);
             };
-        }
-    };
-    /**
-     * Handle scaling, #11329 - when there is scaling/transform on the container
-     * or on a parent element, we need to take this into account. We calculate
-     * the scaling once here and it is picked up where we need to use it
-     * (Pointer, Tooltip).
-     *
-     * @private
-     * @function Highcharts.Chart#updateContainerScaling
-     */
-    Chart.prototype.updateContainerScaling = function () {
-        var container = this.container;
-        // #13342 - tooltip was not visible in Chrome, when chart
-        // updates height.
-        if (container.offsetWidth > 2 && // #13342
-            container.offsetHeight > 2 && // #13342
-            container.getBoundingClientRect) {
-            var bb = container.getBoundingClientRect(), scaleX = bb.width / container.offsetWidth, scaleY = bb.height / container.offsetHeight;
-            if (scaleX !== 1 || scaleY !== 1) {
-                this.containerScaling = { scaleX: scaleX, scaleY: scaleY };
-            }
-            else {
-                delete this.containerScaling;
-            }
         }
     };
     /**
@@ -2223,7 +2197,7 @@ var Chart = /** @class */ (function () {
             chart.setResponsive(false, true);
         }
         options = cleanRecursively(options, chart.options);
-        merge(true, chart.userOptions, options);
+        chart.userOptions = merge(chart.userOptions, options);
         // If the top-level chart option is present, some special updates are
         // required
         optionsChart = options.chart;
@@ -2459,6 +2433,222 @@ var Chart = /** @class */ (function () {
     Chart.prototype.setCaption = function (options, redraw) {
         this.applyDescription('caption', options);
         this.layOutTitles(redraw);
+    };
+    /**
+     * Display the zoom button, so users can reset zoom to the default view
+     * settings.
+     *
+     * @function Highcharts.Chart#showResetZoom
+     *
+     * @fires Highcharts.Chart#event:afterShowResetZoom
+     * @fires Highcharts.Chart#event:beforeShowResetZoom
+     */
+    Chart.prototype.showResetZoom = function () {
+        var chart = this, lang = defaultOptions.lang, btnOptions = chart.options.chart.resetZoomButton, theme = btnOptions.theme, states = theme.states, alignTo = (btnOptions.relativeTo === 'chart' ||
+            btnOptions.relativeTo === 'spaceBox' ?
+            null :
+            'plotBox');
+        /**
+         * @private
+         */
+        function zoomOut() {
+            chart.zoomOut();
+        }
+        fireEvent(this, 'beforeShowResetZoom', null, function () {
+            chart.resetZoomButton = chart.renderer
+                .button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
+                .attr({
+                align: btnOptions.position.align,
+                title: lang.resetZoomTitle
+            })
+                .addClass('highcharts-reset-zoom')
+                .add()
+                .align(btnOptions.position, false, alignTo);
+        });
+        fireEvent(this, 'afterShowResetZoom');
+    };
+    /**
+     * Zoom the chart out after a user has zoomed in. See also
+     * [Axis.setExtremes](/class-reference/Highcharts.Axis#setExtremes).
+     *
+     * @function Highcharts.Chart#zoomOut
+     *
+     * @fires Highcharts.Chart#event:selection
+     */
+    Chart.prototype.zoomOut = function () {
+        fireEvent(this, 'selection', { resetSelection: true }, this.zoom);
+    };
+    /**
+     * Zoom into a given portion of the chart given by axis coordinates.
+     *
+     * @private
+     * @function Highcharts.Chart#zoom
+     * @param {Highcharts.SelectEventObject} event
+     */
+    Chart.prototype.zoom = function (event) {
+        var chart = this, hasZoomed, pointer = chart.pointer, displayButton = false, mouseDownPos = chart.inverted ? pointer.mouseDownX : pointer.mouseDownY, resetZoomButton;
+        // If zoom is called with no arguments, reset the axes
+        if (!event || event.resetSelection) {
+            chart.axes.forEach(function (axis) {
+                hasZoomed = axis.zoom();
+            });
+            pointer.initiated = false; // #6804
+        }
+        else { // else, zoom in on all axes
+            event.xAxis.concat(event.yAxis).forEach(function (axisData) {
+                var axis = axisData.axis, axisStartPos = chart.inverted ? axis.left : axis.top, axisEndPos = chart.inverted ?
+                    axisStartPos + axis.width : axisStartPos + axis.height, isXAxis = axis.isXAxis, isWithinPane = false;
+                // Check if zoomed area is within the pane (#1289).
+                // In case of multiple panes only one pane should be zoomed.
+                if ((!isXAxis &&
+                    mouseDownPos >= axisStartPos &&
+                    mouseDownPos <= axisEndPos) ||
+                    isXAxis ||
+                    !defined(mouseDownPos)) {
+                    isWithinPane = true;
+                }
+                // don't zoom more than minRange
+                if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
+                    hasZoomed = axis.zoom(axisData.min, axisData.max);
+                    if (axis.displayBtn) {
+                        displayButton = true;
+                    }
+                }
+            });
+        }
+        // Show or hide the Reset zoom button
+        resetZoomButton = chart.resetZoomButton;
+        if (displayButton && !resetZoomButton) {
+            chart.showResetZoom();
+        }
+        else if (!displayButton && isObject(resetZoomButton)) {
+            chart.resetZoomButton = resetZoomButton.destroy();
+        }
+        // Redraw
+        if (hasZoomed) {
+            chart.redraw(pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100));
+        }
+    };
+    /**
+     * Pan the chart by dragging the mouse across the pane. This function is
+     * called on mouse move, and the distance to pan is computed from chartX
+     * compared to the first chartX position in the dragging operation.
+     *
+     * @private
+     * @function Highcharts.Chart#pan
+     * @param {Highcharts.PointerEventObject} e
+     * @param {string} panning
+     */
+    Chart.prototype.pan = function (e, panning) {
+        var chart = this, hoverPoints = chart.hoverPoints, panningOptions, chartOptions = chart.options.chart, hasMapNavigation = chart.options.mapNavigation &&
+            chart.options.mapNavigation.enabled, doRedraw, type;
+        if (typeof panning === 'object') {
+            panningOptions = panning;
+        }
+        else {
+            panningOptions = {
+                enabled: panning,
+                type: 'x'
+            };
+        }
+        if (chartOptions && chartOptions.panning) {
+            chartOptions.panning = panningOptions;
+        }
+        type = panningOptions.type;
+        fireEvent(this, 'pan', { originalEvent: e }, function () {
+            // remove active points for shared tooltip
+            if (hoverPoints) {
+                hoverPoints.forEach(function (point) {
+                    point.setState();
+                });
+            }
+            // panning axis mapping
+            var xy = [1]; // x
+            if (type === 'xy') {
+                xy = [1, 0];
+            }
+            else if (type === 'y') {
+                xy = [0];
+            }
+            xy.forEach(function (isX) {
+                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
+                    (!axis.reversed && chart.inverted) ?
+                    -1 :
+                    1, extremes = axis.getExtremes(), panMin = axis.toValue(startPos - mousePos, true) +
+                    halfPointRange * pointRangeDirection, panMax = axis.toValue(startPos + axis.len - mousePos, true) -
+                    halfPointRange * pointRangeDirection, flipped = panMax < panMin, newMin = flipped ? panMax : panMin, newMax = flipped ? panMin : panMax, hasVerticalPanning = axis.hasVerticalPanning(), paddedMin, paddedMax, spill, panningState = axis.panningState;
+                // General calculations of panning state.
+                // This is related to using vertical panning. (#11315).
+                axis.series.forEach(function (series) {
+                    if (hasVerticalPanning &&
+                        !isX && (!panningState || panningState.isDirty)) {
+                        var processedData = series.getProcessedData(true), dataExtremes = series.getExtremes(processedData.yData, true);
+                        if (!panningState) {
+                            panningState = {
+                                startMin: Number.MAX_VALUE,
+                                startMax: -Number.MAX_VALUE
+                            };
+                        }
+                        if (isNumber(dataExtremes.dataMin) &&
+                            isNumber(dataExtremes.dataMax)) {
+                            panningState.startMin = Math.min(pick(series.options.threshold, Infinity), dataExtremes.dataMin, panningState.startMin);
+                            panningState.startMax = Math.max(pick(series.options.threshold, -Infinity), dataExtremes.dataMax, panningState.startMax);
+                        }
+                    }
+                });
+                paddedMin = Math.min(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
+                    extremes.min :
+                    axis.toValue(axis.toPixels(extremes.min) -
+                        axis.minPixelPadding));
+                paddedMax = Math.max(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMax, extremes.dataMax), halfPointRange ?
+                    extremes.max :
+                    axis.toValue(axis.toPixels(extremes.max) +
+                        axis.minPixelPadding));
+                axis.panningState = panningState;
+                // It is not necessary to calculate extremes on ordinal axis,
+                // because they are already calculated, so we don't want to
+                // override them.
+                if (!axis.isOrdinal) {
+                    // If the new range spills over, either to the min or max,
+                    // adjust the new range.
+                    spill = paddedMin - newMin;
+                    if (spill > 0) {
+                        newMax += spill;
+                        newMin = paddedMin;
+                    }
+                    spill = newMax - paddedMax;
+                    if (spill > 0) {
+                        newMax = paddedMax;
+                        newMin -= spill;
+                    }
+                    // Set new extremes if they are actually new
+                    if (axis.series.length &&
+                        newMin !== extremes.min &&
+                        newMax !== extremes.max &&
+                        newMin >= paddedMin &&
+                        newMax <= paddedMax) {
+                        axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+                        if (!chart.resetZoomButton &&
+                            !hasMapNavigation &&
+                            // Show reset zoom button only when both newMin and
+                            // newMax values are between padded axis range.
+                            newMin !== paddedMin &&
+                            newMax !== paddedMax &&
+                            type.match('y')) {
+                            chart.showResetZoom();
+                            axis.displayBtn = false;
+                        }
+                        doRedraw = true;
+                    }
+                    // set new reference for next run:
+                    chart[mouseDown] = mousePos;
+                }
+            });
+            if (doRedraw) {
+                chart.redraw(false);
+            }
+            css(chart.container, { cursor: 'move' });
+        });
     };
     return Chart;
 }());

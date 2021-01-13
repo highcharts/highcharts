@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,12 +10,12 @@
 'use strict';
 import A from '../Animation/AnimationUtilities.js';
 var getDeferredAnimation = A.getDeferredAnimation;
-import BaseSeries from './Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import H from '../Globals.js';
 var noop = H.noop;
-import LineSeries from '../../Series/Line/LineSeries.js';
 import palette from '../Color/Palette.js';
+import Series from '../Series/Series.js';
+import SeriesRegistry from './SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Utilities.js';
 var arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 /**
@@ -175,7 +175,7 @@ H.distribute = function (boxes, len, maxDistance) {
  * @return {void}
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
-LineSeries.prototype.drawDataLabels = function () {
+Series.prototype.drawDataLabels = function () {
     var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, dataLabelAnim = seriesDlOptions.animation, animationConfig = seriesDlOptions.defer ?
         getDeferredAnimation(chart, dataLabelAnim, series) :
         { defer: 0, duration: 0 }, renderer = chart.renderer;
@@ -415,7 +415,7 @@ LineSeries.prototype.drawDataLabels = function () {
  * @param {boolean} [isNew]
  * @return {void}
  */
-LineSeries.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
+Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
     var series = this, chart = this.chart, inverted = this.isCartesian && chart.inverted, enabledDataSorting = this.enabledDataSorting, plotX = pick(point.dlBox && point.dlBox.centerX, point.plotX, -9999), plotY = pick(point.plotY, -9999), bBox = dataLabel.getBBox(), baseline, rotation = options.rotation, normRotation, negRotation, align = options.align, rotCorr, // rotation correction
     isInsidePlot = chart.isInsidePlot(plotX, Math.round(plotY), inverted), 
     // Math.round for rounding errors (#2683), alignTo to allow column
@@ -539,7 +539,7 @@ LineSeries.prototype.alignDataLabel = function (point, dataLabel, options, align
  *
  * @return {void}
  */
-LineSeries.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, isInside, alignOptions) {
+Series.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, isInside, alignOptions) {
     var chart = this.chart, inverted = chart.inverted, xAxis = this.xAxis, reversed = xAxis.reversed, labelCenter = inverted ? dataLabel.height / 2 : dataLabel.width / 2, pointWidth = point.pointWidth, halfWidth = pointWidth ? pointWidth / 2 : 0, startXPos, startYPos;
     startXPos = inverted ?
         alignOptions.x :
@@ -588,7 +588,7 @@ LineSeries.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, i
  * @param {boolean} [isNew]
  * @return {boolean|undefined}
  */
-LineSeries.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
+Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
     var chart = this.chart, align = options.align, verticalAlign = options.verticalAlign, off, justified, padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
     var _a = options.x, x = _a === void 0 ? 0 : _a, _b = options.y, y = _b === void 0 ? 0 : _b;
     // Off left
@@ -729,7 +729,7 @@ if (seriesTypes.pie) {
             }
         });
         // run parent method
-        LineSeries.prototype.drawDataLabels.apply(series);
+        Series.prototype.drawDataLabels.apply(series);
         data.forEach(function (point) {
             if (point.dataLabel) {
                 if (point.visible) { // #407, #2510
@@ -1143,7 +1143,7 @@ if (seriesTypes.column) {
         options.align = pick(options.align, !inverted || inside ? 'center' : below ? 'right' : 'left');
         options.verticalAlign = pick(options.verticalAlign, inverted || inside ? 'middle' : below ? 'top' : 'bottom');
         // Call the parent method
-        LineSeries.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+        Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
         // If label was justified and we have contrast, set it:
         if (options.inside && point.contrastColor) {
             dataLabel.css({

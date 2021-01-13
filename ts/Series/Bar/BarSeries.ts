@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,7 @@
 import type BarPoint from './BarPoint';
 import type BarSeriesOptions from './BarSeriesOptions';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -101,7 +101,7 @@ declare module '../../Core/Series/SeriesType' {
         bar: typeof BarSeries;
     }
 }
-BaseSeries.registerSeriesType('bar', BarSeries);
+SeriesRegistry.registerSeriesType('bar', BarSeries);
 
 /* *
  *

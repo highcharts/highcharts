@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -69,6 +69,7 @@ declare global {
         interface LangAccessibilityLegendOptions {
             legendItem: string;
             legendLabel: string;
+            legendLabelNoTitle: string;
         }
         interface LangAccessibilityOptions {
             announceNewData: LangAccessibilityAnnounceNewDataOptions;
@@ -95,6 +96,7 @@ declare global {
             zoom: LangAccessibilityZoomOptions;
         }
         interface LangAccessibilityRangeSelectorOptions {
+            dropdownLabel: string;
             maxInputLabel: string;
             minInputLabel: string;
             clickButtonAnnouncement: string;
@@ -278,8 +280,9 @@ var langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         legend: {
-            legendLabel: 'Toggle series visibility',
-            legendItem: 'Hide {itemName}'
+            legendLabelNoTitle: 'Toggle series visibility',
+            legendLabel: 'Chart legend: {legendTitle}',
+            legendItem: 'Show {itemName}'
         },
 
         /**
@@ -299,6 +302,7 @@ var langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         rangeSelector: {
+            dropdownLabel: '{rangeTitle}',
             minInputLabel: 'Select start date.',
             maxInputLabel: 'Select end date.',
             clickButtonAnnouncement: 'Viewing {axisRangeDescription}'

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Sebastian Bochan
+ *  (c) 2010-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -21,9 +21,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var LineSeries = BaseSeries.seriesTypes.line;
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, merge = U.merge, extend = U.extend;
 /* *
@@ -155,7 +155,7 @@ extend(ParetoSeries.prototype, {
     init: DerivedSeriesMixin.init,
     setBaseSeries: DerivedSeriesMixin.setBaseSeries
 });
-BaseSeries.registerSeriesType('pareto', ParetoSeries);
+SeriesRegistry.registerSeriesType('pareto', ParetoSeries);
 /* *
  *
  *  Default export

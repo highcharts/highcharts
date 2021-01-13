@@ -2,7 +2,7 @@
  *
  *  Vector plot series module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,9 +25,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ScatterSeries = _a.scatter;
 import H from '../../Core/Globals.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, ScatterSeries = _a.scatter;
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, extend = U.extend, merge = U.merge, pick = U.pick;
 /* *
@@ -273,7 +273,7 @@ extend(VectorSeries.prototype, {
     parallelArrays: ['x', 'y', 'length', 'direction'],
     pointArrayMap: ['y', 'length', 'direction']
 });
-BaseSeries.registerSeriesType('vector', VectorSeries);
+SeriesRegistry.registerSeriesType('vector', VectorSeries);
 /* *
  *
  *  Default Export

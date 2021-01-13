@@ -9,21 +9,21 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     PCOptions,
     PCParamsOptions
 } from '../PC/PCOptions';
 import type PCPoint from './PCPoint';
+import type Series from '../../../Core/Series/Series';
+import palette from '../../../Core/Color/Palette.js';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
-import BaseSeries from '../../../Core/Series/Series.js';
-import palette from '../../../Core/Color/Palette.js';
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -125,7 +125,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     *
     * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: PCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
@@ -179,10 +179,11 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
 * */
 
 interface PCIndicator {
-    getTranslatedLinesNames: Highcharts.MultipleLinesMixin[
-        'getTranslatedLinesNames'
-    ];
-    linesApiNames: Highcharts.MultipleLinesMixin['linesApiNames'];
+    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
+    drawGraph: typeof MultipleLinesMixin.drawGraph;
+    toYData: typeof MultipleLinesMixin.toYData;
+    translate: typeof MultipleLinesMixin.translate;
+    linesApiNames: typeof MultipleLinesMixin.linesApiNames;
     nameBase: string;
     nameComponents: Array<string>;
     pointArrayMap: Array<string>;
@@ -214,7 +215,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('pc', PCIndicator);
+SeriesRegistry.registerSeriesType('pc', PCIndicator);
 
 /* *
  *

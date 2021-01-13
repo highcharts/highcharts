@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -94,7 +94,7 @@ if (!svg) {
         }
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = offset(this.chart.container);
+            this.chartPosition = chartPosition = this.getChartPosition();
         }
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within

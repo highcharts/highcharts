@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,11 +22,11 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/StackingAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -69,7 +69,7 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * @augments Highcharts.Series
  */
-class AreaSeries extends LineSeries {
+class AreaSeries extends Series {
 
     /* *
      *
@@ -90,7 +90,7 @@ class AreaSeries extends LineSeries {
      * @product      highcharts highstock
      * @optionparent plotOptions.area
      */
-    public static defaultOptions: AreaSeriesOptions = merge(LineSeries.defaultOptions, {
+    public static defaultOptions: AreaSeriesOptions = merge(Series.defaultOptions, {
         /**
          * @see [fillColor](#plotOptions.area.fillColor)
          * @see [fillOpacity](#plotOptions.area.fillOpacity)
@@ -245,7 +245,7 @@ class AreaSeries extends LineSeries {
         this.areaPath = [];
 
         // Call the base method
-        LineSeries.prototype.drawGraph.apply(this);
+        Series.prototype.drawGraph.apply(this);
 
         // Define local variables
         var series = this,
@@ -315,7 +315,7 @@ class AreaSeries extends LineSeries {
      * @private
      */
     public getGraphPath(points: Array<AreaPoint>): SVGPath {
-        var getGraphPath = LineSeries.prototype.getGraphPath,
+        var getGraphPath = Series.prototype.getGraphPath,
             graphPath: SVGPath,
             options = this.options,
             stacking = options.stacking,
@@ -645,7 +645,7 @@ declare module '../../Core/Series/SeriesType' {
         area: typeof AreaSeries;
     }
 }
-BaseSeries.registerSeriesType('area', AreaSeries);
+SeriesRegistry.registerSeriesType('area', AreaSeries);
 
 /* *
  *

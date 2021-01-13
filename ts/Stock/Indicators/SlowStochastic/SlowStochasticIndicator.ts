@@ -8,21 +8,22 @@
 
 'use strict';
 
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type Series from '../../../Core/Series/Series';
 import type {
     SlowStochasticOptions,
     SlowStochasticParamsOptions
 } from './SlowStochasticOptions';
 import type SlowStochasticPoint from './SlowStochasticPoint';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         stochastic: StochasticIndicator
     }
-} = BaseSeries;
-const { seriesTypes } = BaseSeries;
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+} = SeriesRegistry;
+const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -87,7 +88,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
         );
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: SlowStochasticParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -114,7 +115,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
 
         // Get SMA(%D)
         const smoothedValues: (
-            undefined|IndicatorValuesObject<LineSeries>
+            undefined|IndicatorValuesObject<Series>
         ) = seriesTypes.sma.prototype.getValues.call(
             this,
             ({
@@ -154,6 +155,7 @@ class SlowStochasticIndicator extends StochasticIndicator {
 }
 
 interface SlowStochasticIndicator {
+    pointClass: typeof SlowStochasticPoint;
     nameBase: string;
 }
 extend(SlowStochasticIndicator.prototype, {
@@ -166,7 +168,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('slowstochastic', SlowStochasticIndicator);
+SeriesRegistry.registerSeriesType('slowstochastic', SlowStochasticIndicator);
 
 /* *
  *

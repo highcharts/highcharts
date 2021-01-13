@@ -19,9 +19,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /* eslint-disable valid-jsdoc */
@@ -64,7 +64,7 @@ var BBIndicator = /** @class */ (function (_super) {
         return _this;
     }
     BBIndicator.prototype.init = function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             topLine: {
@@ -92,7 +92,7 @@ var BBIndicator = /** @class */ (function (_super) {
         for (i = period; i <= yValLen; i++) {
             slicedX = xVal.slice(i - period, i);
             slicedY = yVal.slice(i - period, i);
-            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
+            point = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, {
                 xData: slicedX,
                 yData: slicedY
             }, params);
@@ -191,7 +191,7 @@ extend(BBIndicator.prototype, {
     translate: MultipleLinesMixin.translate,
     toYData: MultipleLinesMixin.toYData
 });
-BaseSeries.registerSeriesType('bb', BBIndicator);
+SeriesRegistry.registerSeriesType('bb', BBIndicator);
 /* *
  *
  *  Default Export

@@ -2,7 +2,7 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  License: www.highcharts.com/license
@@ -23,13 +23,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var ColumnSeries = BaseSeries.seriesTypes.column;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Line/LineSeries.js';
 import PolygonMixin from '../../Mixins/Polygon.js';
 var getBoundingBoxFromPolygon = PolygonMixin.getBoundingBoxFromPolygon, getPolygon = PolygonMixin.getPolygon, isPolygonsColliding = PolygonMixin.isPolygonsColliding, rotate2DToOrigin = PolygonMixin.rotate2DToOrigin, rotate2DToPoint = PolygonMixin.rotate2DToPoint;
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
 import WordcloudPoint from './WordcloudPoint.js';
@@ -75,7 +75,7 @@ var WordcloudSeries = /** @class */ (function (_super) {
             title: null,
             tickPositions: []
         };
-        LineSeries.prototype.bindAxes.call(this);
+        Series.prototype.bindAxes.call(this);
         extend(this.yAxis.options, wordcloudAxis);
         extend(this.xAxis.options, wordcloudAxis);
     };
@@ -376,7 +376,7 @@ var WordcloudSeries = /** @class */ (function (_super) {
     return WordcloudSeries;
 }(ColumnSeries));
 extend(WordcloudSeries.prototype, {
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     animateDrilldown: noop,
     animateDrillupFrom: noop,
     pointClass: WordcloudPoint,
@@ -419,7 +419,7 @@ extend(WordcloudSeries.prototype, {
         rotate2DToPoint: rotate2DToPoint
     }
 });
-BaseSeries.registerSeriesType('wordcloud', WordcloudSeries);
+SeriesRegistry.registerSeriesType('wordcloud', WordcloudSeries);
 /* *
  *
  * Export Default

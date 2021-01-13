@@ -8,22 +8,22 @@
 
 'use strict';
 
-import type Point from '../../../Core/Series/Point';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = BaseSeries;
 import type {
     PivotPointsOptions,
     PivotPointsParamsOptions
 } from './PivotPointsOptions';
-import PivotPointsPoint from './PivotPointsPoint.js';
+import type Point from '../../../Core/Series/Point';
+import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
+import PivotPointsPoint from './PivotPointsPoint.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -116,7 +116,7 @@ class PivotPointsIndicator extends SMAIndicator {
     public translate(this: PivotPointsIndicator): void {
         var indicator = this;
 
-        BaseSeries.seriesTypes.sma.prototype.translate.apply(indicator);
+        SeriesRegistry.seriesTypes.sma.prototype.translate.apply(indicator);
 
         indicator.points.forEach(
             function (
@@ -189,7 +189,7 @@ class PivotPointsIndicator extends SMAIndicator {
             pivotPoints: Array<Point>
         ): void {
             path = path.concat(
-                BaseSeries.seriesTypes.sma.prototype.getGraphPath.call(indicator, pivotPoints)
+                SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, pivotPoints)
             );
         });
 
@@ -250,7 +250,7 @@ class PivotPointsIndicator extends SMAIndicator {
                                     null;
                         }
                     }
-                    BaseSeries.seriesTypes.sma.prototype.drawDataLabels.apply(
+                    SeriesRegistry.seriesTypes.sma.prototype.drawDataLabels.apply(
                         indicator, arguments
                     );
                 }
@@ -258,7 +258,7 @@ class PivotPointsIndicator extends SMAIndicator {
         }
     }
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         this: PivotPointsIndicator,
         series: TLinkedSeries,
         params: PivotPointsParamsOptions
@@ -422,7 +422,7 @@ extend(PivotPointsIndicator.prototype, {
  *
  * */
 
-BaseSeries.registerSeriesType('pivotpoints', PivotPointsIndicator);
+SeriesRegistry.registerSeriesType('pivotpoints', PivotPointsIndicator);
 
 /* *
  *

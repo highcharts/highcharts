@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -233,6 +233,9 @@ class ZAxis extends Axis implements AxisLike {
             offset: 0 as any,
             lineWidth: 0 as any
         }, userOptions);
+
+        // #14793, this used to be set on the prototype
+        this.isZAxis = true;
 
         super.setOptions(userOptions);
 

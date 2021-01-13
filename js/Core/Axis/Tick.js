@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,6 +9,9 @@
  * */
 'use strict';
 import H from '../Globals.js';
+var deg2rad = H.deg2rad;
+import U from '../Utilities.js';
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /**
  * Optional parameters for the tick.
  * @private
@@ -25,9 +28,19 @@ import H from '../Globals.js';
 * @name Highcharts.TickParametersObject#tickmarkOffset
 * @type {number|undefined}
 */
-import U from '../Utilities.js';
-var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-var deg2rad = H.deg2rad;
+/**
+ * Additonal time tick information.
+ *
+ * @interface Highcharts.TimeTicksInfoObject
+ * @extends Highcharts.TimeNormalizedObject
+ */ /**
+* @name Highcharts.TimeTicksInfoObject#higherRanks
+* @type {Array<string>}
+*/ /**
+* @name Highcharts.TimeTicksInfoObject#totalRange
+* @type {number}
+*/
+''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Tick class.

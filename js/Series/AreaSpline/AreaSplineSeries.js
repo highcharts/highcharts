@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -24,8 +24,8 @@ var __extends = (this && this.__extends) || (function () {
 import AreaSeries from '../Area/AreaSeries.js';
 var areaProto = AreaSeries.prototype;
 import SplineSeries from '../Spline/SplineSeries.js';
-import BaseSeries from '../../Core/Series/Series.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 /* *
@@ -104,7 +104,7 @@ extend(AreaSplineSeries.prototype, {
     drawGraph: areaProto.drawGraph,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
-BaseSeries.registerSeriesType('areaspline', AreaSplineSeries);
+SeriesRegistry.registerSeriesType('areaspline', AreaSplineSeries);
 /* *
  *
  *  Default export

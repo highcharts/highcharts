@@ -9,15 +9,6 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import LineSeries from '../../../Series/Line/LineSeries.js';
-import BaseSeries from '../../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        sma: SMAIndicator,
-        ema: EMAIndicator,
-        column: ColumnSeries
-    }
-} = BaseSeries;
 import type {
     MACDOptions,
     MACDGappedExtensionObject,
@@ -25,12 +16,22 @@ import type {
     MACDParamsOptions
 } from './MACDOptions';
 import type MACDPoint from './MACDPoint';
+import type Series from '../../../Core/Series/Series';
 import type {
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
+
 import H from '../../../Core/Globals.js';
 const { noop } = H;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator,
+        ema: EMAIndicator,
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -191,7 +192,7 @@ class MACDIndicator extends SMAIndicator {
     public init(
         this: MACDIndicator
     ): void {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Check whether series is initialized. It may be not initialized,
         // when any of required indicators is missing.
@@ -261,7 +262,7 @@ class MACDIndicator extends SMAIndicator {
         this.graphmacd = this.graphmacd && this.graphmacd.destroy();
         this.graphsignal = this.graphsignal && this.graphsignal.destroy();
 
-        BaseSeries.seriesTypes.sma.prototype.destroy.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.destroy.apply(this, arguments);
     }
 
     public drawGraph(this: MACDIndicator): void {
@@ -317,7 +318,7 @@ class MACDIndicator extends SMAIndicator {
                 indicator.zones =
                 (indicator as any)[indicator.currentLineZone].zones;
 
-                BaseSeries.seriesTypes.sma.prototype.drawGraph.call(indicator);
+                SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
                 (indicator as any)['graph' + lineName] = indicator.graph;
             }
         );
@@ -335,7 +336,7 @@ class MACDIndicator extends SMAIndicator {
         props: Array<Array<string>>
     ): Array<Array<string>> {
         var allZones: Array<Array<string>> =
-        BaseSeries.seriesTypes.sma.prototype.getZonesGraphs.call(this, props),
+        SeriesRegistry.seriesTypes.sma.prototype.getZonesGraphs.call(this, props),
             currentZones: Array<Array<string>> = allZones;
 
         if (this.currentLineZone) {
@@ -364,7 +365,7 @@ class MACDIndicator extends SMAIndicator {
 
         // signalZones.zones contains all zones:
         this.zones = (this.signalZones.zones as any);
-        BaseSeries.seriesTypes.sma.prototype.applyZones.call(this);
+        SeriesRegistry.seriesTypes.sma.prototype.applyZones.call(this);
 
         // applyZones hides only main series.graph, hide macd line manually
         if (this.graphmacd && (this.options.macdLine as any).zones.length) {
@@ -374,7 +375,7 @@ class MACDIndicator extends SMAIndicator {
         this.zones = histogramZones;
     }
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -394,14 +395,14 @@ class MACDIndicator extends SMAIndicator {
         }
 
         // Calculating the short and long EMA used when calculating the MACD
-        shortEMA = (BaseSeries.seriesTypes.ema.prototype.getValues(
+        shortEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
             series,
             {
                 period: params.shortPeriod
             }
         ) as any);
 
-        longEMA = (BaseSeries.seriesTypes.ema.prototype.getValues(
+        longEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
             series,
             {
                 period: params.longPeriod
@@ -439,7 +440,7 @@ class MACDIndicator extends SMAIndicator {
         }
 
         // Setting the signalline (Signal Line: X-day EMA of MACD line).
-        signalLine = (BaseSeries.seriesTypes.ema.prototype.getValues(
+        signalLine = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
             ({
                 xData: xMACD,
                 yData: yMACD
@@ -484,8 +485,8 @@ class MACDIndicator extends SMAIndicator {
 }
 
 interface MACDIndicator {
-    crispCol: typeof ColumnSeries.prototype['crispCol'];
-    getColumnMetrics: typeof ColumnSeries.prototype['getColumnMetrics'];
+    crispCol: typeof ColumnSeries.prototype.crispCol;
+    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
@@ -520,7 +521,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('macd', MACDIndicator);
+SeriesRegistry.registerSeriesType('macd', MACDIndicator);
 
 /* *
  *

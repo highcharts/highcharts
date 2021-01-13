@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -23,9 +23,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, XRangeSeries = _a.xrange;
 import GanttPoint from './GanttPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, XRangeSeries = _a.xrange;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, splat = U.splat;
 import '../../Core/Axis/TreeGridAxis.js';
@@ -199,7 +199,7 @@ extend(GanttSeries.prototype, {
     pointClass: GanttPoint,
     setData: LineSeries.prototype.setData
 });
-BaseSeries.registerSeriesType('gantt', GanttSeries);
+SeriesRegistry.registerSeriesType('gantt', GanttSeries);
 /* *
  *
  *  Default Export
@@ -228,7 +228,7 @@ export default GanttSeries;
  * @declare   Highcharts.GanttPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.xrange.data
- * @excluding className, color, colorIndex, connect, dataLabels, events,
+ * @excluding className, connect, dataLabels, events,
  *            partialFill, selected, x, x2
  * @product   gantt
  * @apioption series.gantt.data

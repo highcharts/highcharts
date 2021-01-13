@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,8 @@
 'use strict';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
 var columnProto = ColumnSeries.prototype;
-import LineSeries from '../Series/Line/LineSeries.js';
-var seriesProto = LineSeries.prototype;
+import Series from '../Core/Series/Series.js';
+var seriesProto = Series.prototype;
 import U from '../Core/Utilities.js';
 var defined = U.defined, stableSort = U.stableSort;
 /**

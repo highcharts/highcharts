@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Paweł Dalek
+ *  (c) 2010-2021 Paweł Dalek
  *
  *  Volume Weighted Average Price (VWAP) indicator for Highstock
  *
@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var error = U.error, isArray = U.isArray, merge = U.merge;
 /* *
@@ -157,7 +157,7 @@ var VWAPIndicator = /** @class */ (function (_super) {
     });
     return VWAPIndicator;
 }(SMAIndicator));
-BaseSeries.registerSeriesType('vwap', VWAPIndicator);
+SeriesRegistry.registerSeriesType('vwap', VWAPIndicator);
 /* *
  *
  *  Default Export

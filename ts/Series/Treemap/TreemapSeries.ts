@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2020 Highsoft AS
+ *  (c) 2014-2021 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -34,16 +34,6 @@ import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        heatmap: HeatmapSeries,
-        line: LineSeries,
-        pie: PieSeries,
-        scatter: ScatterSeries
-    }
-} = BaseSeries;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
@@ -52,6 +42,16 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        column: ColumnSeries,
+        heatmap: HeatmapSeries,
+        line: LineSeries,
+        pie: PieSeries,
+        scatter: ScatterSeries
+    }
+} = SeriesRegistry;
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
@@ -1944,7 +1944,7 @@ declare module '../../Core/Series/SeriesType' {
         treemap: typeof TreemapSeries;
     }
 }
-BaseSeries.registerSeriesType('treemap', TreemapSeries);
+SeriesRegistry.registerSeriesType('treemap', TreemapSeries);
 
 /* *
  *

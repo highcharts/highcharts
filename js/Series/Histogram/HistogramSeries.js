@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2010-2017 Highsoft AS
+ *  Copyright (c) 2010-2021 Highsoft AS
  *  Author: Sebastian Domas
  *
  *  License: www.highcharts.com/license
@@ -22,9 +22,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var ColumnSeries = BaseSeries.seriesTypes.column;
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach;
 /* ************************************************************************** *
@@ -160,6 +160,7 @@ var HistogramSeries = /** @class */ (function (_super) {
     HistogramSeries.prototype.setDerivedData = function () {
         var yData = this.baseSeries.yData;
         if (!yData.length) {
+            this.setData([]);
             return;
         }
         var data = this.derivedData(yData, this.binsNumber(), this.options.binWidth);
@@ -223,7 +224,7 @@ extend(HistogramSeries.prototype, {
     init: DerivedSeriesMixin.init,
     setBaseSeries: DerivedSeriesMixin.setBaseSeries
 });
-BaseSeries.registerSeriesType('histogram', HistogramSeries);
+SeriesRegistry.registerSeriesType('histogram', HistogramSeries);
 /* *
  *
  *  Default Export

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2020 Torstein Honsi
+ *  (c) 2019-2021 Torstein Honsi
  *
  *  Item series type for Highcharts
  *

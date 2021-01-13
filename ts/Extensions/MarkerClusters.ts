@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Author: Wojciech Chmiel
  *
@@ -36,14 +36,14 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 const { defaultOptions } = O;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -300,10 +300,9 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 import Axis from '../Core/Axis/Axis.js';
-import '../Series/Line/LineSeries.js';
 
 var Scatter = seriesTypes.scatter,
-    baseGeneratePoints = LineSeries.prototype.generatePoints,
+    baseGeneratePoints = Series.prototype.generatePoints,
     stateIdCounter = 0,
     // Points that ids are included in the oldPointsStateId array
     // are hidden before animation. Other ones are destroyed.
@@ -2353,10 +2352,10 @@ addEvent(Point, 'update', function (): (boolean | void) {
 });
 
 // Destroy grouped data on series destroy.
-addEvent(LineSeries, 'destroy', Scatter.prototype.destroyClusteredData);
+addEvent(Series, 'destroy', Scatter.prototype.destroyClusteredData);
 
 // Add classes, change mouse cursor.
-addEvent(LineSeries, 'afterRender', function (): void {
+addEvent(Series, 'afterRender', function (): void {
     var series = this,
         clusterZoomEnabled = (series.options.cluster || {}).drillToCluster;
 

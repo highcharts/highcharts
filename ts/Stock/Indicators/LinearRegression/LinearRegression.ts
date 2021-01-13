@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2020 Kamil Kulig
+ *  (c) 2010-2021 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -11,19 +11,19 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     LinearRegressionOptions,
     LinearRegressionParamsOptions,
     RegressionLineParametersObject
 } from './LinearRegressionOptions';
 import type LinearRegressionPoint from './LinearRegressionPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -256,7 +256,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     }
 
     // Required to be implemented - starting point for indicator's logic
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         this: LinearRegressionIndicator,
         baseSeries: TLinkedSeries,
         regressionSeriesParams:
@@ -327,6 +327,7 @@ class LinearRegressionIndicator extends SMAIndicator {
  * */
 interface LinearRegressionIndicator {
     pointClass: typeof LinearRegressionPoint;
+    nameBase: string;
 }
 
 extend(LinearRegressionIndicator.prototype, {
@@ -346,7 +347,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('linearRegression', LinearRegressionIndicator);
+SeriesRegistry.registerSeriesType('linearRegression', LinearRegressionIndicator);
 
 /* *
  *

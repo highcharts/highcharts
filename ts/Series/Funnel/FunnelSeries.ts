@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,17 +25,17 @@ import type FunnelPoint from './FunnelPoint';
 import type FunnelSeriesOptions from './FunnelSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries,
         pie: PieSeries
     }
-} = BaseSeries;
-import Chart from '../../Core/Chart/Chart.js';
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import palette from '../../Core/Color/Palette.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -380,7 +380,7 @@ class FunnelSeries extends PieSeries {
             };
         }
 
-        BaseSeries.seriesTypes[
+        SeriesRegistry.seriesTypes[
             (series.options.dataLabels as any).inside ? 'column' : 'pie'
         ].prototype.drawDataLabels.call(this);
     }
@@ -662,7 +662,7 @@ declare module '../../Core/Series/SeriesType' {
         funnel: typeof FunnelSeries;
     }
 }
-BaseSeries.registerSeriesType('funnel', FunnelSeries);
+SeriesRegistry.registerSeriesType('funnel', FunnelSeries);
 
 /* *
  *

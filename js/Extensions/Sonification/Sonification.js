@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Sonification module for Highcharts
  *
@@ -12,10 +12,10 @@
 'use strict';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 import Instrument from './Instrument.js';
@@ -26,7 +26,6 @@ import chartSonifyFunctions from './ChartSonify.js';
 import utilities from './Utilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './Options.js';
-import '../../Series/Line/LineSeries.js';
 // Expose on the Highcharts object
 /**
  * Global classes and objects related to sonification.
@@ -98,7 +97,7 @@ merge(true, defaultOptions, sonificationOptions);
 // Chart specific
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
-LineSeries.prototype.sonify = chartSonifyFunctions.seriesSonify;
+Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
 extend(Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,

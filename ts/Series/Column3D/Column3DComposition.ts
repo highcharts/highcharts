@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,14 +26,14 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Position3DObject from '../../Core/Renderer/Position3DObject';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
 const { svg } = H;
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 import Math3D from '../../Extensions/Math3D.js';
 const { perspective } = Math3D;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -107,7 +107,7 @@ function retrieveStacks(
     chart: Chart,
     stacking?: string
 ): Highcharts.Stack3DDictionary {
-    const series = chart.series as Array<LineSeries>,
+    const series = chart.series as Array<Series>,
         stacks = {} as Highcharts.Stack3DDictionary;
 
     let stackNumber: number,
@@ -143,7 +143,7 @@ wrap(columnProto, 'translate', function (
 });
 
 // Don't use justifyDataLabel when point is outsidePlot
-wrap(LineSeries.prototype, 'justifyDataLabel', function (
+wrap(Series.prototype, 'justifyDataLabel', function (
     this: ColumnSeries,
     proceed: Function
 ): void {
@@ -506,8 +506,8 @@ wrap(columnProto.pointClass.prototype,
     hasNewShapeType
 );
 
-if (BaseSeries.seriesTypes.columnRange) {
-    const columnRangeProto = BaseSeries.seriesTypes.columnrange.prototype;
+if (SeriesRegistry.seriesTypes.columnRange) {
+    const columnRangeProto = SeriesRegistry.seriesTypes.columnrange.prototype;
     wrap(columnRangeProto, 'pointAttribs', pointAttribs);
     wrap(columnRangeProto, 'setState', setState);
     wrap(
@@ -519,8 +519,8 @@ if (BaseSeries.seriesTypes.columnRange) {
     columnRangeProto.setVisible = columnProto.setVisible;
 }
 
-wrap(LineSeries.prototype, 'alignDataLabel', function (
-    this: LineSeries,
+wrap(Series.prototype, 'alignDataLabel', function (
+    this: Series,
     proceed: Function,
     point: ColumnPoint,
     dataLabel: SVGElement,
@@ -601,7 +601,7 @@ wrap(StackItem.prototype, 'getStackBox', function (
         // for correct stackLabels position calculation
         if (
             columnSeries &&
-            columnSeries instanceof BaseSeries.seriesTypes.column
+            columnSeries instanceof SeriesRegistry.seriesTypes.column
         ) {
             let dLPosition = {
                 x: stackBox.x + (chart.inverted ? h : xWidth / 2),

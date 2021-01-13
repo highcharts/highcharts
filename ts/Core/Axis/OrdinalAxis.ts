@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,8 +14,8 @@ import type NavigatorAxis from './NavigatorAxis';
 import type ScatterSeries from '../../Series/Scatter/ScatterSeries';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import Point from '../Series/Point.js';
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -26,40 +26,47 @@ const {
     timeUnits
 } = U;
 
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            getTimeTicks(
-                normalizedInterval: DateTimeAxisNormalizedObject,
-                min: number,
-                max: number,
-                startOfWeek?: number,
-                positions?: Array<number>,
-                closestDistance?: number,
-                findHigherRanks?: boolean
-            ): AxisTickPositionsArray;
-            lin2val(val: number, fromIndex?: boolean): number;
-            val2lin(val: number, toIndex?: boolean): number;
-        }
-        interface TimeTicksInfoObject extends DateTimeAxisNormalizedObject {
-            segmentStarts?: Array<number>;
-        }
         interface XAxisOptions {
             keepOrdinalPadding?: boolean;
         }
     }
 }
 
-/**
- * @private
- */
+declare module './TimeTicksInfoObject' {
+    interface TimeTicksInfoObject extends Highcharts.DateTimeAxisNormalizedObject {
+        segmentStarts?: Array<number>;
+    }
+}
+
 declare module './Types' {
     interface AxisComposition {
         ordinal?: OrdinalAxis['ordinal'];
+        /** @deprecated */
+        getTimeTicks(
+            normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
+            min: number,
+            max: number,
+            startOfWeek?: number,
+            positions?: Array<number>,
+            closestDistance?: number,
+            findHigherRanks?: boolean
+        ): Highcharts.AxisTickPositionsArray;
+        /** @deprecated */
+        lin2val(val: number, fromIndex?: boolean): number;
+        /** @deprecated */
+        val2lin(val: number, toIndex?: boolean): number;
     }
     interface AxisTypeRegistry {
         OrdinalAxis: OrdinalAxis;
@@ -368,7 +375,7 @@ namespace OrdinalAxis {
                 overscroll = axis.options.overscroll,
                 extremes = axis.getExtremes(),
                 fakeAxis: OrdinalAxis,
-                fakeSeries: LineSeries;
+                fakeSeries: Series;
 
             // If this is the first time, or the ordinal index is deleted by
             // updatedData,
@@ -408,7 +415,7 @@ namespace OrdinalAxis {
                         xData: (series.xData as any).slice(),
                         chart: chart,
                         destroyGroupedData: H.noop,
-                        getProcessedData: LineSeries.prototype.getProcessedData
+                        getProcessedData: Series.prototype.getProcessedData
                     } as any;
 
                     fakeSeries.xData = (fakeSeries.xData as any).concat(
@@ -471,7 +478,7 @@ namespace OrdinalAxis {
         public getGroupIntervalFactor(
             xMin: number,
             xMax: number,
-            series: LineSeries
+            series: Series
         ): number {
             var ordinal = this,
                 axis = ordinal.axis,
@@ -601,7 +608,7 @@ namespace OrdinalAxis {
     export function compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
-        SeriesClass: typeof LineSeries
+        SeriesClass: typeof Series
     ): void {
 
         AxisClass.keepProps.push('ordinal');
@@ -1182,6 +1189,6 @@ namespace OrdinalAxis {
     }
 }
 
-OrdinalAxis.compose(Axis, Chart, LineSeries); // @todo move to StockChart, remove from master
+OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master
 
 export default OrdinalAxis;

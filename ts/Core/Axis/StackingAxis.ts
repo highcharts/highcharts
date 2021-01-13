@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../Series/Series';
 import type StackItem from '../../Extensions/Stacking';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
@@ -86,7 +86,7 @@ class StackingAxisAdditions {
         const reversedStacks = pick(axis.options.reversedStacks, true);
         const len = axisSeries.length;
 
-        let actualSeries: LineSeries,
+        let actualSeries: Series,
             i: number;
 
         if (!axis.isXAxis) {

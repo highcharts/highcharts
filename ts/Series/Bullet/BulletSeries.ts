@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Kacper Madej
+ *  (c) 2010-2021 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -18,13 +18,13 @@
 
 import type BulletSeriesOptions from './BulletSeriesOptions';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
-import BaseSeries from '../../Core/Series/Series.js';
+import BulletPoint from './BulletPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
-import BulletPoint from './BulletPoint.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -361,7 +361,7 @@ declare module '../../Core/Series/SeriesType' {
         bullet: typeof BulletSeries;
     }
 }
-BaseSeries.registerSeriesType('bullet', BulletSeries);
+SeriesRegistry.registerSeriesType('bullet', BulletSeries);
 
 /* *
  *

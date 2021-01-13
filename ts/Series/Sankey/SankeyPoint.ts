@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,14 +20,14 @@
 
 import type SankeyPointOptions from './SankeyPointOptions';
 import type SankeySeries from './SankeySeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import NodesMixin from '../../Mixins/Nodes.js';
+import Point from '../../Core/Series/Point.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
-import NodesMixin from '../../Mixins/Nodes.js';
-import Point from '../../Core/Series/Point.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     defined,

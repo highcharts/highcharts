@@ -2,7 +2,7 @@
  *
  *  Variable Pie module for Highcharts
  *
- *  (c) 2010-2017 Grzegorz Blachliński
+ *  (c) 2010-2021 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var PieSeries = BaseSeries.seriesTypes.pie;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick;
 /* *
@@ -363,7 +363,7 @@ extend(VariablePieSeries.prototype, {
     pointArrayMap: ['y', 'z'],
     parallelArrays: ['x', 'y', 'z']
 });
-BaseSeries.registerSeriesType('variablepie', VariablePieSeries);
+SeriesRegistry.registerSeriesType('variablepie', VariablePieSeries);
 /* *
  *
  *  Default Export

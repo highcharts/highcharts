@@ -2,7 +2,7 @@
  *
  *  Dependency wheel module
  *
- *  (c) 2018-2020 Torstein Honsi
+ *  (c) 2018-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,13 +22,13 @@ import type DependencyWheelPointOptions from './DependencyWheelPointOptions';
 import type DependencyWheelSeries from './DependencyWheelSeries';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+import NodesMixin from '../../Mixins/Nodes.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sankey: SankeySeries
     }
-} = BaseSeries;
-import NodesMixin from '../../Mixins/Nodes.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

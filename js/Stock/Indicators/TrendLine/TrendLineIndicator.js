@@ -19,8 +19,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var SMAIndicator = BaseSeries.seriesTypes.sma;
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, isArray = U.isArray;
 /* *
@@ -125,7 +125,7 @@ extend(TrendLineIndicator.prototype, {
     nameBase: 'Trendline',
     nameComponents: false
 });
-BaseSeries.registerSeriesType('trendline', TrendLineIndicator);
+SeriesRegistry.registerSeriesType('trendline', TrendLineIndicator);
 /* *
  *
  *  Default Export

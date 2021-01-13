@@ -12,16 +12,16 @@ const {
     seriesTypes: {
         ema: EMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import type {
     APOOptions,
     APOParamsOptions
 } from './APOOptions';
 import type APOPoint from './APOPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -98,7 +98,7 @@ class APOIndicator extends EMAIndicator {
     *
     * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: APOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
@@ -211,7 +211,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('apo', APOIndicator);
+SeriesRegistry.registerSeriesType('apo', APOIndicator);
 
 /* *
  *

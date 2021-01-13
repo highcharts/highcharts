@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,14 +18,14 @@
 
 import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
-import type ColorString from '../../Core/Color/ColorString';
 import type { SeriesZonesOptions } from './../../Core/Series/SeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 
 /* *
  *
@@ -62,8 +62,6 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
     public series: OHLCSeries = void 0 as any;
 
     public yBottom?: number;
-
-    public upColor?: ColorString;
 
     /* *
      *

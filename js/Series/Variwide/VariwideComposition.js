@@ -2,7 +2,7 @@
  *
  *  Highcharts variwide module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -71,7 +71,7 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, 
     xy = proceed.apply(this, args);
     // Post-translate
     if (this.axis.variwide && this.axis.categories) {
-        this.postTranslate(xy, xOrY, index);
+        this.postTranslate(xy, xOrY, this.pos);
     }
     return xy;
 });

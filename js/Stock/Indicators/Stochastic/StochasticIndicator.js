@@ -19,10 +19,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, isArray = U.isArray, merge = U.merge;
 /**
@@ -44,7 +44,7 @@ var StochasticIndicator = /** @class */ (function (_super) {
         return _this;
     }
     StochasticIndicator.prototype.init = function () {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             smoothedLine: {
@@ -79,7 +79,7 @@ var StochasticIndicator = /** @class */ (function (_super) {
             yData.push([K, null]);
             // Calculate smoothed %D, which is SMA of %K
             if (i >= (periodK - 1) + (periodD - 1)) {
-                points = BaseSeries.seriesTypes.sma.prototype.getValues.call(this, {
+                points = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(this, {
                     xData: xData.slice(-periodD),
                     yData: yData.slice(-periodD)
                 }, {
@@ -172,7 +172,7 @@ extend(StochasticIndicator.prototype, {
     translate: MultipleLinesMixin.translate,
     toYData: MultipleLinesMixin.toYData
 });
-BaseSeries.registerSeriesType('stochastic', StochasticIndicator);
+SeriesRegistry.registerSeriesType('stochastic', StochasticIndicator);
 /* *
  *
  *  Default Export

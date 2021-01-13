@@ -2,7 +2,7 @@
  *
  *  Parabolic SAR indicator for Highstock
  *
- *  (c) 2010-2020 Grzegorz Blachliński
+ *  (c) 2010-2021 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -13,18 +13,18 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     PSAROptions,
     PSARParamsOptions
 } from './PSAROptions';
 import type PSARPoint from './PSARPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     merge,
@@ -240,7 +240,7 @@ class PSARIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: PSARParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -385,6 +385,7 @@ class PSARIndicator extends SMAIndicator {
 
 interface PSARIndicator {
     pointClass: typeof PSARPoint;
+    nameComponents: Array<string>;
 }
 
 extend(PSARIndicator.prototype, {
@@ -403,7 +404,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('psar', PSARIndicator);
+SeriesRegistry.registerSeriesType('psar', PSARIndicator);
 
 /* *
  *

@@ -8,24 +8,22 @@
 
 'use strict';
 
-import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import type { PointMarkerOptions } from '../../../Core/Series/PointOptions';
 import type {
     KeltnerChannelsOptions,
     KeltnerChannelsParamsOptions
 } from './KeltnerChannelsOptions';
 import type KeltnerChannelsPoint from './KeltnerChannelsPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type Series from '../../../Core/Series/Series';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
         ema: EMAIndicator,
         atr: ATRIndicator
     }
-} = BaseSeries;
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -123,7 +121,7 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
     public points: Array<KeltnerChannelsPoint> = void 0 as any;
 
     public init(this: KeltnerChannelsIndicator): void {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
         // Set default color for lines:
         this.options = merge({
             topLine: {
@@ -139,7 +137,7 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
         }, this.options);
     }
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: KeltnerChannelsParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -160,7 +158,7 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
             seriesEMA: (
                 IndicatorValuesObject<TLinkedSeries>|
                 undefined
-            ) = BaseSeries.seriesTypes.ema.prototype.getValues(series,
+            ) = SeriesRegistry.seriesTypes.ema.prototype.getValues(series,
                 {
                     period: period,
                     index: index
@@ -168,7 +166,7 @@ class KeltnerChannelsIndicator extends SMAIndicator implements Highcharts.Multip
             seriesATR: (
                 IndicatorValuesObject<TLinkedSeries>|undefined
             ) =
-            BaseSeries.seriesTypes.atr.prototype.getValues(series,
+            SeriesRegistry.seriesTypes.atr.prototype.getValues(series,
                 {
                     period: periodATR
                 }),
@@ -236,7 +234,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
+SeriesRegistry.registerSeriesType('keltnerchannels', KeltnerChannelsIndicator);
 
 /* *
  *

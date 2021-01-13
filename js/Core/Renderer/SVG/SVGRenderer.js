@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -2275,7 +2275,7 @@ SVGRenderer.prototype.symbols = {
      * rectangles in VML
      */
     callout: function (x, y, w, h, options) {
-        var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX || 0, anchorY = options && options.anchorY || 0, path;
+        var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX, anchorY = options && options.anchorY || 0, path;
         path = [
             ['M', x + r, y],
             ['L', x + w - r, y],
@@ -2287,8 +2287,11 @@ SVGRenderer.prototype.symbols = {
             ['L', x, y + r],
             ['C', x, y, x, y, x + r, y] // top-left corner
         ];
+        if (!isNumber(anchorX)) {
+            return path;
+        }
         // Anchor on right side
-        if (anchorX && anchorX > w) {
+        if (x + anchorX >= w) {
             // Chevron
             if (anchorY > y + safeDistance &&
                 anchorY < y + h - safeDistance) {
@@ -2300,7 +2303,7 @@ SVGRenderer.prototype.symbols = {
             }
             // Anchor on left side
         }
-        else if (anchorX && anchorX < 0) {
+        else if (x + anchorX <= 0) {
             // Chevron
             if (anchorY > y + safeDistance &&
                 anchorY < y + h - safeDistance) {

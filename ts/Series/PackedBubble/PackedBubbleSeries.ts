@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2018 Grzegorz Blachlinski, Sebastian Bochan
+ *  (c) 2010-2021 Grzegorz Blachlinski, Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -25,18 +25,17 @@ import type PackedBubbleSeriesOptions from './PackedBubbleSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+import Color from '../../Core/Color/Color.js';
+const { parse: color } = Color;
+import H from '../../Core/Globals.js';
+import PackedBubblePoint from './PackedBubblePoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         bubble: BubbleSeries,
         line: LineSeries
     }
-} = BaseSeries;
-import Chart from '../../Core/Chart/Chart.js';
-import Color from '../../Core/Color/Color.js';
-const { parse: color } = Color;
-import H from '../../Core/Globals.js';
-import PackedBubblePoint from './PackedBubblePoint.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -1577,7 +1576,7 @@ declare module '../../Core/Series/SeriesType' {
         packedbubble: typeof PackedBubbleSeries;
     }
 }
-BaseSeries.registerSeriesType('packedbubble', PackedBubbleSeries);
+SeriesRegistry.registerSeriesType('packedbubble', PackedBubbleSeries);
 
 /* *
  *

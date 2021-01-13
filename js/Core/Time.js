@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,7 +8,10 @@
  *
  * */
 'use strict';
-import Highcharts from './Globals.js';
+import H from './Globals.js';
+var win = H.win;
+import U from './Utilities.js';
+var defined = U.defined, error = U.error, extend = U.extend, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pad = U.pad, pick = U.pick, splat = U.splat, timeUnits = U.timeUnits;
 /**
  * Normalized interval.
  *
@@ -35,18 +38,6 @@ import Highcharts from './Globals.js';
  * @return {string}
  *         The formatted portion of the date.
  */
-/**
- * Additonal time tick information.
- *
- * @interface Highcharts.TimeTicksInfoObject
- * @extends Highcharts.TimeNormalizedObject
- */ /**
-* @name Highcharts.TimeTicksInfoObject#higherRanks
-* @type {Array<string>}
-*/ /**
-* @name Highcharts.TimeTicksInfoObject#totalRange
-* @type {number}
-*/
 /**
  * Time ticks.
  *
@@ -81,9 +72,7 @@ import Highcharts from './Globals.js';
  * @since 8.2.0
  * @apioption time.moment
  */
-import U from './Utilities.js';
-var defined = U.defined, error = U.error, extend = U.extend, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pad = U.pad, pick = U.pick, splat = U.splat, timeUnits = U.timeUnits;
-var H = Highcharts, win = H.win;
+''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Time class. Time settings are applied in general for each page using

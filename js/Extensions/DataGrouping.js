@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,10 +11,10 @@
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
-var seriesProto = LineSeries.prototype;
 import O from '../Core/Options.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+var seriesProto = Series.prototype;
 import Tooltip from '../Core/Tooltip.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
@@ -583,10 +583,10 @@ addEvent(Tooltip, 'headerFormatter', function (e) {
     }
 });
 // Destroy grouped data on series destroy
-addEvent(LineSeries, 'destroy', seriesProto.destroyGroupedData);
+addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
-addEvent(LineSeries, 'afterSetOptions', function (e) {
+addEvent(Series, 'afterSetOptions', function (e) {
     var options = e.options, type = this.type, plotOptions = this.chart.options.plotOptions, defaultOptions = O.defaultOptions.plotOptions[type].dataGrouping, 
     // External series, for example technical indicators should also
     // inherit commonOptions which are not available outside this module

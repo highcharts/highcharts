@@ -8,28 +8,28 @@
 
 'use strict';
 
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     AroonOscillatorOptions,
     AroonOscillatorParamsOptions
 } from '../AroonOscillator/AroonOscillatorOptions';
 import type AroonOscillatorPoint from '../AroonOscillator/AroonOscillatorPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type Series from '../../../Core/Series/Series';
+import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         aroon: AroonIndicator
     }
-} = BaseSeries;
-import BaseSeries from '../../../Core/Series/Series.js';
-import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
-import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
     merge
 } = U;
 
-const AROON = BaseSeries.seriesTypes.aroon;
+const AROON = SeriesRegistry.seriesTypes.aroon;
 
 /* *
  *
@@ -103,7 +103,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
      *
      * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: AroonOscillatorParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {
@@ -188,7 +188,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
+SeriesRegistry.registerSeriesType('aroonoscillator', AroonOscillatorIndicator);
 
 /* *
  *

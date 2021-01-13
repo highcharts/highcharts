@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,8 +11,8 @@
 'use strict';
 
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -583,7 +583,7 @@ addEvent(Pointer, 'beforeGetHoverData', function (
         chart.hoverPane = chart.getHoverPane(eventArgs);
 
         // Edit filter method to handle polar
-        eventArgs.filter = function (s: LineSeries): boolean {
+        eventArgs.filter = function (s: Series): boolean {
             return (
                 s.visible &&
                 !(!eventArgs.shared && s.directTouch) && // #3821

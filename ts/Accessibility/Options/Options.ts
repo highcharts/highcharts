@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -15,8 +15,8 @@
 import type Chart from '../../Core/Chart/Chart';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
 import palette from '../../Core/Color/Palette.js';
 
 declare module '../../Core/Series/PointOptions' {
@@ -45,8 +45,8 @@ declare global {
         }
         interface AccessibilityAnnouncementFormatter {
             (
-                updatedSeries: Array<LineSeries>,
-                addedSeries?: LineSeries,
+                updatedSeries: Array<Series>,
+                addedSeries?: Series,
                 addedPoint?: Point,
             ): false|string;
         }
@@ -110,7 +110,7 @@ declare global {
         }
         interface AccessibilitySeriesOptions {
             descriptionFormatter?: (
-                ScreenReaderFormatterCallbackFunction<LineSeries>
+                ScreenReaderFormatterCallbackFunction<Series>
             );
             describeSingleSeries: boolean;
             pointDescriptionEnabledThreshold: (boolean|number);

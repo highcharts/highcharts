@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,18 +21,17 @@ import type CandlestickSeriesOptions from './CandlestickSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import type ColorString from '../../Core/Color/ColorString';
-import BaseSeries from '../../Core/Series/Series.js';
+import O from '../../Core/Options.js';
+const { defaultOptions } = O;
+import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+
 const {
     seriesTypes: {
         column: ColumnSeries,
         ohlc: OHLCSeries
     }
-} = BaseSeries;
-const { prototype: columnProto } = ColumnSeries;
-import O from '../../Core/Options.js';
-const { defaultOptions } = O;
-import palette from '../../Core/Color/Palette.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -202,7 +201,7 @@ class CandlestickSeries extends OHLCSeries {
         point: CandlestickPoint,
         state?: StatesOptionsKey
     ): SVGAttributes {
-        var attribs = columnProto.pointAttribs.call(
+        var attribs = ColumnSeries.prototype.pointAttribs.call(
                 this,
                 point,
                 state
@@ -364,7 +363,7 @@ declare module '../../Core/Series/SeriesType'{
     }
 }
 
-BaseSeries.registerSeriesType('candlestick', CandlestickSeries);
+SeriesRegistry.registerSeriesType('candlestick', CandlestickSeries);
 
 /* *
  *

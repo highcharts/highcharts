@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,11 +18,11 @@ import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type GradientColor from '../Color/GradientColor';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type PositionObject from '../Renderer/PositionObject';
+import type Series from '../Series/Series';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -327,6 +327,13 @@ declare global {
             stops?: GradientColor['stops'];
             tooltipValueFormat?: string;
         }
+        interface Axis {
+        }
+        interface AxisPanningState {
+            startMin: (number);
+            startMax: (number);
+            isDirty?: boolean;
+        }
         class Axis implements AxisLike {
             public static defaultBottomAxisOptions: AxisOptions;
             public static defaultLeftAxisOptions: AxisOptions;
@@ -404,6 +411,7 @@ declare global {
             public options: AxisOptions;
             public overlap: boolean;
             public paddedTicks: Array<number>;
+            public panningState?: AxisPanningState;
             public plotLinesAndBands: Array<PlotLineOrBand>;
             public plotLinesAndBandsGroups: Record<string, SVGElement>;
             public pointRange: number;
@@ -415,7 +423,7 @@ declare global {
             public reversed?: boolean;
             public right: number;
             public sector?: number;
-            public series: Array<LineSeries>;
+            public series: Array<Series>;
             public showAxis?: boolean;
             public side: number;
             public single?: boolean;
@@ -1579,14 +1587,17 @@ class Axis {
             enabled: true,
 
             /**
-             * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-             * for the axis label.
+             * A format string for the axis label. See
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for example usage.
+             *
+             * Note: The default value is not specified due to the dynamic
+             * nature of the default implementation.
              *
              * @sample {highcharts|highstock} highcharts/yaxis/labels-format/
              *         Add units to Y axis label
              *
              * @type      {string}
-             * @default   {value}
              * @since     3.0
              * @apioption xAxis.labels.format
              */
@@ -3963,12 +3974,14 @@ class Axis {
     public minRange?: (null|number);
     public names: Array<string> = void 0 as any;
     public offset: number = void 0 as any;
-    public oldAxisLength?: number;
-    public oldMax: (null|number) = void 0 as any;
-    public oldMin: (null|number) = void 0 as any;
-    public oldTransA?: number;
-    public oldUserMax?: number;
-    public oldUserMin?: number;
+    public old?: { // @todo create a type
+        len: number;
+        max: number|null;
+        min: number|null;
+        transA: number;
+        userMax?: number;
+        userMin?: number;
+    };
     public opposite?: boolean;
     public options: Highcharts.AxisOptions = void 0 as any;
     public ordinal?: AxisComposition['ordinal'];
@@ -3983,7 +3996,7 @@ class Axis {
     public reserveSpaceDefault?: boolean;
     public reversed?: boolean;
     public right: number = void 0 as any;
-    public series: Array<LineSeries> = void 0 as any;
+    public series: Array<Series> = void 0 as any;
     public showAxis?: boolean;
     public side: number = void 0 as any;
     public single?: boolean;
@@ -4073,7 +4086,7 @@ class Axis {
 
         fireEvent(this, 'init', { userOptions: userOptions });
 
-        axis.opposite = userOptions.opposite; // needed in setOptions
+        axis.opposite = pick(userOptions.opposite, axis.opposite); // needed in setOptions
 
         /**
          * The side on which the axis is rendered. 0 is top, 1 is right, 2
@@ -4082,9 +4095,13 @@ class Axis {
          * @name Highcharts.Axis#side
          * @type {number}
          */
-        axis.side = userOptions.side || (axis.horiz ?
-            (axis.opposite ? 0 : 2) : // top : bottom
-            (axis.opposite ? 1 : 3)); // right : left
+        axis.side = pick(
+            userOptions.side,
+            axis.side,
+            (axis.horiz ?
+                (axis.opposite ? 0 : 2) : // top : bottom
+                (axis.opposite ? 1 : 3)) // right : left
+        );
 
         /**
          * Current options for the axis after merge of defaults and user's
@@ -4124,7 +4141,7 @@ class Axis {
          * @name Highcharts.Axis#reversed
          * @type {boolean}
          */
-        axis.reversed = options.reversed;
+        axis.reversed = pick(options.reversed, axis.reversed);
         axis.visible = options.visible !== false;
         axis.zoomEnabled = options.zoomEnabled !== false;
 
@@ -7428,6 +7445,7 @@ class Axis {
 
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
+                axis._addedPlotLB = true;
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
@@ -7435,7 +7453,6 @@ class Axis {
                             axis.addPlotBandOrLine(plotLineOptions);
                         }
                     );
-                axis._addedPlotLB = true;
             }
 
         } // end if hasData

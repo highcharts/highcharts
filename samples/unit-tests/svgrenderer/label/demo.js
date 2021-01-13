@@ -560,3 +560,36 @@ QUnit.test('Label padding', assert => {
         );
     });
 });
+
+QUnit.test('#14858: Callout missing line when anchorX within width and no room for chevron', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    [
+        [1, 'left', 100],
+        [1, 'right', 100],
+        [1, 'left', 20],
+        [1, 'right', 20],
+        [2, 'left', 100],
+        [2, 'right', 100],
+        [2, 'left', 20],
+        [2, 'right', 20]
+    ].forEach(([strokeWidth, align, anchorY]) => {
+        const label = ren
+            .label('Some text', 100, 50, 'callout', 100, anchorY)
+            .attr({
+                align,
+                'stroke-width': strokeWidth,
+                stroke: 'black'
+            })
+            .add();
+
+        assert.ok(
+            label.box.pathArray.length > 9,
+            'Anchor line should have rendered'
+        );
+    });
+});

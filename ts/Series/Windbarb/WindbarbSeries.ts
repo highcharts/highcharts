@@ -2,7 +2,7 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -20,16 +20,16 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../Core/Series/Series.js';
+import H from '../../Core/Globals.js';
+const { noop } = H;
+import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries,
         line: LineSeries
     }
-} = BaseSeries;
-import H from '../../Core/Globals.js';
-const { noop } = H;
-import OnSeriesMixin from '../../Mixins/OnSeries.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -479,7 +479,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('windbarb', WindbarbSeries);
+SeriesRegistry.registerSeriesType('windbarb', WindbarbSeries);
 
 /* *
  *
