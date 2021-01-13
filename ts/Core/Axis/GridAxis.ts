@@ -911,13 +911,11 @@ class GridAxis {
         const userLabels = axis.userOptions.labels || {};
 
         // Fire this only for the Gantt type chart, #14868.
-        if (axis.options.grid && axis.options.grid.enabled) {
+        if (gridOptions.enabled) {
             if (axis.horiz) {
-                if (gridOptions.enabled === true) {
-                    axis.series.forEach(function (series): void {
-                        series.options.pointRange = 0;
-                    });
-                }
+                axis.series.forEach(function (series): void {
+                    series.options.pointRange = 0;
+                });
 
                 // Lower level time ticks, like hours or minutes, represent
                 // points in time and not ranges. These should be aligned
