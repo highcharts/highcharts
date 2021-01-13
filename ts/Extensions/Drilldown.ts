@@ -68,7 +68,6 @@ declare module '../Core/Chart/ChartLike' {
         drilldown?: Highcharts.ChartDrilldownObject;
         drilldownLevels?: Array<Highcharts.DrilldownLevelObject>;
         drillUpButton?: SVGElement;
-        temporaryDrillUpButton?: SVGElement;
         addSeriesAsDrilldown(
             point: Point,
             options: SeriesTypeOptions
@@ -1663,5 +1662,11 @@ addEvent(H.Chart, 'selection', function (event: any): void {
             buttonOptions.relativeTo || 'plotBox'
             );
         }
+    }
+});
+
+addEvent(H.Chart, 'drillup', function (): void {
+    if (this.resetZoomButton) {
+        this.resetZoomButton = this.resetZoomButton.destroy();
     }
 });

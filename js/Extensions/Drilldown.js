@@ -1124,3 +1124,8 @@ addEvent(H.Chart, 'selection', function (event) {
         }
     }
 });
+addEvent(H.Chart, 'drillup', function () {
+    if (this.resetZoomButton) {
+        this.resetZoomButton = this.resetZoomButton.destroy();
+    }
+});
