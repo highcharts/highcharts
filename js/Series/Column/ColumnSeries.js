@@ -762,7 +762,7 @@ var ColumnSeries = /** @class */ (function (_super) {
          *         20px wide columns regardless of chart width or the amount of
          *         data points
          *
-         * @type      {number}
+         * @type      {number|null}
          * @since     1.2.5
          * @product   highcharts highstock gantt
          * @apioption plotOptions.column.pointWidth
