@@ -6086,10 +6086,7 @@ class Axis {
                     axis.max !== axis.old?.max;
             }
         } else if (axis.stacking) {
-            const keys = Object.keys(axis.stacking.stacks);
-            if (!(keys.length === 1 && keys[0].slice(-5) === 'group')) {
-                axis.stacking.cleanStacks();
-            }
+            axis.stacking.cleanStacks();
         }
 
         // Recalculate panning state object, when the data
