@@ -26,12 +26,12 @@ import ColorSeriesModule from '../../Mixins/ColorSeries.js';
 const { colorPointMixin } = ColorSeriesModule;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: {
+        prototype: {
+            pointClass: Point
+        }
+    },
     seriesTypes: {
-        line: {
-            prototype: {
-                pointClass: LinePoint
-            }
-        },
         heatmap: {
             prototype: {
                 pointClass: HeatmapPoint
@@ -98,7 +98,7 @@ interface TilemapPoint {
     setVisible: typeof colorPointMixin.setVisible;
 }
 extend(TilemapPoint.prototype, {
-    setState: LinePoint.prototype.setState,
+    setState: Point.prototype.setState,
     setVisible: colorPointMixin.setVisible
 });
 

@@ -1587,14 +1587,17 @@ class Axis {
             enabled: true,
 
             /**
-             * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-             * for the axis label.
+             * A format string for the axis label. See
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for example usage.
+             *
+             * Note: The default value is not specified due to the dynamic
+             * nature of the default implementation.
              *
              * @sample {highcharts|highstock} highcharts/yaxis/labels-format/
              *         Add units to Y axis label
              *
              * @type      {string}
-             * @default   {value}
              * @since     3.0
              * @apioption xAxis.labels.format
              */
@@ -7442,6 +7445,7 @@ class Axis {
 
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
+                axis._addedPlotLB = true;
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
@@ -7449,7 +7453,6 @@ class Axis {
                             axis.addPlotBandOrLine(plotLineOptions);
                         }
                     );
-                axis._addedPlotLB = true;
             }
 
         } // end if hasData

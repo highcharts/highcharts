@@ -79,8 +79,8 @@ var Fx = /** @class */ (function () {
                     var startItem = startSeg[j];
                     var endItem = endSeg[j];
                     // Tween numbers
-                    if (typeof startItem === 'number' &&
-                        typeof endItem === 'number' &&
+                    if (isNumber(startItem) &&
+                        isNumber(endItem) &&
                         // Arc boolean flags
                         !(endSeg[0] === 'A' && (j === 4 || j === 5))) {
                         tweenSeg[j] = startItem + now * (endItem - startItem);

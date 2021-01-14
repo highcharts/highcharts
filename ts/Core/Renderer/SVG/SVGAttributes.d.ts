@@ -39,7 +39,7 @@ export interface SVGAttributes {
     scaleX?: number;
     scaleY?: number;
     stroke?: ColorType;
-    style?: CSSObject;
+    style?: CSSObject|string;
     translateX?: number;
     translateY?: number;
     // width?: number;

@@ -8,6 +8,7 @@
  *
  * */
 'use strict';
+import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import H from '../Globals.js';
@@ -1241,7 +1242,7 @@ var Point = /** @class */ (function () {
                 halo.attr(extend({
                     'fill': point.color || series.color,
                     'fill-opacity': haloOptions.opacity
-                }, haloOptions.attributes));
+                }, AST.filterUserAttributes(haloOptions.attributes || {})));
             }
         }
         else if (halo && halo.point && halo.point.haloPath) {

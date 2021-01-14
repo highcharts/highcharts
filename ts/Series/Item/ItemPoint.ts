@@ -23,8 +23,8 @@ import type ItemSeries from './ItemSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        line: LineSeries,
         pie: PieSeries
     }
 } = SeriesRegistry;
@@ -60,10 +60,10 @@ class ItemPoint extends PieSeries.prototype.pointClass {
  * */
 
 interface ItemPoint {
-    haloPath: typeof LineSeries.prototype.pointClass.prototype.haloPath;
+    haloPath: typeof Series.prototype.pointClass.prototype.haloPath;
 }
 extend(ItemPoint.prototype, {
-    haloPath: LineSeries.prototype.pointClass.prototype.haloPath
+    haloPath: Series.prototype.pointClass.prototype.haloPath
 });
 
 /* *

@@ -30,10 +30,7 @@ import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        line: LineSeries,
-        ohlc: {
-            prototype: ohlcProto
-        }
+        line: LineSeries
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
@@ -60,11 +57,6 @@ interface BindToObject {
     series: boolean;
 }
 
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-    }
-}
-
 declare module '../../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         useOhlcData?: boolean;
@@ -83,10 +75,6 @@ const generateMessage = RequiredIndicatorMixin.generateMessage;
  * The SMA series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.sma
- *
- * @augments Highcharts.Series
  */
 class SMAIndicator extends LineSeries {
 

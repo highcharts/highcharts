@@ -68,12 +68,19 @@ function ownProp(obj: unknown, key: string): boolean {
 
 // eslint-disable-next-line valid-jsdoc
 
+/**
+ * Waterfall series type.
+ *
+ * @private
+ */
 class WaterfallSeries extends ColumnSeries {
+
     /* *
      *
      * Static properties
      *
      * */
+
     /**
      * A waterfall chart displays sequentially introduced positive or negative
      * values in cumulative columns.
@@ -545,7 +552,7 @@ class WaterfallSeries extends ColumnSeries {
             dataMax = Math.max(sum, dataMax);
         }
 
-        LineSeries.prototype.processData.call(this, force);
+        super.processData.call(this, force);
 
         // Record extremes only if stacking was not set:
         if (!options.stacking) {
@@ -572,7 +579,7 @@ class WaterfallSeries extends ColumnSeries {
         point: Point,
         i: (number|string)
     ): void {
-        LineSeries.prototype.updateParallelArrays.call(
+        super.updateParallelArrays.call(
             this,
             point,
             i
@@ -693,11 +700,10 @@ class WaterfallSeries extends ColumnSeries {
             }
 
             if (
-                !stacking &&
-                path.length &&
                 prevArgs &&
+                path.length &&
                 (
-                    (prevPoint.y < 0 && !reversedYAxis) ||
+                    (!stacking && prevPoint.y < 0 && !reversedYAxis) ||
                     (prevPoint.y > 0 && reversedYAxis)
                 )
             ) {

@@ -116,6 +116,7 @@ class NATRIndicator extends ATRIndicator {
  * */
 interface NATRIndicator {
     pointClass: typeof NATRPoint;
+    requiredIndicators: Array<string>;
 }
 
 extend(NATRIndicator.prototype, {

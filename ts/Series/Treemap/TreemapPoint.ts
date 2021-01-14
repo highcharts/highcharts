@@ -24,12 +24,12 @@ import type TreemapSeries from './TreemapSeries';
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: {
+        prototype: {
+            pointClass: Point
+        }
+    },
     seriesTypes: {
-        line: {
-            prototype: {
-                pointClass: LinePoint
-            }
-        },
         pie: {
             prototype: {
                 pointClass: PiePoint
@@ -88,7 +88,7 @@ class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
     /* eslint-disable valid-jsdoc */
 
     public getClassName(): string {
-        var className = LinePoint.prototype.getClassName.call(this),
+        var className = Point.prototype.getClassName.call(this),
             series = this.series,
             options = series.options;
 
@@ -120,7 +120,7 @@ class TreemapPoint extends ScatterPoint implements DrawPointMixin.DrawPoint {
     }
 
     public setState(state: StatesOptionsKey): void {
-        LinePoint.prototype.setState.call(this, state);
+        Point.prototype.setState.call(this, state);
 
         // Graphic does not exist when point is not visible.
         if (this.graphic) {

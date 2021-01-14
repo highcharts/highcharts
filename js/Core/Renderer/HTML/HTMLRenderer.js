@@ -9,6 +9,7 @@
  * */
 import H from '../../Globals.js';
 var isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, win = H.win;
+import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
@@ -76,13 +77,13 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
         };
         // Text setter
         wrapper.textSetter = function (value) {
-            if (value !== element.innerHTML) {
+            if (value !== this.textStr) {
                 delete this.bBox;
                 delete this.oldTextWidth;
+                AST.setElementHTML(this.element, pick(value, ''));
+                this.textStr = value;
+                wrapper.doTransform = true;
             }
-            this.textStr = value;
-            element.innerHTML = pick(value, '');
-            wrapper.doTransform = true;
         };
         // Add setters for the element itself (#4938)
         if (isSVG) { // #4938, only for HTML within SVG

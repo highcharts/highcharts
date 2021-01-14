@@ -120,8 +120,7 @@ function setElAttrs(el, attrs) {
             el.removeAttribute(attr);
         }
         else {
-            var cleanedVal = escapeStringForHTML('' + val);
-            el.setAttribute(attr, cleanedVal);
+            el.setAttribute(attr, val);
         }
     });
 }

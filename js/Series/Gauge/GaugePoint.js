@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var LinePoint = SeriesRegistry.seriesTypes.line.prototype.pointClass;
+var Point = SeriesRegistry.series.prototype.pointClass;
 /* *
  *
  *  Class
@@ -57,7 +57,7 @@ var GaugePoint = /** @class */ (function (_super) {
         this.state = state;
     };
     return GaugePoint;
-}(LinePoint));
+}(Point));
 /* *
  *
  *  Default export

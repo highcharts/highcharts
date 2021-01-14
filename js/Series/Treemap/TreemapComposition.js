@@ -16,7 +16,7 @@
  *
  * */
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var LineSeries = SeriesRegistry.seriesTypes.line;
+var Series = SeriesRegistry.series;
 import TreemapUtilities from './TreemapUtilities.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend;
@@ -26,7 +26,7 @@ var addEvent = U.addEvent, extend = U.extend;
  *
  * */
 var treemapAxisDefaultValues = false;
-addEvent(LineSeries, 'afterBindAxes', function () {
+addEvent(Series, 'afterBindAxes', function () {
     // eslint-disable-next-line no-invalid-this
     var series = this, xAxis = series.xAxis, yAxis = series.yAxis, treeAxis;
     if (xAxis && yAxis) {

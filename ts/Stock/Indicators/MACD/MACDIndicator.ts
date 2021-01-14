@@ -485,8 +485,8 @@ class MACDIndicator extends SMAIndicator {
 }
 
 interface MACDIndicator {
-    crispCol: typeof ColumnSeries.prototype['crispCol'];
-    getColumnMetrics: typeof ColumnSeries.prototype['getColumnMetrics'];
+    crispCol: typeof ColumnSeries.prototype.crispCol;
+    getColumnMetrics: typeof ColumnSeries.prototype.getColumnMetrics;
     nameComponents: Array<string>;
     parallelArrays: Array<string>;
     pointArrayMap: Array<string>;

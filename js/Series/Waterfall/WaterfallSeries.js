@@ -43,9 +43,19 @@ function ownProp(obj, key) {
 }
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // eslint-disable-next-line valid-jsdoc
+/**
+ * Waterfall series type.
+ *
+ * @private
+ */
 var WaterfallSeries = /** @class */ (function (_super) {
     __extends(WaterfallSeries, _super);
     function WaterfallSeries() {
+        /* *
+         *
+         * Static properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -274,7 +284,7 @@ var WaterfallSeries = /** @class */ (function (_super) {
             dataMin = Math.min(sum, dataMin);
             dataMax = Math.max(sum, dataMax);
         }
-        LineSeries.prototype.processData.call(this, force);
+        _super.prototype.processData.call(this, force);
         // Record extremes only if stacking was not set:
         if (!options.stacking) {
             series.dataMin = dataMin + threshold;
@@ -293,7 +303,7 @@ var WaterfallSeries = /** @class */ (function (_super) {
         return pt.y;
     };
     WaterfallSeries.prototype.updateParallelArrays = function (point, i) {
-        LineSeries.prototype.updateParallelArrays.call(this, point, i);
+        _super.prototype.updateParallelArrays.call(this, point, i);
         // Prevent initial sums from triggering an error (#3245, #7559)
         if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
             this.yData[0] = null;
@@ -355,10 +365,9 @@ var WaterfallSeries = /** @class */ (function (_super) {
                     yPos
                 ]);
             }
-            if (!stacking &&
+            if (prevArgs &&
                 path.length &&
-                prevArgs &&
-                ((prevPoint.y < 0 && !reversedYAxis) ||
+                ((!stacking && prevPoint.y < 0 && !reversedYAxis) ||
                     (prevPoint.y > 0 && reversedYAxis))) {
                 path[path.length - 2][2] += prevArgs.height;
                 path[path.length - 1][2] += prevArgs.height;
@@ -512,11 +521,6 @@ var WaterfallSeries = /** @class */ (function (_super) {
             dataMax: this.dataMax
         };
     };
-    /* *
-     *
-     * Static properties
-     *
-     * */
     /**
      * A waterfall chart displays sequentially introduced positive or negative
      * values in cumulative columns.

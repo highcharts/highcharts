@@ -33,6 +33,7 @@ import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../Globals.js';
@@ -1714,7 +1715,7 @@ class Point {
                         'fill': point.color || series.color,
                         'fill-opacity': haloOptions.opacity
                     },
-                    haloOptions.attributes
+                    AST.filterUserAttributes(haloOptions.attributes || {})
                 ));
             }
 

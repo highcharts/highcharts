@@ -952,11 +952,20 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
+        var _this = this;
         var obj = new H.PlotLineOrBand(this, options), userOptions = this.userOptions;
         if (this.visible) {
             obj = obj.render();
         }
         if (obj) { // #2189
+            if (!this._addedPlotLB) {
+                this._addedPlotLB = true;
+                (userOptions.plotLines || [])
+                    .concat(userOptions.plotBands || [])
+                    .forEach(function (plotLineOptions) {
+                    _this.addPlotBandOrLine(plotLineOptions);
+                });
+            }
             // Add it to the user options for exporting and Axis.update
             if (coll) {
                 // Workaround Microsoft/TypeScript issue #32693
@@ -965,7 +974,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
-            this._addedPlotLB = true;
         }
         return obj;
     },

@@ -261,6 +261,8 @@ class RadialAxis {
                 end,
                 chart = this.chart,
                 r = pick(radius, center[2] / 2 - this.offset),
+                left = this.left || 0,
+                top = this.top || 0,
                 path: RadialAxisPath;
 
             if (typeof innerRadius === 'undefined') {
@@ -274,8 +276,8 @@ class RadialAxis {
 
             if (this.isCircular || typeof radius !== 'undefined') {
                 path = this.chart.renderer.symbols.arc(
-                    this.left + center[0],
-                    this.top + center[1],
+                    left + center[0],
+                    top + center[1],
                     r,
                     r,
                     {
@@ -288,8 +290,8 @@ class RadialAxis {
 
                 // Bounds used to position the plotLine label next to the line
                 // (#7117)
-                path.xBounds = [this.left + center[0]];
-                path.yBounds = [this.top + center[1] - r];
+                path.xBounds = [left + center[0]];
+                path.yBounds = [top + center[1] - r];
 
             } else {
                 end = this.postTranslate(this.angleRad, r);
@@ -511,6 +513,8 @@ class RadialAxis {
                 startAngleRad = this.startAngleRad,
                 fullRadius = center[2] / 2,
                 offset = Math.min(this.offset, 0),
+                left = this.left || 0,
+                top = this.top || 0,
                 percentRegex = /%$/,
                 start,
                 end,
@@ -563,8 +567,8 @@ class RadialAxis {
                 thickness -= offset; // #5283
 
                 path = this.chart.renderer.symbols.arc(
-                    this.left + center[0],
-                    this.top + center[1],
+                    left + center[0],
+                    top + center[1],
                     outerRadius,
                     outerRadius,
                     {
@@ -583,7 +587,7 @@ class RadialAxis {
                 if (isCircular) {
                     angle = (end + start) / 2;
                     xOnPerimeter = (
-                        this.left +
+                        left +
                         center[0] +
                         (center[2] / 2) * Math.cos(angle)
                     );
@@ -596,7 +600,7 @@ class RadialAxis {
 
 
                     path.yBounds = [
-                        this.top + center[1] + (center[2] / 2) * Math.sin(angle)
+                        top + center[1] + (center[2] / 2) * Math.sin(angle)
                     ];
                     // Shift up or down to get the label clear of the perimeter
                     path.yBounds[0] += (

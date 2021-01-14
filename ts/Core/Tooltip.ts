@@ -382,22 +382,30 @@ class Tooltip {
 
         chart.renderer.definition({
             tagName: 'filter',
-            id: 'drop-shadow-' + chart.index,
-            opacity: 0.5,
+            attributes: {
+                id: 'drop-shadow-' + chart.index,
+                opacity: 0.5
+            },
             children: [{
                 tagName: 'feGaussianBlur',
-                'in': 'SourceAlpha',
-                stdDeviation: 1
+                attributes: {
+                    'in': 'SourceAlpha',
+                    stdDeviation: 1
+                }
             }, {
                 tagName: 'feOffset',
-                dx: 1,
-                dy: 1
+                attributes: {
+                    dx: 1,
+                    dy: 1
+                }
             }, {
                 tagName: 'feComponentTransfer',
                 children: [{
                     tagName: 'feFuncA',
-                    type: 'linear',
-                    slope: 0.3
+                    attributes: {
+                        type: 'linear',
+                        slope: 0.3
+                    }
                 }]
             }, {
                 tagName: 'feMerge',
@@ -405,7 +413,9 @@ class Tooltip {
                     tagName: 'feMergeNode'
                 }, {
                     tagName: 'feMergeNode',
-                    'in': 'SourceGraphic'
+                    attributes: {
+                        'in': 'SourceGraphic'
+                    }
                 }]
             }]
         });
@@ -537,7 +547,7 @@ class Tooltip {
         points: (Point|Array<Point>),
         mouseEvent?: PointerEvent
     ): Array<number> {
-        var ret,
+        var ret: number[],
             chart = this.chart,
             pointer = chart.pointer,
             inverted = chart.inverted,
@@ -545,8 +555,8 @@ class Tooltip {
             plotLeft = chart.plotLeft,
             plotX = 0,
             plotY = 0,
-            yAxis,
-            xAxis;
+            yAxis: Highcharts.Axis|undefined,
+            xAxis: Highcharts.Axis|undefined;
 
         points = splat(points);
 
@@ -565,33 +575,50 @@ class Tooltip {
         } else if (points[0].tooltipPos) {
             ret = points[0].tooltipPos;
 
-        // When shared, use the average position
+        // Calculate the average position and adjust for axis positions
         } else {
             points.forEach(function (point): void {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
-                plotX += (point.plotX as any) +
-                    (!inverted && xAxis ? xAxis.left - plotLeft : 0);
+                plotX += point.plotX || 0;
                 plotY += (
                     point.plotLow ?
-                        ((point.plotLow as any) + point.plotHigh) / 2 :
-                        (point.plotY as any)
-                ) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
+                        (point.plotLow + (point.plotHigh || 0)) / 2 :
+                        (point.plotY || 0)
+                );
+
+                // Adjust position for positioned axes (top/left settings)
+                if (xAxis && yAxis) {
+                    if (!inverted) { // #1151
+                        plotX += xAxis.pos - plotLeft;
+                        plotY += yAxis.pos - plotTop;
+                    } else { // #14771
+                        plotX += plotTop + chart.plotHeight - xAxis.len - xAxis.pos;
+                        plotY += plotLeft + chart.plotWidth - yAxis.len - yAxis.pos;
+                    }
+                }
             });
 
             plotX /= points.length;
             plotY /= points.length;
 
+            // Use the average position for multiple points
             ret = [
                 inverted ? chart.plotWidth - plotY : plotX,
-                this.shared && !inverted && points.length > 1 && mouseEvent ?
-                    // place shared tooltip next to the mouse (#424)
-                    mouseEvent.chartY - plotTop :
-                    inverted ? chart.plotHeight - plotX : plotY
+                inverted ? chart.plotHeight - plotX : plotY
             ];
-        }
 
+            // When shared, place the tooltip next to the mouse (#424)
+            if (this.shared && points.length > 1 && mouseEvent) {
+                if (inverted) {
+                    ret[0] = mouseEvent.chartX - plotLeft;
+                } else {
+                    ret[1] = mouseEvent.chartY - plotTop;
+                }
+            }
+        }
         return ret.map(Math.round);
+
     }
 
     /**
@@ -702,7 +729,6 @@ class Tooltip {
                 (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
             ),
             container: globalThis.HTMLElement,
-            set: Record<string, Function>,
             onMouseEnter = function (): void {
                 tooltip.inContact = true;
             },
@@ -722,6 +748,8 @@ class Tooltip {
         if (!this.label) {
 
             if (this.outside) {
+                const chartStyle = this.chart.options.chart?.style;
+
                 /**
                  * Reference to the tooltip's container, when
                  * [Highcharts.Tooltip#outside] is set to true, otherwise
@@ -737,7 +765,10 @@ class Tooltip {
                     position: 'absolute',
                     top: '1px',
                     pointerEvents,
-                    zIndex: 3
+                    zIndex: Math.max(
+                        (this.options.style?.zIndex || 0) as number,
+                        (chartStyle?.zIndex || 0) as number + 3
+                    )
                 });
 
                 H.doc.body.appendChild(container);
@@ -754,7 +785,7 @@ class Tooltip {
                     container,
                     0,
                     0,
-                    this.chart.options.chart?.style,
+                    chartStyle,
                     void 0,
                     void 0,
                     renderer.styledMode
