@@ -5,9 +5,21 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
             scrollablePlotArea: {
                 minWidth: 2000,
                 scrollPositionX: 1
-            }
+            },
+            inverted: true
         }
     });
+
+    assert.strictEqual(
+        chart.plotWidth,
+        chart.plotBox.width,
+        '#14448: plotBox.width should equal plotWidth'
+    );
+    assert.strictEqual(
+        chart.plotHeight,
+        chart.plotBox.height,
+        '#14448: plotBox.height should equal plotHeight'
+    );
 
     chart.setTitle({ text: 'New title' });
 
