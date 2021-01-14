@@ -1,5 +1,4 @@
 QUnit.test('Touch event test on popup', function (assert) {
-
     Highcharts.stockChart('container', {
         stockTools: {
             gui: {
@@ -10,9 +9,11 @@ QUnit.test('Touch event test on popup', function (assert) {
                 }
             }
         },
-        series: [{
-            data: [1, 2, 3]
-        }]
+        series: [
+            {
+                data: [1, 2, 3]
+            }
+        ]
     });
 
     assert.ok(

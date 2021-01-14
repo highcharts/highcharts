@@ -13,4 +13,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/Pyramid3DSeries.js';
+import '../../Series/Pyramid3D/Pyramid3DSeries.js';

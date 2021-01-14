@@ -2,7 +2,7 @@
  *
  *  Data module
  *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,7 +17,6 @@ import Ajax from '../Extensions/Ajax.js';
 const {
     ajax
 } = Ajax;
-import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
@@ -31,6 +30,8 @@ import CSVStore from '../Data/Stores/CSVStore.js';
 import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 import CSVParser from '../Data/Parsers/CSVParser.js';
 import HTMLTableParser from '../Data/Parsers/HTMLTableParser.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
 import DataConverter from '../Data/DataConverter.js';
 const {
@@ -104,7 +105,7 @@ declare global {
             parseDate?: DataParseDateCallbackFunction;
             rows?: Array<Array<DataValueType>>;
             rowsURL?: string;
-            seriesMapping?: Array<Dictionary<number>>;
+            seriesMapping?: Array<Record<string, number>>;
             sort?: boolean;
             startColumn?: number;
             startRow?: number;
@@ -143,7 +144,7 @@ declare global {
             public chartOptions: Options;
             public columns?: Array<Array<DataValueType>>;
             public dateFormat?: string;
-            public dateFormats: Dictionary<Highcharts.DataDateFormatObject>;
+            public dateFormats: Record<string, Highcharts.DataDateFormatObject>;
             public decimalRegex?: RegExp;
             public firstRowAsNames: boolean;
             public liveDataTimeout?: number;
@@ -193,7 +194,7 @@ declare global {
             public read<DataItemType>(
                 columns: Array<Array<DataItemType>>,
                 rowIndex: number
-            ): (Array<DataItemType>|Dictionary<DataItemType>);
+            ): (Array<DataItemType>|Record<string, DataItemType>);
         }
         function data(
             dataOptions: DataOptions,
@@ -202,8 +203,6 @@ declare global {
         ): Data;
     }
 }
-
-const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
 
 /**
  * Callback function to modify the CSV before parsing it by the data module.
@@ -848,7 +847,7 @@ class Data {
                     chartOptions &&
                     chartOptions.series &&
                     chartOptions.series.map(function (
-                    ): Highcharts.Dictionary<number> {
+                    ): Record<string, number> {
                         return { x: 0 };
                     })
                 ) ||
@@ -864,7 +863,7 @@ class Data {
 
         // Collect the x-column indexes from seriesMapping
         seriesMapping.forEach(function (
-            mapping: Highcharts.Dictionary<number>
+            mapping: Record<string, number>
         ): void {
             xColumns.push(mapping.x || 0);
         });
@@ -878,7 +877,7 @@ class Data {
         // Loop all seriesMappings and constructs SeriesBuilders from
         // the mapping options.
         seriesMapping.forEach(function (
-            mapping: Highcharts.Dictionary<number>
+            mapping: Record<string, number>
         ): void {
             var builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
@@ -976,11 +975,453 @@ class Data {
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
     public parseCSV(inOptions?: Highcharts.DataOptions): Array<Array<Highcharts.DataValueType>> {
-        const options = inOptions || this.options,
-            csv = options.csv;
+        const self = this,
+            options = inOptions || this.options,
+            csv = options.csv,
+            startRow = (
+                typeof options.startRow !== 'undefined' && options.startRow ?
+                    options.startRow :
+                    0
+            ),
+            endRow = options.endRow || Number.MAX_VALUE,
+            startColumn = (
+                typeof options.startColumn !== 'undefined' &&
+                options.startColumn
+            ) ? options.startColumn : 0,
+            endColumn = options.endColumn || Number.MAX_VALUE,
+            rowIt = 0,
+            // activeRowNo = 0,
+            dataTypes: Array<Array<string>> = [],
+            // We count potential delimiters in the prepass, and use the
+            // result as the basis of half-intelligent guesses.
+            potDelimiters: Record<string, number> = {
+                ',': 0,
+                ';': 0,
+                '\t': 0
+            };
 
-        let columns: Array<Array<Highcharts.DataValueType>> = [],
-            csvStore;
+        let columns: Array<Array<Highcharts.DataValueType>> = this.columns = [],
+            itemDelimiter: string,
+            lines;
+
+        /*
+            This implementation is quite verbose. It will be shortened once
+            it's stable and passes all the test.
+
+            It's also not written with speed in mind, instead everything is
+            very seggregated, and there a several redundant loops.
+            This is to make it easier to stabilize the code initially.
+
+            We do a pre-pass on the first 4 rows to make some intelligent
+            guesses on the set. Guessed delimiters are in this pass counted.
+
+            Auto detecting delimiters
+                - If we meet a quoted string, the next symbol afterwards
+                  (that's not \s, \t) is the delimiter
+                - If we meet a date, the next symbol afterwards is the delimiter
+
+            Date formats
+                - If we meet a column with date formats, check all of them to
+                  see if one of the potential months crossing 12. If it does,
+                  we now know the format
+
+            It would make things easier to guess the delimiter before
+            doing the actual parsing.
+
+            General rules:
+                - Quoting is allowed, e.g: "Col 1",123,321
+                - Quoting is optional, e.g.: Col1,123,321
+                - Doubble quoting is escaping, e.g. "Col ""Hello world""",123
+                - Spaces are considered part of the data: Col1 ,123
+                - New line is always the row delimiter
+                - Potential column delimiters are , ; \t
+                - First row may optionally contain headers
+                - The last row may or may not have a row delimiter
+                - Comments are optionally supported, in which case the comment
+                  must start at the first column, and the rest of the line will
+                  be ignored
+        */
+
+        /**
+         * Parse a single row.
+         * @private
+         */
+        function parseRow(
+            columnStr: string,
+            rowNumber: number,
+            noAdd?: boolean,
+            callbacks?: Record<string, Function>
+        ): void {
+            var i = 0,
+                c = '',
+                cl = '',
+                cn = '',
+                token = '',
+                actualColumn = 0,
+                column = 0;
+
+            /**
+             * @private
+             */
+            function read(j: number): void {
+                c = columnStr[j];
+                cl = columnStr[j - 1];
+                cn = columnStr[j + 1];
+            }
+
+            /**
+             * @private
+             */
+            function pushType(type: string): void {
+                if (dataTypes.length < column + 1) {
+                    dataTypes.push([type]);
+                }
+                if (dataTypes[column][dataTypes[column].length - 1] !== type) {
+                    dataTypes[column].push(type);
+                }
+            }
+
+            /**
+             * @private
+             */
+            function push(): void {
+                if (startColumn > actualColumn || actualColumn > endColumn) {
+                    // Skip this column, but increment the column count (#7272)
+                    ++actualColumn;
+                    token = '';
+                    return;
+                }
+
+                if (!isNaN(parseFloat(token)) && isFinite(token as any)) {
+                    token = parseFloat(token) as any;
+                    pushType('number');
+                } else if (!isNaN(Date.parse(token))) {
+                    token = token.replace(/\//g, '-');
+                    pushType('date');
+                } else {
+                    pushType('string');
+                }
+
+                if (columns.length < column + 1) {
+                    columns.push([]);
+                }
+
+                if (!noAdd) {
+                    // Don't push - if there's a varrying amount of columns
+                    // for each row, pushing will skew everything down n slots
+                    columns[column][rowNumber] = token;
+                }
+
+                token = '';
+                ++column;
+                ++actualColumn;
+            }
+
+            if (!columnStr.trim().length) {
+                return;
+            }
+
+            if (columnStr.trim()[0] === '#') {
+                return;
+            }
+
+            for (; i < columnStr.length; i++) {
+                read(i);
+
+                if (c === '#') {
+                    // If there are hexvalues remaining (#13283)
+                    if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substr(i))) {
+                        // The rest of the row is a comment
+                        push();
+                        return;
+                    }
+
+                // Quoted string
+                } else if (c === '"') {
+                    read(++i);
+
+                    while (i < columnStr.length) {
+                        if (c === '"' && cl !== '"' && cn !== '"') {
+                            break;
+                        }
+
+                        if (c !== '"' || (c === '"' && cl !== '"')) {
+                            token += c;
+                        }
+
+                        read(++i);
+                    }
+
+                // Perform "plugin" handling
+                } else if (callbacks && callbacks[c]) {
+                    if (callbacks[c](c, token)) {
+                        push();
+                    }
+
+                // Delimiter - push current token
+                } else if (c === itemDelimiter) {
+                    push();
+
+                // Actual column data
+                } else {
+                    token += c;
+                }
+            }
+
+            push();
+
+        }
+
+        /**
+         * Attempt to guess the delimiter. We do a separate parse pass here
+         * because we need to count potential delimiters softly without making
+         * any assumptions.
+         * @private
+         */
+        function guessDelimiter(lines: Array<string>): string {
+            var points = 0,
+                commas = 0,
+                guessed: string = false as any;
+
+            lines.some(function (
+                columnStr: string,
+                i: number
+            ): (boolean|undefined) {
+                var inStr = false,
+                    c,
+                    cn,
+                    cl,
+                    token = '';
+
+
+                // We should be able to detect dateformats within 13 rows
+                if (i > 13) {
+                    return true;
+                }
+
+                for (var j = 0; j < columnStr.length; j++) {
+                    c = columnStr[j];
+                    cn = columnStr[j + 1];
+                    cl = columnStr[j - 1];
+
+                    if (c === '#') {
+                        // Skip the rest of the line - it's a comment
+                        return;
+                    }
+
+                    if (c === '"') {
+                        if (inStr) {
+                            if (cl !== '"' && cn !== '"') {
+                                while (cn === ' ' && j < columnStr.length) {
+                                    cn = columnStr[++j];
+                                }
+
+                                // After parsing a string, the next non-blank
+                                // should be a delimiter if the CSV is properly
+                                // formed.
+
+                                if (typeof potDelimiters[cn] !== 'undefined') {
+                                    potDelimiters[cn]++;
+                                }
+
+                                inStr = false;
+                            }
+                        } else {
+                            inStr = true;
+                        }
+                    } else if (typeof potDelimiters[c] !== 'undefined') {
+
+                        token = token.trim();
+
+                        if (!isNaN(Date.parse(token))) {
+                            potDelimiters[c]++;
+                        } else if (
+                            isNaN(token as any) ||
+                            !isFinite(token as any)
+                        ) {
+                            potDelimiters[c]++;
+                        }
+
+                        token = '';
+
+                    } else {
+                        token += c;
+                    }
+
+                    if (c === ',') {
+                        commas++;
+                    }
+
+                    if (c === '.') {
+                        points++;
+                    }
+                }
+            } as any);
+
+            // Count the potential delimiters.
+            // This could be improved by checking if the number of delimiters
+            // equals the number of columns - 1
+
+            if (potDelimiters[';'] > potDelimiters[',']) {
+                guessed = ';';
+            } else if (potDelimiters[','] > potDelimiters[';']) {
+                guessed = ',';
+            } else {
+                // No good guess could be made..
+                guessed = ',';
+            }
+
+            // Try to deduce the decimal point if it's not explicitly set.
+            // If both commas or points is > 0 there is likely an issue
+            if (!options.decimalPoint) {
+                if (points > commas) {
+                    options.decimalPoint = '.';
+                } else {
+                    options.decimalPoint = ',';
+                }
+
+                // Apply a new decimal regex based on the presumed decimal sep.
+                self.decimalRegex = new RegExp(
+                    '^(-?[0-9]+)' +
+                    options.decimalPoint +
+                    '([0-9]+)$'
+                );
+            }
+
+            return guessed;
+        }
+
+        /**
+         * Tries to guess the date format
+         *  - Check if either month candidate exceeds 12
+         *  - Check if year is missing (use current year)
+         *  - Check if a shortened year format is used (e.g. 1/1/99)
+         *  - If no guess can be made, the user must be prompted
+         * data is the data to deduce a format based on
+         * @private
+         */
+        function deduceDateFormat(data: Array<string>, limit?: number): string {
+            var format = 'YYYY/mm/dd',
+                thing: Array<Highcharts.DataValueType>,
+                guessedFormat: Array<string> = [],
+                calculatedFormat: string,
+                i = 0,
+                madeDeduction = false,
+                // candidates = {},
+                stable = [],
+                max: Array<number> = [],
+                j;
+
+            if (!limit || limit > data.length) {
+                limit = data.length;
+            }
+
+            for (; i < limit; i++) {
+                if (
+                    typeof data[i] !== 'undefined' &&
+                    data[i] && data[i].length
+                ) {
+                    thing = data[i]
+                        .trim()
+                        .replace(/\//g, ' ')
+                        .replace(/\-/g, ' ')
+                        .replace(/\./g, ' ')
+                        .split(' ');
+
+                    guessedFormat = [
+                        '',
+                        '',
+                        ''
+                    ];
+
+
+                    for (j = 0; j < thing.length; j++) {
+                        if (j < guessedFormat.length) {
+                            thing[j] = parseInt(thing[j] as any, 10);
+
+                            if (thing[j]) {
+
+                                max[j] = (
+                                    !max[j] || max[j] < (thing[j] as any)
+                                ) ?
+                                    (thing[j] as any) :
+                                    max[j];
+
+                                if (typeof stable[j] !== 'undefined') {
+                                    if (stable[j] !== thing[j]) {
+                                        stable[j] = false;
+                                    }
+                                } else {
+                                    stable[j] = thing[j];
+                                }
+
+                                if ((thing[j] as any) > 31) {
+                                    if ((thing[j] as any) < 100) {
+                                        guessedFormat[j] = 'YY';
+                                    } else {
+                                        guessedFormat[j] = 'YYYY';
+                                    }
+                                    // madeDeduction = true;
+                                } else if (
+                                    (thing[j] as any) > 12 &&
+                                    (thing[j] as any) <= 31
+                                ) {
+                                    guessedFormat[j] = 'dd';
+                                    madeDeduction = true;
+                                } else if (!guessedFormat[j].length) {
+                                    guessedFormat[j] = 'mm';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (madeDeduction) {
+
+                // This handles a few edge cases with hard to guess dates
+                for (j = 0; j < stable.length; j++) {
+                    if (stable[j] !== false) {
+                        if (
+                            max[j] > 12 &&
+                            guessedFormat[j] !== 'YY' &&
+                            guessedFormat[j] !== 'YYYY'
+                        ) {
+                            guessedFormat[j] = 'YY';
+                        }
+                    } else if (max[j] > 12 && guessedFormat[j] === 'mm') {
+                        guessedFormat[j] = 'dd';
+                    }
+                }
+
+                // If the middle one is dd, and the last one is dd,
+                // the last should likely be year.
+                if (guessedFormat.length === 3 &&
+                    guessedFormat[1] === 'dd' &&
+                    guessedFormat[2] === 'dd') {
+                    guessedFormat[2] = 'YY';
+                }
+
+                calculatedFormat = guessedFormat.join('/');
+
+                // If the caculated format is not valid, we need to present an
+                // error.
+
+                if (
+                    !(options.dateFormats || self.dateFormats)[calculatedFormat]
+                ) {
+                    // This should emit an event instead
+                    (fireEvent as any)('deduceDateFailed');
+                    return format;
+                }
+
+                return calculatedFormat;
+            }
+
+            return format;
+        }
+
+        let csvStore;
 
         if (csv) {
             csvStore = this.dataStore = new CSVStore(
@@ -1505,7 +1946,7 @@ class Data {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    public dateFormats: Highcharts.Dictionary<Highcharts.DataDateFormatObject> = {
+    public dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
@@ -2075,11 +2516,11 @@ class SeriesBuilder {
     public read <T>(
         columns: Array<Array<T>>,
         rowIndex: number
-    ): (Array<T>|Highcharts.Dictionary<T>) {
+    ): (Array<T>|Record<string, T>) {
         var builder = this,
             pointIsArray = builder.pointIsArray,
             point =
-                pointIsArray ? [] as Array<T> : {} as Highcharts.Dictionary<T>,
+                pointIsArray ? [] as Array<T> : {} as Record<string, T>,
             columnIndexes;
 
         // Loop each reader and ask it to read its value.

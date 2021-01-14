@@ -1,5 +1,4 @@
 QUnit.test('Treemap', assert => {
-
     const container1 = document.createElement('div');
     document.getElementById('container').appendChild(container1);
     const container2 = document.createElement('div');
@@ -21,47 +20,68 @@ QUnit.test('Treemap', assert => {
                     }
                 },
                 credits: false,
-                series: [{
-                    data: [{
-                        id: 'A',
-                        name: 'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
-                        value: 6,
-                        color: 'red'
-                    }, {
-                        id: 'B',
-                        name: 'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
-                        value: 6,
-                        color: 'blue'
-                    }, {
-                        id: 'C',
-                        name: 'Ana are mere si castraveti',
-                        value: 4,
-                        color: 'green'
-                    }]
-                }],
+                series: [
+                    {
+                        data: [
+                            {
+                                id: 'A',
+                                name:
+                                    'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
+                                value: 6,
+                                color: 'red'
+                            },
+                            {
+                                id: 'B',
+                                name:
+                                    'Ana are mere si peremgfdjgj fddifjhdfi oidgjhodgj dtjhod kngfjgiodfjhoi fofijhofo hjohjod ogfjho jgfk f hgf hfg',
+                                value: 6,
+                                color: 'blue'
+                            },
+                            {
+                                id: 'C',
+                                name: 'Ana are mere si castraveti',
+                                value: 4,
+                                color: 'green'
+                            }
+                        ]
+                    }
+                ],
                 title: {
                     text: null
                 }
             },
             // Create chart1 with width calculated from the container and default height of 400px
             chart1 = Highcharts.chart(container1, defaultOptions),
-
             // Create chart2 with width of 470px and height of 400px
-            chart2 = Highcharts.chart(container2, (function () {
-                defaultOptions.chart.width = 470;
-                defaultOptions.chart.height = 400;
-                return defaultOptions;
-            }()));
+            chart2 = Highcharts.chart(
+                container2,
+                (function () {
+                    defaultOptions.chart.width = 470;
+                    defaultOptions.chart.height = 400;
+                    return defaultOptions;
+                }())
+            );
 
         // Update chart1 with the same height and width as chart2
         chart1.setSize(470, 400, false);
 
         // Check if height, left, right and width is equal
-        ['chartHeight', 'chartWidth', 'plotHeight', 'plotLeft', 'plotSizeX', 'plotSizeX', 'plotTop', 'plotWidth'].forEach(function (prop) {
+        [
+            'chartHeight',
+            'chartWidth',
+            'plotHeight',
+            'plotLeft',
+            'plotSizeX',
+            'plotSizeX',
+            'plotTop',
+            'plotWidth'
+        ].forEach(function (prop) {
             assert.strictEqual(
                 chart1[prop] === chart2[prop],
                 true,
-                'Property ' + prop + ' of chart has the same behaviour after a resize as with a first render'
+                'Property ' +
+                    prop +
+                    ' of chart has the same behaviour after a resize as with a first render'
             );
         });
 
@@ -108,18 +128,24 @@ QUnit.test('Treemap', assert => {
                 assert.strictEqual(
                     point1[prop] === point2[prop],
                     true,
-                    'Property ' + prop + ' of point ' + i + ' should have the same behaviour after a resize as with a first render'
+                    'Property ' +
+                        prop +
+                        ' of point ' +
+                        i +
+                        ' should have the same behaviour after a resize as with a first render'
                 );
                 assert.strictEqual(
                     point1[prop] === point2[prop],
                     true,
-                    'Property ' + prop + ' of point ' + i + ' bounding should have the same behaviour after a resize as with a first render'
+                    'Property ' +
+                        prop +
+                        ' of point ' +
+                        i +
+                        ' bounding should have the same behaviour after a resize as with a first render'
                 );
             });
         });
-
     } finally {
-
         chart1.destroy();
         chart2.destroy();
 
@@ -129,13 +155,11 @@ QUnit.test('Treemap', assert => {
 });
 
 QUnit.test('point.isValid', function (assert) {
-    var isValid = Highcharts.seriesTypes.treemap.prototype.pointClass.prototype.isValid,
+    var isValid =
+            Highcharts.seriesTypes.treemap.prototype.pointClass.prototype
+                .isValid,
         context = {};
-    assert.strictEqual(
-        typeof isValid,
-        "function",
-        'point.isValid exists'
-    );
+    assert.strictEqual(typeof isValid, 'function', 'point.isValid exists');
 
     // Check against an undefined value
     context.value = undefined;
@@ -170,7 +194,7 @@ QUnit.test('point.isValid', function (assert) {
     );
 
     // Check against a string value
-    context.value = "1";
+    context.value = '1';
     assert.strictEqual(
         isValid.call(context),
         false,

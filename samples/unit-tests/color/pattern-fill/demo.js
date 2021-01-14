@@ -7,32 +7,33 @@ function getPointFillId(point) {
 
 const doc = Highcharts.win.document;
 
-
 QUnit.test('SVGRenderer used directly', function (assert) {
     var renderer = new Highcharts.Renderer(
             doc.getElementById('container'),
             400,
             400
         ),
-        circle = renderer.circle({
-            fill: {
-                pattern: {
-                    id: 'custom-id',
-                    path: {
-                        d: 'M 3 3 L 8 3 L 8 8 Z',
-                        fill: '#00ff00'
-                    },
-                    width: 12,
-                    height: 12,
-                    color: '#ff0000',
-                    opacity: 0.5,
-                    backgroundColor: '#00ffff'
-                }
-            },
-            x: 40,
-            y: 40,
-            r: 10
-        }).add(),
+        circle = renderer
+            .circle({
+                fill: {
+                    pattern: {
+                        id: 'custom-id',
+                        path: {
+                            d: 'M 3 3 L 8 3 L 8 8 Z',
+                            fill: '#00ff00'
+                        },
+                        width: 12,
+                        height: 12,
+                        color: '#ff0000',
+                        opacity: 0.5,
+                        backgroundColor: '#00ffff'
+                    }
+                },
+                x: 40,
+                y: 40,
+                r: 10
+            })
+            .add(),
         pattern = doc.getElementById('custom-id');
 
     assert.strictEqual(
@@ -65,31 +66,28 @@ QUnit.test('SVGRenderer used directly', function (assert) {
     );
 });
 
-
 QUnit.test('Pattern fill set on series', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                type: 'column',
-                keys: ['y', 'color'],
-                color: {
-                    pattern: {
-                        id: 'custom-id',
-                        path: {
-                            d: 'M 3 3 L 8 3 L 8 8 Z'
-                        },
-                        width: 12,
-                        height: 12,
-                        color: '#ff0000',
-                        opacity: 0.5,
-                        backgroundColor: '#000000'
-                    }
-                },
-                data: [
-                    [1, { patternIndex: 0 }],
-                    2,
-                    3
-                ]
-            }]
+            series: [
+                {
+                    type: 'column',
+                    keys: ['y', 'color'],
+                    color: {
+                        pattern: {
+                            id: 'custom-id',
+                            path: {
+                                d: 'M 3 3 L 8 3 L 8 8 Z'
+                            },
+                            width: 12,
+                            height: 12,
+                            color: '#ff0000',
+                            opacity: 0.5,
+                            backgroundColor: '#000000'
+                        }
+                    },
+                    data: [[1, { patternIndex: 0 }], 2, 3]
+                }
+            ]
         }),
         points = chart.series[0].points,
         firstPatternId = getPointFillId(points[0]),
@@ -139,33 +137,45 @@ QUnit.test('Pattern fill set on series', function (assert) {
     );
 });
 
-
 QUnit.test('Pattern fills set on points', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                type: 'bubble',
-                keys: ['x', 'y', 'z', 'color'],
-                data: [
-                    [1, 1, 1, { patternIndex: 0 }],
-                    [2, 1, 1, {
-                        pattern: {
-                            id: 'custom-1',
-                            path: 'M 3 3 L 8 3 L 8 8 Z',
-                            width: 12,
-                            height: 12,
-                            color: '#ff0000'
-                        }
-                    }], [3, 1, 1, {
-                        pattern: {
-                            id: 'custom-2',
-                            path: 'M 3 3 L 8 3 L 8 8 Z',
-                            width: 20,
-                            height: 15,
-                            color: '#0000ff'
-                        }
-                    }]
-                ]
-            }]
+            series: [
+                {
+                    type: 'bubble',
+                    keys: ['x', 'y', 'z', 'color'],
+                    data: [
+                        [1, 1, 1, { patternIndex: 0 }],
+                        [
+                            2,
+                            1,
+                            1,
+                            {
+                                pattern: {
+                                    id: 'custom-1',
+                                    path: 'M 3 3 L 8 3 L 8 8 Z',
+                                    width: 12,
+                                    height: 12,
+                                    color: '#ff0000'
+                                }
+                            }
+                        ],
+                        [
+                            3,
+                            1,
+                            1,
+                            {
+                                pattern: {
+                                    id: 'custom-2',
+                                    path: 'M 3 3 L 8 3 L 8 8 Z',
+                                    width: 20,
+                                    height: 15,
+                                    color: '#0000ff'
+                                }
+                            }
+                        ]
+                    ]
+                }
+            ]
         }),
         points = chart.series[0].points,
         firstPatternId = getPointFillId(points[0]),
@@ -216,37 +226,42 @@ QUnit.test('Pattern fills set on points', function (assert) {
     );
 });
 
-
 QUnit.test('Auto IDs and no duplicate elements', function (assert) {
     var chart = Highcharts.chart('container', {
-            series: [{
-                type: 'pie',
-                colorByPoint: false,
-                keys: ['y', 'color'],
-                color: {
-                    pattern: {
-                        width: 5,
-                        height: 5,
-                        path: {
-                            stroke: '#ff0000'
-                        }
-                    }
-                },
-                data: [
-                    1,
-                    [1, { patternIndex: 0 }],
-                    [1, { patternIndex: 0 }],
-                    [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 Z' } }],
-                    [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 L 3 8 Z' } }],
-                    [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 Z' } }],
-                    [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 L 3 8 Z' } }],
-                    [1, {
+            series: [
+                {
+                    type: 'pie',
+                    colorByPoint: false,
+                    keys: ['y', 'color'],
+                    color: {
                         pattern: {
-                            path: 'M 3 3 L 8 3 L 8 8 Z', id: 'pattern-bob'
+                            width: 5,
+                            height: 5,
+                            path: {
+                                stroke: '#ff0000'
+                            }
                         }
-                    }]
-                ]
-            }]
+                    },
+                    data: [
+                        1,
+                        [1, { patternIndex: 0 }],
+                        [1, { patternIndex: 0 }],
+                        [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 Z' } }],
+                        [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 L 3 8 Z' } }],
+                        [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 Z' } }],
+                        [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 L 3 8 Z' } }],
+                        [
+                            1,
+                            {
+                                pattern: {
+                                    path: 'M 3 3 L 8 3 L 8 8 Z',
+                                    id: 'pattern-bob'
+                                }
+                            }
+                        ]
+                    ]
+                }
+            ]
         }),
         defs = chart.renderer.defs.element,
         patterns = defs.getElementsByTagName('pattern'),
@@ -263,7 +278,10 @@ QUnit.test('Auto IDs and no duplicate elements', function (assert) {
     Highcharts.each(patterns, function (pattern) {
         var id = pattern.getAttribute('id');
         if (ids.indexOf(id) > -1) {
-            assert.ok(false, 'Expected unique ids for patterns. Duplicate: ' + id);
+            assert.ok(
+                false,
+                'Expected unique ids for patterns. Duplicate: ' + id
+            );
         }
         ids.push(id);
     });
@@ -281,45 +299,62 @@ QUnit.test('Auto IDs and no duplicate elements', function (assert) {
     );
 });
 
-
 QUnit.test('Images (dummy images, not loaded)', function (assert) {
     var chart = Highcharts.mapChart('container', {
             chart: {
                 map: 'custom/europe'
             },
-            series: [{
-                keys: ['hc-key', 'value', 'color'],
-                color: {
-                    pattern: {
-                        width: 100,
-                        height: 100
-                    }
-                },
-                data: [
-                    ['no', 1, {
+            series: [
+                {
+                    keys: ['hc-key', 'value', 'color'],
+                    color: {
                         pattern: {
-                            image: 'base/test/test1x1b.png'
+                            width: 100,
+                            height: 100
                         }
-                    }],
-                    ['dk', 1, {
-                        pattern: {
-                            image: 'base/test/test1x1b.png'
-                        }
-                    }],
-                    ['se', 1, {
-                        pattern: {
-                            image: 'base/test/test1x1w.png'
-                        }
-                    }],
-                    ['fi', 1, {
-                        pattern: {
-                            image: 'base/test/test1x1w.png',
-                            width: 10,
-                            height: null // Autocompute
-                        }
-                    }]
-                ]
-            }]
+                    },
+                    data: [
+                        [
+                            'no',
+                            1,
+                            {
+                                pattern: {
+                                    image: 'base/test/test1x1b.png'
+                                }
+                            }
+                        ],
+                        [
+                            'dk',
+                            1,
+                            {
+                                pattern: {
+                                    image: 'base/test/test1x1b.png'
+                                }
+                            }
+                        ],
+                        [
+                            'se',
+                            1,
+                            {
+                                pattern: {
+                                    image: 'base/test/test1x1w.png'
+                                }
+                            }
+                        ],
+                        [
+                            'fi',
+                            1,
+                            {
+                                pattern: {
+                                    image: 'base/test/test1x1w.png',
+                                    width: 10,
+                                    height: null // Autocompute
+                                }
+                            }
+                        ]
+                    ]
+                }
+            ]
         }),
         finlandPoint = chart.series[0].points[3],
         defs = chart.renderer.defs.element,
@@ -345,8 +380,10 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
             customPattern = pattern;
         }
         if (ids.indexOf(id) > -1) {
-            assert.ok(false,
-                'Expected unique ids for patterns. Duplicate: ' + id);
+            assert.ok(
+                false,
+                'Expected unique ids for patterns. Duplicate: ' + id
+            );
         }
         ids.push(id);
     });
@@ -370,7 +407,6 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
     );
 });
 
-
 QUnit.test('Image auto resize with aspect ratio - map', function (assert) {
     var chart = Highcharts.mapChart('container', {
             chart: {
@@ -381,38 +417,50 @@ QUnit.test('Image auto resize with aspect ratio - map', function (assert) {
             legend: {
                 enabled: false
             },
-            series: [{
-                keys: ['hc-key', 'value', 'color'],
-                color: {
-                    pattern: {
-                        aspectRatio: 3 / 2
-                    }
-                },
-                allAreas: false,
-                data: [
-                    ['no', 1, {
+            series: [
+                {
+                    keys: ['hc-key', 'value', 'color'],
+                    color: {
                         pattern: {
-                            image: 'base/test/test1x1b.png'
+                            aspectRatio: 3 / 2
                         }
-                    }],
-                    ['at', 1, {
-                        pattern: {
-                            image: 'base/test/test1x1w.png'
-                        }
-                    }]
-                ]
-            }]
+                    },
+                    allAreas: false,
+                    data: [
+                        [
+                            'no',
+                            1,
+                            {
+                                pattern: {
+                                    image: 'base/test/test1x1b.png'
+                                }
+                            }
+                        ],
+                        [
+                            'at',
+                            1,
+                            {
+                                pattern: {
+                                    image: 'base/test/test1x1w.png'
+                                }
+                            }
+                        ]
+                    ]
+                }
+            ]
         }),
         norwayPoint = chart.series[0].points[0],
         austriaPoint = chart.series[0].points[1],
         test = function () {
             var norwayPattern = doc.getElementById(
-                    norwayPoint.graphic.element.getAttribute('fill')
+                    norwayPoint.graphic.element
+                        .getAttribute('fill')
                         .replace('url(#', '')
                         .replace(')', '')
                 ),
                 austriaPattern = doc.getElementById(
-                    austriaPoint.graphic.element.getAttribute('fill')
+                    austriaPoint.graphic.element
+                        .getAttribute('fill')
                         .replace('url(#', '')
                         .replace(')', '')
                 ),
@@ -470,7 +518,6 @@ QUnit.test('Image auto resize with aspect ratio - map', function (assert) {
     );
 });
 
-
 QUnit.test('Image auto resize with aspect ratio - column', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
@@ -481,22 +528,27 @@ QUnit.test('Image auto resize with aspect ratio - column', function (assert) {
             legend: {
                 enabled: false
             },
-            series: [{
-                data: [{
-                    y: 1,
-                    color: {
-                        pattern: {
-                            aspectRatio: 3 / 2,
-                            image: 'base/test/test1x1b.png'
+            series: [
+                {
+                    data: [
+                        {
+                            y: 1,
+                            color: {
+                                pattern: {
+                                    aspectRatio: 3 / 2,
+                                    image: 'base/test/test1x1b.png'
+                                }
+                            }
                         }
-                    }
-                }]
-            }]
+                    ]
+                }
+            ]
         }),
         point = chart.series[0].points[0],
         test = function () {
             var columnPattern = doc.getElementById(
-                    point.graphic.element.getAttribute('fill')
+                    point.graphic.element
+                        .getAttribute('fill')
                         .replace('url(#', '')
                         .replace(')', '')
                 ),
@@ -520,7 +572,6 @@ QUnit.test('Image auto resize with aspect ratio - column', function (assert) {
     test();
 });
 
-
 QUnit.test('Image animation opacity', function (assert) {
     var clock = TestUtilities.lolexInstall(),
         done = assert.async(),
@@ -534,32 +585,38 @@ QUnit.test('Image animation opacity', function (assert) {
                     enabled: true
                 }
             },
-            series: [{
-                animation: {
-                    enabled: true
-                },
-                data: [{
-                    y: 1,
-                    color: {
-                        pattern: {
-                            id: 'test-pattern',
-                            image: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
-                            opacity: 0.5,
-                            animation: {
-                                duration: 50,
-                                complete: function () {
-                                    assert.strictEqual(
-                                        columnPattern.firstChild.getAttribute('opacity'),
-                                        '0.5',
-                                        'Pattern should end at 0.5 opacity'
-                                    );
-                                    done();
+            series: [
+                {
+                    animation: {
+                        enabled: true
+                    },
+                    data: [
+                        {
+                            y: 1,
+                            color: {
+                                pattern: {
+                                    id: 'test-pattern',
+                                    image:
+                                        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==',
+                                    opacity: 0.5,
+                                    animation: {
+                                        duration: 50,
+                                        complete: function () {
+                                            assert.strictEqual(
+                                                columnPattern.firstChild
+                                                    .getAttribute('opacity'),
+                                                '0.5',
+                                                'Pattern should end at 0.5 opacity'
+                                            );
+                                            done();
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                }]
-            }]
+                    ]
+                }
+            ]
         });
 
         columnPattern = doc.getElementById('test-pattern');
@@ -576,31 +633,28 @@ QUnit.test('Image animation opacity', function (assert) {
     }
 });
 
-
 QUnit.test('Destroy and recreate chart', function (assert) {
     const options = {
-            series: [{
-                type: 'column',
-                keys: ['y', 'color'],
-                color: {
-                    pattern: {
-                        id: 'custom-id',
-                        path: {
-                            d: 'M 3 3 L 8 3 L 8 8 Z'
-                        },
-                        width: 12,
-                        height: 12,
-                        color: '#ff0000',
-                        opacity: 0.5,
-                        backgroundColor: '#000000'
-                    }
-                },
-                data: [
-                    [1, { patternIndex: 2 }],
-                    2,
-                    3
-                ]
-            }]
+            series: [
+                {
+                    type: 'column',
+                    keys: ['y', 'color'],
+                    color: {
+                        pattern: {
+                            id: 'custom-id',
+                            path: {
+                                d: 'M 3 3 L 8 3 L 8 8 Z'
+                            },
+                            width: 12,
+                            height: 12,
+                            color: '#ff0000',
+                            opacity: 0.5,
+                            backgroundColor: '#000000'
+                        }
+                    },
+                    data: [[1, { patternIndex: 2 }], 2, 3]
+                }
+            ]
         },
         firstChart = Highcharts.chart('container', options);
 
@@ -630,7 +684,10 @@ QUnit.test('Destroy and recreate chart', function (assert) {
         );
 
         assert.strictEqual(
-            secondPattern && secondPattern.getElementsByTagName('path')[0].getAttribute('stroke'),
+            secondPattern &&
+                secondPattern
+                    .getElementsByTagName('path')[0]
+                    .getAttribute('stroke'),
             '#ff0000',
             'Second pattern has path with correct color'
         );
@@ -640,4 +697,8 @@ QUnit.test('Destroy and recreate chart', function (assert) {
     firstChart.destroy();
     const secondChart = Highcharts.chart('container', options);
     testChart(secondChart);
+});
+
+QUnit.test('#14765: Global patterns', assert => {
+    assert.ok(Highcharts.patterns, 'Global patterns should be defined');
 });

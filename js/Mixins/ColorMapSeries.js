@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,8 +26,6 @@ var colorMapPointMixin = {
      * Color points have a value option that determines whether or not it is
      * a null point
      * @private
-     * @function Highcharts.colorMapPointMixin.isValid
-     * @return {boolean}
      */
     isValid: function () {
         // undefined is allowed
@@ -37,9 +35,6 @@ var colorMapPointMixin = {
     },
     /**
      * @private
-     * @function Highcharts.colorMapPointMixin.setState
-     * @param {string} state
-     * @return {void}
      */
     setState: function (state) {
         Point.prototype.setState.call(this, state);

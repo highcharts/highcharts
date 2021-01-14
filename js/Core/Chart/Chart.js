@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,17 +11,20 @@
 import A from '../Animation/AnimationUtilities.js';
 var animate = A.animate, animObject = A.animObject, setAnimation = A.setAnimation;
 import Axis from '../Axis/Axis.js';
-import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
 var charts = H.charts, doc = H.doc, win = H.win;
 import Legend from '../Legend.js';
 import MSPointer from '../MSPointer.js';
 import O from '../Options.js';
-var defaultOptions = O.defaultOptions;
+var defaultOptions = O.defaultOptions, time = O.time;
+import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
+import SeriesRegistry from '../Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import Time from '../Time.js';
 import U from '../Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
+import AST from '../Renderer/HTML/AST.js';
+var addEvent = U.addEvent, attr = U.attr, cleanRecursively = U.cleanRecursively, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
 var marginNames = H.marginNames;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -288,7 +291,7 @@ var Chart = /** @class */ (function () {
     Chart.prototype.initSeries = function (options) {
         var chart = this, optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
-            optionsChart.defaultSeriesType), series, SeriesClass = BaseSeries.seriesTypes[type];
+            optionsChart.defaultSeriesType), series, SeriesClass = seriesTypes[type];
         // No such series type
         if (!SeriesClass) {
             error(17, true, chart, { missingModuleFor: type });
@@ -688,10 +691,10 @@ var Chart = /** @class */ (function () {
         var chart = this;
         // Default style
         var style = name === 'title' ? {
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             fontSize: this.options.isStock ? '16px' : '18px' // #2944
         } : {
-            color: '${palette.neutralColor60}'
+            color: palette.neutralColor60
         };
         // Merge default options with explicit options
         var options = this.options[name] = merge(
@@ -1116,6 +1119,7 @@ var Chart = /** @class */ (function () {
     Chart.prototype.reflow = function (e) {
         var chart = this, optionsChart = chart.options.chart, renderTo = chart.renderTo, hasUserSize = (defined(optionsChart.width) &&
             defined(optionsChart.height)), width = optionsChart.width || getStyle(renderTo, 'width'), height = optionsChart.height || getStyle(renderTo, 'height'), target = e ? e.target : win;
+        delete chart.pointer.chartPosition;
         // Width and height checks for display:none. Target is doc in IE8 and
         // Opera, win in Firefox, Chrome and IE9.
         if (!hasUserSize &&
@@ -1489,8 +1493,7 @@ var Chart = /** @class */ (function () {
          */
         ['inverted', 'angular', 'polar'].forEach(function (key) {
             // The default series type's class
-            klass = BaseSeries.seriesTypes[(optionsChart.type ||
-                optionsChart.defaultSeriesType)];
+            klass = seriesTypes[(optionsChart.type || optionsChart.defaultSeriesType)];
             // Get the value from available chart-wide properties
             value =
                 // It is set in the options:
@@ -1501,7 +1504,7 @@ var Chart = /** @class */ (function () {
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
             while (!value && i--) {
-                klass = BaseSeries.seriesTypes[seriesOptions[i].type];
+                klass = seriesTypes[seriesOptions[i].type];
                 if (klass && klass.prototype[key]) {
                     value = true;
                 }
@@ -1667,12 +1670,6 @@ var Chart = /** @class */ (function () {
         chart.renderLabels();
         // Credits
         chart.addCredits();
-        // Handle responsiveness
-        if (chart.setResponsive) {
-            chart.setResponsive();
-        }
-        // Handle scaling
-        chart.updateContainerScaling();
         // Set flag
         chart.hasRendered = true;
     };
@@ -1720,31 +1717,6 @@ var Chart = /** @class */ (function () {
                 chart.credits = chart.credits.destroy();
                 chart.addCredits(options);
             };
-        }
-    };
-    /**
-     * Handle scaling, #11329 - when there is scaling/transform on the container
-     * or on a parent element, we need to take this into account. We calculate
-     * the scaling once here and it is picked up where we need to use it
-     * (Pointer, Tooltip).
-     *
-     * @private
-     * @function Highcharts.Chart#updateContainerScaling
-     */
-    Chart.prototype.updateContainerScaling = function () {
-        var container = this.container;
-        // #13342 - tooltip was not visible in Chrome, when chart
-        // updates height.
-        if (container.offsetWidth > 2 && // #13342
-            container.offsetHeight > 2 && // #13342
-            container.getBoundingClientRect) {
-            var bb = container.getBoundingClientRect(), scaleX = bb.width / container.offsetWidth, scaleY = bb.height / container.offsetHeight;
-            if (scaleX !== 1 || scaleY !== 1) {
-                this.containerScaling = { scaleX: scaleX, scaleY: scaleY };
-            }
-            else {
-                delete this.containerScaling;
-            }
         }
     };
     /**
@@ -1868,6 +1840,12 @@ var Chart = /** @class */ (function () {
                 chart.pointer = new Pointer(chart, options);
             }
         }
+        // Handle responsiveness. Has to fire after extensions are loaded
+        addEvent(chart, 'load', function () {
+            if (chart.setResponsive) {
+                chart.setResponsive(true);
+            }
+        });
         chart.render();
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {
@@ -1904,11 +1882,852 @@ var Chart = /** @class */ (function () {
         // Don't run again
         this.hasLoaded = true;
     };
+    /**
+     * Add a series to the chart after render time. Note that this method should
+     * never be used when adding data synchronously at chart render time, as it
+     * adds expense to the calculations and rendering. When adding data at the
+     * same time as the chart is initialized, add the series as a configuration
+     * option instead. With multiple axes, the `offset` is dynamically adjusted.
+     *
+     * @sample highcharts/members/chart-addseries/
+     *         Add a series from a button
+     * @sample stock/members/chart-addseries/
+     *         Add a series in Highstock
+     *
+     * @function Highcharts.Chart#addSeries
+     *
+     * @param {Highcharts.SeriesOptionsType} options
+     *        The config options for the series.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after adding.
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
+     *        Whether to apply animation, and optionally animation
+     *        configuration.
+     *
+     * @return {Highcharts.Series}
+     *         The newly created series object.
+     *
+     * @fires Highcharts.Chart#event:addSeries
+     * @fires Highcharts.Chart#event:afterAddSeries
+     */
+    Chart.prototype.addSeries = function (options, redraw, animation) {
+        var series, chart = this;
+        if (options) { // <- not necessary
+            redraw = pick(redraw, true); // defaults to true
+            fireEvent(chart, 'addSeries', { options: options }, function () {
+                series = chart.initSeries(options);
+                chart.isDirtyLegend = true;
+                chart.linkSeries();
+                if (series.enabledDataSorting) {
+                    // We need to call `setData` after `linkSeries`
+                    series.setData(options.data, false);
+                }
+                fireEvent(chart, 'afterAddSeries', { series: series });
+                if (redraw) {
+                    chart.redraw(animation);
+                }
+            });
+        }
+        return series;
+    };
+    /**
+     * Add an axis to the chart after render time. Note that this method should
+     * never be used when adding data synchronously at chart render time, as it
+     * adds expense to the calculations and rendering. When adding data at the
+     * same time as the chart is initialized, add the axis as a configuration
+     * option instead.
+     *
+     * @sample highcharts/members/chart-addaxis/
+     *         Add and remove axes
+     *
+     * @function Highcharts.Chart#addAxis
+     *
+     * @param {Highcharts.AxisOptions} options
+     *        The axis options.
+     *
+     * @param {boolean} [isX=false]
+     *        Whether it is an X axis or a value axis.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after adding.
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
+     *        Whether and how to apply animation in the redraw.
+     *
+     * @return {Highcharts.Axis}
+     *         The newly generated Axis object.
+     */
+    Chart.prototype.addAxis = function (options, isX, redraw, animation) {
+        return this.createAxis(isX ? 'xAxis' : 'yAxis', { axis: options, redraw: redraw, animation: animation });
+    };
+    /**
+     * Add a color axis to the chart after render time. Note that this method
+     * should never be used when adding data synchronously at chart render time,
+     * as it adds expense to the calculations and rendering. When adding data at
+     * the same time as the chart is initialized, add the axis as a
+     * configuration option instead.
+     *
+     * @sample highcharts/members/chart-addaxis/
+     *         Add and remove axes
+     *
+     * @function Highcharts.Chart#addColorAxis
+     *
+     * @param {Highcharts.ColorAxisOptions} options
+     *        The axis options.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after adding.
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
+     *        Whether and how to apply animation in the redraw.
+     *
+     * @return {Highcharts.ColorAxis}
+     *         The newly generated Axis object.
+     */
+    Chart.prototype.addColorAxis = function (options, redraw, animation) {
+        return this.createAxis('colorAxis', { axis: options, redraw: redraw, animation: animation });
+    };
+    /**
+     * Factory for creating different axis types.
+     *
+     * @private
+     * @function Highcharts.Chart#createAxis
+     *
+     * @param {string} type
+     *        An axis type.
+     *
+     * @param {...Array<*>} arguments
+     *        All arguments for the constructor.
+     *
+     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     *         The newly generated Axis object.
+     */
+    Chart.prototype.createAxis = function (type, options) {
+        var chartOptions = this.options, isColorAxis = type === 'colorAxis', axisOptions = options.axis, redraw = options.redraw, animation = options.animation, userOptions = merge(axisOptions, {
+            index: this[type].length,
+            isX: type === 'xAxis'
+        }), axis;
+        if (isColorAxis) {
+            axis = new H.ColorAxis(this, userOptions);
+        }
+        else {
+            axis = new Axis(this, userOptions);
+        }
+        // Push the new axis options to the chart options
+        chartOptions[type] = splat(chartOptions[type] || {});
+        chartOptions[type].push(userOptions);
+        if (isColorAxis) {
+            this.isDirtyLegend = true;
+            // Clear before 'bindAxes' (#11924)
+            this.axes.forEach(function (axis) {
+                axis.series = [];
+            });
+            this.series.forEach(function (series) {
+                series.bindAxes();
+                series.isDirtyData = true;
+            });
+        }
+        if (pick(redraw, true)) {
+            this.redraw(animation);
+        }
+        return axis;
+    };
+    /**
+     * Dim the chart and show a loading text or symbol. Options for the loading
+     * screen are defined in {@link
+     * https://api.highcharts.com/highcharts/loading|the loading options}.
+     *
+     * @sample highcharts/members/chart-hideloading/
+     *         Show and hide loading from a button
+     * @sample highcharts/members/chart-showloading/
+     *         Apply different text labels
+     * @sample stock/members/chart-show-hide-loading/
+     *         Toggle loading in Highstock
+     *
+     * @function Highcharts.Chart#showLoading
+     *
+     * @param {string} [str]
+     *        An optional text to show in the loading label instead of the
+     *        default one. The default text is set in
+     *        [lang.loading](https://api.highcharts.com/highcharts/lang.loading).
+     */
+    Chart.prototype.showLoading = function (str) {
+        var chart = this, options = chart.options, loadingDiv = chart.loadingDiv, loadingSpan = chart.loadingSpan, loadingOptions = options.loading, setLoadingSize = function () {
+            if (loadingDiv) {
+                css(loadingDiv, {
+                    left: chart.plotLeft + 'px',
+                    top: chart.plotTop + 'px',
+                    width: chart.plotWidth + 'px',
+                    height: chart.plotHeight + 'px'
+                });
+            }
+        };
+        // create the layer at the first call
+        if (!loadingDiv) {
+            chart.loadingDiv = loadingDiv = createElement('div', {
+                className: 'highcharts-loading highcharts-loading-hidden'
+            }, null, chart.container);
+        }
+        if (!loadingSpan) {
+            chart.loadingSpan = loadingSpan = createElement('span', { className: 'highcharts-loading-inner' }, null, loadingDiv);
+            addEvent(chart, 'redraw', setLoadingSize); // #1080
+        }
+        loadingDiv.className = 'highcharts-loading';
+        // Update text
+        AST.setElementHTML(loadingSpan, pick(str, options.lang.loading, ''));
+        if (!chart.styledMode) {
+            // Update visuals
+            css(loadingDiv, extend(loadingOptions.style, {
+                zIndex: 10
+            }));
+            css(loadingSpan, loadingOptions.labelStyle);
+            // Show it
+            if (!chart.loadingShown) {
+                css(loadingDiv, {
+                    opacity: 0,
+                    display: ''
+                });
+                animate(loadingDiv, {
+                    opacity: loadingOptions.style.opacity || 0.5
+                }, {
+                    duration: loadingOptions.showDuration || 0
+                });
+            }
+        }
+        chart.loadingShown = true;
+        setLoadingSize();
+    };
+    /**
+     * Hide the loading layer.
+     *
+     * @see Highcharts.Chart#showLoading
+     *
+     * @sample highcharts/members/chart-hideloading/
+     *         Show and hide loading from a button
+     * @sample stock/members/chart-show-hide-loading/
+     *         Toggle loading in Highstock
+     *
+     * @function Highcharts.Chart#hideLoading
+     */
+    Chart.prototype.hideLoading = function () {
+        var options = this.options, loadingDiv = this.loadingDiv;
+        if (loadingDiv) {
+            loadingDiv.className =
+                'highcharts-loading highcharts-loading-hidden';
+            if (!this.styledMode) {
+                animate(loadingDiv, {
+                    opacity: 0
+                }, {
+                    duration: options.loading.hideDuration || 100,
+                    complete: function () {
+                        css(loadingDiv, { display: 'none' });
+                    }
+                });
+            }
+        }
+        this.loadingShown = false;
+    };
+    /**
+     * A generic function to update any element of the chart. Elements can be
+     * enabled and disabled, moved, re-styled, re-formatted etc.
+     *
+     * A special case is configuration objects that take arrays, for example
+     * [xAxis](https://api.highcharts.com/highcharts/xAxis),
+     * [yAxis](https://api.highcharts.com/highcharts/yAxis) or
+     * [series](https://api.highcharts.com/highcharts/series). For these
+     * collections, an `id` option is used to map the new option set to an
+     * existing object. If an existing object of the same id is not found, the
+     * corresponding item is updated. So for example, running `chart.update`
+     * with a series item without an id, will cause the existing chart's series
+     * with the same index in the series array to be updated. When the
+     * `oneToOne` parameter is true, `chart.update` will also take care of
+     * adding and removing items from the collection. Read more under the
+     * parameter description below.
+     *
+     * Note that when changing series data, `chart.update` may mutate the passed
+     * data options.
+     *
+     * See also the
+     * [responsive option set](https://api.highcharts.com/highcharts/responsive).
+     * Switching between `responsive.rules` basically runs `chart.update` under
+     * the hood.
+     *
+     * @sample highcharts/members/chart-update/
+     *         Update chart geometry
+     *
+     * @function Highcharts.Chart#update
+     *
+     * @param {Highcharts.Options} options
+     *        A configuration object for the new chart options.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart.
+     *
+     * @param {boolean} [oneToOne=false]
+     *        When `true`, the `series`, `xAxis`, `yAxis` and `annotations`
+     *        collections will be updated one to one, and items will be either
+     *        added or removed to match the new updated options. For example,
+     *        if the chart has two series and we call `chart.update` with a
+     *        configuration containing three series, one will be added. If we
+     *        call `chart.update` with one series, one will be removed. Setting
+     *        an empty `series` array will remove all series, but leaving out
+     *        the`series` property will leave all series untouched. If the
+     *        series have id's, the new series options will be matched by id,
+     *        and the remaining ones removed.
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
+     *        Whether to apply animation, and optionally animation
+     *        configuration.
+     *
+     * @fires Highcharts.Chart#event:update
+     * @fires Highcharts.Chart#event:afterUpdate
+     */
+    Chart.prototype.update = function (options, redraw, oneToOne, animation) {
+        var chart = this, adders = {
+            credits: 'addCredits',
+            title: 'setTitle',
+            subtitle: 'setSubtitle',
+            caption: 'setCaption'
+        }, optionsChart, updateAllAxes, updateAllSeries, newWidth, newHeight, runSetSize, isResponsiveOptions = options.isResponsiveOptions, itemsForRemoval = [];
+        fireEvent(chart, 'update', { options: options });
+        // If there are responsive rules in action, undo the responsive rules
+        // before we apply the updated options and replay the responsive rules
+        // on top from the chart.redraw function (#9617).
+        if (!isResponsiveOptions) {
+            chart.setResponsive(false, true);
+        }
+        options = cleanRecursively(options, chart.options);
+        chart.userOptions = merge(chart.userOptions, options);
+        // If the top-level chart option is present, some special updates are
+        // required
+        optionsChart = options.chart;
+        if (optionsChart) {
+            merge(true, chart.options.chart, optionsChart);
+            // Setter function
+            if ('className' in optionsChart) {
+                chart.setClassName(optionsChart.className);
+            }
+            if ('reflow' in optionsChart) {
+                chart.setReflow(optionsChart.reflow);
+            }
+            if ('inverted' in optionsChart ||
+                'polar' in optionsChart ||
+                'type' in optionsChart) {
+                // Parse options.chart.inverted and options.chart.polar together
+                // with the available series.
+                chart.propFromSeries();
+                updateAllAxes = true;
+            }
+            if ('alignTicks' in optionsChart) { // #6452
+                updateAllAxes = true;
+            }
+            objectEach(optionsChart, function (val, key) {
+                if (chart.propsRequireUpdateSeries.indexOf('chart.' + key) !==
+                    -1) {
+                    updateAllSeries = true;
+                }
+                // Only dirty box
+                if (chart.propsRequireDirtyBox.indexOf(key) !== -1) {
+                    chart.isDirtyBox = true;
+                }
+                // Chart setSize
+                if (chart.propsRequireReflow.indexOf(key) !== -1) {
+                    if (isResponsiveOptions) {
+                        chart.isDirtyBox = true;
+                    }
+                    else {
+                        runSetSize = true;
+                    }
+                }
+            });
+            if (!chart.styledMode && 'style' in optionsChart) {
+                chart.renderer.setStyle(optionsChart.style);
+            }
+        }
+        // Moved up, because tooltip needs updated plotOptions (#6218)
+        if (!chart.styledMode && options.colors) {
+            this.options.colors = options.colors;
+        }
+        if (options.time) {
+            // Maintaining legacy global time. If the chart is instanciated
+            // first with global time, then updated with time options, we need
+            // to create a new Time instance to avoid mutating the global time
+            // (#10536).
+            if (this.time === time) {
+                this.time = new Time(options.time);
+            }
+            // If we're updating, the time class is different from other chart
+            // classes (chart.legend, chart.tooltip etc) in that it doesn't know
+            // about the chart. The other chart[something].update functions also
+            // set the chart.options[something]. For the time class however we
+            // need to update the chart options separately. #14230.
+            merge(true, chart.options.time, options.time);
+        }
+        // Some option stuctures correspond one-to-one to chart objects that
+        // have update methods, for example
+        // options.credits => chart.credits
+        // options.legend => chart.legend
+        // options.title => chart.title
+        // options.tooltip => chart.tooltip
+        // options.subtitle => chart.subtitle
+        // options.mapNavigation => chart.mapNavigation
+        // options.navigator => chart.navigator
+        // options.scrollbar => chart.scrollbar
+        objectEach(options, function (val, key) {
+            if (chart[key] &&
+                typeof chart[key].update === 'function') {
+                chart[key].update(val, false);
+                // If a one-to-one object does not exist, look for an adder function
+            }
+            else if (typeof chart[adders[key]] === 'function') {
+                chart[adders[key]](val);
+                // Else, just merge the options. For nodes like loading, noData,
+                // plotOptions
+            }
+            else if (key !== 'color' &&
+                chart.collectionsWithUpdate.indexOf(key) === -1) {
+                merge(true, chart.options[key], options[key]);
+            }
+            if (key !== 'chart' &&
+                chart.propsRequireUpdateSeries.indexOf(key) !== -1) {
+                updateAllSeries = true;
+            }
+        });
+        // Setters for collections. For axes and series, each item is referred
+        // by an id. If the id is not found, it defaults to the corresponding
+        // item in the collection, so setting one series without an id, will
+        // update the first series in the chart. Setting two series without
+        // an id will update the first and the second respectively (#6019)
+        // chart.update and responsive.
+        this.collectionsWithUpdate.forEach(function (coll) {
+            var indexMap;
+            if (options[coll]) {
+                // In stock charts, the navigator series are also part of the
+                // chart.series array, but those series should not be handled
+                // here (#8196).
+                if (coll === 'series') {
+                    indexMap = [];
+                    chart[coll].forEach(function (s, i) {
+                        if (!s.options.isInternal) {
+                            indexMap.push(pick(s.options.index, i));
+                        }
+                    });
+                }
+                splat(options[coll]).forEach(function (newOptions, i) {
+                    var hasId = defined(newOptions.id);
+                    var item;
+                    // Match by id
+                    if (hasId) {
+                        item = chart.get(newOptions.id);
+                    }
+                    // No match by id found, match by index instead
+                    if (!item) {
+                        item = chart[coll][indexMap ? indexMap[i] : i];
+                        // Check if we grabbed an item with an exising but
+                        // different id (#13541)
+                        if (item && hasId && defined(item.options.id)) {
+                            item = void 0;
+                        }
+                    }
+                    if (item && item.coll === coll) {
+                        item.update(newOptions, false);
+                        if (oneToOne) {
+                            item.touched = true;
+                        }
+                    }
+                    // If oneToOne and no matching item is found, add one
+                    if (!item && oneToOne && chart.collectionsWithInit[coll]) {
+                        chart.collectionsWithInit[coll][0].apply(chart, 
+                        // [newOptions, ...extraArguments, redraw=false]
+                        [
+                            newOptions
+                        ].concat(
+                        // Not all initializers require extra args
+                        chart.collectionsWithInit[coll][1] || []).concat([
+                            false
+                        ])).touched = true;
+                    }
+                });
+                // Add items for removal
+                if (oneToOne) {
+                    chart[coll].forEach(function (item) {
+                        if (!item.touched && !item.options.isInternal) {
+                            itemsForRemoval.push(item);
+                        }
+                        else {
+                            delete item.touched;
+                        }
+                    });
+                }
+            }
+        });
+        itemsForRemoval.forEach(function (item) {
+            if (item.chart) { // #9097, avoid removing twice
+                item.remove(false);
+            }
+        });
+        if (updateAllAxes) {
+            chart.axes.forEach(function (axis) {
+                axis.update({}, false);
+            });
+        }
+        // Certain options require the whole series structure to be thrown away
+        // and rebuilt
+        if (updateAllSeries) {
+            chart.getSeriesOrderByLinks().forEach(function (series) {
+                // Avoid removed navigator series
+                if (series.chart) {
+                    series.update({}, false);
+                }
+            }, this);
+        }
+        // Update size. Redraw is forced.
+        newWidth = optionsChart && optionsChart.width;
+        newHeight = optionsChart && optionsChart.height;
+        if (isString(newHeight)) {
+            newHeight = relativeLength(newHeight, newWidth || chart.chartWidth);
+        }
+        if (
+        // In this case, run chart.setSize with newWidth and newHeight which
+        // are undefined, only for reflowing chart elements because margin
+        // or spacing has been set (#8190)
+        runSetSize ||
+            // In this case, the size is actually set
+            (isNumber(newWidth) && newWidth !== chart.chartWidth) ||
+            (isNumber(newHeight) && newHeight !== chart.chartHeight)) {
+            chart.setSize(newWidth, newHeight, animation);
+        }
+        else if (pick(redraw, true)) {
+            chart.redraw(animation);
+        }
+        fireEvent(chart, 'afterUpdate', {
+            options: options,
+            redraw: redraw,
+            animation: animation
+        });
+    };
+    /**
+     * Shortcut to set the subtitle options. This can also be done from {@link
+     * Chart#update} or {@link Chart#setTitle}.
+     *
+     * @function Highcharts.Chart#setSubtitle
+     *
+     * @param {Highcharts.SubtitleOptions} options
+     *        New subtitle options. The subtitle text itself is set by the
+     *        `options.text` property.
+     */
+    Chart.prototype.setSubtitle = function (options, redraw) {
+        this.applyDescription('subtitle', options);
+        this.layOutTitles(redraw);
+    };
+    /**
+     * Set the caption options. This can also be done from {@link
+     * Chart#update}.
+     *
+     * @function Highcharts.Chart#setCaption
+     *
+     * @param {Highcharts.CaptionOptions} options
+     *        New caption options. The caption text itself is set by the
+     *        `options.text` property.
+     */
+    Chart.prototype.setCaption = function (options, redraw) {
+        this.applyDescription('caption', options);
+        this.layOutTitles(redraw);
+    };
+    /**
+     * Display the zoom button, so users can reset zoom to the default view
+     * settings.
+     *
+     * @function Highcharts.Chart#showResetZoom
+     *
+     * @fires Highcharts.Chart#event:afterShowResetZoom
+     * @fires Highcharts.Chart#event:beforeShowResetZoom
+     */
+    Chart.prototype.showResetZoom = function () {
+        var chart = this, lang = defaultOptions.lang, btnOptions = chart.options.chart.resetZoomButton, theme = btnOptions.theme, states = theme.states, alignTo = (btnOptions.relativeTo === 'chart' ||
+            btnOptions.relativeTo === 'spaceBox' ?
+            null :
+            'plotBox');
+        /**
+         * @private
+         */
+        function zoomOut() {
+            chart.zoomOut();
+        }
+        fireEvent(this, 'beforeShowResetZoom', null, function () {
+            chart.resetZoomButton = chart.renderer
+                .button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
+                .attr({
+                align: btnOptions.position.align,
+                title: lang.resetZoomTitle
+            })
+                .addClass('highcharts-reset-zoom')
+                .add()
+                .align(btnOptions.position, false, alignTo);
+        });
+        fireEvent(this, 'afterShowResetZoom');
+    };
+    /**
+     * Zoom the chart out after a user has zoomed in. See also
+     * [Axis.setExtremes](/class-reference/Highcharts.Axis#setExtremes).
+     *
+     * @function Highcharts.Chart#zoomOut
+     *
+     * @fires Highcharts.Chart#event:selection
+     */
+    Chart.prototype.zoomOut = function () {
+        fireEvent(this, 'selection', { resetSelection: true }, this.zoom);
+    };
+    /**
+     * Zoom into a given portion of the chart given by axis coordinates.
+     *
+     * @private
+     * @function Highcharts.Chart#zoom
+     * @param {Highcharts.SelectEventObject} event
+     */
+    Chart.prototype.zoom = function (event) {
+        var chart = this, hasZoomed, pointer = chart.pointer, displayButton = false, mouseDownPos = chart.inverted ? pointer.mouseDownX : pointer.mouseDownY, resetZoomButton;
+        // If zoom is called with no arguments, reset the axes
+        if (!event || event.resetSelection) {
+            chart.axes.forEach(function (axis) {
+                hasZoomed = axis.zoom();
+            });
+            pointer.initiated = false; // #6804
+        }
+        else { // else, zoom in on all axes
+            event.xAxis.concat(event.yAxis).forEach(function (axisData) {
+                var axis = axisData.axis, axisStartPos = chart.inverted ? axis.left : axis.top, axisEndPos = chart.inverted ?
+                    axisStartPos + axis.width : axisStartPos + axis.height, isXAxis = axis.isXAxis, isWithinPane = false;
+                // Check if zoomed area is within the pane (#1289).
+                // In case of multiple panes only one pane should be zoomed.
+                if ((!isXAxis &&
+                    mouseDownPos >= axisStartPos &&
+                    mouseDownPos <= axisEndPos) ||
+                    isXAxis ||
+                    !defined(mouseDownPos)) {
+                    isWithinPane = true;
+                }
+                // don't zoom more than minRange
+                if (pointer[isXAxis ? 'zoomX' : 'zoomY'] && isWithinPane) {
+                    hasZoomed = axis.zoom(axisData.min, axisData.max);
+                    if (axis.displayBtn) {
+                        displayButton = true;
+                    }
+                }
+            });
+        }
+        // Show or hide the Reset zoom button
+        resetZoomButton = chart.resetZoomButton;
+        if (displayButton && !resetZoomButton) {
+            chart.showResetZoom();
+        }
+        else if (!displayButton && isObject(resetZoomButton)) {
+            chart.resetZoomButton = resetZoomButton.destroy();
+        }
+        // Redraw
+        if (hasZoomed) {
+            chart.redraw(pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100));
+        }
+    };
+    /**
+     * Pan the chart by dragging the mouse across the pane. This function is
+     * called on mouse move, and the distance to pan is computed from chartX
+     * compared to the first chartX position in the dragging operation.
+     *
+     * @private
+     * @function Highcharts.Chart#pan
+     * @param {Highcharts.PointerEventObject} e
+     * @param {string} panning
+     */
+    Chart.prototype.pan = function (e, panning) {
+        var chart = this, hoverPoints = chart.hoverPoints, panningOptions, chartOptions = chart.options.chart, hasMapNavigation = chart.options.mapNavigation &&
+            chart.options.mapNavigation.enabled, doRedraw, type;
+        if (typeof panning === 'object') {
+            panningOptions = panning;
+        }
+        else {
+            panningOptions = {
+                enabled: panning,
+                type: 'x'
+            };
+        }
+        if (chartOptions && chartOptions.panning) {
+            chartOptions.panning = panningOptions;
+        }
+        type = panningOptions.type;
+        fireEvent(this, 'pan', { originalEvent: e }, function () {
+            // remove active points for shared tooltip
+            if (hoverPoints) {
+                hoverPoints.forEach(function (point) {
+                    point.setState();
+                });
+            }
+            // panning axis mapping
+            var xy = [1]; // x
+            if (type === 'xy') {
+                xy = [1, 0];
+            }
+            else if (type === 'y') {
+                xy = [0];
+            }
+            xy.forEach(function (isX) {
+                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
+                    (!axis.reversed && chart.inverted) ?
+                    -1 :
+                    1, extremes = axis.getExtremes(), panMin = axis.toValue(startPos - mousePos, true) +
+                    halfPointRange * pointRangeDirection, panMax = axis.toValue(startPos + axis.len - mousePos, true) -
+                    halfPointRange * pointRangeDirection, flipped = panMax < panMin, newMin = flipped ? panMax : panMin, newMax = flipped ? panMin : panMax, hasVerticalPanning = axis.hasVerticalPanning(), paddedMin, paddedMax, spill, panningState = axis.panningState;
+                // General calculations of panning state.
+                // This is related to using vertical panning. (#11315).
+                axis.series.forEach(function (series) {
+                    if (hasVerticalPanning &&
+                        !isX && (!panningState || panningState.isDirty)) {
+                        var processedData = series.getProcessedData(true), dataExtremes = series.getExtremes(processedData.yData, true);
+                        if (!panningState) {
+                            panningState = {
+                                startMin: Number.MAX_VALUE,
+                                startMax: -Number.MAX_VALUE
+                            };
+                        }
+                        if (isNumber(dataExtremes.dataMin) &&
+                            isNumber(dataExtremes.dataMax)) {
+                            panningState.startMin = Math.min(pick(series.options.threshold, Infinity), dataExtremes.dataMin, panningState.startMin);
+                            panningState.startMax = Math.max(pick(series.options.threshold, -Infinity), dataExtremes.dataMax, panningState.startMax);
+                        }
+                    }
+                });
+                paddedMin = Math.min(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
+                    extremes.min :
+                    axis.toValue(axis.toPixels(extremes.min) -
+                        axis.minPixelPadding));
+                paddedMax = Math.max(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMax, extremes.dataMax), halfPointRange ?
+                    extremes.max :
+                    axis.toValue(axis.toPixels(extremes.max) +
+                        axis.minPixelPadding));
+                axis.panningState = panningState;
+                // It is not necessary to calculate extremes on ordinal axis,
+                // because they are already calculated, so we don't want to
+                // override them.
+                if (!axis.isOrdinal) {
+                    // If the new range spills over, either to the min or max,
+                    // adjust the new range.
+                    spill = paddedMin - newMin;
+                    if (spill > 0) {
+                        newMax += spill;
+                        newMin = paddedMin;
+                    }
+                    spill = newMax - paddedMax;
+                    if (spill > 0) {
+                        newMax = paddedMax;
+                        newMin -= spill;
+                    }
+                    // Set new extremes if they are actually new
+                    if (axis.series.length &&
+                        newMin !== extremes.min &&
+                        newMax !== extremes.max &&
+                        newMin >= paddedMin &&
+                        newMax <= paddedMax) {
+                        axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+                        if (!chart.resetZoomButton &&
+                            !hasMapNavigation &&
+                            // Show reset zoom button only when both newMin and
+                            // newMax values are between padded axis range.
+                            newMin !== paddedMin &&
+                            newMax !== paddedMax &&
+                            type.match('y')) {
+                            chart.showResetZoom();
+                            axis.displayBtn = false;
+                        }
+                        doRedraw = true;
+                    }
+                    // set new reference for next run:
+                    chart[mouseDown] = mousePos;
+                }
+            });
+            if (doRedraw) {
+                chart.redraw(false);
+            }
+            css(chart.container, { cursor: 'move' });
+        });
+    };
     return Chart;
 }());
 extend(Chart.prototype, {
     // Hook for adding callbacks in modules
-    callbacks: []
+    callbacks: [],
+    /**
+     * These collections (arrays) implement `Chart.addSomethig` method used in
+     * chart.update() to create new object in the collection. Equivalent for
+     * deleting is resolved by simple `Somethig.remove()`.
+     *
+     * Note: We need to define these references after initializers are bound to
+     * chart's prototype.
+     */
+    collectionsWithInit: {
+        // collectionName: [ initializingMethod, [extraArguments] ]
+        xAxis: [Chart.prototype.addAxis, [true]],
+        yAxis: [Chart.prototype.addAxis, [false]],
+        series: [Chart.prototype.addSeries]
+    },
+    /**
+     * These collections (arrays) implement update() methods with support for
+     * one-to-one option.
+     */
+    collectionsWithUpdate: [
+        'xAxis',
+        'yAxis',
+        'zAxis',
+        'series'
+    ],
+    /**
+     * These properties cause isDirtyBox to be set to true when updating. Can be
+     * extended from plugins.
+     */
+    propsRequireDirtyBox: [
+        'backgroundColor',
+        'borderColor',
+        'borderWidth',
+        'borderRadius',
+        'plotBackgroundColor',
+        'plotBackgroundImage',
+        'plotBorderColor',
+        'plotBorderWidth',
+        'plotShadow',
+        'shadow'
+    ],
+    /**
+     * These properties require a full reflow of chart elements, best
+     * implemented through running `Chart.setSize` internally (#8190).
+     * @type {Array}
+     */
+    propsRequireReflow: [
+        'margin',
+        'marginTop',
+        'marginRight',
+        'marginBottom',
+        'marginLeft',
+        'spacing',
+        'spacingTop',
+        'spacingRight',
+        'spacingBottom',
+        'spacingLeft'
+    ],
+    /**
+     * These properties cause all series to be updated when updating. Can be
+     * extended from plugins.
+     */
+    propsRequireUpdateSeries: [
+        'chart.inverted',
+        'chart.polar',
+        'chart.ignoreHiddenSeries',
+        'chart.type',
+        'colors',
+        'plotOptions',
+        'time',
+        'tooltip'
+    ]
 });
 /**
  * Factory function for basic charts.

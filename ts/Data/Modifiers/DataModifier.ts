@@ -176,6 +176,74 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     public abstract execute(table: DataTable): DataTable;
 
     /**
+     * Runs a timed execution of the modifier on the given datatable.
+     * Can be configured to run multiple times.
+     *
+     * @param {DataTable} dataTable
+     * The datatable to execute
+     *
+     * @param {DataModifier.BenchmarkOptions} options
+     * Options. Currently supports `iterations` for number of iterations.
+     *
+     * @return {Array<number>}
+     * An array of times in milliseconds
+     *
+     */
+    public benchmark(
+        dataTable: DataTable,
+        options?: DataModifier.BenchmarkOptions
+    ): Array<number> {
+        const results: Array<number> = [];
+        const modifier = this as DataModifier<DataModifier.BenchmarkEventObject|DataModifier.EventObject>;
+        const execute = (): void => {
+            modifier.execute(dataTable);
+            modifier.emit({ type: 'afterBenchmarkIteration' });
+        };
+
+        const defaultOptions = {
+            iterations: 1
+        };
+
+        const { iterations } = merge(
+            defaultOptions,
+            options
+        );
+
+        modifier.on('afterBenchmarkIteration', (): void => {
+            if (results.length === iterations) {
+                modifier.emit({ type: 'afterBenchmark', results });
+                return;
+            }
+
+            // Run again
+            execute();
+        });
+
+        const times: {
+            startTime: number;
+            endTime: number;
+        } = {
+            startTime: 0,
+            endTime: 0
+        };
+
+        // Add timers
+        modifier.on('execute', (): void => {
+            times.startTime = window.performance.now();
+        });
+
+        modifier.on('afterExecute', (): void => {
+            times.endTime = window.performance.now();
+            results.push(times.endTime - times.startTime);
+        });
+
+        // Initial run
+        execute();
+
+        return results;
+    }
+
+    /**
      * Emits an event on the modifier to all registered callbacks of this event.
      *
      * @param {DataEventEmitter.EventObject} [e]
@@ -254,6 +322,17 @@ namespace DataModifier {
             'execute'|'afterExecute'
         );
         readonly table: DataTable;
+    }
+
+    export interface BenchmarkEventObject extends DataEventEmitter.EventObject {
+        readonly type: (
+            'afterBenchmark'|'afterBenchmarkIteration'
+        );
+        readonly results?: Array<number>;
+    }
+
+    export interface BenchmarkOptions {
+        iterations: number;
     }
 
     /**

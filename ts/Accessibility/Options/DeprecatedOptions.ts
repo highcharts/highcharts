@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -61,7 +61,7 @@
 
 'use strict';
 
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../../Core/Series/Series';
 import Axis from '../../Core/Axis/Axis.js';
 import Chart from '../../Core/Chart/Chart.js';
 import U from '../../Core/Utilities.js';
@@ -101,7 +101,7 @@ declare global {
  * @return {void}
  */
 function traverseSetOption<T>(
-    root: Highcharts.Dictionary<T>,
+    root: Record<string, T>,
     optionAsArray: Array<string>,
     val: T
 ): void {
@@ -123,7 +123,7 @@ function deprecateFromOptionsMap(
     chart: Chart,
     rootOldAsArray: Array<string>,
     rootNewAsArray: Array<string>,
-    mapToNewOptions: Highcharts.Dictionary<Array<string>>
+    mapToNewOptions: Record<string, Array<string>>
 ): void {
     /**
      * @private
@@ -131,11 +131,11 @@ function deprecateFromOptionsMap(
     function getChildProp(
         root: Highcharts.Options,
         propAsArray: Array<string>
-    ): Highcharts.Dictionary<unknown> {
+    ): Record<string, unknown> {
         return propAsArray.reduce(function (
-            acc: Highcharts.Dictionary<unknown>,
+            acc: Record<string, unknown>,
             cur: string
-        ): Highcharts.Dictionary<unknown> {
+        ): Record<string, unknown> {
             return acc[cur] as any;
         }, root as any);
     }
@@ -210,7 +210,7 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
             'accessibility', 'keyboardNavigation', 'enabled'
         ]
     };
-    chart.series.forEach(function (series: LineSeries): void {
+    chart.series.forEach(function (series: Series): void {
         // Handle series wide options
         Object.keys(oldToNewSeriesOptions).forEach(function (
             oldOption: string

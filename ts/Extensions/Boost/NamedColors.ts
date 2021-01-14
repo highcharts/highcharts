@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -17,7 +17,7 @@ import Color from '../../Core/Color/Color.js';
 
 // Register color names since GL can't render those directly.
 // TODO: When supporting modern syntax, make this a const and a named export
-const defaultHTMLColorMap: Highcharts.Dictionary<ColorString> = {
+const defaultHTMLColorMap: Record<string, ColorString> = {
     aliceblue: '#f0f8ff',
     antiquewhite: '#faebd7',
     aqua: '#00ffff',

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,6 +12,7 @@ import H from './Globals.js';
 var isTouchDevice = H.isTouchDevice, svg = H.svg;
 import Color from './Color/Color.js';
 var color = Color.parse;
+import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 var merge = U.merge;
@@ -228,7 +229,7 @@ H.defaultOptions = {
      * @default ["#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9",
      *          "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1"]
      */
-    colors: '${palette.colors}'.split(' '),
+    colors: palette.colors,
     /**
      * Styled mode only. Configuration object for adding SVG definitions for
      * reusable elements. See [gradients, shadows and
@@ -1485,6 +1486,19 @@ H.defaultOptions = {
          * @apioption  chart.zoomType
          */
         /**
+         * Enables zooming by a single touch, in combination with
+         * [chart.zoomType](#chart.zoomType). When enabled, two-finger pinch
+         * will still work as set up by [chart.pinchType](#chart.pinchType).
+         * However, `zoomBySingleTouch` will interfere with touch-dragging the
+         * chart to read the tooltip. And especially when vertical zooming is
+         * enabled, it will make it hard to scroll vertically on the page.
+         * @since      next
+         * @sample     highcharts/chart/zoombysingletouch
+         *             Zoom by single touch enabled, with buttons to toggle
+         * @product    highcharts higstock gantt
+         */
+        zoomBySingleTouch: false,
+        /**
          * An explicit width for the chart. By default (when `null`) the width
          * is calculated from the offset width of the containing element.
          *
@@ -1536,7 +1550,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '${palette.highlightColor80}',
+        borderColor: palette.highlightColor80,
         /**
          * The pixel width of the outer chart border.
          *
@@ -1575,7 +1589,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: '${palette.backgroundColor}',
+        backgroundColor: palette.backgroundColor,
         /**
          * The background color or gradient for the plot area.
          *
@@ -1632,7 +1646,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        plotBorderColor: '${palette.neutralColor20}'
+        plotBorderColor: palette.neutralColor20
     },
     /**
      * The chart's main title.
@@ -2061,7 +2075,7 @@ H.defaultOptions = {
             /**
              * @ignore-option
              */
-            color: '${palette.neutralColor80}'
+            color: palette.neutralColor80
         }
     },
     /**
@@ -2337,7 +2351,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        borderColor: '${palette.neutralColor40}',
+        borderColor: palette.neutralColor40,
         /**
          * The border corner radius of the legend.
          *
@@ -2431,7 +2445,7 @@ H.defaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            activeColor: '${palette.highlightColor100}',
+            activeColor: palette.highlightColor100,
             /**
              * The color of the inactive up or down arrow in the legend page
              * navigation. .
@@ -2447,7 +2461,7 @@ H.defaultOptions = {
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.2.4
              */
-            inactiveColor: '${palette.neutralColor20}'
+            inactiveColor: palette.neutralColor20
         },
         /**
          * The inner padding of the legend box.
@@ -2523,7 +2537,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             /**
              * @ignore
              */
@@ -2561,7 +2575,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '${palette.neutralColor100}'
+            color: palette.neutralColor100
         },
         /**
          * CSS styles for each legend item when the corresponding series or
@@ -2582,7 +2596,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            color: '${palette.neutralColor20}'
+            color: palette.neutralColor20
         },
         /**
          * Whether to apply a drop shadow to the legend. A `backgroundColor`
@@ -2886,7 +2900,7 @@ H.defaultOptions = {
             /**
              * @ignore
              */
-            backgroundColor: '${palette.backgroundColor}',
+            backgroundColor: palette.backgroundColor,
             /**
              * @ignore
              */
@@ -3478,7 +3492,7 @@ H.defaultOptions = {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        backgroundColor: color('${palette.neutralColor3}')
+        backgroundColor: color(palette.neutralColor3)
             .setOpacity(0.85).get(),
         /**
          * The pixel width of the tooltip border.
@@ -3530,7 +3544,7 @@ H.defaultOptions = {
          */
         style: {
             /** @internal */
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             /** @internal */
             cursor: 'default',
             /** @internal */
@@ -3629,7 +3643,7 @@ H.defaultOptions = {
             /** @internal */
             cursor: 'pointer',
             /** @internal */
-            color: '${palette.neutralColor40}',
+            color: palette.neutralColor40,
             /** @internal */
             fontSize: '9px'
         },
@@ -3653,6 +3667,8 @@ H.defaultOptions = {
 /*= if (!build.classic) { =*/
 // Legacy build for styled mode, set the styledMode option to true by default.
 H.defaultOptions.chart.styledMode = true;
+/*= } else { =*/
+H.defaultOptions.chart.styledMode = false;
 /*= } =*/
 '';
 /**

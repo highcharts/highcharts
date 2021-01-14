@@ -285,7 +285,10 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             itemDelimiter = decimalPoint === ',' ? ';' : ',';
         }
 
-        const { columnNames, columnValues } = this.getColumnsForExport(exportOptions.exportIDColumn);
+        const { columnNames, columnValues } = this.getColumnsForExport(
+            exportOptions.exportIDColumn,
+            exportOptions.usePresentationOrder
+        );
         const csvRows: Array<string> = [],
             columnsCount = columnNames.length;
 
@@ -460,10 +463,11 @@ namespace CSVStore {
      */
     export interface ExportOptions extends DataJSON.JSONObject {
         decimalPoint: string | null;
+        exportIDColumn: boolean;
         itemDelimiter: string | null;
         lineDelimiter: string;
         useLocalDecimalPoint?: boolean;
-        exportIDColumn: boolean;
+        usePresentationOrder?: boolean;
     }
 
 }

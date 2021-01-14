@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,11 +8,14 @@
  *
  * */
 'use strict';
+import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import H from '../Globals.js';
+import O from '../Options.js';
+var defaultOptions = O.defaultOptions;
 import U from '../Utilities.js';
-var defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 /**
  * Function callback when a series point is clicked. Return false to cancel the
  * action.
@@ -159,6 +162,54 @@ var defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireE
 * @name Highcharts.PointUpdateEventObject#options
 * @type {Highcharts.PointOptionsType}
 */
+/**
+ * @interface Highcharts.PointEventsOptionsObject
+ */ /**
+* Fires when the point is selected either programmatically or following a click
+* on the point. One parameter, `event`, is passed to the function. Returning
+* `false` cancels the operation.
+* @name Highcharts.PointEventsOptionsObject#select
+* @type {Highcharts.PointSelectCallbackFunction|undefined}
+*/ /**
+* Fires when the point is unselected either programmatically or following a
+* click on the point. One parameter, `event`, is passed to the function.
+* Returning `false` cancels the operation.
+* @name Highcharts.PointEventsOptionsObject#unselect
+* @type {Highcharts.PointUnselectCallbackFunction|undefined}
+*/
+/**
+ * Information about the select/unselect event.
+ *
+ * @interface Highcharts.PointInteractionEventObject
+ * @extends global.Event
+ */ /**
+* @name Highcharts.PointInteractionEventObject#accumulate
+* @type {boolean}
+*/
+/**
+ * Gets fired when the point is selected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.PointSelectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointInteractionEventObject} event
+ *        Event that occured.
+ */
+/**
+ * Fires when the point is unselected either programmatically or following a
+ * click on the point.
+ *
+ * @callback Highcharts.PointUnselectCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointInteractionEventObject} event
+ *        Event that occured.
+ */
 ''; // detach doclet above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -731,7 +782,7 @@ var Point = /** @class */ (function () {
         else {
             colorIndex = series.colorIndex;
         }
-        this.colorIndex = pick(this.colorIndex, colorIndex);
+        this.colorIndex = pick(this.options.colorIndex, colorIndex);
     };
     /**
      * Set a value in an object, on the property defined by key. The key
@@ -797,6 +848,427 @@ var Point = /** @class */ (function () {
             point: this,
             series: this.series
         }, series.chart);
+    };
+    /**
+     * Update point with new options (typically x/y data) and optionally redraw
+     * the series.
+     *
+     * @sample highcharts/members/point-update-column/
+     *         Update column value
+     * @sample highcharts/members/point-update-pie/
+     *         Update pie slice
+     * @sample maps/members/point-update/
+     *         Update map area value in Highmaps
+     *
+     * @function Highcharts.Point#update
+     *
+     * @param {Highcharts.PointOptionsType} options
+     *        The point options. Point options are handled as described under
+     *        the `series.type.data` item for each series type. For example
+     *        for a line series, if options is a single number, the point will
+     *        be given that number as the marin y value. If it is an array, it
+     *        will be interpreted as x and y values respectively. If it is an
+     *        object, advanced options are applied.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the point is updated. If doing
+     *        more operations on the chart, it is best practice to set
+     *        `redraw` to false and call `chart.redraw()` after.
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
+     *        Whether to apply animation, and optionally animation
+     *        configuration.
+     *
+     * @fires Highcharts.Point#event:update
+     */
+    Point.prototype.update = function (options, redraw, animation, runEvent) {
+        var point = this, series = point.series, graphic = point.graphic, i, chart = series.chart, seriesOptions = series.options;
+        redraw = pick(redraw, true);
+        /**
+         * @private
+         */
+        function update() {
+            point.applyOptions(options);
+            // Update visuals, #4146
+            // Handle dummy graphic elements for a11y, #12718
+            var hasDummyGraphic = graphic && point.hasDummyGraphic;
+            var shouldDestroyGraphic = point.y === null ? !hasDummyGraphic : hasDummyGraphic;
+            if (graphic && shouldDestroyGraphic) {
+                point.graphic = graphic.destroy();
+                delete point.hasDummyGraphic;
+            }
+            if (isObject(options, true)) {
+                // Destroy so we can get new elements
+                if (graphic && graphic.element) {
+                    // "null" is also a valid symbol
+                    if (options &&
+                        options.marker &&
+                        typeof options.marker.symbol !== 'undefined') {
+                        point.graphic = graphic.destroy();
+                    }
+                }
+                if (options && options.dataLabels && point.dataLabel) {
+                    point.dataLabel = point.dataLabel.destroy(); // #2468
+                }
+                if (point.connector) {
+                    point.connector = point.connector.destroy(); // #7243
+                }
+            }
+            // record changes in the parallel arrays
+            i = point.index;
+            series.updateParallelArrays(point, i);
+            // Record the options to options.data. If the old or the new config
+            // is an object, use point options, otherwise use raw options
+            // (#4701, #4916).
+            seriesOptions.data[i] = (isObject(seriesOptions.data[i], true) ||
+                isObject(options, true)) ?
+                point.options :
+                pick(options, seriesOptions.data[i]);
+            // redraw
+            series.isDirty = series.isDirtyData = true;
+            if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
+                chart.isDirtyBox = true;
+            }
+            if (seriesOptions.legendType === 'point') { // #1831, #1885
+                chart.isDirtyLegend = true;
+            }
+            if (redraw) {
+                chart.redraw(animation);
+            }
+        }
+        // Fire the event with a default handler of doing the update
+        if (runEvent === false) { // When called from setData
+            update();
+        }
+        else {
+            point.firePointEvent('update', { options: options }, update);
+        }
+    };
+    /**
+     * Remove a point and optionally redraw the series and if necessary the axes
+     *
+     * @sample highcharts/plotoptions/series-point-events-remove/
+     *         Remove point and confirm
+     * @sample highcharts/members/point-remove/
+     *         Remove pie slice
+     * @sample maps/members/point-remove/
+     *         Remove selected points in Highmaps
+     *
+     * @function Highcharts.Point#remove
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart or wait for an explicit call. When
+     *        doing more operations on the chart, for example running
+     *        `point.remove()` in a loop, it is best practice to set `redraw`
+     *        to false and call `chart.redraw()` after.
+     *
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=false]
+     *        Whether to apply animation, and optionally animation
+     *        configuration.
+     */
+    Point.prototype.remove = function (redraw, animation) {
+        this.series.removePoint(this.series.data.indexOf(this), redraw, animation);
+    };
+    /**
+     * Toggle the selection status of a point.
+     *
+     * @see Highcharts.Chart#getSelectedPoints
+     *
+     * @sample highcharts/members/point-select/
+     *         Select a point from a button
+     * @sample highcharts/chart/events-selection-points/
+     *         Select a range of points through a drag selection
+     * @sample maps/series/data-id/
+     *         Select a point in Highmaps
+     *
+     * @function Highcharts.Point#select
+     *
+     * @param {boolean} [selected]
+     * When `true`, the point is selected. When `false`, the point is
+     * unselected. When `null` or `undefined`, the selection state is toggled.
+     *
+     * @param {boolean} [accumulate=false]
+     * When `true`, the selection is added to other selected points.
+     * When `false`, other selected points are deselected. Internally in
+     * Highcharts, when
+     * [allowPointSelect](https://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect)
+     * is `true`, selected points are accumulated on Control, Shift or Cmd
+     * clicking the point.
+     *
+     * @fires Highcharts.Point#event:select
+     * @fires Highcharts.Point#event:unselect
+     */
+    Point.prototype.select = function (selected, accumulate) {
+        var point = this, series = point.series, chart = series.chart;
+        selected = pick(selected, !point.selected);
+        this.selectedStaging = selected;
+        // fire the event with the default handler
+        point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
+            /**
+             * Whether the point is selected or not.
+             *
+             * @see Point#select
+             * @see Chart#getSelectedPoints
+             *
+             * @name Highcharts.Point#selected
+             * @type {boolean}
+             */
+            point.selected = point.options.selected = selected;
+            series.options.data[series.data.indexOf(point)] =
+                point.options;
+            point.setState(selected && 'select');
+            // unselect all other points unless Ctrl or Cmd + click
+            if (!accumulate) {
+                chart.getSelectedPoints().forEach(function (loopPoint) {
+                    var loopSeries = loopPoint.series;
+                    if (loopPoint.selected && loopPoint !== point) {
+                        loopPoint.selected = loopPoint.options.selected =
+                            false;
+                        loopSeries.options.data[loopSeries.data.indexOf(loopPoint)] = loopPoint.options;
+                        // Programatically selecting a point should restore
+                        // normal state, but when click happened on other
+                        // point, set inactive state to match other points
+                        loopPoint.setState(chart.hoverPoints &&
+                            loopSeries.options.inactiveOtherPoints ?
+                            'inactive' : '');
+                        loopPoint.firePointEvent('unselect');
+                    }
+                });
+            }
+        });
+        delete this.selectedStaging;
+    };
+    /**
+     * Runs on mouse over the point. Called internally from mouse and touch
+     * events.
+     *
+     * @function Highcharts.Point#onMouseOver
+     *
+     * @param {Highcharts.PointerEventObject} [e]
+     *        The event arguments.
+     */
+    Point.prototype.onMouseOver = function (e) {
+        var point = this, series = point.series, chart = series.chart, pointer = chart.pointer;
+        e = e ?
+            pointer.normalize(e) :
+            // In cases where onMouseOver is called directly without an event
+            pointer.getChartCoordinatesFromPoint(point, chart.inverted);
+        pointer.runPointActions(e, point);
+    };
+    /**
+     * Runs on mouse out from the point. Called internally from mouse and touch
+     * events.
+     *
+     * @function Highcharts.Point#onMouseOut
+     * @fires Highcharts.Point#event:mouseOut
+     */
+    Point.prototype.onMouseOut = function () {
+        var point = this, chart = point.series.chart;
+        point.firePointEvent('mouseOut');
+        if (!point.series.options.inactiveOtherPoints) {
+            (chart.hoverPoints || []).forEach(function (p) {
+                p.setState();
+            });
+        }
+        chart.hoverPoints = chart.hoverPoint = null;
+    };
+    /**
+     * Import events from the series' and point's options. Only do it on
+     * demand, to save processing time on hovering.
+     *
+     * @private
+     * @function Highcharts.Point#importEvents
+     */
+    Point.prototype.importEvents = function () {
+        if (!this.hasImportedEvents) {
+            var point = this, options = merge(point.series.options.point, point.options), events = options.events;
+            point.events = events;
+            objectEach(events, function (event, eventType) {
+                if (isFunction(event)) {
+                    addEvent(point, eventType, event);
+                }
+            });
+            this.hasImportedEvents = true;
+        }
+    };
+    /**
+     * Set the point's state.
+     *
+     * @function Highcharts.Point#setState
+     *
+     * @param {Highcharts.PointStateValue|""} [state]
+     *        The new state, can be one of `'hover'`, `'select'`, `'inactive'`,
+     *        or `''` (an empty string), `'normal'` or `undefined` to set to
+     *        normal state.
+     * @param {boolean} [move]
+     *        State for animation.
+     *
+     * @fires Highcharts.Point#event:afterSetState
+     */
+    Point.prototype.setState = function (state, move) {
+        var point = this, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] ||
+            {}), markerOptions = (defaultOptions.plotOptions[series.type].marker &&
+            series.options.marker), normalDisabled = (markerOptions && markerOptions.enabled === false), markerStateOptions = ((markerOptions &&
+            markerOptions.states &&
+            markerOptions.states[state || 'normal']) || {}), stateDisabled = markerStateOptions.enabled === false, stateMarkerGraphic = series.stateMarkerGraphic, pointMarker = point.marker || {}, chart = series.chart, halo = series.halo, haloOptions, markerAttribs, pointAttribs, pointAttribsAnimation, hasMarkers = (markerOptions && series.markerAttribs), newSymbol;
+        state = state || ''; // empty string
+        if (
+        // already has this state
+        (state === point.state && !move) ||
+            // selected points don't respond to hover
+            (point.selected && state !== 'select') ||
+            // series' state options is disabled
+            (stateOptions.enabled === false) ||
+            // general point marker's state options is disabled
+            (state && (stateDisabled ||
+                (normalDisabled &&
+                    markerStateOptions.enabled === false))) ||
+            // individual point marker's state options is disabled
+            (state &&
+                pointMarker.states &&
+                pointMarker.states[state] &&
+                pointMarker.states[state].enabled === false) // #1610
+        ) {
+            return;
+        }
+        point.state = state;
+        if (hasMarkers) {
+            markerAttribs = series.markerAttribs(point, state);
+        }
+        // Apply hover styles to the existing point
+        if (point.graphic) {
+            if (previousState) {
+                point.graphic.removeClass('highcharts-point-' + previousState);
+            }
+            if (state) {
+                point.graphic.addClass('highcharts-point-' + state);
+            }
+            if (!chart.styledMode) {
+                pointAttribs = series.pointAttribs(point, state);
+                pointAttribsAnimation = pick(chart.options.chart.animation, stateOptions.animation);
+                // Some inactive points (e.g. slices in pie) should apply
+                // oppacity also for it's labels
+                if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
+                    (point.dataLabels || []).forEach(function (label) {
+                        if (label) {
+                            label.animate({
+                                opacity: pointAttribs.opacity
+                            }, pointAttribsAnimation);
+                        }
+                    });
+                    if (point.connector) {
+                        point.connector.animate({
+                            opacity: pointAttribs.opacity
+                        }, pointAttribsAnimation);
+                    }
+                }
+                point.graphic.animate(pointAttribs, pointAttribsAnimation);
+            }
+            if (markerAttribs) {
+                point.graphic.animate(markerAttribs, pick(
+                // Turn off globally:
+                chart.options.chart.animation, markerStateOptions.animation, markerOptions.animation));
+            }
+            // Zooming in from a range with no markers to a range with markers
+            if (stateMarkerGraphic) {
+                stateMarkerGraphic.hide();
+            }
+        }
+        else {
+            // if a graphic is not applied to each point in the normal state,
+            // create a shared graphic for the hover state
+            if (state && markerStateOptions) {
+                newSymbol = pointMarker.symbol || series.symbol;
+                // If the point has another symbol than the previous one, throw
+                // away the state marker graphic and force a new one (#1459)
+                if (stateMarkerGraphic &&
+                    stateMarkerGraphic.currentSymbol !== newSymbol) {
+                    stateMarkerGraphic = stateMarkerGraphic.destroy();
+                }
+                // Add a new state marker graphic
+                if (markerAttribs) {
+                    if (!stateMarkerGraphic) {
+                        if (newSymbol) {
+                            series.stateMarkerGraphic = stateMarkerGraphic =
+                                chart.renderer
+                                    .symbol(newSymbol, markerAttribs.x, markerAttribs.y, markerAttribs.width, markerAttribs.height)
+                                    .add(series.markerGroup);
+                            stateMarkerGraphic.currentSymbol = newSymbol;
+                        }
+                        // Move the existing graphic
+                    }
+                    else {
+                        stateMarkerGraphic[move ? 'animate' : 'attr']({
+                            x: markerAttribs.x,
+                            y: markerAttribs.y
+                        });
+                    }
+                }
+                if (!chart.styledMode && stateMarkerGraphic) {
+                    stateMarkerGraphic.attr(series.pointAttribs(point, state));
+                }
+            }
+            if (stateMarkerGraphic) {
+                stateMarkerGraphic[state && point.isInside ? 'show' : 'hide'](); // #2450
+                stateMarkerGraphic.element.point = point; // #4310
+            }
+        }
+        // Show me your halo
+        haloOptions = stateOptions.halo;
+        var markerGraphic = (point.graphic || stateMarkerGraphic);
+        var markerVisibility = (markerGraphic && markerGraphic.visibility || 'inherit');
+        if (haloOptions &&
+            haloOptions.size &&
+            markerGraphic &&
+            markerVisibility !== 'hidden' &&
+            !point.isCluster) {
+            if (!halo) {
+                series.halo = halo = chart.renderer.path()
+                    // #5818, #5903, #6705
+                    .add(markerGraphic.parentGroup);
+            }
+            halo.show()[move ? 'animate' : 'attr']({
+                d: point.haloPath(haloOptions.size)
+            });
+            halo.attr({
+                'class': 'highcharts-halo highcharts-color-' +
+                    pick(point.colorIndex, series.colorIndex) +
+                    (point.className ? ' ' + point.className : ''),
+                'visibility': markerVisibility,
+                'zIndex': -1 // #4929, #8276
+            });
+            halo.point = point; // #6055
+            if (!chart.styledMode) {
+                halo.attr(extend({
+                    'fill': point.color || series.color,
+                    'fill-opacity': haloOptions.opacity
+                }, AST.filterUserAttributes(haloOptions.attributes || {})));
+            }
+        }
+        else if (halo && halo.point && halo.point.haloPath) {
+            // Animate back to 0 on the current halo point (#6055)
+            halo.animate({ d: halo.point.haloPath(0) }, null, 
+            // Hide after unhovering. The `complete` callback runs in the
+            // halo's context (#7681).
+            halo.hide);
+        }
+        fireEvent(point, 'afterSetState');
+    };
+    /**
+     * Get the path definition for the halo, which is usually a shadow-like
+     * circle around the currently hovered point.
+     *
+     * @function Highcharts.Point#haloPath
+     *
+     * @param {number} size
+     *        The radius of the circular halo.
+     *
+     * @return {Highcharts.SVGPathArray}
+     *         The path definition.
+     */
+    Point.prototype.haloPath = function (size) {
+        var series = this.series, chart = series.chart;
+        return chart.renderer.symbols.circle(Math.floor(this.plotX) - size, this.plotY - size, size * 2, size * 2);
     };
     return Point;
 }());

@@ -12,18 +12,24 @@ QUnit.test('Label position after redraw (#4133)', function (assert) {
                     }
                 }
             },
-            series: [{
-                type: 'errorbar',
-                data: [
-                    [48, 81],
-                    [68, 123],
-                    [52, 110]
-                ]
-            }]
+            series: [
+                {
+                    type: 'errorbar',
+                    data: [
+                        [48, 81],
+                        [68, 123],
+                        [52, 110]
+                    ]
+                }
+            ]
         }),
         oldY = chart.series[0].points[1].dataLabelUpper.y;
 
     chart.setSize(300, 400);
 
-    assert.strictEqual(oldY, chart.series[0].points[1].dataLabelUpper.y, 'Upper data label has not changed position');
+    assert.strictEqual(
+        oldY,
+        chart.series[0].points[1].dataLabelUpper.y,
+        'Upper data label has not changed position'
+    );
 });

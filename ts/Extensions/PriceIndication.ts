@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2020 Sebastian Bochann
+ * (c) 2009-2021 Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
@@ -11,7 +11,7 @@
 'use strict';
 
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -119,7 +119,7 @@ declare global {
 
 /* eslint-disable no-invalid-this */
 
-addEvent(LineSeries, 'afterRender', function (): void {
+addEvent(Series, 'afterRender', function (): void {
     var serie = this,
         seriesOptions = serie.options,
         pointRange = seriesOptions.pointRange,
@@ -196,11 +196,10 @@ addEvent(LineSeries, 'afterRender', function (): void {
             }
 
             serie.crossLabel = yAxis.crossLabel;
-
         }
 
         // Restore crosshair:
-        yAxis.crosshair = origOptions;
+        yAxis.crosshair = yAxis.options.crosshair = origOptions;
         yAxis.cross = origGraphic;
         yAxis.crossLabel = origLabel;
 

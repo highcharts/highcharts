@@ -13,17 +13,18 @@
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
+import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
@@ -141,7 +142,6 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, extend = U.extend, fireE
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import '../Series/Line/LineSeries.js';
 import '../Series/Column/ColumnSeries.js';
 var PieSeries = seriesTypes.pie, ddSeriesId = 1;
 // Add language
@@ -224,7 +224,7 @@ defaultOptions.drilldown = {
         /** @ignore-option */
         cursor: 'pointer',
         /** @ignore-option */
-        color: '${palette.highlightColor100}',
+        color: palette.highlightColor100,
         /** @ignore-option */
         fontWeight: 'bold',
         /** @ignore-option */
@@ -248,7 +248,7 @@ defaultOptions.drilldown = {
      */
     activeDataLabelStyle: {
         cursor: 'pointer',
-        color: '${palette.highlightColor100}',
+        color: palette.highlightColor100,
         fontWeight: 'bold',
         textDecoration: 'underline'
     },
@@ -1028,24 +1028,38 @@ Tick.prototype.drillable = function () {
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
 addEvent(Point, 'afterInit', function () {
-    var point = this, series = point.series;
-    if (point.drilldown) {
+    var point = this;
+    if (point.drilldown && !point.unbindDrilldownClick) {
         // Add the click event to the point
-        addEvent(point, 'click', function (e) {
-            if (series.xAxis &&
-                series.chart.options.drilldown.allowPointDrilldown ===
-                    false) {
-                // #5822, x changed
-                series.xAxis.drilldownCategory(point.x, e);
-            }
-            else {
-                point.doDrilldown(void 0, void 0, e);
-            }
-        });
+        point.unbindDrilldownClick = addEvent(point, 'click', handlePointClick);
     }
     return point;
 });
-addEvent(LineSeries, 'afterDrawDataLabels', function () {
+addEvent(Point, 'update', function (e) {
+    var point = this, options = e.options || {};
+    if (options.drilldown && !point.unbindDrilldownClick) {
+        // Add the click event to the point
+        point.unbindDrilldownClick = addEvent(point, 'click', handlePointClick);
+    }
+    else if (!options.drilldown &&
+        options.drilldown !== void 0 &&
+        point.unbindDrilldownClick) {
+        point.unbindDrilldownClick = point.unbindDrilldownClick();
+    }
+});
+var handlePointClick = function (e) {
+    var point = this, series = point.series;
+    if (series.xAxis &&
+        series.chart.options.drilldown.allowPointDrilldown ===
+            false) {
+        // #5822, x changed
+        series.xAxis.drilldownCategory(point.x, e);
+    }
+    else {
+        point.doDrilldown(void 0, void 0, e);
+    }
+};
+addEvent(Series, 'afterDrawDataLabels', function () {
     var css = this.chart.options.drilldown.activeDataLabelStyle, renderer = this.chart.renderer, styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         var dataLabelsOptions = point.options.dataLabels, pointCSS = pick(point.dlOptions, dataLabelsOptions && dataLabelsOptions.style, {});
@@ -1073,7 +1087,7 @@ var applyCursorCSS = function (element, cursor, addClass, styledMode) {
     }
 };
 // Mark the trackers with a pointer
-addEvent(LineSeries, 'afterDrawTracker', function () {
+addEvent(Series, 'afterDrawTracker', function () {
     var styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         if (point.drilldown && point.graphic) {

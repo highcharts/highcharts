@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisComposition, AxisLike } from './Types';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
@@ -18,11 +18,11 @@ import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type GradientColor from '../Color/GradientColor';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type PositionObject from '../Renderer/PositionObject';
+import type Series from '../Series/Series';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -33,6 +33,7 @@ const {
 } = A;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
+import palette from '../Color/Palette.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
 import Tick from './Tick.js';
@@ -45,6 +46,7 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
+    erase,
     error,
     extend,
     fireEvent,
@@ -68,7 +70,7 @@ declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         softThreshold?: boolean;
         startFromThreshold?: boolean;
-        threshold?: number;
+        threshold?: number|null;
     }
 }
 
@@ -124,7 +126,7 @@ declare global {
             (this: Axis, evt: AxisPointBreakEventObject): void;
         }
         interface AxisPointBreakEventObject {
-            brk: Dictionary<number>;
+            brk: Record<string, number>;
             point: Point;
             preventDefault: Function;
             target: SVGElement;
@@ -325,6 +327,13 @@ declare global {
             stops?: GradientColor['stops'];
             tooltipValueFormat?: string;
         }
+        interface Axis {
+        }
+        interface AxisPanningState {
+            startMin: (number);
+            startMax: (number);
+            isDirty?: boolean;
+        }
         class Axis implements AxisLike {
             public static defaultBottomAxisOptions: AxisOptions;
             public static defaultLeftAxisOptions: AxisOptions;
@@ -336,7 +345,7 @@ declare global {
             public constructor(chart: Chart, userOptions: AxisOptions);
             public _addedPlotLB?: boolean;
             public allowZoomOutside?: boolean;
-            public alternateBands: Dictionary<PlotLineOrBand>;
+            public alternateBands: Record<string, PlotLineOrBand>;
             public autoRotation?: Array<number>;
             public axisGroup?: SVGElement;
             public axisLine?: SVGElement;
@@ -384,7 +393,7 @@ declare global {
             public maxLabelLength: number;
             public min: (null|number);
             public minorTickInterval: number;
-            public minorTicks: Dictionary<Tick>;
+            public minorTicks: Record<string, Tick>;
             public minPixelPadding: number;
             public minPointOffset?: number;
             public minRange?: (null|number);
@@ -402,8 +411,9 @@ declare global {
             public options: AxisOptions;
             public overlap: boolean;
             public paddedTicks: Array<number>;
+            public panningState?: AxisPanningState;
             public plotLinesAndBands: Array<PlotLineOrBand>;
-            public plotLinesAndBandsGroups: Dictionary<SVGElement>;
+            public plotLinesAndBandsGroups: Record<string, SVGElement>;
             public pointRange: number;
             public pointRangePadding: number;
             public pos: number;
@@ -413,7 +423,7 @@ declare global {
             public reversed?: boolean;
             public right: number;
             public sector?: number;
-            public series: Array<LineSeries>;
+            public series: Array<Series>;
             public showAxis?: boolean;
             public side: number;
             public single?: boolean;
@@ -426,9 +436,10 @@ declare global {
             public tickmarkOffset: number;
             public tickPositions: AxisTickPositionsArray;
             public tickRotCorr: PositionObject;
-            public ticks: Dictionary<Tick>;
+            public ticks: Record<string, Tick>;
             public titleOffset?: number;
             public top: number;
+            public touched?: boolean;
             public transA: number;
             public transB: number;
             public translationSlope: number;
@@ -476,6 +487,7 @@ declare global {
             public minFromRange(): (number|undefined);
             public nameToX(point: Point): number;
             public redraw(): void;
+            public remove(redraw?: boolean): void;
             public render(): void;
             public renderLine(): void;
             public renderMinorTick(pos: number): void;
@@ -483,17 +495,19 @@ declare global {
             public renderUnsquish(): void;
             public setAxisSize(): void;
             public setAxisTranslation(): void;
+            public setCategories(categories: Array<string>, redraw?: boolean): void;
             public setExtremes(
                 newMin?: number,
                 newMax?: number,
                 redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
+                animation?: (boolean|Partial<AnimationOptions>),
                 eventArguments?: any
             ): void;
             public setOptions(userOptions: DeepPartial<AxisOptions>): void;
             public setScale(): void;
             public setTickInterval(secondPass?: boolean): void;
             public setTickPositions(): void;
+            public setTitle(titleOptions: AxisTitleOptions, redraw?: boolean): void;
             public tickSize(prefix?: string): [number, number]|undefined;
             public toPixels(value: number, paneCoordinates?: boolean): number;
             public toValue(pixel: number, paneCoordinates?: boolean): number;
@@ -511,6 +525,7 @@ declare global {
                 endOnTick?: boolean
             ): void;
             public unsquish(): number;
+            public update(options: AxisOptions, redraw?: boolean): void;
             public updateNames(): void;
             public validatePositiveValue(value: unknown): boolean;
             public zoom(newMin: number, newMax: number): boolean;
@@ -1572,14 +1587,17 @@ class Axis {
             enabled: true,
 
             /**
-             * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-             * for the axis label.
+             * A format string for the axis label. See
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for example usage.
+             *
+             * Note: The default value is not specified due to the dynamic
+             * nature of the default implementation.
              *
              * @sample {highcharts|highstock} highcharts/yaxis/labels-format/
              *         Add units to Y axis label
              *
              * @type      {string}
-             * @default   {value}
              * @since     3.0
              * @apioption xAxis.labels.format
              */
@@ -1785,7 +1803,7 @@ class Axis {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor60}',
+                color: palette.neutralColor60,
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
@@ -2687,7 +2705,7 @@ class Axis {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor60}'
+                color: palette.neutralColor60
             }
         },
 
@@ -2814,7 +2832,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #f2f2f2
          */
-        minorGridLineColor: '${palette.neutralColor5}',
+        minorGridLineColor: palette.neutralColor5,
 
         /**
          * Width of the minor, secondary grid lines.
@@ -2842,7 +2860,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #999999
          */
-        minorTickColor: '${palette.neutralColor40}',
+        minorTickColor: palette.neutralColor40,
 
         /**
          * The color of the line marking the axis itself.
@@ -2864,7 +2882,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        lineColor: '${palette.highlightColor20}',
+        lineColor: palette.highlightColor20,
 
         /**
          * The width of the line marking the axis itself.
@@ -2903,7 +2921,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #e6e6e6
          */
-        gridLineColor: '${palette.neutralColor10}',
+        gridLineColor: palette.neutralColor10,
 
         // gridLineDashStyle: 'solid',
 
@@ -2966,7 +2984,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        tickColor: '${palette.highlightColor20}'
+        tickColor: palette.highlightColor20
 
         // tickWidth: 1
     };
@@ -3795,7 +3813,7 @@ class Axis {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor100}',
+                color: palette.neutralColor100,
                 /** @internal */
                 fontSize: '11px',
                 /** @internal */
@@ -3956,12 +3974,14 @@ class Axis {
     public minRange?: (null|number);
     public names: Array<string> = void 0 as any;
     public offset: number = void 0 as any;
-    public oldAxisLength?: number;
-    public oldMax: (null|number) = void 0 as any;
-    public oldMin: (null|number) = void 0 as any;
-    public oldTransA?: number;
-    public oldUserMax?: number;
-    public oldUserMin?: number;
+    public old?: { // @todo create a type
+        len: number;
+        max: number|null;
+        min: number|null;
+        transA: number;
+        userMax?: number;
+        userMin?: number;
+    };
     public opposite?: boolean;
     public options: Highcharts.AxisOptions = void 0 as any;
     public ordinal?: AxisComposition['ordinal'];
@@ -3976,7 +3996,7 @@ class Axis {
     public reserveSpaceDefault?: boolean;
     public reversed?: boolean;
     public right: number = void 0 as any;
-    public series: Array<LineSeries> = void 0 as any;
+    public series: Array<Series> = void 0 as any;
     public showAxis?: boolean;
     public side: number = void 0 as any;
     public single?: boolean;
@@ -4066,7 +4086,7 @@ class Axis {
 
         fireEvent(this, 'init', { userOptions: userOptions });
 
-        axis.opposite = userOptions.opposite; // needed in setOptions
+        axis.opposite = pick(userOptions.opposite, axis.opposite); // needed in setOptions
 
         /**
          * The side on which the axis is rendered. 0 is top, 1 is right, 2
@@ -4075,9 +4095,13 @@ class Axis {
          * @name Highcharts.Axis#side
          * @type {number}
          */
-        axis.side = userOptions.side || (axis.horiz ?
-            (axis.opposite ? 0 : 2) : // top : bottom
-            (axis.opposite ? 1 : 3)); // right : left
+        axis.side = pick(
+            userOptions.side,
+            axis.side,
+            (axis.horiz ?
+                (axis.opposite ? 0 : 2) : // top : bottom
+                (axis.opposite ? 1 : 3)) // right : left
+        );
 
         /**
          * Current options for the axis after merge of defaults and user's
@@ -4117,7 +4141,7 @@ class Axis {
          * @name Highcharts.Axis#reversed
          * @type {boolean}
          */
-        axis.reversed = options.reversed;
+        axis.reversed = pick(options.reversed, axis.reversed);
         axis.visible = options.visible !== false;
         axis.zoomEnabled = options.zoomEnabled !== false;
 
@@ -4945,7 +4969,7 @@ class Axis {
             log = axis.logarithmic,
             zoomOffset,
             spaceAvailable: boolean,
-            closestDataRange: (number|undefined),
+            closestDataRange = 0,
             i,
             distance,
             xData,
@@ -4972,18 +4996,18 @@ class Axis {
                 axis.series.forEach(function (series): void {
                     xData = series.xData as any;
                     loopLength = series.xIncrement ? 1 : xData.length - 1;
-                    for (i = loopLength; i > 0; i--) {
-                        distance = xData[i] - xData[i - 1];
-                        if (
-                            typeof closestDataRange === 'undefined' ||
-                            distance < closestDataRange
-                        ) {
-                            closestDataRange = distance;
+
+                    if (xData.length > 1) {
+                        for (i = loopLength; i > 0; i--) {
+                            distance = xData[i] - xData[i - 1];
+                            if (!closestDataRange || distance < closestDataRange) {
+                                closestDataRange = distance;
+                            }
                         }
                     }
                 });
                 axis.minRange = Math.min(
-                    (closestDataRange as any) * 5,
+                    closestDataRange * 5,
                     (axis.dataMax as any) - (axis.dataMin as any)
                 );
             }
@@ -5498,6 +5522,20 @@ class Axis {
             }
         }
 
+        // If min is bigger than highest, or if max less than lowest value, the
+        // chart should not render points. (#14417)
+        if (
+            isNumber(axis.min) &&
+            isNumber(axis.max) &&
+            !this.chart.polar &&
+            (axis.min > axis.max)
+        ) {
+            if (defined(axis.options.min)) {
+                axis.max = axis.min;
+            } else if (defined(axis.options.max)) {
+                axis.min = axis.max;
+            }
+        }
 
         // get tickInterval
         if (
@@ -5887,7 +5925,8 @@ class Axis {
 
         if (
             !defined(options.tickInterval) &&
-            !tickAmount && this.len < tickPixelInterval &&
+            !tickAmount &&
+            this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
@@ -5929,21 +5968,18 @@ class Axis {
             finalTickAmt = axis.finalTickAmt,
             currentTickAmount = tickPositions && tickPositions.length,
             threshold = pick(axis.threshold, axis.softThreshold ? 0 : null),
-            min,
             len,
             i;
 
-        if (axis.hasData()) {
+        if (axis.hasData() && isNumber(axis.min) && isNumber(axis.max)) { // #14769
             if (currentTickAmount < tickAmount) {
-                min = axis.min;
-
                 while (tickPositions.length < tickAmount) {
 
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
                     if (
                         tickPositions.length % 2 ||
-                        min === threshold
+                        axis.min === threshold
                     ) {
                         // to the end
                         tickPositions.push(correctFloat(
@@ -5962,11 +5998,11 @@ class Axis {
                 // Do not crop when ticks are not extremes (#9841)
                 axis.min = axisOptions.startOnTick ?
                     tickPositions[0] :
-                    Math.min((axis.min as any), tickPositions[0]);
+                    Math.min(axis.min, tickPositions[0]);
                 axis.max = axisOptions.endOnTick ?
                     tickPositions[tickPositions.length - 1] :
                     Math.max(
-                        (axis.max as any),
+                        axis.max,
                         tickPositions[tickPositions.length - 1]
                     );
 
@@ -6005,7 +6041,7 @@ class Axis {
     public setScale(): void {
         var axis: Highcharts.Axis = this as any,
             isDirtyAxisLength,
-            isDirtyData = false,
+            isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
 
         axis.series.forEach(function (series): void {
@@ -6108,7 +6144,7 @@ class Axis {
         newMin?: number,
         newMax?: number,
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         eventArguments?: any
     ): void {
         var axis = this,
@@ -6163,7 +6199,7 @@ class Axis {
             evt = {
                 newMin: newMin,
                 newMax: newMax
-            } as Highcharts.Dictionary<any>;
+            } as Record<string, any>;
 
         fireEvent(this, 'zoom', evt, function (e: Record<string, any>): void {
 
@@ -6351,7 +6387,7 @@ class Axis {
             evt = { align: 'center' as AlignValue };
 
         fireEvent(this, 'autoLabelAlign', evt, function (
-            e: Highcharts.Dictionary<any>
+            e: Record<string, any>
         ): void {
 
             if (angle > 15 && angle < 165) {
@@ -6818,7 +6854,7 @@ class Axis {
                     low: opposite ? 'right' : 'left',
                     middle: 'center',
                     high: opposite ? 'left' : 'right'
-                }) as Highcharts.Dictionary<AlignValue>)[
+                }) as Record<string, AlignValue>)[
                     (axisTitleOptions as any).align
                 ];
             }
@@ -7334,8 +7370,8 @@ class Axis {
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (
-                Highcharts.Dictionary<Tick>|
-                Highcharts.Dictionary<PlotLineOrBand>
+                Record<string, Tick>|
+                Record<string, PlotLineOrBand>
             )
         ): void {
             objectEach(coll, function (tick): void {
@@ -7409,6 +7445,7 @@ class Axis {
 
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
+                axis._addedPlotLB = true;
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
@@ -7416,7 +7453,6 @@ class Axis {
                             axis.addPlotBandOrLine(plotLineOptions);
                         }
                     );
-                axis._addedPlotLB = true;
             }
 
         } // end if hasData
@@ -7424,8 +7460,8 @@ class Axis {
         // Remove inactive ticks
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (
-                Highcharts.Dictionary<Highcharts.Tick>|
-                Highcharts.Dictionary<Highcharts.PlotLineOrBand>
+                Record<string, Highcharts.Tick>|
+                Record<string, Highcharts.PlotLineOrBand>
             )
         ): void {
             var i,
@@ -7577,8 +7613,8 @@ class Axis {
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
             function (
                 coll: (
-                    Highcharts.Dictionary<Highcharts.PlotLineOrBand>|
-                    Highcharts.Dictionary<Highcharts.Tick>
+                    Record<string, Highcharts.PlotLineOrBand>|
+                    Record<string, Highcharts.Tick>
                 )
             ): void {
                 destroyObjectProperties(coll);
@@ -7730,10 +7766,10 @@ class Axis {
                             (
                                 categorized ?
                                     Color
-                                        .parse('${palette.highlightColor20}')
+                                        .parse(palette.highlightColor20)
                                         .setOpacity(0.25)
                                         .get() :
-                                    '${palette.neutralColor20}'
+                                    palette.neutralColor20
                             ),
                         'stroke-width': pick((options as any).width, 1)
                     }).css({
@@ -7783,7 +7819,12 @@ class Axis {
     *
     */
     public hasVerticalPanning(): boolean {
-        return /y/.test(this.chart.options.chart?.panning?.type || '');
+        const panningOptions = this.chart.options.chart?.panning;
+        return Boolean(
+            panningOptions &&
+            panningOptions.enabled && // #14624
+            /y/.test(panningOptions.type)
+        );
     }
 
     /**
@@ -7794,12 +7835,163 @@ class Axis {
     *
     * @param {unknown} value
     * The axis value
-    * @return {boolean}
     *
+    * @return {boolean}
     */
     public validatePositiveValue(value: unknown): boolean {
         return isNumber(value) && value > 0;
     }
+
+    /**
+     * Update an axis object with a new set of options. The options are merged
+     * with the existing options, so only new or altered options need to be
+     * specified.
+     *
+     * @sample highcharts/members/axis-update/
+     *         Axis update demo
+     *
+     * @function Highcharts.Axis#update
+     *
+     * @param {Highcharts.AxisOptions} options
+     *        The new options that will be merged in with existing options on
+     *        the axis.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the axis is altered. If doing
+     *        more operations on the chart, it is a good idea to set redraw to
+     *        false and call {@link Chart#redraw} after.
+     */
+    public update(
+        options: Highcharts.AxisOptions,
+        redraw?: boolean
+    ): void {
+        var chart = this.chart,
+            newEvents = ((options && options.events) || {});
+
+        options = merge(this.userOptions, options);
+
+        // Color Axis is not an array,
+        // This change is applied in the ColorAxis wrapper
+        if ((chart.options as any)[this.coll].indexOf) {
+            // Don't use this.options.index,
+            // StockChart has Axes in navigator too
+            (chart.options as any)[this.coll][
+                (chart.options as any)[this.coll].indexOf(this.userOptions)
+            ] = options;
+        }
+
+        // Remove old events, if no new exist (#8161)
+        objectEach(
+            (chart.options as any)[this.coll].events,
+            function (fn: Function, ev: string): void {
+                if (typeof (newEvents as any)[ev] === 'undefined') {
+                    (newEvents as any)[ev] = void 0;
+                }
+            }
+        );
+
+        this.destroy(true);
+        this.init(chart, extend(options, { events: newEvents }));
+
+        chart.isDirtyBox = true;
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
+    }
+
+    /**
+     * Remove the axis from the chart.
+     *
+     * @sample highcharts/members/chart-addaxis/
+     *         Add and remove axes
+     *
+     * @function Highcharts.Axis#remove
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart following the remove.
+     */
+    public remove(redraw?: boolean): void {
+        var chart = this.chart,
+            key = this.coll, // xAxis or yAxis
+            axisSeries = this.series,
+            i = axisSeries.length;
+
+        // Remove associated series (#2687)
+        while (i--) {
+            if (axisSeries[i]) {
+                axisSeries[i].remove(false);
+            }
+        }
+
+        // Remove the axis
+        erase(chart.axes, this);
+        erase((chart as any)[key], this);
+
+        if (isArray((chart.options as any)[key])) {
+            (chart.options as any)[key].splice(this.options.index, 1);
+        } else { // color axis, #6488
+            delete (chart.options as any)[key];
+        }
+
+        (chart as any)[key].forEach(function (
+            axis: Highcharts.Axis,
+            i: number
+        ): void {
+            // Re-index, #1706, #8075
+            axis.options.index = axis.userOptions.index = i;
+        });
+        this.destroy();
+        chart.isDirtyBox = true;
+
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
+    }
+
+    /**
+     * Update the axis title by options after render time.
+     *
+     * @sample highcharts/members/axis-settitle/
+     *         Set a new Y axis title
+     *
+     * @function Highcharts.Axis#setTitle
+     *
+     * @param {Highcharts.AxisTitleOptions} titleOptions
+     *        The additional title options.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after setting the title.
+     *
+     * @return {void}
+     */
+    public setTitle(
+        titleOptions: Highcharts.AxisTitleOptions,
+        redraw?: boolean
+    ): void {
+        this.update({ title: titleOptions }, redraw);
+    }
+
+    /**
+     * Set new axis categories and optionally redraw.
+     *
+     * @sample highcharts/members/axis-setcategories/
+     *         Set categories by click on a button
+     *
+     * @function Highcharts.Axis#setCategories
+     *
+     * @param {Array<string>} categories
+     *        The new categories.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart.
+     */
+    public setCategories(
+        categories: Array<string>,
+        redraw?: boolean
+    ): void {
+        this.update({ categories: categories }, redraw);
+    }
+
 }
 
 interface Axis extends AxisComposition, AxisLike {

@@ -1,5 +1,5 @@
 /* *
- * (c) 2009-2020 Rafal Sebestjanski
+ * (c) 2009-2021 Rafal Sebestjanski
  *
  * Full screen for Highcharts
  *
@@ -10,6 +10,10 @@
 
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+const {
+    doc
+} = H;
+import AST from '../Core/Renderer/HTML/AST.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent
@@ -267,12 +271,14 @@ class Fullscreen {
             exportDivElements &&
             exportDivElements.length
         ) {
-            exportDivElements[menuItems.indexOf('viewFullscreen')]
-                .innerHTML = !this.isOpen ?
+            AST.setElementHTML(
+                exportDivElements[menuItems.indexOf('viewFullscreen')],
+                !this.isOpen ?
                     (
                         exportingOptions.menuItemDefinitions.viewFullscreen.text ||
                         lang.viewFullscreen
-                    ) : lang.exitFullscreen;
+                    ) : lang.exitFullscreen
+            );
         }
     }
     /**

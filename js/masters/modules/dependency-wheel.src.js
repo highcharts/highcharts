@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/DependencyWheelSeries.js';
+import '../../Series/DependencyWheel/DependencyWheelSeries.js';

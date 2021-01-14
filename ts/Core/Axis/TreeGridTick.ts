@@ -18,6 +18,7 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type Tick from './Tick';
 import type TreeGridAxis from './TreeGridAxis';
+import palette from '../../Core/Color/Palette.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -132,7 +133,7 @@ namespace TreeGridTick {
         label: SVGElement,
         options: SVGAttributes
     ): void {
-        const css: CSSObject = defined(options.style) ? options.style : {};
+        const css: CSSObject = isObject(options.style) ? options.style : {};
 
         label.removeClass('highcharts-treegrid-node-active');
 
@@ -185,7 +186,7 @@ namespace TreeGridTick {
             icon
                 .attr({
                     'stroke-width': 1,
-                    'fill': pick(params.color, '${palette.neutralColor60}')
+                    'fill': pick(params.color, palette.neutralColor60)
                 })
                 .css({
                     cursor: 'pointer',

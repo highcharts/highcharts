@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -135,7 +135,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
         scrollablePixelsX,
         scrollablePixelsY,
         corrections: (
-            Highcharts.Dictionary<Highcharts.Dictionary<(number|string)>>|
+            Record<string, Record<string, (number|string)>>|
             undefined
         );
 
@@ -357,7 +357,8 @@ Chart.prototype.applyFixed = function (): void {
         scrollableWidth,
         scrollableHeight,
         firstTime = !this.fixedDiv,
-        scrollableOptions = (this.options.chart as any).scrollablePlotArea;
+        chartOptions = this.options.chart as any,
+        scrollableOptions = chartOptions.scrollablePlotArea;
 
     // First render
     if (firstTime) {
@@ -370,7 +371,7 @@ Chart.prototype.applyFixed = function (): void {
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: 2,
+                zIndex: (chartOptions.style?.zIndex || 0) + 2,
                 top: 0
             },
             null as any,

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,6 +10,7 @@
 'use strict';
 import H from './Globals.js';
 var doc = H.doc;
+import palette from './Color/Palette.js';
 import U from './Utilities.js';
 var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**
@@ -159,22 +160,30 @@ var Tooltip = /** @class */ (function () {
         var chart = this.chart;
         chart.renderer.definition({
             tagName: 'filter',
-            id: 'drop-shadow-' + chart.index,
-            opacity: 0.5,
+            attributes: {
+                id: 'drop-shadow-' + chart.index,
+                opacity: 0.5
+            },
             children: [{
                     tagName: 'feGaussianBlur',
-                    'in': 'SourceAlpha',
-                    stdDeviation: 1
+                    attributes: {
+                        'in': 'SourceAlpha',
+                        stdDeviation: 1
+                    }
                 }, {
                     tagName: 'feOffset',
-                    dx: 1,
-                    dy: 1
+                    attributes: {
+                        dx: 1,
+                        dy: 1
+                    }
                 }, {
                     tagName: 'feComponentTransfer',
                     children: [{
                             tagName: 'feFuncA',
-                            type: 'linear',
-                            slope: 0.3
+                            attributes: {
+                                type: 'linear',
+                                slope: 0.3
+                            }
                         }]
                 }, {
                     tagName: 'feMerge',
@@ -182,7 +191,9 @@ var Tooltip = /** @class */ (function () {
                             tagName: 'feMergeNode'
                         }, {
                             tagName: 'feMergeNode',
-                            'in': 'SourceGraphic'
+                            attributes: {
+                                'in': 'SourceGraphic'
+                            }
                         }]
                 }]
         });
@@ -304,27 +315,44 @@ var Tooltip = /** @class */ (function () {
         }
         else if (points[0].tooltipPos) {
             ret = points[0].tooltipPos;
-            // When shared, use the average position
+            // Calculate the average position and adjust for axis positions
         }
         else {
             points.forEach(function (point) {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
-                plotX += point.plotX +
-                    (!inverted && xAxis ? xAxis.left - plotLeft : 0);
+                plotX += point.plotX || 0;
                 plotY += (point.plotLow ?
-                    (point.plotLow + point.plotHigh) / 2 :
-                    point.plotY) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
+                    (point.plotLow + (point.plotHigh || 0)) / 2 :
+                    (point.plotY || 0));
+                // Adjust position for positioned axes (top/left settings)
+                if (xAxis && yAxis) {
+                    if (!inverted) { // #1151
+                        plotX += xAxis.pos - plotLeft;
+                        plotY += yAxis.pos - plotTop;
+                    }
+                    else { // #14771
+                        plotX += plotTop + chart.plotHeight - xAxis.len - xAxis.pos;
+                        plotY += plotLeft + chart.plotWidth - yAxis.len - yAxis.pos;
+                    }
+                }
             });
             plotX /= points.length;
             plotY /= points.length;
+            // Use the average position for multiple points
             ret = [
                 inverted ? chart.plotWidth - plotY : plotX,
-                this.shared && !inverted && points.length > 1 && mouseEvent ?
-                    // place shared tooltip next to the mouse (#424)
-                    mouseEvent.chartY - plotTop :
-                    inverted ? chart.plotHeight - plotX : plotY
+                inverted ? chart.plotHeight - plotX : plotY
             ];
+            // When shared, place the tooltip next to the mouse (#424)
+            if (this.shared && points.length > 1 && mouseEvent) {
+                if (inverted) {
+                    ret[0] = mouseEvent.chartX - plotLeft;
+                }
+                else {
+                    ret[1] = mouseEvent.chartY - plotTop;
+                }
+            }
         }
         return ret.map(Math.round);
     };
@@ -396,11 +424,11 @@ var Tooltip = /** @class */ (function () {
      * @return {Highcharts.SVGElement}
      */
     Tooltip.prototype.getLabel = function () {
-        var _a, _b;
+        var _a, _b, _c;
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = ('tooltip' + (defined(options.className) ?
             ' ' + options.className :
             '')), pointerEvents = (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) ||
-            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, set, onMouseEnter = function () {
+            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, onMouseEnter = function () {
             tooltip.inContact = true;
         }, onMouseLeave = function () {
             var series = tooltip.chart.hoverSeries;
@@ -412,6 +440,7 @@ var Tooltip = /** @class */ (function () {
         };
         if (!this.label) {
             if (this.outside) {
+                var chartStyle = (_b = this.chart.options.chart) === null || _b === void 0 ? void 0 : _b.style;
                 /**
                  * Reference to the tooltip's container, when
                  * [Highcharts.Tooltip#outside] is set to true, otherwise
@@ -426,7 +455,7 @@ var Tooltip = /** @class */ (function () {
                     position: 'absolute',
                     top: '1px',
                     pointerEvents: pointerEvents,
-                    zIndex: 3
+                    zIndex: Math.max((((_c = this.options.style) === null || _c === void 0 ? void 0 : _c.zIndex) || 0), ((chartStyle === null || chartStyle === void 0 ? void 0 : chartStyle.zIndex) || 0) + 3)
                 });
                 H.doc.body.appendChild(container);
                 /**
@@ -437,7 +466,7 @@ var Tooltip = /** @class */ (function () {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(container, 0, 0, (_b = this.chart.options.chart) === null || _b === void 0 ? void 0 : _b.style, void 0, void 0, renderer.styledMode);
+                this.renderer = renderer = new H.Renderer(container, 0, 0, chartStyle, void 0, void 0, renderer.styledMode);
             }
             // Create the label
             if (this.split) {
@@ -513,9 +542,9 @@ var Tooltip = /** @class */ (function () {
             doc.documentElement.clientWidth - 2 * distance :
             chart.chartWidth, outerHeight = outside ?
             Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, doc.body.offsetHeight, doc.documentElement.offsetHeight, doc.documentElement.clientHeight) :
-            chart.chartHeight, chartPosition = chart.pointer.getChartPosition(), containerScaling = chart.containerScaling, scaleX = function (val) { return ( // eslint-disable-line no-confusing-arrow
-        containerScaling ? val * containerScaling.scaleX : val); }, scaleY = function (val) { return ( // eslint-disable-line no-confusing-arrow
-        containerScaling ? val * containerScaling.scaleY : val); }, 
+            chart.chartHeight, chartPosition = chart.pointer.getChartPosition(), scaleX = function (val) { return ( // eslint-disable-line no-confusing-arrow
+        val * chartPosition.scaleX); }, scaleY = function (val) { return ( // eslint-disable-line no-confusing-arrow
+        val * chartPosition.scaleY); }, 
         // Build parameter arrays for firstDimension()/secondDimension()
         buildDimensionArray = function (dim) {
             var isX = dim === 'x';
@@ -909,7 +938,7 @@ var Tooltip = /** @class */ (function () {
                         stroke: (options.borderColor ||
                             point.color ||
                             currentSeries.color ||
-                            '${palette.neutralColor60}')
+                            palette.neutralColor60)
                     });
                 }
                 tooltip.updatePosition({
@@ -1063,7 +1092,7 @@ var Tooltip = /** @class */ (function () {
                     stroke: (options.borderColor ||
                         point.color ||
                         series.color ||
-                        '${palette.neutralColor80}')
+                        palette.neutralColor80)
                 });
             }
             return tt;
@@ -1312,13 +1341,12 @@ var Tooltip = /** @class */ (function () {
             this.renderer.setSize(label.width + pad, label.height + pad, false);
             // Anchor and tooltip container need scaling if chart container has
             // scale transform/css zoom. #11329.
-            var containerScaling = chart.containerScaling;
-            if (containerScaling) {
+            if (chartPosition.scaleX !== 1 || chartPosition.scaleY !== 1) {
                 css(this.container, {
-                    transform: "scale(" + containerScaling.scaleX + ", " + containerScaling.scaleY + ")"
+                    transform: "scale(" + chartPosition.scaleX + ", " + chartPosition.scaleY + ")"
                 });
-                anchorX *= containerScaling.scaleX;
-                anchorY *= containerScaling.scaleY;
+                anchorX *= chartPosition.scaleX;
+                anchorY *= chartPosition.scaleY;
             }
             anchorX += chartPosition.left - pos.x;
             anchorY += chartPosition.top - pos.y;

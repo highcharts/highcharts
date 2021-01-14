@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for chart info region and table.
  *
@@ -11,6 +11,7 @@
  * */
 import H from '../../Core/Globals.js';
 var doc = H.doc;
+import AST from '../../Core/Renderer/HTML/AST.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, format = U.format, pick = U.pick;
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -18,10 +19,16 @@ import Announcer from '../Utils/Announcer.js';
 import AnnotationsA11y from './AnnotationsA11y.js';
 var getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 import ChartUtilities from '../Utils/ChartUtilities.js';
-var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getChartTitle = ChartUtilities.getChartTitle, getAxisDescription = ChartUtilities.getAxisDescription;
+var getAxisDescription = ChartUtilities.getAxisDescription, getAxisRangeDescription = ChartUtilities.getAxisRangeDescription, getChartTitle = ChartUtilities.getChartTitle, unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 var addClass = HTMLUtilities.addClass, setElAttrs = HTMLUtilities.setElAttrs, escapeStringForHTML = HTMLUtilities.escapeStringForHTML, stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString, getElement = HTMLUtilities.getElement, visuallyHideElement = HTMLUtilities.visuallyHideElement;
 /* eslint-disable no-invalid-this, valid-jsdoc */
+/**
+ * @private
+ */
+function stripEmptyHTMLTags(str) {
+    return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
+}
 /**
  * @private
  */
@@ -55,27 +62,6 @@ function buildTypeDescriptionFromSeries(chart, types, context) {
  */
 function getTableSummary(chart) {
     return chart.langFormat('accessibility.table.tableSummary', { chart: chart });
-}
-/**
- * @private
- */
-function stripEmptyHTMLTags(str) {
-    return str.replace(/<(\w+)[^>]*?>\s*<\/\1>/g, '');
-}
-/**
- * @private
- */
-function enableSimpleHTML(str) {
-    return str
-        .replace(/&lt;(h[1-7]|p|div|ul|ol|li)&gt;/g, '<$1>')
-        .replace(/&lt;&#x2F;(h[1-7]|p|div|ul|ol|li|a|button)&gt;/g, '</$1>')
-        .replace(/&lt;(div|a|button) id=&quot;([a-zA-Z\-0-9#]*?)&quot;&gt;/g, '<$1 id="$2">');
-}
-/**
- * @private
- */
-function stringToSimpleHTML(str) {
-    return stripEmptyHTMLTags(enableSimpleHTML(escapeStringForHTML(str)));
 }
 /**
  * Return simplified explaination of chart type. Some types will not be familiar
@@ -122,7 +108,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         var chart = this.chart;
         var component = this;
         this.initRegionsDefinitions();
-        this.addEvent(chart, 'afterGetTable', function (e) {
+        this.addEvent(chart, 'aftergetTableAST', function (e) {
             component.onDataTableCreated(e);
         });
         this.addEvent(chart, 'afterViewData', function (tableDiv) {
@@ -219,7 +205,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     updateScreenReaderSection: function (regionKey) {
         var chart = this.chart, region = this.screenReaderSections[regionKey], content = region.buildContent(chart), sectionDiv = region.element = (region.element || this.createElement('div')), hiddenDiv = (sectionDiv.firstChild || this.createElement('div'));
         this.setScreenReaderSectionAttribs(sectionDiv, regionKey);
-        hiddenDiv.innerHTML = content;
+        AST.setElementHTML(hiddenDiv, content);
         sectionDiv.appendChild(hiddenDiv);
         region.insertIntoDOM(sectionDiv, chart);
         visuallyHideElement(hiddenDiv);
@@ -273,7 +259,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         }, formattedString = H.i18nFormat(format, context, chart);
         this.dataTableButtonId = dataTableButtonId;
         this.sonifyButtonId = sonifyButtonId;
-        return stringToSimpleHTML(formattedString);
+        return stripEmptyHTMLTags(formattedString);
     },
     /**
      * @private
@@ -284,7 +270,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             .screenReaderSection.afterChartFormat, context = {
             endOfChartMarker: this.getEndOfChartMarkerText()
         }, formattedString = H.i18nFormat(format, context, chart);
-        return stringToSimpleHTML(formattedString);
+        return stripEmptyHTMLTags(formattedString);
     },
     /**
      * @private
@@ -364,7 +350,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             if (this.viewDataTableButton) {
                 this.viewDataTableButton.setAttribute('aria-expanded', 'true');
             }
-            e.html = e.html.replace('<table ', '<table tabindex="-1" summary="' + getTableSummary(chart) + '"');
+            var attributes = e.tree.attributes || {};
+            attributes.tabindex = -1;
+            attributes.summary = getTableSummary(chart);
+            e.tree.attributes = attributes;
         }
     },
     /**
@@ -455,100 +444,17 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @return {string}
      */
     getAxisDescriptionText: function (collectionKey) {
-        var component = this, chart = this.chart, axes = chart[collectionKey];
+        var chart = this.chart;
+        var axes = chart[collectionKey];
         return chart.langFormat('accessibility.axis.' + collectionKey + 'Description' + (axes.length > 1 ? 'Plural' : 'Singular'), {
             chart: chart,
             names: axes.map(function (axis) {
                 return getAxisDescription(axis);
             }),
             ranges: axes.map(function (axis) {
-                return component.getAxisRangeDescription(axis);
+                return getAxisRangeDescription(axis);
             }),
             numAxes: axes.length
-        });
-    },
-    /**
-     * Return string with text description of the axis range.
-     * @private
-     * @param {Highcharts.Axis} axis The axis to get range desc of.
-     * @return {string} A string with the range description for the axis.
-     */
-    getAxisRangeDescription: function (axis) {
-        var axisOptions = axis.options || {};
-        // Handle overridden range description
-        if (axisOptions.accessibility &&
-            typeof axisOptions.accessibility.rangeDescription !== 'undefined') {
-            return axisOptions.accessibility.rangeDescription;
-        }
-        // Handle category axes
-        if (axis.categories) {
-            return this.getCategoryAxisRangeDesc(axis);
-        }
-        // Use time range, not from-to?
-        if (axis.dateTime && (axis.min === 0 || axis.dataMin === 0)) {
-            return this.getAxisTimeLengthDesc(axis);
-        }
-        // Just use from and to.
-        // We have the range and the unit to use, find the desc format
-        return this.getAxisFromToDescription(axis);
-    },
-    /**
-     * @private
-     * @param {Highcharts.Axis} axis
-     * @return {string}
-     */
-    getCategoryAxisRangeDesc: function (axis) {
-        var chart = this.chart;
-        if (axis.dataMax && axis.dataMin) {
-            return chart.langFormat('accessibility.axis.rangeCategories', {
-                chart: chart,
-                axis: axis,
-                numCategories: axis.dataMax - axis.dataMin + 1
-            });
-        }
-        return '';
-    },
-    /**
-     * @private
-     * @param {Highcharts.Axis} axis
-     * @return {string}
-     */
-    getAxisTimeLengthDesc: function (axis) {
-        var chart = this.chart, range = {}, rangeUnit = 'Seconds';
-        range.Seconds = ((axis.max || 0) - (axis.min || 0)) / 1000;
-        range.Minutes = range.Seconds / 60;
-        range.Hours = range.Minutes / 60;
-        range.Days = range.Hours / 24;
-        ['Minutes', 'Hours', 'Days'].forEach(function (unit) {
-            if (range[unit] > 2) {
-                rangeUnit = unit;
-            }
-        });
-        var rangeValue = range[rangeUnit].toFixed(rangeUnit !== 'Seconds' &&
-            rangeUnit !== 'Minutes' ? 1 : 0 // Use decimals for days/hours
-        );
-        // We have the range and the unit to use, find the desc format
-        return chart.langFormat('accessibility.axis.timeRange' + rangeUnit, {
-            chart: chart,
-            axis: axis,
-            range: rangeValue.replace('.0', '')
-        });
-    },
-    /**
-     * @private
-     * @param {Highcharts.Axis} axis
-     * @return {string}
-     */
-    getAxisFromToDescription: function (axis) {
-        var chart = this.chart, dateRangeFormat = chart.options.accessibility
-            .screenReaderSection.axisRangeDateFormat, format = function (axisKey) {
-            return axis.dateTime ? chart.time.dateFormat(dateRangeFormat, axis[axisKey]) : axis[axisKey];
-        };
-        return chart.langFormat('accessibility.axis.rangeFromTo', {
-            chart: chart,
-            axis: axis,
-            rangeFrom: format('min'),
-            rangeTo: format('max')
         });
     },
     /**

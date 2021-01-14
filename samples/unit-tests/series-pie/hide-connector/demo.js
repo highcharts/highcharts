@@ -1,21 +1,23 @@
 QUnit.test('Pie connector with HTML(#4365)', function (assert) {
-    var chart = $('#container').highcharts({
-
-        series: [{
-            type: 'pie',
-            dataLabels: {
-                useHTML: true
-            },
-            data: [1, 2, 3]
-        }]
-    }).highcharts();
+    var chart = $('#container')
+        .highcharts({
+            series: [
+                {
+                    type: 'pie',
+                    dataLabels: {
+                        useHTML: true
+                    },
+                    data: [1, 2, 3]
+                }
+            ]
+        })
+        .highcharts();
 
     assert.strictEqual(
         typeof chart.series[0].points[0].connector.element.getBBox(),
         'object',
         'Connector has a bounding box'
     );
-
 
     // Now hide the series and check that one of the connector's parents is hidden
     chart.series[0].hide();
@@ -31,9 +33,5 @@ QUnit.test('Pie connector with HTML(#4365)', function (assert) {
         parent = parent.parentNode;
     }
 
-    assert.strictEqual(
-        hiddenParent,
-        true,
-        'Connector is inherently hidden'
-    );
+    assert.strictEqual(hiddenParent, true, 'Connector is inherently hidden');
 });

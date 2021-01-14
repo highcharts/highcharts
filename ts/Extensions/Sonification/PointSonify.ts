@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Code for sonifying single points.
  *
@@ -56,7 +56,7 @@ declare global {
             ): void;
         }
         interface PointSonifyOptionsObject {
-            dataExtremes?: Dictionary<RangeObject>;
+            dataExtremes?: Record<string, RangeObject>;
             instruments: Array<PointInstrumentObject>;
             onEnd?: Function;
             masterVolume?: number;

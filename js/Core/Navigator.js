@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,18 +9,19 @@
  * */
 'use strict';
 import Axis from './Axis/Axis.js';
-import BaseSeries from './Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
 var color = Color.parse;
 import H from './Globals.js';
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
-import LineSeries from '../Series/Line/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;
+import palette from './Color/Palette.js';
 import Scrollbar from './Scrollbar.js';
+import Series from './Series/Series.js';
+import SeriesRegistry from './Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from './Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
 var defaultSeriesType, 
@@ -201,13 +202,13 @@ extend(defaultOptions, {
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            backgroundColor: '${palette.neutralColor5}',
+            backgroundColor: palette.neutralColor5,
             /**
              * The stroke for the handle border and the stripes inside.
              *
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              */
-            borderColor: '${palette.neutralColor40}'
+            borderColor: palette.neutralColor40
         },
         /**
          * The color of the mask covering the areas of the navigator series
@@ -224,7 +225,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default rgba(102,133,194,0.3)
          */
-        maskFill: color('${palette.highlightColor60}').setOpacity(0.3).get(),
+        maskFill: color(palette.highlightColor60).setOpacity(0.3).get(),
         /**
          * The color of the line marking the currently zoomed area in the
          * navigator.
@@ -235,7 +236,7 @@ extend(defaultOptions, {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @default #cccccc
          */
-        outlineColor: '${palette.neutralColor20}',
+        outlineColor: palette.neutralColor20,
         /**
          * The width of the line marking the currently zoomed area in the
          * navigator.
@@ -423,7 +424,7 @@ extend(defaultOptions, {
             className: 'highcharts-navigator-xaxis',
             tickLength: 0,
             lineWidth: 0,
-            gridLineColor: '${palette.neutralColor10}',
+            gridLineColor: palette.neutralColor10,
             gridLineWidth: 1,
             tickPixelInterval: 200,
             labels: {
@@ -433,7 +434,7 @@ extend(defaultOptions, {
                  */
                 style: {
                     /** @ignore */
-                    color: '${palette.neutralColor40}'
+                    color: palette.neutralColor40
                 },
                 x: 3,
                 y: -4
@@ -1902,7 +1903,7 @@ if (!H.Navigator) {
         }
     });
     // Handle updating series
-    addEvent(LineSeries, 'afterUpdate', function () {
+    addEvent(Series, 'afterUpdate', function () {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null, false);
         }

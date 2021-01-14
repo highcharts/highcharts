@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Stock/Indicators/CMFIndicator.js';
+import '../../Stock/Indicators/CMF/CMFIndicator.js';

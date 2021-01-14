@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,12 +10,12 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisBreakBorderObject, AxisBreakObject } from './Types';
 import type Point from '../Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../Series/Series.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 const {
@@ -311,7 +311,7 @@ class BrokenAxisAdditions {
                 newMin: number,
                 newMax: number,
                 redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
+                animation?: (boolean|Partial<AnimationOptions>),
                 eventArguments?: any
             ): void {
                 // If trying to set extremes inside a break, extend min to
@@ -485,11 +485,11 @@ class BrokenAxis {
      * Adds support for broken axes.
      * @private
      */
-    public static compose(AxisClass: typeof Axis, SeriesClass: typeof LineSeries): void {
+    public static compose(AxisClass: typeof Axis, SeriesClass: typeof Series): void {
 
         AxisClass.keepProps.push('brokenAxis');
 
-        const seriesProto = LineSeries.prototype;
+        const seriesProto = Series.prototype;
 
         /**
          * @private
@@ -798,6 +798,6 @@ interface BrokenAxis extends Axis {
     brokenAxis: BrokenAxisAdditions;
 }
 
-BrokenAxis.compose(Axis, LineSeries); // @todo remove automatism
+BrokenAxis.compose(Axis, Series); // @todo remove automatism
 
 export default BrokenAxis;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,6 +23,7 @@ export interface AlignObject {
     verticalAlign?: VerticalAlignValue;
     x?: number;
     y?: number;
+    width?: number;
 }
 
 /* *

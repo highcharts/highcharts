@@ -172,13 +172,18 @@ var DataStore = /** @class */ (function () {
     /**
      * Retrieves the columns of the the dataTable,
      * applies column order from meta.
+     *
      * @param {boolean} [includeIdColumn]
-     * Whether to include the `id` column in the returned array
+     * Whether to include the `id` column in the returned array.
+     *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state of the table.
+     *
      * @return {{}}
      * An object with the properties `columnNames` and `columnValues`
      */
-    DataStore.prototype.getColumnsForExport = function (includeIdColumn) {
-        var columnsRecord = this.table.toColumns(), columnNames = (includeIdColumn ?
+    DataStore.prototype.getColumnsForExport = function (includeIdColumn, usePresentationOrder) {
+        var columnsRecord = this.table.toColumns(usePresentationOrder), columnNames = (includeIdColumn ?
             Object.keys(columnsRecord) :
             Object.keys(columnsRecord).slice(1));
         var columnOrder = this.getColumnOrder().reverse();

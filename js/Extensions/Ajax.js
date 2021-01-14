@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2017 Christer Vasseng, Torstein Honsi
+ *  (c) 2010-2021 Christer Vasseng, Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *

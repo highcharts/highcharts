@@ -4,7 +4,7 @@
  *
  * */
 'use strict';
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
 /**
  * @private
  * @interface Highcharts.AnnotationMockLabelOptionsObject
@@ -45,7 +45,6 @@ import LineSeries from '../../Series/Line/LineSeries.js';
 import U from '../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent;
 import Axis from '../../Core/Axis/Axis.js';
-import '../../Series/Line/LineSeries.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A trimmed point object which imitates {@link Highchart.Point} class. It is
@@ -97,7 +96,7 @@ var MockPoint = /** @class */ (function () {
         this.series = {
             visible: true,
             chart: chart,
-            getPlotBox: LineSeries.prototype.getPlotBox
+            getPlotBox: Series.prototype.getPlotBox
         };
         /**
          * @name Annotation.AnnotationMockPoint#target

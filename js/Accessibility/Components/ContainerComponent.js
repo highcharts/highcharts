@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for chart container.
  *
@@ -58,9 +58,9 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * @private
      */
     setSVGContainerLabel: function () {
-        var chart = this.chart, svgContainerLabel = stripHTMLTags(chart.langFormat('accessibility.svgContainerLabel', {
+        var chart = this.chart, svgContainerLabel = chart.langFormat('accessibility.svgContainerLabel', {
             chartTitle: getChartTitle(chart)
-        }));
+        });
         if (chart.renderer.box && svgContainerLabel.length) {
             chart.renderer.box.setAttribute('aria-label', svgContainerLabel);
         }
@@ -99,7 +99,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
         var chart = this.chart, credits = chart.credits;
         if (credits) {
             if (credits.textStr) {
-                credits.element.setAttribute('aria-label', stripHTMLTags(chart.langFormat('accessibility.credits', { creditsStr: credits.textStr })));
+                credits.element.setAttribute('aria-label', chart.langFormat('accessibility.credits', { creditsStr: credits.textStr }));
             }
             unhideChartElementFromAT(chart, credits.element);
         }

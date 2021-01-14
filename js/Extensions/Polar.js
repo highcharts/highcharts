@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,19 +10,19 @@
 'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import Pane from './Pane.js';
 import Pointer from '../Core/Pointer.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, find = U.find, isNumber = U.isNumber, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
-var seriesProto = LineSeries.prototype, pointerProto = Pointer.prototype, columnProto, arearangeProto;
+var seriesProto = Series.prototype, pointerProto = Pointer.prototype, columnProto, arearangeProto;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Search a k-d tree by the point angle, used for shared tooltips in polar
@@ -177,8 +177,7 @@ if (seriesTypes.spline) {
     // #6430 Areasplinerange series use unwrapped getPointSpline method, so
     // we need to set this method again.
     if (seriesTypes.areasplinerange) {
-        seriesTypes.areasplinerange.prototype.getPointSpline =
-            seriesTypes.spline.prototype.getPointSpline;
+        seriesTypes.areasplinerange.prototype.getPointSpline = seriesTypes.spline.prototype.getPointSpline;
     }
 }
 /**
@@ -187,7 +186,7 @@ if (seriesTypes.spline) {
  * and (yAxis.len - plotY) is the pixel distance from center.
  * @private
  */
-addEvent(LineSeries, 'afterTranslate', function () {
+addEvent(Series, 'afterTranslate', function () {
     var series = this;
     var chart = series.chart;
     if (chart.polar && series.xAxis) {
@@ -706,7 +705,7 @@ addEvent(Chart, 'afterDrawChartBox', function () {
         pane.render();
     });
 });
-addEvent(LineSeries, 'afterInit', function () {
+addEvent(Series, 'afterInit', function () {
     var chart = this.chart;
     // Add flags that identifies radial inverted series
     if (chart.inverted && chart.polar) {

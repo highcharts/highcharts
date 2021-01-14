@@ -9,6 +9,7 @@
  *
  * */
 'use strict';
+import palette from '../../Core/Color/Palette.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, isObject = U.isObject, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 /**
@@ -78,7 +79,7 @@ var TreeGridTick;
      * @private
      */
     function onTickHoverExit(label, options) {
-        var css = defined(options.style) ? options.style : {};
+        var css = isObject(options.style) ? options.style : {};
         label.removeClass('highcharts-treegrid-node-active');
         if (!label.renderer.styledMode) {
             label.css({ textDecoration: css.textDecoration });
@@ -108,7 +109,7 @@ var TreeGridTick;
             icon
                 .attr({
                 'stroke-width': 1,
-                'fill': pick(params.color, '${palette.neutralColor60}')
+                'fill': pick(params.color, palette.neutralColor60)
             })
                 .css({
                 cursor: 'pointer',

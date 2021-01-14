@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,6 +35,7 @@ const {
     svg,
     win
 } = H;
+import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
@@ -98,7 +99,7 @@ declare global {
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLAttributes extends Dictionary<any> {
+        interface VMLAttributes extends Record<string, any> {
             d?: VMLPathArray;
             end?: number;
             innerR?: number;
@@ -264,7 +265,7 @@ declare global {
             public isVML: true;
             public setSize: SVGRenderer['setSize'];
             public symbols: SVGRenderer['symbols'];
-            public circle(obj: Dictionary<number>): VMLElement;
+            public circle(obj: Record<string, number>): VMLElement;
             public circle(x: number, y: number, r: number): VMLElement;
             public clipRect(size: SizeObject): VMLClipRectObject;
             public clipRect(
@@ -376,7 +377,7 @@ let VMLRenderer: typeof Highcharts.VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = U.getStyle = function (
+    (H as any).getStyle = U.getStyle = function (
         el: HTMLDOMElement,
         prop: string
     ): number {
@@ -384,7 +385,7 @@ if (doc && !doc.defaultView) {
             alias = ({
                 width: 'clientWidth',
                 height: 'clientHeight'
-            } as Highcharts.Dictionary<string>)[prop];
+            } as Record<string, string>)[prop];
 
         if (el.style[prop as any]) {
             return pInt(el.style[prop as any]);
@@ -461,7 +462,7 @@ if (!svg) {
 
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = offset(this.chart.container);
+            this.chartPosition = chartPosition = this.getChartPosition();
         }
 
         return extend(e, {
@@ -1046,7 +1047,7 @@ if (!svg) {
                     // apply the opacity
                     markup = [
                         '<stroke color="',
-                        shadowOptions.color || '${palette.neutralColor100}',
+                        shadowOptions.color || palette.neutralColor100,
                         '" opacity="', shadowElementOpacity * i, '"/>'];
                     createElement(
                         renderer.prepVML(markup),

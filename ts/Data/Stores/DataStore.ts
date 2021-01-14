@@ -272,17 +272,21 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Retrieves the columns of the the dataTable,
      * applies column order from meta.
+     *
      * @param {boolean} [includeIdColumn]
-     * Whether to include the `id` column in the returned array
+     * Whether to include the `id` column in the returned array.
+     *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state of the table.
+     *
      * @return {{}}
      * An object with the properties `columnNames` and `columnValues`
      */
-    protected getColumnsForExport(includeIdColumn?: boolean): {
-        columnNames: Array<string>;
-        columnValues: Array<Array<DataTableRow.CellType>>;
-        columnHeaderFormatter?: Function;
-    } {
-        const columnsRecord = this.table.toColumns(),
+    protected getColumnsForExport(
+        includeIdColumn?: boolean,
+        usePresentationOrder?: boolean
+    ): DataStore.ColumnsForExportObject {
+        const columnsRecord = this.table.toColumns(usePresentationOrder),
             columnNames = (
                 includeIdColumn ?
                     Object.keys(columnsRecord) :
@@ -402,6 +406,15 @@ namespace DataStore {
      */
     export interface EventObject extends DataEventEmitter.EventObject {
         readonly table: DataTable;
+    }
+
+    /**
+     * Object with columns for object.
+     */
+    export interface ColumnsForExportObject {
+        columnNames: Array<string>;
+        columnValues: Array<Array<DataTableRow.CellType>>;
+        columnHeaderFormatter?: Function;
     }
 
     /**

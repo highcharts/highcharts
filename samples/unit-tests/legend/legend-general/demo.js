@@ -1,16 +1,28 @@
 QUnit.test('Legend object set to false (#5215)', function (assert) {
-
     // We only expect it to render without a JS error, that's all
     assert.expect(0);
     Highcharts.chart('container', {
-
         legend: false,
 
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-            type: 'column'
-        }]
-
+        series: [
+            {
+                data: [
+                    29.9,
+                    71.5,
+                    106.4,
+                    129.2,
+                    144.0,
+                    176.0,
+                    135.6,
+                    148.5,
+                    216.4,
+                    194.1,
+                    95.6,
+                    54.4
+                ],
+                type: 'column'
+            }
+        ]
     });
 });
 
@@ -21,11 +33,12 @@ QUnit.test('Spacing and legend overflow (#6497)', function (assert) {
             spacing: [10, 200, 15, 0]
         },
 
-        series: [{
-            showInLegend: true,
-            data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7]
-        }]
-
+        series: [
+            {
+                showInLegend: true,
+                data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7]
+            }
+        ]
     });
     assert.ok(
         chart.legend.group.attr('translateX') > chart.spacing[3],
@@ -34,7 +47,6 @@ QUnit.test('Spacing and legend overflow (#6497)', function (assert) {
 });
 
 QUnit.test('Hidden legend bogus SVG (#6769', function (assert) {
-
     var chart = Highcharts.chart('container', {
         credits: {
             enabled: false
@@ -48,10 +60,12 @@ QUnit.test('Hidden legend bogus SVG (#6769', function (assert) {
         xAxis: {
             visible: false
         },
-        series: [{
-            data: [1],
-            visible: false
-        }]
+        series: [
+            {
+                data: [1],
+                visible: false
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -59,7 +73,6 @@ QUnit.test('Hidden legend bogus SVG (#6769', function (assert) {
         -1,
         'No bogus stroke-width found'
     );
-
 });
 
 QUnit.test('Legend resize', function (assert) {
@@ -75,9 +88,11 @@ QUnit.test('Legend resize', function (assert) {
                 legend: {
                     borderWidth: 2
                 },
-                series: [{
-                    data: [1, 3, 2, 4]
-                }]
+                series: [
+                    {
+                        data: [1, 3, 2, 4]
+                    }
+                ]
             }),
             legendWidth = chart.legend.box.getBBox().width;
 
@@ -96,7 +111,6 @@ QUnit.test('Legend resize', function (assert) {
     }
 });
 
-
 QUnit.test('Legend redraws', function (assert) {
     var visible = true,
         chart = Highcharts.chart('container', {
@@ -106,43 +120,47 @@ QUnit.test('Legend redraws', function (assert) {
                     return this.visible;
                 }
             },
-            series: [{
-                data: [1, 2, 3]
-            }]
+            series: [
+                {
+                    data: [1, 2, 3]
+                }
+            ]
         });
 
     chart.series[0].hide(true);
 
-    assert.strictEqual(
-        visible,
-        false,
-        'Legend item text has changed (#2165)'
-    );
+    assert.strictEqual(visible, false, 'Legend item text has changed (#2165)');
 });
 
+QUnit.test(
+    'Legend item alignment after the font size update (#12705)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+                legend: {
+                    borderWidth: 1,
+                    verticalAlign: 'top'
+                },
+                series: [
+                    {
+                        data: [1, 2, 3]
+                    }
+                ]
+            }),
+            itemOriginalYPos = +chart.legend.allItems[0].legendItem.element
+                .attributes.y.value;
 
-QUnit.test('Legend item alignment after the font size update (#12705)', function (assert) {
-    var chart = Highcharts.chart('container', {
+        chart.update({
             legend: {
-                borderWidth: 1,
-                verticalAlign: 'top'
-            },
-            series: [{
-                data: [1, 2, 3]
-            }]
-        }),
-        itemOriginalYPos = +chart.legend.allItems[0].legendItem.element.attributes.y.value;
-
-    chart.update({
-        legend: {
-            itemStyle: {
-                fontSize: "24px"
+                itemStyle: {
+                    fontSize: '24px'
+                }
             }
-        }
-    });
+        });
 
-    assert.ok(
-        itemOriginalYPos < +chart.legend.allItems[0].legendItem.element.attributes.y.value,
-        'The item should be moved down.'
-    );
-});
+        assert.ok(
+            itemOriginalYPos <
+                +chart.legend.allItems[0].legendItem.element.attributes.y.value,
+            'The item should be moved down.'
+        );
+    }
+);

@@ -25,7 +25,13 @@ rules:
     func-style: 0
     function-paren-newline: 0
     indent: [2, 4]
-    max-len: 0                  # Should be reduced, but there are 1200 violations by 2015-10-31.
+    max-len: [
+        "error",
+        {
+            "ignoreComments": true,
+            "ignoreStrings": true
+        }
+    ]
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.

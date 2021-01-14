@@ -2,7 +2,7 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2017 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -25,6 +25,7 @@ const {
     hasTouch
 } = H;
 import Axis from '../Core/Axis/Axis.js';
+import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -222,7 +223,7 @@ class AxisResizer {
              * @type     {Highcharts.ColorString}
              * @requires modules/drag-panes
              */
-            lineColor: '${palette.neutralColor20}',
+            lineColor: palette.neutralColor20,
 
             /**
              * Dash style of the control line.
@@ -500,7 +501,7 @@ class AxisResizer {
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
             // prev and next configs
-            axesConfigs: Array<Highcharts.Dictionary<any>> = [],
+            axesConfigs: Array<Record<string, any>> = [],
             stopDrag = false,
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
@@ -642,7 +643,7 @@ class AxisResizer {
         if (!stopDrag) {
             // Now update axes:
             axesConfigs.forEach(function (
-                config: Highcharts.Dictionary<any>
+                config: Record<string, any>
             ): void {
                 config.axis.update(config.options, false);
             });

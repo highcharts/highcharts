@@ -15,7 +15,9 @@
 
 'use strict';
 
+import type AreaSeries from '../Series/Area/AreaSeries';
 import type ColumnSeries from '../Series/Column/ColumnSeries';
+import type HeatmapSeries from '../Series/Heatmap/HeatmapSeries';
 import type HTMLElement from '../Core/Renderer/HTML/HTMLElement';
 import type {
     PointOptions,
@@ -30,8 +32,10 @@ const {
     doc,
     noop
 } = H;
-import LineSeries from '../Series/Line/LineSeries.js';
+import palette from '../Core/Color/Palette.js';
 import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -103,11 +107,7 @@ declare global {
     }
 }
 
-
-import '../Core/Options.js';
-
-var seriesTypes = Series.seriesTypes,
-    CHUNK_SIZE = 50000,
+var CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -120,7 +120,7 @@ var seriesTypes = Series.seriesTypes,
 const initCanvasBoost = function (): void {
     if (H.seriesTypes.heatmap) {
         wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (
-            this: Highcharts.HeatmapSeries
+            this: HeatmapSeries
         ): void {
             var chart = this.chart,
                 ctx = this.getContext(),
@@ -131,9 +131,7 @@ const initCanvasBoost = function (): void {
             if (ctx) {
 
                 // draw the columns
-                this.points.forEach(function (
-                    point: Highcharts.HeatmapPoint
-                ): void {
+                this.points.forEach(function (point): void {
                     var plotY = point.plotY,
                         shapeArgs: SVGAttributes,
                         pointAttr: SVGAttributes;
@@ -188,7 +186,7 @@ const initCanvasBoost = function (): void {
     }
 
 
-    extend(LineSeries.prototype, {
+    extend(Series.prototype, {
 
         /**
          * Create a hidden canvas to draw the graph on. The contents is later
@@ -198,7 +196,7 @@ const initCanvasBoost = function (): void {
          * @function Highcharts.Series#getContext
          */
         getContext: function (
-            this: LineSeries
+            this: Series
         ): (CanvasRenderingContext2D|null|undefined) {
             var chart = this.chart,
                 width = chart.chartWidth,
@@ -299,7 +297,7 @@ const initCanvasBoost = function (): void {
          * @private
          * @function Highcharts.Series#canvasToSVG
          */
-        canvasToSVG: function (this: LineSeries): void {
+        canvasToSVG: function (this: Series): void {
             if (!this.chart.isChartSeriesBoosting()) {
                 if (this.boostCopy || this.chart.boostCopy) {
                     (this.boostCopy || this.chart.boostCopy)();
@@ -312,7 +310,7 @@ const initCanvasBoost = function (): void {
         },
 
         cvsLineTo: function (
-            this: LineSeries,
+            this: Series,
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number
@@ -320,7 +318,7 @@ const initCanvasBoost = function (): void {
             ctx.lineTo(clientX, plotY);
         },
 
-        renderCanvas: function (this: LineSeries): void {
+        renderCanvas: function (this: Series): void {
             var series = this,
                 options = series.options,
                 chart = series.chart,
@@ -344,10 +342,10 @@ const initCanvasBoost = function (): void {
                 yExtremes = yAxis.getExtremes(),
                 yMin = yExtremes.min,
                 yMax = yExtremes.max,
-                pointTaken: Highcharts.Dictionary<boolean> = {},
+                pointTaken: Record<string, boolean> = {},
                 lastClientX: number,
                 sampling = !!series.sampling,
-                points: Array<Highcharts.Dictionary<number>>,
+                points: Array<Record<string, number>>,
                 r = options.marker && options.marker.radius,
                 cvsDrawPoint = this.cvsDrawPoint,
                 cvsLineTo = options.lineWidth ? this.cvsLineTo : void 0,
@@ -358,7 +356,7 @@ const initCanvasBoost = function (): void {
                 ),
                 strokeBatch = this.cvsStrokeBatch || 1000,
                 enableMouseTracking = options.enableMouseTracking !== false,
-                lastPoint: Highcharts.Dictionary<number>,
+                lastPoint: Record<string, number>,
                 threshold: number = options.threshold as any,
                 yBottom: number = yAxis.getThreshold(threshold) as any,
                 hasThreshold = isNumber(threshold),
@@ -564,7 +562,7 @@ const initCanvasBoost = function (): void {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: color('${palette.backgroundColor}').setOpacity(0.75).get(),
+                        backgroundColor: color(palette.backgroundColor).setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },
@@ -817,12 +815,12 @@ const initCanvasBoost = function (): void {
 
     extend(seriesTypes.area.prototype, {
         cvsDrawPoint: function (
-            this: Highcharts.AreaSeries,
+            this: AreaSeries,
             ctx: CanvasRenderingContext2D,
             clientX: number,
             plotY: number,
             yBottom: number,
-            lastPoint: Highcharts.Dictionary<number>
+            lastPoint: Record<string, number>
         ): void {
             if (lastPoint && clientX !== lastPoint.clientX) {
                 ctx.moveTo(lastPoint.clientX as any, lastPoint.yBottom as any);

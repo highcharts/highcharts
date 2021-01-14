@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -328,7 +328,7 @@ Chart.prototype.currentOptions = function (
 ): Highcharts.Options {
 
     var chart = this,
-        ret = {} as Highcharts.Dictionary<any>;
+        ret = {} as Record<string, any>;
 
     /**
      * Recurse over a set of options and its current values,
@@ -336,14 +336,14 @@ Chart.prototype.currentOptions = function (
      */
     function getCurrent(
         options: Highcharts.Options,
-        curr: Highcharts.Dictionary<any>,
-        ret: Highcharts.Dictionary<any>,
+        curr: Record<string, any>,
+        ret: Record<string, any>,
         depth: number
     ): void {
         var i;
 
         objectEach(options, function (
-            val: Highcharts.Dictionary<any>,
+            val: Record<string, any>,
             key: string
         ): void {
             if (

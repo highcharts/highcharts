@@ -9,11 +9,15 @@ QUnit.test('Default datetime format from tooltip', function (assert) {
             xAxis: {
                 type: 'datetime'
             },
-            series: [{
-                data: [
-                    [timeStart, 1], [timeStart + 1000, 2], [timeStart + 2000, 3]
-                ]
-            }]
+            series: [
+                {
+                    data: [
+                        [timeStart, 1],
+                        [timeStart + 1000, 2],
+                        [timeStart + 2000, 3]
+                    ]
+                }
+            ]
         }),
         point = chart.series[0].points[0];
 
@@ -34,11 +38,15 @@ QUnit.test('pointDateFormat', function (assert) {
             xAxis: {
                 type: 'datetime'
             },
-            series: [{
-                data: [
-                    [timeStart, 1], [timeStart + 1000, 2], [timeStart + 2000, 3]
-                ]
-            }]
+            series: [
+                {
+                    data: [
+                        [timeStart, 1],
+                        [timeStart + 1000, 2],
+                        [timeStart + 2000, 3]
+                    ]
+                }
+            ]
         }),
         point = chart.series[0].points[0];
 
@@ -64,11 +72,15 @@ QUnit.test('pointDateFormatter', function (assert) {
             xAxis: {
                 type: 'datetime'
             },
-            series: [{
-                data: [
-                    [timeStart, 1], [timeStart + 1000, 2], [timeStart + 2000, 3]
-                ]
-            }]
+            series: [
+                {
+                    data: [
+                        [timeStart, 1],
+                        [timeStart + 1000, 2],
+                        [timeStart + 2000, 3]
+                    ]
+                }
+            ]
         }),
         point = chart.series[0].points[0];
 

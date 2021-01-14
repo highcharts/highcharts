@@ -11,6 +11,7 @@
  * */
 import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
+import DataPresentationState from './DataPresentationState.js';
 import DataTableRow from './DataTableRow.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
@@ -34,20 +35,25 @@ var DataTable = /** @class */ (function () {
      * @param {Array<DataTableRow>} [rows]
      * Array of table rows as DataTableRow instances.
      *
-     * @param {DataConverter} [converter]
-     * Converter for value conversions in table rows.
-     *
      * @param {string} [id]
      * DataTable identifier.
+     *
+     * @param {DataPresentationState} [presentationState]
+     * Presentation state for the DataTable.
+     *
+     * @param {DataConverter} [converter]
+     * Converter for value conversions in table rows.
      */
-    function DataTable(rows, converter, id) {
+    function DataTable(rows, id, presentationState, converter) {
         if (rows === void 0) { rows = []; }
+        if (presentationState === void 0) { presentationState = new DataPresentationState(); }
         if (converter === void 0) { converter = new DataConverter(); }
         var rowsIdMap = {};
         var row;
         rows = rows.slice();
         this.converter = converter;
         this.id = id || uniqueKey();
+        this.presentationState = presentationState;
         this.rows = rows;
         this.rowsIdMap = rowsIdMap;
         this.watchsIdMap = {};
@@ -91,6 +97,7 @@ var DataTable = /** @class */ (function () {
         while (headers.length < columnsLength) {
             headers.push(uniqueKey());
         }
+        table.presentationState.setColumnOrder(headers);
         if (columnsLength) {
             var rowsLength = columns[0].length;
             var i = 0;
@@ -116,14 +123,18 @@ var DataTable = /** @class */ (function () {
      */
     DataTable.fromJSON = function (json) {
         var rows = json.rows, dataRows = [];
+        var presentationState;
+        if (json.presentationState) {
+            presentationState = DataPresentationState.fromJSON(json.presentationState);
+        }
         try {
             for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
                 dataRows[i] = DataTableRow.fromJSON(rows[i]);
             }
-            return new DataTable(dataRows);
+            return new DataTable(dataRows, void 0, presentationState);
         }
         catch (error) {
-            return new DataTable();
+            return new DataTable(void 0, void 0, presentationState);
         }
     };
     /* *
@@ -159,7 +170,7 @@ var DataTable = /** @class */ (function () {
      * Returns new empty DataTable instance.
      */
     DataTable.prototype.clone = function () {
-        var table = this, newTable = new DataTable([], table.converter, table.id), aliasMapNames = Object.keys(table.aliasMap);
+        var table = this, newTable = new DataTable([], table.id, table.presentationState, table.converter), aliasMapNames = Object.keys(table.aliasMap);
         var eventNames, eventName, eventArr, eventFunction, alias;
         if (table.hcEvents) {
             eventNames = Object.keys(table.hcEvents);
@@ -182,6 +193,43 @@ var DataTable = /** @class */ (function () {
             }
         }
         return newTable;
+    };
+    /**
+     * Create an alias for a column
+     *
+     * @param {string} columnName
+     * The name for the column to create an alias for
+     *
+     * @param {string} alias
+     * The alias for the column. Cannot be `id`, or an alias already in use
+     *
+     * @return {boolean}
+     * True if successfully added, false if already in used or reserved.
+     */
+    DataTable.prototype.createColumnAlias = function (columnName, alias) {
+        if (alias === 'id' || this.aliasMap[alias]) {
+            return false;
+        }
+        this.aliasMap[alias] = columnName;
+        return true;
+    };
+    /**
+     * Deletes a column of cells from the table.
+     * @param {string} columnName
+     * The name of the column to be deleted (not an alias).
+     *
+     * @return {boolean}
+     * `true` if the at least one cell is deleted.
+     */
+    DataTable.prototype.deleteColumn = function (columnName) {
+        var rows = this.getAllRows();
+        var success = false;
+        for (var i = 0, rowCount = rows.length; i < rowCount; i++) {
+            if (rows[i].deleteCell(columnName)) {
+                success = true;
+            }
+        }
+        return success;
     };
     /**
      * Deletes a row in this table.
@@ -251,6 +299,24 @@ var DataTable = /** @class */ (function () {
         return this.rows[row];
     };
     /**
+     * Retrieves a cell value based on row index/ID
+     * and column name/alias.
+     *
+     * @param {string | number} rowID
+     * The row to select.
+     *
+     * @param {string} columnNameOrAlias
+     * The column to get the value from.
+     *
+     * @return {DataTableRow.CellType}
+     * The value of the cell.
+     */
+    DataTable.prototype.getRowCell = function (rowID, columnNameOrAlias) {
+        var _a;
+        var cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
+        return (_a = this.getRow(rowID)) === null || _a === void 0 ? void 0 : _a.getCell(cellName);
+    };
+    /**
      * Returns the number of rows in this table.
      *
      * @return {number}
@@ -271,46 +337,6 @@ var DataTable = /** @class */ (function () {
      */
     DataTable.prototype.getVersionTag = function () {
         return this.versionTag || (this.versionTag = uniqueKey());
-    };
-    /**
-     * Converts the DataTable instance to a record of columns
-     *
-     * @return {DataTable.ColumnCollection}
-     * A record of columns, where the key is the name of the column,
-     * and the values are the content of the column.
-     */
-    DataTable.prototype.toColumns = function () {
-        var columnsObject = {
-            id: []
-        }, dataTable = this;
-        for (var rowIndex = 0, rowCount = dataTable.getRowCount(); rowIndex < rowCount; rowIndex++) {
-            var row = dataTable.rows[rowIndex], cellNames = row.getCellNames(), cellCount = cellNames.length;
-            columnsObject.id.push(row.id); // Push the ID column
-            for (var j = 0; j < cellCount; j++) {
-                var cellName = cellNames[j], cell = row.getCell(cellName);
-                if (!columnsObject[cellName]) {
-                    columnsObject[cellName] = [];
-                    // If row number is greater than 0
-                    // add the previous rows as undefined
-                    if (rowIndex > 0) {
-                        for (var rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
-                            columnsObject[cellName][rowNumber] = void 0;
-                        }
-                    }
-                }
-                columnsObject[cellName][rowIndex] = cell;
-            }
-            // If the object has columns that were not in the row
-            // add them as undefined
-            var columnsInObject = Object.keys(columnsObject);
-            for (var columnIndex = 0; columnIndex < columnsInObject.length; columnIndex++) {
-                var columnName = columnsInObject[columnIndex];
-                while (columnsObject[columnName].length - 1 < rowIndex) {
-                    columnsObject[columnName].push(void 0);
-                }
-            }
-        }
-        return columnsObject;
     };
     /**
      * Retrieves the given columns, either by the canonical column name,
@@ -337,138 +363,48 @@ var DataTable = /** @class */ (function () {
         return columnArray;
     };
     /**
-     * Create an alias for a column
-     * @param {string} columnName
-     * The name for the column to create an alias for
+     * Adds a row to this table.
      *
-     * @param {string} alias
-     * The alias for the column. Cannot be `id`, or an alias already in use
+     * @param {DataTableRow} row
+     * Row to add to this table.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
      *
      * @return {boolean}
-     * True if successfully added, false if already in used or reserved.
+     * Returns true, if the row has been added to the table. Returns false, if
+     * a row with the same row ID already exists in the table.
+     *
+     * @emits DataTable#insertRow
+     * @emits DataTable#afterInsertRow
      */
-    DataTable.prototype.createColumnAlias = function (columnName, alias) {
-        if (alias === 'id' || this.aliasMap[alias]) {
+    DataTable.prototype.insertRow = function (row, eventDetail) {
+        var rowId = row.id;
+        var index = this.rows.length;
+        if (typeof this.rowsIdMap[rowId] !== 'undefined') {
             return false;
         }
-        this.aliasMap[alias] = columnName;
+        this.emit({ type: 'insertRow', detail: eventDetail, index: index, row: row });
+        this.rows.push(row);
+        this.rowsIdMap[rowId] = row;
+        this.watchRow(row);
+        this.emit({ type: 'afterInsertRow', detail: eventDetail, index: index, row: row });
         return true;
     };
     /**
-     * Removes a column alias from the table
+     * Registers a callback for a specific event.
      *
-     * @param {string} alias
-     * The alias to remove
+     * @param {string} type
+     * Event type as a string.
      *
-     * @return {boolean}
-     * True if successfully removed, false if the alias was not found
+     * @param {DataEventEmitter.EventCallback} callback
+     * Function to register for an event callback.
+     *
+     * @return {Function}
+     * Function to unregister callback from the event.
      */
-    DataTable.prototype.removeColumnAlias = function (alias) {
-        if (this.aliasMap[alias]) {
-            delete this.aliasMap[alias];
-            return true;
-        }
-        return false;
-    };
-    /**
-     * Sets a cell value based on the rowID/index and column name/alias.
-     * Will insert a new row if the specified row does not exist.
-     *
-     * @param {string | number | undefined} rowID
-     * The ID or index of the row.
-     *
-     * @param {string} columnNameOrAlias
-     * The column name of the cell to set.
-     *
-     * @param {DataTableRow.CellType} value
-     * The value to set the cell to.
-     *
-     * @param {boolean} [allowUndefined]
-     * Whether to allow for an `undefined` rowID.
-     * If `true` the method will insert a new row with a generated ID.
-     * Defaults to `false`.
-     *
-     * @return {boolean}
-     * `true` if successful, `false` if not
-     */
-    DataTable.prototype.setRowCell = function (rowID, columnNameOrAlias, value, allowUndefined) {
-        if (allowUndefined === void 0) { allowUndefined = false; }
-        var cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
-        if (!allowUndefined && !rowID) {
-            return false;
-        }
-        // Insert a row with the specified ID if not found
-        if (!rowID || !this.getRow(rowID)) {
-            var rowToInsert = DataTableRow.fromJSON({
-                $class: 'DataTableRow',
-                id: rowID
-            });
-            this.insertRow(rowToInsert);
-            rowID = rowToInsert.id;
-        }
-        var row = this.getRow(rowID);
-        if (row) {
-            return (row.updateCell(cellName, value) ||
-                row.insertCell(cellName, value));
-        }
-        return false;
-    };
-    /**
-     * Retrieves a cell value based on row index/ID
-     * and column name/alias.
-     *
-     * @param {string | number} rowID
-     * The row to select.
-     *
-     * @param {string} columnNameOrAlias
-     * The column to get the value from.
-     *
-     * @return {DataTableRow.CellType}
-     * The value of the cell.
-     */
-    DataTable.prototype.getRowCell = function (rowID, columnNameOrAlias) {
-        var _a;
-        var cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
-        return (_a = this.getRow(rowID)) === null || _a === void 0 ? void 0 : _a.getCell(cellName);
-    };
-    /**
-     * Sets a column of cells from an array of cell values
-     *
-     * @param {string} columnNameOrAlias
-     * Name or alias of the column to set.
-     *
-     * @param {Array<DataTableRow.CellType>} cells
-     * Ann array of cell values to set.
-     *
-     * @return {boolean}
-     * `true` if successful, `false` if unable to insert all values.
-     *
-     */
-    DataTable.prototype.setColumn = function (columnNameOrAlias, cells) {
-        var rowIDs = this.getAllRowIds();
-        var success = false;
-        for (var i = 0, iEnd = Math.max(cells.length, rowIDs.length); i < iEnd; i++) {
-            success = this.setRowCell(rowIDs[i], columnNameOrAlias, cells[i], true);
-        }
-        return success;
-    };
-    /**
-     * Deletes a column of cells from the table.
-     * @param {string} columnName
-     * The name of the column to be deleted (not an alias).
-     *
-     * @return {boolean}
-     * `true` if the at least one cell is deleted.
-     */
-    DataTable.prototype.deleteColumn = function (columnName) {
-        var rows = this.getAllRows();
-        var success = false;
-        for (var i = 0, rowCount = rows.length; i < rowCount; i++) {
-            if (rows[i].deleteCell(columnName)) {
-                success = true;
-            }
-        }
-        return success;
+    DataTable.prototype.on = function (type, callback) {
+        return addEvent(this, type, callback);
     };
     /**
      * Removes a column of cells from the table and returns the values.
@@ -540,73 +476,140 @@ var DataTable = /** @class */ (function () {
         return success;
     };
     /**
-     * Adds a row to this table.
+     * Removes a column alias from the table
      *
-     * @param {DataTableRow} row
-     * Row to add to this table.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
+     * @param {string} alias
+     * The alias to remove
      *
      * @return {boolean}
-     * Returns true, if the row has been added to the table. Returns false, if
-     * a row with the same row ID already exists in the table.
-     *
-     * @emits DataTable#insertRow
-     * @emits DataTable#afterInsertRow
+     * True if successfully removed, false if the alias was not found
      */
-    DataTable.prototype.insertRow = function (row, eventDetail) {
-        var rowId = row.id;
-        var index = this.rows.length;
-        if (typeof this.rowsIdMap[rowId] !== 'undefined') {
+    DataTable.prototype.removeColumnAlias = function (alias) {
+        if (this.aliasMap[alias]) {
+            delete this.aliasMap[alias];
+            return true;
+        }
+        return false;
+    };
+    /**
+     * Sets a column of cells from an array of cell values
+     *
+     * @param {string} columnNameOrAlias
+     * Name or alias of the column to set.
+     *
+     * @param {Array<DataTableRow.CellType>} cells
+     * Ann array of cell values to set.
+     *
+     * @return {boolean}
+     * `true` if successful, `false` if unable to insert all values.
+     *
+     */
+    DataTable.prototype.setColumn = function (columnNameOrAlias, cells) {
+        var rowIDs = this.getAllRowIds();
+        var success = false;
+        for (var i = 0, iEnd = Math.max(cells.length, rowIDs.length); i < iEnd; i++) {
+            success = this.setRowCell(rowIDs[i], columnNameOrAlias, cells[i], true);
+        }
+        return success;
+    };
+    /**
+     * Sets a cell value based on the rowID/index and column name/alias.
+     * Will insert a new row if the specified row does not exist.
+     *
+     * @param {string | number | undefined} rowID
+     * The ID or index of the row.
+     *
+     * @param {string} columnNameOrAlias
+     * The column name of the cell to set.
+     *
+     * @param {DataTableRow.CellType} value
+     * The value to set the cell to.
+     *
+     * @param {boolean} [allowUndefined]
+     * Whether to allow for an `undefined` rowID.
+     * If `true` the method will insert a new row with a generated ID.
+     * Defaults to `false`.
+     *
+     * @return {boolean}
+     * `true` if successful, `false` if not
+     */
+    DataTable.prototype.setRowCell = function (rowID, columnNameOrAlias, value, allowUndefined) {
+        if (allowUndefined === void 0) { allowUndefined = false; }
+        var cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
+        if (!allowUndefined && !rowID) {
             return false;
         }
-        this.emit({ type: 'insertRow', detail: eventDetail, index: index, row: row });
-        this.rows.push(row);
-        this.rowsIdMap[rowId] = row;
-        this.watchRow(row);
-        this.emit({ type: 'afterInsertRow', detail: eventDetail, index: index, row: row });
-        return true;
-    };
-    /**
-     * Registers a callback for a specific event.
-     *
-     * @param {string} type
-     * Event type as a string.
-     *
-     * @param {DataEventEmitter.EventCallback} callback
-     * Function to register for an event callback.
-     *
-     * @return {Function}
-     * Function to unregister callback from the event.
-     */
-    DataTable.prototype.on = function (type, callback) {
-        return addEvent(this, type, callback);
-    };
-    /**
-     * Watchs for events in a row to keep the version tag of the table updated.
-     *
-     * @param {DataTableRow} row
-     * Row the watch for modifications.
-     *
-     * @emits DataTable#afterUpdateRow
-     */
-    DataTable.prototype.watchRow = function (row) {
-        var table = this, index = table.rows.indexOf(row), watchsIdMap = table.watchsIdMap, watchs = [];
-        /**
-         * @private
-         * @param {DataTableRow.EventObject} e
-         * Received event.
-         */
-        function callback(e) {
-            table.versionTag = uniqueKey();
-            fireEvent(table, 'afterUpdateRow', { detail: e.detail, index: index, row: row });
+        // Insert a row with the specified ID if not found
+        if (!rowID || !this.getRow(rowID)) {
+            var rowToInsert = DataTableRow.fromJSON({
+                $class: 'DataTableRow',
+                id: rowID
+            });
+            this.insertRow(rowToInsert);
+            rowID = rowToInsert.id;
         }
-        watchs.push(row.on('afterClearRow', callback));
-        watchs.push(row.on('afterDeleteCell', callback));
-        watchs.push(row.on('afterInsertCell', callback));
-        watchs.push(row.on('afterUpdateCell', callback));
-        watchsIdMap[row.id] = watchs;
+        var row = this.getRow(rowID);
+        if (row) {
+            return (row.updateCell(cellName, value) ||
+                row.insertCell(cellName, value));
+        }
+        return false;
+    };
+    /**
+     * Converts the DataTable instance to a record of columns
+     *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state.
+     *
+     * @return {DataTable.ColumnCollection}
+     * A record of columns, where the key is the name of the column,
+     * and the values are the content of the column.
+     */
+    DataTable.prototype.toColumns = function (usePresentationOrder) {
+        var columnsObject = {
+            id: []
+        }, dataTable = this;
+        for (var rowIndex = 0, rowCount = dataTable.getRowCount(); rowIndex < rowCount; rowIndex++) {
+            var row = dataTable.rows[rowIndex], cellNames = row.getCellNames(), cellCount = cellNames.length;
+            columnsObject.id.push(row.id); // Push the ID column
+            for (var j = 0; j < cellCount; j++) {
+                var cellName = cellNames[j], cell = row.getCell(cellName);
+                if (!columnsObject[cellName]) {
+                    columnsObject[cellName] = [];
+                    // If row number is greater than 0
+                    // add the previous rows as undefined
+                    if (rowIndex > 0) {
+                        for (var rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
+                            columnsObject[cellName][rowNumber] = void 0;
+                        }
+                    }
+                }
+                columnsObject[cellName][rowIndex] = cell;
+            }
+            // If the object has columns that were not in the row
+            // add them as undefined
+            var columnsInObject = Object.keys(columnsObject);
+            for (var columnIndex = 0; columnIndex < columnsInObject.length; columnIndex++) {
+                var columnName = columnsInObject[columnIndex];
+                while (columnsObject[columnName].length - 1 < rowIndex) {
+                    columnsObject[columnName].push(void 0);
+                }
+            }
+        }
+        if (usePresentationOrder) {
+            var sortedColumnsObject_1 = {
+                id: columnsObject.id
+            };
+            Object
+                .keys(columnsObject)
+                .slice(1)
+                .sort(dataTable.presentationState.getColumnSorter())
+                .forEach(function (column) {
+                sortedColumnsObject_1[column] = columnsObject[column];
+            });
+            return sortedColumnsObject_1;
+        }
+        return columnsObject;
     };
     /**
      * Converts the table to a class JSON.
@@ -618,8 +621,10 @@ var DataTable = /** @class */ (function () {
         var json = {
             $class: 'DataTable',
             rows: []
-        };
-        var rows = this.rows;
+        }, rows = this.rows;
+        if (this.presentationState.isSet()) {
+            json.presentationState = this.presentationState.toJSON();
+        }
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
             json.rows.push(rows[i].toJSON());
         }
@@ -645,6 +650,32 @@ var DataTable = /** @class */ (function () {
         if (!skipDelete) {
             delete watchsIdMap[rowId];
         }
+    };
+    /**
+     * Watchs for events in a row to keep the version tag of the table updated.
+     *
+     * @param {DataTableRow} row
+     * Row the watch for modifications.
+     *
+     * @emits DataTable#afterUpdateRow
+     */
+    DataTable.prototype.watchRow = function (row) {
+        var table = this, index = table.rows.indexOf(row), watchsIdMap = table.watchsIdMap, watchs = [];
+        /**
+         * @private
+         * @param {DataTableRow.EventObject} e
+         * Received event.
+         */
+        function callback(e) {
+            table.versionTag = uniqueKey();
+            fireEvent(table, 'afterUpdateRow', { detail: e.detail, index: index, row: row });
+        }
+        watchs.push(row.on('afterClearRow', callback));
+        watchs.push(row.on('afterDeleteCell', callback));
+        watchs.push(row.on('afterInsertCell', callback));
+        watchs.push(row.on('afterRemoveCell', callback));
+        watchs.push(row.on('afterUpdateCell', callback));
+        watchsIdMap[row.id] = watchs;
     };
     return DataTable;
 }());

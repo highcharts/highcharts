@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,7 @@
  *
  * */
 
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from './Series';
 
 /* *
  *
@@ -51,7 +51,7 @@ export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype
  * definition file.
  */
 export interface SeriesTypeRegistry {
-    [key: string]: typeof LineSeries;
+    [key: string]: typeof Series;
 }
 
 export default SeriesType;

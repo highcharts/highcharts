@@ -8,9 +8,11 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type PointOptions from '../Core/Series/PointOptions';
+import type Series from '../Core/Series/Series';
+import type TreemapSeries from '../Series/Treemap/TreemapSeries';
+import type TreemapSeriesOptions from '../Series/Treemap/TreemapSeriesOptions';
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
 const {
@@ -46,7 +48,7 @@ declare global {
         interface TreePointOptions extends PointOptions {
             value?: (number|null);
         }
-        interface TreeSeries extends LineSeries {
+        interface TreeSeries extends Series {
             mapOptionsToLevel: any;
             points: Array<TreePoint>;
             tree: TreeNodeObject;
@@ -74,7 +76,7 @@ declare global {
             before?: TreeValuesBeforeCallbackFunction<T>;
             idRoot: string;
             levelIsConstant?: boolean;
-            mapIdToNode: Dictionary<TreeNodeObject>;
+            mapIdToNode: Record<string, TreeNodeObject>;
             points: T['points'];
             series: T;
             visible?: boolean;
@@ -163,15 +165,15 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
  * @private
  */
 const getColor = function getColor(
-    node: Highcharts.TreemapNodeObject,
+    node: TreemapSeries.NodeObject,
     options: {
         colorIndex?: number;
         colors: Array<ColorString>;
         index: number;
-        mapOptionsToLevel: Array<Highcharts.TreemapSeriesOptions>;
+        mapOptionsToLevel: Array<TreemapSeriesOptions>;
         parentColor: ColorString;
         parentColorIndex: number;
-        series: LineSeries;
+        series: Series;
         siblings: number;
     }
 ): Highcharts.TreeColorObject {
@@ -187,7 +189,7 @@ const getColor = function getColor(
         chartOptionsChart: Highcharts.ChartOptions =
             series.chart.options.chart as any,
         point,
-        level: Highcharts.Dictionary<any>,
+        level: Record<string, any>,
         colorByPoint,
         colorIndexByPoint,
         color,

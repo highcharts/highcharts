@@ -14,7 +14,11 @@ QUnit.test('data-google-spreadsheetloading', function (assert) {
                 tested = true;
 
                 assert.strictEqual(
-                    (Highcharts.isArray(options.xAxis) ? options.xAxis[0] : options.xAxis).type,
+                    (
+                        Highcharts.isArray(options.xAxis) ?
+                            options.xAxis[0] :
+                            options.xAxis
+                    ).type,
                     'datetime',
                     'X axis is date/time'
                 );
@@ -76,4 +80,5 @@ QUnit.test('data-google-spreadsheetloading', function (assert) {
             googleSpreadsheetKey: '1BNuncjK16FzPUE045dfBUheODVYIJpe1UXtVFLprmgw'
         }
     });
+
 });

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Place desriptions on a series and its points.
  *
@@ -15,7 +15,7 @@ var getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
 import ChartUtilities from '../../Utils/ChartUtilities.js';
 var getAxisDescription = ChartUtilities.getAxisDescription, getSeriesFirstPointElement = ChartUtilities.getSeriesFirstPointElement, getSeriesA11yElement = ChartUtilities.getSeriesA11yElement, unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
-var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
+var reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 var find = U.find, format = U.format, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick, defined = U.defined;
@@ -288,11 +288,11 @@ function defaultPointDescriptionFormatter(point) {
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} pointElement
  */
 function setPointScreenReaderAttribs(point, pointElement) {
-    var series = point.series, a11yPointOptions = series.chart.options.accessibility.point || {}, seriesA11yOptions = series.options.accessibility || {}, label = escapeStringForHTML(stripHTMLTags(seriesA11yOptions.pointDescriptionFormatter &&
+    var series = point.series, a11yPointOptions = series.chart.options.accessibility.point || {}, seriesA11yOptions = series.options.accessibility || {}, label = stripHTMLTags(seriesA11yOptions.pointDescriptionFormatter &&
         seriesA11yOptions.pointDescriptionFormatter(point) ||
         a11yPointOptions.descriptionFormatter &&
             a11yPointOptions.descriptionFormatter(point) ||
-        defaultPointDescriptionFormatter(point)));
+        defaultPointDescriptionFormatter(point));
     pointElement.setAttribute('role', 'img');
     pointElement.setAttribute('aria-label', label);
 }
@@ -357,9 +357,9 @@ function describeSeriesElement(series, seriesElement) {
     } /* else do not add role */
     seriesElement.setAttribute('tabindex', '-1');
     seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
-    seriesElement.setAttribute('aria-label', escapeStringForHTML(stripHTMLTags(a11yOptions.series.descriptionFormatter &&
+    seriesElement.setAttribute('aria-label', stripHTMLTags(a11yOptions.series.descriptionFormatter &&
         a11yOptions.series.descriptionFormatter(series) ||
-        defaultSeriesDescriptionFormatter(series))));
+        defaultSeriesDescriptionFormatter(series)));
 }
 /**
  * Put accessible info on series and points of a series.

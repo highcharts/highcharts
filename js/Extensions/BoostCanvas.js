@@ -18,12 +18,13 @@ import Color from '../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../Core/Globals.js';
 var doc = H.doc, noop = H.noop;
-import LineSeries from '../Series/Line/LineSeries.js';
+import palette from '../Core/Color/Palette.js';
 import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;
-import '../Core/Options.js';
-var seriesTypes = Series.seriesTypes, CHUNK_SIZE = 50000, destroyLoadingDiv;
+var CHUNK_SIZE = 50000, destroyLoadingDiv;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Initialize the canvas boost.
@@ -69,7 +70,7 @@ var initCanvasBoost = function () {
             }
         });
     }
-    extend(LineSeries.prototype, {
+    extend(Series.prototype, {
         /**
          * Create a hidden canvas to draw the graph on. The contents is later
          * copied over to an SVG image element.
@@ -293,7 +294,7 @@ var initCanvasBoost = function () {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: color('${palette.backgroundColor}').setOpacity(0.75).get(),
+                        backgroundColor: color(palette.backgroundColor).setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },
