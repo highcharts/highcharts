@@ -9,12 +9,12 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     NATROptions,
     NATRParamsOptions
 } from './NATROptions';
 import type NATRPoint from './NATRPoint';
-import type Series from '../../../Core/Series/Series';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -78,12 +78,12 @@ class NATRIndicator extends ATRIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: NATRParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var atrData: (
-                IndicatorValuesObject<Series>|
+                IndicatorValuesObject<LineSeries>|
                 undefined
             ) = (
                 ATRIndicator.prototype.getValues.apply(this, arguments)

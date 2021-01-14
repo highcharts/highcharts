@@ -9,6 +9,7 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     MACDOptions,
     MACDGappedExtensionObject,
@@ -16,7 +17,6 @@ import type {
     MACDParamsOptions
 } from './MACDOptions';
 import type MACDPoint from './MACDPoint';
-import type Series from '../../../Core/Series/Series';
 import type {
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
@@ -375,7 +375,7 @@ class MACDIndicator extends SMAIndicator {
         this.zones = histogramZones;
     }
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

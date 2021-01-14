@@ -9,12 +9,13 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     RSIOptions,
     RSIParamsOptions
 } from './RSIOptions';
 import type RSIPoint from './RSIPoint';
-import type Series from '../../../Core/Series/Series';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -83,7 +84,7 @@ class RSIIndicator extends SMAIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: RSIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

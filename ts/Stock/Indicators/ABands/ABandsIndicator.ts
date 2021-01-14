@@ -20,7 +20,7 @@ import type {
 } from './ABandsOptions';
 import type ABandsPoint from './ABandsPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -150,7 +150,7 @@ class ABandsIndicator extends SMAIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         this: ABandsIndicator,
         series: TLinkedSeries,
         params: ABandsParamsOptions
