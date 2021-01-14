@@ -1,0 +1,6 @@
+.container-column, .container-spline, .container-scatter, .container-map, .container-pie {
+    width: 50%;
+	height: 400px;
+	margin-bottom: 15px;
+	float: left;
+}

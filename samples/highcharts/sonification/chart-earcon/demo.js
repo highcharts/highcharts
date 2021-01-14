@@ -41,7 +41,16 @@ var chart = Highcharts.chart('container', {
                     }
                 ));
             }
-        }]
+        }],
+        events: {
+            onPointStart: function (e, point) {
+                point.onMouseOver();
+            },
+            onEnd: function () {
+                document.getElementById('sonify').style.visibility = 'visible';
+                document.getElementById('overlay').style.visibility = 'visible';
+            }
+        }
     },
     series: [{
         data: [1, 2, 4, 5, 7, 9, 11, 13]
@@ -54,5 +63,7 @@ var chart = Highcharts.chart('container', {
 
 
 document.getElementById('sonify').onclick = function () {
+    document.getElementById('sonify').style.visibility = 'hidden';
+    document.getElementById('overlay').style.visibility = 'hidden';
     chart.sonify();
 };
