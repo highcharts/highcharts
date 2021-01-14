@@ -1453,6 +1453,7 @@ class Tooltip {
                 plotTop,
                 pointer,
                 scrollablePixelsY = 0,
+                scrollablePixelsX,
                 scrollingContainer: {
                     scrollLeft,
                     scrollTop
@@ -1468,16 +1469,19 @@ class Tooltip {
 
         // The area which the tooltip should be limited to. Limit to scrollable
         // plot area if enabled, otherwise limit to the chart container.
-        const bounds = {
-            left: scrollLeft,
-            right: scrollLeft + chartWidth,
-            top: scrollTop,
-            bottom: scrollTop + chartHeight
-        };
+        // If outside is true it should be the whole viewport
+        const bounds = tooltip.outside && !scrollablePixelsX ?
+            doc.documentElement.getBoundingClientRect() : {
+                left: scrollLeft,
+                right: scrollLeft + chartWidth,
+                top: scrollTop,
+                bottom: scrollTop + chartHeight
+            };
 
         const tooltipLabel = tooltip.getLabel();
         const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
+        const { left: chartLeft, top: chartTop } = pointer.getChartPosition();
 
         let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
@@ -1516,6 +1520,11 @@ class Tooltip {
                 }
             }
 
+            // Add chart X position to anchorX if not scrollable
+            if (tooltip.outside && !scrollablePixelsX) {
+                anchorX += chartLeft;
+            }
+
             // Limit values to plot area
             anchorX = clamp(
                 anchorX,
@@ -1546,6 +1555,7 @@ class Tooltip {
         ): PositionObject {
             let y;
             let x;
+
             if (isHeader) {
                 y = headerTop ? 0 : adjustedPlotHeight;
                 x = clamp(
@@ -1723,8 +1733,18 @@ class Tooltip {
             return boxes;
         }, []);
 
+        const isInsideRightBounds = (box: AnyRecord): boolean => (
+            (tooltip.outside ?
+                box.anchorX + distance + box.boxWidth :
+                box.point.plotX + box.boxWidth) < bounds.right
+        );
+
         // If overflow left then align all labels to the right
-        if (!positioner && boxes.some((box): boolean => box.x < bounds.left)) {
+        // if they do not overflow to the right
+        if (!positioner && boxes.some((box): boolean =>
+            box.x < scrollLeft &&
+            isInsideRightBounds(box)
+        )) {
             boxes = boxes.map((box): AnyRecord => {
                 const { x, y } = defaultPositioner(
                     box.anchorX,
@@ -1746,7 +1766,8 @@ class Tooltip {
         // Distribute and put in place
         H.distribute(boxes as any, adjustedPlotHeight);
         boxes.forEach(function (box: AnyRecord): void {
-            const { anchorX, anchorY, pos, x } = box;
+            const { x, anchorX, anchorY, pos } = box;
+
             // Put the label in place
             box.tt.attr({
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
@@ -1773,18 +1794,17 @@ class Tooltip {
             renderer
         } = tooltip;
         if (outside && container && renderer) {
-            // Set container size to fit the tooltip
-            const { width, height, x, y } = tooltipLabel.getBBox();
+            // Set container size to fit the bounds
+            const { width, x } = tooltipLabel.getBBox();
             renderer.setSize(
-                width + x,
-                height + y,
+                scrollablePixelsX ? width + x : bounds.right - bounds.left,
+                bounds.bottom - bounds.top,
                 false
             );
 
             // Position the tooltip container to the chart container
-            const chartPosition = pointer.getChartPosition();
-            container.style.left = chartPosition.left + 'px';
-            container.style.top = chartPosition.top + 'px';
+            container.style.left = (scrollablePixelsX ? chartLeft : bounds.left) + 'px';
+            container.style.top = chartTop + 'px';
         }
     }
 
