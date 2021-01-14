@@ -18,6 +18,7 @@
 
 import type ParetoPoint from './ParetoPoint';
 import type ParetoSeriesOptions from './ParetoSeriesOptions';
+
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const { series: Series } = SeriesRegistry;
