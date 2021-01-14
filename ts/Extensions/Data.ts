@@ -684,14 +684,6 @@ class Data {
 
     /* *
      *
-     *  Static Properties
-     *
-     * */
-
-    private static timezoneOffset = (new Date()).getTimezoneOffset();
-
-    /* *
-     *
      *  Constructors
      *
      * */
@@ -2182,8 +2174,7 @@ class Data {
             key,
             format,
             dateFormat = this.options.dateFormat || this.dateFormat,
-            match,
-            timezoneOffset = Data.timezoneOffset;
+            match;
 
         if (parseDate) {
             ret = parseDate(val);
@@ -2219,30 +2210,29 @@ class Data {
             }
             // Fall back to Date.parse
             if (!match) {
-                if (val.match(/:.+[Z+-]/)) {
+                if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
                     val = val
-                        .replace(/(\d)\s*(?:Z)/, '$1+00:00')
-                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)/, '$1$2:$3')
-                        .replace(/\s*(?:GMT|UTC)?([+-])/, '$1');
-                    timezoneOffset = 0;
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
                 }
                 match = Date.parse(val);
                 // External tools like Date.js and MooTools extend Date object
-                // and returns a date.
+                // and return a date.
                 if (
                     typeof match === 'object' &&
                     match !== null &&
-                    (match as any).getTime
+                    (match as Date).getTime
                 ) {
                     ret = (
-                        (match as any).getTime() -
-                        timezoneOffset *
+                        (match as Date).getTime() -
+                        (match as Date).getTimezoneOffset() *
                         60000
                     );
 
                 // Timestamp
                 } else if (isNumber(match)) {
-                    ret = match - timezoneOffset * 60000;
+                    ret = match - (new Date(match)).getTimezoneOffset() * 60000;
                 }
             }
         }
