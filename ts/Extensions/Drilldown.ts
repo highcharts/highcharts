@@ -845,6 +845,8 @@ Chart.prototype.applyDrilldown = function (): void {
     this.pointer.reset();
     this.redraw();
     fireEvent(this, 'afterDrilldown');
+    this.redraw();
+
 };
 
 Chart.prototype.getDrilldownBackText = function (): (string|undefined) {
@@ -911,6 +913,7 @@ Chart.prototype.drillUp = function (): void {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
         return;
     }
+    fireEvent(this, 'beforeDrillUp');
 
     var chart = this,
         drilldownLevels = chart.drilldownLevels as any,

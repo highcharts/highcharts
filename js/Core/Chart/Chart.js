@@ -508,6 +508,7 @@ var Chart = /** @class */ (function () {
         if (isHiddenChart) {
             chart.temporaryDisplay();
         }
+        fireEvent(this, 'setOffsets');
         // Adjust title layout (reflow multiline text)
         chart.layOutTitles();
         // link stacked series

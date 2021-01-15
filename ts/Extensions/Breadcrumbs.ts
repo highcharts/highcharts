@@ -98,15 +98,18 @@ declare global {
 
             public alignGroup(): void;
             public createList(e?: any): void;
-            public destroy(this: Breadcrumbs, lastVisibleLevel: number|undefined): void;
+            public destroyGroup(this: Breadcrumbs, lastVisibleLevel: number|undefined): void;
             public draw(): void;
             public multipleDrillUp(numb: number): void;
             public init(chart: Chart, userOptions: Highcharts.Options): void;
             public redraw(): void;
+            public resetList(this: Breadcrumbs): void
             public renderButton(breadcrumb: Array<number|Point|SVGAElement>, posX: number, posY: number):
             SVGElement|void;
             public renderSeparator(posX: number, posY: number): SVGElement;
             public update(userOptions: Highcharts.Options, redrawFlag: boolean): void;
+            public updateSingleButton(this: Breadcrumbs): void;
+            public setMargins(this: Breadcrumbs): void;
         }
     }
 }
@@ -303,6 +306,7 @@ class Breadcrumbs {
     public chart: Chart = void 0 as any;
     public breadcrumbsGroup: Highcharts.SVGElement = void 0 as any;
     public breadcrumbsList: Array<Array<any>> = [];
+    public isDirty: boolean = false
     public isTreemap: boolean = void 0 as any;
     public level: number = -1;
     public options: Highcharts.BreadcrumbsOptions = void 0 as any;
@@ -385,6 +389,28 @@ class Breadcrumbs {
     }
 
     /**
+     * Calcule level on which chart currently is.
+     *
+     * @requires  modules/breadcrumbs
+     *
+     * @function Highcharts.Breadcrumbs#calculateLevel
+     * @param {Highcharts.Breadcrumbs} this
+     *        Breadcrumbs class.
+     */
+    public calculateLevel(this: Breadcrumbs): void {
+        const chart = this.chart,
+            drilldownLevels = chart.drilldownLevels;
+
+        // Calculate on which level we are now.
+        if (this.isTreemap && (chart.series[0] as any).tree) {
+            this.level = Math.abs((chart.series[0] as any).tree.levelDynamic) - 1;
+        } else {
+            this.level = drilldownLevels && drilldownLevels[drilldownLevels.length - 1] &&
+            drilldownLevels[drilldownLevels.length - 1].levelNumber || 0;
+        }
+    }
+
+    /**
      * This method creates an array of arrays containing a level number
      * with the corresponding series/point.
      *
@@ -404,14 +430,6 @@ class Breadcrumbs {
             // as the current level- first iteration.
         let currentLevelNumber: number|null = breadcrumbsList.length ?
             (breadcrumbsList[breadcrumbsList.length - 1][0] as number) : null;
-
-        // Calculate on which level we are now.
-        if (this.isTreemap && (chart.series[0] as any).tree) {
-            this.level = Math.abs((chart.series[0] as any).tree.levelDynamic) - 1;
-        } else {
-            this.level = drilldownLevels && drilldownLevels[drilldownLevels.length - 1] &&
-            drilldownLevels[drilldownLevels.length - 1].levelNumber || 0;
-        }
 
         if (this.isTreemap && e) {
             if (!breadcrumbsList[0]) {
@@ -469,69 +487,43 @@ class Breadcrumbs {
      *
      * @requires  modules/breadcrumbs
      *
-     * @function Highcharts.Breadcrumbs#destroy
+     * @function Highcharts.Breadcrumbs#destroyGroup
      * @param {Highcharts.Breadcrumbs} this
      *        Breadcrumbs class.
      * @param {Highcharts.Breadcrumbs} lastVisibleLevel
      *        Number of levels to destoy.
      */
-    public destroy(this: Breadcrumbs, lastVisibleLevel: number|undefined): void {
+    public destroyGroup(this: Breadcrumbs, lastVisibleLevel: number|undefined): void {
         const breadcrumbs = this,
             chart = breadcrumbs.chart,
             breadcrumbsList = breadcrumbs.breadcrumbsList,
             breadcrumbsOptions = breadcrumbs.options;
 
-        // Click the main breadcrumb
+        // The full path of buttons is visible.
         if (breadcrumbsOptions && !breadcrumbsOptions.showOnlyLast) {
-            if (!lastVisibleLevel && lastVisibleLevel !== 0) {
-                breadcrumbsList.forEach(function (el): void {
-                    const button = el[2],
-                        separator = el[3];
+            breadcrumbsList.forEach(function (el): void {
+                const button = el[2],
+                    separator = el[3];
 
-                    // Remove SVG elements fromt the DOM.
-                    button && button.destroy();
-                    separator && separator.destroy();
-                });
-                // Clear the breadcrums list array.
-                breadcrumbsList.length = 0;
-                this.breadcrumbsGroup.destroy();
-                this.breadcrumbsGroup = void 0 as any;
-                chart.getMargins();
-                chart.redraw();
-            } else {
-                const prevConector = breadcrumbsList[lastVisibleLevel + 1][3];
-
-                // Remove connector from the previous button.
-                prevConector && prevConector.destroy();
-                breadcrumbsList[lastVisibleLevel + 1].length = 3;
-
-                for (let i = lastVisibleLevel + 2; i < breadcrumbsList.length; i++) {
-                    const el = breadcrumbsList[i],
-                        button = el[2],
-                        conector = el[3];
-
-                    // Remove SVG elements fromt the DOM.
-                    button && button.destroy();
-                    conector && conector.destroy();
-                }
-                // Clear the breadcrums list array.
-                breadcrumbsList.length = lastVisibleLevel + 2;
-            }
+                // Remove SVG elements fromt the DOM.
+                button && button.destroy();
+                separator && separator.destroy();
+            });
+            // Clear the breadcrums list array.
+            breadcrumbsList.length = 0;
+            this.breadcrumbsGroup.destroy();
+            this.breadcrumbsGroup = void 0 as any;
         } else {
             const drilldownLevels = chart.drilldownLevels;
-
-            // Update button.
-            if (drilldownLevels && (!drilldownLevels.length || this.level === -1) && chart.drillUpButton) {
+            // When the chart is on the main series, destroy the button.
+            // Subtract 1 because destroy is fired before drillUp and we
+            // want to see the previous state.
+            if ((drilldownLevels && (!(drilldownLevels.length - 1) || this.level === -1) && chart.drillUpButton) ||
+                (this.isTreemap && this.level === 0 && chart.drillUpButton)) {
                 breadcrumbsList.length = 0;
                 chart.drillUpButton.destroy();
                 chart.drillUpButton = void 0;
-            } else if (chart.drillUpButton) {
-                chart.drillUpButton.attr({
-                    text: '◁ ' + breadcrumbsList[this.level][1].name
-                });
             }
-            chart.getMargins();
-            chart.redraw();
         }
 
         if (breadcrumbsOptions && breadcrumbsOptions.position && breadcrumbsOptions.position.align !== 'left') {
@@ -588,15 +580,8 @@ class Breadcrumbs {
                     chart.drillUpButton = breadcrumbs.renderButton(previousBreadcrumb, posX, posY);
                 } else if (chart.drillUpButton) {
                     // Update button.
-                    if (this.level === -1) {
-                        chart.drillUpButton.destroy();
-                        chart.drillUpButton = void 0;
-                        this.breadcrumbsList = [];
-                    } else {
-                        this.updateSignleButton();
-                    }
+                    this.updateSingleButton();
                 }
-                chart.getMargins();
             } else {
                 // Make sure that only one type of button is visible.
                 if (chart.drillUpButton) {
@@ -650,23 +635,25 @@ class Breadcrumbs {
 
         if (!this.options.showOnlyLast) {
             if (breadcrumbsList && breadcrumbsList.length) {
+                this.isDirty = true;
                 for (let i = 0; i < drillNumber; i++) {
+
                     if (this.isTreemap) {
                         (chart.series[0] as Highcharts.TreemapSeries).drillUp();
                     } else {
                         chart.drillUp();
                     }
                 }
+                this.isDirty = false;
             }
         } else {
+            this.destroyGroup(void 0 as any);
             if (this.isTreemap) {
                 (chart.series[0] as Highcharts.TreemapSeries).drillUp();
             } else {
                 chart.drillUp();
             }
         }
-
-        this.destroy(drillAmount);
     }
 
     /**
@@ -681,11 +668,52 @@ class Breadcrumbs {
     public redraw(this: Breadcrumbs): void {
         const breadcrumbsGroup = this.breadcrumbsGroup;
 
+        this.calculateLevel();
+
         if (breadcrumbsGroup && this.breadcrumbsList.length) {
             this.alignGroup();
         }
-        this.createList();
-        this.draw();
+
+        if (!this.isDirty) {
+            this.createList();
+            this.draw();
+        }
+    }
+
+    /**
+    * Reset list after the drillUp.
+    *
+    * @requires  modules/breadcrums
+    *
+    * @function Highcharts.Breadcrumbs#redraw
+    * @param {Highcharts.Breadcrumbs} this
+    *        Breadcrumbs class.
+    */
+    public resetList(this: Breadcrumbs): void {
+        const breadcrumbsList = this.breadcrumbsList;
+
+        if (this.level === 0) {
+            this.destroyGroup(void 0 as any);
+        } else {
+            if (this.options.showOnlyLast) {
+                this.updateSingleButton();
+            } else {
+                const el = breadcrumbsList[breadcrumbsList.length - 1],
+                    button = el && el[2],
+                    conector = el && el[3],
+                    prevConector = breadcrumbsList[breadcrumbsList.length - 2] &&
+                        breadcrumbsList[breadcrumbsList.length - 2][3];
+
+                // Remove connector from the previous button.
+                prevConector && prevConector.destroy();
+                breadcrumbsList[breadcrumbsList.length - 2].length = 3;
+
+                // Remove SVG elements fromt the DOM.
+                button && button.destroy();
+                conector && conector.destroy();
+            }
+            breadcrumbsList.pop();
+        }
     }
 
     /**
@@ -822,21 +850,21 @@ class Breadcrumbs {
         merge(true, this.options, userOptions);
 
         if (redrawFlag) {
-            this.destroy(-1);
+            this.destroyGroup(-1);
             this.redraw();
         }
     }
 
     /**
     * Update button text when the showOnlyLast set to true.
-    * @function Highcharts.Breadcrumbs#updateSignleButton
+    * @function Highcharts.Breadcrumbs#updateSingleButton
     *
     * @requires  modules/breadcrumbs
     *
     * @param {Highcharts.Breadcrumbs} this
     *        Breadcrumbs class.
     */
-    public updateSignleButton(this: Breadcrumbs): void {
+    public updateSingleButton(this: Breadcrumbs): void {
         const chart = this.chart,
             breadcrumbsOptions = this.options,
             breadcrumbsList = this.breadcrumbsList,
@@ -856,15 +884,18 @@ class Breadcrumbs {
             });
         }
     }
-}
 
-/* eslint-disable no-invalid-this */
-
-if (!H.Breadcrumbs) {
-    H.Breadcrumbs = Breadcrumbs as any;
-
-    addEvent(Chart, 'getMargins', function (e: Chart): void {
-        const chart = this,
+    /**
+    * Set margins if the floating: false.
+    * @function Highcharts.Breadcrumbs#update
+    *
+    * @requires  modules/breadcrumbs
+    *
+    * @param {Highcharts.Breadcrumbs} this
+    *        Breadcrumbs class.
+    */
+    public setMargins(this: Breadcrumbs): void {
+        const chart = this.chart,
             breadcrumbsOptions = chart.options.breadcrumbs,
             defaultBreadcrumheight = 35, // TO DO: calculate that height
             extraMargin = chart.rangeSelector ? chart.rangeSelector.getHeight() : defaultBreadcrumheight;
@@ -877,20 +908,31 @@ if (!H.Breadcrumbs) {
             chart.breadcrumbs.breadcrumbsList &&
             chart.breadcrumbs.breadcrumbsList.length
         ) {
-            if (breadcrumbsOptions.position && breadcrumbsOptions.position.verticalAlign === 'top' && extraMargin) {
-                chart.plotTop += extraMargin;
-            }
-            if (breadcrumbsOptions.position && breadcrumbsOptions.position.verticalAlign === 'bottom' && extraMargin) {
-                (chart.marginBottom as number) += extraMargin;
-            }
+            chart.yAxis[0].options.offsets = [extraMargin, 0, 0, 0];
+        } else {
+            chart.yAxis[0].options.offsets = [0, 0, 0, 0];
         }
+    }
+}
+
+/* eslint-disable no-invalid-this */
+
+if (!H.Breadcrumbs) {
+    H.Breadcrumbs = Breadcrumbs as any;
+
+    addEvent(Chart, 'setOffsets', function (): void {
+        this.breadcrumbs && this.breadcrumbs.setMargins();
     });
 
-    addEvent(Chart, 'redraw', function (e: Chart): void {
+    addEvent(Chart, 'redraw', function (): void {
         this.breadcrumbs?.redraw();
     });
 
-    addEvent(Chart, 'afterDrilldown', function (e: Chart): void {
+    addEvent(Chart, 'beforeDrillUp', function (): void {
+        this.breadcrumbs?.resetList();
+    });
+
+    addEvent(Chart, 'afterDrilldown', function (): void {
         const chart = this,
             breadcrumbs = chart.breadcrumbs as Highcharts.Breadcrumbs,
             breadcrumbsOptions = chart.options.breadcrumbs;
@@ -900,13 +942,7 @@ if (!H.Breadcrumbs) {
             if (!breadcrumbs) {
                 chart.breadcrumbs = new Breadcrumbs(chart as Chart, chart.options as Highcharts.Options);
             }
-            chart.redraw();
-        }
-    });
-
-    addEvent(Chart, 'drillupall', function (): void {
-        if (this.drillUpButton) {
-            this.breadcrumbs && this.breadcrumbs.destroy(void 0 as any);
+            this.breadcrumbs && this.breadcrumbs.redraw();
         }
     });
 
@@ -922,6 +958,10 @@ if (!H.Breadcrumbs) {
             if ((e as any).trigger === 'click' || !(e as any).trigger) {
                 chart.breadcrumbs?.createList(e);
                 chart.breadcrumbs?.draw();
+            }
+
+            if ((e as any).trigger === 'traverseUpButton') {
+                chart.breadcrumbs.resetList();
             }
         }
     });

@@ -765,6 +765,8 @@ class Chart {
             chart.temporaryDisplay();
         }
 
+        fireEvent(this, 'setOffsets');
+
         // Adjust title layout (reflow multiline text)
         chart.layOutTitles();
 

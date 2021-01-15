@@ -573,6 +573,7 @@ Chart.prototype.applyDrilldown = function () {
     this.pointer.reset();
     this.redraw();
     fireEvent(this, 'afterDrilldown');
+    this.redraw();
 };
 Chart.prototype.getDrilldownBackText = function () {
     var drilldownLevels = this.drilldownLevels, lastLevel;
@@ -618,6 +619,7 @@ Chart.prototype.drillUp = function () {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
         return;
     }
+    fireEvent(this, 'beforeDrillUp');
     var chart = this, drilldownLevels = chart.drilldownLevels, levelNumber = drilldownLevels[drilldownLevels.length - 1].levelNumber, i = drilldownLevels.length, chartSeries = chart.series, seriesI, level, oldSeries, newSeries, oldExtremes, addSeries = function (seriesOptions) {
         var addedSeries;
         chartSeries.forEach(function (series) {
