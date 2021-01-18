@@ -806,7 +806,7 @@ Highcharts.chart('container', {
         text: 'Top 100 cities ranked by the number of international visitors - 2017'
     },
     subtitle: {
-        text: 'Euromonitor Rank - Source <ahref="https://en.wikipedia.org/wiki/List_of_cities_by_international_visitors">Wikipedia</a>'
+        text: 'Euromonitor Rank - Source <a href="https://en.wikipedia.org/wiki/List_of_cities_by_international_visitors">Wikipedia</a>'
     },
     series: [{
         type: "sunburst",

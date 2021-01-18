@@ -14,18 +14,19 @@
 
 import type Chart from '../../../Core/Chart/Chart';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     VWAPOptions,
     VWAPParamsOptions
 } from './VWAPOptions';
 import type VWAPPoint from './VWAPPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     error,
@@ -96,7 +97,7 @@ class VWAPIndicator extends SMAIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: VWAPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -108,7 +109,7 @@ class VWAPIndicator extends SMAIndicator {
             ) = (series.yData as any),
             period: number = (params.period as any),
             isOHLC = true,
-            volumeSeries: LineSeries;
+            volumeSeries: Series;
 
         // Checks if volume series exists
         if (!(volumeSeries = (
@@ -151,11 +152,11 @@ class VWAPIndicator extends SMAIndicator {
      * @param {number} period - number of points to be calculated
      * @return {object} - Object contains computed VWAP
      **/
-    public calculateVWAPValues<TLinkedSeries extends LineSeries>(
+    public calculateVWAPValues<TLinkedSeries extends Series>(
         isOHLC: boolean,
         xValues: Array<number>,
         yValues: (Array<number>|Array<[number, number, number, number]>),
-        volumeSeries: LineSeries,
+        volumeSeries: Series,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
         var volumeValues: Array<number> = (volumeSeries.yData as any),
@@ -239,7 +240,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('vwap', VWAPIndicator);
+SeriesRegistry.registerSeriesType('vwap', VWAPIndicator);
 
 /* *
  *

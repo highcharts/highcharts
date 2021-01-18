@@ -16,13 +16,13 @@ import type {
     RegressionLineParametersObject
 } from '../LinearRegression/LinearRegressionOptions';
 import type LinearRegressionSlopesPoint from './LinearRegressionSlopesPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator,
         linearRegression: LinearRegressionIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -95,6 +95,7 @@ class LinearRegressionSlopesIndicator extends LinearRegressionIndicator {
  * */
 interface LinearRegressionSlopesIndicator {
     pointClass: typeof LinearRegressionSlopesPoint;
+    nameBase: string;
 }
 
 extend(LinearRegressionSlopesIndicator.prototype, {
@@ -113,7 +114,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType(
+SeriesRegistry.registerSeriesType(
     'linearRegressionSlope',
     LinearRegressionSlopesIndicator
 );

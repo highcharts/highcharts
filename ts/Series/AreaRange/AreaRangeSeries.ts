@@ -26,13 +26,13 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import AreaRangePoint from './AreaRangePoint.js';
 import AreaSeries from '../Area/AreaSeries.js';
 const { prototype: areaProto } = AreaSeries;
-import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 const { prototype: columnProto } = ColumnSeries;
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../Line/LineSeries.js';
-const { prototype: seriesProto } = LineSeries;
+import Series from '../../Core/Series/Series.js';
+const { prototype: seriesProto } = Series;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     defined,
@@ -674,7 +674,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('arearange', AreaRangeSeries);
+SeriesRegistry.registerSeriesType('arearange', AreaRangeSeries);
 
 
 /* *

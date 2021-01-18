@@ -26,16 +26,16 @@ import type {
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
-    }
-} = BaseSeries;
 import H from '../../Core/Globals.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    series: Series,
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 const { prototype: columnProto } = ColumnSeries;
 import U from '../../Core/Utilities.js';
 const {
@@ -253,7 +253,7 @@ class XRangeSeries extends ColumnSeries {
     ): Highcharts.SeriesCropDataObject {
 
         // Replace xData with x2Data to find the appropriate cropStart
-        var cropData = LineSeries.prototype.cropData,
+        var cropData = Series.prototype.cropData,
             crop = cropData.call(this, this.x2Data as any, yData, min, max);
 
         // Re-insert the cropped xData
@@ -681,7 +681,7 @@ class XRangeSeries extends ColumnSeries {
  *
  * */
 interface XRangeSeries {
-    animate: typeof LineSeries.prototype.animate;
+    animate: typeof Series.prototype.animate;
     cropShoulder: number;
     getExtremesFromAll: boolean;
     parallelArrays: Array<string>;
@@ -695,7 +695,7 @@ extend(XRangeSeries.prototype, {
     type: 'xrange',
     parallelArrays: ['x', 'x2', 'y'],
     requireSorting: false,
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     cropShoulder: 1,
     getExtremesFromAll: true,
     autoIncrement: H.noop as any,
@@ -725,7 +725,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('xrange', XRangeSeries);
+SeriesRegistry.registerSeriesType('xrange', XRangeSeries);
 
 /* *
  *

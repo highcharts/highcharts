@@ -23,8 +23,8 @@ import type Point from '../Core/Series/Point';
 import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     correctFloat,
@@ -73,7 +73,7 @@ declare global {
             x: number;
             y: number;
             below: boolean;
-            series: LineSeries;
+            series: Series;
             xAxis: number;
             yAxis: number;
         }
@@ -264,7 +264,7 @@ bindingsUtils.manageIndicators = function (
         yAxis,
         parentSeries,
         defaultOptions,
-        series: LineSeries;
+        series: Series;
 
     if (data.actionType === 'edit') {
         navigation.fieldsToOptions(data.fields, seriesConfig);
@@ -301,7 +301,7 @@ bindingsUtils.manageIndicators = function (
         // by parent series (#13950).
         if (
             typeof parentSeries !== 'undefined' &&
-            parentSeries instanceof LineSeries &&
+            parentSeries instanceof Series &&
             parentSeries.getDGApproximation() === 'sum' &&
             // If indicator has defined approx type, use it (e.g. "ranges")
             !defined(

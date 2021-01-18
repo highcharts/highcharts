@@ -19,9 +19,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ohlcProto = _a.ohlc.prototype;
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
 import './SMAComposition.js';
@@ -35,10 +35,6 @@ var generateMessage = RequiredIndicatorMixin.generateMessage;
  * The SMA series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.sma
- *
- * @augments Highcharts.Series
  */
 var SMAIndicator = /** @class */ (function (_super) {
     __extends(SMAIndicator, _super);
@@ -242,8 +238,8 @@ var SMAIndicator = /** @class */ (function (_super) {
         // Check whether all required indicators are loaded, else return
         // the object with missing indicator's name.
         this.requiredIndicators.forEach(function (indicator) {
-            if (BaseSeries.seriesTypes[indicator]) {
-                BaseSeries.seriesTypes[indicator].prototype.requireIndicators();
+            if (SeriesRegistry.seriesTypes[indicator]) {
+                SeriesRegistry.seriesTypes[indicator].prototype.requireIndicators();
             }
             else {
                 obj.allLoaded = false;
@@ -346,7 +342,7 @@ extend(SMAIndicator.prototype, {
     requiredIndicators: [],
     useCommonDataGrouping: true
 });
-BaseSeries.registerSeriesType('sma', SMAIndicator);
+SeriesRegistry.registerSeriesType('sma', SMAIndicator);
 /* *
  *
  *  Default Export

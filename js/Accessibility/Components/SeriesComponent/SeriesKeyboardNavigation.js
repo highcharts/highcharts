@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import Series from '../../../Core/Series/Series.js';
-var seriesTypes = Series.seriesTypes;
 import Chart from '../../../Core/Chart/Chart.js';
-import LineSeries from '../../../Series/Line/LineSeries.js';
 import Point from '../../../Core/Series/Point.js';
+import Series from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent;
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
@@ -28,7 +28,7 @@ import '../../../Series/Pie/PieSeries.js';
  * Set for which series types it makes sense to move to the closest point with
  * up/down arrows, and which series types should just move to next series.
  */
-LineSeries.prototype.keyboardMoveVertical = true;
+Series.prototype.keyboardMoveVertical = true;
 ['column', 'pie'].forEach(function (type) {
     if (seriesTypes[type]) {
         seriesTypes[type].prototype.keyboardMoveVertical = false;
@@ -237,7 +237,7 @@ Chart.prototype.highlightAdjacentPoint = function (next) {
  *
  * @return {boolean|Highcharts.Point}
  */
-LineSeries.prototype.highlightFirstValidPoint = function () {
+Series.prototype.highlightFirstValidPoint = function () {
     var curPoint = this.chart.highlightedPoint, start = (curPoint && curPoint.series) === this ?
         getPointIndex(curPoint) :
         0, points = this.points, len = points.length;
@@ -403,7 +403,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     init: function () {
         var keyboardNavigation = this, chart = this.chart, e = this.eventProvider = new EventProvider();
-        e.addEvent(LineSeries, 'destroy', function () {
+        e.addEvent(Series, 'destroy', function () {
             return keyboardNavigation.onSeriesDestroy(this);
         });
         e.addEvent(chart, 'afterDrilldown', function () {

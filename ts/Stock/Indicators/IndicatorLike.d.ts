@@ -12,8 +12,8 @@
  *
  * */
 
-import RequireIndicatorsResultObject from './RequireIndicatorsResultObject';
-import LineSeries from '../../Series/Line/LineSeries';
+import type RequireIndicatorsResultObject from './RequireIndicatorsResultObject';
+import type Series from '../../Core/Series/Series';
 
 /* *
  *
@@ -21,7 +21,7 @@ import LineSeries from '../../Series/Line/LineSeries';
  *
  * */
 
-export interface IndicatorLike extends LineSeries {
+export interface IndicatorLike extends Series {
     useCommonDataGrouping?: boolean;
     /** @requires indicators/indicators */
     requireIndicators(): RequireIndicatorsResultObject;

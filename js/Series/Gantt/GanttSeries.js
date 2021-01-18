@@ -23,9 +23,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, XRangeSeries = _a.xrange;
 import GanttPoint from './GanttPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, XRangeSeries = SeriesRegistry.seriesTypes.xrange;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, splat = U.splat;
 import '../../Core/Axis/TreeGridAxis.js';
@@ -197,9 +197,9 @@ extend(GanttSeries.prototype, {
     keyboardMoveVertical: false,
     pointArrayMap: ['start', 'end', 'y'],
     pointClass: GanttPoint,
-    setData: LineSeries.prototype.setData
+    setData: Series.prototype.setData
 });
-BaseSeries.registerSeriesType('gantt', GanttSeries);
+SeriesRegistry.registerSeriesType('gantt', GanttSeries);
 /* *
  *
  *  Default Export

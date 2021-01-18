@@ -21,12 +21,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, BubbleSeries = _a.bubble, LineSeries = _a.line;
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import H from '../../Core/Globals.js';
 import PackedBubblePoint from './PackedBubblePoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, BubbleSeries = SeriesRegistry.seriesTypes.bubble;
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../../Series/Networkgraph/DraggableNodes.js';
@@ -286,7 +286,7 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
                     this.parentNode.dataLabel.destroy();
             }
         }
-        LineSeries.prototype.destroy.apply(this, arguments);
+        Series.prototype.destroy.apply(this, arguments);
     };
     /**
      * Packedbubble has two separate collecions of nodes if split, render
@@ -296,14 +296,14 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
     PackedBubbleSeries.prototype.drawDataLabels = function () {
         var textPath = this.options.dataLabels.textPath, points = this.points;
         // Render node labels:
-        LineSeries.prototype.drawDataLabels.apply(this, arguments);
+        Series.prototype.drawDataLabels.apply(this, arguments);
         // Render parentNode labels:
         if (this.parentNode) {
             this.parentNode.formatPrefix = 'parentNode';
             this.points = [this.parentNode];
             this.options.dataLabels.textPath =
                 this.options.dataLabels.parentNodeTextPath;
-            LineSeries.prototype.drawDataLabels.apply(this, arguments);
+            Series.prototype.drawDataLabels.apply(this, arguments);
             // Restore nodes
             this.points = points;
             this.options.dataLabels.textPath = textPath;
@@ -413,7 +413,7 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
         series.radii = radii;
     };
     PackedBubbleSeries.prototype.init = function () {
-        LineSeries.prototype.init.apply(this, arguments);
+        Series.prototype.init.apply(this, arguments);
         /* eslint-disable no-invalid-this */
         // When one series is modified, the others need to be recomputed
         this.eventsToUnbind.push(addEvent(this, 'updatedData', function () {
@@ -591,7 +591,7 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
     };
     PackedBubbleSeries.prototype.render = function () {
         var series = this, dataLabels = [];
-        LineSeries.prototype.render.apply(this, arguments);
+        Series.prototype.render.apply(this, arguments);
         // #10823 - dataLabels should stay visible
         // when enabled allowOverlap.
         if (!series.options.dataLabels.allowOverlap) {
@@ -694,7 +694,7 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
      */
     PackedBubbleSeries.prototype.setVisible = function () {
         var series = this;
-        LineSeries.prototype.setVisible.apply(series, arguments);
+        Series.prototype.setVisible.apply(series, arguments);
         if (series.parentNodeLayout && series.graph) {
             if (series.visible) {
                 series.graph.show();
@@ -1085,7 +1085,7 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
     return PackedBubbleSeries;
 }(BubbleSeries));
 extend(PackedBubbleSeries.prototype, {
-    alignDataLabel: LineSeries.prototype.alignDataLabel,
+    alignDataLabel: Series.prototype.alignDataLabel,
     axisTypes: [],
     directTouch: true,
     /**
@@ -1129,7 +1129,7 @@ extend(PackedBubbleSeries.prototype, {
     searchPoint: H.noop,
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
 });
-BaseSeries.registerSeriesType('packedbubble', PackedBubbleSeries);
+SeriesRegistry.registerSeriesType('packedbubble', PackedBubbleSeries);
 /* *
  *
  *  Default Export

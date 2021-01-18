@@ -24,14 +24,14 @@ import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../Core/Series/Series.js';
+import H from '../../Core/Globals.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        line: LineSeries,
         scatter: ScatterSeries
     }
-} = BaseSeries;
-import H from '../../Core/Globals.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -309,7 +309,7 @@ class VectorSeries extends ScatterSeries {
      * @private
      */
     public translate(): void {
-        LineSeries.prototype.translate.call(this);
+        Series.prototype.translate.call(this);
 
         this.lengthMax = arrayMax(this.lengthData as any);
     }
@@ -367,7 +367,7 @@ declare module '../../Core/Series/SeriesType' {
         vector: typeof VectorSeries;
     }
 }
-BaseSeries.registerSeriesType('vector', VectorSeries);
+SeriesRegistry.registerSeriesType('vector', VectorSeries);
 
 /* *
  *

@@ -33,8 +33,12 @@ import type WaterfallPoint from '../Series/Waterfall/WaterfallPoint';
 import type XRangePoint from '../Series/XRange/XRangePoint';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes
+} = SeriesRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -233,176 +237,6 @@ declare global {
 }
 
 /**
- * Current drag and drop position.
- *
- * @interface Highcharts.DragDropPositionObject
- *//**
- * Chart x position
- * @name Highcharts.DragDropPositionObject#chartX
- * @type {number}
- *//**
- * Chart y position
- * @name Highcharts.DragDropPositionObject#chartY
- * @type {number}
- *//**
- * Drag and drop guide box.
- * @name Highcharts.DragDropPositionObject#guideBox
- * @type {Highcharts.BBoxObject|undefined}
- *//**
- * Updated point data.
- * @name Highcharts.DragDropPositionObject#points
- * @type {Highcharts.Dictionary<Highcharts.Dictionary<number>>}
- *//**
- * Delta of previous x position.
- * @name Highcharts.DragDropPositionObject#prevdX
- * @type {number|undefined}
- *//**
- * Delta of previous y position.
- * @name Highcharts.DragDropPositionObject#prevdY
- * @type {number|undefined}
- */
-
-/**
- * Function callback to execute while series points are dragged. Return false to
- * stop the default drag action.
- *
- * @callback Highcharts.PointDragCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.PointDragEventObject} event
- *        Event arguments.
- */
-
-/**
- * Contains information about a points new values.
- *
- * @interface Highcharts.PointDragDropObject
- *//**
- * New values.
- * @name Highcharts.PointDragDropObject#newValues
- * @type {Highcharts.Dictionary<number>}
- *//**
- * Updated point.
- * @name Highcharts.PointDragDropObject#point
- * @type {Highcharts.Point}
- */
-
-/**
- * Contains common information for a drag event on series points.
- *
- * @interface Highcharts.PointDragEventObject
- *//**
- * New point after drag if only a single one.
- * @name Highcharts.PointDropEventObject#newPoint
- * @type {Highcharts.PointDragDropObject|undefined}
- *//**
- * New point id after drag if only a single one.
- * @name Highcharts.PointDropEventObject#newPointId
- * @type {string|undefined}
- *//**
- * New points during drag.
- * @name Highcharts.PointDragEventObject#newPoints
- * @type {Highcharts.Dictionary<Highcharts.PointDragDropObject>}
- *//**
- * Original data.
- * @name Highcharts.PointDragEventObject#origin
- * @type {Highcharts.DragDropPositionObject}
- *//**
- * Prevent default drag action.
- * @name Highcharts.PointDragEventObject#preventDefault
- * @type {Function}
- *//**
- * Target point that caused the event.
- * @name Highcharts.PointDragEventObject#target
- * @type {Highcharts.Point}
- *//**
- * Event type.
- * @name Highcharts.PointDragEventObject#type
- * @type {"drag"}
- */
-
-/**
- * Function callback to execute when a series point is dragged.
- *
- * @callback Highcharts.PointDragStartCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.PointDragStartEventObject} event
- *        Event arguments.
- */
-
-/**
- * Contains common information for a drag event on series point.
- *
- * @interface Highcharts.PointDragStartEventObject
- * @extends global.MouseEvent
- *//**
- * Data property being dragged.
- * @name Highcharts.PointDragStartEventObject#updateProp
- * @type {string|undefined}
- */
-
-/**
- * Function callback to execute when series points are dropped.
- *
- * @callback Highcharts.PointDropCallbackFunction
- *
- * @param {Highcharts.Point} this
- *        Point where the event occured.
- *
- * @param {Highcharts.PointDropEventObject} event
- *        Event arguments.
- */
-
-/**
- * Contains common information for a drop event on series points.
- *
- * @interface Highcharts.PointDropEventObject
- *//**
- * New point after drop if only a single one.
- * @name Highcharts.PointDropEventObject#newPoint
- * @type {Highcharts.PointDragDropObject|undefined}
- *//**
- * New point id after drop if only a single one.
- * @name Highcharts.PointDropEventObject#newPointId
- * @type {string|undefined}
- *//**
- * New points after drop.
- * @name Highcharts.PointDropEventObject#newPoints
- * @type {Highcharts.Dictionary<Highcharts.PointDragDropObject>}
- *//**
- * Number of new points.
- * @name Highcharts.PointDropEventObject#numNewPoints
- * @type {number}
- *//**
- * Original data.
- * @name Highcharts.PointDropEventObject#origin
- * @type {Highcharts.DragDropPositionObject}
- *//**
- * Prevent default drop action.
- * @name Highcharts.PointDropEventObject#preventDefault
- * @type {Function}
- *//**
- * Target point that caused the event.
- * @name Highcharts.PointDropEventObject#target
- * @type {Highcharts.Point}
- *//**
- * Event type.
- * @name Highcharts.PointDropEventObject#type
- * @type {"drop"}
- */
-
-''; // detaches doclets above
-
-import '../Series/Line/LineSeries.js';
-
-var seriesTypes = H.seriesTypes;
-
-/**
  * Flip a side property, used with resizeRect. If input side is "left", return
  * "right" etc.
  *
@@ -490,7 +324,7 @@ const horizHandleFormatter = function (
 };
 
 // Line series - only draggableX/Y, no drag handles
-const lineDragDropProps = seriesTypes.line.prototype.dragDropProps = {
+const lineDragDropProps = Series.prototype.dragDropProps = {
     x: {
         axis: 'x',
         move: true
@@ -1612,7 +1446,7 @@ const defaultDragHandleOptions: Highcharts.DragDropHandleOptionsObject = {
  * @return {boolean}
  *         True if the series is using drag/drop.
  */
-function isSeriesDraggable(series: LineSeries): (boolean|undefined) {
+function isSeriesDraggable(series: Series): (boolean|undefined) {
     var props = ['draggableX', 'draggableY'],
         i;
 
@@ -2423,7 +2257,7 @@ Point.prototype.getDropValues = function (
  * @return {Highcharts.SVGElement}
  *         An SVG element for the guide box, not added to DOM.
  */
-LineSeries.prototype.getGuideBox = function (
+Series.prototype.getGuideBox = function (
     points: Array<Point>
 ): SVGElement {
     var chart = this.chart,
@@ -3088,3 +2922,175 @@ addEvent(Chart, 'render', function (): void {
         addDragDropEvents(this);
     }
 });
+
+/* *
+ *
+ *  API Options
+ *
+ * */
+
+/**
+ * Current drag and drop position.
+ *
+ * @interface Highcharts.DragDropPositionObject
+ *//**
+ * Chart x position
+ * @name Highcharts.DragDropPositionObject#chartX
+ * @type {number}
+ *//**
+ * Chart y position
+ * @name Highcharts.DragDropPositionObject#chartY
+ * @type {number}
+ *//**
+ * Drag and drop guide box.
+ * @name Highcharts.DragDropPositionObject#guideBox
+ * @type {Highcharts.BBoxObject|undefined}
+ *//**
+ * Updated point data.
+ * @name Highcharts.DragDropPositionObject#points
+ * @type {Highcharts.Dictionary<Highcharts.Dictionary<number>>}
+ *//**
+ * Delta of previous x position.
+ * @name Highcharts.DragDropPositionObject#prevdX
+ * @type {number|undefined}
+ *//**
+ * Delta of previous y position.
+ * @name Highcharts.DragDropPositionObject#prevdY
+ * @type {number|undefined}
+ */
+
+/**
+ * Function callback to execute while series points are dragged. Return false to
+ * stop the default drag action.
+ *
+ * @callback Highcharts.PointDragCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointDragEventObject} event
+ *        Event arguments.
+ */
+
+/**
+ * Contains information about a points new values.
+ *
+ * @interface Highcharts.PointDragDropObject
+ *//**
+ * New values.
+ * @name Highcharts.PointDragDropObject#newValues
+ * @type {Highcharts.Dictionary<number>}
+ *//**
+ * Updated point.
+ * @name Highcharts.PointDragDropObject#point
+ * @type {Highcharts.Point}
+ */
+
+/**
+ * Contains common information for a drag event on series points.
+ *
+ * @interface Highcharts.PointDragEventObject
+ *//**
+ * New point after drag if only a single one.
+ * @name Highcharts.PointDropEventObject#newPoint
+ * @type {Highcharts.PointDragDropObject|undefined}
+ *//**
+ * New point id after drag if only a single one.
+ * @name Highcharts.PointDropEventObject#newPointId
+ * @type {string|undefined}
+ *//**
+ * New points during drag.
+ * @name Highcharts.PointDragEventObject#newPoints
+ * @type {Highcharts.Dictionary<Highcharts.PointDragDropObject>}
+ *//**
+ * Original data.
+ * @name Highcharts.PointDragEventObject#origin
+ * @type {Highcharts.DragDropPositionObject}
+ *//**
+ * Prevent default drag action.
+ * @name Highcharts.PointDragEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Target point that caused the event.
+ * @name Highcharts.PointDragEventObject#target
+ * @type {Highcharts.Point}
+ *//**
+ * Event type.
+ * @name Highcharts.PointDragEventObject#type
+ * @type {"drag"}
+ */
+
+/**
+ * Function callback to execute when a series point is dragged.
+ *
+ * @callback Highcharts.PointDragStartCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointDragStartEventObject} event
+ *        Event arguments.
+ */
+
+/**
+ * Contains common information for a drag event on series point.
+ *
+ * @interface Highcharts.PointDragStartEventObject
+ * @extends global.MouseEvent
+ *//**
+ * Data property being dragged.
+ * @name Highcharts.PointDragStartEventObject#updateProp
+ * @type {string|undefined}
+ */
+
+/**
+ * Function callback to execute when series points are dropped.
+ *
+ * @callback Highcharts.PointDropCallbackFunction
+ *
+ * @param {Highcharts.Point} this
+ *        Point where the event occured.
+ *
+ * @param {Highcharts.PointDropEventObject} event
+ *        Event arguments.
+ */
+
+/**
+ * Contains common information for a drop event on series points.
+ *
+ * @interface Highcharts.PointDropEventObject
+ *//**
+ * New point after drop if only a single one.
+ * @name Highcharts.PointDropEventObject#newPoint
+ * @type {Highcharts.PointDragDropObject|undefined}
+ *//**
+ * New point id after drop if only a single one.
+ * @name Highcharts.PointDropEventObject#newPointId
+ * @type {string|undefined}
+ *//**
+ * New points after drop.
+ * @name Highcharts.PointDropEventObject#newPoints
+ * @type {Highcharts.Dictionary<Highcharts.PointDragDropObject>}
+ *//**
+ * Number of new points.
+ * @name Highcharts.PointDropEventObject#numNewPoints
+ * @type {number}
+ *//**
+ * Original data.
+ * @name Highcharts.PointDropEventObject#origin
+ * @type {Highcharts.DragDropPositionObject}
+ *//**
+ * Prevent default drop action.
+ * @name Highcharts.PointDropEventObject#preventDefault
+ * @type {Function}
+ *//**
+ * Target point that caused the event.
+ * @name Highcharts.PointDropEventObject#target
+ * @type {Highcharts.Point}
+ *//**
+ * Event type.
+ * @name Highcharts.PointDropEventObject#type
+ * @type {"drop"}
+ */
+
+''; // detaches doclets above

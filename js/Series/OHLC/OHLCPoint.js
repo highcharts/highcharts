@@ -21,8 +21,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var ColumnSeries = BaseSeries.seriesTypes.column;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ColumnSeries = SeriesRegistry.seriesTypes.column;
 /* *
  *
  *  Class
@@ -65,6 +65,40 @@ var OHLCPoint = /** @class */ (function (_super) {
             (this.open < this.close ?
                 ' highcharts-point-up' :
                 ' highcharts-point-down');
+    };
+    /**
+     * Save upColor as point color (#14826).
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#resolveUpColor
+     */
+    OHLCPoint.prototype.resolveUpColor = function () {
+        if (this.open < this.close &&
+            !this.options.color &&
+            this.series.options.upColor) {
+            this.color = this.series.options.upColor;
+        }
+    };
+    /**
+     * Extend the parent method by saving upColor.
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#resolveColor
+     */
+    OHLCPoint.prototype.resolveColor = function () {
+        _super.prototype.resolveColor.call(this);
+        this.resolveUpColor();
+    };
+    /**
+     * Extend the parent method by saving upColor.
+     * @private
+     * @function Highcharts.seriesTypes.ohlc#getZone
+     *
+     * @return {Highcharts.SeriesZonesOptionsObject}
+     *         The zone item.
+     */
+    OHLCPoint.prototype.getZone = function () {
+        var zone = _super.prototype.getZone.call(this);
+        this.resolveUpColor();
+        return zone;
     };
     return OHLCPoint;
 }(ColumnSeries.prototype.pointClass));

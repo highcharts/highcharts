@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import ColumnSeries from '../Column/ColumnSeries.js';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 /* *
@@ -77,7 +77,7 @@ var BarSeries = /** @class */ (function (_super) {
 extend(BarSeries.prototype, {
     inverted: true
 });
-BaseSeries.registerSeriesType('bar', BarSeries);
+SeriesRegistry.registerSeriesType('bar', BarSeries);
 /* *
  *
  *  Default Export

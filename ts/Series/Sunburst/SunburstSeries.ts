@@ -28,14 +28,6 @@ import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeriesOptions from './SunburstSeriesOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type TreemapSeriesType from '../Treemap/TreemapSeries';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries,
-        treemap: TreemapSeries
-    }
-} = BaseSeries;
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 const {
     getCenter,
@@ -43,6 +35,14 @@ const {
 } = CenteredSeriesMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    series: Series,
+    seriesTypes: {
+        column: ColumnSeries,
+        treemap: TreemapSeries
+    }
+} = SeriesRegistry;
 import SunburstPoint from './SunburstPoint.js';
 import SunburstUtilities from './SunburstUtilities.js';
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
@@ -895,7 +895,7 @@ class SunburstSeries extends TreemapSeries {
         if (hackDataLabelAnimation && addedHack) {
             series.hasRendered = false;
             (series.options.dataLabels as any).defer = true;
-            LineSeries.prototype.drawDataLabels.call(series);
+            Series.prototype.drawDataLabels.call(series);
             series.hasRendered = true;
             // If animateLabels is called before labels were hidden, then call
             // it again.
@@ -903,7 +903,7 @@ class SunburstSeries extends TreemapSeries {
                 (animateLabels as any)();
             }
         } else {
-            LineSeries.prototype.drawDataLabels.call(series);
+            Series.prototype.drawDataLabels.call(series);
         }
     }
 
@@ -1047,7 +1047,7 @@ class SunburstSeries extends TreemapSeries {
 
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
-        LineSeries.prototype.translate.call(series);
+        Series.prototype.translate.call(series);
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
 
@@ -1198,7 +1198,7 @@ declare module '../../Core/Series/SeriesType' {
         sunburst: typeof SunburstSeries;
     }
 }
-BaseSeries.registerSeriesType('sunburst', SunburstSeries);
+SeriesRegistry.registerSeriesType('sunburst', SunburstSeries);
 
 /* *
  *

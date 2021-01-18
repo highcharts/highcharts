@@ -31,6 +31,8 @@ import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 import A from '../../Animation/AnimationUtilities.js';
+import AST from '../HTML/AST.js';
+
 const {
     animate,
     animObject,
@@ -2288,7 +2290,7 @@ class SVGElement {
             }
         }, textPathOptions);
 
-        attrs = textPathOptions.attributes;
+        attrs = AST.filterUserAttributes(textPathOptions.attributes);
 
         if (path && textPathOptions && textPathOptions.enabled) {
             // In case of fixed width for a text, string is rebuilt

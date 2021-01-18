@@ -21,11 +21,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
@@ -38,9 +38,9 @@ var extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick
  *
  * @private
  * @class
- * @name Highcharts.seriesTypes.area
+ * @name AreaSeries
  *
- * @augments Highcharts.Series
+ * @augments LineSeries
  */
 var AreaSeries = /** @class */ (function (_super) {
     __extends(AreaSeries, _super);
@@ -73,7 +73,7 @@ var AreaSeries = /** @class */ (function (_super) {
         // Define or reset areaPath
         this.areaPath = [];
         // Call the base method
-        LineSeries.prototype.drawGraph.apply(this);
+        _super.prototype.drawGraph.apply(this);
         // Define local variables
         var series = this, areaPath = this.areaPath, options = this.options, zones = this.zones, props = [[
                 'area',
@@ -459,7 +459,7 @@ extend(AreaSeries.prototype, {
     singleStacks: false,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
-BaseSeries.registerSeriesType('area', AreaSeries);
+SeriesRegistry.registerSeriesType('area', AreaSeries);
 /* *
  *
  *  Default Export

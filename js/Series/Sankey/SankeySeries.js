@@ -23,12 +23,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import SankeyPoint from './SankeyPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 var getLevelOptions = TreeSeriesMixin.getLevelOptions;
 import U from '../../Core/Utilities.js';
@@ -822,7 +822,7 @@ var SankeySeries = /** @class */ (function (_super) {
     return SankeySeries;
 }(ColumnSeries));
 extend(SankeySeries.prototype, {
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: NodesMixin.createNode,
@@ -836,7 +836,7 @@ extend(SankeySeries.prototype, {
     searchPoint: H.noop,
     setData: NodesMixin.setData
 });
-BaseSeries.registerSeriesType('sankey', SankeySeries);
+SeriesRegistry.registerSeriesType('sankey', SankeySeries);
 /* *
  *
  *  Default Export

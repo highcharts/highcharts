@@ -16,12 +16,12 @@
  *
  * */
 import type VariwidePointOptions from './VariwidePointOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import VariwideSeries from './VariwideSeries.js';
 import U from '../../Core/Utilities.js';
 const { isNumber } = U;

@@ -20,14 +20,14 @@
 import type HistogramPoint from './HistogramPoint';
 import type HistogramPointOptions from './HistogramPointOptions';
 import type HistogramSeriesOptions from './HistogramSeriesOptions';
-import type LineSeries from '../Line/LineSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import type Series from '../../Core/Series/Series';
+import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     arrayMax,
@@ -48,17 +48,17 @@ const {
  * base series
  **/
 var binsNumberFormulas: Record<string, Function> = {
-    'square-root': function (baseSeries: LineSeries): number {
+    'square-root': function (baseSeries: Series): number {
         return Math.ceil(Math.sqrt((baseSeries.options.data as any).length));
     },
 
-    'sturges': function (baseSeries: LineSeries): number {
+    'sturges': function (baseSeries: Series): number {
         return Math.ceil(
             Math.log((baseSeries.options.data as any).length) * Math.LOG2E
         );
     },
 
-    'rice': function (baseSeries: LineSeries): number {
+    'rice': function (baseSeries: Series): number {
         return Math.ceil(
             2 * Math.pow((baseSeries.options.data as any).length, 1 / 3)
         );
@@ -288,6 +288,7 @@ class HistogramSeries extends ColumnSeries {
         var yData = (this.baseSeries as any).yData;
 
         if (!yData.length) {
+            this.setData([]);
             return;
         }
 
@@ -340,7 +341,7 @@ declare module '../../Core/Series/SeriesType' {
         histogram: typeof HistogramSeries;
     }
 }
-BaseSeries.registerSeriesType('histogram', HistogramSeries);
+SeriesRegistry.registerSeriesType('histogram', HistogramSeries);
 
 /* *
  *

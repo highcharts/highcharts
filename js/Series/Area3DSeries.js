@@ -8,11 +8,11 @@
  *
  * */
 'use strict';
-import LineSeries from './Line/LineSeries.js';
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Core/Utilities.js';
 var pick = U.pick, wrap = U.wrap;
 /* eslint-disable no-invalid-this */
@@ -22,7 +22,7 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
     if (!series.chart.is3d()) {
         return svgPath;
     }
-    var getGraphPath = LineSeries.prototype.getGraphPath, graphPath = [], options = series.options, stacking = options.stacking, bottomPath, bottomPoints = [], graphPoints = [], i, areaPath, connectNulls = pick(// #10574
+    var getGraphPath = Series.prototype.getGraphPath, graphPath = [], options = series.options, stacking = options.stacking, bottomPath, bottomPoints = [], graphPoints = [], i, areaPath, connectNulls = pick(// #10574
     options.connectNulls, stacking === 'percent'), translatedThreshold = Math.round(// #10909
     series.yAxis.getThreshold(options.threshold)), options3d;
     if (series.rawPointsX) {

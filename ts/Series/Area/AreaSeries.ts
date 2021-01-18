@@ -22,11 +22,15 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type StackingAxis from '../../Core/Axis/StackingAxis';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../Line/LineSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        line: LineSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -65,9 +69,9 @@ declare module '../../Core/Series/SeriesLike' {
  *
  * @private
  * @class
- * @name Highcharts.seriesTypes.area
+ * @name AreaSeries
  *
- * @augments Highcharts.Series
+ * @augments LineSeries
  */
 class AreaSeries extends LineSeries {
 
@@ -245,7 +249,7 @@ class AreaSeries extends LineSeries {
         this.areaPath = [];
 
         // Call the base method
-        LineSeries.prototype.drawGraph.apply(this);
+        super.drawGraph.apply(this);
 
         // Define local variables
         var series = this,
@@ -645,7 +649,7 @@ declare module '../../Core/Series/SeriesType' {
         area: typeof AreaSeries;
     }
 }
-BaseSeries.registerSeriesType('area', AreaSeries);
+SeriesRegistry.registerSeriesType('area', AreaSeries);
 
 /* *
  *

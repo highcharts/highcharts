@@ -926,3 +926,23 @@ QUnit.test('Defer test #12901', function (assert) {
         TestUtilities.lolexUninstall(clock);
     }
 });
+
+QUnit.test('#14351: Tweening NaN path', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        400
+    );
+
+    const el = ren.path();
+    const fx = new Highcharts.Fx(el);
+    fx.paths = fx.initPath(el, [['M', NaN, NaN]], [['M', 10, 10]]);
+    fx.now = 0.5;
+    fx.dSetter();
+
+    assert.strictEqual(
+        el.d,
+        'M 10 10',
+        'It should not attempt to tween NaN values'
+    );
+});

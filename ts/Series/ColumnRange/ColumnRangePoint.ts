@@ -19,7 +19,7 @@
 import type ColumnRangePointOptions from './ColumnRangePointOptions.js';
 import type ColumnRangeSeries from './ColumnRangeSeries.js';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: {
@@ -33,8 +33,7 @@ const {
             }
         }
     }
-} = BaseSeries;
-
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 

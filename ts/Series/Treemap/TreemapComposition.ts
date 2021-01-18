@@ -18,12 +18,8 @@
  *
  * */
 
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = BaseSeries;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { series: Series } = SeriesRegistry;
 import TreemapUtilities from './TreemapUtilities.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -39,7 +35,7 @@ const {
 
 let treemapAxisDefaultValues = false;
 
-addEvent(LineSeries, 'afterBindAxes', function (): void {
+addEvent(Series, 'afterBindAxes', function (): void {
     // eslint-disable-next-line no-invalid-this
     var series = this,
         xAxis = series.xAxis,

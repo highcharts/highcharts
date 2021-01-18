@@ -19,12 +19,12 @@
 import type SplinePoint from './SplinePoint';
 import type SplineSeriesOptions from './SplineSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         line: LineSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -35,10 +35,6 @@ const {
  * Spline series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.spline
- *
- * @augments Highcarts.Series
  */
 class SplineSeries extends LineSeries {
 
@@ -273,7 +269,7 @@ declare module '../../Core/Series/SeriesType' {
         spline: typeof SplineSeries;
     }
 }
-BaseSeries.registerSeriesType('spline', SplineSeries);
+SeriesRegistry.registerSeriesType('spline', SplineSeries);
 
 /* *
  *

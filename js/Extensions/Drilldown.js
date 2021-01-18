@@ -13,18 +13,18 @@
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Axis from '../Core/Axis/Axis.js';
-import BaseSeries from '../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import Chart from '../Core/Chart/Chart.js';
 import Color from '../Core/Color/Color.js';
 import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 var noop = H.noop;
-import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import Tick from '../Core/Axis/Tick.js';
 import U from '../Core/Utilities.js';
@@ -142,7 +142,6 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, extend = U.extend, fireE
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import '../Series/Line/LineSeries.js';
 import '../Series/Column/ColumnSeries.js';
 var PieSeries = seriesTypes.pie, ddSeriesId = 1;
 // Add language
@@ -663,6 +662,7 @@ Chart.prototype.drillUp = function () {
                 seriesOptions: level.seriesPurgedOptions ||
                     level.seriesOptions
             });
+            this.resetZoomButton && this.resetZoomButton.destroy(); // #8095
             if (newSeries.type === oldSeries.type) {
                 newSeries.drilldownLevel = level;
                 newSeries.options.animation =
@@ -715,10 +715,15 @@ addEvent(Chart, 'afterInit', function () {
         }
     };
 });
-// Don't show the reset button if we already are displaying the drillUp button.
-addEvent(Chart, 'beforeShowResetZoom', function () {
-    if (this.drillUpButton) {
-        return false;
+// Shift the drillUpButton to make the space for resetZoomButton, #8095.
+addEvent(Chart, 'afterShowResetZoom', function () {
+    var chart = this, bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(), buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton;
+    if (this.drillUpButton && bbox && buttonOptions && buttonOptions.position && buttonOptions.position.x) {
+        this.drillUpButton.align({
+            x: buttonOptions.position.x - bbox.width - 10,
+            y: buttonOptions.position.y,
+            align: buttonOptions.position.align
+        }, false, buttonOptions.relativeTo || 'plotBox');
     }
 });
 addEvent(Chart, 'render', function () {
@@ -1060,7 +1065,7 @@ var handlePointClick = function (e) {
         point.doDrilldown(void 0, void 0, e);
     }
 };
-addEvent(LineSeries, 'afterDrawDataLabels', function () {
+addEvent(Series, 'afterDrawDataLabels', function () {
     var css = this.chart.options.drilldown.activeDataLabelStyle, renderer = this.chart.renderer, styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         var dataLabelsOptions = point.options.dataLabels, pointCSS = pick(point.dlOptions, dataLabelsOptions && dataLabelsOptions.style, {});
@@ -1088,7 +1093,7 @@ var applyCursorCSS = function (element, cursor, addClass, styledMode) {
     }
 };
 // Mark the trackers with a pointer
-addEvent(LineSeries, 'afterDrawTracker', function () {
+addEvent(Series, 'afterDrawTracker', function () {
     var styledMode = this.chart.styledMode;
     this.points.forEach(function (point) {
         if (point.drilldown && point.graphic) {
@@ -1103,5 +1108,23 @@ addEvent(Point, 'afterSetState', function () {
     }
     else if (this.series.halo) {
         applyCursorCSS(this.series.halo, 'auto', false, styledMode);
+    }
+});
+// After zooming out, shift the drillUpButton to the previous position, #8095.
+addEvent(H.Chart, 'selection', function (event) {
+    if (event.resetSelection === true && this.drillUpButton) {
+        var buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
+        if (buttonOptions && buttonOptions.position) {
+            this.drillUpButton.align({
+                x: buttonOptions.position.x,
+                y: buttonOptions.position.y,
+                align: buttonOptions.position.align
+            }, false, buttonOptions.relativeTo || 'plotBox');
+        }
+    }
+});
+addEvent(H.Chart, 'drillup', function () {
+    if (this.resetZoomButton) {
+        this.resetZoomButton = this.resetZoomButton.destroy();
     }
 });

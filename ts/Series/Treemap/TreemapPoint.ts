@@ -21,14 +21,15 @@
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type TreemapPointOptions from './TreemapPointOptions';
 import type TreemapSeries from './TreemapSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import DrawPointMixin from '../../Mixins/DrawPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: {
+        prototype: {
+            pointClass: Point
+        }
+    },
     seriesTypes: {
-        line: {
-            prototype: {
-                pointClass: LinePoint
-            }
-        },
         pie: {
             prototype: {
                 pointClass: PiePoint
@@ -40,8 +41,7 @@ const {
             }
         }
     }
-} = BaseSeries;
-import DrawPointMixin from '../../Mixins/DrawPoint.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -88,7 +88,7 @@ class TreemapPoint extends ScatterPoint implements Highcharts.DrawPoint {
     /* eslint-disable valid-jsdoc */
 
     public getClassName(): string {
-        var className = LinePoint.prototype.getClassName.call(this),
+        var className = Point.prototype.getClassName.call(this),
             series = this.series,
             options = series.options;
 
@@ -120,7 +120,7 @@ class TreemapPoint extends ScatterPoint implements Highcharts.DrawPoint {
     }
 
     public setState(state: StatesOptionsKey): void {
-        LinePoint.prototype.setState.call(this, state);
+        Point.prototype.setState.call(this, state);
 
         // Graphic does not exist when point is not visible.
         if (this.graphic) {

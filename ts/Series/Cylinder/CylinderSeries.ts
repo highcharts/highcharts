@@ -21,13 +21,13 @@
  * */
 
 import type CylinderSeriesOptions from './CylinderSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import CylinderPoint from './CylinderPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
-import CylinderPoint from './CylinderPoint.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -116,7 +116,7 @@ declare module '../../Core/Series/SeriesType' {
         cylinder: typeof CylinderSeries;
     }
 }
-BaseSeries.registerSeriesType('cylinder', CylinderSeries);
+SeriesRegistry.registerSeriesType('cylinder', CylinderSeries);
 
 /* *
  *

@@ -368,7 +368,7 @@ var Axis = /** @class */ (function () {
          */
         axis.coll = axis.coll || (isXAxis ? 'xAxis' : 'yAxis');
         fireEvent(this, 'init', { userOptions: userOptions });
-        axis.opposite = userOptions.opposite; // needed in setOptions
+        axis.opposite = pick(userOptions.opposite, axis.opposite); // needed in setOptions
         /**
          * The side on which the axis is rendered. 0 is top, 1 is right, 2
          * is bottom and 3 is left.
@@ -376,9 +376,10 @@ var Axis = /** @class */ (function () {
          * @name Highcharts.Axis#side
          * @type {number}
          */
-        axis.side = userOptions.side || (axis.horiz ?
+        axis.side = pick(userOptions.side, axis.side, (axis.horiz ?
             (axis.opposite ? 0 : 2) : // top : bottom
-            (axis.opposite ? 1 : 3)); // right : left
+            (axis.opposite ? 1 : 3)) // right : left
+        );
         /**
          * Current options for the axis after merge of defaults and user's
          * options.
@@ -406,7 +407,7 @@ var Axis = /** @class */ (function () {
          * @name Highcharts.Axis#reversed
          * @type {boolean}
          */
-        axis.reversed = options.reversed;
+        axis.reversed = pick(options.reversed, axis.reversed);
         axis.visible = options.visible !== false;
         axis.zoomEnabled = options.zoomEnabled !== false;
         // Initial categories
@@ -2762,12 +2763,12 @@ var Axis = /** @class */ (function () {
             }
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
+                axis._addedPlotLB = true;
                 (options.plotLines || [])
                     .concat(options.plotBands || [])
                     .forEach(function (plotLineOptions) {
                     axis.addPlotBandOrLine(plotLineOptions);
                 });
-                axis._addedPlotLB = true;
             }
         } // end if hasData
         // Remove inactive ticks
@@ -3928,14 +3929,17 @@ var Axis = /** @class */ (function () {
              */
             enabled: true,
             /**
-             * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-             * for the axis label.
+             * A format string for the axis label. See
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for example usage.
+             *
+             * Note: The default value is not specified due to the dynamic
+             * nature of the default implementation.
              *
              * @sample {highcharts|highstock} highcharts/yaxis/labels-format/
              *         Add units to Y axis label
              *
              * @type      {string}
-             * @default   {value}
              * @since     3.0
              * @apioption xAxis.labels.format
              */

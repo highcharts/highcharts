@@ -25,16 +25,14 @@ import type {
     SMAParamsOptions
 } from './SMAOptions';
 import type SMAPoint from './SMAPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        line: LineSeries,
-        ohlc: {
-            prototype: ohlcProto
-        }
+        line: LineSeries
     }
-} = BaseSeries;
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -59,11 +57,6 @@ interface BindToObject {
     series: boolean;
 }
 
-declare module '../../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-    }
-}
-
 declare module '../../../Core/Series/SeriesOptions' {
     interface SeriesOptions {
         useOhlcData?: boolean;
@@ -82,10 +75,6 @@ const generateMessage = RequiredIndicatorMixin.generateMessage;
  * The SMA series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.sma
- *
- * @augments Highcharts.Series
  */
 class SMAIndicator extends LineSeries {
 
@@ -497,8 +486,8 @@ class SMAIndicator extends LineSeries {
         // Check whether all required indicators are loaded, else return
         // the object with missing indicator's name.
         this.requiredIndicators.forEach(function (indicator: string): void {
-            if (BaseSeries.seriesTypes[indicator]) {
-                (BaseSeries.seriesTypes[indicator].prototype as SMAIndicator).requireIndicators();
+            if (SeriesRegistry.seriesTypes[indicator]) {
+                (SeriesRegistry.seriesTypes[indicator].prototype as SMAIndicator).requireIndicators();
             } else {
                 obj.allLoaded = false;
                 obj.needed = indicator;
@@ -552,7 +541,7 @@ declare module '../../../Core/Series/SeriesType' {
         sma: typeof SMAIndicator;
     }
 }
-BaseSeries.registerSeriesType('sma', SMAIndicator);
+SeriesRegistry.registerSeriesType('sma', SMAIndicator);
 
 /* *
  *

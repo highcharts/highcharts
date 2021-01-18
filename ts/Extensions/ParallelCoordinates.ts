@@ -19,7 +19,7 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -81,8 +81,6 @@ declare module '../Core/Axis/Types' {
         ParallelAxis: ParallelAxis;
     }
 }
-
-import '../Series/Line/LineSeries.js';
 
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;
@@ -323,7 +321,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 
 // Bind each series to each yAxis. yAxis needs a reference to all series to
 // calculate extremes.
-addEvent(LineSeries, 'bindAxes', function (e: Event): void {
+addEvent(Series, 'bindAxes', function (e: Event): void {
     if (this.chart.hasParallelCoordinates) {
         var series = this;
 
@@ -340,7 +338,7 @@ addEvent(LineSeries, 'bindAxes', function (e: Event): void {
 
 
 // Translate each point using corresponding yAxis.
-addEvent(LineSeries, 'afterTranslate', function (): void {
+addEvent(Series, 'afterTranslate', function (): void {
     var series = this,
         chart = this.chart,
         points = series.points,
@@ -391,7 +389,7 @@ addEvent(LineSeries, 'afterTranslate', function (): void {
 }, { order: 1 });
 
 // On destroy, we need to remove series from each axis.series
-addEvent(LineSeries, 'destroy', function (): void {
+addEvent(Series, 'destroy', function (): void {
     if (this.chart.hasParallelCoordinates) {
         (this.chart.axes || []).forEach(function (axis): void {
             if (axis && axis.series) {

@@ -13,12 +13,12 @@
 'use strict';
 
 import type BubbleSeries from '../../Series/Bubble/BubbleSeries';
-import BaseSeries from '../../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
-import LineSeries from '../../Series/Line/LineSeries.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -30,7 +30,7 @@ const {
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         didBoost?: boolean;
-        markerGroup?: LineSeries['markerGroup'];
+        markerGroup?: Series['markerGroup'];
     }
 }
 
@@ -41,8 +41,6 @@ declare module '../../Core/Series/SeriesLike' {
         sampling?: boolean;
     }
 }
-
-import '../../Series/Line/LineSeries.js';
 
 import butils from './BoostUtils.js';
 import createAndAttachRenderer from './BoostAttach.js';
@@ -63,12 +61,12 @@ var eachAsync = butils.eachAsync,
  * @return {void}
  */
 function init(): void {
-    extend(LineSeries.prototype, {
+    extend(Series.prototype, {
         /**
          * @private
          * @function Highcharts.Series#renderCanvas
          */
-        renderCanvas: function (this: LineSeries): void {
+        renderCanvas: function (this: Series): void {
             var series = this,
                 options = series.options || {},
                 renderer: Highcharts.BoostGLRenderer = false as any,

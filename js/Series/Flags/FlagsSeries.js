@@ -21,13 +21,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
@@ -272,7 +272,7 @@ var FlagsSeries = /** @class */ (function (_super) {
      * @private
      */
     FlagsSeries.prototype.setClip = function () {
-        LineSeries.prototype.setClip.apply(this, arguments);
+        Series.prototype.setClip.apply(this, arguments);
         if (this.options.clip !== false && this.sharedClipKey) {
             this.markerGroup
                 .clip(this.chart[this.sharedClipKey]);
@@ -504,7 +504,7 @@ extend(FlagsSeries.prototype, {
      * @private
      * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
      */
-    init: LineSeries.prototype.init,
+    init: Series.prototype.init,
     /**
      * Don't invert the flag marker group (#4960).
      *
@@ -519,7 +519,7 @@ extend(FlagsSeries.prototype, {
     trackerGroups: ['markerGroup'],
     translate: OnSeriesMixin.translate
 });
-BaseSeries.registerSeriesType('flags', FlagsSeries);
+SeriesRegistry.registerSeriesType('flags', FlagsSeries);
 /* *
  *
  *  Default Export

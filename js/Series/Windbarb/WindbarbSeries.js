@@ -25,11 +25,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import A from '../../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 import WindbarbPoint from './WindbarbPoint.js';
@@ -98,7 +98,7 @@ var WindbarbSeries = /** @class */ (function (_super) {
      * */
     WindbarbSeries.prototype.init = function (chart, options) {
         WindbarbSeries.registerApproximation();
-        LineSeries.prototype.init.call(this, chart, options);
+        Series.prototype.init.call(this, chart, options);
     };
     // Get presentational attributes.
     WindbarbSeries.prototype.pointAttribs = function (point, state) {
@@ -370,7 +370,7 @@ WindbarbSeries.prototype.pointClass = WindbarbPoint;
  *
  * */
 WindbarbSeries.registerApproximation();
-BaseSeries.registerSeriesType('windbarb', WindbarbSeries);
+SeriesRegistry.registerSeriesType('windbarb', WindbarbSeries);
 /* *
  *
  * Export default

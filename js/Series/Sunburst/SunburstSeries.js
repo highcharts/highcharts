@@ -25,12 +25,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line, TreemapSeries = _a.treemap;
 import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 var getCenter = CenteredSeriesMixin.getCenter, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, TreemapSeries = _a.treemap;
 import SunburstPoint from './SunburstPoint.js';
 import SunburstUtilities from './SunburstUtilities.js';
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
@@ -452,7 +452,7 @@ var SunburstSeries = /** @class */ (function (_super) {
         if (hackDataLabelAnimation && addedHack) {
             series.hasRendered = false;
             series.options.dataLabels.defer = true;
-            LineSeries.prototype.drawDataLabels.call(series);
+            Series.prototype.drawDataLabels.call(series);
             series.hasRendered = true;
             // If animateLabels is called before labels were hidden, then call
             // it again.
@@ -461,7 +461,7 @@ var SunburstSeries = /** @class */ (function (_super) {
             }
         }
         else {
-            LineSeries.prototype.drawDataLabels.call(series);
+            Series.prototype.drawDataLabels.call(series);
         }
     };
     /**
@@ -534,7 +534,7 @@ var SunburstSeries = /** @class */ (function (_super) {
         rootId = updateRootId(series), mapIdToNode = series.nodeMap, mapOptionsToLevel, idTop, nodeRoot = mapIdToNode && mapIdToNode[rootId], nodeTop, tree, values, nodeIds = {};
         series.shapeRoot = nodeRoot && nodeRoot.shapeArgs;
         // Call prototype function
-        LineSeries.prototype.translate.call(series);
+        Series.prototype.translate.call(series);
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
         // Render traverseUpButton, after series.nodeMap i calculated.
@@ -849,7 +849,7 @@ extend(SunburstSeries.prototype, {
     pointClass: SunburstPoint,
     utils: SunburstUtilities
 });
-BaseSeries.registerSeriesType('sunburst', SunburstSeries);
+SeriesRegistry.registerSeriesType('sunburst', SunburstSeries);
 /* *
  *
  *  Default Export

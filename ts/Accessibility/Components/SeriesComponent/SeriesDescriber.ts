@@ -13,9 +13,9 @@
 'use strict';
 
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const {
@@ -30,7 +30,6 @@ const {
 } = ChartUtilities;
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
 const {
-    escapeStringForHTML,
     reverseChildNodes,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
@@ -308,7 +307,7 @@ function getSeriesDescriptionText(
  * @return {string}
  */
 function getSeriesAxisDescriptionText(
-    series: LineSeries,
+    series: Series,
     axisCollection: string
 ): string {
     var axis: Highcharts.Axis = (series as any)[axisCollection];
@@ -533,14 +532,12 @@ function setPointScreenReaderAttribs(
     var series = point.series,
         a11yPointOptions = series.chart.options.accessibility.point || {},
         seriesA11yOptions = series.options.accessibility || {},
-        label = escapeStringForHTML(
-            stripHTMLTags(
-                seriesA11yOptions.pointDescriptionFormatter &&
-                seriesA11yOptions.pointDescriptionFormatter(point) ||
-                a11yPointOptions.descriptionFormatter &&
-                a11yPointOptions.descriptionFormatter(point) ||
-                defaultPointDescriptionFormatter(point)
-            )
+        label = stripHTMLTags(
+            seriesA11yOptions.pointDescriptionFormatter &&
+            seriesA11yOptions.pointDescriptionFormatter(point) ||
+            a11yPointOptions.descriptionFormatter &&
+            a11yPointOptions.descriptionFormatter(point) ||
+            defaultPointDescriptionFormatter(point)
         );
 
     pointElement.setAttribute('role', 'img');
@@ -649,12 +646,10 @@ function describeSeriesElement(
     seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
     seriesElement.setAttribute(
         'aria-label',
-        escapeStringForHTML(
-            stripHTMLTags(
-                (a11yOptions.series as any).descriptionFormatter &&
-                (a11yOptions.series as any).descriptionFormatter(series) ||
-                defaultSeriesDescriptionFormatter(series)
-            )
+        stripHTMLTags(
+            (a11yOptions.series as any).descriptionFormatter &&
+            (a11yOptions.series as any).descriptionFormatter(series) ||
+            defaultSeriesDescriptionFormatter(series)
         )
     );
 }

@@ -20,13 +20,9 @@ import type MapLinePoint from './MapLinePoint.js';
 import type MapLineSeriesOptions from './MapLineSeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = BaseSeries;
 import MapSeries from '../Map/MapSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -147,7 +143,7 @@ extend(MapLineSeries.prototype, {
 
     colorProp: 'stroke',
 
-    drawLegendSymbol: LineSeries.prototype.drawLegendSymbol,
+    drawLegendSymbol: Series.prototype.drawLegendSymbol,
 
     pointAttrToOptions: {
         'stroke': 'color',
@@ -167,7 +163,7 @@ declare module '../../Core/Series/SeriesType' {
         mapline: typeof MapLineSeries;
     }
 }
-BaseSeries.registerSeriesType('mapline', MapLineSeries);
+SeriesRegistry.registerSeriesType('mapline', MapLineSeries);
 
 /* *
  *

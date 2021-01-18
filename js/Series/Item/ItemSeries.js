@@ -23,12 +23,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var PieSeries = BaseSeries.seriesTypes.pie;
 import H from '../../Core/Globals.js';
 import ItemPoint from './ItemPoint.js';
 import O from '../../Core/Options.js';
 var defaultOptions = O.defaultOptions;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* *
@@ -429,7 +429,7 @@ extend(ItemSeries.prototype, {
     markerAttribs: void 0
 });
 ItemSeries.prototype.pointClass = ItemPoint;
-BaseSeries.registerSeriesType('item', ItemSeries);
+SeriesRegistry.registerSeriesType('item', ItemSeries);
 /* *
  *
  *  Default Export

@@ -22,23 +22,23 @@
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type TilemapPointOptions from './TilemapPointOptions';
 import type TilemapSeries from './TilemapSeries';
-import BaseSeries from '../../Core/Series/Series.js';
+import ColorSeriesModule from '../../Mixins/ColorSeries.js';
+const { colorPointMixin } = ColorSeriesModule;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: {
+        prototype: {
+            pointClass: Point
+        }
+    },
     seriesTypes: {
-        line: {
-            prototype: {
-                pointClass: LinePoint
-            }
-        },
         heatmap: {
             prototype: {
                 pointClass: HeatmapPoint
             }
         }
     }
-} = BaseSeries;
-import ColorSeriesModule from '../../Mixins/ColorSeries.js';
-const { colorPointMixin } = ColorSeriesModule;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { extend } = U;
 
@@ -98,7 +98,7 @@ interface TilemapPoint {
     setVisible: typeof colorPointMixin.setVisible;
 }
 extend(TilemapPoint.prototype, {
-    setState: LinePoint.prototype.setState,
+    setState: Point.prototype.setState,
     setVisible: colorPointMixin.setVisible
 });
 

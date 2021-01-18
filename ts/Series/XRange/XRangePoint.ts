@@ -15,20 +15,21 @@
  *  Imports
  *
  * */
-import type LineSeries from '../../Series/Line/LineSeries';
+
 import type RectangleObject from '../../Core/Renderer/RectangleObject';
+import type Series from '../../Core/Series/Series';
 import type {
     XRangePointOptions,
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 
-import BaseSeries from '../../Core/Series/Series.js';
+import Point from '../../Core/Series/Point.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
-import Point from '../../Core/Series/Point.js';
+} = SeriesRegistry;
 import XRangeSeries from './XRangeSeries.js';
 
 /* *
@@ -59,7 +60,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
      *         Returns an object containing the properties color and colorIndex.
      */
     public static getColorByCategory(
-        series: LineSeries,
+        series: Series,
         point: Point
     ): Record<string, any> {
         var colors = series.options.colors || series.chart.options.colors,

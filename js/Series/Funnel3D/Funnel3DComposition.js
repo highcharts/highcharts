@@ -43,13 +43,17 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
         if (!chart.renderer.filterId) {
             chart.renderer.definition({
                 tagName: 'filter',
-                id: filterId,
+                attributes: {
+                    id: filterId
+                },
                 children: [{
                         tagName: 'feComponentTransfer',
                         children: [{
                                 tagName: 'feFuncA',
-                                type: 'table',
-                                tableValues: '0 ' + opacity
+                                attributes: {
+                                    type: 'table',
+                                    tableValues: '0 ' + opacity
+                                }
                             }]
                     }]
             });

@@ -21,11 +21,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import U from '../../Core/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import WaterfallAxis from '../../Core/Axis/WaterfallAxis.js';
@@ -43,9 +43,19 @@ function ownProp(obj, key) {
 }
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // eslint-disable-next-line valid-jsdoc
+/**
+ * Waterfall series type.
+ *
+ * @private
+ */
 var WaterfallSeries = /** @class */ (function (_super) {
     __extends(WaterfallSeries, _super);
     function WaterfallSeries() {
+        /* *
+         *
+         * Static properties
+         *
+         * */
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /* *
          *
@@ -274,7 +284,7 @@ var WaterfallSeries = /** @class */ (function (_super) {
             dataMin = Math.min(sum, dataMin);
             dataMax = Math.max(sum, dataMax);
         }
-        LineSeries.prototype.processData.call(this, force);
+        _super.prototype.processData.call(this, force);
         // Record extremes only if stacking was not set:
         if (!options.stacking) {
             series.dataMin = dataMin + threshold;
@@ -293,7 +303,7 @@ var WaterfallSeries = /** @class */ (function (_super) {
         return pt.y;
     };
     WaterfallSeries.prototype.updateParallelArrays = function (point, i) {
-        LineSeries.prototype.updateParallelArrays.call(this, point, i);
+        _super.prototype.updateParallelArrays.call(this, point, i);
         // Prevent initial sums from triggering an error (#3245, #7559)
         if (this.yData[0] === 'sum' || this.yData[0] === 'intermediateSum') {
             this.yData[0] = null;
@@ -355,10 +365,9 @@ var WaterfallSeries = /** @class */ (function (_super) {
                     yPos
                 ]);
             }
-            if (!stacking &&
+            if (prevArgs &&
                 path.length &&
-                prevArgs &&
-                ((prevPoint.y < 0 && !reversedYAxis) ||
+                ((!stacking && prevPoint.y < 0 && !reversedYAxis) ||
                     (prevPoint.y > 0 && reversedYAxis))) {
                 path[path.length - 2][2] += prevArgs.height;
                 path[path.length - 1][2] += prevArgs.height;
@@ -512,11 +521,6 @@ var WaterfallSeries = /** @class */ (function (_super) {
             dataMax: this.dataMax
         };
     };
-    /* *
-     *
-     * Static properties
-     *
-     * */
     /**
      * A waterfall chart displays sequentially introduced positive or negative
      * values in cumulative columns.
@@ -614,7 +618,7 @@ extend(WaterfallSeries.prototype, {
     showLine: true,
     pointClass: WaterfallPoint
 });
-BaseSeries.registerSeriesType('waterfall', WaterfallSeries);
+SeriesRegistry.registerSeriesType('waterfall', WaterfallSeries);
 WaterfallAxis.compose(H.Axis, Chart);
 /* *
  *

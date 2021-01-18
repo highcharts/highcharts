@@ -34,16 +34,6 @@ import type { SeriesStateHoverOptions } from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        heatmap: HeatmapSeries,
-        line: LineSeries,
-        pie: PieSeries,
-        scatter: ScatterSeries
-    }
-} = BaseSeries;
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
@@ -52,6 +42,15 @@ import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    series: Series,
+    seriesTypes: {
+        column: ColumnSeries,
+        heatmap: HeatmapSeries,
+        scatter: ScatterSeries
+    }
+} = SeriesRegistry;
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
@@ -1029,7 +1028,7 @@ class TreemapSeries extends ScatterSeries {
             // Merge custom options with point options
             point.dlOptions = merge(options, point.options.dataLabels);
         });
-        LineSeries.prototype.drawDataLabels.call(this);
+        Series.prototype.drawDataLabels.call(this);
     }
 
     /**
@@ -1190,13 +1189,13 @@ class TreemapSeries extends ScatterSeries {
 
     public getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
-        const { dataMin, dataMax } = LineSeries.prototype.getExtremes
+        const { dataMin, dataMax } = Series.prototype.getExtremes
             .call(this, this.colorValueData);
         this.valueMin = dataMin;
         this.valueMax = dataMax;
 
         // Get the extremes from the y data
-        return LineSeries.prototype.getExtremes.call(this);
+        return Series.prototype.getExtremes.call(this);
     }
 
     /**
@@ -1312,7 +1311,7 @@ class TreemapSeries extends ScatterSeries {
             }
         });
 
-        LineSeries.prototype.init.call(series, chart, options);
+        Series.prototype.init.call(series, chart, options);
 
         // Treemap's opacity is a different option from other series
         delete series.opacity;
@@ -1659,7 +1658,7 @@ class TreemapSeries extends ScatterSeries {
      */
     public setState(state: StatesOptionsKey): void {
         this.options.inactiveOtherPoints = true;
-        LineSeries.prototype.setState.call(this, state, false);
+        Series.prototype.setState.call(this, state, false);
         this.options.inactiveOtherPoints = false;
     }
 
@@ -1757,7 +1756,7 @@ class TreemapSeries extends ScatterSeries {
             val: TreemapSeries.NodeValuesObject;
 
         // Call prototype function
-        LineSeries.prototype.translate.call(series);
+        Series.prototype.translate.call(series);
 
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
@@ -1944,7 +1943,7 @@ declare module '../../Core/Series/SeriesType' {
         treemap: typeof TreemapSeries;
     }
 }
-BaseSeries.registerSeriesType('treemap', TreemapSeries);
+SeriesRegistry.registerSeriesType('treemap', TreemapSeries);
 
 /* *
  *

@@ -9,7 +9,7 @@
  * */
 'use strict';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 /**
  * @private
  * @interface Highcharts.RadianAngles
@@ -55,7 +55,7 @@ var centeredSeriesMixin = H.CenteredSeriesMixin = {
         ];
         // No need for inner size in angular (gauges) series but still required
         // for pie series
-        if (chart.angular && !(this instanceof LineSeries)) {
+        if (chart.angular && !(this instanceof Series)) {
             positions[3] = 0;
         }
         for (i = 0; i < 4; ++i) {

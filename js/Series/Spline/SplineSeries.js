@@ -21,18 +21,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var LineSeries = BaseSeries.seriesTypes.line;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../Core/Utilities.js';
 var merge = U.merge, pick = U.pick;
 /**
  * Spline series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.spline
- *
- * @augments Highcarts.Series
  */
 var SplineSeries = /** @class */ (function (_super) {
     __extends(SplineSeries, _super);
@@ -208,7 +204,7 @@ var SplineSeries = /** @class */ (function (_super) {
     SplineSeries.defaultOptions = merge(LineSeries.defaultOptions);
     return SplineSeries;
 }(LineSeries));
-BaseSeries.registerSeriesType('spline', SplineSeries);
+SeriesRegistry.registerSeriesType('spline', SplineSeries);
 /* *
  *
  *  Default Export

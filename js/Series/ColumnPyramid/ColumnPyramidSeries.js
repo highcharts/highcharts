@@ -21,9 +21,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 var colProto = ColumnSeries.prototype;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, extend = U.extend, merge = U.merge, pick = U.pick;
 /**
@@ -209,7 +209,7 @@ var ColumnPyramidSeries = /** @class */ (function (_super) {
     });
     return ColumnPyramidSeries;
 }(ColumnSeries));
-BaseSeries.registerSeriesType('columnpyramid', ColumnPyramidSeries);
+SeriesRegistry.registerSeriesType('columnpyramid', ColumnPyramidSeries);
 /* *
  *
  * Default export

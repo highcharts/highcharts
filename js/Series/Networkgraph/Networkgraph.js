@@ -23,12 +23,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import H from '../../Core/Globals.js';
-import LineSeries from '../Line/LineSeries.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, css = U.css, defined = U.defined, extend = U.extend, merge = U.merge, pick = U.pick;
 import '../../Core/Options.js';
@@ -122,7 +122,7 @@ var NetworkgraphSeries = /** @class */ (function (_super) {
      * @requires     modules/networkgraph
      * @optionparent plotOptions.networkgraph
      */
-    NetworkgraphSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+    NetworkgraphSeries.defaultOptions = merge(Series.defaultOptions, {
         stickyTracking: false,
         /**
          * @ignore-option
@@ -472,7 +472,7 @@ var NetworkgraphSeries = /** @class */ (function (_super) {
         showInLegend: false
     });
     return NetworkgraphSeries;
-}(LineSeries));
+}(Series));
 extend(NetworkgraphSeries.prototype, {
     /**
      * Array of internal forces. Each force should be later defined in
@@ -511,7 +511,7 @@ extend(NetworkgraphSeries.prototype, {
      * @private
      */
     init: function () {
-        LineSeries.prototype.init.apply(this, arguments);
+        Series.prototype.init.apply(this, arguments);
         addEvent(this, 'updatedData', function () {
             if (this.layout) {
                 this.layout.stop();
@@ -578,7 +578,7 @@ extend(NetworkgraphSeries.prototype, {
      * @private
      */
     markerAttribs: function (point, state) {
-        var attribs = LineSeries.prototype.markerAttribs.call(this, point, state);
+        var attribs = Series.prototype.markerAttribs.call(this, point, state);
         // series.render() is called before initial positions are set:
         if (!defined(point.plotY)) {
             attribs.y = 0;
@@ -678,12 +678,12 @@ extend(NetworkgraphSeries.prototype, {
     drawDataLabels: function () {
         var textPath = this.options.dataLabels.textPath;
         // Render node labels:
-        LineSeries.prototype.drawDataLabels.apply(this, arguments);
+        Series.prototype.drawDataLabels.apply(this, arguments);
         // Render link labels:
         this.points = this.data;
         this.options.dataLabels.textPath =
             this.options.dataLabels.linkTextPath;
-        LineSeries.prototype.drawDataLabels.apply(this, arguments);
+        Series.prototype.drawDataLabels.apply(this, arguments);
         // Restore nodes
         this.points = this.nodes;
         this.options.dataLabels.textPath = textPath;
@@ -691,7 +691,7 @@ extend(NetworkgraphSeries.prototype, {
     // Return the presentational attributes.
     pointAttribs: function (point, state) {
         // By default, only `selected` state is passed on
-        var pointState = state || point && point.state || 'normal', attribs = LineSeries.prototype.pointAttribs.call(this, point, pointState), stateOptions = this.options.states[pointState];
+        var pointState = state || point && point.state || 'normal', attribs = Series.prototype.pointAttribs.call(this, point, pointState), stateOptions = this.options.states[pointState];
         if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
             // For link, get prefixed names:
@@ -743,11 +743,11 @@ extend(NetworkgraphSeries.prototype, {
     setState: function (state, inherit) {
         if (inherit) {
             this.points = this.nodes.concat(this.data);
-            LineSeries.prototype.setState.apply(this, arguments);
+            Series.prototype.setState.apply(this, arguments);
             this.points = this.data;
         }
         else {
-            LineSeries.prototype.setState.apply(this, arguments);
+            Series.prototype.setState.apply(this, arguments);
         }
         // If simulation is done, re-render points with new states:
         if (!this.layout.simulation && !state) {
@@ -779,7 +779,7 @@ var NetworkgraphPoint = /** @class */ (function (_super) {
         return _this;
     }
     return NetworkgraphPoint;
-}(LineSeries.prototype.pointClass));
+}(Series.prototype.pointClass));
 extend(NetworkgraphPoint.prototype, {
     setState: NodesMixin.setNodeState,
     /**
@@ -968,7 +968,7 @@ extend(NetworkgraphPoint.prototype, {
                     linkFromTo.toNode.linksTo.splice(index, 1);
                 }
                 // Remove link from data/points collections
-                LineSeries.prototype.removePoint.call(series, series.data.indexOf(linkFromTo), false, false);
+                Series.prototype.removePoint.call(series, series.data.indexOf(linkFromTo), false, false);
             });
             // Restore points array, after links are removed
             series.points = series.data.slice();
@@ -1017,7 +1017,7 @@ extend(NetworkgraphPoint.prototype, {
     }
 });
 NetworkgraphSeries.prototype.pointClass = NetworkgraphPoint;
-BaseSeries.registerSeriesType('networkgraph', NetworkgraphSeries);
+SeriesRegistry.registerSeriesType('networkgraph', NetworkgraphSeries);
 /* *
  *
  *  Default Export

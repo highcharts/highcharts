@@ -11,10 +11,10 @@
  *
  * */
 'use strict';
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, HeatmapSeries = _a.heatmap, ScatterSeries = _a.scatter;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, HeatmapSeries = _a.heatmap, ScatterSeries = _a.scatter;
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, pick = U.pick;
 /**

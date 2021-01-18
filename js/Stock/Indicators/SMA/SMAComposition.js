@@ -6,8 +6,8 @@
  *
  * */
 'use strict';
-import BaseSeries from '../../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, ohlcProto = _a.ohlc.prototype;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, ohlcProto = SeriesRegistry.seriesTypes.ohlc.prototype;
 import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend;
 /* *
@@ -15,7 +15,7 @@ var addEvent = U.addEvent, extend = U.extend;
  *  Composition
  *
  * */
-addEvent(LineSeries, 'init', function (eventOptions) {
+addEvent(Series, 'init', function (eventOptions) {
     // eslint-disable-next-line no-invalid-this
     var series = this, options = eventOptions.options;
     if (options.useOhlcData &&
@@ -28,7 +28,7 @@ addEvent(LineSeries, 'init', function (eventOptions) {
         });
     }
 });
-addEvent(LineSeries, 'afterSetOptions', function (e) {
+addEvent(Series, 'afterSetOptions', function (e) {
     var options = e.options, dataGrouping = options.dataGrouping;
     if (dataGrouping &&
         options.useOhlcData &&

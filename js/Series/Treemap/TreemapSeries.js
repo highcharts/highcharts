@@ -23,8 +23,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, HeatmapSeries = _a.heatmap, LineSeries = _a.line, PieSeries = _a.pie, ScatterSeries = _a.scatter;
 import Color from '../../Core/Color/Color.js';
 var color = Color.parse;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
@@ -33,6 +31,8 @@ import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, HeatmapSeries = _a.heatmap, ScatterSeries = _a.scatter;
 import TreemapAlgorithmGroup from './TreemapAlgorithmGroup.js';
 import TreemapPoint from './TreemapPoint.js';
 import TreemapUtilities from './TreemapUtilities.js';
@@ -331,7 +331,7 @@ var TreemapSeries = /** @class */ (function (_super) {
             // Merge custom options with point options
             point.dlOptions = merge(options, point.options.dataLabels);
         });
-        LineSeries.prototype.drawDataLabels.call(this);
+        Series.prototype.drawDataLabels.call(this);
     };
     /**
      * Override drawPoints
@@ -442,12 +442,12 @@ var TreemapSeries = /** @class */ (function (_super) {
     };
     TreemapSeries.prototype.getExtremes = function () {
         // Get the extremes from the value data
-        var _a = LineSeries.prototype.getExtremes
+        var _a = Series.prototype.getExtremes
             .call(this, this.colorValueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
         this.valueMin = dataMin;
         this.valueMax = dataMax;
         // Get the extremes from the y data
-        return LineSeries.prototype.getExtremes.call(this);
+        return Series.prototype.getExtremes.call(this);
     };
     /**
      * Creates an object map from parent id to childrens index.
@@ -524,7 +524,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 delete options.drillUpButton;
             }
         });
-        LineSeries.prototype.init.call(series, chart, options);
+        Series.prototype.init.call(series, chart, options);
         // Treemap's opacity is a different option from other series
         delete series.opacity;
         // Handle deprecated options.
@@ -767,7 +767,7 @@ var TreemapSeries = /** @class */ (function (_super) {
      */
     TreemapSeries.prototype.setState = function (state) {
         this.options.inactiveOtherPoints = true;
-        LineSeries.prototype.setState.call(this, state, false);
+        Series.prototype.setState.call(this, state, false);
         this.options.inactiveOtherPoints = false;
     };
     TreemapSeries.prototype.setTreeValues = function (tree) {
@@ -821,7 +821,7 @@ var TreemapSeries = /** @class */ (function (_super) {
         // NOTE: updateRootId modifies series.
         rootId = updateRootId(series), rootNode, pointValues, seriesArea, tree, val;
         // Call prototype function
-        LineSeries.prototype.translate.call(series);
+        Series.prototype.translate.call(series);
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
         rootNode = series.nodeMap[rootId];
@@ -1374,7 +1374,7 @@ extend(TreemapSeries.prototype, {
         recursive: TreemapUtilities.recursive
     }
 });
-BaseSeries.registerSeriesType('treemap', TreemapSeries);
+SeriesRegistry.registerSeriesType('treemap', TreemapSeries);
 /* *
  *
  *  Default Export

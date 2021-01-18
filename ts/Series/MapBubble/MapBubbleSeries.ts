@@ -17,10 +17,10 @@
  * */
 
 import type MapBubbleSeriesOptions from './MapBubbleSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
 import BubbleSeries from '../Bubble/BubbleSeries.js';
 import MapBubblePoint from './MapBubblePoint.js';
 import MapSeries from '../Map/MapSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -247,7 +247,7 @@ declare module '../../Core/Series/SeriesType' {
         mapbubble: typeof MapBubbleSeries;
     }
 }
-BaseSeries.registerSeriesType('mapbubble', MapBubbleSeries);
+SeriesRegistry.registerSeriesType('mapbubble', MapBubbleSeries);
 
 /* *
  *

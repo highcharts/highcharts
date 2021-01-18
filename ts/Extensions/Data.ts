@@ -17,13 +17,14 @@ import Ajax from '../Extensions/Ajax.js';
 const {
     ajax
 } = Ajax;
-import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     doc
 } = H;
 import Point from '../Core/Series/Point.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -192,8 +193,6 @@ declare global {
         ): Data;
     }
 }
-
-const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
 
 /**
  * Callback function to modify the CSV before parsing it by the data module.
@@ -682,6 +681,13 @@ const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
  * @param {Highcharts.Chart} [chart]
  */
 class Data {
+
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
     public constructor(
         dataOptions: Highcharts.DataOptions,
         chartOptions?: Highcharts.Options,
@@ -689,6 +695,12 @@ class Data {
     ) {
         this.init(dataOptions, chartOptions, chart);
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public alternativeFormat?: string;
     public chart: Chart = void 0 as any;
@@ -701,6 +713,12 @@ class Data {
     public rawColumns: Array<Array<string>> = void 0 as any;
     public options: Highcharts.DataOptions= void 0 as any;
     public valueCount?: Highcharts.DataValueCountObject;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Initialize the Data object with the given options
@@ -2150,8 +2168,9 @@ class Data {
      * @return {number}
      */
     public parseDate(val: string): number {
-        var parseDate = this.options.parseDate,
-            ret,
+        const parseDate = this.options.parseDate;
+
+        let ret,
             key,
             format,
             dateFormat = this.options.dateFormat || this.dateFormat,
@@ -2191,17 +2210,23 @@ class Data {
             }
             // Fall back to Date.parse
             if (!match) {
+                if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
+                    val = val
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
+                }
                 match = Date.parse(val);
                 // External tools like Date.js and MooTools extend Date object
-                // and returns a date.
+                // and return a date.
                 if (
                     typeof match === 'object' &&
                     match !== null &&
-                    (match as any).getTime
+                    (match as Date).getTime
                 ) {
                     ret = (
-                        (match as any).getTime() -
-                        (match as any).getTimezoneOffset() *
+                        (match as Date).getTime() -
+                        (match as Date).getTimezoneOffset() *
                         60000
                     );
 

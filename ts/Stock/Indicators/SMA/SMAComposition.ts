@@ -16,15 +16,15 @@
 
 import type LineSeriesOptions from '../../../Series/Line/LineSeriesOptions';
 import type SMAOptions from './SMAOptions';
-import BaseSeries from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        line: LineSeries,
         ohlc: {
             prototype: ohlcProto
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     addEvent,
@@ -37,7 +37,7 @@ const {
  *
  * */
 
-addEvent(LineSeries, 'init', function (
+addEvent(Series, 'init', function (
     eventOptions: { options: SMAOptions }
 ): void {
     // eslint-disable-next-line no-invalid-this
@@ -57,7 +57,7 @@ addEvent(LineSeries, 'init', function (
     }
 });
 
-addEvent(LineSeries, 'afterSetOptions', function (
+addEvent(Series, 'afterSetOptions', function (
     e: { options: LineSeriesOptions }
 ): void {
     var options = e.options,

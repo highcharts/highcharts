@@ -12,9 +12,13 @@
 
 import type AreaSplineRangePoint from './AreaSplineRangePoint';
 import type AreaSplineRangeSeriesOptions from './AreaSplineRangeSeriesOptions';
-import type SplineSeries from '../Spline/SplineSeries';
-import BaseSeries from '../../Core/Series/Series.js';
 import AreaRangeSeries from '../AreaRange/AreaRangeSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        spline: SplineSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     merge,
@@ -95,12 +99,12 @@ class AreaSplineRangeSeries extends AreaRangeSeries {
 }
 
 interface AreaSplineRangeSeries extends AreaRangeSeries {
-    getPointSpline: SplineSeries['getPointSpline'];
+    getPointSpline: typeof SplineSeries.prototype.getPointSpline;
     pointClass: typeof AreaSplineRangePoint;
 }
 
 extend(AreaSplineRangeSeries.prototype, {
-    getPointSpline: BaseSeries.seriesTypes.spline.prototype.getPointSpline
+    getPointSpline: SplineSeries.prototype.getPointSpline
 });
 
 /* *
@@ -118,7 +122,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('areasplinerange', AreaSplineRangeSeries);
+SeriesRegistry.registerSeriesType('areasplinerange', AreaSplineRangeSeries);
 
 /* *
  *

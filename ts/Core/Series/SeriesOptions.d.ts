@@ -17,6 +17,7 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type { EventCallback } from '../Callback';
 import type ColorType from '../Color/ColorType';
+import type { CursorValue } from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type Point from './Point';
 import type {
@@ -25,7 +26,8 @@ import type {
     PointOptions,
     PointShortOptions
 } from './PointOptions';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from './Series';
+import type ShadowOptionsObject from '../Renderer/ShadowOptionsObject';
 import type {
     StateGenericOptions,
     StateHoverOptions,
@@ -43,12 +45,18 @@ import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
  * */
 
 export interface SeriesAfterAnimateEvent {
-    target: LineSeries;
+    target: Series;
     type: 'afterAnimate';
 }
 
 export interface SeriesClickEvent {
     point: Point;
+}
+
+export interface SeriesDataSortingOptions {
+    enabled?: boolean;
+    matchByName?: boolean;
+    sortKey?: string;
 }
 
 /**
@@ -59,13 +67,17 @@ export interface SeriesClickEvent {
  * file.
  */
 export interface SeriesEventsOptions {
-    afterAnimate?: EventCallback<LineSeries, SeriesAfterAnimateEvent>;
-    click?: EventCallback<LineSeries, SeriesClickEvent>;
-    hide?: EventCallback<LineSeries, Event>;
-    mouseOut?: EventCallback<LineSeries, PointerEvent>;
-    mouseOver?: EventCallback<LineSeries, PointerEvent>;
-    show?: EventCallback<LineSeries, Event>;
+    afterAnimate?: EventCallback<Series, SeriesAfterAnimateEvent>;
+    click?: EventCallback<Series, SeriesClickEvent>;
+    hide?: EventCallback<Series, Event>;
+    mouseOut?: EventCallback<Series, PointerEvent>;
+    mouseOver?: EventCallback<Series, PointerEvent>;
+    show?: EventCallback<Series, Event>;
 }
+
+export type SeriesFindNearestPointByValue = ('x'|'xy');
+
+export type SeriesLinecapValue = ('butt'|'round'|'square'|string);
 
 /**
  * Helper interface for series types to add options to all series options.
@@ -74,29 +86,56 @@ export interface SeriesEventsOptions {
  * file.
  */
 export interface SeriesOptions {
+    allowPointSelect?: boolean;
     animation?: (boolean|DeepPartial<AnimationOptions>);
+    className?: string;
+    clip?: boolean;
     color?: ColorType;
+    colorByPoint?: boolean;
     colorIndex?: number;
+    colors?: Array<ColorType>;
+    connectNulls?: boolean;
+    crisp?: (boolean|number);
+    cursor?: (string|CursorValue);
+    dashStyle?: DashStyleValue;
     data?: Array<(PointOptions|PointShortOptions)>;
+    dataSorting?: SeriesDataSortingOptions;
     enableMouseTracking?: boolean;
     events?: SeriesEventsOptions;
+    findNearestPointBy?: SeriesFindNearestPointByValue;
+    getExtremesFromAll?: boolean;
     id?: string;
     index?: number;
     inactiveOtherPoints?: boolean;
     /** @private */
     isInternal?: boolean;
+    joinBy?: (string|Array<string>);
+    kdNow?: boolean;
+    keys?: Array<string>;
+    linecap?: SeriesLinecapValue;
+    lineColor?: ColorType;
+    lineWidth?: number;
     linkedTo?: string;
     marker?: PointMarkerOptions;
     name?: string;
     negativeColor?: ColorType;
     opacity?: number;
     point?: SeriesPointOptions;
+    pointPlacement?: (number|string);
     pointStart?: number;
-    states?: SeriesStatesOptions<LineSeries>;
+    pointValKey?: string;
+    selected?: boolean;
+    shadow?: (boolean|Partial<ShadowOptionsObject>);
+    states?: SeriesStatesOptions<Series>;
+    step?: SeriesStepValue;
     stickyTracking?: boolean;
     turboThreshold?: number;
     type?: string;
     visible?: boolean;
+    xAxis?: (number|string);
+    yAxis?: (number|string);
+    zIndex?: number;
+    zoneAxis?: string;
     zones?: Array<SeriesZonesOptions>;
 }
 
@@ -118,6 +157,8 @@ export interface SeriesStateHoverOptions extends StateHoverOptions {
     halo?: (boolean|SeriesStateHoverHaloOptions);
     lineWidth?: number;
     lineWidthPlus?: number;
+    radius?: number;
+    radiusPlus?: number;
     opacity?: number;
 }
 
@@ -139,6 +180,8 @@ export interface SeriesStatesOptions<T extends { options: Record<string, any> }>
     normal?: SeriesStateNormalOptions&StateGenericOptions<T>;
     select?: SeriesStateSelectOptions&StateGenericOptions<T>;
 }
+
+export type SeriesStepValue = ('center'|'left'|'right');
 
 /**
  * An array defining zones within a series. Zones can be applied to the

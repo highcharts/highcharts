@@ -21,8 +21,8 @@ import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -74,7 +74,7 @@ declare global {
         }
         interface AnnotationChartOptionsObject extends Options {
             annotations: Array<AnnotationsOptions>;
-            defs: Record<string, SVGDefinitionObject>;
+            defs: Record<string, ASTNode>;
             navigation: NavigationOptions;
         }
         interface AnnotationControlPointEventsOptionsObject {
@@ -106,7 +106,7 @@ declare global {
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
         }
-        interface AnnotationSeries extends LineSeries {
+        interface AnnotationSeries extends Series {
             chart: AnnotationChart;
             points: Array<AnnotationPoint>;
         }

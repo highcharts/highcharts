@@ -25,8 +25,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LinePoint = _a.line.prototype.pointClass, TreemapPoint = _a.treemap.prototype.pointClass;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Point = SeriesRegistry.series.prototype.pointClass, TreemapPoint = SeriesRegistry.seriesTypes.treemap.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend;
 /* *
@@ -104,9 +104,9 @@ var SunburstPoint = /** @class */ (function (_super) {
     return SunburstPoint;
 }(TreemapPoint));
 extend(SunburstPoint.prototype, {
-    getClassName: LinePoint.prototype.getClassName,
-    haloPath: LinePoint.prototype.haloPath,
-    setState: LinePoint.prototype.setState
+    getClassName: Point.prototype.getClassName,
+    haloPath: Point.prototype.haloPath,
+    setState: Point.prototype.setState
 });
 /* *
  *

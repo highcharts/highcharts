@@ -18,20 +18,15 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-/* *
- *
- *  Imports
- *
- * */
-import BaseSeries from '../../../Core/Series/Series.js';
-var SMAIndicator = BaseSeries.seriesTypes.sma;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 /**
  * @private
  */
 function destroyExtraLabels(point, functionName) {
     var props = point.series.pointArrayMap, prop, i = props.length;
-    BaseSeries.seriesTypes.sma.prototype.pointClass.prototype[functionName].call(point);
+    SeriesRegistry.seriesTypes.sma.prototype.pointClass.prototype[functionName].call(point);
     while (i--) {
         prop = 'dataLabel' + props[i];
         // S4 dataLabel could be removed by parent method:

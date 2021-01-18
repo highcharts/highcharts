@@ -21,14 +21,14 @@
 import type GanttSeriesOptions from './GanttSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
+import GanttPoint from './GanttPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        line: LineSeries,
         xrange: XRangeSeries
     }
-} = BaseSeries;
-import GanttPoint from './GanttPoint.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -274,7 +274,7 @@ extend(GanttSeries.prototype, { // props - series member overrides
 
     pointClass: GanttPoint,
 
-    setData: LineSeries.prototype.setData
+    setData: Series.prototype.setData
 
 });
 
@@ -289,7 +289,7 @@ declare module '../../Core/Series/SeriesType' {
         gantt: typeof GanttSeries;
     }
 }
-BaseSeries.registerSeriesType('gantt', GanttSeries);
+SeriesRegistry.registerSeriesType('gantt', GanttSeries);
 
 /* *
  *

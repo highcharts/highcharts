@@ -21,9 +21,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var ColumnSeries = BaseSeries.seriesTypes.column;
 import BulletPoint from './BulletPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
 import '../Column/ColumnSeries.js';
@@ -252,7 +252,7 @@ extend(BulletSeries.prototype, {
     pointArrayMap: ['y', 'target']
 });
 BulletSeries.prototype.pointClass = BulletPoint;
-BaseSeries.registerSeriesType('bullet', BulletSeries);
+SeriesRegistry.registerSeriesType('bullet', BulletSeries);
 /* *
  *
  *  Default Export

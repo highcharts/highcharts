@@ -8,20 +8,21 @@
 
 'use strict';
 
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type Series from '../../../Core/Series/Series';
 import type {
     TEMAOptions,
     TEMAParamsOptions
 } from './TEMAOptions';
 import type TEMAPoint from './TEMAPoint';
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
-import BaseSeries from '../../../Core/Series/Series.js';
+
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         ema: EMAIndicator
     }
-} = BaseSeries;
-import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
@@ -134,7 +135,7 @@ class TEMAIndicator extends EMAIndicator {
     }
 
     public getValues<
-        TLinkedSeries extends LineSeries
+        TLinkedSeries extends Series
     >(
         this: TEMAIndicator,
         series: TLinkedSeries,
@@ -283,7 +284,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('tema', TEMAIndicator);
+SeriesRegistry.registerSeriesType('tema', TEMAIndicator);
 
 /* *
  *

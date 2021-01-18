@@ -19,7 +19,6 @@
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type { EventCallback } from '../Callback';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type PointLike from './PointLike';
 import type {
     PointEventsOptions,
@@ -28,11 +27,13 @@ import type {
     PointShortOptions
 } from './PointOptions';
 import type { PointTypeOptions } from './PointType';
+import type Series from './Series';
 import type { SeriesZonesOptions } from './SeriesOptions';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../Globals.js';
@@ -430,7 +431,7 @@ class Point {
      * @name Highcharts.Point#series
      * @type {Highcharts.Series}
      */
-    public series: LineSeries = void 0 as any;
+    public series: Series = void 0 as any;
 
     public shapeArgs?: SVGAttributes;
 
@@ -912,7 +913,7 @@ class Point {
      * @fires Highcharts.Point#event:afterInit
      */
     public init(
-        series: LineSeries,
+        series: Series,
         options: (PointOptions|PointShortOptions),
         x?: number
     ): Point {
@@ -1714,7 +1715,7 @@ class Point {
                         'fill': point.color || series.color,
                         'fill-opacity': haloOptions.opacity
                     },
-                    haloOptions.attributes
+                    AST.filterUserAttributes(haloOptions.attributes || {})
                 ));
             }
 
@@ -1769,7 +1770,7 @@ namespace Point {
         color?: ColorType;
         colorIndex?: number;
         key?: string;
-        series: LineSeries;
+        series: Series;
         point: Point;
         percentage?: number;
         total?: number;

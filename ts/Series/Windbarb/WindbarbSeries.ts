@@ -20,16 +20,16 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import type WindbarbSeriesOptions from './WindbarbSeriesOptions';
 import A from '../../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
-    }
-} = BaseSeries;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    series: Series,
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -227,7 +227,7 @@ class WindbarbSeries extends ColumnSeries {
         options: WindbarbSeriesOptions
     ): void {
         WindbarbSeries.registerApproximation();
-        LineSeries.prototype.init.call(this, chart, options);
+        Series.prototype.init.call(this, chart, options);
     }
 
     // Get presentational attributes.
@@ -479,7 +479,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('windbarb', WindbarbSeries);
+SeriesRegistry.registerSeriesType('windbarb', WindbarbSeries);
 
 /* *
  *

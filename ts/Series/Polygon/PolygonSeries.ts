@@ -13,17 +13,17 @@
 import type PolygonPoint from './PolygonPoint';
 import type PolygonSeriesOptions from './PolygonSeriesOptions';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        area: AreaSeries,
-        line: LineSeries,
-        scatter: ScatterSeries
-    }
-} = BaseSeries;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    series: Series,
+    seriesTypes: {
+        area: AreaSeries,
+        scatter: ScatterSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -97,7 +97,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
     public getGraphPath(): SVGPath {
-        var graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
+        var graphPath: SVGPath = Series.prototype.getGraphPath.call(this),
             i = graphPath.length + 1;
 
         // Close all segments
@@ -124,7 +124,7 @@ interface PolygonSeries {
 extend(PolygonSeries.prototype, {
     type: 'polygon',
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-    drawTracker: LineSeries.prototype.drawTracker,
+    drawTracker: Series.prototype.drawTracker,
     setStackedPoints: noop as any // No stacking points on polygons (#5310)
 });
 
@@ -140,7 +140,7 @@ declare module '../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('polygon', PolygonSeries);
+SeriesRegistry.registerSeriesType('polygon', PolygonSeries);
 
 /* *
  *

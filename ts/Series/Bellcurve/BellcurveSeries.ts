@@ -24,13 +24,13 @@ import type {
     PointOptions,
     PointShortOptions
 } from '../../Core/Series/PointOptions';
-import BaseSeries from '../../Core/Series/Series.js';
+import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         areaspline: AreaSplineSeries
     }
-} = BaseSeries;
-import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
@@ -306,7 +306,7 @@ declare module '../../Core/Series/SeriesType' {
         bellcurve: typeof BellcurveSeries;
     }
 }
-BaseSeries.registerSeriesType('bellcurve', BellcurveSeries);
+SeriesRegistry.registerSeriesType('bellcurve', BellcurveSeries);
 
 /* *
  *

@@ -25,13 +25,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import Math3D from '../../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength;
 import './Funnel3DComposition.js';
@@ -115,7 +115,7 @@ var Funnel3DSeries = /** @class */ (function (_super) {
      * @private
      */
     Funnel3DSeries.prototype.bindAxes = function () {
-        LineSeries.prototype.bindAxes.apply(this, arguments);
+        Series.prototype.bindAxes.apply(this, arguments);
         extend(this.xAxis.options, {
             gridLineWidth: 0,
             lineWidth: 0,
@@ -134,7 +134,7 @@ var Funnel3DSeries = /** @class */ (function (_super) {
      * @private
      */
     Funnel3DSeries.prototype.translate = function () {
-        LineSeries.prototype.translate.apply(this, arguments);
+        Series.prototype.translate.apply(this, arguments);
         var sum = 0, series = this, chart = series.chart, options = series.options, reversed = options.reversed, ignoreHiddenPoint = options.ignoreHiddenPoint, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, cumulative = 0, // start at top
         center = options.center, centerX = relativeLength(center[0], plotWidth), centerY = relativeLength(center[1], plotHeight), width = relativeLength(options.width, plotWidth), tempWidth, getWidthAt, height = relativeLength(options.height, plotHeight), neckWidth = relativeLength(options.neckWidth, plotWidth), neckHeight = relativeLength(options.neckHeight, plotHeight), neckY = (centerY - height / 2) + height - neckHeight, data = series.data, fraction, tooltipPos, 
         //
@@ -354,7 +354,7 @@ extend(Funnel3DSeries.prototype, {
     pointClass: Funnel3DPoint,
     translate3dShapes: noop
 });
-BaseSeries.registerSeriesType('funnel3d', Funnel3DSeries);
+SeriesRegistry.registerSeriesType('funnel3d', Funnel3DSeries);
 /* *
  *
  *  Default Export

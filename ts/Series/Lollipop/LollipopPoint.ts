@@ -18,8 +18,13 @@
 import type LollipopPointOptions from './LollipopPointOptions';
 import type LollipopSeries from './LollipopSeries';
 
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: {
+        prototype: {
+            pointClass: Point
+        }
+    },
     seriesTypes: {
         area: {
             prototype: areaProto
@@ -28,14 +33,9 @@ const {
             prototype: {
                 pointClass: DumbbellPoint
             }
-        },
-        line: {
-            prototype: {
-                pointClass: Point
-            }
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     isObject,

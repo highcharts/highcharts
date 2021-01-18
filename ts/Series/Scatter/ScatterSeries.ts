@@ -18,9 +18,9 @@
 
 import type ScatterPoint from './ScatterPoint';
 import type ScatterSeriesOptions from './ScatterSeriesOptions';
-import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -38,10 +38,6 @@ const {
  * Scatter series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.scatter
- *
- * @augments Highcharts.Series
  */
 class ScatterSeries extends LineSeries {
 
@@ -243,7 +239,7 @@ class ScatterSeries extends LineSeries {
                 this.graph.strokeWidth()
             )
         ) {
-            LineSeries.prototype.drawGraph.call(this);
+            super.drawGraph.call(this);
         }
     }
 
@@ -296,7 +292,7 @@ declare module '../../Core/Series/SeriesType' {
         scatter: typeof ScatterSeries;
     }
 }
-BaseSeries.registerSeriesType('scatter', ScatterSeries);
+SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
 
 /* *
  *

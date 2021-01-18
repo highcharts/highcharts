@@ -14,12 +14,12 @@
 import type SizeObject from '../../Core/Renderer/SizeObject';
 import type WordcloudPointOptions from './WordcloudPointOptions';
 import DrawPointMixin from '../../Mixins/DrawPoint.js';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         column: ColumnSeries
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import WordcloudSeries from './WordcloudSeries';
 import U from '../../Core/Utilities.js';
 const { extend } = U;

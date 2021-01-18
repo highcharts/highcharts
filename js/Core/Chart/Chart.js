@@ -11,7 +11,6 @@
 import A from '../Animation/AnimationUtilities.js';
 var animate = A.animate, animObject = A.animObject, setAnimation = A.setAnimation;
 import Axis from '../Axis/Axis.js';
-import BaseSeries from '../Series/Series.js';
 import H from '../Globals.js';
 var charts = H.charts, doc = H.doc, win = H.win;
 import Legend from '../Legend.js';
@@ -20,8 +19,11 @@ import O from '../Options.js';
 var defaultOptions = O.defaultOptions, time = O.time;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
+import SeriesRegistry from '../Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import Time from '../Time.js';
 import U from '../Utilities.js';
+import AST from '../Renderer/HTML/AST.js';
 var addEvent = U.addEvent, attr = U.attr, cleanRecursively = U.cleanRecursively, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
 var marginNames = H.marginNames;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -289,7 +291,7 @@ var Chart = /** @class */ (function () {
     Chart.prototype.initSeries = function (options) {
         var chart = this, optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
-            optionsChart.defaultSeriesType), series, SeriesClass = BaseSeries.seriesTypes[type];
+            optionsChart.defaultSeriesType), series, SeriesClass = seriesTypes[type];
         // No such series type
         if (!SeriesClass) {
             error(17, true, chart, { missingModuleFor: type });
@@ -426,7 +428,7 @@ var Chart = /** @class */ (function () {
         i = series.length;
         while (i--) {
             serie = series[i];
-            if (serie.options.stacking) {
+            if (serie.options.stacking || serie.options.centerInCategory) {
                 hasStackedSeries = true;
                 if (serie.isDirty) {
                     hasDirtyStacks = true;
@@ -1491,8 +1493,7 @@ var Chart = /** @class */ (function () {
          */
         ['inverted', 'angular', 'polar'].forEach(function (key) {
             // The default series type's class
-            klass = BaseSeries.seriesTypes[(optionsChart.type ||
-                optionsChart.defaultSeriesType)];
+            klass = seriesTypes[(optionsChart.type || optionsChart.defaultSeriesType)];
             // Get the value from available chart-wide properties
             value =
                 // It is set in the options:
@@ -1503,7 +1504,7 @@ var Chart = /** @class */ (function () {
             // 4. Check if any the chart's series require it
             i = seriesOptions && seriesOptions.length;
             while (!value && i--) {
-                klass = BaseSeries.seriesTypes[seriesOptions[i].type];
+                klass = seriesTypes[seriesOptions[i].type];
                 if (klass && klass.prototype[key]) {
                     value = true;
                 }
@@ -2053,7 +2054,7 @@ var Chart = /** @class */ (function () {
      *        [lang.loading](https://api.highcharts.com/highcharts/lang.loading).
      */
     Chart.prototype.showLoading = function (str) {
-        var chart = this, options = chart.options, loadingDiv = chart.loadingDiv, loadingOptions = options.loading, setLoadingSize = function () {
+        var chart = this, options = chart.options, loadingDiv = chart.loadingDiv, loadingSpan = chart.loadingSpan, loadingOptions = options.loading, setLoadingSize = function () {
             if (loadingDiv) {
                 css(loadingDiv, {
                     left: chart.plotLeft + 'px',
@@ -2068,19 +2069,20 @@ var Chart = /** @class */ (function () {
             chart.loadingDiv = loadingDiv = createElement('div', {
                 className: 'highcharts-loading highcharts-loading-hidden'
             }, null, chart.container);
-            chart.loadingSpan = createElement('span', { className: 'highcharts-loading-inner' }, null, loadingDiv);
+        }
+        if (!loadingSpan) {
+            chart.loadingSpan = loadingSpan = createElement('span', { className: 'highcharts-loading-inner' }, null, loadingDiv);
             addEvent(chart, 'redraw', setLoadingSize); // #1080
         }
         loadingDiv.className = 'highcharts-loading';
         // Update text
-        chart.loadingSpan.innerHTML =
-            pick(str, options.lang.loading, '');
+        AST.setElementHTML(loadingSpan, pick(str, options.lang.loading, ''));
         if (!chart.styledMode) {
             // Update visuals
             css(loadingDiv, extend(loadingOptions.style, {
                 zIndex: 10
             }));
-            css(chart.loadingSpan, loadingOptions.labelStyle);
+            css(loadingSpan, loadingOptions.labelStyle);
             // Show it
             if (!chart.loadingShown) {
                 css(loadingDiv, {

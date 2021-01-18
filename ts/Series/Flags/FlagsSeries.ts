@@ -20,18 +20,18 @@ import type ColorType from '../../Core/Color/ColorType';
 import type { FlagsShapeValue } from './FlagsPointOptions';
 import type FlagsSeriesOptions from './FlagsSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
-    }
-} = BaseSeries;
 import FlagsPoint from './FlagsPoint.js';
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import OnSeriesMixin from '../../Mixins/OnSeries.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    series: Series,
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -336,7 +336,7 @@ class FlagsSeries extends ColumnSeries {
 
     public data: Array<FlagsPoint> = void 0 as any;
 
-    public onSeries?: typeof LineSeries.prototype;
+    public onSeries?: typeof Series.prototype;
 
     public options: FlagsSeriesOptions = void 0 as any;
 
@@ -638,7 +638,7 @@ class FlagsSeries extends ColumnSeries {
      * @private
      */
     public setClip(): void {
-        LineSeries.prototype.setClip.apply(this, arguments as any);
+        Series.prototype.setClip.apply(this, arguments as any);
         if (this.options.clip !== false && this.sharedClipKey) {
             (this.markerGroup as any)
                 .clip((this.chart as any)[this.sharedClipKey]);
@@ -658,7 +658,7 @@ class FlagsSeries extends ColumnSeries {
 interface FlagsSeries {
     allowDG: boolean;
     getPlotBox: typeof OnSeriesMixin['getPlotBox'];
-    init: typeof LineSeries.prototype['init'];
+    init: typeof Series.prototype['init'];
     pointClass: typeof FlagsPoint;
     takeOrdinalPosition: boolean;
     translate: typeof OnSeriesMixin['translate'];
@@ -683,7 +683,7 @@ extend(FlagsSeries.prototype, {
      * @private
      * @borrows Highcharts.Series#init as Highcharts.seriesTypes.flags#init
      */
-    init: LineSeries.prototype.init,
+    init: Series.prototype.init,
 
     /**
      * Don't invert the flag marker group (#4960).
@@ -718,7 +718,7 @@ declare module '../../Core/Series/SeriesType' {
         flags: typeof FlagsSeries;
     }
 }
-BaseSeries.registerSeriesType('flags', FlagsSeries);
+SeriesRegistry.registerSeriesType('flags', FlagsSeries);
 
 /* *
  *

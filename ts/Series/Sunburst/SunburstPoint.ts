@@ -23,21 +23,21 @@
 import type SunburstPointOptions from './SunburstPointOptions';
 import type SunburstSeries from './SunburstSeries';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: {
+        prototype: {
+            pointClass: Point
+        }
+    },
     seriesTypes: {
-        line: {
-            prototype: {
-                pointClass: LinePoint
-            }
-        },
         treemap: {
             prototype: {
                 pointClass: TreemapPoint
             }
         }
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const { correctFloat, extend } = U;
 
@@ -144,9 +144,9 @@ class SunburstPoint extends TreemapPoint implements Highcharts.DrawPoint {
 }
 
 extend(SunburstPoint.prototype, {
-    getClassName: LinePoint.prototype.getClassName,
-    haloPath: LinePoint.prototype.haloPath,
-    setState: LinePoint.prototype.setState
+    getClassName: Point.prototype.getClassName,
+    haloPath: Point.prototype.haloPath,
+    setState: Point.prototype.setState
 });
 
 /* *

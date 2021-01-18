@@ -20,8 +20,8 @@ import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
 import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
 import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
-import type LineSeries from '../Series/Line/LineSeries';
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Connection from './Connection.js';
 import Chart from '../Core/Chart/Chart.js';
@@ -688,7 +688,7 @@ class Pathfinder {
                     }
                     var to: (
                             Axis|
-                            LineSeries|
+                            Series|
                             Point|
                             undefined
                         ),

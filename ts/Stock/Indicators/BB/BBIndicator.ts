@@ -8,20 +8,20 @@
 
 'use strict';
 
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     BBOptions,
     BBParamsOptions
 } from './BBOptions';
 import type BBPoint from './BBPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type Series from '../../../Core/Series/Series';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
-import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -151,7 +151,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     public points: Array<BBPoint> = void 0 as any;
 
     public init(this: BBIndicator): void {
-        BaseSeries.seriesTypes.sma.prototype.init.apply(this, arguments);
+        SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Set default color for lines:
         this.options = merge({
@@ -168,7 +168,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
         }, this.options);
     }
 
-    public getValues<TLinkedSeries extends LineSeries>(
+    public getValues<TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: BBParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -206,7 +206,7 @@ class BBIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
             slicedX = xVal.slice(i - period, i);
             slicedY = yVal.slice(i - period, i);
 
-            point = BaseSeries.seriesTypes.sma.prototype.getValues.call(
+            point = SeriesRegistry.seriesTypes.sma.prototype.getValues.call(
                 this,
                 ({
                     xData: slicedX,
@@ -272,7 +272,7 @@ declare module '../../../Core/Series/SeriesType' {
         bb: typeof BBIndicator;
     }
 }
-BaseSeries.registerSeriesType('bb', BBIndicator);
+SeriesRegistry.registerSeriesType('bb', BBIndicator);
 
 /* *
  *

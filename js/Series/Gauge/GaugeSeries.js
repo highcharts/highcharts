@@ -21,12 +21,12 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line;
 import GaugePoint from './GaugePoint.js';
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, ColumnSeries = SeriesRegistry.seriesTypes.column;
 import U from '../../Core/Utilities.js';
 var clamp = U.clamp, isNumber = U.isNumber, extend = U.extend, merge = U.merge, pick = U.pick, pInt = U.pInt;
 /* *
@@ -199,7 +199,7 @@ var GaugeSeries = /** @class */ (function (_super) {
      */
     GaugeSeries.prototype.render = function () {
         this.group = this.plotGroup('group', 'series', this.visible ? 'visible' : 'hidden', this.options.zIndex, this.chart.seriesGroup);
-        LineSeries.prototype.render.call(this);
+        Series.prototype.render.call(this);
         this.group.clip(this.chart.clipRect);
     };
     /**
@@ -208,7 +208,7 @@ var GaugeSeries = /** @class */ (function (_super) {
      * @private
      */
     GaugeSeries.prototype.setData = function (data, redraw) {
-        LineSeries.prototype.setData.call(this, data, false);
+        Series.prototype.setData.call(this, data, false);
         this.processData();
         this.generatePoints();
         if (pick(redraw, true)) {
@@ -241,7 +241,7 @@ var GaugeSeries = /** @class */ (function (_super) {
      * @requires     highcharts-more
      * @optionparent plotOptions.gauge
      */
-    GaugeSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+    GaugeSeries.defaultOptions = merge(Series.defaultOptions, {
         /**
          * When this option is `true`, the dial will wrap around the axes.
          * For instance, in a full-range gauge going from 0 to 360, a value
@@ -485,7 +485,7 @@ var GaugeSeries = /** @class */ (function (_super) {
         // Prototype members
     });
     return GaugeSeries;
-}(LineSeries));
+}(Series));
 extend(GaugeSeries.prototype, {
     // chart.angular will be set to true when a gauge series is present,
     // and this will be used on the axes
@@ -499,7 +499,7 @@ extend(GaugeSeries.prototype, {
     pointClass: GaugePoint,
     trackerGroups: ['group', 'dataLabelsGroup']
 });
-BaseSeries.registerSeriesType('gauge', GaugeSeries);
+SeriesRegistry.registerSeriesType('gauge', GaugeSeries);
 /* *
  *
  *  Default export

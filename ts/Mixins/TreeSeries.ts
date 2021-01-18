@@ -8,9 +8,9 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type PointOptions from '../Core/Series/PointOptions';
+import type Series from '../Core/Series/Series';
 import type TreemapSeries from '../Series/Treemap/TreemapSeries';
 import type TreemapSeriesOptions from '../Series/Treemap/TreemapSeriesOptions';
 import Color from '../Core/Color/Color.js';
@@ -48,7 +48,7 @@ declare global {
         interface TreePointOptions extends PointOptions {
             value?: (number|null);
         }
-        interface TreeSeries extends LineSeries {
+        interface TreeSeries extends Series {
             mapOptionsToLevel: any;
             points: Array<TreePoint>;
             tree: TreeNodeObject;
@@ -173,7 +173,7 @@ const getColor = function getColor(
         mapOptionsToLevel: Array<TreemapSeriesOptions>;
         parentColor: ColorString;
         parentColorIndex: number;
-        series: LineSeries;
+        series: Series;
         siblings: number;
     }
 ): Highcharts.TreeColorObject {

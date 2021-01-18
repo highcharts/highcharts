@@ -21,8 +21,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, ColumnSeries = _a.column, LineSeries = _a.line, ScatterSeries = _a.scatter;
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 var colorMapSeriesMixin = ColorMapMixin.colorMapSeriesMixin;
 import H from '../../Core/Globals.js';
@@ -30,6 +28,8 @@ var noop = H.noop;
 import HeatmapPoint from './HeatmapPoint.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, ColumnSeries = _a.column, ScatterSeries = _a.scatter;
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer.js';
 var symbols = SVGRenderer.prototype.symbols;
 import U from '../../Core/Utilities.js';
@@ -84,7 +84,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
         // sheet will take precedence over the fill attribute.
         var seriesMarkerOptions = this.options.marker || {};
         if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
-            LineSeries.prototype.drawPoints.call(this);
+            Series.prototype.drawPoints.call(this);
             this.points.forEach(function (point) {
                 point.graphic &&
                     point.graphic[_this.chart.styledMode ? 'css' : 'animate'](_this.colorAttribs(point));
@@ -96,7 +96,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
      */
     HeatmapSeries.prototype.getExtremes = function () {
         // Get the extremes from the value data
-        var _a = LineSeries.prototype.getExtremes
+        var _a = Series.prototype.getExtremes
             .call(this, this.valueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
         if (isNumber(dataMin)) {
             this.valueMin = dataMin;
@@ -105,7 +105,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
             this.valueMax = dataMax;
         }
         // Get the extremes from the y data
-        return LineSeries.prototype.getExtremes.call(this);
+        return Series.prototype.getExtremes.call(this);
     };
     /**
      * Override to also allow null points, used when building the k-d-tree for
@@ -113,7 +113,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
      * @private
      */
     HeatmapSeries.prototype.getValidPoints = function (points, insideOnly) {
-        return LineSeries.prototype.getValidPoints.call(this, points, insideOnly, true);
+        return Series.prototype.getValidPoints.call(this, points, insideOnly, true);
     };
     /**
      * Define hasData function for non-cartesian series. Returns true if the
@@ -129,7 +129,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
      */
     HeatmapSeries.prototype.init = function () {
         var options;
-        LineSeries.prototype.init.apply(this, arguments);
+        Series.prototype.init.apply(this, arguments);
         options = this.options;
         // #3758, prevent resetting in setData
         options.pointRange = pick(options.pointRange, options.colsize || 1);
@@ -175,7 +175,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
      * @private
      */
     HeatmapSeries.prototype.pointAttribs = function (point, state) {
-        var series = this, attr = LineSeries.prototype.pointAttribs.call(series, point, state), seriesOptions = series.options || {}, plotOptions = series.chart.options.plotOptions || {}, seriesPlotOptions = plotOptions.series || {}, heatmapPlotOptions = plotOptions.heatmap || {}, stateOptions, brightness, 
+        var series = this, attr = Series.prototype.pointAttribs.call(series, point, state), seriesOptions = series.options || {}, plotOptions = series.chart.options.plotOptions || {}, seriesPlotOptions = plotOptions.series || {}, heatmapPlotOptions = plotOptions.heatmap || {}, stateOptions, brightness, 
         // Get old properties in order to keep backward compatibility
         borderColor = seriesOptions.borderColor ||
             heatmapPlotOptions.borderColor ||
@@ -209,7 +209,7 @@ var HeatmapSeries = /** @class */ (function (_super) {
      */
     HeatmapSeries.prototype.setClip = function (animation) {
         var series = this, chart = series.chart;
-        LineSeries.prototype.setClip.apply(series, arguments);
+        Series.prototype.setClip.apply(series, arguments);
         if (series.options.clip !== false || animation) {
             series.markerGroup
                 .clip((animation || series.clipBox) && series.sharedClipKey ?
@@ -548,14 +548,14 @@ extend(HeatmapSeries.prototype, {
      */
     getBox: noop,
     getExtremesFromAll: true,
-    getSymbol: LineSeries.prototype.getSymbol,
+    getSymbol: Series.prototype.getSymbol,
     hasPointSpecificOptions: true,
     parallelArrays: colorMapSeriesMixin.parallelArrays,
     pointArrayMap: ['y', 'value'],
     pointClass: HeatmapPoint,
     trackerGroups: colorMapSeriesMixin.trackerGroups
 });
-BaseSeries.registerSeriesType('heatmap', HeatmapSeries);
+SeriesRegistry.registerSeriesType('heatmap', HeatmapSeries);
 /* *
  *
  *  Default Export

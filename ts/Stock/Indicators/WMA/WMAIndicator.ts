@@ -11,18 +11,19 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import type {
     WMAOptions,
     WMAParamsOptions
 } from './WMAOptions';
 import type WMAPoint from './WMAPoint';
-import BaseSeries from '../../../Core/Series/Series.js';
+
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
         sma: SMAIndicator
     }
-} = BaseSeries;
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
@@ -125,7 +126,7 @@ class WMAIndicator extends SMAIndicator {
     public points: Array<WMAPoint> = void 0 as any;
 
 
-    public getValues <TLinkedSeries extends LineSeries>(
+    public getValues <TLinkedSeries extends Series>(
         series: TLinkedSeries,
         params: WMAParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -195,7 +196,7 @@ declare module '../../../Core/Series/SeriesType' {
     }
 }
 
-BaseSeries.registerSeriesType('wma', WMAIndicator);
+SeriesRegistry.registerSeriesType('wma', WMAIndicator);
 
 /* *
  *

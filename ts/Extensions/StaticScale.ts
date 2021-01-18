@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from '../Series/Line/LineSeries';
+import type Series from '../Core/Series/Series';
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -110,7 +110,7 @@ Chart.prototype.adjustHeight = function (): void {
 
                 // Make sure clip rects have the right height before initial
                 // animation.
-                axis.series.forEach(function (series: LineSeries): void {
+                axis.series.forEach(function (series: Series): void {
                     var clipRect = series.sharedClipKey &&
                         (chart as any)[series.sharedClipKey];
 

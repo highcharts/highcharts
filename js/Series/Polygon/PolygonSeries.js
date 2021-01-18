@@ -21,11 +21,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, AreaSeries = _a.area, LineSeries = _a.line, ScatterSeries = _a.scatter;
 import H from '../../Core/Globals.js';
 var noop = H.noop;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, _a = SeriesRegistry.seriesTypes, AreaSeries = _a.area, ScatterSeries = _a.scatter;
 import U from '../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 import '../../Core/Legend.js';
@@ -54,7 +54,7 @@ var PolygonSeries = /** @class */ (function (_super) {
      *
      * */
     PolygonSeries.prototype.getGraphPath = function () {
-        var graphPath = LineSeries.prototype.getGraphPath.call(this), i = graphPath.length + 1;
+        var graphPath = Series.prototype.getGraphPath.call(this), i = graphPath.length + 1;
         // Close all segments
         while (i--) {
             if ((i === graphPath.length || graphPath[i][0] === 'M') && i > 0) {
@@ -108,10 +108,10 @@ var PolygonSeries = /** @class */ (function (_super) {
 extend(PolygonSeries.prototype, {
     type: 'polygon',
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-    drawTracker: LineSeries.prototype.drawTracker,
+    drawTracker: Series.prototype.drawTracker,
     setStackedPoints: noop // No stacking points on polygons (#5310)
 });
-BaseSeries.registerSeriesType('polygon', PolygonSeries);
+SeriesRegistry.registerSeriesType('polygon', PolygonSeries);
 /* *
  *
  * Export

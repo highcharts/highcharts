@@ -21,8 +21,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, SMAIndicator = _a.sma, LinearRegressionIndicator = _a.linearRegression;
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+var _a = SeriesRegistry.seriesTypes, SMAIndicator = _a.sma, LinearRegressionIndicator = _a.linearRegression;
 import U from '../../../Core/Utilities.js';
 var extend = U.extend, merge = U.merge;
 /* *
@@ -96,7 +96,7 @@ var LinearRegressionAngleIndicator = /** @class */ (function (_super) {
 extend(LinearRegressionAngleIndicator.prototype, {
     nameBase: 'Linear Regression Angle Indicator'
 });
-BaseSeries.registerSeriesType('linearRegressionAngle', LinearRegressionAngleIndicator);
+SeriesRegistry.registerSeriesType('linearRegressionAngle', LinearRegressionAngleIndicator);
 /* *
  *
  *  Default Export

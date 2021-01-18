@@ -21,9 +21,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
 import ColumnSeries from '../Column/ColumnSeries.js';
 import LineSeries from '../Line/LineSeries.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 /* *
@@ -35,10 +35,6 @@ var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
  * Scatter series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.scatter
- *
- * @augments Highcharts.Series
  */
 var ScatterSeries = /** @class */ (function (_super) {
     __extends(ScatterSeries, _super);
@@ -112,7 +108,7 @@ var ScatterSeries = /** @class */ (function (_super) {
             (this.options.lineWidth === 0 &&
                 this.graph &&
                 this.graph.strokeWidth())) {
-            LineSeries.prototype.drawGraph.call(this);
+            _super.prototype.drawGraph.call(this);
         }
     };
     /**
@@ -229,7 +225,7 @@ extend(ScatterSeries.prototype, {
 addEvent(ScatterSeries, 'afterTranslate', function () {
     this.applyJitter();
 });
-BaseSeries.registerSeriesType('scatter', ScatterSeries);
+SeriesRegistry.registerSeriesType('scatter', ScatterSeries);
 /* *
  *
  *  Default Export

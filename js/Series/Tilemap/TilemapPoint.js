@@ -24,10 +24,10 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LinePoint = _a.line.prototype.pointClass, HeatmapPoint = _a.heatmap.prototype.pointClass;
 import ColorSeriesModule from '../../Mixins/ColorSeries.js';
 var colorPointMixin = ColorSeriesModule.colorPointMixin;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Point = SeriesRegistry.series.prototype.pointClass, HeatmapPoint = SeriesRegistry.seriesTypes.heatmap.prototype.pointClass;
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
 /* *
@@ -69,7 +69,7 @@ var TilemapPoint = /** @class */ (function (_super) {
     return TilemapPoint;
 }(HeatmapPoint));
 extend(TilemapPoint.prototype, {
-    setState: LinePoint.prototype.setState,
+    setState: Point.prototype.setState,
     setVisible: colorPointMixin.setVisible
 });
 /* *

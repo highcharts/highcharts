@@ -31,18 +31,18 @@ import type {
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
-import BaseSeries from '../../Core/Series/Series.js';
-const {
-    seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
-    }
-} = BaseSeries;
 import Color from '../../Core/Color/Color.js';
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
 import SankeyPoint from './SankeyPoint.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+const {
+    series: Series,
+    seriesTypes: {
+        column: ColumnSeries
+    }
+} = SeriesRegistry;
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
 const { getLevelOptions } = TreeSeriesMixin;
 import U from '../../Core/Utilities.js';
@@ -1164,7 +1164,7 @@ interface SankeySeries extends Highcharts.NodesSeries {
     setData: Highcharts.NodesMixin['setData'];
 }
 extend(SankeySeries.prototype, {
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: NodesMixin.createNode,
@@ -1204,7 +1204,7 @@ declare module '../../Core/Series/SeriesType' {
         sankey: typeof SankeySeries;
     }
 }
-BaseSeries.registerSeriesType('sankey', SankeySeries);
+SeriesRegistry.registerSeriesType('sankey', SankeySeries);
 
 /* *
  *

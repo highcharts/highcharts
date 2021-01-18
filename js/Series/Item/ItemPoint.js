@@ -23,8 +23,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import BaseSeries from '../../Core/Series/Series.js';
-var _a = BaseSeries.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+var Series = SeriesRegistry.series, PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
 /* *
@@ -49,7 +49,7 @@ var ItemPoint = /** @class */ (function (_super) {
     return ItemPoint;
 }(PieSeries.prototype.pointClass));
 extend(ItemPoint.prototype, {
-    haloPath: LineSeries.prototype.pointClass.prototype.haloPath
+    haloPath: Series.prototype.pointClass.prototype.haloPath
 });
 /* *
  *

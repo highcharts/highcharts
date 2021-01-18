@@ -27,8 +27,8 @@ const { parse: color } = Color;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import Legend from '../../Core/Legend.js';
-import LineSeries from '../Line/LineSeries.js';
 import palette from '../../Core/Color/Palette.js';
+import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -147,7 +147,7 @@ declare global {
             public symbols: Record<string, Array<SVGElement>>;
             public options: BubbleLegendOptions;
             public visible: boolean;
-            public addToLegend(items: Array<(LineSeries|Point)>): void;
+            public addToLegend(items: Array<(Series|Point)>): void;
             public correctSizes(): void;
             public drawLegendSymbol(legend: Legend): void;
             public formatLabel(range: BubbleLegendRangesOptions): string;
@@ -503,7 +503,7 @@ class BubbleLegend {
      *        All legend items
      * @return {void}
      */
-    public addToLegend(items: Array<(LineSeries|Point)>): void {
+    public addToLegend(items: Array<(Series|Point)>): void {
         // Insert bubbleLegend into legend items
         items.splice(this.options.legendIndex as any, 0, this as any);
     }
@@ -1123,7 +1123,7 @@ class BubbleLegend {
 // Start the bubble legend creation process.
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
-    e: { allItems: Array<(LineSeries|Point)> }
+    e: { allItems: Array<(Series|Point)> }
 ): void {
     var legend = this,
         bubbleLegend = legend.bubbleLegend,
@@ -1242,7 +1242,7 @@ Legend.prototype.retranslateItems = function (
         actualLine = 0;
 
     items.forEach(function (
-        item: (Highcharts.BubbleLegend|LineSeries|Point),
+        item: (Highcharts.BubbleLegend|Series|Point),
         index: number
     ): void {
         orgTranslateX = (item.legendGroup as any).translateX;
@@ -1272,7 +1272,7 @@ Legend.prototype.retranslateItems = function (
 };
 
 // Toggle bubble legend depending on the visible status of bubble series.
-addEvent(LineSeries, 'legendItemClick', function (): void {
+addEvent(Series, 'legendItemClick', function (): void {
     var series = this,
         chart = series.chart,
         visible = series.visible,

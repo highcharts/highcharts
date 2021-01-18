@@ -16,14 +16,15 @@ import type AlignObject from '../Core/Renderer/AlignObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
+import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
 import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    getOptions,
-    merge
+    getOptions
 } = U;
 
 declare module '../Core/Chart/ChartLike' {
@@ -214,7 +215,7 @@ chartPrototype.showNoData = function (str?: string): void {
 
         if (!chart.styledMode) {
             chart.noDataLabel
-                .attr(noDataOptions.attr)
+                .attr(AST.filterUserAttributes(noDataOptions.attr || {}))
                 .css(noDataOptions.style || {});
         }
 

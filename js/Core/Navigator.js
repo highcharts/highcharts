@@ -9,19 +9,19 @@
  * */
 'use strict';
 import Axis from './Axis/Axis.js';
-import BaseSeries from './Series/Series.js';
-var seriesTypes = BaseSeries.seriesTypes;
 import Chart from './Chart/Chart.js';
 import Color from './Color/Color.js';
 var color = Color.parse;
 import H from './Globals.js';
 var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
-import LineSeries from '../Series/Line/LineSeries.js';
 import NavigatorAxis from './Axis/NavigatorAxis.js';
 import O from './Options.js';
 var defaultOptions = O.defaultOptions;
 import palette from './Color/Palette.js';
 import Scrollbar from './Scrollbar.js';
+import Series from './Series/Series.js';
+import SeriesRegistry from './Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from './Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
 var defaultSeriesType, 
@@ -1903,7 +1903,7 @@ if (!H.Navigator) {
         }
     });
     // Handle updating series
-    addEvent(LineSeries, 'afterUpdate', function () {
+    addEvent(Series, 'afterUpdate', function () {
         if (this.chart.navigator && !this.options.isInternal) {
             this.chart.navigator.setBaseSeries(null, false);
         }
