@@ -179,6 +179,8 @@ namespace TreeGridTick {
         // Set the new position, and show or hide
         if (!shouldRender) {
             icon.attr({ y: -9999 }); // #1338
+        } else {
+            icon.attr({ y: 0 }); // #14904
         }
 
         // Presentational attributes
