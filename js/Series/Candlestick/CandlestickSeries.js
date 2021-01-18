@@ -81,10 +81,11 @@ var CandlestickSeries = /** @class */ (function (_super) {
      * @function Highcharts.seriesTypes.candlestick#pointAttribs
      */
     CandlestickSeries.prototype.pointAttribs = function (point, state) {
-        var attribs = ColumnSeries.prototype.pointAttribs.call(this, point, state), options = this.options, isUp = point.open < point.close, stroke = options.lineColor || this.color, stateOptions;
+        var attribs = ColumnSeries.prototype.pointAttribs.call(this, point, state), options = this.options, isUp = point.open < point.close, stroke = options.lineColor || this.color, color = point.color || this.color, // (#14826)
+        stateOptions;
         attribs['stroke-width'] = options.lineWidth;
         attribs.fill = point.options.color ||
-            (isUp ? (options.upColor || this.color) : this.color);
+            (isUp ? (options.upColor || color) : color);
         attribs.stroke = point.options.lineColor ||
             (isUp ? (options.upLineColor || stroke) : stroke);
         // Select or hover states
