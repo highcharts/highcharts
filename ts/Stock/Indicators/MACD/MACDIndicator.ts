@@ -189,9 +189,7 @@ class MACDIndicator extends SMAIndicator {
      *
      */
 
-    public init(
-        this: MACDIndicator
-    ): void {
+    public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Check whether series is initialized. It may be not initialized,
@@ -233,7 +231,7 @@ class MACDIndicator extends SMAIndicator {
         return [point.y, point.signal, point.MACD];
     }
 
-    public translate(this: MACDIndicator): void {
+    public translate(): void {
         var indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];
 
@@ -256,7 +254,7 @@ class MACDIndicator extends SMAIndicator {
         );
     }
 
-    public destroy(this: MACDIndicator): void {
+    public destroy(): void {
         // this.graph is null due to removing two times the same SVG element
         this.graph = (null as any);
         this.graphmacd = this.graphmacd && this.graphmacd.destroy();
@@ -265,7 +263,7 @@ class MACDIndicator extends SMAIndicator {
         SeriesRegistry.seriesTypes.sma.prototype.destroy.apply(this, arguments);
     }
 
-    public drawGraph(this: MACDIndicator): void {
+    public drawGraph(): void {
         var indicator = this,
             mainLinePoints: Array<(
                 MACDPoint
@@ -332,11 +330,10 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public getZonesGraphs(
-        this: MACDIndicator,
         props: Array<Array<string>>
     ): Array<Array<string>> {
         var allZones: Array<Array<string>> =
-        SeriesRegistry.seriesTypes.sma.prototype.getZonesGraphs.call(this, props),
+        super.getZonesGraphs(props),
             currentZones: Array<Array<string>> = allZones;
 
         if (this.currentLineZone) {
@@ -356,9 +353,7 @@ class MACDIndicator extends SMAIndicator {
         return currentZones;
     }
 
-    public applyZones(
-        this: MACDIndicator
-    ): void {
+    public applyZones(): void {
         // Histogram zones are handled by drawPoints method
         // Here we need to apply zones for all lines
         var histogramZones = this.zones;

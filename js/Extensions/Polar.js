@@ -247,7 +247,7 @@ addEvent(Series, 'afterTranslate', function () {
  * closed circle in line-like series.
  * @private
  */
-wrap(seriesProto, 'getGraphPath', function (proceed, points) {
+wrap(seriesTypes.line.prototype, 'getGraphPath', function (proceed, points) {
     var series = this, i, firstValid, popLastPoint;
     // Connect the path
     if (this.chart.polar) {
