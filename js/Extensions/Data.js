@@ -472,6 +472,11 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U
  * @param {Highcharts.Chart} [chart]
  */
 var Data = /** @class */ (function () {
+    /* *
+     *
+     *  Constructors
+     *
+     * */
     function Data(dataOptions, chartOptions, chart) {
         this.chart = void 0;
         this.chartOptions = void 0;
@@ -539,6 +544,11 @@ var Data = /** @class */ (function () {
         };
         this.init(dataOptions, chartOptions, chart);
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Initialize the Data object with the given options
      *
@@ -1550,7 +1560,8 @@ var Data = /** @class */ (function () {
      * @return {number}
      */
     Data.prototype.parseDate = function (val) {
-        var parseDate = this.options.parseDate, ret, key, format, dateFormat = this.options.dateFormat || this.dateFormat, match;
+        var parseDate = this.options.parseDate;
+        var ret, key, format, dateFormat = this.options.dateFormat || this.dateFormat, match;
         if (parseDate) {
             ret = parseDate(val);
         }
@@ -1582,9 +1593,15 @@ var Data = /** @class */ (function () {
             }
             // Fall back to Date.parse
             if (!match) {
+                if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
+                    val = val
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
+                }
                 match = Date.parse(val);
                 // External tools like Date.js and MooTools extend Date object
-                // and returns a date.
+                // and return a date.
                 if (typeof match === 'object' &&
                     match !== null &&
                     match.getTime) {
