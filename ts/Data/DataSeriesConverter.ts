@@ -17,8 +17,8 @@
  * */
 
 import type DataEventEmitter from './DataEventEmitter';
-import type LineSeries from '../Series/Line/LineSeries';
 import type PointOptions from '../Core/Series/PointOptions';
+import type Series from '../Core/Series/Series';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
 import DataTable from './DataTable.js';
 import DataTableRow from './DataTableRow.js';
@@ -44,7 +44,10 @@ class DataSeriesConverter {
      *  Constructor
      *
      * */
-    public constructor(table: DataTable = new DataTable(), options: DataSeriesConverter.Options) {
+    public constructor(
+        table: DataTable = new DataTable(),
+        options: DataSeriesConverter.Options = {}
+    ) {
         this.table = table;
         this.options = options;
     }
@@ -153,7 +156,7 @@ class DataSeriesConverter {
     }
 
     setDataTable(
-        allSeries: Array<LineSeries>,
+        allSeries: Array<Series>,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const table = this.table,

@@ -53,7 +53,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Regular expression to extract the modifier name (group 1) from the
      * stringified class type.
      */
-    private static readonly nameRegExp = /^function\s+(\w*?)(?:DataModifier)?\s*\(/;
+    private static readonly nameRegExp = /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
 
     /**
      * Registry as a record object with modifier names and their class.
@@ -317,12 +317,7 @@ namespace DataModifier {
     /**
      * Event object with additional event information.
      */
-    export interface EventObject extends DataEventEmitter.EventObject {
-        readonly type: (
-            'execute'|'afterExecute'
-        );
-        readonly table: DataTable;
-    }
+    export type EventObject = (BenchmarkEventObject|ExecuteEventObject);
 
     export interface BenchmarkEventObject extends DataEventEmitter.EventObject {
         readonly type: (
@@ -333,6 +328,13 @@ namespace DataModifier {
 
     export interface BenchmarkOptions {
         iterations: number;
+    }
+
+    export interface ExecuteEventObject extends DataEventEmitter.EventObject {
+        readonly type: (
+            'execute'|'afterExecute'
+        );
+        readonly table: DataTable;
     }
 
     /**

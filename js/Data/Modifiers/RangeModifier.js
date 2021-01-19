@@ -46,7 +46,7 @@ var RangeDataModifier = /** @class */ (function (_super) {
     /**
      * Constructs an instance of the range modifier.
      *
-     * @param {RangeDataModifier.Options} [options]
+     * @param {RangeModifier.Options} [options]
      * Options to configure the range modifier.
      */
     function RangeDataModifier(options) {
@@ -62,7 +62,7 @@ var RangeDataModifier = /** @class */ (function (_super) {
     /**
      * Converts a class JSON to a range modifier.
      *
-     * @param {RangeDataModifier.ClassJSON} json
+     * @param {RangeModifier.ClassJSON} json
      * Class JSON to convert to an instance of range modifier.
      *
      * @return {RangeDataModifier}
@@ -130,15 +130,14 @@ var RangeDataModifier = /** @class */ (function (_super) {
         return result;
     };
     /**
-     * Converts the range modifier to a class JSON, including all containing all
-     * modifiers.
+     * Converts the range modifier to a class JSON.
      *
      * @return {DataJSON.ClassJSON}
      * Class JSON of this range modifier.
      */
     RangeDataModifier.prototype.toJSON = function () {
         return {
-            $class: 'RangeDataModifier',
+            $class: 'RangeModifier',
             options: merge(this.options)
         };
     };
@@ -170,9 +169,3 @@ var RangeDataModifier = /** @class */ (function (_super) {
  * */
 DataJSON.addClass(RangeDataModifier);
 DataModifier.addModifier(RangeDataModifier);
-/* *
- *
- *  Export
- *
- * */
-export default RangeDataModifier;

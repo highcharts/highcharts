@@ -29,6 +29,7 @@ var DataSeriesConverter = /** @class */ (function () {
      * */
     function DataSeriesConverter(table, options) {
         if (table === void 0) { table = new DataTable(); }
+        if (options === void 0) { options = {}; }
         this.table = table;
         this.options = options;
     }
