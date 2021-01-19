@@ -1,30 +1,23 @@
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/maps/modules/map.js"></script>
 <script src="https://code.highcharts.com/mapdata/custom/europe.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 
     <div role="radiogroup">
-        <div class="form-check form-check-inline" aria-activedescendant="themeLight" style>
-            <input class="form-check-input" type = "radio" name="themes" id="themeDark" value="dark" role="radio">
-            <label class="form-check-label" for="dark">Dark Theme</label>
+        <div class="form">
+            <input type = "radio" name="themes" id="themeDark" value="dark" role="radio">
+            <label for="dark">Dark Theme</label>
         </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-label" type="radio" name="themes" id="themeLight" value="light" role="radio" checked>
-            <label class="form-check-label" for="themeLight" >Light theme</label>
+        <div class="form">
+            <input type="radio" name="themes" id="themeLight" value="light" role="radio" checked>
+            <label for="themeLight" >Light theme</label>
         </div>
     </div>
 
 <figure class ="highcharts-figure">
     <p class="highcharts-description">These four charts demonstrates the use of two high contrast themes.</p>
-    <div class="container">
-        <div class="row">
-            <div id="container-column" class="col-6"></div>
-            <div id="container-spline" class="col-6"></div>
-            <div id="container-scatter" class="col-6"></div>
-            <div id="container-map" class="col-6"></div>
-            <div id="container-pie" class="col-6"></div>
-        </div>
-    </div>  
+            <div id="container-column" class="container"></div>
+            <div id="container-spline" class="container"></div>
+            <div id="container-map" class="container"></div>
+            <div id="container-pie" class="container"></div>
 </figure>

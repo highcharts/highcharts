@@ -287,6 +287,9 @@ function makeChart(constructor, type, series) {
         chart: {
             type: type
         },
+        exporting: {
+            enabled: false
+        },
         title: {
             text: `${capitalizeString(type)} chart`
         },
@@ -306,11 +309,6 @@ const createChartLayout = () => {
             colorByPoint: true,
             data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
         }]],
-
-        ['scatter', makeArray(10, (_, i) => ({
-            data: makeArray(100, () => i / 2 + Math.random())
-        }))],
-
         ['pie', [{
             dataLabels: {
                 enabled: false
