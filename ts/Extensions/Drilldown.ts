@@ -979,6 +979,8 @@ Chart.prototype.drillUp = function (): void {
                     level.seriesOptions
             });
 
+            this.resetZoomButton && this.resetZoomButton.destroy(); // #8095
+
             if ((newSeries as any).type === oldSeries.type) {
                 (newSeries as any).drilldownLevel = level;
                 (newSeries as any).options.animation =
@@ -1053,12 +1055,24 @@ addEvent(Chart, 'afterInit', function (): void {
     };
 });
 
-// Don't show the reset button if we already are displaying the drillUp button.
-addEvent(Chart, 'beforeShowResetZoom', function (): (boolean|undefined) {
-    if (this.drillUpButton) {
-        return false;
+// Shift the drillUpButton to make the space for resetZoomButton, #8095.
+addEvent(Chart, 'afterShowResetZoom', function (): void {
+    const chart = this,
+        bbox = chart.resetZoomButton && chart.resetZoomButton.getBBox(),
+        buttonOptions = chart.options.drilldown && chart.options.drilldown.drillUpButton;
+
+    if (this.drillUpButton && bbox && buttonOptions && buttonOptions.position && buttonOptions.position.x) {
+        this.drillUpButton.align({
+            x: buttonOptions.position.x - bbox.width - 10,
+            y: buttonOptions.position.y,
+            align: buttonOptions.position.align
+        },
+        false,
+        buttonOptions.relativeTo || 'plotBox'
+        );
     }
 });
+
 addEvent(Chart, 'render', function (): void {
     (this.xAxis || []).forEach(function (axis): void {
         axis.ddPoints = {};
@@ -1623,7 +1637,6 @@ addEvent(Series, 'afterDrawTracker', function (): void {
     });
 });
 
-
 addEvent(Point, 'afterSetState', function (): void {
     var styledMode = this.series.chart.styledMode;
 
@@ -1631,5 +1644,29 @@ addEvent(Point, 'afterSetState', function (): void {
         applyCursorCSS(this.series.halo, 'pointer', true, styledMode);
     } else if (this.series.halo) {
         applyCursorCSS(this.series.halo, 'auto', false, styledMode);
+    }
+});
+
+// After zooming out, shift the drillUpButton to the previous position, #8095.
+addEvent(H.Chart, 'selection', function (event: any): void {
+    if (event.resetSelection === true && this.drillUpButton) {
+        const buttonOptions = this.options.drilldown && this.options.drilldown.drillUpButton;
+
+        if (buttonOptions && buttonOptions.position) {
+            this.drillUpButton.align({
+                x: buttonOptions.position.x,
+                y: buttonOptions.position.y,
+                align: buttonOptions.position.align
+            },
+            false,
+            buttonOptions.relativeTo || 'plotBox'
+            );
+        }
+    }
+});
+
+addEvent(H.Chart, 'drillup', function (): void {
+    if (this.resetZoomButton) {
+        this.resetZoomButton = this.resetZoomButton.destroy();
     }
 });
