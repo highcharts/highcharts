@@ -1,6 +1,7 @@
+// remove all references to series.label.enabled = false in the options
 var colors = Highcharts.getOptions().colors;
 
-Highcharts.chart('container', {
+Highcharts.chart('container-area', {
     chart: {
         type: 'area'
     },
@@ -10,8 +11,7 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        visible: false,
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        visible: false
     },
 
     yAxis: {
@@ -65,7 +65,7 @@ Highcharts.chart('container', {
     }]
 });
 
-Highcharts.chart('container2', {
+Highcharts.chart('container-col', {
     title: {
         text: ''
     },
@@ -88,9 +88,6 @@ Highcharts.chart('container2', {
 
     series: [{
         showInLegend: true,
-        label: {
-            enabled: false
-        },
         type: 'column',
         borderColor: Highcharts.getOptions().colors[0],
         data: [{
@@ -143,16 +140,7 @@ Highcharts.chart('container2', {
             color: {
                 patternIndex: 9
             }
-        }],
-        dataLabels: {
-            connectorColor: Highcharts.getOptions().colors[0],
-            formatter: function () {
-                var i = this.point.index;
-                return i > 9 ?
-                    'Custom pattern' : // For the last one, show custom label
-                    'default-pattern-' + i; // Show default pattern label
-            }
-        }
+        }]
     }]
 });
 
@@ -177,12 +165,10 @@ function getColorPattern(i) {
     };
 }
 
-Highcharts.chart('container3', {
+
+Highcharts.chart('container-pie', {
     chart: {
-        type: 'pie',
-        style: {
-            fontFamily: 'Roboto,Arial'
-        }
+        type: 'pie'
     },
 
     title: {
@@ -200,77 +186,33 @@ Highcharts.chart('container3', {
 
     plotOptions: {
         series: {
-            label: {
-                enabled: false
-            },
             dataLabels: {
-                enabled: false,
-                connectorColor: '#777',
-                format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-            },
-            point: {
-                events: {
-                    click: function () {
-                        window.location.href = this.website;
-                    }
-                }
-            },
-            cursor: 'pointer',
-            borderWidth: 3
+                enabled: false
+            }
         }
     },
 
     series: [{
-        name: 'Screen reader usage',
         data: [{
-            name: 'NVDA',
             y: 40.6,
-            color: getColorPattern(0),
-            website: 'https://www.nvaccess.org',
-            accessibility: {
-                description: 'This is the most used desktop screen reader'
-            }
+            color: getColorPattern(0)
         }, {
-            name: 'JAWS',
             y: 40.1,
-            color: getColorPattern(1),
-            website: 'https://www.freedomscientific.com/Products/Blindness/JAWS'
+            color: getColorPattern(1)
         }, {
-            name: 'VoiceOver',
             y: 12.9,
-            color: getColorPattern(2),
-            website: 'http://www.apple.com/accessibility/osx/voiceover'
+            color: getColorPattern(2)
         }, {
-            name: 'ZoomText',
             y: 2,
-            color: getColorPattern(3),
-            website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader'
+            color: getColorPattern(3)
         }, {
-            name: 'Other',
             y: 4.4,
-            color: getColorPattern(4),
-            website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php'
+            color: getColorPattern(4)
         }]
-    }],
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                plotOptions: {
-                    series: {
-                        dataLabels: {
-                            format: '<b>{point.name}</b>'
-                        }
-                    }
-                }
-            }
-        }]
-    }
+    }]
 });
 
-Highcharts.chart('container4', {
+Highcharts.chart('container-line', {
     chart: {
         type: 'spline',
         style: {
@@ -281,116 +223,51 @@ Highcharts.chart('container4', {
     exporting: {
         enabled: false
     },
-
     legend: {
-        enabled: false,
-        symbolWidth: 40
+        enabled: false
     },
 
     title: {
         text: ''
     },
 
-    yAxis: {
-        visible: false,
-        title: {
-            text: 'Percentage usage'
-        }
-    },
-
     xAxis: {
-        visible: false,
-        title: {
-            text: 'Time'
-        },
-        accessibility: {
-            description: 'Time from December 2010 to September 2019'
-        },
-        categories: ['December 2010', 'May 2012', 'January 2014', 'July 2015', 'October 2017', 'September 2019']
+        visible: false
     },
 
-    tooltip: {
-        valueSuffix: '%',
-        enabled: false
+    yAxis: {
+        visible: false
     },
 
     plotOptions: {
         series: {
-            label: {
-                enabled: false
-            },
-            point: {
-                events: {
-                    click: function () {
-                        window.location.href = this.series.options.website;
-                    }
-                }
-            },
             cursor: 'pointer'
         }
     },
 
+    // Simplify data to match other charts
     series: [{
-        name: 'NVDA',
         data: [34.8, 43.0, 51.2, 41.4, 64.9, 72.4],
-        website: 'https://www.nvaccess.org',
-        color: colors[2],
-        accessibility: {
-            description: 'This is the most used screen reader in 2019'
-        }
+        color: colors[2]
     }, {
-        name: 'JAWS',
         data: [69.6, 63.7, 63.9, 43.7, 66.0, 61.7],
-        website: 'https://www.freedomscientific.com/Products/Blindness/JAWS',
         dashStyle: 'ShortDashDot',
         color: colors[0]
     }, {
-        name: 'VoiceOver',
         data: [20.2, 30.7, 36.8, 30.9, 39.6, 47.1],
-        website: 'http://www.apple.com/accessibility/osx/voiceover',
         dashStyle: 'ShortDot',
         color: colors[1]
     }, {
-        name: 'Narrator',
         data: [null, null, null, null, 21.4, 30.3],
-        website: 'https://support.microsoft.com/en-us/help/22798/windows-10-complete-guide-to-narrator',
         dashStyle: 'Dash',
         color: colors[9]
     }, {
-        name: 'ZoomText/Fusion',
         data: [6.1, 6.8, 5.3, 27.5, 6.0, 5.5],
-        website: 'http://www.zoomtext.com/products/zoomtext-magnifierreader',
         dashStyle: 'ShortDot',
         color: colors[5]
     }, {
-        name: 'Other',
         data: [42.6, 51.5, 54.2, 45.8, 20.2, 15.4],
-        website: 'http://www.disabled-world.com/assistivedevices/computer/screen-readers.php',
         dashStyle: 'ShortDash',
         color: colors[3]
-    }],
-
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 550
-            },
-            chartOptions: {
-                legend: {
-                    itemWidth: 150
-                },
-                xAxis: {
-                    categories: ['Dec. 2010', 'May 2012', 'Jan. 2014', 'July 2015', 'Oct. 2017', 'Sep. 2019']
-                },
-                yAxis: {
-                    title: {
-                        enabled: false
-                    },
-                    labels: {
-                        format: '{value}%'
-                    }
-                }
-            }
-        }]
-    }
+    }]
 });

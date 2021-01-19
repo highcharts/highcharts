@@ -1,3 +1,13 @@
+.btn.btn-stop {
+    background-color: #fff;
+    border: 1px solid #25386f;
+    color: #25386f;
+    width: 20%;
+    font-size: 0.9rem;
+    min-height: 30px;
+    font-weight: 500;
+}
+
 .btn {
     background-color: #25386f;
     border: 1 px solid #25386f;
@@ -11,6 +21,9 @@
     padding: .375rem .75rem;
     margin-bottom: .25rem;
     margin-top: .25rem;
+}
+.text-center{
+    text-align: center;
 }
 
 .highcharts-figure {
@@ -37,4 +50,18 @@
     left: 0;
     z-index: 999;
     background-color: rgba(255, 255, 255, 0.75);
+}
+
+#stop {
+    visibility: hidden;
+}
+
+@media (max-width: 575px){
+    .btn.btn-play {
+        width: 50%;
+    }
+    .btn.btn-stop {
+        width: 30%;
+    }
+  
 }
