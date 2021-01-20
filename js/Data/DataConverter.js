@@ -368,6 +368,12 @@ var DataConverter = /** @class */ (function () {
             }
             // Fall back to Date.parse
             if (!match) {
+                if (value.match(/:.+(GMT|UTC|[Z+-])/)) {
+                    value = value
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
+                }
                 match = Date.parse(value);
                 // External tools like Date.js and MooTools extend Date object
                 // and returns a date.
