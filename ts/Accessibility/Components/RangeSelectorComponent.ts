@@ -218,8 +218,8 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
 
 
     /**
-     * @private
      * Hide buttons from AT when showing dropdown, and vice versa.
+     * @private
      */
     updateSelectorVisibility: function (this: Highcharts.RangeSelectorComponent): void {
         const chart = this.chart;
@@ -241,8 +241,8 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
 
 
     /**
-     * @private
      * Set accessibility related attributes on dropdown element.
+     * @private
      */
     setDropdownAttrs: function (this: Highcharts.RangeSelectorComponent): void {
         const chart = this.chart;
