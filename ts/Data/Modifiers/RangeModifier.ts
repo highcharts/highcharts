@@ -38,7 +38,7 @@ const {
 /**
  * Filters out table rows with a specific value range.
  */
-class RangeDataModifier extends DataModifier {
+class RangeModifier extends DataModifier {
 
     /* *
      *
@@ -76,8 +76,8 @@ class RangeDataModifier extends DataModifier {
      * @return {RangeDataModifier}
      * GrouRangep modifier of the class JSON.
      */
-    public static fromJSON(json: RangeModifier.ClassJSON): RangeDataModifier {
-        return new RangeDataModifier(json.options);
+    public static fromJSON(json: RangeModifier.ClassJSON): RangeModifier {
+        return new RangeModifier(json.options);
     }
 
     /* *
@@ -95,7 +95,7 @@ class RangeDataModifier extends DataModifier {
     public constructor(options?: DeepPartial<RangeModifier.Options>) {
         super();
 
-        this.options = merge(RangeDataModifier.defaultOptions, options);
+        this.options = merge(RangeModifier.defaultOptions, options);
     }
 
     /* *
@@ -275,12 +275,12 @@ namespace RangeModifier {
  *
  * */
 
-DataJSON.addClass(RangeDataModifier);
-DataModifier.addModifier(RangeDataModifier);
+DataJSON.addClass(RangeModifier);
+DataModifier.addModifier(RangeModifier);
 
 declare module './ModifierType' {
     interface ModifierTypeRegistry {
-        Range: typeof RangeDataModifier;
+        Range: typeof RangeModifier;
     }
 }
 

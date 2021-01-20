@@ -426,7 +426,7 @@ class DataConverter {
         const converter = this;
 
         let dateFormat = dateFormatProp || converter.options.dateFormat,
-            result = 0,
+            result = NaN,
             key,
             format,
             match;

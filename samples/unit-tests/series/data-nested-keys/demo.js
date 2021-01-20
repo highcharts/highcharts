@@ -113,14 +113,39 @@ QUnit.test('Nested properties in CSV', function (assert) {
         }),
         points = chart.series[0].points;
 
+    assert.strictEqual(
+        points[0].name,
+        'Bob',
+        'First point should have correct options. (#1)'
+    );
+
+    assert.strictEqual(
+        points[0].y,
+        1,
+        'First point should have correct options. (#2)'
+    );
+
     assert.ok(
-        points[0].name === 'Bob' &&
-            points[0].y === 1 &&
-            points[0].options.dataLabels.enabled &&
-            points[0].options.dataLabels.color === '#ff0000' &&
-            points[0].options.test.test2.test3.test4 === 'Hello' &&
-            points[0].options.test.test2.test3.test5 === 12,
-        'Point 1 has correct options'
+        points[0].options.dataLabels.enabled,
+        'First point should have correct options. (#3)'
+    );
+
+    assert.strictEqual(
+        points[0].options.dataLabels.color,
+        '#ff0000',
+        'First point should have correct options. (#4)'
+    );
+
+    assert.strictEqual(
+        points[0].options.test.test2.test3.test4,
+        'Hello',
+        'First point should have correct options. (#5)'
+    );
+
+    assert.strictEqual(
+        points[0].options.test.test2.test3.test5,
+        12,
+        'First point should have correct options. (#6)'
     );
 
     assert.ok(

@@ -39,7 +39,7 @@ QUnit.test('csv-datetime-axis', function (assert) {
 });
 
 if (!isNaN(Date.parse('Jan 16'))) {
-    // Only Chrome parses "Jan 16" as of 2017
+    // Only Chrome parses "Jan 16" as of current year
     QUnit.test('csv-current-year', function (assert) {
         // Don't log the error 'Could not deduce date format'
         var error = Highcharts.error;
