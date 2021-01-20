@@ -872,8 +872,6 @@ class SVGElement {
             tspans: Array<SVGDOMElement>,
             hasContrast = textOutline.indexOf('contrast') !== -1,
             styles: CSSObject = {},
-            color: ColorString,
-            strokeWidth: string,
             firstRealChild: SVGDOMElement;
 
         // When the text shadow is set to contrast, use dark stroke for light
@@ -881,20 +879,20 @@ class SVGElement {
         if (hasContrast) {
             styles.textOutline = textOutline = textOutline.replace(
                 /contrast/g,
-                this.renderer.getContrast(elem.style.fill as any)
+                this.renderer.getContrast(elem.style.fill)
             );
         }
 
         // Extract the stroke width and color
-        textOutline = textOutline.split(' ') as any;
-        color = textOutline[textOutline.length - 1];
-        strokeWidth = textOutline[0];
+        const parts = textOutline.split(' ');
+        const color: ColorString = parts[parts.length - 1];
+        let strokeWidth = parts[0];
 
         if (strokeWidth && strokeWidth !== 'none' && H.svg) {
 
             this.fakeTS = true; // Fake text shadow
 
-            tspans = [].slice.call(elem.getElementsByTagName('tspan'));
+            //tspans = [].slice.call(elem.getElementsByTagName('tspan'));
 
             // In order to get the right y position of the clone,
             // copy over the y setter
@@ -911,55 +909,45 @@ class SVGElement {
             );
 
             // Remove shadows from previous runs.
-            this.removeTextOutline(tspans);
+            this.removeTextOutline();
 
-            // Check if the element contains RTL characters.
-            // Comparing against Hebrew and Arabic characters,
-            // excluding Arabic digits. Source:
-            // https://www.unicode.org/Public/UNIDATA/extracted/DerivedBidiClass.txt
-            const isRTL = elem.textContent ?
-                /^[\u0591-\u065F\u066A-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
-                    .test(elem.textContent) : false;
-            // For each of the tspans, create a stroked copy behind it.
-            firstRealChild = elem.firstChild as any;
-            tspans.forEach(function (
-                tspan: SVGDOMElement,
-                y: number
-            ): void {
-                var clone: any;
-
-                // Let the first line start at the correct X position
-                if (y === 0) {
-                    tspan.setAttribute('x', elem.getAttribute('x') as any);
-                    y = elem.getAttribute('y') as any;
-                    tspan.setAttribute('y', y || 0);
-                    if (y === null) {
-                        elem.setAttribute('y', 0);
-                    }
-                }
-
-                // Create the clone and apply outline properties.
-                // For RTL elements apply outline properties for orginal element
-                // to prevent outline from overlapping the text.
-                // For RTL in Firefox keep the orginal order (#10162).
-                clone = tspan.cloneNode(true);
-                attr((isRTL && !isFirefox) ? tspan : clone, {
-                    'class': 'highcharts-text-outline',
-                    fill: color,
-                    stroke: color,
-                    'stroke-width': strokeWidth,
-                    'stroke-linejoin': 'round'
-                });
-                elem.insertBefore(clone, firstRealChild);
+            const outline = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            attr(outline, {
+                'class': 'highcharts-text-outline',
+                fill: color,
+                stroke: color,
+                'stroke-width': strokeWidth,
+                'stroke-linejoin': 'round'
             });
 
-            // Create a whitespace between tspan and clone,
-            // to fix the display of Arabic characters in Firefox.
-            if (isRTL && isFirefox && tspans[0]) {
-                const whitespace = tspans[0].cloneNode(true);
-                whitespace.textContent = ' ';
-                elem.insertBefore(whitespace, firstRealChild);
-            }
+            // For each of the tspans and text node, create a copy in the
+            // outline.
+            [].forEach.call(
+                elem.childNodes,
+                (childNode: ChildNode): void => {
+                    const clone = childNode.cloneNode(true);
+                    if ((clone as any).removeAttribute) {
+                        ['fill', 'stroke', 'stroke-width', 'stroke'].forEach(
+                            (prop): void => (clone as any).removeAttribute(prop)
+                        );
+                    }
+                    outline.appendChild(clone);
+                }
+            );
+
+            // Insert an absolutely positioned break before the original text
+            // to keep it in place
+            const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            br.textContent = '\u200B';
+            attr(br, {
+                x: elem.getAttribute('x'),
+                y: elem.getAttribute('y')
+            });
+
+            // Insert the outline
+            outline.appendChild(br);
+            elem.insertBefore(outline, elem.firstChild);
+
         }
     }
 
@@ -2181,21 +2169,14 @@ class SVGElement {
     }
 
     /**
+     *
      * @private
-     * @param {Array<Highcharts.SVGDOMElement>} tspans
-     * Text spans.
      */
-    public removeTextOutline(tspans: Array<SVGDOMElement>): void {
-        // Iterate from the end to
-        // support removing items inside the cycle (#6472).
-        var i = tspans.length,
-            tspan;
-        while (i--) {
-            tspan = tspans[i];
-            if (tspan.getAttribute('class') === 'highcharts-text-outline') {
-                // Remove then erase
-                erase(tspans, this.element.removeChild(tspan));
-            }
+    public removeTextOutline(): void {
+        const outline = this.element
+            .querySelector('tspan.highcharts-text-ouline') as SVGDOMElement;
+        if (outline) {
+            this.safeRemoveChild(outline);
         }
     }
 
@@ -2306,10 +2287,7 @@ class SVGElement {
             } else if (textPathWrapper) {
                 // Case after drillup when spans were added into
                 // the DOM outside the textPathWrapper parentGroup
-                this.removeTextOutline.call(
-                    textPathWrapper.parentGroup,
-                    [].slice.call(elem.getElementsByTagName('tspan'))
-                );
+                this.removeTextOutline.call(textPathWrapper.parentGroup);
             }
             // label() has padding, text() doesn't
             if (this.options && this.options.padding) {
@@ -2393,10 +2371,7 @@ class SVGElement {
             elem.removeAttribute('transform');
 
             // Remove shadows and text outlines
-            this.removeTextOutline.call(
-                textPathWrapper,
-                [].slice.call(elem.getElementsByTagName('tspan'))
-            );
+            this.removeTextOutline.call(textPathWrapper);
 
             // Remove background and border for label(), see #10545
             // Alternatively, we can disable setting background rects in
