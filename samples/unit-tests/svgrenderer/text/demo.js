@@ -398,8 +398,29 @@ QUnit.test('BBox for mulitiple lines', function (assert) {
         assert.strictEqual(
             lab.element.getAttribute('dy'),
             null,
-            "Frist line shouldn't have dy (#6144) - visually the red text fits in the green box."
+            "First line shouldn't have dy (#6144) - visually the red text fits in the green box."
         );
+
+        const txt = renderer
+            .text(
+                '<span><span>FirstLine</span><br/>SecondLine</span><br/>ThirdLine',
+                20,
+                100
+            )
+            .add();
+
+        assert.strictEqual(
+            txt.element.querySelectorAll('tspan').length,
+            4,
+            'A fake tspan should be inserted'
+        );
+        assert.strictEqual(
+            txt.element.querySelectorAll('tspan[dy]').length,
+            2,
+            'The content should be rendered across three lines'
+        );
+
+
     } finally {
         renderer.destroy();
     }
