@@ -428,7 +428,7 @@ var Chart = /** @class */ (function () {
         i = series.length;
         while (i--) {
             serie = series[i];
-            if (serie.options.stacking || serie.options.centerInCategory) {
+            if (serie.options.stacking) {
                 hasStackedSeries = true;
                 if (serie.isDirty) {
                     hasDirtyStacks = true;

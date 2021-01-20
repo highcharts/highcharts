@@ -1,37 +1,4 @@
 QUnit.test(
-    'Parsing dates with timezone information (#10322)',
-    function (assert) {
-        var data = new Highcharts.Data({}),
-            samples = [
-                '2018-03-13T17:00:00+00:00',
-                '2018-03-13T20:00:00+03:00',
-                '2018-03-13T17:00:00GMT',
-                '2018-03-13T07:00:00GMT-1000',
-                '2018-03-13T08:00:00GMT-09:00',
-                '2018-03-13T17:00:00UTC',
-                '2018-03-13T18:30:00UTC+0130',
-                '2018-03-13T17:30:00UTC+00:30',
-                '2018-03-13T17:00:00Z'
-            ],
-            previousSample;
-
-        samples
-            .map(sample => data.parseDate(sample))
-            .map(sample => (new Date(sample)).toUTCString())
-            .forEach((sample, index) => {
-                if (previousSample) {
-                    assert.strictEqual(
-                        sample,
-                        previousSample,
-                        'Parsed dates should be the same. (Index: ' + index + ')'
-                    );
-                }
-                previousSample = sample;
-            });
-    }
-);
-
-QUnit.test(
     'Data module with decimapPoint and negative numbers (#4749)',
     function (assert) {
         document.body.innerHTML += `<table id="datatable">

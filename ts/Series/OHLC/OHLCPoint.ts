@@ -18,9 +18,7 @@
 
 import type OHLCPointOptions from './OHLCPointOptions';
 import type OHLCSeries from './OHLCSeries';
-import type { SeriesZonesOptions } from './../../Core/Series/SeriesOptions';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 const {
     seriesTypes: {
         column: ColumnSeries
@@ -84,46 +82,6 @@ class OHLCPoint extends ColumnSeries.prototype.pointClass {
                 ' highcharts-point-up' :
                 ' highcharts-point-down'
         );
-    }
-
-    /**
-     * Save upColor as point color (#14826).
-     * @private
-     * @function Highcharts.seriesTypes.ohlc#resolveUpColor
-     */
-    public resolveUpColor(): void {
-        if (
-            this.open < this.close &&
-            !this.options.color &&
-            this.series.options.upColor
-        ) {
-            this.color = this.series.options.upColor;
-        }
-    }
-
-    /**
-     * Extend the parent method by saving upColor.
-     * @private
-     * @function Highcharts.seriesTypes.ohlc#resolveColor
-     */
-    public resolveColor(): void {
-        super.resolveColor();
-        this.resolveUpColor();
-    }
-
-    /**
-     * Extend the parent method by saving upColor.
-     * @private
-     * @function Highcharts.seriesTypes.ohlc#getZone
-     *
-     * @return {Highcharts.SeriesZonesOptionsObject}
-     *         The zone item.
-     */
-    public getZone(): SeriesZonesOptions {
-        const zone = super.getZone();
-        this.resolveUpColor();
-
-        return zone;
     }
 
     /* eslint-enable valid-jsdoc */

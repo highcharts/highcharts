@@ -25,7 +25,6 @@ import O from '../../Core/Options.js';
 const { defaultOptions } = O;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-
 const {
     seriesTypes: {
         column: ColumnSeries,
@@ -209,13 +208,12 @@ class CandlestickSeries extends OHLCSeries {
             options = this.options,
             isUp = point.open < point.close,
             stroke = options.lineColor || this.color,
-            color = point.color || this.color, // (#14826)
             stateOptions;
 
         attribs['stroke-width'] = options.lineWidth;
 
         attribs.fill = point.options.color ||
-            (isUp ? (options.upColor || color) : color);
+            (isUp ? (options.upColor || this.color) : this.color);
         attribs.stroke = point.options.lineColor ||
             (isUp ? (options.upLineColor || stroke) : stroke);
 

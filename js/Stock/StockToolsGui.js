@@ -751,31 +751,7 @@ addEvent(Chart, 'getMargins', function () {
         getStyle(listWrapper, 'padding-right')) || listWrapper.offsetWidth);
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
-        this.spacing[3] += offsetWidth;
     }
-});
-['beforeRender', 'beforeRedraw'].forEach(function (event) {
-    addEvent(Chart, event, function () {
-        if (this.stockTools) {
-            var listWrapper = this.stockTools.listWrapper, offsetWidth = listWrapper && ((listWrapper.startWidth +
-                getStyle(listWrapper, 'padding-left') +
-                getStyle(listWrapper, 'padding-right')) || listWrapper.offsetWidth);
-            var dirty = false;
-            if (offsetWidth && offsetWidth < this.plotWidth) {
-                this.spacingBox.x += offsetWidth;
-                dirty = true;
-            }
-            else if (offsetWidth === 0) {
-                dirty = true;
-            }
-            if (offsetWidth !== this.stockTools.prevOffsetWidth) {
-                this.stockTools.prevOffsetWidth = offsetWidth;
-                if (dirty) {
-                    this.isDirtyLegend = true;
-                }
-            }
-        }
-    });
 });
 addEvent(Chart, 'destroy', function () {
     if (this.stockTools) {
