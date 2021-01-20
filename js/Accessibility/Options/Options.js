@@ -43,6 +43,12 @@ import palette from '../../Core/Color/Palette.js';
 * @type {string|undefined}
 * @requires modules/accessibility
 * @since 7.1.0
+*/ /**
+* Enable or disable exposing the point to assistive technology
+* @name Highcharts.PointAccessibilityOptionsObject#enabled
+* @type {boolean|undefined}
+* @requires modules/accessibility
+* @since next
 */
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
@@ -634,6 +640,15 @@ var options = {
      * @type      {string}
      * @since     7.1.0
      * @apioption series.line.data.accessibility.description
+     */
+    /**
+     * Set to false to disable accessibility functionality for a specific point.
+     * The point will not be included in keyboard navigation, and will not be
+     * exposed to assistive technology.
+     *
+     * @type      {string}
+     * @since     next
+     * @apioption series.line.data.accessibility.enabled
      */
     /**
      * Accessibility options for a series.
