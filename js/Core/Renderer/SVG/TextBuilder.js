@@ -99,9 +99,22 @@ var TextBuilder = /** @class */ (function () {
         // Add line breaks by replacing the br tags with x and dy attributes on
         // the next tspan
         [].forEach.call(this.svgElement.element.querySelectorAll('br'), function (br) {
-            if (br.nextSibling && br.previousSibling) { // #5261
-                attr(br.nextSibling, {
-                    dy: _this.getLineHeight(br.nextSibling),
+            var _a;
+            var nextSibling = br.nextSibling;
+            if (nextSibling &&
+                br.previousSibling // #5261
+            ) {
+                // If the new line starts with a text node, we can't apply
+                // dy directly to it, so we create a tspan and move the text
+                // node inside it
+                if (!(nextSibling instanceof SVGElement)) {
+                    var tspan = doc.createElementNS(SVG_NS, 'tspan');
+                    (_a = br.parentElement) === null || _a === void 0 ? void 0 : _a.insertBefore(tspan, nextSibling);
+                    tspan.appendChild(nextSibling);
+                    nextSibling = tspan;
+                }
+                attr(nextSibling, {
+                    dy: _this.getLineHeight(nextSibling),
                     x: attr(_this.svgElement.element, 'x')
                 });
             }
