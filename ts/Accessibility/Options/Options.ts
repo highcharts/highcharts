@@ -136,6 +136,7 @@ declare global {
         }
         interface PointAccessibilityOptionsObject {
             description?: string;
+            enabled?: boolean;
         }
         interface ScreenReaderClickCallbackFunction {
             (evt: MouseEvent, chart?: AccessibilityChart): void;
@@ -199,6 +200,12 @@ declare global {
  * @type {string|undefined}
  * @requires modules/accessibility
  * @since 7.1.0
+ *//**
+ * Enable or disable exposing the point to assistive technology
+ * @name Highcharts.PointAccessibilityOptionsObject#enabled
+ * @type {boolean|undefined}
+ * @requires modules/accessibility
+ * @since next
  */
 
 /* *
@@ -834,6 +841,16 @@ var options: DeepPartial<Highcharts.Options> = {
      * @type      {string}
      * @since     7.1.0
      * @apioption series.line.data.accessibility.description
+     */
+
+    /**
+     * Set to false to disable accessibility functionality for a specific point.
+     * The point will not be included in keyboard navigation, and will not be
+     * exposed to assistive technology.
+     *
+     * @type      {string}
+     * @since     next
+     * @apioption series.line.data.accessibility.enabled
      */
 
     /**
