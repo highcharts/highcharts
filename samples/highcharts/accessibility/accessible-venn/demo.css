@@ -26,25 +26,28 @@
   grid-template-columns:70px 1fr;
   justify-items:left;
   opacity:1;
+  z-index: 1000;
 }
 
 .dataLabel h4{
   font-weight: normal;
+  display: none;
+  text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.5);
+  font-size:16px;
+  margin:0px 0px 5px 0px;
 }
 
 .dataLabel.over h4{
+  display: unset;
   font-weight: bold;
 }
 
 .dataLabel p{
+  display: none;
   margin:0px;
   padding:0px;
   white-space:normal;
-}
-
-.dataLabel h4{
-  font-size:16px;
-  margin:0px 0px 5px 0px;
+  text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.5);
 }
 
 #container svg {
@@ -110,23 +113,21 @@
 }
 
 #innovation{
-  top:-200px;
-  left:-140px;
+  top:-230px;
+  left:-150px;
   grid-template-columns:1fr;
   justify-items:center;
   text-align: center;
-}
-
-#innovation h4{
-  display: block;
+  background-color: transparent;
+  clip-path: unset;
+  height:unset;   
 }
 
 #innovation h4.open{
   opacity: 0; 
-    margin-top:20px;
+  margin-top:20px;
   grid-row:1 / span 1;
   font-weight:bold;
-
 }
 #innovation h4.closed{
   opacity: 1;
@@ -140,24 +141,24 @@
 #innovation.over h4.closed{
   opacity: 0;
 }
-  
+
 #innovation p{
   grid-row:2 / span 1;
   grid-column:1 / span 1;
-  display: block;
   opacity:0;
-  margin-bottom:30px;
+  margin-bottom:45px;
 }
 
 #innovation.over p{
   margin-bottom:30px;
   opacity:1;
+  display: block;
 }
 
 #innovation i{
   grid-row:3 / span 1;
   transition:none;
-  margin-bottom:15px;
+  top: 184px;
 }
 
 #reach{
@@ -175,18 +176,20 @@
 
 #reach i{
   grid-row:3 / span1; 
-  margin-top:15px;
-  margin-bottom:20px;
+  margin-top: 44px;
+  margin-bottom: 20px;
+  margin-left: -10px;
 }
 
 #reach.over h4{
   grid-row:2 / span1;
   margin-bottom:5px;
-  
 }
 
 #reach.over i{
   grid-row:1 / span1;
+  margin-left: 10px;
+  margin-top: 22px;
 }
 
 #legal{
@@ -199,7 +202,7 @@
 #legal.over{
   top:-80px;
   left:-205px;
-  grid-template-columns:220px 70px;
+  grid-template-columns:225px 65px;
   justify-items:left;
   align-items:center;
   padding-left:10px;
@@ -267,119 +270,107 @@
   display: none;
 }
 
-#innovation {
-  top: -215px;
-  background-color: transparent;
-  clip-path: unset;
-  height:unset;   
-}
-
 #innovation p{
   height:fit-content;
 }
  
 #innovation.over p{
-  margin-top:-130px;
-  color:#fff;
+  margin-top:-120px;
+  color:#252525;
 }
 
 #innovation h4.open{
-  margin-top:30px;
-  color:#fff;
+  margin-top:50px;
+  color:#252525;
 }
 
 #innovation.over i{
-  top:-180px;
+  top:-154px;
 }
 
 #innovation.over{
   background-color: rgb(124, 181, 236);
-  clip-path:ellipse(150px 100px at 50% 30%);
+  clip-path:ellipse(150px 116px at 50% 34%);
   height:340px;
 }
 
 #innovation.over a{
-  color:rgba(255,255,255,1);
+  color:#252525;
   text-decoration:underline;
 }
 
 #innovation.over a:hover{
-  color:rgba(255,255,255,.8);
+  color:#000;
 }
 
 #legal i {
-  margin-left: -55px;
+  margin-left: -60px;
+  margin-top: 15px;
 }
 
 #legal.over i {
-  margin-top: -130px;
-  margin-right: 8px;
+  margin-top: -110px;
+  margin-right: 13px;
 }
 
 #legal.over{
-  background-color: #F15C80;
-  clip-path:ellipse(150px 115px at 50% 35%);
+  background-color: #fa6d80;
+  clip-path:ellipse(150px 117px at 50% 35%);
   height:340px;
-  left:-265px;
-  top:-130px;
+  left:-260px;
+  top:-125px;
 }
 
 #legal.over p{
   margin-top: -250px;
-  margin-left: 40px;
-  color:#fff;
+  margin-left: 45px;
+  color:#252525;
 }
 
 #legal.over h4{
   margin-top: -55px;
-  margin-left: 40px;
-  color:#fff;
+  margin-left: 45px;
+  color:#252525;
 }
 
 #legal.over a{
-  color:rgba(255,255,255,1);
+  color:#252525;
   text-decoration:underline;
 }
 
 #legal.over a:hover{
-  color:rgba(255,255,255,.8);
+  color: #000;
 }
 
 #reach.over{
   background-color: rgba(247, 163, 92,1);
-  clip-path:ellipse(150px 115px at 50% 35%);
-  height:340px;
+  clip-path:ellipse(150px 120px at 50% 36%);
+  height:355px;
   left:-150px;
 }
 
 #reach i {
   grid-row: 3 / span1;
-  margin-top: -30px;
-  margin-bottom: 20px;
-}
-
-#reach.over i {
-  margin-top:20px;
 }
 
 #reach.over p {
   margin-top: 90px;
   width: 70%;
-  color:#fff;
+  color:#252525;
 }
 
 #reach.over h4 {
   margin-top: -210px;
-  color:#fff;
+  color:#252525;
 }
 
 #reach.over a{
-  color:rgba(255,255,255,1);
+  color:#252525;
   text-decoration:underline;
 }
 
 #reach.over a:hover{
-  color:rgba(255,255,255,.8);
+  color: #000;
 }
 
 #brand{
@@ -394,36 +385,38 @@
 
 #brand.over{
   background-color: rgba(144, 237, 125,1);
-  clip-path:ellipse(150px 115px at 50% 35%);
+  clip-path:ellipse(150px 117px at 50% 35%);
   height:340px;
-  left: 0px;
+  left: -5px;
   top: -230px;
 }
 
 #brand  p{
   margin-top:-240px;
-  margin-left:-20px;
+  margin-left:-10px;
+  color: #252525;
   width:95%;
 }
 
 #brand  h4{
   margin-top:-45px;
-  margin-left:50px;
+  margin-left:60px;
   margin-bottom:0px;
+  color: #252525;
 }
 
 #brand.over i{
-  left: 15px;
-  top: 100px;
+  left: 18px;
+  top: 105px;
 }
 
 #brand.over a{
-  color:rgba(0,0,0,1);
+  color: #252525;
   text-decoration:underline;
 }
 
 #brand.over a:hover{
-  color:rgba(0,0,0,.8);
+  color: #000;
 }
 
 .fas, .far,
@@ -434,33 +427,3 @@
   position:absolute;
   z-index: 100;
 }
-
-#featuresMenu{
-  display: none;
-}
-
-@media only screen and (max-width: 1024px){
-  #featuresMenu{
-    display: block;
-  }
-
-  .toc ul{
-    display: none;
-  }
-
-  h1 {
-    margin-top:0px;
-  }
-
-  h2 {
-    margin-top:20px;
-    margin-bottom:0px;
-  }
-
-  .headers{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-} 
