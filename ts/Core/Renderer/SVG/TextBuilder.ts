@@ -162,6 +162,8 @@ class TextBuilder {
 
     private modifyDOM(): void {
 
+        const x = attr(this.svgElement.element, 'x');
+
         // Modify hard line breaks by applying the rendered line height
         [].forEach.call(
             this.svgElement.element.querySelectorAll('tspan.highcharts-br'),
@@ -169,7 +171,7 @@ class TextBuilder {
                 if (br.nextSibling && br.previousSibling) { // #5261
                     attr(br, {
                         dy: this.getLineHeight(br),
-                        x: attr(this.svgElement.element, 'x')
+                        x
                     });
                 }
             }
@@ -259,7 +261,6 @@ class TextBuilder {
                     );
 
                     // Insert a break
-                    const x = attr(this.svgElement.element, 'x');
                     const br = doc.createElementNS(SVG_NS, 'tspan') as SVGElement;
                     br.textContent = '\u200B'; // zero-width space
                     attr(br, { dy, x });

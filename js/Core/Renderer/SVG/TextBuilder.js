@@ -96,12 +96,13 @@ var TextBuilder = /** @class */ (function () {
     };
     TextBuilder.prototype.modifyDOM = function () {
         var _this = this;
+        var x = attr(this.svgElement.element, 'x');
         // Modify hard line breaks by applying the rendered line height
         [].forEach.call(this.svgElement.element.querySelectorAll('tspan.highcharts-br'), function (br) {
             if (br.nextSibling && br.previousSibling) { // #5261
                 attr(br, {
                     dy: _this.getLineHeight(br),
-                    x: attr(_this.svgElement.element, 'x')
+                    x: x
                 });
             }
         });
@@ -163,7 +164,6 @@ var TextBuilder = /** @class */ (function () {
                     // Insert the line
                     parentElement.insertBefore(doc.createTextNode(line), textNode);
                     // Insert a break
-                    var x = attr(_this.svgElement.element, 'x');
                     var br = doc.createElementNS(SVG_NS, 'tspan');
                     br.textContent = '\u200B'; // zero-width space
                     attr(br, { dy: dy, x: x });
