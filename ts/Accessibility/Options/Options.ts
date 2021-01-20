@@ -848,7 +848,7 @@ var options: DeepPartial<Highcharts.Options> = {
      * The point will not be included in keyboard navigation, and will not be
      * exposed to assistive technology.
      *
-     * @type      {string}
+     * @type      {boolean}
      * @since     next
      * @apioption series.line.data.accessibility.enabled
      */
