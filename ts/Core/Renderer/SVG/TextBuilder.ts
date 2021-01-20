@@ -166,9 +166,24 @@ class TextBuilder {
         [].forEach.call(
             this.svgElement.element.querySelectorAll('br'),
             (br: SVGElement|HTMLElement): void => {
-                if (br.nextSibling && br.previousSibling) { // #5261
-                    attr(br.nextSibling as SVGElement, {
-                        dy: this.getLineHeight(br.nextSibling as SVGElement),
+                let nextSibling = br.nextSibling;
+
+                if (
+                    nextSibling &&
+                    br.previousSibling // #5261
+                ) {
+                    // If the new line starts with a text node, we can't apply
+                    // dy directly to it, so we create a tspan and move the text
+                    // node inside it
+                    if (!(nextSibling instanceof SVGElement)) {
+                        const tspan = doc.createElementNS(SVG_NS, 'tspan') as SVGElement;
+                        br.parentElement?.insertBefore(tspan, nextSibling);
+                        tspan.appendChild(nextSibling);
+                        nextSibling = tspan;
+                    }
+
+                    attr(nextSibling as SVGElement, {
+                        dy: this.getLineHeight(nextSibling as SVGElement),
                         x: attr(this.svgElement.element, 'x')
                     });
                 }
