@@ -1246,7 +1246,7 @@ var Data = /** @class */ (function () {
     Data.prototype.getDataColumnsFromDataTable = function (table) {
         var columns = [];
         var column, element;
-        objectEach(table.toColumns(), function (elemArr, key) {
+        objectEach(table.getColumns(), function (elemArr, key) {
             if (key !== 'id') {
                 column = [];
                 for (var i = 0, iEnd = elemArr.length; i < iEnd; ++i) {

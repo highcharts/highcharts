@@ -96,7 +96,7 @@ test('CSVStore, negative values', function (assert) {
     store.load();
 
     assert.deepEqual(
-        store.table.toColumns()['Values'],
+        store.table.getColumns()['Values'],
         array
     );
 
@@ -116,7 +116,7 @@ test('CSV with ""s', (assert) => {
     datastore.load();
 
     assert.deepEqual(
-        Object.keys(datastore.table.toColumns()),
+        Object.keys(datastore.table.getColumns()),
         ['id', 'test', 'test2'],
         'Headers should not contain ""s'
     )

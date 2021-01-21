@@ -12,7 +12,14 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
 import Ajax from '../Extensions/Ajax.js';
 const {
     ajax
@@ -46,6 +53,12 @@ const {
     pick,
     splat
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -1673,7 +1686,7 @@ class Data {
         let column: Array<Highcharts.DataValueType>,
             element;
 
-        objectEach(table.toColumns(), function (elemArr, key): void {
+        objectEach(table.getColumns(), function (elemArr, key): void {
             if (key !== 'id') {
                 column = [];
 

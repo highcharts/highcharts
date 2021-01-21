@@ -90,7 +90,7 @@ var InvertModifier = /** @class */ (function (_super) {
      * New modified table.
      */
     InvertModifier.prototype.execute = function (table, eventDetail) {
-        var modifier = this, newTable = new DataTable(), columns = table.toColumns(), newRowIds = Object.keys(columns), oldRowsLength = table.getRowCount();
+        var modifier = this, newTable = new DataTable(), columns = table.getColumns(), newRowIds = Object.keys(columns), oldRowsLength = table.getRowCount();
         var oldRow, newCells, newRow, rowCell;
         modifier.emit({ type: 'execute', detail: eventDetail, table: table });
         for (var i = 0, iEnd = newRowIds.length; i < iEnd; i++) {
@@ -101,7 +101,7 @@ var InvertModifier = /** @class */ (function (_super) {
                 for (var j = 0; j < oldRowsLength; j++) {
                     oldRow = table.getRow(j);
                     rowCell = oldRow && oldRow.getCell(newRowIds[i]);
-                    if (defined(rowCell) && (oldRow === null || oldRow === void 0 ? void 0 : oldRow.id)) {
+                    if (defined(rowCell) && oldRow && oldRow.id) {
                         newCells[oldRow.id] = rowCell;
                     }
                 }

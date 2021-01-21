@@ -20,19 +20,18 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
-import type DataParser from '../Parsers/DataParser';
 import type StoreType from './StoreType';
+
+import DataParser from '../Parsers/DataParser.js';
 import DataTableRow from '../DataTableRow.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-
 const {
     addEvent,
     fireEvent,
     merge,
     pick
 } = U;
-
 
 /* *
  *
@@ -249,10 +248,13 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Returns the order of columns.
      *
+     * @param {boolean} [usePresentationState]
+     * Whether to use the column order of the presentation state of the table.
+     *
      * @return {Array<string>}
      * Order of columns.
      */
-    public getColumnOrder(): Array<string> {
+    public getColumnOrder(usePresentationState?: boolean): Array<string> {
         const store = this,
             metadata = store.metadata,
             columns = metadata.columns,
@@ -286,14 +288,15 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         includeIdColumn?: boolean,
         usePresentationOrder?: boolean
     ): DataStore.ColumnsForExportObject {
-        const columnsRecord = this.table.toColumns(usePresentationOrder),
+        const table = this.table,
+            columnsRecord = table.getColumns(),
             columnNames = (
                 includeIdColumn ?
                     Object.keys(columnsRecord) :
                     Object.keys(columnsRecord).slice(1)
             );
 
-        const columnOrder = this.getColumnOrder().reverse();
+        const columnOrder = this.getColumnOrder(usePresentationOrder);
 
         if (columnOrder.length) {
             columnNames.sort((a, b): number => {
@@ -309,9 +312,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
 
         return ({
             columnNames,
-            columnValues: columnNames.map(function (name): DataTableRow.CellType[] {
-                return columnsRecord[name];
-            })
+            columnValues: columnNames.map(
+                (name: string): DataTableRow.CellType[] => columnsRecord[name]
+            )
         });
     }
 

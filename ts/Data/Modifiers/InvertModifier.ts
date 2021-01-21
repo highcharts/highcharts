@@ -19,6 +19,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+
 import DataModifier from './DataModifier.js';
 import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
@@ -125,7 +126,7 @@ class InvertModifier extends DataModifier {
     ): DataTable {
         const modifier = this,
             newTable = new DataTable(),
-            columns = table.toColumns(),
+            columns = table.getColumns(),
             newRowIds = Object.keys(columns),
             oldRowsLength = table.getRowCount();
 
@@ -146,7 +147,7 @@ class InvertModifier extends DataModifier {
                     oldRow = table.getRow(j);
                     rowCell = oldRow && oldRow.getCell(newRowIds[i]);
 
-                    if (defined(rowCell) && oldRow?.id) {
+                    if (defined(rowCell) && oldRow && oldRow.id) {
                         newCells[oldRow.id] = rowCell;
                     }
                 }

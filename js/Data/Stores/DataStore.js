@@ -157,10 +157,13 @@ var DataStore = /** @class */ (function () {
     /**
      * Returns the order of columns.
      *
+     * @param {boolean} [usePresentationState]
+     * Whether to use the column order of the presentation state of the table.
+     *
      * @return {Array<string>}
      * Order of columns.
      */
-    DataStore.prototype.getColumnOrder = function () {
+    DataStore.prototype.getColumnOrder = function (usePresentationState) {
         var store = this, metadata = store.metadata, columns = metadata.columns, columnNames = Object.keys(columns), columnOrder = [];
         var columnName;
         for (var i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -183,10 +186,10 @@ var DataStore = /** @class */ (function () {
      * An object with the properties `columnNames` and `columnValues`
      */
     DataStore.prototype.getColumnsForExport = function (includeIdColumn, usePresentationOrder) {
-        var columnsRecord = this.table.toColumns(usePresentationOrder), columnNames = (includeIdColumn ?
+        var table = this.table, columnsRecord = table.getColumns(), columnNames = (includeIdColumn ?
             Object.keys(columnsRecord) :
             Object.keys(columnsRecord).slice(1));
-        var columnOrder = this.getColumnOrder().reverse();
+        var columnOrder = this.getColumnOrder(usePresentationOrder);
         if (columnOrder.length) {
             columnNames.sort(function (a, b) {
                 if (columnOrder.indexOf(a) < columnOrder.indexOf(b)) {
@@ -200,9 +203,7 @@ var DataStore = /** @class */ (function () {
         }
         return ({
             columnNames: columnNames,
-            columnValues: columnNames.map(function (name) {
-                return columnsRecord[name];
-            })
+            columnValues: columnNames.map(function (name) { return columnsRecord[name]; })
         });
     };
     /**
