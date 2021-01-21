@@ -165,3 +165,43 @@ QUnit.test('Flags visibility', function (assert) {
         'Flag with box position value equal to 0 is visible.'
     );
 });
+
+QUnit.test('Scrolling inverted chart with a flag series.', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                inverted: true
+            },
+
+            xAxis: {
+                scrollbar: {
+                    enabled: true
+                },
+                min: 2,
+                max: 3
+            },
+
+            series: [{
+                data: [1, 2, 3, 4, 5]
+            }, {
+                type: 'flags',
+                data: [{
+                    x: 3,
+                    text: '3',
+                    title: '3'
+                }]
+            }]
+        }),
+        controller = new TestController(chart),
+        scrollbar = chart.xAxis[0].scrollbar;
+
+    controller.pan(
+        [scrollbar.x + 3, scrollbar.y + scrollbar.scrollbarTop + 3],
+        [scrollbar.x + 3, scrollbar.y + scrollbar.scrollbarTop + 10]
+    );
+
+    assert.equal(
+        chart.series[1].group.inverted,
+        false,
+        'The flag series should be invertible (#14063).'
+    );
+});
