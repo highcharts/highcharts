@@ -13,6 +13,7 @@ function removeHover() {
         e.classList.remove('over');
     });
     getEl('aicon').classList.remove('over');
+    getEl('dyncaption').classList.remove('visible');
 }
 
 getEl('container').addEventListener('mouseleave', function () {
@@ -21,6 +22,12 @@ getEl('container').addEventListener('mouseleave', function () {
 
 document.addEventListener('mouseup', function (e) {
     if (!getEl('container').contains(e.target)) {
+        removeHover();
+    }
+});
+
+document.addEventListener('keydown', function (e) {
+    if ((e.which || e.keyCode) === 27) { // esc key
         removeHover();
     }
 });
@@ -46,8 +53,7 @@ Highcharts.chart('container', {
     },
 
     chart: {
-        margin: 0,
-        spacing: 0
+        margin: 0
     },
 
     series: [{
@@ -87,8 +93,17 @@ Highcharts.chart('container', {
                             e.classList.remove('over');
                         });
 
-                        getEl(category).classList.add('over');
-                        getEl('aicon').classList.add('over');
+                        var mq = window.matchMedia('(max-width: 480px)');
+                        var caption = getEl('dyncaption');
+                        var label = getEl(category);
+                        if (mq.matches) {
+                            caption.className = 'visible content-' + category;
+                            getEl('caption-content').innerHTML = label.innerHTML;
+                        } else {
+                            caption.classList.remove('visible');
+                            label.classList.add('over');
+                            getEl('aicon').classList.add('over');
+                        }
                     }, 100);
                 }
             }
