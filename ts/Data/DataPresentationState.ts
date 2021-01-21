@@ -30,6 +30,10 @@ const {
  *
  * */
 
+/**
+ * Contains presentation information like column order, usually in relation to a
+ * DataTable instance.
+ */
 class DataPresentationState implements DataEventEmitter<DataPresentationState.EventObject>, DataJSON.Class {
 
     /**
@@ -59,8 +63,14 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      *
      * */
 
-    public columnOrder?: Array<string>;
+    /**
+     * Sorted array of column names.
+     */
+    private columnOrder?: Array<string>;
 
+    /**
+     * Whether the state has been changed since initialization.
+     */
     protected isModified?: boolean;
 
     /* *
@@ -80,10 +90,23 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         fireEvent(this, e.type, e);
     }
 
+    /**
+     * Returns an ordered array of column names.
+     *
+     * @return {Array<string>}
+     * Array of column names in order.
+     */
     public getColumnOrder(): Array<string> {
         return (this.columnOrder || []).slice();
     }
 
+    /**
+     * Returns a function for `Array.sort` to change the order of an array of
+     * column names. Unknown column names come last.
+     *
+     * @return {DataPresentationState.ColumnOrderCallback}
+     * Sort function to change the order.
+     */
     public getColumnSorter(): DataPresentationState.ColumnOrderCallback {
         const columnOrder = (this.columnOrder || []).slice();
 
@@ -111,6 +134,10 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         };
     }
 
+    /**
+     * @return {boolean}
+     * Returns true, if the state was changed since initialization.
+     */
     public isSet(): boolean {
         return this.isModified === true;
     }
@@ -134,6 +161,15 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         return addEvent(this, type, callback);
     }
 
+    /**
+     * Sets the order of the columns.
+     *
+     * @param {Array<string>} columnOrder
+     * Array of column names in order.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     */
     public setColumnOrder(
         columnOrder: Array<string>,
         eventDetail?: DataEventEmitter.EventDetail
@@ -161,7 +197,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
     }
 
     /**
-     * Converts the table to a class JSON.
+     * Converts the presentation state to a class JSON.
      *
      * @return {DataJSON.ClassJSON}
      * Class JSON of this table.
@@ -211,6 +247,9 @@ namespace DataPresentationState {
         'columnOrderChange'|'afterColumnOrderChange'
     );
 
+    /**
+     * Function to sort an array of column names.
+     */
     export interface ColumnOrderCallback {
         (a: string, b: string): number;
     }

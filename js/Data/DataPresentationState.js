@@ -16,6 +16,10 @@ var addEvent = U.addEvent, fireEvent = U.fireEvent;
  *  Class
  *
  * */
+/**
+ * Contains presentation information like column order, usually in relation to a
+ * DataTable instance.
+ */
 var DataPresentationState = /** @class */ (function () {
     function DataPresentationState() {
     }
@@ -50,9 +54,22 @@ var DataPresentationState = /** @class */ (function () {
     DataPresentationState.prototype.emit = function (e) {
         fireEvent(this, e.type, e);
     };
+    /**
+     * Returns an ordered array of column names.
+     *
+     * @return {Array<string>}
+     * Array of column names in order.
+     */
     DataPresentationState.prototype.getColumnOrder = function () {
         return (this.columnOrder || []).slice();
     };
+    /**
+     * Returns a function for `Array.sort` to change the order of an array of
+     * column names. Unknown column names come last.
+     *
+     * @return {DataPresentationState.ColumnOrderCallback}
+     * Sort function to change the order.
+     */
     DataPresentationState.prototype.getColumnSorter = function () {
         var columnOrder = (this.columnOrder || []).slice();
         if (!columnOrder.length) {
@@ -72,6 +89,10 @@ var DataPresentationState = /** @class */ (function () {
             return 0;
         };
     };
+    /**
+     * @return {boolean}
+     * Returns true, if the state was changed since initialization.
+     */
     DataPresentationState.prototype.isSet = function () {
         return this.isModified === true;
     };
@@ -90,6 +111,15 @@ var DataPresentationState = /** @class */ (function () {
     DataPresentationState.prototype.on = function (type, callback) {
         return addEvent(this, type, callback);
     };
+    /**
+     * Sets the order of the columns.
+     *
+     * @param {Array<string>} columnOrder
+     * Array of column names in order.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     */
     DataPresentationState.prototype.setColumnOrder = function (columnOrder, eventDetail) {
         var presentationState = this, oldColumnOrder = (presentationState.columnOrder || []).slice(), newColumnOrder = columnOrder.slice();
         presentationState.emit({
@@ -108,7 +138,7 @@ var DataPresentationState = /** @class */ (function () {
         });
     };
     /**
-     * Converts the table to a class JSON.
+     * Converts the presentation state to a class JSON.
      *
      * @return {DataJSON.ClassJSON}
      * Class JSON of this table.
