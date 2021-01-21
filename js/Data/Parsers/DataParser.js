@@ -90,7 +90,10 @@ var DataParser = /** @class */ (function () {
      * Common series options.
      */
     DataParser.getSeriesOptionsFromTable = function (table) {
-        var rows = table.getAllRows(), data = [], seriesOptions = { data: data };
+        var rows = table.getAllRows(), data = [], seriesOptions = {
+            id: table.id,
+            data: data
+        };
         var cellName, cellNames, pointOptions, row;
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
@@ -148,23 +151,24 @@ var DataParser = /** @class */ (function () {
      * @param {Highcharts.SeriesOptions} seriesOptions
      * Series options to convert.
      *
-     * @param {Array<string>} [pointArrayMap]
-     * Optional map to convert the index of short point options to column names.
-     *
      * @return {DataTable}
      * DataTable instance.
      */
-    DataParser.getTableFromSeriesOptions = function (seriesOptions, pointArrayMap) {
+    DataParser.getTableFromSeriesOptions = function (seriesOptions) {
         var _a;
-        if (pointArrayMap === void 0) { pointArrayMap = []; }
-        var table = new DataTable(), data = (seriesOptions.data || []);
-        if (!pointArrayMap.length) {
+        var table = new DataTable(void 0, seriesOptions.id), data = (seriesOptions.data || []);
+        var keys = (seriesOptions.keys || []).slice();
+        if (!keys.length) {
             if (seriesOptions.type) {
-                var seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type];
-                pointArrayMap = seriesClass && seriesClass.prototype.pointArrayMap || [];
+                var seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type], pointArrayMap = (seriesClass &&
+                    seriesClass.prototype.pointArrayMap);
+                if (pointArrayMap) {
+                    keys = pointArrayMap.slice();
+                    keys.unshift('x');
+                }
             }
-            if (!pointArrayMap.length) {
-                pointArrayMap = ['x', 'y'];
+            if (!keys.length) {
+                keys = ['x', 'y'];
             }
         }
         var point;
@@ -174,7 +178,7 @@ var DataParser = /** @class */ (function () {
             if (point instanceof Array) {
                 var pointOptions = {};
                 for (var j = 0, jEnd = point.length; j < jEnd; ++j) {
-                    pointOptions[pointArrayMap[j] || "" + j] = point[j];
+                    pointOptions[keys[j] || "" + j] = point[j];
                 }
                 table.insertRow(new DataTableRow(pointOptions));
                 // Object
@@ -186,8 +190,8 @@ var DataParser = /** @class */ (function () {
             }
             else {
                 table.insertRow(new DataTableRow((_a = {},
-                    _a[pointArrayMap[0] || 'x'] = i,
-                    _a[pointArrayMap[1] || 'y'] = point,
+                    _a[keys[0] || 'x'] = i,
+                    _a[keys[1] || 'y'] = point,
                     _a)));
             }
         }

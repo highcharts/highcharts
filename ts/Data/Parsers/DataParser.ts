@@ -158,7 +158,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     ): SeriesOptions {
         const rows = table.getAllRows(),
             data: Array<PointOptions> = [],
-            seriesOptions: SeriesOptions = { data };
+            seriesOptions: SeriesOptions = {
+                id: table.id,
+                data
+            };
 
         let cellName: string,
             cellNames: Array<string>,
@@ -232,26 +235,31 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @param {Highcharts.SeriesOptions} seriesOptions
      * Series options to convert.
      *
-     * @param {Array<string>} [pointArrayMap]
-     * Optional map to convert the index of short point options to column names.
-     *
      * @return {DataTable}
      * DataTable instance.
      */
     public static getTableFromSeriesOptions(
-        seriesOptions: SeriesOptions,
-        pointArrayMap: Array<string> = []
+        seriesOptions: SeriesOptions
     ): DataTable {
-        const table = new DataTable(),
+        const table = new DataTable(void 0, seriesOptions.id),
             data = (seriesOptions.data || []);
 
-        if (!pointArrayMap.length) {
+        let keys = (seriesOptions.keys || []).slice();
+
+        if (!keys.length) {
             if (seriesOptions.type) {
-                const seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type];
-                pointArrayMap = seriesClass && seriesClass.prototype.pointArrayMap || [];
+                const seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type],
+                    pointArrayMap = (
+                        seriesClass &&
+                        seriesClass.prototype.pointArrayMap
+                    );
+                if (pointArrayMap) {
+                    keys = pointArrayMap.slice();
+                    keys.unshift('x');
+                }
             }
-            if (!pointArrayMap.length) {
-                pointArrayMap = ['x', 'y'];
+            if (!keys.length) {
+                keys = ['x', 'y'];
             }
         }
 
@@ -267,7 +275,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
             if (point instanceof Array) {
                 const pointOptions: (PointOptions&Record<string, any>) = {};
                 for (let j = 0, jEnd = point.length; j < jEnd; ++j) {
-                    pointOptions[pointArrayMap[j] || `${j}`] = point[j];
+                    pointOptions[keys[j] || `${j}`] = point[j];
                 }
                 table.insertRow(new DataTableRow(pointOptions));
 
@@ -282,8 +290,8 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
             } else {
                 table.insertRow(
                     new DataTableRow({
-                        [pointArrayMap[0] || 'x']: i,
-                        [pointArrayMap[1] || 'y']: point
+                        [keys[0] || 'x']: i,
+                        [keys[1] || 'y']: point
                     })
                 );
             }
