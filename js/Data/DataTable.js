@@ -71,48 +71,6 @@ var DataTable = /** @class */ (function () {
      *
      * */
     /**
-     * Converts a simple two dimensional array to a DataTable instance. The
-     * array needs to be structured like a DataFrame, so that the first
-     * dimension becomes the columns and the second dimension the rows.
-     *
-     * @param {Array<Array<DataFrame.ValueType>>} [columns]
-     * Array to convert.
-     *
-     * @param {Array<string>} [headers]
-     * Column names to use.
-     *
-     * @param {DataConverter} [converter]
-     * Converter for value conversions in table rows.
-     *
-     * @return {DataTable}
-     * DataTable instance from the arrays.
-     */
-    DataTable.fromColumns = function (columns, headers) {
-        if (columns === void 0) { columns = []; }
-        if (headers === void 0) { headers = []; }
-        var table = new DataTable();
-        var columnsLength = columns.length;
-        // Assign an unique id for every column
-        // without a provided name
-        while (headers.length < columnsLength) {
-            headers.push(uniqueKey());
-        }
-        table.presentationState.setColumnOrder(headers);
-        if (columnsLength) {
-            var rowsLength = columns[0].length;
-            var i = 0;
-            while (i < rowsLength) {
-                var row = new DataTableRow();
-                for (var j = 0; j < columnsLength; ++j) {
-                    row.insertCell(headers[j], columns[j][i]);
-                }
-                table.insertRow(row);
-                ++i;
-            }
-        }
-        return table;
-    };
-    /**
      * Converts a supported class JSON to a DataTable instance.
      *
      * @param {DataTable.ClassJSON} json
@@ -342,7 +300,7 @@ var DataTable = /** @class */ (function () {
      * Retrieves the given columns, either by the canonical column name,
      * or by an alias
      *
-     * @param {...string} columnNamesOrAlias
+     * @param {...string} [columnNamesOrAlias]
      * Names or aliases for the columns to get, aliases taking precedence.
      *
      * @return {Array<Array<DataTableRow.CellType>|undefined>}
@@ -354,13 +312,24 @@ var DataTable = /** @class */ (function () {
         for (var _i = 0; _i < arguments.length; _i++) {
             columnNamesOrAlias[_i] = arguments[_i];
         }
-        var columns = this.toColumns(), aliasMap = this.aliasMap;
-        var columnNames = Object.keys(columns), columnArray = [];
-        for (var i = 0, parameterCount = columnNamesOrAlias.length; i < parameterCount; i++) {
-            var parameter = columnNamesOrAlias[i], foundName = columnNames[columnNames.indexOf(aliasMap[parameter] || parameter)];
-            columnArray.push(columns[foundName] || void 0);
+        var table = this, aliasMap = table.aliasMap, rows = table.rows, noParameter = !columnNamesOrAlias.length, columns = { id: [] };
+        var columnName, row;
+        for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            row = rows[i];
+            columns.id.push(row.id);
+            if (noParameter) {
+                columnNamesOrAlias = row.getCellNames();
+            }
+            for (var j = 0, jEnd = columnNamesOrAlias.length; j < jEnd; ++j) {
+                columnName = columnNamesOrAlias[j];
+                columnName = (aliasMap[columnName] || columnName);
+                if (!columns[columnName]) {
+                    columns[columnName] = new Array(i + 1);
+                }
+                columns[columnName][i] = row.getCell(columnName);
+            }
         }
-        return columnArray;
+        return columns;
     };
     /**
      * Adds a row to this table.
@@ -457,7 +426,7 @@ var DataTable = /** @class */ (function () {
             // setColumn will overwrite an alias, so check that it
             // does not exist
             if (!this.aliasMap[toColumnName] || followAlias) {
-                var _a = this.getColumns(fromColumnName, toColumnName), fromColumnValues = _a[0], toColumnValues = _a[1];
+                var columns = this.getColumns(fromColumnName, toColumnName), fromColumnValues = columns[fromColumnName], toColumnValues = columns[toColumnName];
                 // Check that the fromColumn exists,
                 // and that the toColumn does not
                 if (!fromColumnValues || (toColumnValues && !force)) {
@@ -554,62 +523,6 @@ var DataTable = /** @class */ (function () {
                 row.insertCell(cellName, value));
         }
         return false;
-    };
-    /**
-     * Converts the DataTable instance to a record of columns
-     *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
-     *
-     * @return {DataTable.ColumnCollection}
-     * A record of columns, where the key is the name of the column,
-     * and the values are the content of the column.
-     */
-    DataTable.prototype.toColumns = function (usePresentationOrder) {
-        var columnsObject = {
-            id: []
-        }, dataTable = this;
-        for (var rowIndex = 0, rowCount = dataTable.getRowCount(); rowIndex < rowCount; rowIndex++) {
-            var row = dataTable.rows[rowIndex], cellNames = row.getCellNames(), cellCount = cellNames.length;
-            columnsObject.id.push(row.id); // Push the ID column
-            for (var j = 0; j < cellCount; j++) {
-                var cellName = cellNames[j], cell = row.getCell(cellName);
-                if (!columnsObject[cellName]) {
-                    columnsObject[cellName] = [];
-                    // If row number is greater than 0
-                    // add the previous rows as undefined
-                    if (rowIndex > 0) {
-                        for (var rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
-                            columnsObject[cellName][rowNumber] = void 0;
-                        }
-                    }
-                }
-                columnsObject[cellName][rowIndex] = cell;
-            }
-            // If the object has columns that were not in the row
-            // add them as undefined
-            var columnsInObject = Object.keys(columnsObject);
-            for (var columnIndex = 0; columnIndex < columnsInObject.length; columnIndex++) {
-                var columnName = columnsInObject[columnIndex];
-                while (columnsObject[columnName].length - 1 < rowIndex) {
-                    columnsObject[columnName].push(void 0);
-                }
-            }
-        }
-        if (usePresentationOrder) {
-            var sortedColumnsObject_1 = {
-                id: columnsObject.id
-            };
-            Object
-                .keys(columnsObject)
-                .slice(1)
-                .sort(dataTable.presentationState.getColumnSorter())
-                .forEach(function (column) {
-                sortedColumnsObject_1[column] = columnsObject[column];
-            });
-            return sortedColumnsObject_1;
-        }
-        return columnsObject;
     };
     /**
      * Converts the table to a class JSON.

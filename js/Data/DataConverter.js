@@ -334,7 +334,7 @@ var DataConverter = /** @class */ (function () {
      */
     DataConverter.prototype.parseDate = function (value, dateFormatProp) {
         var converter = this;
-        var dateFormat = dateFormatProp || converter.options.dateFormat, result = 0, key, format, match;
+        var dateFormat = dateFormatProp || converter.options.dateFormat, result = NaN, key, format, match;
         if (converter.parseDateFn) {
             result = converter.parseDateFn(value);
         }

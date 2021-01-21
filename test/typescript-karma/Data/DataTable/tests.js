@@ -1,6 +1,7 @@
+import DataParser from '/base/js/Data/DataParser/DataParser.js';
+import DataSeriesConverter from '/base/js/Data/DataSeriesConverter.js';
 import DataTableRow from '/base/js/Data/DataTableRow.js';
 import DataTable from '/base/js/Data/DataTable.js';
-import DataSeriesConverter from '/base/js/Data/DataSeriesConverter.js';
 
 QUnit.test('DataTable and DataTableRow events', function (assert) {
 
@@ -364,7 +365,7 @@ QUnit.test('DataTable column methods', function (assert) {
     table.removeColumnAlias('population');
     assert.deepEqual(
         table.getColumns('population'),
-        [table.toColumns()['population']],
+        DataParser.getColumnsFromTable(table)['population'],
         'After alias is removed, getColumns gets by canonical name'
     );
 
@@ -496,45 +497,6 @@ QUnit.test('DataTable.renameColumn', function (assert) {
         'fails when trying to move a column with the name `id`'
     );
     assert.notDeepEqual(table.getColumns('id'), [true]);
-
-});
-
-QUnit.test('DataTable.toColumns with missing cells', function (assert) {
-
-    const table = new DataTable();
-
-    table.insertRow(new DataTableRow(
-        {
-            id: 'Row1',
-            column1: 'value',
-            column3: 'value'
-        }
-    ))
-    table.insertRow(new DataTableRow(
-        {
-            id: 'Row2',
-            column3: 'value'
-        }
-    ))
-    table.insertRow(new DataTableRow(
-        {
-            id: 'Row3',
-            column4: 'value'
-        }
-    ))
-    table.insertRow(new DataTableRow(
-        {
-            id: 'Row4',
-            column1: 'value',
-            column3: 'value'
-        }
-    ))
-    const columns = table.toColumns();
-
-    assert.deepEqual(columns['id'], ['Row1', 'Row2', 'Row3', 'Row4']);
-    assert.deepEqual(columns['column1'], ['value', undefined, undefined, 'value']);
-    assert.deepEqual(columns['column3'], ['value', 'value', undefined, 'value']);
-    assert.deepEqual(columns['column4'], [undefined, undefined, 'value', undefined]);
 
 });
 

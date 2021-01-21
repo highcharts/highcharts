@@ -32,9 +32,9 @@ QUnit.test('InvertModifier.execute', function (assert) {
     invertedTable = modifier.execute(table),
     invertedTable2 = modifier.execute(invertedTable),
     tableRowIds = table.getAllRowIds(),
-    invertedTableColumns = invertedTable.toColumns(),
+    invertedTableColumns = invertedTable.getColumns(),
     invertedTableColumnNames = Object.keys(invertedTableColumns),
-    tableColumns = table.toColumns(),
+    tableColumns = table.getColumns(),
     tableColumnNames = Object.keys(tableColumns);
 
     let result,
@@ -48,10 +48,16 @@ QUnit.test('InvertModifier.execute', function (assert) {
         'The inverted table should be a new table instance.'
     );
 
-    assert.ok(
-        invertedTableColumnNames.length - 1 === table.getRowCount() &&
-        tableColumnNames.length - 1 === invertedTable.getRowCount(),
-        'The inverted and original table should have an inverted amount of rows and columns.'
+    assert.strictEqual(
+        invertedTableColumnNames.length - 1,
+        table.getRowCount(),
+        'The inverted and original table should have an inverted amount of columns and rows.'
+    );
+
+    assert.strictEqual(
+        tableColumnNames.length - 1,
+        invertedTable.getRowCount(),
+        'The original and inverted table should have an inverted amount of columns and rows.'
     );
 
     result = true;

@@ -194,10 +194,9 @@ test('asDate', function (assert) {
         'Should return a correct date when value is date.'
     );
 
-    assert.strictEqual(
-        converter.asDate('string').getTime(),
-        0,
-        'Should return date for 0 timestamp when value does not fit any format.'
+    assert.ok(
+        isNaN(converter.asDate('string').getTime()),
+        'Should return date for NaN timestamp when value does not fit any format.'
     );
 
     converter.deduceDateFormat(['10/08/2020', '10/12/2020', '10/22/2020'], null, true);

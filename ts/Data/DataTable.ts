@@ -17,6 +17,7 @@
  * */
 
 import type DataEventEmitter from './DataEventEmitter';
+
 import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
 import DataPresentationState from './DataPresentationState.js';
@@ -44,55 +45,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      *  Static Functions
      *
      * */
-
-    /**
-     * Converts a simple two dimensional array to a DataTable instance. The
-     * array needs to be structured like a DataFrame, so that the first
-     * dimension becomes the columns and the second dimension the rows.
-     *
-     * @param {Array<Array<DataFrame.ValueType>>} [columns]
-     * Array to convert.
-     *
-     * @param {Array<string>} [headers]
-     * Column names to use.
-     *
-     * @param {DataConverter} [converter]
-     * Converter for value conversions in table rows.
-     *
-     * @return {DataTable}
-     * DataTable instance from the arrays.
-     */
-    public static fromColumns(
-        columns: DataTableRow.CellType[][] = [],
-        headers: string [] = []
-    ): DataTable {
-        const table = new DataTable();
-        const columnsLength = columns.length;
-
-        // Assign an unique id for every column
-        // without a provided name
-        while (headers.length < columnsLength) {
-            headers.push(uniqueKey());
-        }
-
-        table.presentationState.setColumnOrder(headers);
-
-        if (columnsLength) {
-            const rowsLength = columns[0].length;
-            let i = 0;
-
-            while (i < rowsLength) {
-                const row = new DataTableRow();
-                for (let j = 0; j < columnsLength; ++j) {
-                    row.insertCell(headers[j], columns[j][i]);
-                }
-                table.insertRow(row);
-                ++i;
-            }
-        }
-
-        return table;
-    }
 
     /**
      * Converts a supported class JSON to a DataTable instance.
@@ -471,28 +423,46 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Retrieves the given columns, either by the canonical column name,
      * or by an alias
      *
-     * @param {...string} columnNamesOrAlias
+     * @param {...string} [columnNamesOrAlias]
      * Names or aliases for the columns to get, aliases taking precedence.
      *
      * @return {Array<Array<DataTableRow.CellType>|undefined>}
      * A two-dimensional array of the specified columns,
      * if the column does not exist it will be `undefined`
      */
-    public getColumns(...columnNamesOrAlias: Array<string>): Array<Array<DataTableRow.CellType>|undefined> {
-        const columns = this.toColumns(),
-            { aliasMap } = this;
+    public getColumns(
+        ...columnNamesOrAlias: Array<string>
+    ): DataTable.ColumnCollection {
+        const table = this,
+            aliasMap = table.aliasMap,
+            rows = table.rows,
+            noParameter = !columnNamesOrAlias.length,
+            columns: Record<string, Array<DataTableRow.CellType>> = { id: [] };
 
-        const columnNames = Object.keys(columns),
-            columnArray = [];
+        let columnName: string,
+            row: DataTableRow;
 
-        for (let i = 0, parameterCount = columnNamesOrAlias.length; i < parameterCount; i++) {
-            const parameter = columnNamesOrAlias[i],
-                foundName = columnNames[columnNames.indexOf(aliasMap[parameter] || parameter)];
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            row = rows[i];
+            columns.id.push(row.id);
 
-            columnArray.push(columns[foundName] || void 0);
+            if (noParameter) {
+                columnNamesOrAlias = row.getCellNames();
+            }
+
+            for (let j = 0, jEnd = columnNamesOrAlias.length; j < jEnd; ++j) {
+                columnName = columnNamesOrAlias[j];
+                columnName = (aliasMap[columnName] || columnName);
+
+                if (!columns[columnName]) {
+                    columns[columnName] = new Array(i + 1);
+                }
+
+                columns[columnName][i] = row.getCell(columnName);
+            }
         }
 
-        return columnArray;
+        return columns;
     }
 
     /**
@@ -616,10 +586,12 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             // setColumn will overwrite an alias, so check that it
             // does not exist
             if (!this.aliasMap[toColumnName] || followAlias) {
-                const [fromColumnValues, toColumnValues] = this.getColumns(
-                    fromColumnName,
-                    toColumnName
-                );
+                const columns = this.getColumns(
+                        fromColumnName,
+                        toColumnName
+                    ),
+                    fromColumnValues = columns[fromColumnName],
+                    toColumnValues = columns[toColumnName];
 
                 // Check that the fromColumn exists,
                 // and that the toColumn does not
@@ -737,82 +709,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         return false;
-    }
-
-    /**
-     * Converts the DataTable instance to a record of columns
-     *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
-     *
-     * @return {DataTable.ColumnCollection}
-     * A record of columns, where the key is the name of the column,
-     * and the values are the content of the column.
-     */
-    public toColumns(usePresentationOrder?: boolean): DataTable.ColumnCollection {
-        const columnsObject: DataTable.ColumnCollection = {
-                id: []
-            },
-            dataTable = this;
-
-        for (let rowIndex = 0, rowCount = dataTable.getRowCount(); rowIndex < rowCount; rowIndex++) {
-            const row = dataTable.rows[rowIndex],
-                cellNames = row.getCellNames(),
-                cellCount = cellNames.length;
-
-            columnsObject.id.push(row.id); // Push the ID column
-
-            for (let j = 0; j < cellCount; j++) {
-                const cellName = cellNames[j],
-                    cell = row.getCell(cellName);
-
-                if (!columnsObject[cellName]) {
-                    columnsObject[cellName] = [];
-                    // If row number is greater than 0
-                    // add the previous rows as undefined
-                    if (rowIndex > 0) {
-                        for (let rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
-                            columnsObject[cellName][rowNumber] = void 0;
-                        }
-                    }
-                }
-                columnsObject[cellName][rowIndex] = cell;
-            }
-
-            // If the object has columns that were not in the row
-            // add them as undefined
-            const columnsInObject = Object.keys(columnsObject);
-
-            for (
-                let columnIndex = 0;
-                columnIndex < columnsInObject.length;
-                columnIndex++
-            ) {
-                const columnName = columnsInObject[columnIndex];
-
-                while (columnsObject[columnName].length - 1 < rowIndex) {
-                    columnsObject[columnName].push(void 0);
-                }
-            }
-        }
-
-        if (usePresentationOrder) {
-            const sortedColumnsObject: DataTable.ColumnCollection = {
-                id: columnsObject.id
-            };
-
-            Object
-                .keys(columnsObject)
-                .slice(1)
-                .sort(dataTable.presentationState.getColumnSorter())
-                .forEach((column: string): void => {
-                    sortedColumnsObject[column] = columnsObject[column];
-                });
-
-            return sortedColumnsObject;
-        }
-
-        return columnsObject;
     }
 
     /**

@@ -237,10 +237,10 @@ class ColumnSeries extends Series {
 
         /**
          * A pixel value specifying a fixed width for each column or bar point.
-         * When `null`, the width is calculated from the `pointPadding` and
-         * `groupPadding`. The width effects the dimension that is not based on
-         * the point value. For column series it is the hoizontal length and for
-         * bar series it is the vertical length.
+         * When set to `undefined`, the width is calculated from the
+         * `pointPadding` and `groupPadding`. The width effects the dimension
+         * that is not based on the point value. For column series it is the
+         * hoizontal length and for bar series it is the vertical length.
          *
          * @see [maxPointWidth](#plotOptions.column.maxPointWidth)
          *

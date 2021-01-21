@@ -35,7 +35,6 @@ var __assign = (this && this.__assign) || function () {
 };
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
-import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
@@ -201,7 +200,7 @@ var HTMLTableParser = /** @class */ (function (_super) {
      * A DataTable from the parsed HTML table
      */
     HTMLTableParser.prototype.getTable = function () {
-        return DataTable.fromColumns(this.columns, this.headers);
+        return DataParser.getTableFromColumns(this.columns, this.headers);
     };
     /**
      * Converts the parser instance to ClassJSON.

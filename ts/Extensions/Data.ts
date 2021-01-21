@@ -12,7 +12,14 @@
 
 'use strict';
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type SeriesOptions from '../Core/Series/SeriesOptions';
+
 import Ajax from '../Extensions/Ajax.js';
 const {
     ajax
@@ -46,6 +53,12 @@ const {
     pick,
     splat
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -691,6 +704,13 @@ declare global {
  * @param {Highcharts.Chart} [chart]
  */
 class Data {
+
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
     public constructor(
         dataOptions: Highcharts.DataOptions,
         chartOptions?: Highcharts.Options,
@@ -698,6 +718,12 @@ class Data {
     ) {
         this.init(dataOptions, chartOptions, chart);
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public alternativeFormat?: string;
     public chart: Chart = void 0 as any;
@@ -711,6 +737,12 @@ class Data {
     public rawColumns: Array<Array<string>> = void 0 as any;
     public options: Highcharts.DataOptions= void 0 as any;
     public valueCount?: Highcharts.DataValueCountObject;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Initialize the Data object with the given options
@@ -1654,7 +1686,7 @@ class Data {
         let column: Array<Highcharts.DataValueType>,
             element;
 
-        objectEach(table.toColumns(), function (elemArr, key): void {
+        objectEach(table.getColumns(), function (elemArr, key): void {
             if (key !== 'id') {
                 column = [];
 
@@ -2020,7 +2052,73 @@ class Data {
      * @return {number}
      */
     public parseDate(val: string): number {
-        return new Date(val).getTime();
+        const parseDate = this.options.parseDate;
+
+        let ret,
+            key,
+            format,
+            dateFormat = this.options.dateFormat || this.dateFormat,
+            match;
+
+        if (parseDate) {
+            ret = parseDate(val);
+
+        } else if (typeof val === 'string') {
+            // Auto-detect the date format the first time
+            if (!dateFormat) {
+                for (key in this.dateFormats) { // eslint-disable-line guard-for-in
+                    format = this.dateFormats[key];
+                    match = val.match(format.regex);
+                    if (match) {
+                        this.dateFormat = dateFormat = key;
+                        this.alternativeFormat = format.alternative;
+                        ret = format.parser(match);
+                        break;
+                    }
+                }
+            // Next time, use the one previously found
+            } else {
+                format = this.dateFormats[dateFormat];
+
+
+                if (!format) {
+                    // The selected format is invalid
+                    format = this.dateFormats['YYYY/mm/dd'];
+                }
+
+                match = val.match(format.regex);
+                if (match) {
+                    ret = format.parser(match);
+                }
+
+            }
+            // Fall back to Date.parse
+            if (!match) {
+                if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
+                    val = val
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
+                }
+                match = Date.parse(val);
+                // External tools like Date.js and MooTools extend Date object
+                // and return a date.
+                if (
+                    typeof match === 'object' &&
+                    match !== null &&
+                    (match as Date).getTime
+                ) {
+                    ret = (
+                        (match as Date).getTime()
+                    );
+
+                // Timestamp
+                } else if (isNumber(match)) {
+                    ret = match;
+                }
+            }
+        }
+        return ret as any;
     }
 
     /**

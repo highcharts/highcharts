@@ -19,12 +19,16 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataTableRow from '../DataTableRow';
 import type DataValueType from '../DataValueType';
+
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
-const { merge, uniqueKey } = U;
+const {
+    merge,
+    uniqueKey
+} = U;
 
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
@@ -273,7 +277,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
      * A DataTable from the parsed Google Sheet
      */
     public getTable(): DataTable {
-        return DataTable.fromColumns(this.columns, this.headers);
+        return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 
     /**
