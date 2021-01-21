@@ -89,6 +89,9 @@ H.layouts['reingold-fruchterman'].prototype, {
         layout.prevSystemTemperature = layout.systemTemperature;
         layout.systemTemperature = layout.getSystemTemperature();
         if (layout.enableSimulation) {
+            if (layout.prevSystemTemperature === layout.systemTemperature) {
+                layout.prevSystemTemperature = 0; // #14439
+            }
             series.forEach(function (s) {
                 // Chart could be destroyed during the simulation
                 if (s.chart) {
