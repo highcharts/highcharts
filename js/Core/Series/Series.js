@@ -2235,7 +2235,7 @@ var Series = /** @class */ (function () {
         }
         // SVGRenderer needs to know this before drawing elements (#1089,
         // #1795)
-        group.inverted = series.isCartesian || series.invertable ?
+        group.inverted = pick(series.invertible, series.isCartesian) ?
             inverted : false;
         // Draw the graph if any
         if (series.drawGraph) {
