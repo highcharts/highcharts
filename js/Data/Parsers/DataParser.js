@@ -11,6 +11,7 @@
  * */
 import DataTable from '../DataTable.js';
 import DataTableRow from '../DataTableRow.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
 /* *
@@ -30,7 +31,7 @@ var DataParser = /** @class */ (function () {
      *
      * */
     /**
-     * Converts the DataTable instance to a record of columns
+     * Converts the DataTable instance to a record of columns.
      *
      * @param {DataTable} table
      * Table to convert.
@@ -80,6 +81,30 @@ var DataParser = /** @class */ (function () {
         return columnNames.map(function (columnName) { return columnsObject[columnName]; });
     };
     /**
+     * Converts the DataTable instance to common series options.
+     *
+     * @param {DataTable} table
+     * DataTable to convert.
+     *
+     * @return {Highcharts.SeriesOptions}
+     * Common series options.
+     */
+    DataParser.getSeriesOptionsFromTable = function (table) {
+        var rows = table.getAllRows(), data = [], seriesOptions = { data: data };
+        var cellName, cellNames, pointOptions, row;
+        for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            row = rows[i];
+            pointOptions = { id: row.id };
+            cellNames = row.getCellNames();
+            for (var j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
+                cellName = cellNames[j];
+                pointOptions[cellName] = row.getCell(cellName);
+            }
+            data.push(pointOptions);
+        }
+        return seriesOptions;
+    };
+    /**
      * Converts a simple two dimensional array to a DataTable instance. The
      * array needs to be structured like a DataFrame, so that the first
      * dimension becomes the columns and the second dimension the rows.
@@ -113,6 +138,57 @@ var DataParser = /** @class */ (function () {
                     row.insertCell(headers[j], columns[j][i]);
                 }
                 table.insertRow(row);
+            }
+        }
+        return table;
+    };
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @param {Highcharts.SeriesOptions} seriesOptions
+     * Series options to convert.
+     *
+     * @param {Array<string>} [pointArrayMap]
+     * Optional map to convert the index of short point options to column names.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    DataParser.getTableFromSeriesOptions = function (seriesOptions, pointArrayMap) {
+        var _a;
+        if (pointArrayMap === void 0) { pointArrayMap = []; }
+        var table = new DataTable(), data = (seriesOptions.data || []);
+        if (!pointArrayMap.length) {
+            if (seriesOptions.type) {
+                var seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type];
+                pointArrayMap = seriesClass && seriesClass.prototype.pointArrayMap || [];
+            }
+            if (!pointArrayMap.length) {
+                pointArrayMap = ['x', 'y'];
+            }
+        }
+        var point;
+        for (var i = 0, iEnd = data.length; i < iEnd; ++i) {
+            point = data[i];
+            // Array
+            if (point instanceof Array) {
+                var pointOptions = {};
+                for (var j = 0, jEnd = point.length; j < jEnd; ++j) {
+                    pointOptions[pointArrayMap[j] || "" + j] = point[j];
+                }
+                table.insertRow(new DataTableRow(pointOptions));
+                // Object
+            }
+            else if (point &&
+                typeof point === 'object') {
+                table.insertRow(new DataTableRow(point));
+                // Primitive
+            }
+            else {
+                table.insertRow(new DataTableRow((_a = {},
+                    _a[pointArrayMap[0] || 'x'] = i,
+                    _a[pointArrayMap[1] || 'y'] = point,
+                    _a)));
             }
         }
         return table;

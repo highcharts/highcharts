@@ -423,31 +423,46 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Retrieves the given columns, either by the canonical column name,
      * or by an alias
      *
-     * @param {...string} [columnNamesOrAlias]
+     * @param {Array<string>} [columnNamesOrAlias]
      * Names or aliases for the columns to get, aliases taking precedence.
+     *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state.
      *
      * @return {Array<Array<DataTableRow.CellType>|undefined>}
      * A two-dimensional array of the specified columns,
      * if the column does not exist it will be `undefined`
      */
     public getColumns(
-        ...columnNamesOrAlias: Array<string>
+        columnNamesOrAlias: Array<string> = [],
+        usePresentationOrder?: boolean
     ): DataTable.ColumnCollection {
         const table = this,
             aliasMap = table.aliasMap,
             rows = table.rows,
-            noParameter = !columnNamesOrAlias.length,
+            noColumnNames = !columnNamesOrAlias.length,
+            columnSorter = (
+                usePresentationOrder &&
+                table.presentationState.getColumnSorter()
+            ),
             columns: Record<string, Array<DataTableRow.CellType>> = { id: [] };
 
         let columnName: string,
             row: DataTableRow;
 
+        if (columnSorter) {
+            columnNamesOrAlias.sort(columnSorter);
+        }
+
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
             columns.id.push(row.id);
 
-            if (noParameter) {
+            if (noColumnNames) {
                 columnNamesOrAlias = row.getCellNames();
+                if (columnSorter) {
+                    columnNamesOrAlias.sort(columnSorter);
+                }
             }
 
             for (let j = 0, jEnd = columnNamesOrAlias.length; j < jEnd; ++j) {
@@ -586,10 +601,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             // setColumn will overwrite an alias, so check that it
             // does not exist
             if (!this.aliasMap[toColumnName] || followAlias) {
-                const columns = this.getColumns(
-                        fromColumnName,
-                        toColumnName
-                    ),
+                const columns = this.getColumns([fromColumnName, toColumnName]),
                     fromColumnValues = columns[fromColumnName],
                     toColumnValues = columns[toColumnName];
 

@@ -300,25 +300,32 @@ var DataTable = /** @class */ (function () {
      * Retrieves the given columns, either by the canonical column name,
      * or by an alias
      *
-     * @param {...string} [columnNamesOrAlias]
+     * @param {Array<string>} [columnNamesOrAlias]
      * Names or aliases for the columns to get, aliases taking precedence.
+     *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state.
      *
      * @return {Array<Array<DataTableRow.CellType>|undefined>}
      * A two-dimensional array of the specified columns,
      * if the column does not exist it will be `undefined`
      */
-    DataTable.prototype.getColumns = function () {
-        var columnNamesOrAlias = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            columnNamesOrAlias[_i] = arguments[_i];
-        }
-        var table = this, aliasMap = table.aliasMap, rows = table.rows, noParameter = !columnNamesOrAlias.length, columns = { id: [] };
+    DataTable.prototype.getColumns = function (columnNamesOrAlias, usePresentationOrder) {
+        if (columnNamesOrAlias === void 0) { columnNamesOrAlias = []; }
+        var table = this, aliasMap = table.aliasMap, rows = table.rows, noColumnNames = !columnNamesOrAlias.length, columnSorter = (usePresentationOrder &&
+            table.presentationState.getColumnSorter()), columns = { id: [] };
         var columnName, row;
+        if (columnSorter) {
+            columnNamesOrAlias.sort(columnSorter);
+        }
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
             columns.id.push(row.id);
-            if (noParameter) {
+            if (noColumnNames) {
                 columnNamesOrAlias = row.getCellNames();
+                if (columnSorter) {
+                    columnNamesOrAlias.sort(columnSorter);
+                }
             }
             for (var j = 0, jEnd = columnNamesOrAlias.length; j < jEnd; ++j) {
                 columnName = columnNamesOrAlias[j];
@@ -426,7 +433,7 @@ var DataTable = /** @class */ (function () {
             // setColumn will overwrite an alias, so check that it
             // does not exist
             if (!this.aliasMap[toColumnName] || followAlias) {
-                var columns = this.getColumns(fromColumnName, toColumnName), fromColumnValues = columns[fromColumnName], toColumnValues = columns[toColumnName];
+                var columns = this.getColumns([fromColumnName, toColumnName]), fromColumnValues = columns[fromColumnName], toColumnValues = columns[toColumnName];
                 // Check that the fromColumn exists,
                 // and that the toColumn does not
                 if (!fromColumnValues || (toColumnValues && !force)) {

@@ -18,9 +18,15 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
+import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import DataTable from '../DataTable.js';
 import DataTableRow from '../DataTableRow.js';
+import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -65,7 +71,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Converts the DataTable instance to a record of columns
+     * Converts the DataTable instance to a record of columns.
      *
      * @param {DataTable} table
      * Table to convert.
@@ -139,6 +145,43 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     }
 
     /**
+     * Converts the DataTable instance to common series options.
+     *
+     * @param {DataTable} table
+     * DataTable to convert.
+     *
+     * @return {Highcharts.SeriesOptions}
+     * Common series options.
+     */
+    public static getSeriesOptionsFromTable(
+        table: DataTable
+    ): SeriesOptions {
+        const rows = table.getAllRows(),
+            data: Array<PointOptions> = [],
+            seriesOptions: SeriesOptions = { data };
+
+        let cellName: string,
+            cellNames: Array<string>,
+            pointOptions: (PointOptions&Record<string, any>),
+            row: DataTableRow;
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            row = rows[i];
+            pointOptions = { id: row.id };
+            cellNames = row.getCellNames();
+
+            for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
+                cellName = cellNames[j];
+                pointOptions[cellName] = row.getCell(cellName);
+            }
+
+            data.push(pointOptions);
+        }
+
+        return seriesOptions;
+    }
+
+    /**
      * Converts a simple two dimensional array to a DataTable instance. The
      * array needs to be structured like a DataFrame, so that the first
      * dimension becomes the columns and the second dimension the rows.
@@ -177,6 +220,72 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
                     row.insertCell(headers[j], columns[j][i]);
                 }
                 table.insertRow(row);
+            }
+        }
+
+        return table;
+    }
+
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @param {Highcharts.SeriesOptions} seriesOptions
+     * Series options to convert.
+     *
+     * @param {Array<string>} [pointArrayMap]
+     * Optional map to convert the index of short point options to column names.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    public static getTableFromSeriesOptions(
+        seriesOptions: SeriesOptions,
+        pointArrayMap: Array<string> = []
+    ): DataTable {
+        const table = new DataTable(),
+            data = (seriesOptions.data || []);
+
+        if (!pointArrayMap.length) {
+            if (seriesOptions.type) {
+                const seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type];
+                pointArrayMap = seriesClass && seriesClass.prototype.pointArrayMap || [];
+            }
+            if (!pointArrayMap.length) {
+                pointArrayMap = ['x', 'y'];
+            }
+        }
+
+        let point: (
+            (PointOptions&Record<string, any>)|
+            PointShortOptions
+        );
+
+        for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
+            point = data[i];
+
+            // Array
+            if (point instanceof Array) {
+                const pointOptions: (PointOptions&Record<string, any>) = {};
+                for (let j = 0, jEnd = point.length; j < jEnd; ++j) {
+                    pointOptions[pointArrayMap[j] || `${j}`] = point[j];
+                }
+                table.insertRow(new DataTableRow(pointOptions));
+
+            // Object
+            } else if (
+                point &&
+                typeof point === 'object'
+            ) {
+                table.insertRow(new DataTableRow(point));
+
+            // Primitive
+            } else {
+                table.insertRow(
+                    new DataTableRow({
+                        [pointArrayMap[0] || 'x']: i,
+                        [pointArrayMap[1] || 'y']: point
+                    })
+                );
             }
         }
 
