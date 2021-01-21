@@ -1562,7 +1562,7 @@ class Point {
         }
 
         // Apply hover styles to the existing point
-        if (point.graphic) {
+        if (point.graphic && !point.hasDummyGraphic) {
 
             if (previousState) {
                 point.graphic.removeClass('highcharts-point-' + previousState);
