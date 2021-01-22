@@ -2251,6 +2251,7 @@ class SVGElement {
         textPathOptions: Record<string, any>
     ): SVGElement {
         var elem = this.element,
+            textNode = this.text ? this.text.element : elem,
             attribsMap = {
                 textAnchor: 'text-anchor'
             },
@@ -2311,7 +2312,7 @@ class SVGElement {
 
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
-                const childNodes = elem.childNodes;
+                const childNodes = textNode.childNodes;
 
                 // Now move all <tspan>'s and text nodes to the <textPath> node
                 while (childNodes.length) {
@@ -2329,14 +2330,8 @@ class SVGElement {
             }
 
             // Add <textPath> to the DOM
-            if (
-                adder &&
-                textPathWrapper
-            ) {
-                textPathWrapper.add({
-                    // label() is placed in a group, text() is standalone
-                    element: this.text ? this.text.element : elem
-                } as any);
+            if (adder && textPathWrapper) {
+                textPathWrapper.add({ element: textNode } as any);
             }
 
             // Set basic options:
