@@ -591,10 +591,7 @@ var DataTable = /** @class */ (function () {
             fireEvent(table, 'afterUpdateRow', { detail: e.detail, index: index, row: row });
         }
         watchs.push(row.on('afterClearRow', callback));
-        watchs.push(row.on('afterDeleteCell', callback));
-        watchs.push(row.on('afterInsertCell', callback));
-        watchs.push(row.on('afterRemoveCell', callback));
-        watchs.push(row.on('afterUpdateCell', callback));
+        watchs.push(row.on('afterChangeRow', callback));
         watchsIdMap[row.id] = watchs;
     };
     return DataTable;

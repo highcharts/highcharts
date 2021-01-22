@@ -796,10 +796,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         watchs.push(row.on('afterClearRow', callback));
-        watchs.push(row.on('afterDeleteCell', callback));
-        watchs.push(row.on('afterInsertCell', callback));
-        watchs.push(row.on('afterRemoveCell', callback));
-        watchs.push(row.on('afterUpdateCell', callback));
+        watchs.push(row.on('afterChangeRow', callback));
 
         watchsIdMap[row.id] = watchs;
     }

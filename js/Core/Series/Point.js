@@ -8,9 +8,17 @@
  *
  * */
 'use strict';
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
+import DataParser from '../../Data/Parsers/DataParser.js';
 import H from '../Globals.js';
 import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
@@ -424,6 +432,24 @@ var Point = /** @class */ (function () {
         }
         return point;
     };
+    Point.prototype.attachTableRow = function (tableRow) {
+        var point = this, series = point.series;
+        if (point.tableRow) {
+            point.detachTableRow();
+        }
+        var keys;
+        if (series.options.keys) {
+            keys = series.options.keys.slice();
+        }
+        else if (series.pointArrayMap) {
+            keys = __spreadArrays(['x'], series.pointArrayMap);
+        }
+        point.tableRow = tableRow;
+        point.tableRowEventRemover = tableRow.on('afterChangeRow', function () {
+            point.update(DataParser.getPointOptionsFromTableRow(this, keys));
+        });
+        return point;
+    };
     /**
      * Destroy a point to clear memory. Its reference still stays in
      * `series.data`.
@@ -490,6 +516,16 @@ var Point = /** @class */ (function () {
             });
             delete point[plural];
         });
+    };
+    Point.prototype.detachTableRow = function () {
+        var point = this, tableRow = point.tableRow, tableRowEventRemover = point.tableRowEventRemover;
+        if (tableRow) {
+            point.tableRow = void 0;
+        }
+        if (tableRowEventRemover) {
+            tableRowEventRemover();
+        }
+        return tableRow;
     };
     /**
      * Fire an event on the Point object.

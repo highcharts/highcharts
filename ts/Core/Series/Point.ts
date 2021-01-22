@@ -18,6 +18,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
+import type DataTableRow from '../../Data/DataTableRow';
 import type { EventCallback } from '../Callback';
 import type PointLike from './PointLike';
 import type {
@@ -36,6 +37,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
+import DataParser from '../../Data/Parsers/DataParser.js';
 import H from '../Globals.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
@@ -441,6 +443,10 @@ class Point {
 
     public state?: StatesOptionsKey;
 
+    public tableRow?: DataTableRow;
+
+    public tableRowEventRemover?: Function;
+
     /**
      * The total of values in either a stack for stacked series, or a pie in a
      * pie series.
@@ -600,6 +606,33 @@ class Point {
         return point;
     }
 
+    public attachTableRow(tableRow: DataTableRow): this {
+        const point = this,
+            series = point.series;
+
+        if (point.tableRow) {
+            point.detachTableRow();
+        }
+
+        let keys: (Array<string>|undefined);
+
+        if (series.options.keys) {
+            keys = series.options.keys.slice();
+        } else if (series.pointArrayMap) {
+            keys = ['x', ...series.pointArrayMap];
+        }
+
+        point.tableRow = tableRow;
+        point.tableRowEventRemover = tableRow.on(
+            'afterChangeRow',
+            function (): void {
+                point.update(DataParser.getPointOptionsFromTableRow(this, keys));
+            }
+        );
+
+        return point;
+    }
+
     /**
      * Destroy a point to clear memory. Its reference still stays in
      * `series.data`.
@@ -685,6 +718,22 @@ class Point {
 
             delete (point as any)[plural];
         });
+    }
+
+    public detachTableRow(): (DataTableRow|undefined) {
+        const point = this,
+            tableRow = point.tableRow,
+            tableRowEventRemover = point.tableRowEventRemover;
+
+        if (tableRow) {
+            point.tableRow = void 0;
+        }
+
+        if (tableRowEventRemover) {
+            tableRowEventRemover();
+        }
+
+        return tableRow;
     }
 
     /**

@@ -625,6 +625,7 @@ namespace DataTableRow {
      */
     export interface RowEventObject extends DataEventEmitter.EventObject {
         readonly type: (
+            'changeRow'|'afterChangeRow'|
             'clearRow'|'afterClearRow'
         );
     }
