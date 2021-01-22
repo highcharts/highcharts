@@ -2174,7 +2174,8 @@ class SVGElement {
      */
     public removeTextOutline(): void {
         const outline = this.element
-            .querySelector('tspan.highcharts-text-ouline') as SVGDOMElement;
+            .querySelector('tspan.highcharts-text-outline') as SVGDOMElement;
+
         if (outline) {
             this.safeRemoveChild(outline);
         }
@@ -2258,7 +2259,6 @@ class SVGElement {
             textPathElement: DOMElementType,
             textPathId,
             textPathWrapper: SVGElement = this.textPathWrapper as any,
-            tspans,
             firstTime = !textPathWrapper;
 
         // Defaults
@@ -2311,17 +2311,20 @@ class SVGElement {
 
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
-                tspans = elem.getElementsByTagName('tspan');
+                const childNodes = elem.childNodes;
 
-                // Now move all <tspan>'s to the <textPath> node
-                while (tspans.length) {
-                    // Remove "y" from tspans, as Firefox translates them
-                    tspans[0].setAttribute('y', 0);
-                    // Remove "x" from tspans
-                    if (isNumber(attrs.dx)) {
-                        tspans[0].setAttribute('x', -attrs.dx);
+                // Now move all <tspan>'s and text nodes to the <textPath> node
+                while (childNodes.length) {
+                    const childNode = childNodes[0];
+                    if ((childNode as any).setAttribute) {
+                        // Remove "y" from tspans, as Firefox translates them
+                        (childNode as any).setAttribute('y', 0);
+                        // Remove "x" from tspans
+                        if (isNumber(attrs.dx)) {
+                            (childNode as any).setAttribute('x', -attrs.dx);
+                        }
                     }
-                    textPathElement.appendChild(tspans[0]);
+                    textPathElement.appendChild(childNode);
                 }
             }
 
