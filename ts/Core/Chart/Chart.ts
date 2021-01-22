@@ -2615,6 +2615,7 @@ class Chart {
         });
 
         chart.render();
+        chart.pointer.getChartPosition(); // #14973
 
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {
