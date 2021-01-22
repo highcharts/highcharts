@@ -195,10 +195,12 @@ var MACDIndicator = /** @class */ (function (_super) {
         }
         // Calculating the short and long EMA used when calculating the MACD
         shortEMA = SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
-            period: params.shortPeriod
+            period: params.shortPeriod,
+            index: params.index
         });
         longEMA = SeriesRegistry.seriesTypes.ema.prototype.getValues(series, {
-            period: params.longPeriod
+            period: params.longPeriod,
+            index: params.index
         });
         shortEMA = shortEMA.values;
         longEMA = longEMA.values;
