@@ -144,12 +144,20 @@ var TextBuilder = /** @class */ (function () {
             }
             else if (hasWhiteSpace) {
                 var lines = [];
+                // Remove preceding siblings in order to make the text length
+                // calculation correct in the truncate function
+                var precedingSiblings = [];
+                while (parentElement.firstChild &&
+                    parentElement.firstChild !== textNode) {
+                    precedingSiblings.push(parentElement.firstChild);
+                    parentElement.removeChild(parentElement.firstChild);
+                }
                 while (words.length) {
-                    // For subsequent lines, create tspans with the same style
-                    // attributes as the first tspan.
+                    // Apply the previous line
                     if (words.length && !_this.noWrap && lineNo > 0) {
                         lines.push(textNode.textContent || '');
-                        textNode.textContent = words.join(' ').replace(/- /g, '-');
+                        textNode.textContent = words.join(' ')
+                            .replace(/- /g, '-');
                     }
                     // For each line, truncate the remaining
                     // words into the line length.
@@ -164,6 +172,10 @@ var TextBuilder = /** @class */ (function () {
                     startAt = wrapper.actualWidth;
                     lineNo++;
                 }
+                // Reinsert the preceding child nodes
+                precedingSiblings.forEach(function (childNode) {
+                    parentElement.insertBefore(childNode, textNode);
+                });
                 // Insert the previous lines before the original text node
                 lines.forEach(function (line) {
                     // Insert the line
@@ -183,6 +195,12 @@ var TextBuilder = /** @class */ (function () {
                     modifyTextNode(childNode);
                 }
                 else {
+                    // Reset word-wrap width readings after hard breaks
+                    if (childNode.classList
+                        .contains('highcharts-br')) {
+                        wrapper.actualWidth = 0;
+                    }
+                    // Recurse down to child node
                     recurse(childNode);
                 }
             });
