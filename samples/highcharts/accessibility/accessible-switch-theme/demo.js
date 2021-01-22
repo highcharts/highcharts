@@ -1,4 +1,3 @@
-// Light and dark themes
 const textBright = '#F0F0F3';
 
 const lightTheme = {
@@ -293,12 +292,22 @@ function makeChart(constructor, type, series) {
         title: {
             text: `${capitalizeString(type)} chart`
         },
+        accessibility: {
+            screenReaderSection: {
+                beforeChartFormat: `${capitalizeString(type)} chart showing a 
+                selected high contrast theme.`
+            },
+            landmarkVerbosity: 'one'
+        },
         series: series
     })));
 }
 
 // Initializing the chartLayout array
 let chartLayout = [];
+
+// Setting standard options
+Highcharts.setOptions(lightTheme);
 
 // Loop over the regular charts and create them
 const createChartLayout = () => {
@@ -331,7 +340,6 @@ const createChartLayout = () => {
 createChartLayout();
 
 const initialOptions = JSON.parse(JSON.stringify(Highcharts.getOptions()));
-Highcharts.setOptions(lightTheme);
 
 // Function for destroying all charts in the chartLayout array.
 const destroyAllAndReset = () => {

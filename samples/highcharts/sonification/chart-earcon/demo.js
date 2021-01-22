@@ -69,6 +69,7 @@ document.getElementById('sonify').onclick = function () {
     document.getElementById('overlay').style.visibility = 'hidden';
     document.getElementById('stop').style.visibility = 'visible';
     chart.sonify();
+    document.getElementById('stop').focus();
 };
 
 document.getElementById('stop').onclick = function () {

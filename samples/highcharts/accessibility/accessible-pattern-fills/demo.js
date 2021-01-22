@@ -1,4 +1,3 @@
-// remove all references to series.label.enabled = false in the options
 var colors = Highcharts.getOptions().colors;
 
 Highcharts.chart('container-area', {
@@ -20,6 +19,19 @@ Highcharts.chart('container-area', {
 
     exporting: {
         enabled: false
+    },
+
+    lang: {
+        accessibility: {
+            chartContainerLabel: 'Area chart with patterns.'
+        }
+    },
+
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<p>Area chart showing use of patterns.</p>'
+        },
+        landmarkVerbosity: 'one'
     },
 
     plotOptions: {
@@ -84,6 +96,19 @@ Highcharts.chart('container-col', {
 
     exporting: {
         enabled: false
+    },
+
+    lang: {
+        accessibility: {
+            chartContainerLabel: 'Column chart with patterns.'
+        }
+    },
+
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<p>Column chart showing use of patterns.</p>'
+        },
+        landmarkVerbosity: 'one'
     },
 
     series: [{
@@ -179,6 +204,19 @@ Highcharts.chart('container-pie', {
         enabled: false
     },
 
+    lang: {
+        accessibility: {
+            chartContainerLabel: 'Pie chart with patterns.'
+        }
+    },
+
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<p>Pie chart showing use of patterns.</p>'
+        },
+        landmarkVerbosity: 'one'
+    },
+
     tooltip: {
         valueSuffix: '%',
         borderColor: '#8ae'
@@ -223,6 +261,20 @@ Highcharts.chart('container-line', {
     exporting: {
         enabled: false
     },
+
+    lang: {
+        accessibility: {
+            chartContainerLabel: 'Line chart with patterns.'
+        }
+    },
+
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<p>Line chart showing use of patterns.</p>'
+        },
+        landmarkVerbosity: 'one'
+    },
+
     legend: {
         enabled: false
     },
@@ -238,14 +290,6 @@ Highcharts.chart('container-line', {
     yAxis: {
         visible: false
     },
-
-    plotOptions: {
-        series: {
-            cursor: 'pointer'
-        }
-    },
-
-    // Simplify data to match other charts
     series: [{
         data: [34.8, 43.0, 51.2, 41.4, 64.9, 72.4],
         color: colors[2]
