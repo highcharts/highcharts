@@ -792,7 +792,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
          */
         function callback(e: DataTableRow.EventObject): void {
             table.versionTag = uniqueKey();
-            fireEvent(table, 'afterUpdateRow', { detail: e.detail, index, row });
+            table.emit({ type: 'afterUpdateRow', detail: e.detail, index, row });
         }
 
         watchs.push(row.on('afterClearRow', callback));

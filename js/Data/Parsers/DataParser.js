@@ -86,7 +86,7 @@ var DataParser = /** @class */ (function () {
      * @param {DataTableRow} tableRow
      * Table row to convert.
      *
-     * @param {Array<string>} keys
+     * @param {Array<string>} [keys]
      * Data keys to extract from the table row.
      *
      * @return {Highcharts.PointOptions}
@@ -116,7 +116,7 @@ var DataParser = /** @class */ (function () {
      * @param {DataTable} table
      * Table to convert.
      *
-     * @param {Array<string>} keys
+     * @param {Array<string>} [keys]
      * Data keys to extract from table rows.
      *
      * @return {Highcharts.SeriesOptions}

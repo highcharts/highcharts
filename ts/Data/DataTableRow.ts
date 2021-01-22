@@ -126,6 +126,8 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         }
 
         delete cells.id;
+
+        this.watchCells();
     }
 
     /* *
@@ -566,6 +568,22 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         return true;
     }
 
+    private watchCells(): void {
+        const row = this;
+
+        /**
+         * @private
+         * @param {DataTableRow.EventObject} e
+         * Received event.
+         */
+        function callback(e: DataTableRow.EventObject): void {
+            row.emit({ type: 'afterChangeRow', detail: e.detail });
+        }
+
+        row.on('afterClearRow', callback);
+        row.on('afterDeleteCell', callback);
+        row.on('afterUpdateCell', callback);
+    }
 }
 
 /* *
@@ -625,8 +643,8 @@ namespace DataTableRow {
      */
     export interface RowEventObject extends DataEventEmitter.EventObject {
         readonly type: (
-            'changeRow'|'afterChangeRow'|
-            'clearRow'|'afterClearRow'
+            'clearRow'|'afterClearRow'|
+            'afterChangeRow'
         );
     }
 

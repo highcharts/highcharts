@@ -588,7 +588,7 @@ var DataTable = /** @class */ (function () {
          */
         function callback(e) {
             table.versionTag = uniqueKey();
-            fireEvent(table, 'afterUpdateRow', { detail: e.detail, index: index, row: row });
+            table.emit({ type: 'afterUpdateRow', detail: e.detail, index: index, row: row });
         }
         watchs.push(row.on('afterClearRow', callback));
         watchs.push(row.on('afterChangeRow', callback));
