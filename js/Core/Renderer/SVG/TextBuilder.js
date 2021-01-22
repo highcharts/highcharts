@@ -32,7 +32,7 @@ var TextBuilder = /** @class */ (function () {
     }
     TextBuilder.prototype.buildSVG = function () {
         var wrapper = this.svgElement;
-        var textNode = wrapper.element, renderer = wrapper.renderer, forExport = renderer.forExport, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, lines, childNodes = textNode.childNodes, parentX = attr(textNode, 'x'), textCache, isSubsequentLine, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
+        var textNode = wrapper.element, renderer = wrapper.renderer, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, childNodes = textNode.childNodes, textCache, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
         var regexMatchBreaks = /<br.*?>/g;
         // The buildText code is quite heavy, so if we're not changing something
         // that affects the text, skip it (#6113).
@@ -49,6 +49,7 @@ var TextBuilder = /** @class */ (function () {
             return;
         }
         wrapper.textCache = textCache;
+        delete wrapper.actualWidth;
         // Remove old text
         while (i--) {
             textNode.removeChild(childNodes[i]);
@@ -96,9 +97,10 @@ var TextBuilder = /** @class */ (function () {
     };
     TextBuilder.prototype.modifyDOM = function () {
         var _this = this;
-        var x = attr(this.svgElement.element, 'x');
+        var wrapper = this.svgElement;
+        var x = attr(wrapper.element, 'x');
         // Modify hard line breaks by applying the rendered line height
-        [].forEach.call(this.svgElement.element.querySelectorAll('tspan.highcharts-br'), function (br) {
+        [].forEach.call(wrapper.element.querySelectorAll('tspan.highcharts-br'), function (br) {
             if (br.nextSibling && br.previousSibling) { // #5261
                 attr(br, {
                     dy: _this.getLineHeight(br),
@@ -122,7 +124,7 @@ var TextBuilder = /** @class */ (function () {
             var hasWhiteSpace = !_this.noWrap && (words.length > 1 || parentElement.childNodes.length > 1);
             var dy = _this.getLineHeight(parentElement);
             var lineNo = 0;
-            var startAt = _this.svgElement.actualWidth;
+            var startAt = wrapper.actualWidth;
             if (_this.ellipsis) {
                 if (text) {
                     _this.truncate(textNode, text, void 0, 0, 
@@ -156,7 +158,7 @@ var TextBuilder = /** @class */ (function () {
                             .join(' ')
                             .replace(/- /g, '-');
                     });
-                    startAt = _this.svgElement.actualWidth;
+                    startAt = wrapper.actualWidth;
                     lineNo++;
                 }
                 // Insert the previous lines before the original text node
@@ -182,7 +184,7 @@ var TextBuilder = /** @class */ (function () {
                 }
             });
         });
-        recurse(this.svgElement.element);
+        recurse(wrapper.element);
     };
     TextBuilder.prototype.getLineHeight = function (tspan) {
         var fontSizeStyle;

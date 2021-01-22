@@ -64,14 +64,10 @@ class TextBuilder {
         const wrapper = this.svgElement;
         var textNode = wrapper.element,
             renderer = wrapper.renderer,
-            forExport = renderer.forExport,
             textStr = pick(wrapper.textStr, '').toString() as string,
             hasMarkup = textStr.indexOf('<') !== -1,
-            lines: Array<string>,
             childNodes = textNode.childNodes,
-            parentX = attr(textNode, 'x'),
             textCache,
-            isSubsequentLine: number,
             i = childNodes.length,
             tempParent = this.width && !wrapper.added && renderer.box;
         const regexMatchBreaks = /<br.*?>/g;
@@ -91,6 +87,7 @@ class TextBuilder {
             return;
         }
         wrapper.textCache = textCache;
+        delete wrapper.actualWidth;
 
         // Remove old text
         while (i--) {
@@ -162,11 +159,12 @@ class TextBuilder {
 
     private modifyDOM(): void {
 
-        const x = attr(this.svgElement.element, 'x');
+        const wrapper = this.svgElement;
+        const x = attr(wrapper.element, 'x');
 
         // Modify hard line breaks by applying the rendered line height
         [].forEach.call(
-            this.svgElement.element.querySelectorAll('tspan.highcharts-br'),
+            wrapper.element.querySelectorAll('tspan.highcharts-br'),
             (br: SVGElement): void => {
                 if (br.nextSibling && br.previousSibling) { // #5261
                     attr(br, {
@@ -198,7 +196,7 @@ class TextBuilder {
             const dy = this.getLineHeight(parentElement);
 
             let lineNo = 0;
-            let startAt = this.svgElement.actualWidth;
+            let startAt = wrapper.actualWidth;
 
             if (this.ellipsis) {
                 if (text) {
@@ -247,7 +245,7 @@ class TextBuilder {
                                 .replace(/- /g, '-')
                     );
 
-                    startAt = this.svgElement.actualWidth;
+                    startAt = wrapper.actualWidth;
                     lineNo++;
                 }
 
@@ -282,7 +280,7 @@ class TextBuilder {
                 }
             );
         });
-        recurse(this.svgElement.element);
+        recurse(wrapper.element);
     }
 
     private getLineHeight(tspan: DOMElementType): number {
