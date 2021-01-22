@@ -725,17 +725,20 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         point[this.isXAxis ? 'x' : 'y'] :
         this.toValue(horiz ? e.chartX : e.chartY);
 
+    // Crosshair should be rendered within Axis range (#7219)
+    // Also, the point of currentPriceIndicator
+    // should be inside the plot area, #14879.
+    const isInside = point ? point.series.isPointInside(point) :
+        (value as any) > (min as any) || (value as any) < (max as any);
+
+
     crossLabel.attr({
         text: formatOption ?
             format(formatOption, { value: value }, chart) :
             options.formatter.call(this, value),
         x: posx,
         y: posy,
-        // Crosshair should be rendered within Axis range (#7219)
-        visibility:
-            (value as any) < (min as any) || (value as any) > (max as any) ?
-                'hidden' :
-                'visible'
+        visibility: isInside ? 'visible' : 'hidden'
     });
 
     crossBox = crossLabel.getBBox();
