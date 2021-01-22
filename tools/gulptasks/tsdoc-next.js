@@ -33,7 +33,7 @@ function task() {
         .then(() => fs.writeFileSync(
             NEXT_TARGET,
             generator.JSON.stringify(
-                generator.Project.load('ts').toJSON()
+                generator.OptionDoc.load('ts', 'apioption', 'optionparent').toJSON()
             )
         ))
         .then(logLib.success)
