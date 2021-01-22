@@ -222,14 +222,26 @@ class TextBuilder {
                 }
             } else if (hasWhiteSpace) {
                 const lines: string[] = [];
+
+                // Remove preceding siblings in order to make the text length
+                // calculation correct in the truncate function
+                const precedingSiblings: ChildNode[] = [];
+                while (
+                    parentElement.firstChild &&
+                    parentElement.firstChild !== textNode
+                ) {
+                    precedingSiblings.push(parentElement.firstChild);
+                    parentElement.removeChild(parentElement.firstChild);
+                }
+
                 while (words.length) {
 
-                    // For subsequent lines, create tspans with the same style
-                    // attributes as the first tspan.
+                    // Apply the previous line
                     if (words.length && !this.noWrap && lineNo > 0) {
 
                         lines.push(textNode.textContent || '');
-                        textNode.textContent = words.join(' ').replace(/- /g, '-');
+                        textNode.textContent = words.join(' ')
+                            .replace(/- /g, '-');
                     }
 
                     // For each line, truncate the remaining
@@ -251,6 +263,11 @@ class TextBuilder {
                     startAt = wrapper.actualWidth;
                     lineNo++;
                 }
+
+                // Reinsert the preceding child nodes
+                precedingSiblings.forEach((childNode): void => {
+                    parentElement.insertBefore(childNode, textNode);
+                });
 
                 // Insert the previous lines before the original text node
                 lines.forEach((line): void => {
@@ -278,6 +295,14 @@ class TextBuilder {
                     if (childNode.nodeType === Node.TEXT_NODE) {
                         modifyTextNode(childNode as Text);
                     } else {
+                        // Reset word-wrap width readings after hard breaks
+                        if (
+                            (childNode as DOMElementType).classList
+                                .contains('highcharts-br')
+                        ) {
+                            wrapper.actualWidth = 0;
+                        }
+                        // Recurse down to child node
                         recurse(childNode as DOMElementType);
                     }
                 }

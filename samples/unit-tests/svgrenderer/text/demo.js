@@ -83,16 +83,16 @@ QUnit.test('Text word wrap with a long word (#3158)', function (assert) {
         })
         .add();
 
-    var textLines = text.element.getElementsByTagName('tspan');
+    var breaks = text.element.querySelectorAll('tspan[x="100"]');
 
     assert.strictEqual(
-        textLines.length,
-        6,
-        'Six text lines should be rendered.'
+        breaks.length,
+        5,
+        'Five breaks should be applied'
     );
 
     assert.strictEqual(
-        textLines[1].textContent.indexOf(' ') > 0,
+        text.element.childNodes[2].textContent.indexOf(' ') > 0,
         true,
         'There should be more than one word in the second text line. #3158'
     );
