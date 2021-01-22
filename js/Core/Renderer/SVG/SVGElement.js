@@ -1519,7 +1519,7 @@ var SVGElement = /** @class */ (function () {
      */
     SVGElement.prototype.removeTextOutline = function () {
         var outline = this.element
-            .querySelector('tspan.highcharts-text-ouline');
+            .querySelector('tspan.highcharts-text-outline');
         if (outline) {
             this.safeRemoveChild(outline);
         }
@@ -1577,7 +1577,7 @@ var SVGElement = /** @class */ (function () {
     SVGElement.prototype.setTextPath = function (path, textPathOptions) {
         var elem = this.element, attribsMap = {
             textAnchor: 'text-anchor'
-        }, attrs, adder = false, textPathElement, textPathId, textPathWrapper = this.textPathWrapper, tspans, firstTime = !textPathWrapper;
+        }, attrs, adder = false, textPathElement, textPathId, textPathWrapper = this.textPathWrapper, firstTime = !textPathWrapper;
         // Defaults
         textPathOptions = merge(true, {
             enabled: true,
@@ -1621,16 +1621,19 @@ var SVGElement = /** @class */ (function () {
             }
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
-                tspans = elem.getElementsByTagName('tspan');
-                // Now move all <tspan>'s to the <textPath> node
-                while (tspans.length) {
-                    // Remove "y" from tspans, as Firefox translates them
-                    tspans[0].setAttribute('y', 0);
-                    // Remove "x" from tspans
-                    if (isNumber(attrs.dx)) {
-                        tspans[0].setAttribute('x', -attrs.dx);
+                var childNodes = elem.childNodes;
+                // Now move all <tspan>'s and text nodes to the <textPath> node
+                while (childNodes.length) {
+                    var childNode = childNodes[0];
+                    if (childNode.setAttribute) {
+                        // Remove "y" from tspans, as Firefox translates them
+                        childNode.setAttribute('y', 0);
+                        // Remove "x" from tspans
+                        if (isNumber(attrs.dx)) {
+                            childNode.setAttribute('x', -attrs.dx);
+                        }
                     }
-                    textPathElement.appendChild(tspans[0]);
+                    textPathElement.appendChild(childNode);
                 }
             }
             // Add <textPath> to the DOM
