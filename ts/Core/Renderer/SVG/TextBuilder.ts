@@ -193,7 +193,7 @@ class TextBuilder {
                 // .trim()
                 .split(' '); // #1273
             const hasWhiteSpace = !this.noWrap && (
-                words.length > 1 || parentElement.childNodes.length > 1
+                words.length > 1 || wrapper.element.childNodes.length > 1
             );
 
             const dy = this.getLineHeight(parentElement);
@@ -284,31 +284,30 @@ class TextBuilder {
                     attr(br, { dy, x });
                     parentElement.insertBefore(br, textNode);
                 });
+
             }
         };
 
         // Recurse down the DOM tree and handle line breaks for each text node
-        const recurse = ((node: DOMElementType): void => {
-            [].forEach.call(
-                node.childNodes,
-                (childNode: ChildNode): void => {
-                    if (childNode.nodeType === Node.TEXT_NODE) {
-                        modifyTextNode(childNode as Text);
-                    } else {
-                        // Reset word-wrap width readings after hard breaks
-                        if (
-                            (childNode as DOMElementType).classList
-                                .contains('highcharts-br')
-                        ) {
-                            wrapper.actualWidth = 0;
-                        }
-                        // Recurse down to child node
-                        recurse(childNode as DOMElementType);
+        const modifyChildren = ((node: DOMElementType): void => {
+            const childNodes = [].slice.call(node.childNodes);
+            childNodes.forEach((childNode: ChildNode): void => {
+                if (childNode.nodeType === Node.TEXT_NODE) {
+                    modifyTextNode(childNode as Text);
+                } else {
+                    // Reset word-wrap width readings after hard breaks
+                    if (
+                        (childNode as DOMElementType).classList
+                            .contains('highcharts-br')
+                    ) {
+                        wrapper.actualWidth = 0;
                     }
+                    // Recurse down to child node
+                    modifyChildren(childNode as DOMElementType);
                 }
-            );
+            });
         });
-        recurse(wrapper.element);
+        modifyChildren(wrapper.element);
     }
 
     private getLineHeight(node: DOMElementType|Text): number {

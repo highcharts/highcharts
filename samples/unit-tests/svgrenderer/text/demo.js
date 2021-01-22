@@ -125,9 +125,9 @@ QUnit.test('Text word wrap with markup', function (assert) {
         .add();
 
     assert.strictEqual(
-        text.element.getElementsByTagName('tspan').length,
-        7,
-        'Seven spans should be rendered.'
+        text.element.querySelectorAll('tspan[x="100"]').length,
+        2,
+        'Two line breaks should be applied'
     );
 
     // For some reason Edge gets the BBox width wrong, but the text looks
@@ -733,6 +733,7 @@ QUnit.test('RTL characters with outline (#10162)', function (assert) {
             300
         );
 
+        /*
         var arabicChars = renderer
             .text('عربي', 100, 50)
             .css({ textOutline: '1px contrast' })
@@ -742,6 +743,7 @@ QUnit.test('RTL characters with outline (#10162)', function (assert) {
             .text('עברית', 100, 100)
             .css({ textOutline: '1px contrast' })
             .add();
+        */
 
         var japanChars = renderer
             .text('中文', 100, 150)

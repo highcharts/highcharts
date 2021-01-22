@@ -892,8 +892,6 @@ class SVGElement {
 
             this.fakeTS = true; // Fake text shadow
 
-            //tspans = [].slice.call(elem.getElementsByTagName('tspan'));
-
             // In order to get the right y position of the clone,
             // copy over the y setter
             this.ySetter = this.xSetter;

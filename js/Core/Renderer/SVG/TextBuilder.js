@@ -124,7 +124,7 @@ var TextBuilder = /** @class */ (function () {
                 .replace(/([^\^])-/g, '$1- ') // Split on hyphens
                 // .trim()
                 .split(' '); // #1273
-            var hasWhiteSpace = !_this.noWrap && (words.length > 1 || parentElement.childNodes.length > 1);
+            var hasWhiteSpace = !_this.noWrap && (words.length > 1 || wrapper.element.childNodes.length > 1);
             var dy = _this.getLineHeight(parentElement);
             var lineNo = 0;
             var startAt = wrapper.actualWidth;
@@ -189,8 +189,9 @@ var TextBuilder = /** @class */ (function () {
             }
         };
         // Recurse down the DOM tree and handle line breaks for each text node
-        var recurse = (function (node) {
-            [].forEach.call(node.childNodes, function (childNode) {
+        var modifyChildren = (function (node) {
+            var childNodes = [].slice.call(node.childNodes);
+            childNodes.forEach(function (childNode) {
                 if (childNode.nodeType === Node.TEXT_NODE) {
                     modifyTextNode(childNode);
                 }
@@ -201,11 +202,11 @@ var TextBuilder = /** @class */ (function () {
                         wrapper.actualWidth = 0;
                     }
                     // Recurse down to child node
-                    recurse(childNode);
+                    modifyChildren(childNode);
                 }
             });
         });
-        recurse(wrapper.element);
+        modifyChildren(wrapper.element);
     };
     TextBuilder.prototype.getLineHeight = function (node) {
         var fontSizeStyle;
