@@ -52,10 +52,16 @@ QUnit.test('Gantt tooltip', assert => {
     });
 
     chart.series[0].points[0].onMouseOver();
-    assert.strictEqual(
+    assert.deepEqual(
         chart.tooltip.label.text.element.textContent
-            .replace(/\u200B/g, ';'),
-        'Series 1;Task;Start: Tuesday, Jan; 1, 08:00;End: Monday, Jan  7, 16:00;',
+            .split('\u200B'),
+        [
+            "Series 1",
+            "Task",
+            "Start: Tuesday, Jan  1, 08:00",
+            "End: Monday, Jan  7, 16:00",
+            ""
+        ],
         'Intraday times - tooltip should show the date and time of day'
     );
 

@@ -103,7 +103,10 @@ var TextBuilder = /** @class */ (function () {
         [].forEach.call(wrapper.element.querySelectorAll('tspan.highcharts-br'), function (br) {
             if (br.nextSibling && br.previousSibling) { // #5261
                 attr(br, {
-                    dy: _this.getLineHeight(br),
+                    // Since the break is inserted in front of the next
+                    // line, we need to use the next sibling for the line
+                    // height
+                    dy: _this.getLineHeight(br.nextSibling),
                     x: x
                 });
             }
@@ -186,19 +189,21 @@ var TextBuilder = /** @class */ (function () {
         });
         recurse(wrapper.element);
     };
-    TextBuilder.prototype.getLineHeight = function (tspan) {
+    TextBuilder.prototype.getLineHeight = function (node) {
         var fontSizeStyle;
+        // If the node is a text node, use its parent
+        var element = node.nodeType === Node.TEXT_NODE ?
+            node.parentElement :
+            node;
         if (!this.renderer.styledMode) {
             fontSizeStyle =
-                /(px|em)$/.test(tspan && tspan.style.fontSize) ?
-                    tspan.style.fontSize :
+                element && /(px|em)$/.test(element.style.fontSize) ?
+                    element.style.fontSize :
                     (this.fontSize || this.renderer.style.fontSize || 12);
         }
         return this.textLineHeight ?
             parseInt(this.textLineHeight.toString(), 10) :
-            this.renderer.fontMetrics(fontSizeStyle, 
-            // Get the computed size from parent if not explicit
-            (tspan.getAttribute('style') ? tspan : this.svgElement.element)).h;
+            this.renderer.fontMetrics(fontSizeStyle, element || this.svgElement.element).h;
     };
     // Transform HTML to SVG, validate
     TextBuilder.prototype.modifyTree = function (elements) {

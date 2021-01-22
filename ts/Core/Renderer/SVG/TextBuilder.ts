@@ -168,7 +168,10 @@ class TextBuilder {
             (br: SVGElement): void => {
                 if (br.nextSibling && br.previousSibling) { // #5261
                     attr(br, {
-                        dy: this.getLineHeight(br),
+                        // Since the break is inserted in front of the next
+                        // line, we need to use the next sibling for the line
+                        // height
+                        dy: this.getLineHeight(br.nextSibling as any),
                         x
                     });
                 }
@@ -283,13 +286,18 @@ class TextBuilder {
         recurse(wrapper.element);
     }
 
-    private getLineHeight(tspan: DOMElementType): number {
-        var fontSizeStyle;
+    private getLineHeight(node: DOMElementType|Text): number {
+        let fontSizeStyle;
+
+        // If the node is a text node, use its parent
+        const element: DOMElementType|null = node.nodeType === Node.TEXT_NODE ?
+            node.parentElement :
+            node as DOMElementType;
 
         if (!this.renderer.styledMode) {
             fontSizeStyle =
-                /(px|em)$/.test(tspan && tspan.style.fontSize as any) ?
-                    tspan.style.fontSize :
+                element && /(px|em)$/.test(element.style.fontSize) ?
+                    element.style.fontSize :
                     (this.fontSize || this.renderer.style.fontSize || 12);
         }
 
@@ -297,8 +305,7 @@ class TextBuilder {
             parseInt(this.textLineHeight.toString(), 10) :
             this.renderer.fontMetrics(
                 fontSizeStyle as any,
-                // Get the computed size from parent if not explicit
-                (tspan.getAttribute('style') ? tspan : this.svgElement.element) as any
+                element || this.svgElement.element
             ).h;
     }
 

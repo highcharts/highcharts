@@ -1575,7 +1575,7 @@ var SVGElement = /** @class */ (function () {
      * Returns the SVGElement for chaining.
      */
     SVGElement.prototype.setTextPath = function (path, textPathOptions) {
-        var elem = this.element, attribsMap = {
+        var elem = this.element, textNode = this.text ? this.text.element : elem, attribsMap = {
             textAnchor: 'text-anchor'
         }, attrs, adder = false, textPathElement, textPathId, textPathWrapper = this.textPathWrapper, firstTime = !textPathWrapper;
         // Defaults
@@ -1621,7 +1621,7 @@ var SVGElement = /** @class */ (function () {
             }
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
-                var childNodes = elem.childNodes;
+                var childNodes = textNode.childNodes;
                 // Now move all <tspan>'s and text nodes to the <textPath> node
                 while (childNodes.length) {
                     var childNode = childNodes[0];
@@ -1637,12 +1637,8 @@ var SVGElement = /** @class */ (function () {
                 }
             }
             // Add <textPath> to the DOM
-            if (adder &&
-                textPathWrapper) {
-                textPathWrapper.add({
-                    // label() is placed in a group, text() is standalone
-                    element: this.text ? this.text.element : elem
-                });
+            if (adder && textPathWrapper) {
+                textPathWrapper.add({ element: textNode });
             }
             // Set basic options:
             // Use `setAttributeNS` because Safari needs this..
