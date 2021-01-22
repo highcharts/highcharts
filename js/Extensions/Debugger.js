@@ -51,7 +51,8 @@ addEvent(Chart, 'displayError', function (e) {
         // Format msg so SVGRenderer can handle it
         msg = msg
             .replace(/<h1>(.*)<\/h1>/g, '<br><span style="font-size: 24px">$1</span><br>')
-            .replace(/<\/p>/g, '</p><br>');
+            .replace(/<p>/g, '')
+            .replace(/<\/p>/g, '<br>');
         // Render red chart frame.
         chart.errorElements[0] = renderer.rect(2, 2, chartWidth - 4, chartHeight - 4).attr({
             'stroke-width': 4,

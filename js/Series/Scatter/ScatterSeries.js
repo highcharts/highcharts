@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import ColumnSeries from '../Column/ColumnSeries.js';
-import Series from '../../Core/Series/Series.js';
+import LineSeries from '../Line/LineSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
@@ -35,10 +35,6 @@ var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
  * Scatter series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.scatter
- *
- * @augments Highcharts.Series
  */
 var ScatterSeries = /** @class */ (function (_super) {
     __extends(ScatterSeries, _super);
@@ -112,7 +108,7 @@ var ScatterSeries = /** @class */ (function (_super) {
             (this.options.lineWidth === 0 &&
                 this.graph &&
                 this.graph.strokeWidth())) {
-            Series.prototype.drawGraph.call(this);
+            _super.prototype.drawGraph.call(this);
         }
     };
     /**
@@ -127,7 +123,7 @@ var ScatterSeries = /** @class */ (function (_super) {
      * @product      highcharts highstock
      * @optionparent plotOptions.scatter
      */
-    ScatterSeries.defaultOptions = merge(Series.defaultOptions, {
+    ScatterSeries.defaultOptions = merge(LineSeries.defaultOptions, {
         /**
          * The width of the line connecting the data points.
          *
@@ -211,7 +207,7 @@ var ScatterSeries = /** @class */ (function (_super) {
         }
     });
     return ScatterSeries;
-}(Series));
+}(LineSeries));
 extend(ScatterSeries.prototype, {
     drawTracker: ColumnSeries.prototype.drawTracker,
     sorted: false,

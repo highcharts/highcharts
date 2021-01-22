@@ -24,7 +24,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, PieSeries = _a.pie;
+var Series = SeriesRegistry.series, PieSeries = SeriesRegistry.seriesTypes.pie;
 import U from '../../Core/Utilities.js';
 var extend = U.extend;
 /* *
@@ -49,7 +49,7 @@ var ItemPoint = /** @class */ (function (_super) {
     return ItemPoint;
 }(PieSeries.prototype.pointClass));
 extend(ItemPoint.prototype, {
-    haloPath: LineSeries.prototype.pointClass.prototype.haloPath
+    haloPath: Series.prototype.pointClass.prototype.haloPath
 });
 /* *
  *

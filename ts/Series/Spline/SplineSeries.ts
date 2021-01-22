@@ -35,10 +35,6 @@ const {
  * Spline series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.spline
- *
- * @augments Highcarts.Series
  */
 class SplineSeries extends LineSeries {
 

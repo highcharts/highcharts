@@ -8,22 +8,159 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import H from '../../Core/Globals.js';
-SeriesRegistry.registerSeriesType('line', Series);
+import U from '../../Core/Utilities.js';
+var merge = U.merge;
 /* *
  *
- *  Compatibility
+ *  Class
  *
  * */
-H.Series = Series; // backwards compatibility
+/**
+ * The line series is the base type and is therefor the series base prototype.
+ *
+ * @private
+ */
+var LineSeries = /** @class */ (function (_super) {
+    __extends(LineSeries, _super);
+    function LineSeries() {
+        /* *
+         *
+         *  Static Functions
+         *
+         * */
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        _this.data = void 0;
+        _this.options = void 0;
+        _this.points = void 0;
+        return _this;
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /**
+     * Draw the graph. Called internally when rendering line-like series
+     * types. The first time it generates the `series.graph` item and
+     * optionally other series-wide items like `series.area` for area
+     * charts. On subsequent calls these items are updated with new
+     * positions and attributes.
+     *
+     * @function Highcharts.Series#drawGraph
+     */
+    LineSeries.prototype.drawGraph = function () {
+        var series = this, options = this.options, graphPath = (this.gappedPath || this.getGraphPath).call(this), styledMode = this.chart.styledMode, props = [[
+                'graph',
+                'highcharts-graph'
+            ]];
+        // Presentational properties
+        if (!styledMode) {
+            props[0].push((options.lineColor ||
+                this.color ||
+                palette.neutralColor20 // when colorByPoint = true
+            ), options.dashStyle);
+        }
+        props = series.getZonesGraphs(props);
+        // Draw the graph
+        props.forEach(function (prop, i) {
+            var graphKey = prop[0], graph = series[graphKey], verb = graph ? 'animate' : 'attr', attribs;
+            if (graph) {
+                graph.endX = series.preventGraphAnimation ?
+                    null :
+                    graphPath.xMap;
+                graph.animate({ d: graphPath });
+            }
+            else if (graphPath.length) { // #1487
+                /**
+                 * SVG element of area-based charts. Can be used for styling
+                 * purposes. If zones are configured, this element will be
+                 * hidden and replaced by multiple zone areas, accessible
+                 * via `series['zone-area-x']` (where x is a number,
+                 * starting with 0).
+                 *
+                 * @name Highcharts.Series#area
+                 * @type {Highcharts.SVGElement|undefined}
+                 */
+                /**
+                 * SVG element of line-based charts. Can be used for styling
+                 * purposes. If zones are configured, this element will be
+                 * hidden and replaced by multiple zone lines, accessible
+                 * via `series['zone-graph-x']` (where x is a number,
+                 * starting with 0).
+                 *
+                 * @name Highcharts.Series#graph
+                 * @type {Highcharts.SVGElement|undefined}
+                 */
+                series[graphKey] = graph = series.chart.renderer
+                    .path(graphPath)
+                    .addClass(prop[1])
+                    .attr({ zIndex: 1 }) // #1069
+                    .add(series.group);
+            }
+            if (graph && !styledMode) {
+                attribs = {
+                    'stroke': prop[2],
+                    'stroke-width': options.lineWidth,
+                    // Polygon series use filled graph
+                    'fill': (series.fillGraph && series.color) || 'none'
+                };
+                if (prop[3]) {
+                    attribs.dashstyle = prop[3];
+                }
+                else if (options.linecap !== 'square') {
+                    attribs['stroke-linecap'] =
+                        attribs['stroke-linejoin'] = 'round';
+                }
+                graph[verb](attribs)
+                    // Add shadow to normal series (0) or to first
+                    // zone (1) #3932
+                    .shadow((i < 2) && options.shadow);
+            }
+            // Helpers for animation
+            if (graph) {
+                graph.startX = graphPath.xMap;
+                graph.isArea = graphPath.isArea; // For arearange animation
+            }
+        });
+    };
+    /**
+     * General options for all series types.
+     *
+     * @optionparent plotOptions.series
+     */
+    LineSeries.defaultOptions = merge(Series.defaultOptions, {
+    // nothing here yet
+    });
+    return LineSeries;
+}(Series));
+SeriesRegistry.registerSeriesType('line', LineSeries);
 /* *
  *
  *  Default Export
  *
  * */
-export default Series;
+export default LineSeries;
 /* *
  *
  *  API Options

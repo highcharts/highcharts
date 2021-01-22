@@ -28,13 +28,13 @@ function getChartTitle(chart) {
  * @return {string}
  */
 function getAxisDescription(axis) {
-    return stripHTMLTags(axis && (axis.userOptions && axis.userOptions.accessibility &&
+    return axis && (axis.userOptions && axis.userOptions.accessibility &&
         axis.userOptions.accessibility.description ||
         axis.axisTitle && axis.axisTitle.textStr ||
         axis.options.id ||
         axis.categories && 'categories' ||
         axis.dateTime && 'Time' ||
-        'values'));
+        'values');
 }
 /**
  * Return string with text description of the axis range.

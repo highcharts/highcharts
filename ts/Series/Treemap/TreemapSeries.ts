@@ -44,11 +44,10 @@ import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
         column: ColumnSeries,
         heatmap: HeatmapSeries,
-        line: LineSeries,
-        pie: PieSeries,
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -1029,7 +1028,7 @@ class TreemapSeries extends ScatterSeries {
             // Merge custom options with point options
             point.dlOptions = merge(options, point.options.dataLabels);
         });
-        LineSeries.prototype.drawDataLabels.call(this);
+        Series.prototype.drawDataLabels.call(this);
     }
 
     /**
@@ -1190,13 +1189,13 @@ class TreemapSeries extends ScatterSeries {
 
     public getExtremes(): DataExtremesObject {
         // Get the extremes from the value data
-        const { dataMin, dataMax } = LineSeries.prototype.getExtremes
+        const { dataMin, dataMax } = Series.prototype.getExtremes
             .call(this, this.colorValueData);
         this.valueMin = dataMin;
         this.valueMax = dataMax;
 
         // Get the extremes from the y data
-        return LineSeries.prototype.getExtremes.call(this);
+        return Series.prototype.getExtremes.call(this);
     }
 
     /**
@@ -1312,7 +1311,7 @@ class TreemapSeries extends ScatterSeries {
             }
         });
 
-        LineSeries.prototype.init.call(series, chart, options);
+        Series.prototype.init.call(series, chart, options);
 
         // Treemap's opacity is a different option from other series
         delete series.opacity;
@@ -1659,7 +1658,7 @@ class TreemapSeries extends ScatterSeries {
      */
     public setState(state: StatesOptionsKey): void {
         this.options.inactiveOtherPoints = true;
-        LineSeries.prototype.setState.call(this, state, false);
+        Series.prototype.setState.call(this, state, false);
         this.options.inactiveOtherPoints = false;
     }
 
@@ -1757,7 +1756,7 @@ class TreemapSeries extends ScatterSeries {
             val: TreemapSeries.NodeValuesObject;
 
         // Call prototype function
-        LineSeries.prototype.translate.call(series);
+        Series.prototype.translate.call(series);
 
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();

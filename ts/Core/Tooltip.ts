@@ -382,22 +382,30 @@ class Tooltip {
 
         chart.renderer.definition({
             tagName: 'filter',
-            id: 'drop-shadow-' + chart.index,
-            opacity: 0.5,
+            attributes: {
+                id: 'drop-shadow-' + chart.index,
+                opacity: 0.5
+            },
             children: [{
                 tagName: 'feGaussianBlur',
-                'in': 'SourceAlpha',
-                stdDeviation: 1
+                attributes: {
+                    'in': 'SourceAlpha',
+                    stdDeviation: 1
+                }
             }, {
                 tagName: 'feOffset',
-                dx: 1,
-                dy: 1
+                attributes: {
+                    dx: 1,
+                    dy: 1
+                }
             }, {
                 tagName: 'feComponentTransfer',
                 children: [{
                     tagName: 'feFuncA',
-                    type: 'linear',
-                    slope: 0.3
+                    attributes: {
+                        type: 'linear',
+                        slope: 0.3
+                    }
                 }]
             }, {
                 tagName: 'feMerge',
@@ -405,7 +413,9 @@ class Tooltip {
                     tagName: 'feMergeNode'
                 }, {
                     tagName: 'feMergeNode',
-                    'in': 'SourceGraphic'
+                    attributes: {
+                        'in': 'SourceGraphic'
+                    }
                 }]
             }]
         });
@@ -719,7 +729,6 @@ class Tooltip {
                 (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
             ),
             container: globalThis.HTMLElement,
-            set: Record<string, Function>,
             onMouseEnter = function (): void {
                 tooltip.inContact = true;
             },
@@ -739,6 +748,8 @@ class Tooltip {
         if (!this.label) {
 
             if (this.outside) {
+                const chartStyle = this.chart.options.chart?.style;
+
                 /**
                  * Reference to the tooltip's container, when
                  * [Highcharts.Tooltip#outside] is set to true, otherwise
@@ -754,7 +765,10 @@ class Tooltip {
                     position: 'absolute',
                     top: '1px',
                     pointerEvents,
-                    zIndex: 3
+                    zIndex: Math.max(
+                        (this.options.style?.zIndex || 0) as number,
+                        (chartStyle?.zIndex || 0) as number + 3
+                    )
                 });
 
                 H.doc.body.appendChild(container);
@@ -771,7 +785,7 @@ class Tooltip {
                     container,
                     0,
                     0,
-                    this.chart.options.chart?.style,
+                    chartStyle,
                     void 0,
                     void 0,
                     renderer.styledMode

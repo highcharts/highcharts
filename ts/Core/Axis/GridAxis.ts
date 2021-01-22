@@ -910,38 +910,39 @@ class GridAxis {
         const gridOptions = options.grid || {};
         const userLabels = axis.userOptions.labels || {};
 
-        if (axis.horiz) {
-            if (gridOptions.enabled === true) {
+        // Fire this only for the Gantt type chart, #14868.
+        if (gridOptions.enabled) {
+            if (axis.horiz) {
                 axis.series.forEach(function (series): void {
                     series.options.pointRange = 0;
                 });
-            }
 
-            // Lower level time ticks, like hours or minutes, represent
-            // points in time and not ranges. These should be aligned
-            // left in the grid cell by default. The same applies to
-            // years of higher order.
-            if (
-                tickInfo &&
-                options.dateTimeLabelFormats &&
-                options.labels &&
-                !defined(userLabels.align) &&
-                (
-                    (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
-                    tickInfo.count > 1 // years
-                )
-            ) {
-                options.labels.align = 'left';
+                // Lower level time ticks, like hours or minutes, represent
+                // points in time and not ranges. These should be aligned
+                // left in the grid cell by default. The same applies to
+                // years of higher order.
+                if (
+                    tickInfo &&
+                    options.dateTimeLabelFormats &&
+                    options.labels &&
+                    !defined(userLabels.align) &&
+                    (
+                        (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
+                        tickInfo.count > 1 // years
+                    )
+                ) {
+                    options.labels.align = 'left';
 
-                if (!defined(userLabels.x)) {
-                    options.labels.x = 3;
+                    if (!defined(userLabels.x)) {
+                        options.labels.x = 3;
+                    }
                 }
-            }
-        } else {
-            // Don't trim ticks which not in min/max range but
-            // they are still in the min/max plus tickInterval.
-            if (this.options.type !== 'treegrid' && axis.grid?.columns) {
-                this.minPointOffset = this.tickInterval;
+            } else {
+                // Don't trim ticks which not in min/max range but
+                // they are still in the min/max plus tickInterval.
+                if (this.options.type !== 'treegrid' && axis.grid?.columns) {
+                    this.minPointOffset = this.tickInterval;
+                }
             }
         }
     }

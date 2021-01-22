@@ -31,8 +31,8 @@ const { noop } = H;
 import palette from '../../Core/Color/Palette.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        line: LineSeries,
         pie: PieSeries
     }
 } = SeriesRegistry;
@@ -285,7 +285,7 @@ class FunnelSeries extends PieSeries {
 
         // Call the parent method
         if (!inside || point.visible) {
-            LineSeries.prototype.alignDataLabel.call(
+            Series.prototype.alignDataLabel.call(
                 this,
                 point,
                 dataLabel,

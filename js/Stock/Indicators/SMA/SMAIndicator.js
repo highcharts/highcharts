@@ -21,7 +21,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
-var _a = SeriesRegistry.seriesTypes, LineSeries = _a.line, ohlcProto = _a.ohlc.prototype;
+var LineSeries = SeriesRegistry.seriesTypes.line;
 import U from '../../../Core/Utilities.js';
 var addEvent = U.addEvent, error = U.error, extend = U.extend, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
 import './SMAComposition.js';
@@ -35,10 +35,6 @@ var generateMessage = RequiredIndicatorMixin.generateMessage;
  * The SMA series type.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.sma
- *
- * @augments Highcharts.Series
  */
 var SMAIndicator = /** @class */ (function (_super) {
     __extends(SMAIndicator, _super);

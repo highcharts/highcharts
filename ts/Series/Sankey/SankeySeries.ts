@@ -38,9 +38,9 @@ import Point from '../../Core/Series/Point.js';
 import SankeyPoint from './SankeyPoint.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
+    series: Series,
     seriesTypes: {
-        column: ColumnSeries,
-        line: LineSeries
+        column: ColumnSeries
     }
 } = SeriesRegistry;
 import TreeSeriesMixin from '../../Mixins/TreeSeries.js';
@@ -1164,7 +1164,7 @@ interface SankeySeries extends Highcharts.NodesSeries {
     setData: Highcharts.NodesMixin['setData'];
 }
 extend(SankeySeries.prototype, {
-    animate: LineSeries.prototype.animate,
+    animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: NodesMixin.createNode,

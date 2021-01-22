@@ -251,9 +251,16 @@ class ABandsIndicator extends SMAIndicator {
  * */
 
 interface ABandsIndicator {
-    getTranslatedLinesNames: typeof MultipleLinesMixin['getTranslatedLinesNames'];
-    linesApiNames: typeof MultipleLinesMixin['linesApiNames'];
+    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
+    linesApiNames: typeof MultipleLinesMixin.linesApiNames;
+    nameBase: string;
+    nameComponents: Array<string>;
+    pointArrayMap: Array<string>;
+    pointValKey: string;
     pointClass: typeof ABandsPoint;
+    toYData: typeof MultipleLinesMixin.toYData;
+    translate: typeof MultipleLinesMixin.translate;
+    drawGraph: typeof MultipleLinesMixin.drawGraph;
 }
 
 extend(ABandsIndicator.prototype, {

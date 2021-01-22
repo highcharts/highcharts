@@ -112,6 +112,7 @@ declare global {
             public listWrapper: HTMLDOMElement;
             public options: StockToolsGuiOptions;
             public placed: boolean;
+            public prevOffsetWidth: (number|undefined);
             public showhideBtn: HTMLDOMElement;
             public submenu: HTMLDOMElement;
             public toolbar: HTMLDOMElement;
@@ -919,7 +920,39 @@ addEvent(Chart, 'getMargins', function (): void {
 
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
+        this.spacing[3] += offsetWidth;
     }
+});
+
+['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
+    addEvent(Chart, event, function (): void {
+        if (this.stockTools) {
+            const listWrapper = this.stockTools.listWrapper,
+                offsetWidth = listWrapper && (
+                    (
+                        (listWrapper as any).startWidth +
+                        getStyle(listWrapper, 'padding-left') +
+                        getStyle(listWrapper, 'padding-right')
+                    ) || listWrapper.offsetWidth
+                );
+
+            let dirty = false;
+
+            if (offsetWidth && offsetWidth < this.plotWidth) {
+                this.spacingBox.x += offsetWidth;
+                dirty = true;
+            } else if (offsetWidth === 0) {
+                dirty = true;
+            }
+
+            if (offsetWidth !== this.stockTools.prevOffsetWidth) {
+                this.stockTools.prevOffsetWidth = offsetWidth;
+                if (dirty) {
+                    this.isDirtyLegend = true;
+                }
+            }
+        }
+    });
 });
 
 addEvent(Chart, 'destroy', function (): void {
@@ -983,6 +1016,7 @@ class Toolbar {
     public listWrapper: HTMLDOMElement = void 0 as any;
     public options: Highcharts.StockToolsGuiOptions;
     public placed: boolean;
+    public prevOffsetWidth: (number|undefined);
     public showhideBtn: HTMLDOMElement = void 0 as any;
     public submenu: HTMLDOMElement = void 0 as any;
     public toolbar: HTMLDOMElement = void 0 as any;

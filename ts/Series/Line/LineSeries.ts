@@ -18,13 +18,16 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+const { merge } = U;
 
 /* *
  *
- *  Declarations
+ *  Class
  *
  * */
 
@@ -32,12 +35,8 @@ import H from '../../Core/Globals.js';
  * The line series is the base type and is therefor the series base prototype.
  *
  * @private
- * @class
- * @name Highcharts.seriesTypes.line
- *
- * @augments Highcharts.Series
  */
-declare class LineSeries extends Series {
+class LineSeries extends Series {
 
     /* *
      *
@@ -50,7 +49,9 @@ declare class LineSeries extends Series {
      *
      * @optionparent plotOptions.series
      */
-    public static defaultOptions: LineSeriesOptions;
+    public static defaultOptions: LineSeriesOptions = merge(Series.defaultOptions, {
+        // nothing here yet
+    } as LineSeriesOptions);
 
     /* *
      *
@@ -58,13 +59,129 @@ declare class LineSeries extends Series {
      *
      * */
 
-    public data: Array<LinePoint>;
+    public data: Array<LinePoint> = void 0 as any;
 
-    public options: LineSeriesOptions;
+    public options: LineSeriesOptions = void 0 as any;
 
-    public points: Array<LinePoint>;
+    public points: Array<LinePoint> = void 0 as any;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Draw the graph. Called internally when rendering line-like series
+     * types. The first time it generates the `series.graph` item and
+     * optionally other series-wide items like `series.area` for area
+     * charts. On subsequent calls these items are updated with new
+     * positions and attributes.
+     *
+     * @function Highcharts.Series#drawGraph
+     */
+    public drawGraph(): void {
+        var series = this,
+            options = this.options,
+            graphPath = (this.gappedPath || this.getGraphPath).call(this),
+            styledMode = this.chart.styledMode,
+            props = [[
+                'graph',
+                'highcharts-graph'
+            ]];
+
+        // Presentational properties
+        if (!styledMode) {
+            props[0].push(
+                (
+                    options.lineColor ||
+                    this.color ||
+                    palette.neutralColor20 // when colorByPoint = true
+                ) as any,
+                options.dashStyle as any
+            );
+        }
+
+        props = series.getZonesGraphs(props);
+
+        // Draw the graph
+        props.forEach(function (prop, i): void {
+            var graphKey = prop[0],
+                graph = (series as any)[graphKey],
+                verb = graph ? 'animate' : 'attr',
+                attribs: SVGAttributes;
+
+            if (graph) {
+                graph.endX = series.preventGraphAnimation ?
+                    null :
+                    graphPath.xMap;
+                graph.animate({ d: graphPath });
+
+            } else if (graphPath.length) { // #1487
+
+                /**
+                 * SVG element of area-based charts. Can be used for styling
+                 * purposes. If zones are configured, this element will be
+                 * hidden and replaced by multiple zone areas, accessible
+                 * via `series['zone-area-x']` (where x is a number,
+                 * starting with 0).
+                 *
+                 * @name Highcharts.Series#area
+                 * @type {Highcharts.SVGElement|undefined}
+                 */
+                /**
+                 * SVG element of line-based charts. Can be used for styling
+                 * purposes. If zones are configured, this element will be
+                 * hidden and replaced by multiple zone lines, accessible
+                 * via `series['zone-graph-x']` (where x is a number,
+                 * starting with 0).
+                 *
+                 * @name Highcharts.Series#graph
+                 * @type {Highcharts.SVGElement|undefined}
+                 */
+                (series as any)[graphKey] = graph = series.chart.renderer
+                    .path(graphPath)
+                    .addClass(prop[1])
+                    .attr({ zIndex: 1 }) // #1069
+                    .add(series.group);
+            }
+
+            if (graph && !styledMode) {
+
+                attribs = {
+                    'stroke': prop[2],
+                    'stroke-width': options.lineWidth,
+                    // Polygon series use filled graph
+                    'fill': (series.fillGraph && series.color) || 'none'
+                };
+
+                if (prop[3]) {
+                    attribs.dashstyle = prop[3];
+                } else if (options.linecap !== 'square') {
+                    attribs['stroke-linecap'] =
+                        attribs['stroke-linejoin'] = 'round';
+                }
+                graph[verb](attribs)
+                    // Add shadow to normal series (0) or to first
+                    // zone (1) #3932
+                    .shadow((i < 2) && options.shadow);
+            }
+
+            // Helpers for animation
+            if (graph) {
+                graph.startX = graphPath.xMap;
+                graph.isArea = graphPath.isArea; // For arearange animation
+            }
+        });
+    }
 
 }
+
+/* *
+ *
+ *  Prototype Properties
+ *
+ * */
 
 interface LineSeries {
     pointClass: typeof LinePoint;
@@ -81,15 +198,7 @@ declare module '../../Core/Series/SeriesType' {
         line: typeof LineSeries;
     }
 }
-SeriesRegistry.registerSeriesType('line', Series);
-
-/* *
- *
- *  Compatibility
- *
- * */
-
-(H as any).Series = Series; // backwards compatibility
+SeriesRegistry.registerSeriesType('line', LineSeries);
 
 /* *
  *
@@ -97,7 +206,7 @@ SeriesRegistry.registerSeriesType('line', Series);
  *
  * */
 
-export default Series;
+export default LineSeries;
 
 /* *
  *

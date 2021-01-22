@@ -398,8 +398,29 @@ QUnit.test('BBox for mulitiple lines', function (assert) {
         assert.strictEqual(
             lab.element.getAttribute('dy'),
             null,
-            "Frist line shouldn't have dy (#6144) - visually the red text fits in the green box."
+            "First line shouldn't have dy (#6144) - visually the red text fits in the green box."
         );
+
+        const txt = renderer
+            .text(
+                '<span><span>FirstLine</span><br/>SecondLine</span><br/>ThirdLine',
+                20,
+                100
+            )
+            .add();
+
+        assert.strictEqual(
+            txt.element.querySelectorAll('tspan').length,
+            4,
+            'A fake tspan should be inserted'
+        );
+        assert.strictEqual(
+            txt.element.querySelectorAll('tspan[dy]').length,
+            2,
+            'The content should be rendered across three lines'
+        );
+
+
     } finally {
         renderer.destroy();
     }
@@ -750,36 +771,4 @@ QUnit.test('RTL characters with outline (#10162)', function (assert) {
     } finally {
         renderer.destroy();
     }
-});
-
-QUnit.test('XSS and script injection', assert => {
-    const ren = new Highcharts.Renderer(
-        document.getElementById('container'),
-        600,
-        400
-    );
-
-    ren.text(
-        'This is a link to <a href="https://www.highcharts.com">highcharts.com</a>',
-        30,
-        30
-    ).add();
-
-    assert.strictEqual(
-        document.getElementById('container').innerHTML.indexOf('onclick'),
-        -1,
-        'There should be no translation of anchors to onclick like historically'
-    );
-
-    ren.text(
-        'This is a link to <a href="javascript:alert(\'XSS\')">an alert</a>',
-        30,
-        60
-    ).add();
-
-    assert.strictEqual(
-        document.getElementById('container').innerHTML.indexOf('javascript'),
-        -1,
-        'JavaScript execution should not be allowed from config'
-    );
 });

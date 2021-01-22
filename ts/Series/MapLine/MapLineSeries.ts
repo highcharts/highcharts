@@ -22,11 +22,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import MapSeries from '../Map/MapSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const {
-    seriesTypes: {
-        line: LineSeries
-    }
-} = SeriesRegistry;
+const { series: Series } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     extend,
@@ -147,7 +143,7 @@ extend(MapLineSeries.prototype, {
 
     colorProp: 'stroke',
 
-    drawLegendSymbol: LineSeries.prototype.drawLegendSymbol,
+    drawLegendSymbol: Series.prototype.drawLegendSymbol,
 
     pointAttrToOptions: {
         'stroke': 'color',

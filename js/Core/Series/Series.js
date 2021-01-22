@@ -10,16 +10,17 @@
 'use strict';
 import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject, setAnimation = A.setAnimation;
-import H from '../../Core/Globals.js';
+import H from '../Globals.js';
 var hasTouch = H.hasTouch, svg = H.svg, win = H.win;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import O from '../../Core/Options.js';
+import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
-import palette from '../../Core/Color/Palette.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import palette from '../Color/Palette.js';
+import Point from './Point.js';
+import SeriesRegistry from './SeriesRegistry.js';
 var seriesTypes = SeriesRegistry.seriesTypes;
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Core/Utilities.js';
+import SVGElement from '../Renderer/SVG/SVGElement.js';
+import U from '../Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, cleanRecursively = U.cleanRecursively, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 /* *
  *
@@ -2073,90 +2074,6 @@ var Series = /** @class */ (function () {
         graphPath.xMap = xMap;
         series.graphPath = graphPath;
         return graphPath;
-    };
-    /**
-     * Draw the graph. Called internally when rendering line-like series
-     * types. The first time it generates the `series.graph` item and
-     * optionally other series-wide items like `series.area` for area
-     * charts. On subsequent calls these items are updated with new
-     * positions and attributes.
-     *
-     * @function Highcharts.Series#drawGraph
-     */
-    Series.prototype.drawGraph = function () {
-        var series = this, options = this.options, graphPath = (this.gappedPath || this.getGraphPath).call(this), styledMode = this.chart.styledMode, props = [[
-                'graph',
-                'highcharts-graph'
-            ]];
-        // Presentational properties
-        if (!styledMode) {
-            props[0].push((options.lineColor ||
-                this.color ||
-                palette.neutralColor20 // when colorByPoint = true
-            ), options.dashStyle);
-        }
-        props = series.getZonesGraphs(props);
-        // Draw the graph
-        props.forEach(function (prop, i) {
-            var graphKey = prop[0], graph = series[graphKey], verb = graph ? 'animate' : 'attr', attribs;
-            if (graph) {
-                graph.endX = series.preventGraphAnimation ?
-                    null :
-                    graphPath.xMap;
-                graph.animate({ d: graphPath });
-            }
-            else if (graphPath.length) { // #1487
-                /**
-                 * SVG element of area-based charts. Can be used for styling
-                 * purposes. If zones are configured, this element will be
-                 * hidden and replaced by multiple zone areas, accessible
-                 * via `series['zone-area-x']` (where x is a number,
-                 * starting with 0).
-                 *
-                 * @name Highcharts.Series#area
-                 * @type {Highcharts.SVGElement|undefined}
-                 */
-                /**
-                 * SVG element of line-based charts. Can be used for styling
-                 * purposes. If zones are configured, this element will be
-                 * hidden and replaced by multiple zone lines, accessible
-                 * via `series['zone-graph-x']` (where x is a number,
-                 * starting with 0).
-                 *
-                 * @name Highcharts.Series#graph
-                 * @type {Highcharts.SVGElement|undefined}
-                 */
-                series[graphKey] = graph = series.chart.renderer
-                    .path(graphPath)
-                    .addClass(prop[1])
-                    .attr({ zIndex: 1 }) // #1069
-                    .add(series.group);
-            }
-            if (graph && !styledMode) {
-                attribs = {
-                    'stroke': prop[2],
-                    'stroke-width': options.lineWidth,
-                    // Polygon series use filled graph
-                    'fill': (series.fillGraph && series.color) || 'none'
-                };
-                if (prop[3]) {
-                    attribs.dashstyle = prop[3];
-                }
-                else if (options.linecap !== 'square') {
-                    attribs['stroke-linecap'] =
-                        attribs['stroke-linejoin'] = 'round';
-                }
-                graph[verb](attribs)
-                    // Add shadow to normal series (0) or to first
-                    // zone (1) #3932
-                    .shadow((i < 2) && options.shadow);
-            }
-            // Helpers for animation
-            if (graph) {
-                graph.startX = graphPath.xMap;
-                graph.isArea = graphPath.isArea; // For arearange animation
-            }
-        });
     };
     /**
      * Get zones properties for building graphs. Extendable by series with
@@ -5717,12 +5634,19 @@ extend(Series.prototype, {
     drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
-    // each point's x and y values are stored in this.xData and this.yData
+    // each point's x and y values are stored in this.xData and this.yData:
     parallelArrays: ['x', 'y'],
+    pointClass: Point,
     requireSorting: true,
-    // requires the data to be sorted
+    // requires the data to be sorted:
     sorted: true
 });
+/* *
+ *
+ *  Registry
+ *
+ * */
+SeriesRegistry.series = Series;
 /* *
  *
  *  Default Export

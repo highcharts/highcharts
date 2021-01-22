@@ -22,24 +22,23 @@ import type Chart from '../Chart/Chart';
 import type ColorType from '../Color/ColorType';
 import type DataExtremesObject from './DataExtremesObject';
 import type { EventCallback } from '../Callback';
-import type Point from './Point';
 import type PointerEvent from '../PointerEvent';
 import type {
     PointOptions,
     PointShortOptions,
     PointStateHoverOptions
-} from '../Series/PointOptions';
-import type SeriesLike from '../Series/SeriesLike';
+} from './PointOptions';
+import type SeriesLike from './SeriesLike';
 import type {
     SeriesDataSortingOptions,
     SeriesOptions,
     SeriesStateHoverOptions,
     SeriesZonesOptions
-} from '../../Core/Series/SeriesOptions';
+} from './SeriesOptions';
 import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
-} from '../../Core/Series/SeriesType';
+} from './SeriesType';
 import type SplinePoint from '../../Series/Spline/SplinePoint';
 import type SplineSeries from '../../Series/Spline/SplineSeries';
 import type { StatesOptionsKey } from './StatesOptions';
@@ -50,20 +49,21 @@ const {
     animObject,
     setAnimation
 } = A;
-import H from '../../Core/Globals.js';
+import H from '../Globals.js';
 const {
     hasTouch,
     svg,
     win
 } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import O from '../../Core/Options.js';
+import O from '../Options.js';
 const { defaultOptions } = O;
-import palette from '../../Core/Color/Palette.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import palette from '../Color/Palette.js';
+import Point from './Point.js';
+import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
-import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
-import U from '../../Core/Utilities.js';
+import SVGElement from '../Renderer/SVG/SVGElement.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     arrayMax,
@@ -5559,110 +5559,6 @@ class Series {
     }
 
     /**
-     * Draw the graph. Called internally when rendering line-like series
-     * types. The first time it generates the `series.graph` item and
-     * optionally other series-wide items like `series.area` for area
-     * charts. On subsequent calls these items are updated with new
-     * positions and attributes.
-     *
-     * @function Highcharts.Series#drawGraph
-     */
-    public drawGraph(): void {
-        var series = this,
-            options = this.options,
-            graphPath = (this.gappedPath || this.getGraphPath).call(this),
-            styledMode = this.chart.styledMode,
-            props = [[
-                'graph',
-                'highcharts-graph'
-            ]];
-
-        // Presentational properties
-        if (!styledMode) {
-            props[0].push(
-                (
-                    options.lineColor ||
-                    this.color ||
-                    palette.neutralColor20 // when colorByPoint = true
-                ) as any,
-                options.dashStyle as any
-            );
-        }
-
-        props = series.getZonesGraphs(props);
-
-        // Draw the graph
-        props.forEach(function (prop, i): void {
-            var graphKey = prop[0],
-                graph = (series as any)[graphKey],
-                verb = graph ? 'animate' : 'attr',
-                attribs: SVGAttributes;
-
-            if (graph) {
-                graph.endX = series.preventGraphAnimation ?
-                    null :
-                    graphPath.xMap;
-                graph.animate({ d: graphPath });
-
-            } else if (graphPath.length) { // #1487
-
-                /**
-                 * SVG element of area-based charts. Can be used for styling
-                 * purposes. If zones are configured, this element will be
-                 * hidden and replaced by multiple zone areas, accessible
-                 * via `series['zone-area-x']` (where x is a number,
-                 * starting with 0).
-                 *
-                 * @name Highcharts.Series#area
-                 * @type {Highcharts.SVGElement|undefined}
-                 */
-                /**
-                 * SVG element of line-based charts. Can be used for styling
-                 * purposes. If zones are configured, this element will be
-                 * hidden and replaced by multiple zone lines, accessible
-                 * via `series['zone-graph-x']` (where x is a number,
-                 * starting with 0).
-                 *
-                 * @name Highcharts.Series#graph
-                 * @type {Highcharts.SVGElement|undefined}
-                 */
-                (series as any)[graphKey] = graph = series.chart.renderer
-                    .path(graphPath)
-                    .addClass(prop[1])
-                    .attr({ zIndex: 1 }) // #1069
-                    .add(series.group);
-            }
-
-            if (graph && !styledMode) {
-
-                attribs = {
-                    'stroke': prop[2],
-                    'stroke-width': options.lineWidth,
-                    // Polygon series use filled graph
-                    'fill': (series.fillGraph && series.color) || 'none'
-                };
-
-                if (prop[3]) {
-                    attribs.dashstyle = prop[3];
-                } else if (options.linecap !== 'square') {
-                    attribs['stroke-linecap'] =
-                        attribs['stroke-linejoin'] = 'round';
-                }
-                graph[verb](attribs)
-                    // Add shadow to normal series (0) or to first
-                    // zone (1) #3932
-                    .shadow((i < 2) && options.shadow);
-            }
-
-            // Helpers for animation
-            if (graph) {
-                graph.startX = graphPath.xMap;
-                graph.isArea = graphPath.isArea; // For arearange animation
-            }
-        });
-    }
-
-    /**
      * Get zones properties for building graphs. Extendable by series with
      * multiple lines within one series.
      *
@@ -7533,34 +7429,30 @@ interface Series extends SeriesLike {
     requireSorting: boolean;
     sorted: boolean;
 }
-extend(
-    Series.prototype,
-    {
-        axisTypes: ['xAxis', 'yAxis'],
+extend(Series.prototype, {
+    axisTypes: ['xAxis', 'yAxis'],
+    coll: 'series',
+    colorCounter: 0,
+    cropShoulder: 1,
+    directTouch: false,
+    drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
+    isCartesian: true,
+    kdAxisArray: ['clientX', 'plotY'],
+    // each point's x and y values are stored in this.xData and this.yData:
+    parallelArrays: ['x', 'y'],
+    pointClass: Point,
+    requireSorting: true,
+    // requires the data to be sorted:
+    sorted: true
+});
 
-        coll: 'series',
+/* *
+ *
+ *  Registry
+ *
+ * */
 
-        colorCounter: 0,
-
-        cropShoulder: 1,
-
-        directTouch: false,
-
-        drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
-
-        isCartesian: true,
-
-        kdAxisArray: ['clientX', 'plotY'],
-
-        // each point's x and y values are stored in this.xData and this.yData
-        parallelArrays: ['x', 'y'],
-
-        requireSorting: true,
-
-        // requires the data to be sorted
-        sorted: true
-    }
-);
+SeriesRegistry.series = Series;
 
 /* *
  *

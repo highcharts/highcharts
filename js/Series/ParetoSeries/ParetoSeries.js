@@ -23,7 +23,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-var LineSeries = SeriesRegistry.seriesTypes.line;
+var Series = SeriesRegistry.series;
 import U from '../../Core/Utilities.js';
 var correctFloat = U.correctFloat, merge = U.merge, extend = U.extend;
 /* *
@@ -139,14 +139,14 @@ var ParetoSeries = /** @class */ (function (_super) {
      * @requires     modules/pareto
      * @optionparent plotOptions.pareto
      */
-    ParetoSeries.defaultOptions = merge(LineSeries.defaultOptions, {
+    ParetoSeries.defaultOptions = merge(Series.defaultOptions, {
         /**
          * Higher zIndex than column series to draw line above shapes.
          */
         zIndex: 3
     });
     return ParetoSeries;
-}(LineSeries));
+}(Series));
 extend(ParetoSeries.prototype, {
     addBaseSeriesEvents: DerivedSeriesMixin.addBaseSeriesEvents,
     addEvents: DerivedSeriesMixin.addEvents,

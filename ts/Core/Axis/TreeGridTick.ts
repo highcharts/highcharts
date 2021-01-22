@@ -133,7 +133,7 @@ namespace TreeGridTick {
         label: SVGElement,
         options: SVGAttributes
     ): void {
-        const css: CSSObject = defined(options.style) ? options.style : {};
+        const css: CSSObject = isObject(options.style) ? options.style : {};
 
         label.removeClass('highcharts-treegrid-node-active');
 
