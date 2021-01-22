@@ -67,11 +67,10 @@ QUnit.test('Left trim (#5261)', function (assert) {
         })
         .add();
 
-    // tspan.dy should be the same as the reference
     assert.strictEqual(
         label.element.querySelector('tspan').getAttribute('dy'),
-        correctLabel.element.querySelector('tspan').getAttribute('dy'),
-        'Tspan dy offset'
+        null,
+        'Initial break should have no dy'
     );
 
     label = ren
@@ -85,8 +84,8 @@ QUnit.test('Left trim (#5261)', function (assert) {
     // tspan.dy should be the same as the reference
     assert.strictEqual(
         label.element.querySelector('tspan').getAttribute('dy'),
-        correctLabel.element.querySelector('tspan').getAttribute('dy'),
-        'Tspan dy offset'
+        null,
+        'Ending break should have no dy'
     );
 });
 

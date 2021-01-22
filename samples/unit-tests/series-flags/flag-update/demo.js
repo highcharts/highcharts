@@ -51,7 +51,8 @@ QUnit.test('Update flag (#4222)', function (assert) {
     chart.tooltip.refresh([point]);
 
     assert.strictEqual(
-        chart.tooltip.label.element.lastChild.lastChild.textContent,
+        chart.tooltip.label.element.lastChild.lastChild.textContent
+            .replace('\u200B', ''),
         flag.text,
         'Updated text'
     );
