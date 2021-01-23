@@ -661,6 +661,17 @@ class SVGElement {
      * @function Highcharts.SVGElement#afterSetters
      */
     public afterSetters(): void {
+        // Update renderer url if neccessary
+        if (
+            this.renderer.url?.length &&
+            !this.renderer.isSettingURL &&
+            ([this.attr('fill'), this.attr('clip-path')].some((attr): boolean =>
+                attr.toString().indexOf(this.renderer.url) > -1
+            ))
+        ) {
+            this.renderer.setURL();
+        }
+
         // Update transform. Do this outside the loop to prevent redundant
         // updating for batch setting of attributes.
         if (this.doTransform) {

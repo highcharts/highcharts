@@ -1846,14 +1846,6 @@ var Chart = /** @class */ (function () {
                 chart.setResponsive(true);
             }
         });
-        // We only need to add these events if history is available
-        if (win.history) {
-            addEvent(chart, 'beforeRedraw', function (e) {
-                if (win.history.state) {
-                    chart.renderer.setURL();
-                }
-            });
-        }
         chart.render();
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {

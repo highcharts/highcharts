@@ -755,8 +755,15 @@ var SVGRenderer = /** @class */ (function () {
     };
     /**
      * Sets the internal URL
+     *
+     * @return {void}
      */
     SVGRenderer.prototype.setURL = function () {
+        var _this = this;
+        if (this.isSettingURL) {
+            return;
+        }
+        this.isSettingURL = true;
         var previousUrl = this.url;
         // #24, #672, #1070
         this.url = ((isFirefox || isWebKit) &&
@@ -774,6 +781,10 @@ var SVGRenderer = /** @class */ (function () {
         if (this.url.length && previousUrl !== this.url) {
             this.updateReferences(previousUrl);
         }
+        setTimeout(function () {
+            _this.isSettingURL = false;
+        }, this.chartIndex === void 0 ? 0 : 750);
+        // Ignore subsequent interactions if we are dealing with a chart
     };
     /**
      * Updates internal url references

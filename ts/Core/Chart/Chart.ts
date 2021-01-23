@@ -2614,15 +2614,6 @@ class Chart {
             }
         });
 
-        // We only need to add these events if history is available
-        if (win.history) {
-            addEvent(chart, 'beforeRedraw', (e): void => {
-                if (win.history.state) {
-                    chart.renderer.setURL();
-                }
-            });
-        }
-
         chart.render();
 
         // Fire the load event if there are no external images

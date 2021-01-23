@@ -350,6 +350,16 @@ var SVGElement = /** @class */ (function () {
      * @function Highcharts.SVGElement#afterSetters
      */
     SVGElement.prototype.afterSetters = function () {
+        var _this = this;
+        var _a;
+        // Update renderer url if neccessary
+        if (((_a = this.renderer.url) === null || _a === void 0 ? void 0 : _a.length) &&
+            !this.renderer.isSettingURL &&
+            ([this.attr('fill'), this.attr('clip-path')].some(function (attr) {
+                return attr.toString().indexOf(_this.renderer.url) > -1;
+            }))) {
+            this.renderer.setURL();
+        }
         // Update transform. Do this outside the loop to prevent redundant
         // updating for batch setting of attributes.
         if (this.doTransform) {

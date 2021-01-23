@@ -243,7 +243,8 @@ declare global {
                 animate?: (boolean|Partial<AnimationOptions>)
             ): void;
             public setStyle(style: CSSObject): void;
-            public setURL(): void;
+            public setURL(async?: boolean): void;
+            public isSettingURL: boolean;
             public updateReferences(previousUrl: string): void;
             public symbol(
                 symbol: string,
@@ -1162,8 +1163,15 @@ class SVGRenderer {
 
     /**
      * Sets the internal URL
+     *
+     * @return {void}
      */
     public setURL(): void {
+        if (this.isSettingURL) {
+            return;
+        }
+        this.isSettingURL = true;
+
         const previousUrl = this.url;
         // #24, #672, #1070
         this.url = (
@@ -1184,6 +1192,11 @@ class SVGRenderer {
         if (this.url.length && previousUrl !== this.url) {
             this.updateReferences(previousUrl);
         }
+
+        setTimeout((): void => {
+            this.isSettingURL = false;
+        }, this.chartIndex === void 0 ? 0 : 750);
+        // Ignore subsequent interactions if we are dealing with a chart
     }
 
     /**
