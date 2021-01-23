@@ -244,7 +244,7 @@ jobs:
       - run:
           name: Wait for file size comparison and comment on PR
           command: while [ ! -f ./tmp/filesizes/comparison.md ]; do sleep 1; done && npx gulp pr-comment-sizes --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
-          no_output_timeout: 2m #wait for max 2 minutes
+          no_output_timeout: 5m #wait for max 2 minutes
 
   nightly_visual_diff:
     <<: *defaults
