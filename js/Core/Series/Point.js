@@ -19,6 +19,7 @@ import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import DataParser from '../../Data/Parsers/DataParser.js';
+import DataTableRow from '../../Data/DataTableRow.js';
 import H from '../Globals.js';
 import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
@@ -461,8 +462,9 @@ var Point = /** @class */ (function () {
             keys = __spreadArrays(['x'], series.pointArrayMap);
         }
         point.tableRow = tableRow;
-        point.tableRowEventRemover = tableRow.on('afterChangeRow', function () {
-            point.update(DataParser.getPointOptionsFromTableRow(this, keys));
+        point.tableRowEventRemover = tableRow.on('afterChangeRow', function (e) {
+            var detail = (e.detail || {});
+            point.update(this, detail.redraw === 'true', detail.animation === 'true', false);
         });
         return point;
     };
@@ -934,13 +936,15 @@ var Point = /** @class */ (function () {
      * @fires Highcharts.Point#event:update
      */
     Point.prototype.update = function (options, redraw, animation, runEvent) {
-        var point = this, series = point.series, graphic = point.graphic, i, chart = series.chart, seriesOptions = series.options;
-        redraw = pick(redraw, true);
+        if (redraw === void 0) { redraw = true; }
+        var point = this, series = point.series, graphic = point.graphic, i, chart = series.chart, pointOptions = (options instanceof DataTableRow ?
+            DataParser.getPointOptionsFromTableRow(options) :
+            options), seriesOptions = series.options;
         /**
          * @private
          */
         function update() {
-            point.applyOptions(options);
+            point.applyOptions(pointOptions);
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
             var hasDummyGraphic = graphic && point.hasDummyGraphic;
@@ -949,17 +953,19 @@ var Point = /** @class */ (function () {
                 point.graphic = graphic.destroy();
                 delete point.hasDummyGraphic;
             }
-            if (isObject(options, true)) {
+            if (isObject(pointOptions, true)) {
                 // Destroy so we can get new elements
                 if (graphic && graphic.element) {
                     // "null" is also a valid symbol
-                    if (options &&
-                        options.marker &&
-                        typeof options.marker.symbol !== 'undefined') {
+                    if (pointOptions &&
+                        pointOptions.marker &&
+                        typeof pointOptions.marker.symbol !== 'undefined') {
                         point.graphic = graphic.destroy();
                     }
                 }
-                if (options && options.dataLabels && point.dataLabel) {
+                if (pointOptions &&
+                    pointOptions.dataLabels &&
+                    point.dataLabel) {
                     point.dataLabel = point.dataLabel.destroy(); // #2468
                 }
                 if (point.connector) {
@@ -973,9 +979,9 @@ var Point = /** @class */ (function () {
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
             seriesOptions.data[i] = (isObject(seriesOptions.data[i], true) ||
-                isObject(options, true)) ?
+                isObject(pointOptions, true)) ?
                 point.options :
-                pick(options, seriesOptions.data[i]);
+                pick(pointOptions, seriesOptions.data[i]);
             // redraw
             series.isDirty = series.isDirtyData = true;
             if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
@@ -993,7 +999,7 @@ var Point = /** @class */ (function () {
             update();
         }
         else {
-            point.firePointEvent('update', { options: options }, update);
+            point.firePointEvent('update', { options: pointOptions }, update);
         }
     };
     /**

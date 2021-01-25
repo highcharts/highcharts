@@ -18,7 +18,6 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
-import type DataTableRow from '../../Data/DataTableRow';
 import type { EventCallback } from '../Callback';
 import type PointLike from './PointLike';
 import type {
@@ -38,6 +37,7 @@ import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import DataParser from '../../Data/Parsers/DataParser.js';
+import DataTableRow from '../../Data/DataTableRow.js';
 import H from '../Globals.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
@@ -649,8 +649,14 @@ class Point {
         point.tableRow = tableRow;
         point.tableRowEventRemover = tableRow.on(
             'afterChangeRow',
-            function (): void {
-                point.update(DataParser.getPointOptionsFromTableRow(this, keys));
+            function (e): void {
+                const detail = (e.detail || {});
+                point.update(
+                    this,
+                    detail.redraw === 'true',
+                    detail.animation === 'true',
+                    false
+                );
             }
         );
 
@@ -1260,8 +1266,8 @@ class Point {
      * @fires Highcharts.Point#event:update
      */
     public update(
-        options: (PointOptions|PointShortOptions),
-        redraw?: boolean,
+        options: (DataTableRow|PointOptions|PointShortOptions),
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         runEvent?: boolean
     ): void {
@@ -1270,16 +1276,19 @@ class Point {
             graphic = point.graphic,
             i: number,
             chart = series.chart,
+            pointOptions = (
+                options instanceof DataTableRow ?
+                    DataParser.getPointOptionsFromTableRow(options) :
+                    options
+            ),
             seriesOptions = series.options;
-
-        redraw = pick(redraw, true);
 
         /**
          * @private
          */
         function update(): void {
 
-            point.applyOptions(options);
+            point.applyOptions(pointOptions);
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
@@ -1290,19 +1299,23 @@ class Point {
                 delete point.hasDummyGraphic;
             }
 
-            if (isObject(options, true)) {
+            if (isObject(pointOptions, true)) {
                 // Destroy so we can get new elements
                 if (graphic && graphic.element) {
                     // "null" is also a valid symbol
                     if (
-                        options &&
-                        (options as any).marker &&
-                        typeof (options as any).marker.symbol !== 'undefined'
+                        pointOptions &&
+                        pointOptions.marker &&
+                        typeof pointOptions.marker.symbol !== 'undefined'
                     ) {
                         point.graphic = graphic.destroy();
                     }
                 }
-                if (options && (options as any).dataLabels && point.dataLabel) {
+                if (
+                    pointOptions &&
+                    pointOptions.dataLabels &&
+                    point.dataLabel
+                ) {
                     point.dataLabel = point.dataLabel.destroy(); // #2468
                 }
                 if (point.connector) {
@@ -1319,10 +1332,10 @@ class Point {
             // (#4701, #4916).
             (seriesOptions.data as any)[i] = (
                 isObject((seriesOptions.data as any)[i], true) ||
-                    isObject(options, true)
+                    isObject(pointOptions, true)
             ) ?
                 point.options :
-                pick(options, (seriesOptions.data as any)[i]);
+                pick(pointOptions, (seriesOptions.data as any)[i]);
 
             // redraw
             series.isDirty = series.isDirtyData = true;
@@ -1342,7 +1355,7 @@ class Point {
         if (runEvent === false) { // When called from setData
             update();
         } else {
-            point.firePointEvent('update', { options: options }, update);
+            point.firePointEvent('update', { options: pointOptions }, update);
         }
     }
 
