@@ -1,0 +1,65 @@
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/data.js"></script>
+<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/stock/indicators/indicators-all.js"></script>
+
+<div class='main'>
+  <div class='selectors'>
+    <div class="left">
+      <label class='left__labels' for="overlays">Overlays:</label>
+      <select class='left__select' id="overlays">
+        <option value="none">None</option>
+        <option value="abands">Acceleration Bands</option>
+        <option value="bb">Bollinger Bands</option>
+        <option value="dema">Double EMA (Exponential Moving Average)</option>
+        <option value="ema">EMA (Exponential Moving Average)</option>
+        <option value="ikh">Ichimoku Kinko Hyo</option>
+        <option value="keltnerchannels">Keltner Channels</option>
+        <option value="linearRegression">Linear Regression</option>
+        <option value="pivotpoints">Pivot Points</option>
+        <option value="pc">Price Channel</option>
+        <option value="priceenvelopes">Price Envelopes</option>
+        <option value="psar">PSAR (Parabolic SAR)</option>
+        <option value="sma">SMA (Simple Moving Average)</option>
+        <option value="supertrend">Super Trend</option>
+        <option value="tema">Triple EMA (Exponential Moving Average)</option>
+        <option value="vbp">VbP (Volume by Price)</option>
+        <option value="vwap">WMA (Weighted Moving Average)</option>
+        <option value="wma">VWAP (Volume Weighted Average Price)</option>
+        <option value="zigzag">Zig Zag</option>
+      </select>
+    </div>
+
+    <div class="right">
+      <label class='right__labels' for="oscilators">Oscillators:</label>
+      <select class='right__select' id="oscilators">
+        <option value="none">None</option>
+        <option value="apo">Absolute price indicator</option>
+        <option value="ad">A/D (Accumulation/Distribution)</option>
+        <option value="aroon">Aroon</option>
+        <option value="aroonoscillator">Aroon oscilator</option>
+        <option value="atr">ATR (Average True Range)</option>
+        <option value="ao">Awesome oscilator</option>
+        <option value="cci">CCI (Commodity Channel Index)</option>
+        <option value="chaikin">Chaikin</option>
+        <option value="cmf">CMF (Chaikin Money Flow)</option>
+        <option value="dpo">Detrended price</option>
+        <option value="linearRegressionAngle">Linear Regression Angle</option>
+        <option value="linearRegressionIntercept">Linear Regression Intercept</option>
+        <option value="linearRegressionSlope">Linear Regression Slope</option>
+        <option value="macd">MACD (Moving Average Convergence Divergence)</option>
+        <option value="mfi">MFI (Money Flow Index)</option>
+        <option value="momentum">Momentum</option>
+        <option value="natr">NATR (Normalized Average True Range)</option>
+        <option value="ppo">Percentage Price oscillator</option>
+        <option value="roc">RoC (Rate of Change)</option> <!-- ???? aditional axis -->
+        <option value="rsi">RSI (Relative Strength Index)</option>
+        <option value="slowstochastic">Slow Stochastic</option>
+        <option value="stochastic">Stochastic</option>
+        <option value="trix">TRIX</option>
+        <option value="williamsr">Williams %R</option> ???? aditional zones
+      </select>
+    </div>
+  </div>
+  <div id="container"></div>
+</div>
