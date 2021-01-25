@@ -399,7 +399,7 @@ class TextBuilder {
 
 
             if (tagName === 'br') {
-                attributes.class = 'highcharts-br';
+                attributes['class'] = 'highcharts-br'; // eslint-disable-line dot-notation
                 node.textContent = '\u200B'; // zero-width space
 
                 // Trim whitespace off the beginning of new lines
