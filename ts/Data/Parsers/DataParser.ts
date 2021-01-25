@@ -31,6 +31,8 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
+    flat,
+    unflat,
     uniqueKey
 } = U;
 
@@ -158,7 +160,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      */
     public static getPointOptionsFromTableRow(
         tableRow: DataTableRow,
-        keys: Array<string> = ['x', 'y']
+        keys?: Array<string>
     ): PointOptions {
         const pointOptions: (PointOptions&Record<string, any>) = {
                 id: tableRow.id
@@ -169,15 +171,13 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
 
         for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
             cellName = cellNames[j];
-            if (keys.indexOf(cellName) === -1) {
-                pointOptions.custom = (pointOptions.custom || {});
-                pointOptions.custom[cellName] = tableRow.getCell(cellName);
-            } else {
-                pointOptions[cellName] = tableRow.getCell(cellName);
+            if (keys && keys.indexOf(cellName) === -1) {
+                continue;
             }
+            pointOptions[cellName] = tableRow.getCell(cellName);
         }
 
-        return pointOptions;
+        return unflat(pointOptions);
     }
 
     /**
@@ -327,8 +327,8 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         // Array
         if (pointOptions instanceof Array) {
             const tableRowOptions: (PointOptions&Record<string, any>) = {};
-            for (let j = 0, jEnd = pointOptions.length; j < jEnd; ++j) {
-                tableRowOptions[keys[j] || `${j}`] = pointOptions[j];
+            for (let i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
+                tableRowOptions[keys[i] || `${i}`] = pointOptions[i];
             }
             tableRow = new DataTableRow(tableRowOptions);
 
@@ -337,7 +337,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
             pointOptions &&
             typeof pointOptions === 'object'
         ) {
-            tableRow = new DataTableRow(pointOptions);
+            tableRow = new DataTableRow(flat(pointOptions));
 
         // Primitive
         } else {

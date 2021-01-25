@@ -13,7 +13,7 @@ import DataTable from '../DataTable.js';
 import DataTableRow from '../DataTableRow.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, flat = U.flat, unflat = U.unflat, uniqueKey = U.uniqueKey;
 /* *
  *
  *  Class
@@ -93,22 +93,18 @@ var DataParser = /** @class */ (function () {
      * Common point options.
      */
     DataParser.getPointOptionsFromTableRow = function (tableRow, keys) {
-        if (keys === void 0) { keys = ['x', 'y']; }
         var pointOptions = {
             id: tableRow.id
         }, cellNames = tableRow.getCellNames();
         var cellName;
         for (var j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
             cellName = cellNames[j];
-            if (keys.indexOf(cellName) === -1) {
-                pointOptions.custom = (pointOptions.custom || {});
-                pointOptions.custom[cellName] = tableRow.getCell(cellName);
+            if (keys && keys.indexOf(cellName) === -1) {
+                continue;
             }
-            else {
-                pointOptions[cellName] = tableRow.getCell(cellName);
-            }
+            pointOptions[cellName] = tableRow.getCell(cellName);
         }
-        return pointOptions;
+        return unflat(pointOptions);
     };
     /**
      * Converts the DataTable instance to common series options.
@@ -224,15 +220,15 @@ var DataParser = /** @class */ (function () {
         // Array
         if (pointOptions instanceof Array) {
             var tableRowOptions = {};
-            for (var j = 0, jEnd = pointOptions.length; j < jEnd; ++j) {
-                tableRowOptions[keys[j] || "" + j] = pointOptions[j];
+            for (var i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
+                tableRowOptions[keys[i] || "" + i] = pointOptions[i];
             }
             tableRow = new DataTableRow(tableRowOptions);
             // Object
         }
         else if (pointOptions &&
             typeof pointOptions === 'object') {
-            tableRow = new DataTableRow(pointOptions);
+            tableRow = new DataTableRow(flat(pointOptions));
             // Primitive
         }
         else {

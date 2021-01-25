@@ -230,7 +230,12 @@ var addEvent = U.addEvent, defined = U.defined, erase = U.erase, extend = U.exte
  * @name Highcharts.Point
  */
 var Point = /** @class */ (function () {
-    function Point() {
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    function Point(series, tableRow) {
         /* *
          *
          *  Properties
@@ -329,6 +334,17 @@ var Point = /** @class */ (function () {
          */
         this.visible = true;
         this.x = void 0;
+        if (series) {
+            this.series = series;
+        }
+        if (series && tableRow) {
+            this.applyOptions(DataParser.getPointOptionsFromTableRow(tableRow));
+            this.attachTableRow(tableRow);
+            // Add a unique ID to the point if none is assigned
+            this.id = tableRow.id;
+            this.resolveColor();
+            series.chart.pointCount++;
+        }
     }
     /* *
      *

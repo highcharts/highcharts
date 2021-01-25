@@ -336,6 +336,30 @@ class Point {
 
     /* *
      *
+     *  Constructor
+     *
+     * */
+
+    public constructor(series?: Series, tableRow?: DataTableRow) {
+        if (series) {
+            this.series = series;
+        }
+
+        if (series && tableRow) {
+            this.applyOptions(DataParser.getPointOptionsFromTableRow(tableRow));
+            this.attachTableRow(tableRow);
+
+            // Add a unique ID to the point if none is assigned
+            this.id = tableRow.id;
+
+            this.resolveColor();
+
+            series.chart.pointCount++;
+        }
+    }
+
+    /* *
+     *
      *  Properties
      *
      * */
