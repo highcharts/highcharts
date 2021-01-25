@@ -44,7 +44,6 @@ const {
     deg2rad,
     doc,
     hasTouch,
-    isFirefox,
     noop,
     svg,
     SVG_NS,
@@ -181,7 +180,7 @@ declare global {
             public removeClass(
                 className: (string|RegExp)
             ): SVGElement;
-            public removeTextOutline(tspans: Array<SVGDOMElement>): void;
+            public removeTextOutline(): void;
             public rotationOriginXSetter(value: any, key: string): void;
             public rotationOriginYSetter(value: any, key: string): void;
             public rotationSetter(value: any, key: string): void;
@@ -869,10 +868,8 @@ class SVGElement {
      */
     public applyTextOutline(textOutline: string): void {
         var elem = this.element,
-            tspans: Array<SVGDOMElement>,
             hasContrast = textOutline.indexOf('contrast') !== -1,
-            styles: CSSObject = {},
-            firstRealChild: SVGDOMElement;
+            styles: CSSObject = {};
 
         // When the text shadow is set to contrast, use dark stroke for light
         // text and vice versa.
@@ -902,7 +899,7 @@ class SVGElement {
             strokeWidth = strokeWidth.replace(
                 /(^[\d\.]+)(.*?)$/g,
                 function (match: string, digit: string, unit: string): string {
-                    return (2 * (digit as any)) + unit;
+                    return (2 * Number(digit)) + unit;
                 }
             );
 
@@ -918,7 +915,7 @@ class SVGElement {
                 'stroke-linejoin': 'round'
             });
 
-            // For each of the tspans and text node, create a copy in the
+            // For each of the tspans and text nodes, create a copy in the
             // outline.
             [].forEach.call(
                 elem.childNodes,
@@ -1595,7 +1592,7 @@ class SVGElement {
         path: SVGElement
     ): void {
         const textElement = elem.getElementsByTagName('text')[0];
-        let tspans: NodeListOf<ChildNode>;
+        let childNodes: NodeListOf<ChildNode>;
 
         if (textElement) {
             // Remove textPath attributes
@@ -1610,10 +1607,10 @@ class SVGElement {
                 textElement.getElementsByTagName('textPath').length
             ) {
                 // Move nodes to <text>
-                tspans = this.textPathWrapper.element.childNodes;
-                // Now move all <tspan>'s to the <textPath> node
-                while (tspans.length) {
-                    textElement.appendChild(tspans[0]);
+                childNodes = this.textPathWrapper.element.childNodes;
+                // Now move all <tspan>'s and text nodes to the <textPath> node
+                while (childNodes.length) {
+                    textElement.appendChild(childNodes[0]);
                 }
                 // Remove <textPath> from the DOM
                 textElement.removeChild(this.textPathWrapper.element);
@@ -1806,14 +1803,13 @@ class SVGElement {
                     toggleTextShadowShim = this.fakeTS && function (
                         display: string
                     ): void {
-                        [].forEach.call(
-                            element.querySelectorAll(
-                                '.highcharts-text-outline'
-                            ),
-                            function (tspan: SVGDOMElement): void {
-                                tspan.style.display = display;
-                            }
-                        );
+                        const outline = element.querySelector(
+                            '.highcharts-text-outline'
+                        ) as DOMElementType|undefined;
+
+                        if (outline) {
+                            css(outline, { display });
+                        }
                     };
 
                     // Workaround for #3842, Firefox reporting wrong bounding

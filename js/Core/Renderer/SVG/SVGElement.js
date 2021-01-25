@@ -12,7 +12,7 @@ import AST from '../HTML/AST.js';
 var animate = A.animate, animObject = A.animObject, stop = A.stop;
 import Color from '../../Color/Color.js';
 import H from '../../Globals.js';
-var deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, win = H.win;
+var deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, win = H.win;
 import palette from '../../Color/Palette.js';
 import U from '../../Utilities.js';
 var attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
@@ -527,7 +527,7 @@ var SVGElement = /** @class */ (function () {
      *        A custom CSS `text-outline` setting, defined by `width color`.
      */
     SVGElement.prototype.applyTextOutline = function (textOutline) {
-        var elem = this.element, tspans, hasContrast = textOutline.indexOf('contrast') !== -1, styles = {}, firstRealChild;
+        var elem = this.element, hasContrast = textOutline.indexOf('contrast') !== -1, styles = {};
         // When the text shadow is set to contrast, use dark stroke for light
         // text and vice versa.
         if (hasContrast) {
@@ -546,7 +546,7 @@ var SVGElement = /** @class */ (function () {
             // need to double it to get the correct stroke-width outside the
             // glyphs.
             strokeWidth = strokeWidth.replace(/(^[\d\.]+)(.*?)$/g, function (match, digit, unit) {
-                return (2 * digit) + unit;
+                return (2 * Number(digit)) + unit;
             });
             // Remove shadows from previous runs.
             this.removeTextOutline();
@@ -558,7 +558,7 @@ var SVGElement = /** @class */ (function () {
                 'stroke-width': strokeWidth,
                 'stroke-linejoin': 'round'
             });
-            // For each of the tspans and text node, create a copy in the
+            // For each of the tspans and text nodes, create a copy in the
             // outline.
             [].forEach.call(elem.childNodes, function (childNode) {
                 var clone = childNode.cloneNode(true);
@@ -1061,7 +1061,7 @@ var SVGElement = /** @class */ (function () {
      */
     SVGElement.prototype.destroyTextPath = function (elem, path) {
         var textElement = elem.getElementsByTagName('text')[0];
-        var tspans;
+        var childNodes;
         if (textElement) {
             // Remove textPath attributes
             textElement.removeAttribute('dx');
@@ -1072,10 +1072,10 @@ var SVGElement = /** @class */ (function () {
             if (this.textPathWrapper &&
                 textElement.getElementsByTagName('textPath').length) {
                 // Move nodes to <text>
-                tspans = this.textPathWrapper.element.childNodes;
-                // Now move all <tspan>'s to the <textPath> node
-                while (tspans.length) {
-                    textElement.appendChild(tspans[0]);
+                childNodes = this.textPathWrapper.element.childNodes;
+                // Now move all <tspan>'s and text nodes to the <textPath> node
+                while (childNodes.length) {
+                    textElement.appendChild(childNodes[0]);
                 }
                 // Remove <textPath> from the DOM
                 textElement.removeChild(this.textPathWrapper.element);
@@ -1222,9 +1222,10 @@ var SVGElement = /** @class */ (function () {
                     // When the text shadow shim is used, we need to hide the
                     // fake shadows to get the correct bounding box (#3872)
                     toggleTextShadowShim = this.fakeTS && function (display) {
-                        [].forEach.call(element.querySelectorAll('.highcharts-text-outline'), function (tspan) {
-                            tspan.style.display = display;
-                        });
+                        var outline = element.querySelector('.highcharts-text-outline');
+                        if (outline) {
+                            css(outline, { display: display });
+                        }
                     };
                     // Workaround for #3842, Firefox reporting wrong bounding
                     // box for shadows

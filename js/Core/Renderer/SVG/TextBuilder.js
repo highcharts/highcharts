@@ -30,6 +30,14 @@ var TextBuilder = /** @class */ (function () {
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
+    /**
+     * Build an SVG representation of the pseudo HTML given in the object's
+     * svgElement.
+     *
+     * @private
+     *
+     * @return {void}.
+     */
     TextBuilder.prototype.buildSVG = function () {
         var wrapper = this.svgElement;
         var textNode = wrapper.element, renderer = wrapper.renderer, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, childNodes = textNode.childNodes, textCache, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
@@ -54,10 +62,8 @@ var TextBuilder = /** @class */ (function () {
         while (i--) {
             textNode.removeChild(childNodes[i]);
         }
-        // Skip tspans, add text directly to text node. The forceTSpan is a hook
-        // used in text outline hack.
+        // Simple strings, add text directly and return
         if (!hasMarkup &&
-            !this.textOutline &&
             !this.ellipsis &&
             !this.width &&
             (textStr.indexOf(' ') === -1 ||
@@ -95,6 +101,15 @@ var TextBuilder = /** @class */ (function () {
             }
         }
     };
+    /**
+     * Modify the DOM of the generated SVG structure. This function only does
+     * operations that cannot be done until the elements are attached to the
+     * DOM, like doing layout based on rendered metrics of the added elements.
+     *
+     * @private
+     *
+     * @return {void}
+     */
     TextBuilder.prototype.modifyDOM = function () {
         var _this = this;
         var wrapper = this.svgElement;
@@ -117,9 +132,8 @@ var TextBuilder = /** @class */ (function () {
             return;
         }
         // Insert soft line breaks into each text node
-        var modifyTextNode = function (textNode) {
+        var modifyTextNode = function (textNode, parentElement) {
             var text = textNode.textContent || '';
-            var parentElement = textNode.parentElement;
             var words = text
                 .replace(/([^\^])-/g, '$1- ') // Split on hyphens
                 // .trim()
@@ -193,12 +207,12 @@ var TextBuilder = /** @class */ (function () {
             var childNodes = [].slice.call(node.childNodes);
             childNodes.forEach(function (childNode) {
                 if (childNode.nodeType === Node.TEXT_NODE) {
-                    modifyTextNode(childNode);
+                    modifyTextNode(childNode, node);
                 }
                 else {
                     // Reset word-wrap width readings after hard breaks
-                    if (childNode.classList
-                        .contains('highcharts-br')) {
+                    if (childNode.className.baseVal
+                        .indexOf('highcharts-br') !== -1) {
                         wrapper.actualWidth = 0;
                     }
                     // Recurse down to child node
@@ -208,6 +222,13 @@ var TextBuilder = /** @class */ (function () {
         });
         modifyChildren(wrapper.element);
     };
+    /**
+     * Get the rendered line height of a <text>, <tspan> or pure text node.
+     *
+     * @param {DOMElementType|Text} node The node to check for
+     *
+     * @return {number} The rendered line height
+     */
     TextBuilder.prototype.getLineHeight = function (node) {
         var fontSizeStyle;
         // If the node is a text node, use its parent
@@ -224,13 +245,23 @@ var TextBuilder = /** @class */ (function () {
             parseInt(this.textLineHeight.toString(), 10) :
             this.renderer.fontMetrics(fontSizeStyle, element || this.svgElement.element).h;
     };
-    // Transform HTML to SVG, validate
-    TextBuilder.prototype.modifyTree = function (elements) {
+    /**
+     * Transform a pseudo HTML AST node tree into an SVG structure. We do as
+     * much heavy lifting as we can here, before doing the final processing in
+     * the modifyDOM function. The original data is mutated.
+     *
+     * @private
+     *
+     * @param {ASTNode[]} nodes The AST nodes
+     *
+     * @return {void}
+     */
+    TextBuilder.prototype.modifyTree = function (nodes) {
         var _this = this;
-        var modifyChild = function (elem, i) {
-            var tagName = elem.tagName;
+        var modifyChild = function (node, i) {
+            var tagName = node.tagName;
             var styledMode = _this.renderer.styledMode;
-            var attributes = elem.attributes || {};
+            var attributes = node.attributes || {};
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
                 if (styledMode) {
@@ -254,49 +285,27 @@ var TextBuilder = /** @class */ (function () {
             }
             if (tagName === 'br') {
                 attributes.class = 'highcharts-br';
-                elem.textContent = '\u200B'; // zero-width space
+                node.textContent = '\u200B'; // zero-width space
                 // Trim whitespace off the beginning of new lines
-                var nextElem = elements[i + 1];
-                if (nextElem && nextElem.textContent) {
-                    nextElem.textContent =
-                        nextElem.textContent.replace(/^ +/gm, '');
+                var nextNode = nodes[i + 1];
+                if (nextNode && nextNode.textContent) {
+                    nextNode.textContent =
+                        nextNode.textContent.replace(/^ +/gm, '');
                 }
             }
             if (tagName !== '#text' && tagName !== 'a') {
-                elem.tagName = 'tspan';
+                node.tagName = 'tspan';
             }
-            elem.attributes = attributes;
+            node.attributes = attributes;
             // Recurse
-            if (elem.children) {
-                elem.children
+            if (node.children) {
+                node.children
                     .filter(function (c) { return c.tagName !== '#text'; })
                     .forEach(modifyChild);
             }
         };
-        elements.forEach(modifyChild);
+        nodes.forEach(modifyChild);
     };
-    /*
-    private parseAttribute(
-        s: string,
-        attr: string
-    ): (string|undefined) {
-        var start,
-            delimiter;
-
-        start = s.indexOf('<');
-        s = s.substring(start, s.indexOf('>') - start);
-
-        start = s.indexOf(attr + '=');
-        if (start !== -1) {
-            start = start + attr.length + 1;
-            delimiter = s.charAt(start);
-            if (delimiter === '"' || delimiter === "'") { // eslint-disable-line quotes
-                s = s.substring(start + 1);
-                return s.substring(0, s.indexOf(delimiter));
-            }
-        }
-    }
-    */
     /*
      * Truncate the text node contents to a given length. Used when the css
      * width is set. If the `textOverflow` is `ellipsis`, the text is truncated
@@ -315,16 +324,6 @@ var TextBuilder = /** @class */ (function () {
         var currentIndex = maxIndex;
         var str;
         var actualWidth;
-        /*
-        const updateTSpan = function (s: string): void {
-            if (textNode.firstChild) {
-                textNode.removeChild(textNode.firstChild);
-            }
-            if (s) {
-                textNode.appendChild(doc.createTextNode(s));
-            }
-        };
-        */
         var getSubStringLength = function (charEnd, concatenatedEnd) {
             // charEnd is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
@@ -401,6 +400,16 @@ var TextBuilder = /** @class */ (function () {
         svgElement.actualWidth = actualWidth;
         svgElement.rotation = rotation; // Apply rotation again.
     };
+    /*
+     * Un-escape HTML entities based on the public `renderer.escapes` list
+     *
+     * @private
+     *
+     * @param {string} inputStr The string to unescape
+     * @param {Array<string>} [except] Exceptions
+     *
+     * @return {string} The processed string
+     */
     TextBuilder.prototype.unescapeEntities = function (inputStr, except) {
         objectEach(this.renderer.escapes, function (value, key) {
             if (!except || except.indexOf(value) === -1) {

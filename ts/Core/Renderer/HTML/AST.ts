@@ -187,6 +187,19 @@ class AST {
         'zIndex'
     ];
 
+    /**
+     * Filter attributes against the allow list.
+     *
+     * @private
+     * @static
+     *
+     * @function Highcharts.AST#filterUserAttributes
+     *
+     * @param {SVGAttributes} attributes The attributes to filter
+     *
+     * @return {SVGAttributes}
+     * The filtered attributes
+     */
     public static filterUserAttributes(
         attributes: SVGAttributes
     ): SVGAttributes {
@@ -214,7 +227,6 @@ class AST {
      * markup string. The markup is safely parsed by the AST class to avoid
      * XSS vulnerabilities.
      *
-     * @private
      * @static
      *
      * @function Highcharts.AST#setElementHTML

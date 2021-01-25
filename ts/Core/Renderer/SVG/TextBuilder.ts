@@ -9,9 +9,7 @@
  * */
 
 import type {
-    DOMElementType,
-    HTMLDOMElement,
-    SVGDOMElement
+    DOMElementType
 } from '../DOMElementType';
 
 import H from '../../Globals.js';
@@ -60,6 +58,14 @@ class TextBuilder {
     public textOutline: any;
     public width?: number;
 
+    /**
+     * Build an SVG representation of the pseudo HTML given in the object's
+     * svgElement.
+     *
+     * @private
+     *
+     * @return {void}.
+     */
     public buildSVG(): void {
         const wrapper = this.svgElement;
         var textNode = wrapper.element,
@@ -94,11 +100,9 @@ class TextBuilder {
             textNode.removeChild(childNodes[i]);
         }
 
-        // Skip tspans, add text directly to text node. The forceTSpan is a hook
-        // used in text outline hack.
+        // Simple strings, add text directly and return
         if (
             !hasMarkup &&
-            !this.textOutline &&
             !this.ellipsis &&
             !this.width &&
             (
@@ -156,7 +160,15 @@ class TextBuilder {
         }
     }
 
-
+    /**
+     * Modify the DOM of the generated SVG structure. This function only does
+     * operations that cannot be done until the elements are attached to the
+     * DOM, like doing layout based on rendered metrics of the added elements.
+     *
+     * @private
+     *
+     * @return {void}
+     */
     private modifyDOM(): void {
 
         const wrapper = this.svgElement;
@@ -185,9 +197,11 @@ class TextBuilder {
         }
 
         // Insert soft line breaks into each text node
-        const modifyTextNode = (textNode: Text): void => {
+        const modifyTextNode = (
+            textNode: Text,
+            parentElement: DOMElementType
+        ): void => {
             const text = textNode.textContent || '';
-            const parentElement = textNode.parentElement as DOMElementType;
             const words = text
                 .replace(/([^\^])-/g, '$1- ') // Split on hyphens
                 // .trim()
@@ -293,12 +307,12 @@ class TextBuilder {
             const childNodes = [].slice.call(node.childNodes);
             childNodes.forEach((childNode: ChildNode): void => {
                 if (childNode.nodeType === Node.TEXT_NODE) {
-                    modifyTextNode(childNode as Text);
+                    modifyTextNode(childNode as Text, node);
                 } else {
                     // Reset word-wrap width readings after hard breaks
                     if (
-                        (childNode as DOMElementType).classList
-                            .contains('highcharts-br')
+                        (childNode as DOMElementType).className.baseVal
+                            .indexOf('highcharts-br') !== -1
                     ) {
                         wrapper.actualWidth = 0;
                     }
@@ -310,6 +324,13 @@ class TextBuilder {
         modifyChildren(wrapper.element);
     }
 
+    /**
+     * Get the rendered line height of a <text>, <tspan> or pure text node.
+     *
+     * @param {DOMElementType|Text} node The node to check for
+     *
+     * @return {number} The rendered line height
+     */
     private getLineHeight(node: DOMElementType|Text): number {
         let fontSizeStyle;
 
@@ -333,15 +354,25 @@ class TextBuilder {
             ).h;
     }
 
-    // Transform HTML to SVG, validate
+    /**
+     * Transform a pseudo HTML AST node tree into an SVG structure. We do as
+     * much heavy lifting as we can here, before doing the final processing in
+     * the modifyDOM function. The original data is mutated.
+     *
+     * @private
+     *
+     * @param {ASTNode[]} nodes The AST nodes
+     *
+     * @return {void}
+     */
     private modifyTree(
-        elements: Highcharts.ASTNode[]
+        nodes: Highcharts.ASTNode[]
     ): void {
 
-        const modifyChild = (elem: Highcharts.ASTNode, i: number): void => {
-            const tagName = elem.tagName;
+        const modifyChild = (node: Highcharts.ASTNode, i: number): void => {
+            const tagName = node.tagName;
             const styledMode = this.renderer.styledMode;
-            const attributes = elem.attributes || {};
+            const attributes = node.attributes || {};
 
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
@@ -369,54 +400,31 @@ class TextBuilder {
 
             if (tagName === 'br') {
                 attributes.class = 'highcharts-br';
-                elem.textContent = '\u200B'; // zero-width space
+                node.textContent = '\u200B'; // zero-width space
 
                 // Trim whitespace off the beginning of new lines
-                const nextElem = elements[i + 1];
-                if (nextElem && nextElem.textContent) {
-                    nextElem.textContent =
-                        nextElem.textContent.replace(/^ +/gm, '');
+                const nextNode = nodes[i + 1];
+                if (nextNode && nextNode.textContent) {
+                    nextNode.textContent =
+                        nextNode.textContent.replace(/^ +/gm, '');
                 }
             }
 
             if (tagName !== '#text' && tagName !== 'a') {
-                elem.tagName = 'tspan';
+                node.tagName = 'tspan';
             }
-            elem.attributes = attributes;
+            node.attributes = attributes;
 
             // Recurse
-            if (elem.children) {
-                elem.children
+            if (node.children) {
+                node.children
                     .filter((c): boolean => c.tagName !== '#text')
                     .forEach(modifyChild);
             }
         };
 
-        elements.forEach(modifyChild);
+        nodes.forEach(modifyChild);
     }
-
-    /*
-    private parseAttribute(
-        s: string,
-        attr: string
-    ): (string|undefined) {
-        var start,
-            delimiter;
-
-        start = s.indexOf('<');
-        s = s.substring(start, s.indexOf('>') - start);
-
-        start = s.indexOf(attr + '=');
-        if (start !== -1) {
-            start = start + attr.length + 1;
-            delimiter = s.charAt(start);
-            if (delimiter === '"' || delimiter === "'") { // eslint-disable-line quotes
-                s = s.substring(start + 1);
-                return s.substring(0, s.indexOf(delimiter));
-            }
-        }
-    }
-    */
 
     /*
      * Truncate the text node contents to a given length. Used when the css
@@ -445,16 +453,6 @@ class TextBuilder {
         let str;
         let actualWidth: number;
 
-        /*
-        const updateTSpan = function (s: string): void {
-            if (textNode.firstChild) {
-                textNode.removeChild(textNode.firstChild);
-            }
-            if (s) {
-                textNode.appendChild(doc.createTextNode(s));
-            }
-        };
-        */
         const getSubStringLength = function (
             charEnd: number,
             concatenatedEnd?: number
@@ -547,6 +545,16 @@ class TextBuilder {
         svgElement.rotation = rotation; // Apply rotation again.
     }
 
+    /*
+     * Un-escape HTML entities based on the public `renderer.escapes` list
+     *
+     * @private
+     *
+     * @param {string} inputStr The string to unescape
+     * @param {Array<string>} [except] Exceptions
+     *
+     * @return {string} The processed string
+     */
     private unescapeEntities(
         inputStr: string,
         except?: Array<string>
