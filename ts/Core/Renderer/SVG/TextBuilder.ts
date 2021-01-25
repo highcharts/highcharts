@@ -152,11 +152,11 @@ class TextBuilder {
             if (tempParent) {
                 tempParent.removeChild(textNode);
             }
+        }
 
-            // Apply the text outline
-            if (isString(this.textOutline) && wrapper.applyTextOutline) {
-                wrapper.applyTextOutline(this.textOutline);
-            }
+        // Apply the text outline
+        if (isString(this.textOutline) && wrapper.applyTextOutline) {
+            wrapper.applyTextOutline(this.textOutline);
         }
     }
 
