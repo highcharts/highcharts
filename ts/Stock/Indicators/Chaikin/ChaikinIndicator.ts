@@ -32,6 +32,9 @@ const {
     error
 } = U;
 
+// @todo fix direct dependency quirk
+import '../AD/ADIndicator.js';
+
 /* *
  *
  *  Class

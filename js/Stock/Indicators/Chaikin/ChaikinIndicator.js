@@ -24,6 +24,8 @@ import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 var _a = SeriesRegistry.seriesTypes, AD = _a.ad, EMAIndicator = _a.ema;
 import U from '../../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U.error;
+// @todo fix direct dependency quirk
+import '../AD/ADIndicator.js';
 /* *
  *
  *  Class
