@@ -1,0 +1,10 @@
+---
+name: MACD pivot points
+authors:
+  - Karol Kołodziej
+js_wrap: b
+tags:
+  - Highcharts Stock demo
+categories:
+  - Flags and Indicators
+...
