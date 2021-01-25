@@ -43,8 +43,10 @@ var ScrollbarAxis = /** @class */ (function () {
                 axis.scrollbar = new ScrollbarClass(axis.chart.renderer, axis.options.scrollbar, axis.chart);
                 addEvent(axis.scrollbar, 'changed', function (e) {
                     var axisMin = pick(axis.options && axis.options.min, axis.min), axisMax = pick(axis.options && axis.options.max, axis.max), unitedMin = defined(axis.dataMin) ?
-                        Math.min(axisMin, axis.min, axis.dataMin) : axisMin, unitedMax = defined(axis.dataMax) ?
-                        Math.max(axisMax, axis.max, axis.dataMax) : axisMax, range = unitedMax - unitedMin, to, from;
+                        Math.min(axisMin, axis.min, axis.dataMin > axis.threshold ?
+                            axis.threshold : axis.dataMin) : axisMin, unitedMax = defined(axis.dataMax) ?
+                        Math.max(axisMax, axis.max, axis.dataMax < axis.threshold ?
+                            axis.threshold : axis.dataMax) : axisMax, range = unitedMax - unitedMin, to, from;
                     // #12834, scroll when show/hide series, wrong extremes
                     if (!defined(axisMin) || !defined(axisMax)) {
                         return;
@@ -78,8 +80,10 @@ var ScrollbarAxis = /** @class */ (function () {
         });
         // Wrap rendering axis, and update scrollbar if one is created:
         addEvent(AxisClass, 'afterRender', function () {
-            var axis = this, scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, pick(axis.dataMin, axis.min) // #6930
-            ), scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, pick(axis.dataMax, axis.max) // #6930
+            var axis = this, scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, pick(axis.dataMin > axis.threshold ?
+                axis.threshold : axis.dataMin, axis.min) // #6930
+            ), scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, pick(axis.dataMax < axis.threshold ?
+                axis.threshold : axis.dataMax, axis.max) // #6930
             ), scrollbar = axis.scrollbar, offset = axis.axisTitleMargin + (axis.titleOffset || 0), scrollbarsOffsets = axis.chart.scrollbarsOffsets, axisMargin = axis.options.margin || 0, offsetsIndex, from, to;
             if (scrollbar) {
                 if (axis.horiz) {
