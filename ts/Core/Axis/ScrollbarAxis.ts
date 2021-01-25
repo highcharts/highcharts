@@ -87,13 +87,15 @@ class ScrollbarAxis {
                             Math.min(
                                 axisMin,
                                 axis.min as any,
-                                axis.dataMin as any
+                                (axis.dataMin as any) > (axis.threshold as any) ?
+                                    axis.threshold : (axis.dataMin as any)
                             ) : axisMin,
                         unitedMax = defined(axis.dataMax as any) ?
                             Math.max(
                                 axisMax,
                                 axis.max as any,
-                                axis.dataMax as any
+                                (axis.dataMax as any) < (axis.threshold as any) ?
+                                    axis.threshold : (axis.dataMax as any)
                             ) : axisMax,
                         range = unitedMax - unitedMin,
                         to,
@@ -150,12 +152,20 @@ class ScrollbarAxis {
                 scrollMin = Math.min(
                     pick(axis.options.min, axis.min as any),
                     axis.min as any,
-                    pick(axis.dataMin, axis.min as any) // #6930
+                    pick(
+                        (axis.dataMin as any) > (axis.threshold as any) ?
+                            axis.threshold : axis.dataMin,
+                        axis.min as any
+                    ) // #6930
                 ),
                 scrollMax = Math.max(
                     pick(axis.options.max, axis.max as any),
                     axis.max as any,
-                    pick(axis.dataMax, axis.max as any) // #6930
+                    pick(
+                        (axis.dataMax as any) < (axis.threshold as any) ?
+                            axis.threshold : axis.dataMax,
+                        axis.max as any
+                    ) // #6930
                 ),
                 scrollbar = axis.scrollbar,
                 offset = (axis.axisTitleMargin as any) + (axis.titleOffset || 0),
