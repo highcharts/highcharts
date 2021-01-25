@@ -266,8 +266,10 @@ var ColumnSeries = /** @class */ (function (_super) {
             // enabled, but `centerInCategory` is true, there is one stack
             // handling the grouping of points in each category. This is
             // done in the `setGroupedPoints` function.
-            objectEach(this.yAxis.stacking && this.yAxis.stacking.stacks, function (stack) {
-                if (typeof point.x === 'number') {
+            objectEach(this.yAxis.stacking && this.yAxis.stacking.stacks, function (stack, key) {
+                // Skip the centerInCategory stack when stacking is enabled
+                var skip = stacking && key.slice(-5) === 'group';
+                if (typeof point.x === 'number' && !skip) {
                     var stackItem = stack[point.x.toString()];
                     if (stackItem) {
                         var pointValues = stackItem.points[_this.index], total = stackItem.total;

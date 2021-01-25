@@ -91,6 +91,20 @@ QUnit.test('series.centerInCategory', function (assert) {
         '#14910: Group stack should not be removed on redraw'
     );
 
+    chart.update({
+        series: chart.series.map((s, i) => ({
+            stacking: 'normal',
+            stack: i <= 1 ? 'stack1' : 'stack2',
+            data: s.data
+        }))
+    });
+
+    assert.ok(
+        chart.series[3].points[0].shapeArgs.x + chart.plotLeft >
+            chart.xAxis[0].ticks[0].mark.element.getBBox().x,
+        '#14980: Toggling stacking with centerInCategory enabled should work'
+    );
+
     /*
     chart.series[1].setData([
         [0, 2],
