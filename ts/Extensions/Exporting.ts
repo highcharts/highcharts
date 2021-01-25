@@ -2,7 +2,7 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,13 +16,12 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
-import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
-import type { SeriesOptionsType } from '../Core/Series/Types';
+import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
+import type { HTMLDOMElement } from '../Core/Renderer/DOMElementType';
+import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
@@ -38,6 +37,7 @@ import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;
+import palette from '../Core/Color/Palette.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -56,73 +56,76 @@ const {
     uniqueKey
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        btnCount?: number;
+        buttonOffset?: number;
+        exportContextMenu?: Highcharts.ExportingDivElement;
+        exportDivElements?: Array<Highcharts.ExportingDivElement>;
+        exportEvents?: Array<Function>;
+        exporting?: Highcharts.ChartExportingObject;
+        exportingGroup?: SVGElement;
+        exportMenuHeight?: number;
+        exportMenuWidth?: number;
+        exportSVGElements?: Array<SVGElement>;
+        forExport?: boolean;
+        isDirtyExporting?: boolean;
+        isPrinting?: boolean;
+        openMenu?: boolean;
+        printReverseInfo?: Highcharts.PrintReverseInfoObject;
+        /** @requires modules/exporting */
+        addButton(options: Highcharts.ExportingButtonOptions): void;
+        /** @requires modules/exporting */
+        afterPrint(): void;
+        /** @requires modules/exporting */
+        beforePrint(): void;
+        /** @requires modules/exporting */
+        contextMenu(
+            className: string,
+            items: Array<(string|Highcharts.ExportingMenuObject)>,
+            x: number,
+            y: number,
+            width: number,
+            height: number,
+            button: SVGElement
+        ): void;
+        /** @requires modules/exporting */
+        destroyExport(e?: Event): void;
+        /** @requires modules/exporting */
+        exportChart(
+            exportingOptions?: Highcharts.ExportingOptions,
+            chartOptions?: Highcharts.Options
+        ): void;
+        /** @requires modules/exporting */
+        getChartHTML(): string;
+        /** @requires modules/exporting */
+        getFilename(): string;
+        /** @requires modules/exporting */
+        getSVG(chartOptions?: Highcharts.Options): string;
+        /** @requires modules/exporting */
+        getSVGForExport(
+            options: Highcharts.ExportingOptions,
+            chartOptions: Highcharts.Options
+        ): string;
+        /** @requires modules/exporting */
+        inlineStyles(): void;
+        /** @requires modules/exporting */
+        moveContainers(moveTo: HTMLDOMElement): void;
+        /** @requires modules/exporting */
+        print(): void;
+        /** @requires modules/exporting */
+        renderExporting(): void;
+        /** @requires modules/exporting */
+        sanitizeSVG(svg: string, options: Highcharts.Options): string;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            btnCount?: number;
-            buttonOffset?: number;
-            exportContextMenu?: ExportingDivElement;
-            exportDivElements?: Array<ExportingDivElement>;
-            exportEvents?: Array<Function>;
-            exporting?: ChartExportingObject;
-            exportingGroup?: SVGElement;
-            exportMenuHeight?: number;
-            exportMenuWidth?: number;
-            exportSVGElements?: Array<SVGElement>;
-            forExport?: boolean;
-            isDirtyExporting?: boolean;
-            isPrinting?: boolean;
-            openMenu?: boolean;
-            printReverseInfo?: PrintReverseInfoObject;
-            /** @requires modules/exporting */
-            addButton(options: ExportingButtonOptions): void;
-            /** @requires modules/exporting */
-            afterPrint(): void;
-            /** @requires modules/exporting */
-            beforePrint(): void;
-            /** @requires modules/exporting */
-            contextMenu(
-                className: string,
-                items: Array<(string|ExportingMenuObject)>,
-                x: number,
-                y: number,
-                width: number,
-                height: number,
-                button: SVGElement
-            ): void;
-            /** @requires modules/exporting */
-            destroyExport(e?: Event): void;
-            /** @requires modules/exporting */
-            exportChart(
-                exportingOptions?: ExportingOptions,
-                chartOptions?: Options
-            ): void;
-            /** @requires modules/exporting */
-            getChartHTML(): string;
-            /** @requires modules/exporting */
-            getFilename(): string;
-            /** @requires modules/exporting */
-            getSVG(chartOptions?: Options): string;
-            /** @requires modules/exporting */
-            getSVGForExport(
-                options: ExportingOptions,
-                chartOptions: Options
-            ): string;
-            /** @requires modules/exporting */
-            inlineStyles(): void;
-            /** @requires modules/exporting */
-            moveContainers(moveTo: HTMLDOMElement): void;
-            /** @requires modules/exporting */
-            print(): void;
-            /** @requires modules/exporting */
-            renderExporting(): void;
-            /** @requires modules/exporting */
-            sanitizeSVG(svg: string, options: Options): string;
-        }
         interface ChartEventsOptions {
             afterPrint?: ExportingAfterPrintCallbackFunction;
             beforePrint?: ExportingBeforePrintCallbackFunction;
@@ -188,7 +191,7 @@ declare global {
             filename?: string;
             formAttributes?: HTMLAttributes;
             libURL?: string;
-            menuItemDefinitions?: Dictionary<ExportingMenuObject>;
+            menuItemDefinitions?: Record<string, ExportingMenuObject>;
             printMaxWidth?: number;
             scale?: number;
             sourceHeight?: number;
@@ -226,7 +229,7 @@ declare global {
             resetParams?: [
                 (number|null)?,
                 (number|null)?,
-                (boolean|Partial<AnimationOptionsObject>)?
+                (boolean|Partial<AnimationOptions>)?
             ];
         }
         interface SVGRenderer {
@@ -241,7 +244,7 @@ declare global {
         function post(
             url: string,
             data: object,
-            formAttributes?: Dictionary<string>
+            formAttributes?: Record<string, string>
         ): void;
 
         let printingChart: (Chart|undefined);
@@ -318,12 +321,6 @@ declare global {
  *
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
-
-// create shortcuts
-var userAgent = win.navigator.userAgent,
-    symbols = H.Renderer.prototype.symbols,
-    isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent),
-    isFirefoxBrowser = /firefox/i.test(userAgent);
 
 // Add language
 extend(defaultOptions.lang
@@ -591,9 +588,9 @@ merge(true, defaultOptions.navigation
          */
         menuStyle: {
             /** @ignore-option */
-            border: '1px solid ${palette.neutralColor40}',
+            border: `1px solid ${palette.neutralColor40}`,
             /** @ignore-option */
-            background: '${palette.backgroundColor}',
+            background: palette.backgroundColor,
             /** @ignore-option */
             padding: '5px 0'
         },
@@ -620,7 +617,7 @@ merge(true, defaultOptions.navigation
             /** @ignore-option */
             padding: '0.5em 1em',
             /** @ignore-option */
-            color: '${palette.neutralColor80}',
+            color: palette.neutralColor80,
             /** @ignore-option */
             background: 'none',
             /** @ignore-option */
@@ -648,9 +645,9 @@ merge(true, defaultOptions.navigation
          */
         menuItemHoverStyle: {
             /** @ignore-option */
-            background: '${palette.highlightColor80}',
+            background: palette.highlightColor80,
             /** @ignore-option */
-            color: '${palette.backgroundColor}'
+            color: palette.backgroundColor
         },
 
         /**
@@ -675,7 +672,7 @@ merge(true, defaultOptions.navigation
              * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since 2.0
              */
-            symbolFill: '${palette.neutralColor60}',
+            symbolFill: palette.neutralColor60,
 
             /**
              * The color of the symbol's stroke or line.
@@ -686,7 +683,7 @@ merge(true, defaultOptions.navigation
              * @type  {Highcharts.ColorString}
              * @since 2.0
              */
-            symbolStroke: '${palette.neutralColor60}',
+            symbolStroke: palette.neutralColor60,
 
             /**
              * The pixel stroke width of the symbol on the button.
@@ -1252,7 +1249,7 @@ defaultOptions.exporting = {
 H.post = function (
     url: string,
     data: object,
-    formAttributes?: Highcharts.HTMLAttributes
+    formAttributes?: HTMLAttributes
 ): void {
     // create the form
     var form: HTMLFormElement = createElement('form', merge({
@@ -1425,7 +1422,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chartCopy: Chart,
             sandbox,
             svg,
-            seriesOptions: DeepPartial<SeriesOptionsType>,
+            seriesOptions: DeepPartial<SeriesTypeOptions>,
             sourceWidth: number,
             sourceHeight: number,
             cssWidth: string,
@@ -1479,7 +1476,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // prepare for replicating the chart
         options.series = [];
-        chart.series.forEach(function (serie: Highcharts.Series): void {
+        chart.series.forEach(function (serie): void {
             seriesOptions = merge(serie.userOptions, { // #4912
                 animation: false, // turn off animation
                 enableMouseTracking: false,
@@ -1990,6 +1987,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         );
 
                     } else {
+                        // When chart initialized with the table,
+                        // wrong button text displayed, #14352.
+                        if (item.textKey === 'viewData' && chart.isDataTableVisible) {
+                            item.textKey = 'hideData';
+                        }
+
                         element = createElement('li', {
                             className: 'highcharts-menu-item',
                             onclick: function (e: PointerEvent): void {
@@ -2001,14 +2004,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                                     (item as any).onclick
                                         .apply(chart, arguments);
                                 }
-                            },
-                            innerHTML: (
-                                (item as any).text ||
-                                (chart.options.lang as any)[
-                                    (item as any).textKey as any
-                                ]
-                            )
+                            }
                         }, null as any, innerMenu);
+
+                        element.appendChild(doc.createTextNode(
+                            (item as any).text ||
+                            (chart.options.lang as any)[
+                                (item as any).textKey as any
+                            ]
+                        ));
 
                         if (!chart.styledMode) {
                             element.onmouseover = function (
@@ -2114,7 +2118,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             );
 
         if (!chart.styledMode) {
-            attr.fill = pick(attr.fill, '${palette.backgroundColor}');
+            attr.fill = pick(attr.fill, palette.backgroundColor);
             attr.stroke = pick(attr.stroke, 'none');
         }
 
@@ -2123,7 +2127,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (onclick) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Highcharts.Dictionary<any>)
+                e: (Event|Record<string, any>)
             ): void {
                 if (e) {
                     e.stopPropagation();
@@ -2134,7 +2138,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else if (menuItems) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Highcharts.Dictionary<any>)
+                e: (Event|Record<string, any>)
             ): void {
                 // consistent with onclick call (#3495)
                 if (e) {
@@ -2155,7 +2159,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
 
         if (btnOptions.text && btnOptions.symbol) {
-            attr.paddingLeft = pick(attr.paddingLeft, 25);
+            attr.paddingLeft = pick(attr.paddingLeft, 30);
 
         } else if (!btnOptions.text) {
             extend(attr, {
@@ -2168,7 +2172,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         if (!chart.styledMode) {
             attr['stroke-linecap'] = 'round';
-            attr.fill = pick(attr.fill, '${palette.backgroundColor}');
+            attr.fill = pick(attr.fill, palette.backgroundColor);
             attr.stroke = pick(attr.stroke, 'none');
         }
 
@@ -2523,7 +2527,7 @@ Chart.prototype.inlineStyles = function (): void {
             }
 
             // Loop through all styles and add them inline if they are ok
-            if (isFirefoxBrowser || isMSBrowser) {
+            if (H.isFirefox || H.isMS) {
                 // Some browsers put lots of styles on the prototype
                 for (var p in styles) { // eslint-disable-line guard-for-in
                     filterStyles(styles[p] as any, p);
@@ -2572,7 +2576,7 @@ Chart.prototype.inlineStyles = function (): void {
 };
 
 
-symbols.menu = function (
+H.Renderer.prototype.symbols.menu = function (
     x: number,
     y: number,
     width: number,
@@ -2590,7 +2594,7 @@ symbols.menu = function (
     return arr;
 };
 
-symbols.menuball = function (
+H.Renderer.prototype.symbols.menuball = function (
     x: number,
     y: number,
     width: number,
@@ -2642,9 +2646,6 @@ Chart.prototype.renderExporting = function (): void {
 
         chart.isDirtyExporting = false;
     }
-
-    // Destroy the export elements at chart destroy
-    addEvent(chart, 'destroy', chart.destroyExport);
 };
 
 /* eslint-disable no-invalid-this */
@@ -2708,6 +2709,8 @@ Chart.prototype.callbacks.push(function (chart: Chart): void {
     chart.renderExporting();
 
     addEvent(chart, 'redraw', chart.renderExporting);
+    // Destroy the export elements at chart destroy
+    addEvent(chart, 'destroy', chart.destroyExport);
 
 
     // Uncomment this to see a button directly below the chart, for quick

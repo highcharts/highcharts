@@ -13,43 +13,47 @@
         }
     });
 
-    seriesTypes.functionseries = Highcharts.extendClass(Highcharts.Series, {
-        type: 'functionseries',
+    seriesTypes.functionseries = Highcharts.extendClass(
+        Highcharts.seriesTypes.line,
+        {
+            type: 'functionseries',
 
-        setData: function () {
-            var series = this,
-                dataFunction = series.options.dataFunction,
-                xAxis = series.xAxis,
-                points = xAxis.len,
-                min = xAxis.userMin || series.options.min,
-                max = xAxis.userMax || series.options.max,
-                data = [],
-                x,
-                y,
-                i;
+            setData: function () {
+                var series = this,
+                    dataFunction = series.options.dataFunction,
+                    xAxis = series.xAxis,
+                    points = xAxis.len,
+                    min = xAxis.userMin || series.options.min,
+                    max = xAxis.userMax || series.options.max,
+                    data = [],
+                    x,
+                    y,
+                    i;
 
-            for (i = 0; i < points; i += 1) {
-                x = min + (i * ((max - min) / points));
-                y = dataFunction(x);
-                data.push([x, y]);
+                for (i = 0; i < points; i += 1) {
+                    x = min + (i * ((max - min) / points));
+                    y = dataFunction(x);
+                    data.push([x, y]);
+                }
+
+                arguments[0] = data;
+
+                Highcharts.Series.prototype.setData.apply(this, arguments);
+            },
+            bindAxes: function () {
+                Highcharts.Series.prototype.bindAxes.apply(this, arguments);
+                var series = this,
+                    xAxis = this.xAxis;
+
+                xAxis.setExtremes = function ()  {
+                    Highcharts.Axis.prototype.setExtremes
+                        .apply(this, arguments);
+                    series.setData([]);
+                };
             }
 
-            arguments[0] = data;
-
-            Highcharts.Series.prototype.setData.apply(this, arguments);
-        },
-        bindAxes: function () {
-            Highcharts.Series.prototype.bindAxes.apply(this, arguments);
-            var series = this,
-                xAxis = this.xAxis;
-
-            xAxis.setExtremes = function ()  {
-                Highcharts.Axis.prototype.setExtremes.apply(this, arguments);
-                series.setData([]);
-            };
         }
-
-    });
+    );
 
     Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
         proceed.apply(this, [].slice.call(arguments, 1));

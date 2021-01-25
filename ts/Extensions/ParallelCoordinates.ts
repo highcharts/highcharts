@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2020 Pawel Fus
+ *  (c) 2010-2021 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -15,9 +15,11 @@
 import type { AxisType } from '../Core/Axis/Types';
 import type Point from '../Core/Series/Point';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -34,18 +36,22 @@ const {
     wrap
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
+        parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
+        /** @requires modules/parallel-coordinates */
+        setParallelInfo(options: Highcharts.Options): void;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            hasParallelCoordinates?: ParallelChart['hasParallelCoordinates'];
-            parallelInfo?: ParallelChart['parallelInfo'];
-            /** @requires modules/parallel-coordinates */
-            setParallelInfo(options: Options): void;
-        }
+
         interface ChartOptions {
             parallelAxes?: XAxisOptions;
             parallelCoordinates?: boolean;
@@ -75,8 +81,6 @@ declare module '../Core/Axis/Types' {
         ParallelAxis: ParallelAxis;
     }
 }
-
-import '../Series/LineSeries.js';
 
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;
@@ -296,16 +300,14 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
         options: Highcharts.Options
     ): void {
         var chart = this,
-            seriesOptions: Array<Highcharts.SeriesOptions> =
+            seriesOptions: Array<SeriesOptions> =
                 options.series as any;
 
         chart.parallelInfo = {
             counter: 0
         };
 
-        seriesOptions.forEach(function (
-            series: Highcharts.SeriesOptions
-        ): void {
+        seriesOptions.forEach(function (series): void {
             if (series.data) {
                 chart.parallelInfo.counter = Math.max(
                     chart.parallelInfo.counter,
@@ -319,11 +321,11 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 
 // Bind each series to each yAxis. yAxis needs a reference to all series to
 // calculate extremes.
-addEvent(H.Series, 'bindAxes', function (e: Event): void {
+addEvent(Series, 'bindAxes', function (e: Event): void {
     if (this.chart.hasParallelCoordinates) {
         var series = this;
 
-        this.chart.axes.forEach(function (axis: Highcharts.Axis): void {
+        this.chart.axes.forEach(function (axis): void {
             series.insert(axis.series);
             axis.isDirty = true;
         });
@@ -336,7 +338,7 @@ addEvent(H.Series, 'bindAxes', function (e: Event): void {
 
 
 // Translate each point using corresponding yAxis.
-addEvent(H.Series, 'afterTranslate', function (): void {
+addEvent(Series, 'afterTranslate', function (): void {
     var series = this,
         chart = this.chart,
         points = series.points,
@@ -387,9 +389,9 @@ addEvent(H.Series, 'afterTranslate', function (): void {
 }, { order: 1 });
 
 // On destroy, we need to remove series from each axis.series
-addEvent(H.Series, 'destroy', function (): void {
+addEvent(Series, 'destroy', function (): void {
     if (this.chart.hasParallelCoordinates) {
-        (this.chart.axes || []).forEach(function (axis: Highcharts.Axis): void {
+        (this.chart.axes || []).forEach(function (axis): void {
             if (axis && axis.series) {
                 erase(axis.series, this);
                 axis.isDirty = axis.forceRedraw = true;
@@ -645,7 +647,7 @@ namespace ParallelAxis {
             var index = parallelCoordinates.position,
                 currentPoints: Array<Point> = [];
 
-            axis.series.forEach(function (series: Highcharts.Series): void {
+            axis.series.forEach(function (series): void {
                 if (
                     series.visible &&
                     defined((series.yData as any)[index as any])

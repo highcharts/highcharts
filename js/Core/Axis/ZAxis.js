@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -141,6 +141,8 @@ var ZAxis = /** @class */ (function (_super) {
             offset: 0,
             lineWidth: 0
         }, userOptions);
+        // #14793, this used to be set on the prototype
+        this.isZAxis = true;
         _super.prototype.setOptions.call(this, userOptions);
         this.coll = 'zAxis';
     };

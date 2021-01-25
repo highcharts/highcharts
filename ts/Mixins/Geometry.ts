@@ -4,6 +4,10 @@
  *
  * */
 
+'use strict';
+
+import type PositionObject from '../Core/Renderer/PositionObject';
+
 /**
  * Internal types
  * @private
@@ -33,12 +37,12 @@ declare global {
  *         Calculated center
  */
 const getCenterOfPoints = function getCenterOfPoints(
-    points: Array<Highcharts.PositionObject>
-): Highcharts.PositionObject {
+    points: Array<PositionObject>
+): PositionObject {
     var sum = points.reduce(function (
-        sum: Highcharts.PositionObject,
-        point: Highcharts.PositionObject
-    ): Highcharts.PositionObject {
+        sum: PositionObject,
+        point: PositionObject
+    ): PositionObject {
         sum.x += point.x;
         sum.y += point.y;
         return sum;
@@ -62,8 +66,8 @@ const getCenterOfPoints = function getCenterOfPoints(
  *         Returns the distance between the points.
  */
 const getDistanceBetweenPoints = function getDistanceBetweenPoints(
-    p1: Highcharts.PositionObject,
-    p2: Highcharts.PositionObject
+    p1: PositionObject,
+    p2: PositionObject
 ): number {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
 };
@@ -77,8 +81,8 @@ const getDistanceBetweenPoints = function getDistanceBetweenPoints(
  * @return {number} Returns the angle in radians.
  */
 const getAngleBetweenPoints = function getAngleBetweenPoints(
-    p1: Highcharts.PositionObject,
-    p2: Highcharts.PositionObject
+    p1: PositionObject,
+    p2: PositionObject
 ): number {
     return Math.atan2(p2.x - p1.x, p2.y - p1.y);
 };

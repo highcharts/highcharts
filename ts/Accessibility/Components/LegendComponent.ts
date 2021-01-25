@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for chart legend.
  *
@@ -13,10 +13,9 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
 import H from '../../Core/Globals.js';
 import Legend from '../../Core/Legend.js';
 import U from '../../Core/Utilities.js';
@@ -31,10 +30,32 @@ import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
-    removeElement = HTMLUtilities.removeElement;
+const {
+    removeElement,
+    stripHTMLTagsFromString: stripHTMLTags
+} = HTMLUtilities;
 
-type LegendItem = Highcharts.BubbleLegend|Point|Highcharts.Series;
+type LegendItem = (Highcharts.BubbleLegend|Series|Point);
+
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        highlightedLegendItemIx?: number;
+        /** @requires modules/accessibility */
+        highlightLegendItem(ix: number): boolean;
+    }
+}
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        a11yProxyElement?: HTMLDOMElement;
+    }
+}
+
+declare module '../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        a11yProxyElement?: HTMLDOMElement;
+    }
+}
 
 /**
  * Internal types.
@@ -66,6 +87,7 @@ declare global {
             public removeProxies(): void;
             public shouldHaveLegendNavigation(): (boolean);
             public updateLegendItemProxyVisibility(): void;
+            public updateLegendTitle(): void;
             public updateProxiesPositions(): void;
             public updateProxyPositionForItem(item: LegendItem): void;
         }
@@ -75,17 +97,6 @@ declare global {
             posElement: SVGElement;
         }
         interface BubbleLegend {
-            a11yProxyElement?: HTMLDOMElement;
-        }
-        interface ChartLike {
-            highlightedLegendItemIx?: number;
-            /** @requires modules/accessibility */
-            highlightLegendItem(ix: number): boolean;
-        }
-        interface PointLike {
-            a11yProxyElement?: HTMLDOMElement;
-        }
-        interface Series {
             a11yProxyElement?: HTMLDOMElement;
         }
     }
@@ -169,7 +180,7 @@ addEvent(Legend, 'afterColorizeItem', function (
 
     if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
         legendItem.a11yProxyElement.setAttribute(
-            'aria-pressed', e.visible ? 'false' : 'true'
+            'aria-pressed', e.visible ? 'true' : 'false'
         );
     }
 });
@@ -205,7 +216,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 this.chart.highlightLegendItem(component.highlightedLegendItemIx);
             }
         });
-        this.addEvent(Legend, 'afterPositionItem', function (e: Highcharts.Dictionary<any>): void {
+        this.addEvent(Legend, 'afterPositionItem', function (e: Record<string, any>): void {
             if (this.chart === component.chart && this.chart.renderer) {
                 component.updateProxyPositionForItem(e.item);
             }
@@ -248,6 +259,14 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         } else {
             this.removeProxies();
         }
+    },
+
+
+    /**
+     * @private
+     */
+    onChartUpdate: function (this: Highcharts.LegendComponent): void {
+        this.updateLegendTitle();
     },
 
 
@@ -303,17 +322,35 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    updateLegendTitle: function (this: Highcharts.LegendComponent): void {
+        const chart = this.chart;
+        const legendTitle = stripHTMLTags(
+            (chart.legend?.options.title?.text || '').replace(/<br ?\/?>/g, ' ')
+        );
+        const legendLabel = chart.langFormat(
+            'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
+                chart,
+                legendTitle
+            }
+        );
+
+        if (this.legendProxyGroup) {
+            this.legendProxyGroup.setAttribute('aria-label', legendLabel);
+        }
+    },
+
+
+    /**
+     * @private
+     */
     addLegendProxyGroup: function (this: Highcharts.LegendComponent): void {
         var a11yOptions = this.chart.options.accessibility,
-            groupLabel = this.chart.langFormat(
-                'accessibility.legend.legendLabel', {}
-            ),
             groupRole = a11yOptions.landmarkVerbosity === 'all' ?
                 'region' : null;
 
         this.legendProxyGroup = this.addProxyGroup({
-            'aria-label': groupLabel,
-            'role': groupRole as any
+            'aria-label': '_placeholder_', // Filled in by updateLegendTitle
+            role: groupRole as any
         });
     },
 
@@ -352,12 +389,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 'accessibility.legend.legendItem',
                 {
                     chart: this.chart,
-                    itemName: stripHTMLTags((item as any).name)
+                    itemName: (item as any).name
                 }
             ),
             attribs = {
                 tabindex: -1,
-                'aria-pressed': !item.visible,
+                'aria-pressed': item.visible,
                 'aria-label': itemLabel
             },
             // Considers useHTML
@@ -365,16 +402,16 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 item.legendItem : item.legendGroup;
 
         item.a11yProxyElement = this.createProxyButton(
-            item.legendItem,
+            item.legendItem as any,
             this.legendProxyGroup as any,
             attribs,
-            proxyPositioningElement
+            proxyPositioningElement as any
         );
 
         this.proxyElementsList.push({
             item: item,
             element: item.a11yProxyElement,
-            posElement: proxyPositioningElement
+            posElement: proxyPositioningElement as any
         });
     },
 

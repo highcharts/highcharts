@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,11 +17,19 @@
 'use strict';
 
 import type Point from '../Core/Series/Point';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Core/Series/PointOptions';
+import type Series from '../Core/Series/Series.js';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import CSVStore from '../Data/Stores/CSVStore.js';
 import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 import DataTableRow from '../Data/DataTableRow.js';
+import AST from '../Core/Renderer/HTML/AST.js';
 import H from '../Core/Globals.js';
 const {
     doc,
@@ -41,43 +49,61 @@ const {
     setOptions
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        dataTableDiv?: HTMLDivElement;
+        /** @requires modules/export-data */
+        downloadCSV(): void;
+        /** @requires modules/export-data */
+        downloadXLS(): void;
+        /** @requires modules/export-data */
+        getCSV(useLocalDecimalPoint?: boolean): string;
+        /** @requires modules/export-data */
+        getDataRows(
+            multiLevelHeaders?: boolean
+        ): Array<Array<(number|string)>>;
+        /** @requires modules/export-data */
+        getTable(useLocalDecimalPoint?: boolean): string;
+        /** @requires modules/export-data */
+        getTableAST(useLocalDecimalPoint?: boolean): Highcharts.ASTNode;
+        /** @requires modules/export-data */
+        setUpKeyToAxis(): void;
+        /** @requires modules/export-data */
+        viewData(): void;
+        /** @requires modules/export-data */
+        toggleDataTable(show?: boolean): void;
+        /** @requires modules/export-data */
+        hideData(): void;
+        /** @requires modules/export-data */
+        isDataTableVisible: boolean;
+    }
+}
+
+declare module '../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        exportKey?: string;
+        keyToAxis?: Record<string, string>;
+    }
+}
+
+declare module '../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        includeInDataExport?: boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        type ExportingCategoryMap = Dictionary<Array<(number|string|null)>>;
-        type ExportingDateTimeMap = Dictionary<Array<string>>;
+        type ExportingCategoryMap = Record<string, Array<(number|string|null)>>;
+        type ExportingDateTimeMap = Record<string, Array<string>>;
 
         interface ExportingCategoryDateTimeMap {
             categoryMap: ExportingCategoryMap;
             dateTimeValueAxisMap: ExportingDateTimeMap;
-        }
-        interface ChartLike {
-            dataTableDiv?: HTMLDivElement;
-            /** @requires modules/export-data */
-            downloadCSV(): void;
-            /** @requires modules/export-data */
-            downloadXLS(): void;
-            /** @requires modules/export-data */
-            getCSV(useLocalDecimalPoint?: boolean): string;
-            /** @requires modules/export-data */
-            getDataRows(
-                multiLevelHeaders?: boolean
-            ): Array<Array<(number|string)>>;
-            /** @requires modules/export-data */
-            getTable(useLocalDecimalPoint?: boolean): string;
-            /** @requires modules/export-data */
-            setUpKeyToAxis(): void;
-            /** @requires modules/export-data */
-            viewData(): void;
-            /** @requires modules/export-data */
-            toggleDataTable(): void;
-            /** @requires modules/export-data */
-            hideData(): void;
-            /** @requires modules/export-data */
-            isDataTableVisible: boolean;
         }
         interface AnnotationInDataTable {
             itemDelimiter?: string;
@@ -117,10 +143,6 @@ declare global {
             exportData?: ExportDataOptions;
             viewData?: string;
             hideData?: string;
-        }
-        interface Series {
-            exportKey?: string;
-            keyToAxis?: Dictionary<string>;
         }
     }
     interface MSBlobBuilder extends Blob {
@@ -587,13 +609,13 @@ Chart.prototype.getDataRows = function (
         ),
         xAxis: Highcharts.Axis,
         xAxes = this.xAxis,
-        rows: Highcharts.Dictionary<(Array<any>&Highcharts.Dictionary<any>)> =
+        rows: Record<string, (Array<any>&Record<string, any>)> =
             {},
         rowArr = [],
         dataRows,
         topLevelColumnTitles: Array<string> = [],
         columnTitles: Array<string> = [],
-        columnTitleObj: (string|Highcharts.Dictionary<string>),
+        columnTitleObj: (string|Record<string, string>),
         i: number,
         x,
         xTitle: string,
@@ -603,10 +625,10 @@ Chart.prototype.getDataRows = function (
         categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
         columnHeaderFormatter = function (
-            item: (Highcharts.Axis|Highcharts.Series),
+            item: (Axis|Series),
             key?: string,
             keyLength?: number
-        ): (string|Highcharts.Dictionary<string>) {
+        ): (string|Record<string, string>) {
             if (csvOptions.columnHeaderFormatter) {
                 var s = csvOptions.columnHeaderFormatter(item, key, keyLength);
 
@@ -637,7 +659,7 @@ Chart.prototype.getDataRows = function (
         },
         // Map the categories for value axes
         getCategoryAndDateTimeMap = function (
-            series: Highcharts.Series,
+            series: Series,
             pointArrayMap: Array<string>,
             pIdx?: number
         ): Highcharts.ExportingCategoryDateTimeMap {
@@ -671,7 +693,7 @@ Chart.prototype.getDataRows = function (
         // Create point array depends if xAxis is category
         // or point.name is defined #13293
         getPointArray = function (
-            series: Highcharts.Series,
+            series: Series,
             xAxis: Highcharts.Axis
         ): string[] {
             const namedPoints = series.data.filter((d): string | false =>
@@ -702,12 +724,12 @@ Chart.prototype.getDataRows = function (
 
     this.setUpKeyToAxis();
 
-    this.series.forEach(function (series: Highcharts.Series): void {
+    this.series.forEach(function (series: Series): void {
         var keys = series.options.keys,
             xAxis = series.xAxis,
             pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
-            xTaken: (false|Highcharts.Dictionary<unknown>) =
+            xTaken: (false|Record<string, unknown>) =
                 !series.requireSorting && {},
             xAxisIndex = xAxes.indexOf(xAxis),
             categoryAndDatetimeMap = getCategoryAndDateTimeMap(
@@ -768,7 +790,7 @@ Chart.prototype.getDataRows = function (
             // Export directly from options.data because we need the uncropped
             // data (#7913), and we need to support Boost (#7026).
             (series.options.data as any).forEach(function eachData(
-                options: Highcharts.PointOptionsType,
+                options: (PointOptions|PointShortOptions),
                 pIdx: number
             ): void {
                 var key: (number|string),
@@ -865,8 +887,8 @@ Chart.prototype.getDataRows = function (
 
         // Sort it by X values
         rowArr.sort(function ( // eslint-disable-line no-loop-func
-            a: Highcharts.Dictionary<any>,
-            b: Highcharts.Dictionary<any>
+            a: Record<string, any>,
+            b: Record<string, any>
         ): number {
             return a.xValues[xAxisIndex] - b.xValues[xAxisIndex];
         });
@@ -882,7 +904,7 @@ Chart.prototype.getDataRows = function (
 
         // Add the category column
         rowArr.forEach(function ( // eslint-disable-line no-loop-func
-            row: Highcharts.Dictionary<any>
+            row: Record<string, any>
         ): void {
             var category = row.name;
 
@@ -969,7 +991,10 @@ Chart.prototype.getTable = function (
 
     const dataStore = new HTMLTableStore(),
         { exporting } = this.options,
-        tableCaption = exporting?.tableCaption || this.options.title?.text;
+        tableCaption = exporting?.tableCaption ?
+            (typeof exporting.tableCaption == 'string' ?
+                exporting.tableCaption :
+                this.options.title?.text) : undefined;
 
     getDataTable(this, dataStore);
 
@@ -980,10 +1005,287 @@ Chart.prototype.getTable = function (
             exportIDColumn: false
         }),
         e = { html: html };
+    const serialize = (node: Highcharts.ASTNode): string => {
+        if (!node.tagName || node.tagName === '#text') {
+            // Text node
+            return node.textContent || '';
+        }
 
-    fireEvent(this, 'afterGetTable', e);
+        const attributes = node.attributes;
+        let html = `<${node.tagName}`;
 
-    return e.html;
+        if (attributes) {
+            Object.keys(attributes).forEach((key): void => {
+                html += ` ${key}="${attributes[key]}"`;
+            });
+        }
+        html += '>';
+
+        html += node.textContent || '';
+
+        (node.children || []).forEach((child): void => {
+            html += serialize(child);
+        });
+
+        html += `</${node.tagName}>`;
+        return html;
+    };
+
+    const tree = this.getTableAST(useLocalDecimalPoint);
+    return serialize(tree);
+};
+
+/**
+ * Get the AST of a HTML table representing the chart data.
+ *
+ * @private
+ *
+ * @function Highcharts.Chart#getTableAST
+ *
+ * @param {boolean} [useLocalDecimalPoint]
+ *        Whether to use the local decimal point as detected from the browser.
+ *        This makes it easier to export data to Excel in the same locale as the
+ *        user is.
+ *
+ * @return {Highcharts.ASTNode}
+ *         The abstract syntax tree
+ */
+Chart.prototype.getTableAST = function (
+    useLocalDecimalPoint?: boolean
+): Highcharts.ASTNode {
+    const treeChildren: Highcharts.ASTNode[] = [];
+    var options = this.options,
+        decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
+        useMultiLevelHeaders = pick(
+            (options.exporting as any).useMultiLevelHeaders, true
+        ),
+        rows = this.getDataRows(useMultiLevelHeaders),
+        rowLength = 0,
+        topHeaders = useMultiLevelHeaders ? rows.shift() : null,
+        subHeaders = rows.shift(),
+        // Compare two rows for equality
+        isRowEqual = function (
+            row1: Array<(number|string)>,
+            row2: Array<(number|string)>
+        ): boolean {
+            var i = row1.length;
+
+            if (row2.length === i) {
+                while (i--) {
+                    if (row1[i] !== row2[i]) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+            return true;
+        },
+        // Get table cell HTML from value
+        getCellHTMLFromValue = function (
+            tagName: string,
+            classes: (string|null),
+            attributes: SVGAttributes,
+            value: (number|string)
+        ): Highcharts.ASTNode {
+            var textContent = pick(value, ''),
+                className = 'text' + (classes ? ' ' + classes : '');
+
+            // Convert to string if number
+            if (typeof textContent === 'number') {
+                textContent = textContent.toString();
+                if (decimalPoint === ',') {
+                    textContent = textContent.replace('.', decimalPoint);
+                }
+                className = 'number';
+            } else if (!value) {
+                className = 'empty';
+            }
+
+            attributes = extend(
+                { 'class': className },
+                attributes
+            );
+
+            return {
+                tagName,
+                attributes,
+                textContent
+            };
+
+        },
+        // Get table header markup from row data
+        getTableHeaderHTML = function (
+            topheaders: (Array<(number|string)>|null|undefined),
+            subheaders: Array<(number|string)>,
+            rowLength?: number
+        ): Highcharts.ASTNode {
+            const theadChildren: Highcharts.ASTNode[] = [];
+
+            var i = 0,
+                len = rowLength || subheaders && subheaders.length,
+                next,
+                cur,
+                curColspan = 0,
+                rowspan;
+
+            // Clean up multiple table headers. Chart.getDataRows() returns two
+            // levels of headers when using multilevel, not merged. We need to
+            // merge identical headers, remove redundant headers, and keep it
+            // all marked up nicely.
+            if (
+                useMultiLevelHeaders &&
+                topheaders &&
+                subheaders &&
+                !isRowEqual(topheaders, subheaders)
+            ) {
+                const trChildren = [];
+                for (; i < len; ++i) {
+                    cur = topheaders[i];
+                    next = topheaders[i + 1];
+                    if (cur === next) {
+                        ++curColspan;
+                    } else if (curColspan) {
+                        // Ended colspan
+                        // Add cur to HTML with colspan.
+                        trChildren.push(getCellHTMLFromValue(
+                            'th',
+                            'highcharts-table-topheading',
+                            {
+                                scope: 'col',
+                                colspan: curColspan + 1
+                            },
+                            cur
+                        ));
+                        curColspan = 0;
+                    } else {
+                        // Cur is standalone. If it is same as sublevel,
+                        // remove sublevel and add just toplevel.
+                        if (cur === subheaders[i]) {
+                            if ((options.exporting as any).useRowspanHeaders) {
+                                rowspan = 2;
+                                delete subheaders[i];
+                            } else {
+                                rowspan = 1;
+                                subheaders[i] = '';
+                            }
+                        } else {
+                            rowspan = 1;
+                        }
+
+                        const cell = getCellHTMLFromValue(
+                            'th',
+                            'highcharts-table-topheading',
+                            { scope: 'col' },
+                            cur
+                        );
+                        if (rowspan > 1 && cell.attributes) {
+                            cell.attributes.valign = 'top';
+                            cell.attributes.rowspan = rowspan;
+                        }
+
+                        trChildren.push(cell);
+                    }
+                }
+
+                theadChildren.push({
+                    tagName: 'tr',
+                    children: trChildren
+                });
+            }
+
+            // Add the subheaders (the only headers if not using multilevels)
+            if (subheaders) {
+                const trChildren = [];
+
+                for (i = 0, len = subheaders.length; i < len; ++i) {
+                    if (typeof subheaders[i] !== 'undefined') {
+                        trChildren.push(
+                            getCellHTMLFromValue(
+                                'th', null, { scope: 'col' }, subheaders[i]
+                            )
+                        );
+                    }
+                }
+
+                theadChildren.push({
+                    tagName: 'tr',
+                    children: trChildren
+                });
+            }
+            return {
+                tagName: 'thead',
+                children: theadChildren
+            };
+        };
+
+    // Add table caption
+    if ((options.exporting as any).tableCaption !== false) {
+        treeChildren.push({
+            tagName: 'caption',
+            attributes: {
+                'class': 'highcharts-table-caption'
+            },
+            textContent: pick(
+                (options.exporting as any).tableCaption,
+                (
+                    (options.title as any).text ?
+                        htmlencode((options.title as any).text) :
+                        'Chart'
+                )
+            )
+        });
+    }
+
+    // Find longest row
+    for (var i = 0, len = rows.length; i < len; ++i) {
+        if (rows[i].length > rowLength) {
+            rowLength = rows[i].length;
+        }
+    }
+
+    // Add header
+    treeChildren.push(getTableHeaderHTML(
+        topHeaders,
+        subHeaders as any,
+        Math.max(rowLength, (subHeaders as any).length)
+    ));
+
+    // Transform the rows to HTML
+    const trs: Highcharts.ASTNode[] = [];
+    rows.forEach(function (row: Array<(number|string)>): void {
+        const trChildren = [];
+        for (var j = 0; j < rowLength; j++) {
+            // Make first column a header too. Especially important for
+            // category axes, but also might make sense for datetime? Should
+            // await user feedback on this.
+            trChildren.push(getCellHTMLFromValue(
+                j ? 'td' : 'th',
+                null,
+                j ? {} : { scope: 'row' },
+                row[j]
+            ));
+        }
+        trs.push({
+            tagName: 'tr',
+            children: trChildren
+        });
+    });
+    treeChildren.push({
+        tagName: 'tbody',
+        children: trs
+    });
+
+    const e = {
+        tree: {
+            tagName: 'table',
+            id: `highcharts-data-table-${this.index}`,
+            children: treeChildren
+        } as Highcharts.ASTNode
+    };
+    fireEvent(this, 'aftergetTableAST', e);
+
+    return e.tree;
 };
 
 
@@ -1099,25 +1401,7 @@ Chart.prototype.downloadXLS = function (): void {
  * @fires Highcharts.Chart#event:afterViewData
  */
 Chart.prototype.viewData = function (): void {
-    // Create div and generate the data table.
-    if (!this.dataTableDiv) {
-        this.dataTableDiv = doc.createElement('div');
-        this.dataTableDiv.className = 'highcharts-data-table';
-        // Insert after the chart container
-        (this.renderTo.parentNode as any).insertBefore(
-            this.dataTableDiv,
-            this.renderTo.nextSibling
-        );
-        this.dataTableDiv.innerHTML = this.getTable();
-    }
-    // Show the data table again.
-    if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
-        this.dataTableDiv.style.display = 'block';
-    }
-
-    this.isDataTableVisible = true;
-
-    fireEvent(this, 'afterViewData', this.dataTableDiv);
+    this.toggleDataTable(true);
 };
 
 /**
@@ -1126,35 +1410,63 @@ Chart.prototype.viewData = function (): void {
  * @function Highcharts.Chart#hideData
  */
 Chart.prototype.hideData = function (): void {
-    if (this.dataTableDiv && this.dataTableDiv.style.display === 'block') {
-        this.dataTableDiv.style.display = 'none';
-    }
-
-    this.isDataTableVisible = false;
+    this.toggleDataTable(false);
 };
 
-Chart.prototype.toggleDataTable = function (): void {
-    var exportDivElements = this.exportDivElements,
-        menuItems = exportingOptions?.buttons?.contextButton.menuItems,
-        lang = this.options.lang;
+Chart.prototype.toggleDataTable = function (show?: boolean): void {
 
-    if (this.isDataTableVisible) {
-        this.hideData();
-    } else {
-        this.viewData();
+    show = pick(show, !this.isDataTableVisible);
+
+    // Create the div
+    if (show && !this.dataTableDiv) {
+        this.dataTableDiv = doc.createElement('div');
+        this.dataTableDiv.className = 'highcharts-data-table';
+        // Insert after the chart container
+        (this.renderTo.parentNode as any).insertBefore(
+            this.dataTableDiv,
+            this.renderTo.nextSibling
+        );
     }
 
-    // Change the button text based on table visibility.
+    // Toggle the visibility
+    if (this.dataTableDiv) {
+
+        this.dataTableDiv.style.display = show ? 'block' : 'none';
+
+        // Generate the data table
+        if (show) {
+            this.dataTableDiv.innerHTML = '';
+            const ast = new AST([this.getTableAST()]);
+            ast.addToDOM(this.dataTableDiv);
+            fireEvent(this, 'afterViewData', this.dataTableDiv);
+        }
+    }
+
+    // Set the flag
+    this.isDataTableVisible = show;
+
+
+    // Change the menu item text
+    const exportDivElements = this.exportDivElements,
+        options = this.options.exporting,
+        menuItems = options &&
+            options.buttons &&
+            options.buttons.contextButton.menuItems,
+        lang = this.options.lang;
+
     if (
-        exportingOptions?.menuItemDefinitions &&
+        exportingOptions &&
+        exportingOptions.menuItemDefinitions &&
         lang?.viewData &&
         lang.hideData &&
         menuItems &&
         exportDivElements &&
         exportDivElements.length
     ) {
-        exportDivElements[menuItems.indexOf('viewData')]
-            .innerHTML = this.isDataTableVisible ? lang.hideData : lang.viewData;
+        AST.setElementHTML(
+            exportDivElements[menuItems.indexOf('viewData')],
+            this.isDataTableVisible ? lang.hideData : lang.viewData
+        );
     }
 };
 
@@ -1182,7 +1494,7 @@ if (exportingOptions) {
                 this.toggleDataTable();
             }
         }
-    } as Highcharts.Dictionary<Highcharts.ExportingMenuObject>);
+    } as Record<string, Highcharts.ExportingMenuObject>);
 
     if (exportingOptions.buttons) {
         (exportingOptions.buttons.contextButton.menuItems as any).push(

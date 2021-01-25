@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,12 +10,12 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisBreakBorderObject, AxisBreakObject } from './Types';
 import type Point from '../Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
-import LineSeries from '../../Series/LineSeries.js';
+import Series from '../Series/Series.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 const {
@@ -26,6 +26,22 @@ const {
     isNumber,
     pick
 } = U;
+
+declare module '../Series/SeriesLike' {
+    interface SeriesLike {
+        /** @requires modules/broken-axis */
+        drawBreaks(axis: Axis, keys: Array<string>): void;
+        /** @requires modules/broken-axis */
+        gappedPath?(): SVGPath;
+    }
+}
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        gapSize?: number;
+        gapUnit?: string;
+    }
+}
 
 /**
  * @private
@@ -45,14 +61,6 @@ declare module './Types' {
  */
 declare global {
     namespace Highcharts {
-        interface Series {
-            /** @requires modules/broken-axis */
-            drawBreaks(axis: Axis, keys: Array<string>): void;
-        }
-        interface SeriesOptions {
-            gapSize?: number;
-            gapUnit?: string;
-        }
         interface XAxisBreaksOptions {
             inclusive?: boolean;
         }
@@ -303,7 +311,7 @@ class BrokenAxisAdditions {
                 newMin: number,
                 newMax: number,
                 redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
+                animation?: (boolean|Partial<AnimationOptions>),
                 eventArguments?: any
             ): void {
                 // If trying to set extremes inside a break, extend min to
@@ -334,8 +342,8 @@ class BrokenAxisAdditions {
                 );
             };
 
-            axis.setAxisTranslation = function (saveOld?: boolean): void {
-                Axis.prototype.setAxisTranslation.call(this, saveOld);
+            axis.setAxisTranslation = function (): void {
+                Axis.prototype.setAxisTranslation.call(this);
 
                 brokenAxis.unitLength = null as any;
                 if (brokenAxis.hasBreaks) {
@@ -477,11 +485,11 @@ class BrokenAxis {
      * Adds support for broken axes.
      * @private
      */
-    public static compose(AxisClass: typeof Axis, SeriesClass: typeof LineSeries): void {
+    public static compose(AxisClass: typeof Axis, SeriesClass: typeof Series): void {
 
         AxisClass.keepProps.push('brokenAxis');
 
-        const seriesProto = LineSeries.prototype;
+        const seriesProto = Series.prototype;
 
         /**
          * @private
@@ -790,6 +798,6 @@ interface BrokenAxis extends Axis {
     brokenAxis: BrokenAxisAdditions;
 }
 
-BrokenAxis.compose(Axis, LineSeries); // @todo remove automatism
+BrokenAxis.compose(Axis, Series); // @todo remove automatism
 
 export default BrokenAxis;

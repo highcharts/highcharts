@@ -1,16 +1,17 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, setOptions = U.setOptions, syncTimeout = U.syncTimeout;
@@ -45,8 +46,7 @@ var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, format = 
  * https://jsfiddle.net/highcharts/y5A37/
  */
 ''; // detach doclets above
-import '../Series/LineSeries.js';
-var labelDistance = 3, Series = H.Series;
+var labelDistance = 3;
 setOptions({
     /**
      * @optionparent plotOptions

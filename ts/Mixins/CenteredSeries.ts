@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
 
 /**
  * Internal types
@@ -113,7 +115,7 @@ const centeredSeriesMixin = H.CenteredSeriesMixin = {
 
         // No need for inner size in angular (gauges) series but still required
         // for pie series
-        if (chart.angular && !(this instanceof H.Series)) {
+        if (chart.angular && !(this instanceof Series)) {
             positions[3] = 0;
         }
 

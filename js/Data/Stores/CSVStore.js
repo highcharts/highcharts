@@ -217,7 +217,7 @@ var CSVStore = /** @class */ (function (_super) {
         if (!itemDelimiter) {
             itemDelimiter = decimalPoint === ',' ? ';' : ',';
         }
-        var _a = this.getColumnsForExport(exportOptions.exportIDColumn), columnNames = _a.columnNames, columnValues = _a.columnValues;
+        var _a = this.getColumnsForExport(exportOptions.exportIDColumn, exportOptions.usePresentationOrder), columnNames = _a.columnNames, columnValues = _a.columnValues;
         var csvRows = [], columnsCount = columnNames.length;
         var rowArray = [];
         // Add the names as the first row if they should be exported
@@ -236,11 +236,11 @@ var CSVStore = /** @class */ (function (_super) {
                 if (!rowArray[rowIndex]) {
                     rowArray[rowIndex] = [];
                 }
-                // Handle datatype
-                // if (typeof cellValue === 'string') {
-                //     cellValue = `"${cellValue}"`;
-                // }
-                if (typeof cellValue === 'number') {
+                // Prefer datatype from metadata
+                if (columnDataType === 'string') {
+                    cellValue = "\"" + cellValue + "\"";
+                }
+                else if (typeof cellValue === 'number') {
                     cellValue = String(cellValue).replace('.', decimalPoint);
                 }
                 else if (typeof cellValue === 'string') {

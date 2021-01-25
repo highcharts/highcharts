@@ -7,17 +7,13 @@ function getData(n) {
     return arr;
 }
 
-
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     chart: {
         styledMode: true
     },
-
     title: {
         text: 'Dense column borders'
     },
-
     series: [{
         type: 'column',
         name: 'Sinus',
@@ -25,10 +21,10 @@ var chart = Highcharts.chart('container', {
     }]
 });
 
-$('#dense').click(function () {
+document.getElementById('dense').addEventListener('click', () => {
     chart.series[0].setData(getData(360));
 });
 
-$('#sparse').click(function () {
+document.getElementById('sparse').addEventListener('click', () => {
     chart.series[0].setData(getData(45));
 });

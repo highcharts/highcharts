@@ -1,13 +1,11 @@
-var chart = Highcharts.chart('container', {
+const chart = Highcharts.chart('container', {
     xAxis: {
         categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         showEmpty: false
     },
-
     yAxis: {
         showEmpty: false
     },
-
     series: [{
         allowPointSelect: true,
         data: [ // use names for display in pie data labels
@@ -37,21 +35,19 @@ var chart = Highcharts.chart('container', {
 });
 
 chart.name = false;
-var enableDataLabels = true,
+
+let enableDataLabels = true,
     enableMarkers = true,
     color = false;
 
-
-// Toggle names
-$('#name').click(function () {
+document.getElementById('name').addEventListener('click', () => {
     chart.series[0].update({
         name: chart.name ? null : 'First'
     });
     chart.name = !chart.name;
 });
 
-// Toggle data labels
-$('#data-labels').click(function () {
+document.getElementById('data-labels').addEventListener('click', () => {
     chart.series[0].update({
         dataLabels: {
             enabled: enableDataLabels
@@ -60,8 +56,7 @@ $('#data-labels').click(function () {
     enableDataLabels = !enableDataLabels;
 });
 
-// Toggle point markers
-$('#markers').click(function () {
+document.getElementById('markers').addEventListener('click', () => {
     chart.series[0].update({
         marker: {
             enabled: enableMarkers
@@ -70,19 +65,17 @@ $('#markers').click(function () {
     enableMarkers = !enableMarkers;
 });
 
-// Toggle point markers
-$('#color').click(function () {
+document.getElementById('color').addEventListener('click', () => {
     chart.series[0].update({
         color: color ? null : Highcharts.getOptions().colors[1]
     });
     color = !color;
 });
 
-// Set type
-$.each(['line', 'column', 'spline', 'area', 'areaspline', 'scatter', 'pie'], function (i, type) {
-    $('#' + type).click(function () {
+['line', 'column', 'spline', 'area', 'areaspline', 'scatter', 'pie'].forEach(type =>
+    document.getElementById(type).addEventListener('click', () => {
         chart.series[0].update({
             type: type
         });
-    });
-});
+    })
+);

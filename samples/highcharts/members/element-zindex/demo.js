@@ -1,13 +1,10 @@
-var renderer,
-    circles = [],
-    group2;
-
-
-renderer = new Highcharts.Renderer(
-    $('#container')[0],
+const renderer = new Highcharts.Renderer(
+    document.getElementById('container'),
     450,
     300
 );
+
+const circles = [];
 
 circles[0] = renderer.circle(200, 200, 60)
     .attr({
@@ -34,7 +31,7 @@ circles[3] = renderer.circle(350, 200, 60)
     })
     .add();
 
-group2 = renderer.g().add();
+const group2 = renderer.g().add();
 
 circles[4] = renderer.circle(200, 100, 60)
     .attr({
@@ -61,8 +58,10 @@ circles[7] = renderer.circle(350, 100, 60)
     })
     .add(group2);
 
-$('.update-yellow-z').click(function () {
-    circles[1].attr({
-        zIndex: $(this).data('zindex')
-    });
-});
+document.querySelectorAll('.update-yellow-z').forEach(button =>
+    button.addEventListener('click', e =>
+        circles[1].attr({
+            zIndex: e.target.dataset.zindex
+        })
+    )
+);

@@ -3,7 +3,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../../Core/Globals.js';
+'use strict';
+import Series from '../../Core/Series/Series.js';
 /**
  * @private
  * @interface Highcharts.AnnotationMockLabelOptionsObject
@@ -44,7 +45,6 @@ import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent;
 import Axis from '../../Core/Axis/Axis.js';
-import '../../Series/LineSeries.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A trimmed point object which imitates {@link Highchart.Point} class. It is
@@ -96,7 +96,7 @@ var MockPoint = /** @class */ (function () {
         this.series = {
             visible: true,
             chart: chart,
-            getPlotBox: H.Series.prototype.getPlotBox
+            getPlotBox: Series.prototype.getPlotBox
         };
         /**
          * @name Annotation.AnnotationMockPoint#target

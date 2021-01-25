@@ -13,21 +13,26 @@ QUnit.test('#12248 - Correct visible range for points.', function (assert) {
                 stacking: 'overlap'
             }
         },
-        series: [{
-            stack: 'a',
-            data: [-10],
-            zIndex: 1
-        }, {
-            stack: 'a',
-            data: [30]
-        }, {
-            stack: 'b',
-            data: [-10],
-            zIndex: 1
-        }, {
-            stack: 'b',
-            data: [20]
-        }]
+        series: [
+            {
+                stack: 'a',
+                data: [-10],
+                zIndex: 1
+            },
+            {
+                stack: 'a',
+                data: [30]
+            },
+            {
+                stack: 'b',
+                data: [-10],
+                zIndex: 1
+            },
+            {
+                stack: 'b',
+                data: [20]
+            }
+        ]
     });
 
     var firstSeries = chart.series[0],
@@ -47,6 +52,6 @@ QUnit.test('#12248 - Correct visible range for points.', function (assert) {
     assert.strictEqual(
         stackState.length,
         yAxis.waterfall.stacks[firstSeries.stackKey][0].stackState.length,
-        'The number of the first stack\'s states should be unchanged.'
+        "The number of the first stack's states should be unchanged."
     );
 });

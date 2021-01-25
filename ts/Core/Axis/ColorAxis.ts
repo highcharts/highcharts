@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,11 +10,13 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisLike } from './Types';
 import type ColorString from '../Color/ColorString';
 import type ColorType from '../Color/ColorType';
 import type GradientColor from '../Color/GradientColor';
+import type PointerEvent from '../PointerEvent';
+import type { StatesOptionsKey } from '../Series/StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
@@ -35,8 +37,9 @@ const {
 } = H;
 import Legend from '../Legend.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import LineSeries from '../../Series/LineSeries.js';
+import palette from '../Color/Palette.js';
 import Point from '../Series/Point.js';
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -48,83 +51,51 @@ const {
     splat
 } = U;
 
+declare module '../Chart/ChartLike' {
+    interface ChartLike {
+        colorAxis?: Array<ColorAxis>;
+    }
+}
+
+declare module '../Series/PointLike' {
+    interface PointLike {
+        dataClass?: number;
+    }
+}
+
+declare module '../Series/SeriesLike' {
+    interface SeriesLike {
+        axisTypes?: Array<string>;
+        colorAxis?: ColorAxis;
+        colorKey?: string;
+        minColorValue?: number;
+        maxColorValue?: number;
+    }
+}
+
+declare module '../Series/SeriesOptions' {
+    interface SeriesOptions {
+        colorKey?: string;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        class ColorAxis extends Axis { // eslint-disable-line no-undef
-            public constructor(chart: Chart, userOptions: ColorAxis.Options);
-            public added?: boolean;
-            public chart: Chart;
-            public coll: 'colorAxis';
-            public checkbox: undefined;
-            public dataClasses: Array<ColorAxis.DataClassesOptions>;
-            public legendColor?: GradientColor;
-            public legendGroup?: SVGElement
-            public legendItem: ColorAxis.LegendItemObject;
-            public legendItemHeight?: number;
-            public legendItems: Array<ColorAxis.LegendItemObject>;
-            public legendItemWidth?: number;
-            public legendSymbol?: SVGElement;
-            public options: ColorAxis.Options;
-            public prototype: ColorAxis;
-            public setVisible: Function;
-            public stops: GradientColor['stops'];
-            public visible: true;
-            public drawCrosshair(e: PointerEventObject, point: Point): void;
-            public drawLegendSymbol(legend: Legend, item: ColorAxis): void;
-            public getDataClassLegendSymbols(): (
-                Array<ColorAxis.LegendItemObject>
-            );
-            public getOffset(): void;
-            public getPlotLinePath(
-                options: AxisPlotLinePathOptionsObject
-            ): (SVGPath|null);
-            public getSeriesExtremes(): void;
-            public hasData(): boolean;
-            public init(chart: Chart, userOptions: ColorAxis.Options): void;
-            public initDataClasses(userOptions: ColorAxis.Options): void;
-            public initStops(): void;
-            public normalizedValue(value: number): number;
-            public remove(redraw?: boolean): void;
-            public destroyItems(): void;
-            public setAxisSize(): void;
-            public setLegendColor(): void;
-            public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void;
-            public setState(state?: string): void;
-            public setTickPositions(): void;
-            public toColor(
-                value: number,
-                point: Point
-            ): (ColorType|undefined);
-        }
         interface Axis {
             labelLeft?: number;
             labelRight?: number;
         }
-        interface ChartLike {
-            colorAxis?: Array<ColorAxis>;
-        }
-        interface Series {
-            axisTypes: Array<string>;
-            colorAxis?: ColorAxis;
-            colorKey: string;
-            minColorValue?: number;
-            maxColorValue?: number;
-        }
-        interface SeriesOptions {
-            colorKey?: string;
-        }
         interface Options {
             colorAxis?: (ColorAxis.Options|Array<ColorAxis.Options>);
         }
-        interface PointLike {
-            dataClass?: number;
-        }
+        let ColorAxis: ColorAxisClass;
     }
 }
+type ColorAxisClass = typeof ColorAxis;
 
 /**
  * Color axis types
@@ -134,7 +105,7 @@ declare global {
 
 ''; // detach doclet above
 
-extend(LineSeries.prototype, colorSeriesMixin);
+extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
@@ -472,7 +443,7 @@ class ColorAxis extends Axis implements AxisLike {
              * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @product highcharts highstock highmaps
              */
-            color: '${palette.neutralColor40}'
+            color: palette.neutralColor40
         },
 
         /**
@@ -519,7 +490,7 @@ class ColorAxis extends Axis implements AxisLike {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highstock highmaps
          */
-        minColor: '${palette.highlightColor10}',
+        minColor: palette.highlightColor10,
 
         /**
          * The color to represent the maximum of the color axis. Unless
@@ -539,7 +510,7 @@ class ColorAxis extends Axis implements AxisLike {
          * @type    {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @product highcharts highstock highmaps
          */
-        maxColor: '${palette.highlightColor100}',
+        maxColor: palette.highlightColor100,
 
         /**
          * Color stops for the gradient of a scalar color axis. Use this in
@@ -628,43 +599,6 @@ class ColorAxis extends Axis implements AxisLike {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * Build options to keep layout params on init and update.
-     * @private
-     */
-    public static buildOptions(
-        chart: Chart,
-        options: ColorAxis.Options,
-        userOptions: ColorAxis.Options
-    ): ColorAxis.Options {
-        var legend = chart.options.legend || {},
-            horiz = userOptions.layout ?
-                userOptions.layout !== 'vertical' :
-                legend.layout !== 'vertical';
-
-        return merge<ColorAxis.Options>(
-            options,
-            {
-                side: horiz ? 2 : 1,
-                reversed: !horiz
-            },
-            userOptions,
-            {
-                opposite: !horiz,
-                showEmpty: false,
-                title: null as any,
-                visible: (legend as any).enabled &&
-                    (userOptions ? userOptions.visible !== false : true)
-            }
-        );
-    }
-
-    /* *
-     *
      *  Constructors
      *
      * */
@@ -721,14 +655,31 @@ class ColorAxis extends Axis implements AxisLike {
         chart: Chart,
         userOptions: ColorAxis.Options
     ): void {
-        const axis = this as unknown as Highcharts.ColorAxis;
-        const options = ColorAxis.buildOptions( // Build the options
-            chart,
+        const axis = this;
+        const legend = chart.options.legend || {},
+            horiz = userOptions.layout ?
+                userOptions.layout !== 'vertical' :
+                legend.layout !== 'vertical';
+
+        const options = merge<ColorAxis.Options>(
             ColorAxis.defaultOptions,
-            userOptions
+            userOptions,
+            {
+                showEmpty: false,
+                title: null,
+                visible: legend.enabled &&
+                    (userOptions ? userOptions.visible !== false : true)
+            }
         );
 
         axis.coll = 'colorAxis';
+        axis.side = userOptions.side || horiz ? 2 : 1;
+        axis.reversed = userOptions.reversed || !horiz;
+        axis.opposite = !horiz;
+
+        // Keep the options structure updated for export. Unlike xAxis and
+        // yAxis, the colorAxis is not an array. (#3207)
+        chart.options[axis.coll] = options;
 
         super.init(chart, options);
 
@@ -742,7 +693,7 @@ class ColorAxis extends Axis implements AxisLike {
         axis.initStops();
 
         // Override original axis properties
-        axis.horiz = !options.opposite;
+        axis.horiz = horiz;
         axis.zoomEnabled = false;
     }
 
@@ -1061,10 +1012,8 @@ class ColorAxis extends Axis implements AxisLike {
      * Fool the legend.
      * @private
      */
-    public setState(state?: string): void {
-        this.series.forEach(function (
-            series: Highcharts.Series
-        ): void {
+    public setState(state?: StatesOptionsKey): void {
+        this.series.forEach(function (series): void {
             series.setState(state);
         });
     }
@@ -1139,7 +1088,7 @@ class ColorAxis extends Axis implements AxisLike {
                 cSeries.maxColorValue = (cSeries as any)[colorKey + 'Max'];
 
             } else {
-                const cExtremes = LineSeries.prototype.getExtremes.call(
+                const cExtremes = Series.prototype.getExtremes.call(
                     cSeries,
                     colorValArray
                 );
@@ -1156,7 +1105,7 @@ class ColorAxis extends Axis implements AxisLike {
             }
 
             if (!calculatedExtremes) {
-                LineSeries.prototype.applyExtremes.call(cSeries);
+                Series.prototype.applyExtremes.call(cSeries);
             }
         }
     }
@@ -1177,7 +1126,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @fires Highcharts.ColorAxis#event:drawCrosshair
      */
     public drawCrosshair(
-        e?: Highcharts.PointerEventObject,
+        e?: PointerEvent,
         point?: Highcharts.ColorPoint
     ): void {
         const axis = this;
@@ -1277,10 +1226,9 @@ class ColorAxis extends Axis implements AxisLike {
     ): void {
         const axis = this,
             chart = axis.chart,
-            legend = chart.legend,
-            updatedOptions = ColorAxis.buildOptions(chart, {}, newOptions);
+            legend = chart.legend;
 
-        this.series.forEach(function (series: Highcharts.Series): void {
+        this.series.forEach(function (series): void {
             // Needed for Axis.update when choropleth colors change
             series.isDirtyData = true;
         });
@@ -1291,12 +1239,7 @@ class ColorAxis extends Axis implements AxisLike {
             axis.destroyItems();
         }
 
-        // Keep the options structure updated for export. Unlike xAxis and
-        // yAxis, the colorAxis is not an array. (#3207)
-        (chart.options as any)[axis.coll] =
-            merge(axis.userOptions, updatedOptions);
-
-        super.update(updatedOptions, redraw);
+        super.update(newOptions, redraw);
 
         if (axis.legendItem) {
             axis.setLegendColor();
@@ -1322,6 +1265,14 @@ class ColorAxis extends Axis implements AxisLike {
         }
 
         chart.isDirtyLegend = true;
+    }
+
+    //   Removing the whole axis (#14283)
+    public destroy(): void {
+        this.chart.isDirtyLegend = true;
+
+        this.destroyItems();
+        super.destroy(...[].slice.call(arguments));
     }
 
     /**
@@ -1390,9 +1341,7 @@ class ColorAxis extends Axis implements AxisLike {
                         isDataClass: true,
                         setVisible: function (this: ColorAxis.LegendItemObject): void {
                             vis = axis.visible = !vis;
-                            axis.series.forEach(function (
-                                series: Highcharts.Series
-                            ): void {
+                            axis.series.forEach(function (series): void {
                                 series.points.forEach(function (
                                     point: Point
                                 ): void {
@@ -1448,14 +1397,11 @@ addEvent(Chart, 'afterGetAxes', function (): void {
     var chart = this,
         options = chart.options;
 
-    this.colorAxis = [] as Array<Highcharts.ColorAxis>;
+    this.colorAxis = [];
 
     if (options.colorAxis) {
         options.colorAxis = splat(options.colorAxis);
-        options.colorAxis.forEach(function (
-            axisOptions: ColorAxis.Options,
-            i: number
-        ): void {
+        options.colorAxis.forEach(function (axisOptions, i): void {
             axisOptions.index = i;
             new ColorAxis(chart, axisOptions); // eslint-disable-line no-new
         });
@@ -1464,7 +1410,7 @@ addEvent(Chart, 'afterGetAxes', function (): void {
 
 
 // Add colorAxis to series axisTypes
-addEvent(LineSeries, 'bindAxes', function (): void {
+addEvent(Series, 'bindAxes', function (): void {
     var axisTypes = this.axisTypes;
 
     if (!axisTypes) {
@@ -1481,15 +1427,15 @@ addEvent(LineSeries, 'bindAxes', function (): void {
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: {
-        allItems: Array<(Highcharts.ColorAxis|ColorAxis.LegendItemObject)>;
+        allItems: Array<(ColorAxis|ColorAxis.LegendItemObject)>;
     }
 ): void {
-    var colorAxisItems = [] as Array<(Highcharts.ColorAxis|ColorAxis.LegendItemObject)>,
+    var colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
         colorAxes = this.chart.colorAxis || [],
         options: ColorAxis.Options,
         i;
 
-    colorAxes.forEach(function (colorAxis: Highcharts.ColorAxis): void {
+    colorAxes.forEach(function (colorAxis: ColorAxis): void {
         options = colorAxis.options;
 
         if (options && options.showInLegend) {
@@ -1505,9 +1451,7 @@ addEvent(Legend, 'afterGetAllItems', function (
             }
             // If dataClasses are defined or showInLegend option is not set to
             // true, do not add color axis' series to legend.
-            colorAxis.series.forEach(function (
-                series: Highcharts.Series
-            ): void {
+            colorAxis.series.forEach(function (series): void {
                 if (!series.options.showInLegend || options.dataClasses) {
                     if (series.options.legendType === 'point') {
                         series.points.forEach(function (
@@ -1533,7 +1477,7 @@ addEvent(Legend, 'afterGetAllItems', function (
 addEvent(Legend, 'afterColorizeItem', function (
     this: Highcharts.Legend,
     e: {
-        item: Highcharts.ColorAxis;
+        item: ColorAxis;
         visible: boolean;
     }
 ): void {
@@ -1549,14 +1493,14 @@ addEvent(Legend, 'afterUpdate', function (this: Highcharts.Legend): void {
     var colorAxes = this.chart.colorAxis;
 
     if (colorAxes) {
-        colorAxes.forEach(function (colorAxis: Highcharts.ColorAxis): void {
+        colorAxes.forEach(function (colorAxis): void {
             colorAxis.update({}, arguments[2]);
         });
     }
 });
 
 // Calculate and set colors for points
-addEvent(LineSeries as any, 'afterTranslate', function (): void {
+addEvent(Series as any, 'afterTranslate', function (): void {
     if (
         this.chart.colorAxis &&
         this.chart.colorAxis.length ||
@@ -1578,6 +1522,7 @@ namespace ColorAxis {
 
     export interface LegendItemObject extends DataClassesOptions
     {
+        [key: string]: any;
         chart: Chart;
         name: string;
         options: object;
@@ -1589,7 +1534,7 @@ namespace ColorAxis {
     }
 
     export interface MarkerOptions {
-        animation?: (boolean|Partial<AnimationOptionsObject>);
+        animation?: (boolean|Partial<AnimationOptions>);
         color?: ColorType;
         width?: number;
     }

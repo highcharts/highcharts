@@ -2,7 +2,7 @@
  *
  *  Data module
  *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,16 +12,22 @@
 'use strict';
 import Ajax from '../Extensions/Ajax.js';
 var ajax = Ajax.ajax;
-import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 var doc = H.doc;
 import Point from '../Core/Series/Point.js';
 import DataTable from '../Data/DataTable.js';
 import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
+import GoogleSheetsParser from '../Data/Parsers/GoogleSheetsParser.js';
+import CSVStore from '../Data/Stores/CSVStore.js';
+import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
+import CSVParser from '../Data/Parsers/CSVParser.js';
+import HTMLTableParser from '../Data/Parsers/HTMLTableParser.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
-var seriesTypes = BaseSeries.seriesTypes;
+import DataConverter from '../Data/DataConverter.js';
+var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 /**
  * Callback function to modify the CSV before parsing it by the data module.
  *
@@ -474,6 +480,11 @@ var seriesTypes = BaseSeries.seriesTypes;
  * @param {Highcharts.Chart} [chart]
  */
 var Data = /** @class */ (function () {
+    /* *
+     *
+     *  Constructors
+     *
+     * */
     function Data(dataOptions, chartOptions, chart) {
         this.chart = void 0;
         this.chartOptions = void 0;
@@ -541,6 +552,11 @@ var Data = /** @class */ (function () {
         };
         this.init(dataOptions, chartOptions, chart);
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Initialize the Data object with the given options
      *
@@ -711,7 +727,7 @@ var Data = /** @class */ (function () {
         }
     };
     /**
-     * Parse a CSV input string
+     * Handle a CSV input string
      *
      * @function Highcharts.Data#parseCSV
      *
@@ -720,10 +736,10 @@ var Data = /** @class */ (function () {
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
     Data.prototype.parseCSV = function (inOptions) {
-        var self = this, options = inOptions || this.options, csv = options.csv, columns, startRow = (typeof options.startRow !== 'undefined' && options.startRow ?
+        var self = this, options = inOptions || this.options, csv = options.csv, startRow = (typeof options.startRow !== 'undefined' && options.startRow ?
             options.startRow :
             0), endRow = options.endRow || Number.MAX_VALUE, startColumn = (typeof options.startColumn !== 'undefined' &&
-            options.startColumn) ? options.startColumn : 0, endColumn = options.endColumn || Number.MAX_VALUE, itemDelimiter, lines, rowIt = 0, 
+            options.startColumn) ? options.startColumn : 0, endColumn = options.endColumn || Number.MAX_VALUE, rowIt = 0, 
         // activeRowNo = 0,
         dataTypes = [], 
         // We count potential delimiters in the prepass, and use the
@@ -733,7 +749,7 @@ var Data = /** @class */ (function () {
             ';': 0,
             '\t': 0
         };
-        columns = this.columns = [];
+        var columns = this.columns = [], itemDelimiter, lines;
         /*
             This implementation is quite verbose. It will be shortened once
             it's stable and passes all the test.
@@ -837,13 +853,16 @@ var Data = /** @class */ (function () {
             }
             for (; i < columnStr.length; i++) {
                 read(i);
-                // Quoted string
                 if (c === '#') {
-                    // The rest of the row is a comment
-                    push();
-                    return;
+                    // If there are hexvalues remaining (#13283)
+                    if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substr(i))) {
+                        // The rest of the row is a comment
+                        push();
+                        return;
+                    }
+                    // Quoted string
                 }
-                if (c === '"') {
+                else if (c === '"') {
                     read(++i);
                     while (i < columnStr.length) {
                         if (c === '"' && cl !== '"' && cn !== '"') {
@@ -1064,80 +1083,28 @@ var Data = /** @class */ (function () {
             }
             return format;
         }
-        /**
-         * @todo
-         * Figure out the best axis types for the data
-         * - If the first column is a number, we're good
-         * - If the first column is a date, set to date/time
-         * - If the first column is a string, set to categories
-         * @private
-         */
-        function deduceAxisTypes() {
-        }
-        if (csv && options.beforeParse) {
-            csv = options.beforeParse.call(this, csv);
-        }
+        var csvStore;
         if (csv) {
-            lines = csv
-                .replace(/\r\n/g, '\n') // Unix
-                .replace(/\r/g, '\n') // Mac
-                .split(options.lineDelimiter || '\n');
-            if (!startRow || startRow < 0) {
-                startRow = 0;
-            }
-            if (!endRow || endRow >= lines.length) {
-                endRow = lines.length - 1;
-            }
-            if (options.itemDelimiter) {
-                itemDelimiter = options.itemDelimiter;
-            }
-            else {
-                itemDelimiter = null;
-                itemDelimiter = guessDelimiter(lines);
-            }
-            var offset = 0;
-            for (rowIt = startRow; rowIt <= endRow; rowIt++) {
-                if (lines[rowIt][0] === '#') {
-                    offset++;
-                }
-                else {
-                    parseRow(lines[rowIt], rowIt - startRow - offset);
-                }
-            }
-            // //Make sure that there's header columns for everything
-            // columns.forEach(function (col) {
-            // });
-            deduceAxisTypes();
-            if ((!options.columnTypes || options.columnTypes.length === 0) &&
-                dataTypes.length &&
-                dataTypes[0].length &&
-                dataTypes[0][1] === 'date' &&
-                !options.dateFormat) {
-                options.dateFormat = deduceDateFormat(columns[0]);
-            }
-            // lines.forEach(function (line, rowNo) {
-            //    var trimmed = self.trim(line),
-            //        isComment = trimmed.indexOf('#') === 0,
-            //        isBlank = trimmed === '',
-            //        items;
-            //    if (
-            //        rowNo >= startRow &&
-            //        rowNo <= endRow &&
-            //        !isComment && !isBlank
-            //    ) {
-            //        items = line.split(itemDelimiter);
-            //        items.forEach(function (item, colNo) {
-            //            if (colNo >= startColumn && colNo <= endColumn) {
-            //                if (!columns[colNo - startColumn]) {
-            //                    columns[colNo - startColumn] = [];
-            //                }
-            //                columns[colNo - startColumn][activeRowNo] = item;
-            //            }
-            //        });
-            //        activeRowNo += 1;
-            //    }
-            // });
-            //
+            csvStore = this.dataStore = new CSVStore(new DataTable(), {
+                csv: csv,
+                csvURL: options.csvURL,
+                enablePolling: options.enablePolling,
+                dataRefreshRate: options.dataRefreshRate
+            }, new CSVParser({
+                csv: csv,
+                startRow: options.startRow,
+                endRow: options.endRow,
+                startColumn: options.startColumn,
+                endColumn: options.endColumn,
+                firstRowAsNames: options.firstRowAsNames,
+                switchRowsAndColumns: options.switchRowsAndColumns,
+                decimalPoint: options.decimalPoint,
+                itemDelimiter: options.itemDelimiter,
+                lineDelimiter: options.lineDelimiter
+                // beforeParse: options.beforeParse
+            }, new DataConverter({}, options.parseDate)));
+            csvStore.load();
+            columns = this.columns = this.getDataColumnsFromDataTable(csvStore.table);
             this.dataFound();
         }
         return columns;
@@ -1150,36 +1117,24 @@ var Data = /** @class */ (function () {
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
     Data.prototype.parseTable = function () {
-        var options = this.options, table = options.table, columns = this.columns || [], startRow = options.startRow || 0, endRow = options.endRow || Number.MAX_VALUE, startColumn = options.startColumn || 0, endColumn = options.endColumn || Number.MAX_VALUE;
+        var options = this.options, table = options.table, startRow = options.startRow || 0, endRow = options.endRow || Number.MAX_VALUE, startColumn = options.startColumn || 0, endColumn = options.endColumn || Number.MAX_VALUE;
+        var columns = [], htmlStore;
         if (table) {
-            if (typeof table === 'string') {
-                table = doc.getElementById(table);
-            }
-            [].forEach.call(table.getElementsByTagName('tr'), function (tr, rowNo) {
-                if (rowNo >= startRow && rowNo <= endRow) {
-                    [].forEach.call(tr.children, function (item, colNo) {
-                        var row = columns[colNo - startColumn];
-                        var i = 1;
-                        if ((item.tagName === 'TD' ||
-                            item.tagName === 'TH') &&
-                            colNo >= startColumn &&
-                            colNo <= endColumn) {
-                            if (!columns[colNo - startColumn]) {
-                                columns[colNo - startColumn] = [];
-                            }
-                            columns[colNo - startColumn][rowNo - startRow] = item.innerHTML;
-                            // Loop over all previous indices and make sure
-                            // they are nulls, not undefined.
-                            while (rowNo - startRow >= i &&
-                                row[rowNo - startRow - i] === void 0) {
-                                row[rowNo - startRow - i] = null;
-                                i++;
-                            }
-                        }
-                    });
-                }
-            });
-            this.dataFound(); // continue
+            htmlStore = this.dataStore = new HTMLTableStore(new DataTable(), {
+                table: typeof table === 'string' ? table : table.id || ''
+            }, new HTMLTableParser({
+                startRow: startRow,
+                endRow: endRow,
+                startColumn: startColumn,
+                endColumn: endColumn,
+                firstRowAsNames: options.firstRowAsNames,
+                switchRowsAndColumns: options.switchRowsAndColumns
+            }, null, new DataConverter({
+                decimalPoint: options.decimalPoint
+            }, options.parseDate)));
+            htmlStore.load();
+            columns = this.columns = this.getDataColumnsFromDataTable(htmlStore.table);
+            this.dataFound();
         }
         return columns;
     };
@@ -1280,6 +1235,7 @@ var Data = /** @class */ (function () {
     };
     /**
      * Get data columns from the data table.
+     * @private
      *
      * @function Highcharts.Data#getDataColumnsFromDataTable
      *
@@ -1289,9 +1245,25 @@ var Data = /** @class */ (function () {
      */
     Data.prototype.getDataColumnsFromDataTable = function (table) {
         var columns = [];
-        objectEach(table.toColumns(), function (elem, key) {
+        var column, element;
+        objectEach(table.getColumns(), function (elemArr, key) {
             if (key !== 'id') {
-                columns.push(elem);
+                column = [];
+                for (var i = 0, iEnd = elemArr.length; i < iEnd; ++i) {
+                    element = elemArr[i];
+                    if (element instanceof Date) {
+                        column.push(element.toString());
+                    }
+                    else if (isNumber(element) || isString(element)) {
+                        column.push(element);
+                    }
+                    else {
+                        column.push(null);
+                    }
+                }
+                if (column.length) {
+                    columns.push(column);
+                }
             }
         });
         return columns;
@@ -1306,28 +1278,38 @@ var Data = /** @class */ (function () {
      */
     Data.prototype.parseGoogleSpreadsheet = function () {
         var _this = this;
-        var chart = this.chart;
-        var options = this.options;
-        if (options.googleSpreadsheetKey) {
-            var store_1 = new GoogleSheetsStore(new DataTable(), options);
-            var columns_1 = [];
-            store_1.on('afterLoad', function () {
-                columns_1 = _this.getDataColumnsFromDataTable(store_1.table);
-                if (columns_1.length > 0) {
+        var chart = this.chart, options = this.options, googleSpreadsheetKey = options.googleSpreadsheetKey, startRow = options.startRow || 0, endRow = options.endRow || Number.MAX_VALUE, startColumn = options.startColumn || 0, endColumn = options.endColumn || Number.MAX_VALUE;
+        var columns = [], store;
+        if (googleSpreadsheetKey) {
+            store = this.dataStore = new GoogleSheetsStore(new DataTable(), {
+                googleSpreadsheetKey: googleSpreadsheetKey,
+                enablePolling: options.enablePolling,
+                dataRefreshRate: options.dataRefreshRate
+            }, new GoogleSheetsParser({
+                startRow: startRow,
+                endRow: endRow,
+                startColumn: startColumn,
+                endColumn: endColumn
+            }, new DataConverter({
+                decimalPoint: options.decimalPoint
+            }, options.parseDate)));
+            store.on('afterLoad', function () {
+                columns = _this.getDataColumnsFromDataTable(store.table);
+                if (columns.length > 0) {
                     if (chart && chart.series) {
                         chart.update({
                             data: {
-                                columns: columns_1
+                                columns: columns
                             }
                         });
                     }
                     else { // #8245
-                        _this.columns = columns_1;
+                        _this.columns = columns;
                         _this.dataFound();
                     }
                 }
             });
-            store_1.load();
+            store.load();
         }
         // This is an intermediate fetch, so always return false.
         return false;
@@ -1489,7 +1471,8 @@ var Data = /** @class */ (function () {
      * @return {number}
      */
     Data.prototype.parseDate = function (val) {
-        var parseDate = this.options.parseDate, ret, key, format, dateFormat = this.options.dateFormat || this.dateFormat, match;
+        var parseDate = this.options.parseDate;
+        var ret, key, format, dateFormat = this.options.dateFormat || this.dateFormat, match;
         if (parseDate) {
             ret = parseDate(val);
         }
@@ -1521,19 +1504,23 @@ var Data = /** @class */ (function () {
             }
             // Fall back to Date.parse
             if (!match) {
+                if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
+                    val = val
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
+                }
                 match = Date.parse(val);
                 // External tools like Date.js and MooTools extend Date object
-                // and returns a date.
+                // and return a date.
                 if (typeof match === 'object' &&
                     match !== null &&
                     match.getTime) {
-                    ret = (match.getTime() -
-                        match.getTimezoneOffset() *
-                            60000);
+                    ret = (match.getTime());
                     // Timestamp
                 }
                 else if (isNumber(match)) {
-                    ret = match - (new Date(match)).getTimezoneOffset() * 60000;
+                    ret = match;
                 }
             }
         }

@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Author: Wojciech Chmiel
  *
@@ -14,12 +14,14 @@
 'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
 var defaultOptions = O.defaultOptions;
+import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+var seriesTypes = SeriesRegistry.seriesTypes;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
@@ -37,8 +39,7 @@ var addEvent = U.addEvent, defined = U.defined, error = U.error, isArray = U.isA
 ''; // detach doclets from following code
 /* eslint-disable no-invalid-this */
 import Axis from '../Core/Axis/Axis.js';
-import '../Series/LineSeries.js';
-var Series = H.Series, Scatter = BaseSeries.seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
+var Scatter = seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.
 oldPointsStateId = [];
@@ -238,7 +239,7 @@ var clusterDefaultOptions = {
         /** @internal */
         lineWidth: 0,
         /** @internal */
-        lineColor: '${palette.backgroundColor}'
+        lineColor: palette.backgroundColor
     },
     /**
      * Fires when the cluster point is clicked and `drillToCluster` is enabled.
@@ -574,7 +575,9 @@ Scatter.prototype.animateClusterPoint = function (clusterObj) {
                 oldPointObj.point.plotX !== newPointObj.point.plotX &&
                 oldPointObj.point.plotY !== newPointObj.point.plotY) {
                 newPointBBox = newPointObj.point.graphic.getBBox();
-                offset = newPointBBox.width / 2;
+                // Marker image does not have the offset (#14342).
+                offset = newPointObj.point.graphic && newPointObj.point.graphic.isImg ?
+                    0 : newPointBBox.width / 2;
                 newPointObj.point.graphic.attr({
                     x: oldPointObj.point.plotX - offset,
                     y: oldPointObj.point.plotY - offset
@@ -1290,7 +1293,9 @@ Scatter.prototype.generatePoints = function () {
     if (clusterOptions &&
         clusterOptions.enabled &&
         series.xData &&
+        series.xData.length &&
         series.yData &&
+        series.yData.length &&
         !chart.polar) {
         type = clusterOptions.layoutAlgorithm.type;
         layoutAlgOptions = clusterOptions.layoutAlgorithm;

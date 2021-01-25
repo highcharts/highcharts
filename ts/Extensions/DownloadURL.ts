@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2015-2020 Oystein Moseng
+ *  (c) 2015-2021 Oystein Moseng
  *
  *  License: www.highcharts.com/license
  *
@@ -25,11 +25,9 @@ declare global {
     }
 }
 
-var win = Highcharts.win,
-    nav = win.navigator,
+const win = Highcharts.win,
     doc = win.document,
-    domurl = win.URL || win.webkitURL || win,
-    isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
+    domurl = win.URL || win.webkitURL || win;
 
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
@@ -41,7 +39,10 @@ var win = Highcharts.win,
  *         Blob
  */
 const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (string|undefined) {
-    var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+    const parts = dataURL
+        .replace(/filename=.*;/, '')
+        .match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+
 
     if (
         parts &&
@@ -53,16 +54,15 @@ const dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL: string): (st
         domurl.createObjectURL
     ) {
         // Try to convert data URL to Blob
-        var binStr = win.atob(parts[3]),
+        const binStr = win.atob(parts[3]),
             buf = new win.ArrayBuffer(binStr.length),
-            binary = new win.Uint8Array(buf),
-            blob;
+            binary = new win.Uint8Array(buf);
 
         for (var i = 0; i < binary.length; ++i) {
             binary[i] = binStr.charCodeAt(i);
         }
 
-        blob = new win.Blob([binary], { 'type': parts[1] });
+        const blob = new win.Blob([binary], { 'type': parts[1] });
         return domurl.createObjectURL(blob);
     }
 };
@@ -83,6 +83,7 @@ const downloadURL = Highcharts.downloadURL = function (
     dataURL: (string|URL),
     filename: string
 ): void {
+    const nav = win.navigator;
     var a = doc.createElement('a'),
         windowRef;
 
@@ -100,6 +101,7 @@ const downloadURL = Highcharts.downloadURL = function (
 
     // Some browsers have limitations for data URL lengths. Try to convert to
     // Blob or fall back. Edge always needs that blob.
+    const isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
     if (isEdgeBrowser || dataURL.length > 2000000) {
         dataURL = dataURLtoBlob(dataURL) || '';
         if (!dataURL) {

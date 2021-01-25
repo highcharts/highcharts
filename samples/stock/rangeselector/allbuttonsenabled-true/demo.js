@@ -16,7 +16,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
         },
 
         subtitle: {
-            text: 'Demo of all buttons enabled. Even though "YTD" and "1y" don\'t apply since we\'re <br>only showing values within one year, they are enabled to allow dynamic interaction'
+            text: 'Demo of all buttons enabled. Even though "YTD" and "1y" don\'t apply since we\'re<br>only showing values within one year, they are enabled to allow dynamic interaction'
         },
 
         tooltip: {

@@ -2,7 +2,7 @@
  *
  *  Plugin for displaying a message when there is no data visible in chart.
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Oystein Moseng
  *
@@ -11,9 +11,11 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
+var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions;
 var chartPrototype = Chart.prototype, defaultOptions = getOptions();
 // Add language option
 extend(defaultOptions.lang, 
@@ -114,7 +116,7 @@ defaultOptions.noData = {
         /** @ignore */
         fontSize: '12px',
         /** @ignore */
-        color: '${palette.neutralColor60}'
+        color: palette.neutralColor60
     }
 };
 /**
@@ -136,7 +138,7 @@ chartPrototype.showNoData = function (str) {
         }
         if (!chart.styledMode) {
             chart.noDataLabel
-                .attr(noDataOptions.attr)
+                .attr(AST.filterUserAttributes(noDataOptions.attr || {}))
                 .css(noDataOptions.style || {});
         }
         chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position || {}), false, 'plotBox');

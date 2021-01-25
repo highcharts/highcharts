@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,14 +10,13 @@
 
 'use strict';
 
-import type AnimationOptionsObject from './Animation/AnimationOptionsObject';
+import type AnimationOptions from './Animation/AnimationOptions';
+import type BBoxObject from './Renderer/BBoxObject';
 import type Chart from './Chart/Chart';
-import type ColorAxisGlobal from './Axis/ColorAxis';
+import type ColorAxis from './Axis/ColorAxis';
 import type CSSObject from './Renderer/CSSObject';
-import type {
-    HTMLDOMElement
-} from './Renderer/DOMElementType';
-import type Point from './Series/Point';
+import type { HTMLDOMElement } from './Renderer/DOMElementType';
+import type Series from './Series/Series';
 import type SVGAttributes from './Renderer/SVG/SVGAttributes';
 import type SVGElement from './Renderer/SVG/SVGElement';
 import A from './Animation/AnimationUtilities.js';
@@ -26,6 +25,39 @@ const {
     setAnimation
 } = A;
 import H from './Globals.js';
+const {
+    isFirefox,
+    marginNames,
+    win
+} = H;
+import Point from './Series/Point.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    discardElement,
+    find,
+    fireEvent,
+    format,
+    isNumber,
+    merge,
+    pick,
+    relativeLength,
+    stableSort,
+    syncTimeout,
+    wrap
+} = U;
+
+declare module './Series/SeriesOptions' {
+    interface SeriesOptions {
+        legendIndex?: number;
+        legendType?: ('point'|'series');
+        showCheckbox?: boolean;
+        showInLegend?: boolean;
+    }
+}
 
 /**
  * Internal types
@@ -38,12 +70,9 @@ declare global {
             x: number;
             y: number;
         }
-        interface SeriesOptions {
-            legendType?: ('point'|'series');
-        }
         class Legend {
             public constructor(chart: Chart, options: LegendOptions);
-            public allItems: Array<(BubbleLegend|Point|Series)>;
+            public allItems: Array<(BubbleLegend|Series|Point)>;
             public baseline?: number;
             public box: SVGElement;
             public chart: Chart;
@@ -95,31 +124,34 @@ declare global {
             ): void;
             public align(alignTo?: BBoxObject): void;
             public colorizeItem(
-                item: (BubbleLegend|Point|Series),
+                item: (BubbleLegend|Series|Point),
                 visible?: boolean
+            ): void;
+            public createCheckboxForItem(
+                item: (BubbleLegend|Series|Point)
             ): void;
             public destroy(): void;
             public destroyItem(
-                item: (BubbleLegend|ColorAxisGlobal|Point|Series)
+                item: (BubbleLegend|ColorAxis|ColorAxis.LegendItemObject|Series|Point)
             ): void;
             public getAlignment(): string;
-            public getAllItems(): Array<(BubbleLegend|Point|Series)>;
+            public getAllItems(): Array<(BubbleLegend|Series|Point)>;
             public handleOverflow(legendHeight: number): number;
             public init(chart: Chart, options: LegendOptions): void;
-            public layoutItem(item: (BubbleLegend|Point|Series)): void;
+            public layoutItem(item: (BubbleLegend|Series|Point)): void;
             public render(): void;
             public positionCheckboxes(): void;
-            public positionItem(item: (BubbleLegend|Point|Series)): void;
+            public positionItem(item: (BubbleLegend|Series|Point)): void;
             public positionItems(): void;
             public proximatePositions(): void;
-            public renderItem(item: (BubbleLegend|Point|Series)): void;
+            public renderItem(item: (BubbleLegend|Series|Point)): void;
             public renderTitle(): void;
             public scroll(
                 scrollBy: number,
-                animation?: (boolean|Partial<AnimationOptionsObject>)
+                animation?: (boolean|Partial<AnimationOptions>)
             ): void;
             public setOptions(options: LegendOptions): void;
-            public setText(item: (BubbleLegend|Point|Series)): void;
+            public setText(item: (BubbleLegend|Series|Point)): void;
             public update(options: LegendOptions, redraw?: boolean): void;
         }
     }
@@ -197,28 +229,6 @@ declare global {
  * @type {"legendItemClick"}
  */
 
-import U from './Utilities.js';
-const {
-    addEvent,
-    css,
-    defined,
-    discardElement,
-    find,
-    fireEvent,
-    format,
-    isNumber,
-    merge,
-    pick,
-    relativeLength,
-    stableSort,
-    syncTimeout,
-    wrap
-} = U;
-
-var isFirefox = H.isFirefox,
-    marginNames = H.marginNames,
-    win = H.win;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -254,7 +264,7 @@ class Legend {
      *
      * */
 
-    public allItems: Array<(Highcharts.BubbleLegend|Point|Highcharts.Series)> = [];
+    public allItems: Array<(Highcharts.BubbleLegend|Series|Point)> = [];
 
     public baseline?: number;
 
@@ -267,8 +277,6 @@ class Legend {
     public clipRect?: SVGElement
 
     public contentGroup: SVGElement = void 0 as any;
-
-    public createCheckboxForItem?: Highcharts.Legend['createCheckboxForItem'];
 
     public currentPage?: number;
 
@@ -329,8 +337,6 @@ class Legend {
     public scrollGroup: SVGElement = void 0 as any;
 
     public scrollOffset?: number;
-
-    public setItemEvents?: Highcharts.Legend['setItemEvents'];
 
     public symbolHeight: number = 0;
 
@@ -487,7 +493,10 @@ class Legend {
      * @todo
      * Make events official: Fires the event `afterColorizeItem`.
      */
-    public colorizeItem(item: (Highcharts.BubbleLegend|Point|Highcharts.Series), visible?: boolean): void {
+    public colorizeItem(
+        item: (Highcharts.BubbleLegend|Series|Point),
+        visible?: boolean
+    ): void {
         (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
             'highcharts-legend-item-hidden'
         );
@@ -559,7 +568,7 @@ class Legend {
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * The item to position
      */
-    public positionItem(item: (Highcharts.BubbleLegend|Point|Highcharts.Series)): void {
+    public positionItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
         var legend = this,
             options = legend.options,
             symbolPadding = options.symbolPadding,
@@ -603,7 +612,12 @@ class Legend {
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * The item to remove
      */
-    public destroyItem(item: (Highcharts.BubbleLegend|Highcharts.ColorAxis|Point|Highcharts.Series)): void {
+    public destroyItem(
+        item: (
+            Highcharts.BubbleLegend|ColorAxis|ColorAxis.LegendItemObject|
+            Series|Point
+        )
+    ): void {
         var checkbox = item.checkbox;
 
         // destroy SVG elements
@@ -640,9 +654,7 @@ class Legend {
         }
 
         // Destroy items
-        this.getAllItems().forEach(function (
-            item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
-        ): void {
+        this.getAllItems().forEach(function (item): void {
             ['legendItem', 'legendGroup'].forEach(destroyItems, item);
         });
 
@@ -674,11 +686,7 @@ class Legend {
 
         if (alignAttr) {
             translateY = alignAttr.translateY;
-            this.allItems.forEach(function (
-                item: (
-                    Highcharts.BubbleLegend|Point|Highcharts.Series
-                )
-            ): void {
+            this.allItems.forEach(function (item): void {
                 var checkbox = item.checkbox,
                     top;
 
@@ -765,8 +773,7 @@ class Legend {
      * @param {Highcharts.Point|Highcharts.Series} item
      *        The item for which to update the text in the legend.
      */
-    public setText(item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
-    ): void {
+    public setText(item: (Highcharts.BubbleLegend|Series|Point)): void {
         var options = this.options;
 
         (item.legendItem as any).attr({
@@ -785,7 +792,7 @@ class Legend {
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * The item to render.
      */
-    public renderItem(item: (Highcharts.BubbleLegend|Point|Highcharts.Series)): void {
+    public renderItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
         var legend = this,
             chart = legend.chart,
             renderer = chart.renderer,
@@ -927,7 +934,7 @@ class Legend {
      * @function Highcharts.Legend#layoutItem
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      */
-    public layoutItem(item: (Highcharts.BubbleLegend|Point|Highcharts.Series)): void {
+    public layoutItem(item: (Highcharts.BubbleLegend|Series|Point)): void {
 
         var options = this.options,
             padding = this.padding,
@@ -1004,14 +1011,10 @@ class Legend {
      * The current items in the legend.
      * @fires Highcharts.Legend#event:afterGetAllItems
      */
-    public getAllItems(): Array<(Highcharts.BubbleLegend|Point|Highcharts.Series)> {
-        var allItems = [] as Array<(
-            Highcharts.BubbleLegend|Point|Highcharts.Series
-        )>;
+    public getAllItems(): Array<(Highcharts.BubbleLegend|Series|Point)> {
+        var allItems = [] as Array<(Highcharts.BubbleLegend|Series|Point)>;
 
-        this.chart.series.forEach(function (
-            series: Highcharts.Series
-        ): void {
+        this.chart.series.forEach(function (series): void {
             var seriesOptions = series && series.options;
 
             // Handle showInLegend. If the series is linked to another series,
@@ -1034,7 +1037,7 @@ class Legend {
             }
         });
 
-        fireEvent(this, 'afterGetAllItems', { allItems: allItems });
+        fireEvent(this, 'afterGetAllItems', { allItems });
 
         return allItems;
     }
@@ -1114,12 +1117,10 @@ class Legend {
      */
     public proximatePositions(): void {
         var chart = this.chart,
-            boxes = [] as Array<Highcharts.Dictionary<any>>,
+            boxes = [] as Array<Record<string, any>>,
             alignLeft = this.options.align === 'left';
 
-        this.allItems.forEach(function (
-            item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
-        ): void {
+        this.allItems.forEach(function (item): void {
             var lastPoint: (Point|undefined),
                 height: number,
                 useFirstPoint = alignLeft,
@@ -1185,7 +1186,7 @@ class Legend {
             chart = legend.chart,
             renderer = chart.renderer,
             legendGroup = legend.group,
-            allItems: Array<(Highcharts.BubbleLegend|Point|Highcharts.Series)>,
+            allItems: Array<(Highcharts.BubbleLegend|Series|Point)>,
             display,
             legendWidth,
             legendHeight,
@@ -1236,8 +1237,8 @@ class Legend {
 
         // sort by legendIndex
         stableSort(allItems, function (
-            a: (Point|Highcharts.Series),
-            b: (Point|Highcharts.Series)
+            a: (Series|Point),
+            b: (Series|Point)
         ): number {
             return ((a.options && a.options.legendIndex) || 0) -
                 ((b.options && b.options.legendIndex) || 0);
@@ -1347,9 +1348,7 @@ class Legend {
      * @param {Highcharts.BBoxObject} alignTo
      * @return {void}
      */
-    public align(
-        alignTo: Highcharts.BBoxObject = this.chart.spacingBox
-    ): void {
+    public align(alignTo: BBoxObject = this.chart.spacingBox): void {
         var chart = this.chart,
             options = this.options;
         // If aligning to the top and the layout is horizontal, adjust for
@@ -1466,12 +1465,7 @@ class Legend {
 
             // Fill pages with Y positions so that the top of each a legend item
             // defines the scroll top for each page (#2098)
-            allItems.forEach(function (
-                item: (
-                    Highcharts.BubbleLegend|Point|Highcharts.Series
-                ),
-                i: number
-            ): void {
+            allItems.forEach(function (item, i): void {
                 var y = (item._legendItemPos as any)[1],
                     h = Math.round((item.legendItem as any).getBBox().height),
                     len = pages.length;
@@ -1588,7 +1582,7 @@ class Legend {
      *
      * @return {void}
      */
-    public scroll(scrollBy: number, animation?: (boolean|Partial<AnimationOptionsObject>)): void {
+    public scroll(scrollBy: number, animation?: (boolean|Partial<AnimationOptions>)): void {
         var chart = this.chart,
             pages = this.pages,
             pageCount = pages.length,
@@ -1680,6 +1674,165 @@ class Legend {
             }, animOptions.duration);
         }
     }
+
+
+    /**
+     * @private
+     * @function Highcharts.Legend#setItemEvents
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @param {Highcharts.SVGElement} legendItem
+     * @param {boolean} [useHTML=false]
+     * @fires Highcharts.Point#event:legendItemClick
+     * @fires Highcharts.Series#event:legendItemClick
+     */
+    public setItemEvents(
+        item: (Highcharts.BubbleLegend|Series|Point),
+        legendItem: SVGElement,
+        useHTML?: boolean
+    ): void {
+        var legend = this,
+            boxWrapper = legend.chart.renderer.boxWrapper,
+            isPoint = item instanceof Point,
+            activeClass = 'highcharts-legend-' +
+                (isPoint ? 'point' : 'series') + '-active',
+            styledMode = legend.chart.styledMode,
+            // When `useHTML`, the symbol is rendered in other group, so
+            // we need to apply events listeners to both places
+            legendItems = useHTML ?
+                [legendItem, item.legendSymbol] :
+                [item.legendGroup];
+
+        // Set the events on the item group, or in case of useHTML, the item
+        // itself (#1249)
+        legendItems.forEach(function (element): void {
+            if (element) {
+                element
+                    .on('mouseover', function (): void {
+                        if (item.visible) {
+                            legend.allItems.forEach(function (inactiveItem): void {
+                                if (item !== inactiveItem) {
+                                    inactiveItem.setState('inactive', !isPoint);
+                                }
+                            });
+                        }
+
+                        item.setState('hover');
+
+                        // A CSS class to dim or hide other than the hovered
+                        // series.
+                        // Works only if hovered series is visible (#10071).
+                        if (item.visible) {
+                            boxWrapper.addClass(activeClass);
+                        }
+
+                        if (!styledMode) {
+                            legendItem.css(
+                                legend.options.itemHoverStyle as any
+                            );
+                        }
+                    })
+                    .on('mouseout', function (): void {
+                        if (!legend.chart.styledMode) {
+                            legendItem.css(
+                                merge(
+                                    item.visible ?
+                                        legend.itemStyle as any :
+                                        legend.itemHiddenStyle as any
+                                )
+                            );
+                        }
+
+                        legend.allItems.forEach(function (inactiveItem): void {
+                            if (item !== inactiveItem) {
+                                inactiveItem.setState('', !isPoint);
+                            }
+                        });
+
+                        // A CSS class to dim or hide other than the hovered
+                        // series.
+                        boxWrapper.removeClass(activeClass);
+
+                        item.setState();
+                    })
+                    .on('click', function (event: PointerEvent): void {
+                        var strLegendItemClick = 'legendItemClick',
+                            fnLegendItemClick = function (): void {
+                                if ((item as any).setVisible) {
+                                    (item as any).setVisible();
+                                }
+                                // Reset inactive state
+                                legend.allItems.forEach(function (inactiveItem): void {
+                                    if (item !== inactiveItem) {
+                                        inactiveItem.setState(
+                                            item.visible ? 'inactive' : '',
+                                            !isPoint
+                                        );
+                                    }
+                                });
+                            };
+
+                        // A CSS class to dim or hide other than the hovered
+                        // series. Event handling in iOS causes the activeClass
+                        // to be added prior to click in some cases (#7418).
+                        boxWrapper.removeClass(activeClass);
+
+                        // Pass over the click/touch event. #4.
+                        event = {
+                            browserEvent: event
+                        } as any;
+
+                        // click the name or symbol
+                        if ((item as any).firePointEvent) { // point
+                            (item as any).firePointEvent(
+                                strLegendItemClick,
+                                event,
+                                fnLegendItemClick
+                            );
+                        } else {
+                            fireEvent(
+                                item, strLegendItemClick, event, fnLegendItemClick
+                            );
+                        }
+                    });
+            }
+        });
+    }
+
+    /**
+     * @private
+     * @function Highcharts.Legend#createCheckboxForItem
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @fires Highcharts.Series#event:checkboxClick
+     */
+    public createCheckboxForItem(
+        item: (Highcharts.BubbleLegend|Series|Point)
+    ): void {
+        var legend = this;
+
+        item.checkbox = createElement('input', {
+            type: 'checkbox',
+            className: 'highcharts-legend-checkbox',
+            checked: (item as any).selected,
+            defaultChecked: (item as any).selected // required by IE7
+        }, legend.options.itemCheckboxStyle, legend.chart.container) as any;
+
+        addEvent(item.checkbox, 'click', function (event: PointerEvent): void {
+            var target = event.target as Highcharts.LegendCheckBoxElement;
+
+            fireEvent(
+                (item as any).series || item,
+                'checkboxClick',
+                { // #3712
+                    checked: target.checked,
+                    item: item
+                },
+                function (): void {
+                    (item as any).select();
+                }
+            );
+        });
+    }
+
 }
 
 // Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
@@ -1694,7 +1847,7 @@ if (
     wrap(Legend.prototype, 'positionItem', function (
         this: Highcharts.Legend,
         proceed: Function,
-        item: (Point|Highcharts.Series)
+        item: (Series|Point)
     ): void {
         var legend = this,
             // If chart destroyed in sync, this is undefined (#2030)

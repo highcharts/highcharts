@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2020 Highsoft AS
+ *  (c) 2016-2021 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -9,9 +9,9 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import Axis from '../Core/Axis/Axis.js';
-import O from '../Core/Options.js';
-var dateFormat = O.dateFormat;
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
 import PlotLineOrBand from '../Core/Axis/PlotLineOrBand.js';
@@ -35,7 +35,7 @@ var defaultConfig = {
      * @apioption xAxis.currentDateIndicator
      */
     currentDateIndicator: true,
-    color: '${palette.highlightColor20}',
+    color: palette.highlightColor20,
     width: 2,
     /**
      * @declare Highcharts.AxisCurrentDateIndicatorLabelOptions
@@ -52,7 +52,7 @@ var defaultConfig = {
          */
         format: '%a, %b %d %Y, %H:%M',
         formatter: function (value, format) {
-            return dateFormat(format, value);
+            return this.axis.chart.time.dateFormat(format, value);
         },
         rotation: 0,
         /**

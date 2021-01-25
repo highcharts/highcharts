@@ -1,7 +1,6 @@
 /* eslint func-style:0 */
 
 QUnit.test('Container initially hidden (#6693)', function (assert) {
-
     var outerOuter = document.createElement('div');
     outerOuter.style.visibility = 'hidden';
     outerOuter.style.display = 'none';
@@ -17,12 +16,13 @@ QUnit.test('Container initially hidden (#6693)', function (assert) {
     container.style.height = '300px';
     outer.appendChild(container);
 
-
     var chart = Highcharts.chart(container, {
-        series: [{
-            type: 'column',
-            data: [1, 3, 2, 4]
-        }]
+        series: [
+            {
+                type: 'column',
+                data: [1, 3, 2, 4]
+            }
+        ]
     });
 
     container.style.display = 'block';
@@ -52,11 +52,39 @@ QUnit.test('Container originally detached (#5783)', function (assert) {
             text: 'The height of the chart is set to 200px'
         },
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
+            ]
         },
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
-        }]
+        series: [
+            {
+                data: [
+                    29.9,
+                    71.5,
+                    106.4,
+                    129.2,
+                    144.0,
+                    176.0,
+                    135.6,
+                    148.5,
+                    216.4,
+                    194.1,
+                    95.6,
+                    54.4
+                ]
+            }
+        ]
     });
 
     document.getElementById('container').appendChild(c);
@@ -76,17 +104,44 @@ QUnit.test('Container originally detached (#5783)', function (assert) {
             text: 'The second chart in the same container'
         },
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            categories: [
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec'
+            ]
         },
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
-            type: 'column'
-        }]
+        series: [
+            {
+                data: [
+                    29.9,
+                    71.5,
+                    106.4,
+                    129.2,
+                    144.0,
+                    176.0,
+                    135.6,
+                    148.5,
+                    216.4,
+                    194.1,
+                    95.6,
+                    54.4
+                ],
+                type: 'column'
+            }
+        ]
     });
 });
 
 QUnit.test('Container parent originally detached (#7024)', function (assert) {
-
     var parent = document.createElement('div');
     var c = document.createElement('div');
 
@@ -102,11 +157,25 @@ QUnit.test('Container parent originally detached (#7024)', function (assert) {
         title: {
             text: 'The height of the chart is set to 210px'
         },
-        series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6,
-                148.5, 216.4, 194.1, 95.6, 54.4],
-            type: 'pie'
-        }]
+        series: [
+            {
+                data: [
+                    29.9,
+                    71.5,
+                    106.4,
+                    129.2,
+                    144.0,
+                    176.0,
+                    135.6,
+                    148.5,
+                    216.4,
+                    194.1,
+                    95.6,
+                    54.4
+                ],
+                type: 'pie'
+            }
+        ]
     });
 
     document.getElementById('container').appendChild(parent);
@@ -115,15 +184,10 @@ QUnit.test('Container parent originally detached (#7024)', function (assert) {
         document.body.contains(chart.container),
         'Chart is attached to DOM'
     );
-    assert.strictEqual(
-        chart.chartWidth,
-        210,
-        'Chart width detected from CSS'
-    );
+    assert.strictEqual(chart.chartWidth, 210, 'Chart width detected from CSS');
 });
 
 QUnit.test('Container hidden by display:block !important', function (assert) {
-
     var style = document.createElement('style');
     document.head.appendChild(style);
     style.sheet.insertRule('.ng-cloak { display: none !important; }', 0);
@@ -139,9 +203,11 @@ QUnit.test('Container hidden by display:block !important', function (assert) {
         title: {
             text: 'The plot area should not overlap the title'
         },
-        series: [{
-            data: [1, 3, 2, 4]
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4]
+            }
+        ]
     });
 
     c.className = '';
@@ -149,8 +215,7 @@ QUnit.test('Container hidden by display:block !important', function (assert) {
     assert.ok(
         chart.plotTop > 15,
         'The chart should make room for the title when rendered inside a ' +
-        'hidden container (#2631)'
+            'hidden container (#2631)'
     );
     document.body.removeChild(c);
-
 });

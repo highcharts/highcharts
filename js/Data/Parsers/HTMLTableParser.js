@@ -35,7 +35,6 @@ var __assign = (this && this.__assign) || function () {
 };
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
-import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
@@ -59,15 +58,20 @@ var HTMLTableParser = /** @class */ (function (_super) {
      *
      * @param {HTMLTableParser.OptionsType} [options]
      * Options for the CSV parser.
+     *
      * @param {HTMLElement | null} tableElement
      * The HTML table to parse
+     *
+     * @param {DataConverter} converter
+     * Parser data converter.
      */
-    function HTMLTableParser(options, tableElement) {
+    function HTMLTableParser(options, tableElement, converter) {
         if (tableElement === void 0) { tableElement = null; }
         var _this = _super.call(this) || this;
         _this.columns = [];
         _this.headers = [];
         _this.options = merge(HTMLTableParser.defaultOptions, options);
+        _this.converter = converter || new DataConverter();
         if (tableElement) {
             _this.tableElement = tableElement;
             _this.tableElementID = tableElement.id;
@@ -114,7 +118,7 @@ var HTMLTableParser = /** @class */ (function (_super) {
      * @emits HTMLTableParser#parseError
      */
     HTMLTableParser.prototype.parse = function (options, eventDetail) {
-        var parser = this, converter = new DataConverter(), columns = [], headers = [], parseOptions = merge(parser.options, options), endRow = parseOptions.endRow, startColumn = parseOptions.startColumn, endColumn = parseOptions.endColumn, firstRowAsNames = parseOptions.firstRowAsNames, tableHTML = parseOptions.tableHTML || this.tableElement;
+        var parser = this, converter = this.converter, columns = [], headers = [], parseOptions = merge(parser.options, options), endRow = parseOptions.endRow, startColumn = parseOptions.startColumn, endColumn = parseOptions.endColumn, firstRowAsNames = parseOptions.firstRowAsNames, tableHTML = parseOptions.tableHTML || this.tableElement;
         if (!(tableHTML instanceof HTMLElement)) {
             parser.emit({
                 type: 'parseError',
@@ -196,7 +200,7 @@ var HTMLTableParser = /** @class */ (function (_super) {
      * A DataTable from the parsed HTML table
      */
     HTMLTableParser.prototype.getTable = function () {
-        return DataTable.fromColumns(this.columns, this.headers);
+        return DataParser.getTableFromColumns(this.columns, this.headers);
     };
     /**
      * Converts the parser instance to ClassJSON.

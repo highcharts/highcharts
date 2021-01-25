@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.
  *
@@ -9,6 +9,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+'use strict';
 import H from '../Core/Globals.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
@@ -149,19 +150,30 @@ extend(SVGElement.prototype, {
         }
         var isLabel = this instanceof SVGLabel;
         if (this.element.nodeName === 'text' || isLabel) {
-            var isRotated = !!this.rotation, correction = !isLabel ? getTextAnchorCorrection(this) :
+            var isRotated = !!this.rotation;
+            var correction = !isLabel ? getTextAnchorCorrection(this) :
                 {
                     x: isRotated ? 1 : 0,
                     y: 0
                 };
-            borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
-            borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
+            var attrX = +this.attr('x');
+            var attrY = +this.attr('y');
+            if (!isNaN(attrX)) {
+                borderPosX = attrX - (bb.width * correction.x) - pad;
+            }
+            if (!isNaN(attrY)) {
+                borderPosY = attrY - (bb.height * correction.y) - pad;
+            }
             if (isLabel && isRotated) {
                 var temp = borderWidth;
                 borderWidth = borderHeight;
                 borderHeight = temp;
-                borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
-                borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
+                if (!isNaN(attrX)) {
+                    borderPosX = attrX - (bb.height * correction.x) - pad;
+                }
+                if (!isNaN(attrY)) {
+                    borderPosY = attrY - (bb.width * correction.y) - pad;
+                }
             }
         }
         this.focusBorder = this.renderer.rect(borderPosX, borderPosY, borderWidth, borderHeight, parseInt((style && style.borderRadius || 0).toString(), 10))

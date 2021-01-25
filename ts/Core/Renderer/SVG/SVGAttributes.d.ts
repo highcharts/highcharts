@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -39,7 +39,7 @@ export interface SVGAttributes {
     scaleX?: number;
     scaleY?: number;
     stroke?: ColorType;
-    style?: CSSObject;
+    style?: CSSObject|string;
     translateX?: number;
     translateY?: number;
     // width?: number;

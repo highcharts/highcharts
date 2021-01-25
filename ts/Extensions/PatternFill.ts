@@ -2,7 +2,7 @@
  *
  *  Module for using patterns or images as point fills.
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *  Author: Torstein Hønsi, Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -13,7 +13,8 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type ColorString from '../Core/Color/ColorString';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type {
@@ -25,6 +26,7 @@ const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -37,7 +39,12 @@ const {
     wrap
 } = U;
 
-import '../Series/LineSeries.js';
+declare module '../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/pattern-fill */
+        calculatePatternDimensions(pattern: PatternFill.PatternOptionsObject): void;
+    }
+}
 
 /**
  * Internal types
@@ -50,16 +57,13 @@ declare global {
             aspectRatio?: number;
             aspectWidth?: number;
         }
-        interface PointLike {
-            calculatePatternDimensions(pattern: PatternFill.PatternOptionsObject): void;
-        }
         interface SVGRenderer {
             defIds?: Array<string>;
             idCounter?: number;
-            patternElements?: Dictionary<SVGElement>;
+            patternElements?: Record<string, SVGElement>;
             addPattern(
                 options: PatternFill.PatternOptionsObject,
-                animation?: (boolean|AnimationOptionsObject)
+                animation?: (boolean|AnimationOptions)
             ): (SVGElement|undefined);
         }
         let patterns: Array<PatternFill.PatternOptionsObject>|undefined;
@@ -178,7 +182,7 @@ declare global {
 ''; // detach doclets above
 
 // Add the predefined patterns
-const patterns = ((): Array<PatternFill.PatternOptionsObject> => {
+const patterns = H.patterns = ((): Array<PatternFill.PatternOptionsObject> => {
     const patterns: Array<PatternFill.PatternOptionsObject> = [],
         colors: Array<string> = getOptions().colors as any;
 
@@ -362,7 +366,7 @@ Point.prototype.calculatePatternDimensions = function (
  */
 SVGRenderer.prototype.addPattern = function (
     options: PatternFill.PatternOptionsObject,
-    animation?: (boolean|Partial<AnimationOptionsObject>)
+    animation?: (boolean|Partial<AnimationOptions>)
 ): (SVGElement|undefined) {
     var pattern: (SVGElement|undefined),
         animate = pick(animation, true),
@@ -481,9 +485,9 @@ SVGRenderer.prototype.addPattern = function (
 
 
 // Make sure we have a series color
-wrap(H.Series.prototype, 'getColor', function (
-    this: Highcharts.Series,
-    proceed: Highcharts.Series['getColor']
+wrap(Series.prototype, 'getColor', function (
+    this: Series,
+    proceed: Series['getColor']
 ): void {
     var oldColor = this.options.color;
 
@@ -513,7 +517,7 @@ wrap(H.Series.prototype, 'getColor', function (
 
 
 // Calculate pattern dimensions on points that have their own pattern.
-addEvent(H.Series, 'render', function (): void {
+addEvent(Series, 'render', function (): void {
     var isResizing = this.chart.isResizing;
 
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
@@ -684,7 +688,7 @@ addEvent(Chart, 'endResize', function (): void {
     ) {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
-        this.series.forEach(function (series: Highcharts.Series): void {
+        this.series.forEach(function (series: Series): void {
             series.points.forEach(function (point: Point): void {
                 var colorOptions = point.options && point.options.color;
 
@@ -763,7 +767,7 @@ addEvent(Chart, 'redraw', function (): void {
 namespace PatternFill {
 
     export interface PatternObject {
-        animation?: Partial<AnimationOptionsObject>;
+        animation?: Partial<AnimationOptions>;
         pattern: PatternOptionsObject;
         patternIndex?: number;
     }

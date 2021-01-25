@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2020 Pawel Fus
+ *  (c) 2010-2021 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -13,9 +13,9 @@
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, format = U.format, merge = U.merge, pick = U.pick, setOptions = U.setOptions, splat = U.splat, wrap = U.wrap;
-import '../Series/LineSeries.js';
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;
 var defaultXAxisOptions = {
@@ -206,7 +206,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 });
 // Bind each series to each yAxis. yAxis needs a reference to all series to
 // calculate extremes.
-addEvent(H.Series, 'bindAxes', function (e) {
+addEvent(Series, 'bindAxes', function (e) {
     if (this.chart.hasParallelCoordinates) {
         var series = this;
         this.chart.axes.forEach(function (axis) {
@@ -219,7 +219,7 @@ addEvent(H.Series, 'bindAxes', function (e) {
     }
 });
 // Translate each point using corresponding yAxis.
-addEvent(H.Series, 'afterTranslate', function () {
+addEvent(Series, 'afterTranslate', function () {
     var series = this, chart = this.chart, points = series.points, dataLength = points && points.length, closestPointRangePx = Number.MAX_VALUE, lastPlotX, point, i;
     if (this.chart.hasParallelCoordinates) {
         for (i = 0; i < dataLength; i++) {
@@ -253,7 +253,7 @@ addEvent(H.Series, 'afterTranslate', function () {
     }
 }, { order: 1 });
 // On destroy, we need to remove series from each axis.series
-addEvent(H.Series, 'destroy', function () {
+addEvent(Series, 'destroy', function () {
     if (this.chart.hasParallelCoordinates) {
         (this.chart.axes || []).forEach(function (axis) {
             if (axis && axis.series) {

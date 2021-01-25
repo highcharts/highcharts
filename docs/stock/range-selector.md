@@ -24,7 +24,7 @@ rangeSelector: {
 },
 ```    
 
-Use the x and y options to customise position. The x and y options offset the selector by pixels from the given alignment.
+Use the x and y options to customize position. The x and y options offset the selector by pixels from the given alignment.
 
 ![ROoULLX-uFGoOnxAlv8P7GRHrBrjyAMVVBXFLry5o5a1nLQAnUkR7uMEOOuclKI_VC5zr6_3D0B1hbbK9tSts58z5ayk-OVx8gLgIyxAau5oAXQIID8IgIdObQM1SD2qHSj12JaH](https://lh3.googleusercontent.com/ROoULLX-uFGoOnxAlv8P7GRHrBrjyAMVVBXFLry5o5a1nLQAnUkR7uMEOOuclKI_VC5zr6_3D0B1hbbK9tSts58z5ayk-OVx8gLgIyxAau5oAXQIID8IgIdObQM1SD2qHSj12JaH)
 
@@ -69,6 +69,22 @@ rangeSelector: {
 ```
 
 ![RXAXKRKmXdJAoJfEZIsYiuFOJu7_-8SQ98TIZfdhGBhu9hsRXCJwlBg-3V8BfTY4u30XIwhpeLnsMq0mMnDdzGMQ9T7O_bqsjKjGF2xbmKA0az-a77snT9_40wgdSbaSypH_XSTw](https://lh5.googleusercontent.com/RXAXKRKmXdJAoJfEZIsYiuFOJu7_-8SQ98TIZfdhGBhu9hsRXCJwlBg-3V8BfTY4u30XIwhpeLnsMq0mMnDdzGMQ9T7O_bqsjKjGF2xbmKA0az-a77snT9_40wgdSbaSypH_XSTw)
+
+Input type
+----------
+
+The option `inputDateFormat` is used to determine which type of input to show, `datetime-local`, `date` or `time` and falling back to `text` when the browser does not support the input type or the format contains milliseconds. The default setting of `%b %e, %Y` for example is going to show a `date` input when the browser supports it, while the example below is going to result in a `datetime-local` input:
+
+```js
+rangeSelector: {
+	inputDateFormat: '%b %e, %Y %H:%M'
+},
+```
+
+Responsive
+----------
+
+By default the range selector buttons will collapse into a dropdown when there is not enough room to show everything in a single row, this behaviour can be controlled using the `dropdown` option. More info on this can be found in the [API docs](https://api.highcharts.com/highstock/rangeSelector.dropdown)
 
 Custom button click event
 -------------------------

@@ -3,7 +3,7 @@ Line chart
 
 The line chart is represented by a series of datapoints connected with a straight line. Line charts are most often used to visualize data that changes over time.
 
-![line.png](line.png)
+<iframe style="width: 100%; height: 470px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/line-basic" allow="fullscreen"></iframe>
 
 Line chart features
 ===================
@@ -19,7 +19,7 @@ Allows the use of steps instead of a straight line.
 
 ![step_demo.png](step_demo.png)
 
-[Try it here](https://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/highcharts/plotoptions/line-step/)
+[Try it here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/line-step/)
 
 Code to enable step:
 

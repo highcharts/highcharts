@@ -10,8 +10,15 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataTableRow from '../DataTableRow';
+
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
 import DataTable from '../DataTable.js';
@@ -70,11 +77,18 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      *
      * @param {CSVParser.OptionsType} [options]
      * Options for the CSV parser.
+     *
+     * @param {DataConverter} converter
+     * Parser data converter.
      */
-    public constructor(options?: CSVParser.OptionsType) {
+    public constructor(
+        options?: CSVParser.OptionsType,
+        converter?: DataConverter
+    ) {
         super();
 
         this.options = merge(CSVParser.defaultOptions, options);
+        this.converter = converter || new DataConverter();
     }
 
     /* *
@@ -84,10 +98,12 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      * */
     private columns: Array<Array<DataTableRow.CellType>> = [];
     private headers: Array<string> = [];
+    private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
     private guessedDecimalPoint?: string;
     private decimalRegex?: RegExp;
     private options: CSVParser.ClassJSONOptions;
+    public converter: DataConverter;
 
 
     /**
@@ -107,6 +123,8 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const parser = this,
+            dataTypes = parser.dataTypes,
+            converter = parser.converter,
             parserOptions = merge(true, this.options, options),
             {
                 beforeParse,
@@ -122,12 +140,13 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 startRow,
                 endRow
             } = parserOptions,
+            column,
             i: number,
             colsCount: number;
 
-        this.columns = [];
+        parser.columns = [];
 
-        this.emit<DataParser.EventObject>({
+        parser.emit<DataParser.EventObject>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -159,8 +178,16 @@ class CSVParser extends DataParser<DataParser.EventObject> {
             // If the first row contain names, add them to the
             // headers array and skip the row.
             if (firstRowAsNames) {
-                parser.headers = lines[0]
+                const headers = lines[0]
                     .split(itemDelimiter || parser.guessedItemDelimiter || ',');
+
+                // Remove ""s from the headers
+                for (let i = 0; i < headers.length; i++) {
+                    headers[i] = headers[i].replace(/^["']|["']$/g, '');
+                }
+
+                parser.headers = headers;
+
                 startRow++;
             }
 
@@ -171,6 +198,26 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                     offset++;
                 } else {
                     parser.parseCSVRow(lines[rowIt], rowIt - startRow - offset);
+                }
+            }
+
+            if (dataTypes.length &&
+                dataTypes[0].length &&
+                dataTypes[0][1] === 'date' && // format is a string date
+                !parser.converter.getDateFormat()
+            ) {
+                parser.converter.deduceDateFormat(
+                    parser.columns[0] as Array<string>, null, true);
+            }
+
+            // Guess types.
+            for (let i = 0, iEnd = parser.columns.length; i < iEnd; ++i) {
+                column = parser.columns[i];
+
+                for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
+                    if (column[j] && typeof column[j] === 'string') {
+                        parser.columns[i][j] = converter.asGuessedType(column[j] as string);
+                    }
                 }
             }
         }
@@ -191,8 +238,9 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         rowNumber: number
     ): void {
         const parser = this,
-            converter = new DataConverter(),
+            converter = this.converter,
             columns = parser.columns || [],
+            dataTypes = parser.dataTypes,
             { startColumn, endColumn } = parser.options,
             itemDelimiter = parser.options.itemDelimiter || parser.guessedItemDelimiter;
 
@@ -221,12 +269,39 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         /**
          * @private
          */
+        function pushType(type: string): void {
+            if (dataTypes.length < column + 1) {
+                dataTypes.push([type]);
+            }
+            if (dataTypes[column][dataTypes[column].length - 1] !== type) {
+                dataTypes[column].push(type);
+            }
+        }
+
+        /**
+         * @private
+         */
         function push(): void {
             if (startColumn > actualColumn || actualColumn > endColumn) {
                 // Skip this column, but increment the column count (#7272)
                 ++actualColumn;
                 token = '';
                 return;
+            }
+
+            // Save the type of the token.
+            if (typeof token === 'string') {
+                if (!isNaN(parseFloat(token)) && isFinite(token as any)) {
+                    token = parseFloat(token) as any;
+                    pushType('number');
+                } else if (!isNaN(Date.parse(token))) {
+                    token = token.replace(/\//g, '-');
+                    pushType('date');
+                } else {
+                    pushType('string');
+                }
+            } else {
+                pushType('number');
             }
 
             if (columns.length < column + 1) {
@@ -247,8 +322,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 }
             }
 
-            columns[column][rowNumber] = typeof token !== 'number' ?
-                converter.asGuessedType(token) : token;
+            columns[column][rowNumber] = token;
 
             token = '';
             ++column;
@@ -266,13 +340,16 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         for (; i < columnStr.length; i++) {
             read(i);
 
-            // Quoted string
             if (c === '#') {
-                // The rest of the row is a comment
-                push();
-                return;
+                // If there are hexvalues remaining (#13283)
+                if (!/^#[0-F]{3,3}|[0-F]{6,6}/i.test(columnStr.substr(i))) {
+                    // The rest of the row is a comment
+                    push();
+                    return;
+                }
             }
 
+            // Quoted string
             if (c === '"') {
                 read(++i);
 
@@ -431,7 +508,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      * A DataTable from the parsed CSV
      */
     public getTable(): DataTable {
-        return DataTable.fromColumns(this.columns, this.headers);
+        return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 
     /**

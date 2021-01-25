@@ -51,6 +51,7 @@ var DataTableRow = /** @class */ (function () {
             this.id = uniqueKey();
         }
         delete cells.id;
+        this.watchCells();
     }
     /* *
      *
@@ -431,6 +432,20 @@ var DataTableRow = /** @class */ (function () {
             cellValue: cellValue
         });
         return true;
+    };
+    DataTableRow.prototype.watchCells = function () {
+        var row = this;
+        /**
+         * @private
+         * @param {DataTableRow.EventObject} e
+         * Received event.
+         */
+        function callback(e) {
+            row.emit({ type: 'afterChangeRow', detail: e.detail });
+        }
+        row.on('afterClearRow', callback);
+        row.on('afterDeleteCell', callback);
+        row.on('afterUpdateCell', callback);
     };
     return DataTableRow;
 }());

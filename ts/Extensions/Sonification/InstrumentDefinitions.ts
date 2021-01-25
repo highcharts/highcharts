@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Instrument definitions for sonification module.
  *
@@ -18,7 +18,7 @@
  */
 declare global {
     namespace Highcharts {
-        interface InstrumentsDictionary extends Dictionary<Instrument> {
+        interface InstrumentsDictionary extends Record<string, Instrument> {
             sawtooth: Instrument;
             sawtoothMajor: Instrument;
             sawtoothMusical: Instrument;

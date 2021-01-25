@@ -13,14 +13,17 @@
 
 import type ColorType from '../Color/ColorType';
 import type Point from '../Series/Point';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../Series/PointOptions';
+import type PositionObject from '../Renderer/PositionObject';
+import type Series from '../Series/Series';
+import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import O from '../Options.js';
-const {
-    dateFormat
-} = O;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 const {
@@ -45,7 +48,7 @@ declare global {
         interface Axis {
             axisBorder?: SVGElement;
             getMaxLabelDimensions(
-                ticks: Dictionary<Tick>,
+                ticks: Record<string, Tick>,
                 tickPositions: Array<(number|string)>
             ): SizeObject;
             addExtraBorder(
@@ -209,10 +212,10 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
  * @todo Move this to the generic axis implementation, as it is used there.
  */
 Axis.prototype.getMaxLabelDimensions = function (
-    ticks: Highcharts.Dictionary<Highcharts.Tick>,
+    ticks: Record<string, Highcharts.Tick>,
     tickPositions: Array<(number|string)>
-): Highcharts.SizeObject {
-    var dimensions: Highcharts.SizeObject = {
+): SizeObject {
+    var dimensions: SizeObject = {
         width: 0,
         height: 0
     };
@@ -296,7 +299,7 @@ addEvent(
     function (
         this: Tick,
         e: {
-            pos: Highcharts.PositionObject;
+            pos: PositionObject;
             tickmarkOffset: number;
             index: number;
         }
@@ -591,7 +594,7 @@ class GridAxis {
      */
     public static onAfterGetTitlePosition(
         this: Axis,
-        e: { titlePosition: Highcharts.PositionObject }
+        e: { titlePosition: PositionObject }
     ): void {
         const axis = this;
         const options = axis.options;
@@ -677,7 +680,7 @@ class GridAxis {
                     value
                 } = this;
                 const tickPos = axis.tickPositions;
-                const series: Highcharts.Series = (
+                const series: Series = (
                     axis.isLinked ?
                         (axis.linkedParent as any) :
                         axis
@@ -686,7 +689,7 @@ class GridAxis {
                 const isLast = value === tickPos[tickPos.length - 1];
                 const point: (Point|undefined) =
                     series && find(series.options.data as any, function (
-                        p: Highcharts.PointOptionsType
+                        p: (PointOptions|PointShortOptions)
                     ): boolean {
                         return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
                     });
@@ -696,7 +699,7 @@ class GridAxis {
                     // For the Gantt set point aliases to the pointCopy
                     // to do not change the original point
                     pointCopy = merge(point);
-                    H.seriesTypes.gantt.prototype.setGanttPointAliases(pointCopy as any);
+                    H.seriesTypes.gantt.prototype.pointClass.setGanttPointAliases(pointCopy as any);
                 }
                 // Make additional properties available for the
                 // formatter
@@ -890,7 +893,7 @@ class GridAxis {
 
                 if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
                     (axis.ticks[lastTick].mark as any).hide();
-                } else {
+                } else if (axis.ticks[lastTick - 1]) {
                     (axis.ticks[lastTick - 1].mark as any).show();
                 }
             }
@@ -907,38 +910,39 @@ class GridAxis {
         const gridOptions = options.grid || {};
         const userLabels = axis.userOptions.labels || {};
 
-        if (axis.horiz) {
-            if (gridOptions.enabled === true) {
-                axis.series.forEach(function (series: Highcharts.Series): void {
+        // Fire this only for the Gantt type chart, #14868.
+        if (gridOptions.enabled) {
+            if (axis.horiz) {
+                axis.series.forEach(function (series): void {
                     series.options.pointRange = 0;
                 });
-            }
 
-            // Lower level time ticks, like hours or minutes, represent
-            // points in time and not ranges. These should be aligned
-            // left in the grid cell by default. The same applies to
-            // years of higher order.
-            if (
-                tickInfo &&
-                options.dateTimeLabelFormats &&
-                options.labels &&
-                !defined(userLabels.align) &&
-                (
-                    (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
-                    tickInfo.count > 1 // years
-                )
-            ) {
-                options.labels.align = 'left';
+                // Lower level time ticks, like hours or minutes, represent
+                // points in time and not ranges. These should be aligned
+                // left in the grid cell by default. The same applies to
+                // years of higher order.
+                if (
+                    tickInfo &&
+                    options.dateTimeLabelFormats &&
+                    options.labels &&
+                    !defined(userLabels.align) &&
+                    (
+                        (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
+                        tickInfo.count > 1 // years
+                    )
+                ) {
+                    options.labels.align = 'left';
 
-                if (!defined(userLabels.x)) {
-                    options.labels.x = 3;
+                    if (!defined(userLabels.x)) {
+                        options.labels.x = 3;
+                    }
                 }
-            }
-        } else {
-            // Don't trim ticks which not in min/max range but
-            // they are still in the min/max plus tickInterval.
-            if (this.options.type !== 'treegrid' && axis.grid?.columns) {
-                this.minPointOffset = this.tickInterval;
+            } else {
+                // Don't trim ticks which not in min/max range but
+                // they are still in the min/max plus tickInterval.
+                if (this.options.type !== 'treegrid' && axis.grid?.columns) {
+                    this.minPointOffset = this.tickInterval;
+                }
             }
         }
     }

@@ -154,3 +154,17 @@ Highcharts.chart('chart5', {
         googleSpreadsheetKey: '0AoIaUO7wH1HwdENPcGVEVkxfUDJkMmFBcXMzOVVPdHc'
     }
 });
+
+// demo - data module - HTML table
+Highcharts.chart('chart6', {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'Data module - HTML table'
+    },
+    data: {
+        table: 'datatable',
+        decimalPoint: ','
+    }
+});

@@ -1,11 +1,11 @@
-Dynamic data with the accessibility module
+Accessible dynamic data
 ===
 
 The Highcharts suite of products has extensive dynamic support. Changes to the layout, design, and data is supported after the chart has been created, using methods like [`chart.update`](https://api.highcharts.com/class-reference/Highcharts.Chart#update) and [`series.setData`](https://api.highcharts.com/class-reference/Highcharts.Series#setData). This gives us some interesting challenges for accessibility, particularly for non-visual users.
 
 Since Highcharts version 7.1, the Accessibility module supports dynamic data. This includes support for changing the accessibility options dynamically, but more importantly it also supports announcing new chart data to screen reader users. Included with this is support for drilldown. When a screen reader user drills down to a new series, they will be notified of the new data in this series.
 
-To enable announcing new data and drilldown for your charts, set the [`accessibility.announceNewData.enabled`](https://api.highcharts.com/highcharts/accessibility.announceNewData.enabled) option. Note that this will only users of screen readers and similar assistive technology. The announcements are made accessible to screen readers, and the screen reader will let its user know that there is new data. By default, the screen reader user will be notified every time there is new data, a maximum of once every 5 seconds.
+To enable announcing new data and drilldown for your charts, set the [`accessibility.announceNewData.enabled`](https://api.highcharts.com/highcharts/accessibility.announceNewData.enabled) option. Note that this will only work for users of screen readers and similar assistive technology. The announcements are made accessible to screen readers, and the screen reader will let its user know that there is new data. By default, the screen reader user will be notified every time there is new data, a maximum of once every 5 seconds.
 
 It is important to note that these announcements will generally not be useful if they are too frequent, and care has to be taken not to annoy the end user. For charts that are updating often, consider if you should make announcements in batches, and perhaps make snapshots of the data accessible.
 

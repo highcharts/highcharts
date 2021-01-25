@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,15 +13,18 @@
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        errorElements?: Array<SVGElement>;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            errorElements?: Array<SVGElement>;
-        }
         interface ChartOptions {
             displayErrors?: boolean;
         }
@@ -29,7 +32,7 @@ declare global {
             title: string;
             text: string;
         }
-        const errorMessages: (Dictionary<ErrorMessageObject>|undefined);
+        const errorMessages: (Record<string, ErrorMessageObject>|undefined);
     }
 }
 
@@ -98,7 +101,8 @@ addEvent(Chart, 'displayError', function (
                 /<h1>(.*)<\/h1>/g,
                 '<br><span style="font-size: 24px">$1</span><br>'
             )
-            .replace(/<\/p>/g, '</p><br>');
+            .replace(/<p>/g, '')
+            .replace(/<\/p>/g, '<br>');
 
         // Render red chart frame.
         chart.errorElements[0] = renderer.rect(

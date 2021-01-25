@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Utility functions for accessibility module.
  *
@@ -120,8 +120,7 @@ function setElAttrs(el, attrs) {
             el.removeAttribute(attr);
         }
         else {
-            var cleanedVal = escapeStringForHTML('' + val);
-            el.setAttribute(attr, cleanedVal);
+            el.setAttribute(attr, val);
         }
     });
 }

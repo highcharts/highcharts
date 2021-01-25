@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Extension for 3D charts
  *
@@ -1508,21 +1508,29 @@ var Chart3D;
                 }].forEach(function (cfg) {
                 this.renderer.definition({
                     tagName: 'filter',
-                    id: 'highcharts-' + cfg.name,
+                    attributes: {
+                        id: 'highcharts-' + cfg.name
+                    },
                     children: [{
                             tagName: 'feComponentTransfer',
                             children: [{
                                     tagName: 'feFuncR',
-                                    type: 'linear',
-                                    slope: cfg.slope
+                                    attributes: {
+                                        type: 'linear',
+                                        slope: cfg.slope
+                                    }
                                 }, {
                                     tagName: 'feFuncG',
-                                    type: 'linear',
-                                    slope: cfg.slope
+                                    attributes: {
+                                        type: 'linear',
+                                        slope: cfg.slope
+                                    }
                                 }, {
                                     tagName: 'feFuncB',
-                                    type: 'linear',
-                                    slope: cfg.slope
+                                    attributes: {
+                                        type: 'linear',
+                                        slope: cfg.slope
+                                    }
                                 }]
                         }]
                 });

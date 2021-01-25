@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -180,12 +180,11 @@ function GLShader(gl) {
         // '}',
         'void main(void) {',
         'vec4 col = fillColor;',
-        'vec4 tcol;',
+        'vec4 tcol = texture2D(uSampler, gl_PointCoord.st);',
         'if (hasColor) {',
         'col = vColor;',
         '}',
         'if (isCircle) {',
-        'tcol = texture2D(uSampler, gl_PointCoord.st);',
         'col *= tcol;',
         'if (tcol.r < 0.0) {',
         'discard;',

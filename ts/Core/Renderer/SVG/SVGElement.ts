@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,7 +13,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../AlignObject';
-import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
@@ -24,7 +24,6 @@ import type {
     SVGDOMElement
 } from '../DOMElementType';
 import type GradientColor from '../../Color/GradientColor';
-import type HTMLElement from '../HTML/HTMLElement';
 import type RectangleObject from '../RectangleObject';
 import type ShadowOptionsObject from '../ShadowOptionsObject';
 import type SVGAttributes from './SVGAttributes';
@@ -32,6 +31,8 @@ import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 import A from '../../Animation/AnimationUtilities.js';
+import AST from '../HTML/AST.js';
+
 const {
     animate,
     animObject,
@@ -49,6 +50,7 @@ const {
     SVG_NS,
     win
 } = H;
+import palette from '../../Color/Palette.js';
 import U from '../../Utilities.js';
 const {
     attr,
@@ -69,9 +71,6 @@ const {
     syncTimeout,
     uniqueKey
 } = U;
-
-type ImportedBBoxObject = BBoxObject;
-type ImportedAlignObject = AlignObject;
 
 /**
  * @private
@@ -97,7 +96,6 @@ declare global {
         cutHeight?: number;
     }
     namespace Highcharts {
-        type BBoxObject = ImportedBBoxObject;
         class SVGElement {
             public constructor();
             [key: string]: any;
@@ -125,7 +123,7 @@ declare global {
             public alignSetter(value: ('left'|'center'|'right')): void;
             public animate(
                 params: SVGAttributes,
-                options?: (boolean|DeepPartial<AnimationOptionsObject>),
+                options?: (boolean|DeepPartial<AnimationOptions>),
                 complete?: Function
             ): SVGElement;
             public applyTextOutline(textOutline: string): void;
@@ -809,7 +807,7 @@ class SVGElement {
      */
     public animate(
         params: SVGAttributes,
-        options?: (boolean|Partial<AnimationOptionsObject>),
+        options?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement {
         var animOptions = animObject(
@@ -840,7 +838,7 @@ class SVGElement {
             // Call the end step synchronously
             objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
-                    animOptions.step.call(this as any, val, { prop: prop, pos: 1 });
+                    animOptions.step.call(this, val, { prop: prop, pos: 1, elem: this });
                 }
             }, this);
         }
@@ -2119,8 +2117,10 @@ class SVGElement {
                 }
 
                 touchEventFired = true;
-                // prevent other events from being fired. #9682
-                e.preventDefault();
+                if (e.cancelable !== false) {
+                    // prevent other events from being fired. #9682
+                    e.preventDefault();
+                }
             };
 
             element.onclick = function (e: Event): void {
@@ -2290,7 +2290,7 @@ class SVGElement {
             }
         }, textPathOptions);
 
-        attrs = textPathOptions.attributes;
+        attrs = AST.filterUserAttributes(textPathOptions.attributes);
 
         if (path && textPathOptions && textPathOptions.enabled) {
             // In case of fixed width for a text, string is rebuilt
@@ -2477,7 +2477,7 @@ class SVGElement {
             transform;
 
         const defaultShadowOptions: ShadowOptionsObject = {
-            color: '${palette.neutralColor100}',
+            color: palette.neutralColor100,
             offsetX: 1,
             offsetY: 1,
             opacity: 0.15,
@@ -2522,7 +2522,7 @@ class SVGElement {
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
-                        '${palette.neutralColor100}'
+                        palette.neutralColor100
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
@@ -2734,29 +2734,24 @@ class SVGElement {
      * @param {string} value
      */
     public titleSetter(value: string): void {
-        var titleNode: SVGDOMElement = (
-            this.element.getElementsByTagName('title')[0] as any
-        );
+        const el = this.element;
+        const titleNode = el.getElementsByTagName('title')[0] ||
+            doc.createElementNS(this.SVG_NS, 'title');
 
-        if (!titleNode) {
-            titleNode = doc.createElementNS(this.SVG_NS, 'title') as any;
-            this.element.appendChild(titleNode);
+        // Move to first child
+        if (el.insertBefore) {
+            el.insertBefore(titleNode, el.firstChild);
+        } else {
+            el.appendChild(titleNode);
         }
 
-        // Remove text content if it exists
-        if (titleNode.firstChild) {
-            titleNode.removeChild(titleNode.firstChild);
-        }
-
-        titleNode.appendChild(
-            doc.createTextNode(
+        // Replace text content and escape markup
+        titleNode.textContent =
                 // #3276, #3895
                 String(pick(value, ''))
                     .replace(/<[^>]*>/g, '')
                     .replace(/&lt;/g, '<')
-                    .replace(/&gt;/g, '>')
-            )
-        );
+                    .replace(/&gt;/g, '>');
     }
 
     /**

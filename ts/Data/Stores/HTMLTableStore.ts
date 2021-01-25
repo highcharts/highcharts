@@ -203,18 +203,20 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
     /**
      * Creates an HTML table from the datatable on the store instance.
      *
-     * @param {HTMLTableStore.ExportOptions} exportOptions
+     * @param {HTMLTableStore.ExportOptions} [exportOptions]
      * Options used for exporting.
      *
      * @return {string}
      * The HTML table.
      */
-    private getHTMLTableForExport(exportOptions?: HTMLTableStore.ExportOptions): string {
+    private getHTMLTableForExport(
+        exportOptions: HTMLTableStore.ExportOptions = {}
+    ): string {
         const options = exportOptions,
-            decimalPoint = options?.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
+            decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.',
             exportNames = (this.parserOptions.firstRowAsNames !== false),
-            useMultiLevelHeaders = options?.useMultiLevelHeaders,
-            useRowspanHeaders = options?.useRowspanHeaders;
+            useMultiLevelHeaders = options.useMultiLevelHeaders,
+            useRowspanHeaders = options.useRowspanHeaders;
 
         const isRowEqual = function (
             row1: Array<(number | string | undefined)>,
@@ -344,7 +346,10 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
                 val + '</' + tag + '>';
         };
 
-        const { columnNames, columnValues } = this.getColumnsForExport(options?.exportIDColumn),
+        const { columnNames, columnValues } = this.getColumnsForExport(
+                options.exportIDColumn,
+                options.usePresentationOrder
+            ),
             htmlRows: Array<string> = [],
             columnsCount = columnNames.length;
 
@@ -472,6 +477,12 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
     }
 
+    /**
+     * Converts the store to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this store.
+     */
     public toJSON(): HTMLTableStore.ClassJSON {
         const store = this,
             json: HTMLTableStore.ClassJSON = {
@@ -523,11 +534,12 @@ namespace HTMLTableStore {
      */
     export interface ExportOptions extends Record<string, unknown> {
         decimalPoint?: string | null;
+        exportIDColumn?: boolean;
+        tableCaption?: string;
         useLocalDecimalPoint?: boolean;
-        exportIDColumn: boolean;
-        tableCaption?: string | boolean;
-        useRowspanHeaders?: boolean;
         useMultiLevelHeaders?: boolean;
+        useRowspanHeaders?: boolean;
+        usePresentationOrder?: boolean;
     }
 
     /**

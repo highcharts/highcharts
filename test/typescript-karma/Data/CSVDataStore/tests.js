@@ -85,6 +85,60 @@ test('CSVStore from string, with decimalpoint option', function(assert){
     );
 });
 
+test('CSVStore, negative values', function (assert) {
+    // If the final value is undefined it will be trimmed
+    const array = [-3, -3.1, -.2, 2.1, undefined, 1];
+
+    let store = new CSVStore(undefined, {
+        csv: ['Values', ...array].join('\n')
+    });
+
+    store.load();
+
+    assert.deepEqual(
+        store.table.getColumns()['Values'],
+        array
+    );
+
+})
+
+test('CSV with ""s', (assert) => {
+    const csv = `"test","test2"
+12,"2"
+"a",4
+"s",5
+12,"5"
+`
+    const datastore = new CSVStore(undefined, {
+        csv
+    });
+
+    datastore.load();
+
+    assert.deepEqual(
+        Object.keys(datastore.table.getColumns()),
+        ['id', 'test', 'test2'],
+        'Headers should not contain ""s'
+    )
+
+    datastore.describeColumn('test', {
+        dataType: 'string'
+    })
+
+    assert.strictEqual(
+        datastore.save().split('\n')[1].split(',')[0],
+        '\"12\"',
+        'The first value (12) should be quoted when exported to csv, if dataType is set to string'
+    )
+
+    // Not quite here yet
+
+    // assert.strictEqual(
+    //     datastore.save(),
+    //     csv,
+    //     'Output should be same as input'
+    // )
+});
 test('CSVStore from URL', function (assert) {
     const registeredEvents = [];
 

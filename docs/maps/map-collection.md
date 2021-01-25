@@ -100,14 +100,14 @@ The **hc-key** property reflects the naming convention of the maps, and can be u
 
 Attempts are made to use commonly known codes for each level, to increase readability. As an example, most countries are identified by their two letter ISO-3166 code. Most admin1 areas are identified by their postal codes. For United States, admin2 (county) areas are identified by their FIPS codes.
 
-In addition to the above mentioned properties, all points have an **id** property that is stored on the point itself, rather than in the properties object. The **id** property is an unique ID for the point within the map. It follows a hierarchical system identical to that of the **hc-key** property, but uses capital letters and periods as delimiters.
+In addition to the above mentioned properties, all points have an **id** property that is stored on the point itself, rather than in the properties object. The **id** property is a unique ID for the point within the map. It follows a hierarchical system identical to that of the **hc-key** property, but uses capital letters and periods as delimiters.
 
 Some maps may provide additional properties that are not mentioned in the above table. Open the GeoJSON/Javascript source of the map in a text editor to find all available properties.
 
 Using parts of a map
 --------------------
 
-If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/maps/plotoptions/series-allareas-false/).
+If you can't find the exact map that you want in the collection, it is easy to use only selected parts of a larger area. Say you want a comparative map of Canada, USA and Mexico. Since we don't have that exact combination in the collection (as of now), you can use the map called "North America without Central". This map also contains Greenland as well as Caribbean islands. So we apply a data set only for the three countries we want, and set the [allAreas](https://api.highcharts.com/highmaps/plotOptions.map.allAreas) option to false. This option makes sure all null points (the countries that don't have data), are hidden. See [demo on jsFiddle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/maps/plotoptions/series-allareas-false/).
 
 Modify our maps
 ---------------

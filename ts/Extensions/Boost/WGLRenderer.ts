@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -15,17 +15,16 @@
 import type Chart from '../../Core/Chart/Chart';
 import type ColorString from '../../Core/Color/ColorString';
 import type Point from '../../Core/Series/Point';
+import type PositionObject from '../../Core/Renderer/PositionObject';
+import type Series from '../../Core/Series/Series';
+import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import Color from '../../Core/Color/Color.js';
-const {
-    parse: color
-} = Color;
+const { parse: color } = Color;
 import GLShader from './WGLShader.js';
 import GLVertexBuffer from './WGLVBuffer.js';
 import H from '../../Core/Globals.js';
-const {
-    doc
-} = H;
+const { doc } = H;
 import U from '../../Core/Utilities.js';
 const {
     isNumber,
@@ -91,7 +90,7 @@ declare global {
             hasMarkers: boolean;
             markerFrom: number;
             markerTo?: number;
-            segments: Array<Dictionary<number>>;
+            segments: Array<Record<string, number>>;
             series: Series;
             showMarkers: boolean;
             skipTranslation?: boolean;
@@ -151,6 +150,7 @@ function GLRenderer(
     var shader: Highcharts.BoostGLShader = false as any,
         // Vertex buffers - keyed on shader attribute name
         vbuffer: Highcharts.BoostGLVertexBuffer = false as any,
+        vlen = 0,
         // Opengl context
         gl: WebGLRenderingContext = false as any,
         // Width of our viewport in pixels
@@ -168,18 +168,18 @@ function GLRenderer(
         // The series stack
         series: Array<Highcharts.BoostGLSeriesObject> = [],
         // Texture handles
-        textureHandles: Highcharts.Dictionary<(
+        textureHandles: Record<string, (
             Highcharts.BoostGLTextureObject
         )> = {},
         // Things to draw as "rectangles" (i.e lines)
-        asBar: Highcharts.Dictionary<boolean> = {
+        asBar: Record<string, boolean> = {
             'column': true,
             'columnrange': true,
             'bar': true,
             'area': true,
             'arearange': true
         },
-        asCircle: Highcharts.Dictionary<boolean> = {
+        asCircle: Record<string, boolean> = {
             'scatter': true,
             'bubble': true
         },
@@ -213,7 +213,7 @@ function GLRenderer(
     /**
      * @private
      */
-    function seriesPointCount(series: Highcharts.Series): number {
+    function seriesPointCount(series: Series): number {
         var isStacked: boolean,
             xData: Array<number>,
             s: number;
@@ -253,7 +253,7 @@ function GLRenderer(
             return;
         }
 
-        chart.series.forEach(function (series: Highcharts.Series): void {
+        chart.series.forEach(function (series: Series): void {
             if (series.isSeriesBoosting) {
                 s += seriesPointCount(series);
             }
@@ -265,7 +265,7 @@ function GLRenderer(
     /**
      * @private
      */
-    function allocateBufferForSingleSeries(series: Highcharts.Series): void {
+    function allocateBufferForSingleSeries(series: Series): void {
         var s = 0;
 
         if (!settings.usePreallocated) {
@@ -321,7 +321,7 @@ function GLRenderer(
      * @private
      */
     function pushSeriesData(
-        series: Highcharts.Series,
+        series: Series,
         inst: Highcharts.BoostGLSeriesObject
     ): void {
         var isRange = (
@@ -383,7 +383,7 @@ function GLRenderer(
             // The following are used in the builder while loop
             x: number,
             y: number,
-            d: (number|Array<number>|Highcharts.Dictionary<number>),
+            d: (number|Array<number>|Record<string, number>),
             z: (number|undefined),
             i = -1,
             px: number = false as any,
@@ -413,7 +413,7 @@ function GLRenderer(
         }
 
         if (zones) {
-            zones.some(function (zone: Highcharts.SeriesZonesOptions): (boolean) {
+            zones.some(function (zone): (boolean) {
                 if (typeof zone.value === 'undefined') {
                     zoneDefColor = new Color(zone.color);
                     return true;
@@ -464,6 +464,7 @@ function GLRenderer(
             pushColor(color);
             if (settings.usePreallocated) {
                 vbuffer.push(x, y, checkTreshold ? 1 : 0, pointSize || 1);
+                vlen += 4;
             } else {
                 data.push(x);
                 data.push(y);
@@ -477,7 +478,7 @@ function GLRenderer(
          */
         function closeSegment(): void {
             if (inst.segments.length) {
-                inst.segments[inst.segments.length - 1].to = data.length;
+                inst.segments[inst.segments.length - 1].to = data.length || vlen;
             }
         }
 
@@ -492,7 +493,7 @@ function GLRenderer(
             // set the previous segment's end
 
             if (inst.segments.length &&
-                inst.segments[inst.segments.length - 1].from === data.length
+                inst.segments[inst.segments.length - 1].from === (data.length || vlen)
             ) {
                 return;
             }
@@ -500,7 +501,7 @@ function GLRenderer(
             closeSegment();
 
             inst.segments.push({
-                from: data.length
+                from: data.length || vlen
             });
 
         }
@@ -818,10 +819,10 @@ function GLRenderer(
             if (zones) {
                 pcolor = (zoneDefColor as any).rgba;
                 zones.some(function ( // eslint-disable-line no-loop-func
-                    zone: Highcharts.SeriesZonesOptions,
+                    zone: SeriesZonesOptions,
                     i: number
                 ): boolean {
-                    var last: Highcharts.SeriesZonesOptions =
+                    var last: SeriesZonesOptions =
                             (zones as any)[i - 1];
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
@@ -984,7 +985,7 @@ function GLRenderer(
          * @private
          */
         function pushSupplementPoint(
-            point: Highcharts.PositionObject,
+            point: PositionObject,
             atStart?: boolean
         ): void {
             if (!settings.useGPUTranslations) {
@@ -1033,7 +1034,7 @@ function GLRenderer(
      * @private
      * @param s {Highchart.Series} - the series to push
      */
-    function pushSeries(s: Highcharts.Series): void {
+    function pushSeries(s: Series): void {
         if (series.length > 0) {
             // series[series.length - 1].to = data.length;
             if (series[series.length - 1].hasMarkers) {
@@ -1073,7 +1074,7 @@ function GLRenderer(
                     'heatmap': 'triangles',
                     'treemap': 'triangles',
                     'bubble': 'points'
-                } as Highcharts.Dictionary<Highcharts.BoostGLDrawModeValue>
+                } as Record<string, Highcharts.BoostGLDrawModeValue>
             )[s.type] || 'line_strip'
         });
 
@@ -1255,7 +1256,11 @@ function GLRenderer(
 
             } else {
                 fillColor =
-                    (s.series.pointAttribs && s.series.pointAttribs().fill) ||
+                    (
+                        s.drawMode === 'points' && // #14260
+                        s.series.pointAttribs &&
+                        s.series.pointAttribs().fill
+                    ) ||
                     s.series.color;
 
                 if (options.colorByPoint) {

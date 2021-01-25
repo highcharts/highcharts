@@ -2,7 +2,7 @@
  *
  *  Plugin for displaying a message when there is no data visible in chart.
  *
- *  (c) 2010-2020 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Oystein Moseng
  *
@@ -15,14 +15,29 @@
 import type AlignObject from '../Core/Renderer/AlignObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Core/Renderer/SVG/SVGElement';
+
+import AST from '../Core/Renderer/HTML/AST.js';
 import Chart from '../Core/Chart/Chart.js';
+import palette from '../Core/Color/Palette.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     extend,
-    getOptions,
-    merge
+    getOptions
 } = U;
+
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        noDataLabel?: SVGElement;
+        /** @requires modules/no-data-to-display */
+        showNoData(str?: string): void;
+        /** @requires modules/no-data-to-display */
+        hideNoData(): void;
+        /** @requires modules/no-data-to-display */
+        hasData(): (boolean|undefined);
+    }
+}
 
 /**
  * Internal types
@@ -41,15 +56,6 @@ declare global {
             useHTML?: boolean;
             position?: AlignObject;
             style?: CSSObject;
-        }
-        interface ChartLike {
-            noDataLabel?: SVGElement;
-            /** @requires modules/no-data-to-display */
-            showNoData(str?: string): void;
-            /** @requires modules/no-data-to-display */
-            hideNoData(): void;
-            /** @requires modules/no-data-to-display */
-            hasData(): (boolean|undefined);
         }
     }
 }
@@ -168,7 +174,7 @@ defaultOptions.noData = {
         /** @ignore */
         fontSize: '12px',
         /** @ignore */
-        color: '${palette.neutralColor60}'
+        color: palette.neutralColor60
     }
 
 };
@@ -209,7 +215,7 @@ chartPrototype.showNoData = function (str?: string): void {
 
         if (!chart.styledMode) {
             chart.noDataLabel
-                .attr(noDataOptions.attr)
+                .attr(AST.filterUserAttributes(noDataOptions.attr || {}))
                 .css(noDataOptions.style || {});
         }
 

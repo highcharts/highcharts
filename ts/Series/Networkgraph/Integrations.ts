@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -13,6 +13,7 @@
 'use strict';
 
 import type Point from '../../Core/Series/Point';
+import type PositionObject from '../../Core/Renderer/PositionObject';
 import H from '../../Core/Globals.js';
 
 /**
@@ -172,7 +173,7 @@ H.networkgraphIntegrations = {
             this: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint,
             force: number,
-            distanceXY: Highcharts.PositionObject
+            distanceXY: PositionObject
         ): void {
             var factor =
                 force * (this.diffTemperature as any) / node.mass / node.degree;
@@ -201,7 +202,7 @@ H.networkgraphIntegrations = {
             this: Highcharts.NetworkgraphLayout,
             link: Highcharts.NetworkgraphPoint,
             force: number,
-            distanceXY: Highcharts.PositionObject
+            distanceXY: PositionObject
         ): void {
             var massFactor = link.getMass(),
                 translatedX =
@@ -397,7 +398,7 @@ H.networkgraphIntegrations = {
         repulsive: function (
             node: Highcharts.NetworkgraphPoint,
             force: number,
-            distanceXY: Highcharts.PositionObject,
+            distanceXY: PositionObject,
             distanceR: number
         ): void {
             (node.dispX as any) +=
@@ -424,7 +425,7 @@ H.networkgraphIntegrations = {
         attractive: function (
             link: Highcharts.NetworkgraphPoint,
             force: number,
-            distanceXY: Highcharts.PositionObject,
+            distanceXY: PositionObject,
             distanceR: number
         ): void {
             var massFactor = link.getMass(),

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,6 +11,10 @@
 import A from './Animation/AnimationUtilities.js';
 var animObject = A.animObject, setAnimation = A.setAnimation;
 import H from './Globals.js';
+var isFirefox = H.isFirefox, marginNames = H.marginNames, win = H.win;
+import Point from './Series/Point.js';
+import U from './Utilities.js';
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, find = U.find, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort, syncTimeout = U.syncTimeout, wrap = U.wrap;
 /**
  * Gets fired when the legend item belonging to a point is clicked. The default
  * action is to toggle the visibility of the point. This can be prevented by
@@ -79,9 +83,6 @@ import H from './Globals.js';
 * @name Highcharts.SeriesLegendItemClickEventObject#type
 * @type {"legendItemClick"}
 */
-import U from './Utilities.js';
-var addEvent = U.addEvent, css = U.css, defined = U.defined, discardElement = U.discardElement, find = U.find, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort, syncTimeout = U.syncTimeout, wrap = U.wrap;
-var isFirefox = H.isFirefox, marginNames = H.marginNames, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The overview of the chart's series. The legend object is instanciated
@@ -1099,6 +1100,118 @@ var Legend = /** @class */ (function () {
                 fireEvent(_this, 'afterScroll', { currentPage: currentPage });
             }, animOptions.duration);
         }
+    };
+    /**
+     * @private
+     * @function Highcharts.Legend#setItemEvents
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @param {Highcharts.SVGElement} legendItem
+     * @param {boolean} [useHTML=false]
+     * @fires Highcharts.Point#event:legendItemClick
+     * @fires Highcharts.Series#event:legendItemClick
+     */
+    Legend.prototype.setItemEvents = function (item, legendItem, useHTML) {
+        var legend = this, boxWrapper = legend.chart.renderer.boxWrapper, isPoint = item instanceof Point, activeClass = 'highcharts-legend-' +
+            (isPoint ? 'point' : 'series') + '-active', styledMode = legend.chart.styledMode, 
+        // When `useHTML`, the symbol is rendered in other group, so
+        // we need to apply events listeners to both places
+        legendItems = useHTML ?
+            [legendItem, item.legendSymbol] :
+            [item.legendGroup];
+        // Set the events on the item group, or in case of useHTML, the item
+        // itself (#1249)
+        legendItems.forEach(function (element) {
+            if (element) {
+                element
+                    .on('mouseover', function () {
+                    if (item.visible) {
+                        legend.allItems.forEach(function (inactiveItem) {
+                            if (item !== inactiveItem) {
+                                inactiveItem.setState('inactive', !isPoint);
+                            }
+                        });
+                    }
+                    item.setState('hover');
+                    // A CSS class to dim or hide other than the hovered
+                    // series.
+                    // Works only if hovered series is visible (#10071).
+                    if (item.visible) {
+                        boxWrapper.addClass(activeClass);
+                    }
+                    if (!styledMode) {
+                        legendItem.css(legend.options.itemHoverStyle);
+                    }
+                })
+                    .on('mouseout', function () {
+                    if (!legend.chart.styledMode) {
+                        legendItem.css(merge(item.visible ?
+                            legend.itemStyle :
+                            legend.itemHiddenStyle));
+                    }
+                    legend.allItems.forEach(function (inactiveItem) {
+                        if (item !== inactiveItem) {
+                            inactiveItem.setState('', !isPoint);
+                        }
+                    });
+                    // A CSS class to dim or hide other than the hovered
+                    // series.
+                    boxWrapper.removeClass(activeClass);
+                    item.setState();
+                })
+                    .on('click', function (event) {
+                    var strLegendItemClick = 'legendItemClick', fnLegendItemClick = function () {
+                        if (item.setVisible) {
+                            item.setVisible();
+                        }
+                        // Reset inactive state
+                        legend.allItems.forEach(function (inactiveItem) {
+                            if (item !== inactiveItem) {
+                                inactiveItem.setState(item.visible ? 'inactive' : '', !isPoint);
+                            }
+                        });
+                    };
+                    // A CSS class to dim or hide other than the hovered
+                    // series. Event handling in iOS causes the activeClass
+                    // to be added prior to click in some cases (#7418).
+                    boxWrapper.removeClass(activeClass);
+                    // Pass over the click/touch event. #4.
+                    event = {
+                        browserEvent: event
+                    };
+                    // click the name or symbol
+                    if (item.firePointEvent) { // point
+                        item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
+                    }
+                    else {
+                        fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
+                    }
+                });
+            }
+        });
+    };
+    /**
+     * @private
+     * @function Highcharts.Legend#createCheckboxForItem
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
+     * @fires Highcharts.Series#event:checkboxClick
+     */
+    Legend.prototype.createCheckboxForItem = function (item) {
+        var legend = this;
+        item.checkbox = createElement('input', {
+            type: 'checkbox',
+            className: 'highcharts-legend-checkbox',
+            checked: item.selected,
+            defaultChecked: item.selected // required by IE7
+        }, legend.options.itemCheckboxStyle, legend.chart.container);
+        addEvent(item.checkbox, 'click', function (event) {
+            var target = event.target;
+            fireEvent(item.series || item, 'checkboxClick', {
+                checked: target.checked,
+                item: item
+            }, function () {
+                item.select();
+            });
+        });
     };
     return Legend;
 }());

@@ -97,6 +97,55 @@ var DataModifier = /** @class */ (function () {
             ['', ''])[1];
     };
     /**
+     * Runs a timed execution of the modifier on the given datatable.
+     * Can be configured to run multiple times.
+     *
+     * @param {DataTable} dataTable
+     * The datatable to execute
+     *
+     * @param {DataModifier.BenchmarkOptions} options
+     * Options. Currently supports `iterations` for number of iterations.
+     *
+     * @return {Array<number>}
+     * An array of times in milliseconds
+     *
+     */
+    DataModifier.prototype.benchmark = function (dataTable, options) {
+        var results = [];
+        var modifier = this;
+        var execute = function () {
+            modifier.execute(dataTable);
+            modifier.emit({ type: 'afterBenchmarkIteration' });
+        };
+        var defaultOptions = {
+            iterations: 1
+        };
+        var iterations = merge(defaultOptions, options).iterations;
+        modifier.on('afterBenchmarkIteration', function () {
+            if (results.length === iterations) {
+                modifier.emit({ type: 'afterBenchmark', results: results });
+                return;
+            }
+            // Run again
+            execute();
+        });
+        var times = {
+            startTime: 0,
+            endTime: 0
+        };
+        // Add timers
+        modifier.on('execute', function () {
+            times.startTime = window.performance.now();
+        });
+        modifier.on('afterExecute', function () {
+            times.endTime = window.performance.now();
+            results.push(times.endTime - times.startTime);
+        });
+        // Initial run
+        execute();
+        return results;
+    };
+    /**
      * Emits an event on the modifier to all registered callbacks of this event.
      *
      * @param {DataEventEmitter.EventObject} [e]

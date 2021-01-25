@@ -15,7 +15,7 @@ There are two main steps to create a technical indicator series:
 
 ### 1. Set up the structure
 
-Each technical indicator requires the method `getValues()` to be implemented. This method takes two arguments and returns an object. The arguments are the main series and the parameters. The parameters are specific to a technical indicator. Check the structure of the method `getValue()`:
+Each technical indicator requires the method `getValues()` to be implemented. This method takes two arguments and returns an object. The arguments are the main series and the parameters. The parameters are specific to a technical indicator. Check the structure of the method `getValues()`:
 
 ```js
   function getValues(series, params) {
@@ -72,7 +72,7 @@ And offset:
 
 ![Screen Shot 2017-11-03 at 14.12.06.png](https://lh3.googleusercontent.com/oACfBFWV5gm7yPq6kUoPGJkPbdntUnjOVqRON491vVA77WbvS294c8kTEshlzPbu7Yoo1zoUeqP5afr2WfxBUhgUIwFO2uojZWlGlFy1nQBa2KjF7HfF_cPEHTRjUS9U1lyyUZ0g)
 
-The JavaScript representation of the formulas above is as follow:
+The JavaScript representation of the formulas above is as follows:
 
 ```js
 function getLinearRegression(xData, yData) {
@@ -146,7 +146,7 @@ For live demos check the links below:
 
 **Remark**
 
-To improve the user experience when using the linear regression series, try to disable tooltip and/or markers. Go to the `seriesType()` and set the default options as follow:
+To improve the user experience when using the linear regression series, try to disable tooltip and/or markers. Go to the `seriesType()` and set the default options as follows:
 
 ```js
 Highcharts.seriesType(

@@ -11,8 +11,6 @@
 'use strict';
 import Axis from './Axis.js';
 import H from '../Globals.js';
-import O from '../Options.js';
-var dateFormat = O.dateFormat;
 import Tick from './Tick.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, erase = U.erase, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
@@ -450,7 +448,7 @@ var GridAxis = /** @class */ (function () {
                     // For the Gantt set point aliases to the pointCopy
                     // to do not change the original point
                     pointCopy = merge(point);
-                    H.seriesTypes.gantt.prototype.setGanttPointAliases(pointCopy);
+                    H.seriesTypes.gantt.prototype.pointClass.setGanttPointAliases(pointCopy);
                 }
                 // Make additional properties available for the
                 // formatter
@@ -597,7 +595,7 @@ var GridAxis = /** @class */ (function () {
                 if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
                     axis.ticks[lastTick].mark.hide();
                 }
-                else {
+                else if (axis.ticks[lastTick - 1]) {
                     axis.ticks[lastTick - 1].mark.show();
                 }
             }
@@ -613,34 +611,35 @@ var GridAxis = /** @class */ (function () {
         var options = axis.options;
         var gridOptions = options.grid || {};
         var userLabels = axis.userOptions.labels || {};
-        if (axis.horiz) {
-            if (gridOptions.enabled === true) {
+        // Fire this only for the Gantt type chart, #14868.
+        if (gridOptions.enabled) {
+            if (axis.horiz) {
                 axis.series.forEach(function (series) {
                     series.options.pointRange = 0;
                 });
-            }
-            // Lower level time ticks, like hours or minutes, represent
-            // points in time and not ranges. These should be aligned
-            // left in the grid cell by default. The same applies to
-            // years of higher order.
-            if (tickInfo &&
-                options.dateTimeLabelFormats &&
-                options.labels &&
-                !defined(userLabels.align) &&
-                (options.dateTimeLabelFormats[tickInfo.unitName].range === false ||
-                    tickInfo.count > 1 // years
-                )) {
-                options.labels.align = 'left';
-                if (!defined(userLabels.x)) {
-                    options.labels.x = 3;
+                // Lower level time ticks, like hours or minutes, represent
+                // points in time and not ranges. These should be aligned
+                // left in the grid cell by default. The same applies to
+                // years of higher order.
+                if (tickInfo &&
+                    options.dateTimeLabelFormats &&
+                    options.labels &&
+                    !defined(userLabels.align) &&
+                    (options.dateTimeLabelFormats[tickInfo.unitName].range === false ||
+                        tickInfo.count > 1 // years
+                    )) {
+                    options.labels.align = 'left';
+                    if (!defined(userLabels.x)) {
+                        options.labels.x = 3;
+                    }
                 }
             }
-        }
-        else {
-            // Don't trim ticks which not in min/max range but
-            // they are still in the min/max plus tickInterval.
-            if (this.options.type !== 'treegrid' && ((_a = axis.grid) === null || _a === void 0 ? void 0 : _a.columns)) {
-                this.minPointOffset = this.tickInterval;
+            else {
+                // Don't trim ticks which not in min/max range but
+                // they are still in the min/max plus tickInterval.
+                if (this.options.type !== 'treegrid' && ((_a = axis.grid) === null || _a === void 0 ? void 0 : _a.columns)) {
+                    this.minPointOffset = this.tickInterval;
+                }
             }
         }
     };

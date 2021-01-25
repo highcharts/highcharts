@@ -3,7 +3,7 @@
  *  Highcharts module to hide overlapping data labels.
  *  This module is included in Highcharts.
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,10 @@
 'use strict';
 
 import type { AlignValue } from '../Core/Renderer/AlignObject';
+import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type DataLabelOptions from '../Core/Series/DataLabelOptions';
 import type Point from '../Core/Series/Point';
+import type PositionObject from '../Core/Renderer/PositionObject';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
@@ -27,17 +30,16 @@ const {
     pick
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        hideOverlappingLabels(labels: Array<SVGElement>): void;
+    }
+}
+
 /**
  * Internal type
  * @private
  */
-declare global {
-    namespace Highcharts {
-        interface ChartLike {
-            hideOverlappingLabels(labels: Array<SVGElement>): void;
-        }
-    }
-}
 
 /* eslint-disable no-invalid-this */
 
@@ -61,7 +63,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
             !yAxis.options.stackLabels.allowOverlap
         ) {
             objectEach(yAxis.stacking.stacks, function (
-                stack: Highcharts.Dictionary<Highcharts.StackItem>
+                stack: Record<string, Highcharts.StackItem>
             ): void {
                 objectEach(stack, function (
                     stackItem: Highcharts.StackItem
@@ -72,40 +74,44 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         }
     });
 
-    (this.series || []).forEach(function (series: Highcharts.Series): void {
-        var dlOptions: Highcharts.DataLabelsOptions = (
+    (this.series || []).forEach(function (series): void {
+        var dlOptions: DataLabelOptions = (
             series.options.dataLabels as any
         );
 
         if (
             series.visible &&
-            !(dlOptions.enabled === false && !series._hasPointLabels)
+            !((dlOptions as any).enabled === false && !series._hasPointLabels)
         ) { // #3866
-            (series.nodes || series.points).forEach(function (point: Point): void {
-                if (point.visible) {
-                    var dataLabels = (
-                        isArray(point.dataLabels) ?
-                            point.dataLabels :
-                            (point.dataLabel ? [point.dataLabel] : [])
-                    );
+            const push = (points: Point[]): void =>
+                points.forEach((point: Point): void => {
+                    if (point.visible) {
+                        var dataLabels = (
+                            isArray(point.dataLabels) ?
+                                point.dataLabels :
+                                (point.dataLabel ? [point.dataLabel] : [])
+                        );
 
-                    dataLabels.forEach(function (
-                        label: SVGElement
-                    ): void {
-                        var options = label.options;
+                        dataLabels.forEach(function (
+                            label: SVGElement
+                        ): void {
+                            var options = label.options;
 
-                        label.labelrank = pick(
-                            options.labelrank,
-                            (point as any).labelrank,
-                            point.shapeArgs && point.shapeArgs.height
-                        ); // #4118
+                            label.labelrank = pick(
+                                options.labelrank,
+                                (point as any).labelrank,
+                                point.shapeArgs && point.shapeArgs.height
+                            ); // #4118
 
-                        if (!options.allowOverlap) {
-                            labels.push(label);
-                        }
-                    });
-                }
-            });
+                            if (!options.allowOverlap) {
+                                labels.push(label);
+                            }
+                        });
+                    }
+                });
+
+            push(series.nodes || []);
+            push(series.points);
         }
     });
 
@@ -138,8 +144,8 @@ Chart.prototype.hideOverlappingLabels = function (
         box2,
         isLabelAffected = false,
         isIntersectRect = function (
-            box1: Highcharts.BBoxObject,
-            box2: Highcharts.BBoxObject
+            box1: BBoxObject,
+            box2: BBoxObject
         ): boolean {
             return !(
                 box2.x >= box1.x + box1.width ||
@@ -153,10 +159,10 @@ Chart.prototype.hideOverlappingLabels = function (
         // that only reports the position relative to the parent.
         getAbsoluteBox = function (
             label: SVGElement
-        ): (Highcharts.BBoxObject|undefined) {
-            var pos: Highcharts.PositionObject,
+        ): (BBoxObject|undefined) {
+            var pos: PositionObject,
                 parent: SVGElement,
-                bBox: Highcharts.BBoxObject,
+                bBox: BBoxObject,
                 // Substract the padding if no background or border (#4333)
                 padding = label.box ? 0 : (label.padding || 0),
                 lineHeightCorrection = 0,

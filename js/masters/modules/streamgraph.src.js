@@ -10,4 +10,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/StreamgraphSeries.js';
+import '../../Series/Streamgraph/StreamgraphSeries.js';

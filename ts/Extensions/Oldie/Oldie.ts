@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,12 +17,12 @@ import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type GradientColor from '../../Core/Color/GradientColor';
-import {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type HTMLElement from '../../Core/Renderer/HTML/HTMLElement';
 import type HTMLRenderer from '../../Core/Renderer/HTML/HTMLRenderer';
+import type PointerEvent from '../../Core/PointerEvent';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
+import type SizeObject from '../../Core/Renderer/SizeObject';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
 import Color from '../../Core/Color/Color.js';
@@ -35,6 +35,7 @@ const {
     svg,
     win
 } = H;
+import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
@@ -61,18 +62,21 @@ const {
 } = U;
 import VMLRenderer3D from './VMLRenderer3D.js';
 
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        /** @requires highcharts/modules/oldies */
+        ieSanitizeSVG(svg: string): string;
+        /** @requires highcharts/modules/oldies */
+        isReadyToRender(): boolean;
+    }
+}
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface ChartLike {
-            /** @requires highcharts/modules/oldies */
-            ieSanitizeSVG(svg: string): string;
-            /** @requires highcharts/modules/oldies */
-            isReadyToRender(): boolean;
-        }
         interface EventCallbackFunction<T> {
             /** @requires highcharts/modules/oldies */
             hcKey?: string;
@@ -95,7 +99,7 @@ declare global {
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLAttributes extends Dictionary<any> {
+        interface VMLAttributes extends Record<string, any> {
             d?: VMLPathArray;
             end?: number;
             innerR?: number;
@@ -261,7 +265,7 @@ declare global {
             public isVML: true;
             public setSize: SVGRenderer['setSize'];
             public symbols: SVGRenderer['symbols'];
-            public circle(obj: Dictionary<number>): VMLElement;
+            public circle(obj: Record<string, number>): VMLElement;
             public circle(x: number, y: number, r: number): VMLElement;
             public clipRect(size: SizeObject): VMLClipRectObject;
             public clipRect(
@@ -373,7 +377,7 @@ let VMLRenderer: typeof Highcharts.VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = U.getStyle = function (
+    (H as any).getStyle = U.getStyle = function (
         el: HTMLDOMElement,
         prop: string
     ): number {
@@ -381,7 +385,7 @@ if (doc && !doc.defaultView) {
             alias = ({
                 width: 'clientWidth',
                 height: 'clientHeight'
-            } as Highcharts.Dictionary<string>)[prop];
+            } as Record<string, string>)[prop];
 
         if (el.style[prop as any]) {
             return pInt(el.style[prop as any]);
@@ -446,7 +450,7 @@ if (!svg) {
      * @param {boolean} [chartPosition=false]
      * @return {Highcharts.PointerEventObject}
      */
-    Pointer.prototype.normalize = function<T extends Highcharts.PointerEventObject> (
+    Pointer.prototype.normalize = function<T extends PointerEvent> (
         e: (T|MouseEvent|PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): T {
@@ -458,7 +462,7 @@ if (!svg) {
 
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = offset(this.chart.container);
+            this.chartPosition = chartPosition = this.getChartPosition();
         }
 
         return extend(e, {
@@ -1043,7 +1047,7 @@ if (!svg) {
                     // apply the opacity
                     markup = [
                         '<stroke color="',
-                        shadowOptions.color || '${palette.neutralColor100}',
+                        shadowOptions.color || palette.neutralColor100,
                         '" opacity="', shadowElementOpacity * i, '"/>'];
                     createElement(
                         renderer.prepVML(markup),
@@ -1430,7 +1434,7 @@ if (!svg) {
          */
         clipRect: function (
             this: Highcharts.VMLRenderer,
-            x: (number|Highcharts.SizeObject),
+            x: (number|SizeObject),
             y: number,
             width: number,
             height: number
@@ -2083,7 +2087,8 @@ if (!svg) {
     ): void {
         this.init.apply(this, arguments as any);
     } as any;
-    VMLRenderer.prototype = merge(VMLRenderer.prototype, SVGRenderer.prototype, VMLRendererExtension);
+    extend(VMLRenderer.prototype, SVGRenderer.prototype);
+    extend(VMLRenderer.prototype, VMLRendererExtension);
 
     // general renderer
     H.Renderer = VMLRenderer as any;

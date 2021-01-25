@@ -2,7 +2,7 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2017 Sebastian Bochan
+ *  (c) 2009-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -184,9 +184,10 @@ setOptions({
             toolbarClassName: 'stocktools-toolbar',
             /**
              * A collection of strings pointing to config options for the
-             * toolbar items. Each name refers to unique key from definitions
-             * object.
+             * toolbar items. Each name refers to a unique key from the
+             * definitions object.
              *
+             * @type    {Array<string>}
              * @default [
              *   'indicators',
              *   'separator',
@@ -750,7 +751,31 @@ addEvent(Chart, 'getMargins', function () {
         getStyle(listWrapper, 'padding-right')) || listWrapper.offsetWidth);
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
+        this.spacing[3] += offsetWidth;
     }
+});
+['beforeRender', 'beforeRedraw'].forEach(function (event) {
+    addEvent(Chart, event, function () {
+        if (this.stockTools) {
+            var listWrapper = this.stockTools.listWrapper, offsetWidth = listWrapper && ((listWrapper.startWidth +
+                getStyle(listWrapper, 'padding-left') +
+                getStyle(listWrapper, 'padding-right')) || listWrapper.offsetWidth);
+            var dirty = false;
+            if (offsetWidth && offsetWidth < this.plotWidth) {
+                this.spacingBox.x += offsetWidth;
+                dirty = true;
+            }
+            else if (offsetWidth === 0) {
+                dirty = true;
+            }
+            if (offsetWidth !== this.stockTools.prevOffsetWidth) {
+                this.stockTools.prevOffsetWidth = offsetWidth;
+                if (dirty) {
+                    this.isDirtyLegend = true;
+                }
+            }
+        }
+    });
 });
 addEvent(Chart, 'destroy', function () {
     if (this.stockTools) {

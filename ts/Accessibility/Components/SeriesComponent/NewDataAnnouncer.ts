@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Handle announcing new data for a chart.
  *
@@ -15,7 +15,7 @@
 import type Chart from '../../../Core/Chart/Chart';
 import type Point from '../../../Core/Series/Point';
 import H from '../../../Core/Globals.js';
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
+import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend,
     defined = U.defined;
@@ -69,7 +69,7 @@ declare global {
             ): void;
         }
         interface NewDataAnnouncerDirtyObject {
-            allSeries: Dictionary<Series>;
+            allSeries: Record<string, Series>;
             hasDirty?: boolean;
             newPoint?: Point;
             newSeries?: Series;
@@ -114,21 +114,21 @@ function findPointInDataArray(
  * @private
  */
 function getUniqueSeries(
-    arrayA?: Array<Highcharts.Series>,
-    arrayB?: Array<Highcharts.Series>
-): Array<Highcharts.Series> {
+    arrayA?: Array<Series>,
+    arrayB?: Array<Series>
+): Array<Series> {
     var uniqueSeries = (arrayA || []).concat(arrayB || [])
         .reduce(function (
-            acc: Highcharts.Dictionary<Highcharts.Series>,
-            cur: Highcharts.Series
-        ): Highcharts.Dictionary<Highcharts.Series> {
+            acc: Record<string, Series>,
+            cur: Series
+        ): Record<string, Series> {
             acc[cur.name + cur.index] = cur;
             return acc;
         }, {});
 
     return Object.keys(uniqueSeries).map(function (
         ix: string
-    ): Highcharts.Series {
+    ): Series {
         return uniqueSeries[ix];
     });
 }
@@ -189,17 +189,17 @@ extend(NewDataAnnouncer.prototype, {
             announcer.lastAnnouncementTime = 0;
         });
 
-        e.addEvent(CartesianSeries, 'updatedData', function (): void {
+        e.addEvent(Series, 'updatedData', function (): void {
             announcer.onSeriesUpdatedData(this);
         });
 
         e.addEvent(chart, 'afterAddSeries', function (
-            e: { series: Highcharts.Series }
+            e: { series: Series }
         ): void {
             announcer.onSeriesAdded(e.series);
         });
 
-        e.addEvent(CartesianSeries, 'addPoint', function (
+        e.addEvent(Series, 'addPoint', function (
             e: { point: Point }
         ): void {
             announcer.onPointAdded(e.point);
@@ -218,7 +218,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     onSeriesUpdatedData: function (
         this: Highcharts.NewDataAnnouncer,
-        series: Highcharts.Series
+        series: Series
     ): void {
         var chart = this.chart;
 
@@ -236,7 +236,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     onSeriesAdded: function (
         this: Highcharts.NewDataAnnouncer,
-        series: Highcharts.Series
+        series: Series
     ): void {
         if (chartHasAnnounceEnabled(this.chart)) {
             this.dirty.hasDirty = true;
@@ -291,7 +291,7 @@ extend(NewDataAnnouncer.prototype, {
             this.queueAnnouncement(
                 Object.keys(this.dirty.allSeries).map(function (
                     ix: string
-                ): Highcharts.Series {
+                ): Series {
                     return announcer.dirty.allSeries[ix];
                 }),
                 this.dirty.newSeries,
@@ -318,8 +318,8 @@ extend(NewDataAnnouncer.prototype, {
      */
     queueAnnouncement: function (
         this: Highcharts.NewDataAnnouncer,
-        dirtySeries: Array<Highcharts.Series>,
-        newSeries?: Highcharts.Series,
+        dirtySeries: Array<Series>,
+        newSeries?: Series,
         newPoint?: Point
     ): void {
         const chart = this.chart;
@@ -388,7 +388,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     buildAnnouncementMessage: function (
         this: Highcharts.NewDataAnnouncer,
-        dirtySeries: Array<Highcharts.Series>,
+        dirtySeries: Array<Series>,
         newSeries?: Highcharts.AccessibilitySeries,
         newPoint?: Highcharts.AccessibilityPoint
     ): (string|null) {

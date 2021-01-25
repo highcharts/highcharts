@@ -1,11 +1,9 @@
 (function () {
-
     /**
      * Check that the arrays are one to one, so all operators correspond to other
      * operators and numbers align to numbers.
      */
     function isOneToOne(out) {
-
         var start = out[0],
             end = out[1],
             isOK = true;
@@ -31,26 +29,22 @@
         return isOK;
     }
 
-
     QUnit.test('Curve and line (#5892)', function (assert) {
-
         var fromD = [
-            ["M", 5, 118],
-            ["C", 5, 118, 517, 26, 517, 26],
-            ["L", 517, 210],
-            ["C", 517, 210, 5, 210, 5, 210]
+            ['M', 5, 118],
+            ['C', 5, 118, 517, 26, 517, 26],
+            ['L', 517, 210],
+            ['C', 517, 210, 5, 210, 5, 210]
         ];
-
 
         var toD = [
-            ["M", 5, 142],
-            ["C", 5, 142, 38, 17, 60, 17],
-            ["C", 240, 17, 510, 183, 510, 183],
-            ["L", 510, 266],
-            ["C", 510, 266, 240, 266, 60, 266],
-            ["C", 38, 266, 5, 266, 5, 266]
+            ['M', 5, 142],
+            ['C', 5, 142, 38, 17, 60, 17],
+            ['C', 240, 17, 510, 183, 510, 183],
+            ['L', 510, 266],
+            ['C', 510, 266, 240, 266, 60, 266],
+            ['C', 38, 266, 5, 266, 5, 266]
         ];
-
 
         var out = Highcharts.Fx.prototype.initPath.call(
             null,
@@ -63,11 +57,6 @@
             toD
         );
 
-        assert.ok(
-            isOneToOne(out),
-            'Results are one to one'
-        );
-
+        assert.ok(isOneToOne(out), 'Results are one to one');
     });
-
 }());

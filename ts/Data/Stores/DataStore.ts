@@ -20,19 +20,18 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
-import type DataParser from '../Parsers/DataParser';
 import type StoreType from './StoreType';
+
+import DataParser from '../Parsers/DataParser.js';
 import DataTableRow from '../DataTableRow.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-
 const {
     addEvent,
     fireEvent,
     merge,
     pick
 } = U;
-
 
 /* *
  *
@@ -249,10 +248,13 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Returns the order of columns.
      *
+     * @param {boolean} [usePresentationState]
+     * Whether to use the column order of the presentation state of the table.
+     *
      * @return {Array<string>}
      * Order of columns.
      */
-    public getColumnOrder(): Array<string> {
+    public getColumnOrder(usePresentationState?: boolean): Array<string> {
         const store = this,
             metadata = store.metadata,
             columns = metadata.columns,
@@ -272,24 +274,29 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Retrieves the columns of the the dataTable,
      * applies column order from meta.
+     *
      * @param {boolean} [includeIdColumn]
-     * Whether to include the `id` column in the returned array
+     * Whether to include the `id` column in the returned array.
+     *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state of the table.
+     *
      * @return {{}}
      * An object with the properties `columnNames` and `columnValues`
      */
-    protected getColumnsForExport(includeIdColumn?: boolean): {
-        columnNames: Array<string>;
-        columnValues: Array<Array<DataTableRow.CellType>>;
-        columnHeaderFormatter?: Function;
-    } {
-        const columnsRecord = this.table.toColumns(),
+    protected getColumnsForExport(
+        includeIdColumn?: boolean,
+        usePresentationOrder?: boolean
+    ): DataStore.ColumnsForExportObject {
+        const table = this.table,
+            columnsRecord = table.getColumns(),
             columnNames = (
                 includeIdColumn ?
                     Object.keys(columnsRecord) :
                     Object.keys(columnsRecord).slice(1)
             );
 
-        const columnOrder = this.getColumnOrder().reverse();
+        const columnOrder = this.getColumnOrder(usePresentationOrder);
 
         if (columnOrder.length) {
             columnNames.sort((a, b): number => {
@@ -304,13 +311,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         }
 
         return ({
-            columnNames: columnNames.map((name): string => {
-                const { title } = this.whatIs(name) || {};
-                return title || name;
-            }),
-            columnValues: columnNames.map(function (name): DataTableRow.CellType[] {
-                return columnsRecord[name];
-            })
+            columnNames,
+            columnValues: columnNames.map(
+                (name: string): DataTableRow.CellType[] => columnsRecord[name]
+            )
         });
     }
 
@@ -405,6 +409,15 @@ namespace DataStore {
      */
     export interface EventObject extends DataEventEmitter.EventObject {
         readonly table: DataTable;
+    }
+
+    /**
+     * Object with columns for object.
+     */
+    export interface ColumnsForExportObject {
+        columnNames: Array<string>;
+        columnValues: Array<Array<DataTableRow.CellType>>;
+        columnHeaderFormatter?: Function;
     }
 
     /**

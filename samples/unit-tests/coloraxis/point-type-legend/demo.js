@@ -5,15 +5,20 @@ QUnit.test('Point type legend item', function (assert) {
             maxColor: 'rgb(255,0,0)',
             showInLegend: false
         },
-        series: [{
-            type: 'pie',
-            showInLegend: true,
-            data: [{
-                y: 100
-            }, {
-                y: 1
-            }]
-        }]
+        series: [
+            {
+                type: 'pie',
+                showInLegend: true,
+                data: [
+                    {
+                        y: 100
+                    },
+                    {
+                        y: 1
+                    }
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(

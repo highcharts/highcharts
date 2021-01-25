@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2015-2020 Oystein Moseng
+ *  (c) 2015-2021 Oystein Moseng
  *
  *  License: www.highcharts.com/license
  *
@@ -11,7 +11,7 @@
  * */
 'use strict';
 import Highcharts from '../Core/Globals.js';
-var win = Highcharts.win, nav = win.navigator, doc = win.document, domurl = win.URL || win.webkitURL || win, isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
+var win = Highcharts.win, doc = win.document, domurl = win.URL || win.webkitURL || win;
 /**
  * Convert base64 dataURL to Blob if supported, otherwise returns undefined.
  * @private
@@ -22,7 +22,9 @@ var win = Highcharts.win, nav = win.navigator, doc = win.document, domurl = win.
  *         Blob
  */
 var dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL) {
-    var parts = dataURL.match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
+    var parts = dataURL
+        .replace(/filename=.*;/, '')
+        .match(/data:([^;]*)(;base64)?,([0-9A-Za-z+/]+)/);
     if (parts &&
         parts.length > 3 &&
         win.atob &&
@@ -31,11 +33,11 @@ var dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL) {
         win.Blob &&
         domurl.createObjectURL) {
         // Try to convert data URL to Blob
-        var binStr = win.atob(parts[3]), buf = new win.ArrayBuffer(binStr.length), binary = new win.Uint8Array(buf), blob;
+        var binStr = win.atob(parts[3]), buf = new win.ArrayBuffer(binStr.length), binary = new win.Uint8Array(buf);
         for (var i = 0; i < binary.length; ++i) {
             binary[i] = binStr.charCodeAt(i);
         }
-        blob = new win.Blob([binary], { 'type': parts[1] });
+        var blob = new win.Blob([binary], { 'type': parts[1] });
         return domurl.createObjectURL(blob);
     }
 };
@@ -51,6 +53,7 @@ var dataURLtoBlob = Highcharts.dataURLtoBlob = function (dataURL) {
  * @return {void}
  */
 var downloadURL = Highcharts.downloadURL = function (dataURL, filename) {
+    var nav = win.navigator;
     var a = doc.createElement('a'), windowRef;
     // IE specific blob implementation
     // Don't use for normal dataURLs
@@ -63,6 +66,7 @@ var downloadURL = Highcharts.downloadURL = function (dataURL, filename) {
     dataURL = "" + dataURL;
     // Some browsers have limitations for data URL lengths. Try to convert to
     // Blob or fall back. Edge always needs that blob.
+    var isEdgeBrowser = /Edge\/\d+/.test(nav.userAgent);
     if (isEdgeBrowser || dataURL.length > 2000000) {
         dataURL = dataURLtoBlob(dataURL) || '';
         if (!dataURL) {

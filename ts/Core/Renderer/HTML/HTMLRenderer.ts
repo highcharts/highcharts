@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,6 +18,7 @@ const {
     isWebKit,
     win
 } = H;
+import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
@@ -132,13 +133,15 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
         // Text setter
         wrapper.textSetter = function (value: string): void {
-            if (value !== element.innerHTML) {
+            if (value !== this.textStr) {
                 delete this.bBox;
                 delete this.oldTextWidth;
+
+                AST.setElementHTML(this.element, pick(value, ''));
+
+                this.textStr = value;
+                wrapper.doTransform = true;
             }
-            this.textStr = value;
-            element.innerHTML = pick(value, '');
-            wrapper.doTransform = true;
         };
 
         // Add setters for the element itself (#4938)
@@ -258,9 +261,10 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
                             // Create a HTML div and append it to the parent div
                             // to emulate the SVG group structure
+                            const parentGroupStyles = parentGroup.styles || {};
                             htmlGroup =
                             parentGroup.div =
-                            (parentGroup.div as any) || createElement(
+                            parentGroup.div || createElement(
                                 'div',
                                 cls ? { className: cls } : void 0,
                                 {
@@ -269,10 +273,9 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                     top: (parentGroup.translateY || 0) + 'px',
                                     display: parentGroup.display,
                                     opacity: parentGroup.opacity, // #5075
-                                    pointerEvents: (
-                                        parentGroup.styles &&
-                                        parentGroup.styles.pointerEvents
-                                    ) // #5595
+                                    cursor: parentGroupStyles.cursor, // #6794
+                                    pointerEvents:
+                                        parentGroupStyles.pointerEvents // #5595
 
                                 // the top group is appended to container
                                 },

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for chart legend.
  *
@@ -17,7 +17,7 @@ var addEvent = U.addEvent, extend = U.extend, find = U.find, fireEvent = U.fireE
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString, removeElement = HTMLUtilities.removeElement;
+var removeElement = HTMLUtilities.removeElement, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -64,7 +64,7 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
 addEvent(Legend, 'afterColorizeItem', function (e) {
     var chart = this.chart, a11yOptions = chart.options.accessibility, legendItem = e.item;
     if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
-        legendItem.a11yProxyElement.setAttribute('aria-pressed', e.visible ? 'false' : 'true');
+        legendItem.a11yProxyElement.setAttribute('aria-pressed', e.visible ? 'true' : 'false');
     }
 });
 /**
@@ -128,6 +128,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    onChartUpdate: function () {
+        this.updateLegendTitle();
+    },
+    /**
+     * @private
+     */
     updateProxiesPositions: function () {
         for (var _i = 0, _a = this.proxyElementsList; _i < _a.length; _i++) {
             var _b = _a[_i], element = _b.element, posElement = _b.posElement;
@@ -164,12 +170,27 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     /**
      * @private
      */
+    updateLegendTitle: function () {
+        var _a, _b;
+        var chart = this.chart;
+        var legendTitle = stripHTMLTags((((_b = (_a = chart.legend) === null || _a === void 0 ? void 0 : _a.options.title) === null || _b === void 0 ? void 0 : _b.text) || '').replace(/<br ?\/?>/g, ' '));
+        var legendLabel = chart.langFormat('accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {
+            chart: chart,
+            legendTitle: legendTitle
+        });
+        if (this.legendProxyGroup) {
+            this.legendProxyGroup.setAttribute('aria-label', legendLabel);
+        }
+    },
+    /**
+     * @private
+     */
     addLegendProxyGroup: function () {
-        var a11yOptions = this.chart.options.accessibility, groupLabel = this.chart.langFormat('accessibility.legend.legendLabel', {}), groupRole = a11yOptions.landmarkVerbosity === 'all' ?
+        var a11yOptions = this.chart.options.accessibility, groupRole = a11yOptions.landmarkVerbosity === 'all' ?
             'region' : null;
         this.legendProxyGroup = this.addProxyGroup({
-            'aria-label': groupLabel,
-            'role': groupRole
+            'aria-label': '_placeholder_',
+            role: groupRole
         });
     },
     /**
@@ -194,10 +215,10 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         }
         var itemLabel = this.chart.langFormat('accessibility.legend.legendItem', {
             chart: this.chart,
-            itemName: stripHTMLTags(item.name)
+            itemName: item.name
         }), attribs = {
             tabindex: -1,
-            'aria-pressed': !item.visible,
+            'aria-pressed': item.visible,
             'aria-label': itemLabel
         }, 
         // Considers useHTML

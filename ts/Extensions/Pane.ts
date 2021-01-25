@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,9 +12,11 @@
 
 import type ColorType from '../Core/Color/ColorType';
 import type RadialAxis from '../Core/Axis/RadialAxis';
+import type Series from '../Core/Series/Series';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -25,6 +27,14 @@ const {
     splat
 } = U;
 
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        pane?: Array<Highcharts.Pane>;
+        hoverPane?: Highcharts.Pane;
+        getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
+    }
+}
+
 /**
  * Internal types
  * @private
@@ -34,11 +44,6 @@ declare global {
         type PaneBackgroundShapeValue = ('arc'|'circle'|'solid');
         interface Axis {
             pane?: Pane;
-        }
-        interface ChartLike {
-            pane?: Array<Pane>;
-            hoverPane?: Highcharts.Pane;
-            getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
         }
         interface Options {
             pane?: PaneOptions;
@@ -394,7 +399,7 @@ class Pane {
          * @since   2.3.0
          * @product highcharts
          */
-        borderColor: '${palette.neutralColor20}',
+        borderColor: palette.neutralColor20,
 
         /**
          * The background color or gradient for the pane.
@@ -411,8 +416,8 @@ class Pane {
 
             /** @ignore-option */
             stops: [
-                [0, '${palette.backgroundColor}'],
-                [1, '${palette.neutralColor10}']
+                [0, palette.backgroundColor],
+                [1, palette.neutralColor10]
             ]
 
         },
@@ -457,7 +462,7 @@ class Pane {
         this.center = (
             axis ||
             this.axis ||
-            ({} as Highcharts.Dictionary<Array<number>>)
+            ({} as Record<string, Array<number>>)
         ).center = centeredSeriesMixin.getCenter.call(this as any);
     }
 
@@ -578,7 +583,7 @@ addEvent(Pointer, 'beforeGetHoverData', function (
         chart.hoverPane = chart.getHoverPane(eventArgs);
 
         // Edit filter method to handle polar
-        eventArgs.filter = function (s: Highcharts.Series): boolean {
+        eventArgs.filter = function (s: Series): boolean {
             return (
                 s.visible &&
                 !(!eventArgs.shared && s.directTouch) && // #3821
@@ -586,6 +591,8 @@ addEvent(Pointer, 'beforeGetHoverData', function (
                 (!chart.hoverPane || s.xAxis.pane === chart.hoverPane)
             );
         };
+    } else {
+        chart.hoverPane = void 0;
     }
 });
 

@@ -138,14 +138,15 @@ var HTMLTableStore = /** @class */ (function (_super) {
     /**
      * Creates an HTML table from the datatable on the store instance.
      *
-     * @param {HTMLTableStore.ExportOptions} exportOptions
+     * @param {HTMLTableStore.ExportOptions} [exportOptions]
      * Options used for exporting.
      *
      * @return {string}
      * The HTML table.
      */
     HTMLTableStore.prototype.getHTMLTableForExport = function (exportOptions) {
-        var options = exportOptions, decimalPoint = (options === null || options === void 0 ? void 0 : options.useLocalDecimalPoint) ? (1.1).toLocaleString()[1] : '.', exportNames = (this.parserOptions.firstRowAsNames !== false), useMultiLevelHeaders = options === null || options === void 0 ? void 0 : options.useMultiLevelHeaders, useRowspanHeaders = options === null || options === void 0 ? void 0 : options.useRowspanHeaders;
+        if (exportOptions === void 0) { exportOptions = {}; }
+        var options = exportOptions, decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.', exportNames = (this.parserOptions.firstRowAsNames !== false), useMultiLevelHeaders = options.useMultiLevelHeaders, useRowspanHeaders = options.useRowspanHeaders;
         var isRowEqual = function (row1, row2) {
             var i = row1.length;
             if (row2.length === i) {
@@ -240,7 +241,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 ' class="' + className + '">' +
                 val + '</' + tag + '>';
         };
-        var _a = this.getColumnsForExport(options === null || options === void 0 ? void 0 : options.exportIDColumn), columnNames = _a.columnNames, columnValues = _a.columnValues, htmlRows = [], columnsCount = columnNames.length;
+        var _a = this.getColumnsForExport(options.exportIDColumn, options.usePresentationOrder), columnNames = _a.columnNames, columnValues = _a.columnValues, htmlRows = [], columnsCount = columnNames.length;
         var rowArray = [];
         var tableHead = '';
         // Add the names as the first row if they should be exported
@@ -331,6 +332,12 @@ var HTMLTableStore = /** @class */ (function (_super) {
         // Merge in provided options
         return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
     };
+    /**
+     * Converts the store to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this store.
+     */
     HTMLTableStore.prototype.toJSON = function () {
         var store = this, json = {
             $class: 'HTMLTableStore',

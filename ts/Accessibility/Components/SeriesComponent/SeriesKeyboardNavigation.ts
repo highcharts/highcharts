@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Handle keyboard navigation for series.
  *
@@ -12,18 +12,45 @@
 
 'use strict';
 
-import Series from '../../../Core/Series/Series.js';
-const {
-    seriesTypes
-} = Series;
-import CartesianSeries from '../../../Core/Series/CartesianSeries.js';
 import Chart from '../../../Core/Chart/Chart.js';
 import Point from '../../../Core/Series/Point.js';
+import Series from '../../../Core/Series/Series.js';
+import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
-    extend
+    extend,
+    fireEvent
 } = U;
+
+declare module '../../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        highlightedPoint?: Point;
+        /** @requires modules/accessibility */
+        highlightAdjacentPoint(next: boolean): (boolean|Point);
+        /** @requires modules/accessibility */
+        highlightAdjacentPointVertical(down: boolean): (boolean|Point);
+        /** @requires modules/accessibility */
+        highlightAdjacentSeries(down: boolean): (boolean|Point);
+    }
+}
+
+declare module '../../../Core/Series/PointLike' {
+    interface PointLike {
+        /** @requires modules/accessibility */
+        highlight(): Point;
+    }
+}
+
+declare module '../../../Core/Series/SeriesLike' {
+    interface SeriesLike {
+        /** @requires modules/accessibility */
+        keyboardMoveVertical: boolean;
+        /** @requires modules/accessibility */
+        highlightFirstValidPoint(): (boolean|Point);
+    }
+}
 
 /**
  * Internal types.
@@ -34,11 +61,11 @@ declare global {
         class SeriesKeyboardNavigation {
             public constructor(
                 chart: AccessibilityChart,
-                keyCodes: Dictionary<number>
+                keyCodes: Record<string, number>
             );
             public chart: AccessibilityChart;
             public eventProvider?: EventProvider;
-            public keyCodes: Dictionary<number>;
+            public keyCodes: Record<string, number>;
             public lastDrilledDownPoint?: (
                 SeriesKeyboardNavigationDrilldownObject
             );
@@ -63,26 +90,7 @@ declare global {
                 handler: KeyboardNavigationHandler,
                 keyCode: number
             ): number;
-            public onSeriesDestroy(series: Highcharts.Series): void;
-        }
-        interface ChartLike {
-            highlightedPoint?: Point;
-            /** @requires modules/accessibility */
-            highlightAdjacentPoint(next: boolean): (boolean|Point);
-            /** @requires modules/accessibility */
-            highlightAdjacentPointVertical(down: boolean): (boolean|Point);
-            /** @requires modules/accessibility */
-            highlightAdjacentSeries(down: boolean): (boolean|Point);
-        }
-        interface PointLike {
-            /** @requires modules/accessibility */
-            highlight(): Point;
-        }
-        interface Series {
-            /** @requires modules/accessibility */
-            keyboardMoveVertical: boolean;
-            /** @requires modules/accessibility */
-            highlightFirstValidPoint(): (boolean|Point);
+            public onSeriesDestroy(series: Series): void;
         }
         interface SeriesKeyboardNavigationDrilldownObject {
             x: (number|null);
@@ -99,8 +107,8 @@ var getPointFromXY = ChartUtilities.getPointFromXY,
     getSeriesFromName = ChartUtilities.getSeriesFromName,
     scrollToPoint = ChartUtilities.scrollToPoint;
 
-import '../../../Series/ColumnSeries.js';
-import '../../../Series/PieSeries.js';
+import '../../../Series/Column/ColumnSeries.js';
+import '../../../Series/Pie/PieSeries.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -108,7 +116,7 @@ import '../../../Series/PieSeries.js';
  * Set for which series types it makes sense to move to the closest point with
  * up/down arrows, and which series types should just move to next series.
  */
-CartesianSeries.prototype.keyboardMoveVertical = true;
+Series.prototype.keyboardMoveVertical = true;
 (['column', 'pie'] as Array<('column'|'pie')>).forEach(function (type): void {
     if (seriesTypes[type]) {
         seriesTypes[type].prototype.keyboardMoveVertical = false;
@@ -196,6 +204,7 @@ function isSkipPoint(
     return point.isNull &&
         a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
         point.visible === false ||
+        point.isInside === false ||
         isSkipSeries(point.series);
 }
 
@@ -377,7 +386,7 @@ Chart.prototype.highlightAdjacentPoint = function (
  *
  * @return {boolean|Highcharts.Point}
  */
-CartesianSeries.prototype.highlightFirstValidPoint = function (
+Series.prototype.highlightFirstValidPoint = function (
     this: Highcharts.AccessibilitySeries
 ): (boolean|Point) {
     var curPoint = this.chart.highlightedPoint,
@@ -549,7 +558,7 @@ function highlightFirstValidPointInChart(
 
     res = chart.series.reduce(function (
         acc: (boolean|Point),
-        cur: Highcharts.Series
+        cur: Series
     ): (boolean|Point) {
         return acc || cur.highlightFirstValidPoint();
     }, false);
@@ -608,7 +617,7 @@ function updateChartFocusAfterDrilling(chart: Chart): void {
 function SeriesKeyboardNavigation(
     this: Highcharts.SeriesKeyboardNavigation,
     chart: Highcharts.AccessibilityChart,
-    keyCodes: Highcharts.Dictionary<number>
+    keyCodes: Record<string, number>
 ): void {
     this.keyCodes = keyCodes;
     this.chart = chart;
@@ -623,7 +632,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             chart = this.chart,
             e = this.eventProvider = new EventProvider();
 
-        e.addEvent(CartesianSeries, 'destroy', function (): void {
+        e.addEvent(Series, 'destroy', function (): void {
             return keyboardNavigation.onSeriesDestroy(this);
         });
 
@@ -710,10 +719,16 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
 
                 [[keys.enter, keys.space],
                     function (
-                        this: Highcharts.KeyboardNavigationHandler
+                        this: Highcharts.KeyboardNavigationHandler,
+                        keyCode: number,
+                        event: KeyboardEvent
                     ): number {
-                        if (chart.highlightedPoint) {
-                            chart.highlightedPoint.firePointEvent('click');
+                        const point = chart.highlightedPoint;
+                        if (point) {
+                            fireEvent(point.series, 'click', extend(event, {
+                                point
+                            }));
+                            point.firePointEvent('click');
                         }
                         return this.response.success;
                     }]
@@ -868,7 +883,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     onSeriesDestroy: function (
         this: Highcharts.SeriesKeyboardNavigation,
-        series: Highcharts.Series
+        series: Series
     ): void {
         var chart = this.chart,
             currentHighlightedPointDestroyed = chart.highlightedPoint &&

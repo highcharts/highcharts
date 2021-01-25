@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,6 +13,7 @@
 import type Chart from '../Chart/Chart';
 import type Pane from '../../Extensions/Pane';
 import type Point from '../Series/Point';
+import type PositionObject from '../Renderer/PositionObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
@@ -34,6 +35,12 @@ const {
 } = U;
 
 type YAxisOptions = (typeof Axis)['defaultYAxisOptions'];
+
+declare module '../Chart/ChartLike'{
+    interface ChartLike {
+        inverted?: boolean;
+    }
+}
 
 /**
  * Internal types
@@ -58,9 +65,6 @@ declare global {
             isCrosshair?: boolean;
             point?: Point;
             reverse?: boolean;
-        }
-        interface ChartLike {
-            inverted?: boolean;
         }
     }
 }
@@ -257,6 +261,8 @@ class RadialAxis {
                 end,
                 chart = this.chart,
                 r = pick(radius, center[2] / 2 - this.offset),
+                left = this.left || 0,
+                top = this.top || 0,
                 path: RadialAxisPath;
 
             if (typeof innerRadius === 'undefined') {
@@ -270,8 +276,8 @@ class RadialAxis {
 
             if (this.isCircular || typeof radius !== 'undefined') {
                 path = this.chart.renderer.symbols.arc(
-                    this.left + center[0],
-                    this.top + center[1],
+                    left + center[0],
+                    top + center[1],
                     r,
                     r,
                     {
@@ -284,8 +290,8 @@ class RadialAxis {
 
                 // Bounds used to position the plotLine label next to the line
                 // (#7117)
-                path.xBounds = [this.left + center[0]];
-                path.yBounds = [this.top + center[1] - r];
+                path.xBounds = [left + center[0]];
+                path.yBounds = [top + center[1] - r];
 
             } else {
                 end = this.postTranslate(this.angleRad, r);
@@ -424,7 +430,7 @@ class RadialAxis {
         axis.getPosition = function (
             value: number,
             length?: number
-        ): Highcharts.PositionObject {
+        ): PositionObject {
             var translatedVal = this.translate(value) as any;
 
             return this.postTranslate(
@@ -456,7 +462,7 @@ class RadialAxis {
         axis.postTranslate = function (
             angle: number,
             radius: number
-        ): Highcharts.PositionObject {
+        ): PositionObject {
 
             var chart = this.chart,
                 center = this.center;
@@ -507,6 +513,8 @@ class RadialAxis {
                 startAngleRad = this.startAngleRad,
                 fullRadius = center[2] / 2,
                 offset = Math.min(this.offset, 0),
+                left = this.left || 0,
+                top = this.top || 0,
                 percentRegex = /%$/,
                 start,
                 end,
@@ -559,8 +567,8 @@ class RadialAxis {
                 thickness -= offset; // #5283
 
                 path = this.chart.renderer.symbols.arc(
-                    this.left + center[0],
-                    this.top + center[1],
+                    left + center[0],
+                    top + center[1],
                     outerRadius,
                     outerRadius,
                     {
@@ -579,7 +587,7 @@ class RadialAxis {
                 if (isCircular) {
                     angle = (end + start) / 2;
                     xOnPerimeter = (
-                        this.left +
+                        left +
                         center[0] +
                         (center[2] / 2) * Math.cos(angle)
                     );
@@ -592,7 +600,7 @@ class RadialAxis {
 
 
                     path.yBounds = [
-                        this.top + center[1] + (center[2] / 2) * Math.sin(angle)
+                        top + center[1] + (center[2] / 2) * Math.sin(angle)
                     ];
                     // Shift up or down to get the label clear of the perimeter
                     path.yBounds[0] += (
@@ -691,7 +699,7 @@ class RadialAxis {
                 a,
                 b,
                 otherAxis: (RadialAxis|undefined),
-                xy: Highcharts.PositionObject,
+                xy: PositionObject,
                 tickPositions: number[],
                 crossPos,
                 path: SVGPath;
@@ -798,7 +806,7 @@ class RadialAxis {
         };
 
         // Find the position for the axis title, by default inside the gauge.
-        axis.getTitlePosition = function (): Highcharts.PositionObject {
+        axis.getTitlePosition = function (): PositionObject {
             var center = this.center,
                 chart = this.chart,
                 titleOptions = this.options.title;
@@ -813,7 +821,7 @@ class RadialAxis {
                             high: 0.5,
                             middle: 0.25,
                             low: 0
-                        } as Highcharts.Dictionary<number>)[
+                        } as Record<string, number>)[
                             (titleOptions as any).align
                         ] *
                         center[2]
@@ -1247,7 +1255,7 @@ class RadialAxis {
 }
 
 interface RadialAfterGetPositionEvent extends Event {
-    pos: Highcharts.PositionObject;
+    pos: PositionObject;
 }
 
 interface RadialAutoAlignEvent extends Event {
@@ -1293,12 +1301,12 @@ interface RadialAxis extends Axis {
     getPosition(
         value: number,
         length?: number
-    ): Highcharts.PositionObject;
-    getTitlePosition(): Highcharts.PositionObject;
+    ): PositionObject;
+    getTitlePosition(): PositionObject;
     postTranslate(
         angle: number,
         radius: number
-    ): Highcharts.PositionObject;
+    ): PositionObject;
     setAxisSize(): void;
     setAxisTranslation(): void;
     setOptions(userOptions: DeepPartial<RadialAxisOptions>): void;

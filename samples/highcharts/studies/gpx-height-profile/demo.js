@@ -1,5 +1,5 @@
 // 2. Optionally define data labels by the index of the track point
-var dl = {
+const dl = {
     2: {
         enabled: true,
         format: 'Start - Lunde',
@@ -32,23 +32,24 @@ var dl = {
  * http://stackoverflow.com/questions/27928/how-do-i-calculate-distance-between-two-latitude-longitude-points
  */
 function getDistance(pt1, pt2) {
-    var toRad = Math.PI / 180;
-    var R = 6371; // Radius of the earth in km
-    var dLat = (pt2.lat - pt1.lat) * toRad;  // Javascript functions in radians
-    var dLon = (pt2.lon - pt1.lon) * toRad;
-    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    const toRad = Math.PI / 180;
+    const R = 6371; // Radius of the earth in km
+    const dLat = (pt2.lat - pt1.lat) * toRad;  // Javascript functions in radians
+    const dLon = (pt2.lon - pt1.lon) * toRad;
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(pt1.lat * toRad) * Math.cos(pt2.lat * toRad) *
             Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c; // Distance in km
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
 
     return d;
 }
 
 
-var xml = document.getElementById('data'),
-    data = [],
-    lastPoint,
+const xml = document.getElementById('data'),
+    data = [];
+
+let lastPoint,
     totalDistance = 0,
     trackPoints = xml.getElementsByTagName('trkpt');
 
@@ -57,9 +58,8 @@ trackPoints = Array.prototype.slice.call(trackPoints, 0);
 trackPoints.reverse();
 
 // Iterate over the track points, get cumulative distance and elevation
-$.each(trackPoints, function (i, trkpt) {
-
-    var ele = parseInt(trkpt.getElementsByTagName('ele')[0].textContent, 10),
+trackPoints.forEach((trkpt, i) => {
+    const ele = parseInt(trkpt.getElementsByTagName('ele')[0].textContent, 10),
         lat = parseFloat(trkpt.getAttribute('lat')),
         lon = parseFloat(trkpt.getAttribute('lon')),
         point = {
@@ -87,7 +87,6 @@ $.each(trackPoints, function (i, trkpt) {
     lastPoint = point;
 
 });
-
 
 // Now create the chart
 Highcharts.chart('container', {

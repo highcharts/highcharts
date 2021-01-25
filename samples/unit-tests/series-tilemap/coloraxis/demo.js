@@ -4,17 +4,22 @@ QUnit.test('Tilemap and ColorAxis', function (assert) {
                 type: 'tilemap'
             },
             colorAxis: {},
-            series: [{
-                data: [{
-                    x: 0,
-                    y: 0,
-                    value: 0.02
-                }, {
-                    x: 25,
-                    y: 15,
-                    value: 0.06
-                }]
-            }]
+            series: [
+                {
+                    data: [
+                        {
+                            x: 0,
+                            y: 0,
+                            value: 0.02
+                        },
+                        {
+                            x: 25,
+                            y: 15,
+                            value: 0.06
+                        }
+                    ]
+                }
+            ]
         }),
         extremes = chart.colorAxis[0].getExtremes();
 
@@ -39,14 +44,13 @@ QUnit.test('Tilemap and ColorAxis', function (assert) {
 
     assert.notEqual(
         point.graphic.element.getAttribute('cx'),
-        "NaN",
-        "Circle shape of tilemap should not have cx attribute with NaN values on hover."
+        'NaN',
+        'Circle shape of tilemap should not have cx attribute with NaN values on hover.'
     );
 
     assert.notEqual(
         point.graphic.element.getAttribute('cy'),
-        "NaN",
-        "Circle shape of tilemap should not have cy attribute with NaN values on hover."
+        'NaN',
+        'Circle shape of tilemap should not have cy attribute with NaN values on hover.'
     );
-
 });

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -10,12 +10,26 @@
  *
  * */
 
+'use strict';
+
 import type Chart from '../../Core/Chart/Chart';
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
+import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
+import palette from '../../Core/Color/Palette.js';
+
+declare module '../../Core/Series/PointOptions' {
+    interface PointOptions {
+        accessibility?: Highcharts.PointAccessibilityOptionsObject;
+    }
+}
+
+declare module '../../Core/Series/SeriesOptions' {
+    interface SeriesOptions {
+        accessibility?: Highcharts.SeriesAccessibilityOptions;
+    }
+}
 
 /**
  * Internal types.
@@ -64,10 +78,10 @@ declare global {
         }
         interface AccessibilityOptions {
             announceNewData: AccessibilityAnnounceNewDataOptions;
-            customComponents?: Dictionary<any>;
+            customComponents?: Record<string, any>;
             description?: string;
             enabled: boolean;
-            highContrastTheme: Dictionary<any>;
+            highContrastTheme: Record<string, any>;
             keyboardNavigation: AccessibilityKeyboardNavigationOptions;
             landmarkVerbosity: string;
             linkedDescription: (string|HTMLDOMElement);
@@ -123,9 +137,6 @@ declare global {
         interface PointAccessibilityOptionsObject {
             description?: string;
         }
-        interface PointOptionsObject {
-            accessibility?: PointAccessibilityOptionsObject;
-        }
         interface ScreenReaderClickCallbackFunction {
             (evt: MouseEvent, chart?: AccessibilityChart): void;
         }
@@ -143,9 +154,6 @@ declare global {
                 SeriesAccessibilityKeyboardNavigationOptions
             );
             pointDescriptionFormatter?: Function;
-        }
-        interface SeriesOptions {
-            accessibility?: SeriesAccessibilityOptions;
         }
         interface XAxisAccessibilityOptions {
             description?: string;
@@ -230,7 +238,7 @@ var options: DeepPartial<Highcharts.Options> = {
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
      * to be loaded. For a description of the module and information
      * on its features, see
-     * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
+     * [Highcharts Accessibility](https://www.highcharts.com/docs/accessibility/accessibility-module).
      *
      * @since        5.0.0
      * @requires     modules/accessibility
@@ -664,7 +672,7 @@ var options: DeepPartial<Highcharts.Options> = {
                  */
                 style: {
                     /** @internal */
-                    color: '${palette.highlightColor80}',
+                    color: palette.highlightColor80,
                     /** @internal */
                     lineWidth: 2,
                     /** @internal */

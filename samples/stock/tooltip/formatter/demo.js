@@ -1,11 +1,10 @@
 Highcharts.stockChart('container', {
-
     tooltip: {
-        formatter: function () {
-            var s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '</b>';
+        formatter() {
+            let s = '<b>' + Highcharts.dateFormat('%A, %b %e, %Y', this.x) + '</b>';
 
-            $.each(this.points, function () {
-                s += '<br/>1 USD = ' + this.y + ' EUR';
+            this.points.forEach(point => {
+                s += '<br/>1 USD = ' + point.y + ' EUR';
             });
 
             return s;

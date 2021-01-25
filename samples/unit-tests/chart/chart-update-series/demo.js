@@ -1,6 +1,5 @@
 /* eslint func-style:0 */
 
-
 QUnit.test('Test updating series by id', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -15,14 +14,17 @@ QUnit.test('Test updating series by id', function (assert) {
             }
         },
 
-        series: [{
-            data: [1, 3, 2, 4],
-            name: 'First'
-        }, {
-            data: [5, 3, 4, 1],
-            name: 'Last',
-            id: 'last'
-        }]
+        series: [
+            {
+                data: [1, 3, 2, 4],
+                name: 'First'
+            },
+            {
+                data: [5, 3, 4, 1],
+                name: 'Last',
+                id: 'last'
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -32,10 +34,12 @@ QUnit.test('Test updating series by id', function (assert) {
     );
 
     chart.update({
-        series: [{
-            id: 'last',
-            type: 'line'
-        }]
+        series: [
+            {
+                id: 'last',
+                type: 'line'
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -45,9 +49,11 @@ QUnit.test('Test updating series by id', function (assert) {
     );
 
     chart.update({
-        series: [{
-            type: 'line'
-        }]
+        series: [
+            {
+                type: 'line'
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -85,32 +91,41 @@ QUnit.test('Test updating series by id', function (assert) {
         'oh, yes, again',
         'When not changing series props, the point should survive'
     );
-
 });
 
 QUnit.test('Updating axes and series', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [{
-            data: [1, 2, 3],
-            yAxis: 0
-        }, {
-            data: [3, 2, 1],
-            yAxis: 1
-        }, {
-            data: [2, 2, 2],
-            yAxis: 2
-        }],
+        series: [
+            {
+                data: [1, 2, 3],
+                yAxis: 0
+            },
+            {
+                data: [3, 2, 1],
+                yAxis: 1
+            },
+            {
+                data: [2, 2, 2],
+                yAxis: 2
+            }
+        ],
         yAxis: [{}, {}, {}]
     });
 
-    chart.update({
-        series: [{
-            data: [1, 2, 3],
-            yAxis: 0
-        }],
-        yAxis: [{}]
-
-    }, true, true, true);
+    chart.update(
+        {
+            series: [
+                {
+                    data: [1, 2, 3],
+                    yAxis: 0
+                }
+            ],
+            yAxis: [{}]
+        },
+        true,
+        true,
+        true
+    );
 
     assert.strictEqual(
         chart.series.length,
@@ -126,27 +141,39 @@ QUnit.test('Updating axes and series', function (assert) {
 
 QUnit.test('Updating series with indexes', function (assert) {
     var chart = Highcharts.chart('container', {
-        series: [{
-            index: 2,
-            data: [1, 2, 3]
-        }, {
-            index: 1,
-            data: [3, 2, 1]
-        }]
+        series: [
+            {
+                index: 2,
+                data: [1, 2, 3]
+            },
+            {
+                index: 1,
+                data: [3, 2, 1]
+            }
+        ]
     });
 
-    chart.update({
-        series: [{
-            index: 2,
-            data: [1, 1, 1]
-        }, {
-            index: 1,
-            data: [2, 2, 2]
-        }, {
-            index: 4,
-            data: [3, 3, 3]
-        }]
-    }, true, true, false);
+    chart.update(
+        {
+            series: [
+                {
+                    index: 2,
+                    data: [1, 1, 1]
+                },
+                {
+                    index: 1,
+                    data: [2, 2, 2]
+                },
+                {
+                    index: 4,
+                    data: [3, 3, 3]
+                }
+            ]
+        },
+        true,
+        true,
+        false
+    );
 
     assert.strictEqual(
         chart.series.length,
@@ -161,15 +188,17 @@ QUnit.test('Chart.update and series events (#11088)', assert => {
         updated: 0,
         updated2: 0
     };
-    const chart =  Highcharts.chart('container', {
+    const chart = Highcharts.chart('container', {
         chart: {
             width: 400,
             height: 300
         },
-        series: [{
-            type: 'column',
-            data: [3, 2, 1]
-        }],
+        series: [
+            {
+                type: 'column',
+                data: [3, 2, 1]
+            }
+        ],
         plotOptions: {
             series: {
                 events: {
@@ -232,5 +261,4 @@ QUnit.test('Chart.update and series events (#11088)', assert => {
         1,
         'With new points, updated click handler should fire'
     );
-
 });

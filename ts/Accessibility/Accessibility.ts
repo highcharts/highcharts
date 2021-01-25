@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility module for Highcharts
  *
@@ -13,18 +13,19 @@
 'use strict';
 
 import type Chart from '../Core/Chart/Chart';
+import type SeriesOptions from '../Core/Series/SeriesOptions';
 import ChartUtilities from './Utils/ChartUtilities.js';
 import H from '../Core/Globals.js';
 const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import CartesianSeries from '../Core/Series/CartesianSeries.js';
 import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -33,6 +34,15 @@ const {
     merge
 } = U;
 
+declare module '../Core/Chart/ChartLike' {
+    interface ChartLike {
+        a11yDirty?: boolean;
+        accessibility?: Highcharts.Accessibility;
+        types?: Array<string>;
+        /** @require modules/accessibility */
+        updateA11yEnabled(): void;
+    }
+}
 
 /**
  * Internal types.
@@ -73,13 +83,6 @@ declare global {
             chart: AccessibilityChart;
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
-        }
-        interface ChartLike {
-            a11yDirty?: boolean;
-            accessibility?: Accessibility;
-            types?: Array<string>;
-            /** @require modules/accessibility */
-            updateA11yEnabled(): void;
         }
         let A11yChartUtilities: A11yChartUtilities;
     }
@@ -303,9 +306,9 @@ Accessibility.prototype = {
      * Return a list of the types of series we have in the chart.
      * @private
      */
-    getChartTypes: function (): Array<string> {
-        var types: Highcharts.Dictionary<number> = {};
-        this.chart.series.forEach(function (series: Highcharts.Series): void {
+    getChartTypes: function (this: Highcharts.Accessibility): Array<string> {
+        var types: Record<string, number> = {};
+        this.chart.series.forEach(function (series): void {
             types[series.type] = 1;
         });
         return Object.keys(types);
@@ -393,7 +396,7 @@ addEvent(Point, 'update', function (): void {
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event: string): void {
-    addEvent(CartesianSeries, event, function (): void {
+    addEvent(Series, event, function (): void {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

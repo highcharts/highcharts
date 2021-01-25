@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2020 Highsoft AS
+ *  Copyright (c) 2019-2021 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -14,12 +14,19 @@
 
 'use strict';
 
+import type Series from '../../Core/Series/Series';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
 const {
     win,
     doc
 } = H;
+
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        boostForceChartBoost?: boolean;
+    }
+}
 
 /**
  * Internal types
@@ -29,13 +36,9 @@ declare global {
     namespace Highcharts {
         /** @requires modules/boost */
         function hasWebGLSupport(): boolean;
-        interface ChartLike {
-            boostForceChartBoost?: boolean;
-        }
     }
 }
 
-import '../../Series/LineSeries.js';
 import boostableMap from './BoostableMap.js';
 import createAndAttachRenderer from './BoostAttach.js';
 
@@ -188,7 +191,7 @@ function shouldForceChartSeriesBoosting(chart: Chart): boolean {
  */
 function renderIfNotSeriesBoosting(
     renderer: Highcharts.BoostGLRenderer,
-    series: Highcharts.Series,
+    series: Series,
     chart?: Chart
 ): void {
     if (renderer &&
@@ -205,7 +208,7 @@ function renderIfNotSeriesBoosting(
  */
 function allocateIfNotSeriesBoosting(
     renderer: Highcharts.BoostGLRenderer,
-    series: Highcharts.Series
+    series: Series
 ): void {
     if (renderer &&
         series.renderTarget &&
@@ -314,7 +317,7 @@ function hasWebGLSupport(): boolean {
  *
  * @return {*}
  */
-function pointDrawHandler(this: Highcharts.Series, proceed: Function): void {
+function pointDrawHandler(this: Series, proceed: Function): void {
     var enabled = true,
         renderer: Highcharts.BoostGLRenderer;
 

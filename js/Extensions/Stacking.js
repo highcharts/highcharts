@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,6 +11,7 @@
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, isNumber = U.isNumber, pick = U.pick;
@@ -54,8 +55,6 @@ var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties 
 * @type {number}
 */
 ''; // detached doclets above
-import '../Series/LineSeries.js';
-var Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
@@ -151,7 +150,7 @@ var StackItem = /** @class */ (function () {
             }
         }
         // Rank it higher than data labels (#8742)
-        this.label.labelrank = chart.plotHeight;
+        this.label.labelrank = chart.plotSizeY;
     };
     /**
      * Sets the offset that the stack has from the x value and repositions the
@@ -466,9 +465,6 @@ Series.prototype.modifyStacks = function () {
  *
  * @private
  * @function Highcharts.Series#percentStacker
- * @param {Array<number>} pointExtremes
- * @param {Highcharts.StackItem} stack
- * @param {number} i
  */
 Series.prototype.percentStacker = function (pointExtremes, stack, i) {
     var totalFactor = stack.total ? 100 / stack.total : 0;

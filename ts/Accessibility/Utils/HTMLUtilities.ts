@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Utility functions for accessibility module.
  *
@@ -14,6 +14,7 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import H from '../../Core/Globals.js';
 const {
@@ -152,15 +153,14 @@ function reverseChildNodes(node: DOMElementType): void {
  */
 function setElAttrs(
     el: DOMElementType,
-    attrs: (Highcharts.HTMLAttributes|SVGAttributes)
+    attrs: (HTMLAttributes|SVGAttributes)
 ): void {
     Object.keys(attrs).forEach(function (attr: string): void {
         var val = attrs[attr];
         if (val === null) {
             el.removeAttribute(attr);
         } else {
-            var cleanedVal = escapeStringForHTML('' + val);
-            el.setAttribute(attr, cleanedVal);
+            el.setAttribute(attr, val);
         }
     });
 }
@@ -204,15 +204,15 @@ function visuallyHideElement(element: HTMLDOMElement): void {
 
 
 var HTMLUtilities = {
-    addClass: addClass,
-    escapeStringForHTML: escapeStringForHTML,
-    getElement: getElement,
-    getFakeMouseEvent: getFakeMouseEvent,
-    removeElement: removeElement,
-    reverseChildNodes: reverseChildNodes,
-    setElAttrs: setElAttrs,
-    stripHTMLTagsFromString: stripHTMLTagsFromString,
-    visuallyHideElement: visuallyHideElement
+    addClass,
+    escapeStringForHTML,
+    getElement,
+    getFakeMouseEvent,
+    removeElement,
+    reverseChildNodes,
+    setElAttrs,
+    stripHTMLTagsFromString,
+    visuallyHideElement
 };
 
 export default HTMLUtilities;

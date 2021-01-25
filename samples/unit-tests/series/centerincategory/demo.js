@@ -1,66 +1,67 @@
 QUnit.test('series.centerInCategory', function (assert) {
     var chart = Highcharts.chart('container', {
-
         chart: {
             type: 'column'
         },
 
-        xAxis: [{
+        xAxis: [{}, {}],
 
-        }, {
+        yAxis: [
+            {},
+            {
+                opposite: true,
+                title: null
+            }
+        ],
 
-        }],
-
-        yAxis: [{
-
-        }, {
-            opposite: true,
-            title: null
-        }],
-
-        series: [{
-            name: 'Tokyo',
-            data: [
-                [0, 2],
-                [1, 3],
-                [2, 2],
-                [3, null]
-            ]
-        }, {
-            name: 'Warsaw',
-            data: [
-                [0, 2],
-                [1, 5],
-                [2, 1]
-            ]
-        }, {
-            name: 'Madrid',
-            data: [
-                [0, null],
-                [1, 3]
-            ]
-        }, {
-            name: 'Another',
-            data: [
-                [0, 1],
-                [1, 2],
-                [3, 4]
-            ]
-        }, {
-            name: 'Test',
-            data: [
-                [0, 1],
-                [1, 2],
-                [3, 4]
-            ]
-        }]
-
+        series: [
+            {
+                name: 'Tokyo',
+                data: [
+                    [0, 2],
+                    [1, 3],
+                    [2, 2],
+                    [3, null]
+                ]
+            },
+            {
+                name: 'Warsaw',
+                data: [
+                    [0, 2],
+                    [1, 5],
+                    [2, 1]
+                ]
+            },
+            {
+                name: 'Madrid',
+                data: [
+                    [0, null],
+                    [1, 3]
+                ]
+            },
+            {
+                name: 'Another',
+                data: [
+                    [0, 1],
+                    [1, 2],
+                    [3, 4]
+                ]
+            },
+            {
+                name: 'Test',
+                data: [
+                    [0, 1],
+                    [1, 2],
+                    [3, 4]
+                ]
+            }
+        ]
     });
 
     assert.strictEqual(
         chart.series[3].points[0].shapeArgs.width,
         13,
-        '(centerInCategory: false) - point\'s width'
+        "(centerInCategory: false) - point's width"
     );
 
     chart.update({
@@ -74,13 +75,20 @@ QUnit.test('series.centerInCategory', function (assert) {
     assert.strictEqual(
         chart.series[3].points[0].shapeArgs.width,
         13,
-        '(centerInCategory: true) - point\'s width should be unchanged'
+        "(centerInCategory: true) - point's width should be unchanged"
     );
 
     assert.ok(
         chart.series[1].points[2].shapeArgs.x + chart.plotLeft >
             chart.xAxis[0].ticks[2].mark.element.getBBox().x,
         'Point should be on the right side of the tick.'
+    );
+
+    chart.redraw();
+    assert.strictEqual(
+        Object.keys(chart.yAxis[0].stacking.stacks).length,
+        1,
+        '#14910: Group stack should not be removed on redraw'
     );
 
     /*
@@ -155,5 +163,4 @@ QUnit.test('series.centerInCategory', function (assert) {
         'stackLabels placement'
     );
     */
-
 });

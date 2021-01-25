@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,7 +8,10 @@
  *
  * */
 
-import type StackItem from '../../Extensions/Stacking.js';
+'use strict';
+
+import type Series from '../Series/Series';
+import type StackItem from '../../Extensions/Stacking';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
@@ -83,7 +86,7 @@ class StackingAxisAdditions {
         const reversedStacks = pick(axis.options.reversedStacks, true);
         const len = axisSeries.length;
 
-        let actualSeries: Highcharts.Series,
+        let actualSeries: Series,
             i: number;
 
         if (!axis.isXAxis) {
@@ -139,7 +142,7 @@ class StackingAxisAdditions {
 
         if (!axis.isXAxis) {
             objectEach(stacks, function (
-                type: Highcharts.Dictionary<Highcharts.StackItem>
+                type: Record<string, Highcharts.StackItem>
             ): void {
                 objectEach(type, function (
                     stack: Highcharts.StackItem,
@@ -190,7 +193,7 @@ class StackingAxisAdditions {
 
         // Render each stack total
         objectEach(stacks, function (
-            type: Highcharts.Dictionary<Highcharts.StackItem>
+            type: Record<string, Highcharts.StackItem>
         ): void {
             objectEach(type, function (stack: Highcharts.StackItem): void {
                 stack.render(stackTotalGroup);

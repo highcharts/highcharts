@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -15,7 +15,9 @@
  * */
 
 import type PointLike from './PointLike';
-import type PointType from './PointType';
+import type SeriesOptions from './SeriesOptions';
+import type { StatesOptionsKey } from './StatesOptions';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
  *
@@ -39,25 +41,18 @@ export interface SeriesLike {
     linkedParent?: SeriesLike;
     linkedSeries: Array<SeriesLike>;
     markerGroup?: SVGElement;
+    name: string;
     opacity?: number;
-    options: SeriesLikeOptions;
+    options: SeriesOptions;
     points: Array<PointLike>;
-    userOptions: DeepPartial<SeriesLikeOptions>;
+    state?: StatesOptionsKey;
+    type: string;
+    userOptions: DeepPartial<SeriesOptions>;
+    visible: boolean;
     drawGraph(): void;
     render(): void;
     translate(): void;
-    update(options: DeepPartial<SeriesLikeOptions>): void;
-}
-
-/**
- * Helper interface for series types to add options to all series options.
- *
- * Use the `declare module 'Types'` pattern to overload the interface in this
- * definition file.
- */
-export interface SeriesLikeOptions /* @todo */ extends Highcharts.SeriesOptions {
-    data?: Array<PointType['options']>;
-    type?: string;
+    update(options: DeepPartial<SeriesOptions>): void;
 }
 
 /* *

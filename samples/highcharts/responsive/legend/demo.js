@@ -1,33 +1,26 @@
-var chart = Highcharts.chart('container', {
-
+const chart = Highcharts.chart('container', {
     chart: {
         type: 'column'
     },
-
     title: {
         text: 'Highcharts responsive chart'
     },
-
     subtitle: {
         text: 'Resize the frame to see the legend position change'
     },
-
     legend: {
         align: 'right',
         verticalAlign: 'middle',
         layout: 'vertical'
     },
-
     xAxis: {
         categories: ['Apples', 'Oranges', 'Bananas']
     },
-
     yAxis: {
         title: {
             text: 'Amount'
         }
     },
-
     series: [{
         name: 'Christmas Eve',
         data: [1, 4, 3]
@@ -38,7 +31,6 @@ var chart = Highcharts.chart('container', {
         name: 'Christmas Day after dinner',
         data: [8, 4, 3]
     }],
-
     responsive: {
         rules: [{
             condition: {
@@ -55,10 +47,10 @@ var chart = Highcharts.chart('container', {
     }
 });
 
-$('#small').click(function () {
+document.getElementById('small').addEventListener('click', () => {
     chart.setSize(400, 300);
 });
 
-$('#large').click(function () {
+document.getElementById('large').addEventListener('click', () => {
     chart.setSize(600, 300);
 });

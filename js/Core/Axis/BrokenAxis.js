@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Torstein Honsi
+ *  (c) 2009-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,7 +9,7 @@
  * */
 'use strict';
 import Axis from './Axis.js';
-import LineSeries from '../../Series/LineSeries.js';
+import Series from '../Series/Series.js';
 import StackItem from '../../Extensions/Stacking.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
@@ -203,8 +203,8 @@ var BrokenAxisAdditions = /** @class */ (function () {
                 }
                 Axis.prototype.setExtremes.call(this, newMin, newMax, redraw, animation, eventArguments);
             };
-            axis.setAxisTranslation = function (saveOld) {
-                Axis.prototype.setAxisTranslation.call(this, saveOld);
+            axis.setAxisTranslation = function () {
+                Axis.prototype.setAxisTranslation.call(this);
                 brokenAxis.unitLength = null;
                 if (brokenAxis.hasBreaks) {
                     var breaks = axis.options.breaks || [], 
@@ -317,7 +317,7 @@ var BrokenAxis = /** @class */ (function () {
      */
     BrokenAxis.compose = function (AxisClass, SeriesClass) {
         AxisClass.keepProps.push('brokenAxis');
-        var seriesProto = LineSeries.prototype;
+        var seriesProto = Series.prototype;
         /**
          * @private
          */
@@ -528,5 +528,5 @@ var BrokenAxis = /** @class */ (function () {
     };
     return BrokenAxis;
 }());
-BrokenAxis.compose(Axis, LineSeries); // @todo remove automatism
+BrokenAxis.compose(Axis, Series); // @todo remove automatism
 export default BrokenAxis;

@@ -11,4 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import '../../Series/TilemapSeries.js';
+import '../../Series/Tilemap/TilemapSeries.js';
