@@ -450,7 +450,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     // Also, the point of currentPriceIndicator
     // should be inside the plot area, #14879.
     var isInside = point ? point.series.isPointInside(point) :
-        value > min || value < max;
+        value > min && value < max;
     crossLabel.attr({
         text: formatOption ?
             format(formatOption, { value: value }, chart) :
