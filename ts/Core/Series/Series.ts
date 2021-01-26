@@ -44,11 +44,13 @@ import type SplineSeries from '../../Series/Spline/SplineSeries';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type Time from '../Time';
 import A from '../Animation/AnimationUtilities.js';
 const {
     animObject,
     setAnimation
 } = A;
+import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
 const {
     hasTouch,
@@ -226,7 +228,7 @@ class Series {
 
     /* *
      *
-     *  Static Functions
+     *  Static Properties
      *
      * */
 
@@ -2626,6 +2628,144 @@ class Series {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Converts the DataTable instance to common series options.
+     *
+     * @private
+     *
+     * @param {DataTable} table
+     * Table to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from table rows.
+     *
+     * @return {Highcharts.SeriesOptions}
+     * Common series options.
+     */
+    public static getSeriesOptionsFromTable(
+        table: DataTable,
+        keys?: Array<string>
+    ): SeriesOptions {
+        const rows = table.getAllRows(),
+            data: Array<PointOptions> = [];
+
+        let pointStart: (number|undefined);
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            if (i === 0) {
+                pointStart = rows[i].getCellAsNumber(keys && keys[0] || 'x');
+            }
+            data.push(Point.getPointOptionsFromTableRow(rows[i], keys));
+        }
+
+        return {
+            data,
+            id: table.id,
+            keys,
+            pointStart
+        };
+    }
+
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @private
+     *
+     * @param {Highcharts.SeriesOptions} seriesOptions
+     * Series options to convert.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    public static getTableFromSeriesOptions(
+        seriesOptions: SeriesOptions
+    ): DataTable {
+        const table = new DataTable(void 0, seriesOptions.id),
+            data = (seriesOptions.data || []);
+
+        let keys = (seriesOptions.keys || []).slice(),
+            x = (seriesOptions.pointStart || 0);
+
+        if (!keys.length) {
+            if (seriesOptions.type) {
+                const seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type],
+                    pointArrayMap = (
+                        seriesClass &&
+                        seriesClass.prototype.pointArrayMap
+                    );
+                if (pointArrayMap) {
+                    keys = pointArrayMap.slice();
+                    keys.unshift('x');
+                }
+            }
+            if (!keys.length) {
+                keys = ['x', 'y'];
+            }
+        }
+
+        for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
+            table.insertRow(
+                Point.getTableRowFromPointOptions(data[i], x, keys)
+            );
+            x = Series.increment(x, seriesOptions);
+        }
+
+        return table;
+    }
+
+    // eslint-disable-next-line valid-jsdoc
+    /** @private */
+    public static increment(
+        value: number,
+        options: SeriesOptions = {},
+        time: Time = H.time
+    ): number {
+        const intervalUnit = options.pointIntervalUnit;
+
+        let interval = pick(options.pointInterval, 1);
+
+        // Added code for pointInterval strings
+        if (intervalUnit) {
+            const date = new time.Date(value);
+
+            switch (intervalUnit) {
+                case 'day':
+                    time.set(
+                        'Date',
+                        date,
+                        time.get('Date', date) + interval
+                    );
+                    break;
+                case 'month':
+                    time.set(
+                        'Month',
+                        date,
+                        time.get('Month', date) + interval
+                    );
+                    break;
+                case 'year':
+                    time.set(
+                        'FullYear',
+                        date,
+                        time.get('FullYear', date) + interval
+                    );
+                    break;
+                default:
+            }
+
+            interval = date.getTime() - value;
+
+        }
+
+        return value + interval;
+    }
+
+    /* *
+     *
      *  Properties
      *
      * */
@@ -3125,51 +3265,15 @@ class Series {
      * @return {number}
      */
     public autoIncrement(): number {
+        const options = this.options,
+            xIncrement = pick(this.xIncrement, options.pointStart, 0);
 
-        var options: SeriesTypeOptions = this.options,
-            xIncrement = this.xIncrement as number,
-            date,
-            pointInterval,
-            pointIntervalUnit = options.pointIntervalUnit,
-            time = this.chart.time;
-
-        xIncrement = pick(xIncrement, options.pointStart, 0);
-
-        this.pointInterval = pointInterval = pick(
-            this.pointInterval,
-            options.pointInterval,
-            1
+        this.xIncrement = Series.increment(
+            xIncrement,
+            options,
+            this.chart.time
         );
 
-        // Added code for pointInterval strings
-        if (pointIntervalUnit) {
-            date = new time.Date(xIncrement);
-
-            if (pointIntervalUnit === 'day') {
-                time.set(
-                    'Date',
-                    date,
-                    time.get('Date', date) + pointInterval
-                );
-            } else if (pointIntervalUnit === 'month') {
-                time.set(
-                    'Month',
-                    date,
-                    time.get('Month', date) + pointInterval
-                );
-            } else if (pointIntervalUnit === 'year') {
-                time.set(
-                    'FullYear',
-                    date,
-                    time.get('FullYear', date) + pointInterval
-                );
-            }
-
-            pointInterval = date.getTime() - xIncrement;
-
-        }
-
-        this.xIncrement = xIncrement + pointInterval;
         return xIncrement;
     }
 

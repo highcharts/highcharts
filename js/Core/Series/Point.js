@@ -18,13 +18,12 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import DataParser from '../../Data/Parsers/DataParser.js';
 import DataTableRow from '../../Data/DataTableRow.js';
 import H from '../Globals.js';
 import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, flat = U.flat, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout, removeEvent = U.removeEvent, unflat = U.unflat, uniqueKey = U.uniqueKey;
 /**
  * Function callback when a series point is clicked. Return false to cancel the
  * action.
@@ -339,7 +338,7 @@ var Point = /** @class */ (function () {
             this.series = series;
         }
         if (series && tableRow) {
-            this.applyOptions(DataParser.getPointOptionsFromTableRow(tableRow));
+            this.applyOptions(Point.getPointOptionsFromTableRow(tableRow));
             this.attachTableRow(tableRow);
             // Add a unique ID to the point if none is assigned
             this.id = tableRow.id;
@@ -347,6 +346,79 @@ var Point = /** @class */ (function () {
             series.chart.pointCount++;
         }
     }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    /**
+     * Converts the DataTableRow instance to common series options.
+     *
+     * @param {DataTableRow} tableRow
+     * Table row to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from the table row.
+     *
+     * @return {Highcharts.PointOptions}
+     * Common point options.
+     */
+    Point.getPointOptionsFromTableRow = function (tableRow, keys) {
+        var pointOptions = {
+            id: tableRow.id
+        }, cellNames = tableRow.getCellNames();
+        var cellName;
+        for (var j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
+            cellName = cellNames[j];
+            if (keys && keys.indexOf(cellName) === -1) {
+                continue;
+            }
+            pointOptions[cellName] = tableRow.getCell(cellName);
+        }
+        return unflat(pointOptions);
+    };
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @param {Highcharts.PointOptions} pointOptions
+     * Point options to convert.
+     *
+     * @param {number} [x]
+     * Point index for x value.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to convert options.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    Point.getTableRowFromPointOptions = function (pointOptions, x, keys) {
+        var _a;
+        if (x === void 0) { x = 0; }
+        if (keys === void 0) { keys = ['x', 'y']; }
+        var tableRow;
+        // Array
+        if (pointOptions instanceof Array) {
+            var tableRowOptions = {};
+            for (var i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
+                tableRowOptions[keys[i] || "" + i] = pointOptions[i];
+            }
+            tableRow = new DataTableRow(tableRowOptions);
+            // Object
+        }
+        else if (pointOptions &&
+            typeof pointOptions === 'object') {
+            tableRow = new DataTableRow(flat(pointOptions));
+            // Primitive
+        }
+        else {
+            tableRow = new DataTableRow((_a = {},
+                _a[keys[0] || 'x'] = x,
+                _a[keys[1] || 'y'] = pointOptions,
+                _a));
+        }
+        return tableRow;
+    };
     /* *
      *
      *  Functions
@@ -938,7 +1010,7 @@ var Point = /** @class */ (function () {
     Point.prototype.update = function (options, redraw, animation, runEvent) {
         if (redraw === void 0) { redraw = true; }
         var point = this, series = point.series, graphic = point.graphic, i, chart = series.chart, pointOptions = (options instanceof DataTableRow ?
-            DataParser.getPointOptionsFromTableRow(options) :
+            Point.getPointOptionsFromTableRow(options) :
             options), seriesOptions = series.options;
         /**
          * @private

@@ -36,7 +36,6 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
-import DataParser from '../../Data/Parsers/DataParser.js';
 import DataTableRow from '../../Data/DataTableRow.js';
 import H from '../Globals.js';
 import O from '../Options.js';
@@ -48,6 +47,7 @@ const {
     erase,
     extend,
     fireEvent,
+    flat,
     format,
     getNestedProperty,
     isArray,
@@ -59,6 +59,7 @@ const {
     pick,
     syncTimeout,
     removeEvent,
+    unflat,
     uniqueKey
 } = U;
 
@@ -336,6 +337,97 @@ class Point {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Converts the DataTableRow instance to common series options.
+     *
+     * @param {DataTableRow} tableRow
+     * Table row to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from the table row.
+     *
+     * @return {Highcharts.PointOptions}
+     * Common point options.
+     */
+    public static getPointOptionsFromTableRow(
+        tableRow: DataTableRow,
+        keys?: Array<string>
+    ): PointOptions {
+        const pointOptions: (PointOptions&Record<string, any>) = {
+                id: tableRow.id
+            },
+            cellNames = tableRow.getCellNames();
+
+        let cellName: string;
+
+        for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
+            cellName = cellNames[j];
+            if (keys && keys.indexOf(cellName) === -1) {
+                continue;
+            }
+            pointOptions[cellName] = tableRow.getCell(cellName);
+        }
+
+        return unflat(pointOptions);
+    }
+
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @param {Highcharts.PointOptions} pointOptions
+     * Point options to convert.
+     *
+     * @param {number} [x]
+     * Point index for x value.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to convert options.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    public static getTableRowFromPointOptions(
+        pointOptions: (
+            (PointOptions&Record<string, any>)|
+            PointShortOptions
+        ),
+        x: number = 0,
+        keys: Array<string> = ['x', 'y']
+    ): DataTableRow {
+        let tableRow: DataTableRow;
+
+        // Array
+        if (pointOptions instanceof Array) {
+            const tableRowOptions: (PointOptions&Record<string, any>) = {};
+            for (let i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
+                tableRowOptions[keys[i] || `${i}`] = pointOptions[i];
+            }
+            tableRow = new DataTableRow(tableRowOptions);
+
+        // Object
+        } else if (
+            pointOptions &&
+            typeof pointOptions === 'object'
+        ) {
+            tableRow = new DataTableRow(flat(pointOptions));
+
+        // Primitive
+        } else {
+            tableRow = new DataTableRow({
+                [keys[0] || 'x']: x,
+                [keys[1] || 'y']: pointOptions
+            });
+        }
+
+        return tableRow;
+    }
+
+    /* *
+     *
      *  Constructor
      *
      * */
@@ -346,7 +438,7 @@ class Point {
         }
 
         if (series && tableRow) {
-            this.applyOptions(DataParser.getPointOptionsFromTableRow(tableRow));
+            this.applyOptions(Point.getPointOptionsFromTableRow(tableRow));
             this.attachTableRow(tableRow);
 
             // Add a unique ID to the point if none is assigned
@@ -1278,7 +1370,7 @@ class Point {
             chart = series.chart,
             pointOptions = (
                 options instanceof DataTableRow ?
-                    DataParser.getPointOptionsFromTableRow(options) :
+                    Point.getPointOptionsFromTableRow(options) :
                     options
             ),
             seriesOptions = series.options;

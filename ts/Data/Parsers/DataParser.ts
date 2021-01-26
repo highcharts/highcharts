@@ -18,21 +18,13 @@
 
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
-import type {
-    PointOptions,
-    PointShortOptions
-} from '../../Core/Series/PointOptions';
-import type SeriesOptions from '../../Core/Series/SeriesOptions';
 
 import DataTable from '../DataTable.js';
 import DataTableRow from '../DataTableRow.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    flat,
-    unflat,
     uniqueKey
 } = U;
 
@@ -147,71 +139,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     }
 
     /**
-     * Converts the DataTableRow instance to common series options.
-     *
-     * @param {DataTableRow} tableRow
-     * Table row to convert.
-     *
-     * @param {Array<string>} [keys]
-     * Data keys to extract from the table row.
-     *
-     * @return {Highcharts.PointOptions}
-     * Common point options.
-     */
-    public static getPointOptionsFromTableRow(
-        tableRow: DataTableRow,
-        keys?: Array<string>
-    ): PointOptions {
-        const pointOptions: (PointOptions&Record<string, any>) = {
-                id: tableRow.id
-            },
-            cellNames = tableRow.getCellNames();
-
-        let cellName: string;
-
-        for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
-            cellName = cellNames[j];
-            if (keys && keys.indexOf(cellName) === -1) {
-                continue;
-            }
-            pointOptions[cellName] = tableRow.getCell(cellName);
-        }
-
-        return unflat(pointOptions);
-    }
-
-    /**
-     * Converts the DataTable instance to common series options.
-     *
-     * @param {DataTable} table
-     * Table to convert.
-     *
-     * @param {Array<string>} [keys]
-     * Data keys to extract from table rows.
-     *
-     * @return {Highcharts.SeriesOptions}
-     * Common series options.
-     */
-    public static getSeriesOptionsFromTable(
-        table: DataTable,
-        keys?: Array<string>
-    ): SeriesOptions {
-        const rows = table.getAllRows(),
-            data: Array<PointOptions> = [],
-            seriesOptions: SeriesOptions = {
-                id: table.id,
-                data,
-                keys
-            };
-
-        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            data.push(DataParser.getPointOptionsFromTableRow(rows[i], keys));
-        }
-
-        return seriesOptions;
-    }
-
-    /**
      * Converts a simple two dimensional array to a DataTable instance. The
      * array needs to be structured like a DataFrame, so that the first
      * dimension becomes the columns and the second dimension the rows.
@@ -254,100 +181,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         }
 
         return table;
-    }
-
-    /**
-     * Converts series options to a DataTable instance.
-     *
-     * @param {Highcharts.SeriesOptions} seriesOptions
-     * Series options to convert.
-     *
-     * @return {DataTable}
-     * DataTable instance.
-     */
-    public static getTableFromSeriesOptions(
-        seriesOptions: SeriesOptions
-    ): DataTable {
-        const table = new DataTable(void 0, seriesOptions.id),
-            data = (seriesOptions.data || []);
-
-        let keys = (seriesOptions.keys || []).slice();
-
-        if (!keys.length) {
-            if (seriesOptions.type) {
-                const seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type],
-                    pointArrayMap = (
-                        seriesClass &&
-                        seriesClass.prototype.pointArrayMap
-                    );
-                if (pointArrayMap) {
-                    keys = pointArrayMap.slice();
-                    keys.unshift('x');
-                }
-            }
-            if (!keys.length) {
-                keys = ['x', 'y'];
-            }
-        }
-
-        for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
-            table.insertRow(
-                DataParser.getTableRowFromPointOptions(data[i], i, keys)
-            );
-        }
-
-        return table;
-    }
-
-    /**
-     * Converts series options to a DataTable instance.
-     *
-     * @param {Highcharts.PointOptions} pointOptions
-     * Point options to convert.
-     *
-     * @param {number} [index]
-     * Point index for x value.
-     *
-     * @param {Array<string>} [keys]
-     * Data keys to convert options.
-     *
-     * @return {DataTable}
-     * DataTable instance.
-     */
-    public static getTableRowFromPointOptions(
-        pointOptions: (
-            (PointOptions&Record<string, any>)|
-            PointShortOptions
-        ),
-        index: number = 0,
-        keys: Array<string> = ['x', 'y']
-    ): DataTableRow {
-        let tableRow: DataTableRow;
-
-        // Array
-        if (pointOptions instanceof Array) {
-            const tableRowOptions: (PointOptions&Record<string, any>) = {};
-            for (let i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
-                tableRowOptions[keys[i] || `${i}`] = pointOptions[i];
-            }
-            tableRow = new DataTableRow(tableRowOptions);
-
-        // Object
-        } else if (
-            pointOptions &&
-            typeof pointOptions === 'object'
-        ) {
-            tableRow = new DataTableRow(flat(pointOptions));
-
-        // Primitive
-        } else {
-            tableRow = new DataTableRow({
-                [keys[0] || 'x']: index,
-                [keys[1] || 'y']: pointOptions
-            });
-        }
-
-        return tableRow;
     }
 
     /* *

@@ -10,6 +10,7 @@
 'use strict';
 import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject, setAnimation = A.setAnimation;
+import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
 var hasTouch = H.hasTouch, svg = H.svg, win = H.win;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
@@ -87,7 +88,7 @@ var Series = /** @class */ (function () {
     function Series() {
         /* *
          *
-         *  Static Functions
+         *  Static Properties
          *
          * */
         this._i = void 0;
@@ -108,6 +109,100 @@ var Series = /** @class */ (function () {
         this.zones = void 0;
         /** eslint-enable valid-jsdoc */
     }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    /**
+     * Converts the DataTable instance to common series options.
+     *
+     * @private
+     *
+     * @param {DataTable} table
+     * Table to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from table rows.
+     *
+     * @return {Highcharts.SeriesOptions}
+     * Common series options.
+     */
+    Series.getSeriesOptionsFromTable = function (table, keys) {
+        var rows = table.getAllRows(), data = [];
+        var pointStart;
+        for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            if (i === 0) {
+                pointStart = rows[i].getCellAsNumber(keys && keys[0] || 'x');
+            }
+            data.push(Point.getPointOptionsFromTableRow(rows[i], keys));
+        }
+        return {
+            data: data,
+            id: table.id,
+            keys: keys,
+            pointStart: pointStart
+        };
+    };
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @private
+     *
+     * @param {Highcharts.SeriesOptions} seriesOptions
+     * Series options to convert.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    Series.getTableFromSeriesOptions = function (seriesOptions) {
+        var table = new DataTable(void 0, seriesOptions.id), data = (seriesOptions.data || []);
+        var keys = (seriesOptions.keys || []).slice(), x = (seriesOptions.pointStart || 0);
+        if (!keys.length) {
+            if (seriesOptions.type) {
+                var seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type], pointArrayMap = (seriesClass &&
+                    seriesClass.prototype.pointArrayMap);
+                if (pointArrayMap) {
+                    keys = pointArrayMap.slice();
+                    keys.unshift('x');
+                }
+            }
+            if (!keys.length) {
+                keys = ['x', 'y'];
+            }
+        }
+        for (var i = 0, iEnd = data.length; i < iEnd; ++i) {
+            table.insertRow(Point.getTableRowFromPointOptions(data[i], x, keys));
+            x = Series.increment(x, seriesOptions);
+        }
+        return table;
+    };
+    // eslint-disable-next-line valid-jsdoc
+    /** @private */
+    Series.increment = function (value, options, time) {
+        if (options === void 0) { options = {}; }
+        if (time === void 0) { time = H.time; }
+        var intervalUnit = options.pointIntervalUnit;
+        var interval = pick(options.pointInterval, 1);
+        // Added code for pointInterval strings
+        if (intervalUnit) {
+            var date = new time.Date(value);
+            switch (intervalUnit) {
+                case 'day':
+                    time.set('Date', date, time.get('Date', date) + interval);
+                    break;
+                case 'month':
+                    time.set('Month', date, time.get('Month', date) + interval);
+                    break;
+                case 'year':
+                    time.set('FullYear', date, time.get('FullYear', date) + interval);
+                    break;
+                default:
+            }
+            interval = date.getTime() - value;
+        }
+        return value + interval;
+    };
     /* *
      *
      *  Functions
@@ -394,24 +489,8 @@ var Series = /** @class */ (function () {
      * @return {number}
      */
     Series.prototype.autoIncrement = function () {
-        var options = this.options, xIncrement = this.xIncrement, date, pointInterval, pointIntervalUnit = options.pointIntervalUnit, time = this.chart.time;
-        xIncrement = pick(xIncrement, options.pointStart, 0);
-        this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
-        // Added code for pointInterval strings
-        if (pointIntervalUnit) {
-            date = new time.Date(xIncrement);
-            if (pointIntervalUnit === 'day') {
-                time.set('Date', date, time.get('Date', date) + pointInterval);
-            }
-            else if (pointIntervalUnit === 'month') {
-                time.set('Month', date, time.get('Month', date) + pointInterval);
-            }
-            else if (pointIntervalUnit === 'year') {
-                time.set('FullYear', date, time.get('FullYear', date) + pointInterval);
-            }
-            pointInterval = date.getTime() - xIncrement;
-        }
-        this.xIncrement = xIncrement + pointInterval;
+        var options = this.options, xIncrement = pick(this.xIncrement, options.pointStart, 0);
+        this.xIncrement = Series.increment(xIncrement, options, this.chart.time);
         return xIncrement;
     };
     /**
