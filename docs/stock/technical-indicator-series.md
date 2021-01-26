@@ -32,7 +32,7 @@ A full list of supported technical indicators could be divided into two main gro
 | | [RSI (Relative Strength Index)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/rsi/) |
 | | [Slow Stochastic](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/slow-stochastic/) |
 | | [Stochastic](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/stochastic/) |
-| | [TRIX](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/trix/) |
+| | [TRIX (Triple exponential average)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/trix/) |
 | | [Williams %R](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/williams-r/) |
     
 
