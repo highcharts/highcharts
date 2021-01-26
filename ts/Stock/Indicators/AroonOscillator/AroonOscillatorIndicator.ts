@@ -14,7 +14,8 @@ import type {
 } from '../AroonOscillator/AroonOscillatorOptions';
 import type AroonOscillatorPoint from '../AroonOscillator/AroonOscillatorPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
+
 import multipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import requiredIndicator from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -103,7 +104,7 @@ class AroonOscillatorIndicator extends AroonIndicator implements Highcharts.Mult
      *
      * */
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: AroonOscillatorParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {

@@ -491,7 +491,7 @@ addEvent(Series, 'afterTranslate', function (): void {
  * closed circle in line-like series.
  * @private
  */
-wrap(seriesProto, 'getGraphPath', function (
+wrap(seriesTypes.line.prototype, 'getGraphPath', function (
     this: Highcharts.PolarSeries,
     proceed: Function,
     points: Array<Highcharts.PolarPoint>

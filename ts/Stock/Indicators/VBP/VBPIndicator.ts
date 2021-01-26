@@ -17,7 +17,7 @@ import type Chart from '../../../Core/Chart/Chart';
 import type ColumnSeries from '../../../Series/Column/ColumnSeries';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGAttributes from '../../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
@@ -210,8 +210,8 @@ class VBPIndicator extends SMAIndicator {
     ): VBPIndicator {
         var indicator = this,
             params: VBPParamsOptions,
-            baseSeries: Series,
-            volumeSeries: Series;
+            baseSeries: LineSeries,
+            volumeSeries: LineSeries;
 
         H.seriesTypes.sma.prototype.init.apply(indicator, arguments);
 
@@ -226,8 +226,8 @@ class VBPIndicator extends SMAIndicator {
 
     // Adds events related with removing series
     public addCustomEvents(
-        baseSeries: Series,
-        volumeSeries: Series
+        baseSeries: LineSeries,
+        volumeSeries: LineSeries
     ): VBPIndicator {
         var indicator = this;
 
@@ -465,7 +465,7 @@ class VBPIndicator extends SMAIndicator {
         }
     }
 
-    public getValues <TLinkedSeries extends Series>(
+    public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: VBPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -478,7 +478,7 @@ class VBPIndicator extends SMAIndicator {
             xData: Array<number> = [],
             yData: Array<number> = [],
             isOHLC: boolean,
-            volumeSeries: Series,
+            volumeSeries: LineSeries,
             priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>;
 
         // Checks if base series exists
@@ -554,7 +554,7 @@ class VBPIndicator extends SMAIndicator {
         xValues: Array<number>,
         yValues: Array<Array<number>>,
         ranges: number,
-        volumeSeries: Series
+        volumeSeries: LineSeries
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
         var indicator = this,
             rangeExtremes: (boolean|Record<string, number>) = (
@@ -616,7 +616,7 @@ class VBPIndicator extends SMAIndicator {
     public volumePerZone(
         isOHLC: boolean,
         priceZones: Array<VBPIndicator.VBPIndicatorPriceZoneObject>,
-        volumeSeries: Series,
+        volumeSeries: LineSeries,
         xValues: Array<number>,
         yValues: Array<Array<number>>
     ): Array<VBPIndicator.VBPIndicatorPriceZoneObject> {
