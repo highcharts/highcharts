@@ -143,57 +143,7 @@ function handleDetails(path) {
     return true;
 }
 
-const browserStackBrowsers = {
-    'Mac.Chrome': {
-        base: 'BrowserStack',
-        browser: 'chrome',
-        browser_version: '80.0',
-        os: 'OS X',
-        os_version: 'Mojave'
-    },
-    'Mac.Firefox': {
-        base: 'BrowserStack',
-        browser: 'firefox',
-        browser_version: '73.0',
-        os: 'OS X',
-        os_version: 'Mojave'
-    },
-    'Mac.Safari': {
-        base: 'BrowserStack',
-        browser: 'safari',
-        browser_version: '13.0',
-        os: 'OS X',
-        os_version: 'Catalina'
-    },
-    'Win.Chrome': {
-        base: 'BrowserStack',
-        browser: 'chrome',
-        browser_version: '80.0',
-        os: 'Windows',
-        os_version: '10'
-    },
-    'Win.Edge': {
-        base: 'BrowserStack',
-        browser: 'edge',
-        browser_version: '80.0',
-        os: 'Windows',
-        os_version: '10',
-    },
-    'Win.Firefox': {
-        base: 'BrowserStack',
-        browser: 'firefox',
-        browser_version: '73.0',
-        os: 'Windows',
-        os_version: '10'
-    },
-    'Win.IE': {
-        base: 'BrowserStack',
-        browser: 'ie',
-        browser_version: '11.0',
-        os: 'Windows',
-        os_version: '10'
-    }
-};
+const browserStackBrowsers = require('./karma-bs.json');
 
 module.exports = function (config) {
 
