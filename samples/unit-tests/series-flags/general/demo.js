@@ -166,6 +166,7 @@ QUnit.test('Flags visibility', function (assert) {
     );
 });
 
+// The flag series should be invertible (#14063).
 QUnit.test('Scrolling inverted chart with a flag series.', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
@@ -192,16 +193,25 @@ QUnit.test('Scrolling inverted chart with a flag series.', function (assert) {
             }]
         }),
         controller = new TestController(chart),
-        scrollbar = chart.xAxis[0].scrollbar;
+        scrollbar = chart.xAxis[0].scrollbar,
+        containsNaN = false;
 
+    // Move scrollbar 7px down
     controller.pan(
         [scrollbar.x + 3, scrollbar.y + scrollbar.scrollbarTop + 3],
         [scrollbar.x + 3, scrollbar.y + scrollbar.scrollbarTop + 10]
     );
 
+    chart.container.querySelectorAll('.highcharts-flags-series')
+        .forEach(function (group) {
+            containsNaN =
+                containsNaN ||
+                group.getAttribute('transform').includes('NaN');
+        });
+
     assert.equal(
-        chart.series[1].group.inverted,
+        containsNaN,
         false,
-        'The flag series should be invertible (#14063).'
+        'The flag series\' DOM elements should not contain NaN attributes values (#14063).'
     );
 });
