@@ -206,7 +206,7 @@ var DataTableRow = /** @class */ (function () {
         return merge(this.cells);
     };
     /**
-     * Returns the value of the given cell name or cell index.
+     * Returns the value of the given cell name.
      *
      * @param {string} cellName
      * Cell name to fetch.
@@ -218,8 +218,7 @@ var DataTableRow = /** @class */ (function () {
         return this.cells[cellName];
     };
     /**
-     * Converts the value of the given cell name or cell index to a boolean and
-     * returns it.
+     * Converts the value of the given cell name to a boolean and returns it.
      *
      * @param {string} cellName
      * Cell name to fetch.
@@ -231,21 +230,25 @@ var DataTableRow = /** @class */ (function () {
         return this.converter.asBoolean(this.getCell(cellName));
     };
     /**
-     * Converts the value of the given cell name or cell index to a DataTable
-     * and returns it.
+     * Tests if the value of the given cell name is a DataTable and returns it.
      *
      * @param {string} cellName
      * Cell name to fetch.
      *
-     * @return {DataTable}
-     * Converted cell value of the cell in this row.
+     * @return {DataTable|undefined}
+     * Cell value of the cell in this row, if it is a DataTable.
      */
     DataTableRow.prototype.getCellAsDataTable = function (cellName) {
-        return this.converter.asDataTable(this.getCell(cellName));
+        var value = this.getCell(cellName);
+        if (!value ||
+            typeof value !== 'object' ||
+            value instanceof Date) {
+            return;
+        }
+        return value;
     };
     /**
-     * Converts the value of the given cell name or cell index to a Date and
-     * returns it.
+     * Converts the value of the given cell name to a Date and returns it.
      *
      * @param {string} cellName
      * Cell name to fetch.
@@ -257,8 +260,7 @@ var DataTableRow = /** @class */ (function () {
         return this.converter.asDate(this.getCell(cellName));
     };
     /**
-     * Converts the value of the given cell name or cell index to a number and
-     * returns it.
+     * Converts the value of the given cell name to a number and returns it.
      *
      * @param {string} cellName
      * Cell name to fetch.
@@ -270,8 +272,7 @@ var DataTableRow = /** @class */ (function () {
         return this.converter.asNumber(this.getCell(cellName));
     };
     /**
-     * Converts the value of the given cell name or cell index to a string and
-     * returns it.
+     * Converts the value of the given cell name to a string and returns it.
      *
      * @param {string} cellName
      * Cell name to fetch.

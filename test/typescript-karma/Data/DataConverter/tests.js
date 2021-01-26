@@ -108,38 +108,6 @@ test('asBoolean', function (assert) {
     );
 });
 
-test('asDataTable', function (assert) {
-    const testCases = [
-        '',
-        'string',
-        new Date('1980-01-01'),
-        100,
-        0,
-        true,
-        null,
-        undefined
-    ];
-
-    let result = true;
-
-    testCases.forEach(value => {
-        if (!(converter.asDataTable(value) instanceof DataTable)) {
-            result = false;
-        }
-    });
-
-    assert.ok(
-        result,
-        'Should convert all values to DataTable type.'
-    );
-
-    assert.deepEqual(
-        converter.asDataTable(sampleTable),
-        sampleTable,
-        'Should return the same DataTable.'
-    );
-});
-
 test('asNumber', function (assert) {
     assert.strictEqual(
         converter.asNumber('-3.1'),

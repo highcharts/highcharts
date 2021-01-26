@@ -15,7 +15,7 @@
  *  Imports
  *
  * */
-import DataTable from './DataTable.js';
+import type DataTable from './DataTable.js';
 import type DataJSON from './DataJSON';
 import U from './../Core/Utilities.js';
 
@@ -204,41 +204,6 @@ class DataConverter {
     }
 
     /**
-     * Converts a value to a DataTable.
-     *
-     * @param {DataConverter.Type} value
-     * Value to convert.
-     *
-     * @return {DataTable}
-     * Converted value as a DataTable.
-     */
-    public asDataTable(value: DataConverter.Type): DataTable {
-        if (value instanceof DataTable) {
-            return value;
-        }
-
-        if (!this.asBoolean(value)) {
-            return new DataTable();
-        }
-
-        if (typeof value === 'string') {
-            try {
-                return DataTable.fromJSON(JSON.parse(value));
-            } catch (error) {
-                return new DataTable();
-            }
-        }
-
-        return DataTable.fromJSON({
-            $class: 'DataTable',
-            rows: [{
-                $class: 'DataTableRow',
-                cells: [JSON.parse(JSON.stringify(value))]
-            }]
-        });
-    }
-
-    /**
      * Converts a value to a Date.
      *
      * @param {DataConverter.Type} value
@@ -285,11 +250,11 @@ class DataConverter {
 
             return !isNaN(cast) ? cast : 0;
         }
-        if (value instanceof DataTable) {
-            return value.getRowCount();
-        }
         if (value instanceof Date) {
             return value.getDate();
+        }
+        if (value) {
+            return value.getRowCount();
         }
         return 0;
     }

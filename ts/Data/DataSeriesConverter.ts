@@ -94,18 +94,18 @@ class DataSeriesConverter {
         let fcName: Function;
 
         switch (type) {
-        case 'line':
-            fcName = this.getLinePoint;
-            break;
-        case 'pie':
-            fcName = this.getPiePoint;
-            break;
-        case 'range':
-            fcName = this.getRangePoint;
-            break;
-        default:
-            fcName = this.getLinePoint;
-            break;
+            case 'line':
+                fcName = this.getLinePoint;
+                break;
+            case 'pie':
+                fcName = this.getPiePoint;
+                break;
+            case 'range':
+                fcName = this.getRangePoint;
+                break;
+            default:
+                fcName = this.getLinePoint;
+                break;
         }
 
         return fcName;
