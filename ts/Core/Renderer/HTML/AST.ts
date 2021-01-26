@@ -154,6 +154,7 @@ class AST {
         'opacity',
         'orient',
         'padding',
+        'paddingLeft',
         'patternUnits',
         'r',
         'refX',

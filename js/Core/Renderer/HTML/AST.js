@@ -317,6 +317,7 @@ var AST = /** @class */ (function () {
         'opacity',
         'orient',
         'padding',
+        'paddingLeft',
         'patternUnits',
         'r',
         'refX',
