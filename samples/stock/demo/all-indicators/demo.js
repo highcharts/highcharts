@@ -2,11 +2,9 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
     // split the data set into ohlc and volume
     var ohlc = [],
         volume = [],
-        dataLength = data.length,
+        dataLength = data.length;
 
-        i = 0;
-
-    for (i; i < dataLength; i += 1) {
+    for (var i = 0; i < dataLength; i += 1) {
         ohlc.push([
             data[i][0], // the date
             data[i][1], // open
@@ -29,7 +27,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
         title: {
             text: 'AAPL Historical'
         },
-        subTitle: {
+        subtitle: {
             text: 'All indicators'
         },
         legend: {
@@ -37,9 +35,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
         },
         rangeSelector: {
             selected: 2
-        },
-        tooltip: {
-            split: true
         },
         yAxis: [{
             height: '70%'
@@ -59,135 +54,94 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             data: volume,
             yAxis: 1
         }]
-    });
+    }, function () {
+        document.getElementById("overlays").addEventListener("change", function (e) {
+            const seriesToAdd = e.target.value;
 
-    document.getElementById("overlays").addEventListener("change", function (e) {
-        const seriesToAdd = e.target.value;
+            // Destroy previously existing series.
+            if (chart.series[2] && chart.series[2].yAxis.options.index === 0) {
+                chart.series[2].destroy(false);
+            }
+            if (chart.series[3] && chart.series[3].yAxis.options.index === 0) {
+                chart.series[3].destroy(false);
+            }
 
-        // Destroy previously existing series.
-        if (chart.series[2] && chart.series[2].yAxis.options.index === 0) {
-            chart.series[2].destroy(false);
-        }
-        if (chart.series[3] && chart.series[3].yAxis.options.index === 0) {
-            chart.series[3].destroy(false);
-        }
-
-        if (seriesToAdd !== 'none') {
-            if (seriesToAdd === 'ikh') {
+            if (seriesToAdd !== 'none') {
                 chart.addSeries({
-                    type: 'ikh',
+                    type: seriesToAdd,
                     linkedTo: 'aapl',
-                    showInLegend: true,
-                    tenkanLine: {
-                        styles: {
-                            lineColor: 'lightblue'
-                        }
-                    },
-                    kijunLine: {
-                        styles: {
-                            lineColor: 'darkred'
-                        }
-                    },
-                    chikouLine: {
-                        styles: {
-                            lineColor: 'lightgreen'
-                        }
-                    },
-                    senkouSpanA: {
-                        styles: {
-                            lineColor: 'green'
-                        }
-                    },
-                    senkouSpanB: {
-                        styles: {
-                            lineColor: 'red'
-                        }
-                    },
-                    senkouSpan: {
-                        color: 'rgba(0, 255, 0, 0.3)',
-                        styles: {
-                            fill: 'rgba(0, 0, 255, 0.1)'
-                        }
+                    showInLegend: true
+                }, false);
+            }
+            chart.redraw();
+        });
+
+        document.getElementById("oscilators").addEventListener("change", function (e) {
+            const seriesToAdd = e.target.value;
+
+            // Add third axis if needed.
+            if (chart.yAxis.length === 3) {
+                chart.yAxis[0].update({
+                    height: '55%'
+                }, false);
+                chart.yAxis[1].update({
+                    top: '60%',
+                    height: '15%'
+                }, false);
+                chart.addAxis({
+                    top: '80%',
+                    height: '20%',
+                    opposite: true,
+                    title: {
+                        text: null
                     }
+                }, false);
+            }
+
+            // Destroy previously existing series.
+            if (chart.series[2] && chart.series[2].yAxis.options.index === 3) {
+                chart.series[2].destroy(false);
+            }
+            if (chart.series[3] && chart.series[3].yAxis.options.index === 3) {
+                chart.series[3].destroy(false);
+            }
+
+            // Remove axis if not necessary.
+            if (seriesToAdd === 'none') {
+                chart.yAxis[3].remove(false);
+
+                chart.yAxis[0].update({
+                    height: '70%'
+                }, false);
+                chart.yAxis[1].update({
+                    top: '75%',
+                    height: '25%'
                 }, false);
             } else {
-                chart.addSeries({
-                    type: seriesToAdd,
-                    linkedTo: 'aapl',
-                    showInLegend: true
-                }, false);
-            }
-        }
-        chart.redraw();
-    });
-
-    document.getElementById("oscilators").addEventListener("change", function (e) {
-        const seriesToAdd = e.target.value;
-
-        // Add third axis if needed.
-        if (chart.yAxis.length === 3) {
-            chart.yAxis[0].update({
-                height: '55%'
-            });
-            chart.yAxis[1].update({
-                top: '60%',
-                height: '15%'
-            });
-            chart.addAxis({
-                top: '80%',
-                height: '20%',
-                opposite: true,
-                title: {
-                    text: null
-                }
-            });
-        }
-
-        // Destroy previously existing series.
-        if (chart.series[2] && chart.series[2].yAxis.options.index === 3) {
-            chart.series[2].destroy(false);
-        }
-        if (chart.series[3] && chart.series[3].yAxis.options.index === 3) {
-            chart.series[3].destroy(false);
-        }
-
-        // Remove axis if not necessary.
-        if (seriesToAdd === 'none') {
-            chart.yAxis[3].remove();
-
-            chart.yAxis[0].update({
-                height: '70%'
-            });
-            chart.yAxis[1].update({
-                top: '75%',
-                height: '25%'
-            });
-        } else {
-            if (seriesToAdd === 'aroon') {
-                chart.addSeries({
-                    yAxis: 3,
-                    type: 'aroon',
-                    linkedTo: 'aapl',
-                    color: 'green',
-                    lineWidth: 1,
-                    showInLegend: true,
-                    aroonDown: {
-                        styles: {
-                            lineColor: 'red'
+                if (seriesToAdd === 'aroon') {
+                    chart.addSeries({
+                        yAxis: 3,
+                        type: 'aroon',
+                        linkedTo: 'aapl',
+                        color: 'green',
+                        lineWidth: 1,
+                        showInLegend: true,
+                        aroonDown: {
+                            styles: {
+                                lineColor: 'red'
+                            }
                         }
-                    }
-                }, false);
+                    }, false);
+                } else {
+                    chart.addSeries({
+                        type: seriesToAdd,
+                        linkedTo: 'aapl',
+                        yAxis: 3,
+                        showInLegend: true
+                    }, false);
+                }
             }
-
-            if (seriesToAdd !== 'aroon') {
-                chart.addSeries({
-                    type: seriesToAdd,
-                    linkedTo: 'aapl',
-                    yAxis: 3,
-                    showInLegend: true
-                }, false);
-            }
-        }
-        chart.redraw();
+            chart.redraw();
+        });
     });
 });

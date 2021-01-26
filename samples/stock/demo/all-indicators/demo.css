@@ -1,17 +1,14 @@
-.main {
-	position: absolute;
-	min-width: 800px;
-}
-
 .selectors {
 	height: 20px;
 	font-size: 20px;
-	display: flex;
-}
-
+  }
+  
 .left {
-	flex: 1;
+	position: absolute;
+	left: 0%;
+	top: 1%;
 	margin-left: 20px;
+	width: 50%;
 }
 
 .left__labels {
@@ -23,8 +20,11 @@
 }
 
 .right {
-	flex: 1;
-	margin-left:20px;
+	position: absolute;
+	left: 50%;
+	top: 1%;
+	margin-left: 20px;
+	width: 50%;
 }
 
 .right__labels {
