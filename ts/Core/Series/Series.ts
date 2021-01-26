@@ -4856,6 +4856,7 @@ class Series {
                     '_sharedClip',
                     animation && (animation as any).duration,
                     animation && (animation as any).easing,
+                    animation && (animation as any).defer,
                     clipBox.height,
                     options.xAxis,
                     options.yAxis

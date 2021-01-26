@@ -1604,6 +1604,7 @@ var Series = /** @class */ (function () {
                 '_sharedClip',
                 animation && animation.duration,
                 animation && animation.easing,
+                animation && animation.defer,
                 clipBox.height,
                 options.xAxis,
                 options.yAxis
