@@ -2306,26 +2306,27 @@ class SVGElement {
 
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
+
+                // Create an inner tspan that adjusts the y position (Firefox)
+                // and x
+                const tspan = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+                tspan.setAttribute('y', 0);
+                if (isNumber(attrs.dx)) {
+                    tspan.setAttribute('x', -attrs.dx);
+                }
+                textPathElement.appendChild(tspan);
+
                 const childNodes = [].slice.call(textNode.childNodes);
 
-                // Now move all <tspan>'s and text nodes to the <textPath> node
+                // Now move all <tspan>'s and text nodes to the <textPath> node.
+                // Do not move other elements like <title> or <path>
                 for (let i = 0; i < childNodes.length; i++) {
                     const childNode: any = childNodes[i];
                     if (
-                        // Copy only tspans and text, not title and path
                         childNode.nodeType === Node.TEXT_NODE ||
                         childNode.nodeName === 'tspan'
                     ) {
-                        if (childNode.setAttribute) {
-                            // Remove "y" from tspans, as Firefox translates
-                            // them
-                            childNode.setAttribute('y', 0);
-                            // Remove "x" from tspans
-                            if (isNumber(attrs.dx)) {
-                                childNode.setAttribute('x', -attrs.dx);
-                            }
-                        }
-                        textPathElement.appendChild(childNode);
+                        tspan.appendChild(childNode);
                     }
                 }
             }
