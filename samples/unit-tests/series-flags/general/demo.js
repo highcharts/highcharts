@@ -166,51 +166,38 @@ QUnit.test('Flags visibility', function (assert) {
     );
 });
 
-// The flag series should be invertible (#14063).
+// The flag series should not be invertible (#14063).
 QUnit.test('Scrolling inverted chart with a flag series.', function (assert) {
     var chart = Highcharts.chart('container', {
-            chart: {
-                inverted: true
-            },
+        chart: {
+            inverted: true
+        },
 
-            xAxis: {
-                scrollbar: {
-                    enabled: true
-                },
-                min: 2,
-                max: 3
+        xAxis: {
+            scrollbar: {
+                enabled: true
             },
+            min: 2,
+            max: 3
+        },
 
-            series: [{
-                data: [1, 2, 3, 4, 5]
-            }, {
-                type: 'flags',
-                data: [{
-                    x: 3,
-                    text: '3',
-                    title: '3'
-                }]
+        series: [{
+            data: [1, 2, 3, 4, 5]
+        }, {
+            type: 'flags',
+            data: [{
+                x: 3,
+                text: '3',
+                title: '3'
             }]
-        }),
-        controller = new TestController(chart),
-        scrollbar = chart.xAxis[0].scrollbar,
-        containsNaN = false;
+        }]
+    });
 
-    // Move scrollbar 7px down
-    controller.pan(
-        [scrollbar.x + 3, scrollbar.y + scrollbar.scrollbarTop + 3],
-        [scrollbar.x + 3, scrollbar.y + scrollbar.scrollbarTop + 10]
-    );
-
-    chart.container.querySelectorAll('.highcharts-flags-series')
-        .forEach(function (group) {
-            containsNaN =
-                containsNaN ||
-                group.getAttribute('transform').includes('NaN');
-        });
+    chart.xAxis[0].setExtremes(3, 4);
 
     assert.equal(
-        containsNaN,
+        [...chart.container.querySelectorAll('.highcharts-flags-series')]
+            .some(group =>  group.getAttribute('transform').includes('NaN')),
         false,
         'The flag series\' DOM elements should not contain NaN attributes values (#14063).'
     );
