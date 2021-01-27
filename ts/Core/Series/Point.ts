@@ -381,11 +381,11 @@ class Point {
      * @param {Highcharts.PointOptions} pointOptions
      * Point options to convert.
      *
-     * @param {number} [x]
-     * Point index for x value.
-     *
      * @param {Array<string>} [keys]
      * Data keys to convert options.
+     *
+     * @param {number} [x]
+     * Point index for x value.
      *
      * @return {DataTable}
      * DataTable instance.
@@ -395,14 +395,23 @@ class Point {
             (PointOptions&Record<string, any>)|
             PointShortOptions
         ),
-        x: number = 0,
-        keys: Array<string> = ['x', 'y']
+        keys: Array<string> = ['y'],
+        x: number = 0
     ): DataTableRow {
         let tableRow: DataTableRow;
+
+        keys = keys.slice();
 
         // Array
         if (pointOptions instanceof Array) {
             const tableRowOptions: (PointOptions&Record<string, any>) = {};
+            if (pointOptions.length > keys.length) {
+                keys.unshift(
+                    typeof pointOptions[0] === 'string' ?
+                        'name' :
+                        'x'
+                );
+            }
             for (let i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
                 tableRowOptions[keys[i] || `${i}`] = pointOptions[i];
             }
@@ -418,8 +427,8 @@ class Point {
         // Primitive
         } else {
             tableRow = new DataTableRow({
-                [keys[0] || 'x']: x,
-                [keys[1] || 'y']: pointOptions
+                x,
+                [keys[0] || 'y']: pointOptions
             });
         }
 

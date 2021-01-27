@@ -157,22 +157,19 @@ var Series = /** @class */ (function () {
      */
     Series.getTableFromSeriesOptions = function (seriesOptions) {
         var table = new DataTable(void 0, seriesOptions.id), data = (seriesOptions.data || []);
-        var keys = (seriesOptions.keys || []).slice(), x = (seriesOptions.pointStart || 0);
+        var keys = (seriesOptions.keys || []), x = (seriesOptions.pointStart || 0);
+        if (!keys.length &&
+            seriesOptions.type) {
+            var seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type];
+            keys = (seriesClass &&
+                seriesClass.prototype.pointArrayMap ||
+                []);
+        }
         if (!keys.length) {
-            if (seriesOptions.type) {
-                var seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type], pointArrayMap = (seriesClass &&
-                    seriesClass.prototype.pointArrayMap);
-                if (pointArrayMap) {
-                    keys = pointArrayMap.slice();
-                    keys.unshift('x');
-                }
-            }
-            if (!keys.length) {
-                keys = ['x', 'y'];
-            }
+            keys = ['y'];
         }
         for (var i = 0, iEnd = data.length; i < iEnd; ++i) {
-            table.insertRow(Point.getTableRowFromPointOptions(data[i], x, keys));
+            table.insertRow(Point.getTableRowFromPointOptions(data[i], keys, x));
             x = Series.increment(x, seriesOptions);
         }
         return table;
