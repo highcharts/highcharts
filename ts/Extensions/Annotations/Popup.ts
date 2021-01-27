@@ -47,6 +47,7 @@ declare global {
             public constructor(parentDiv: HTMLDOMElement, iconsURL: string);
             public annotations: PopupAnnotationsObject;
             public container: HTMLDOMElement;
+            public chart: Chart;
             public iconsURL: string;
             public indicators: PopupIndicatorsObject;
             public lang: Record<string, string>;
@@ -429,6 +430,14 @@ H.Popup.prototype = {
      * @private
      */
     closePopup: function (): void {
+        const chart = this.chart;
+
+        // When map navigation enabled, restore the scroll behaviour, #12100.
+        if (chart.mapNavigation) {
+            chart.mapNavigation.unbindMouseWheel = void 0 as any;
+            chart.mapNavigation.updateEvents(chart.options.mapNavigation);
+        }
+
         this.popup.container.style.display = 'none';
     },
     /**
@@ -447,6 +456,12 @@ H.Popup.prototype = {
     ): void {
 
         this.popup = chart.navigationBindings.popup;
+
+        // When the map navigation enabled, and pop up is shown,
+        // unbind the scroll, #12100.
+        this.chart.mapNavigation &&
+            this.chart.mapNavigation.unbindMouseWheel &&
+            this.chart.mapNavigation.unbindMouseWheel();
 
         // show blank popup
         this.showPopup();
@@ -1297,6 +1312,7 @@ addEvent(NavigationBindings, 'showPopup', function (
                 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
             )
         );
+        this.popup.chart = this.chart;
     }
 
     this.popup.showForm(

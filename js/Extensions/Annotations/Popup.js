@@ -211,6 +211,12 @@ H.Popup.prototype = {
      * @private
      */
     closePopup: function () {
+        var chart = this.chart;
+        // When map navigation enabled, restore the scroll behaviour, #12100.
+        if (chart.mapNavigation) {
+            chart.mapNavigation.unbindMouseWheel = void 0;
+            chart.mapNavigation.updateEvents(chart.options.mapNavigation);
+        }
         this.popup.container.style.display = 'none';
     },
     /**
@@ -223,6 +229,9 @@ H.Popup.prototype = {
      */
     showForm: function (type, chart, options, callback) {
         this.popup = chart.navigationBindings.popup;
+        // When the map navigation enabled, and pop up is shown,
+        // unbind the scroll, #12100.
+        this.chart.mapNavigation && this.chart.mapNavigation.unbindMouseWheel && this.chart.mapNavigation.unbindMouseWheel();
         // show blank popup
         this.showPopup();
         // indicator form
@@ -726,6 +735,7 @@ addEvent(NavigationBindings, 'showPopup', function (config) {
             (this.chart.options.stockTools &&
                 this.chart.options.stockTools.gui.iconsURL) ||
             'https://code.highcharts.com/@product.version@/gfx/stock-icons/'));
+        this.popup.chart = this.chart;
     }
     this.popup.showForm(config.formType, this.chart, config.options, config.onSubmit);
 });
