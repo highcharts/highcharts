@@ -101,3 +101,27 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('#12517: Reset zoom button', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            scrollablePlotArea: {
+                minWidth: 2000
+            },
+            zoomType: 'x'
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    const controller = new TestController(chart);
+    controller.pan([200, 200], [300, 200]);
+
+    const button = chart.resetZoomButton;
+
+    assert.ok(
+        button.translateX + button.width < chart.chartWidth,
+        'Reset zoom button should be within chart'
+    );
+});

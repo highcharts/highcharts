@@ -2449,7 +2449,12 @@ var Chart = /** @class */ (function () {
         var chart = this, lang = defaultOptions.lang, btnOptions = chart.options.chart.resetZoomButton, theme = btnOptions.theme, states = theme.states, alignTo = (btnOptions.relativeTo === 'chart' ||
             btnOptions.relativeTo === 'spaceBox' ?
             null :
-            'plotBox');
+            {
+                x: chart.plotLeft,
+                y: chart.plotTop,
+                width: chart.spacingBox.x + chart.spacingBox.width - chart.plotLeft,
+                height: chart.spacingBox.y + chart.spacingBox.height - chart.plotTop
+            });
         /**
          * @private
          */
