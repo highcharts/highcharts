@@ -669,10 +669,13 @@ class XRangeSeries extends ColumnSeries {
             plotX = point.plotX,
             plotY = point.plotY;
 
+        if (!shapeArgs) {
+            return super.isPointInside.apply(this, arguments);
+        }
+
         const isInside =
             typeof plotX !== 'undefined' &&
             typeof plotY !== 'undefined' &&
-            typeof shapeArgs !== 'undefined' &&
             plotY >= 0 &&
             plotY <= this.yAxis.len &&
             shapeArgs.x + shapeArgs.width >= 0 &&
