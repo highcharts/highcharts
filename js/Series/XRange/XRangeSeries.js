@@ -403,9 +403,11 @@ var XRangeSeries = /** @class */ (function (_super) {
      */
     XRangeSeries.prototype.isPointInside = function (point) {
         var shapeArgs = point.shapeArgs, plotX = point.plotX, plotY = point.plotY;
+        if (!shapeArgs) {
+            return _super.prototype.isPointInside.apply(this, arguments);
+        }
         var isInside = typeof plotX !== 'undefined' &&
             typeof plotY !== 'undefined' &&
-            typeof shapeArgs !== 'undefined' &&
             plotY >= 0 &&
             plotY <= this.yAxis.len &&
             shapeArgs.x + shapeArgs.width >= 0 &&
