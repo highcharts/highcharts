@@ -364,9 +364,13 @@ var Point = /** @class */ (function () {
      * Common point options.
      */
     Point.getPointOptionsFromTableRow = function (tableRow, keys) {
-        var pointOptions = {
-            id: tableRow.id
-        }, cellNames = tableRow.getCellNames();
+        if (tableRow === DataTableRow.NULL) {
+            return null;
+        }
+        var pointOptions = {}, cellNames = tableRow.getCellNames();
+        if (!keys || keys.indexOf('id') >= 0) {
+            pointOptions.id = tableRow.id;
+        }
         var cellName;
         for (var j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
             cellName = cellNames[j];
@@ -412,9 +416,13 @@ var Point = /** @class */ (function () {
             tableRow = new DataTableRow(tableRowOptions);
             // Object
         }
-        else if (pointOptions &&
-            typeof pointOptions === 'object') {
-            tableRow = new DataTableRow(flat(pointOptions));
+        else if (typeof pointOptions === 'object') {
+            if (pointOptions === null) {
+                tableRow = DataTableRow.NULL;
+            }
+            else {
+                tableRow = new DataTableRow(flat(pointOptions));
+            }
             // Primitive
         }
         else {

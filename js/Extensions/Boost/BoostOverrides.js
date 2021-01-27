@@ -218,7 +218,7 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
 // If the series is a heatmap or treemap, or if the series is not boosting
 // do the default behaviour. Otherwise, process if the series has no extremes.
 wrap(Series.prototype, 'processData', function (proceed) {
-    var series = this, dataToMeasure = this.options.data, firstPoint;
+    var series = this, dataToMeasure = this.options.data;
     /**
      * Used twice in this function, first on this.options.data, the second
      * time it runs the check again after processedXData is built.
@@ -248,7 +248,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
-            firstPoint = this.getFirstValidPoint(this.options.data);
+            var firstPoint = this.getFirstValidPoint(this.options.data);
             if (!isNumber(firstPoint) && !isArray(firstPoint)) {
                 error(12, false, this.chart);
             }

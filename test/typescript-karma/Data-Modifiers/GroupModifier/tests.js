@@ -1,5 +1,6 @@
 import DataTable from '/base/js/Data/DataTable.js';
-import GroupModifier from '/base/js/Data/Modifiers/GroupDataModifier.js';
+import DataTableRow from '/base/js/Data/DataTableRow.js';
+import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
 
 QUnit.test('GroupModifier.execute', function (assert) {
 
@@ -33,7 +34,7 @@ QUnit.test('GroupModifier.execute', function (assert) {
     );
 
     assert.deepEqual(
-        modifiedTable.getRow(0).getCellAsTable('table').toColumn(['x', 'y']),
+        modifiedTable.getRow(0).getCellAsTable('table').getColumns(['x', 'y']),
         {
             x: [0, 1],
             y: ['a', 'a']
@@ -42,7 +43,7 @@ QUnit.test('GroupModifier.execute', function (assert) {
     );
 
     assert.deepEqual(
-        modifiedTable.getRow(1).getCellAsTable('table').toColumn(['x', 'y']),
+        modifiedTable.getRow(1).getCellAsTable('table').getColumns(['x', 'y']),
         {
             x: [0, 1],
             y: ['b', 'b']

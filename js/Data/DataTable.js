@@ -56,7 +56,7 @@ var DataTable = /** @class */ (function () {
         this.presentationState = presentationState;
         this.rows = rows;
         this.rowsIdMap = rowsIdMap;
-        this.watchsIdMap = {};
+        this.unwatchIdMap = {};
         this.aliasMap = {};
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
@@ -117,7 +117,7 @@ var DataTable = /** @class */ (function () {
         }
         this.rows.length = 0;
         this.rowsIdMap = {};
-        this.watchsIdMap = {};
+        this.unwatchIdMap = {};
         this.emit({ type: 'afterClearTable', detail: eventDetail });
     };
     /**
@@ -298,7 +298,7 @@ var DataTable = /** @class */ (function () {
     };
     /**
      * Retrieves the given columns, either by the canonical column name,
-     * or by an alias
+     * or by an alias. This function can also retrieve row IDs.
      *
      * @param {Array<string>} [columnNamesOrAlias]
      * Names or aliases for the columns to get, aliases taking precedence.
@@ -313,27 +313,32 @@ var DataTable = /** @class */ (function () {
     DataTable.prototype.getColumns = function (columnNamesOrAlias, usePresentationOrder) {
         if (columnNamesOrAlias === void 0) { columnNamesOrAlias = []; }
         var table = this, aliasMap = table.aliasMap, rows = table.rows, noColumnNames = !columnNamesOrAlias.length, columnSorter = (usePresentationOrder &&
-            table.presentationState.getColumnSorter()), columns = { id: [] };
-        var columnName, row;
+            table.presentationState.getColumnSorter()), columns = {};
+        var columnName, row, cell;
         if (columnSorter) {
             columnNamesOrAlias.sort(columnSorter);
         }
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
-            columns.id.push(row.id);
             if (noColumnNames) {
                 columnNamesOrAlias = row.getCellNames();
                 if (columnSorter) {
                     columnNamesOrAlias.sort(columnSorter);
                 }
+                columnNamesOrAlias.unshift('id');
             }
             for (var j = 0, jEnd = columnNamesOrAlias.length; j < jEnd; ++j) {
                 columnName = columnNamesOrAlias[j];
-                columnName = (aliasMap[columnName] || columnName);
-                if (!columns[columnName]) {
-                    columns[columnName] = new Array(i + 1);
+                cell = (columnName === 'id' ?
+                    row.id :
+                    row.getCell(aliasMap[columnName] || columnName));
+                if (columns[columnName] ||
+                    typeof cell !== 'undefined') {
+                    if (!columns[columnName]) {
+                        columns[columnName] = new Array(i + 1);
+                    }
+                    columns[columnName][i] = cell;
                 }
-                columns[columnName][i] = row.getCell(columnName);
             }
         }
         return columns;
@@ -562,13 +567,12 @@ var DataTable = /** @class */ (function () {
      * modifying multiple rows in a batch.
      */
     DataTable.prototype.unwatchRow = function (rowId, skipDelete) {
-        var watchsIdMap = this.watchsIdMap;
-        var watchs = watchsIdMap[rowId] || [];
-        for (var i = 0, iEnd = watchs.length; i < iEnd; ++i) {
-            watchs[i]();
-        }
-        if (!skipDelete) {
-            delete watchsIdMap[rowId];
+        var unwatchIdMap = this.unwatchIdMap, unwatch = unwatchIdMap[rowId];
+        if (unwatch) {
+            unwatch();
+            if (!skipDelete) {
+                delete unwatchIdMap[rowId];
+            }
         }
     };
     /**
@@ -580,19 +584,16 @@ var DataTable = /** @class */ (function () {
      * @emits DataTable#afterUpdateRow
      */
     DataTable.prototype.watchRow = function (row) {
-        var table = this, index = table.rows.indexOf(row), watchsIdMap = table.watchsIdMap, watchs = [];
-        /**
-         * @private
-         * @param {DataTableRow.EventObject} e
-         * Received event.
-         */
-        function callback(e) {
+        var table = this, index = table.rows.indexOf(row), unwatchIdMap = table.unwatchIdMap;
+        unwatchIdMap[row.id] = row.on('afterChangeRow', function (e) {
             table.versionTag = uniqueKey();
-            table.emit({ type: 'afterUpdateRow', detail: e.detail, index: index, row: row });
-        }
-        watchs.push(row.on('afterClearRow', callback));
-        watchs.push(row.on('afterChangeRow', callback));
-        watchsIdMap[row.id] = watchs;
+            table.emit({
+                type: 'afterUpdateRow',
+                detail: e.detail,
+                index: index,
+                row: row
+            });
+        });
     };
     return DataTable;
 }());

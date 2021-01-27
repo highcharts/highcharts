@@ -356,11 +356,17 @@ class Point {
     public static getPointOptionsFromTableRow(
         tableRow: DataTableRow,
         keys?: Array<string>
-    ): PointOptions {
-        const pointOptions: (PointOptions&Record<string, any>) = {
-                id: tableRow.id
-            },
+    ): (PointOptions|null) {
+        if (tableRow === DataTableRow.NULL) {
+            return null;
+        }
+
+        const pointOptions: (PointOptions&Record<string, any>) = {},
             cellNames = tableRow.getCellNames();
+
+        if (!keys || keys.indexOf('id') >= 0) {
+            pointOptions.id = tableRow.id;
+        }
 
         let cellName: string;
 
@@ -419,10 +425,13 @@ class Point {
 
         // Object
         } else if (
-            pointOptions &&
             typeof pointOptions === 'object'
         ) {
-            tableRow = new DataTableRow(flat(pointOptions));
+            if (pointOptions === null) {
+                tableRow = DataTableRow.NULL;
+            } else {
+                tableRow = new DataTableRow(flat(pointOptions));
+            }
 
         // Primitive
         } else {

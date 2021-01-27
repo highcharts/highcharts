@@ -113,7 +113,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         this.presentationState = presentationState;
         this.rows = rows;
         this.rowsIdMap = rowsIdMap;
-        this.watchsIdMap = {};
+        this.unwatchIdMap = {};
         this.aliasMap = {};
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
@@ -170,7 +170,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * functions of DataTableRow-related callbacks. These callbacks are used to
      * keep the version tag changing in case of row modifications.
      */
-    private watchsIdMap: Record<string, Array<Function>>;
+    private unwatchIdMap: Record<string, Function>;
 
     /* *
      *
@@ -199,7 +199,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
         this.rows.length = 0;
         this.rowsIdMap = {};
-        this.watchsIdMap = {};
+        this.unwatchIdMap = {};
 
         this.emit({ type: 'afterClearTable', detail: eventDetail });
     }
@@ -421,7 +421,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
     /**
      * Retrieves the given columns, either by the canonical column name,
-     * or by an alias
+     * or by an alias. This function can also retrieve row IDs.
      *
      * @param {Array<string>} [columnNamesOrAlias]
      * Names or aliases for the columns to get, aliases taking precedence.
@@ -445,10 +445,11 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 usePresentationOrder &&
                 table.presentationState.getColumnSorter()
             ),
-            columns: Record<string, Array<DataTableRow.CellType>> = { id: [] };
+            columns: Record<string, Array<DataTableRow.CellType>> = {};
 
         let columnName: string,
-            row: DataTableRow;
+            row: DataTableRow,
+            cell: DataTableRow.CellType;
 
         if (columnSorter) {
             columnNamesOrAlias.sort(columnSorter);
@@ -456,24 +457,32 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
-            columns.id.push(row.id);
 
             if (noColumnNames) {
                 columnNamesOrAlias = row.getCellNames();
                 if (columnSorter) {
                     columnNamesOrAlias.sort(columnSorter);
                 }
+                columnNamesOrAlias.unshift('id');
             }
 
             for (let j = 0, jEnd = columnNamesOrAlias.length; j < jEnd; ++j) {
                 columnName = columnNamesOrAlias[j];
-                columnName = (aliasMap[columnName] || columnName);
+                cell = (
+                    columnName === 'id' ?
+                        row.id :
+                        row.getCell(aliasMap[columnName] || columnName)
+                );
 
-                if (!columns[columnName]) {
-                    columns[columnName] = new Array(i + 1);
+                if (
+                    columns[columnName] ||
+                    typeof cell !== 'undefined'
+                ) {
+                    if (!columns[columnName]) {
+                        columns[columnName] = new Array(i + 1);
+                    }
+                    columns[columnName][i] = cell;
                 }
-
-                columns[columnName][i] = row.getCell(columnName);
             }
         }
 
@@ -759,15 +768,15 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * modifying multiple rows in a batch.
      */
     private unwatchRow(rowId: string, skipDelete?: boolean): void {
-        const watchsIdMap = this.watchsIdMap;
-        const watchs = watchsIdMap[rowId] || [];
+        const unwatchIdMap = this.unwatchIdMap,
+            unwatch = unwatchIdMap[rowId];
 
-        for (let i = 0, iEnd = watchs.length; i < iEnd; ++i) {
-            watchs[i]();
-        }
+        if (unwatch) {
+            unwatch();
 
-        if (!skipDelete) {
-            delete watchsIdMap[rowId];
+            if (!skipDelete) {
+                delete unwatchIdMap[rowId];
+            }
         }
     }
 
@@ -782,23 +791,20 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     private watchRow(row: DataTableRow): void {
         const table = this,
             index = table.rows.indexOf(row),
-            watchsIdMap = table.watchsIdMap,
-            watchs: Array<Function> = [];
+            unwatchIdMap = table.unwatchIdMap;
 
-        /**
-         * @private
-         * @param {DataTableRow.EventObject} e
-         * Received event.
-         */
-        function callback(e: DataTableRow.EventObject): void {
-            table.versionTag = uniqueKey();
-            table.emit({ type: 'afterUpdateRow', detail: e.detail, index, row });
-        }
-
-        watchs.push(row.on('afterClearRow', callback));
-        watchs.push(row.on('afterChangeRow', callback));
-
-        watchsIdMap[row.id] = watchs;
+        unwatchIdMap[row.id] = row.on(
+            'afterChangeRow',
+            function (e: DataTableRow.EventObject): void {
+                table.versionTag = uniqueKey();
+                table.emit({
+                    type: 'afterUpdateRow',
+                    detail: e.detail,
+                    index,
+                    row
+                });
+            }
+        );
     }
 
 }

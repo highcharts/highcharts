@@ -1,5 +1,6 @@
 import DataTable from '/base/js/Data/DataTable.js';
-import RangeModifier from '/base/js/Data/Modifiers/RangeDataModifier.js';
+import DataTableRow from '/base/js/Data/DataTableRow.js';
+import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
 
 QUnit.test('RangeModifier.execute', function (assert) {
 
@@ -32,12 +33,6 @@ QUnit.test('RangeModifier.execute', function (assert) {
         modifiedTable !== table &&
         modifiedTable.getRow(0) === table.getRow(0),
         'Filtered table should contain same rows.'
-    );
-
-    assert.deepEqual(
-        modifiedTable.toJSON(),
-        tableJSON,
-        'JSON of filtered table should be equal to original JSON.'
     );
 
 });

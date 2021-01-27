@@ -1,4 +1,4 @@
-import Series from '/base/js/Core/Series.js';
+import Series from '/base/js/Core/Series/Series.js';
 
 QUnit.test('DataParser.getTableFromSeriesOptions', function (assert) {
 
@@ -14,19 +14,16 @@ QUnit.test('DataParser.getTableFromSeriesOptions', function (assert) {
             ]
         },
         table1 = Series.getTableFromSeriesOptions(series1Options),
-        table1Columns = table1.getColumns(),
-        series2Options = Series.getSeriesOptionsFromTable(table1);
+        table1Columns = table1.getColumns(['x', 'y']),
+        series2Options = Series.getSeriesOptionsFromTable(table1, ['x', 'y']);
 
     assert.strictEqual(
         Object.keys(table1Columns).length,
-        3,
-        'DataTable should contain three columns.'
+        2,
+        'DataTable should contain two columns.'
     );
     assert.deepEqual(
-        {
-            x: table1Columns['x'],
-            y: table1Columns['y']
-        },
+        table1Columns,
         {
             x: [0, 1, 2],
             y: [1, 2, 3]
@@ -34,7 +31,7 @@ QUnit.test('DataParser.getTableFromSeriesOptions', function (assert) {
         'DataTable should contain x and y values in order.'
     );
     assert.deepEqual(
-        series2Options.data.map(point => ({ x: point.x, y: point.y })),
+        series2Options.data,
         [{
             x: 0,
             y: 1

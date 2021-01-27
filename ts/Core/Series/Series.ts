@@ -2651,7 +2651,7 @@ class Series {
         keys?: Array<string>
     ): SeriesOptions {
         const rows = table.getAllRows(),
-            data: Array<PointOptions> = [];
+            data: Array<(PointOptions|null)> = [];
 
         let pointStart: (number|undefined);
 
@@ -4602,10 +4602,10 @@ class Series {
      *
      * @return {Highcharts.PointOptionsType}
      */
-    public getFirstValidPoint(
-        data: Array<(PointOptions|PointShortOptions)>
-    ): (PointOptions|PointShortOptions) {
-        var firstPoint = null,
+    public getFirstValidPoint<T extends PointOptions|PointShortOptions>(
+        data: Array<T>
+    ): (T|null) {
+        var firstPoint: (T|null) = null,
             dataLength = data.length,
             i = 0;
 

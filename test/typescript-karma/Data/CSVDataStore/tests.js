@@ -96,7 +96,7 @@ test('CSVStore, negative values', function (assert) {
     store.load();
 
     assert.deepEqual(
-        store.table.getColumns()['Values'],
+        store.table.getColumns(['Values'])['Values'],
         array
     );
 

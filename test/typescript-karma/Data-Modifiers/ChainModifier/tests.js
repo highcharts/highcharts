@@ -1,8 +1,8 @@
 import DataTable from '/base/js/Data/DataTable.js';
 import DataTableRow from '/base/js/Data/DataTableRow.js';
-import ChainModifier from '/base/js/Data/Modifiers/ChainDataModifier.js';
-import GroupModifier from '/base/js/Data/Modifiers/GroupDataModifier.js';
-import RangeModifier from '/base/js/Data/Modifiers/RangeDataModifier.js';
+import ChainModifier from '/base/js/Data/Modifiers/ChainModifier.js';
+import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
+import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
 
 QUnit.test('ChainModifier.execute', function (assert) {
 

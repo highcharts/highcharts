@@ -45,13 +45,16 @@ var DataTableRow = /** @class */ (function () {
         this.converter = converter;
         if (typeof cells.id === 'string') {
             this.id = cells.id;
+            if (cells.id === 'NULL' &&
+                DataTableRow.NULL) {
+                return DataTableRow.NULL;
+            }
         }
         else {
             this.autoId = true;
             this.id = uniqueKey();
         }
         delete cells.id;
-        this.watchCells();
     }
     /* *
      *
@@ -110,9 +113,20 @@ var DataTableRow = /** @class */ (function () {
      * @emits DataTableRow#afterClearRow
      */
     DataTableRow.prototype.clear = function (eventDetail) {
-        this.emit({ type: 'clearRow', detail: eventDetail });
-        this.cells = {};
-        this.emit({ type: 'afterClearRow', detail: eventDetail });
+        var row = this;
+        row.emit({
+            type: 'clearRow',
+            detail: eventDetail
+        });
+        row.cells = {};
+        row.emit({
+            type: 'afterClearRow',
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
+            detail: eventDetail
+        });
     };
     /**
      * Deletes a cell in this row.
@@ -130,22 +144,26 @@ var DataTableRow = /** @class */ (function () {
      * @emits DataTableRow#afterDeleteCell
      */
     DataTableRow.prototype.deleteCell = function (cellName, eventDetail) {
-        var row = this, cellValue = row.cells[cellName];
+        var row = this, cells = row.cells, cellValue = cells[cellName];
         if (cellName === 'id' ||
-            Object.keys(row.cells).indexOf(cellName) < 0) {
+            Object.keys(cells).indexOf(cellName) === -1) {
             return false;
         }
-        this.emit({
+        row.emit({
             type: 'deleteCell',
             cellName: cellName,
             cellValue: cellValue,
             detail: eventDetail
         });
-        delete row.cells[cellName];
-        this.emit({
+        delete cells[cellName];
+        row.emit({
             type: 'afterDeleteCell',
             cellName: cellName,
             cellValue: cellValue,
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
             detail: eventDetail
         });
         return true;
@@ -166,22 +184,26 @@ var DataTableRow = /** @class */ (function () {
      * @emits DataTableRow#afterRemoveCell
      */
     DataTableRow.prototype.removeCell = function (cellName, eventDetail) {
-        var row = this, cellValue = row.cells[cellName];
+        var row = this, cells = row.cells, cellValue = cells[cellName];
         if (cellName === 'id' ||
-            Object.keys(row.cells).indexOf(cellName) < 0) {
+            Object.keys(cells).indexOf(cellName) < 0) {
             return void 0;
         }
-        this.emit({
+        row.emit({
             type: 'removeCell',
             cellName: cellName,
             cellValue: cellValue,
             detail: eventDetail
         });
         row.deleteCell(cellName, eventDetail); // delete row.cells[cellName];
-        this.emit({
+        row.emit({
             type: 'afterRemoveCell',
             cellName: cellName,
             cellValue: cellValue,
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
             detail: eventDetail
         });
         return cellValue;
@@ -215,7 +237,11 @@ var DataTableRow = /** @class */ (function () {
      * Cell value in this row.
      */
     DataTableRow.prototype.getCell = function (cellName) {
-        return this.cells[cellName];
+        var row = this;
+        if (row.id === 'NULL') {
+            return null;
+        }
+        return row.cells[cellName];
     };
     /**
      * Converts the value of the given cell name to a boolean and returns it.
@@ -323,7 +349,8 @@ var DataTableRow = /** @class */ (function () {
     DataTableRow.prototype.insertCell = function (cellName, cellValue, eventDetail) {
         var row = this, cells = row.cells;
         if (cellName === 'id' ||
-            Object.keys(cells).indexOf(cellName) !== -1) {
+            row.id === 'NULL' ||
+            Object.keys(cells).indexOf(cellName) >= 0) {
             return false;
         }
         row.emit({
@@ -332,11 +359,15 @@ var DataTableRow = /** @class */ (function () {
             cellValue: cellValue,
             detail: eventDetail
         });
-        row.cells[cellName] = cellValue;
+        cells[cellName] = cellValue;
         row.emit({
             type: 'afterInsertCell',
             cellName: cellName,
             cellValue: cellValue,
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
             detail: eventDetail
         });
         return true;
@@ -416,8 +447,10 @@ var DataTableRow = /** @class */ (function () {
      * @emits DataTableRow#afterUpdateCell
      */
     DataTableRow.prototype.updateCell = function (cellName, cellValue, eventDetail) {
-        var row = this;
-        if (cellName === 'id') {
+        var row = this, cells = row.cells;
+        if (cellName === 'id' ||
+            row.id === 'NULL' ||
+            Object.keys(cells).indexOf(cellName) === -1) {
             return false;
         }
         row.emit({
@@ -426,28 +459,28 @@ var DataTableRow = /** @class */ (function () {
             cellValue: cellValue,
             detail: eventDetail
         });
-        row.cells[cellName] = cellValue;
+        cells[cellName] = cellValue;
         row.emit({
             type: 'afterUpdateCell',
             cellName: cellName,
-            cellValue: cellValue
+            cellValue: cellValue,
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
+            detail: eventDetail
         });
         return true;
     };
-    DataTableRow.prototype.watchCells = function () {
-        var row = this;
-        /**
-         * @private
-         * @param {DataTableRow.EventObject} e
-         * Received event.
-         */
-        function callback(e) {
-            row.emit({ type: 'afterChangeRow', detail: e.detail });
-        }
-        row.on('afterClearRow', callback);
-        row.on('afterDeleteCell', callback);
-        row.on('afterUpdateCell', callback);
-    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    /**
+     * Shared table row representing `null` with id `"NULL"`.
+     */
+    DataTableRow.NULL = new DataTableRow({ id: 'NULL' });
     return DataTableRow;
 }());
 /* *

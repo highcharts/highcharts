@@ -2,9 +2,6 @@
 /* eslint-disable */
 const fs = require('fs');
 const path = require('path');
-const os = require('os');
-
-const version = require('../../package.json').version;
 
 /**
  * Get browserstack credentials from the environment variables.
@@ -140,12 +137,7 @@ module.exports = function (config) {
                     })) :
             // default tests
             [{
-                pattern: 'test/typescript-karma/*/*/tests.js',
-                type: 'module'
-            },
-            {
-
-                pattern: 'test/typescript-karma/*/utils.js',
+                pattern: 'test/typescript-karma/**/tests.js',
                 type: 'module'
             }
         ]
@@ -167,6 +159,10 @@ module.exports = function (config) {
             {
                 included: false,
                 pattern: 'js/**/*.js',
+                type: 'module'
+            },
+            {
+                pattern: 'test/typescript-karma/**/!(demo).js',
                 type: 'module'
             }
         ], tests),

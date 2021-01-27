@@ -42,6 +42,17 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
     /* *
      *
+     *  Static Properties
+     *
+     * */
+
+    /**
+     * Shared table row representing `null` with id `"NULL"`.
+     */
+    public static readonly NULL = new DataTableRow({ id: 'NULL' });
+
+    /* *
+     *
      *  Static Functions
      *
      * */
@@ -120,14 +131,18 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         if (typeof cells.id === 'string') {
             this.id = cells.id;
+            if (
+                cells.id === 'NULL' &&
+                DataTableRow.NULL
+            ) {
+                return DataTableRow.NULL;
+            }
         } else {
             this.autoId = true;
             this.id = uniqueKey();
         }
 
         delete cells.id;
-
-        this.watchCells();
     }
 
     /* *
@@ -173,12 +188,23 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @emits DataTableRow#afterClearRow
      */
     public clear(eventDetail?: DataEventEmitter.EventDetail): void {
+        const row = this;
 
-        this.emit({ type: 'clearRow', detail: eventDetail });
+        row.emit({
+            type: 'clearRow',
+            detail: eventDetail
+        });
 
-        this.cells = {};
+        row.cells = {};
 
-        this.emit({ type: 'afterClearRow', detail: eventDetail });
+        row.emit({
+            type: 'afterClearRow',
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
+            detail: eventDetail
+        });
     }
 
     /**
@@ -201,28 +227,33 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const row = this,
-            cellValue = row.cells[cellName];
+            cells = row.cells,
+            cellValue = cells[cellName];
 
         if (
             cellName === 'id' ||
-            Object.keys(row.cells).indexOf(cellName) < 0
+            Object.keys(cells).indexOf(cellName) === -1
         ) {
             return false;
         }
 
-        this.emit({
+        row.emit({
             type: 'deleteCell',
             cellName,
             cellValue,
             detail: eventDetail
         });
 
-        delete row.cells[cellName];
+        delete cells[cellName];
 
-        this.emit({
+        row.emit({
             type: 'afterDeleteCell',
             cellName,
             cellValue,
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
             detail: eventDetail
         });
 
@@ -249,16 +280,17 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTableRow.CellType {
         const row = this,
-            cellValue = row.cells[cellName];
+            cells = row.cells,
+            cellValue = cells[cellName];
 
         if (
             cellName === 'id' ||
-            Object.keys(row.cells).indexOf(cellName) < 0
+            Object.keys(cells).indexOf(cellName) < 0
         ) {
             return void 0;
         }
 
-        this.emit({
+        row.emit({
             type: 'removeCell',
             cellName,
             cellValue,
@@ -267,10 +299,14 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         row.deleteCell(cellName, eventDetail); // delete row.cells[cellName];
 
-        this.emit({
+        row.emit({
             type: 'afterRemoveCell',
             cellName,
             cellValue,
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
             detail: eventDetail
         });
 
@@ -307,7 +343,13 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * Cell value in this row.
      */
     public getCell(cellName: string): DataTableRow.CellType {
-        return this.cells[cellName];
+        const row = this;
+
+        if (row.id === 'NULL') {
+            return null;
+        }
+
+        return row.cells[cellName];
     }
 
     /**
@@ -434,7 +476,8 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         if (
             cellName === 'id' ||
-            Object.keys(cells).indexOf(cellName) !== -1
+            row.id === 'NULL' ||
+            Object.keys(cells).indexOf(cellName) >= 0
         ) {
             return false;
         }
@@ -446,12 +489,16 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
             detail: eventDetail
         });
 
-        row.cells[cellName] = cellValue;
+        cells[cellName] = cellValue;
 
         row.emit({
             type: 'afterInsertCell',
             cellName,
             cellValue,
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
             detail: eventDetail
         });
 
@@ -549,9 +596,14 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         cellValue: DataTableRow.CellType,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
-        const row = this;
+        const row = this,
+            cells = row.cells;
 
-        if (cellName === 'id') {
+        if (
+            cellName === 'id' ||
+            row.id === 'NULL' ||
+            Object.keys(cells).indexOf(cellName) === -1
+        ) {
             return false;
         }
 
@@ -562,33 +614,22 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
             detail: eventDetail
         });
 
-        row.cells[cellName] = cellValue;
+        cells[cellName] = cellValue;
 
         row.emit({
             type: 'afterUpdateCell',
             cellName,
-            cellValue
+            cellValue,
+            detail: eventDetail
+        });
+        row.emit({
+            type: 'afterChangeRow',
+            detail: eventDetail
         });
 
         return true;
     }
 
-    private watchCells(): void {
-        const row = this;
-
-        /**
-         * @private
-         * @param {DataTableRow.EventObject} e
-         * Received event.
-         */
-        function callback(e: DataTableRow.EventObject): void {
-            row.emit({ type: 'afterChangeRow', detail: e.detail });
-        }
-
-        row.on('afterClearRow', callback);
-        row.on('afterDeleteCell', callback);
-        row.on('afterUpdateCell', callback);
-    }
 }
 
 /* *
