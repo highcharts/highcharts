@@ -108,9 +108,8 @@ QUnit.test('Undefined and null z scatter points (#4507, #12548)', function (asse
         ]
     });
 
-    assert.strictEqual(
-        chart.series[0].points.filter(p => p.graphic).length,
-        5,
+    assert.ok(
+        chart.series[0].points.every(p => p.graphic),
         'All points should have rendered'
     );
 });
