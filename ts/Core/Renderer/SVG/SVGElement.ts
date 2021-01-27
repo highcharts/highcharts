@@ -2313,10 +2313,9 @@ class SVGElement {
                     textNode.setAttribute('x', -attrs.dx);
                 }
 
+                // Move all <tspan>'s and text nodes to the <textPath> node. Do
+                // not move other elements like <title> or <path>
                 const childNodes = [].slice.call(textNode.childNodes);
-
-                // Now move all <tspan>'s and text nodes to the <textPath> node.
-                // Do not move other elements like <title> or <path>
                 for (let i = 0; i < childNodes.length; i++) {
                     const childNode: any = childNodes[i];
                     if (

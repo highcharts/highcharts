@@ -1626,9 +1626,9 @@ var SVGElement = /** @class */ (function () {
                 if (isNumber(attrs.dx)) {
                     textNode.setAttribute('x', -attrs.dx);
                 }
+                // Move all <tspan>'s and text nodes to the <textPath> node. Do
+                // not move other elements like <title> or <path>
                 var childNodes = [].slice.call(textNode.childNodes);
-                // Now move all <tspan>'s and text nodes to the <textPath> node.
-                // Do not move other elements like <title> or <path>
                 for (var i = 0; i < childNodes.length; i++) {
                     var childNode = childNodes[i];
                     if (childNode.nodeType === Node.TEXT_NODE ||
