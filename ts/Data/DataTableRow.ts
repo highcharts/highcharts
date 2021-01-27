@@ -324,29 +324,6 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     }
 
     /**
-     * Tests if the value of the given cell name is a DataTable and returns it.
-     *
-     * @param {string} cellName
-     * Cell name to fetch.
-     *
-     * @return {DataTable|undefined}
-     * Cell value of the cell in this row, if it is a DataTable.
-     */
-    public getCellAsDataTable(cellName: string): (DataTable|undefined) {
-        const value = this.getCell(cellName);
-
-        if (
-            !value ||
-            typeof value !== 'object' ||
-            value instanceof Date
-        ) {
-            return;
-        }
-
-        return value;
-    }
-
-    /**
      * Converts the value of the given cell name to a Date and returns it.
      *
      * @param {string} cellName
@@ -383,6 +360,29 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      */
     public getCellAsString(cellName: string): string {
         return this.converter.asString(this.getCell(cellName));
+    }
+
+    /**
+     * Tests if the value of the given cell name is a DataTable and returns it.
+     *
+     * @param {string} cellName
+     * Cell name to fetch.
+     *
+     * @return {DataTable|undefined}
+     * Cell value of the cell in this row, if it is a DataTable.
+     */
+    public getCellAsTable(cellName: string): (DataTable|undefined) {
+        const value = this.getCell(cellName);
+
+        if (
+            !value ||
+            typeof value !== 'object' ||
+            value instanceof Date
+        ) {
+            return;
+        }
+
+        return value;
     }
 
     /**

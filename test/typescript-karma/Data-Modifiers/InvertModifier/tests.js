@@ -1,41 +1,40 @@
 import DataTable from '/base/js/Data/DataTable.js';
+import DataTableRow from '/base/js/Data/DataTableRow.js';
 import InvertModifier from '/base/js/Data/Modifiers/InvertModifier.js';
 
 QUnit.test('InvertModifier.execute', function (assert) {
 
-    const tableJSON = {
-        $class: 'DataTable',
-        rows: [{
-            $class: 'DataTableRow',
-            x: 0,
-            y: 'a'
-        }, {
-            $class: 'DataTableRow',
-            x: 1,
-            y: 'b'
-        }, {
-            $class: 'DataTableRow',
-            x: 2,
-            y: 'c'
-        }, {
-            $class: 'DataTableRow',
-            x: 3,
-            y: 'd'
-        }, {
-            $class: 'DataTableRow',
-            x: 4,
-            y: 'e'
-        }]
-    },
-    table = DataTable.fromJSON(tableJSON),
-    modifier = new InvertModifier(),
-    invertedTable = modifier.execute(table),
-    invertedTable2 = modifier.execute(invertedTable),
-    tableRowIds = table.getAllRowIds(),
-    invertedTableColumns = invertedTable.getColumns(),
-    invertedTableColumnNames = Object.keys(invertedTableColumns),
-    tableColumns = table.getColumns(),
-    tableColumnNames = Object.keys(tableColumns);
+    const table = new DataTable([
+            new DataTableRow({
+                x: 0,
+                y: 'a'
+            }),
+            new DataTableRow({
+                x: 1,
+                y: 'b'
+            }),
+            new DataTableRow({
+                $class: 'DataTableRow',
+                x: 2,
+                y: 'c'
+            }),
+            new DataTableRow({
+                x: 3,
+                y: 'd'
+            }),
+            new DataTableRow({
+                x: 4,
+                y: 'e'
+            })
+        ]),
+        modifier = new InvertModifier(),
+        invertedTable = modifier.execute(table),
+        invertedTable2 = modifier.execute(invertedTable),
+        tableRowIds = table.getAllRowIds(),
+        invertedTableColumns = invertedTable.getColumns(),
+        invertedTableColumnNames = Object.keys(invertedTableColumns),
+        tableColumns = table.getColumns(),
+        tableColumnNames = Object.keys(tableColumns);
 
     let result,
         result2,

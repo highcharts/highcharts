@@ -1,33 +1,30 @@
 import DataTable from '/base/js/Data/DataTable.js';
 import RangeModifier from '/base/js/Data/Modifiers/RangeDataModifier.js';
 
-QUnit.test('RangeDataModifier.execute', function (assert) {
+QUnit.test('RangeModifier.execute', function (assert) {
 
-    const tableJSON = {
-            $class: 'DataTable',
-            rows: [{
-                $class: 'DataTableRow',
+    const table = new DataTable([
+            new DataTableRow({
                 x: -2,
                 y: 'a'
-            }, {
-                $class: 'DataTableRow',
+            }),
+            new DataTableRow({
                 x: -1,
                 y: 'b'
-            }, {
-                $class: 'DataTableRow',
+            }),
+            new DataTableRow({
                 x: 0,
                 y: 'c'
-            }, {
-                $class: 'DataTableRow',
+            }),
+            new DataTableRow({
                 x: 1,
                 y: 'd'
-            }, {
-                $class: 'DataTableRow',
+            }),
+            new DataTableRow({
                 x: 2,
                 y: 'e'
-            }]
-        },
-        table = DataTable.fromJSON(tableJSON),
+            })
+        ]),
         modifier = new RangeModifier({}),
         modifiedTable = modifier.execute(table);
 

@@ -230,24 +230,6 @@ var DataTableRow = /** @class */ (function () {
         return this.converter.asBoolean(this.getCell(cellName));
     };
     /**
-     * Tests if the value of the given cell name is a DataTable and returns it.
-     *
-     * @param {string} cellName
-     * Cell name to fetch.
-     *
-     * @return {DataTable|undefined}
-     * Cell value of the cell in this row, if it is a DataTable.
-     */
-    DataTableRow.prototype.getCellAsDataTable = function (cellName) {
-        var value = this.getCell(cellName);
-        if (!value ||
-            typeof value !== 'object' ||
-            value instanceof Date) {
-            return;
-        }
-        return value;
-    };
-    /**
      * Converts the value of the given cell name to a Date and returns it.
      *
      * @param {string} cellName
@@ -282,6 +264,24 @@ var DataTableRow = /** @class */ (function () {
      */
     DataTableRow.prototype.getCellAsString = function (cellName) {
         return this.converter.asString(this.getCell(cellName));
+    };
+    /**
+     * Tests if the value of the given cell name is a DataTable and returns it.
+     *
+     * @param {string} cellName
+     * Cell name to fetch.
+     *
+     * @return {DataTable|undefined}
+     * Cell value of the cell in this row, if it is a DataTable.
+     */
+    DataTableRow.prototype.getCellAsTable = function (cellName) {
+        var value = this.getCell(cellName);
+        if (!value ||
+            typeof value !== 'object' ||
+            value instanceof Date) {
+            return;
+        }
+        return value;
     };
     /**
      * Returns the number of cell in this row.

@@ -1,29 +1,26 @@
 import DataTable from '/base/js/Data/DataTable.js';
 import GroupModifier from '/base/js/Data/Modifiers/GroupDataModifier.js';
 
-QUnit.test('RangeDataModifier.execute', function (assert) {
+QUnit.test('GroupModifier.execute', function (assert) {
 
-    const tableJSON = {
-            $class: 'DataTable',
-            rows: [{
-                $class: 'DataTableRow',
+    const table = new DataTable([
+            new DataTableRow({
                 x: 0,
                 y: 'a'
-            }, {
-                $class: 'DataTableRow',
+            }),
+            new DataTableRow({
                 x: 0,
                 y: 'b'
-            }, {
-                $class: 'DataTableRow',
+            }),
+            new DataTableRow({
                 x: 1,
                 y: 'b'
-            }, {
-                $class: 'DataTableRow',
+            }),
+            new DataTableRow({
                 x: 1,
                 y: 'a'
-            }]
-        },
-        table = DataTable.fromJSON(tableJSON),
+            })
+        ]),
         modifier = new GroupModifier({
             groupColumn: 'y'
         }),
@@ -36,46 +33,21 @@ QUnit.test('RangeDataModifier.execute', function (assert) {
     );
 
     assert.deepEqual(
-        modifiedTable.toJSON(),
+        modifiedTable.getRow(0).getCellAsTable('table').toColumn(['x', 'y']),
         {
-            $class: 'DataTable',
-            rows: [{
-                $class: 'DataTableRow',
-                groupBy: 'y',
-                id: '0',
-                table: {
-                    $class: 'DataTable',
-                    rows: [{
-                        $class: 'DataTableRow',
-                        x: 0,
-                        y: 'a'
-                    }, {
-                        $class: 'DataTableRow',
-                        x: 1,
-                        y: 'a'
-                    }]
-                },
-                value: 'a'
-            }, {
-                $class: 'DataTableRow',
-                groupBy: 'y',
-                id: '1',
-                table: {
-                    $class: 'DataTable',
-                    rows: [{
-                        $class: 'DataTableRow',
-                        x: 0,
-                        y: 'b'
-                    }, {
-                        $class: 'DataTableRow',
-                        x: 1,
-                        y: 'b'
-                    }]
-                },
-                value: 'b'
-            }]
+            x: [0, 1],
+            y: ['a', 'a']
         },
-        'JSON of filtered table should have two subtables.'
+        'Modified table should have subtables. (#1)'
+    );
+
+    assert.deepEqual(
+        modifiedTable.getRow(1).getCellAsTable('table').toColumn(['x', 'y']),
+        {
+            x: [0, 1],
+            y: ['b', 'b']
+        },
+        'Modified table should have subtables. (#1)'
     );
 
 });
