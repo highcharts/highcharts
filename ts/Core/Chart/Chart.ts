@@ -3390,7 +3390,12 @@ class Chart {
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spaceBox' ?
                     null :
-                    'plotBox'
+                    {
+                        x: chart.plotLeft,
+                        y: chart.plotTop,
+                        width: chart.spacingBox.x + chart.spacingBox.width - chart.plotLeft,
+                        height: chart.spacingBox.y + chart.spacingBox.height - chart.plotTop
+                    }
             );
 
         /**
