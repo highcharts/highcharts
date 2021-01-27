@@ -1,5 +1,5 @@
 import DataTable from '/base/js/Data/DataTable.js';
-import RangeDataModifier from '/base/js/Data/Modifiers/RangeDataModifier.js';
+import RangeModifier from '/base/js/Data/Modifiers/RangeDataModifier.js';
 
 QUnit.test('RangeDataModifier.execute', function (assert) {
 
@@ -28,7 +28,7 @@ QUnit.test('RangeDataModifier.execute', function (assert) {
             }]
         },
         table = DataTable.fromJSON(tableJSON),
-        modifier = new RangeDataModifier({}),
+        modifier = new RangeModifier({}),
         modifiedTable = modifier.execute(table);
 
     assert.ok(

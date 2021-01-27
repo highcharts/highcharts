@@ -178,7 +178,7 @@ var DataModifier = /** @class */ (function () {
      * Regular expression to extract the modifier name (group 1) from the
      * stringified class type.
      */
-    DataModifier.nameRegExp = /^function\s+(\w*?)(?:DataModifier)?\s*\(/;
+    DataModifier.nameRegExp = /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
     /**
      * Registry as a record object with modifier names and their class.
      */

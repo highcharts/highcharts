@@ -1,16 +1,16 @@
 import DataTable from '/base/js/Data/DataTable.js';
-import ChainDataModifier from '/base/js/Data/Modifiers/ChainDataModifier.js';
-import GroupDataModifier from '/base/js/Data/Modifiers/GroupDataModifier.js';
-import RangeDataModifier from '/base/js/Data/Modifiers/RangeDataModifier.js';
+import ChainModifier from '/base/js/Data/Modifiers/ChainDataModifier.js';
+import GroupModifier from '/base/js/Data/Modifiers/GroupDataModifier.js';
+import RangeModifier from '/base/js/Data/Modifiers/RangeDataModifier.js';
 
-QUnit.test('ChainDataModifier.execute', function (assert) {
+QUnit.test('ChainModifier.execute', function (assert) {
 
-    const modifier = new ChainDataModifier(
+    const modifier = new ChainModifier(
             {},
-            new GroupDataModifier({
+            new GroupModifier({
                 groupColumn: 'y'
             }),
-            new RangeDataModifier({
+            new RangeModifier({
                 modifier: 'Range',
                 ranges: [{
                     column: 'value',
@@ -101,12 +101,12 @@ QUnit.test('ChainDataModifier.execute', function (assert) {
 });
 
 QUnit.test('benchmark', function (assert) {
-    const modifier = new ChainDataModifier(
+    const modifier = new ChainModifier(
         {},
-        new GroupDataModifier({
+        new GroupModifier({
             groupColumn: 'y'
         }),
-        new RangeDataModifier({
+        new RangeModifier({
             modifier: 'Range',
             ranges: [{
                 column: 'value',

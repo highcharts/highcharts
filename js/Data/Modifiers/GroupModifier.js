@@ -37,8 +37,8 @@ var merge = U.merge;
 /**
  * Groups table rows into subtables depending on column values.
  */
-var GroupDataModifier = /** @class */ (function (_super) {
-    __extends(GroupDataModifier, _super);
+var GroupModifier = /** @class */ (function (_super) {
+    __extends(GroupModifier, _super);
     /* *
      *
      *  Constructors
@@ -47,12 +47,12 @@ var GroupDataModifier = /** @class */ (function (_super) {
     /**
      * Constructs an instance of the group modifier.
      *
-     * @param {GroupDataModifier.Options} [options]
+     * @param {GroupModifier.Options} [options]
      * Options to configure the group modifier.
      */
-    function GroupDataModifier(options) {
+    function GroupModifier(options) {
         var _this = _super.call(this) || this;
-        _this.options = merge(GroupDataModifier.defaultOptions, options);
+        _this.options = merge(GroupModifier.defaultOptions, options);
         return _this;
     }
     /* *
@@ -69,8 +69,8 @@ var GroupDataModifier = /** @class */ (function (_super) {
      * @return {ChainDataModifier}
      * Group modifier of the class JSON.
      */
-    GroupDataModifier.fromJSON = function (json) {
-        return new GroupDataModifier(json.options);
+    GroupModifier.fromJSON = function (json) {
+        return new GroupModifier(json.options);
     };
     /* *
      *
@@ -94,7 +94,7 @@ var GroupDataModifier = /** @class */ (function (_super) {
      * @return {DataTable}
      * New modified table.
      */
-    GroupDataModifier.prototype.execute = function (table, eventDetail) {
+    GroupModifier.prototype.execute = function (table, eventDetail) {
         this.emit({ type: 'execute', detail: eventDetail, table: table });
         var modifier = this, _a = modifier.options, invalidValues = _a.invalidValues, validValues = _a.validValues, columnGroups = [], tableGroups = [], valueGroups = [];
         var groupColumn = modifier.options.groupColumn, row, value, valueIndex;
@@ -142,9 +142,9 @@ var GroupDataModifier = /** @class */ (function (_super) {
      * @return {DataJSON.ClassJSON}
      * Class JSON of this group modifier.
      */
-    GroupDataModifier.prototype.toJSON = function () {
+    GroupModifier.prototype.toJSON = function () {
         var json = {
-            $class: 'GroupDataModifier',
+            $class: 'GroupModifier',
             options: merge(this.options)
         };
         return json;
@@ -157,22 +157,22 @@ var GroupDataModifier = /** @class */ (function (_super) {
     /**
      * Default options to group table rows.
      */
-    GroupDataModifier.defaultOptions = {
+    GroupModifier.defaultOptions = {
         modifier: 'Group',
         groupColumn: ''
     };
-    return GroupDataModifier;
+    return GroupModifier;
 }(DataModifier));
 /* *
  *
  *  Register
  *
  * */
-DataJSON.addClass(GroupDataModifier);
-DataModifier.addModifier(GroupDataModifier);
+DataJSON.addClass(GroupModifier);
+DataModifier.addModifier(GroupModifier);
 /* *
  *
  *  Export
  *
  * */
-export default GroupDataModifier;
+export default GroupModifier;

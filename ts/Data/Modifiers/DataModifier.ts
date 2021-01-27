@@ -53,7 +53,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Regular expression to extract the modifier name (group 1) from the
      * stringified class type.
      */
-    private static readonly nameRegExp = /^function\s+(\w*?)(?:DataModifier)?\s*\(/;
+    private static readonly nameRegExp = /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
 
     /**
      * Registry as a record object with modifier names and their class.

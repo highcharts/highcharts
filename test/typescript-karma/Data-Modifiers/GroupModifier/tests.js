@@ -1,5 +1,5 @@
 import DataTable from '/base/js/Data/DataTable.js';
-import GroupDataModifier from '/base/js/Data/Modifiers/GroupDataModifier.js';
+import GroupModifier from '/base/js/Data/Modifiers/GroupDataModifier.js';
 
 QUnit.test('RangeDataModifier.execute', function (assert) {
 
@@ -24,7 +24,7 @@ QUnit.test('RangeDataModifier.execute', function (assert) {
             }]
         },
         table = DataTable.fromJSON(tableJSON),
-        modifier = new GroupDataModifier({
+        modifier = new GroupModifier({
             groupColumn: 'y'
         }),
         modifiedTable = modifier.execute(table);
