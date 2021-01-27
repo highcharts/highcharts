@@ -231,7 +231,9 @@ H.Popup.prototype = {
         this.popup = chart.navigationBindings.popup;
         // When the map navigation enabled, and pop up is shown,
         // unbind the scroll, #12100.
-        this.chart.mapNavigation && this.chart.mapNavigation.unbindMouseWheel && this.chart.mapNavigation.unbindMouseWheel();
+        this.chart.mapNavigation &&
+            this.chart.mapNavigation.unbindMouseWheel &&
+            this.chart.mapNavigation.unbindMouseWheel();
         // show blank popup
         this.showPopup();
         // indicator form
