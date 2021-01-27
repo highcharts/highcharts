@@ -2307,14 +2307,11 @@ class SVGElement {
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
 
-                // Create an inner tspan that adjusts the y position (Firefox)
-                // and x
-                const tspan = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
-                tspan.setAttribute('y', 0);
+                // Adjust the position
+                textNode.setAttribute('y', 0); // Firefox
                 if (isNumber(attrs.dx)) {
-                    tspan.setAttribute('x', -attrs.dx);
+                    textNode.setAttribute('x', -attrs.dx);
                 }
-                textPathElement.appendChild(tspan);
 
                 const childNodes = [].slice.call(textNode.childNodes);
 
@@ -2326,7 +2323,7 @@ class SVGElement {
                         childNode.nodeType === Node.TEXT_NODE ||
                         childNode.nodeName === 'tspan'
                     ) {
-                        tspan.appendChild(childNode);
+                        textPathElement.appendChild(childNode);
                     }
                 }
             }
