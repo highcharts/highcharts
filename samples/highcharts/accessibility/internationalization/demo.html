@@ -1,0 +1,27 @@
+<script src="https://code.highcharts.com/stock/highstock.js"></script>
+<script src="https://code.highcharts.com/stock/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<link rel="stylesheet" type="text/css" href="//github.com/downloads/lafeber/world-flags-sprite/flags32.css" />
+
+<div role="radiogroup" style="min-width: 310px; max-width: 600px; margin: 0 auto">
+    <div role="radio" aria-checked="true" tabindex="0">
+        <input type="radio" id="en" name="languages" value="en" checked>
+        <label for="en">
+            <span class="f32"><span id="flag" class="flag us"></span>
+        </label>
+    </div>
+    <div role="radio" aria-checked="false" tabindex="-1">
+        <input type="radio" id="no" name="languages" value="no">
+        <label for="no">
+            <span class="f32"><span id="flag" class="flag no"></span>
+        </label>
+    </div>
+    <div role="radio" aria-checked="false" tabindex="-1">
+        <input type="radio" id="de" name="languages" value="de">
+        <label for="de">
+            <span class="f32"><span id="flag" class="flag de"></span>
+        </label>
+    </div>
+</div>
+
+<div id="container" style="height: 400px; min-width: 310px; max-width: 600px; margin: 0 auto"></div>
