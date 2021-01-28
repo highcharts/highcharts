@@ -100,7 +100,7 @@ var Fullscreen = /** @class */ (function () {
      * @requires    modules/full-screen
      */
     Fullscreen.prototype.close = function () {
-        var fullscreen = this, chart = fullscreen.chart;
+        var fullscreen = this, chart = fullscreen.chart, optionsChart = chart.options.chart;
         // Don't fire exitFullscreen() when user exited using 'Escape' button.
         if (fullscreen.isOpen &&
             fullscreen.browserProps &&
@@ -110,6 +110,15 @@ var Fullscreen = /** @class */ (function () {
         // Unbind event as it's necessary only before exiting from fullscreen.
         if (fullscreen.unbindFullscreenEvent) {
             fullscreen.unbindFullscreenEvent();
+        }
+        var widthOption = optionsChart && optionsChart.width;
+        var heightOption = optionsChart && optionsChart.height;
+        chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
+        fullscreen.origWidth = void 0;
+        fullscreen.origHeight = void 0;
+        if (optionsChart) {
+            optionsChart.width = widthOption;
+            optionsChart.height = heightOption;
         }
         fullscreen.isOpen = false;
         fullscreen.setButtonText();
@@ -128,6 +137,8 @@ var Fullscreen = /** @class */ (function () {
      */
     Fullscreen.prototype.open = function () {
         var fullscreen = this, chart = fullscreen.chart;
+        fullscreen.origWidth = chart.chartWidth;
+        fullscreen.origHeight = chart.chartHeight;
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
             fullscreen.unbindFullscreenEvent = addEvent(chart.container.ownerDocument, // chart's document

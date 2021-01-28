@@ -57,6 +57,8 @@ declare global {
             public close(): void;
             public isOpen: boolean;
             public open(): void;
+            public origHeight?: number;
+            public origWidth?: number;
             public toggle(): void;
             public unbindFullscreenEvent?: Function;
         }
@@ -154,6 +156,11 @@ class Fullscreen {
     public isOpen: boolean;
 
     /** @private */
+    public origHeight?: number;
+    /** @private */
+    public origWidth?: number;
+
+    /** @private */
     public unbindFullscreenEvent?: Function;
 
     /* *
@@ -174,7 +181,8 @@ class Fullscreen {
      */
     public close(): void {
         const fullscreen = this,
-            chart = fullscreen.chart;
+            chart = fullscreen.chart,
+            optionsChart = chart.options.chart;
 
         // Don't fire exitFullscreen() when user exited using 'Escape' button.
         if (
@@ -190,6 +198,18 @@ class Fullscreen {
         // Unbind event as it's necessary only before exiting from fullscreen.
         if (fullscreen.unbindFullscreenEvent) {
             fullscreen.unbindFullscreenEvent();
+        }
+
+        const widthOption = optionsChart && optionsChart.width;
+        const heightOption = optionsChart && optionsChart.height;
+
+        chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
+        fullscreen.origWidth = void 0;
+        fullscreen.origHeight = void 0;
+
+        if (optionsChart) {
+            optionsChart.width = widthOption;
+            optionsChart.height = heightOption;
         }
 
         fullscreen.isOpen = false;
@@ -211,6 +231,9 @@ class Fullscreen {
     public open(): void {
         const fullscreen = this,
             chart = fullscreen.chart;
+
+        fullscreen.origWidth = chart.chartWidth;
+        fullscreen.origHeight = chart.chartHeight;
 
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
