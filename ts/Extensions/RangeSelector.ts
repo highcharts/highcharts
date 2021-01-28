@@ -524,7 +524,7 @@ extend(defaultOptions, {
          * @type      {Highcharts.ColorString}
          * @since     1.3.7
          */
-        inputBoxBorderColor: palette.neutralColor20,
+        inputBoxBorderColor: 'none',
 
         /**
          * The pixel height of the date input boxes.
@@ -537,14 +537,15 @@ extend(defaultOptions, {
         inputBoxHeight: 17,
 
         /**
-         * The pixel width of the date input boxes.
+         * The pixel width of the date input boxes. When `undefined`, the width
+         * is fitted to the renderred content.
          *
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
          * @since     1.3.7
          */
-        inputBoxWidth: 90,
+        inputBoxWidth: void 0,
 
         /**
          * The date format in the input boxes when not selected for editing.
@@ -690,7 +691,10 @@ extend(defaultOptions, {
          * @type      {Highcharts.CSSObject}
          * @apioption rangeSelector.inputStyle
          */
-        inputStyle: {},
+        inputStyle: {
+            /** @ignore */
+            color: palette.highlightColor80
+        },
 
         /**
          * CSS styles for the labels - the Zoom, From and To texts.
@@ -710,8 +714,7 @@ extend(defaultOptions, {
     } as Highcharts.RangeSelectorOptions
 });
 
-defaultOptions.lang = merge(
-
+extend(
     defaultOptions.lang,
 
     /**
@@ -748,18 +751,19 @@ defaultOptions.lang = merge(
 
         /**
          * The text for the label for the "from" input box in the range
-         * selector.
+         * selector. Since v9.0, this string is empty as the label is not
+         * rendered by default.
          *
          * @product highstock gantt
          */
-        rangeSelectorFrom: 'From',
+        rangeSelectorFrom: '',
 
         /**
          * The text for the label for the "to" input box in the range selector.
          *
          * @product highstock gantt
          */
-        rangeSelectorTo: 'To'
+        rangeSelectorTo: '→'
     }
 );
 
