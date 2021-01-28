@@ -406,7 +406,7 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
 
     newMin = chart.xAxis[0].min;
 
-    assert.strictEqual(min === newMin, false, 'Extremes should be updated');
+    assert.notStrictEqual(min, newMin, 'Extremes should be updated');
 });
 
 QUnit.test('#13205, #14544: Timezone issues', assert => {
