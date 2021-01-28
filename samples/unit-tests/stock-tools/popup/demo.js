@@ -63,7 +63,7 @@ QUnit.test('Touch event test on popup', function (assert) {
 
     // click on the first button
     testController.touchStart(
-        inputGroup.translateX + rangeSelector.minDateBox.x + 80,
+        chart.plotWidth - 120,
         chart.plotTop + inputGroup.translateY,
         undefined,
         undefined,
@@ -75,7 +75,7 @@ QUnit.test('Touch event test on popup', function (assert) {
             'highcharts-annotation-toolbar'
         ),
         -1,
-        'Edit popup is displayed by touch event.'
+        'Edit popup should be displayed by touch event'
     );
 
     // REMOVE CSS STYLES
