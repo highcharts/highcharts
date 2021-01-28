@@ -20,6 +20,7 @@ var addEvent = U.addEvent, fireEvent = U.fireEvent, merge = U.merge, pick = U.pi
  * */
 /**
  * Abstract class providing an interface for managing a DataStore
+ * @private
  */
 var DataStore = /** @class */ (function () {
     /* *

@@ -40,6 +40,7 @@ const {
 
 /**
  * Handles parsing and transformation of an Google Sheets to a DataTable
+ * @private
  */
 class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
 

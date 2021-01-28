@@ -34,6 +34,7 @@ var merge = U.merge, objectEach = U.objectEach, extend = U.extend, pick = U.pick
 /** eslint-disable valid-jsdoc */
 /**
  * Class that handles creating a datastore from an HTML table
+ * @private
  */
 var HTMLTableStore = /** @class */ (function (_super) {
     __extends(HTMLTableStore, _super);

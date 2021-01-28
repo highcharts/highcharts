@@ -26,6 +26,7 @@ const { merge, objectEach, extend, pick } = U;
 
 /**
  * Class that handles creating a datastore from an HTML table
+ * @private
  */
 class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements DataJSON.Class {
 

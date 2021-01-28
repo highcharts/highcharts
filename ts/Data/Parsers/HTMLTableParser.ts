@@ -34,6 +34,7 @@ const { merge } = U;
 
 /**
  * Handles parsing and transformation of an HTML table to a DataTable
+ * @private
  */
 class HTMLTableParser extends DataParser<DataParser.EventObject> {
 

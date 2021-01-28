@@ -31,6 +31,7 @@ const {
 
 /**
  * Class that handles creating a datastore from CSV
+ * @private
  */
 class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Class {
 

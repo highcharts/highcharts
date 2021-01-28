@@ -30,6 +30,7 @@ const { merge } = U;
 
 /**
  * Handles parsing and transforming CSV to a DataTable
+ * @private
  */
 class CSVParser extends DataParser<DataParser.EventObject> {
 

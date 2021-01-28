@@ -41,6 +41,7 @@ var merge = U.merge;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 /**
  * Handles parsing and transforming CSV to a DataTable
+ * @private
  */
 var CSVParser = /** @class */ (function (_super) {
     __extends(CSVParser, _super);

@@ -44,6 +44,7 @@ var merge = U.merge, pick = U.pick, objectEach = U.objectEach;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 /**
  * Class that handles creating a datastore from CSV
+ * @private
  */
 var CSVStore = /** @class */ (function (_super) {
     __extends(CSVStore, _super);

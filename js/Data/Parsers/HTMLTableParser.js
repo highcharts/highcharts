@@ -45,6 +45,7 @@ var merge = U.merge;
  * */
 /**
  * Handles parsing and transformation of an HTML table to a DataTable
+ * @private
  */
 var HTMLTableParser = /** @class */ (function (_super) {
     __extends(HTMLTableParser, _super);

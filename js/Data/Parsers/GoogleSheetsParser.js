@@ -46,6 +46,7 @@ var merge = U.merge, uniqueKey = U.uniqueKey;
  * */
 /**
  * Handles parsing and transformation of an Google Sheets to a DataTable
+ * @private
  */
 var GoogleSheetsParser = /** @class */ (function (_super) {
     __extends(GoogleSheetsParser, _super);

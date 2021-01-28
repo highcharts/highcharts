@@ -36,6 +36,7 @@ const {
 
 /**
  * Abstract class providing an interface and basic methods for a DataParser
+ * @private
  */
 abstract class DataParser<TEventObject extends DataParser.EventObject>
 implements DataEventEmitter<TEventObject>, DataJSON.Class {

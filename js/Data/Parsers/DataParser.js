@@ -20,6 +20,7 @@ var addEvent = U.addEvent, fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
  * */
 /**
  * Abstract class providing an interface and basic methods for a DataParser
+ * @private
  */
 var DataParser = /** @class */ (function () {
     function DataParser() {
