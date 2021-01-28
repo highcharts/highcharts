@@ -343,7 +343,8 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
-         * @since     1.3.7
+         * @type   {number|undefined}
+         * @since  1.3.7
          */
         inputBoxWidth: void 0,
         /**
