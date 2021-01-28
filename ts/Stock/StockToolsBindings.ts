@@ -513,7 +513,7 @@ extend(NavigationBindings.prototype, {
         defaultHeight: number,
         deleteIndicatorAxis?: boolean
     ): Array<Record<string, number>> {
-        var positions,
+        var positions: Array<Record<string, number>>|undefined,
             allAxesHeight = 0,
             previousAxisHeight: number;
         /** @private */
@@ -536,7 +536,7 @@ extend(NavigationBindings.prototype, {
                 // check if the previous axis is the
                 // indicator axis (every indicator inherits from sma)
 
-                    height = (yAxes as any)[index - 1].series.every((s: Series): boolean => s.is('sma')) ?
+                    height = yAxes[index - 1].series.every((s: Series): boolean => s.is('sma')) ?
                         previousAxisHeight :
                         defaultHeight / 100;
                 }
