@@ -9,12 +9,12 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     PriceEnvelopesOptions,
     PriceEnvelopesParamsOptions
 } from './PriceEnvelopesOptions';
 import type PriceEnvelopesPoint from './PriceEnvelopesPoint';
-import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -233,7 +233,7 @@ class PriceEnvelopesIndicator extends SMAIndicator {
         SeriesRegistry.seriesTypes.sma.prototype.drawGraph.call(indicator);
     }
 
-    public getValues <TLinkedSeries extends Series>(
+    public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PriceEnvelopesParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

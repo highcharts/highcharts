@@ -18,7 +18,6 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
-import type DataTableRow from '../../Data/DataTableRow';
 import type { EventCallback } from '../Callback';
 import type PointLike from './PointLike';
 import type {
@@ -37,7 +36,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
-import DataParser from '../../Data/Parsers/DataParser.js';
+import DataTableRow from '../../Data/DataTableRow.js';
 import H from '../Globals.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
@@ -48,6 +47,7 @@ const {
     erase,
     extend,
     fireEvent,
+    flat,
     format,
     getNestedProperty,
     isArray,
@@ -59,6 +59,7 @@ const {
     pick,
     syncTimeout,
     removeEvent,
+    unflat,
     uniqueKey
 } = U;
 
@@ -333,6 +334,139 @@ declare module './PointLike' {
  * @name Highcharts.Point
  */
 class Point {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Converts the DataTableRow instance to common series options.
+     *
+     * @param {DataTableRow} tableRow
+     * Table row to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from the table row.
+     *
+     * @return {Highcharts.PointOptions}
+     * Common point options.
+     */
+    public static getPointOptionsFromTableRow(
+        tableRow: DataTableRow,
+        keys?: Array<string>
+    ): (PointOptions|null) {
+        if (tableRow === DataTableRow.NULL) {
+            return null;
+        }
+
+        const pointOptions: (PointOptions&Record<string, any>) = {},
+            cellNames = tableRow.getCellNames();
+
+        if (!keys || keys.indexOf('id') >= 0) {
+            pointOptions.id = tableRow.id;
+        }
+
+        let cellName: string;
+
+        for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
+            cellName = cellNames[j];
+            if (keys && keys.indexOf(cellName) === -1) {
+                continue;
+            }
+            pointOptions[cellName] = tableRow.getCell(cellName);
+        }
+
+        return unflat(pointOptions);
+    }
+
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @param {Highcharts.PointOptions} pointOptions
+     * Point options to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to convert options.
+     *
+     * @param {number} [x]
+     * Point index for x value.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    public static getTableRowFromPointOptions(
+        pointOptions: (
+            (PointOptions&Record<string, any>)|
+            PointShortOptions
+        ),
+        keys: Array<string> = ['y'],
+        x: number = 0
+    ): DataTableRow {
+        let tableRow: DataTableRow;
+
+        keys = keys.slice();
+
+        // Array
+        if (pointOptions instanceof Array) {
+            const tableRowOptions: (PointOptions&Record<string, any>) = {};
+            if (pointOptions.length > keys.length) {
+                keys.unshift(
+                    typeof pointOptions[0] === 'string' ?
+                        'name' :
+                        'x'
+                );
+            }
+            for (let i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
+                tableRowOptions[keys[i] || `${i}`] = pointOptions[i];
+            }
+            tableRow = new DataTableRow(tableRowOptions);
+
+        // Object
+        } else if (
+            typeof pointOptions === 'object'
+        ) {
+            if (pointOptions === null) {
+                tableRow = DataTableRow.NULL;
+            } else {
+                tableRow = new DataTableRow(flat(pointOptions));
+            }
+
+        // Primitive
+        } else {
+            tableRow = new DataTableRow({
+                x,
+                [keys[0] || 'y']: pointOptions
+            });
+        }
+
+        return tableRow;
+    }
+
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
+    public constructor(series?: Series, tableRow?: DataTableRow) {
+        if (series) {
+            this.series = series;
+        }
+
+        if (series && tableRow) {
+            this.applyOptions(Point.getPointOptionsFromTableRow(tableRow));
+            this.attachTableRow(tableRow);
+
+            // Add a unique ID to the point if none is assigned
+            this.id = tableRow.id;
+
+            this.resolveColor();
+
+            series.chart.pointCount++;
+        }
+    }
 
     /* *
      *
@@ -625,8 +759,14 @@ class Point {
         point.tableRow = tableRow;
         point.tableRowEventRemover = tableRow.on(
             'afterChangeRow',
-            function (): void {
-                point.update(DataParser.getPointOptionsFromTableRow(this, keys));
+            function (e): void {
+                const detail = (e.detail || {});
+                point.update(
+                    this,
+                    detail.redraw === 'true',
+                    detail.animation === 'true',
+                    false
+                );
             }
         );
 
@@ -1236,8 +1376,8 @@ class Point {
      * @fires Highcharts.Point#event:update
      */
     public update(
-        options: (PointOptions|PointShortOptions),
-        redraw?: boolean,
+        options: (DataTableRow|PointOptions|PointShortOptions),
+        redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         runEvent?: boolean
     ): void {
@@ -1246,16 +1386,19 @@ class Point {
             graphic = point.graphic,
             i: number,
             chart = series.chart,
+            pointOptions = (
+                options instanceof DataTableRow ?
+                    Point.getPointOptionsFromTableRow(options) :
+                    options
+            ),
             seriesOptions = series.options;
-
-        redraw = pick(redraw, true);
 
         /**
          * @private
          */
         function update(): void {
 
-            point.applyOptions(options);
+            point.applyOptions(pointOptions);
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
@@ -1266,19 +1409,23 @@ class Point {
                 delete point.hasDummyGraphic;
             }
 
-            if (isObject(options, true)) {
+            if (isObject(pointOptions, true)) {
                 // Destroy so we can get new elements
                 if (graphic && graphic.element) {
                     // "null" is also a valid symbol
                     if (
-                        options &&
-                        (options as any).marker &&
-                        typeof (options as any).marker.symbol !== 'undefined'
+                        pointOptions &&
+                        pointOptions.marker &&
+                        typeof pointOptions.marker.symbol !== 'undefined'
                     ) {
                         point.graphic = graphic.destroy();
                     }
                 }
-                if (options && (options as any).dataLabels && point.dataLabel) {
+                if (
+                    pointOptions &&
+                    pointOptions.dataLabels &&
+                    point.dataLabel
+                ) {
                     point.dataLabel = point.dataLabel.destroy(); // #2468
                 }
                 if (point.connector) {
@@ -1295,10 +1442,10 @@ class Point {
             // (#4701, #4916).
             (seriesOptions.data as any)[i] = (
                 isObject((seriesOptions.data as any)[i], true) ||
-                    isObject(options, true)
+                    isObject(pointOptions, true)
             ) ?
                 point.options :
-                pick(options, (seriesOptions.data as any)[i]);
+                pick(pointOptions, (seriesOptions.data as any)[i]);
 
             // redraw
             series.isDirty = series.isDirtyData = true;
@@ -1318,7 +1465,7 @@ class Point {
         if (runEvent === false) { // When called from setData
             update();
         } else {
-            point.firePointEvent('update', { options: options }, update);
+            point.firePointEvent('update', { options: pointOptions }, update);
         }
     }
 

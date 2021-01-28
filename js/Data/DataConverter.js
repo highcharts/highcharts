@@ -9,12 +9,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-/* *
- *
- *  Imports
- *
- * */
-import DataTable from './DataTable.js';
 import U from './../Core/Utilities.js';
 var merge = U.merge, isNumber = U.isNumber;
 /* *
@@ -142,38 +136,6 @@ var DataConverter = /** @class */ (function () {
         return this.asNumber(value) !== 0;
     };
     /**
-     * Converts a value to a DataTable.
-     *
-     * @param {DataConverter.Type} value
-     * Value to convert.
-     *
-     * @return {DataTable}
-     * Converted value as a DataTable.
-     */
-    DataConverter.prototype.asDataTable = function (value) {
-        if (value instanceof DataTable) {
-            return value;
-        }
-        if (!this.asBoolean(value)) {
-            return new DataTable();
-        }
-        if (typeof value === 'string') {
-            try {
-                return DataTable.fromJSON(JSON.parse(value));
-            }
-            catch (error) {
-                return new DataTable();
-            }
-        }
-        return DataTable.fromJSON({
-            $class: 'DataTable',
-            rows: [{
-                    $class: 'DataTableRow',
-                    cells: [JSON.parse(JSON.stringify(value))]
-                }]
-        });
-    };
-    /**
      * Converts a value to a Date.
      *
      * @param {DataConverter.Type} value
@@ -218,11 +180,11 @@ var DataConverter = /** @class */ (function () {
             var trimVal = this.trim(value), cast = parseFloat(trimVal);
             return !isNaN(cast) ? cast : 0;
         }
-        if (value instanceof DataTable) {
-            return value.getRowCount();
-        }
         if (value instanceof Date) {
             return value.getDate();
+        }
+        if (value) {
+            return value.getRowCount();
         }
         return 0;
     };

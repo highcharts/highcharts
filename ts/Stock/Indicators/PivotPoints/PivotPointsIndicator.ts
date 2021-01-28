@@ -9,12 +9,12 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LinePoint from '../../../Series/Line/LinePoint';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     PivotPointsOptions,
     PivotPointsParamsOptions
 } from './PivotPointsOptions';
-import type Point from '../../../Core/Series/Point';
-import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import PivotPointsPoint from './PivotPointsPoint.js';
@@ -146,17 +146,17 @@ class PivotPointsIndicator extends SMAIndicator {
         );
     }
 
-    public getGraphPath(this: PivotPointsIndicator, points: Array<Point>): SVGPath {
+    public getGraphPath(this: PivotPointsIndicator, points: Array<LinePoint>): SVGPath {
         var indicator = this,
             pointsLength: number = points.length,
-            allPivotPoints: Array<Array<Point>> = (
+            allPivotPoints: Array<Array<LinePoint>> = (
                 [[], [], [], [], [], [], [], [], []]
             ),
             path: SVGPath = [],
             endPoint: (number|undefined) = indicator.plotEndPoint,
             pointArrayMapLength: number = indicator.pointArrayMap.length,
             position: string,
-            point: Point,
+            point: LinePoint,
             i: number;
 
         while (pointsLength--) {
@@ -186,7 +186,7 @@ class PivotPointsIndicator extends SMAIndicator {
             endPoint = point.plotX;
         }
         allPivotPoints.forEach(function (
-            pivotPoints: Array<Point>
+            pivotPoints: Array<LinePoint>
         ): void {
             path = path.concat(
                 SeriesRegistry.seriesTypes.sma.prototype.getGraphPath.call(indicator, pivotPoints)
@@ -258,7 +258,7 @@ class PivotPointsIndicator extends SMAIndicator {
         }
     }
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         this: PivotPointsIndicator,
         series: TLinkedSeries,
         params: PivotPointsParamsOptions

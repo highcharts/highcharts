@@ -42,8 +42,8 @@ var merge = U.merge;
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
  */
-var ChainDataModifier = /** @class */ (function (_super) {
-    __extends(ChainDataModifier, _super);
+var ChainModifier = /** @class */ (function (_super) {
+    __extends(ChainModifier, _super);
     /* *
      *
      *  Constructors
@@ -52,20 +52,20 @@ var ChainDataModifier = /** @class */ (function (_super) {
     /**
      * Constructs an instance of the modifier chain.
      *
-     * @param {DeepPartial<ChainDataModifier.Options>} [options]
+     * @param {DeepPartial<ChainModifier.Options>} [options]
      * Options to configure the modifier chain.
      *
      * @param {...DataModifier} [modifiers]
      * Modifiers in order for the modifier chain.
      */
-    function ChainDataModifier(options) {
+    function ChainModifier(options) {
         var modifiers = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             modifiers[_i - 1] = arguments[_i];
         }
         var _this = _super.call(this) || this;
         _this.modifiers = modifiers;
-        _this.options = merge(ChainDataModifier.defaultOptions, options);
+        _this.options = merge(ChainModifier.defaultOptions, options);
         return _this;
     }
     /* *
@@ -77,13 +77,13 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * Converts a class JSON to a modifier chain. All modifier references in the
      * JSON have to be registered on call to get converted to an instance.
      *
-     * @param {ChainDataModifier.ClassJSON} json
+     * @param {ChainModifier.ClassJSON} json
      * Class JSON to convert to an instance of modifier chain.
      *
-     * @return {ChainDataModifier}
+     * @return {ChainModifier}
      * Modifier chain of the class JSON.
      */
-    ChainDataModifier.fromJSON = function (json) {
+    ChainModifier.fromJSON = function (json) {
         var jsonModifiers = json.modifiers, modifiers = [];
         var modifier;
         for (var i = 0, iEnd = jsonModifiers.length; i < iEnd; ++i) {
@@ -92,7 +92,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
                 modifiers.push(modifier);
             }
         }
-        return new (ChainDataModifier.bind.apply(ChainDataModifier, __spreadArrays([void 0, json.options], modifiers)))();
+        return new (ChainModifier.bind.apply(ChainModifier, __spreadArrays([void 0, json.options], modifiers)))();
     };
     /* *
      *
@@ -109,7 +109,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    ChainDataModifier.prototype.add = function (modifier, eventDetail) {
+    ChainModifier.prototype.add = function (modifier, eventDetail) {
         this.emit({
             type: 'addModifier',
             detail: eventDetail,
@@ -128,7 +128,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    ChainDataModifier.prototype.clear = function (eventDetail) {
+    ChainModifier.prototype.clear = function (eventDetail) {
         this.emit({
             type: 'clearChain',
             detail: eventDetail
@@ -155,7 +155,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * @emits ChainDataModifier#execute
      * @emits ChainDataModifier#afterExecute
      */
-    ChainDataModifier.prototype.execute = function (table, eventDetail) {
+    ChainModifier.prototype.execute = function (table, eventDetail) {
         var modifiers = (this.options.reverse ?
             this.modifiers.reverse() :
             this.modifiers.slice());
@@ -195,7 +195,7 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      */
-    ChainDataModifier.prototype.remove = function (modifier, eventDetail) {
+    ChainModifier.prototype.remove = function (modifier, eventDetail) {
         var modifiers = this.modifiers;
         this.emit({
             type: 'removeModifier',
@@ -216,9 +216,9 @@ var ChainDataModifier = /** @class */ (function (_super) {
      * @return {DataJSON.ClassJSON}
      * Class JSON of this modifier chain.
      */
-    ChainDataModifier.prototype.toJSON = function () {
+    ChainModifier.prototype.toJSON = function () {
         var modifiers = this.modifiers, json = {
-            $class: 'ChainDataModifier',
+            $class: 'ChainModifier',
             modifiers: [],
             options: merge(this.options)
         };
@@ -235,22 +235,22 @@ var ChainDataModifier = /** @class */ (function (_super) {
     /**
      * Default option for the ordered modifier chain.
      */
-    ChainDataModifier.defaultOptions = {
+    ChainModifier.defaultOptions = {
         modifier: 'Chain',
         reverse: false
     };
-    return ChainDataModifier;
+    return ChainModifier;
 }(DataModifier));
 /* *
  *
  *  Register
  *
  * */
-DataJSON.addClass(ChainDataModifier);
-DataModifier.addModifier(ChainDataModifier);
+DataJSON.addClass(ChainModifier);
+DataModifier.addModifier(ChainModifier);
 /* *
  *
  *  Export
  *
  * */
-export default ChainDataModifier;
+export default ChainModifier;

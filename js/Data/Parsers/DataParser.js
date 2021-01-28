@@ -11,7 +11,6 @@
  * */
 import DataTable from '../DataTable.js';
 import DataTableRow from '../DataTableRow.js';
-import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, uniqueKey = U.uniqueKey;
 /* *
@@ -81,59 +80,6 @@ var DataParser = /** @class */ (function () {
         return columnNames.map(function (columnName) { return columnsObject[columnName]; });
     };
     /**
-     * Converts the DataTableRow instance to common series options.
-     *
-     * @param {DataTableRow} tableRow
-     * Table row to convert.
-     *
-     * @param {Array<string>} [keys]
-     * Data keys to extract from the table row.
-     *
-     * @return {Highcharts.PointOptions}
-     * Common point options.
-     */
-    DataParser.getPointOptionsFromTableRow = function (tableRow, keys) {
-        if (keys === void 0) { keys = ['x', 'y']; }
-        var pointOptions = {
-            id: tableRow.id
-        }, cellNames = tableRow.getCellNames();
-        var cellName;
-        for (var j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
-            cellName = cellNames[j];
-            if (keys.indexOf(cellName) === -1) {
-                pointOptions.custom = (pointOptions.custom || {});
-                pointOptions.custom[cellName] = tableRow.getCell(cellName);
-            }
-            else {
-                pointOptions[cellName] = tableRow.getCell(cellName);
-            }
-        }
-        return pointOptions;
-    };
-    /**
-     * Converts the DataTable instance to common series options.
-     *
-     * @param {DataTable} table
-     * Table to convert.
-     *
-     * @param {Array<string>} [keys]
-     * Data keys to extract from table rows.
-     *
-     * @return {Highcharts.SeriesOptions}
-     * Common series options.
-     */
-    DataParser.getSeriesOptionsFromTable = function (table, keys) {
-        var rows = table.getAllRows(), data = [], seriesOptions = {
-            id: table.id,
-            data: data,
-            keys: keys
-        };
-        for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            data.push(DataParser.getPointOptionsFromTableRow(rows[i], keys));
-        }
-        return seriesOptions;
-    };
-    /**
      * Converts a simple two dimensional array to a DataTable instance. The
      * array needs to be structured like a DataFrame, so that the first
      * dimension becomes the columns and the second dimension the rows.
@@ -170,78 +116,6 @@ var DataParser = /** @class */ (function () {
             }
         }
         return table;
-    };
-    /**
-     * Converts series options to a DataTable instance.
-     *
-     * @param {Highcharts.SeriesOptions} seriesOptions
-     * Series options to convert.
-     *
-     * @return {DataTable}
-     * DataTable instance.
-     */
-    DataParser.getTableFromSeriesOptions = function (seriesOptions) {
-        var table = new DataTable(void 0, seriesOptions.id), data = (seriesOptions.data || []);
-        var keys = (seriesOptions.keys || []).slice();
-        if (!keys.length) {
-            if (seriesOptions.type) {
-                var seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type], pointArrayMap = (seriesClass &&
-                    seriesClass.prototype.pointArrayMap);
-                if (pointArrayMap) {
-                    keys = pointArrayMap.slice();
-                    keys.unshift('x');
-                }
-            }
-            if (!keys.length) {
-                keys = ['x', 'y'];
-            }
-        }
-        for (var i = 0, iEnd = data.length; i < iEnd; ++i) {
-            table.insertRow(DataParser.getTableRowFromPointOptions(data[i], i, keys));
-        }
-        return table;
-    };
-    /**
-     * Converts series options to a DataTable instance.
-     *
-     * @param {Highcharts.PointOptions} pointOptions
-     * Point options to convert.
-     *
-     * @param {number} [index]
-     * Point index for x value.
-     *
-     * @param {Array<string>} [keys]
-     * Data keys to convert options.
-     *
-     * @return {DataTable}
-     * DataTable instance.
-     */
-    DataParser.getTableRowFromPointOptions = function (pointOptions, index, keys) {
-        var _a;
-        if (index === void 0) { index = 0; }
-        if (keys === void 0) { keys = ['x', 'y']; }
-        var tableRow;
-        // Array
-        if (pointOptions instanceof Array) {
-            var tableRowOptions = {};
-            for (var j = 0, jEnd = pointOptions.length; j < jEnd; ++j) {
-                tableRowOptions[keys[j] || "" + j] = pointOptions[j];
-            }
-            tableRow = new DataTableRow(tableRowOptions);
-            // Object
-        }
-        else if (pointOptions &&
-            typeof pointOptions === 'object') {
-            tableRow = new DataTableRow(pointOptions);
-            // Primitive
-        }
-        else {
-            tableRow = new DataTableRow((_a = {},
-                _a[keys[0] || 'x'] = index,
-                _a[keys[1] || 'y'] = pointOptions,
-                _a));
-        }
-        return tableRow;
     };
     /**
      * Emits an event on the DataParser instance.

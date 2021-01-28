@@ -1,6 +1,6 @@
 import DataTableRow from '/base/js/Data/DataTableRow.js';
 
-QUnit.test('DataTableRow functions', function (assert) {
+QUnit.test('DataTableRow.clear', function (assert) {
 
     const row = new DataTableRow({
         cell1: 'value1',
@@ -8,13 +8,24 @@ QUnit.test('DataTableRow functions', function (assert) {
         cell3: 'value3'
     });
 
-    // DataTableRow.clear()
-
     row.clear();
-    assert.equal(
+    assert.strictEqual(
         row.getCellCount(),
         0,
         'Row count after clear should be zero.'
+    );
+
+});
+
+QUnit.test('DataTableRow.NULL', function (assert) {
+
+    const nullRow = DataTableRow.NULL,
+        row = new DataTableRow({ id: 'NULL' });
+
+    assert.strictEqual(
+        nullRow,
+        row,
+        'Every null row should share the same DataTableRow.NULL instance.'
     );
 
 });

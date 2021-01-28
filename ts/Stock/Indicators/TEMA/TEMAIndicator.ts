@@ -9,7 +9,7 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     TEMAOptions,
     TEMAParamsOptions
@@ -135,7 +135,7 @@ class TEMAIndicator extends EMAIndicator {
     }
 
     public getValues<
-        TLinkedSeries extends Series
+        TLinkedSeries extends LineSeries
     >(
         this: TEMAIndicator,
         series: TLinkedSeries,

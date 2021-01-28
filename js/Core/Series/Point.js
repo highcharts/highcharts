@@ -18,12 +18,12 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 var animObject = A.animObject;
-import DataParser from '../../Data/Parsers/DataParser.js';
+import DataTableRow from '../../Data/DataTableRow.js';
 import H from '../Globals.js';
 import O from '../Options.js';
 var defaultOptions = O.defaultOptions;
 import U from '../Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, flat = U.flat, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout, removeEvent = U.removeEvent, unflat = U.unflat, uniqueKey = U.uniqueKey;
 /**
  * Function callback when a series point is clicked. Return false to cancel the
  * action.
@@ -230,7 +230,12 @@ var addEvent = U.addEvent, defined = U.defined, erase = U.erase, extend = U.exte
  * @name Highcharts.Point
  */
 var Point = /** @class */ (function () {
-    function Point() {
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+    function Point(series, tableRow) {
         /* *
          *
          *  Properties
@@ -329,7 +334,106 @@ var Point = /** @class */ (function () {
          */
         this.visible = true;
         this.x = void 0;
+        if (series) {
+            this.series = series;
+        }
+        if (series && tableRow) {
+            this.applyOptions(Point.getPointOptionsFromTableRow(tableRow));
+            this.attachTableRow(tableRow);
+            // Add a unique ID to the point if none is assigned
+            this.id = tableRow.id;
+            this.resolveColor();
+            series.chart.pointCount++;
+        }
     }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    /**
+     * Converts the DataTableRow instance to common series options.
+     *
+     * @param {DataTableRow} tableRow
+     * Table row to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from the table row.
+     *
+     * @return {Highcharts.PointOptions}
+     * Common point options.
+     */
+    Point.getPointOptionsFromTableRow = function (tableRow, keys) {
+        if (tableRow === DataTableRow.NULL) {
+            return null;
+        }
+        var pointOptions = {}, cellNames = tableRow.getCellNames();
+        if (!keys || keys.indexOf('id') >= 0) {
+            pointOptions.id = tableRow.id;
+        }
+        var cellName;
+        for (var j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
+            cellName = cellNames[j];
+            if (keys && keys.indexOf(cellName) === -1) {
+                continue;
+            }
+            pointOptions[cellName] = tableRow.getCell(cellName);
+        }
+        return unflat(pointOptions);
+    };
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @param {Highcharts.PointOptions} pointOptions
+     * Point options to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to convert options.
+     *
+     * @param {number} [x]
+     * Point index for x value.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    Point.getTableRowFromPointOptions = function (pointOptions, keys, x) {
+        var _a;
+        if (keys === void 0) { keys = ['y']; }
+        if (x === void 0) { x = 0; }
+        var tableRow;
+        keys = keys.slice();
+        // Array
+        if (pointOptions instanceof Array) {
+            var tableRowOptions = {};
+            if (pointOptions.length > keys.length) {
+                keys.unshift(typeof pointOptions[0] === 'string' ?
+                    'name' :
+                    'x');
+            }
+            for (var i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
+                tableRowOptions[keys[i] || "" + i] = pointOptions[i];
+            }
+            tableRow = new DataTableRow(tableRowOptions);
+            // Object
+        }
+        else if (typeof pointOptions === 'object') {
+            if (pointOptions === null) {
+                tableRow = DataTableRow.NULL;
+            }
+            else {
+                tableRow = new DataTableRow(flat(pointOptions));
+            }
+            // Primitive
+        }
+        else {
+            tableRow = new DataTableRow((_a = {
+                    x: x
+                },
+                _a[keys[0] || 'y'] = pointOptions,
+                _a));
+        }
+        return tableRow;
+    };
     /* *
      *
      *  Functions
@@ -445,8 +549,9 @@ var Point = /** @class */ (function () {
             keys = __spreadArrays(['x'], series.pointArrayMap);
         }
         point.tableRow = tableRow;
-        point.tableRowEventRemover = tableRow.on('afterChangeRow', function () {
-            point.update(DataParser.getPointOptionsFromTableRow(this, keys));
+        point.tableRowEventRemover = tableRow.on('afterChangeRow', function (e) {
+            var detail = (e.detail || {});
+            point.update(this, detail.redraw === 'true', detail.animation === 'true', false);
         });
         return point;
     };
@@ -918,13 +1023,15 @@ var Point = /** @class */ (function () {
      * @fires Highcharts.Point#event:update
      */
     Point.prototype.update = function (options, redraw, animation, runEvent) {
-        var point = this, series = point.series, graphic = point.graphic, i, chart = series.chart, seriesOptions = series.options;
-        redraw = pick(redraw, true);
+        if (redraw === void 0) { redraw = true; }
+        var point = this, series = point.series, graphic = point.graphic, i, chart = series.chart, pointOptions = (options instanceof DataTableRow ?
+            Point.getPointOptionsFromTableRow(options) :
+            options), seriesOptions = series.options;
         /**
          * @private
          */
         function update() {
-            point.applyOptions(options);
+            point.applyOptions(pointOptions);
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
             var hasDummyGraphic = graphic && point.hasDummyGraphic;
@@ -933,17 +1040,19 @@ var Point = /** @class */ (function () {
                 point.graphic = graphic.destroy();
                 delete point.hasDummyGraphic;
             }
-            if (isObject(options, true)) {
+            if (isObject(pointOptions, true)) {
                 // Destroy so we can get new elements
                 if (graphic && graphic.element) {
                     // "null" is also a valid symbol
-                    if (options &&
-                        options.marker &&
-                        typeof options.marker.symbol !== 'undefined') {
+                    if (pointOptions &&
+                        pointOptions.marker &&
+                        typeof pointOptions.marker.symbol !== 'undefined') {
                         point.graphic = graphic.destroy();
                     }
                 }
-                if (options && options.dataLabels && point.dataLabel) {
+                if (pointOptions &&
+                    pointOptions.dataLabels &&
+                    point.dataLabel) {
                     point.dataLabel = point.dataLabel.destroy(); // #2468
                 }
                 if (point.connector) {
@@ -957,9 +1066,9 @@ var Point = /** @class */ (function () {
             // is an object, use point options, otherwise use raw options
             // (#4701, #4916).
             seriesOptions.data[i] = (isObject(seriesOptions.data[i], true) ||
-                isObject(options, true)) ?
+                isObject(pointOptions, true)) ?
                 point.options :
-                pick(options, seriesOptions.data[i]);
+                pick(pointOptions, seriesOptions.data[i]);
             // redraw
             series.isDirty = series.isDirtyData = true;
             if (!series.fixedBox && series.hasCartesianSeries) { // #1906, #2320
@@ -977,7 +1086,7 @@ var Point = /** @class */ (function () {
             update();
         }
         else {
-            point.firePointEvent('update', { options: options }, update);
+            point.firePointEvent('update', { options: pointOptions }, update);
         }
     };
     /**

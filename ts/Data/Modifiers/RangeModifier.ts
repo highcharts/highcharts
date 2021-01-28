@@ -37,7 +37,7 @@ const {
 /**
  * Filters out table rows with a specific value range.
  */
-class RangeDataModifier extends DataModifier {
+class RangeModifier extends DataModifier {
 
     /* *
      *
@@ -48,7 +48,7 @@ class RangeDataModifier extends DataModifier {
     /**
      * Default options for the range modifier.
      */
-    public static readonly defaultOptions: RangeDataModifier.Options = {
+    public static readonly defaultOptions: RangeModifier.Options = {
         modifier: 'Range',
         strict: false,
         ranges: [
@@ -69,14 +69,14 @@ class RangeDataModifier extends DataModifier {
     /**
      * Converts a class JSON to a range modifier.
      *
-     * @param {RangeDataModifier.ClassJSON} json
+     * @param {RangeModifier.ClassJSON} json
      * Class JSON to convert to an instance of range modifier.
      *
-     * @return {RangeDataModifier}
+     * @return {RangeModifier}
      * GrouRangep modifier of the class JSON.
      */
-    public static fromJSON(json: RangeDataModifier.ClassJSON): RangeDataModifier {
-        return new RangeDataModifier(json.options);
+    public static fromJSON(json: RangeModifier.ClassJSON): RangeModifier {
+        return new RangeModifier(json.options);
     }
 
     /* *
@@ -88,13 +88,13 @@ class RangeDataModifier extends DataModifier {
     /**
      * Constructs an instance of the range modifier.
      *
-     * @param {RangeDataModifier.Options} [options]
+     * @param {RangeModifier.Options} [options]
      * Options to configure the range modifier.
      */
-    public constructor(options?: DeepPartial<RangeDataModifier.Options>) {
+    public constructor(options?: DeepPartial<RangeModifier.Options>) {
         super();
 
-        this.options = merge(RangeDataModifier.defaultOptions, options);
+        this.options = merge(RangeModifier.defaultOptions, options);
     }
 
     /* *
@@ -106,7 +106,7 @@ class RangeDataModifier extends DataModifier {
     /**
      * Options of the range modifier.
      */
-    public options: RangeDataModifier.Options;
+    public options: RangeModifier.Options;
 
     /* *
      *
@@ -140,7 +140,7 @@ class RangeDataModifier extends DataModifier {
             result = new DataTable();
 
         let column: DataTableRow.CellType,
-            range: RangeDataModifier.RangeOptions,
+            range: RangeModifier.RangeOptions,
             rangeColumn: string,
             row: DataTableRow;
 
@@ -206,9 +206,9 @@ class RangeDataModifier extends DataModifier {
      * @return {DataJSON.ClassJSON}
      * Class JSON of this range modifier.
      */
-    public toJSON(): RangeDataModifier.ClassJSON {
+    public toJSON(): RangeModifier.ClassJSON {
         return {
-            $class: 'RangeDataModifier',
+            $class: 'RangeModifier',
             options: merge(this.options)
         };
     }
@@ -224,7 +224,7 @@ class RangeDataModifier extends DataModifier {
  * Additionally provided types for modifier events and options, and JSON
  * conversion.
  */
-namespace RangeDataModifier {
+namespace RangeModifier {
 
     /**
      * Interface of the class JSON to convert to modifier instances.
@@ -274,12 +274,12 @@ namespace RangeDataModifier {
  *
  * */
 
-DataJSON.addClass(RangeDataModifier);
-DataModifier.addModifier(RangeDataModifier);
+DataJSON.addClass(RangeModifier);
+DataModifier.addModifier(RangeModifier);
 
 declare module './ModifierType' {
     interface ModifierTypeRegistry {
-        Range: typeof RangeDataModifier;
+        Range: typeof RangeModifier;
     }
 }
 
@@ -289,4 +289,4 @@ declare module './ModifierType' {
  *
  * */
 
-export default RangeDataModifier;
+export default RangeModifier;

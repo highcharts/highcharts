@@ -1,16 +1,43 @@
 import DataTable from '/base/js/Data/DataTable.js';
-import ChainDataModifier from '/base/js/Data/Modifiers/ChainDataModifier.js';
-import GroupDataModifier from '/base/js/Data/Modifiers/GroupDataModifier.js';
-import RangeDataModifier from '/base/js/Data/Modifiers/RangeDataModifier.js';
+import DataTableRow from '/base/js/Data/DataTableRow.js';
+import ChainModifier from '/base/js/Data/Modifiers/ChainModifier.js';
+import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
+import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
 
-QUnit.test('ChainDataModifier.execute', function (assert) {
+QUnit.test('ChainModifier.execute', function (assert) {
 
-    const modifier = new ChainDataModifier(
+    const table = new DataTable([
+            new DataTableRow({
+                x: 1,
+                y: 'a'
+            }),
+            new DataTableRow({
+                x: 2,
+                y: 'a'
+            }),
+            new DataTableRow({
+                x: 3,
+                y: 'b'
+            }),
+            new DataTableRow({
+                x: 4,
+                y: 'b'
+            }),
+            new DataTableRow({
+                x: 5,
+                y: 'c'
+            }),
+            new DataTableRow({
+                x: 6,
+                y: 'c'
+            }),
+        ]),
+        modifier = new ChainModifier(
             {},
-            new GroupDataModifier({
+            new GroupModifier({
                 groupColumn: 'y'
             }),
-            new RangeDataModifier({
+            new RangeModifier({
                 modifier: 'Range',
                 ranges: [{
                     column: 'value',
@@ -19,34 +46,6 @@ QUnit.test('ChainDataModifier.execute', function (assert) {
                 }]
             })
         ),
-        table = DataTable.fromJSON({
-            $class: 'DataTable',
-            rows: [{
-                $class: 'DataTableRow',
-                x: 1,
-                y: 'a'
-            }, {
-                $class: 'DataTableRow',
-                x: 2,
-                y: 'a'
-            }, {
-                $class: 'DataTableRow',
-                x: 3,
-                y: 'b'
-            }, {
-                $class: 'DataTableRow',
-                x: 4,
-                y: 'b'
-            }, {
-                $class: 'DataTableRow',
-                x: 5,
-                y: 'c'
-            }, {
-                $class: 'DataTableRow',
-                x: 6,
-                y: 'c'
-            }]
-        }),
         modifiedTable = modifier.execute(table);
 
     assert.equal(
@@ -101,12 +100,12 @@ QUnit.test('ChainDataModifier.execute', function (assert) {
 });
 
 QUnit.test('benchmark', function (assert) {
-    const modifier = new ChainDataModifier(
+    const modifier = new ChainModifier(
         {},
-        new GroupDataModifier({
+        new GroupModifier({
             groupColumn: 'y'
         }),
-        new RangeDataModifier({
+        new RangeModifier({
             modifier: 'Range',
             ranges: [{
                 column: 'value',

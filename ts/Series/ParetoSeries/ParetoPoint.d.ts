@@ -16,7 +16,7 @@
 
 import type ParetoPointOptions from './ParetoPointOptions';
 import type ParetoSeries from './ParetoSeries';
-import type LinePoint from '../Line/LinePoint';
+import type Point from '../../Core/Series/Point';
 
 /* *
  *
@@ -24,7 +24,7 @@ import type LinePoint from '../Line/LinePoint';
  *
  * */
 
-declare class ParetoPoint extends LinePoint {
+declare class ParetoPoint extends Point {
     public options: ParetoPointOptions;
     public series: ParetoSeries;
 }

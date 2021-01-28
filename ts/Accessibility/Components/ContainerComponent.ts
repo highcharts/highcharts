@@ -180,7 +180,8 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
             if (credits.textStr) {
                 credits.element.setAttribute(
                     'aria-label', chart.langFormat(
-                        'accessibility.credits', { creditsStr: credits.textStr }
+                        'accessibility.credits',
+                        { creditsStr: stripHTMLTags(credits.textStr) }
                     )
                 );
             }

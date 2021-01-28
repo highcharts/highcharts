@@ -36,7 +36,7 @@ const {
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
  */
-class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
+class ChainModifier extends DataModifier<ChainModifier.EventObject> {
 
     /* *
      *
@@ -47,7 +47,7 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
     /**
      * Default option for the ordered modifier chain.
      */
-    public static readonly defaultOptions: ChainDataModifier.Options = {
+    public static readonly defaultOptions: ChainModifier.Options = {
         modifier: 'Chain',
         reverse: false
     };
@@ -62,13 +62,13 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
      * Converts a class JSON to a modifier chain. All modifier references in the
      * JSON have to be registered on call to get converted to an instance.
      *
-     * @param {ChainDataModifier.ClassJSON} json
+     * @param {ChainModifier.ClassJSON} json
      * Class JSON to convert to an instance of modifier chain.
      *
-     * @return {ChainDataModifier}
+     * @return {ChainModifier}
      * Modifier chain of the class JSON.
      */
-    public static fromJSON(json: ChainDataModifier.ClassJSON): ChainDataModifier {
+    public static fromJSON(json: ChainModifier.ClassJSON): ChainModifier {
         const jsonModifiers = json.modifiers,
             modifiers: Array<DataModifier> = [];
 
@@ -81,7 +81,7 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
             }
         }
 
-        return new ChainDataModifier(json.options, ...modifiers);
+        return new ChainModifier(json.options, ...modifiers);
     }
 
     /* *
@@ -93,20 +93,20 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
     /**
      * Constructs an instance of the modifier chain.
      *
-     * @param {DeepPartial<ChainDataModifier.Options>} [options]
+     * @param {DeepPartial<ChainModifier.Options>} [options]
      * Options to configure the modifier chain.
      *
      * @param {...DataModifier} [modifiers]
      * Modifiers in order for the modifier chain.
      */
     public constructor(
-        options?: DeepPartial<ChainDataModifier.Options>,
+        options?: DeepPartial<ChainModifier.Options>,
         ...modifiers: Array<DataModifier>
     ) {
         super();
 
         this.modifiers = modifiers;
-        this.options = merge(ChainDataModifier.defaultOptions, options);
+        this.options = merge(ChainModifier.defaultOptions, options);
     }
 
     /* *
@@ -123,7 +123,7 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
     /**
      * Options of the modifier chain.
      */
-    public readonly options: ChainDataModifier.Options;
+    public readonly options: ChainModifier.Options;
 
     /* *
      *
@@ -278,10 +278,10 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
      * @return {DataJSON.ClassJSON}
      * Class JSON of this modifier chain.
      */
-    public toJSON(): ChainDataModifier.ClassJSON {
+    public toJSON(): ChainModifier.ClassJSON {
         const modifiers = this.modifiers,
-            json: ChainDataModifier.ClassJSON = {
-                $class: 'ChainDataModifier',
+            json: ChainModifier.ClassJSON = {
+                $class: 'ChainModifier',
                 modifiers: [],
                 options: merge(this.options)
             };
@@ -305,7 +305,7 @@ class ChainDataModifier extends DataModifier<ChainDataModifier.EventObject> {
  * Additionally provided types for modifier events and options, and JSON
  * conversion.
  */
-namespace ChainDataModifier {
+namespace ChainModifier {
 
     /**
      * Event object
@@ -363,12 +363,12 @@ namespace ChainDataModifier {
  *
  * */
 
-DataJSON.addClass(ChainDataModifier);
-DataModifier.addModifier(ChainDataModifier);
+DataJSON.addClass(ChainModifier);
+DataModifier.addModifier(ChainModifier);
 
 declare module './ModifierType' {
     interface ModifierTypeRegistry {
-        Chain: typeof ChainDataModifier;
+        Chain: typeof ChainModifier;
     }
 }
 
@@ -378,4 +378,4 @@ declare module './ModifierType' {
  *
  * */
 
-export default ChainDataModifier;
+export default ChainModifier;

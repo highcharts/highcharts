@@ -37,7 +37,7 @@ const {
 /**
  * Groups table rows into subtables depending on column values.
  */
-class GroupDataModifier extends DataModifier {
+class GroupModifier extends DataModifier {
 
     /* *
      *
@@ -48,7 +48,7 @@ class GroupDataModifier extends DataModifier {
     /**
      * Default options to group table rows.
      */
-    public static readonly defaultOptions: GroupDataModifier.Options = {
+    public static readonly defaultOptions: GroupModifier.Options = {
         modifier: 'Group',
         groupColumn: ''
     };
@@ -68,8 +68,8 @@ class GroupDataModifier extends DataModifier {
      * @return {ChainDataModifier}
      * Group modifier of the class JSON.
      */
-    public static fromJSON(json: GroupDataModifier.ClassJSON): GroupDataModifier {
-        return new GroupDataModifier(json.options);
+    public static fromJSON(json: GroupModifier.ClassJSON): GroupModifier {
+        return new GroupModifier(json.options);
     }
 
     /* *
@@ -81,13 +81,13 @@ class GroupDataModifier extends DataModifier {
     /**
      * Constructs an instance of the group modifier.
      *
-     * @param {GroupDataModifier.Options} [options]
+     * @param {GroupModifier.Options} [options]
      * Options to configure the group modifier.
      */
-    public constructor(options?: DeepPartial<GroupDataModifier.Options>) {
+    public constructor(options?: DeepPartial<GroupModifier.Options>) {
         super();
 
-        this.options = merge(GroupDataModifier.defaultOptions, options);
+        this.options = merge(GroupModifier.defaultOptions, options);
     }
 
     /* *
@@ -99,7 +99,7 @@ class GroupDataModifier extends DataModifier {
     /**
      * Options of the group modifier.
      */
-    public options: GroupDataModifier.Options;
+    public options: GroupModifier.Options;
 
     /* *
      *
@@ -203,9 +203,9 @@ class GroupDataModifier extends DataModifier {
      * @return {DataJSON.ClassJSON}
      * Class JSON of this group modifier.
      */
-    public toJSON(): GroupDataModifier.ClassJSON {
+    public toJSON(): GroupModifier.ClassJSON {
         const json = {
-            $class: 'GroupDataModifier',
+            $class: 'GroupModifier',
             options: merge(this.options)
         };
 
@@ -224,7 +224,7 @@ class GroupDataModifier extends DataModifier {
  * Additionally provided types for modifier events and options, and JSON
  * conversion.
  */
-namespace GroupDataModifier {
+namespace GroupModifier {
 
     /**
      * Interface of the class JSON to convert to modifier instances.
@@ -259,12 +259,12 @@ namespace GroupDataModifier {
  *
  * */
 
-DataJSON.addClass(GroupDataModifier);
-DataModifier.addModifier(GroupDataModifier);
+DataJSON.addClass(GroupModifier);
+DataModifier.addModifier(GroupModifier);
 
 declare module './ModifierType' {
     interface ModifierTypeRegistry {
-        Group: typeof GroupDataModifier;
+        Group: typeof GroupModifier;
     }
 }
 
@@ -274,4 +274,4 @@ declare module './ModifierType' {
  *
  * */
 
-export default GroupDataModifier;
+export default GroupModifier;

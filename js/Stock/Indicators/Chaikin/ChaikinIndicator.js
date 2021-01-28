@@ -21,6 +21,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+import '../AD/ADIndicator.js'; // For historic reasons, AD i built into Chaikin
 var _a = SeriesRegistry.seriesTypes, AD = _a.ad, EMAIndicator = _a.ema;
 import U from '../../../Core/Utilities.js';
 var correctFloat = U.correctFloat, extend = U.extend, merge = U.merge, error = U.error;

@@ -108,8 +108,7 @@ var SeriesRegistry;
         SeriesRegistry.seriesTypes[type].prototype.type = type;
         // Create the point class if needed
         if (pointProto) {
-            SeriesRegistry.seriesTypes[type].prototype.pointClass =
-                extendClass(Point, pointProto);
+            SeriesRegistry.seriesTypes[type].prototype.pointClass = extendClass(Point, pointProto);
         }
         return SeriesRegistry.seriesTypes[type];
     }

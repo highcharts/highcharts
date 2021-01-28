@@ -77,7 +77,7 @@
             4,
             {
                 "FunctionExpression": { "parameters": 1 },
-                "SwitchCase": 0
+                "SwitchCase": 1
             }
         ],
         "@typescript-eslint/no-empty-function": 0, // @todo

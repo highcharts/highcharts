@@ -44,11 +44,13 @@ import type SplineSeries from '../../Series/Spline/SplineSeries';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import type Time from '../Time';
 import A from '../Animation/AnimationUtilities.js';
 const {
     animObject,
     setAnimation
 } = A;
+import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
 const {
     hasTouch,
@@ -226,7 +228,7 @@ class Series {
 
     /* *
      *
-     *  Static Functions
+     *  Static Properties
      *
      * */
 
@@ -2626,6 +2628,143 @@ class Series {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Converts the DataTable instance to common series options.
+     *
+     * @private
+     *
+     * @param {DataTable} table
+     * Table to convert.
+     *
+     * @param {Array<string>} [keys]
+     * Data keys to extract from table rows.
+     *
+     * @return {Highcharts.SeriesOptions}
+     * Common series options.
+     */
+    public static getSeriesOptionsFromTable(
+        table: DataTable,
+        keys?: Array<string>
+    ): SeriesOptions {
+        const rows = table.getAllRows(),
+            data: Array<(PointOptions|null)> = [];
+
+        let pointStart: (number|undefined);
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            if (i === 0) {
+                pointStart = rows[i].getCellAsNumber(keys && keys[0] || 'x');
+            }
+            data.push(Point.getPointOptionsFromTableRow(rows[i], keys));
+        }
+
+        return {
+            data,
+            id: table.id,
+            keys,
+            pointStart
+        };
+    }
+
+    /**
+     * Converts series options to a DataTable instance.
+     *
+     * @private
+     *
+     * @param {Highcharts.SeriesOptions} seriesOptions
+     * Series options to convert.
+     *
+     * @return {DataTable}
+     * DataTable instance.
+     */
+    public static getTableFromSeriesOptions(
+        seriesOptions: SeriesOptions
+    ): DataTable {
+        const table = new DataTable(void 0, seriesOptions.id),
+            data = (seriesOptions.data || []);
+
+        let keys = (seriesOptions.keys || []),
+            x = (seriesOptions.pointStart || 0);
+
+        if (
+            !keys.length &&
+            seriesOptions.type
+        ) {
+            const seriesClass = SeriesRegistry.seriesTypes[seriesOptions.type];
+            keys = (
+                seriesClass &&
+                seriesClass.prototype.pointArrayMap ||
+                []
+            );
+        }
+
+        if (!keys.length) {
+            keys = ['y'];
+        }
+
+        for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
+            table.insertRow(
+                Point.getTableRowFromPointOptions(data[i], keys, x)
+            );
+            x = Series.increment(x, seriesOptions);
+        }
+
+        return table;
+    }
+
+    // eslint-disable-next-line valid-jsdoc
+    /** @private */
+    public static increment(
+        value: number,
+        options: SeriesOptions = {},
+        time: Time = H.time
+    ): number {
+        const intervalUnit = options.pointIntervalUnit;
+
+        let interval = pick(options.pointInterval, 1);
+
+        // Added code for pointInterval strings
+        if (intervalUnit) {
+            const date = new time.Date(value);
+
+            switch (intervalUnit) {
+                case 'day':
+                    time.set(
+                        'Date',
+                        date,
+                        time.get('Date', date) + interval
+                    );
+                    break;
+                case 'month':
+                    time.set(
+                        'Month',
+                        date,
+                        time.get('Month', date) + interval
+                    );
+                    break;
+                case 'year':
+                    time.set(
+                        'FullYear',
+                        date,
+                        time.get('FullYear', date) + interval
+                    );
+                    break;
+                default:
+            }
+
+            interval = date.getTime() - value;
+
+        }
+
+        return value + interval;
+    }
+
+    /* *
+     *
      *  Properties
      *
      * */
@@ -3125,51 +3264,15 @@ class Series {
      * @return {number}
      */
     public autoIncrement(): number {
+        const options = this.options,
+            xIncrement = pick(this.xIncrement, options.pointStart, 0);
 
-        var options: SeriesTypeOptions = this.options,
-            xIncrement = this.xIncrement as number,
-            date,
-            pointInterval,
-            pointIntervalUnit = options.pointIntervalUnit,
-            time = this.chart.time;
-
-        xIncrement = pick(xIncrement, options.pointStart, 0);
-
-        this.pointInterval = pointInterval = pick(
-            this.pointInterval,
-            options.pointInterval,
-            1
+        this.xIncrement = Series.increment(
+            xIncrement,
+            options,
+            this.chart.time
         );
 
-        // Added code for pointInterval strings
-        if (pointIntervalUnit) {
-            date = new time.Date(xIncrement);
-
-            if (pointIntervalUnit === 'day') {
-                time.set(
-                    'Date',
-                    date,
-                    time.get('Date', date) + pointInterval
-                );
-            } else if (pointIntervalUnit === 'month') {
-                time.set(
-                    'Month',
-                    date,
-                    time.get('Month', date) + pointInterval
-                );
-            } else if (pointIntervalUnit === 'year') {
-                time.set(
-                    'FullYear',
-                    date,
-                    time.get('FullYear', date) + pointInterval
-                );
-            }
-
-            pointInterval = date.getTime() - xIncrement;
-
-        }
-
-        this.xIncrement = xIncrement + pointInterval;
         return xIncrement;
     }
 
@@ -4499,10 +4602,10 @@ class Series {
      *
      * @return {Highcharts.PointOptionsType}
      */
-    public getFirstValidPoint(
-        data: Array<(PointOptions|PointShortOptions)>
-    ): (PointOptions|PointShortOptions) {
-        var firstPoint = null,
+    public getFirstValidPoint<T extends PointOptions|PointShortOptions>(
+        data: Array<T>
+    ): (T|null) {
+        var firstPoint: (T|null) = null,
             dataLength = data.length,
             i = 0;
 
@@ -4760,7 +4863,7 @@ class Series {
 
         // #3916, #5029, #5085
         return (points || this.points || []).filter(
-            function isValidPoint(point: Point): boolean {
+            function (point: Point): boolean {
                 if (insideOnly && !chart.isInsidePlot(
                     point.plotX as any,
                     point.plotY as any,
@@ -5408,185 +5511,6 @@ class Series {
     }
 
     /**
-     * Get the graph path.
-     *
-     * @private
-     * @function Highcharts.Series#getGraphPath
-     */
-    public getGraphPath(
-        points?: Array<Point>,
-        nullsAsZeroes?: boolean,
-        connectCliffs?: boolean
-    ): SVGPath {
-        var series = this,
-            options = series.options,
-            step = options.step as any,
-            reversed,
-            graphPath = [] as SVGPath,
-            xMap = [] as Array<(number|null)>,
-            gap: boolean;
-
-        points = points || series.points;
-
-        // Bottom of a stack is reversed
-        reversed = (points as any).reversed;
-        if (reversed) {
-            points.reverse();
-        }
-        // Reverse the steps (#5004)
-        step = ({
-            right: 1,
-            center: 2
-        } as Record<string, number>)[step as any] || (step && 3);
-        if (step && reversed) {
-            step = 4 - step;
-        }
-
-        // Remove invalid points, especially in spline (#5015)
-        points = this.getValidPoints(
-            points,
-            false,
-            !(options.connectNulls && !nullsAsZeroes && !connectCliffs)
-        );
-
-        // Build the line
-        points.forEach(function (point, i): void {
-
-            var plotX = point.plotX,
-                plotY = point.plotY,
-                lastPoint = (points as any)[i - 1],
-                // the path to this point from the previous
-                pathToPoint: SVGPath;
-
-            if (
-                (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
-                !connectCliffs
-            ) {
-                gap = true; // ... and continue
-            }
-
-            // Line series, nullsAsZeroes is not handled
-            if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
-                gap = !options.connectNulls;
-
-            // Area series, nullsAsZeroes is set
-            } else if (point.isNull && !nullsAsZeroes) {
-                gap = true;
-
-            } else {
-
-                if (i === 0 || gap) {
-                    pathToPoint = [[
-                        'M',
-                        point.plotX as any,
-                        point.plotY as any
-                    ]];
-
-                // Generate the spline as defined in the SplineSeries object
-                } else if (
-                    (series as unknown as Partial<SplineSeries>).getPointSpline
-                ) {
-
-                    pathToPoint = [(
-                        series as unknown as SplineSeries
-                    ).getPointSpline(
-                        points as Array<SplinePoint>,
-                        point as SplinePoint,
-                        i
-                    )];
-
-                } else if (step) {
-
-                    if (step === 1) { // right
-                        pathToPoint = [[
-                            'L',
-                            lastPoint.plotX as any,
-                            plotY as any
-                        ]];
-
-                    } else if (step === 2) { // center
-                        pathToPoint = [[
-                            'L',
-                            ((lastPoint.plotX as any) + plotX) / 2,
-                            lastPoint.plotY as any
-                        ], [
-                            'L',
-                            ((lastPoint.plotX as any) + plotX) / 2,
-                            plotY as any
-                        ]];
-
-                    } else {
-                        pathToPoint = [[
-                            'L',
-                            plotX as any,
-                            lastPoint.plotY as any
-                        ]];
-                    }
-                    pathToPoint.push([
-                        'L',
-                        plotX as any,
-                        plotY as any
-                    ]);
-
-                } else {
-                    // normal line to next point
-                    pathToPoint = [[
-                        'L',
-                        plotX as any,
-                        plotY as any
-                    ]];
-                }
-
-                // Prepare for animation. When step is enabled, there are
-                // two path nodes for each x value.
-                xMap.push(point.x);
-                if (step) {
-                    xMap.push(point.x);
-                    if (step === 2) { // step = center (#8073)
-                        xMap.push(point.x);
-                    }
-                }
-
-                graphPath.push.apply(graphPath, pathToPoint);
-                gap = false;
-            }
-        });
-
-        (graphPath as any).xMap = xMap;
-        series.graphPath = graphPath;
-
-        return graphPath;
-    }
-
-    /**
-     * Get zones properties for building graphs. Extendable by series with
-     * multiple lines within one series.
-     *
-     * @private
-     * @function Highcharts.Series#getZonesGraphs
-     */
-    public getZonesGraphs(props: Array<Array<string>>): Array<Array<string>> {
-        // Add the zone properties if any
-        this.zones.forEach(function (zone, i): void {
-            var propset = [
-                'zone-graph-' + i,
-                'highcharts-graph highcharts-zone-graph-' + i + ' ' +
-                    (zone.className || '')
-            ];
-
-            if (!this.chart.styledMode) {
-                propset.push(
-                    (zone.color || this.color) as any,
-                    (zone.dashStyle || this.options.dashStyle) as any
-                );
-            }
-            props.push(propset);
-        }, this);
-
-        return props;
-    }
-
-    /**
      * Clip the graphs into zones for colors and styling.
      *
      * @private
@@ -5985,8 +5909,8 @@ class Series {
             inverted : false;
 
         // Draw the graph if any
-        if (series.drawGraph) {
-            series.drawGraph();
+        if ((series as any).drawGraph) {
+            (series as any).drawGraph();
             series.applyZones();
         }
 

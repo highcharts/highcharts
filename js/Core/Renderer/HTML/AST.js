@@ -41,6 +41,19 @@ var AST = /** @class */ (function () {
         this.nodes = typeof source === 'string' ?
             this.parseMarkup(source) : source;
     }
+    /**
+     * Filter attributes against the allow list.
+     *
+     * @private
+     * @static
+     *
+     * @function Highcharts.AST#filterUserAttributes
+     *
+     * @param {SVGAttributes} attributes The attributes to filter
+     *
+     * @return {SVGAttributes}
+     * The filtered attributes
+     */
     AST.filterUserAttributes = function (attributes) {
         objectEach(attributes, function (val, key) {
             var valid = true;
@@ -63,7 +76,6 @@ var AST = /** @class */ (function () {
      * markup string. The markup is safely parsed by the AST class to avoid
      * XSS vulnerabilities.
      *
-     * @private
      * @static
      *
      * @function Highcharts.AST#setElementHTML
@@ -326,6 +338,7 @@ var AST = /** @class */ (function () {
         'opacity',
         'orient',
         'padding',
+        'paddingLeft',
         'patternUnits',
         'r',
         'refX',
