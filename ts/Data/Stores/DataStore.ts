@@ -257,14 +257,18 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     public getColumnOrder(usePresentationState?: boolean): Array<string> {
         const store = this,
             metadata = store.metadata,
-            columns = metadata.columns,
+            columns = metadata.columns, //
             columnNames = Object.keys(columns),
             columnOrder: Array<string> = [];
 
-        let columnName: string;
+        if (usePresentationState) {
+            columnOrder.push(...store.table.presentationState.getColumnOrder());
+        }
 
+        // If there is not a columnorder set on the table
+        // get it from store metadata if present
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columnName = columnNames[i];
+            const columnName = columnNames[i];
             columnOrder[pick(columns[columnName].index, i)] = columnName;
         }
 
@@ -290,29 +294,14 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     ): DataStore.ColumnsForExportObject {
         const table = this.table,
             columnsRecord = table.getColumns(),
-            columnNames = (
-                includeIdColumn ?
-                    Object.keys(columnsRecord) :
-                    Object.keys(columnsRecord).slice(1)
-            );
-
-        const columnOrder = this.getColumnOrder(usePresentationOrder);
-
-        if (columnOrder.length) {
-            columnNames.sort((a, b): number => {
-                if (columnOrder.indexOf(a) < columnOrder.indexOf(b)) {
-                    return 1;
-                }
-                if (columnOrder.indexOf(a) > columnOrder.indexOf(b)) {
-                    return -1;
-                }
-                return 0;
-            });
-        }
+            columnOrder = this.getColumnOrder(usePresentationOrder);
 
         return ({
-            columnNames,
-            columnValues: columnNames.map(
+            columnNames: columnOrder.map((name): string => {
+                const { title } = this.whatIs(name) || {};
+                return title || name; // Prefer a title set in the metadata
+            }),
+            columnValues: columnOrder.map(
                 (name: string): DataTableRow.CellType[] => columnsRecord[name]
             )
         });

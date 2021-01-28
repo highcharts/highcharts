@@ -677,35 +677,8 @@ Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  * @fires Highcharts.Chart#event:afterGetTable
  */
 Chart.prototype.getTable = function (useLocalDecimalPoint) {
-    var _a;
-    var dataStore = new HTMLTableStore(), exporting = this.options.exporting, tableCaption = (exporting === null || exporting === void 0 ? void 0 : exporting.tableCaption) ?
-        (typeof exporting.tableCaption == 'string' ?
-            exporting.tableCaption : (_a = this.options.title) === null || _a === void 0 ? void 0 : _a.text) : undefined;
-    getDataTable(this, dataStore);
-    var html = dataStore.save(__assign(__assign({}, exporting), { tableCaption: tableCaption,
-        useLocalDecimalPoint: useLocalDecimalPoint, exportIDColumn: false })), e = { html: html };
-    var serialize = function (node) {
-        if (!node.tagName || node.tagName === '#text') {
-            // Text node
-            return node.textContent || '';
-        }
-        var attributes = node.attributes;
-        var html = "<" + node.tagName;
-        if (attributes) {
-            Object.keys(attributes).forEach(function (key) {
-                html += " " + key + "=\"" + attributes[key] + "\"";
-            });
-        }
-        html += '>';
-        html += node.textContent || '';
-        (node.children || []).forEach(function (child) {
-            html += serialize(child);
-        });
-        html += "</" + node.tagName + ">";
-        return html;
-    };
     var tree = this.getTableAST(useLocalDecimalPoint);
-    return serialize(tree);
+    return AST.serialize(tree);
 };
 /**
  * Get the AST of a HTML table representing the chart data.
@@ -723,164 +696,15 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
  *         The abstract syntax tree
  */
 Chart.prototype.getTableAST = function (useLocalDecimalPoint) {
-    var treeChildren = [];
-    var options = this.options, decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.', useMultiLevelHeaders = pick(options.exporting.useMultiLevelHeaders, true), rows = this.getDataRows(useMultiLevelHeaders), rowLength = 0, topHeaders = useMultiLevelHeaders ? rows.shift() : null, subHeaders = rows.shift(), 
-    // Compare two rows for equality
-    isRowEqual = function (row1, row2) {
-        var i = row1.length;
-        if (row2.length === i) {
-            while (i--) {
-                if (row1[i] !== row2[i]) {
-                    return false;
-                }
-            }
-        }
-        else {
-            return false;
-        }
-        return true;
-    }, 
-    // Get table cell HTML from value
-    getCellHTMLFromValue = function (tagName, classes, attributes, value) {
-        var textContent = pick(value, ''), className = 'text' + (classes ? ' ' + classes : '');
-        // Convert to string if number
-        if (typeof textContent === 'number') {
-            textContent = textContent.toString();
-            if (decimalPoint === ',') {
-                textContent = textContent.replace('.', decimalPoint);
-            }
-            className = 'number';
-        }
-        else if (!value) {
-            className = 'empty';
-        }
-        attributes = extend({ 'class': className }, attributes);
-        return {
-            tagName: tagName,
-            attributes: attributes,
-            textContent: textContent
-        };
-    }, 
-    // Get table header markup from row data
-    getTableHeaderHTML = function (topheaders, subheaders, rowLength) {
-        var theadChildren = [];
-        var i = 0, len = rowLength || subheaders && subheaders.length, next, cur, curColspan = 0, rowspan;
-        // Clean up multiple table headers. Chart.getDataRows() returns two
-        // levels of headers when using multilevel, not merged. We need to
-        // merge identical headers, remove redundant headers, and keep it
-        // all marked up nicely.
-        if (useMultiLevelHeaders &&
-            topheaders &&
-            subheaders &&
-            !isRowEqual(topheaders, subheaders)) {
-            var trChildren = [];
-            for (; i < len; ++i) {
-                cur = topheaders[i];
-                next = topheaders[i + 1];
-                if (cur === next) {
-                    ++curColspan;
-                }
-                else if (curColspan) {
-                    // Ended colspan
-                    // Add cur to HTML with colspan.
-                    trChildren.push(getCellHTMLFromValue('th', 'highcharts-table-topheading', {
-                        scope: 'col',
-                        colspan: curColspan + 1
-                    }, cur));
-                    curColspan = 0;
-                }
-                else {
-                    // Cur is standalone. If it is same as sublevel,
-                    // remove sublevel and add just toplevel.
-                    if (cur === subheaders[i]) {
-                        if (options.exporting.useRowspanHeaders) {
-                            rowspan = 2;
-                            delete subheaders[i];
-                        }
-                        else {
-                            rowspan = 1;
-                            subheaders[i] = '';
-                        }
-                    }
-                    else {
-                        rowspan = 1;
-                    }
-                    var cell = getCellHTMLFromValue('th', 'highcharts-table-topheading', { scope: 'col' }, cur);
-                    if (rowspan > 1 && cell.attributes) {
-                        cell.attributes.valign = 'top';
-                        cell.attributes.rowspan = rowspan;
-                    }
-                    trChildren.push(cell);
-                }
-            }
-            theadChildren.push({
-                tagName: 'tr',
-                children: trChildren
-            });
-        }
-        // Add the subheaders (the only headers if not using multilevels)
-        if (subheaders) {
-            var trChildren = [];
-            for (i = 0, len = subheaders.length; i < len; ++i) {
-                if (typeof subheaders[i] !== 'undefined') {
-                    trChildren.push(getCellHTMLFromValue('th', null, { scope: 'col' }, subheaders[i]));
-                }
-            }
-            theadChildren.push({
-                tagName: 'tr',
-                children: trChildren
-            });
-        }
-        return {
-            tagName: 'thead',
-            children: theadChildren
-        };
-    };
-    // Add table caption
-    if (options.exporting.tableCaption !== false) {
-        treeChildren.push({
-            tagName: 'caption',
-            attributes: {
-                'class': 'highcharts-table-caption'
-            },
-            textContent: pick(options.exporting.tableCaption, (options.title.text ?
-                htmlencode(options.title.text) :
-                'Chart'))
-        });
-    }
-    // Find longest row
-    for (var i = 0, len = rows.length; i < len; ++i) {
-        if (rows[i].length > rowLength) {
-            rowLength = rows[i].length;
-        }
-    }
-    // Add header
-    treeChildren.push(getTableHeaderHTML(topHeaders, subHeaders, Math.max(rowLength, subHeaders.length)));
-    // Transform the rows to HTML
-    var trs = [];
-    rows.forEach(function (row) {
-        var trChildren = [];
-        for (var j = 0; j < rowLength; j++) {
-            // Make first column a header too. Especially important for
-            // category axes, but also might make sense for datetime? Should
-            // await user feedback on this.
-            trChildren.push(getCellHTMLFromValue(j ? 'td' : 'th', null, j ? {} : { scope: 'row' }, row[j]));
-        }
-        trs.push({
-            tagName: 'tr',
-            children: trChildren
-        });
-    });
-    treeChildren.push({
-        tagName: 'tbody',
-        children: trs
-    });
+    var _a;
+    var dataStore = new HTMLTableStore(), exporting = this.options.exporting, tableCaption = pick(exporting === null || exporting === void 0 ? void 0 : exporting.tableCaption, (((_a = this.options.title) === null || _a === void 0 ? void 0 : _a.text) ?
+        htmlencode(this.options.title.text) :
+        'Chart'));
+    getDataTable(this, dataStore);
+    var tree = dataStore.getTableAST(__assign(__assign({}, exporting), { tableCaption: tableCaption,
+        useLocalDecimalPoint: useLocalDecimalPoint }));
     var e = {
-        tree: {
-            tagName: 'table',
-            id: "highcharts-data-table-" + this.index,
-            children: treeChildren
-        }
+        tree: __assign(__assign({}, tree), { id: "highcharts-data-table-" + this.index })
     };
     fireEvent(this, 'aftergetTableAST', e);
     return e.tree;

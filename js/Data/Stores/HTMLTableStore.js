@@ -25,11 +25,12 @@ var __extends = (this && this.__extends) || (function () {
 import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
+import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
 var win = H.win;
 import HTMLTableParser from '../Parsers/HTMLTableParser.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge, objectEach = U.objectEach;
+var merge = U.merge, objectEach = U.objectEach, extend = U.extend, pick = U.pick;
 /** eslint-disable valid-jsdoc */
 /**
  * Class that handles creating a datastore from an HTML table
@@ -144,8 +145,15 @@ var HTMLTableStore = /** @class */ (function (_super) {
      * @return {string}
      * The HTML table.
      */
-    HTMLTableStore.prototype.getHTMLTableForExport = function (exportOptions) {
+    HTMLTableStore.prototype.getTableAST = function (exportOptions) {
         if (exportOptions === void 0) { exportOptions = {}; }
+        // Merge in the provided parser options
+        objectEach(this.parserOptions, function (value, key) {
+            if (key in exportOptions) {
+                exportOptions[key] = value;
+            }
+        });
+        var treeChildren = [];
         var options = exportOptions, decimalPoint = options.useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.', exportNames = (this.parserOptions.firstRowAsNames !== false), useMultiLevelHeaders = options.useMultiLevelHeaders, useRowspanHeaders = options.useRowspanHeaders;
         var isRowEqual = function (row1, row2) {
             var i = row1.length;
@@ -163,7 +171,8 @@ var HTMLTableStore = /** @class */ (function (_super) {
         };
         // Get table header markup from row data
         var getTableHeaderHTML = function (topheaders, subheaders, rowLength) {
-            var html = '<thead>', i = 0, len = rowLength || subheaders && subheaders.length, next, cur, curColspan = 0, rowspan;
+            var theadChildren = [];
+            var i = 0, len = rowLength || subheaders && subheaders.length, next, cur, curColspan = 0, rowspan;
             // Clean up multiple table headers. Chart.getDataRows() returns two
             // levels of headers when using multilevel, not merged. We need to
             // merge identical headers, remove redundant headers, and keep it
@@ -172,7 +181,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
                 topheaders &&
                 subheaders &&
                 !isRowEqual(topheaders, subheaders)) {
-                html += '<tr>';
+                var trChildren = [];
                 for (; i < len; ++i) {
                     cur = topheaders[i];
                     next = topheaders[i + 1];
@@ -182,8 +191,10 @@ var HTMLTableStore = /** @class */ (function (_super) {
                     else if (curColspan) {
                         // Ended colspan
                         // Add cur to HTML with colspan.
-                        html += getCellHTMLFromValue('th', 'highcharts-table-topheading', 'scope="col" ' +
-                            'colspan="' + (curColspan + 1) + '"', cur);
+                        trChildren.push(getCellHTMLFromValue('th', 'highcharts-table-topheading', {
+                            scope: 'col',
+                            colspan: curColspan + 1
+                        }, cur));
                         curColspan = 0;
                     }
                     else {
@@ -202,48 +213,72 @@ var HTMLTableStore = /** @class */ (function (_super) {
                         else {
                             rowspan = 1;
                         }
-                        html += getCellHTMLFromValue('th', 'highcharts-table-topheading', 'scope="col"' +
-                            (rowspan > 1 ?
-                                ' valign="top" rowspan="' + rowspan + '"' :
-                                ''), cur);
+                        var cell = getCellHTMLFromValue('th', 'highcharts-table-topheading', { scope: 'col' }, cur);
+                        if (rowspan > 1 && cell.attributes) {
+                            cell.attributes.valign = 'top';
+                            cell.attributes.rowspan = rowspan;
+                        }
+                        trChildren.push(cell);
                     }
                 }
-                html += '</tr>';
+                theadChildren.push({
+                    tagName: 'tr',
+                    children: trChildren
+                });
             }
             // Add the subheaders (the only headers if not using multilevels)
             if (subheaders) {
-                html += '<tr>';
+                var trChildren = [];
                 for (i = 0, len = subheaders.length; i < len; ++i) {
-                    if (typeof subheaders[i] !== 'undefined') {
-                        html += getCellHTMLFromValue('th', null, 'scope="col"', subheaders[i]);
+                    var subheader = subheaders[i];
+                    if (typeof subheader !== 'undefined') {
+                        trChildren.push(getCellHTMLFromValue('th', null, { scope: 'col' }, subheader));
                     }
                 }
-                html += '</tr>';
+                theadChildren.push({
+                    tagName: 'tr',
+                    children: trChildren
+                });
             }
-            html += '</thead>';
-            return html;
+            return {
+                tagName: 'thead',
+                children: theadChildren
+            };
         };
-        var getCellHTMLFromValue = function (tag, classes, attrs, value) {
-            var val = value, className = 'text' + (classes ? ' ' + classes : '');
+        var getCellHTMLFromValue = function (tagName, classes, attributes, value) {
+            var textContent = pick(value, ''), className = 'text' + (classes ? ' ' + classes : '');
             // Convert to string if number
-            if (typeof val === 'number') {
-                val = val.toString();
+            if (typeof textContent === 'number') {
+                textContent = textContent.toString();
                 if (decimalPoint === ',') {
-                    val = val.replace('.', decimalPoint);
+                    textContent = textContent.replace('.', decimalPoint);
                 }
                 className = 'number';
             }
             else if (!value) {
-                val = '';
                 className = 'empty';
             }
-            return '<' + tag + (attrs ? ' ' + attrs : '') +
-                ' class="' + className + '">' +
-                val + '</' + tag + '>';
+            attributes = extend({ 'class': className }, attributes);
+            return {
+                tagName: tagName,
+                attributes: attributes,
+                textContent: textContent
+            };
         };
-        var _a = this.getColumnsForExport(options.exportIDColumn, options.usePresentationOrder), columnNames = _a.columnNames, columnValues = _a.columnValues, htmlRows = [], columnsCount = columnNames.length;
+        var _a = this.getColumnsForExport(options.exportIDColumn, options.usePresentationOrder), columnNames = _a.columnNames, columnValues = _a.columnValues, columnsCount = columnNames.length;
         var rowArray = [];
-        var tableHead = '';
+        // Add table caption
+        // Current exportdata falls back to chart title
+        // but that should probably be handled in the export module
+        if (options === null || options === void 0 ? void 0 : options.tableCaption) {
+            treeChildren.push({
+                tagName: 'caption',
+                attributes: {
+                    'class': 'highcharts-table-caption'
+                },
+                textContent: options.tableCaption
+            });
+        }
         // Add the names as the first row if they should be exported
         if (exportNames) {
             var subcategories_1 = [];
@@ -254,20 +289,25 @@ var HTMLTableStore = /** @class */ (function (_super) {
                     var subhead = (column.shift() || '').toString();
                     subcategories_1.push(subhead);
                 });
-                tableHead = getTableHeaderHTML(columnNames, subcategories_1);
+                treeChildren.push(getTableHeaderHTML(columnNames, subcategories_1));
             }
             else {
-                tableHead = getTableHeaderHTML(null, columnNames);
+                treeChildren.push(getTableHeaderHTML(null, columnNames));
             }
         }
+        var astRows = [];
+        var longestColumn = 0;
         for (var columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
             var columnName = columnNames[columnIndex], column = columnValues[columnIndex], columnLength = column.length;
+            if (columnLength > longestColumn) {
+                longestColumn = columnLength;
+            }
             var columnMeta = this.whatIs(columnName);
             var columnDataType = void 0;
             if (columnMeta) {
                 columnDataType = columnMeta === null || columnMeta === void 0 ? void 0 : columnMeta.dataType;
             }
-            for (var rowIndex = 0; rowIndex < columnLength; rowIndex++) {
+            for (var rowIndex = 0; rowIndex < longestColumn; rowIndex++) {
                 var cellValue = column[rowIndex];
                 if (!rowArray[rowIndex]) {
                     rowArray[rowIndex] = [];
@@ -281,31 +321,25 @@ var HTMLTableStore = /** @class */ (function (_super) {
                     typeof cellValue === 'undefined')) {
                     cellValue = (cellValue || '').toString();
                 }
-                rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(columnIndex ? 'td' : 'th', null, columnIndex ? '' : 'scope="row"', cellValue);
+                rowArray[rowIndex][columnIndex] = getCellHTMLFromValue(columnIndex ? 'td' : 'th', null, columnIndex ? {} : { scope: 'row' }, cellValue !== void 0 ? cellValue : '');
                 // On the final column, push the row to the array
                 if (columnIndex === columnsCount - 1) {
-                    htmlRows.push('<tr>' +
-                        rowArray[rowIndex].join('') +
-                        '</tr>');
+                    astRows.push({
+                        tagName: 'tr',
+                        children: rowArray[rowIndex]
+                    });
                 }
             }
         }
-        var caption = '';
-        // Add table caption
-        // Current exportdata falls back to chart title
-        // but that should probably be handled elsewhere?
-        if (options === null || options === void 0 ? void 0 : options.tableCaption) {
-            caption = '<caption class="highcharts-table-caption">' +
-                options.tableCaption +
-                '</caption>';
-        }
-        return ('<table>' +
-            caption +
-            tableHead +
-            '<tbody>' +
-            htmlRows.join('') +
-            '</tbody>' +
-            '</table>');
+        treeChildren.push({
+            tagName: 'tbody',
+            children: astRows
+        });
+        var tree = {
+            tagName: 'table',
+            children: treeChildren
+        };
+        return tree;
     };
     /**
      * Exports the datastore as an HTML string, using the options
@@ -323,14 +357,8 @@ var HTMLTableStore = /** @class */ (function (_super) {
      */
     HTMLTableStore.prototype.save = function (htmlExportOptions, eventDetail) {
         var exportOptions = HTMLTableStore.defaultExportOptions;
-        // Merge in the provided parser options
-        objectEach(this.parserOptions, function (value, key) {
-            if (key in exportOptions) {
-                exportOptions[key] = value;
-            }
-        });
         // Merge in provided options
-        return this.getHTMLTableForExport(merge(exportOptions, htmlExportOptions));
+        return AST.serialize(this.getTableAST(merge(exportOptions, htmlExportOptions)));
     };
     /**
      * Converts the store to a class JSON.
@@ -361,7 +389,8 @@ var HTMLTableStore = /** @class */ (function (_super) {
         decimalPoint: null,
         exportIDColumn: false,
         useRowspanHeaders: true,
-        useMultiLevelHeaders: true
+        useMultiLevelHeaders: true,
+        usePresentationOrder: true
     };
     return HTMLTableStore;
 }(DataStore));

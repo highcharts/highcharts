@@ -164,10 +164,15 @@ var DataStore = /** @class */ (function () {
      * Order of columns.
      */
     DataStore.prototype.getColumnOrder = function (usePresentationState) {
-        var store = this, metadata = store.metadata, columns = metadata.columns, columnNames = Object.keys(columns), columnOrder = [];
-        var columnName;
+        var store = this, metadata = store.metadata, columns = metadata.columns, //
+        columnNames = Object.keys(columns), columnOrder = [];
+        if (usePresentationState) {
+            columnOrder.push.apply(columnOrder, store.table.presentationState.getColumnOrder());
+        }
+        // If there is not a columnorder set on the table
+        // get it from store metadata if present
         for (var i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columnName = columnNames[i];
+            var columnName = columnNames[i];
             columnOrder[pick(columns[columnName].index, i)] = columnName;
         }
         return columnOrder;
@@ -186,24 +191,14 @@ var DataStore = /** @class */ (function () {
      * An object with the properties `columnNames` and `columnValues`
      */
     DataStore.prototype.getColumnsForExport = function (includeIdColumn, usePresentationOrder) {
-        var table = this.table, columnsRecord = table.getColumns(), columnNames = (includeIdColumn ?
-            Object.keys(columnsRecord) :
-            Object.keys(columnsRecord).slice(1));
-        var columnOrder = this.getColumnOrder(usePresentationOrder);
-        if (columnOrder.length) {
-            columnNames.sort(function (a, b) {
-                if (columnOrder.indexOf(a) < columnOrder.indexOf(b)) {
-                    return 1;
-                }
-                if (columnOrder.indexOf(a) > columnOrder.indexOf(b)) {
-                    return -1;
-                }
-                return 0;
-            });
-        }
+        var _this = this;
+        var table = this.table, columnsRecord = table.getColumns(), columnOrder = this.getColumnOrder(usePresentationOrder);
         return ({
-            columnNames: columnNames,
-            columnValues: columnNames.map(function (name) { return columnsRecord[name]; })
+            columnNames: columnOrder.map(function (name) {
+                var title = (_this.whatIs(name) || {}).title;
+                return title || name; // Prefer a title set in the metadata
+            }),
+            columnValues: columnOrder.map(function (name) { return columnsRecord[name]; })
         });
     };
     /**

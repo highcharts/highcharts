@@ -78,6 +78,27 @@ var AST = /** @class */ (function () {
             ast.addToDOM(el);
         }
     };
+    AST.serialize = function (node) {
+        var _this = this;
+        if (!node.tagName || node.tagName === '#text') {
+            // Text node
+            return node.textContent || '';
+        }
+        var attributes = node.attributes;
+        var html = "<" + node.tagName;
+        if (attributes) {
+            Object.keys(attributes).forEach(function (key) {
+                html += " " + key + "=\"" + attributes[key] + "\"";
+            });
+        }
+        html += '>';
+        html += node.textContent || '';
+        (node.children || []).forEach(function (child) {
+            html += _this.serialize(child);
+        });
+        html += "</" + node.tagName + ">";
+        return html;
+    };
     /**
      * Add the tree defined as a hierarchical JS structure to the DOM
      *

@@ -319,7 +319,8 @@ var CSVStore = /** @class */ (function (_super) {
         decimalPoint: null,
         itemDelimiter: null,
         lineDelimiter: '\n',
-        exportIDColumn: false
+        exportIDColumn: false,
+        usePresentationOrder: true
     };
     return CSVStore;
 }(DataStore));

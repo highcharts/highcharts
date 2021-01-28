@@ -230,6 +230,33 @@ class AST {
         }
     }
 
+
+    public static serialize(node: Highcharts.ASTNode): string {
+        if (!node.tagName || node.tagName === '#text') {
+            // Text node
+            return node.textContent || '';
+        }
+
+        const attributes = node.attributes;
+        let html = `<${node.tagName}`;
+
+        if (attributes) {
+            Object.keys(attributes).forEach((key): void => {
+                html += ` ${key}="${attributes[key]}"`;
+            });
+        }
+        html += '>';
+
+        html += node.textContent || '';
+
+        (node.children || []).forEach((child): void => {
+            html += this.serialize(child);
+        });
+
+        html += `</${node.tagName}>`;
+        return html;
+    }
+
     // Public list of the nodes of this tree, can be modified before adding the
     // tree to the DOM.
     public nodes: Highcharts.ASTNode[];

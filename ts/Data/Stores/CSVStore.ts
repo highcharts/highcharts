@@ -50,7 +50,8 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
         decimalPoint: null,
         itemDelimiter: null,
         lineDelimiter: '\n',
-        exportIDColumn: false
+        exportIDColumn: false,
+        usePresentationOrder: true
     }
 
     /* *
@@ -289,6 +290,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             exportOptions.exportIDColumn,
             exportOptions.usePresentationOrder
         );
+
         const csvRows: Array<string> = [],
             columnsCount = columnNames.length;
 
