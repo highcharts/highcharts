@@ -338,7 +338,7 @@ extend(defaultOptions, {
         inputBoxHeight: 17,
         /**
          * The pixel width of the date input boxes. When `undefined`, the width
-         * is fitted to the renderred content.
+         * is fitted to the rendered content.
          *
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
