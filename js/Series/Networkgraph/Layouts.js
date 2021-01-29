@@ -89,9 +89,6 @@ H.layouts['reingold-fruchterman'].prototype, {
         layout.prevSystemTemperature = layout.systemTemperature;
         layout.systemTemperature = layout.getSystemTemperature();
         if (layout.enableSimulation) {
-            if (layout.prevSystemTemperature === layout.systemTemperature) {
-                layout.prevSystemTemperature = 0; // #14439
-            }
             series.forEach(function (s) {
                 // Chart could be destroyed during the simulation
                 if (s.chart) {
@@ -457,8 +454,16 @@ H.layouts['reingold-fruchterman'].prototype, {
         return temperature - temperatureStep * currentStep;
     },
     isStable: function () {
-        return Math.abs(this.systemTemperature -
-            this.prevSystemTemperature) < 0.00001 || this.temperature <= 0;
+        var tempDiff = Math.abs(this.prevSystemTemperature -
+            this.systemTemperature);
+        if ((!this.enableSimulation && tempDiff < 0.00001)) { // Tests still rely on this old check.
+            return true;
+        }
+        var upScaledTemperature = 10 * this.systemTemperature /
+            Math.sqrt(this.nodes.length);
+        return Math.abs(upScaledTemperature) < 1 && // #14439, new stable check.
+            tempDiff < 0.00001 ||
+            this.temperature <= 0;
     },
     getSystemTemperature: function () {
         return this.nodes.reduce(function (value, node) {
