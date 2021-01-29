@@ -321,8 +321,8 @@ extend(NavigationBindings.prototype, {
      *
      * @return {Highcharts.YAxisPositions}
      *         An object containing an array of calculated positions
-     *         in percentages.
-     *         Format: `{top: Number, height: Number}` and maximum value of top + height of axes.
+     *         in percentages. Format: `{top: Number, height: Number}`
+     *         and maximum value of top + height of axes.
      */
     getYAxisPositions: function (yAxes, plotHeight, defaultHeight, deleteIndicatorAxis) {
         var positions, allAxesHeight = 0, previousAxisHeight;

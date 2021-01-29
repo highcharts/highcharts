@@ -509,8 +509,9 @@ extend(NavigationBindings.prototype, {
      *        true, if the indicator is deleted
      *
      * @return {Highcharts.YAxisPositions}
-     *         An object containing an array of calculated positions in percentages.
-     *         Format: `{top: Number, height: Number}` and maximum value of top + height of axes.
+     *         An object containing an array of calculated positions
+     *         in percentages. Format: `{top: Number, height: Number}`
+     *         and maximum value of top + height of axes.
      */
     getYAxisPositions: function (
         yAxes: Array<AxisType>,
