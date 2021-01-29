@@ -56,7 +56,7 @@ QUnit.test('Touch event test on popup', function (assert) {
         testController = new TestController(chart);
 
     // show toolbar
-    testController.triggerEvent('click', 100, 100, {}, true);
+    testController.triggerEvent('click', 100, 100);
 
     var rangeSelector = chart.rangeSelector,
         inputGroup = rangeSelector.inputGroup;
@@ -66,8 +66,7 @@ QUnit.test('Touch event test on popup', function (assert) {
         inputGroup.translateX + rangeSelector.minDateBox.x + 80,
         chart.plotTop + inputGroup.translateY,
         undefined,
-        undefined,
-        true
+        undefined
     );
 
     assert.strictEqual(
@@ -78,6 +77,32 @@ QUnit.test('Touch event test on popup', function (assert) {
         'Edit popup is displayed by touch event.'
     );
 
+    let fired = false;
+    // adding event to check, if closePopup event was fired, when closing popup
+    Highcharts.addEvent(chart.navigationBindings, 'closePopup', () => {
+        fired = true;
+    });
+
+    // closing popup
+
+
+    const closeButton = chart.container.getElementsByClassName('highcharts-popup-close')[0];
+    // css are not loaded in karma, so it is mandatory to set the position of the button manually
+    closeButton.style.position = 'absolute';
+    closeButton.style.top = 0;
+    closeButton.style.height = 40;
+    closeButton.style.width = 40;
+    closeButton.style.right = 0;
+    const { left, top } = Highcharts.offset(closeButton);
+
+    const offsetOfContainer = Highcharts.offset(chart.container);
+    testController.triggerEvent('click', left - offsetOfContainer.left + 20, top - offsetOfContainer.top + 20, {}, true);
+
+    assert.equal(
+        fired,
+        true,
+        'Event "closePopup" should be fired when closing popup'
+    );
     // REMOVE CSS STYLES
     style.parentNode.removeChild(style);
 });
