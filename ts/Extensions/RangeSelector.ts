@@ -694,7 +694,9 @@ extend(defaultOptions, {
          */
         inputStyle: {
             /** @ignore */
-            color: palette.highlightColor80
+            color: palette.highlightColor80,
+            /** @ignore */
+            cursor: 'pointer'
         },
 
         /**
@@ -1536,14 +1538,14 @@ class RangeSelector {
         }
 
         // Create the text label
+        const text: string = (lang as any)[
+            isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'
+        ];
         const label = renderer
-            .label(
-                (lang as any)[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'],
-                0
-            )
+            .label(text, 0)
             .addClass('highcharts-range-label')
             .attr({
-                padding: 2
+                padding: text ? 2 : 0
             })
             .add(inputGroup);
 
@@ -1823,16 +1825,10 @@ class RangeSelector {
                     this.minDateBox,
                     this.maxLabel,
                     this.maxDateBox
-                ].forEach((label, i): void => {
-                    if (label) {
+                ].forEach((label): void => {
+                    if (label && label.width) {
                         label.attr({ x });
                         x += label.width + options.inputSpacing;
-
-                        // For version <= 8 compliance
-                        // @todo remove this if we change the design
-                        if (i % 2) {
-                            x += options.inputSpacing;
-                        }
                     }
                 });
             }

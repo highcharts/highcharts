@@ -479,7 +479,9 @@ extend(defaultOptions, {
          */
         inputStyle: {
             /** @ignore */
-            color: palette.highlightColor80
+            color: palette.highlightColor80,
+            /** @ignore */
+            cursor: 'pointer'
         },
         /**
          * CSS styles for the labels - the Zoom, From and To texts.
@@ -1075,11 +1077,12 @@ var RangeSelector = /** @class */ (function () {
             }
         }
         // Create the text label
+        var text = lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'];
         var label = renderer
-            .label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], 0)
+            .label(text, 0)
             .addClass('highcharts-range-label')
             .attr({
-            padding: 2
+            padding: text ? 2 : 0
         })
             .add(inputGroup);
         // Create an SVG label that shows updated date ranges and and records
@@ -1289,15 +1292,10 @@ var RangeSelector = /** @class */ (function () {
                     this.minDateBox,
                     this.maxLabel,
                     this.maxDateBox
-                ].forEach(function (label, i) {
-                    if (label) {
+                ].forEach(function (label) {
+                    if (label && label.width) {
                         label.attr({ x: x_1 });
                         x_1 += label.width + options.inputSpacing;
-                        // For version <= 8 compliance
-                        // @todo remove this if we change the design
-                        if (i % 2) {
-                            x_1 += options.inputSpacing;
-                        }
                     }
                 });
             }
