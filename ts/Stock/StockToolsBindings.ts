@@ -55,7 +55,7 @@ declare global {
                 plotHeight: number,
                 defaultHeight: number,
                 deleteIndicatorAxis?: boolean
-            ): Array<Record<string, number>>;
+            ): YAxisPositions;
             /** @requires modules/stock-tools */
             getYAxisResizers(
                 yAxes: Array<AxisType>
@@ -77,6 +77,11 @@ declare global {
             series: Series;
             xAxis: number;
             yAxis: number;
+        }
+
+        interface YAxisPositions {
+            positions: Array<Record<string, number>>;
+            allAxesHeight: number;
         }
         interface NavigationBindingsResizerObject {
             controlledAxis?: Record<string, Array<number>>;
@@ -503,16 +508,16 @@ extend(NavigationBindings.prototype, {
      * @param {boolean} deleteIndicatorAxis
      *        true, if the indicator is deleted
      *
-     * @return {Array}
-     *         An array of calculated positions in percentages.
-     *         Format: `{top: Number, height: Number}`
+     * @return {Highcharts.YAxisPositions}
+     *         An object containing an array of calculated positions in percentages.
+     *         Format: `{top: Number, height: Number}` and maximum value of top + height of axes.
      */
     getYAxisPositions: function (
         yAxes: Array<AxisType>,
         plotHeight: number,
         defaultHeight: number,
         deleteIndicatorAxis?: boolean
-    ): Array<Record<string, number>> {
+    ): Highcharts.YAxisPositions {
         var positions: Array<Record<string, number>>|undefined,
             allAxesHeight = 0,
             previousAxisHeight: number;
@@ -557,9 +562,8 @@ extend(NavigationBindings.prototype, {
                 top: top * 100
             };
         });
-        (positions as any).allAxesHeight = allAxesHeight;
 
-        return positions;
+        return { positions, allAxesHeight };
     },
 
     /**
@@ -610,7 +614,7 @@ extend(NavigationBindings.prototype, {
         return resizers;
     },
     /**
-     * Resize all yAxes (except navigator) to fit the plotting height. Metho
+     * Resize all yAxes (except navigator) to fit the plotting height. Method
      * checks if new axis is added, if the new axis will fit under previous
      * axes it is placed there. If not, current plot area is scaled
      * to make room for new axis.
@@ -635,14 +639,13 @@ extend(NavigationBindings.prototype, {
             plotHeight = chart.plotHeight,
             allAxesLength = yAxes.length,
             // Gather current heights (in %)
-            positions = this.getYAxisPositions(
+            { positions, allAxesHeight } = this.getYAxisPositions(
                 yAxes,
                 plotHeight,
                 defaultHeight,
                 deleteIndicatorAxis
             ),
-            resizers = this.getYAxisResizers(yAxes),
-            allAxesHeight = (positions as any).allAxesHeight;
+            resizers = this.getYAxisResizers(yAxes);
 
         if (!deleteIndicatorAxis && allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)) {
             positions[positions.length - 1] = {
@@ -653,10 +656,10 @@ extend(NavigationBindings.prototype, {
             positions.forEach(function (position: Record<string, number>): void {
                 position.height =
                     (position.height /
-                        ((positions as any).allAxesHeight * 100)) *
+                        (allAxesHeight * 100)) *
                     100;
                 position.top =
-                    (position.top / ((positions as any).allAxesHeight * 100)) *
+                    (position.top / (allAxesHeight * 100)) *
                     100;
             });
         }
