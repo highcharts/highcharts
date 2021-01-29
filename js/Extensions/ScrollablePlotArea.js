@@ -287,7 +287,6 @@ Chart.prototype.applyFixed = function () {
         })
             .addClass('highcharts-scrollable-mask')
             .add();
-        this.moveFixedElements();
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
     }
@@ -295,6 +294,7 @@ Chart.prototype.applyFixed = function () {
         // Set the size of the fixed renderer to the visible width
         this.fixedRenderer.setSize(this.chartWidth, this.chartHeight);
     }
+    this.moveFixedElements();
     // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0);
     scrollableHeight = this.chartHeight + (this.scrollablePixelsY || 0);
