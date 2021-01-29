@@ -319,9 +319,10 @@ extend(NavigationBindings.prototype, {
      * @param {boolean} deleteIndicatorAxis
      *        true, if the indicator is deleted
      *
-     * @return {Array}
-     *         An array of calculated positions in percentages.
-     *         Format: `{top: Number, height: Number}`
+     * @return {Highcharts.YAxisPositions}
+     *         An object containing an array of calculated positions
+     *         in percentages.
+     *         Format: `{top: Number, height: Number}` and maximum value of top + height of axes.
      */
     getYAxisPositions: function (yAxes, plotHeight, defaultHeight, deleteIndicatorAxis) {
         var positions, allAxesHeight = 0, previousAxisHeight;
@@ -356,8 +357,7 @@ extend(NavigationBindings.prototype, {
                 top: top * 100
             };
         });
-        positions.allAxesHeight = allAxesHeight;
-        return positions;
+        return { positions: positions, allAxesHeight: allAxesHeight };
     },
     /**
      * Get current resize options for each yAxis. Note that each resize is
@@ -400,7 +400,7 @@ extend(NavigationBindings.prototype, {
         return resizers;
     },
     /**
-     * Resize all yAxes (except navigator) to fit the plotting height. Metho
+     * Resize all yAxes (except navigator) to fit the plotting height. Method
      * checks if new axis is added, if the new axis will fit under previous
      * axes it is placed there. If not, current plot area is scaled
      * to make room for new axis.
@@ -420,7 +420,7 @@ extend(NavigationBindings.prototype, {
         // Only non-navigator axes
         yAxes = chart.yAxis.filter(bindingsUtils.isNotNavigatorYAxis), plotHeight = chart.plotHeight, allAxesLength = yAxes.length, 
         // Gather current heights (in %)
-        positions = this.getYAxisPositions(yAxes, plotHeight, defaultHeight, deleteIndicatorAxis), resizers = this.getYAxisResizers(yAxes), allAxesHeight = positions.allAxesHeight;
+        _a = this.getYAxisPositions(yAxes, plotHeight, defaultHeight, deleteIndicatorAxis), positions = _a.positions, allAxesHeight = _a.allAxesHeight, resizers = this.getYAxisResizers(yAxes);
         if (!deleteIndicatorAxis && allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)) {
             positions[positions.length - 1] = {
                 height: defaultHeight,
@@ -431,10 +431,10 @@ extend(NavigationBindings.prototype, {
             positions.forEach(function (position) {
                 position.height =
                     (position.height /
-                        (positions.allAxesHeight * 100)) *
+                        (allAxesHeight * 100)) *
                         100;
                 position.top =
-                    (position.top / (positions.allAxesHeight * 100)) *
+                    (position.top / (allAxesHeight * 100)) *
                         100;
             });
         }
