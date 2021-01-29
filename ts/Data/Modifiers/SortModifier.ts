@@ -119,6 +119,7 @@ class SortModifier extends DataModifier {
         const modifier = this,
             {
                 direction,
+                indexColumn,
                 orderByColumn
             } = modifier.options,
             compare = (
@@ -127,23 +128,44 @@ class SortModifier extends DataModifier {
                     SortModifier.descending
             );
 
-        modifier.emit({ type: 'execute', detail: eventDetail, table });
-
-        const result = new DataTable(
+        modifier.emit({
+            type: 'execute',
+            detail: eventDetail,
             table
-                .getAllRows()
-                .sort((
-                    a: DataTableRow,
-                    b: DataTableRow
-                ): number => compare(
-                    a.getCell(orderByColumn),
-                    b.getCell(orderByColumn)
-                ))
-        );
+        });
 
-        modifier.emit({ type: 'afterExecute', detail: eventDetail, table: result });
+        const tableRows = table.getAllRows();
 
-        return result;
+        let tableRow: (DataTableRow|undefined) = table.getFirstNonNullRow();
+
+        if (
+            indexColumn &&
+            tableRow &&
+            !tableRow.hasCell(indexColumn)
+        ) {
+            for (let i = 0, iEnd = tableRows.length; i < iEnd; ++i) {
+                tableRow = tableRows[i];
+                tableRow.insertCell(indexColumn, i);
+            }
+        }
+
+        tableRows.sort((
+            a: DataTableRow,
+            b: DataTableRow
+        ): number => compare(
+            a.getCell(orderByColumn),
+            b.getCell(orderByColumn)
+        ));
+
+        table = new DataTable(tableRows);
+
+        modifier.emit({
+            type: 'afterExecute',
+            detail: eventDetail,
+            table
+        });
+
+        return table;
     }
 
     /**
@@ -185,6 +207,7 @@ namespace SortModifier {
      */
     export interface Options extends DataModifier.Options {
         direction: ('asc'|'desc');
+        indexColumn?: string;
         orderByColumn: string;
     }
 

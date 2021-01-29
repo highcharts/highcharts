@@ -295,8 +295,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Deletes a row in this table.
      *
-     * @param {string} rowId
-     * Name of the row to delete.
+     * @param {string|DataTableRow} row
+     * Row or row ID to delete.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
@@ -308,21 +308,35 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @emits DataTable#afterDeleteRow
      */
     public deleteRow(
-        rowId: string,
+        row: (string|DataTableRow),
         eventDetail?: DataEventEmitter.EventDetail
     ): (DataTableRow|undefined) {
-        const rows = this.rows,
-            rowsIdMap = this.rowsIdMap,
-            row = rowsIdMap[rowId],
-            index = rows.indexOf(row);
+        const table = this,
+            rows = table.rows;
 
-        this.emit({ type: 'deleteRow', detail: eventDetail, index, row });
+        if (typeof row === 'string') {
+            row = table.rowsIdMap[row];
+        }
 
-        this.unwatchRow(rowId);
+        const index = rows.indexOf(row);
+
+        this.emit({
+            type: 'deleteRow',
+            detail: eventDetail,
+            index,
+            row
+        });
+
+        this.unwatchRow(row.id);
         rows.splice(index, 1);
-        delete rowsIdMap[rowId];
+        delete table.rowsIdMap[row.id];
 
-        this.emit({ type: 'afterDeleteRow', detail: eventDetail, index, row });
+        this.emit({
+            type: 'afterDeleteRow',
+            detail: eventDetail,
+            index,
+            row
+        });
 
         return row;
     }
@@ -356,6 +370,29 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public getAllRows(): Array<DataTableRow> {
         return this.rows.slice();
+    }
+
+    /**
+     * Returns the first row of the table that is not null.
+     *
+     * @return {DataTableRow|undefined}
+     * The first non-null row, if found, otherwise `undefined`.
+     */
+    public getFirstNonNullRow(): (DataTableRow|undefined) {
+        const rows = this.getAllRows();
+
+        let nonNullRow: (DataTableRow|undefined),
+            row: DataTableRow;
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            row = rows[i];
+            if (!row.isNull()) {
+                nonNullRow = row;
+                break;
+            }
+        }
+
+        return nonNullRow;
     }
 
     /**
@@ -498,6 +535,9 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
+     * @param {number} [index]
+     * Index to place row.
+     *
      * @return {boolean}
      * Returns true, if the row has been added to the table. Returns false, if
      * a row with the same row ID already exists in the table.
@@ -507,22 +547,25 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public insertRow(
         row: DataTableRow,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: DataEventEmitter.EventDetail,
+        index: number = this.rows.length
     ): boolean {
-        const rowId = row.id;
-        const index = this.rows.length;
+        const table = this,
+            rows = table.rows,
+            rowsIdMap = table.rowsIdMap,
+            rowId = row.id;
 
-        if (typeof this.rowsIdMap[rowId] !== 'undefined') {
+        if (rowsIdMap[rowId]) {
             return false;
         }
 
-        this.emit({ type: 'insertRow', detail: eventDetail, index, row });
+        table.emit({ type: 'insertRow', detail: eventDetail, index, row });
 
-        this.rows.push(row);
+        rows.splice(index, 0, row);
         this.rowsIdMap[rowId] = row;
         this.watchRow(row);
 
-        this.emit({ type: 'afterInsertRow', detail: eventDetail, index, row });
+        table.emit({ type: 'afterInsertRow', detail: eventDetail, index, row });
 
         return true;
     }
@@ -573,6 +616,23 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         this.emit({ type: 'afterRemoveColumn', detail: eventDetail, columnName, values: cellValueArray });
 
         return cellValueArray;
+    }
+
+    /**
+     * Removes a column alias from the table
+     *
+     * @param {string} alias
+     * The alias to remove
+     *
+     * @return {boolean}
+     * True if successfully removed, false if the alias was not found
+     */
+    public removeColumnAlias(alias: string): boolean {
+        if (this.aliasMap[alias]) {
+            delete this.aliasMap[alias];
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -633,23 +693,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         return success;
-    }
-
-    /**
-     * Removes a column alias from the table
-     *
-     * @param {string} alias
-     * The alias to remove
-     *
-     * @return {boolean}
-     * True if successfully removed, false if the alias was not found
-     */
-    public removeColumnAlias(alias: string): boolean {
-        if (this.aliasMap[alias]) {
-            delete this.aliasMap[alias];
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -722,11 +765,9 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         const row = this.getRow(rowID);
+
         if (row) {
-            return (
-                row.updateCell(cellName, value) ||
-                row.insertCell(cellName, value)
-            );
+            return row.setCell(cellName, value);
         }
 
         return false;
@@ -761,7 +802,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * table get not updated anymore, if the row is modified.
      *
      * @param {string} rowId
-     * ID of the row to unwatch.
+     * Row or row ID to unwatch.
      *
      * @param {boolean} [skipDelete]
      * True, to skip the deletion of the unregister functions. Usefull when

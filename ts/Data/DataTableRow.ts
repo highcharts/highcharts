@@ -232,7 +232,8 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         if (
             cellName === 'id' ||
-            Object.keys(cells).indexOf(cellName) === -1
+            row.id === 'NULL' ||
+            !row.hasCell(cellName)
         ) {
             return false;
         }
@@ -285,7 +286,8 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         if (
             cellName === 'id' ||
-            Object.keys(cells).indexOf(cellName) < 0
+            row.id === 'NULL' ||
+            !row.hasCell(cellName)
         ) {
             return void 0;
         }
@@ -448,6 +450,19 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     }
 
     /**
+     * Checks whether a cell with the given name exists in this row.
+     *
+     * @param {string} cellName
+     * Cell name to check.
+     *
+     * @return {boolean}
+     * True, if a cell with the name exists.
+     */
+    public hasCell(cellName: string): boolean {
+        return (this.getCellNames().indexOf(cellName) !== -1);
+    }
+
+    /**
      * Adds a cell to this row.
      *
      * @param {string} cellName
@@ -477,7 +492,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         if (
             cellName === 'id' ||
             row.id === 'NULL' ||
-            Object.keys(cells).indexOf(cellName) >= 0
+            row.hasCell(cellName)
         ) {
             return false;
         }
@@ -506,6 +521,16 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     }
 
     /**
+     * Checks if this row is null; therefor an instance of `DataTableRow.NULL`.
+     *
+     * @return {boolean}
+     * True, if row is null.
+     */
+    public isNull(): boolean {
+        return (this === DataTableRow.NULL);
+    }
+
+    /**
      * Registers a callback for a specific event.
      *
      * @param {DataTableRow.EventTypes} type
@@ -525,6 +550,38 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     }
 
     /**
+     * Updates or inserts a cell in this row.
+     *
+     * @param {string} cellName
+     * Name of the cell.
+     *
+     * @param {DataTableRow.CellType} cellValue
+     * Value of the cell.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * True, if the cell was set, otherwise false.
+     *
+     * @emits DataTableRow#insertCell
+     * @emits DataTableRow#afterInsertCell
+     * @emits DataTableRow#updateCell
+     * @emits DataTableRow#afterUpdateCell
+     */
+    public setCell(
+        cellName: string,
+        cellValue: DataTableRow.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        const row = this;
+        return (
+            row.updateCell(cellName, cellValue, eventDetail) ||
+            row.insertCell(cellName, cellValue, eventDetail)
+        );
+    }
+
+    /**
      * Converts the row to a class JSON.
      *
      * @return {DataJSON.ClassJSON}
@@ -533,7 +590,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     public toJSON(): DataTableRow.ClassJSON {
         const row = this,
             cells = row.getAllCells(),
-            cellNames = Object.keys(cells),
+            cellNames = row.getCellNames(),
             json: DataTableRow.ClassJSON = {
                 $class: 'DataTableRow'
             };
@@ -602,7 +659,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         if (
             cellName === 'id' ||
             row.id === 'NULL' ||
-            Object.keys(cells).indexOf(cellName) === -1
+            !row.hasCell(cellName)
         ) {
             return false;
         }

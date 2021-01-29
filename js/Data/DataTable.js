@@ -192,8 +192,8 @@ var DataTable = /** @class */ (function () {
     /**
      * Deletes a row in this table.
      *
-     * @param {string} rowId
-     * Name of the row to delete.
+     * @param {string|DataTableRow} row
+     * Row or row ID to delete.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
@@ -204,13 +204,27 @@ var DataTable = /** @class */ (function () {
      * @emits DataTable#deleteRow
      * @emits DataTable#afterDeleteRow
      */
-    DataTable.prototype.deleteRow = function (rowId, eventDetail) {
-        var rows = this.rows, rowsIdMap = this.rowsIdMap, row = rowsIdMap[rowId], index = rows.indexOf(row);
-        this.emit({ type: 'deleteRow', detail: eventDetail, index: index, row: row });
-        this.unwatchRow(rowId);
+    DataTable.prototype.deleteRow = function (row, eventDetail) {
+        var table = this, rows = table.rows;
+        if (typeof row === 'string') {
+            row = table.rowsIdMap[row];
+        }
+        var index = rows.indexOf(row);
+        this.emit({
+            type: 'deleteRow',
+            detail: eventDetail,
+            index: index,
+            row: row
+        });
+        this.unwatchRow(row.id);
         rows.splice(index, 1);
-        delete rowsIdMap[rowId];
-        this.emit({ type: 'afterDeleteRow', detail: eventDetail, index: index, row: row });
+        delete table.rowsIdMap[row.id];
+        this.emit({
+            type: 'afterDeleteRow',
+            detail: eventDetail,
+            index: index,
+            row: row
+        });
         return row;
     };
     /**
@@ -240,6 +254,24 @@ var DataTable = /** @class */ (function () {
      */
     DataTable.prototype.getAllRows = function () {
         return this.rows.slice();
+    };
+    /**
+     * Returns the first row of the table that is not null.
+     *
+     * @return {DataTableRow|undefined}
+     * The first non-null row, if found, otherwise `undefined`.
+     */
+    DataTable.prototype.getFirstNonNullRow = function () {
+        var rows = this.getAllRows();
+        var nonNullRow, row;
+        for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            row = rows[i];
+            if (!row.isNull()) {
+                nonNullRow = row;
+                break;
+            }
+        }
+        return nonNullRow;
     };
     /**
      * Returns the row with the fiven index or row ID.
@@ -352,6 +384,9 @@ var DataTable = /** @class */ (function () {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
+     * @param {number} [index]
+     * Index to place row.
+     *
      * @return {boolean}
      * Returns true, if the row has been added to the table. Returns false, if
      * a row with the same row ID already exists in the table.
@@ -359,17 +394,17 @@ var DataTable = /** @class */ (function () {
      * @emits DataTable#insertRow
      * @emits DataTable#afterInsertRow
      */
-    DataTable.prototype.insertRow = function (row, eventDetail) {
-        var rowId = row.id;
-        var index = this.rows.length;
-        if (typeof this.rowsIdMap[rowId] !== 'undefined') {
+    DataTable.prototype.insertRow = function (row, eventDetail, index) {
+        if (index === void 0) { index = this.rows.length; }
+        var table = this, rows = table.rows, rowsIdMap = table.rowsIdMap, rowId = row.id;
+        if (rowsIdMap[rowId]) {
             return false;
         }
-        this.emit({ type: 'insertRow', detail: eventDetail, index: index, row: row });
-        this.rows.push(row);
+        table.emit({ type: 'insertRow', detail: eventDetail, index: index, row: row });
+        rows.splice(index, 0, row);
         this.rowsIdMap[rowId] = row;
         this.watchRow(row);
-        this.emit({ type: 'afterInsertRow', detail: eventDetail, index: index, row: row });
+        table.emit({ type: 'afterInsertRow', detail: eventDetail, index: index, row: row });
         return true;
     };
     /**
@@ -406,6 +441,22 @@ var DataTable = /** @class */ (function () {
         }
         this.emit({ type: 'afterRemoveColumn', detail: eventDetail, columnName: columnName, values: cellValueArray });
         return cellValueArray;
+    };
+    /**
+     * Removes a column alias from the table
+     *
+     * @param {string} alias
+     * The alias to remove
+     *
+     * @return {boolean}
+     * True if successfully removed, false if the alias was not found
+     */
+    DataTable.prototype.removeColumnAlias = function (alias) {
+        if (this.aliasMap[alias]) {
+            delete this.aliasMap[alias];
+            return true;
+        }
+        return false;
     };
     /**
      * Renames a column of cells.
@@ -455,22 +506,6 @@ var DataTable = /** @class */ (function () {
             }
         }
         return success;
-    };
-    /**
-     * Removes a column alias from the table
-     *
-     * @param {string} alias
-     * The alias to remove
-     *
-     * @return {boolean}
-     * True if successfully removed, false if the alias was not found
-     */
-    DataTable.prototype.removeColumnAlias = function (alias) {
-        if (this.aliasMap[alias]) {
-            delete this.aliasMap[alias];
-            return true;
-        }
-        return false;
     };
     /**
      * Sets a column of cells from an array of cell values
@@ -531,8 +566,7 @@ var DataTable = /** @class */ (function () {
         }
         var row = this.getRow(rowID);
         if (row) {
-            return (row.updateCell(cellName, value) ||
-                row.insertCell(cellName, value));
+            return row.setCell(cellName, value);
         }
         return false;
     };
@@ -560,7 +594,7 @@ var DataTable = /** @class */ (function () {
      * table get not updated anymore, if the row is modified.
      *
      * @param {string} rowId
-     * ID of the row to unwatch.
+     * Row or row ID to unwatch.
      *
      * @param {boolean} [skipDelete]
      * True, to skip the deletion of the unregister functions. Usefull when

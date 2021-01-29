@@ -146,7 +146,8 @@ var DataTableRow = /** @class */ (function () {
     DataTableRow.prototype.deleteCell = function (cellName, eventDetail) {
         var row = this, cells = row.cells, cellValue = cells[cellName];
         if (cellName === 'id' ||
-            Object.keys(cells).indexOf(cellName) === -1) {
+            row.id === 'NULL' ||
+            !row.hasCell(cellName)) {
             return false;
         }
         row.emit({
@@ -186,7 +187,8 @@ var DataTableRow = /** @class */ (function () {
     DataTableRow.prototype.removeCell = function (cellName, eventDetail) {
         var row = this, cells = row.cells, cellValue = cells[cellName];
         if (cellName === 'id' ||
-            Object.keys(cells).indexOf(cellName) < 0) {
+            row.id === 'NULL' ||
+            !row.hasCell(cellName)) {
             return void 0;
         }
         row.emit({
@@ -328,6 +330,18 @@ var DataTableRow = /** @class */ (function () {
         return Object.keys(this.cells);
     };
     /**
+     * Checks whether a cell with the given name exists in this row.
+     *
+     * @param {string} cellName
+     * Cell name to check.
+     *
+     * @return {boolean}
+     * True, if a cell with the name exists.
+     */
+    DataTableRow.prototype.hasCell = function (cellName) {
+        return (this.getCellNames().indexOf(cellName) !== -1);
+    };
+    /**
      * Adds a cell to this row.
      *
      * @param {string} cellName
@@ -350,7 +364,7 @@ var DataTableRow = /** @class */ (function () {
         var row = this, cells = row.cells;
         if (cellName === 'id' ||
             row.id === 'NULL' ||
-            Object.keys(cells).indexOf(cellName) >= 0) {
+            row.hasCell(cellName)) {
             return false;
         }
         row.emit({
@@ -373,6 +387,15 @@ var DataTableRow = /** @class */ (function () {
         return true;
     };
     /**
+     * Checks if this row is null; therefor an instance of `DataTableRow.NULL`.
+     *
+     * @return {boolean}
+     * True, if row is null.
+     */
+    DataTableRow.prototype.isNull = function () {
+        return (this === DataTableRow.NULL);
+    };
+    /**
      * Registers a callback for a specific event.
      *
      * @param {DataTableRow.EventTypes} type
@@ -388,13 +411,38 @@ var DataTableRow = /** @class */ (function () {
         return addEvent(this, type, callback);
     };
     /**
+     * Updates or inserts a cell in this row.
+     *
+     * @param {string} cellName
+     * Name of the cell.
+     *
+     * @param {DataTableRow.CellType} cellValue
+     * Value of the cell.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * True, if the cell was set, otherwise false.
+     *
+     * @emits DataTableRow#insertCell
+     * @emits DataTableRow#afterInsertCell
+     * @emits DataTableRow#updateCell
+     * @emits DataTableRow#afterUpdateCell
+     */
+    DataTableRow.prototype.setCell = function (cellName, cellValue, eventDetail) {
+        var row = this;
+        return (row.updateCell(cellName, cellValue, eventDetail) ||
+            row.insertCell(cellName, cellValue, eventDetail));
+    };
+    /**
      * Converts the row to a class JSON.
      *
      * @return {DataJSON.ClassJSON}
      * Class JSON of this row.
      */
     DataTableRow.prototype.toJSON = function () {
-        var row = this, cells = row.getAllCells(), cellNames = Object.keys(cells), json = {
+        var row = this, cells = row.getAllCells(), cellNames = row.getCellNames(), json = {
             $class: 'DataTableRow'
         };
         var name, value;
@@ -450,7 +498,7 @@ var DataTableRow = /** @class */ (function () {
         var row = this, cells = row.cells;
         if (cellName === 'id' ||
             row.id === 'NULL' ||
-            Object.keys(cells).indexOf(cellName) === -1) {
+            !row.hasCell(cellName)) {
             return false;
         }
         row.emit({

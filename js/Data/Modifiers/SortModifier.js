@@ -75,13 +75,22 @@ var SortModifier = /** @class */ (function (_super) {
      *
      * */
     SortModifier.prototype.execute = function (table, eventDetail) {
-        var modifier = this, _a = modifier.options, direction = _a.direction, orderByColumn = _a.orderByColumn, compare = (direction === 'asc' ?
+        var modifier = this, _a = modifier.options, direction = _a.direction, indexColumn = _a.indexColumn, orderByColumn = _a.orderByColumn, compare = (direction === 'asc' ?
             SortModifier.ascending :
             SortModifier.descending);
         modifier.emit({ type: 'execute', detail: eventDetail, table: table });
-        var result = new DataTable(table
-            .getAllRows()
-            .sort(function (a, b) { return compare(a.getCell(orderByColumn), b.getCell(orderByColumn)); }));
+        var tableRows = table.getAllRows();
+        var tableRow = table.getFirstNonNullRow();
+        if (indexColumn &&
+            tableRow &&
+            !tableRow.hasCell(indexColumn)) {
+            for (var i = 0, iEnd = tableRows.length; i < iEnd; ++i) {
+                tableRow = tableRows[i];
+                tableRow.insertCell(indexColumn, i);
+            }
+        }
+        tableRows.sort(function (a, b) { return compare(a.getCell(orderByColumn), b.getCell(orderByColumn)); });
+        var result = new DataTable(tableRows);
         modifier.emit({ type: 'afterExecute', detail: eventDetail, table: result });
         return result;
     };
