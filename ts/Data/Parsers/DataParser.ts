@@ -149,18 +149,19 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @param {Array<string>} [headers]
      * Column names to use.
      *
-     * @param {DataConverter} [converter]
-     * Converter for value conversions in table rows.
+     * @param {DataTable} [dataTable]
+     * Optional DataTable to use as base for the parsed dataTable
      *
      * @return {DataTable}
      * DataTable instance from the arrays.
      */
     public static getTableFromColumns(
         columns: Array<Array<DataTableRow.CellType>> = [],
-        headers: Array<string> = []
+        headers: Array<string> = [],
+        dataTable?: DataTable
     ): DataTable {
         const columnsLength = columns.length,
-            table = new DataTable();
+            table = dataTable?.clone() || new DataTable();
 
         // Assign an unique id for every column
         // without a provided name

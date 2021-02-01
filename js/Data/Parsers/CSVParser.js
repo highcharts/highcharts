@@ -388,11 +388,14 @@ var CSVParser = /** @class */ (function (_super) {
     /**
      * Handles converting the parsed data to a DataTable
      *
+     * @param {DataTable} [dataTable]
+     * Optional DataTable to use as base for the parsed dataTable
+     *
      * @returns {DataTable}
      * A DataTable from the parsed CSV
      */
-    CSVParser.prototype.getTable = function () {
-        return DataParser.getTableFromColumns(this.columns, this.headers);
+    CSVParser.prototype.getTable = function (dataTable) {
+        return DataParser.getTableFromColumns(this.columns, this.headers, dataTable);
     };
     /**
      * Converts the parser instance to ClassJSON.

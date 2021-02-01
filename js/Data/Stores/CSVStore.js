@@ -177,7 +177,7 @@ var CSVStore = /** @class */ (function (_super) {
                 table: store.table
             });
             store.parser.parse({ csv: csv });
-            store.table = store.parser.getTable();
+            store.table = store.parser.getTable(store.table);
             store.emit({
                 type: 'afterLoad',
                 csv: csv,

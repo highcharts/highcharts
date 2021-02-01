@@ -196,11 +196,14 @@ var HTMLTableParser = /** @class */ (function (_super) {
     /**
      * Handles converting the parsed data to a DataTable
      *
+     * @param {DataTable} [dataTable]
+     * Optional DataTable to use as base for the parsed dataTable
+     *
      * @return {DataTable}
      * A DataTable from the parsed HTML table
      */
-    HTMLTableParser.prototype.getTable = function () {
-        return DataParser.getTableFromColumns(this.columns, this.headers);
+    HTMLTableParser.prototype.getTable = function (dataTable) {
+        return DataParser.getTableFromColumns(this.columns, this.headers, dataTable);
     };
     /**
      * Converts the parser instance to ClassJSON.

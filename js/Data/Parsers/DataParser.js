@@ -90,16 +90,16 @@ var DataParser = /** @class */ (function () {
      * @param {Array<string>} [headers]
      * Column names to use.
      *
-     * @param {DataConverter} [converter]
-     * Converter for value conversions in table rows.
+     * @param {DataTable} [dataTable]
+     * Optional DataTable to use as base for the parsed dataTable
      *
      * @return {DataTable}
      * DataTable instance from the arrays.
      */
-    DataParser.getTableFromColumns = function (columns, headers) {
+    DataParser.getTableFromColumns = function (columns, headers, dataTable) {
         if (columns === void 0) { columns = []; }
         if (headers === void 0) { headers = []; }
-        var columnsLength = columns.length, table = new DataTable();
+        var columnsLength = columns.length, table = (dataTable === null || dataTable === void 0 ? void 0 : dataTable.clone()) || new DataTable();
         // Assign an unique id for every column
         // without a provided name
         while (headers.length < columnsLength) {

@@ -96,7 +96,7 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
             dataType: 'json',
             success: function (json) {
                 store.parser.parse(json);
-                store.table = store.parser.getTable();
+                store.table = store.parser.getTable(store.table);
                 // Polling
                 if (enablePolling) {
                     setTimeout(function () {

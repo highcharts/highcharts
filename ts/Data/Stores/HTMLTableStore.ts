@@ -190,7 +190,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             eventDetail
         );
 
-        store.table = store.parser.getTable();
+        store.table = store.parser.getTable(store.table);
 
         store.emit({
             type: 'afterLoad',

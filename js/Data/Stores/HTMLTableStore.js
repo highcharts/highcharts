@@ -127,7 +127,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
             return;
         }
         store.parser.parse(merge({ tableHTML: store.tableElement }, store.options), eventDetail);
-        store.table = store.parser.getTable();
+        store.table = store.parser.getTable(store.table);
         store.emit({
             type: 'afterLoad',
             detail: eventDetail,

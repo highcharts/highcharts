@@ -239,7 +239,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
                 table: store.table
             });
             store.parser.parse({ csv });
-            store.table = store.parser.getTable();
+            store.table = store.parser.getTable(store.table);
             store.emit({
                 type: 'afterLoad',
                 csv,

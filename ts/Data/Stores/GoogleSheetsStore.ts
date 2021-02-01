@@ -142,7 +142,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
             dataType: 'json',
             success: function (json: Highcharts.JSONType): void {
                 store.parser.parse(json);
-                store.table = store.parser.getTable();
+                store.table = store.parser.getTable(store.table);
 
                 // Polling
                 if (enablePolling) {
