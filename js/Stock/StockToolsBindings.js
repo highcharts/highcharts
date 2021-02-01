@@ -150,8 +150,9 @@ bindingsUtils.manageIndicators = function (data) {
             }
             series.remove(false);
             if (indicatorsWithAxes.indexOf(series.type) >= 0) {
+                var removedYAxisHeight = yAxis.options.height;
                 yAxis.remove(false);
-                navigation.resizeYAxes(true);
+                navigation.resizeYAxes(removedYAxisHeight);
             }
         }
     }
@@ -316,19 +317,22 @@ extend(NavigationBindings.prototype, {
      * @param {number} defaultHeight
      *        Default height in percents.
      *
-     * @param {boolean} deleteIndicatorAxis
-     *        true, if the indicator is deleted
+     * @param {string} removedYAxisHeight
+     *        Height of the removed yAxis.
      *
      * @return {Highcharts.YAxisPositions}
      *         An object containing an array of calculated positions
      *         in percentages. Format: `{top: Number, height: Number}`
      *         and maximum value of top + height of axes.
      */
-    getYAxisPositions: function (yAxes, plotHeight, defaultHeight, deleteIndicatorAxis) {
-        var positions, allAxesHeight = 0, previousAxisHeight;
+    getYAxisPositions: function (yAxes, plotHeight, defaultHeight, removedYAxisHeight) {
+        var positions, allAxesHeight = 0, previousAxisHeight, removedHeight;
         /** @private */
         function isPercentage(prop) {
             return defined(prop) && !isNumber(prop) && prop.match('%');
+        }
+        if (removedYAxisHeight) {
+            removedHeight = (parseFloat(removedYAxisHeight) / 100);
         }
         positions = yAxes.map(function (yAxis, index) {
             var height = isPercentage(yAxis.options.height) ?
@@ -338,20 +342,28 @@ extend(NavigationBindings.prototype, {
                 correctFloat(yAxis.top - yAxis.chart.plotTop) / plotHeight;
             // New axis' height is NaN so we can check if
             // the axis is newly created this way
-            if (!deleteIndicatorAxis) {
+            if (!removedHeight) {
                 if (!isNumber(height)) {
-                    // check if the previous axis is the
+                    // Check if the previous axis is the
                     // indicator axis (every indicator inherits from sma)
                     height = yAxes[index - 1].series.every(function (s) { return s.is('sma'); }) ?
-                        previousAxisHeight :
-                        defaultHeight / 100;
+                        previousAxisHeight : defaultHeight / 100;
                 }
                 if (!isNumber(top)) {
                     top = allAxesHeight;
                 }
+                previousAxisHeight = height;
+                allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
             }
-            previousAxisHeight = height;
-            allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+            else {
+                if (correctFloat(top - 0.01) <= (allAxesHeight || 0.1)) {
+                    allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+                }
+                else {
+                    top = correctFloat(top - removedHeight);
+                    allAxesHeight = correctFloat(allAxesHeight + height);
+                }
+            }
             return {
                 height: height * 100,
                 top: top * 100
@@ -410,32 +422,29 @@ extend(NavigationBindings.prototype, {
      *
      * @private
      * @function Highcharts.NavigationBindings#resizeYAxes
-     * @param {boolean} [deleteIndicatorAxis]
+     * @param {string} [removedYAxisHeight]
      *
      *
      */
-    resizeYAxes: function (deleteIndicatorAxis) {
-        var defaultHeight = 20; // in %, but as a number
+    resizeYAxes: function (removedYAxisHeight) {
+        // The height of the new axis before rescalling. In %, but as a number.
+        var defaultHeight = 20;
         var chart = this.chart, 
         // Only non-navigator axes
-        yAxes = chart.yAxis.filter(bindingsUtils.isNotNavigatorYAxis), plotHeight = chart.plotHeight, allAxesLength = yAxes.length, 
+        yAxes = chart.yAxis.filter(bindingsUtils.isNotNavigatorYAxis), plotHeight = chart.plotHeight, 
         // Gather current heights (in %)
-        _a = this.getYAxisPositions(yAxes, plotHeight, defaultHeight, deleteIndicatorAxis), positions = _a.positions, allAxesHeight = _a.allAxesHeight, resizers = this.getYAxisResizers(yAxes);
-        if (!deleteIndicatorAxis && allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)) {
+        _a = this.getYAxisPositions(yAxes, plotHeight, defaultHeight, removedYAxisHeight), positions = _a.positions, allAxesHeight = _a.allAxesHeight, resizers = this.getYAxisResizers(yAxes);
+        if (!removedYAxisHeight &&
+            allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)) {
             positions[positions.length - 1] = {
                 height: defaultHeight,
-                top: allAxesHeight * 100 - defaultHeight
+                top: correctFloat(allAxesHeight * 100 - defaultHeight)
             };
         }
         else {
             positions.forEach(function (position) {
-                position.height =
-                    (position.height /
-                        (allAxesHeight * 100)) *
-                        100;
-                position.top =
-                    (position.top / (allAxesHeight * 100)) *
-                        100;
+                position.height = (position.height / (allAxesHeight * 100)) * 100;
+                position.top = (position.top / (allAxesHeight * 100)) * 100;
             });
         }
         positions.forEach(function (position, index) {
