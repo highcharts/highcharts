@@ -3610,13 +3610,13 @@ class Chart {
 
                 // General calculations of panning state.
                 // This is related to using vertical panning. (#11315).
-                axis.series.forEach(function (series): void {
-                    if (
-                        hasVerticalPanning &&
-                        !isX && (
-                            !panningState || panningState.isDirty
-                        )
-                    ) {
+                if (
+                    hasVerticalPanning &&
+                    !isX && (
+                        !panningState || panningState.isDirty
+                    )
+                ) {
+                    axis.series.forEach(function (series): void {
                         const processedData = series.getProcessedData(true),
                             dataExtremes = series.getExtremes(
                                 processedData.yData, true
@@ -3644,8 +3644,8 @@ class Chart {
                                 panningState.startMax
                             );
                         }
-                    }
-                });
+                    });
+                }
 
                 paddedMin = Math.min(
                     pick(panningState?.startMin, extremes.dataMin),
