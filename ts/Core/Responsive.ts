@@ -348,7 +348,8 @@ Chart.prototype.currentOptions = function (
         ): void {
             if (
                 !depth &&
-                chart.collectionsWithUpdate.indexOf(key) > -1
+                chart.collectionsWithUpdate.indexOf(key) > -1 &&
+                curr[key]
             ) {
                 val = splat(val);
 
