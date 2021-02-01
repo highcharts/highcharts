@@ -159,6 +159,15 @@ function init(): void {
             if (this.points || this.graph) {
                 this.destroyGraphics();
             }
+            if ((this as any).getZonesGraphs) {
+                const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
+                props.forEach((prop): void => {
+                    const zoneGraph: Highcharts.SVGElement = (this as any)[prop[0]];
+                    if (zoneGraph) {
+                        (this as any)[prop[0]] = zoneGraph.destroy();
+                    }
+                });
+            }
 
             // If we're rendering per. series we should create the marker groups
             // as usual.
