@@ -29,6 +29,7 @@ import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import Series from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
@@ -405,6 +406,9 @@ Chart.prototype.applyFixed = function (): void {
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
         addEvent(Axis, 'afterInit', (): void => {
+            this.scrollableDirty = true;
+        });
+        addEvent(Series, 'show', (): void => {
             this.scrollableDirty = true;
         });
 
