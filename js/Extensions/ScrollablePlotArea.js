@@ -19,6 +19,7 @@ WIP on vertical scrollable plot area (#9378). To do:
 'use strict';
 import A from '../Core/Animation/AnimationUtilities.js';
 var stop = A.stop;
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
@@ -261,6 +262,7 @@ Chart.prototype.moveFixedElements = function () {
  * @return {void}
  */
 Chart.prototype.applyFixed = function () {
+    var _this = this;
     var _a, _b, _c;
     var fixedRenderer, scrollableWidth, scrollableHeight, firstTime = !this.fixedDiv, chartOptions = this.options.chart, scrollableOptions = chartOptions.scrollablePlotArea;
     // First render
@@ -289,12 +291,18 @@ Chart.prototype.applyFixed = function () {
             .add();
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
+        addEvent(Axis, 'afterInit', function () {
+            _this.scrollableDirty = true;
+        });
     }
     else {
         // Set the size of the fixed renderer to the visible width
         this.fixedRenderer.setSize(this.chartWidth, this.chartHeight);
     }
-    this.moveFixedElements();
+    if (this.scrollableDirty || firstTime) {
+        this.scrollableDirty = false;
+        this.moveFixedElements();
+    }
     // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0);
     scrollableHeight = this.chartHeight + (this.scrollablePixelsY || 0);
