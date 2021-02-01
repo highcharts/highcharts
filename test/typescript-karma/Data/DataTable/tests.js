@@ -352,22 +352,22 @@ QUnit.test('DataTable column methods', function (assert) {
     );
 
     assert.deepEqual(
-        table.getColumns(['x'])['x'],
+        table.getColumn('x'),
         table.getColumns(['population'])['population'],
         'DataTable should return correct rows for alias.'
     );
 
     table.createColumnAlias('gdp', 'population')
     assert.deepEqual(
-        table.getColumns(['population'])['population'],
-        table.getColumns(['gdp'])['gdp'],
+        table.getColumn('population'),
+        table.getColumn('gdp'),
         'DataTable should prioritize alias.'
     );
 
     table.removeColumnAlias('population');
     assert.notDeepEqual(
-        table.getColumns(['population'])['population'],
-        table.getColumns(['gdp'])['gdp'],
+        table.getColumn('population'),
+        table.getColumn('gdp'),
         'After alias is removed, getColumns should get canonical name.'
     );
 
@@ -424,11 +424,11 @@ QUnit.test('DataTable column methods', function (assert) {
     );
 
     assert.notOk(
-        table.getColumns(['Cols'])['Cols'],
+        table.getColumn('Cols'),
         'Column "Cols" should be deleted.'
     );
 
-    const expectedValues = table.getColumns(['population'])['population'];
+    const expectedValues = table.getColumn('population');
     assert.deepEqual(
         table.removeColumn('population'),
         expectedValues,
@@ -436,7 +436,7 @@ QUnit.test('DataTable column methods', function (assert) {
     );
 
     assert.notOk(
-        table.getColumns(['population'])['population'],
+        table.getColumn('population'),
         'Column "population" should be removed.'
     )
 
@@ -506,9 +506,9 @@ QUnit.test('DataTable.renameColumn', function (assert) {
         table.renameColumn('id', 'newIDColumn'),
         'DataTable should fail when trying to move a column with the name "id".'
     );
-    assert.deepEqual(
-        table.getColumns(['newIDColumn']),
-        {}
+    assert.notOk(
+        table.getColumn('newIDColumn'),
+        'DataTable should fail when trying to move a column with the name "id".'
     );
 
     assert.notOk(
@@ -519,7 +519,7 @@ QUnit.test('DataTable.renameColumn', function (assert) {
         table.getColumns(['existingColumn', 'id']),
         {
             existingColumn: [true],
-            id: table.getColumns(['id'])['id'],
+            id: table.getColumn('id'),
         }
     );
 });

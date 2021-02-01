@@ -12,6 +12,14 @@
 
 /* *
  *
+ *  Imports
+ *
+ * */
+
+import DataJSON from './DataJSON';
+
+/* *
+ *
  *  Interface
  *
  * */
@@ -97,7 +105,7 @@ declare namespace DataEventEmitter {
     /**
      * Custom information for an event object.
      */
-    export type EventDetail = Record<string, string>;
+    export type EventDetail = DataJSON.JSONObject;
 
     /**
      * Event object with additional event information. This interface can be

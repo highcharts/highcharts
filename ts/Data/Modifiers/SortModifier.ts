@@ -112,15 +112,15 @@ class SortModifier extends DataModifier {
      *
      * */
 
-    public execute(
+    public execute<T extends DataEventEmitter.EventDetail>(
         table: DataTable,
-        eventDetail?: DataEventEmitter.EventDetail
+        eventDetail?: T
     ): DataTable {
         const modifier = this,
             {
                 direction,
-                indexColumn,
-                orderByColumn
+                orderByColumn,
+                orderInColumn
             } = modifier.options,
             compare = (
                 direction === 'asc' ?
@@ -134,22 +134,7 @@ class SortModifier extends DataModifier {
             table
         });
 
-        const tableRows = table.getAllRows();
-
-        let tableRow: (DataTableRow|undefined) = table.getFirstNonNullRow();
-
-        if (
-            indexColumn &&
-            tableRow &&
-            !tableRow.hasCell(indexColumn)
-        ) {
-            for (let i = 0, iEnd = tableRows.length; i < iEnd; ++i) {
-                tableRow = tableRows[i];
-                tableRow.insertCell(indexColumn, i);
-            }
-        }
-
-        tableRows.sort((
+        const tableRows = table.getAllRows().sort((
             a: DataTableRow,
             b: DataTableRow
         ): number => compare(
@@ -157,7 +142,13 @@ class SortModifier extends DataModifier {
             b.getCell(orderByColumn)
         ));
 
-        table = new DataTable(tableRows);
+        if (orderInColumn) {
+            for (let i = 0, iEnd = tableRows.length; i < iEnd; ++i) {
+                tableRows[i].setCell(orderInColumn, i);
+            }
+        } else {
+            table = new DataTable(tableRows);
+        }
 
         modifier.emit({
             type: 'afterExecute',
@@ -206,9 +197,27 @@ namespace SortModifier {
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
+
+        /**
+         * Direction of sorting.
+         *
+         * @default "desc"
+         */
         direction: ('asc'|'desc');
-        indexColumn?: string;
+
+        /**
+         * Column with values to order.
+         *
+         * @default "y"
+         */
         orderByColumn: string;
+
+        /**
+         * If set, the order of rows in the table will not change, just the
+         * index values of the given column.
+         */
+        orderInColumn?: string;
+
     }
 
 }

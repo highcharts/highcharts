@@ -373,6 +373,90 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
+     * Retrieves the given column, either by the canonical column name, or by an
+     * alias.
+     *
+     * @param {string} columnNameOrAlias
+     * Name or alias of the column to get, alias takes precedence.
+     *
+     * @return {DataTable.Column|undefined}
+     * An array with column values, or `undefined` if not found.
+     */
+    public getColumn(columnNameOrAlias: string): (DataTable.Column|undefined) {
+        return this.getColumns([columnNameOrAlias])[columnNameOrAlias];
+    }
+
+    /**
+     * Retrieves the given columns, either by the canonical column name,
+     * or by an alias. This function can also retrieve row IDs as column `id`.
+     *
+     * @param {Array<string>} [columnNamesOrAlias]
+     * Names or aliases for the columns to get, aliases taking precedence.
+     *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state.
+     *
+     * @return {DataTable.ColumnCollection}
+     * A two-dimensional array of the specified columns,
+     * if the column does not exist it will be `undefined`
+     */
+    public getColumns(
+        columnNamesOrAlias: Array<string> = [],
+        usePresentationOrder?: boolean
+    ): DataTable.ColumnCollection {
+        const table = this,
+            aliasMap = table.aliasMap,
+            rows = table.rows,
+            noColumnNames = !columnNamesOrAlias.length,
+            columnSorter = (
+                usePresentationOrder &&
+                table.presentationState.getColumnSorter()
+            ),
+            columns: Record<string, Array<DataTableRow.CellType>> = {};
+
+        let columnName: string,
+            row: DataTableRow,
+            cell: DataTableRow.CellType;
+
+        if (columnSorter) {
+            columnNamesOrAlias.sort(columnSorter);
+        }
+
+        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
+            row = rows[i];
+
+            if (noColumnNames) {
+                columnNamesOrAlias = row.getCellNames();
+                if (columnSorter) {
+                    columnNamesOrAlias.sort(columnSorter);
+                }
+                columnNamesOrAlias.unshift('id');
+            }
+
+            for (let j = 0, jEnd = columnNamesOrAlias.length; j < jEnd; ++j) {
+                columnName = columnNamesOrAlias[j];
+                cell = (
+                    columnName === 'id' ?
+                        row.id :
+                        row.getCell(aliasMap[columnName] || columnName)
+                );
+
+                if (
+                    columns[columnName] ||
+                    typeof cell !== 'undefined'
+                ) {
+                    if (!columns[columnName]) {
+                        columns[columnName] = new Array(i + 1);
+                    }
+                    columns[columnName][i] = cell;
+                }
+            }
+        }
+
+        return columns;
+    }
+
+    /**
      * Returns the first row of the table that is not null.
      *
      * @return {DataTableRow|undefined}
@@ -454,76 +538,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public getVersionTag(): string {
         return this.versionTag || (this.versionTag = uniqueKey());
-    }
-
-    /**
-     * Retrieves the given columns, either by the canonical column name,
-     * or by an alias. This function can also retrieve row IDs.
-     *
-     * @param {Array<string>} [columnNamesOrAlias]
-     * Names or aliases for the columns to get, aliases taking precedence.
-     *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
-     *
-     * @return {Array<Array<DataTableRow.CellType>|undefined>}
-     * A two-dimensional array of the specified columns,
-     * if the column does not exist it will be `undefined`
-     */
-    public getColumns(
-        columnNamesOrAlias: Array<string> = [],
-        usePresentationOrder?: boolean
-    ): DataTable.ColumnCollection {
-        const table = this,
-            aliasMap = table.aliasMap,
-            rows = table.rows,
-            noColumnNames = !columnNamesOrAlias.length,
-            columnSorter = (
-                usePresentationOrder &&
-                table.presentationState.getColumnSorter()
-            ),
-            columns: Record<string, Array<DataTableRow.CellType>> = {};
-
-        let columnName: string,
-            row: DataTableRow,
-            cell: DataTableRow.CellType;
-
-        if (columnSorter) {
-            columnNamesOrAlias.sort(columnSorter);
-        }
-
-        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            row = rows[i];
-
-            if (noColumnNames) {
-                columnNamesOrAlias = row.getCellNames();
-                if (columnSorter) {
-                    columnNamesOrAlias.sort(columnSorter);
-                }
-                columnNamesOrAlias.unshift('id');
-            }
-
-            for (let j = 0, jEnd = columnNamesOrAlias.length; j < jEnd; ++j) {
-                columnName = columnNamesOrAlias[j];
-                cell = (
-                    columnName === 'id' ?
-                        row.id :
-                        row.getCell(aliasMap[columnName] || columnName)
-                );
-
-                if (
-                    columns[columnName] ||
-                    typeof cell !== 'undefined'
-                ) {
-                    if (!columns[columnName]) {
-                        columns[columnName] = new Array(i + 1);
-                    }
-                    columns[columnName][i] = cell;
-                }
-            }
-        }
-
-        return columns;
     }
 
     /**
@@ -894,11 +908,18 @@ namespace DataTable {
     );
 
     /**
+     * An array of column values.
+     */
+    export interface Column extends Array<DataTableRow.CellType> {
+        [index: number]: DataTableRow.CellType;
+    }
+
+    /**
      * A record of columns, where the key is the column name
      * and the value is an array of column values
      */
     export interface ColumnCollection {
-        [className: string]: Array<DataTableRow.CellType>;
+        [columnNameOrAlias: string]: Column;
     }
 
     /**
