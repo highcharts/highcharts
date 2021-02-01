@@ -54,7 +54,7 @@ declare global {
                 yAxes: Array<AxisType>,
                 plotHeight: number,
                 defaultHeight: number,
-                deleteIndicatorAxis?: boolean
+                removedYAxisHeight?: string
             ): YAxisPositions;
             /** @requires modules/stock-tools */
             getYAxisResizers(
@@ -68,7 +68,7 @@ declare global {
                 adder?: number
             ): Array<Record<string, number>>;
             /** @requires modules/stock-tools */
-            resizeYAxes (deleteIndicatorAxis?: boolean): void;
+            resizeYAxes (removedYAxisHeight?: string): void;
         }
         interface NavigationBindingsAttractionObject {
             x: number;
@@ -293,8 +293,9 @@ bindingsUtils.manageIndicators = function (
             series.remove(false);
 
             if (indicatorsWithAxes.indexOf(series.type) >= 0) {
+                const removedYAxisHeight = yAxis.options.height;
                 yAxis.remove(false);
-                navigation.resizeYAxes(true);
+                navigation.resizeYAxes(removedYAxisHeight as string);
             }
         }
     } else {
@@ -505,8 +506,8 @@ extend(NavigationBindings.prototype, {
      * @param {number} defaultHeight
      *        Default height in percents.
      *
-     * @param {boolean} deleteIndicatorAxis
-     *        true, if the indicator is deleted
+     * @param {string} removedYAxisHeight
+     *        Height of the removed yAxis.
      *
      * @return {Highcharts.YAxisPositions}
      *         An object containing an array of calculated positions
@@ -517,14 +518,19 @@ extend(NavigationBindings.prototype, {
         yAxes: Array<AxisType>,
         plotHeight: number,
         defaultHeight: number,
-        deleteIndicatorAxis?: boolean
+        removedYAxisHeight?: string
     ): Highcharts.YAxisPositions {
         var positions: Array<Record<string, number>>|undefined,
             allAxesHeight = 0,
-            previousAxisHeight: number;
+            previousAxisHeight: number,
+            removedHeight: number;
         /** @private */
         function isPercentage(prop: number | string | undefined): boolean {
             return defined(prop) && !isNumber(prop) && (prop.match('%') as any);
+        }
+
+        if (removedYAxisHeight) {
+            removedHeight = (parseFloat(removedYAxisHeight) / 100);
         }
 
         positions = yAxes.map(function (yAxis: AxisType, index: number): Record<string, number> {
@@ -537,26 +543,29 @@ extend(NavigationBindings.prototype, {
 
             // New axis' height is NaN so we can check if
             // the axis is newly created this way
-            if (!deleteIndicatorAxis) {
+            if (!removedHeight) {
                 if (!isNumber(height)) {
-                // check if the previous axis is the
-                // indicator axis (every indicator inherits from sma)
-
+                    // Check if the previous axis is the
+                    // indicator axis (every indicator inherits from sma)
                     height = yAxes[index - 1].series.every((s: Series): boolean => s.is('sma')) ?
-                        previousAxisHeight :
-                        defaultHeight / 100;
+                        previousAxisHeight : defaultHeight / 100;
                 }
 
                 if (!isNumber(top)) {
                     top = allAxesHeight;
                 }
+
+                previousAxisHeight = height;
+
+                allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+            } else {
+                if (correctFloat(top - 0.01) <= (allAxesHeight || 0.1)) {
+                    allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+                } else {
+                    top = correctFloat(top - removedHeight);
+                    allAxesHeight = correctFloat(allAxesHeight + height);
+                }
             }
-
-            previousAxisHeight = height;
-
-            allAxesHeight = correctFloat(
-                Math.max(allAxesHeight, (top || 0) + (height || 0))
-            );
 
             return {
                 height: height * 100,
@@ -625,56 +634,51 @@ extend(NavigationBindings.prototype, {
      *
      * @private
      * @function Highcharts.NavigationBindings#resizeYAxes
-     * @param {boolean} [deleteIndicatorAxis]
+     * @param {string} [removedYAxisHeight]
      *
      *
      */
     resizeYAxes: function (
         this: Highcharts.StockToolsNavigationBindings,
-        deleteIndicatorAxis?: boolean
+        removedYAxisHeight?: string
     ): void {
-        const defaultHeight = 20; // in %, but as a number
+        // The height of the new axis before rescalling. In %, but as a number.
+        const defaultHeight = 20;
         var chart = this.chart,
             // Only non-navigator axes
             yAxes = chart.yAxis.filter(bindingsUtils.isNotNavigatorYAxis),
             plotHeight = chart.plotHeight,
-            allAxesLength = yAxes.length,
             // Gather current heights (in %)
             { positions, allAxesHeight } = this.getYAxisPositions(
                 yAxes,
                 plotHeight,
                 defaultHeight,
-                deleteIndicatorAxis
+                removedYAxisHeight
             ),
             resizers = this.getYAxisResizers(yAxes);
 
-        if (!deleteIndicatorAxis && allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)) {
+        if (
+            !removedYAxisHeight &&
+            allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)
+        ) {
             positions[positions.length - 1] = {
                 height: defaultHeight,
-                top: allAxesHeight * 100 - defaultHeight
+                top: correctFloat(allAxesHeight * 100 - defaultHeight)
             };
         } else {
             positions.forEach(function (position: Record<string, number>): void {
-                position.height =
-                    (position.height /
-                        (allAxesHeight * 100)) *
-                    100;
-                position.top =
-                    (position.top / (allAxesHeight * 100)) *
-                    100;
+                position.height = (position.height / (allAxesHeight * 100)) * 100;
+                position.top = (position.top / (allAxesHeight * 100)) * 100;
             });
         }
 
         positions.forEach(function (position: Record<string, number>, index: number): void {
-            yAxes[index].update(
-                {
-                    height: position.height + '%',
-                    top: position.top + '%',
-                    resize: resizers[index],
-                    offset: 0
-                },
-                false
-            );
+            yAxes[index].update({
+                height: position.height + '%',
+                top: position.top + '%',
+                resize: resizers[index],
+                offset: 0
+            }, false);
         });
     },
 
