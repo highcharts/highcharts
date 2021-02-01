@@ -1,6 +1,18 @@
 const languages = {
     no: {
         lang: {
+            accessibility: {
+                rangeSelector: {
+                    maxInputLabel: 'Velg sluttdato',
+                    minInputLabel: 'Velg startdato'
+                },
+                chartContainerLabel: 'Highcharts interaktivt diagram',
+                exporting: {
+                    chartMenuLabel: 'Diagram meny',
+                    exportRegionLabel: 'Diagram meny',
+                    menuButtonLabel: 'Se diagram meny'
+                }
+            },
             decimalPoint: ',',
             thousandsSep: '.',
             loading: 'Later­...',
@@ -19,10 +31,52 @@ const languages = {
             downloadPDF: 'Last ned som PDF-dokument',
             downloadSVG: 'Last ned som SVG-bilde',
             title: 'AAPL Aksjekurs'
+        },
+        rangeSelector: {
+            buttons: [{
+                type: 'month',
+                count: 1,
+                text: '1m',
+                title: '1m'
+            }, {
+                type: 'month',
+                count: 3,
+                text: '3m',
+                title: '3m'
+            }, {
+                type: 'month',
+                count: 6,
+                text: '6m',
+                title: '6m'
+            }, {
+                type: 'ytd',
+                text: 'YTD',
+                title: 'YTD'
+            }, {
+                type: 'year',
+                count: 1,
+                text: '1år'
+            }, {
+                type: 'all',
+                text: 'Alle',
+                title: 'Alle'
+            }]
         }
     },
     de: {
         lang: {
+            accessibility: {
+                rangeSelector: {
+                    maxInputLabel: 'Endpunkt auswählen',
+                    minInputLabel: 'Startpunkt auswählen'
+                },
+                chartContainerLabel: 'Interaktives Highcharts-Diagramm',
+                exporting: {
+                    chartMenuLabel: 'Diagramm-Menü',
+                    exportRegionLabel: 'Diagramm-Menü',
+                    menuButtonLabel: 'Diagramm-Menü ansehen'
+                }
+            },
             decimalPoint: ',',
             thousandsSep: '.',
             loading: 'Daten werden geladen...',
@@ -43,6 +97,36 @@ const languages = {
             resetZoom: "Zoom zurücksetzen",
             resetZoomTitle: "Zoom zurücksetzen",
             title: 'AAPL Aktienkurs'
+        },
+        rangeSelector: {
+            buttons: [{
+                type: 'month',
+                count: 1,
+                text: '1 M',
+                title: '1 M'
+            }, {
+                type: 'month',
+                count: 3,
+                text: '3 M',
+                title: '3 M'
+            }, {
+                type: 'month',
+                count: 6,
+                text: '6 M',
+                title: '6 M'
+            }, {
+                type: 'ytd',
+                text: 'YTD',
+                title: 'YTD'
+            }, {
+                type: 'year',
+                count: 1,
+                text: '1 J'
+            }, {
+                type: 'all',
+                text: 'Alle',
+                title: 'Alle'
+            }]
         }
     }
 };
@@ -87,11 +171,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
                         color: '#000'
                     }
                 }
-            },
-            series: {
-                label: {
-                    enabled: false
-                }
             }
         },
 
@@ -108,7 +187,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
         return new Highcharts.stockChart('container', options);
     }
 
-    let chart = createChart(chartOptions);
+    createChart(chartOptions);
     const initialOptions = JSON.parse(JSON.stringify(Highcharts.getOptions()));
 
     function resetOptions() {
@@ -116,24 +195,22 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
     }
 
     document.getElementById('en').addEventListener('click', function () {
-        chart.destroy();
         resetOptions();
         Highcharts.setOptions(initialOptions);
-        chart = createChart(chartOptions);
+        createChart(chartOptions);
     });
 
     document.getElementById('no').addEventListener('click', function () {
-        chart.destroy();
         Highcharts.setOptions(languages.no);
-        chart = createChart(Highcharts.merge(chartOptions, {
+        document.getElementById("container").lang = "no";
+        createChart(Highcharts.merge(chartOptions, {
             title: { text: Highcharts.getOptions().lang.title }
         }));
     });
 
     document.getElementById('de').addEventListener('click', function () {
-        chart.destroy();
         Highcharts.setOptions(languages.de);
-        chart = createChart(Highcharts.merge(chartOptions, {
+        createChart(Highcharts.merge(chartOptions, {
             title: { text: Highcharts.getOptions().lang.title }
         }));
     });
