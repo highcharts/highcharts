@@ -2452,8 +2452,8 @@ var Chart = /** @class */ (function () {
             {
                 x: chart.plotLeft,
                 y: chart.plotTop,
-                width: chart.spacingBox.x + chart.spacingBox.width - chart.plotLeft,
-                height: chart.spacingBox.y + chart.spacingBox.height - chart.plotTop
+                width: chart.chartWidth - chart.plotLeft - (chart.marginRight || 0),
+                height: chart.chartHeight - chart.plotTop - (chart.marginBottom || 0)
             });
         /**
          * @private
