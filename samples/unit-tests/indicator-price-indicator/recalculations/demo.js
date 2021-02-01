@@ -147,3 +147,54 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('CurrentPriceIndicator && yAxis crosshair label options, #13875.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            tooltip: {
+                split: false
+            },
+
+            xAxis: [{
+                crosshair: {
+                    label: {
+                        padding: 6,
+                        backgroundColor: "red",
+                        enabled: true
+                    },
+                    snap: false,
+                    dashStyle: "LongDash",
+                    color: "red"
+                }
+            }],
+            yAxis: [{
+                crosshair: {
+                    dashStyle: "LongDash",
+                    color: "green",
+
+                    label: {
+                        padding: 6,
+                        backgroundColor: "green",
+                        enabled: true
+                    }
+                }
+            }],
+            series: [{
+                data: [100, 120, 200, 130],
+                lastVisiblePrice: {
+                    enabled: true,
+                    label: {
+                        enabled: true
+                    }
+                }
+            }]
+        }),
+        controller = new TestController(chart);
+
+    controller.moveTo(300, 200);
+
+    assert.strictEqual(
+        chart.yAxis[0].crossLabel.fill,
+        'green',
+        'Axis croshair Label should not inherit proerties from CurrentPriceIndicator.'
+    );
+});
