@@ -20,6 +20,7 @@ import palette from '../Color/Palette.js';
 import Point from './Point.js';
 import SeriesRegistry from './SeriesRegistry.js';
 var seriesTypes = SeriesRegistry.seriesTypes;
+import SortModifier from '../../Data/Modifiers/SortModifier.js';
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, cleanRecursively = U.cleanRecursively, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
@@ -102,6 +103,7 @@ var Series = /** @class */ (function () {
         this.points = void 0;
         this.processedXData = void 0;
         this.processedYData = void 0;
+        this.table = void 0;
         this.tooltipOptions = void 0;
         this.userOptions = void 0;
         this.xAxis = void 0;
@@ -1030,40 +1032,87 @@ var Series = /** @class */ (function () {
                     series: series
                 }, pointOptions)) || {};
         };
-        data.forEach(function (pointOptions, i) {
-            data[i] = getPointOptionsObject(series, pointOptions);
-            data[i].index = i;
+        /*
+        if (data[0] instanceof Point) {
+            throw new Error('Options are a point instance!');
+        }
+        */
+        var sorter = new SortModifier({
+            orderByColumn: sortKey,
+            orderInColumn: 'x'
+        }), table = sorter.execute(Series.getTableFromSeriesOptions(merge(options, { data: data }))), tData = (Series.getSeriesOptionsFromTable(table).data || []);
+        /*
+        tData.forEach(function (pointOptions, i): void {
+            tData[i] = getPointOptionsObject(series, pointOptions);
+            (tData[i] as any).index = i;
         }, this);
+        */
+        if (series.linkedSeries) {
+            series.linkedSeries.forEach(function (linkedSeries) {
+                var linkedOptions = linkedSeries.options, linkedData = linkedOptions.data;
+                if ((!linkedOptions.dataSorting ||
+                    !linkedOptions.dataSorting.enabled) &&
+                    linkedData) {
+                    linkedData.forEach(function (pointOptions, i) {
+                        linkedData[i] = getPointOptionsObject(linkedSeries, pointOptions);
+                        if (tData[i]) {
+                            linkedData[i].x = tData[i].x;
+                            linkedData[i].index = i;
+                        }
+                    });
+                    linkedSeries.setData(linkedData, false);
+                }
+            });
+        }
+        return tData;
+        /*
+        data.forEach(function (pointOptions, i): void {
+            data[i] = getPointOptionsObject(series, pointOptions);
+            (data[i] as any).index = i;
+        }, this);
+
         // Sorting
-        sortedData = data.concat().sort(function (a, b) {
-            var aValue = getNestedProperty(sortKey, a);
-            var bValue = getNestedProperty(sortKey, b);
+        sortedData = data.concat().sort((a, b): number => {
+const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
+const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
             return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
-        });
+        }) as Array<Point>;
         // Set x value depending on the position in the array
-        sortedData.forEach(function (point, i) {
+        sortedData.forEach(function (point, i): void {
             point.x = i;
         }, this);
+
         // Set the same x for linked series points if they don't have their
         // own sorting
         if (series.linkedSeries) {
-            series.linkedSeries.forEach(function (linkedSeries) {
-                var options = linkedSeries.options, seriesData = options.data;
-                if ((!options.dataSorting ||
+            series.linkedSeries.forEach(function (linkedSeries): void {
+                var options = linkedSeries.options,
+                    seriesData = options.data as Array<PointOptions>;
+
+                if (
+                    (!options.dataSorting ||
                     !options.dataSorting.enabled) &&
-                    seriesData) {
-                    seriesData.forEach(function (pointOptions, i) {
-                        seriesData[i] = getPointOptionsObject(linkedSeries, pointOptions);
+                    seriesData
+                ) {
+                    seriesData.forEach(function (pointOptions, i): void {
+                        seriesData[i] = getPointOptionsObject(
+                            linkedSeries,
+                            pointOptions
+                        );
+
                         if (data[i]) {
-                            seriesData[i].x = data[i].x;
+                            seriesData[i].x = (data[i] as any).x;
                             seriesData[i].index = i;
                         }
                     });
+
                     linkedSeries.setData(seriesData, false);
                 }
             });
         }
-        return data;
+
+        return data as any;
+        */
     };
     /**
      * Internal function to process the data by cropping away unused data

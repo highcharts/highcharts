@@ -39,8 +39,6 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
-import type SplinePoint from '../../Series/Spline/SplinePoint';
-import type SplineSeries from '../../Series/Spline/SplineSeries';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -64,6 +62,7 @@ import palette from '../Color/Palette.js';
 import Point from './Point.js';
 import SeriesRegistry from './SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
+import SortModifier from '../../Data/Modifiers/SortModifier.js';
 import SVGElement from '../Renderer/SVG/SVGElement.js';
 import U from '../Utilities.js';
 const {
@@ -2871,6 +2870,8 @@ class Series {
 
     public symbol?: string;
 
+    public table: DataTable = void 0 as any;
+
     public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
 
     public touched?: boolean;
@@ -3829,7 +3830,7 @@ class Series {
      *        `false` to prevent.
      */
     public setData(
-        data: Array<(PointOptions|PointShortOptions)>,
+        data?: (Array<(PointOptions|PointShortOptions)>|null),
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
@@ -4017,7 +4018,58 @@ class Series {
                         series: series
                     }, pointOptions)) || {};
             };
+        /*
+        if (data[0] instanceof Point) {
+            throw new Error('Options are a point instance!');
+        }
+        */
+        const sorter = new SortModifier({
+                orderByColumn: sortKey,
+                orderInColumn: 'x'
+            }),
+            table = sorter.execute(
+                Series.getTableFromSeriesOptions(
+                    merge(options, { data })
+                )
+            ),
+            tData = (Series.getSeriesOptionsFromTable(table).data || []);
+        /*
+        tData.forEach(function (pointOptions, i): void {
+            tData[i] = getPointOptionsObject(series, pointOptions);
+            (tData[i] as any).index = i;
+        }, this);
+        */
+        if (series.linkedSeries) {
+            series.linkedSeries.forEach(function (linkedSeries): void {
+                const linkedOptions = linkedSeries.options,
+                    linkedData = linkedOptions.data as Array<PointOptions>;
 
+                if (
+                    (
+                        !linkedOptions.dataSorting ||
+                        !linkedOptions.dataSorting.enabled
+                    ) &&
+                    linkedData
+                ) {
+                    linkedData.forEach(function (pointOptions, i): void {
+                        linkedData[i] = getPointOptionsObject(
+                            linkedSeries,
+                            pointOptions
+                        );
+
+                        if (tData[i]) {
+                            linkedData[i].x = (tData[i] as any).x;
+                            linkedData[i].index = i;
+                        }
+                    });
+
+                    linkedSeries.setData(linkedData, false);
+                }
+            });
+        }
+        return tData as any;
+
+        /*
         data.forEach(function (pointOptions, i): void {
             data[i] = getPointOptionsObject(series, pointOptions);
             (data[i] as any).index = i;
@@ -4025,8 +4077,8 @@ class Series {
 
         // Sorting
         sortedData = data.concat().sort((a, b): number => {
-            const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
-            const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
+const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
+const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
             return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
         }) as Array<Point>;
         // Set x value depending on the position in the array
@@ -4064,6 +4116,7 @@ class Series {
         }
 
         return data as any;
+        */
     }
 
     /**
