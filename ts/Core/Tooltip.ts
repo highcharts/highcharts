@@ -958,8 +958,9 @@ class Tooltip {
                 min: number,
                 max: number
             ): (boolean|undefined) {
-                const scaledDist = dim === 'y' ?
-                        scaleY(distance) : scaleX(distance),
+                const scaledDist = outside ?
+                        (dim === 'y' ? scaleY(distance) : scaleX(distance)) :
+                        distance,
                     scaleDiff = (innerSize - scaledInnerSize) / 2,
                     roomLeft = scaledInnerSize < point - distance,
                     roomRight = point + distance + scaledInnerSize < outerSize,
