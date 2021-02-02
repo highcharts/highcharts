@@ -829,21 +829,10 @@ extend(
             return temperature - temperatureStep * currentStep;
         },
         isStable: function (this: Highcharts.NetworkgraphLayout): boolean {
-            var tempDiff = Math.abs(
-                (this.prevSystemTemperature as any) -
-                (this.systemTemperature as any)
-            );
-
-            if ((!this.enableSimulation && tempDiff < 0.00001)) { // Tests still rely on this old check.
-                return true;
-            }
-
-            var upScaledTemperature = 10 * (this.systemTemperature as any) /
-                Math.sqrt(this.nodes.length);
-
-            return Math.abs(upScaledTemperature) < 1 && // #14439, new stable check.
-                tempDiff < 0.00001 ||
-                (this.temperature as any) <= 0;
+            return Math.abs(
+                (this.systemTemperature as any) -
+                (this.prevSystemTemperature as any)
+            ) < 0.00001 || (this.temperature as any) <= 0;
         },
         getSystemTemperature: function (
             this: Highcharts.NetworkgraphLayout
