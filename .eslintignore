@@ -2,6 +2,7 @@ docs/sidebars.js
 js/Accessibility/**/*.js
 js/Core/**/*.js
 js/Data/**/*.js
+js/Dashboard/**/*.js
 js/Extensions/**/*.js
 js/Gantt/**/*.js
 js/Maps/**/*.js
