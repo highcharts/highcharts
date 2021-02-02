@@ -111,15 +111,15 @@ var Fullscreen = /** @class */ (function () {
         if (fullscreen.unbindFullscreenEvent) {
             fullscreen.unbindFullscreenEvent();
         }
-        var widthOption = optionsChart && optionsChart.width;
-        var heightOption = optionsChart && optionsChart.height;
         chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
         fullscreen.origWidth = void 0;
         fullscreen.origHeight = void 0;
         if (optionsChart) {
-            optionsChart.width = widthOption;
-            optionsChart.height = heightOption;
+            optionsChart.width = fullscreen.origWidthOption;
+            optionsChart.height = fullscreen.origHeightOption;
         }
+        fullscreen.origWidthOption = void 0;
+        fullscreen.origHeightOption = void 0;
         fullscreen.isOpen = false;
         fullscreen.setButtonText();
     };
@@ -136,7 +136,11 @@ var Fullscreen = /** @class */ (function () {
      * @requires    modules/full-screen
      */
     Fullscreen.prototype.open = function () {
-        var fullscreen = this, chart = fullscreen.chart;
+        var fullscreen = this, chart = fullscreen.chart, optionsChart = chart.options.chart;
+        if (optionsChart) {
+            fullscreen.origWidthOption = optionsChart.width;
+            fullscreen.origHeightOption = optionsChart.height;
+        }
         fullscreen.origWidth = chart.chartWidth;
         fullscreen.origHeight = chart.chartHeight;
         // Handle exitFullscreen() method when user clicks 'Escape' button.
@@ -149,6 +153,7 @@ var Fullscreen = /** @class */ (function () {
                     fullscreen.close();
                 }
                 else {
+                    chart.setSize(null, null, false);
                     fullscreen.isOpen = true;
                     fullscreen.setButtonText();
                 }

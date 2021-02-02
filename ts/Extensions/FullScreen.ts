@@ -58,7 +58,9 @@ declare global {
             public isOpen: boolean;
             public open(): void;
             public origHeight?: number;
+            public origHeightOption?: (number|string|null);
             public origWidth?: number;
+            public origWidthOption?: (number|string|null);
             public toggle(): void;
             public unbindFullscreenEvent?: Function;
         }
@@ -158,7 +160,11 @@ class Fullscreen {
     /** @private */
     public origHeight?: number;
     /** @private */
+    public origHeightOption?: (number|string|null);
+    /** @private */
     public origWidth?: number;
+    /** @private */
+    public origWidthOption?: (number|string|null);
 
     /** @private */
     public unbindFullscreenEvent?: Function;
@@ -200,17 +206,16 @@ class Fullscreen {
             fullscreen.unbindFullscreenEvent();
         }
 
-        const widthOption = optionsChart && optionsChart.width;
-        const heightOption = optionsChart && optionsChart.height;
-
         chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
         fullscreen.origWidth = void 0;
         fullscreen.origHeight = void 0;
 
         if (optionsChart) {
-            optionsChart.width = widthOption;
-            optionsChart.height = heightOption;
+            optionsChart.width = fullscreen.origWidthOption;
+            optionsChart.height = fullscreen.origHeightOption;
         }
+        fullscreen.origWidthOption = void 0;
+        fullscreen.origHeightOption = void 0;
 
         fullscreen.isOpen = false;
 
@@ -230,8 +235,13 @@ class Fullscreen {
      */
     public open(): void {
         const fullscreen = this,
-            chart = fullscreen.chart;
+            chart = fullscreen.chart,
+            optionsChart = chart.options.chart;
 
+        if (optionsChart) {
+            fullscreen.origWidthOption = optionsChart.width;
+            fullscreen.origHeightOption = optionsChart.height;
+        }
         fullscreen.origWidth = chart.chartWidth;
         fullscreen.origHeight = chart.chartHeight;
 
@@ -246,6 +256,7 @@ class Fullscreen {
                         fullscreen.isOpen = false;
                         fullscreen.close();
                     } else {
+                        chart.setSize(null, null, false);
                         fullscreen.isOpen = true;
                         fullscreen.setButtonText();
                     }
