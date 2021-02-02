@@ -85,6 +85,8 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
             worksheet,
             'public/values?alt=json'
         ].join('/');
+        // If already loaded, clear the current rows
+        store.table.clear();
         store.emit({
             type: 'load',
             detail: eventDetail,
@@ -96,7 +98,7 @@ var GoogleSheetsStore = /** @class */ (function (_super) {
             dataType: 'json',
             success: function (json) {
                 store.parser.parse(json);
-                store.table = store.parser.getTable(store.table);
+                store.table.insertRows(store.parser.getTable().getAllRows());
                 // Polling
                 if (enablePolling) {
                     setTimeout(function () {

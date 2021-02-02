@@ -1,6 +1,7 @@
 import CSVStore from '/base/js/Data/Stores/CSVStore.js'
 import { registerStoreEvents, testExportedDataTable } from '../utils.js'
 import U from '/base/js/Core/Utilities.js';
+import DataTable from '/base/js/Data/DataTable.js';
 
 const { test, only } = QUnit;
 
@@ -160,12 +161,17 @@ test('CSVStore from URL', function (assert) {
 
         // Check that the store is updated
         // with the new dataset when polling
-        states[pollNumber] = new CSVStore(e.table);
+        states[pollNumber] = new DataTable(e.table.getAllRows())
 
-        if (pollNumber > 0) {
-            const currentValue = states[pollNumber].table.getRow(2).getCellAsNumber('X');
-            const previousValue = states[pollNumber - 1].table.getRow(2).getCellAsNumber('X')
+        if (pollNumber > 0 && states[pollNumber]) {
+            assert.strictEqual(
+                states[pollNumber].length,
+                states[pollNumber - 1].length,
+                'Should have the same amount of rows'
+            )
 
+            const currentValue = states[pollNumber].getRow(2).getCellAsNumber('X');
+            const previousValue = states[pollNumber - 1].getRow(2).getCellAsNumber('X')
             assert.notStrictEqual(
                 currentValue,
                 previousValue,
@@ -176,8 +182,8 @@ test('CSVStore from URL', function (assert) {
         pollNumber++;
 
         // Stop polling
-        if(pollNumber > 1){
-            datastore.options.enablePolling = false
+        if (pollNumber > 1) {
+            datastore.options.enablePolling = false;
         }
 
         function getExpectedEvents(){
@@ -194,7 +200,8 @@ test('CSVStore from URL', function (assert) {
         assert.deepEqual(registeredEvents, getExpectedEvents(), 'Events are fired in correct order');
         assert.ok(e.csv, 'AfterLoad event has CSV attached')
 
-        doneLoading();
+        doneLoading()
+        ;
     });
 
     datastore.on('load', (e) => {

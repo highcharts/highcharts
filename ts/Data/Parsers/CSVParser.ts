@@ -504,14 +504,11 @@ class CSVParser extends DataParser<DataParser.EventObject> {
     /**
      * Handles converting the parsed data to a DataTable
      *
-     * @param {DataTable} [dataTable]
-     * Optional DataTable to use as base for the parsed dataTable
-     *
      * @returns {DataTable}
      * A DataTable from the parsed CSV
      */
-    public getTable(dataTable?: DataTable): DataTable {
-        return DataParser.getTableFromColumns(this.columns, this.headers, dataTable);
+    public getTable(): DataTable {
+        return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 
     /**

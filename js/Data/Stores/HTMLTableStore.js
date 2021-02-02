@@ -111,6 +111,8 @@ var HTMLTableStore = /** @class */ (function (_super) {
     HTMLTableStore.prototype.load = function (eventDetail) {
         var store = this;
         store.fetchTable();
+        // If already loaded, clear the current rows
+        store.table.clear();
         store.emit({
             type: 'load',
             detail: eventDetail,
@@ -127,7 +129,7 @@ var HTMLTableStore = /** @class */ (function (_super) {
             return;
         }
         store.parser.parse(merge({ tableHTML: store.tableElement }, store.options), eventDetail);
-        store.table = store.parser.getTable(store.table);
+        store.table.insertRows(store.parser.getTable().getAllRows());
         store.emit({
             type: 'afterLoad',
             detail: eventDetail,

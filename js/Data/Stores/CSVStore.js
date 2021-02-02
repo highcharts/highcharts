@@ -123,6 +123,8 @@ var CSVStore = /** @class */ (function (_super) {
     CSVStore.prototype.fetchCSV = function (initialFetch, eventDetail) {
         var store = this, maxRetries = 3, csvURL = store.options.csvURL;
         var currentRetries;
+        // Clear the table
+        store.table.clear();
         if (initialFetch) {
             clearTimeout(store.liveDataTimeout);
             store.liveDataURL = csvURL;
@@ -136,7 +138,7 @@ var CSVStore = /** @class */ (function (_super) {
                 if (store.liveDataURL) {
                     store.poll();
                 }
-                store.table = store.parser.getTable();
+                store.table.insertRows(store.parser.getTable().getAllRows());
                 store.emit({
                     type: 'afterLoad',
                     csv: csv,
@@ -170,6 +172,8 @@ var CSVStore = /** @class */ (function (_super) {
     CSVStore.prototype.load = function (eventDetail) {
         var store = this, _a = store.options, csv = _a.csv, csvURL = _a.csvURL;
         if (csv) {
+            // If already loaded, clear the current rows
+            store.table.clear();
             store.emit({
                 type: 'load',
                 csv: csv,
@@ -177,7 +181,7 @@ var CSVStore = /** @class */ (function (_super) {
                 table: store.table
             });
             store.parser.parse({ csv: csv });
-            store.table = store.parser.getTable(store.table);
+            store.table.insertRows(store.parser.getTable().getAllRows());
             store.emit({
                 type: 'afterLoad',
                 csv: csv,

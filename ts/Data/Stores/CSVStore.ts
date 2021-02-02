@@ -180,6 +180,8 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             { csvURL } = store.options;
         let currentRetries: number;
 
+        // Clear the table
+        store.table.clear();
         if (initialFetch) {
             clearTimeout(store.liveDataTimeout);
             store.liveDataURL = csvURL;
@@ -195,7 +197,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
                 if (store.liveDataURL) {
                     store.poll();
                 }
-                store.table = store.parser.getTable();
+                store.table.insertRows(store.parser.getTable().getAllRows());
                 store.emit({
                     type: 'afterLoad',
                     csv,
@@ -232,6 +234,8 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             { csv, csvURL } = store.options;
 
         if (csv) {
+            // If already loaded, clear the current rows
+            store.table.clear();
             store.emit({
                 type: 'load',
                 csv,
@@ -239,7 +243,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
                 table: store.table
             });
             store.parser.parse({ csv });
-            store.table = store.parser.getTable(store.table);
+            store.table.insertRows(store.parser.getTable().getAllRows());
             store.emit({
                 type: 'afterLoad',
                 csv,

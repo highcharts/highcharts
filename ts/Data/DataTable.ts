@@ -585,6 +585,26 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
+     * Inserts an array of rows into the table
+     * @param {Array<DataTableRow>} rows
+     * Array of rows to insert
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Details for insertRow event
+     *
+     * @return {this}
+     * The datatable with the inserted rows
+     */
+    public insertRows(rows: Array<DataTableRow>, eventDetail?: DataEventEmitter.EventDetail): this {
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            this.insertRow(row, eventDetail);
+        }
+
+        return this;
+    }
+
+    /**
      * Registers a callback for a specific event.
      *
      * @param {string} type

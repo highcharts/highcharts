@@ -168,6 +168,9 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
 
         store.fetchTable();
 
+        // If already loaded, clear the current rows
+        store.table.clear();
+
         store.emit({
             type: 'load',
             detail: eventDetail,
@@ -190,7 +193,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             eventDetail
         );
 
-        store.table = store.parser.getTable(store.table);
+        store.table.insertRows(store.parser.getTable().getAllRows());
 
         store.emit({
             type: 'afterLoad',
