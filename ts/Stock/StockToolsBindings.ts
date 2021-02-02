@@ -530,16 +530,16 @@ extend(NavigationBindings.prototype, {
         }
 
         if (removedYAxisHeight) {
-            removedHeight = (parseFloat(removedYAxisHeight) / 100);
+            removedHeight = correctFloat((parseFloat(removedYAxisHeight) / 100));
         }
 
         positions = yAxes.map(function (yAxis: AxisType, index: number): Record<string, number> {
             var height = isPercentage(yAxis.options.height) ?
-                    parseFloat(yAxis.options.height as any) / 100 :
-                    yAxis.height / plotHeight,
+                    correctFloat(parseFloat(yAxis.options.height as any) / 100) :
+                    correctFloat(yAxis.height / plotHeight),
                 top = isPercentage(yAxis.options.top) ?
-                    parseFloat(yAxis.options.top as any) / 100 :
-                    correctFloat(yAxis.top - yAxis.chart.plotTop) / plotHeight;
+                    correctFloat(parseFloat(yAxis.options.top as any) / 100) :
+                    correctFloat((yAxis.top - yAxis.chart.plotTop) / plotHeight);
 
             // New axis' height is NaN so we can check if
             // the axis is newly created this way
@@ -559,7 +559,7 @@ extend(NavigationBindings.prototype, {
 
                 allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
             } else {
-                if (correctFloat(top - 0.01) <= (allAxesHeight || 0.1)) {
+                if (top <= allAxesHeight) {
                     allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
                 } else {
                     top = correctFloat(top - removedHeight);
