@@ -454,16 +454,8 @@ H.layouts['reingold-fruchterman'].prototype, {
         return temperature - temperatureStep * currentStep;
     },
     isStable: function () {
-        var tempDiff = Math.abs(this.prevSystemTemperature -
-            this.systemTemperature);
-        if ((!this.enableSimulation && tempDiff < 0.00001)) { // Tests still rely on this old check.
-            return true;
-        }
-        var upScaledTemperature = 10 * this.systemTemperature /
-            Math.sqrt(this.nodes.length);
-        return Math.abs(upScaledTemperature) < 1 && // #14439, new stable check.
-            tempDiff < 0.00001 ||
-            this.temperature <= 0;
+        return Math.abs(this.systemTemperature -
+            this.prevSystemTemperature) < 0.00001 || this.temperature <= 0;
     },
     getSystemTemperature: function () {
         return this.nodes.reduce(function (value, node) {
