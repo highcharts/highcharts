@@ -3,17 +3,18 @@
 <script src="https://code.highcharts.com/mapdata/custom/europe.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-
-<div role="radiogroup">
-    <div class="btn1">
-        <input type = "radio" name="themes" id="themeDark" value="dark" role="radio">
-        <label for="dark">Dark Theme</label>
+<fieldset>
+    <legend>Choose theme:</legend>
+        <div class="btn1">
+            <input type = "radio" name="themes" id="themeDark" value="dark" role="radio">
+            <label for="themeDark">Dark Theme</label>
+        </div>
+        <div class="btn2">
+            <input type="radio" name="themes" id="themeLight" value="light" role="radio" checked>
+            <label for="themeLight">Light theme</label>
+        </div>
     </div>
-    <div class="btn2">
-        <input type="radio" name="themes" id="themeLight" value="light" role="radio" checked>
-        <label for="themeLight" >Light theme</label>
-    </div>
-</div>
+</fieldset>
 
 <figure class ="highcharts-figure">
     <p class="highcharts-description">These four charts demonstrates the use of two high contrast themes.</p>
