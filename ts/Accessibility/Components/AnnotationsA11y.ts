@@ -91,6 +91,7 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
     const langFormatStr = 'accessibility.screenReaderSection.annotations.description' + pointsSelector;
     const context = {
         annotationText: labelText,
+        annotation: label,
         numPoints: numPoints,
         annotationPoint: pointValueDescriptions[0],
         additionalAnnotationPoints: pointValueDescriptions.slice(1)
@@ -136,7 +137,7 @@ function getAnnotationsInfoHTML(chart: Highcharts.AnnotationChart): string {
     }
 
     const annotationItems = getAnnotationListItems(chart);
-    return `<ul>${annotationItems.join(' ')}</ul>`;
+    return `<ul style="list-style-type: none">${annotationItems.join(' ')}</ul>`;
 }
 
 
