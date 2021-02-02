@@ -417,7 +417,7 @@ extend(defaultOptions, {
          *         Dropdown option
          *
          * @validvalue ["always", "responsive", "never"]
-         * @since next
+         * @since 9.0.0
          */
         dropdown: 'responsive',
 
@@ -638,7 +638,7 @@ extend(defaultOptions, {
          * The space in pixels between the labels and the date input boxes in
          * the range selector.
          *
-         * @since next
+         * @since 9.0.0
          */
         inputSpacing: 5,
 
