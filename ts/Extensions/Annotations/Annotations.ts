@@ -1729,15 +1729,24 @@ chartProto.collectionsWithUpdate.push('annotations');
 // Let chart.update() create annoations on demand
 chartProto.collectionsWithInit.annotations = [chartProto.addAnnotation];
 
+// Create lookups initially
+addEvent(
+    Chart as unknown as Highcharts.AnnotationChart,
+    'afterInit',
+    function (this): void {
+        this.annotations = [];
+
+        if (!this.options.annotations) {
+            this.options.annotations = [];
+        }
+
+    }
+);
+
 chartProto.callbacks.push(function (
     this: Highcharts.AnnotationChart,
     chart: Highcharts.AnnotationChart
 ): void {
-    chart.annotations = [];
-
-    if (!chart.options.annotations) {
-        chart.options.annotations = [];
-    }
 
     chart.plotBoxClip = this.renderer.clipRect(this.plotBox);
 
@@ -1747,13 +1756,17 @@ chartProto.callbacks.push(function (
         .clip(chart.plotBoxClip)
         .add();
 
-    chart.options.annotations.forEach(function (
-        annotationOptions: Highcharts.AnnotationsOptions,
-        i: number
-    ): void {
-        var annotation = chart.initAnnotation(annotationOptions);
+    chart.options.annotations.forEach(function (annotationOptions, i): void {
+        if (
+            // Verify that it has not been previously added in a responsive rule
+            !chart.annotations.some((annotation): boolean =>
+                annotation.options === annotationOptions
+            )
+        ) {
+            const annotation = chart.initAnnotation(annotationOptions);
 
-        chart.options.annotations[i] = annotation.options;
+            chart.options.annotations[i] = annotation.options;
+        }
     });
 
     chart.drawAnnotations();
@@ -1762,7 +1775,7 @@ chartProto.callbacks.push(function (
         chart.plotBoxClip.destroy();
         chart.controlPointsGroup.destroy();
     });
-    addEvent(chart, 'exportData', function (this: Highcharts.AnnotationChart, event: any): void {
+    addEvent(chart, 'exportData', function (this, event: any): void {
         const annotations = chart.annotations,
             csvColumnHeaderFormatter = ((
                 this.options.exporting &&

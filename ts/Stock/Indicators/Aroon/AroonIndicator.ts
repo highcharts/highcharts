@@ -14,7 +14,7 @@ import type {
 } from '../Aroon/AroonOptions';
 import type AroonPoint from '../Aroon/AroonPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
 
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -152,7 +152,7 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
      *  Functions
      *
      * */
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: AroonParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> {

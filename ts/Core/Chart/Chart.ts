@@ -2392,6 +2392,11 @@ class Chart {
         // Credits
         chart.addCredits();
 
+        // Handle responsiveness
+        if (chart.setResponsive) {
+            chart.setResponsive();
+        }
+
         // Set flag
         chart.hasRendered = true;
 
@@ -2606,13 +2611,6 @@ class Chart {
                 chart.pointer = new Pointer(chart, options);
             }
         }
-
-        // Handle responsiveness. Has to fire after extensions are loaded
-        addEvent(chart, 'load', function (): void {
-            if (chart.setResponsive) {
-                chart.setResponsive(true);
-            }
-        });
 
         chart.render();
 
@@ -3234,7 +3232,7 @@ class Chart {
                     }
 
                     // No match by id found, match by index instead
-                    if (!item) {
+                    if (!item && (chart as any)[coll]) {
                         item = (chart as any)[coll][indexMap ? indexMap[i] : i];
 
                         // Check if we grabbed an item with an exising but

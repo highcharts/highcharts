@@ -1744,9 +1744,9 @@ QUnit.test('Chart.update', assert => {
     } = chart;
     const getYAxisLabels = () =>
         Array.from(
-            document.querySelectorAll('.highcharts-yaxis-labels > text > tspan')
+            document.querySelectorAll('.highcharts-yaxis-labels > text')
         )
-            .map(text => text.innerHTML)
+            .map(text => text.textContent)
             .reverse();
 
     assert.strictEqual(chart.yAxis.length, 1, 'should have only one yAxis');

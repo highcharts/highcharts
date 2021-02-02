@@ -1911,6 +1911,7 @@ Highcharts.chart('container', {
     },
 
     annotations: [{
+        draggable: '',
         labelOptions: {
             backgroundColor: 'rgba(255,255,255,0.5)',
             verticalAlign: 'top',
@@ -1967,6 +1968,7 @@ Highcharts.chart('container', {
             text: 'Saint-Claude'
         }]
     }, {
+        draggable: '',
         labels: [{
             point: {
                 xAxis: 0,
@@ -1994,6 +1996,7 @@ Highcharts.chart('container', {
             text: 'Montée de la Combe<br>de Laisia Les Molunes'
         }]
     }, {
+        draggable: '',
         labelOptions: {
             shape: 'connector',
             align: 'right',

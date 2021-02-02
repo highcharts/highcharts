@@ -1670,6 +1670,10 @@ var Chart = /** @class */ (function () {
         chart.renderLabels();
         // Credits
         chart.addCredits();
+        // Handle responsiveness
+        if (chart.setResponsive) {
+            chart.setResponsive();
+        }
         // Set flag
         chart.hasRendered = true;
     };
@@ -1840,12 +1844,6 @@ var Chart = /** @class */ (function () {
                 chart.pointer = new Pointer(chart, options);
             }
         }
-        // Handle responsiveness. Has to fire after extensions are loaded
-        addEvent(chart, 'load', function () {
-            if (chart.setResponsive) {
-                chart.setResponsive(true);
-            }
-        });
         chart.render();
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {
@@ -2323,7 +2321,7 @@ var Chart = /** @class */ (function () {
                         item = chart.get(newOptions.id);
                     }
                     // No match by id found, match by index instead
-                    if (!item) {
+                    if (!item && chart[coll]) {
                         item = chart[coll][indexMap ? indexMap[i] : i];
                         // Check if we grabbed an item with an exising but
                         // different id (#13541)

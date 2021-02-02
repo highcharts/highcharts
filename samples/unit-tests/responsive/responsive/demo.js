@@ -1131,3 +1131,56 @@ QUnit.test('Responsive amount of axes', assert => {
         'After resetting, initial axis binding should be restored'
     );
 });
+
+QUnit.test('Initially responsive, skip update animation', assert => {
+
+    const clock = TestUtilities.lolexInstall();
+    const chart = Highcharts.chart('container', {
+        chart: {
+            width: 400,
+            height: 600,
+            animation: {
+                duration: 100
+            }
+        },
+
+        xAxis: {
+            categories: ['January', 'February']
+        },
+
+        series: [
+            {
+                name: 'Sales',
+                data: [434, 523]
+            }
+        ],
+
+        responsive: {
+            rules: [
+                {
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        chart: {
+                            height: 400
+                        }
+                    }
+                }
+            ]
+        }
+    });
+
+    const initialDefinition = chart.series[0].graph.element.getAttribute('d');
+
+    setTimeout(() => {
+        assert.strictEqual(
+            chart.series[0].graph.element.getAttribute('d'),
+            initialDefinition,
+            'The chart should not animate initially to responsive settings'
+        );
+    }, 50);
+
+    TestUtilities.lolexRunAndUninstall(clock);
+
+});

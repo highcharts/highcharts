@@ -14,8 +14,8 @@
 
 import type ColorType from '../../../Core/Color/ColorType';
 import type CSSObject from '../../../Core/Renderer/CSSObject';
-import type Point from '../../../Core/Series/Point';
-import type Series from '../../../Core/Series/Series';
+import type LinePoint from '../../../Series/Line/LinePoint';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -40,13 +40,13 @@ export interface SupertrendParamsOptions extends SMAParamsOptions {
     multiplier?: number;
 }
 
-export interface SupertrendLinkedParentPointObject extends Point {
+export interface SupertrendLinkedParentPointObject extends LinePoint {
     close: number;
     index: number;
     x: number;
 }
 
-export interface SupertrendLinkedParentObject extends Series {
+export interface SupertrendLinkedParentObject extends LineSeries {
     data: Array<SupertrendLinkedParentPointObject>;
     points: Array<SupertrendLinkedParentPointObject>;
     xData: Array<number>;
