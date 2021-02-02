@@ -428,7 +428,7 @@ var DataTable = /** @class */ (function () {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Details for insertRow event
      *
-     * @returns {this}
+     * @return {this}
      * The datatable with the inserted rows
      */
     DataTable.prototype.insertRows = function (rows, eventDetail) {
