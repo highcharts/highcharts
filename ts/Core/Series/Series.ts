@@ -7011,7 +7011,10 @@ class Series {
                         stateAnimation
                     );
                     while ((series as any)['zone-graph-' + i]) {
-                        (series as any)['zone-graph-' + i].attr(attribs);
+                        (series as any)['zone-graph-' + i].animate(
+                            attribs,
+                            stateAnimation
+                        );
                         i = i + 1;
                     }
                 }

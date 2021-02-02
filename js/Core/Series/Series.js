@@ -3091,7 +3091,7 @@ var Series = /** @class */ (function () {
                     // Animate the graph stroke-width.
                     graph.animate(attribs, stateAnimation);
                     while (series['zone-graph-' + i]) {
-                        series['zone-graph-' + i].attr(attribs);
+                        series['zone-graph-' + i].animate(attribs, stateAnimation);
                         i = i + 1;
                     }
                 }
