@@ -31,36 +31,6 @@ const languages = {
             downloadPDF: 'Last ned som PDF-dokument',
             downloadSVG: 'Last ned som SVG-bilde',
             title: 'AAPL Aksjekurs'
-        },
-        rangeSelector: {
-            buttons: [{
-                type: 'month',
-                count: 1,
-                text: '1m',
-                title: '1m'
-            }, {
-                type: 'month',
-                count: 3,
-                text: '3m',
-                title: '3m'
-            }, {
-                type: 'month',
-                count: 6,
-                text: '6m',
-                title: '6m'
-            }, {
-                type: 'ytd',
-                text: 'YTD',
-                title: 'YTD'
-            }, {
-                type: 'year',
-                count: 1,
-                text: '1år'
-            }, {
-                type: 'all',
-                text: 'Alle',
-                title: 'Alle'
-            }]
         }
     },
     de: {
@@ -97,36 +67,6 @@ const languages = {
             resetZoom: "Zoom zurücksetzen",
             resetZoomTitle: "Zoom zurücksetzen",
             title: 'AAPL Aktienkurs'
-        },
-        rangeSelector: {
-            buttons: [{
-                type: 'month',
-                count: 1,
-                text: '1 M',
-                title: '1 M'
-            }, {
-                type: 'month',
-                count: 3,
-                text: '3 M',
-                title: '3 M'
-            }, {
-                type: 'month',
-                count: 6,
-                text: '6 M',
-                title: '6 M'
-            }, {
-                type: 'ytd',
-                text: 'YTD',
-                title: 'YTD'
-            }, {
-                type: 'year',
-                count: 1,
-                text: '1 J'
-            }, {
-                type: 'all',
-                text: 'Alle',
-                title: 'Alle'
-            }]
         }
     }
 };
@@ -139,7 +79,6 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
                 fontFamily: 'Arial'
             }
         },
-
         rangeSelector: {
             selected: 1,
             labelStyle: {
@@ -147,7 +86,36 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
                 color: '#000',
                 fontSize: '14px',
                 padding: '10px'
-            }
+            },
+            buttons: [{
+                type: 'month',
+                count: 1,
+                text: '1m',
+                title: 'View 1 month'
+            }, {
+                type: 'month',
+                count: 3,
+                text: '3m',
+                title: 'View 3 months'
+            }, {
+                type: 'month',
+                count: 6,
+                text: '6m',
+                title: 'View 6 months'
+            }, {
+                type: 'ytd',
+                text: 'YTD',
+                title: 'View year to date'
+            }, {
+                type: 'year',
+                count: 1,
+                text: '1y',
+                title: 'View 1 year'
+            }, {
+                type: 'all',
+                text: 'All',
+                title: 'View all'
+            }]
         },
 
         title: {
@@ -183,35 +151,100 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
         }]
     };
 
-    function createChart(options) {
-        return new Highcharts.stockChart('container', options);
-    }
-
-    createChart(chartOptions);
     const initialOptions = JSON.parse(JSON.stringify(Highcharts.getOptions()));
 
     function resetOptions() {
         Highcharts.setOptions(initialOptions);
     }
 
+    function createChart(options) {
+        return new Highcharts.stockChart('container', options);
+    }
+
+    createChart(chartOptions);
+
     document.getElementById('en').addEventListener('click', function () {
         resetOptions();
-        Highcharts.setOptions(initialOptions);
         createChart(chartOptions);
     });
 
     document.getElementById('no').addEventListener('click', function () {
         Highcharts.setOptions(languages.no);
-        document.getElementById("container").lang = "no";
         createChart(Highcharts.merge(chartOptions, {
-            title: { text: Highcharts.getOptions().lang.title }
+            title: {
+                text: Highcharts.getOptions().lang.title
+            },
+            rangeSelector: {
+                buttons: [{
+                    type: 'month',
+                    count: 1,
+                    text: '1m',
+                    title: 'Se 1 måned'
+                }, {
+                    type: 'month',
+                    count: 3,
+                    text: '3m',
+                    title: 'Se 3 måneder'
+                }, {
+                    type: 'month',
+                    count: 6,
+                    text: '6m',
+                    title: 'Se 6 måneder'
+                }, {
+                    type: 'ytd',
+                    text: 'YTD',
+                    title: 'Se året til dags dato'
+                }, {
+                    type: 'year',
+                    count: 1,
+                    text: '1 år',
+                    title: 'Se 1 år'
+                }, {
+                    type: 'all',
+                    text: 'Alle',
+                    title: 'Alle'
+                }]
+            }
         }));
     });
 
     document.getElementById('de').addEventListener('click', function () {
         Highcharts.setOptions(languages.de);
         createChart(Highcharts.merge(chartOptions, {
-            title: { text: Highcharts.getOptions().lang.title }
+            title: {
+                text: Highcharts.getOptions().lang.title
+            },
+            rangeSelector: {
+                buttons: [{
+                    type: 'month',
+                    count: 1,
+                    text: '1 M',
+                    title: '1 Monat anzeigen'
+                }, {
+                    type: 'month',
+                    count: 3,
+                    text: '3 M',
+                    title: '3 Monate anzeigen'
+                }, {
+                    type: 'month',
+                    count: 6,
+                    text: '6 M',
+                    title: '6 Monate anzeigen'
+                }, {
+                    type: 'ytd',
+                    text: 'YTD',
+                    title: 'Jahr bis heute anzeigen'
+                }, {
+                    type: 'year',
+                    count: 1,
+                    text: '1 J',
+                    title: '1 Jahr anzeigen'
+                }, {
+                    type: 'all',
+                    text: 'Alle',
+                    title: 'Alle'
+                }]
+            }
         }));
     });
 });
