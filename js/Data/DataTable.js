@@ -343,16 +343,17 @@ var DataTable = /** @class */ (function () {
      * Column value of the column in this row.
      */
     DataTable.prototype.getRow = function (row) {
+        var table = this;
         if (typeof row === 'string') {
-            return this.rowsIdMap[row];
+            return table.rowsIdMap[row];
         }
-        return this.rows[row];
+        return table.rows[row];
     };
     /**
      * Retrieves a cell value based on row index/ID
      * and column name/alias.
      *
-     * @param {string | number} rowID
+     * @param {string|number} row
      * The row to select.
      *
      * @param {string} columnNameOrAlias
@@ -361,10 +362,9 @@ var DataTable = /** @class */ (function () {
      * @return {DataTableRow.CellType}
      * The value of the cell.
      */
-    DataTable.prototype.getRowCell = function (rowID, columnNameOrAlias) {
-        var _a;
-        var cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
-        return (_a = this.getRow(rowID)) === null || _a === void 0 ? void 0 : _a.getCell(cellName);
+    DataTable.prototype.getRowCell = function (row, columnNameOrAlias) {
+        var cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias, foundRow = this.getRow(row);
+        return foundRow && foundRow.getCell(cellName);
     };
     /**
      * Returns the number of rows in this table.
@@ -377,6 +377,22 @@ var DataTable = /** @class */ (function () {
      */
     DataTable.prototype.getRowCount = function () {
         return this.rows.length;
+    };
+    /**
+     * Returns the index of a given row in this table.
+     *
+     * @param {string|DataTableRow} row
+     * Row to determ index for.
+     *
+     * @return {number}
+     * Index of the row in this table, -1 if not found.
+     */
+    DataTable.prototype.getRowIndex = function (row) {
+        var table = this;
+        if (typeof row === 'string') {
+            row = table.rowsIdMap[row];
+        }
+        return table.rows.indexOf(row);
     };
     /**
      * Returns the version tag that changes with each modification of the table
@@ -537,6 +553,40 @@ var DataTable = /** @class */ (function () {
             }
         }
         return success;
+    };
+    /**
+     * Replaces a row in this table with a new row. The new row must not be part
+     * found in this table.
+     *
+     * @param {number|string|DataTableRow} oldRow
+     * Row index, row ID, or row to replace.
+     *
+     * @param {DataTableRow} newRow
+     * Row as the replacement.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * True, if row was successfully replaced, otherwise false.
+     *
+     * @emits DataTable#deleteRow
+     * @emits DataTable#afterDeleteRow
+     * @emits DataTable#insertRow
+     * @emits DataTable#afterInsertRow
+     */
+    DataTable.prototype.replaceRow = function (oldRow, newRow, eventDetail) {
+        var table = this, rows = table.rows, rowsIdMap = table.rowsIdMap, index = (typeof oldRow === 'number' ?
+            oldRow :
+            table.getRowIndex(oldRow));
+        oldRow = rows[index];
+        if (!oldRow ||
+            rowsIdMap[newRow.id]) {
+            return false;
+        }
+        table.deleteRow(oldRow);
+        table.insertRow(newRow, eventDetail, index);
+        return true;
     };
     /**
      * Sets a column of cells from an array of cell values

@@ -109,7 +109,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events DataTableRow.insertCell should be in expected order.'
+        'Events for DataTableRow.insertCell should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -122,7 +122,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events DataTableRow.updateCell (2) should be in expected order.'
+        'Events for DataTableRow.updateCell (2) should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -135,7 +135,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events DataTableRow.updateCell (2) should be in expected order.'
+        'Events for DataTableRow.updateCell (2) should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -148,7 +148,20 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events DataTableRow.clear should be in expected order.'
+        'Events for DataTableRow.clear should be in expected order.'
+    );
+
+    registeredEvents.length = 0;
+    dataTable.replaceRow(dataRow, new DataTableRow());
+    assert.deepEqual(
+        registeredEvents,
+        [
+            'deleteRow',
+            'afterDeleteRow',
+            'insertRow',
+            'afterInsertRow'
+        ],
+        'Events for DataTableRow.replaceRow should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -159,7 +172,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'clearTable',
             'afterClearTable'
         ],
-        'Events DataTable.clear should be in expected order.'
+        'Events for DataTable.clear should be in expected order.'
     );
 
 });

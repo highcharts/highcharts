@@ -489,19 +489,20 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Column value of the column in this row.
      */
     public getRow(row: (number|string)): (DataTableRow|undefined) {
+        const table = this;
 
         if (typeof row === 'string') {
-            return this.rowsIdMap[row];
+            return table.rowsIdMap[row];
         }
 
-        return this.rows[row];
+        return table.rows[row];
     }
 
     /**
      * Retrieves a cell value based on row index/ID
      * and column name/alias.
      *
-     * @param {string | number} rowID
+     * @param {string|number} row
      * The row to select.
      *
      * @param {string} columnNameOrAlias
@@ -510,10 +511,14 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @return {DataTableRow.CellType}
      * The value of the cell.
      */
-    public getRowCell(rowID: string | number, columnNameOrAlias: string): DataTableRow.CellType {
-        const cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
+    public getRowCell(
+        row: (string|number),
+        columnNameOrAlias: string
+    ): DataTableRow.CellType {
+        const cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias,
+            foundRow = this.getRow(row);
 
-        return this.getRow(rowID)?.getCell(cellName);
+        return foundRow && foundRow.getCell(cellName);
     }
 
     /**
@@ -527,6 +532,25 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public getRowCount(): number {
         return this.rows.length;
+    }
+
+    /**
+     * Returns the index of a given row in this table.
+     *
+     * @param {string|DataTableRow} row
+     * Row to determ index for.
+     *
+     * @return {number}
+     * Index of the row in this table, -1 if not found.
+     */
+    public getRowIndex(row: (string|DataTableRow)): number {
+        const table = this;
+
+        if (typeof row === 'string') {
+            row = table.rowsIdMap[row];
+        }
+
+        return table.rows.indexOf(row);
     }
 
     /**
@@ -727,6 +751,56 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         return success;
+    }
+
+    /**
+     * Replaces a row in this table with a new row. The new row must not be part
+     * found in this table.
+     *
+     * @param {number|string|DataTableRow} oldRow
+     * Row index, row ID, or row to replace.
+     *
+     * @param {DataTableRow} newRow
+     * Row as the replacement.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * True, if row was successfully replaced, otherwise false.
+     *
+     * @emits DataTable#deleteRow
+     * @emits DataTable#afterDeleteRow
+     * @emits DataTable#insertRow
+     * @emits DataTable#afterInsertRow
+     */
+    public replaceRow(
+        oldRow: (number|string|DataTableRow),
+        newRow: DataTableRow,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        const table = this,
+            rows = table.rows,
+            rowsIdMap = table.rowsIdMap,
+            index = (
+                typeof oldRow === 'number' ?
+                    oldRow :
+                    table.getRowIndex(oldRow)
+            );
+
+        oldRow = rows[index];
+
+        if (
+            !oldRow ||
+            rowsIdMap[newRow.id]
+        ) {
+            return false;
+        }
+
+        table.deleteRow(oldRow);
+        table.insertRow(newRow, eventDetail, index);
+
+        return true;
     }
 
     /**
