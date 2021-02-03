@@ -3138,8 +3138,20 @@ var Axis = /** @class */ (function () {
         // Remove the axis
         erase(chart.axes, this);
         erase(chart[key], this);
-        if (isArray(chart.options[key])) {
-            chart.options[key].splice(this.options.index, 1);
+        var options = chart.options[key];
+        if (isArray(options) && defined(this.options.index)) {
+            var option = options[this.options.index];
+            if (option && option.index === this.options.index) {
+                options.splice(this.options.index, 1);
+            }
+            else {
+                for (var i_1 = 0; i_1 < options.length; i_1++) {
+                    if (options[i_1].index === this.options.index) {
+                        options.splice(i_1, 1);
+                        break;
+                    }
+                }
+            }
         }
         else { // color axis, #6488
             delete chart.options[key];

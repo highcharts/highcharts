@@ -7927,8 +7927,20 @@ class Axis {
         erase(chart.axes, this);
         erase((chart as any)[key], this);
 
-        if (isArray((chart.options as any)[key])) {
-            (chart.options as any)[key].splice(this.options.index, 1);
+        const options: Highcharts.AxisOptions[] = (chart.options as any)[key];
+
+        if (isArray(options) && defined(this.options.index)) {
+            const option = options[this.options.index];
+            if (option && option.index === this.options.index) {
+                options.splice(this.options.index, 1);
+            } else {
+                for (let i = 0; i < options.length; i++) {
+                    if (options[i].index === this.options.index) {
+                        options.splice(i, 1);
+                        break;
+                    }
+                }
+            }
         } else { // color axis, #6488
             delete (chart.options as any)[key];
         }
