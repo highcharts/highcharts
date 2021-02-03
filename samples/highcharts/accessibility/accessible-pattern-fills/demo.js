@@ -29,16 +29,13 @@ Highcharts.chart('container-area', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Area chart showing use of patterns.</p>'
+            beforeChartFormat: '<p>Area chart showing use of visual pattern fills.</p>'
         },
         landmarkVerbosity: 'one'
     },
 
     plotOptions: {
         area: {
-            label: {
-                enabled: false
-            },
             fillColor: {
                 pattern: {
                     path: {
@@ -100,7 +97,7 @@ Highcharts.chart('container-col', {
 
     lang: {
         accessibility: {
-            chartContainerLabel: 'Column chart with patterns.'
+            chartContainerLabel: 'Column chart showing use of visual pattern fills.'
         }
     },
 
@@ -112,7 +109,6 @@ Highcharts.chart('container-col', {
     },
 
     series: [{
-        showInLegend: true,
         type: 'column',
         borderColor: Highcharts.getOptions().colors[0],
         data: [{
@@ -212,7 +208,7 @@ Highcharts.chart('container-pie', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Pie chart showing use of patterns.</p>'
+            beforeChartFormat: '<p>Pie chart showing use of visual pattern fills.</p>'
         },
         landmarkVerbosity: 'one'
     },
@@ -270,7 +266,7 @@ Highcharts.chart('container-line', {
 
     accessibility: {
         screenReaderSection: {
-            beforeChartFormat: '<p>Line chart showing use of patterns.</p>'
+            beforeChartFormat: '<p>Line chart showing use of dash styles</p>'
         },
         landmarkVerbosity: 'one'
     },
