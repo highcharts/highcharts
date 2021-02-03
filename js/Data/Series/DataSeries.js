@@ -8,6 +8,7 @@
  * */
 import CS from '../../Core/Series/Series.js';
 import DataPoint from './DataPoint.js';
+import DataTable from '../DataTable.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
@@ -31,10 +32,11 @@ var DataSeries = /** @class */ (function () {
         this.linkedSeries = [];
         this.options = merge(DataSeries.defaultOptions, options);
         this.points = [];
-        this.table = DataSeries.getTableFromSeriesOptions(this.options);
+        this.table = (options.data ?
+            DataSeries.getTableFromSeriesOptions(this.options) :
+            new DataTable());
         this.userOptions = options;
         this.visible = true;
-        this.setTable(this.table);
     }
     /* *
      *
@@ -81,23 +83,28 @@ var DataSeries = /** @class */ (function () {
         series.chart = chart;
         series.options = merge(series.options, options);
         series.userOptions = merge(series.userOptions, options);
+        var table = DataSeries.getTableFromSeriesOptions(series.options);
+        if (table) {
+            series.setTable(table);
+        }
         series.bindAxes();
         chart.series.push(this);
         fireEvent(this, 'afterInit');
     };
     DataSeries.prototype.plotGroup = function (parent) {
         console.log('DataSeries.plotGroup');
-        var series = this, chart = series.chart, options = series.options, visibility = series.visible, xAxis = series.xAxis, yAxis = series.yAxis, zIndex = options.zIndex, plotBox = {
+        var series = this, chart = series.chart, options = series.options, visibility = series.visible, xAxis = series.xAxis, yAxis = series.yAxis, zIndex = options.zIndex;
+        return parent.renderer
+            .g()
+            .addClass('highcharts-data-series')
+            .attr({
             translateX: xAxis ? xAxis.left : chart.plotLeft,
             translateY: yAxis ? yAxis.top : chart.plotTop,
             scaleX: 1,
             scaleY: 1,
             visibility: visibility,
             zIndex: zIndex
-        };
-        return parent.renderer
-            .g()
-            .attr(plotBox)
+        })
             .add(parent);
     };
     /**
@@ -145,12 +152,15 @@ var DataSeries = /** @class */ (function () {
                 if (point) {
                     point.destroy();
                 }
+                seriesTable.insertRow(tableRow, void 0, i);
                 seriesData[i] = null;
             }
             else if (point) {
                 point.setTableRow(tableRow);
+                seriesTable.replaceRow(i, tableRow);
             }
             else {
+                seriesTable.insertRow(tableRow);
                 seriesData[i] = new SeriesPoint(series, tableRow);
             }
         }

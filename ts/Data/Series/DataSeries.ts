@@ -68,11 +68,13 @@ class DataSeries {
         this.linkedSeries = [];
         this.options = merge(DataSeries.defaultOptions, options);
         this.points = [];
-        this.table = DataSeries.getTableFromSeriesOptions(this.options);
+        this.table = (
+            options.data ?
+                DataSeries.getTableFromSeriesOptions(this.options) :
+                new DataTable()
+        );
         this.userOptions = options;
         this.visible = true;
-
-        this.setTable(this.table);
     }
 
     /* *
@@ -152,7 +154,14 @@ class DataSeries {
         series.options = merge(series.options, options);
         series.userOptions = merge(series.userOptions, options);
 
+        const table = DataSeries.getTableFromSeriesOptions(series.options);
+
+        if (table) {
+            series.setTable(table);
+        }
+
         series.bindAxes();
+
         chart.series.push(this as any);
 
         fireEvent(this, 'afterInit');
@@ -169,19 +178,19 @@ class DataSeries {
             } = series,
             {
                 zIndex
-            } = options,
-            plotBox: SVGAttributes = {
+            } = options;
+
+        return parent.renderer
+            .g()
+            .addClass('highcharts-data-series')
+            .attr({
                 translateX: xAxis ? xAxis.left : chart.plotLeft,
                 translateY: yAxis ? yAxis.top : chart.plotTop,
                 scaleX: 1,
                 scaleY: 1,
                 visibility,
                 zIndex
-            };
-
-        return parent.renderer
-            .g()
-            .attr(plotBox)
+            })
             .add(parent);
     }
 
@@ -261,10 +270,13 @@ class DataSeries {
                 if (point) {
                     point.destroy();
                 }
+                seriesTable.insertRow(tableRow, void 0, i);
                 seriesData[i] = null;
             } else if (point) {
                 point.setTableRow(tableRow);
+                seriesTable.replaceRow(i, tableRow);
             } else {
+                seriesTable.insertRow(tableRow);
                 seriesData[i] = new SeriesPoint(series, tableRow);
             }
         }

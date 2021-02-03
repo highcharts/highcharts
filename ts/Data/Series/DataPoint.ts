@@ -62,7 +62,7 @@ class DataPoint {
 
     public readonly series: DataSeries;
 
-    public readonly tableRow: DataTableRow;
+    public tableRow: DataTableRow;
 
     /* *
      *
@@ -71,28 +71,42 @@ class DataPoint {
      * */
 
     public destroy(): void { console.log('DataPoint.destroy');
+        const point = this;
 
+        point.series.table.deleteRow(point.tableRow);
     }
 
     public render(parent: SVGElement): void { console.log('DataPoint.render');
         const point = this,
             tableRow = point.tableRow;
 
-        point.graphic = parent.renderer.rect({
-            x: tableRow.getCellAsNumber('x') * 10,
-            y: tableRow.getCellAsNumber('y'),
-            width: 1,
-            height: 1,
-            fill: '#333',
-            stroke: '#000',
-            'stroke-width': 1,
-            opacity: 1
-        });
+        point.graphic = parent.renderer
+            .rect(
+                tableRow.getCellAsNumber('x') * 10,
+                tableRow.getCellAsNumber('y'),
+                1,
+                1
+            )
+            .addClass('highcharts-data-point')
+            .attr({
+                fill: '#333',
+                stroke: '#000',
+                'stroke-width': 1,
+                opacity: 1
+            })
+            .add(parent);
     }
 
     public setTableRow(
         tableRow: DataTableRow
     ): void { console.log('DataPoint.setTableRow');
+        const point = this;
+
+        if (point.tableRow !== tableRow) {
+            point.series.table.replaceRow(point.tableRow, tableRow);
+            point.tableRow = tableRow;
+        }
+
         this.update(
             DataPoint.getPointOptionsFromTableRow(
                 tableRow,

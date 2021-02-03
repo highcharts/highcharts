@@ -33,23 +33,30 @@ var DataPoint = /** @class */ (function () {
      * */
     DataPoint.prototype.destroy = function () {
         console.log('DataPoint.destroy');
+        var point = this;
+        point.series.table.deleteRow(point.tableRow);
     };
     DataPoint.prototype.render = function (parent) {
         console.log('DataPoint.render');
         var point = this, tableRow = point.tableRow;
-        point.graphic = parent.renderer.rect({
-            x: tableRow.getCellAsNumber('x') * 10,
-            y: tableRow.getCellAsNumber('y'),
-            width: 1,
-            height: 1,
+        point.graphic = parent.renderer
+            .rect(tableRow.getCellAsNumber('x') * 10, tableRow.getCellAsNumber('y'), 1, 1)
+            .addClass('highcharts-data-point')
+            .attr({
             fill: '#333',
             stroke: '#000',
             'stroke-width': 1,
             opacity: 1
-        });
+        })
+            .add(parent);
     };
     DataPoint.prototype.setTableRow = function (tableRow) {
         console.log('DataPoint.setTableRow');
+        var point = this;
+        if (point.tableRow !== tableRow) {
+            point.series.table.replaceRow(point.tableRow, tableRow);
+            point.tableRow = tableRow;
+        }
         this.update(DataPoint.getPointOptionsFromTableRow(tableRow, this.series.pointArrayMap) || {});
     };
     DataPoint.prototype.update = function (options, redraw, animation) {
