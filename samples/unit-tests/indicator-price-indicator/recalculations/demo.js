@@ -147,3 +147,142 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(`The currentPriceIndicator, lastPrice and axis crosshair should
+    have their own properties, no errors in console after toggle, #13876.`,
+function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            stockTools: {
+                gui: {
+                    enabled: true,
+                    buttons: ['currentPriceIndicator']
+                }
+            },
+            yAxis: [{
+                crosshair: {
+                    color: 'blue',
+                    label: {
+                        padding: 6,
+                        backgroundColor: "blue",
+                        enabled: true
+                    }
+                }
+            }],
+            series: [{
+                data: [1, 2, 4, 6, 1, 4, 6, 4, 3, 2],
+                lastVisiblePrice: {
+                    color: 'green',
+                    label: {
+                        enabled: true,
+                        backgroundColor: "green"
+                    }
+                },
+                lastPrice: {
+                    color: 'red'
+                }
+            }]
+        }),
+        controller = new TestController(chart),
+        button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
+
+    // Show croshair with the label.
+    controller.moveTo(200, 200);
+    assert.strictEqual(
+        chart.yAxis[0].crossLabel.visibility,
+        'visible',
+        'Axis cross label should be visible.'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].crossLabel.fill,
+        'blue',
+        'Axis cross label fill color should be blue.'
+    );
+
+    // Hide croshair with the label.
+    controller.moveTo(30, 20);
+    assert.strictEqual(
+        chart.yAxis[0].crossLabel.visibility,
+        'hidden',
+        'Cross label should not be visible.'
+    );
+
+    // Show currentPriceIndicator with the label.
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings, button);
+    assert.strictEqual(
+        chart.series[0].crossLabel.visibility,
+        'visible',
+        'Series price indicator should be visible.'
+    );
+    assert.strictEqual(
+        chart.series[0].crossLabel.fill,
+        'green',
+        'Cross label fill color should be blue.'
+    );
+
+    // Show currentPriceIndicator togehter with axis croshair.
+    controller.moveTo(200, 200);
+    assert.strictEqual(
+        chart.yAxis[0].crossLabel.visibility,
+        'visible',
+        'Cross label should be visible.'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].crossLabel.fill,
+        'blue',
+        'Cross label fill color should be blue.'
+    );
+
+    // Adjust extremes to show the lastPrice line.
+    chart.xAxis[0].setExtremes(0, 4);
+    assert.strictEqual(
+        chart.series[0].lastPrice.visibility,
+        'visible',
+        'Series last price indicator should be visible.'
+    );
+    assert.strictEqual(
+        chart.series[0].lastPrice.stroke,
+        'red',
+        'Cross label fill color should be red.'
+    );
+
+    // Hide lastPrice and currentPriceIndicator.
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings, button);
+    assert.notOk(
+        chart.series[0].crossLabel,
+        'Series price indicator should not exist.'
+    );
+    assert.notOk(
+        chart.series[0].lastPrice,
+        'Series last price indicator should not exist.'
+    );
+
+    // Show again the lastPrice and currentPriceIndicator.
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings, button);
+    assert.strictEqual(
+        chart.yAxis[0].crossLabel.visibility,
+        'visible',
+        'Cross label should be visible again.'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].crossLabel.fill,
+        'blue',
+        'Cross label fill color should be blue again.'
+    );
+    assert.strictEqual(
+        chart.series[0].lastPrice.visibility,
+        'visible',
+        'Series last price indicator should be visible again.'
+    );
+    assert.strictEqual(
+        chart.series[0].lastPrice.stroke,
+        'red',
+        'Cross label fill color should be red again.'
+    );
+    assert.ok(
+        true,
+        'No errors in the console.'
+    );
+});

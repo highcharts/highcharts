@@ -179,11 +179,11 @@ addEvent(Series, 'afterRender', function (): void {
             lastPoint = points[pLength - crop];
 
             if (serie.crossLabel) {
-                serie.crossLabel.destroy();
                 // Set to undefined to avoid collision with
                 // the yAxis crosshair #11480
-                delete yAxis.crossLabel;
+                serie.crossLabel.destroy();
             }
+            delete yAxis.crossLabel;
 
             // Save price
             yAxis.drawCrosshair((null as any), lastPoint);
