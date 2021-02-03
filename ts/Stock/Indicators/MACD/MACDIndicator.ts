@@ -418,7 +418,8 @@ class MACDIndicator extends SMAIndicator {
                 defined(shortEMA[i + (params.shortPeriod as any) + 1][0])
             ) {
                 MACD.push([
-                    shortEMA[i + (params.shortPeriod as any) + 1][0],
+                    (params.shortPeriod as number) >= 12 ?
+                        shortEMA[i + (params.shortPeriod as number) + 1][0] : longEMA[i - 1][0], // #14197
                     0,
                     null,
                     shortEMA[i + (params.shortPeriod as any) + 1][1] -

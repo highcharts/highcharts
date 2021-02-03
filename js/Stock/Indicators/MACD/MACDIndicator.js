@@ -210,7 +210,8 @@ var MACDIndicator = /** @class */ (function (_super) {
                 defined(shortEMA[i + params.shortPeriod + 1]) &&
                 defined(shortEMA[i + params.shortPeriod + 1][0])) {
                 MACD.push([
-                    shortEMA[i + params.shortPeriod + 1][0],
+                    params.shortPeriod >= 12 ?
+                        shortEMA[i + params.shortPeriod + 1][0] : longEMA[i - 1][0],
                     0,
                     null,
                     shortEMA[i + params.shortPeriod + 1][1] -
