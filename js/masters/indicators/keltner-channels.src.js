@@ -6,7 +6,7 @@
  *
  * Indicator series type for Highstock
  *
- * (c) 2010-2019 Daniel Studencki
+ * (c) 2010-2021 Daniel Studencki
  *
  * License: www.highcharts.com/license
  */
