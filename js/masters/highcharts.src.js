@@ -23,6 +23,7 @@ import '../Core/Legend.js';
 import '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
 import '../Extensions/Stacking.js';
+import '../Data/Series/DataSeries.js';
 import Series from '../Core/Series/Series.js';
 import '../Series/Line/LineSeries.js';
 import '../Series/Area/AreaSeries.js';
