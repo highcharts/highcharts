@@ -579,3 +579,38 @@ QUnit.test('DataTable.clone', function (assert) {
         'Cloned and original table should have the same versionTag.'
     );
 });
+
+
+QUnit.test('DataTable.setTableRows', function (assert) {
+
+    const originalTable = new DataTable();
+
+    originalTable.insertRow(new DataTableRow({
+        column1: true,
+        existingColumn: true
+    }));
+
+    const newTable = originalTable.clone();
+
+    assert.strictEqual(
+        newTable.rows.length,
+        0,
+        'Cloned table should have rows length of 0'
+    );
+
+    newTable.insertRows(originalTable.getAllRows());
+
+    assert.deepEqual(
+        newTable.rows,
+        originalTable.rows,
+        'Rows are the same after copy'
+    );
+
+
+    assert.deepEqual(
+        newTable.rowsIdMap,
+        originalTable.rowsIdMap,
+        'Row id map is the same after copy'
+    );
+
+});

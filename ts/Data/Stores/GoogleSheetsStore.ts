@@ -130,6 +130,9 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
                 'public/values?alt=json'
             ].join('/');
 
+        // If already loaded, clear the current rows
+        store.table.clear();
+
         store.emit({
             type: 'load',
             detail: eventDetail,
@@ -142,8 +145,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
             dataType: 'json',
             success: function (json: Highcharts.JSONType): void {
                 store.parser.parse(json);
-                store.table = store.parser.getTable(store.table);
-
+                store.table.insertRows(store.parser.getTable().getAllRows());
                 // Polling
                 if (enablePolling) {
                     setTimeout(

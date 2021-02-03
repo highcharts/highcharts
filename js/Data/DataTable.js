@@ -421,6 +421,24 @@ var DataTable = /** @class */ (function () {
         return true;
     };
     /**
+     * Inserts an array of rows into the table
+     * @param {Array<DataTableRow>} rows
+     * Array of rows to insert
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Details for insertRow event
+     *
+     * @return {this}
+     * The datatable with the inserted rows
+     */
+    DataTable.prototype.insertRows = function (rows, eventDetail) {
+        for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            this.insertRow(row, eventDetail);
+        }
+        return this;
+    };
+    /**
      * Registers a callback for a specific event.
      *
      * @param {string} type
