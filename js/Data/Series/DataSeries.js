@@ -141,10 +141,10 @@ var DataSeries = /** @class */ (function () {
     DataSeries.prototype.setTable = function (table) {
         console.log('DataSeries.setTable');
         var series = this, seriesData = series.data, seriesTable = series.table, tableRows = table.getAllRows(), tableRowsLength = tableRows.length, SeriesPoint = series.pointClass;
-        if (table.id !== seriesTable.id) {
-            seriesTable.clear();
-            seriesTable.id = table.id;
+        if (series.table === table) {
+            return;
         }
+        series.table = table;
         for (var i = 0, iEnd = tableRowsLength, point = void 0, tableRow = void 0; i < iEnd; ++i) {
             point = seriesData[i];
             tableRow = tableRows[i];
@@ -152,15 +152,12 @@ var DataSeries = /** @class */ (function () {
                 if (point) {
                     point.destroy();
                 }
-                seriesTable.insertRow(tableRow, void 0, i);
                 seriesData[i] = null;
             }
             else if (point) {
                 point.setTableRow(tableRow);
-                seriesTable.replaceRow(i, tableRow);
             }
             else {
-                seriesTable.insertRow(tableRow);
                 seriesData[i] = new SeriesPoint(series, tableRow);
             }
         }

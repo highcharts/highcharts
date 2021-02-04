@@ -1,5 +1,7 @@
 /* eslint-disable brace-style */
 /* eslint-disable no-console */
+/* eslint-disable no-invalid-this */
+
 /* *
  *
  *  Imports
@@ -9,12 +11,24 @@
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type DataPointOptions from './DataPointOptions';
 import type DataSeries from './DataSeries';
-import type DataTableRow from '../DataTableRow';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import CP from '../../Core/Series/Point.js';
+import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Chart/ChartLike' {
+    interface ChartLike {
+        redrawTimer?: number;
+    }
+}
 
 /* *
  *
@@ -42,12 +56,19 @@ class DataPoint {
 
     public constructor(
         series: DataSeries,
-        options: DataPointOptions = {},
+        data?: (DataPointOptions|DataTableRow),
         x?: number
     ) { console.log('DataPoint.constructor');
+        this.options = { x };
         this.series = series;
-        this.options = merge({ x }, options);
-        this.tableRow = DataPoint.getTableRowFromPointOptions(options);
+        this.tableRow = DataTableRow.NULL;
+        if (data) {
+            if (data instanceof DataTableRow) {
+                this.setTableRow(data);
+            } else {
+                this.setTableRow(DataPoint.getTableRowFromPointOptions(data));
+            }
+        }
     }
 
     /* *
@@ -64,6 +85,8 @@ class DataPoint {
 
     public tableRow: DataTableRow;
 
+    private tableRowListener?: Function;
+
     /* *
      *
      *  Functions
@@ -73,7 +96,11 @@ class DataPoint {
     public destroy(): void { console.log('DataPoint.destroy');
         const point = this;
 
-        point.series.table.deleteRow(point.tableRow);
+        point.tableRow = DataTableRow.NULL;
+
+        if (point.tableRowListener) {
+            point.tableRowListener();
+        }
     }
 
     public render(parent: SVGElement): void { console.log('DataPoint.render');
@@ -100,18 +127,42 @@ class DataPoint {
     public setTableRow(
         tableRow: DataTableRow
     ): void { console.log('DataPoint.setTableRow');
-        const point = this;
+        const point = this,
+            series = point.series,
+            chart = series.chart;
 
-        if (point.tableRow !== tableRow) {
-            point.series.table.replaceRow(point.tableRow, tableRow);
+        if (point.tableRow === tableRow) {
+            point.update(tableRow, false, false);
+        } else {
+            if (point.tableRowListener) {
+                point.tableRowListener();
+            }
+
             point.tableRow = tableRow;
+            point.update(tableRow, false, false);
+
+            point.tableRowListener = tableRow.on('afterChangeRow', function (
+                this: DataTableRow
+            ): void {
+                point.update(this, false, false);
+
+                // POC by Torstein
+                if (typeof chart.redrawTimer === 'undefined') {
+                    chart.redrawTimer = setTimeout(function (): void {
+                        chart.redrawTimer = void 0;
+                        chart.redraw();
+                    });
+                }
+            });
         }
 
-        this.update(
+        point.update(
             DataPoint.getPointOptionsFromTableRow(
                 tableRow,
-                this.series.pointArrayMap
-            ) || {}
+                series.pointArrayMap
+            ) || {},
+            false,
+            false
         );
     }
 
@@ -127,6 +178,7 @@ class DataPoint {
         if (redraw) {
             point.series.chart.redraw(animation);
         }
+
     }
 
 }

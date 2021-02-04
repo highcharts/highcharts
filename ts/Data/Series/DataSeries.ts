@@ -95,7 +95,7 @@ class DataSeries {
 
     public points: Array<(this['pointClass']['prototype']|null)>;
 
-    public readonly table: DataTable;
+    public table: DataTable;
 
     public userOptions: DeepPartial<DataSeriesOptions>;
 
@@ -249,10 +249,11 @@ class DataSeries {
             tableRowsLength = tableRows.length,
             SeriesPoint = series.pointClass;
 
-        if (table.id !== seriesTable.id) {
-            seriesTable.clear();
-            seriesTable.id = table.id;
+        if (series.table === table) {
+            return;
         }
+
+        series.table = table;
 
         for (
             let i = 0,
@@ -270,13 +271,10 @@ class DataSeries {
                 if (point) {
                     point.destroy();
                 }
-                seriesTable.insertRow(tableRow, void 0, i);
                 seriesData[i] = null;
             } else if (point) {
                 point.setTableRow(tableRow);
-                seriesTable.replaceRow(i, tableRow);
             } else {
-                seriesTable.insertRow(tableRow);
                 seriesData[i] = new SeriesPoint(series, tableRow);
             }
         }

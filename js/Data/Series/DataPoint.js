@@ -1,11 +1,8 @@
 /* eslint-disable brace-style */
 /* eslint-disable no-console */
-/* *
- *
- *  Imports
- *
- * */
+/* eslint-disable no-invalid-this */
 import CP from '../../Core/Series/Point.js';
+import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 var merge = U.merge;
 /* *
@@ -19,12 +16,19 @@ var DataPoint = /** @class */ (function () {
      *  Constructor
      *
      * */
-    function DataPoint(series, options, x) {
-        if (options === void 0) { options = {}; }
+    function DataPoint(series, data, x) {
         console.log('DataPoint.constructor');
+        this.options = { x: x };
         this.series = series;
-        this.options = merge({ x: x }, options);
-        this.tableRow = DataPoint.getTableRowFromPointOptions(options);
+        this.tableRow = DataTableRow.NULL;
+        if (data) {
+            if (data instanceof DataTableRow) {
+                this.setTableRow(data);
+            }
+            else {
+                this.setTableRow(DataPoint.getTableRowFromPointOptions(data));
+            }
+        }
     }
     /* *
      *
@@ -34,7 +38,10 @@ var DataPoint = /** @class */ (function () {
     DataPoint.prototype.destroy = function () {
         console.log('DataPoint.destroy');
         var point = this;
-        point.series.table.deleteRow(point.tableRow);
+        point.tableRow = DataTableRow.NULL;
+        if (point.tableRowListener) {
+            point.tableRowListener();
+        }
     };
     DataPoint.prototype.render = function (parent) {
         console.log('DataPoint.render');
@@ -52,12 +59,28 @@ var DataPoint = /** @class */ (function () {
     };
     DataPoint.prototype.setTableRow = function (tableRow) {
         console.log('DataPoint.setTableRow');
-        var point = this;
-        if (point.tableRow !== tableRow) {
-            point.series.table.replaceRow(point.tableRow, tableRow);
-            point.tableRow = tableRow;
+        var point = this, series = point.series, chart = series.chart;
+        if (point.tableRow === tableRow) {
+            point.update(tableRow, false, false);
         }
-        this.update(DataPoint.getPointOptionsFromTableRow(tableRow, this.series.pointArrayMap) || {});
+        else {
+            if (point.tableRowListener) {
+                point.tableRowListener();
+            }
+            point.tableRow = tableRow;
+            point.update(tableRow, false, false);
+            point.tableRowListener = tableRow.on('afterChangeRow', function () {
+                point.update(this, false, false);
+                // POC by Torstein
+                if (typeof chart.redrawTimer === 'undefined') {
+                    chart.redrawTimer = setTimeout(function () {
+                        chart.redrawTimer = void 0;
+                        chart.redraw();
+                    });
+                }
+            });
+        }
+        point.update(DataPoint.getPointOptionsFromTableRow(tableRow, series.pointArrayMap) || {}, false, false);
     };
     DataPoint.prototype.update = function (options, redraw, animation) {
         console.log('DataPoint.update');
