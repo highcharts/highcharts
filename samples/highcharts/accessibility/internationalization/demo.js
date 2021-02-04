@@ -10,12 +10,17 @@ const languages = {
                 exporting: {
                     chartMenuLabel: 'Diagram meny',
                     exportRegionLabel: 'Diagram meny',
-                    menuButtonLabel: 'Se diagram meny'
+                    menuButtonLabel: 'Vis diagram meny'
+                },
+                svgContainerLabel: 'Interaktivt diagram',
+                screenReaderSection: {
+                    beforeRegionLabel: 'Diagram skjermleser informasjon',
+                    endOfChartMarker: 'Slutt på interaktivt diagram.'
                 }
             },
             decimalPoint: ',',
             thousandsSep: '.',
-            loading: 'Later­...',
+            loading: 'Laster­...',
             months: ['Januar', 'Februar', 'Mars', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Desember'],
             shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
             weekdays: ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lørdag', 'Søndag­'],
@@ -45,6 +50,11 @@ const languages = {
                     chartMenuLabel: 'Diagramm-Menü',
                     exportRegionLabel: 'Diagramm-Menü',
                     menuButtonLabel: 'Diagramm-Menü ansehen'
+                },
+                svgContainerLabel: 'Interaktives Diagramm',
+                screenReaderSection: {
+                    beforeRegionLabel: 'Screenreader-Information des Diagramms',
+                    endOfChartMarker: 'Ende des interaktiven Diagramms'
                 }
             },
             decimalPoint: ',',
@@ -77,6 +87,11 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
         chart: {
             style: {
                 fontFamily: 'Arial'
+            }
+        },
+        accessibilty: {
+            screenReaderSection: {
+                beforeChartFormat: 'Financial line chart showing AAPL stock prices, with an additional navigator series showing an overview of the stock.'
             }
         },
         rangeSelector: {
@@ -174,6 +189,17 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
             title: {
                 text: Highcharts.getOptions().lang.title
             },
+            accessibility: {
+                series: {
+                    descriptionFormatter: function (series) {
+                        return series.name + ', serie ' + (series.index + 1) + ' av ' +
+                        series.chart.series.length + '.';
+                    }
+                },
+                screenReaderSection: {
+                    beforeChartFormat: 'Finansielt linjediagram som viser AAPL aksjepriser, med tilhørende navigeringsserie som gir et overblikk over aksjen.'
+                }
+            },
             rangeSelector: {
                 buttons: [{
                     type: 'month',
@@ -213,6 +239,17 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
         createChart(Highcharts.merge(chartOptions, {
             title: {
                 text: Highcharts.getOptions().lang.title
+            },
+            accessibility: {
+                series: {
+                    descriptionFormatter: function (series) {
+                        return series.name + ', Graph ' + (series.index + 1) + ' von ' +
+                        series.chart.series.length + '.';
+                    }
+                },
+                screenReaderSection: {
+                    beforeChartFormat: 'Liniendiagramm des AAPL-Aktienkurses mit zusätzlichem Navigationsdiagramm für einen Überblick über den Aktienkurs.'
+                }
             },
             rangeSelector: {
                 buttons: [{
