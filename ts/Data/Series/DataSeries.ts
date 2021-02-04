@@ -21,7 +21,13 @@ import DataTable from '../DataTable.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-const { extend, fireEvent, merge } = U;
+const {
+    cleanRecursively,
+    extend,
+    fireEvent,
+    merge,
+    pick
+} = U;
 
 /* *
  *
@@ -66,7 +72,15 @@ class DataSeries {
         this.chart = chart;
         this.data = [];
         this.linkedSeries = [];
-        this.options = merge(DataSeries.defaultOptions, options);
+        this.options = merge(
+            (
+                chart &&
+                chart.options.plotOptions &&
+                chart.options.plotOptions.series
+            ),
+            DataSeries.defaultOptions,
+            options
+        );
         this.points = [];
         this.table = (
             options.data ?
@@ -97,6 +111,8 @@ class DataSeries {
 
     public table: DataTable;
 
+    private tableListener?: Function;
+
     public userOptions: DeepPartial<DataSeriesOptions>;
 
     public readonly visible: boolean;
@@ -110,6 +126,15 @@ class DataSeries {
      *  Functions
      *
      * */
+
+    public destroy(): void {
+        const series = this;
+
+        if (series.tableListener) {
+            series.tableListener();
+            series.tableListener = void 0;
+        }
+    }
 
     /* public findPoint(
         tableRow: DataTableRow,
@@ -144,15 +169,35 @@ class DataSeries {
         }
     } */
 
+    public hasData(): boolean {
+        return (this.table.getRowCount() > 0);
+    }
+
     /** @deprecated */
     public init(chart: Chart, options: DataSeriesOptions): void { console.log('DataSeries.init');
         const series = this;
 
-        fireEvent(this, 'init');
+        fireEvent(series, 'init');
 
         series.chart = chart;
-        series.options = merge(series.options, options);
+
+        fireEvent(series, 'setOptions', { userOptions: options });
+
+        series.options = merge(
+            series.options,
+            (
+                chart.options.plotOptions &&
+                chart.options.plotOptions.series
+            ),
+            (
+                chart.userOptions.plotOptions &&
+                chart.userOptions.plotOptions[series.type]
+            ),
+            options
+        );
         series.userOptions = merge(series.userOptions, options);
+
+        fireEvent(series, 'afterSetOptions', { options: series.options });
 
         const table = DataSeries.getTableFromSeriesOptions(series.options);
 
@@ -162,9 +207,9 @@ class DataSeries {
 
         series.bindAxes();
 
-        chart.series.push(this as any);
+        chart.series.push(series as any);
 
-        fireEvent(this, 'afterInit');
+        fireEvent(series, 'afterInit');
     }
 
     public plotGroup(parent: SVGElement): SVGElement { console.log('DataSeries.plotGroup');
@@ -192,6 +237,12 @@ class DataSeries {
                 zIndex
             })
             .add(parent);
+    }
+
+    public redraw(): void {
+        const series = this;
+        series.translate();
+        series.render();
     }
 
     /**
@@ -244,13 +295,17 @@ class DataSeries {
     public setTable(table: DataTable): void { console.log('DataSeries.setTable');
         const series = this,
             seriesData = series.data,
-            seriesTable = series.table,
+            seriesDataLength = seriesData.length,
             tableRows = table.getAllRows(),
             tableRowsLength = tableRows.length,
             SeriesPoint = series.pointClass;
 
         if (series.table === table) {
             return;
+        }
+
+        if (series.tableListener) {
+            series.tableListener();
         }
 
         series.table = table;
@@ -279,13 +334,48 @@ class DataSeries {
             }
         }
 
-        seriesData.length = tableRowsLength;
+        if (seriesDataLength > tableRowsLength) {
+            for (
+                let i = tableRowsLength,
+                    iEnd = seriesDataLength,
+                    point: (this['pointClass']['prototype']|null);
+
+                i < iEnd;
+
+                ++i
+            ) {
+                point = seriesData[i];
+                if (point) {
+                    point.destroy();
+                }
+            }
+
+            seriesData.length = tableRowsLength;
+        }
+
+        // series.tableListener =  ---> point listener?
     }
 
     public translate(): void { console.log('DataSeries.translate');
         const series = this;
 
         series.points = series.data.slice();
+    }
+
+    public update(options: DataSeriesOptions, redraw?: boolean): void {
+        const series = this;
+
+        options = cleanRecursively(options, series.options);
+
+        fireEvent(series, 'update', { options });
+
+        series.options = merge(series.options, options);
+
+        fireEvent(series, 'afterUpdate');
+
+        if (pick(redraw, true)) {
+            series.chart.redraw();
+        }
     }
 
 }
@@ -301,12 +391,14 @@ interface DataSeries {
     drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
     pointArrayMap: Array<string>;
     pointClass: typeof DataPoint;
+    type: string;
 }
 extend(DataSeries.prototype, {
     bindAxes: CS.prototype.bindAxes,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     pointArrayMap: ['y'],
-    pointClass: DataPoint
+    pointClass: DataPoint,
+    type: 'data'
 });
 
 /* *

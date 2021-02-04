@@ -12,7 +12,7 @@ import DataTable from '../DataTable.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-var extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
+var cleanRecursively = U.cleanRecursively, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick;
 /* *
  *
  *  Class
@@ -30,7 +30,9 @@ var DataSeries = /** @class */ (function () {
         this.chart = chart;
         this.data = [];
         this.linkedSeries = [];
-        this.options = merge(DataSeries.defaultOptions, options);
+        this.options = merge((chart &&
+            chart.options.plotOptions &&
+            chart.options.plotOptions.series), DataSeries.defaultOptions, options);
         this.points = [];
         this.table = (options.data ?
             DataSeries.getTableFromSeriesOptions(this.options) :
@@ -43,6 +45,13 @@ var DataSeries = /** @class */ (function () {
      *  Functions
      *
      * */
+    DataSeries.prototype.destroy = function () {
+        var series = this;
+        if (series.tableListener) {
+            series.tableListener();
+            series.tableListener = void 0;
+        }
+    };
     /* public findPoint(
         tableRow: DataTableRow,
         startIndex: number = 0
@@ -75,21 +84,28 @@ var DataSeries = /** @class */ (function () {
             }
         }
     } */
+    DataSeries.prototype.hasData = function () {
+        return (this.table.getRowCount() > 0);
+    };
     /** @deprecated */
     DataSeries.prototype.init = function (chart, options) {
         console.log('DataSeries.init');
         var series = this;
-        fireEvent(this, 'init');
+        fireEvent(series, 'init');
         series.chart = chart;
-        series.options = merge(series.options, options);
+        fireEvent(series, 'setOptions', { userOptions: options });
+        series.options = merge(series.options, (chart.options.plotOptions &&
+            chart.options.plotOptions.series), (chart.userOptions.plotOptions &&
+            chart.userOptions.plotOptions[series.type]), options);
         series.userOptions = merge(series.userOptions, options);
+        fireEvent(series, 'afterSetOptions', { options: series.options });
         var table = DataSeries.getTableFromSeriesOptions(series.options);
         if (table) {
             series.setTable(table);
         }
         series.bindAxes();
-        chart.series.push(this);
-        fireEvent(this, 'afterInit');
+        chart.series.push(series);
+        fireEvent(series, 'afterInit');
     };
     DataSeries.prototype.plotGroup = function (parent) {
         console.log('DataSeries.plotGroup');
@@ -106,6 +122,11 @@ var DataSeries = /** @class */ (function () {
             zIndex: zIndex
         })
             .add(parent);
+    };
+    DataSeries.prototype.redraw = function () {
+        var series = this;
+        series.translate();
+        series.render();
     };
     /**
      * Render series as points.
@@ -140,9 +161,12 @@ var DataSeries = /** @class */ (function () {
      */
     DataSeries.prototype.setTable = function (table) {
         console.log('DataSeries.setTable');
-        var series = this, seriesData = series.data, seriesTable = series.table, tableRows = table.getAllRows(), tableRowsLength = tableRows.length, SeriesPoint = series.pointClass;
+        var series = this, seriesData = series.data, seriesDataLength = seriesData.length, tableRows = table.getAllRows(), tableRowsLength = tableRows.length, SeriesPoint = series.pointClass;
         if (series.table === table) {
             return;
+        }
+        if (series.tableListener) {
+            series.tableListener();
         }
         series.table = table;
         for (var i = 0, iEnd = tableRowsLength, point = void 0, tableRow = void 0; i < iEnd; ++i) {
@@ -161,12 +185,31 @@ var DataSeries = /** @class */ (function () {
                 seriesData[i] = new SeriesPoint(series, tableRow);
             }
         }
-        seriesData.length = tableRowsLength;
+        if (seriesDataLength > tableRowsLength) {
+            for (var i = tableRowsLength, iEnd = seriesDataLength, point = void 0; i < iEnd; ++i) {
+                point = seriesData[i];
+                if (point) {
+                    point.destroy();
+                }
+            }
+            seriesData.length = tableRowsLength;
+        }
+        // series.tableListener =  ---> point listener?
     };
     DataSeries.prototype.translate = function () {
         console.log('DataSeries.translate');
         var series = this;
         series.points = series.data.slice();
+    };
+    DataSeries.prototype.update = function (options, redraw) {
+        var series = this;
+        options = cleanRecursively(options, series.options);
+        fireEvent(series, 'update', { options: options });
+        series.options = merge(series.options, options);
+        fireEvent(series, 'afterUpdate');
+        if (pick(redraw, true)) {
+            series.chart.redraw();
+        }
     };
     /* *
      *
@@ -191,7 +234,8 @@ extend(DataSeries.prototype, {
     bindAxes: CS.prototype.bindAxes,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     pointArrayMap: ['y'],
-    pointClass: DataPoint
+    pointClass: DataPoint,
+    type: 'data'
 });
 /* *
  *
