@@ -1,0 +1,2332 @@
+
+
+.footer-container {
+    text-align: center;
+}
+
+
+#indicator{
+  position:absolute;top:-10px;left:140px;height:40px;width:20px;z-index:1000;
+}
+
+#thumbnails .nav{
+	display: inline-flex;
+}
+
+#thumbnails .nav-item{
+	width:80px;
+	max-height: 80px;
+	height:auto;
+	border-radius:4px;
+	font-size: 14px;
+	padding: 0px;
+}
+
+#thumbnails .nav-item a{
+	/*padding-top:0px;
+	font-size: 12px;
+	font-weight: 400;
+	text-decoration: underline;*/
+}
+
+#thumbnails  .nav-item img{
+	max-height: 30px;
+}
+
+#thumbnails  .nav-linkT img{
+  height: 30px;
+}
+
+
+#thumbnails a:hover {
+    background-color: #FCF9F9;
+}
+
+#thumbnails.closed a:hover {
+    background-color: #FFFFFF;
+}
+
+#thumbnails .nav-link.active {
+    color: #fff;
+    background-color: #FCF9F9;
+    /*fill: #ffffff;*/
+    height:40px;
+    overflow:hidden;
+	/*box-shadow: 0px 1px 24px rgba(71,72,92,0.2), 1px 0px 24px rgba(0,0,0,0.1);
+	stroke-width: 1;*/
+}
+
+#thumbnails.closed .nav-link.active {
+    color: #fff;
+    background-color: #fff;
+    fill: #ffffff;
+    height:40px;
+    overflow:hidden;
+	/*box-shadow: 0px 1px 24px rgba(71,72,92,0.2), 1px 0px 24px rgba(0,0,0,0.1);
+	stroke-width: 1;*/
+}
+
+#demoContainer #chart-switcher {
+    display: flex;
+    justify-content: flex-start;
+    align-items: baseline;
+}
+
+#chart-switcher{
+	margin-top:0px;
+	
+}
+
+#demoContainer{
+	/*border:1px solid #ebebeb;*/
+	/*border:1px solid #FCF9F9;*/
+	align-items: flex-start;
+	font-size:14px;
+	position:absolute;
+	padding-top:0px;
+	
+}
+
+.card{
+	border:none;
+  flex-direction:unset;
+  padding:10px;
+  border-radius:4;
+  margin-right:10px;
+  margin-bottom:60px;
+	height:600px;
+	background-color:#ffffff;
+	box-shadow: 0px 1px 24px rgba(71,72,92,0.2), 1px 0px 24px rgba(0,0,0,0.1);
+	stroke-width: 1;
+}
+
+.card-title{
+  background-color:#47475c;
+  padding-bottom:0px;
+  margin-bottom:0px;
+
+
+}
+
+.card-body{
+	padding: 20px 0px 0px 0px;
+ 
+	color:#000;
+  border-radius:4px;
+  background-color: #fff;
+}
+
+
+.bd-sidenav a{
+	font-weight: 400;
+	font-size: 14px;
+}
+
+#demoContainer #demo-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-content: left;
+    margin: 1em auto;
+}
+
+#demo-buttons a{
+	padding-right:10px;
+}
+#demo-buttons .button {
+    min-height: 20px;
+    min-width: 170px;
+    border-radius: 4px;
+    font-size: .8rem (14px);
+    font-weight: 700;
+    text-align: center;
+    padding: 0px;
+    margin-bottom: .25rem;
+    margin-top: .25rem;
+    margin-left: .25rem;
+    margin-right: .25rem;
+    background-color: transparent;
+    border: 1px solid #5A62D3;
+    color: #5A62D3;
+}
+
+
+
+#demoIndexPage .demo-container {
+    width: 100px;
+    /*border: 1px solid #ebebeb;*/
+    margin-bottom: .5rem;
+}
+
+#demoContainer {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+#demoContainer .chart-container {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 100vw;
+    min-height: 300px;
+    height:100%
+    overflow: auto;
+    height: auto;
+}
+
+#demoIndexPage .image-container img, #demoIndexPage .image-container svg {
+    display: inline-block;
+    vertical-align: middle;
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    border: none;
+    padding: 0;
+    background: 0;
+    position: inherit!important;
+    border-radius: 0;
+}
+
+p.subarea{
+	color:#000;
+	font-weight: 700;
+}
+
+#demopage h4 {
+    min-width: 190px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: left;
+    padding: .375rem .75rem;
+    margin-bottom: 0;
+    margin-top: 0;
+    color: #000;
+    display: flex;
+    justify-content: space-between;
+}
+
+#demopage #sidebar {
+    overflow: visible;
+    
+    background-color: transparent;
+    min-width: 10rem;
+    max-width: 16rem;
+}
+
+#sidebar .bd-links {
+    position: relative;
+    color:white;
+    /*right: 16px;
+    left: 0;*/
+    padding-top: .5rem;
+}
+
+#demoContainer h4{
+	
+	font-size: 1.5rem;
+	padding:0px;
+}
+
+.demoSlider{
+	position: relative;
+	overflow: hidden;
+	/*padding-top:20px;*/
+	margin:0px;
+	background-color:#FCF9F9;
+	
+}
+.demoSlider2{
+	position: relative;
+	overflow-x: hidden;
+	overflow-y: hidden;
+	height:310px;
+	/*padding-top:20px;*/
+	margin:0px;
+	background-color:#FCF9F9;
+	border:1px solid #ebebeb;
+	border-radius:4px;
+  margin-bottom:30px;
+	
+	
+}
+
+#demoSubNav{
+	margin-bottom:30px;
+
+}
+
+#demoSubNav .dropdownButton .btn, #demoSubNav .dropdownButton .dropdown-menu {
+    width: 20rem;
+    max-width: 75vw;
+}
+
+#demoSubNav .dropdownButton .btn {
+    background-color: #47475c;
+    color: #fff;
+    display: inline-flex;
+    align-content: center;
+    justify-content: space-between;
+}
+
+.slider {
+  display: flex;
+  flex: 1 1 500px;
+  list-style: none;
+  padding: 0;
+  margin: 0 10px;
+  flex-wrap: wrap;
+}
+
+.item {
+  flex: 0 0 150px;
+  height: 140px;
+  width:150px;
+ /*padding:10px;*/
+ padding-top:5px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.item img {
+  margin-bottom:3px;
+  width: auto;
+  max-width: 250px;
+  height:90px;
+  margin-top:10px;
+}
+.item a {
+  flex: 1;
+  font-size:12px;
+  line-height:1.2em;
+}
+
+.prev{
+	position: absolute;
+    left: 0px;
+    top: 50px;
+    z-index: 10;
+}
+.next{
+	    position: absolute;
+    right: 0px;
+    top: 50px;
+    z-index: 10;
+}
+
+/*.item:first-child {
+  margin: 0;
+}
+.item img.thumbTitle {
+  margin:0px;
+}
+.item:nth-child(2) {
+  background: #f5ab3d;
+  z-index: 19;
+}
+.item:nth-child(3) {
+  background: #f5e23d;
+  z-index: 18;
+}
+.item:nth-child(4) {
+  background: #d0f53d;
+  z-index: 17;
+}
+.item:nth-child(5) {
+  background: #99f53d;
+  z-index: 16;
+}
+.item:nth-child(6) {
+  background: #62f53d;
+  z-index: 15;
+}
+.item:nth-child(7) {
+  background: #3df550;
+  z-index: 14;
+}
+.item:nth-child(8) {
+  background: #3df587;
+  z-index: 13;
+}
+.item:nth-child(9) {
+  background: #3df5be;
+  z-index: 12;
+}
+.item:nth-child(10) {
+  background: #3df5f5;
+  z-index: 11;
+}
+.item:nth-child(11) {
+  background: #3dbef5;
+  z-index: 10;
+}
+.item:nth-child(12) {
+  background: #3d87f5;
+  z-index: 9;
+}
+.item:nth-child(13) {
+  background: #3d50f5;
+  z-index: 8;
+}
+.item:nth-child(14) {
+  background: #623df5;
+  z-index: 7;
+}
+.item:nth-child(15) {
+  background: #993df5;
+  z-index: 6;
+}
+.item:nth-child(16) {
+  background: #d03df5;
+  z-index: 5;
+}
+.item:nth-child(17) {
+  background: #f53de2;
+  z-index: 4;
+}
+.item:nth-child(18) {
+  background: #f53dab;
+  z-index: 3;
+}
+.item:nth-child(19) {
+  background: #f53d74;
+  z-index: 2;
+}
+.item:nth-child(20) {
+  background: #f53d3d;
+  z-index: 1;
+}*/
+/*
+.btn-alternate{
+  background-color:'transparent';
+}
+
+.btn-alternate{
+  background-color: transparent;
+  border-color:#fff;
+  color:#fff;
+  height:40px;
+  width:200px;
+  display:block;
+  max-height:40px !important;
+  max-width:200px !important;
+  margin:10px 10px 10px 0px !important;;
+}
+.btn-alternate:hover,.btn-alternate.active{
+  background-color: white;
+  border-color:#fff;
+  color:#48485c;
+}
+a.btn-alternate{
+  color:#fff !important;
+}
+a.btn-alternate:hover,a.btn-alternate.active{
+  color:#48485c !important;
+}*/
+
+/*nav stuff I modified just to set up the navbar...this stuff is not final*/
+
+
+#menu .navbar-brand {
+      max-width: 300px;
+      padding-left:20px;
+      padding-top:10px;
+  }
+
+#masthead .navbar-nav>li>a {
+    color: #eeeaea;
+    font-size: 18px;
+    font-weight: 500;
+    /* width: 120px; */
+    margin-right: 10px;
+    padding:.5rem;
+}
+
+#menu-main_menu {
+    width: auto !important;
+    margin: auto;
+}
+
+
+footer#colophon, header#masthead {
+    background-color: transparent;
+}
+
+
+#masthead .navbar-nav>li:nth-last-child(-n+1)>a {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 3em;
+}
+
+.dropdown-toggle-green::after {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: .255em;
+    vertical-align: .255em;
+    content: "";
+    border-top: .3em solid;
+    border-right: .3em solid transparent;
+    border-bottom: 0;
+    border-left: .3em solid transparent;
+}
+
+.dropdown-toggle-green::after {
+    border: solid #C9ECB4;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    margin-bottom:-3px;
+}
+
+#menu-item-11196 {
+    position: fixed;
+    right: 130px;
+    top: 10px;
+    text-transform: none;
+    font-weight: bold;
+    font-size:1rem;
+}
+
+#masthead .navbar-nav>li:nth-last-child(-n+1)>a {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 3em;
+
+}
+
+.menuWidthB{
+
+  background-color:"#48485C";
+  padding-top:5px;
+}
+
+#masthead .navbar-nav>li:nth-last-child(-n+2)>a {
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 2.2em;
+ }
+
+#container{
+  background-color:white;
+}
+/*END nav stuff I modified just to set up the navbar...this stuff is not final*/
+
+
+
+#bottom-curve{
+    background-image: url(bg__header.svg);
+    background-repeat: no-repeat;
+    background-size: auto;
+    margin-top: -10px;
+    /* margin-left: -300px; */
+    height: 183px;
+    /* transform: scale(2,1); */
+    z-index: 1;
+    /* width: 500%;
+} 
+
+#demopage .bd-sidenav li a {
+    width: 100%;
+    text-align: left;
+    padding-left: .75rem;
+    padding-right: .5rem;
+    padding-bottom: .25rem;
+    padding-top: .25rem;
+    margin-bottom: 0;
+    margin-top: 0;
+    color: #fff;
+    display: flex;
+
+    justify-content: space-between;
+}
+
+#thumbnails .nav{
+
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    /* flex-wrap: wrap; */
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+    justify-content: space-around;
+}
+#nextDemo,#prevDemo{
+  white-space: nowrap;
+}
+
+.highcharts-flags-series.highcharts-tracker > g > text {
+  transform: scale(.8);
+}
+.highcharts-label.highcharts-point > .highcharts-label-box {
+  transform: scale(.6);
+}
+
+.highcharts-scatter-series  {
+  /*transform: scale(.5);*/
+}
+.highcharts-zoom-in > text{
+  vertical-align: middle;
+}
+
+
+.list-group-horizontal {
+    -ms-flex-direction: row;
+    flex-direction: row;
+}
+.list-group-item {
+    position: relative;
+    display: block;
+    width:116px;
+    padding: 0px;
+    margin-bottom: -1px;
+    background-color: #47475c;
+   
+     border-radius:4px;
+     margin-right:4px;
+     color:#fff;
+     font-size:14px;
+     line-height:20px;
+     text-align:center;
+}
+.list-group-item:first-child {
+    border-radius:4px;
+}
+
+li.list-group-item{
+  margin-bottom:0px;
+}
+.demoNails p{
+  margin-bottom:0px;
+}
+
+a.demoNails{
+  color:#fff !important;,
+ width:116px;
+ height:68px;
+ padding:0px;
+ 
+}
+
+a.demoNails > img{
+   border: 3px solid #47475c;
+}
+
+a.demoNails:hover > img{
+  border:3px solid #47475c;
+  border-radius:4px;
+
+
+}
+
+a.demoNails:hover > img,
+.demoNails > img.selected{
+  color:#fff !important;
+  border:3px solid #ffcc00;
+   border-radius:4px;
+}
+
+
+
+.sticky-top {
+    position: sticky;
+   /* position: relative;*/
+    top: 0;
+    z-index: 1020;
+}
+
+.smallChart{
+
+height:600px;
+display:block;
+
+ position:absolute;
+ top:0px;
+ left:400px;
+}
+
+#developersCharts1 {
+ /* width: 1200px;
+    height: 400px;
+    top: 210px;
+    left:60px;*/
+    margin-top:30px;
+}
+
+#developersCharts2 {
+  display: none;
+  position:absolute;
+  z-index:20;
+  width:100%;
+  height:600px;
+  margin-top:-255px;
+  padding-top:190px;
+
+    justify-content: center;  
+}
+
+
+/* homepage setup */
+
+
+
+
+#gui{
+  background-color:rgba(0,0,0,.3);
+  display: none;
+  height:fit-content;
+/*  position:absolute;*/
+  opacity:1;
+  z-index:20;
+  margin-top:-30px;
+  border-radius:4px;
+   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+
+    justify-content: center;  
+}
+
+#container{
+  background-color:rgba(0,0,0,.3);
+  border:1px solid #fff;
+  display: block;
+  position:absolute;
+  opacity:1;
+  z-index:20;
+  margin-top:-30px;
+  max-height:400px;
+  border-radius:4px;
+   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+
+    justify-content: center;  
+}
+
+#developersCharts3, #scChart{
+  display: block;
+ position:absolute !important;
+  top: 0px;
+  height: 550px;
+  max-height:570px;
+  margin:50px 0px 0px 0px;
+  opacity:1;
+  z-index:1;
+  width:100% !important;
+ 
+}
+
+#developersCharts4{
+  
+/*  width:100%;
+*/ opacity:0;
+  /*position:absolute;
+  top:70px;*/
+  height:360px;
+ /* padding:20px;*/
+ /* margin:0px 60px 0px 0px;*/
+/*  border:1px solid;
+*/  z-index: 1030;
+  border-radius:4px;
+}
+
+#developersCharts4.open{
+   box-shadow: 0 19px 38px rgba(0,0,0,0.20), 0 15px 12px rgba(0,0,0,0.12);
+   background-color:#fff;
+}
+
+#close{
+  display: none;
+  align-items:center;
+  grid-column-gap:10px;
+  grid-template-columns:10px 200px; 
+  position:absolute;
+  z-index: 1700;
+  left:5px;
+  top:-30px;
+  border:0px solid #5A62D3;
+  border-radius:4px;
+}
+
+
+
+
+
+
+#back,#next{
+  display: :block;
+  opacity:1;
+  color:#5A62D3;
+  
+  /*position: absolute;*/
+  z-index: 300;
+}
+#back i,#next i{
+  color:#5A62D3;
+  
+}
+
+
+#demoContent{
+  grid-column-start: 2;,
+}
+
+#demoContent p{
+  color:#fff;
+  padding:20px;
+}
+
+#demoContent a{
+   color:#fff;
+   text-decoration: underline
+}
+
+
+
+#next{
+  right:0px;
+  grid-column-start: 3;
+  justify-self:end;
+  
+}
+
+#back{
+ grid-column-start: 1;
+}
+
+
+
+.chartControls{
+opacity: 0;
+}
+
+.controlGrid{
+  /* width:70%;*/
+  display:grid;
+  grid-template-columns: 130px 30px 130px 30px;
+  grid-column-gap: 2px;
+   /* background-color: rgba(255,255,255,.6); */
+   border-radius: 4px;
+/*border:1px solid #ebebeb;*/
+padding:4px 4px 4px 4px;
+}
+
+.controlGrid div:nth-child(1){
+  grid-column: 1 / span 2;
+}
+.controlGrid div:nth-child(2){
+  grid-column: 3 / span 2;
+}
+
+
+
+
+
+
+
+#science1Controls
+{
+  display:none;
+  position: absolute;
+   top: 220px;
+    left: -290px;
+}
+
+
+#publishing2Controls
+{
+    position: absolute;
+    top: -200px;
+    left: 400px;
+    width:200px;
+    display:none;
+}
+
+
+#publishing2Controls #wrapper {
+  height: 500px;
+  width: 500px;
+  margin: 0 auto;
+  padding: 0;
+  overflow:visible;
+}
+#publishing2Controls #chartContainer {
+  float: left;
+  width: 700px; 
+  margin: 0;
+}
+#publishing2Controls #info {
+  float: left;
+  width: 270px;
+  padding-left: 20px;
+  margin: 100px 0 0 0;
+  border-left: 1px solid silver;
+}
+#publishing2Controls #info h2 {
+  display: inline;
+  font-size: 13pt;
+}
+#publishing2Controls #info .f32 .flag {
+  vertical-align: bottom !important;
+}
+
+#publishing2Controls #info h4 {
+  margin: 1em 0 0 0;
+}
+#nbControls
+{
+  display:none;
+  position: absolute;
+  top: 200px;
+  left: -120px;
+}
+
+#developers0Controls #pointWidthControls{
+  display:grid;grid-template-columns: 130px 10px;
+  opacity:1;
+}
+
+#developers0Controls #pointWidthControls div:nth-child(1){
+  grid-column: 1 / span 2;
+  grid-row:1 / span 1;
+}
+#developers0Controls #pointWidthControls div:nth-child(2){
+  grid-column: 1 / span 1;
+  grid-row:2 / span 1;
+}
+#developers0Controls #pointWidthControls div:nth-child(3){
+  grid-column: 2 / span 1;
+  grid-row:2 / span 1;
+}
+
+
+#developers0Controls .btn-sm
+{
+        color: #25386f;
+    background-color: #fff;
+    border-color: #25386f;
+    padding: .2rem .5rem;
+    font-size: 14px;
+    line-height: 1.5;
+    border-radius: 4px;
+    width: 100px;
+    height: 25px;
+    border-width: 1px;
+    margin-left:2px;
+    font-weight:bold;
+}
+
+#developers0Controls .btn-sm:hover {
+    background-color: #25386f;
+    border: 1px solid #25386f;
+    color: #ffffff;
+}
+
+#developers0Controls .btn-sm:focus {
+    color: #fff;
+    background-color: #5a6268;
+    border-color: #545b62;
+    box-shadow: 0 0 0 0.2rem rgba(130,138,145,.5);
+}
+
+
+
+
+#developers0Controls #itemChartControls{
+  display:none;
+  grid-template-columns: 100px 30px 100px 30px 100px 30px 100px 30px;
+  grid-column-gap: 1px;
+}
+
+#developers0Controls #itemChartControls input[type='range']{
+  width:100px;
+}
+
+#developers0Controls #itemChartControls div:nth-child(1){
+  grid-column: 1 / span 2;
+  grid-row:1 / span 1;
+}
+#developers0Controls #itemChartControls div:nth-child(2){
+ grid-column: 3 / span 2;
+ grid-row:1 / span 1;
+}
+
+#developers0Controls #itemChartControls div:nth-child(3){
+ grid-column: 5 / span 2;
+ grid-row:1 / span 1;
+}
+
+#developers0Controls #itemChartControls div:nth-child(4){
+ grid-column: 7 / span 2;
+ grid-row:1 / span 1;
+}
+
+#developers0Controls #itemChartControls div:nth-child(5){
+   grid-column:1 / span 1;
+   grid-row:2 / span 1;
+}
+#developers0Controls #itemChartControls div:nth-child(6){
+   grid-column:2 / span 1;
+   grid-row:2 / span 1;
+}
+
+
+
+.controlGrid div label,
+.controlGrid div span,
+#developersGrid0 div label,
+#developersGrid0 div span{
+  color:#222;
+  font-size: 14px;
+}
+
+.fas{
+  font-size:24px;
+  color:#47475c;
+  line-height:2px;
+
+
+}
+
+.controlGrid input[type="text"]{
+  width:40px;
+}
+
+
+#developersGrid1{
+ /* margin-left:10%;*/
+}
+
+#developersGrid0{
+  width:100%;
+  display:grid;
+  margin-left:0px;
+  grid-template-columns: 250px 4px 700px;
+  grid-column-gap:.5em;
+  align-items: center;
+}
+
+/*radios*/
+#developersGrid0.controlGrid div:nth-child(1){
+ grid-column: 1 / span 1;
+ grid-row:1 / span 2;
+}
+/*control header*/
+#developersGrid0.controlGrid div:nth-child(2){
+ grid-column: 2 / span 1;
+  grid-row: 1 / span 2;
+}
+/*slider*/
+#developersGrid0.controlGrid div:nth-child(3){
+ grid-column: 3 / span 2;
+  grid-row: 1 / span 1;
+}
+/*input value*/
+#developersGrid0.controlGrid div:nth-child(4){
+   grid-column: 3 / span 1;
+    grid-row: 2 / span 1;
+}
+/*other controls*/
+#developersGrid0.controlGrid div:nth-child(5){
+   grid-column: 4 / span 1;
+    grid-row: 2 / span 1;
+}
+
+
+
+
+
+#nbGrid div:nth-child(1){
+ grid-column: 1 / span 2;
+}
+
+#nbGrid div:nth-child(2){
+ grid-column: 3 / span 2;
+}
+
+
+
+.ball {
+  /*display: flex;
+  justify-content: center;*/
+  margin: 30px auto 0;
+ 
+  border-radius: 50%;
+  box-shadow: inset -25px -25px 40px rgba(0,0,0,.5);
+  background-image: -webkit-linear-gradient(-45deg, rgba(255,255,220,.2) 0%, transparent 100%);
+  background-image: -moz-linear-gradient(-45deg, rgba(255,255,220,.2) 0%, transparent 100%);  
+  background-image: -o-linear-gradient(-45deg, rgba(255,255,220,.2) 0%, transparent 100%);
+  background-image: -ms-linear-gradient(-45deg, rgba(255,255,220,.2) 0%, transparent 100%);
+}
+
+
+.highcharts-data-table table {
+
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-radius:4px;
+  background: rgba(0,0,0,.6);
+  min-width:100%;
+  height:50px;
+  margin-top: 10px;
+  font-family: sans-serif;
+  font-size: 0.7em;
+     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+
+}
+.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+  border: 1px solid silver;
+  padding: 0px 0px 0px 4px;
+  color:#fff;
+  background: transparent;
+}
+.highcharts-data-table tr:nth-child(even), .highcharts-data-table thead tr {
+  background: transparent;
+}
+.highcharts-data-table td:hover {
+ background: transparent;
+}
+.highcharts-data-table td.selected {
+  background-color: tomato;
+  color: white;
+  border: 2px solid;
+}
+
+.highcharts-data-table caption {
+  border-bottom: none;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+
+
+svg{
+  overflow:visible;
+}
+
+.planet{
+  height:200px;
+  height:180px;
+  /*border:1px solid #fff;*/
+}
+
+.pName{
+  font-weight: normal;
+  font-family:'Arial';
+  color:#fff;
+  font-size: 16px;
+ 
+}
+.arrow > .fas{
+  color:rgba(255,255,255,.8);
+}
+
+.planet p.pName{
+ 
+  vertical-align: bottom
+}
+
+p.arrow{
+  fill:#8087e8;
+  /*opacity:.8;*/
+  font-size:30px;
+  font-weight:400;
+  
+}
+p.arrow {
+  position:absolute;
+  top:60px;
+  left:3px;
+  width:40px;
+  height:40px;
+}
+
+p.arrow img{
+  min-width: 40px;
+  min-height: 40px;
+  opacity: .7;
+  transform:scale(1,.8);
+  
+}
+p.arrow {
+ left:10px;
+}
+
+.water-dl-label{
+  padding:0px 20px 8px 18px;
+  color:#000;width:11em;white-space:normal;background-color:transparent;border-radius:4px;
+}
+
+.water-dl-label h2{
+  font-size:1em;
+  font-weight: 600;
+  display: block;
+  padding:4px 0px 0px 0px;
+  margin:0px 0px 0px 0px;
+  color:#000;
+}
+.water-dl-label span{
+  font-weight:300;color:#000;
+}
+
+.water-dl-container{
+  text-align:left;padding:0px;
+}
+
+.water-dl-image{
+  padding:0px;
+}
+#soilImage img{
+  min-width:50px;
+  width:50px;
+ 
+}
+
+#lakesImage img{
+  width: 180px;
+    min-width: 180px;
+    margin-left: 30px;
+}
+
+#soilLabel{
+  padding-left:10px;
+  width:21em;
+}
+
+#lakesLabel{
+  padding-right: 4px;
+  text-align: right;
+  grid-column: 1 / span 1;width:150px
+}
+
+#lakesContainer{
+  display:grid;grid-template-columns:1fr 1fr
+}
+
+#lakesImage{
+  grid-column: 2 / span 1;
+    margin-left: 20px;
+}
+
+#iceContainer{
+  margin-top: 70px;
+    margin-left: 20px;
+}
+
+#iceLabel{
+  width: 18em;
+    text-align: right;
+    margin-left: -40px;
+}
+
+#riverImage{
+  transform:scale(1,.8) translate(10px 30px);
+  margin-top:25px;
+}
+
+#riverImage img{
+  width:100px;
+  min-width:100px;
+}
+
+#iceImage{
+  padding-left:55px;
+}
+
+#iceImage img{
+  width:100px;
+}
+
+ #riverContainer{
+    width:25em;
+    margin-left:240px;
+   
+  }
+#soilContainer{
+  margin-top:-20px;margin-left:10em;
+}
+
+
+/*.highcharts-markers g[stroke='#B0E0E6']{
+transform: translate(0px, -20px);
+}
+
+.highcharts-markers g[stroke='#8cc26c']{
+  transform: rotateX(0deg) skewX(0deg) translate(-95px, 47px);
+}
+
+.highcharts-markers g[stroke='#DEB887']{
+  transform: rotateX(0deg) skewX(0deg) translate(145px, -90px);
+}
+
+.highcharts-markers g[stroke='#01baf2']{
+   transform: rotate(0deg) translate(160px, -11px);
+}*/
+/*.water-marsh{
+  
+}
+.water-rivers{
+ 
+}
+.water-soil{
+  
+}
+*/
+
+
+#Venus > p > img {
+ transform:rotate(180deg);
+ opacity: .7;
+  transform:scale(1,.8) ;
+  margin-left:0px;
+
+}
+
+#Neptune + p.arrow{
+  margin-left:30px;
+}
+
+#Uranus {
+  position:absolute;
+  top:-10px;
+  left:10px;
+  width:60px;
+  z-index:1;
+/*border:1px solid #000;*/
+}
+
+#Uranus .pName{
+ margin-top:12px;
+  margin-left:-55px;
+}
+
+#Uranus     > .arrow{
+ /* opacity:.7;*/
+ opacity: .7;
+  transform:scale(1,.6) ;
+}
+
+.planetStats{
+  padding:0px;
+  top:0px;
+  
+}
+
+#explorerGrid{
+  padding:1rem;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  color:#000;
+}
+
+#explorerGrid h5{
+ font-size:18px;
+ color:#000;
+}
+#planetImage{
+  margin-bottom:3px;
+}
+#planetImage img{
+  width:60%;
+}
+#planetType{
+  grid-column:1 / span 2;
+  color:#000;
+}
+#explorerGrid .planetInfo h5{
+  font-size:14px;
+  color:brown;
+}
+#explorerGrid .planetInfo p{
+  font-size:24px;
+  font-weight:200;
+  color:#000;
+}
+#planetDescription{
+ 
+  
+}
+#planetDescription p{
+  font-size:14px;
+  color:#000;
+  padding:1rem;
+  white-space:normal;
+}
+
+
+
+.hidden {
+  display: none;
+}
+
+
+#sliders input[type=range] {
+  display: inline;
+  color:#fff;
+}
+#sliders, #sliders label {
+  padding-right: 1em;
+  white-space: nowrap;
+  color:#fff;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.3);
+  transition: opacity 500ms;
+}
+
+.highcharts-popup{
+ /* max-height: 70%;*/
+  overflow: hidden;
+  
+  border-radius: 4px;
+  background-color: rgba(255,255,255,1);
+  top: 22%;
+}
+.highcharts-popup{
+  right:auto !important;
+}
+
+.highcharts-popup-lhs-col {
+    clear: both;
+    width: 33%;
+    border-right: 1px solid #e6e6e6;
+    height: 200px;
+    padding-right: 2px;
+}
+.highcharts-popup-rhs-col {
+    width: 59%;
+    padding-right:0px;
+    height:200px;
+}
+.highcharts-tab-item-show{
+  /*height:250px;*/
+  border: 5px solid #3399ff;
+  border-radius:4px;
+}
+
+.highcharts-popup input, .highcharts-popup label, .highcharts-popup select {
+  
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.highcharts-tab-item.highcharts-tab-item-active {
+    background-color: #3399ff;
+    color:#fff;
+}
+
+
+.highcharts-popup input {
+    border: 1px solid #e6e6e6;
+    padding: 5px;
+    width: 80px;
+}
+
+.highcharts-popup select {
+   
+    width: 100%;
+}
+
+.highcharts-tab-item-content {
+  
+    width: 98%;
+    border-top: 5px solid #3399ff;
+    background-color: white;
+}
+
+.highcharts-popup input, .highcharts-popup label, .highcharts-popup select {
+    clear: both;
+  
+    margin-bottom: 10px;
+}
+
+
+
+/*.highcharts-popup-rhs-col-wrapper h3 {
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:4px;
+  grid-column: 1/span 4;
+}
+
+.highcharts-popup label{
+  grid-column: auto/span 4;
+}
+
+.highcharts-popup input[type="text"]{
+  grid-column: auto/span 1;
+}
+
+.highcharts-popup select{
+  grid-column: 1/span 4;
+}
+
+.highcharts-popup-rhs-col-wrapper {
+    float: left;
+    width: calc(100% - 10px);
+    padding-right: 4px;
+  height:180px;
+  overflow-y: scroll;
+  display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+}*/
+  
+
+.highcharts-popup button {
+     float: none; 
+    text-align: center;
+    align-self: center;
+    border: none;
+    background: #3399ff;
+    color: #fff;
+    width: 130px;
+    height: 30px;
+    border-radius: 4px;
+    margin-left: 5px;
+    margin-top: 12px;
+}
+
+.highcharts-popup-close:hover, .highcharts-popup button:hover, .highcharts-popup button.highcharts-annotation-edit-button:hover, .highcharts-popup button.highcharts-annotation-remove-button:hover {
+    background-color: #f7f7f7;
+    color:#333;
+}
+
+.highcharts-popup-lhs-col, .highcharts-popup-rhs-col{
+  padding:20px 0px 20px 5px;
+ 
+}
+
+.popup {
+  margin: 70px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 5px;
+  width: 350px;
+  position: relative;
+}
+
+.popup input, .popup select {
+  width: 100%;
+  margin: 5px 0 15px;
+}
+
+.popup button {
+  float: right;
+  margin-left: 0.2em;
+}
+
+.popup .clear {
+  height: 50px;
+}
+
+.popup input[type=text], .popup select {
+  height: 2em;
+  font-size: 16px;
+}
+
+#mainChart .highcharts-popup{
+  visibility: hidden;
+  opacity:0;
+}
+
+.cloudSigns{
+  position:absolute;
+  left:40px;
+  top:-60px;
+}
+
+
+.chart:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.chart:-moz-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+.chart:-ms-fullscreen {
+  width: 100%;
+  height: 100%;
+}
+
+.chart:fullscreen {
+  width: 100%;
+  height: 100%;
+}
+
+/* GENERAL */
+
+.chart {
+  float: left;
+  max-height: 800px;
+  height: 75vh;
+  position: relative;
+  width: 100%;
+}
+
+.highcharts-draw-mode {
+  cursor: crosshair;
+}
+
+.left {
+  float: left;
+}
+
+.right,
+.highcharts-stocktools-toolbar li.right {
+  float: right;
+}
+
+/* GUI */
+
+.highcharts-menu-wrapper{
+  display: flex;
+  justify-content: center;
+
+}
+
+
+/*.highcharts-menu-wrapper .highcharts-stocktools-toolbar,
+.highcharts-menu-wrapper {
+   
+    height: calc(100% - 200px);
+   
+}*/
+
+
+.highcharts-bindings-wrapper {
+    display: block;
+    width: 40px;
+    height: 100%;
+    position: absolute;
+    z-index: 10;
+    top: 130px;
+}
+
+.highcharts-stocktools-toolbar {
+    margin: 0px 0px 0px 10px;
+    padding: 10px 0px 0px 0px;
+    /* height: 100px; */
+    /* display: flex; */
+    /* border: 1px solid #fff; */
+    /* align-content: center; */
+    /* justify-content: flex-end; */
+    /* width: calc(100% - 63px); */
+    position: absolute;
+    z-index: 100;
+     top: 30px; 
+    /* left: 180px; */
+}
+
+
+.highcharts-stocktools-toolbar li {
+    background-color: rgba(51,153,255,1);
+    background-repeat: no-repeat;
+    border: 0px solid rgba(119,161,229,1);
+    border-radius: 4px;
+    cursor: pointer;
+    float: left;
+    height: 40px;
+    list-style: none;
+    margin-right: 2px;
+    margin-bottom: 3px;
+    padding: 0px;
+    position: relative;
+    width: auto;
+}
+
+.highcharts-stocktools-toolbar li ul {
+  display: none;
+  left: 0px;
+  padding-left: 0px;
+  position: absolute;
+  /*z-index: 125;*/
+}
+
+.highcharts-stocktools-toolbar li:hover {
+  background-color: rgba(51,153,255,.8);
+}
+
+.highcharts-stocktools-toolbar li:hover ul {
+  display: block;
+}
+
+.highcharts-stocktools-toolbar li ul li {
+  margin-bottom: 2px;
+  width: 160px;
+}
+
+.highcharts-stocktools-toolbar li>span.highcharts-menu-item-btn {
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  display: block;
+  float: left;
+  height: 100%;
+  width: 40px;
+}
+
+.highcharts-popup-bottom-row button{
+  margin-bottom:30px;
+}
+
+.highcharts-popup.highcharts-annotation-toolbar {
+    right: 33% !important;
+    left: auto;
+    top: 20% !important;
+    height: 40px;
+    overflow: hidden;
+    padding-right: 40px;
+    width: auto;
+    min-width: 0;
+}
+
+button.highcharts-annotation-remove-button, button.highcharts-annotation-edit-button{
+    float: right;
+    border: none;
+    background: #f7f7f7;
+    color: #666;
+    margin-left: 5px;
+    margin-top: 12px;
+}
+
+.highcharts-stocktools-toolbar li>.highcharts-menu-item-title {
+  color: #fff;
+  line-height: 40px;
+  font-size: 0.876em;
+  padding: 0px 10px 0px 5px;
+}
+
+.highcharts-indicators>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/indicators.svg');
+}
+
+.highcharts-label-annotation>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/label.svg');
+}
+
+.highcharts-circle-annotation>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/circle.svg');
+}
+
+.highcharts-rectangle-annotation>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/rectangle.svg');
+}
+
+.highcharts-segment>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/segment.svg');
+}
+
+.highcharts-arrow-segment>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/arrow-segment.svg');
+}
+
+.highcharts-ray>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/ray.svg');
+}
+
+.highcharts-arrow-ray>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/arrow-ray.svg');
+}
+
+.highcharts-infinity-line>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/line.svg');
+}
+
+.highcharts-arrow-infinity-line>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/arrow-line.svg');
+}
+
+.highcharts-horizontal-line>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/horizontal-line.svg');
+}
+
+.highcharts-vertical-line>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-line.svg');
+}
+
+.highcharts-elliott3>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/elliott-3.svg');
+}
+
+.highcharts-elliott5>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/elliott-5.svg');
+}
+
+.highcharts-crooked3>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/crooked-3.svg');
+}
+
+.highcharts-crooked5>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/crooked-5.svg');
+}
+
+.highcharts-measure-xy>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/measure-xy.svg');
+}
+
+.highcharts-measure-x>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/measure-x.svg');
+}
+
+.highcharts-measure-y>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/measure-y.svg');
+}
+
+.highcharts-fibonacci>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/fibonacci.svg');
+}
+
+.highcharts-pitchfork>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/pitchfork.svg');
+}
+
+.highcharts-parallel-channel>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/parallel-channel.svg');
+}
+
+.highcharts-toggle-annotations>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/annotations-visible.svg');
+}
+
+.highcharts-vertical-counter>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-counter.svg');
+}
+
+.highcharts-vertical-label>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-label.svg');
+}
+
+.highcharts-vertical-arrow>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-arrow.svg');
+}
+
+.highcharts-vertical-double-arrow>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/vertical-double-arrow.svg');
+}
+
+.highcharts-flag-circlepin>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-elipse.svg');
+}
+
+.highcharts-flag-diamondpin>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-diamond.svg');
+}
+
+.highcharts-flag-squarepin>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-trapeze.svg');
+}
+
+.highcharts-flag-simplepin>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/flag-basic.svg');
+}
+
+.highcharts-zoom-xy>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/zoom-xy.svg');
+}
+
+.highcharts-zoom-x>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/zoom-x.svg');
+}
+
+.highcharts-zoom-y>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/zoom-y.svg');
+}
+
+.highcharts-full-screen>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/fullscreen.svg');
+}
+
+.highcharts-series-type-ohlc>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/series-ohlc.svg');
+}
+
+.highcharts-series-type-line>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/series-line.svg');
+}
+
+.highcharts-series-type-candlestick>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/series-candlestick.svg');
+}
+
+.highcharts-current-price-indicator>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/current-price-show.svg');
+}
+
+.highcharts-save-chart>.highcharts-menu-item-btn {
+  background-image: url('https://code.highcharts.com/gfx/stock-icons/save-chart.svg');
+}
+
+li.highcharts-active {
+  background-color: rgba(51,153,255,1);
+}
+
+/* Popup */
+
+.chart-wrapper {
+  float: left;
+  position: relative;
+  width: 100%;
+  background: transparent;
+  padding-top: 10px;
+}
+
+.highcharts-annotation-shapes circle,
+.highcharts-annotation-shapes path,
+.highcharts-annotation-label-box{
+  /*fill:rgba(119,161,229,.5);*/
+}
+
+#menu .navbar-brand img {
+    width: auto;
+    height: 130%;
+    margin-top: -7px;
+}
+
+
+
+@media screen and (max-width: 1024px){
+  #menu .navbar-brand img {
+    width: auto;
+    height: 150%;
+    margin-top: -7px;
+  }
+
+  #hero, #mainChart{
+    height:600px;/*fit-content;*/
+  }
+
+  .chart{
+    height:25vh;
+  }
+
+  #heroTitle{
+    margin-top:0px;
+  }
+  #hero #title{
+   color:#fff;
+   font-size:32px;
+   width:max-content;
+   font-weight:bold;
+   line-height:50px;
+   margin-top:0px;
+  }
+
+  #verticalCarousel {
+    height: 64px;
+    margin-top: 0px;
+    position: initial;
+    /* top: 24px; */
+    /* left: 325px; */
+  }
+
+  #verticalCarousel .carousel-item {
+    margin-top: 0px;
+}
+
+  #verticalCarousel .carousel-inner{
+    margin-left:0px;
+    font-size:36px;
+    line-height: 48px;
+     width: 330px;
+     padding-top: 20px;
+  }
+
+  #demoButton{
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    margin:10px 0px 10px 0px;
+
+  }
+
+  
+  #contentCarousel .carousel-indicators{
+    top: -30px;
+    
+  }
+  #contentCarousel .carousel-indicators li,
+  #contentCarousel .carousel-indicators .active{
+    font-weight:700;
+    font-size: 16px;
+  }
+
+  #contentCarousel .carousel-inner {
+    font-size: 16px;
+    color: #fff;
+    height: 240px;
+    font-weight: bold;
+    padding-top: 30px;
+  }
+
+    /*
+    
+    .controlGrid{
+      width:90%;
+    }
+
+   
+
+    #developersGrid0 {
+      width: 90%;
+      display: grid;
+      margin-left: 10%;
+      grid-template-columns: 25% 25% 25% 25%;
+    }*/
+
+  .btn-alternate {
+    /*height: auto;
+    width:auto;
+    max-height: 40px !important;
+    max-width: 150px !important;
+    margin: 10px 10px 10px 0px !important;*/
+  }
+  
+
+ 
+
+  #planetStats{
+    cursor:grab;
+    width:250px;
+    height: 395px;
+    border-radius:4px 4px 4px 4px;
+    border-width:1px 1px 1px 1px;
+    border-color:#fff;
+    border-style: solid;
+    padding:0px;
+    position:absolute;
+    top:0px;
+    left:10vh;
+    background-color:rgba(0,0,0,.9);
+    }
+
+  #closeExplorer{
+  width:24px;height:24px;position:absolute;top:2px;right:2px;color:#fff
+  }
+
+  #explorerGrid{
+    padding:.5rem;display:grid;grid-template-columns:1fr 1fr;
+  }
+
+  #explorerGrid h5{
+   font-size:16px;color:#fff
+  }
+  #planetImage{
+    margin-bottom:3px;color:#fff;font-size:14px;white-space:nowrap;
+  }
+  #planetImage img{
+    width:60%;
+  }
+  #planetType{
+    grid-column:1 / span 2;color:#fff;
+  }
+  #explorerGrid .planetInfo h5{
+    font-size:14px;color:crimson;white-space: nowrap;
+  }
+  #explorerGrid .planetInfo p{
+    font-size:20px;font-weight:200;color:#fff;
+  }
+  #planetDescription{
+    background-color:rgba(255,255,255,.7);
+    overflow:auto;
+    height:200px;
+    
+  }
+  #planetDescription p{
+    font-size:14px;color:#000;padding:1rem;
+  }
+
+  .highcharts-stocktools-toolbar li {
+    height: 30px;
+  }
+  .highcharts-stocktools-toolbar li>.highcharts-menu-item-title {
+    line-height: 30px;
+  }
+  .fas {
+    font-size: 40px;
+  }
+  #back, #next {
+   margin-top: 100px;
+   padding:2px;
+  }
+  .water-dl-container {
+    text-align: left;
+    padding: 0px;
+    width: 75%;
+  }
+  .water-dl-label{
+    padding: 0px 20px 8px 18px;
+    color: #000;
+    background-color: transparent;
+    width: 16em;
+    white-space: normal;
+    border-radius: 4px;
+
+  }
+  .water-dl-label h2 {
+    font-size: .8em;
+    color:#000;
+  }
+  .water-dl-label span {
+     font-size: .8em;
+    font-weight: 300;
+    color: #000;
+  }
+
+  /*.highcharts-8s g[stroke='#B0E0E6']{
+  transform: translate(0px, 0px);
+  }
+
+  .highcharts-markers g[stroke='#8cc26c']{
+    transform: rotateX(0deg) skewX(0deg) translate(-65px, 30px);
+  }
+
+  .highcharts-markers g[stroke='#DEB887']{
+    transform:rotateX(0deg) skewX(0deg) translate(105px, -30px)
+  }
+
+  .highcharts-markers g[stroke='#01baf2']{
+     transform: rotate(0deg) translate(100px, 5px);
+  }*/
+
+  #riverContainer{
+        margin-top: 65px;
+    margin-left: -35px;
+    width: fit-content;
+    
+  }
+  #riverImage {
+    transform: scale(1,.8) translate(10px 30px);
+    margin-top: 3px;
+}
+  #riverLabel{
+    
+     width:16em;
+  }
+
+  #soilContainer{
+ /* 
+    width:fit-content;*/
+    margin-left:-50px;
+    margin-top: 120px;
+    width:11em;
+}
+#soilLabel{
+  
+}
+
+#lakesContainer{
+  margin-left: -15px;
+}
+#lakesLabel {
+    padding-right: 4px;
+    grid-column: 1 / span 1;
+    width: 16em;
+    margin-left: -50px;
+    margin-top: 30px;
+}
+
+  #iceLabel{
+    width: 13em;
+    margin-top: 130px !important;
+    margin-left: 0px;
+    padding-right: 10px;
+   
+  }
+  #iceImage img {
+    width: 55px;
+  }
+
+  #iceImage{
+  padding-left:5px;
+  margin-left:80px;
+  }
+  #iceContainer {
+    margin-top: -20px; 
+    margin-left: 20px;
+  }
+
+
+  #lakesImage img {
+         width: 90px;
+    min-width: 90px;
+    padding-left: 0px;
+    padding-top: 0px;
+    margin-left: 4px;
+    margin-top: 10px;
+  }
+  #riverImage img {
+    width: 60px;
+    min-width: 60px;
+  }
+  #soilImage img {
+    min-width: 40px;
+    width: 40px;
+  }
+ .highcharts-popup {
+    max-height: 70%;
+    overflow: hidden;
+    width: 80%;
+    border-radius: 4px;
+    background-color: rgba(255,255,255,1);
+    top: 30%;
+    left: 10%;
+  }
+  h3.highcharts-indicator-title{
+    font-size: 18px;
+  }
+  .highcharts-popup-lhs-col {
+      clear: both;
+      width: 33%;
+      border-right: 1px solid #e6e6e6;
+      height: 250px;
+  }
+  .highcharts-popup-rhs-col {
+      width: 60%;
+  }
+  .highcharts-tab-item-show {
+      height: 180px;
+      border: 5px solid #3399ff;
+      border-radius: 4px;
+  }
+  .highcharts-popup-rhs-col-wrapper {
+      float: left;
+     width:100%;
+      padding-right: 4px;
+      height: 50%;
+      overflow-y: scroll;
+      display: grid;
+      grid-template-columns: 100%;
+  }
+  .highcharts-popup.highcharts-annotation-toolbar {
+      right: 22% !important;
+      left: auto;
+      top: 30% !important;
+      height: 40px;
+      overflow: hidden;
+      padding-right: 40px;
+      width: auto;
+      min-width: 0;
+  }
+  .highcharts-stocktools-toolbar {
+      margin:0px 0px 0px 0px;
+  }
+
+  .highcharts-popup button {
+    width: 60px;
+    }
+    .highcharts-stocktools-toolbar li>.highcharts-menu-item-title {
+    color: #fff;
+    line-height: 18px;
+    font-size: 0.876em;
+    padding: 0px 7px 0px 5px;
+  }
+
+ 
+
+}
+
+
+
+@media screen and (max-width: 576px){
+
+ 
+
+  .highcharts-markers g[stroke='#8cc26c']{
+    transform: rotateX(0deg) skewX(0deg) translate(-55px, 30px);
+  } 
+  #contentCarousel .carousel-inner {
+    display: none;
+    font-size: 16px;
+    color: #fff;
+    height: 240px;
+    font-weight: bold;
+    padding-top: 30px;
+  }
+  #iceContainer{
+        margin-top: 10px;
+    width: 8em;
+    margin-left: -40px;
+  }
+  #soilContainer{
+    width: 9em;
+    margin-top: 110px;
+    /* margin-left: -60px;*/
+  }
+  #riverContainer{
+        margin-left: 200px;
+        width:9em;
+        margin-top:85px;
+  }
+  #riverLabel{
+    padding-top:10px;
+  }
+  #lakesContainer{
+   display:grid;
+   grid-template-columns:1fr;
+    grid-template-rows:1fr;
+    margin-left: 10px;
+    margin-top:30px;
+  }
+  #lakesLabel {
+    padding-right: 4px;
+    grid-row: 2 / span 1;
+    width: 16em;
+    margin-left: -50px;
+    margin-top: 0px;
+    padding-top: 20px;
+  }
+  #lakesImage {
+    grid-row: 1 / span 1;
+    grid-column: 1 / span 1;
+    margin-left: 20px;
+    text-align: right;
+  }
+   #lakesImage  img{
+      width: 90px;
+    min-width: 90px;
+    padding-left: 0px;
+    padding-top: 0px;
+     margin-left: 0px; 
+     margin-top: 0px; 
+  }
+ 
+
+ /* #developersGrid0 div:nth-child(1){
+    grid-column: 1 / span 1;
+    grid-row:1;
+  }
+
+  #developersGrid0 div:nth-child(2){
+   grid-column: 2 / span 2;
+   grid-row:1;
+  }
+
+  #developersGrid0 div:nth-child(7){
+   grid-column: 1 / span 1;
+   grid-row:3;
+  }
+  #developersGrid0 div:nth-child(8){
+   grid-column: 2 / span 1;
+   grid-row:3;
+  }*/
+
+
+}
+
+.highcharts-stocktools-toolbar:nth-child(2){
+  display: none;
+}
+
