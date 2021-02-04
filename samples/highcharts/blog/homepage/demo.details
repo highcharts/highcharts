@@ -1,6 +1,0 @@
----
- name: Homepage Animation
- authors:
-   - Nancy Dillon
- js_wrap: b
-...
