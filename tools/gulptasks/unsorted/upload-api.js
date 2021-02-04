@@ -1,18 +1,69 @@
-/* eslint func-style: 0, no-console: 0, max-len: 0 */
-const gulp = require('gulp');
+/* eslint-disable func-style */
+/* eslint-disable no-console */
+/* eslint-disable quotes */
+/* eslint-disable require-jsdoc */
 
-const uploadAPIDocs = () => {
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+const gulp = require('gulp'),
+    Path = require('path');
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const HTML_HEAD_STATIC = [
+    [
+        '<script',
+        'id="Cookiebot"',
+        'src="https://consent.cookiebot.com/uc.js"',
+        'data-cbid="8be0770c-8b7f-4e2d-aeb5-2cfded81e177"',
+        'data-blockingmode="auto"',
+        'type="text/javascript"',
+        '></script>'
+    ].join(''),
+    [
+        '<!-- Google Tag Manager -->',
+        `<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':`,
+        `new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],`,
+        `j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=`,
+        `'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);`,
+        `})(window,document,'script','dataLayer','GTM-5WLVCCK');</script>`,
+        `<!-- End Google Tag Manager -->`
+    ].join('')
+].join('\n');
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+function updateHTMLHead(filePath, fileContent) {
+
+    if (
+        Path.extname(filePath) !== '.html' ||
+        fileContent.indexOf('</head>') === -1
+    ) {
+        return fileContent;
+    }
+
+    return fileContent.replace('</head>', HTML_HEAD_STATIC + '\n</head>');
+}
+
+function uploadAPIDocs() {
     const {
         getFilesInFolder
     } = require('highcharts-assembler/src/build.js');
     const colors = require('colors');
     const isString = x => typeof x === 'string';
     const ProgressBar = require('../../progress-bar.js');
-    const {
-        join,
-        relative,
-        sep
-    } = require('path');
     const {
         asyncForeach,
         uploadFiles
@@ -53,6 +104,7 @@ const uploadAPIDocs = () => {
             bucket,
             profile: argv.profile,
             callback: argv.silent ? false : doTick,
+            contentCallback: updateHTMLHead,
             onError
         };
         const getMapOfFromTo = fileName => {
@@ -63,7 +115,7 @@ const uploadAPIDocs = () => {
                 to = parts.join('/');
             }
             return {
-                from: join(sourceFolder, fileName),
+                from: Path.join(sourceFolder, fileName),
                 to
             };
         };
@@ -79,9 +131,9 @@ const uploadAPIDocs = () => {
             const { errors } = result;
             if (errors.length) {
                 const erroredFiles = errors
-                    .map(e => relative(sourceFolder, e.from)
+                    .map(e => Path.relative(sourceFolder, e.from)
                         // Make path command line friendly.
-                        .split(sep)
+                        .split(Path.sep)
                         .join('/'));
                 commands.push(`gulp upload-api --tags ${tag} --files ${erroredFiles.join(',')}`);
             }
@@ -95,7 +147,7 @@ const uploadAPIDocs = () => {
                 ].join('\n'));
             }
         });
-};
+}
 
 uploadAPIDocs.description = 'Uploads API docs to the designated bucket';
 uploadAPIDocs.flags = {
