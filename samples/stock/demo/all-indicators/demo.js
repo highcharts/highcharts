@@ -37,10 +37,13 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             selected: 2
         },
         yAxis: [{
-            height: '70%'
+            height: '60%'
         }, {
-            top: '75%',
-            height: '25%'
+            top: '60%',
+            height: '20%'
+        }, {
+            top: '80%',
+            height: '20%'
         }],
         series: [{
             type: 'candlestick',
@@ -53,94 +56,51 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             name: 'Volume',
             data: volume,
             yAxis: 1
+        }, {
+            type: 'pc',
+            id: 'overlay',
+            linkedTo: 'aapl',
+            showInLegend: true,
+            yAxis: 0
+        }, {
+            type: 'macd',
+            id: 'oscillator',
+            linkedTo: 'aapl',
+            showInLegend: true,
+            yAxis: 2
         }]
     }, function () {
         document.getElementById("overlays").addEventListener("change", function (e) {
-            const seriesToAdd = e.target.value;
+            const series = chart.get('overlay');
 
-            // Destroy previously existing series.
-            if (chart.series[2] && chart.series[2].yAxis.options.index === 0) {
-                chart.series[2].destroy(false);
-            }
-            if (chart.series[3] && chart.series[3].yAxis.options.index === 0) {
-                chart.series[3].destroy(false);
-            }
-
-            if (seriesToAdd !== 'none') {
+            if (series) {
+                series.remove(false);
                 chart.addSeries({
-                    type: seriesToAdd,
+                    type: e.target.value,
                     linkedTo: 'aapl',
+                    id: 'overlay',
+                    yAxis: 0,
                     showInLegend: true
                 }, false);
             }
+
             chart.redraw();
         });
 
         document.getElementById("oscilators").addEventListener("change", function (e) {
-            const seriesToAdd = e.target.value;
+            const series = chart.get('oscillator');
 
-            // Add third axis if needed.
-            if (chart.yAxis.length === 3) {
-                chart.yAxis[0].update({
-                    height: '55%'
-                }, false);
-                chart.yAxis[1].update({
-                    top: '60%',
-                    height: '15%'
-                }, false);
-                chart.addAxis({
-                    top: '80%',
-                    height: '20%',
-                    opposite: true,
-                    title: {
-                        text: null
-                    }
+            if (series) {
+                series.remove(false);
+                chart.addSeries({
+                    type: e.target.value,
+                    linkedTo: 'aapl',
+                    id: 'oscillator',
+                    yAxis: 2,
+                    showInLegend: true
                 }, false);
             }
 
-            // Destroy previously existing series.
-            if (chart.series[2] && chart.series[2].yAxis.options.index === 3) {
-                chart.series[2].destroy(false);
-            }
-            if (chart.series[3] && chart.series[3].yAxis.options.index === 3) {
-                chart.series[3].destroy(false);
-            }
-
-            // Remove axis if not necessary.
-            if (seriesToAdd === 'none') {
-                chart.yAxis[3].remove(false);
-
-                chart.yAxis[0].update({
-                    height: '70%'
-                }, false);
-                chart.yAxis[1].update({
-                    top: '75%',
-                    height: '25%'
-                }, false);
-            } else {
-                if (seriesToAdd === 'aroon') {
-                    chart.addSeries({
-                        yAxis: 3,
-                        type: 'aroon',
-                        linkedTo: 'aapl',
-                        color: 'green',
-                        lineWidth: 1,
-                        showInLegend: true,
-                        aroonDown: {
-                            styles: {
-                                lineColor: 'red'
-                            }
-                        }
-                    }, false);
-                } else {
-                    chart.addSeries({
-                        type: seriesToAdd,
-                        linkedTo: 'aapl',
-                        yAxis: 3,
-                        showInLegend: true
-                    }, false);
-                }
-            }
             chart.redraw();
         });
     });
