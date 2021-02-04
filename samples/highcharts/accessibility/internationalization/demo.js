@@ -27,7 +27,7 @@ const languages = {
             exportButtonTitle: 'Eksporter',
             printButtonTitle: 'Print',
             printChart: 'Skriv ut diagram',
-            viewFullscreen: 'Se i fullskjerm',
+            viewFullscreen: 'Vis i fullskjerm',
             rangeSelectorFrom: 'Fra',
             rangeSelectorTo: 'Til',
             rangeSelectorZoom: 'Zoom',
@@ -90,8 +90,12 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
             }
         },
         accessibilty: {
+            landmarkVerbosity: 'one',
             screenReaderSection: {
                 beforeChartFormat: 'Financial line chart showing AAPL stock prices, with an additional navigator series showing an overview of the stock.'
+            },
+            series: {
+                pointDescriptionEnabledThreshold: 30
             }
         },
         rangeSelector: {
@@ -205,30 +209,30 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
                     type: 'month',
                     count: 1,
                     text: '1m',
-                    title: 'Se 1 måned'
+                    title: 'Vis 1 måned'
                 }, {
                     type: 'month',
                     count: 3,
                     text: '3m',
-                    title: 'Se 3 måneder'
+                    title: 'Vis 3 måneder'
                 }, {
                     type: 'month',
                     count: 6,
                     text: '6m',
-                    title: 'Se 6 måneder'
+                    title: 'Vis 6 måneder'
                 }, {
                     type: 'ytd',
                     text: 'YTD',
-                    title: 'Se året til dags dato'
+                    title: 'Vis året til dags dato'
                 }, {
                     type: 'year',
                     count: 1,
                     text: '1 år',
-                    title: 'Se 1 år'
+                    title: 'Vis 1 år'
                 }, {
                     type: 'all',
                     text: 'Alle',
-                    title: 'Alle'
+                    title: 'Vis alle'
                 }]
             }
         }));
