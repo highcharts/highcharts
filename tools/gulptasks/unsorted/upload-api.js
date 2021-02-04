@@ -1,3 +1,4 @@
+/* eslint-disable callback-return */
 /* eslint-disable func-style */
 /* eslint-disable no-console */
 /* eslint-disable quotes */
@@ -20,6 +21,7 @@ const gulp = require('gulp'),
 
 const HTML_HEAD_STATIC = [
     [
+        '',
         '<script',
         'id="Cookiebot"',
         'src="https://consent.cookiebot.com/uc.js"',
@@ -27,8 +29,9 @@ const HTML_HEAD_STATIC = [
         'data-blockingmode="auto"',
         'type="text/javascript"',
         '></script>'
-    ].join(''),
+    ].join('\n        '),
     [
+        '',
         '<!-- Google Tag Manager -->',
         `<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':`,
         `new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],`,
@@ -36,7 +39,7 @@ const HTML_HEAD_STATIC = [
         `'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);`,
         `})(window,document,'script','dataLayer','GTM-5WLVCCK');</script>`,
         `<!-- End Google Tag Manager -->`
-    ].join('')
+    ].join('\n        ')
 ].join('\n');
 
 /* *
@@ -45,16 +48,55 @@ const HTML_HEAD_STATIC = [
  *
  * */
 
-function updateHTMLHead(filePath, fileContent) {
-
-    if (
-        Path.extname(filePath) !== '.html' ||
-        fileContent.indexOf('</head>') === -1
-    ) {
-        return fileContent;
+function updateFileContent(filePath, fileContent) {
+    switch (Path.extname(filePath)) {
+        case '.htm':
+        case '.html':
+            fileContent = Buffer.from(
+                fileContent
+                    .toString()
+                    .replace(/^(.*\<\/head\>.*)$/m, HTML_HEAD_STATIC + '\n$1')
+            );
+            break;
+        default:
     }
+    return fileContent;
+}
 
-    return fileContent.replace('</head>', HTML_HEAD_STATIC + '\n</head>');
+function uploadFilesTest(params) {
+    const fs = require('fs');
+    const mkDirP = require('mkdirp');
+
+    return new Promise(resolve => {
+        const callback = params.callback,
+            contentCallback = params.contentCallback,
+            errors = [];
+
+        let from,
+            to,
+            content;
+
+        params.files.forEach(file => {
+            try {
+                from = file.from;
+                to = Path.join('./build/upload-api/', file.to);
+                content = fs.readFileSync(from, '');
+                if (contentCallback) {
+                    content = contentCallback(from, content);
+                }
+                mkDirP.sync(Path.dirname(to));
+                fs.writeFileSync(to, content);
+                if (callback) {
+                    callback();
+                }
+            } catch (error) {
+                console.error(error);
+                errors.push(error);
+            }
+        });
+
+        resolve({ errors: [] });
+    });
 }
 
 function uploadAPIDocs() {
@@ -77,7 +119,8 @@ function uploadAPIDocs() {
             argv.files.split(',') :
             getFilesInFolder(sourceFolder, true, '')
     );
-    if (!bucket) {
+
+    if (!bucket && !argv.test) {
         throw new Error('No --bucket argument specified or env. variable HIGHCHARTS_APIDOCS_BUCKET is empty or unset.');
     }
 
@@ -104,7 +147,7 @@ function uploadAPIDocs() {
             bucket,
             profile: argv.profile,
             callback: argv.silent ? false : doTick,
-            contentCallback: updateHTMLHead,
+            contentCallback: updateFileContent,
             onError
         };
         const getMapOfFromTo = fileName => {
@@ -126,7 +169,7 @@ function uploadAPIDocs() {
     const commands = [];
     return asyncForeach(tags, tag => Promise
         .resolve(getUploadConfig(tag))
-        .then(uploadFiles)
+        .then(argv.test ? uploadFilesTest : uploadFiles)
         .then(result => {
             const { errors } = result;
             if (errors.length) {
@@ -152,11 +195,13 @@ function uploadAPIDocs() {
 uploadAPIDocs.description = 'Uploads API docs to the designated bucket';
 uploadAPIDocs.flags = {
     '--bucket': 'The S3 bucket to upload to.',
+    '--files': 'Upload selected files relative to current working directory. (optional)',
     '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
                     'standard AWS environment variables for credentials will be used. (optional)',
-    '--tags': 'Tags to upload under (optional)',
+    '--tags': 'Subfolders to upload under (optional)',
     '--noextensions': 'Remove file extensions for uploaded files (destination). Useful for testing/serving directly from S3 bucket (optional)',
-    '--silent': 'Don\'t produce progress output. (optional)'
+    '--silent': 'Don\'t produce progress output. (optional)',
+    '--test': 'Will save processed files for S3 bucket in a local directory instead of uploading. (optional)'
 };
 
 
