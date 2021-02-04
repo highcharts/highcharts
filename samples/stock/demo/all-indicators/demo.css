@@ -4,39 +4,27 @@
   }
   
 .left {
-	position: absolute;
-	left: 0%;
-	top: 1%;
-	margin-left: 20px;
+	position: relative;
+	left: 2%;
 	width: 50%;
 }
-
-.left__labels {
-	display: block;
-}
-
+  
 .left__select {
 	width: 90%;
 }
-
+  
 .right {
-	position: absolute;
-	left: 50%;
-	top: 1%;
-	margin-left: 20px;
+	position: relative;
 	width: 50%;
+	left: 52%;
+	transform: translate(0, -100%);
 }
-
-.right__labels {
-	display: block;
-}
-
+  
 .right__select {
 	width: 90%;
 }
-
+  
 #container {
 	position: relative;
-	top: 30px;
+	top: 35px;
 }
-  

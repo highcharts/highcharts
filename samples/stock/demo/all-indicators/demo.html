@@ -6,9 +6,8 @@
 <div class='main'>
   <div class='selectors'>
     <div class="left">
-      <label class='left__labels' for="overlays">Overlays:</label>
+      <label for="overlays">Overlays:</label>
       <select class='left__select' id="overlays">
-        <option value="none">None</option>
         <option value="abands">Acceleration Bands</option>
         <option value="bb">Bollinger Bands</option>
         <option value="dema">DEMA (Double Exponential Moving Average)</option>
@@ -17,7 +16,7 @@
         <option value="keltnerchannels">Keltner Channels</option>
         <option value="linearRegression">Linear Regression</option>
         <option value="pivotpoints">Pivot Points</option>
-        <option value="pc">Price Channel</option>
+        <option value="pc" selected="selected">Price Channel</option>
         <option value="priceenvelopes">Price Envelopes</option>
         <option value="psar">PSAR (Parabolic SAR)</option>
         <option value="sma">SMA (Simple Moving Average)</option>
@@ -31,8 +30,8 @@
     </div>
 
     <div class="right">
-      <label class='right__labels' for="oscilators">Oscillators:</label>
-      <select class='right__select' id="oscilators">
+      <label for="oscillators">Oscillators:</label>
+      <select class='right__select' id="oscillators">
         <option value="none">None</option>
         <option value="apo">Absolute price indicator</option>
         <option value="ad">A/D (Accumulation/Distribution)</option>
@@ -47,7 +46,7 @@
         <option value="linearRegressionAngle">Linear Regression Angle</option>
         <option value="linearRegressionIntercept">Linear Regression Intercept</option>
         <option value="linearRegressionSlope">Linear Regression Slope</option>
-        <option value="macd">MACD (Moving Average Convergence Divergence)</option>
+        <option value="macd" selected="selected">MACD (Moving Average Convergence Divergence)</option>
         <option value="mfi">MFI (Money Flow Index)</option>
         <option value="momentum">Momentum</option>
         <option value="natr">NATR (Normalized Average True Range)</option>
@@ -56,7 +55,7 @@
         <option value="rsi">RSI (Relative Strength Index)</option>
         <option value="slowstochastic">Slow Stochastic</option>
         <option value="stochastic">Stochastic</option>
-        <option value="trix">TRIX (Triple exponential average)</option>
+        <option value="trix">TRIX</option>
         <option value="williamsr">Williams %R</option>
       </select>
     </div>
