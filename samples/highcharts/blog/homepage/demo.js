@@ -1,5 +1,4 @@
 let demoChart;
-
 const baseColor = 'rgba(72,72,72,.2)';
 const networklinkColor = 'rgba(72,72,72,.4)';
 const baseTextColor = '#222';
