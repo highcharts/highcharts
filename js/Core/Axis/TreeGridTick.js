@@ -101,12 +101,7 @@ var TreeGridTick;
                 .add(params.group);
         }
         // Set the new position, and show or hide
-        if (!shouldRender) {
-            icon.attr({ y: -9999 }); // #1338
-        }
-        else {
-            icon.attr({ y: 0 }); // #14904
-        }
+        icon.attr({ y: shouldRender ? 0 : -9999 }); // #14904, #1338
         // Presentational attributes
         if (!renderer.styledMode) {
             icon
