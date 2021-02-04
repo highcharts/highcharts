@@ -748,11 +748,11 @@ function GLRenderer(
                 continue;
             }
 
-            if (nx && nx >= xMin && nx <= xMax && series.type !== 'scatter') {
+            if (nx && nx >= xMin && nx <= xMax && !series.is('scatter')) {
                 nextInside = true;
             }
 
-            if (px && px >= xMin && px <= xMax && series.type !== 'scatter') {
+            if (px && px >= xMin && px <= xMax && !series.is('scatter')) {
                 prevInside = true;
             }
 
