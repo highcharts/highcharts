@@ -35,7 +35,6 @@ function init() {
          * @function Highcharts.Series#renderCanvas
          */
         renderCanvas: function () {
-            var _this = this;
             var series = this, options = series.options || {}, renderer = false, chart = series.chart, xAxis = this.xAxis, yAxis = this.yAxis, xData = options.xData || series.processedXData, yData = options.yData || series.processedYData, rawData = options.data, xExtremes = xAxis.getExtremes(), xMin = xExtremes.min, xMax = xExtremes.max, yExtremes = yAxis.getExtremes(), yMin = yExtremes.min, yMax = yExtremes.max, pointTaken = {}, lastClientX, sampling = !!series.sampling, points, enableMouseTracking = options.enableMouseTracking !== false, threshold = options.threshold, yBottom = yAxis.getThreshold(threshold), isRange = series.pointArrayMap &&
                 series.pointArrayMap.join(',') === 'low,high', isStacked = !!options.stacking, cropStart = series.cropStart || 0, requireSorting = series.requireSorting, useRaw = !xData, minVal, maxVal, minI, maxI, boostOptions, compareX = options.findNearestPointBy === 'x', xDataFull = (this.xData ||
                 this.options.xData ||
@@ -75,15 +74,6 @@ function init() {
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points || this.graph) {
                 this.destroyGraphics();
-            }
-            if (this.getZonesGraphs) {
-                var props = this.getZonesGraphs([['graph', 'highcharts-graph']]);
-                props.forEach(function (prop) {
-                    var zoneGraph = _this[prop[0]];
-                    if (zoneGraph) {
-                        _this[prop[0]] = zoneGraph.destroy();
-                    }
-                });
             }
             // If we're rendering per. series we should create the marker groups
             // as usual.
