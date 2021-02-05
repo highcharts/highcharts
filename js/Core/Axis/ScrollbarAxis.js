@@ -38,9 +38,9 @@ var ScrollbarAxis = /** @class */ (function () {
                 axisMin: axisMin,
                 axisMax: axisMax,
                 scrollMin: defined(axis.dataMin) ?
-                    Math.min(axisMin, axis.min, Math.min(pick(axis.threshold, Infinity), axis.dataMin)) : axisMin,
+                    Math.min(axisMin, axis.min, axis.dataMin, pick(axis.threshold, Infinity)) : axisMin,
                 scrollMax: defined(axis.dataMax) ?
-                    Math.max(axisMax, axis.max, Math.max(pick(axis.threshold, -Infinity), axis.dataMax)) : axisMax
+                    Math.max(axisMax, axis.max, axis.dataMax, pick(axis.threshold, -Infinity)) : axisMax
             };
         };
         // Wrap axis initialization and create scrollbar if enabled:
