@@ -29,12 +29,12 @@ import AST from '../../Core/Renderer/HTML/AST.js';
 var HTMLComponent = /** @class */ (function (_super) {
     __extends(HTMLComponent, _super);
     function HTMLComponent(options) {
-        var _this = this;
+        var _this = _super.call(this, options) || this;
         options = merge(HTMLComponent.defaultOptions, options);
-        _this = _super.call(this, options) || this;
+        _this.options = options;
         _this.type = 'HTML';
         _this.innerElements = [];
-        _this.elements = options.elements;
+        _this.elements = [];
         _this.on('tableChanged', function (e) {
             var _a;
             if (((_a = e.detail) === null || _a === void 0 ? void 0 : _a.sender) !== _this.id) {
@@ -44,27 +44,26 @@ var HTMLComponent = /** @class */ (function (_super) {
         return _this;
     }
     HTMLComponent.prototype.load = function () {
+        var _this = this;
         this.emit({ type: 'load' });
         _super.prototype.load.call(this);
+        this.elements = this.options.elements || [];
+        this.constructTree();
+        this.innerElements.forEach(function (element) {
+            _this.element.appendChild(element);
+        });
         this.parentElement.appendChild(this.element);
         this.hasLoaded = true;
         this.emit({ type: 'afterLoad' });
         return this;
     };
     HTMLComponent.prototype.render = function () {
-        var _this = this;
-        var elements = _super.prototype.render.call(this).elements; // Fires the render event
-        this.elements = elements;
-        this.constructTree();
-        this.innerElements.forEach(function (element) {
-            _this.element.appendChild(element);
-        });
+        _super.prototype.render.call(this); // Fires the render event and calls load
         this.emit({ type: 'afterRender', component: this, detail: { sender: this.id } });
         return this;
     };
     HTMLComponent.prototype.redraw = function () {
-        var elements = _super.prototype.redraw.call(this).elements; // Fires the render event
-        this.elements = elements;
+        _super.prototype.redraw.call(this);
         this.innerElements = [];
         this.constructTree();
         for (var i = 0; i < this.element.childNodes.length; i++) {
@@ -76,7 +75,13 @@ var HTMLComponent = /** @class */ (function (_super) {
                 this.element.removeChild(childnode);
             }
         }
+        this.render();
         this.emit({ type: 'afterRedraw', component: this, detail: { sender: this.id } });
+        return this;
+    };
+    HTMLComponent.prototype.update = function (options) {
+        _super.prototype.update.call(this, options);
+        this.emit({ type: 'afterUpdate' });
         return this;
     };
     // Could probably use the serialize function moved on
@@ -92,7 +97,7 @@ var HTMLComponent = /** @class */ (function (_super) {
             _this.innerElements.push(created);
         });
     };
-    HTMLComponent.defaultOptions = __assign({}, Component.defaultOptions);
+    HTMLComponent.defaultOptions = __assign(__assign({}, Component.defaultOptions), { elements: [] });
     return HTMLComponent;
 }(Component));
 export default HTMLComponent;

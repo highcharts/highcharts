@@ -11,7 +11,7 @@ namespace HTMLComponent {
 
     export type ComponentType = HTMLComponent;
     export interface HTMLComponentOptions extends Component.ComponentOptions {
-        elements: Highcharts.ASTNode[];
+        elements?: Highcharts.ASTNode[];
     }
 
     export interface HTMLComponentEventObject extends Component.Event {
@@ -25,23 +25,26 @@ namespace HTMLComponent {
 class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
 
     public static defaultOptions = {
-        ...Component.defaultOptions
+        ...Component.defaultOptions,
+        elements: []
     }
 
     private innerElements: HTMLElement[];
     private elements: Highcharts.ASTNode[];
+    public options: HTMLComponent.HTMLComponentOptions;
 
-    constructor(options: HTMLComponent.HTMLComponentOptions) {
+    constructor(options: Partial<HTMLComponent.HTMLComponentOptions>) {
+        super(options);
         options = merge(
             HTMLComponent.defaultOptions,
             options
         );
-        super(options);
+
+        this.options = options as HTMLComponent.HTMLComponentOptions;
 
         this.type = 'HTML';
         this.innerElements = [];
-        this.elements = options.elements;
-
+        this.elements = [];
 
         this.on('tableChanged', (e: Component.TableChangedEvent): void => {
             if (e.detail?.sender !== this.id) {
@@ -53,6 +56,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
+        this.elements = this.options.elements || [];
+        this.constructTree();
+        this.innerElements.forEach((element): void => {
+            this.element.appendChild(element);
+        });
         this.parentElement.appendChild(this.element);
         this.hasLoaded = true;
         this.emit({ type: 'afterLoad' });
@@ -60,20 +68,13 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
     }
 
     public render(): this {
-        const { elements } = super.render(); // Fires the render event
-
-        this.elements = elements;
-        this.constructTree();
-        this.innerElements.forEach((element): void => {
-            this.element.appendChild(element);
-        });
+        super.render(); // Fires the render event and calls load
         this.emit({ type: 'afterRender', component: this, detail: { sender: this.id } });
         return this;
     }
 
     public redraw(): this {
-        const { elements } = super.redraw(); // Fires the render event
-        this.elements = elements;
+        super.redraw();
         this.innerElements = [];
         this.constructTree();
 
@@ -86,10 +87,16 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
             }
         }
 
+        this.render();
         this.emit({ type: 'afterRedraw', component: this, detail: { sender: this.id } });
         return this;
     }
 
+    public update(options: Partial<HTMLComponent.HTMLComponentOptions>): this {
+        super.update(options);
+        this.emit({ type: 'afterUpdate' });
+        return this;
+    }
 
     // Could probably use the serialize function moved on
     // the exportdata branch
