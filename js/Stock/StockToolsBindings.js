@@ -318,7 +318,7 @@ extend(NavigationBindings.prototype, {
      *        Default height in percents.
      *
      * @param {string} removedYAxisHeight
-     *        Height of the removed yAxis.
+     *        Height of the removed yAxis in percents.
      *
      * @return {Highcharts.YAxisPositions}
      *         An object containing an array of calculated positions
@@ -335,11 +335,11 @@ extend(NavigationBindings.prototype, {
             removedHeight = correctFloat((parseFloat(removedYAxisHeight) / 100));
         }
         positions = yAxes.map(function (yAxis, index) {
-            var height = isPercentage(yAxis.options.height) ?
-                correctFloat(parseFloat(yAxis.options.height) / 100) :
-                correctFloat(yAxis.height / plotHeight), top = isPercentage(yAxis.options.top) ?
-                correctFloat(parseFloat(yAxis.options.top) / 100) :
-                correctFloat((yAxis.top - yAxis.chart.plotTop) / plotHeight);
+            var height = correctFloat(isPercentage(yAxis.options.height) ?
+                parseFloat(yAxis.options.height) / 100 :
+                yAxis.height / plotHeight), top = correctFloat(isPercentage(yAxis.options.top) ?
+                parseFloat(yAxis.options.top) / 100 :
+                (yAxis.top - yAxis.chart.plotTop) / plotHeight);
             // New axis' height is NaN so we can check if
             // the axis is newly created this way
             if (!removedHeight) {
@@ -434,6 +434,9 @@ extend(NavigationBindings.prototype, {
         yAxes = chart.yAxis.filter(bindingsUtils.isNotNavigatorYAxis), plotHeight = chart.plotHeight, 
         // Gather current heights (in %)
         _a = this.getYAxisPositions(yAxes, plotHeight, defaultHeight, removedYAxisHeight), positions = _a.positions, allAxesHeight = _a.allAxesHeight, resizers = this.getYAxisResizers(yAxes);
+        // check if the axis is being either added or removed and
+        // if the new indicator axis will fit under existing axes.
+        // if so, there is no need to scale them.
         if (!removedYAxisHeight &&
             allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)) {
             positions[positions.length - 1] = {

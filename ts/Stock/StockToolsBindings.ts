@@ -507,7 +507,7 @@ extend(NavigationBindings.prototype, {
      *        Default height in percents.
      *
      * @param {string} removedYAxisHeight
-     *        Height of the removed yAxis.
+     *        Height of the removed yAxis in percents.
      *
      * @return {Highcharts.YAxisPositions}
      *         An object containing an array of calculated positions
@@ -534,12 +534,12 @@ extend(NavigationBindings.prototype, {
         }
 
         positions = yAxes.map(function (yAxis: AxisType, index: number): Record<string, number> {
-            var height = isPercentage(yAxis.options.height) ?
-                    correctFloat(parseFloat(yAxis.options.height as any) / 100) :
-                    correctFloat(yAxis.height / plotHeight),
-                top = isPercentage(yAxis.options.top) ?
-                    correctFloat(parseFloat(yAxis.options.top as any) / 100) :
-                    correctFloat((yAxis.top - yAxis.chart.plotTop) / plotHeight);
+            var height = correctFloat(isPercentage(yAxis.options.height) ?
+                    parseFloat(yAxis.options.height as any) / 100 :
+                    yAxis.height / plotHeight),
+                top = correctFloat(isPercentage(yAxis.options.top) ?
+                    parseFloat(yAxis.options.top as any) / 100 :
+                    (yAxis.top - yAxis.chart.plotTop) / plotHeight);
 
             // New axis' height is NaN so we can check if
             // the axis is newly created this way
@@ -657,6 +657,9 @@ extend(NavigationBindings.prototype, {
             ),
             resizers = this.getYAxisResizers(yAxes);
 
+        // check if the axis is being either added or removed and
+        // if the new indicator axis will fit under existing axes.
+        // if so, there is no need to scale them.
         if (
             !removedYAxisHeight &&
             allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)

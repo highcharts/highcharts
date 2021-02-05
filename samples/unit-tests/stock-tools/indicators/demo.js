@@ -63,6 +63,8 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
 
     assert.close(
         parseFloat(chart.yAxis[0].options.height),
+        // Existing axis has 100% height, and new axis has 20% height.
+        // 100 / 1.2 scalles all of them back to 100%
         100 / 1.2,
         0.0001, // up to 0.0001% is fine
         'Main Axis should have correct height after adding 1 indicator. Main axis -> 100% height'
