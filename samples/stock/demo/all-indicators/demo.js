@@ -87,7 +87,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             chart.redraw();
         });
 
-        document.getElementById("oscilators").addEventListener("change", function (e) {
+        document.getElementById("oscillators").addEventListener("change", function (e) {
             const series = chart.get('oscillator');
 
             if (series) {
