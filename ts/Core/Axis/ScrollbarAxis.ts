@@ -67,13 +67,15 @@ class ScrollbarAxis {
                     Math.min(
                         axisMin,
                         axis.min as any,
-                        Math.min(pick(axis.threshold, Infinity), axis.dataMin)
+                        axis.dataMin,
+                        pick(axis.threshold, Infinity)
                     ) : axisMin,
                 scrollMax: defined(axis.dataMax) ?
                     Math.max(
                         axisMax,
                         axis.max as any,
-                        Math.max(pick(axis.threshold, -Infinity), axis.dataMax)
+                        axis.dataMax,
+                        pick(axis.threshold, -Infinity)
                     ) : axisMax
             };
         };
