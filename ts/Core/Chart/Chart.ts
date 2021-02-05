@@ -679,7 +679,7 @@ class Chart {
         fireEvent(this, 'beforeRedraw');
 
         var chart = this,
-            axes = chart.axes,
+            axes: Array<Axis> = chart.hasCartesianSeries ? chart.axes : chart.colorAxis || [],
             series = chart.series,
             pointer = chart.pointer,
             legend = chart.legend,
@@ -687,7 +687,6 @@ class Chart {
             redrawLegend = chart.isDirtyLegend,
             hasStackedSeries: (boolean|undefined),
             hasDirtyStacks,
-            hasCartesianSeries = chart.hasCartesianSeries,
             isDirtyBox = chart.isDirtyBox,
             i,
             serie,
@@ -773,48 +772,44 @@ class Chart {
         }
 
 
-        if (hasCartesianSeries) {
-            // set axes scales
-            axes.forEach(function (axis): void {
-                axis.updateNames();
-                axis.setScale();
-            });
-        }
+        // set axes scales
+        axes.forEach(function (axis): void {
+            axis.updateNames();
+            axis.setScale();
+        });
 
         chart.getMargins(); // #3098
 
-        if (hasCartesianSeries) {
-            // If one axis is dirty, all axes must be redrawn (#792, #2169)
-            axes.forEach(function (axis): void {
-                if (axis.isDirty) {
-                    isDirtyBox = true;
-                }
-            });
+        // If one axis is dirty, all axes must be redrawn (#792, #2169)
+        axes.forEach(function (axis): void {
+            if (axis.isDirty) {
+                isDirtyBox = true;
+            }
+        });
 
-            // redraw axes
-            axes.forEach(function (axis: Highcharts.Axis): void {
+        // redraw axes
+        axes.forEach(function (axis): void {
 
-                // Fire 'afterSetExtremes' only if extremes are set
-                var key = axis.min + ',' + axis.max;
+            // Fire 'afterSetExtremes' only if extremes are set
+            var key = axis.min + ',' + axis.max;
 
-                if (axis.extKey !== key) { // #821, #4452
-                    axis.extKey = key;
+            if (axis.extKey !== key) { // #821, #4452
+                axis.extKey = key;
 
-                    // prevent a recursive call to chart.redraw() (#1119)
-                    afterRedraw.push(function (): void {
-                        fireEvent(
-                            axis,
-                            'afterSetExtremes',
-                            extend(axis.eventArgs, axis.getExtremes())
-                        ); // #747, #751
-                        delete axis.eventArgs;
-                    });
-                }
-                if (isDirtyBox || hasStackedSeries) {
-                    axis.redraw();
-                }
-            });
-        }
+                // prevent a recursive call to chart.redraw() (#1119)
+                afterRedraw.push(function (): void {
+                    fireEvent(
+                        axis,
+                        'afterSetExtremes',
+                        extend(axis.eventArgs, axis.getExtremes())
+                    ); // #747, #751
+                    delete axis.eventArgs;
+                });
+            }
+            if (isDirtyBox || hasStackedSeries) {
+                axis.redraw();
+            }
+        });
 
         // the plot areas size has changed
         if (isDirtyBox) {
@@ -2392,6 +2387,11 @@ class Chart {
         // Credits
         chart.addCredits();
 
+        // Handle responsiveness
+        if (chart.setResponsive) {
+            chart.setResponsive();
+        }
+
         // Set flag
         chart.hasRendered = true;
 
@@ -2607,14 +2607,8 @@ class Chart {
             }
         }
 
-        // Handle responsiveness. Has to fire after extensions are loaded
-        addEvent(chart, 'load', function (): void {
-            if (chart.setResponsive) {
-                chart.setResponsive(true);
-            }
-        });
-
         chart.render();
+        chart.pointer.getChartPosition(); // #14973
 
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {
@@ -3234,7 +3228,7 @@ class Chart {
                     }
 
                     // No match by id found, match by index instead
-                    if (!item) {
+                    if (!item && (chart as any)[coll]) {
                         item = (chart as any)[coll][indexMap ? indexMap[i] : i];
 
                         // Check if we grabbed an item with an exising but

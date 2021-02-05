@@ -360,6 +360,8 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
         });
         let bBox;
 
+        delete chart.pointer.chartPosition;
+
         // Open tooltip
         chart.series[0].points[8].onMouseOver();
 

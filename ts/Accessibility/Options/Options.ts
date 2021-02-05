@@ -297,17 +297,21 @@ var options: DeepPartial<Highcharts.Options> = {
 
             /**
              * Format for the screen reader information region before the chart.
-             * Supported HTML tags are `<h1-7>`, `<p>`, `<div>`, `<a>`, `<ul>`,
+             * Supported HTML tags are `<h1-6>`, `<p>`, `<div>`, `<a>`, `<ul>`,
              * `<ol>`, `<li>`, and `<button>`. Attributes are not supported,
              * except for id on `<div>`, `<a>`, and `<button>`. Id is required
              * on `<a>` and `<button>` in the format `<tag id="abcd">`. Numbers,
              * lower- and uppercase letters, "-" and "#" are valid characters in
              * IDs.
              *
+             * The headingTagName is an auto-detected heading (h1-h6) that
+             * corresponds to the heading level below the previous heading in
+             * the DOM.
+             *
              * @since 8.0.0
              */
             beforeChartFormat:
-                '<h5>{chartTitle}</h5>' +
+                '<{headingTagName}>{chartTitle}</{headingTagName}>' +
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
                 '<div>{chartLongdesc}</div>' +

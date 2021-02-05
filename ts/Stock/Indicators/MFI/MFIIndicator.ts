@@ -13,18 +13,19 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
-} = SeriesRegistry;
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     MFIOptions,
     MFIParamsOptions
 } from '../MFI/MFIOptions';
 import type MFIPoint from './MFIPoint';
-import type Series from '../../../Core/Series/Series';
+
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
+const {
+    seriesTypes: {
+        sma: SMAIndicator
+    }
+} = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     extend,
@@ -121,7 +122,7 @@ class MFIIndicator extends SMAIndicator {
     *  Functions
     *
     * */
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MFIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
@@ -133,7 +134,7 @@ class MFIIndicator extends SMAIndicator {
             // MFI starts calculations from the second point
             // Cause we need to calculate change between two points
             range = 1,
-            volumeSeries: (Series | undefined) = (
+            volumeSeries: (LineSeries | undefined) = (
                 series.chart.get((params.volumeSeriesID as any)) as any
             ),
             yValVolume: Array<number> = (

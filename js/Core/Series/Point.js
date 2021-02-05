@@ -562,7 +562,7 @@ var Point = /** @class */ (function () {
         var point = this, props = [], prop, i, graphicalProps = { singular: [], plural: [] };
         kinds = kinds || { graphic: 1, dataLabel: 1 };
         if (kinds.graphic) {
-            props.push('graphic', 'shadowGroup');
+            props.push('graphic', 'upperGraphic', 'shadowGroup');
         }
         if (kinds.dataLabel) {
             props.push('dataLabel', 'dataLabelUpper', 'connector');

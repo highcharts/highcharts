@@ -20,7 +20,7 @@ import type {
 } from './CMFOptions';
 import type CMFPoint from './CMFPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -75,8 +75,8 @@ class CMFIndicator extends SMAIndicator {
     public data: Array<CMFPoint> = void 0 as any;
     public options: CMFOptions = void 0 as any;
     public points: Array<CMFPoint> = void 0 as any;
-    public volumeSeries: Series = void 0 as any;
-    public linkedParent: Series = void 0 as any;
+    public volumeSeries: LineSeries = void 0 as any;
+    public linkedParent: LineSeries = void 0 as any;
     public yData: Array<Array<number>> = void 0 as any;
     public nameBase: string = 'Chaikin Money Flow';
 
@@ -92,7 +92,7 @@ class CMFIndicator extends SMAIndicator {
         var chart = this.chart,
             options: CMFOptions = this.options,
             series = this.linkedParent,
-            volumeSeries: Series = (
+            volumeSeries: LineSeries = (
                 this.volumeSeries ||
                     (
                         this.volumeSeries =
@@ -111,7 +111,7 @@ class CMFIndicator extends SMAIndicator {
          * @return {boolean|undefined} true if length is valid.
          */
         function isLengthValid(
-            serie: Series
+            serie: LineSeries
         ): (boolean|undefined) {
             return serie.xData &&
                 serie.xData.length >= (options.params as any).period;
@@ -134,7 +134,7 @@ class CMFIndicator extends SMAIndicator {
      * @return {boolean|Highcharts.IndicatorNullableValuesObject} Returns false if the
      * indicator is not valid, otherwise returns Values object.
      */
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         this: CMFIndicator,
         series: TLinkedSeries,
         params: CMFParamsOptions
@@ -160,7 +160,7 @@ class CMFIndicator extends SMAIndicator {
      * @return {Highcharts.IndicatorNullableValuesObject} object containing computed money
      * flow data
      */
-    public getMoneyFlow<TLinkedSeries extends Series>(
+    public getMoneyFlow<TLinkedSeries extends LineSeries>(
         xData: Array<number>,
         seriesYData: TLinkedSeries['yData'],
         volumeSeriesYData: Array<number>,

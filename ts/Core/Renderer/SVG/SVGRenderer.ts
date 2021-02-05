@@ -2023,7 +2023,7 @@ class SVGRenderer {
                 element: SVGDOMElement
             ): void {
                 var tspans = element.getElementsByTagName('tspan'),
-                    tspan,
+                    tspan: SVGTSpanElement,
                     parentVal = element.getAttribute(key),
                     i;
 

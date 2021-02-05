@@ -410,7 +410,7 @@ var Chart = /** @class */ (function () {
      */
     Chart.prototype.redraw = function (animation) {
         fireEvent(this, 'beforeRedraw');
-        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legend = chart.legend, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasDirtyStacks, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
+        var chart = this, axes = chart.hasCartesianSeries ? chart.axes : chart.colorAxis || [], series = chart.series, pointer = chart.pointer, legend = chart.legend, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasDirtyStacks, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
             chart.setResponsive(false);
@@ -474,38 +474,34 @@ var Chart = /** @class */ (function () {
         if (hasStackedSeries) {
             chart.getStacks();
         }
-        if (hasCartesianSeries) {
-            // set axes scales
-            axes.forEach(function (axis) {
-                axis.updateNames();
-                axis.setScale();
-            });
-        }
+        // set axes scales
+        axes.forEach(function (axis) {
+            axis.updateNames();
+            axis.setScale();
+        });
         chart.getMargins(); // #3098
-        if (hasCartesianSeries) {
-            // If one axis is dirty, all axes must be redrawn (#792, #2169)
-            axes.forEach(function (axis) {
-                if (axis.isDirty) {
-                    isDirtyBox = true;
-                }
-            });
-            // redraw axes
-            axes.forEach(function (axis) {
-                // Fire 'afterSetExtremes' only if extremes are set
-                var key = axis.min + ',' + axis.max;
-                if (axis.extKey !== key) { // #821, #4452
-                    axis.extKey = key;
-                    // prevent a recursive call to chart.redraw() (#1119)
-                    afterRedraw.push(function () {
-                        fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
-                        delete axis.eventArgs;
-                    });
-                }
-                if (isDirtyBox || hasStackedSeries) {
-                    axis.redraw();
-                }
-            });
-        }
+        // If one axis is dirty, all axes must be redrawn (#792, #2169)
+        axes.forEach(function (axis) {
+            if (axis.isDirty) {
+                isDirtyBox = true;
+            }
+        });
+        // redraw axes
+        axes.forEach(function (axis) {
+            // Fire 'afterSetExtremes' only if extremes are set
+            var key = axis.min + ',' + axis.max;
+            if (axis.extKey !== key) { // #821, #4452
+                axis.extKey = key;
+                // prevent a recursive call to chart.redraw() (#1119)
+                afterRedraw.push(function () {
+                    fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
+                    delete axis.eventArgs;
+                });
+            }
+            if (isDirtyBox || hasStackedSeries) {
+                axis.redraw();
+            }
+        });
         // the plot areas size has changed
         if (isDirtyBox) {
             chart.drawChartBox();
@@ -1670,6 +1666,10 @@ var Chart = /** @class */ (function () {
         chart.renderLabels();
         // Credits
         chart.addCredits();
+        // Handle responsiveness
+        if (chart.setResponsive) {
+            chart.setResponsive();
+        }
         // Set flag
         chart.hasRendered = true;
     };
@@ -1840,13 +1840,8 @@ var Chart = /** @class */ (function () {
                 chart.pointer = new Pointer(chart, options);
             }
         }
-        // Handle responsiveness. Has to fire after extensions are loaded
-        addEvent(chart, 'load', function () {
-            if (chart.setResponsive) {
-                chart.setResponsive(true);
-            }
-        });
         chart.render();
+        chart.pointer.getChartPosition(); // #14973
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {
             chart.onload();
@@ -2323,7 +2318,7 @@ var Chart = /** @class */ (function () {
                         item = chart.get(newOptions.id);
                     }
                     // No match by id found, match by index instead
-                    if (!item) {
+                    if (!item && chart[coll]) {
                         item = chart[coll][indexMap ? indexMap[i] : i];
                         // Check if we grabbed an item with an exising but
                         // different id (#13541)
