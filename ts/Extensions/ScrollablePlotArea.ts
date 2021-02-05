@@ -20,6 +20,7 @@ WIP on vertical scrollable plot area (#9378). To do:
 
 'use strict';
 
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -33,6 +34,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    merge,
     pick
 } = U;
 
@@ -46,6 +48,7 @@ declare module '../Core/Chart/ChartLike'{
         scrollableMask?: Highcharts.SVGElement;
         scrollablePixelsX?: number;
         scrollablePixelsY?: number;
+        scrollablePlotBox?: BBoxObject;
         applyFixed(): void;
         moveFixedElements(): void;
         setUpScrolling(): void;
@@ -149,6 +152,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinWidth - this.chartWidth
             );
             if (scrollablePixelsX) {
+                this.scrollablePlotBox = merge(this.plotBox);
                 this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     (this.clipBox as any).height += scrollablePixelsX;
@@ -171,6 +175,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinHeight - this.chartHeight
             );
             if (scrollablePixelsY) {
+                this.scrollablePlotBox = merge(this.plotBox);
                 this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     (this.clipBox as any).width += scrollablePixelsY;

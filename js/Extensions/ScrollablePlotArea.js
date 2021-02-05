@@ -22,7 +22,7 @@ var stop = A.stop;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick;
+var addEvent = U.addEvent, createElement = U.createElement, merge = U.merge, pick = U.pick;
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
  * the plot area of the chart. If the size gets smaller than this, typically
@@ -96,6 +96,7 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
         if (scrollableMinWidth) {
             this.scrollablePixelsX = scrollablePixelsX = Math.max(0, scrollableMinWidth - this.chartWidth);
             if (scrollablePixelsX) {
+                this.scrollablePlotBox = merge(this.plotBox);
                 this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
@@ -115,6 +116,7 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
         else if (scrollableMinHeight) {
             this.scrollablePixelsY = scrollablePixelsY = Math.max(0, scrollableMinHeight - this.chartHeight);
             if (scrollablePixelsY) {
+                this.scrollablePlotBox = merge(this.plotBox);
                 this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;
