@@ -3,11 +3,11 @@
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/stock/indicators/indicators-all.js"></script>
 
-<div class='main'>
-  <div class='selectors'>
-    <div class="left">
+<div class="main-wrapper">
+  <div class="selectors-container">
+    <div class="lhs-col">
       <label for="overlays">Overlays:</label>
-      <select class='left__select' id="overlays">
+      <select class='left-select' id="overlays">
         <option value="abands">Acceleration Bands</option>
         <option value="bb">Bollinger Bands</option>
         <option value="dema">DEMA (Double Exponential Moving Average)</option>
@@ -29,9 +29,9 @@
       </select>
     </div>
 
-    <div class="right">
+    <div class="rhs-col">
       <label for="oscillators">Oscillators:</label>
-      <select class='right__select' id="oscillators">
+      <select class='right-select' id="oscillators">
         <option value="none">None</option>
         <option value="apo">Absolute price indicator</option>
         <option value="ad">A/D (Accumulation/Distribution)</option>

@@ -1,30 +1,35 @@
-.selectors {
-	height: 20px;
-	font-size: 20px;
-  }
-  
-.left {
-	position: relative;
-	left: 2%;
-	width: 50%;
+.selectors-container {
+	font-size: 1.2em;
 }
-  
-.left__select {
-	width: 90%;
+
+.lhs-col {
+	width: 48%;
+	display: inline-block;
 }
-  
-.right {
-	position: relative;
-	width: 50%;
-	left: 52%;
-	transform: translate(0, -100%);
+
+.left-select {
+	width: 100%;
 }
-  
-.right__select {
-	width: 90%;
+
+.rhs-col {
+	width: 48%;
+	margin-left: 2%;
+	display: inline-block;
 }
-  
-#container {
-	position: relative;
-	top: 35px;
+
+.right-select {
+	width: 100%;
+}
+
+@media (max-width: 768px) {
+	.lhs-col,
+	.rhs-col {
+		display: block;
+		width: 100%;
+	}
+
+	.rhs-col {
+		margin-left: 0px;
+		margin-top: 15px;
+	}
 }
