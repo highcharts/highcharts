@@ -36,7 +36,6 @@
     "gulp": "npx gulp",
     "utils": "highcharts-utils"
   },
-  
   "devDependencies": {
     "@babel/core": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
@@ -113,6 +112,7 @@
   },
   "license": "SEE LICENSE IN <license.txt>",
   "dependencies": {
+    "highcharts": "^9.0.0",
     "jspdf-yworks": "^2.0.1",
     "svg2pdf.js": "^1.3.3"
   }
