@@ -993,29 +993,34 @@ H.defaultOptions = {
          * @sample  {highcharts} highcharts/chart/pankey/ Zooming and panning
          * @sample  {highstock} stock/chart/panning/ Zooming and xy panning
          *
-         * @product highcharts highstock gantt
+         * @product highcharts highstock highmaps gantt
          * @apioption chart.panning
          */
-        /**
-         * Enable or disable chart panning.
-         *
-         * @type      {boolean}
-         * @default   {highcharts} false
-         * @default   {highstock} true
-         * @apioption chart.panning.enabled
-         */
-        /**
-         * Decides in what dimensions the user can pan the chart. Can be
-         * one of `x`, `y`, or `xy`.
-         *
-         * @sample {highcharts} highcharts/chart/panning-type
-         *         Zooming and xy panning
-         *
-         * @type    {string}
-         * @validvalue ["x", "y", "xy"]
-         * @default x
-         * @apioption chart.panning.type
-         */
+        panning: {
+            /**
+             * Enable or disable chart panning.
+             *
+             * @type      {boolean}
+             * @default   {highcharts} false
+             * @default   {highstock|highmaps} true
+             * @apioption chart.panning.enabled
+             */
+            enabled: false,
+            /**
+             * Decides in what dimensions the user can pan the chart. Can be
+             * one of `x`, `y`, or `xy`.
+             *
+             * @sample {highcharts} highcharts/chart/panning-type
+             *         Zooming and xy panning
+             *
+             * @type       {string}
+             * @validvalue ["x", "y", "xy"]
+             * @default    {highcharts|highstock} x
+             * @default    {highmaps} xy
+             * @apioption  chart.panning.type
+             */
+            type: 'x'
+        },
         /**
          * Equivalent to [zoomType](#chart.zoomType), but for multitouch
          * gestures only. By default, the `pinchType` is the same as the
