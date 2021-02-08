@@ -2006,7 +2006,7 @@ if ($('h2.fakeTitle').length > 0) {
 
 //homepage chart animation chart
 /****************************************/
-////Section 4 Network graph
+///Section 4 Network graph
 
 function section4() {
 
