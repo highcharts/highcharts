@@ -7,7 +7,6 @@ const axisColor = '#333';
 const streamLine = '#ebebeb';
 let currentTimeout;
 
-
 const colors = Highcharts.getOptions().colors;
 
 //HERO CHART
