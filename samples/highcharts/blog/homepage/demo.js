@@ -2232,7 +2232,7 @@ function section3() {
             , Date.UTC(2016, 11, 1));
 
         $('.highcharts-axis-labels').fadeIn();
-        // $('.highcharts-pie-series').hide();
+        $('.highcharts-pie-series').hide();
         $('.highcharts-annotation-label').fadeIn();
         demoChart.xAxis[4].update({
             visible: true
@@ -2271,9 +2271,7 @@ function section3() {
 
             }
         });
-        if ($('.highcharts-annotation-label').length > 0) {
-            $('.highcharts-annotation-label').hide();
-        }
+        //$('.highcharts-annotation-label').hide();
         demoChart.xAxis[4].update({
             visible: false
         });
@@ -2538,6 +2536,8 @@ function section1() {
     };
     currentTimeout = setTimeout(s17, 5000);
 }
+
+
 const heroChart = {
     chart: {
         backgroundColor: 'transparent',
@@ -2570,11 +2570,14 @@ const heroChart = {
                 $('.highcharts-scatter-series').hide();
                 $('.highcharts-streamgraph-series').hide();
                 $('.highcharts-annotation-label').hide();
+
                 section1();
                 if (hasHTML) {
                     $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
                     $('h1.title').animate({ opacity: 1 }, 1000);
                 }
+
+
             }
         }
     },
