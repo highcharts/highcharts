@@ -1434,9 +1434,6 @@ H.defaultOptions = {
          *
          * @sample  {highcharts} highcharts/chart/pankey/ Zooming and panning
          * @sample  {highstock} stock/chart/panning/ Zooming and xy panning
-         *
-         * @product highcharts highstock highmaps gantt
-         * @apioption chart.panning
          */
         panning: {
             /**
@@ -1445,7 +1442,6 @@ H.defaultOptions = {
              * @type      {boolean}
              * @default   {highcharts} false
              * @default   {highstock|highmaps} true
-             * @apioption chart.panning.enabled
              */
             enabled: false,
 
@@ -1460,7 +1456,6 @@ H.defaultOptions = {
              * @validvalue ["x", "y", "xy"]
              * @default    {highcharts|highstock} x
              * @default    {highmaps} xy
-             * @apioption  chart.panning.type
              */
             type: 'x'
         },
