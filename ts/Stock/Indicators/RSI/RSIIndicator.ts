@@ -88,9 +88,10 @@ class RSIIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: RSIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
+
         var period = (params.period as any),
             xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+            yVal: Array<Array<number>> | Array<number> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             decimals: number = (params.decimals as any),
             // RSI starts calculations from the second point
@@ -106,20 +107,28 @@ class RSIIndicator extends SMAIndicator {
             change: number,
             avgGain: number,
             avgLoss: number,
-            i: number;
+            i: number,
+            values: Array<number>;
 
         // RSI requires close value
-        if (
-            (xVal.length < period) || !isArray(yVal[0]) ||
-            yVal[0].length !== 4
-        ) {
+        if ((xVal.length < period)) {
             return;
+        }
+        if (!isArray(yVal[0])) {
+            values = yVal as Array<number>;
+        } else if (yVal[0].length < 4) {
+            values = (yVal as Array<Array<number>>).map(
+                (value: Array<number>): number =>
+                    value[(params.index as number) || (yVal as Array<Array<number>>)[0].length - 1]
+            );
+        } else {
+            values = (yVal as any).map((value: Array<number>): number => value[index]);
         }
 
         // Calculate changes for first N points
         while (range < period) {
             change = toFixed(
-                yVal[range][index] - yVal[range - 1][index],
+                values[range] - values[range - 1],
                 decimals
             );
 
@@ -137,7 +146,7 @@ class RSIIndicator extends SMAIndicator {
         avgLoss = toFixed(loss / (period - 1), decimals);
 
         for (i = range; i < yValLen; i++) {
-            change = toFixed(yVal[i][index] - yVal[i - 1][index], decimals);
+            change = toFixed(values[i] - values[i - 1], decimals);
 
             if (change > 0) {
                 gain = change;
