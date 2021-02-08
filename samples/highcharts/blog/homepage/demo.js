@@ -2026,8 +2026,7 @@ function section4() {
         }
         demoChart.update({
             legend: {
-                labelFormat:
-                             '{name} <span style="opacity: 0.4">{y}</span>',
+                labelFormat: '{name} <span style="opacity: 0.4">{y}</span>',
                 width: 1000,
                 floating: true,
                 verticalAlign: 'bottom'
@@ -2038,8 +2037,7 @@ function section4() {
                     xAxis: 5,
                     yAxis: 4,
                     dashStyle: 'dot',
-                    color:
-                                      Highcharts.getOptions().colors[3],
+                    color: Highcharts.getOptions().colors[3],
                     dataGrouping: {
                         enabled: false
                     },
@@ -2052,8 +2050,7 @@ function section4() {
                     xAxis: 5,
                     yAxis: 4,
                     dashStyle: "shortdot",
-                    color:
-                                    Highcharts.getOptions().colors[5],
+                    color: Highcharts.getOptions().colors[5],
                     pointStart: xiData[0],
                     label: {
                         enabled: false
@@ -2271,7 +2268,7 @@ function section3() {
 
             }
         });
-        //$('.highcharts-annotation-label').hide();
+        $('.highcharts-annotation-label').hide();
         demoChart.xAxis[4].update({
             visible: false
         });
