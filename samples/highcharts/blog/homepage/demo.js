@@ -2232,7 +2232,7 @@ function section3() {
             , Date.UTC(2016, 11, 1));
 
         $('.highcharts-axis-labels').fadeIn();
-        $('.highcharts-pie-series').hide();
+        // $('.highcharts-pie-series').hide();
         $('.highcharts-annotation-label').fadeIn();
         demoChart.xAxis[4].update({
             visible: true
