@@ -1046,7 +1046,7 @@ function GLRenderer(
             console.time('building ' + s.type + ' series'); // eslint-disable-line no-console
         }
 
-        series.push({
+        const obj = {
             segments: [],
             // from: data.length,
             markerFrom: markerData.length,
@@ -1076,10 +1076,16 @@ function GLRenderer(
                     'bubble': 'points'
                 } as Record<string, Highcharts.BoostGLDrawModeValue>
             )[s.type] || 'line_strip'
-        });
+        };
+
+        if (s.index >= series.length) {
+            series.push(obj);
+        } else {
+            series[s.index] = obj;
+        }
 
         // Add the series data to our buffer(s)
-        pushSeriesData(s, series[series.length - 1]);
+        pushSeriesData(s, obj);
 
         if (settings.debug.timeSeriesProcessing) {
             console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
