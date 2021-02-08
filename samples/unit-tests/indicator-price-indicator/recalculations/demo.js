@@ -148,8 +148,8 @@ QUnit.test(
     }
 );
 
-QUnit.test(`The currentPriceIndicator, lastPrice and axis crosshair should
-    have their own properties, no errors in console after toggle, #13876.`,
+QUnit.test(`The currentPriceIndicator, lastPrice and axis crosshair
+    didn't work properly with stockTools, #13876.`,
 function (assert) {
     const chart = Highcharts.stockChart('container', {
             stockTools: {
@@ -160,10 +160,10 @@ function (assert) {
             },
             yAxis: [{
                 crosshair: {
-                    color: 'blue',
+                    color: '#0000ff',
                     label: {
                         padding: 6,
-                        backgroundColor: "blue",
+                        backgroundColor: '#0000ff',
                         enabled: true
                     }
                 }
@@ -171,10 +171,10 @@ function (assert) {
             series: [{
                 data: [1, 2, 4, 6, 1, 4, 6, 4, 3, 2],
                 lastVisiblePrice: {
-                    color: 'green',
+                    color: '#00ff00',
                     label: {
                         enabled: true,
-                        backgroundColor: "green"
+                        backgroundColor: '#00ff00'
                     }
                 },
                 lastPrice: {
@@ -188,20 +188,20 @@ function (assert) {
     // Show croshair with the label.
     controller.moveTo(200, 200);
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.visibility,
+        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
         'visible',
         'Axis cross label should be visible.'
     );
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.fill,
-        'blue',
+        chart.yAxis[0].crossLabel.element.childNodes[0].getAttribute('fill'),
+        '#0000ff',
         'Axis cross label fill color should be blue.'
     );
 
     // Hide croshair with the label.
     controller.moveTo(30, 20);
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.visibility,
+        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
         'hidden',
         'Cross label should not be visible.'
     );
@@ -210,33 +210,33 @@ function (assert) {
     chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
         chart.navigationBindings, button);
     assert.strictEqual(
-        chart.series[0].crossLabel.visibility,
+        chart.series[0].crossLabel.element.getAttribute('visibility'),
         'visible',
         'Series price indicator should be visible.'
     );
     assert.strictEqual(
-        chart.series[0].crossLabel.fill,
-        'green',
+        chart.series[0].crossLabel.element.childNodes[0].getAttribute('fill'),
+        '#00ff00',
         'Cross label fill color should be blue.'
     );
 
     // Show currentPriceIndicator togehter with axis croshair.
     controller.moveTo(200, 200);
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.visibility,
+        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
         'visible',
         'Cross label should be visible.'
     );
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.fill,
-        'blue',
+        chart.yAxis[0].crossLabel.element.childNodes[0].getAttribute('fill'),
+        '#0000ff',
         'Cross label fill color should be blue.'
     );
 
     // Adjust extremes to show the lastPrice line.
     chart.xAxis[0].setExtremes(0, 4);
     assert.strictEqual(
-        chart.series[0].lastPrice.visibility,
+        chart.series[0].crossLabel.element.getAttribute('visibility'),
         'visible',
         'Series last price indicator should be visible.'
     );
@@ -262,17 +262,17 @@ function (assert) {
     chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
         chart.navigationBindings, button);
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.visibility,
+        chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
         'visible',
         'Cross label should be visible again.'
     );
     assert.strictEqual(
-        chart.yAxis[0].crossLabel.fill,
-        'blue',
+        chart.yAxis[0].crossLabel.element.childNodes[0].getAttribute('fill'),
+        '#0000ff',
         'Cross label fill color should be blue again.'
     );
     assert.strictEqual(
-        chart.series[0].lastPrice.visibility,
+        chart.series[0].crossLabel.element.getAttribute('visibility'),
         'visible',
         'Series last price indicator should be visible again.'
     );
@@ -280,9 +280,5 @@ function (assert) {
         chart.series[0].lastPrice.stroke,
         'red',
         'Cross label fill color should be red again.'
-    );
-    assert.ok(
-        true,
-        'No errors in the console.'
     );
 });
