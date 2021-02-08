@@ -1999,7 +1999,543 @@ const kernelSeries = [
 
     }];
 
+let hasHTML = false;
+if ($('h2.fakeTitle').length > 0) {
+    hasHTML = true;
+}
+
 //homepage chart animation chart
+/****************************************/
+////Section 4 Network graph
+
+function section4() {
+
+    clearTimeout(currentTimeout);
+
+    ///shows the networkgraph, sets up the splines,
+    //shows new title and tab
+    const p1 = function () {
+        $('.highcharts-spline-series').hide();
+        $('.highcharts-scatter-series').hide();
+        $('.highcharts-networkgraph-series').fadeIn();
+        ///html elements
+        if (hasHTML) {
+            $('h2.fakeTitle').html('science');
+            $('h2.fakeTitle').animate({ opacity: 1 }, 100);
+            $('#science').addClass('active');
+        }
+        demoChart.update({
+            legend: {
+                labelFormat:
+                             '{name} <span style="opacity: 0.4">{y}</span>',
+                width: 1000,
+                floating: true,
+                verticalAlign: 'bottom'
+            },
+            plotOptions: {
+                spline: {
+                    lineWidth: 2,
+                    xAxis: 5,
+                    yAxis: 4,
+                    dashStyle: 'dot',
+                    color:
+                                      Highcharts.getOptions().colors[3],
+                    dataGrouping: {
+                        enabled: false
+                    },
+                    label: {
+                        enabled: true
+                    }
+                },
+                scatter: {
+                    lineWidth: 1,
+                    xAxis: 5,
+                    yAxis: 4,
+                    dashStyle: "shortdot",
+                    color:
+                                    Highcharts.getOptions().colors[5],
+                    pointStart: xiData[0],
+                    label: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                }
+            }
+        });
+        $('.highcharts-pie-series').hide();
+        $('.highcharts-spline-series').hide();
+        $('.highcharts-scatter-series').hide();
+    };
+    currentTimeout = window.setTimeout(p1, 700);
+
+
+    //moves the node on the network graph
+    const p2 = function () {
+        demoChart.series[3].nodes[0].update({
+            plotX: demoChart.chartWidth / 2 + 100,
+            plotY: demoChart.chartHeight
+        });
+    };
+    currentTimeout = window.setTimeout(p2, 1200);
+
+    //shows the splines
+    const p25 = function () {
+        //html element
+        if (hasHTML) {
+            $('#c3').animate({ opacity: 1 }, 1000);
+        }
+        $('.highcharts-spline-series').fadeIn(100);
+        $('.highcharts-scatter-series').fadeIn(100);
+        $('.highcharts-legend').fadeIn();
+
+        demoChart.series[19].update({ color: '#1E90FF' });
+    };
+    currentTimeout = window.setTimeout(p25, 2500);
+
+    //moves the node again
+    const p3 = function () {
+        demoChart.update({
+            chart: {
+                animation: {
+                    duration: 1000
+                }
+            }
+        });
+        demoChart.series[3].nodes[0].update({
+            mass: 1,
+            plotX: demoChart.series[3].nodes[1].plotX,
+            plotY: demoChart.series[3].nodes[1].plotY
+
+        });
+        demoChart.xAxis[5].setExtremes(78, 107);
+    };
+    currentTimeout = window.setTimeout(p3, 4000);
+
+    ///consolidates all the nodes, hides most everything else,
+    //shows the title and content
+    const p4 = function () {
+
+        $('.highcharts-label').fadeOut();
+        $('.highcharts-streamgraph-series').fadeOut();
+        $('.highcharts-spline-series').fadeOut();
+        $('.highcharts-scatter-series').fadeOut();
+
+        //html elements
+        if (hasHTML) {
+            $('#science').removeClass('active');
+            $('h2.fakeTitle').hide();
+            $('#c3').animate({ opacity: 0 }, 100);
+            $('h1.title').css({ opacity: 0 });
+            $('h1.title').html('Elevate your data');
+        }
+
+        $('.highcharts-legend').fadeOut();
+
+        demoChart.series[3].nodes[0].update({
+            plotX: demoChart.chartWidth / 2,
+            plotY: demoChart.chartHeight / 2
+
+        });
+        let pointCount = 0;
+        const updatePoints = setInterval(function () {
+            demoChart.series[3].nodes[pointCount].plotY =
+                        demoChart.series[3].nodes[0].plotY;
+            demoChart.series[3].nodes[pointCount].plotX =
+                        demoChart.series[3].nodes[0].plotX;
+            demoChart.series[3].nodes[pointCount].mass = 1;
+            pointCount = pointCount + 1;
+            const nodeLength = demoChart.series[3].nodes.length;
+            if (pointCount === nodeLength) {
+                clearInterval(updatePoints);
+                demoChart.series[3].hide();
+                ///HTML elements
+                if (hasHTML) {
+                    $('h1.title').animate({ opacity: 1 }, 1000);
+                    $('#cContent').animate({ opacity: 1 }, 2000);
+                    $('.cTab').css({ display: 'block' });
+                    $('#developersCharts4').animate({ opacity: 1 }, 2000);
+                    $('#heroTitle').css({ gridTemplateColumns: '300px' });
+                    $('#developers').trigger('click');
+                }
+            }
+        }, 10);
+    };
+    currentTimeout = window.setTimeout(p4, 9000);
+}
+/****************************************/
+////Section 3 Streamgraph
+
+function section3() {
+
+    //sets up new title, sets the plot options for
+    //the streamgraph
+    const s1 = function () {
+
+        if (hasHTML) {
+            $('h2.fakeTitle').html('publishing');
+        }
+
+        demoChart.update({
+            plotOptions: {
+                streamgraph: {
+                    fillOpacity: 0,
+                    lineWidth: 1,
+                    lineColor: streamLine,
+                    states: {
+                        inactive: {
+                            enabled: false
+                        }
+                    }
+                }
+
+            }
+        });
+    };
+    currentTimeout = window.setTimeout(s1, 0);
+
+    //sets animation duration to 1000, shows streamgraph
+    const s2 = function () {
+        $('.highcharts-streamgraph-series').fadeIn(500);
+        $('.highcharts-plot-line-label').hide();
+        demoChart.update({
+            chart: {
+                animation: {
+                    duration: 1000
+                }
+            }
+        });
+    };
+
+    currentTimeout = window.setTimeout(s2, 500);
+
+    //shows the title and activates the right tab
+    const s3 = () => {
+        //html elements
+        if (hasHTML) {
+            $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
+            $('#c2').animate({ opacity: 1 }, 2000);
+            $('#publishing').addClass('active');
+        }
+
+    };
+    currentTimeout = window.setTimeout(s3, 1000);
+
+    //shows the xAxis, sets the xAxis extremes for the
+    //streamgraph, shows the labels, sets streamgraph
+    //opacity to 1
+    const s4 = function () {
+        let yearMax = 1860;
+        if (demoChart.chartWidth < 500) {
+            yearMax = 1920;
+        }
+        demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
+            , Date.UTC(2016, 11, 1));
+
+        $('.highcharts-axis-labels').fadeIn();
+        $('.highcharts-pie-series').hide();
+        $('.highcharts-annotation-label').fadeIn();
+        demoChart.xAxis[4].update({
+            visible: true
+        });
+
+        demoChart.update({
+            plotOptions: {
+                streamgraph: {
+                    fillOpacity: 1,
+                    label: {
+                        enabled: true
+                    },
+                    lineWidth: 1
+
+                }
+
+            }
+        });
+    };
+    currentTimeout = window.setTimeout(s4, 2000);
+
+    //sets the fill opacity to 0, hides the annotations,
+    //sets the xAxis extremes
+    const s5 = function () {
+
+        demoChart.update({
+            plotOptions: {
+                streamgraph: {
+                    fillOpacity: 0,
+                    label: {
+                        enabled: false
+                    },
+                    lineWidth: 1
+
+                }
+
+            }
+        });
+        $('.highcharts-annotation-label').hide();
+        demoChart.xAxis[4].update({
+            visible: false
+        });
+    };
+    currentTimeout = window.setTimeout(s5, 5500);
+
+    //hides the xAxis
+    const s6 = function () {
+
+        demoChart.update({
+            plotOptions: {
+                streamgraph: {
+                    label: {
+                        enabled: false
+                    }
+                }
+            }
+        });
+
+        demoChart.xAxis[4].setExtremes(Date.UTC(1970, 7, 1),
+            Date.UTC(2016, 11, 1));
+    };
+    currentTimeout = window.setTimeout(s6, 7000);
+
+    //turns off series labels, fades the titles,
+    //goes to section 4
+    const s7 = function () {
+        //html elements
+        if (hasHTML) {
+            $('h2.fakeTitle').animate({ opacity: 0 }, 1000);
+            $('#c2').animate({ opacity: 0 }, 1000);
+            $('#publishing').removeClass('active');
+        }
+        section4();
+    };
+    currentTimeout = window.setTimeout(s7, 8000);
+}
+/****************************************/
+////Section 2 Splines and candlestick
+
+function section2() {
+
+    ///update animation duration to 1000, hide the item series
+    const f1 = function () {
+        demoChart.update({
+            chart: {
+                animation: {
+                    duration: 1000
+                }
+            }
+        });
+        demoChart.series[0].update({
+            opacity: 0
+        });
+    };
+    currentTimeout = setTimeout(f1, 500);
+
+    //set axes extremes for splines and candlestick,
+    //show new title
+    const f2 = function () {
+        if (hasHTML) {
+            $('h2.fakeTitle').html('finance');
+            $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
+        }
+        $('.highcharts-networkgraph-series').hide();
+        $('.highcharts-candlestick-series').show();
+        demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
+            Date.UTC(2010, 9, 1));
+        demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
+            Date.UTC(2020, 1, 13));
+
+    };
+    currentTimeout = setTimeout(f2, 1500);
+
+    ///show candlestick tooltip
+    const f3 = function () {
+        demoChart.update({
+            tooltip: {
+                enabled: true
+            }
+        });
+        if (hasHTML) {
+            $('#c1').animate({ opacity: 1 }, 1000);
+        }
+        demoChart.tooltip.refresh(
+            [demoChart.series[2].points[22]]);
+        $('.highcharts-tooltip').hide();
+        $('.highcharts-tooltip').fadeIn(1000);
+    };
+    currentTimeout = setTimeout(f3, 2500);
+
+    //hide the tooltip and candlestick, remove all the splines
+    const f4 = function () {
+        $('.highcharts-candlestick-series').fadeOut(1000);
+        $('.highcharts-tooltip').hide();
+
+        demoChart.update({
+            tooltip: {
+                enabled: false
+            },
+            chart: {
+                animation: {
+                    duration: 10
+                }
+            }
+        });
+
+        let startNum = demoChart.series.length - 1;
+        const endNum = 27;
+        $('.highcharts-spline-series').fadeOut();
+        const removeSeries = setInterval(function () {
+            demoChart.series[startNum].remove();
+            startNum = startNum - 1;
+            if (startNum < endNum) {
+                clearInterval(removeSeries);
+            }
+
+        }, 0);
+
+        demoChart.update({
+            plotOptions: {
+                streamgraph: {
+                    fillOpacity: 0,
+                    lineWidth: 1,
+                    lineColor: baseColor
+                }
+            }
+        });
+        //html elements
+        if (hasHTML) {
+            $('h2.fakeTitle').animate({ opacity: 0 }, 100);
+            $('#c1').animate({ opacity: 0 }, 1000);
+            $('#finance').removeClass('active');
+        }
+        $('.highcharts-spline-series').fadeOut(1000);
+
+    };
+    currentTimeout = setTimeout(f4, 5000);
+
+    //go to section 3
+    const f5 = function () {
+        section3();
+    };
+    currentTimeout = setTimeout(f5, 5500);
+
+}
+/****************************************/
+////Section 1 Pie and item
+
+function section1() {
+    ///show title
+    const s10 = function () {
+        if (hasHTML) {
+            $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
+        }
+    };
+    currentTimeout = setTimeout(s10, 100);
+    ///show subtitle
+    const s11 = function () {
+        if (hasHTML) {
+            $('#c0').animate({ opacity: 1 }, 1000);
+        }
+    };
+    currentTimeout = setTimeout(s11, 500);
+    ///swap graphs
+    const s12 = function () {
+        $('.highcharts-series-0').fadeIn();
+        $('.highcharts-series-4').fadeOut(1000);
+    };
+    currentTimeout = setTimeout(s12, 1500);
+    //make an arch
+    const s13 =  function () {
+        let radius = 5;
+        let size = '85%';
+        let centerY =  '85%';
+        let centerX = '50%%';
+        if (demoChart.chartWidth < 800) {
+            radius = 3;
+        }
+        if (demoChart.chartWidth > 800) {
+            size = '120%';
+            centerY = '80%';
+            centerX = '65.5%';
+        }
+        demoChart.series[0].update({
+            startAngle: -100,
+            endAngle: 100,
+            center: [centerX, centerY],
+            size: size,
+            innerSize: '30%',
+            marker: {
+                radius: radius
+            }
+        });
+    };
+    currentTimeout = setTimeout(s13, 2500);
+    ///expand the arch
+    const s14 =  function () {
+        let size = '500%';
+        if (demoChart.chartWidth < 500) {
+            size = '200%';
+        }
+        demoChart.update({
+            chart: {
+                animation: {
+                    duration: 500
+                }
+            }
+        });
+        demoChart.series[0].update({
+            startAngle: 100,
+            size: size
+        });
+    };
+    currentTimeout = setTimeout(s14, 4000);
+
+    ///hide title, hide item chart, deactive carousel
+    ///1, show spline series
+    const s15 = function () {
+        $('.highcharts-spline-series').show();
+        $('.highcharts-item-series').fadeOut(1000);
+
+        if (hasHTML) {
+            $('#developers').removeClass('active');
+            $('h2.fakeTitle').animate({ opacity: 0 }, 1000);
+        }
+    };
+    currentTimeout = setTimeout(s15, 4500);
+
+    //hide subtitle, turn off legen, add splines
+    const s16 = function () {
+        if (hasHTML) {
+            $('#c0').animate({ opacity: 0 }, 1000);
+        }
+        demoChart.update({
+            chart: {
+                animation: {
+                    duration: 100
+                }
+            }
+        });
+        demoChart.series[0].update({
+            showInLegend: false
+        });
+        let count = 0;
+        const addSeries = setInterval(function () {
+            demoChart.addSeries(splineSeries[count]);
+            count = count + 1;
+            if (count === splineSeries.length) {
+                clearInterval(addSeries);
+            }
+        }, 0);
+    };
+    currentTimeout = setTimeout(s16, 4700);
+
+    ///set current tab, go to section 2
+    const s17 = function () {
+        if (hasHTML) {
+            $('#finance').addClass('active');
+        }
+        section2();
+    };
+    currentTimeout = setTimeout(s17, 5000);
+}
 const heroChart = {
     chart: {
         backgroundColor: 'transparent',
@@ -2025,10 +2561,6 @@ const heroChart = {
                         }
                     }
                 });
-                let hasHTML = false;
-                if ($('h2.fakeTitle').length > 0) {
-                    hasHTML = true;
-                }
                 $('.highcharts-networkgraph-series').hide();
                 $('.highcharts-series-0').hide();
                 $('.highcharts-candlestick-series').hide();
@@ -2036,545 +2568,11 @@ const heroChart = {
                 $('.highcharts-scatter-series').hide();
                 $('.highcharts-streamgraph-series').hide();
                 $('.highcharts-annotation-label').hide();
-                /****************************************/
-                ////Section 4 Network graph
-
-                function section4() {
-
-                    clearTimeout(currentTimeout);
-
-                    ///shows the networkgraph, sets up the splines,
-                    //shows new title and tab
-                    const p1 = function () {
-                        $('.highcharts-spline-series').hide();
-                        $('.highcharts-scatter-series').hide();
-                        $('.highcharts-networkgraph-series').fadeIn();
-                        ///html elements
-                        if (hasHTML) {
-                            $('h2.fakeTitle').html('science');
-                            $('h2.fakeTitle').animate({ opacity: 1 }, 100);
-                            $('#science').addClass('active');
-                        }
-                        demoChart.update({
-                            legend: {
-                                labelFormat:
-                             '{name} <span style="opacity: 0.4">{y}</span>',
-                                width: 1000,
-                                floating: true,
-                                verticalAlign: 'bottom'
-                            },
-                            plotOptions: {
-                                spline: {
-                                    lineWidth: 2,
-                                    xAxis: 5,
-                                    yAxis: 4,
-                                    dashStyle: 'dot',
-                                    color:
-                                      Highcharts.getOptions().colors[3],
-                                    dataGrouping: {
-                                        enabled: false
-                                    },
-                                    label: {
-                                        enabled: true
-                                    }
-                                },
-                                scatter: {
-                                    lineWidth: 1,
-                                    xAxis: 5,
-                                    yAxis: 4,
-                                    dashStyle: "shortdot",
-                                    color:
-                                    Highcharts.getOptions().colors[5],
-                                    pointStart: xiData[0],
-                                    label: {
-                                        enabled: false
-                                    },
-                                    showInLegend: true
-                                }
-                            }
-                        });
-                        $('.highcharts-pie-series').hide();
-                        $('.highcharts-spline-series').hide();
-                        $('.highcharts-scatter-series').hide();
-                    };
-                    currentTimeout = window.setTimeout(p1, 700);
-
-
-                    //moves the node on the network graph
-                    const p2 = function () {
-                        demoChart.series[3].nodes[0].update({
-                            plotX: demoChart.chartWidth / 2 + 100,
-                            plotY: demoChart.chartHeight
-                        });
-                    };
-                    currentTimeout = window.setTimeout(p2, 1200);
-
-                    //shows the splines
-                    const p25 = function () {
-                    //html element
-                        if (hasHTML) {
-                            $('#c3').animate({ opacity: 1 }, 1000);
-                        }
-                        $('.highcharts-spline-series').fadeIn(100);
-                        $('.highcharts-scatter-series').fadeIn(100);
-                        $('.highcharts-legend').fadeIn();
-
-                        demoChart.series[19].update({ color: '#1E90FF' });
-                    };
-                    currentTimeout = window.setTimeout(p25, 2500);
-
-                    //moves the node again
-                    const p3 = function () {
-                        demoChart.update({
-                            chart: {
-                                animation: {
-                                    duration: 1000
-                                }
-                            }
-                        });
-                        demoChart.series[3].nodes[0].update({
-                            mass: 1,
-                            plotX: demoChart.series[3].nodes[1].plotX,
-                            plotY: demoChart.series[3].nodes[1].plotY
-
-                        });
-                        demoChart.xAxis[5].setExtremes(78, 107);
-                    };
-                    currentTimeout = window.setTimeout(p3, 4000);
-
-                    ///consolidates all the nodes, hides most everything else,
-                    //shows the title and content
-                    const p4 = function () {
-
-                        $('.highcharts-label').fadeOut();
-                        $('.highcharts-streamgraph-series').fadeOut();
-                        $('.highcharts-spline-series').fadeOut();
-                        $('.highcharts-scatter-series').fadeOut();
-
-                        //html elements
-                        if (hasHTML) {
-                            $('#science').removeClass('active');
-                            $('h2.fakeTitle').hide();
-                            $('#c3').animate({ opacity: 0 }, 100);
-                            $('h1.title').css({ opacity: 0 });
-                            $('h1.title').html('Elevate your data');
-                        }
-
-                        $('.highcharts-legend').fadeOut();
-
-                        demoChart.series[3].nodes[0].update({
-                            plotX: demoChart.chartWidth / 2,
-                            plotY: demoChart.chartHeight / 2
-
-                        });
-                        let pointCount = 0;
-                        const updatePoints = setInterval(function () {
-                            demoChart.series[3].nodes[pointCount].plotY =
-                        demoChart.series[3].nodes[0].plotY;
-                            demoChart.series[3].nodes[pointCount].plotX =
-                        demoChart.series[3].nodes[0].plotX;
-                            demoChart.series[3].nodes[pointCount].mass = 1;
-                            pointCount = pointCount + 1;
-                            const nodeLength = demoChart.series[3].nodes.length;
-                            if (pointCount === nodeLength) {
-                                clearInterval(updatePoints);
-                                demoChart.series[3].hide();
-                                ///HTML elements
-                                if (hasHTML) {
-                                    $('h1.title').animate({ opacity: 1 }, 1000);
-                                    $('#cContent').animate({ opacity: 1 }, 2000);
-                                    $('.cTab').css({ display: 'block' });
-                                    $('#developersCharts4').animate({ opacity: 1 }, 2000);
-                                    $('#heroTitle').css({ gridTemplateColumns: '300px' });
-                                    $('#developers').trigger('click');
-                                }
-                            }
-                        }, 10);
-                    };
-                    currentTimeout = window.setTimeout(p4, 9000);
-                }
-                /****************************************/
-                ////Section 3 Streamgraph
-
-                function section3() {
-
-                    //sets up new title, sets the plot options for
-                    //the streamgraph
-                    const s1 = function () {
-
-                        if (hasHTML) {
-                            $('h2.fakeTitle').html('publishing');
-                        }
-
-                        demoChart.update({
-                            plotOptions: {
-                                streamgraph: {
-                                    fillOpacity: 0,
-                                    lineWidth: 1,
-                                    lineColor: streamLine,
-                                    states: {
-                                        inactive: {
-                                            enabled: false
-                                        }
-                                    }
-                                }
-
-                            }
-                        });
-                    };
-                    currentTimeout = window.setTimeout(s1, 0);
-
-                    //sets animation duration to 1000, shows streamgraph
-                    const s2 = function () {
-                        $('.highcharts-streamgraph-series').fadeIn(500);
-                        $('.highcharts-plot-line-label').hide();
-                        demoChart.update({
-                            chart: {
-                                animation: {
-                                    duration: 1000
-                                }
-                            }
-                        });
-                    };
-
-                    currentTimeout = window.setTimeout(s2, 500);
-
-                    //shows the title and activates the right tab
-                    const s3 = () => {
-                    //html elements
-                        if (hasHTML) {
-                            $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
-                            $('#c2').animate({ opacity: 1 }, 2000);
-                            $('#publishing').addClass('active');
-                        }
-
-                    };
-                    currentTimeout = window.setTimeout(s3, 1000);
-
-                    //shows the xAxis, sets the xAxis extremes for the
-                    //streamgraph, shows the labels, sets streamgraph
-                    //opacity to 1
-                    const s4 = function () {
-                        let yearMax = 1860;
-                        if (demoChart.chartWidth < 500) {
-                            yearMax = 1920;
-                        }
-                        demoChart.xAxis[4].setExtremes(Date.UTC(yearMax, 7, 1)
-                            , Date.UTC(2016, 11, 1));
-
-                        $('.highcharts-axis-labels').fadeIn();
-                        $('.highcharts-pie-series').hide();
-                        $('.highcharts-annotation-label').fadeIn();
-                        demoChart.xAxis[4].update({
-                            visible: true
-                        });
-
-                        demoChart.update({
-                            plotOptions: {
-                                streamgraph: {
-                                    fillOpacity: 1,
-                                    label: {
-                                        enabled: true
-                                    },
-                                    lineWidth: 1
-
-                                }
-
-                            }
-                        });
-                    };
-                    currentTimeout = window.setTimeout(s4, 2000);
-
-                    //sets the fill opacity to 0, hides the annotations,
-                    //sets the xAxis extremes
-                    const s5 = function () {
-
-                        demoChart.update({
-                            plotOptions: {
-                                streamgraph: {
-                                    fillOpacity: 0,
-                                    label: {
-                                        enabled: false
-                                    },
-                                    lineWidth: 1
-
-                                }
-
-                            }
-                        });
-                        $('.highcharts-annotation-label').hide();
-                        demoChart.xAxis[4].update({
-                            visible: false
-                        });
-                    };
-                    currentTimeout = window.setTimeout(s5, 5500);
-
-                    //hides the xAxis
-                    const s6 = function () {
-
-                        demoChart.update({
-                            plotOptions: {
-                                streamgraph: {
-                                    label: {
-                                        enabled: false
-                                    }
-                                }
-                            }
-                        });
-
-                        demoChart.xAxis[4].setExtremes(Date.UTC(1970, 7, 1),
-                            Date.UTC(2016, 11, 1));
-                    };
-                    currentTimeout = window.setTimeout(s6, 7000);
-
-                    //turns off series labels, fades the titles,
-                    //goes to section 4
-                    const s7 = function () {
-                    //html elements
-                        if (hasHTML) {
-                            $('h2.fakeTitle').animate({ opacity: 0 }, 1000);
-                            $('#c2').animate({ opacity: 0 }, 1000);
-                            $('#publishing').removeClass('active');
-                        }
-                        section4();
-                    };
-                    currentTimeout = window.setTimeout(s7, 8000);
-                }
-                /****************************************/
-                ////Section 2 Splines and candlestick
-
-                function section2() {
-
-                    ///update animation duration to 1000, hide the item series
-                    const f1 = function () {
-                        demoChart.update({
-                            chart: {
-                                animation: {
-                                    duration: 1000
-                                }
-                            }
-                        });
-                        demoChart.series[0].update({
-                            opacity: 0
-                        });
-                    };
-                    currentTimeout = setTimeout(f1, 500);
-
-                    //set axes extremes for splines and candlestick,
-                    //show new title
-                    const f2 = function () {
-                        if (hasHTML) {
-                            $('h2.fakeTitle').html('finance');
-                            $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
-                        }
-                        $('.highcharts-networkgraph-series').hide();
-                        $('.highcharts-candlestick-series').show();
-                        demoChart.xAxis[1].setExtremes(Date.UTC(2002, 7, 1),
-                            Date.UTC(2010, 9, 1));
-                        demoChart.xAxis[0].setExtremes(Date.UTC(2019, 11, 9),
-                            Date.UTC(2020, 1, 13));
-
-                    };
-                    currentTimeout = setTimeout(f2, 1500);
-
-                    ///show candlestick tooltip
-                    const f3 = function () {
-                        demoChart.update({
-                            tooltip: {
-                                enabled: true
-                            }
-                        });
-                        if (hasHTML) {
-                            $('#c1').animate({ opacity: 1 }, 1000);
-                        }
-                        demoChart.tooltip.refresh(
-                            [demoChart.series[2].points[22]]);
-                        $('.highcharts-tooltip').hide();
-                        $('.highcharts-tooltip').fadeIn(1000);
-                    };
-                    currentTimeout = setTimeout(f3, 2500);
-
-                    //hide the tooltip and candlestick, remove all the splines
-                    const f4 = function () {
-                        $('.highcharts-candlestick-series').fadeOut(1000);
-                        $('.highcharts-tooltip').hide();
-
-                        demoChart.update({
-                            tooltip: {
-                                enabled: false
-                            },
-                            chart: {
-                                animation: {
-                                    duration: 10
-                                }
-                            }
-                        });
-
-                        let startNum = demoChart.series.length - 1;
-                        const endNum = 27;
-                        $('.highcharts-spline-series').fadeOut();
-                        const removeSeries = setInterval(function () {
-                            demoChart.series[startNum].remove();
-                            startNum = startNum - 1;
-                            if (startNum < endNum) {
-                                clearInterval(removeSeries);
-                            }
-
-                        }, 0);
-
-                        demoChart.update({
-                            plotOptions: {
-                                streamgraph: {
-                                    fillOpacity: 0,
-                                    lineWidth: 1,
-                                    lineColor: baseColor
-                                }
-                            }
-                        });
-                        //html elements
-                        if (hasHTML) {
-                            $('h2.fakeTitle').animate({ opacity: 0 }, 100);
-                            $('#c1').animate({ opacity: 0 }, 1000);
-                            $('#finance').removeClass('active');
-                        }
-                        $('.highcharts-spline-series').fadeOut(1000);
-
-                    };
-                    currentTimeout = setTimeout(f4, 5000);
-
-                    //go to section 3
-                    const f5 = function () {
-                        section3();
-                    };
-                    currentTimeout = setTimeout(f5, 5500);
-
-                }
-                /****************************************/
-                ////Section 1 Pie and item
-
-                function section1() {
-                ///show title
-                    const s10 = function () {
-                        if (hasHTML) {
-                            $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
-                        }
-                    };
-                    currentTimeout = setTimeout(s10, 100);
-                    ///show subtitle
-                    const s11 = function () {
-                        if (hasHTML) {
-                            $('#c0').animate({ opacity: 1 }, 1000);
-                        }
-                    };
-                    currentTimeout = setTimeout(s11, 500);
-                    ///swap graphs
-                    const s12 = function () {
-                        $('.highcharts-series-0').fadeIn();
-                        $('.highcharts-series-4').fadeOut(1000);
-                    };
-                    currentTimeout = setTimeout(s12, 1500);
-                    //make an arch
-                    const s13 =  function () {
-                        let radius = 5;
-                        let size = '85%';
-                        let centerY =  '85%';
-                        let centerX = '50%%';
-                        if (demoChart.chartWidth < 800) {
-                            radius = 3;
-                        }
-                        if (demoChart.chartWidth > 800) {
-                            size = '120%';
-                            centerY = '80%';
-                            centerX = '65.5%';
-                        }
-                        demoChart.series[0].update({
-                            startAngle: -100,
-                            endAngle: 100,
-                            center: [centerX, centerY],
-                            size: size,
-                            innerSize: '30%',
-                            marker: {
-                                radius: radius
-                            }
-                        });
-                    };
-                    currentTimeout = setTimeout(s13, 2500);
-                    ///expand the arch
-                    const s14 =  function () {
-                        let size = '500%';
-                        if (demoChart.chartWidth < 500) {
-                            size = '200%';
-                        }
-                        demoChart.update({
-                            chart: {
-                                animation: {
-                                    duration: 500
-                                }
-                            }
-                        });
-                        demoChart.series[0].update({
-                            startAngle: 100,
-                            size: size
-                        });
-                    };
-                    currentTimeout = setTimeout(s14, 4000);
-
-                    ///hide title, hide item chart, deactive carousel
-                    ///1, show spline series
-                    const s15 = function () {
-                        $('.highcharts-spline-series').show();
-                        $('.highcharts-item-series').fadeOut(1000);
-
-                        if (hasHTML) {
-                            $('#developers').removeClass('active');
-                            $('h2.fakeTitle').animate({ opacity: 0 }, 1000);
-                        }
-                    };
-                    currentTimeout = setTimeout(s15, 4500);
-
-                    //hide subtitle, turn off legen, add splines
-                    const s16 = function () {
-                        if (hasHTML) {
-                            $('#c0').animate({ opacity: 0 }, 1000);
-                        }
-                        demoChart.update({
-                            chart: {
-                                animation: {
-                                    duration: 100
-                                }
-                            }
-                        });
-                        demoChart.series[0].update({
-                            showInLegend: false
-                        });
-                        let count = 0;
-                        const addSeries = setInterval(function () {
-                            demoChart.addSeries(splineSeries[count]);
-                            count = count + 1;
-                            if (count === splineSeries.length) {
-                                clearInterval(addSeries);
-                            }
-                        }, 0);
-                    };
-                    currentTimeout = setTimeout(s16, 4700);
-
-                    ///set current tab, go to section 2
-                    const s17 = function () {
-                        if (hasHTML) {
-                            $('#finance').addClass('active');
-                        }
-                        section2();
-                    };
-                    currentTimeout = setTimeout(s17, 5000);
-                }
-
                 section1();
                 if (hasHTML) {
                     $('h2.fakeTitle').animate({ opacity: 1 }, 1000);
                     $('h1.title').animate({ opacity: 1 }, 1000);
                 }
-
-
             }
         }
     },
