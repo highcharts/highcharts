@@ -463,7 +463,8 @@ var SVGRenderer = /** @class */ (function () {
             // has to be performed once per page load, so we store the result
             // locally in the module.
             if (!defined(hasInternalReferenceBug)) {
-                var svg = "<svg width=\"8\" height=\"8\">\n                <defs>\n                    <clipPath id=\"test-clip\"><rect width=\"4\" height=\"4\" />\n                </defs>\n                <rect id=\"hitme\" width=\"8\" height=\"8\"\n                    clip-path=\"url(#test-clip)\" fill=\"rgba(0,0,0,0.001)\" />\n                </svg>";
+                var id = uniqueKey();
+                var svg = "<svg width=\"8\" height=\"8\">\n                <defs>\n                    <clipPath id=\"" + id + "\"><rect width=\"4\" height=\"4\" />\n                </defs>\n                <rect id=\"hitme\" width=\"8\" height=\"8\"\n                    clip-path=\"url(#" + id + ")\" fill=\"rgba(0,0,0,0.001)\" />\n                </svg>";
                 var div = createElement('div', void 0, {
                     position: 'fixed',
                     top: 0,
