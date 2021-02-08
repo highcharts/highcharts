@@ -374,7 +374,8 @@ class MACDIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var j = 0,
+        var indexToShift: number = (params.longPeriod as any) - (params.shortPeriod as any), // #14197
+            j = 0,
             MACD: Array<Array<(number|null)>> = [],
             xMACD: Array<(number|null)> = [],
             yMACD: Array<Array<(number|null)>> = [],
@@ -410,20 +411,19 @@ class MACDIndicator extends SMAIndicator {
 
         // Subtract each Y value from the EMA's and create the new dataset
         // (MACD)
-        for (i = 1; i <= shortEMA.length; i++) {
+        for (i = 0; i <= shortEMA.length; i++) {
             if (
-                defined(longEMA[i - 1]) &&
-                defined(longEMA[i - 1][1]) &&
-                defined(shortEMA[i + (params.shortPeriod as any) + 1]) &&
-                defined(shortEMA[i + (params.shortPeriod as any) + 1][0])
+                defined(longEMA[i]) &&
+                defined(longEMA[i][1]) &&
+                defined(shortEMA[i + indexToShift]) &&
+                defined(shortEMA[i + indexToShift][0])
             ) {
                 MACD.push([
-                    (params.shortPeriod as number) >= 12 ?
-                        shortEMA[i + (params.shortPeriod as number) + 1][0] : longEMA[i - 1][0], // #14197
+                    shortEMA[i + indexToShift][0],
                     0,
                     null,
-                    shortEMA[i + (params.shortPeriod as any) + 1][1] -
-                        longEMA[i - 1][1]
+                    shortEMA[i + indexToShift][1] -
+                        longEMA[i][1]
                 ]);
             }
         }
