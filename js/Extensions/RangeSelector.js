@@ -1157,9 +1157,9 @@ var RangeSelector = /** @class */ (function () {
         var keyDown = false;
         // handle changes in the input boxes
         input.onchange = function () {
-            updateExtremes();
-            // Blur input when clicking date input calendar
+            // Update extremes and blur input when clicking date input calendar
             if (!keyDown) {
+                updateExtremes();
                 rangeSelector.hideInput(name);
                 input.blur();
             }
