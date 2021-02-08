@@ -2271,7 +2271,9 @@ function section3() {
 
             }
         });
-        $('.highcharts-annotation-label').hide();
+        if ($('.highcharts-annotation-label').length > 0) {
+            $('.highcharts-annotation-label').hide();
+        }
         demoChart.xAxis[4].update({
             visible: false
         });
