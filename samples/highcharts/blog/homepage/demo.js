@@ -4430,4 +4430,4 @@ const heroChart = {
     ]
 };
 
-demoChart = Highcharts.stockChart('developersCharts3', heroChart);
+demoChart = Highcharts.stockChart('container', heroChart);

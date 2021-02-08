@@ -40,55 +40,6 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <script src="https://code.highcharts.com/gantt/modules/draggable-points.js"></script>
 
-<style>
-
-/*tooltip formatting for finance animation*/
-#tooltipGrid{
-		padding:5px;
-		display:grid;
-		grid-template-columns:120px;
-		grid-column-gap:1px;
-		grid-row-gap: 8px;
-		height:90px;
-		align-items:start;
-		background-color:transparent;
-	}
-	#tooltipGrid .date{
-		white-space:normal;
-		grid-column:1 / span 1;
-		color:#333;
-		font-size:9px;
-		text-transform:uppercase;
-
-	}
-	#tooltipGrid .date img{
-		opacity:.5;
-		margin-right:4px;
-		width:10px;
-	}
-	#tooltipGrid .infoGrid{
-		display:grid;
-		grid-template-columns: 30px 30px;
-		grid-column:1 / span 1;
-	}
-
-	#tooltipGrid .infoGrid .label{
-		text-transform:uppercase;
-		font-size:9px;
-		color:#666;
-		font-weight:400;
-		border-bottom:1px dotted #856eff;
-	}
-	#tooltipGrid .infoGrid .data{
-		grid-column: 2 / span 1;
-		font-size:12px;
-		font-weight:700;
-		border-bottom:1px dotted #856eff;
-	}
-
-
-
-</style>
 
 <pre id="csv" style="display: none">Date,Time,Temperature
 	2017-01-01,0,2.7
@@ -8852,4 +8803,4 @@
 	2017-12-31,23,-0.6
 </pre>
 
-<div id="developersCharts3"></div>
+<div id="container"></div>
