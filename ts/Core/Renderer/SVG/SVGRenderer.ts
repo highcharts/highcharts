@@ -792,12 +792,13 @@ class SVGRenderer {
             // has to be performed once per page load, so we store the result
             // locally in the module.
             if (!defined(hasInternalReferenceBug)) {
+                const id = uniqueKey();
                 const svg = `<svg width="8" height="8">
                 <defs>
-                    <clipPath id="test-clip"><rect width="4" height="4" />
+                    <clipPath id="${id}"><rect width="4" height="4" />
                 </defs>
                 <rect id="hitme" width="8" height="8"
-                    clip-path="url(#test-clip)" fill="rgba(0,0,0,0.001)" />
+                    clip-path="url(#${id})" fill="rgba(0,0,0,0.001)" />
                 </svg>`;
                 const div = createElement('div', void 0, {
                     position: 'fixed',
