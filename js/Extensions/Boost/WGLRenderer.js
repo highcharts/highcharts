@@ -678,7 +678,7 @@ function GLRenderer(postRenderCallback) {
         if (settings.debug.timeSeriesProcessing) {
             console.time('building ' + s.type + ' series'); // eslint-disable-line no-console
         }
-        series.push({
+        var obj = {
             segments: [],
             // from: data.length,
             markerFrom: markerData.length,
@@ -706,9 +706,15 @@ function GLRenderer(postRenderCallback) {
                 'treemap': 'triangles',
                 'bubble': 'points'
             }[s.type] || 'line_strip'
-        });
+        };
+        if (s.index >= series.length) {
+            series.push(obj);
+        }
+        else {
+            series[s.index] = obj;
+        }
         // Add the series data to our buffer(s)
-        pushSeriesData(s, series[series.length - 1]);
+        pushSeriesData(s, obj);
         if (settings.debug.timeSeriesProcessing) {
             console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
         }
