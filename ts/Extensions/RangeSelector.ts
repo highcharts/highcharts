@@ -1649,8 +1649,13 @@ class RangeSelector {
             }
         };
 
-        input.onkeydown = (): void => {
+        input.onkeydown = (event: KeyboardEvent): void => {
             keyDown = true;
+
+            // Arrow keys
+            if (event.keyCode === 38 || event.keyCode === 40) {
+                updateExtremes();
+            }
         };
 
         input.onkeyup = (): void => {
