@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Google analytics Website tracking-->
+  <script>
+    (function (i, s, o, g, r, a, m) {
+      i['GoogleAnalyticsObject'] = r;
+      (i[r] =
+        i[r] ||
+        function () {
+          (i[r].q = i[r].q || []).push(arguments);
+        }),
+        (i[r].l = 1 * new Date());
+      (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+      a.async = 1;
+      a.src = g;
+      m.parentNode.insertBefore(a, m);
+    })(
+      window,
+      document,
+      'script',
+      'https://www.google-analytics.com/analytics.js',
+      'ga'
+    );
+
+    ga('create', 'UA-79221604-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>likeVik</title>
+    <link
+      rel="shortcut icon"
+      href="shortcut_icon/master_favicon_thumbnail.png"
+    />
+
+    <!-- Bootstrap Core CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+      type="text/css"
+    />
+
+    <!-- Custom Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.css"
+      type="text/css"
+    />
+
+    <!-- Plugin CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/animatecss/3.5.1/animate.min.css"
+      type="text/css"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/creative.css" type="text/css" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body id="page-top">
+    <section id="Example">
+      <div class="container">
+        <div class="col-lg-6 col-sm-6">
+          <br />
+          <a
+            href="../index.html"
+            class="btn btn-info bg-info btn-xl page-scroll"
+            >Back to the main web page</a
+          >
+
+          <br />
+          <br />
+        </div>
+      </div>
+    </section>
+
+    <section id="Example">
+      <div class="container">
+        <div class="col-lg-8 col-lg-offset-2">
+          <br />
+          <h2 class="section-heading" style="border-bottom: 5px solid #cfe2f3">
+            Data types
+          </h2>
+          <p>
+            Knowing what kind of data you are dealing with is an essential phase
+            to better extract insights from the data; since for each data type,
+            you need to use the right mathematical techniques and visualization
+            types. There are basically two main types of data: Categorical and
+            Continuous.
+          </p>
+          <img src="../img/portfolio/datatype.png" style="margin: 4px" />
+
+          <p>Here is an example of different data type:</p>
+
+          <table class="table table-bordered">
+            <tr>
+              <th>Categorical</th>
+              <th>Continuous</th>
+            </tr>
+            <tr>
+              <td>
+                <ul>
+                  <li>Male/Female</li>
+                  <li>Martial status</li>
+                  <li>Countries’ names</li>
+                  <li>Colors</li>
+                  <li>Political parties</li>
+                  <li>Levels</li>
+                  <li>Times of day</li>
+                </ul>
+              </td>
+              <td>
+                <ul>
+                  <li>Intelligence quotient</li>
+                  <li>Temperature</li>
+                  <li>Distance</li>
+                  <li>Weight</li>
+                  <li>Height</li>
+                  <li>Age</li>
+                </ul>
+              </td>
+            </tr>
+          </table>
+
+          <h2 class="section-heading" style="border-bottom: 5px solid #f3cfe2">
+            A. Categorical data
+          </h2>
+          Data is labeled categorical if their values describe a quality, grade,
+          level, or any other characteristics, such as happy/neutral/sad,
+          low/high, dark/light. Categorical data can be Nominal or Ordinal.
+
+          <h3>1. Nominal data</h3>
+          Nominal data is a type of categorical data where the order doesn’t
+          matter. Examples of nominal data:
+          <ul>
+            <li>Male/Female.</li>
+            <li>Countries’ names.</li>
+            <li>Colors.</li>
+            <li>…</li>
+          </ul>
+          To identify nominal data, ask yourself the following question: Will
+          the meaning change if I change the variables’ order? If not, you have
+          nominal data.
+
+          <h3>2. Ordinal data</h3>
+          Data is ordinal if it represents an ordered quality variable, and the
+          number of units in each variable is not the same. Example of ordinal
+          data:
+          <b>Levels</b>
+          <ul>
+            <li>
+              Low, medium, and high. Each level could have different units of
+              measurement, such as the level of happiness, pain, etc.
+            </li>
+          </ul>
+          <b>Times of day</b>
+          <ul>
+            <li>
+              Morning: from sunrise to 11:59 am, it is around 6hours or 6 units
+              of time.
+            </li>
+            <li>
+              Afternoon: from 12:00 pm to 5:00 pm, it is 5 hours or 5 units of
+              time.
+            </li>
+            <li>
+              Evening: from 5:01 pm to 8:00 pm, it is 3 hours or 3 units of
+              time.
+            </li>
+            <li>
+              Night: from 8:01 pm to sunrise, it is around 10hours or 10 units
+              of time.
+            </li>
+          </ul>
+          <b>Educational stages</b>
+          <ul>
+            <li>Preschool: from 3 to 5 years old, and it has one grade.</li>
+            <li>
+              Elementary school: from 5 to 14 years old, and it has 8 grades.
+            </li>
+            <li>High school: from 14 to 18 years old, and it has 3 grades.</li>
+            <li>
+              College: from 18 to 22 years old, and it has 4 to 5 years of
+              education.
+            </li>
+            <li>Graduate school: ages vary.</li>
+          </ul>
+          <h2 class="section-heading" style="border-bottom: 5px solid #e2f3cf">
+            B. Continuous data
+          </h2>
+          Data is labeled continuous if the values are measured, such as how
+          many kgs of gold do I have? I have 30,5kg of gold; How big is the
+          farm? The farm is 1km2 or 100 hectares (0.3861 square miles), etc. The
+          data could be discrete (.., -1, 0, 1, 2, ..) or continuous (…, 0.123,
+          0,456, …). Continuous data could be either interval or ratio.
+          <h3>1. Interval data</h3>
+          Interval data represents values where proportion doesn’t make sense,
+          and the zero has no meaning. I can not say that a person with 160 IQ
+          is twice as intelligent than a person with an IQ of 80, or a
+          temperature of 20° is 20 times more than 0°. Example of interval data:
+          <ul>
+            <li>Intelligence quotient or IQ.</li>
+            <li>Temperature.</li>
+            <li>Time of the day, ex: 1 pm, 2 pm, 4 am, etc.</li>
+          </ul>
+          <b>Remark</b>
+          Interval data is often used in the social sciences.
+          <h3>2. Ratio data</h3>
+          For ratio data, the zero has a meaning as a point of reference, and
+          proportions make sense: I can say that 4kg is two times 2kg or 4 times
+          1kg, and the minimum weight is 0kg. Example of ratio data:
+          <ul>
+            <li>Distance: 5km, 1,84m, etc.</li>
+            <li>Weight: 81.5kg.</li>
+            <li>Days: 2 or 3 days.</li>
+            <li>Times: 1 hour, 34min.</li>
+          </ul>
+          <b>Remark</b>
+          Notice that ratio data does not have negative values, as there is no
+          negative height or weight. Ratio data is popular in physical sciences.
+
+          <br />
+          <br />
+        </div>
+      </div>
+    </section>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+    <!--script src="js/jquery.fittext.js"></script-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FitText.js/1.2.0/jquery.fittext.min.js"></script>
+
+    <!--script src="js/wow.min.js"></script-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-creative/1.0.2/js/creative.min.js"></script>
+  </body>
+</html>
