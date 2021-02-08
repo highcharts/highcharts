@@ -1634,10 +1634,9 @@ class RangeSelector {
 
         // handle changes in the input boxes
         input.onchange = (): void => {
-            updateExtremes();
-
-            // Blur input when clicking date input calendar
+            // Update extremes and blur input when clicking date input calendar
             if (!keyDown) {
+                updateExtremes();
                 rangeSelector.hideInput(name);
                 input.blur();
             }
