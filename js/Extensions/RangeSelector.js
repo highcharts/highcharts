@@ -1170,8 +1170,12 @@ var RangeSelector = /** @class */ (function () {
                 updateExtremes();
             }
         };
-        input.onkeydown = function () {
+        input.onkeydown = function (event) {
             keyDown = true;
+            // Arrow keys
+            if (event.keyCode === 38 || event.keyCode === 40) {
+                updateExtremes();
+            }
         };
         input.onkeyup = function () {
             keyDown = false;
