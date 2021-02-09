@@ -112,7 +112,6 @@ class RSIIndicator extends SMAIndicator {
             i: number,
             values: Array<number>;
 
-        // RSI requires close value
         if ((xVal.length < period)) {
             return;
         }
@@ -123,7 +122,6 @@ class RSIIndicator extends SMAIndicator {
             // in case of the situation, where the series type has data length
             // longer then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
-
             index = Math.min(params.index as number, yVal[0].length - 1);
             values = (yVal as Array<Array<number>>).map((value: Array<number>): number => value[index]);
         }
