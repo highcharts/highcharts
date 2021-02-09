@@ -1188,6 +1188,8 @@ export default dataGrouping;
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-approximation
  *         Approximation callback with custom data
+ * @sample {highstock} stock/plotoptions/series-datagrouping-simple-approximation
+ *         Simple approximation demo
  *
  * @type       {Highcharts.DataGroupingApproximationValue|Function}
  * @apioption  plotOptions.series.dataGrouping.approximation
