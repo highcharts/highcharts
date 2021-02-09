@@ -138,4 +138,4 @@ Just like in normal area charts, the Highcharts 3D plugin does allow to display 
 
 Stacking is still available in 3D charts and works in exactly the same way by setting _stacking_ to **true**.
 
-<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-area-stacking allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-area-multiple allow="fullscreen"></iframe>
