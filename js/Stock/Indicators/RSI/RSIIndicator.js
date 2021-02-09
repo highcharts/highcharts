@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-var isArray = U.isArray, merge = U.merge;
+var isArray = U.isArray, isNumber = U.isNumber, error = U.error, merge = U.merge;
 /* eslint-disable require-jsdoc */
 // Utils:
 function toFixed(a, n) {
@@ -61,20 +61,19 @@ var RSIIndicator = /** @class */ (function (_super) {
         var period = params.period, xVal = series.xData, yVal = series.yData, yValLen = yVal ? yVal.length : 0, decimals = params.decimals, 
         // RSI starts calculations from the second point
         // Cause we need to calculate change between two points
-        range = 1, RSI = [], xData = [], yData = [], index = 3, gain = 0, loss = 0, RSIPoint, change, avgGain, avgLoss, i, values;
+        range = 1, RSI = [], xData = [], yData = [], index = params.index, gain = 0, loss = 0, RSIPoint, change, avgGain, avgLoss, i, values;
         // RSI requires close value
         if ((xVal.length < period)) {
             return;
         }
-        if (!isArray(yVal[0])) {
+        if (isNumber(yVal[0])) {
             values = yVal;
         }
-        else if (yVal[0].length < 4) {
-            values = yVal.map(function (value) {
-                return value[params.index || yVal[0].length - 1];
-            });
-        }
         else {
+            // in case of the situation, where the series type has data length
+            // longer then 4 (HLC, range), this ensures that we are not trying
+            // to reach the index out of bounds
+            index = Math.min(params.index, yVal[0].length - 1);
             values = yVal.map(function (value) { return value[index]; });
         }
         // Calculate changes for first N points
@@ -145,7 +144,8 @@ var RSIIndicator = /** @class */ (function (_super) {
     RSIIndicator.defaultOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 14,
-            decimals: 4
+            decimals: 4,
+            index: 3
         }
     });
     return RSIIndicator;

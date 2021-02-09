@@ -151,7 +151,7 @@ QUnit.test('Test RSI calculations on data updates.', function (assert) {
         ],
         'Correct values after point.remove()'
     );
-    // Enhancement #14930, RSI Works with line series type
+    // Enhancement #14930, RSI works with line series type.
     chart.series[0].update({
         data: [
             443389,

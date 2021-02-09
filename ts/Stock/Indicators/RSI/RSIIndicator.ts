@@ -25,6 +25,8 @@ const {
 import U from '../../../Core/Utilities.js';
 const {
     isArray,
+    isNumber,
+    error,
     merge
 } = U;
 
@@ -64,7 +66,8 @@ class RSIIndicator extends SMAIndicator {
     public static defaultOptions: RSIOptions = merge(SMAIndicator.defaultOptions, {
         params: {
             period: 14,
-            decimals: 4
+            decimals: 4,
+            index: 3
         }
     } as RSIOptions);
 
@@ -88,10 +91,9 @@ class RSIIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: RSIParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-
         var period = (params.period as any),
             xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> | Array<number> = (series.yData as any),
+            yVal: Array<number> | Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             decimals: number = (params.decimals as any),
             // RSI starts calculations from the second point
@@ -100,7 +102,7 @@ class RSIIndicator extends SMAIndicator {
             RSI: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            index = 3,
+            index = (params.index as any),
             gain = 0,
             loss = 0,
             RSIPoint: number,
@@ -114,15 +116,16 @@ class RSIIndicator extends SMAIndicator {
         if ((xVal.length < period)) {
             return;
         }
-        if (!isArray(yVal[0])) {
+
+        if (isNumber(yVal[0])) {
             values = yVal as Array<number>;
-        } else if (yVal[0].length < 4) {
-            values = (yVal as Array<Array<number>>).map(
-                (value: Array<number>): number =>
-                    value[(params.index as number) || (yVal as Array<Array<number>>)[0].length - 1]
-            );
         } else {
-            values = (yVal as any).map((value: Array<number>): number => value[index]);
+            // in case of the situation, where the series type has data length
+            // longer then 4 (HLC, range), this ensures that we are not trying
+            // to reach the index out of bounds
+
+            index = Math.min(params.index as number, yVal[0].length - 1);
+            values = (yVal as Array<Array<number>>).map((value: Array<number>): number => value[index]);
         }
 
         // Calculate changes for first N points
