@@ -12,6 +12,8 @@ import type DataPlotOptions from './DataPlotOptions';
 import type DataPointOptions from './DataPointOptions';
 import type DataSeriesOptions from './DataSeriesOptions';
 import type DataTableRow from '../DataTableRow';
+import type SeriesLike from '../../Core/Series/SeriesLike';
+import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
@@ -59,6 +61,8 @@ class DataSeries {
 
     public static readonly getTableFromSeriesOptions = CS.getTableFromSeriesOptions;
 
+    public static readonly increment = CS.increment;
+
     /* *
      *
      *  Constructor
@@ -72,21 +76,15 @@ class DataSeries {
         this.chart = chart;
         this.data = [];
         this.linkedSeries = [];
-        this.options = merge(
-            (
-                chart &&
-                chart.options.plotOptions &&
-                chart.options.plotOptions.series
-            ),
-            DataSeries.defaultOptions,
-            options
-        );
+        this.options = this.setOptions(options);
         this.points = [];
+        this.state = '';
         this.table = (
             options.data ?
                 DataSeries.getTableFromSeriesOptions(this.options) :
                 new DataTable()
         );
+        this.tableListeners = [];
         this.userOptions = options;
         this.visible = true;
     }
@@ -103,23 +101,27 @@ class DataSeries {
 
     public group?: SVGElement;
 
+    public isDirty?: boolean;
+
+    public isDirtyData?: boolean;
+
     public linkedSeries: Array<DataSeries>;
 
-    public options: DataPlotOptions;
+    public opacity?: number;
+
+    public options: DataSeriesOptions;
 
     public points: Array<(this['pointClass']['prototype']|null)>;
 
+    public state: StatesOptionsKey;
+
     public table: DataTable;
 
-    private tableListener?: Function;
+    private tableListeners: Array<Function>;
 
     public userOptions: DeepPartial<DataSeriesOptions>;
 
-    public readonly visible: boolean;
-
-    public xAxis?: Chart['xAxis'][0];
-
-    public yAxis?: Chart['yAxis'][0];
+    public visible: boolean;
 
     /* *
      *
@@ -128,11 +130,17 @@ class DataSeries {
      * */
 
     public destroy(): void {
-        const series = this;
+        this.destroyTableListeners();
+    }
 
-        if (series.tableListener) {
-            series.tableListener();
-            series.tableListener = void 0;
+    public destroyTableListeners(): void {
+        const series = this,
+            tableListeners = series.tableListeners.slice();
+
+        series.tableListeners.length = 0;
+
+        for (let i = 0, iEnd = tableListeners.length; i < iEnd; ++i) {
+            tableListeners[i]();
         }
     }
 
@@ -181,23 +189,7 @@ class DataSeries {
 
         series.chart = chart;
 
-        fireEvent(series, 'setOptions', { userOptions: options });
-
-        series.options = merge(
-            series.options,
-            (
-                chart.options.plotOptions &&
-                chart.options.plotOptions.series
-            ),
-            (
-                chart.userOptions.plotOptions &&
-                chart.userOptions.plotOptions[series.type]
-            ),
-            options
-        );
-        series.userOptions = merge(series.userOptions, options);
-
-        fireEvent(series, 'afterSetOptions', { options: series.options });
+        series.setOptions(options);
 
         const table = DataSeries.getTableFromSeriesOptions(series.options);
 
@@ -216,26 +208,33 @@ class DataSeries {
         const series = this,
             {
                 chart,
-                options,
-                visible: visibility,
-                xAxis,
-                yAxis
+                options
             } = series,
             {
                 zIndex
-            } = options;
+            } = options,
+            attributes: SVGAttributes = {
+                translateX: chart.plotLeft,
+                translateY: chart.plotTop,
+                scaleX: 1,
+                scaleY: 1,
+                visibility: series.visible,
+                zIndex
+            };
+
+        // Avoid setting undefined opacity, or in styled mode
+        if (
+            typeof this.opacity !== 'undefined' &&
+            !this.chart.styledMode &&
+            this.state !== 'inactive' // #13719
+        ) {
+            attributes.opacity = this.opacity;
+        }
 
         return parent.renderer
             .g()
             .addClass('highcharts-data-series')
-            .attr({
-                translateX: xAxis ? xAxis.left : chart.plotLeft,
-                translateY: yAxis ? yAxis.top : chart.plotTop,
-                scaleX: 1,
-                scaleY: 1,
-                visibility,
-                zIndex
-            })
+            .attr(attributes)
             .add(parent);
     }
 
@@ -243,6 +242,12 @@ class DataSeries {
         const series = this;
         series.translate();
         series.render();
+        if (
+            series.isDirty ||
+            series.isDirtyData
+        ) { // #3868, #3945
+            delete (series as any).kdTree;
+        }
     }
 
     /**
@@ -289,6 +294,35 @@ class DataSeries {
         }));
     }
 
+    /** @private */
+    private setOptions(options: DeepPartial<DataSeriesOptions>): DataSeriesOptions {
+        const series = this,
+            chart = series.chart;
+
+        fireEvent(series, 'setOptions', { userOptions: options });
+
+        series.options = merge(
+            DataSeries.defaultOptions,
+            (
+                chart &&
+                chart.options.plotOptions &&
+                chart.options.plotOptions.series
+            ),
+            (
+                chart &&
+                chart.userOptions &&
+                chart.userOptions.plotOptions &&
+                chart.userOptions.plotOptions[series.type]
+            ),
+            options
+        ) as DataSeriesOptions;
+        series.userOptions = merge(options);
+
+        fireEvent(series, 'afterSetOptions', { options: series.options });
+
+        return series.options;
+    }
+
     /**
      * Add or update points of table rows.
      */
@@ -304,9 +338,7 @@ class DataSeries {
             return;
         }
 
-        if (series.tableListener) {
-            series.tableListener();
-        }
+        series.destroyTableListeners();
 
         series.table = table;
 
@@ -330,7 +362,7 @@ class DataSeries {
             } else if (point) {
                 point.setTableRow(tableRow);
             } else {
-                seriesData[i] = new SeriesPoint(series, tableRow);
+                seriesData[i] = new SeriesPoint(series, tableRow, i);
             }
         }
 
@@ -352,6 +384,26 @@ class DataSeries {
 
             seriesData.length = tableRowsLength;
         }
+
+        series.tableListeners.push(
+            table.on('afterInsertRow', function (
+                this: DataTable,
+                e: DataTable.EventObject
+            ): void {
+                if (e.type === 'afterInsertRow') {
+                    const i = e.index;
+                    seriesData.splice(i, 0, new DataPoint(series, e.row, i));
+                }
+            }),
+            table.on('afterDeleteRow', function (
+                this: DataTable,
+                e: DataTable.EventObject
+            ): void {
+                if (e.type === 'afterUpdateRow') {
+                    seriesData.splice(e.index, 1);
+                }
+            })
+        );
 
         // series.tableListener =  ---> point listener?
     }
@@ -387,18 +439,28 @@ class DataSeries {
  * */
 
 interface DataSeries {
+    axisTypes: Array<string>;
     bindAxes: typeof CS.prototype.bindAxes;
     drawLegendSymbol: typeof LegendSymbolMixin.drawRectangle;
+    insert: typeof CS.prototype.insert;
+    is: typeof CS.prototype.is;
+    parallelArrays: Array<string>;
     pointArrayMap: Array<string>;
     pointClass: typeof DataPoint;
     type: string;
+    updateParallelArrays: typeof CS.prototype.updateParallelArrays;
 }
 extend(DataSeries.prototype, {
+    axisTypes: [],
     bindAxes: CS.prototype.bindAxes,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    insert: CS.prototype.insert,
+    is: CS.prototype.is,
+    parallelArrays: [],
     pointArrayMap: ['y'],
     pointClass: DataPoint,
-    type: 'data'
+    type: 'data',
+    updateParallelArrays: CS.prototype.updateParallelArrays
 });
 
 /* *

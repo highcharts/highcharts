@@ -105,12 +105,13 @@ class DataPoint {
 
     public render(parent: SVGElement): void { console.log('DataPoint.render');
         const point = this,
-            tableRow = point.tableRow;
+            tableRow = point.tableRow,
+            valueKey = point.series.pointArrayMap[0];
 
         point.graphic = parent.renderer
             .rect(
                 tableRow.getCellAsNumber('x') * 10,
-                tableRow.getCellAsNumber('y'),
+                tableRow.getCellAsNumber(valueKey) * 10,
                 1,
                 1
             )
@@ -144,7 +145,16 @@ class DataPoint {
             point.tableRowListener = tableRow.on('afterChangeRow', function (
                 this: DataTableRow
             ): void {
-                point.update(this, false, false);
+                point.update(
+                    DataPoint.getPointOptionsFromTableRow(
+                        this,
+                        series.pointArrayMap
+                    ) || {},
+                    false,
+                    false
+                );
+                series.isDirty = true;
+                series.isDirtyData = true;
 
                 // POC by Torstein
                 if (typeof chart.redrawTimer === 'undefined') {
@@ -178,7 +188,6 @@ class DataPoint {
         if (redraw) {
             point.series.chart.redraw(animation);
         }
-
     }
 
 }

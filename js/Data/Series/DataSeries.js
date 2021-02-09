@@ -30,13 +30,13 @@ var DataSeries = /** @class */ (function () {
         this.chart = chart;
         this.data = [];
         this.linkedSeries = [];
-        this.options = merge((chart &&
-            chart.options.plotOptions &&
-            chart.options.plotOptions.series), DataSeries.defaultOptions, options);
+        this.options = this.setOptions(options);
         this.points = [];
+        this.state = '';
         this.table = (options.data ?
             DataSeries.getTableFromSeriesOptions(this.options) :
             new DataTable());
+        this.tableListeners = [];
         this.userOptions = options;
         this.visible = true;
     }
@@ -46,10 +46,13 @@ var DataSeries = /** @class */ (function () {
      *
      * */
     DataSeries.prototype.destroy = function () {
-        var series = this;
-        if (series.tableListener) {
-            series.tableListener();
-            series.tableListener = void 0;
+        this.destroyTableListeners();
+    };
+    DataSeries.prototype.destroyTableListeners = function () {
+        var series = this, tableListeners = series.tableListeners.slice();
+        series.tableListeners.length = 0;
+        for (var i = 0, iEnd = tableListeners.length; i < iEnd; ++i) {
+            tableListeners[i]();
         }
     };
     /* public findPoint(
@@ -93,12 +96,7 @@ var DataSeries = /** @class */ (function () {
         var series = this;
         fireEvent(series, 'init');
         series.chart = chart;
-        fireEvent(series, 'setOptions', { userOptions: options });
-        series.options = merge(series.options, (chart.options.plotOptions &&
-            chart.options.plotOptions.series), (chart.userOptions.plotOptions &&
-            chart.userOptions.plotOptions[series.type]), options);
-        series.userOptions = merge(series.userOptions, options);
-        fireEvent(series, 'afterSetOptions', { options: series.options });
+        series.setOptions(options);
         var table = DataSeries.getTableFromSeriesOptions(series.options);
         if (table) {
             series.setTable(table);
@@ -109,24 +107,35 @@ var DataSeries = /** @class */ (function () {
     };
     DataSeries.prototype.plotGroup = function (parent) {
         console.log('DataSeries.plotGroup');
-        var series = this, chart = series.chart, options = series.options, visibility = series.visible, xAxis = series.xAxis, yAxis = series.yAxis, zIndex = options.zIndex;
+        var series = this, chart = series.chart, options = series.options, zIndex = options.zIndex, attributes = {
+            translateX: chart.plotLeft,
+            translateY: chart.plotTop,
+            scaleX: 1,
+            scaleY: 1,
+            visibility: series.visible,
+            zIndex: zIndex
+        };
+        // Avoid setting undefined opacity, or in styled mode
+        if (typeof this.opacity !== 'undefined' &&
+            !this.chart.styledMode &&
+            this.state !== 'inactive' // #13719
+        ) {
+            attributes.opacity = this.opacity;
+        }
         return parent.renderer
             .g()
             .addClass('highcharts-data-series')
-            .attr({
-            translateX: xAxis ? xAxis.left : chart.plotLeft,
-            translateY: yAxis ? yAxis.top : chart.plotTop,
-            scaleX: 1,
-            scaleY: 1,
-            visibility: visibility,
-            zIndex: zIndex
-        })
+            .attr(attributes)
             .add(parent);
     };
     DataSeries.prototype.redraw = function () {
         var series = this;
         series.translate();
         series.render();
+        if (series.isDirty ||
+            series.isDirtyData) { // #3868, #3945
+            delete series.kdTree;
+        }
     };
     /**
      * Render series as points.
@@ -156,6 +165,20 @@ var DataSeries = /** @class */ (function () {
             keys: series.pointArrayMap
         }));
     };
+    /** @private */
+    DataSeries.prototype.setOptions = function (options) {
+        var series = this, chart = series.chart;
+        fireEvent(series, 'setOptions', { userOptions: options });
+        series.options = merge(DataSeries.defaultOptions, (chart &&
+            chart.options.plotOptions &&
+            chart.options.plotOptions.series), (chart &&
+            chart.userOptions &&
+            chart.userOptions.plotOptions &&
+            chart.userOptions.plotOptions[series.type]), options);
+        series.userOptions = merge(options);
+        fireEvent(series, 'afterSetOptions', { options: series.options });
+        return series.options;
+    };
     /**
      * Add or update points of table rows.
      */
@@ -165,9 +188,7 @@ var DataSeries = /** @class */ (function () {
         if (series.table === table) {
             return;
         }
-        if (series.tableListener) {
-            series.tableListener();
-        }
+        series.destroyTableListeners();
         series.table = table;
         for (var i = 0, iEnd = tableRowsLength, point = void 0, tableRow = void 0; i < iEnd; ++i) {
             point = seriesData[i];
@@ -182,7 +203,7 @@ var DataSeries = /** @class */ (function () {
                 point.setTableRow(tableRow);
             }
             else {
-                seriesData[i] = new SeriesPoint(series, tableRow);
+                seriesData[i] = new SeriesPoint(series, tableRow, i);
             }
         }
         if (seriesDataLength > tableRowsLength) {
@@ -194,6 +215,16 @@ var DataSeries = /** @class */ (function () {
             }
             seriesData.length = tableRowsLength;
         }
+        series.tableListeners.push(table.on('afterInsertRow', function (e) {
+            if (e.type === 'afterInsertRow') {
+                var i = e.index;
+                seriesData.splice(i, 0, new DataPoint(series, e.row, i));
+            }
+        }), table.on('afterDeleteRow', function (e) {
+            if (e.type === 'afterUpdateRow') {
+                seriesData.splice(e.index, 1);
+            }
+        }));
         // series.tableListener =  ---> point listener?
     };
     DataSeries.prototype.translate = function () {
@@ -228,14 +259,20 @@ var DataSeries = /** @class */ (function () {
      * */
     DataSeries.getSeriesOptionsFromTable = CS.getSeriesOptionsFromTable;
     DataSeries.getTableFromSeriesOptions = CS.getTableFromSeriesOptions;
+    DataSeries.increment = CS.increment;
     return DataSeries;
 }());
 extend(DataSeries.prototype, {
+    axisTypes: [],
     bindAxes: CS.prototype.bindAxes,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+    insert: CS.prototype.insert,
+    is: CS.prototype.is,
+    parallelArrays: [],
     pointArrayMap: ['y'],
     pointClass: DataPoint,
-    type: 'data'
+    type: 'data',
+    updateParallelArrays: CS.prototype.updateParallelArrays
 });
 /* *
  *

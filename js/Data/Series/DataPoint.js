@@ -45,9 +45,9 @@ var DataPoint = /** @class */ (function () {
     };
     DataPoint.prototype.render = function (parent) {
         console.log('DataPoint.render');
-        var point = this, tableRow = point.tableRow;
+        var point = this, tableRow = point.tableRow, valueKey = point.series.pointArrayMap[0];
         point.graphic = parent.renderer
-            .rect(tableRow.getCellAsNumber('x') * 10, tableRow.getCellAsNumber('y'), 1, 1)
+            .rect(tableRow.getCellAsNumber('x') * 10, tableRow.getCellAsNumber(valueKey) * 10, 1, 1)
             .addClass('highcharts-data-point')
             .attr({
             fill: '#333',
@@ -70,7 +70,9 @@ var DataPoint = /** @class */ (function () {
             point.tableRow = tableRow;
             point.update(tableRow, false, false);
             point.tableRowListener = tableRow.on('afterChangeRow', function () {
-                point.update(this, false, false);
+                point.update(DataPoint.getPointOptionsFromTableRow(this, series.pointArrayMap) || {}, false, false);
+                series.isDirty = true;
+                series.isDirtyData = true;
                 // POC by Torstein
                 if (typeof chart.redrawTimer === 'undefined') {
                     chart.redrawTimer = setTimeout(function () {
