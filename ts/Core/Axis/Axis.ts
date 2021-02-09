@@ -7927,16 +7927,23 @@ class Axis {
         erase(chart.axes, this);
         erase((chart as any)[key], this);
 
-        const options: Highcharts.AxisOptions[] = (chart.options as any)[key];
+        const chartAxisOptions: Highcharts.AxisOptions[] = (chart.options as any)[key];
 
-        if (isArray(options) && defined(this.options.index)) {
-            const option = options[this.options.index];
-            if (option && option.index === this.options.index) {
-                options.splice(this.options.index, 1);
+        if (isArray(chartAxisOptions) && defined(this.options.index)) {
+            const chartAxisOption = chartAxisOptions[this.options.index];
+
+            // #11930: Some axes such as NavigatorAxis do not get added to
+            // chart.options, so there might be a mismatch between
+            // Axis.options.index and the index of the axis in the chart
+            // options array for axes added after the navigator axis.
+            if (chartAxisOption && chartAxisOption.index === this.options.index) {
+                chartAxisOptions.splice(this.options.index, 1);
             } else {
-                for (let i = 0; i < options.length; i++) {
-                    if (options[i].index === this.options.index) {
-                        options.splice(i, 1);
+                // Find the correct axis in chart.options if the index
+                // doesnt match
+                for (let i = 0; i < chartAxisOptions.length; i++) {
+                    if (chartAxisOptions[i].index === this.options.index) {
+                        chartAxisOptions.splice(i, 1);
                         break;
                     }
                 }
