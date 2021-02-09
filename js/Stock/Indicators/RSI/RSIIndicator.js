@@ -62,7 +62,6 @@ var RSIIndicator = /** @class */ (function (_super) {
         // RSI starts calculations from the second point
         // Cause we need to calculate change between two points
         range = 1, RSI = [], xData = [], yData = [], index = params.index, gain = 0, loss = 0, RSIPoint, change, avgGain, avgLoss, i, values;
-        // RSI requires close value
         if ((xVal.length < period)) {
             return;
         }
