@@ -793,24 +793,50 @@ class SVGRenderer {
             // locally in the module.
             if (!defined(hasInternalReferenceBug)) {
                 const id = uniqueKey();
-                const svg = `<svg width="8" height="8">
-                <defs>
-                    <clipPath id="${id}"><rect width="4" height="4" />
-                </defs>
-                <rect id="hitme" width="8" height="8"
-                    clip-path="url(#${id})" fill="rgba(0,0,0,0.001)" />
-                </svg>`;
-                const div = createElement('div', void 0, {
+                const ast = new AST([{
+                    tagName: 'svg',
+                    attributes: {
+                        width: 8,
+                        height: 8
+                    },
+                    children: [{
+                        tagName: 'defs',
+                        children: [{
+                            tagName: 'clipPath',
+                            attributes: {
+                                id
+                            },
+                            children: [{
+                                tagName: 'rect',
+                                attributes: {
+                                    width: 4,
+                                    height: 4
+                                }
+                            }]
+                        }]
+                    }, {
+                        tagName: 'rect',
+                        attributes: {
+                            id: 'hitme',
+                            width: 8,
+                            height: 8,
+                            'clip-path': `url(#${id})`,
+                            fill: 'rgba(0,0,0,0.001)'
+                        }
+                    }]
+                }]);
+                const svg = ast.addToDOM(doc.body, SVG_NS);
+                css(svg, {
                     position: 'fixed',
                     top: 0,
                     left: 0,
                     zIndex: 9e5
-                }, doc.body, true);
-                div.innerHTML = svg;
+                });
+
                 const hitElement = doc.elementFromPoint(6, 6);
                 hasInternalReferenceBug =
                     (hitElement && hitElement.id) === 'hitme';
-                doc.body.removeChild(div);
+                doc.body.removeChild(svg);
             }
 
             if (hasInternalReferenceBug) {
