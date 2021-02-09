@@ -20,7 +20,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
     }
 
     // create the chart
-    const chart = Highcharts.stockChart('container', {
+    Highcharts.stockChart('container', {
         chart: {
             height: 600
         },
@@ -45,6 +45,11 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             top: '80%',
             height: '20%'
         }],
+        plotOptions: {
+            series: {
+                showInLegend: true
+            }
+        },
         series: [{
             type: 'candlestick',
             id: 'aapl',
@@ -60,35 +65,31 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
             type: 'pc',
             id: 'overlay',
             linkedTo: 'aapl',
-            showInLegend: true,
             yAxis: 0
         }, {
             type: 'macd',
             id: 'oscillator',
             linkedTo: 'aapl',
-            showInLegend: true,
             yAxis: 2
         }]
-    }, function () {
-        document.getElementById("overlays").addEventListener("change", function (e) {
-            const series = chart.get('overlay');
+    }, function (chart) {
+        document.getElementById('overlays').addEventListener('change', function (e) {
+            var series = chart.get('overlay');
 
             if (series) {
                 series.remove(false);
                 chart.addSeries({
                     type: e.target.value,
                     linkedTo: 'aapl',
-                    id: 'overlay',
-                    yAxis: 0,
-                    showInLegend: true
+                    id: 'overlay'
                 }, false);
             }
 
             chart.redraw();
         });
 
-        document.getElementById("oscillators").addEventListener("change", function (e) {
-            const series = chart.get('oscillator');
+        document.getElementById('oscillators').addEventListener('change', function (e) {
+            var series = chart.get('oscillator');
 
             if (series) {
                 series.remove(false);
@@ -96,8 +97,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     type: e.target.value,
                     linkedTo: 'aapl',
                     id: 'oscillator',
-                    yAxis: 2,
-                    showInLegend: true
+                    yAxis: 2
                 }, false);
             }
 
