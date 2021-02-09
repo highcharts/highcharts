@@ -106,11 +106,14 @@ var AST = /** @class */ (function () {
      * @param {SVGElement} parent
      * The node where it should be added
      *
+     * @param {string} [namespace]
+     * Which XML namespace to use, by default detected from the parent
+     *
      * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
      * The inserted node.
      */
-    AST.prototype.addToDOM = function (parent) {
-        var NS = parent.namespaceURI || H.SVG_NS;
+    AST.prototype.addToDOM = function (parent, namespace) {
+        var NS = namespace || parent.namespaceURI || H.SVG_NS;
         /**
          * @private
          * @param {Highcharts.ASTNode} subtree - HTML/SVG definition
@@ -237,7 +240,9 @@ var AST = /** @class */ (function () {
         'button',
         'caption',
         'circle',
+        'clipPath',
         'code',
+        'defs',
         'div',
         'em',
         'feComponentTransfer',
@@ -275,6 +280,7 @@ var AST = /** @class */ (function () {
         'style',
         'sub',
         'sup',
+        'svg',
         'table',
         'text',
         'thead',
@@ -300,6 +306,7 @@ var AST = /** @class */ (function () {
         'aria-roledescription',
         'aria-selected',
         'class',
+        'clip-path',
         'color',
         'colspan',
         'cx',
