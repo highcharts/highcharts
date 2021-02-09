@@ -330,7 +330,7 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         labels: {
             align: 'left'
         }
-    });
+    }, false);
 
     chart.addAxis(
         {
