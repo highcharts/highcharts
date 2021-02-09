@@ -82,10 +82,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     type: e.target.value,
                     linkedTo: 'aapl',
                     id: 'overlay'
-                }, false);
+                });
             }
-
-            chart.redraw();
         });
 
         document.getElementById('oscillators').addEventListener('change', function (e) {
@@ -98,10 +96,8 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
                     linkedTo: 'aapl',
                     id: 'oscillator',
                     yAxis: 2
-                }, false);
+                });
             }
-
-            chart.redraw();
         });
     });
 });
