@@ -2565,9 +2565,9 @@ Chart.prototype.inlineStyles = function (): void {
      * @return {void}
      */
     function tearDown(): void {
-        (dummySVG.parentNode as any).remove();
+        dummySVG.parentNode.removeChild(dummySVG);
         // Remove trash from DOM that stayed after each exporting
-        iframe.remove();
+        iframe.parentNode.removeChild(iframe);
     }
 
     recurse(this.container.querySelector('svg') as any);

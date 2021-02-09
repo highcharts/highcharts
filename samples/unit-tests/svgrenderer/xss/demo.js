@@ -67,6 +67,7 @@ QUnit.module('XSS', function () {
                 !/javascript/i.test(text.element.outerHTML),
                 'JavaScript directive should be stripped out'
             );
+
             assert.ok(
                 !/alert/i.test(text.element.outerHTML),
                 'Alerts should be stripped out from JS directives'
@@ -196,7 +197,7 @@ QUnit.module('XSS', function () {
             assert.ok(
                 !/alert/i.test(
                     // But alert as text content is allowed
-                    text.element.outerHTML.replace(/<tspan[^>]+>alert/g, '')
+                    text.element.outerHTML.replace(/<tspan[^>]?>alert/g, '')
                 ),
                 'Tag tricks, alerts should be stripped out from JS directives'
             );

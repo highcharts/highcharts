@@ -101,7 +101,7 @@ QUnit.test('Drilldown methods', function (assert) {
     assert.deepEqual(
         chart.xAxis[0].tickPositions.map(function (pos) {
             return chart.xAxis[0].ticks[pos].label.element.textContent.replace(
-                / /g,
+                /[ \u200B]/g,
                 ''
             );
         }),

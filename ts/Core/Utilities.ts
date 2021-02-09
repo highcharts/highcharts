@@ -82,8 +82,10 @@ declare global {
             ): void;
         }
         interface OffsetObject {
+            height: number;
             left: number;
             top: number;
+            width: number;
         }
         interface Timer {
             (gotoEnd?: boolean): boolean;
@@ -1998,13 +2000,15 @@ function offset(el: Element): Highcharts.OffsetObject {
     var docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
-            { top: 0, left: 0 };
+            { top: 0, left: 0, width: 0, height: 0 };
 
     return {
         top: box.top + (win.pageYOffset || docElem.scrollTop) -
             (docElem.clientTop || 0),
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
-            (docElem.clientLeft || 0)
+            (docElem.clientLeft || 0),
+        width: box.width,
+        height: box.height
     };
 }
 

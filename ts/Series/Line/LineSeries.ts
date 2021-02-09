@@ -18,12 +18,15 @@
 
 import type LinePoint from './LinePoint';
 import type LineSeriesOptions from './LineSeriesOptions';
+import type SplineSeries from '../Spline/SplineSeries';
+import type SplinePoint from '../Spline/SplinePoint';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
+import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { defined, merge } = U;
 
 /* *
  *
@@ -173,6 +176,185 @@ class LineSeries extends Series {
                 graph.isArea = graphPath.isArea; // For arearange animation
             }
         });
+    }
+
+    // eslint-disable-next-line valid-jsdoc
+    /**
+     * Get the graph path.
+     *
+     * @private
+     */
+    public getGraphPath(
+        points?: Array<LinePoint>,
+        nullsAsZeroes?: boolean,
+        connectCliffs?: boolean
+    ): SVGPath {
+        var series = this,
+            options = series.options,
+            step = options.step as any,
+            reversed,
+            graphPath = [] as SVGPath,
+            xMap = [] as Array<(number|null)>,
+            gap: boolean;
+
+        points = points || series.points;
+
+        // Bottom of a stack is reversed
+        reversed = (points as any).reversed;
+        if (reversed) {
+            points.reverse();
+        }
+        // Reverse the steps (#5004)
+        step = ({
+            right: 1,
+            center: 2
+        } as Record<string, number>)[step as any] || (step && 3);
+        if (step && reversed) {
+            step = 4 - step;
+        }
+
+        // Remove invalid points, especially in spline (#5015)
+        points = this.getValidPoints(
+            points,
+            false,
+            !(options.connectNulls && !nullsAsZeroes && !connectCliffs)
+        ) as Array<LinePoint>;
+
+        // Build the line
+        points.forEach(function (point, i): void {
+
+            var plotX = point.plotX,
+                plotY = point.plotY,
+                lastPoint = (points as any)[i - 1],
+                // the path to this point from the previous
+                pathToPoint: SVGPath;
+
+            if (
+                (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
+                !connectCliffs
+            ) {
+                gap = true; // ... and continue
+            }
+
+            // Line series, nullsAsZeroes is not handled
+            if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
+                gap = !options.connectNulls;
+
+            // Area series, nullsAsZeroes is set
+            } else if (point.isNull && !nullsAsZeroes) {
+                gap = true;
+
+            } else {
+
+                if (i === 0 || gap) {
+                    pathToPoint = [[
+                        'M',
+                        point.plotX as any,
+                        point.plotY as any
+                    ]];
+
+                // Generate the spline as defined in the SplineSeries object
+                } else if (
+                    (series as unknown as Partial<SplineSeries>).getPointSpline
+                ) {
+
+                    pathToPoint = [(
+                        series as unknown as SplineSeries
+                    ).getPointSpline(
+                        points as Array<SplinePoint>,
+                        point as SplinePoint,
+                        i
+                    )];
+
+                } else if (step) {
+
+                    if (step === 1) { // right
+                        pathToPoint = [[
+                            'L',
+                            lastPoint.plotX as any,
+                            plotY as any
+                        ]];
+
+                    } else if (step === 2) { // center
+                        pathToPoint = [[
+                            'L',
+                            ((lastPoint.plotX as any) + plotX) / 2,
+                            lastPoint.plotY as any
+                        ], [
+                            'L',
+                            ((lastPoint.plotX as any) + plotX) / 2,
+                            plotY as any
+                        ]];
+
+                    } else {
+                        pathToPoint = [[
+                            'L',
+                            plotX as any,
+                            lastPoint.plotY as any
+                        ]];
+                    }
+                    pathToPoint.push([
+                        'L',
+                        plotX as any,
+                        plotY as any
+                    ]);
+
+                } else {
+                    // normal line to next point
+                    pathToPoint = [[
+                        'L',
+                        plotX as any,
+                        plotY as any
+                    ]];
+                }
+
+                // Prepare for animation. When step is enabled, there are
+                // two path nodes for each x value.
+                xMap.push(point.x);
+                if (step) {
+                    xMap.push(point.x);
+                    if (step === 2) { // step = center (#8073)
+                        xMap.push(point.x);
+                    }
+                }
+
+                graphPath.push.apply(graphPath, pathToPoint);
+                gap = false;
+            }
+        });
+
+        (graphPath as any).xMap = xMap;
+        series.graphPath = graphPath;
+
+        return graphPath;
+    }
+
+    // eslint-disable-next-line valid-jsdoc
+    /**
+     * Get zones properties for building graphs. Extendable by series with
+     * multiple lines within one series.
+     *
+     * @private
+     */
+    public getZonesGraphs(props: Array<Array<string>>): Array<Array<string>> {
+        // Add the zone properties if any
+        this.zones.forEach(function (zone, i): void {
+            var propset = [
+                'zone-graph-' + i,
+                'highcharts-graph highcharts-zone-graph-' + i + ' ' +
+                    (zone.className || '')
+            ];
+
+            if (!this.chart.styledMode) {
+                propset.push(
+                    (zone.color || this.color) as any,
+                    (zone.dashStyle || this.options.dashStyle) as any
+                );
+            }
+            props.push(propset);
+        }, this);
+
+        return props;
     }
 
 }

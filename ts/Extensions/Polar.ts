@@ -491,7 +491,7 @@ addEvent(Series, 'afterTranslate', function (): void {
  * closed circle in line-like series.
  * @private
  */
-wrap(seriesProto, 'getGraphPath', function (
+wrap(seriesTypes.line.prototype, 'getGraphPath', function (
     this: Highcharts.PolarSeries,
     proceed: Function,
     points: Array<Highcharts.PolarPoint>
@@ -1160,7 +1160,7 @@ wrap(Chart.prototype, 'get', function (
     proceed: Function,
     id: string
 ): boolean {
-    return find(this.pane as any, function (pane: Highcharts.Pane): boolean {
+    return find(this.pane || [], function (pane: Highcharts.Pane): boolean {
         return (pane.options as any).id === id;
     }) || proceed.call(this, id);
 });

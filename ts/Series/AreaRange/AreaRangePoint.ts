@@ -163,22 +163,6 @@ class AreaRangePoint extends AreaSeries.prototype.pointClass {
         return path;
     }
 
-    public destroyElements(): void {
-        var graphics = ['lowerGraphic', 'upperGraphic'];
-
-        graphics.forEach(function (graphicName): void {
-            if ((this as any)[graphicName]) {
-                (this as any)[graphicName] =
-                    (this as any)[graphicName].destroy();
-            }
-        }, this);
-
-        // Clear graphic for states, removed in the above each:
-        this.graphic = null as any;
-
-        return pointProto.destroyElements.apply(this, arguments as any);
-    }
-
     public isValid(): boolean {
         return isNumber(this.low) && isNumber(this.high);
     }

@@ -14,7 +14,7 @@ import type {
 } from './DEMAOptions';
 import type DEMAPoint from './DEMAPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -103,7 +103,7 @@ class DEMAIndicator extends EMAIndicator {
     }
 
     public getValues<
-        TLinkedSeries extends Series
+        TLinkedSeries extends LineSeries
     >(
         this: DEMAIndicator,
         series: TLinkedSeries,

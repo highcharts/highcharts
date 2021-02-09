@@ -39,6 +39,27 @@ QUnit.test('Accessibility disabled', function (assert) {
     );
 });
 
+QUnit.test('Point hidden from AT', function (assert) {
+    var chart = Highcharts.chart('container', {
+            series: [
+                {
+                    data: [1, {
+                        y: 2,
+                        accessibility: {
+                            enabled: false
+                        }
+                    }, 3, 4, 5, 6]
+                }
+            ]
+        }),
+        pointA = chart.series[0].points[0],
+        pointB = chart.series[0].points[1];
+
+    assert.ok(getPointAriaLabel(pointA), 'There should be ARIA on point A');
+    assert.notOk(getPointAriaLabel(pointB), 'There should be no ARIA label on point B');
+    assert.ok(isPointAriaHidden(pointB), 'Point B should be ARIA hidden');
+});
+
 QUnit.test('Keyboard nav disabled', function (assert) {
     const chart = Highcharts.chart('container', {
         accessibility: {

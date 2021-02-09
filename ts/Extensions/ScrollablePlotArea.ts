@@ -27,7 +27,9 @@ import type {
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import Series from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
@@ -43,6 +45,7 @@ declare module '../Core/Chart/ChartLike'{
         innerContainer?: HTMLDOMElement;
         scrollingContainer?: HTMLDOMElement;
         scrollingParent?: HTMLDOMElement;
+        scrollableDirty?: boolean;
         scrollableMask?: Highcharts.SVGElement;
         scrollablePixelsX?: number;
         scrollablePixelsY?: number;
@@ -396,10 +399,14 @@ Chart.prototype.applyFixed = function (): void {
             .addClass('highcharts-scrollable-mask')
             .add();
 
-        this.moveFixedElements();
-
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
+        addEvent(Axis, 'afterInit', (): void => {
+            this.scrollableDirty = true;
+        });
+        addEvent(Series, 'show', (): void => {
+            this.scrollableDirty = true;
+        });
 
     } else {
 
@@ -408,6 +415,11 @@ Chart.prototype.applyFixed = function (): void {
             this.chartWidth,
             this.chartHeight
         );
+    }
+
+    if (this.scrollableDirty || firstTime) {
+        this.scrollableDirty = false;
+        this.moveFixedElements();
     }
 
     // Increase the size of the scrollable renderer and background

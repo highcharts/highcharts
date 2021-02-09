@@ -305,15 +305,17 @@ function describePointsInSeries(series) {
     var setScreenReaderProps = shouldSetScreenReaderPropsOnPoints(series), setKeyboardProps = shouldSetKeyboardNavPropsOnPoints(series);
     if (setScreenReaderProps || setKeyboardProps) {
         series.points.forEach(function (point) {
+            var _a, _b;
             var pointEl = point.graphic && point.graphic.element ||
                 shouldAddDummyPoint(point) && addDummyPointElement(point);
+            var pointA11yDisabled = ((_b = (_a = point.options) === null || _a === void 0 ? void 0 : _a.accessibility) === null || _b === void 0 ? void 0 : _b.enabled) === false;
             if (pointEl) {
                 // We always set tabindex, as long as we are setting props.
                 // When setting tabindex, also remove default outline to
                 // avoid ugly border on click.
                 pointEl.setAttribute('tabindex', '-1');
                 pointEl.style.outline = '0';
-                if (setScreenReaderProps) {
+                if (setScreenReaderProps && !pointA11yDisabled) {
                     setPointScreenReaderAttribs(point, pointEl);
                 }
                 else {

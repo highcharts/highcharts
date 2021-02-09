@@ -29,6 +29,12 @@ var attr = U.attr, createElement = U.createElement, discardElement = U.discardEl
 * @type {string|undefined}
 */
 ''; // detach doclets above
+// In IE8, DOMParser is undefined. IE9 and batik are only able to parse XML.
+var hasValidDOMParser = false;
+try {
+    hasValidDOMParser = Boolean(new DOMParser().parseFromString('', 'text/html'));
+}
+catch (e) { } // eslint-disable-line no-empty
 /**
  * Represents an AST
  * @private
@@ -41,6 +47,19 @@ var AST = /** @class */ (function () {
         this.nodes = typeof source === 'string' ?
             this.parseMarkup(source) : source;
     }
+    /**
+     * Filter attributes against the allow list.
+     *
+     * @private
+     * @static
+     *
+     * @function Highcharts.AST#filterUserAttributes
+     *
+     * @param {SVGAttributes} attributes The attributes to filter
+     *
+     * @return {SVGAttributes}
+     * The filtered attributes
+     */
     AST.filterUserAttributes = function (attributes) {
         objectEach(attributes, function (val, key) {
             var valid = true;
@@ -63,7 +82,6 @@ var AST = /** @class */ (function () {
      * markup string. The markup is safely parsed by the AST class to avoid
      * XSS vulnerabilities.
      *
-     * @private
      * @static
      *
      * @function Highcharts.AST#setElementHTML
@@ -163,17 +181,13 @@ var AST = /** @class */ (function () {
         var nodes = [];
         var doc;
         var body;
-        if (
-        // IE9 is only able to parse XML
-        /MSIE 9.0/.test(navigator.userAgent) ||
-            // IE8-
-            typeof DOMParser === 'undefined') {
+        if (hasValidDOMParser) {
+            doc = new DOMParser().parseFromString(markup, 'text/html');
+        }
+        else {
             body = createElement('div');
             body.innerHTML = markup;
             doc = { body: body };
-        }
-        else {
-            doc = new DOMParser().parseFromString(markup, 'text/html');
         }
         var appendChildNodes = function (node, addTo) {
             var tagName = node.nodeName.toLowerCase();
@@ -305,6 +319,7 @@ var AST = /** @class */ (function () {
         'opacity',
         'orient',
         'padding',
+        'paddingLeft',
         'patternUnits',
         'r',
         'refX',

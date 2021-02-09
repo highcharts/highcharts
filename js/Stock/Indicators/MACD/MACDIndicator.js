@@ -160,7 +160,7 @@ var MACDIndicator = /** @class */ (function (_super) {
         // indicator.graph = null;
     };
     MACDIndicator.prototype.getZonesGraphs = function (props) {
-        var allZones = SeriesRegistry.seriesTypes.sma.prototype.getZonesGraphs.call(this, props), currentZones = allZones;
+        var allZones = _super.prototype.getZonesGraphs.call(this, props), currentZones = allZones;
         if (this.currentLineZone) {
             currentZones = allZones.splice(this[this.currentLineZone].startIndex + 1);
             if (!currentZones.length) {

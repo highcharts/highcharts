@@ -818,16 +818,17 @@ class Pointer {
             scaleY: 1
         };
 
+        const offsetWidth = container.offsetWidth;
+        const offsetHeight = container.offsetHeight;
+
         // #13342 - tooltip was not visible in Chrome, when chart
         // updates height.
         if (
-            container.offsetWidth > 2 && // #13342
-            container.offsetHeight > 2 && // #13342
-            container.getBoundingClientRect
+            offsetWidth > 2 && // #13342
+            offsetHeight > 2 // #13342
         ) {
-            const bb = container.getBoundingClientRect();
-            this.chartPosition.scaleX = bb.width / container.offsetWidth;
-            this.chartPosition.scaleY = bb.height / container.offsetHeight;
+            this.chartPosition.scaleX = pos.width / offsetWidth;
+            this.chartPosition.scaleY = pos.height / offsetHeight;
         }
 
         return this.chartPosition;

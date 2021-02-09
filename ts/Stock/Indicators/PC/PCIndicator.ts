@@ -9,12 +9,12 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     PCOptions,
     PCParamsOptions
 } from '../PC/PCOptions';
 import type PCPoint from './PCPoint';
-import type Series from '../../../Core/Series/Series';
 import palette from '../../../Core/Color/Palette.js';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import ReduceArrayMixin from '../../../Mixins/ReduceArray.js';
@@ -125,7 +125,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
     *
     * */
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {
