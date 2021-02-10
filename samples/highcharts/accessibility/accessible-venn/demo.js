@@ -1,20 +1,34 @@
-var getByClass = function (className) {
+function getByClass(className) {
     return Array.prototype.slice.call(
         document.getElementsByClassName(className)
     );
-};
-var getEl = function (id) {
+}
+
+function getEl(id) {
     return document.getElementById(id);
-};
-var nextMouseOver = null;
+}
+
+function removeClass(el, className) {
+    if (el && el.classList) {
+        el.classList.remove(className);
+    }
+}
+
+function addClass(el, className) {
+    if (el && el.classList) {
+        el.classList.add(className);
+    }
+}
 
 function removeHover() {
     getByClass('dataLabel').forEach(function (e) {
-        e.classList.remove('over');
+        removeClass(e, 'over');
     });
-    getEl('aicon').classList.remove('over');
-    getEl('dyncaption').classList.remove('visible');
+    removeClass(getEl('aicon'), 'over');
+    removeClass(getEl('dyncaption'), 'visible');
 }
+
+var nextMouseOver = null;
 
 getEl('container').addEventListener('mouseleave', function () {
     removeHover();
@@ -90,7 +104,7 @@ Highcharts.chart('container', {
                     clearTimeout(nextMouseOver);
                     nextMouseOver = setTimeout(function () {
                         getByClass('dataLabel').forEach(function (e) {
-                            e.classList.remove('over');
+                            removeClass(e, 'over');
                         });
 
                         var mq = window.matchMedia('(max-width: 480px)');
@@ -100,9 +114,9 @@ Highcharts.chart('container', {
                             caption.className = 'visible content-' + category;
                             getEl('caption-content').innerHTML = label.innerHTML;
                         } else {
-                            caption.classList.remove('visible');
-                            label.classList.add('over');
-                            getEl('aicon').classList.add('over');
+                            removeClass(caption, 'visible');
+                            addClass(label, 'over');
+                            addClass(getEl('aicon'), 'over');
                         }
                     }, 100);
                 }
