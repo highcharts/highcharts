@@ -2,6 +2,7 @@ import '../../../../code/es-modules/Core/Renderer/SVG/SVGRenderer.js';
 import '../../../../code/es-modules/Data/Series/DataSeries.js';
 
 Highcharts.chart('chart', {
+    debug: true,
     title: {
         text: 'DataSeries study'
     },

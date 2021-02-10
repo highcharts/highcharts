@@ -28,9 +28,18 @@ const {
     cleanRecursively,
     extend,
     fireEvent,
+    getOptions,
     merge,
     pick
 } = U;
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const DEBUG = !!(getOptions() as any).debug;
 
 /* *
  *
@@ -73,7 +82,9 @@ class DataSeries {
     public constructor(
         chart: Chart,
         options: DeepPartial<DataSeriesOptions> = {}
-    ) { console.log('DataSeries.constructor');
+    ) {
+        DEBUG && console.log('DataSeries.constructor');
+
         this.chart = chart;
         this.data = [];
         this.linkedSeries = [];
@@ -128,10 +139,14 @@ class DataSeries {
      * */
 
     public destroy(): void {
+        DEBUG && console.log('DataSeries.destroy');
+
         this.destroyTableListeners();
     }
 
     public destroyTableListeners(): void {
+        DEBUG && console.log('DataSeries.destroyTableListeners');
+
         const series = this,
             tableListeners = series.tableListeners.slice();
 
@@ -176,11 +191,18 @@ class DataSeries {
     } */
 
     public hasData(): boolean {
+        DEBUG && console.log('DataSeries.hasData');
+
         return (this.table.getRowCount() > 0);
     }
 
     /** @deprecated */
-    public init(chart: Chart, options: DataSeriesOptions): void { console.log('DataSeries.init');
+    public init(
+        chart: Chart,
+        options: DataSeriesOptions
+    ): void {
+        DEBUG && console.log('DataSeries.init');
+
         const series = this;
 
         fireEvent(series, 'init');
@@ -197,7 +219,11 @@ class DataSeries {
         fireEvent(series, 'afterInit');
     }
 
-    public plotGroup(parent: SVGElement): SVGElement { console.log('DataSeries.plotGroup');
+    public plotGroup(
+        parent: SVGElement
+    ): SVGElement {
+        DEBUG && console.log('DataSeries.plotGroup');
+
         const series = this,
             {
                 chart,
@@ -232,7 +258,10 @@ class DataSeries {
     }
 
     public redraw(): void {
+        DEBUG && console.log('DataSeries.redraw');
+
         const series = this;
+
         series.translate();
         series.render();
         if (
@@ -246,7 +275,11 @@ class DataSeries {
     /**
      * Render series as points.
      */
-    public render(parent?: SVGElement): void {
+    public render(
+        parent?: SVGElement
+    ): void {
+        DEBUG && console.log('DataSeries.render');
+
         const series = this,
             chart = series.chart,
             points = series.points,
@@ -279,8 +312,13 @@ class DataSeries {
     }
 
     /** @deprecated */
-    public setData(data: Array<DataPointOptions|PointShortOptions|undefined>): void { console.log('DataSeries.setData');
+    public setData(
+        data: Array<DataPointOptions|PointShortOptions|undefined>
+    ): void {
+        DEBUG && console.log('DataSeries.setData');
+
         const series = this;
+
         if (series.table.getRowCount() > 0) {
             // @todo find point/rows to update
         } else {
@@ -292,7 +330,11 @@ class DataSeries {
     }
 
     /** @private */
-    private setOptions(options: DeepPartial<DataSeriesOptions>): DataSeriesOptions {
+    private setOptions(
+        options: DeepPartial<DataSeriesOptions>
+    ): DataSeriesOptions {
+        DEBUG && console.log('DataSeries.setOptions');
+
         const series = this,
             chart = series.chart;
 
@@ -323,7 +365,11 @@ class DataSeries {
     /**
      * Add or update table.
      */
-    public setTable(table: DataTable): void { console.log('DataSeries.setTable');
+    public setTable(
+        table: DataTable
+    ): void {
+        DEBUG && console.log('DataSeries.setTable');
+
         const series = this,
             seriesData = series.data,
             seriesDataLength = seriesData.length,
@@ -412,13 +458,20 @@ class DataSeries {
         // series.tableListener =  ---> point listener?
     }
 
-    public translate(): void { console.log('DataSeries.translate');
+    public translate(): void {
+        DEBUG && console.log('DataSeries.translate');
+
         const series = this;
 
         series.points = series.data.slice();
     }
 
-    public update(options: DataSeriesOptions, redraw?: boolean): void {
+    public update(
+        options: DataSeriesOptions,
+        redraw?: boolean
+    ): void {
+        DEBUG && console.log('DataSeries.update');
+
         const series = this;
 
         options = cleanRecursively(options, series.options);

@@ -16,7 +16,10 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import CP from '../../Core/Series/Point.js';
 import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const {
+    getOptions,
+    merge
+} = U;
 
 /* *
  *
@@ -29,6 +32,14 @@ declare module '../../Core/Chart/ChartLike' {
         redrawTimer?: number;
     }
 }
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const DEBUG = !!(getOptions() as any).debug;
 
 /* *
  *
@@ -58,10 +69,13 @@ class DataPoint {
         series: DataSeries,
         data?: (DataPointOptions|DataTableRow),
         x?: number
-    ) { console.log('DataPoint.constructor');
+    ) {
+        DEBUG && console.log('DataPoint.constructor');
+
         this.options = { x };
         this.series = series;
         this.tableRow = DataTableRow.NULL;
+
         if (data) {
             if (data instanceof DataTableRow) {
                 this.setTableRow(data);
@@ -93,7 +107,9 @@ class DataPoint {
      *
      * */
 
-    public destroy(): void { console.log('DataPoint.destroy');
+    public destroy(): void {
+        DEBUG && console.log('DataPoint.destroy');
+
         const point = this;
 
         point.tableRow = DataTableRow.NULL;
@@ -103,7 +119,9 @@ class DataPoint {
         }
     }
 
-    public render(parent: SVGElement): void { console.log('DataPoint.render');
+    public render(parent: SVGElement): void {
+        DEBUG && console.log('DataPoint.render');
+
         const point = this,
             tableRow = point.tableRow,
             valueKey = point.series.pointArrayMap[0];
@@ -131,7 +149,9 @@ class DataPoint {
 
     public setTableRow(
         tableRow: DataTableRow
-    ): void { console.log('DataPoint.setTableRow');
+    ): void {
+        DEBUG && console.log('DataPoint.setTableRow');
+
         const point = this,
             series = point.series,
             chart = series.chart;
@@ -180,7 +200,9 @@ class DataPoint {
         options: DataPointOptions,
         redraw?: boolean,
         animation?: (false|AnimationOptions)
-    ): void { console.log('DataPoint.update');
+    ): void {
+        DEBUG && console.log('DataPoint.update');
+
         const point = this;
 
         merge(true, point.options, options);

@@ -4,7 +4,13 @@
 import CP from '../../Core/Series/Point.js';
 import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge;
+var getOptions = U.getOptions, merge = U.merge;
+/* *
+ *
+ *  Constants
+ *
+ * */
+var DEBUG = !!getOptions().debug;
 /* *
  *
  *  Class
@@ -17,7 +23,7 @@ var DataPoint = /** @class */ (function () {
      *
      * */
     function DataPoint(series, data, x) {
-        console.log('DataPoint.constructor');
+        DEBUG && console.log('DataPoint.constructor');
         this.options = { x: x };
         this.series = series;
         this.tableRow = DataTableRow.NULL;
@@ -36,7 +42,7 @@ var DataPoint = /** @class */ (function () {
      *
      * */
     DataPoint.prototype.destroy = function () {
-        console.log('DataPoint.destroy');
+        DEBUG && console.log('DataPoint.destroy');
         var point = this;
         point.tableRow = DataTableRow.NULL;
         if (point.tableRowListener) {
@@ -44,7 +50,7 @@ var DataPoint = /** @class */ (function () {
         }
     };
     DataPoint.prototype.render = function (parent) {
-        console.log('DataPoint.render');
+        DEBUG && console.log('DataPoint.render');
         var point = this, tableRow = point.tableRow, valueKey = point.series.pointArrayMap[0];
         if (point.graphic) {
             point.graphic.destroy();
@@ -61,7 +67,7 @@ var DataPoint = /** @class */ (function () {
             .add(parent);
     };
     DataPoint.prototype.setTableRow = function (tableRow) {
-        console.log('DataPoint.setTableRow');
+        DEBUG && console.log('DataPoint.setTableRow');
         var point = this, series = point.series, chart = series.chart;
         if (point.tableRow !== tableRow) {
             if (point.tableRowListener) {
@@ -84,7 +90,7 @@ var DataPoint = /** @class */ (function () {
         point.update(DataPoint.getPointOptionsFromTableRow(tableRow, series.pointArrayMap) || {}, false, false);
     };
     DataPoint.prototype.update = function (options, redraw, animation) {
-        console.log('DataPoint.update');
+        DEBUG && console.log('DataPoint.update');
         var point = this;
         merge(true, point.options, options);
         if (redraw) {
