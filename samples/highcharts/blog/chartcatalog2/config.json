@@ -1,8 +1,0 @@
-{
-	"highchartsDir": ".",
-	"utilsPort": 3030,
-	"codePort": 3031,
-	"apiPort": 3032,
-	"emulateKarma": false
-
-}
