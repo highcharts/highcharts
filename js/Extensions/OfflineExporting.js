@@ -15,7 +15,7 @@ var win = H.win, doc = H.doc;
 import '../Core/Options.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, error = U.error, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
+var addEvent = U.addEvent, error = U.error, extend = U.extend, fireEvent = U.fireEvent, getOptions = U.getOptions, merge = U.merge;
 import DownloadURL from '../Extensions/DownloadURL.js';
 var downloadURL = DownloadURL.downloadURL;
 var domurl = win.URL || win.webkitURL || win, 
@@ -508,7 +508,7 @@ Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
                 'for charts with embedded HTML');
         }
         else {
-            downloadSVGLocal(svg, extend({ filename: chart.getFilename() }, options), fallbackToExportServer);
+            downloadSVGLocal(svg, extend({ filename: chart.getFilename() }, options), fallbackToExportServer, function () { return fireEvent(chart, 'exportChartLocalSuccess'); });
         }
     }, 
     // Return true if the SVG contains images with external data. With the
