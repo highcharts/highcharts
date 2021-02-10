@@ -24,9 +24,7 @@ const {
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
-    isArray,
     isNumber,
-    error,
     merge
 } = U;
 
@@ -102,7 +100,7 @@ class RSIIndicator extends SMAIndicator {
             RSI: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            index = (params.index as any),
+            index = (params.index as number),
             gain = 0,
             loss = 0,
             RSIPoint: number,
@@ -122,7 +120,7 @@ class RSIIndicator extends SMAIndicator {
             // in case of the situation, where the series type has data length
             // longer then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
-            index = Math.min(params.index as number, yVal[0].length - 1);
+            index = Math.min(index, yVal[0].length - 1);
             values = (yVal as Array<Array<number>>).map((value: Array<number>): number => value[index]);
         }
 

@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 var SMAIndicator = SeriesRegistry.seriesTypes.sma;
 import U from '../../../Core/Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber, error = U.error, merge = U.merge;
+var isNumber = U.isNumber, merge = U.merge;
 /* eslint-disable require-jsdoc */
 // Utils:
 function toFixed(a, n) {
@@ -72,7 +72,7 @@ var RSIIndicator = /** @class */ (function (_super) {
             // in case of the situation, where the series type has data length
             // longer then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
-            index = Math.min(params.index, yVal[0].length - 1);
+            index = Math.min(index, yVal[0].length - 1);
             values = yVal.map(function (value) { return value[index]; });
         }
         // Calculate changes for first N points
