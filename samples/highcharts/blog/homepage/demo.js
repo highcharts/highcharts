@@ -938,6 +938,7 @@ const splineSeries = [
             [Date.UTC(2020, 3, 1), -2.50],
             [Date.UTC(2020, 4, 1), -6.90]]
     },
+
     {
         type: 'spline',
         dashStyle: 'solid',
