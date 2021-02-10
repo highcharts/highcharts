@@ -32,14 +32,14 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
     );
 
     chart.update({
-        yAxis: {
+        xAxis: {
             lineWidth: 1
         }
     });
 
     assert.ok(
-        chart.fixedRenderer.box.contains(chart.yAxis[0].axisGroup.element),
-        'Y-axis should be outside the scrollable plot area (#8862)'
+        chart.fixedRenderer.box.contains(chart.xAxis[0].axisGroup.element),
+        'X-axis should be outside the scrollable plot area (#8862)'
     );
 });
 
