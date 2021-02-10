@@ -389,7 +389,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 'accessibility.legend.legendItem',
                 {
                     chart: this.chart,
-                    itemName: stripHTMLTags((item as any).name)
+                    itemName: stripHTMLTags((item as any).name),
+                    item
                 }
             ),
             attribs = {
