@@ -46,6 +46,9 @@ var DataPoint = /** @class */ (function () {
     DataPoint.prototype.render = function (parent) {
         console.log('DataPoint.render');
         var point = this, tableRow = point.tableRow, valueKey = point.series.pointArrayMap[0];
+        if (point.graphic) {
+            point.graphic.destroy();
+        }
         point.graphic = parent.renderer
             .rect(tableRow.getCellAsNumber('x') * 10, tableRow.getCellAsNumber(valueKey) * 10, 1, 1)
             .addClass('highcharts-data-point')
@@ -60,15 +63,11 @@ var DataPoint = /** @class */ (function () {
     DataPoint.prototype.setTableRow = function (tableRow) {
         console.log('DataPoint.setTableRow');
         var point = this, series = point.series, chart = series.chart;
-        if (point.tableRow === tableRow) {
-            point.update(tableRow, false, false);
-        }
-        else {
+        if (point.tableRow !== tableRow) {
             if (point.tableRowListener) {
                 point.tableRowListener();
             }
             point.tableRow = tableRow;
-            point.update(tableRow, false, false);
             point.tableRowListener = tableRow.on('afterChangeRow', function () {
                 point.update(DataPoint.getPointOptionsFromTableRow(this, series.pointArrayMap) || {}, false, false);
                 series.isDirty = true;

@@ -33,12 +33,11 @@ var DataSeries = /** @class */ (function () {
         this.options = this.setOptions(options);
         this.points = [];
         this.state = '';
-        this.table = (options.data ?
-            DataSeries.getTableFromSeriesOptions(this.options) :
-            new DataTable());
+        this.table = new DataTable();
         this.tableListeners = [];
         this.userOptions = options;
         this.visible = true;
+        this.setData(options.data || []);
     }
     /* *
      *
@@ -97,12 +96,9 @@ var DataSeries = /** @class */ (function () {
         fireEvent(series, 'init');
         series.chart = chart;
         series.setOptions(options);
-        var table = DataSeries.getTableFromSeriesOptions(series.options);
-        if (table) {
-            series.setTable(table);
-        }
         series.bindAxes();
         chart.series.push(series);
+        series.setData(options.data || []);
         fireEvent(series, 'afterInit');
     };
     DataSeries.prototype.plotGroup = function (parent) {
@@ -160,10 +156,15 @@ var DataSeries = /** @class */ (function () {
     DataSeries.prototype.setData = function (data) {
         console.log('DataSeries.setData');
         var series = this;
-        series.setTable(DataSeries.getTableFromSeriesOptions({
-            data: data,
-            keys: series.pointArrayMap
-        }));
+        if (series.table.getRowCount() > 0) {
+            // @todo find point/rows to update
+        }
+        else {
+            series.setTable(DataSeries.getTableFromSeriesOptions({
+                data: data,
+                keys: series.pointArrayMap
+            }));
+        }
     };
     /** @private */
     DataSeries.prototype.setOptions = function (options) {
@@ -180,7 +181,7 @@ var DataSeries = /** @class */ (function () {
         return series.options;
     };
     /**
-     * Add or update points of table rows.
+     * Add or update table.
      */
     DataSeries.prototype.setTable = function (table) {
         console.log('DataSeries.setTable');
@@ -199,7 +200,8 @@ var DataSeries = /** @class */ (function () {
                 }
                 seriesData[i] = null;
             }
-            else if (point) {
+            else if (point &&
+                point.tableRow !== tableRow) {
                 point.setTableRow(tableRow);
             }
             else {
@@ -217,12 +219,13 @@ var DataSeries = /** @class */ (function () {
         }
         series.tableListeners.push(table.on('afterInsertRow', function (e) {
             if (e.type === 'afterInsertRow') {
-                var i = e.index;
-                seriesData.splice(i, 0, new DataPoint(series, e.row, i));
+                var index = e.index, row = e.row;
+                seriesData.splice(index, 0, new DataPoint(series, row, index));
             }
         }), table.on('afterDeleteRow', function (e) {
             if (e.type === 'afterUpdateRow') {
-                seriesData.splice(e.index, 1);
+                var index = e.index;
+                seriesData.splice(index, 1);
             }
         }));
         // series.tableListener =  ---> point listener?

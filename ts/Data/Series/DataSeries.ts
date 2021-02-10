@@ -12,6 +12,7 @@ import type DataPlotOptions from './DataPlotOptions';
 import type DataPointOptions from './DataPointOptions';
 import type DataSeriesOptions from './DataSeriesOptions';
 import type DataTableRow from '../DataTableRow';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SeriesLike from '../../Core/Series/SeriesLike';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
@@ -79,14 +80,11 @@ class DataSeries {
         this.options = this.setOptions(options);
         this.points = [];
         this.state = '';
-        this.table = (
-            options.data ?
-                DataSeries.getTableFromSeriesOptions(this.options) :
-                new DataTable()
-        );
+        this.table = new DataTable();
         this.tableListeners = [];
         this.userOptions = options;
         this.visible = true;
+        this.setData(options.data || []);
     }
 
     /* *
@@ -190,16 +188,11 @@ class DataSeries {
         series.chart = chart;
 
         series.setOptions(options);
-
-        const table = DataSeries.getTableFromSeriesOptions(series.options);
-
-        if (table) {
-            series.setTable(table);
-        }
-
         series.bindAxes();
 
         chart.series.push(series as any);
+
+        series.setData(options.data || []);
 
         fireEvent(series, 'afterInit');
     }
@@ -286,12 +279,16 @@ class DataSeries {
     }
 
     /** @deprecated */
-    public setData(data: Array<DataPointOptions>): void { console.log('DataSeries.setData');
+    public setData(data: Array<DataPointOptions|PointShortOptions|undefined>): void { console.log('DataSeries.setData');
         const series = this;
-        series.setTable(DataSeries.getTableFromSeriesOptions({
-            data,
-            keys: series.pointArrayMap
-        }));
+        if (series.table.getRowCount() > 0) {
+            // @todo find point/rows to update
+        } else {
+            series.setTable(DataSeries.getTableFromSeriesOptions({
+                data: data as any,
+                keys: series.pointArrayMap
+            }));
+        }
     }
 
     /** @private */
@@ -324,7 +321,7 @@ class DataSeries {
     }
 
     /**
-     * Add or update points of table rows.
+     * Add or update table.
      */
     public setTable(table: DataTable): void { console.log('DataSeries.setTable');
         const series = this,
@@ -359,7 +356,10 @@ class DataSeries {
                     point.destroy();
                 }
                 seriesData[i] = null;
-            } else if (point) {
+            } else if (
+                point &&
+                point.tableRow !== tableRow
+            ) {
                 point.setTableRow(tableRow);
             } else {
                 seriesData[i] = new SeriesPoint(series, tableRow, i);
@@ -391,8 +391,11 @@ class DataSeries {
                 e: DataTable.EventObject
             ): void {
                 if (e.type === 'afterInsertRow') {
-                    const i = e.index;
-                    seriesData.splice(i, 0, new DataPoint(series, e.row, i));
+                    const {
+                        index,
+                        row
+                    } = e;
+                    seriesData.splice(index, 0, new DataPoint(series, row, index));
                 }
             }),
             table.on('afterDeleteRow', function (
@@ -400,7 +403,8 @@ class DataSeries {
                 e: DataTable.EventObject
             ): void {
                 if (e.type === 'afterUpdateRow') {
-                    seriesData.splice(e.index, 1);
+                    const index = e.index;
+                    seriesData.splice(index, 1);
                 }
             })
         );

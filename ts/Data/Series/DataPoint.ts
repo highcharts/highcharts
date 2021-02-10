@@ -108,6 +108,10 @@ class DataPoint {
             tableRow = point.tableRow,
             valueKey = point.series.pointArrayMap[0];
 
+        if (point.graphic) {
+            point.graphic.destroy();
+        }
+
         point.graphic = parent.renderer
             .rect(
                 tableRow.getCellAsNumber('x') * 10,
@@ -132,16 +136,12 @@ class DataPoint {
             series = point.series,
             chart = series.chart;
 
-        if (point.tableRow === tableRow) {
-            point.update(tableRow, false, false);
-        } else {
+        if (point.tableRow !== tableRow) {
             if (point.tableRowListener) {
                 point.tableRowListener();
             }
 
             point.tableRow = tableRow;
-            point.update(tableRow, false, false);
-
             point.tableRowListener = tableRow.on('afterChangeRow', function (
                 this: DataTableRow
             ): void {
