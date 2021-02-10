@@ -6,7 +6,7 @@
  *
  * Drag-panes module
  *
- * (c) 2010-2019 Highsoft AS
+ * (c) 2010-2021 Highsoft AS
  * Author: Kacper Madej
  *
  * License: www.highcharts.com/license

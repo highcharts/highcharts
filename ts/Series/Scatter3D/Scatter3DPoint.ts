@@ -21,6 +21,10 @@
 import type Scatter3DPointOptions from './Scatter3DPointOptions';
 import type Scatter3DSeries from './Scatter3DSeries';
 import ScatterSeries from '../Scatter/ScatterSeries.js';
+import U from '../../Core/Utilities.js';
+const {
+    defined
+} = U;
 
 /* *
  *
@@ -48,7 +52,7 @@ class Scatter3DPoint extends ScatterSeries.prototype.pointClass {
 
     public applyOptions(): Scatter3DPoint {
         super.applyOptions.apply(this, arguments);
-        if (typeof this.z === 'undefined') {
+        if (!defined(this.z)) {
             this.z = 0;
         }
 

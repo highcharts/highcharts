@@ -24,6 +24,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import ScatterSeries from '../Scatter/ScatterSeries.js';
+import U from '../../Core/Utilities.js';
+var defined = U.defined;
 /* *
  *
  *  Class
@@ -49,7 +51,7 @@ var Scatter3DPoint = /** @class */ (function (_super) {
      * */
     Scatter3DPoint.prototype.applyOptions = function () {
         _super.prototype.applyOptions.apply(this, arguments);
-        if (typeof this.z === 'undefined') {
+        if (!defined(this.z)) {
             this.z = 0;
         }
         return this;

@@ -52,6 +52,7 @@ QUnit.test('Bindings general tests', function (assert) {
     if (qunitContainer) {
         qunitContainer.style.display = 'none';
     }
+    delete chart.pointer.chartPosition;
 
     // Shorthand for selecting a button
     function selectButton(name) {

@@ -410,7 +410,7 @@ var Chart = /** @class */ (function () {
      */
     Chart.prototype.redraw = function (animation) {
         fireEvent(this, 'beforeRedraw');
-        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legend = chart.legend, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasDirtyStacks, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
+        var chart = this, axes = chart.hasCartesianSeries ? chart.axes : chart.colorAxis || [], series = chart.series, pointer = chart.pointer, legend = chart.legend, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasDirtyStacks, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
             chart.setResponsive(false);
@@ -474,38 +474,34 @@ var Chart = /** @class */ (function () {
         if (hasStackedSeries) {
             chart.getStacks();
         }
-        if (hasCartesianSeries) {
-            // set axes scales
-            axes.forEach(function (axis) {
-                axis.updateNames();
-                axis.setScale();
-            });
-        }
+        // set axes scales
+        axes.forEach(function (axis) {
+            axis.updateNames();
+            axis.setScale();
+        });
         chart.getMargins(); // #3098
-        if (hasCartesianSeries) {
-            // If one axis is dirty, all axes must be redrawn (#792, #2169)
-            axes.forEach(function (axis) {
-                if (axis.isDirty) {
-                    isDirtyBox = true;
-                }
-            });
-            // redraw axes
-            axes.forEach(function (axis) {
-                // Fire 'afterSetExtremes' only if extremes are set
-                var key = axis.min + ',' + axis.max;
-                if (axis.extKey !== key) { // #821, #4452
-                    axis.extKey = key;
-                    // prevent a recursive call to chart.redraw() (#1119)
-                    afterRedraw.push(function () {
-                        fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
-                        delete axis.eventArgs;
-                    });
-                }
-                if (isDirtyBox || hasStackedSeries) {
-                    axis.redraw();
-                }
-            });
-        }
+        // If one axis is dirty, all axes must be redrawn (#792, #2169)
+        axes.forEach(function (axis) {
+            if (axis.isDirty) {
+                isDirtyBox = true;
+            }
+        });
+        // redraw axes
+        axes.forEach(function (axis) {
+            // Fire 'afterSetExtremes' only if extremes are set
+            var key = axis.min + ',' + axis.max;
+            if (axis.extKey !== key) { // #821, #4452
+                axis.extKey = key;
+                // prevent a recursive call to chart.redraw() (#1119)
+                afterRedraw.push(function () {
+                    fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
+                    delete axis.eventArgs;
+                });
+            }
+            if (isDirtyBox || hasStackedSeries) {
+                axis.redraw();
+            }
+        });
         // the plot areas size has changed
         if (isDirtyBox) {
             chart.drawChartBox();
@@ -1845,6 +1841,7 @@ var Chart = /** @class */ (function () {
             }
         }
         chart.render();
+        chart.pointer.getChartPosition(); // #14973
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {
             chart.onload();
@@ -2447,7 +2444,7 @@ var Chart = /** @class */ (function () {
         var chart = this, lang = defaultOptions.lang, btnOptions = chart.options.chart.resetZoomButton, theme = btnOptions.theme, states = theme.states, alignTo = (btnOptions.relativeTo === 'chart' ||
             btnOptions.relativeTo === 'spaceBox' ?
             null :
-            'plotBox');
+            this.scrollablePlotBox || 'plotBox');
         /**
          * @private
          */
@@ -2579,9 +2576,9 @@ var Chart = /** @class */ (function () {
                     halfPointRange * pointRangeDirection, flipped = panMax < panMin, newMin = flipped ? panMax : panMin, newMax = flipped ? panMin : panMax, hasVerticalPanning = axis.hasVerticalPanning(), paddedMin, paddedMax, spill, panningState = axis.panningState;
                 // General calculations of panning state.
                 // This is related to using vertical panning. (#11315).
-                axis.series.forEach(function (series) {
-                    if (hasVerticalPanning &&
-                        !isX && (!panningState || panningState.isDirty)) {
+                if (hasVerticalPanning &&
+                    !isX && (!panningState || panningState.isDirty)) {
+                    axis.series.forEach(function (series) {
                         var processedData = series.getProcessedData(true), dataExtremes = series.getExtremes(processedData.yData, true);
                         if (!panningState) {
                             panningState = {
@@ -2594,8 +2591,8 @@ var Chart = /** @class */ (function () {
                             panningState.startMin = Math.min(pick(series.options.threshold, Infinity), dataExtremes.dataMin, panningState.startMin);
                             panningState.startMax = Math.max(pick(series.options.threshold, -Infinity), dataExtremes.dataMax, panningState.startMax);
                         }
-                    }
-                });
+                    });
+                }
                 paddedMin = Math.min(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
                     extremes.min :
                     axis.toValue(axis.toPixels(extremes.min) -
