@@ -653,6 +653,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
 
             // Override setTimeout and animation and stuff for all visual
             // samples
+            var originalSetTimeout = setTimeout;
             var clock = TestUtilities.lolexInstall({
                 now: Date.UTC(2019, 7, 1)
             });
@@ -678,7 +679,7 @@ function createVisualTestTemplate(argv, path, js, assertion) {
                     `}
                     assert.test.resets = ${resets};
                 } else if (attempts < 100) {
-                    setTimeout(waitForChartToLoad, 100);
+                    originalSetTimeout(waitForChartToLoad, 100);
                     attempts++;
                 } else {
                     assert.ok(
