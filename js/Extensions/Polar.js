@@ -721,7 +721,7 @@ addEvent(Series, 'afterInit', function () {
  * @private
  */
 wrap(Chart.prototype, 'get', function (proceed, id) {
-    return find(this.pane, function (pane) {
+    return find(this.pane || [], function (pane) {
         return pane.options.id === id;
     }) || proceed.call(this, id);
 });

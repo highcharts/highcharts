@@ -347,6 +347,7 @@ Series.prototype.hasExtremes = function (checkX) {
  * @function Highcharts.Series#destroyGraphics
  */
 Series.prototype.destroyGraphics = function () {
+    var _this = this;
     var series = this, points = this.points, point, i;
     if (points) {
         for (i = 0; i < points.length; i = i + 1) {
@@ -361,6 +362,15 @@ Series.prototype.destroyGraphics = function () {
             series[prop] = series[prop].destroy();
         }
     });
+    if (this.getZonesGraphs) {
+        var props = this.getZonesGraphs([['graph', 'highcharts-graph']]);
+        props.forEach(function (prop) {
+            var zoneGraph = _this[prop[0]];
+            if (zoneGraph) {
+                _this[prop[0]] = zoneGraph.destroy();
+            }
+        });
+    }
 };
 // Set default options
 boostable.forEach(function (type) {

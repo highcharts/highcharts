@@ -1970,10 +1970,10 @@ H.defaultOptions = {
          * However, `zoomBySingleTouch` will interfere with touch-dragging the
          * chart to read the tooltip. And especially when vertical zooming is
          * enabled, it will make it hard to scroll vertically on the page.
-         * @since      next
+         * @since 9.0.0
          * @sample     highcharts/chart/zoombysingletouch
          *             Zoom by single touch enabled, with buttons to toggle
-         * @product    highcharts higstock gantt
+         * @product    highcharts highstock gantt
          */
         zoomBySingleTouch: false,
 
@@ -3964,7 +3964,7 @@ H.defaultOptions = {
         borderRadius: 3,
 
         /**
-         * For series on a datetime axes, the date format in the tooltip's
+         * For series on datetime axes, the date format in the tooltip's
          * header will by default be guessed based on the closest data points.
          * This member gives the default string representations used for
          * each unit. For an overview of the replacement codes, see

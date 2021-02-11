@@ -14,7 +14,7 @@ var isFirefox = H.isFirefox;
 import NavigationBindings from './NavigationBindings.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, defined = U.defined, getOptions = U.getOptions, isArray = U.isArray, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort, wrap = U.wrap;
+var addEvent = U.addEvent, createElement = U.createElement, defined = U.defined, fireEvent = U.fireEvent, getOptions = U.getOptions, isArray = U.isArray, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort, wrap = U.wrap;
 var indexFilter = /\d/g, PREFIX = 'highcharts-', DIV = 'div', INPUT = 'input', LABEL = 'label', BUTTON = 'button', SELECT = 'select', OPTION = 'option', SPAN = 'span', UL = 'ul', LI = 'li', H3 = 'h3';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // onContainerMouseDown blocks internal popup events, due to e.preventDefault.
@@ -27,8 +27,8 @@ wrap(Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
-H.Popup = function (parentDiv, iconsURL) {
-    this.init(parentDiv, iconsURL);
+H.Popup = function (parentDiv, iconsURL, chart) {
+    this.init(parentDiv, iconsURL, chart);
 };
 H.Popup.prototype = {
     /**
@@ -39,7 +39,8 @@ H.Popup.prototype = {
      * @param {string} iconsURL
      * Icon URL
      */
-    init: function (parentDiv, iconsURL) {
+    init: function (parentDiv, iconsURL, chart) {
+        this.chart = chart;
         // create popup div
         this.container = createElement(DIV, {
             className: PREFIX + 'popup'
@@ -63,7 +64,7 @@ H.Popup.prototype = {
             this.iconsURL + 'close.svg)';
         ['click', 'touchstart'].forEach(function (eventName) {
             addEvent(closeBtn, eventName, function () {
-                _self.closePopup();
+                fireEvent(_self.chart.navigationBindings, 'closePopup');
             });
         });
     },
@@ -725,7 +726,7 @@ addEvent(NavigationBindings, 'showPopup', function (config) {
         this.popup = new H.Popup(this.chart.container, (this.chart.options.navigation.iconsURL ||
             (this.chart.options.stockTools &&
                 this.chart.options.stockTools.gui.iconsURL) ||
-            'https://code.highcharts.com/@product.version@/gfx/stock-icons/'));
+            'https://code.highcharts.com/@product.version@/gfx/stock-icons/'), this.chart);
     }
     this.popup.showForm(config.formType, this.chart, config.options, config.onSubmit);
 });

@@ -57,6 +57,14 @@ declare global {
     }
 }
 
+// In IE8, DOMParser is undefined. IE9 and batik are only able to parse XML.
+let hasValidDOMParser = false;
+try {
+    hasValidDOMParser = Boolean(
+        new DOMParser().parseFromString('', 'text/html')
+    );
+} catch (e) { } // eslint-disable-line no-empty
+
 /**
  * Represents an AST
  * @private
@@ -365,19 +373,15 @@ class AST {
         }
 
         const nodes: Highcharts.ASTNode[] = [];
+
         let doc;
         let body;
-        if (
-            // IE9 is only able to parse XML
-            /MSIE 9.0/.test(navigator.userAgent) ||
-            // IE8-
-            typeof DOMParser === 'undefined'
-        ) {
+        if (hasValidDOMParser) {
+            doc = new DOMParser().parseFromString(markup, 'text/html');
+        } else {
             body = createElement('div');
             body.innerHTML = markup;
             doc = { body };
-        } else {
-            doc = new DOMParser().parseFromString(markup, 'text/html');
         }
 
         const appendChildNodes = (

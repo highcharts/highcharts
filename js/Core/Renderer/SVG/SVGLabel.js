@@ -215,8 +215,10 @@ var SVGLabel = /** @class */ (function (_super) {
                 if ((eventType === 'mouseenter' ||
                     eventType === 'mouseleave') &&
                     e.relatedTarget instanceof Element &&
-                    (label.element.contains(e.relatedTarget) ||
-                        span.element.contains(e.relatedTarget))) {
+                    (
+                    // #14110
+                    label.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY ||
+                        span.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
                     return;
                 }
                 handler.call(label.element, e);

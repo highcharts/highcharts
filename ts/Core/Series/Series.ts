@@ -107,6 +107,7 @@ declare module '../Chart/ChartLike'{
 declare module './SeriesLike' {
     interface SeriesLike {
         _hasPointMarkers?: boolean;
+        invertible?: boolean;
         pointArrayMap?: Array<string>;
         pointValKey?: string;
     }
@@ -4959,6 +4960,7 @@ class Series {
                     '_sharedClip',
                     animation && (animation as any).duration,
                     animation && (animation as any).easing,
+                    animation && (animation as any).defer,
                     clipBox.height,
                     options.xAxis,
                     options.yAxis
@@ -5905,7 +5907,7 @@ class Series {
 
         // SVGRenderer needs to know this before drawing elements (#1089,
         // #1795)
-        group.inverted = series.isCartesian || series.invertable ?
+        group.inverted = pick(series.invertible, series.isCartesian) ?
             inverted : false;
 
         // Draw the graph if any
@@ -7113,7 +7115,10 @@ class Series {
                         stateAnimation
                     );
                     while ((series as any)['zone-graph-' + i]) {
-                        (series as any)['zone-graph-' + i].attr(attribs);
+                        (series as any)['zone-graph-' + i].animate(
+                            attribs,
+                            stateAnimation
+                        );
                         i = i + 1;
                     }
                 }
