@@ -57,6 +57,10 @@ declare global {
             public close(): void;
             public isOpen: boolean;
             public open(): void;
+            public origHeight?: number;
+            public origHeightOption?: (number|string|null);
+            public origWidth?: number;
+            public origWidthOption?: (number|string|null);
             public toggle(): void;
             public unbindFullscreenEvent?: Function;
         }
@@ -154,6 +158,15 @@ class Fullscreen {
     public isOpen: boolean;
 
     /** @private */
+    public origHeight?: number;
+    /** @private */
+    public origHeightOption?: (number|string|null);
+    /** @private */
+    public origWidth?: number;
+    /** @private */
+    public origWidthOption?: (number|string|null);
+
+    /** @private */
     public unbindFullscreenEvent?: Function;
 
     /* *
@@ -174,7 +187,8 @@ class Fullscreen {
      */
     public close(): void {
         const fullscreen = this,
-            chart = fullscreen.chart;
+            chart = fullscreen.chart,
+            optionsChart = chart.options.chart;
 
         // Don't fire exitFullscreen() when user exited using 'Escape' button.
         if (
@@ -191,6 +205,17 @@ class Fullscreen {
         if (fullscreen.unbindFullscreenEvent) {
             fullscreen.unbindFullscreenEvent();
         }
+
+        chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
+        fullscreen.origWidth = void 0;
+        fullscreen.origHeight = void 0;
+
+        if (optionsChart) {
+            optionsChart.width = fullscreen.origWidthOption;
+            optionsChart.height = fullscreen.origHeightOption;
+        }
+        fullscreen.origWidthOption = void 0;
+        fullscreen.origHeightOption = void 0;
 
         fullscreen.isOpen = false;
 
@@ -210,7 +235,15 @@ class Fullscreen {
      */
     public open(): void {
         const fullscreen = this,
-            chart = fullscreen.chart;
+            chart = fullscreen.chart,
+            optionsChart = chart.options.chart;
+
+        if (optionsChart) {
+            fullscreen.origWidthOption = optionsChart.width;
+            fullscreen.origHeightOption = optionsChart.height;
+        }
+        fullscreen.origWidth = chart.chartWidth;
+        fullscreen.origHeight = chart.chartHeight;
 
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
@@ -223,6 +256,7 @@ class Fullscreen {
                         fullscreen.isOpen = false;
                         fullscreen.close();
                     } else {
+                        chart.setSize(null, null, false);
                         fullscreen.isOpen = true;
                         fullscreen.setButtonText();
                     }

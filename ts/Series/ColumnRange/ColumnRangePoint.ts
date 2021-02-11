@@ -35,7 +35,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { extend } = U;
+const {
+    extend,
+    isNumber
+} = U;
 
 /* *
  *
@@ -50,6 +53,10 @@ class ColumnRangePoint extends AreaRangePoint {
     public pointWidth: typeof ColumnPoint.prototype['pointWidth'] = void 0 as any;
     public shapeArgs: SVGAttributes = void 0 as any;
     public shapeType: typeof ColumnPoint.prototype['shapeType'] = void 0 as any;
+
+    public isValid(): boolean {
+        return isNumber(this.low);
+    }
 }
 
 /* *

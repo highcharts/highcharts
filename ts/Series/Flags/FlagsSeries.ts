@@ -693,6 +693,9 @@ extend(FlagsSeries.prototype, {
      */
     invertGroups: noop as any,
 
+    // Flags series group should not be invertible (#14063).
+    invertible: false,
+
     noSharedTooltip: true,
 
     pointClass: FlagsPoint,
