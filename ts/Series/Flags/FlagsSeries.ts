@@ -198,7 +198,7 @@ class FlagsSeries extends ColumnSeries {
          * @product   highstock
          */
         tooltip: {
-            pointFormat: '{point.text}<br/>'
+            pointFormat: '{point.text}'
         },
 
         threshold: null as any,
