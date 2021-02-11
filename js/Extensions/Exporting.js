@@ -963,12 +963,12 @@ var enterExitPrint = function (enter) {
 };
 // Chrome and Safari can use this
 if (H.isWebKit) {
-    H.win.matchMedia('print').addEventListener('change', function (mqlEvent) { return enterExitPrint(mqlEvent.matches); });
+    win.matchMedia('print').addEventListener('change', function (mqlEvent) { return enterExitPrint(mqlEvent.matches); });
     // Not supported (as of 2021) on iOS and partly Android, therefore matchMedia
     // for WebKit. Firefox prints in a copy of the document so matchMedia doesn't
     // work. https://bugzilla.mozilla.org/show_bug.cgi?id=774398
 }
-else {
+else if (win.addEventListener) {
     win.addEventListener('beforeprint', function () { return enterExitPrint(true); });
     win.addEventListener('afterprint', function () { return enterExitPrint(false); });
 }
@@ -1386,25 +1386,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             return;
         }
         H.printingChart = chart;
-        /*
-        if (!H.isSafari) {
-            chart.beforePrint();
-        }
-        */
-        // Give the browser time to draw WebGL content, an issue that randomly
-        // appears (at least) in Chrome ~67 on the Mac (#8708).
-        // setTimeout(function (): void {
         win.focus(); // #1510
         win.print();
-        // allow the browser to prepare before reverting
-        /*
-        if (!H.isSafari) {
-            setTimeout(function (): void {
-                chart.afterPrint();
-            }, 1000);
-        }
-        */
-        // }, 1);
     },
     /**
      * Display a popup menu for choosing the export type.
