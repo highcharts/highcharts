@@ -1,25 +1,3 @@
-// Function to run on series show/hide to update the pointStart settings of
-// all series. We do this to avoid gaps on the xAxis when hiding series.
-function updatePointStart() {
-    var allSeries = this.chart.series;
-    Highcharts.each(allSeries, function (series) {
-        var i = series.index,
-            pointStart = 0;
-        if (series.type === 'column') {
-            while (i--) {
-                if (allSeries[i].visible && allSeries[i].type === 'column') {
-                    pointStart += allSeries[i].points.length + 1;
-                }
-            }
-        } else {
-            pointStart = allSeries[i - 1].options.pointStart;
-        }
-        series.update({
-            pointStart: pointStart
-        });
-    });
-}
-
 function dollarFormat(x) {
     return '$' + Highcharts.numberFormat(x, 0);
 }
@@ -49,7 +27,8 @@ Highcharts.chart('container', {
             seriesNavigation: {
                 mode: 'serialize'
             }
-        }
+        },
+        landmarkVerbosity: 'one'
     },
 
     title: {
@@ -94,13 +73,13 @@ Highcharts.chart('container', {
                 return '$' + (this.value / 1000) + (this.value ? 'k' : '');
             },
             style: {
-                color: '#a88'
+                color: '#8F6666'
             }
         },
         title: {
             text: 'Category total',
             style: {
-                color: '#a88'
+                color: '#8F6666'
             }
         }
     }],
@@ -111,10 +90,6 @@ Highcharts.chart('container', {
             grouping: false,
             pointPadding: 0.1,
             groupPadding: 0,
-            events: {
-                hide: updatePointStart,
-                show: updatePointStart
-            },
             tooltip: {
                 headerFormat: '<span style="font-size: 10px"><span style="color:{point.color}">\u25CF</span> {series.name}</span><br/>',
                 pointFormatter: function () {
@@ -143,7 +118,7 @@ Highcharts.chart('container', {
                 enabled: true,
                 verticalAlign: 'bottom',
                 style: {
-                    color: '#777',
+                    color: '#757575',
                     fontWeight: 'normal'
                 },
                 formatter: function () {
@@ -177,7 +152,8 @@ Highcharts.chart('container', {
         type: 'line',
         name: 'Creative Space (CRSP) grant totals',
         data: [
-            550000, 550000, 550000, 550000, 550000, 550000, 550000, 550000, 550000
+            550000, 550000, 550000, 550000, 550000, 550000, 550000,
+            550000, 550000
         ],
         color: colors[0]
     }, {

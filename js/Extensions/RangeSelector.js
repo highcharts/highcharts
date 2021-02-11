@@ -237,6 +237,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/enabled/
          *         Disable the range selector
          *
+         * @type {boolean|undefined}
          * @default {highstock} true
          */
         enabled: void 0,

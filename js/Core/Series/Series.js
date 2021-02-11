@@ -2235,7 +2235,7 @@ var Series = /** @class */ (function () {
         }
         // SVGRenderer needs to know this before drawing elements (#1089,
         // #1795)
-        group.inverted = series.isCartesian || series.invertable ?
+        group.inverted = pick(series.invertible, series.isCartesian) ?
             inverted : false;
         // Draw the graph if any
         if (series.drawGraph) {
@@ -3091,7 +3091,7 @@ var Series = /** @class */ (function () {
                     // Animate the graph stroke-width.
                     graph.animate(attribs, stateAnimation);
                     while (series['zone-graph-' + i]) {
-                        series['zone-graph-' + i].attr(attribs);
+                        series['zone-graph-' + i].animate(attribs, stateAnimation);
                         i = i + 1;
                     }
                 }
