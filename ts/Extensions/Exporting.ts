@@ -224,7 +224,7 @@ declare global {
             navigation?: NavigationOptions;
         }
         interface PrintReverseInfoObject {
-            childNodes: NodeListOf<ChildNode>;
+            childNodes: Array<ChildNode>;
             origDisplay: Array<(string|null)> ;
             resetParams?: [
                 (number|null)?,
@@ -1276,23 +1276,33 @@ H.post = function (
     discardElement(form);
 };
 
+const enterExitPrint = (enter: boolean): void => {
+    const charts = H.printingChart ? [H.printingChart] : H.charts;
 
-if (H.isSafari) {
-    H.win.matchMedia('print').addListener(
-        function (
-            this: MediaQueryList,
-            mqlEvent: MediaQueryListEvent
-        ): void {
-            if (!H.printingChart) {
-                return void 0;
-            }
-            if (mqlEvent.matches) {
-                H.printingChart.beforePrint();
+    charts.forEach((chart): void => {
+        if (chart) {
+            if (enter) {
+                chart.beforePrint();
             } else {
-                H.printingChart.afterPrint();
+                chart.afterPrint();
             }
         }
+    });
+};
+
+// Chrome and Safari can use this
+if (H.isWebKit) {
+    H.win.matchMedia('print').addEventListener(
+        'change',
+        (mqlEvent): void => enterExitPrint(mqlEvent.matches)
     );
+
+// Not supported (as of 2021) on iOS and partly Android, therefore matchMedia
+// for WebKit. Firefox prints in a copy of the document so matchMedia doesn't
+// work. https://bugzilla.mozilla.org/show_bug.cgi?id=774398
+} else {
+    win.addEventListener('beforeprint', (): void => enterExitPrint(true));
+    win.addEventListener('afterprint', (): void => enterExitPrint(false));
 }
 
 extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
@@ -1713,42 +1723,51 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             printMaxWidth: number =
                 (chart.options.exporting as any).printMaxWidth,
             printReverseInfo: Highcharts.PrintReverseInfoObject = {
-                childNodes: body.childNodes,
+                // When printing one single chart we hide other body nodes. On
+                // full page print we don't.
+                childNodes: H.printingChart ?
+                    [].slice.call(body.childNodes) :
+                    [],
                 origDisplay: [],
                 resetParams: void 0
             };
 
-        var handleMaxWidth: (boolean|number);
-
         chart.isPrinting = true;
-        chart.pointer.reset(null as any, 0);
+        chart.pointer.reset(void 0, 0);
 
         fireEvent(chart, 'beforePrint');
 
         // Handle printMaxWidth
-        handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
-        if (handleMaxWidth) {
+        const width = Math.min(
+            // At this point the `renderTo` width may have been altered by
+            // print media queries, so it may differ from `chart.chartWidth`
+            // (#2284)
+            Number(U.getStyle(chart.renderTo, 'width')),
+            printMaxWidth || Infinity
+        );
+
+        if (chart.chartWidth > width) {
             printReverseInfo.resetParams = [
                 (chart.options.chart as any).width,
                 void 0,
                 false
             ];
-            chart.setSize(printMaxWidth, void 0, false);
+            chart.setSize(width, void 0, false);
         }
 
-        // hide all body content
-        [].forEach.call(printReverseInfo.childNodes, function (
-            node: HTMLDOMElement,
-            i: number
-        ): void {
+        // Hide all body content
+        printReverseInfo.childNodes.forEach(function (node, i): void {
             if (node.nodeType === 1) {
-                printReverseInfo.origDisplay[i] = node.style.display;
-                node.style.display = 'none';
+                printReverseInfo.origDisplay[i] = (node as any).style.display;
+                (node as any).style.display = 'none';
             }
         });
 
-        // pull out the chart
-        chart.moveContainers(body);
+        // Pull out the chart
+        if (H.printingChart) {
+            chart.moveContainers(body);
+        }
+
         // Storage details for undo action after printing
         chart.printReverseInfo = printReverseInfo;
     },
@@ -1777,15 +1796,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             resetParams = chart.printReverseInfo.resetParams;
 
         // put the chart back in
-        chart.moveContainers(chart.renderTo);
+        if (H.printingChart) {
+            chart.moveContainers(chart.renderTo);
+        }
 
         // restore all body content
-        [].forEach.call(childNodes, function (
-            node: HTMLDOMElement,
-            i: number
-        ): void {
+        childNodes.forEach(function (node, i): void {
             if (node.nodeType === 1) {
-                node.style.display = (origDisplay[i] || '');
+                (node as any).style.display = (origDisplay[i] || '');
             }
         });
 
@@ -1829,24 +1847,28 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         H.printingChart = chart;
 
+        /*
         if (!H.isSafari) {
             chart.beforePrint();
         }
+        */
 
         // Give the browser time to draw WebGL content, an issue that randomly
         // appears (at least) in Chrome ~67 on the Mac (#8708).
-        setTimeout(function (): void {
+        // setTimeout(function (): void {
 
-            win.focus(); // #1510
-            win.print();
+        win.focus(); // #1510
+        win.print();
 
             // allow the browser to prepare before reverting
+            /*
             if (!H.isSafari) {
                 setTimeout(function (): void {
                     chart.afterPrint();
                 }, 1000);
             }
-        }, 1);
+            */
+        // }, 1);
 
     },
 
