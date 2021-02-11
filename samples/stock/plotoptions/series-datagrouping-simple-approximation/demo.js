@@ -22,21 +22,19 @@ Highcharts.stockChart('container', {
         name: 'ADBE start',
         data: ADBE,
         dataGrouping: {
-            approximation: function () {
-                var groupStart = this.dataGroupInfo.start;
-
-                return this.options.data[groupStart][1];
+            approximation: function (groupData) {
+                return groupData[0];
             }
         }
     }, {
         name: 'ADBE end',
         data: ADBE,
         dataGrouping: {
-            approximation: function () {
+            approximation: function (groupData) {
                 var groupEnd = this.dataGroupInfo.start +
                      this.dataGroupInfo.length - 1;
 
-                return this.options.data[groupEnd][1];
+                return groupData[groupEnd];
             }
         }
     }]
