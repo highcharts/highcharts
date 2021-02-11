@@ -13,6 +13,7 @@ module.exports = {
         { from: 'chart-and-series-types/networkgraph', to: 'chart-and-series-types/network-graph' },
         { from: 'chart-and-series-types/technical-indicator-series', to: 'stock/technical-indicator-series' },
         { from: 'advanced-chart-features/highcharts-typescript-beta', to: 'advanced-chart-features/highcharts-typescript-declarations' },
+        { from: 'advanced-chart-features/axis-resizer', to: 'stock/axis-resizer' },
         { from: 'maps/create-custom-maps-for-highmaps', to: 'maps/create-custom-maps' },
         { from: 'stock/understanding-highstock', to: 'stock/understanding-highcharts-stock' },
         { from: 'getting-started/compatibility', to: 'getting-started/system-requirements' },
