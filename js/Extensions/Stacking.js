@@ -14,7 +14,7 @@ import H from '../Core/Globals.js';
 import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, isNumber = U.isNumber, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 /**
  * Stack of data points
  *
@@ -405,6 +405,9 @@ Series.prototype.setStackedPoints = function (stackingParam) {
             }
         }
         else if (stacking === 'group') {
+            if (isArray(y)) {
+                y = y[0];
+            }
             // In this stack, the total is the number of valid points
             if (y !== null) {
                 stack.total = (stack.total || 0) + 1;

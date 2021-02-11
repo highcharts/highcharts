@@ -243,6 +243,7 @@ function init() {
         fill: true,
         sampling: true
     });
+    Chart.prototype.propsRequireUpdateSeries.push('boost');
     // Take care of the canvas blitting
     Chart.prototype.callbacks.push(function (chart) {
         /**

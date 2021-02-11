@@ -2444,7 +2444,7 @@ var Chart = /** @class */ (function () {
         var chart = this, lang = defaultOptions.lang, btnOptions = chart.options.chart.resetZoomButton, theme = btnOptions.theme, states = theme.states, alignTo = (btnOptions.relativeTo === 'chart' ||
             btnOptions.relativeTo === 'spaceBox' ?
             null :
-            'plotBox');
+            this.scrollablePlotBox || 'plotBox');
         /**
          * @private
          */
@@ -2576,9 +2576,9 @@ var Chart = /** @class */ (function () {
                     halfPointRange * pointRangeDirection, flipped = panMax < panMin, newMin = flipped ? panMax : panMin, newMax = flipped ? panMin : panMax, hasVerticalPanning = axis.hasVerticalPanning(), paddedMin, paddedMax, spill, panningState = axis.panningState;
                 // General calculations of panning state.
                 // This is related to using vertical panning. (#11315).
-                axis.series.forEach(function (series) {
-                    if (hasVerticalPanning &&
-                        !isX && (!panningState || panningState.isDirty)) {
+                if (hasVerticalPanning &&
+                    !isX && (!panningState || panningState.isDirty)) {
+                    axis.series.forEach(function (series) {
                         var processedData = series.getProcessedData(true), dataExtremes = series.getExtremes(processedData.yData, true);
                         if (!panningState) {
                             panningState = {
@@ -2591,8 +2591,8 @@ var Chart = /** @class */ (function () {
                             panningState.startMin = Math.min(pick(series.options.threshold, Infinity), dataExtremes.dataMin, panningState.startMin);
                             panningState.startMax = Math.max(pick(series.options.threshold, -Infinity), dataExtremes.dataMax, panningState.startMax);
                         }
-                    }
-                });
+                    });
+                }
                 paddedMin = Math.min(pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
                     extremes.min :
                     axis.toValue(axis.toPixels(extremes.min) -

@@ -464,10 +464,10 @@ function GLRenderer(postRenderCallback) {
                 beginSegment();
                 continue;
             }
-            if (nx && nx >= xMin && nx <= xMax) {
+            if (nx && nx >= xMin && nx <= xMax && !series.is('scatter')) {
                 nextInside = true;
             }
-            if (px && px >= xMin && px <= xMax) {
+            if (px && px >= xMin && px <= xMax && !series.is('scatter')) {
                 prevInside = true;
             }
             if (isRange) {
@@ -558,27 +558,6 @@ function GLRenderer(postRenderCallback) {
                     // x = plotWidth;
                 }
             }
-            if (drawAsBar) {
-                // maxVal = y;
-                minVal = low;
-                if (low === false || typeof low === 'undefined') {
-                    if (y < 0) {
-                        minVal = y;
-                    }
-                    else {
-                        minVal = 0;
-                    }
-                }
-                if (!isRange && !isStacked) {
-                    minVal = Math.max(threshold === null ? yMin : threshold, // #5268
-                    yMin); // #8731
-                }
-                if (!settings.useGPUTranslations) {
-                    minVal = yAxis.toPixels(minVal, true);
-                }
-                // Need to add an extra point here
-                vertice(x, minVal, 0, 0, pcolor);
-            }
             // No markers on out of bounds things.
             // Out of bound things are shown if and only if the next
             // or previous point is inside the rect.
@@ -608,6 +587,27 @@ function GLRenderer(postRenderCallback) {
                     ++skipped;
                 }
                 continue;
+            }
+            if (drawAsBar) {
+                // maxVal = y;
+                minVal = low;
+                if (low === false || typeof low === 'undefined') {
+                    if (y < 0) {
+                        minVal = y;
+                    }
+                    else {
+                        minVal = 0;
+                    }
+                }
+                if (!isRange && !isStacked) {
+                    minVal = Math.max(threshold === null ? yMin : threshold, // #5268
+                    yMin); // #8731
+                }
+                if (!settings.useGPUTranslations) {
+                    minVal = yAxis.toPixels(minVal, true);
+                }
+                // Need to add an extra point here
+                vertice(x, minVal, 0, 0, pcolor);
             }
             // Do step line if enabled.
             // Draws an additional point at the old Y at the new X.
