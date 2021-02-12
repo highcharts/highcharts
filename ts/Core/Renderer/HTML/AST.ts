@@ -11,6 +11,9 @@
 import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
+const {
+    SVG_NS
+} = H;
 import U from '../../Utilities.js';
 const {
     attr,
@@ -275,17 +278,12 @@ class AST {
      * @param {SVGElement} parent
      * The node where it should be added
      *
-     * @param {string} [namespace]
-     * Which XML namespace to use, by default detected from the parent
-     *
      * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
      * The inserted node.
      */
     public addToDOM(
-        parent: Element,
-        namespace?: string
+        parent: Element
     ): HTMLElement|SVGElement {
-        const NS = namespace || parent.namespaceURI || H.SVG_NS;
 
         /**
          * @private
@@ -316,6 +314,10 @@ class AST {
                         node = textNode;
 
                     } else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                        const NS = tagName === 'svg' ?
+                            SVG_NS :
+                            (subParent.namespaceURI || SVG_NS);
+
                         const element = H.doc.createElementNS(NS, tagName);
                         const attributes = item.attributes || {};
 

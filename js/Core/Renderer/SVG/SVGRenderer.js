@@ -496,7 +496,7 @@ var SVGRenderer = /** @class */ (function () {
                                 }
                             }]
                     }]);
-                var svg = ast.addToDOM(doc.body, SVG_NS);
+                var svg = ast.addToDOM(doc.body);
                 css(svg, {
                     position: 'fixed',
                     top: 0,
