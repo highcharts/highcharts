@@ -108,8 +108,7 @@ module.exports = {
             'chart-and-series-types/waterfall-series',
             'chart-and-series-types/wind-barbs-series',
             'chart-and-series-types/word-cloud-series',
-            'chart-and-series-types/x-range-series',
-            'stock/technical-indicator-series'
+            'chart-and-series-types/x-range-series'
 
         ],
         'Advanced chart features': [
