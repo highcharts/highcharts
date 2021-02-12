@@ -8,6 +8,7 @@
  *
  * */
 import H from '../../Globals.js';
+var SVG_NS = H.SVG_NS;
 import U from '../../Utilities.js';
 var attr = U.attr, createElement = U.createElement, discardElement = U.discardElement, error = U.error, objectEach = U.objectEach, splat = U.splat;
 /**
@@ -106,14 +107,10 @@ var AST = /** @class */ (function () {
      * @param {SVGElement} parent
      * The node where it should be added
      *
-     * @param {string} [namespace]
-     * Which XML namespace to use, by default detected from the parent
-     *
      * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
      * The inserted node.
      */
-    AST.prototype.addToDOM = function (parent, namespace) {
-        var NS = namespace || parent.namespaceURI || H.SVG_NS;
+    AST.prototype.addToDOM = function (parent) {
         /**
          * @private
          * @param {Highcharts.ASTNode} subtree - HTML/SVG definition
@@ -133,6 +130,9 @@ var AST = /** @class */ (function () {
                         node = textNode;
                     }
                     else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                        var NS = tagName === 'svg' ?
+                            SVG_NS :
+                            (subParent.namespaceURI || SVG_NS);
                         var element = H.doc.createElementNS(NS, tagName);
                         var attributes_1 = item.attributes || {};
                         // Apply attributes from root of AST node, legacy from
