@@ -11,13 +11,12 @@ import H from '../../Globals.js';
 import U from '../../Utilities.js';
 var attr = U.attr, createElement = U.createElement, discardElement = U.discardElement, error = U.error, objectEach = U.objectEach, splat = U.splat;
 /**
- * Serialized form of an SVG/HTML definition, including children. Some key
- * property names are reserved: tagName, textContent, and children.
+ * Serialized form of an SVG/HTML definition, including children.
  *
  * @interface Highcharts.ASTNode
  */ /**
-* @name Highcharts.ASTNode#[key:string]
-* @type {boolean|number|string|Array<Highcharts.ASTNode>|undefined}
+* @name Highcharts.ASTNode#attributes
+* @type {Highcharts.SVGAttributes|undefined}
 */ /**
 * @name Highcharts.ASTNode#children
 * @type {Array<Highcharts.ASTNode>|undefined}
@@ -29,17 +28,22 @@ var attr = U.attr, createElement = U.createElement, discardElement = U.discardEl
 * @type {string|undefined}
 */
 ''; // detach doclets above
-// In IE8, DOMParser is undefined. IE9 and batik are only able to parse XML.
+// In IE8, DOMParser is undefined. IE9 and PhantomJS are only able to parse XML.
 var hasValidDOMParser = false;
 try {
     hasValidDOMParser = Boolean(new DOMParser().parseFromString('', 'text/html'));
 }
 catch (e) { } // eslint-disable-line no-empty
 /**
- * Represents an AST
- * @private
+ * The AST class represents an abstract syntax tree of HTML or SVG content. It
+ * can take HTML as an argument, parse it, optionally transform it to SVG, then
+ * perform sanitation before inserting it into the DOM.
+ *
  * @class
  * @name Highcharts.AST
+ * @param {string|Highcharts.ASTNode[]} source
+ *                                      Either an HTML string or an ASTNode list
+ *                                      to populate the tree
  */
 var AST = /** @class */ (function () {
     // Construct an AST from HTML markup, or wrap an array of existing AST nodes
@@ -48,16 +52,15 @@ var AST = /** @class */ (function () {
             this.parseMarkup(source) : source;
     }
     /**
-     * Filter attributes against the allow list.
+     * Filter an object of SVG or HTML attributes against the allow list.
      *
-     * @private
      * @static
      *
      * @function Highcharts.AST#filterUserAttributes
      *
-     * @param {SVGAttributes} attributes The attributes to filter
+     * @param {Highcharts.SVGAttributes} attributes The attributes to filter
      *
-     * @return {SVGAttributes}
+     * @return {Highcharts.SVGAttributes}
      * The filtered attributes
      */
     AST.filterUserAttributes = function (attributes) {
@@ -80,13 +83,14 @@ var AST = /** @class */ (function () {
     /**
      * Utility function to set html content for an element by passing in a
      * markup string. The markup is safely parsed by the AST class to avoid
-     * XSS vulnerabilities.
+     * XSS vulnerabilities. This function should be used instead of setting
+     * `innerHTML` in all cases where the content is not fully trusted.
      *
      * @static
      *
      * @function Highcharts.AST#setElementHTML
      *
-     * @param {SVGElement} el The node to set content of
+     * @param {SVGDOMElement|HTMLDOMElement} el The node to set content of
      * @param {string} html The markup string
      */
     AST.setElementHTML = function (el, html) {
@@ -99,11 +103,9 @@ var AST = /** @class */ (function () {
     /**
      * Add the tree defined as a hierarchical JS structure to the DOM
      *
-     * @private
+     * @function Highcharts.AST#addToDOM
      *
-     * @function Highcharts.AST#add
-     *
-     * @param {SVGElement} parent
+     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} parent
      * The node where it should be added
      *
      * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
@@ -167,7 +169,8 @@ var AST = /** @class */ (function () {
         return recurse(this.nodes, parent);
     };
     /**
-     * Parse HTML/SVG markup into AST Node objects.
+     * Parse HTML/SVG markup into AST Node objects. Used internally from the
+     * constructor.
      *
      * @private
      *
@@ -230,6 +233,17 @@ var AST = /** @class */ (function () {
         }
         return nodes;
     };
+    /**
+     * The list of allowed SVG or HTML tags, used for sanitizing potentially
+     * harmful content from the chart configuration before adding to the DOM.
+     *
+     * @example
+     * // Allow a custom, trusted tag
+     * Highcharts.AST.allowedTags.push('blink'); // ;)
+     *
+     * @name Highcharts.AST.allowedTags
+     * @static
+     */
     AST.allowedTags = [
         'a',
         'b',
@@ -286,6 +300,18 @@ var AST = /** @class */ (function () {
         'ul',
         '#text'
     ];
+    /**
+     * The list of allowed SVG or HTML attributes, used for sanitizing
+     * potentially harmful content from the chart configuration before adding to
+     * the DOM.
+     *
+     * @example
+     * // Allow a custom, trusted attribute
+     * Highcharts.AST.allowedAttributes.push('data-value');
+     *
+     * @name Highcharts.AST.allowedTags
+     * @static
+     */
     AST.allowedAttributes = [
         'aria-controls',
         'aria-describedby',
