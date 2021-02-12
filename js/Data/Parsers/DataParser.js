@@ -104,12 +104,16 @@ var DataParser = /** @class */ (function () {
         }
         table.presentationState.setColumnOrder(headers);
         if (columnsLength) {
-            for (var i = 0, iEnd = columns[0].length; i < iEnd; ++i) {
-                var row = new DataTableRow();
-                for (var j = 0; j < columnsLength; ++j) {
-                    row.insertCell(headers[j], columns[j][i]);
+            var idIndex = headers.indexOf('id');
+            if (idIndex >= 0) {
+                var idColumn = columns.splice(idIndex, 1)[0];
+                for (var i = 0, iEnd = idColumn.length; i < iEnd; ++i) {
+                    table.insertRow(new DataTableRow({ id: idColumn[i] }));
                 }
-                table.insertRow(row);
+                headers.splice(idIndex, 1);
+            }
+            for (var i = 0, iEnd = headers.length; i < iEnd; ++i) {
+                table.setColumn(headers[i], columns[i]);
             }
         }
         return table;

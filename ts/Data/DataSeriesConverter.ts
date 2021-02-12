@@ -271,7 +271,7 @@ class DataSeriesConverter {
                         row = new DataTableRow(columns);
                         table.insertRow(row, eventDetail);
                     } else if (columns[y]) {
-                        row.insertCell(y, columns[y], eventDetail);
+                        row.setCell(y, columns[y], eventDetail);
                     }
                 }
             }

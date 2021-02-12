@@ -168,12 +168,20 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         table.presentationState.setColumnOrder(headers);
 
         if (columnsLength) {
-            for (let i = 0, iEnd = columns[0].length; i < iEnd; ++i) {
-                const row = new DataTableRow();
-                for (let j = 0; j < columnsLength; ++j) {
-                    row.insertCell(headers[j], columns[j][i]);
+            const idIndex = headers.indexOf('id');
+
+            if (idIndex >= 0) {
+                const idColumn = columns.splice(idIndex, 1)[0];
+
+                for (let i = 0, iEnd = idColumn.length; i < iEnd; ++i) {
+                    table.insertRow(new DataTableRow({ id: idColumn[i] }));
                 }
-                table.insertRow(row);
+
+                headers.splice(idIndex, 1);
+            }
+
+            for (let i = 0, iEnd = headers.length; i < iEnd; ++i) {
+                table.setColumn(headers[i], columns[i]);
             }
         }
 
