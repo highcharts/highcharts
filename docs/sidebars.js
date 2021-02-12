@@ -109,7 +109,7 @@ module.exports = {
             'chart-and-series-types/wind-barbs-series',
             'chart-and-series-types/word-cloud-series',
             'chart-and-series-types/x-range-series',
-            'chart-and-series-types/technical-indicator-series'
+            'stock/technical-indicator-series'
 
         ],
         'Advanced chart features': [
