@@ -8,6 +8,7 @@
  *
  * */
 import H from '../../Globals.js';
+var SVG_NS = H.SVG_NS;
 import U from '../../Utilities.js';
 var attr = U.attr, createElement = U.createElement, discardElement = U.discardElement, error = U.error, isString = U.isString, objectEach = U.objectEach, splat = U.splat;
 /**
@@ -112,7 +113,6 @@ var AST = /** @class */ (function () {
      * The inserted node.
      */
     AST.prototype.addToDOM = function (parent) {
-        var NS = parent.namespaceURI || H.SVG_NS;
         /**
          * @private
          * @param {Highcharts.ASTNode} subtree - HTML/SVG definition
@@ -132,6 +132,9 @@ var AST = /** @class */ (function () {
                         node = textNode;
                     }
                     else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                        var NS = tagName === 'svg' ?
+                            SVG_NS :
+                            (subParent.namespaceURI || SVG_NS);
                         var element = H.doc.createElementNS(NS, tagName);
                         var attributes_1 = item.attributes || {};
                         // Apply attributes from root of AST node, legacy from
@@ -251,8 +254,10 @@ var AST = /** @class */ (function () {
         'button',
         'caption',
         'circle',
+        'clipPath',
         'code',
         'dd',
+        'defs',
         'div',
         'dl',
         'dt',
@@ -292,6 +297,7 @@ var AST = /** @class */ (function () {
         'style',
         'sub',
         'sup',
+        'svg',
         'table',
         'text',
         'thead',
@@ -329,6 +335,7 @@ var AST = /** @class */ (function () {
         'aria-roledescription',
         'aria-selected',
         'class',
+        'clip-path',
         'color',
         'colspan',
         'cx',

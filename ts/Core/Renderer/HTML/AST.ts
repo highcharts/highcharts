@@ -11,6 +11,9 @@
 import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
+const {
+    SVG_NS
+} = H;
 import U from '../../Utilities.js';
 const {
     attr,
@@ -95,8 +98,10 @@ class AST {
         'button',
         'caption',
         'circle',
+        'clipPath',
         'code',
         'dd',
+        'defs',
         'div',
         'dl',
         'dt',
@@ -136,6 +141,7 @@ class AST {
         'style',
         'sub',
         'sup',
+        'svg',
         'table',
         'text',
         'thead',
@@ -174,6 +180,7 @@ class AST {
         'aria-roledescription',
         'aria-selected',
         'class',
+        'clip-path',
         'color',
         'colspan',
         'cx',
@@ -330,8 +337,9 @@ class AST {
      * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
      * The inserted node.
      */
-    public addToDOM(parent: Element): HTMLElement|SVGElement {
-        const NS = parent.namespaceURI || H.SVG_NS;
+    public addToDOM(
+        parent: Element
+    ): HTMLElement|SVGElement {
 
         /**
          * @private
@@ -362,6 +370,10 @@ class AST {
                         node = textNode;
 
                     } else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                        const NS = tagName === 'svg' ?
+                            SVG_NS :
+                            (subParent.namespaceURI || SVG_NS);
+
                         const element = H.doc.createElementNS(NS, tagName);
                         const attributes = item.attributes || {};
 
