@@ -3390,7 +3390,7 @@ class Chart {
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spaceBox' ?
                     null :
-                    'plotBox'
+                    this.scrollablePlotBox || 'plotBox'
             );
 
         /**

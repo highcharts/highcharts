@@ -31,6 +31,7 @@ const {
     addEvent,
     error,
     extend,
+    fireEvent,
     getOptions,
     merge
 } = U;
@@ -765,7 +766,8 @@ Chart.prototype.exportChartLocal = function (
                         { filename: chart.getFilename() },
                         options
                     ),
-                    fallbackToExportServer
+                    fallbackToExportServer,
+                    (): void => fireEvent(chart, 'exportChartLocalSuccess')
                 );
             }
         },

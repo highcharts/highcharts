@@ -584,8 +584,9 @@ var Tooltip = /** @class */ (function () {
          */
         firstDimension = function (dim, outerSize, innerSize, scaledInnerSize, // #11329
         point, min, max) {
-            var scaledDist = dim === 'y' ?
-                scaleY(distance) : scaleX(distance), scaleDiff = (innerSize - scaledInnerSize) / 2, roomLeft = scaledInnerSize < point - distance, roomRight = point + distance + scaledInnerSize < outerSize, alignedLeft = point - scaledDist - innerSize + scaleDiff, alignedRight = point + scaledDist - scaleDiff;
+            var scaledDist = outside ?
+                (dim === 'y' ? scaleY(distance) : scaleX(distance)) :
+                distance, scaleDiff = (innerSize - scaledInnerSize) / 2, roomLeft = scaledInnerSize < point - distance, roomRight = point + distance + scaledInnerSize < outerSize, alignedLeft = point - scaledDist - innerSize + scaleDiff, alignedRight = point + scaledDist - scaleDiff;
             if (preferFarSide && roomRight) {
                 ret[dim] = alignedRight;
             }
@@ -1006,12 +1007,13 @@ var Tooltip = /** @class */ (function () {
             }
             else {
                 var xAxis = series.xAxis, yAxis = series.yAxis;
+                var scrollBottom = scrollTop + plotTop + plotHeight - scrollablePixelsY;
                 // Set anchorX to plotX. Limit to within xAxis.
                 anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
-                // Set anchorY, limit to the scrollable plot area
-                if (yAxis.pos + plotY >= scrollTop + plotTop &&
-                    yAxis.pos + plotY <= scrollTop + plotTop + plotHeight - scrollablePixelsY) {
-                    anchorY = yAxis.pos + plotY;
+                // Set anchorY, limit to the scrollable plot area and yAxis
+                if (yAxis.pos + yAxis.len > scrollTop + plotTop &&
+                    yAxis.pos < scrollBottom) {
+                    anchorY = clamp(yAxis.pos + plotY, Math.max(scrollTop + plotTop, yAxis.pos), Math.min(scrollBottom, yAxis.pos + yAxis.len));
                 }
             }
             // Limit values to plot area

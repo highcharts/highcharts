@@ -1973,7 +1973,7 @@ H.defaultOptions = {
          * @since 9.0.0
          * @sample     highcharts/chart/zoombysingletouch
          *             Zoom by single touch enabled, with buttons to toggle
-         * @product    highcharts higstock gantt
+         * @product    highcharts highstock gantt
          */
         zoomBySingleTouch: false,
 

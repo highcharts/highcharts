@@ -2444,7 +2444,7 @@ var Chart = /** @class */ (function () {
         var chart = this, lang = defaultOptions.lang, btnOptions = chart.options.chart.resetZoomButton, theme = btnOptions.theme, states = theme.states, alignTo = (btnOptions.relativeTo === 'chart' ||
             btnOptions.relativeTo === 'spaceBox' ?
             null :
-            'plotBox');
+            this.scrollablePlotBox || 'plotBox');
         /**
          * @private
          */

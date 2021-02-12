@@ -91,6 +91,42 @@ QUnit.test('series.centerInCategory', function (assert) {
         '#14910: Group stack should not be removed on redraw'
     );
 
+    chart.update({
+        chart: {
+            type: 'columnrange'
+        },
+        series: [
+            {
+                name: 'Tokyo',
+                data: [2, null, 2, null]
+            },
+            {
+                name: 'Warsaw',
+                data: [2, [3, 5], 1]
+            },
+            {
+                name: 'Madrid',
+                data: [null, 3]
+            },
+            {
+                name: 'Another',
+                data: [1, 2, 4, [2, 6]]
+            },
+            {
+                name: 'Test',
+                data: [1, null, 4]
+            }
+        ]
+    });
+
+    const point = chart.series[3].points[3];
+    const tickX = chart.xAxis[0].ticks[3].mark.element.getBBox().x;
+    assert.ok(
+        chart.plotLeft + point.shapeArgs.x < tickX &&
+            chart.plotLeft + point.shapeArgs.x + point.shapeArgs.width > tickX,
+        '#15045: Point should be centered on the tick'
+    );
+
     /*
     chart.series[1].setData([
         [0, 2],
