@@ -45,8 +45,7 @@ var DataTableRow = /** @class */ (function () {
         this.converter = converter;
         if (typeof cells.id === 'string') {
             this.id = cells.id;
-            if (cells.id === 'NULL' &&
-                DataTableRow.NULL) {
+            if (cells.id === 'NULL') {
                 return DataTableRow.NULL;
             }
         }
@@ -142,12 +141,12 @@ var DataTableRow = /** @class */ (function () {
      *
      * @emits DataTableRow#deleteCell
      * @emits DataTableRow#afterDeleteCell
+     * @emits DataTableRow#afterChangeRow
      */
     DataTableRow.prototype.deleteCell = function (cellName, eventDetail) {
         var row = this, cells = row.cells, cellValue = cells[cellName];
         if (cellName === 'id' ||
-            row.id === 'NULL' ||
-            !row.hasCell(cellName)) {
+            row.id === 'NULL') {
             return false;
         }
         row.emit({
@@ -168,47 +167,6 @@ var DataTableRow = /** @class */ (function () {
             detail: eventDetail
         });
         return true;
-    };
-    /**
-     * Removes a cell and returns the content of the cell.
-     * @param {string} cellName
-     * The name of the cell to remove.
-     * Cells with the name `id` cannot be removed, and will return `undefined`.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {DataTableRow.CellType}
-     * Returns the value of the removed cell.
-     *
-     * @emits DataTableRow#removeCell
-     * @emits DataTableRow#afterRemoveCell
-     */
-    DataTableRow.prototype.removeCell = function (cellName, eventDetail) {
-        var row = this, cells = row.cells, cellValue = cells[cellName];
-        if (cellName === 'id' ||
-            row.id === 'NULL' ||
-            !row.hasCell(cellName)) {
-            return void 0;
-        }
-        row.emit({
-            type: 'removeCell',
-            cellName: cellName,
-            cellValue: cellValue,
-            detail: eventDetail
-        });
-        row.deleteCell(cellName, eventDetail); // delete row.cells[cellName];
-        row.emit({
-            type: 'afterRemoveCell',
-            cellName: cellName,
-            cellValue: cellValue,
-            detail: eventDetail
-        });
-        row.emit({
-            type: 'afterChangeRow',
-            detail: eventDetail
-        });
-        return cellValue;
     };
     /**
      * Emits an event on this row to all registered callbacks of the given
@@ -339,52 +297,7 @@ var DataTableRow = /** @class */ (function () {
      * True, if a cell with the name exists.
      */
     DataTableRow.prototype.hasCell = function (cellName) {
-        return (this.getCellNames().indexOf(cellName) !== -1);
-    };
-    /**
-     * Adds a cell to this row.
-     *
-     * @param {string} cellName
-     * Name of the cell.
-     *
-     * @param {DataTableRow.CellType} cellValue
-     * Value of the cell.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {boolean}
-     * Returns true, if the cell was added to the row. Returns false, if `id`
-     * was used as cell name, or if the cell already exists.
-     *
-     * @emits DataTableRow#insertCell
-     * @emits DataTableRow#afterInsertCell
-     */
-    DataTableRow.prototype.insertCell = function (cellName, cellValue, eventDetail) {
-        var row = this, cells = row.cells;
-        if (cellName === 'id' ||
-            row.id === 'NULL' ||
-            row.hasCell(cellName)) {
-            return false;
-        }
-        row.emit({
-            type: 'insertCell',
-            cellName: cellName,
-            cellValue: cellValue,
-            detail: eventDetail
-        });
-        cells[cellName] = cellValue;
-        row.emit({
-            type: 'afterInsertCell',
-            cellName: cellName,
-            cellValue: cellValue,
-            detail: eventDetail
-        });
-        row.emit({
-            type: 'afterChangeRow',
-            detail: eventDetail
-        });
-        return true;
+        return (this.getCellNames().indexOf(cellName) >= 0);
     };
     /**
      * Checks if this row is null; therefor an instance of `DataTableRow.NULL`.
@@ -411,7 +324,33 @@ var DataTableRow = /** @class */ (function () {
         return addEvent(this, type, callback);
     };
     /**
-     * Updates or inserts a cell in this row.
+     * Deletes a cell and returns the content of the cell.
+     *
+     * @param {string} cellName
+     * The name of the cell to remove.
+     * Cells with the name `id` cannot be removed, and will return `undefined`.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataTableRow.CellType}
+     * Returns the value of the removed cell.
+     *
+     * @emits DataTableRow#deleteCell
+     * @emits DataTableRow#afterDeleteCell
+     * @emits DataTableRow#afterChangeRow
+     */
+    DataTableRow.prototype.removeCell = function (cellName, eventDetail) {
+        var row = this, cells = row.cells, cellValue = cells[cellName];
+        if (cellName === 'id' ||
+            row.id === 'NULL') {
+            return void 0;
+        }
+        row.deleteCell(cellName, eventDetail); // delete row.cells[cellName];
+        return cellValue;
+    };
+    /**
+     * Sets a cell in this row.
      *
      * @param {string} cellName
      * Name of the cell.
@@ -423,17 +362,61 @@ var DataTableRow = /** @class */ (function () {
      * Custom information for pending events.
      *
      * @return {boolean}
-     * True, if the cell was set, otherwise false.
+     * Returns true, if the cell was set in this row. Returns false, if `id`
+     * was used as cell name, or row is null.
      *
-     * @emits DataTableRow#insertCell
-     * @emits DataTableRow#afterInsertCell
-     * @emits DataTableRow#updateCell
-     * @emits DataTableRow#afterUpdateCell
+     * @emits DataTableRow#setCell
+     * @emits DataTableRow#afterSetCell
+     * @emits DataTableRow#afterChangeRow
      */
     DataTableRow.prototype.setCell = function (cellName, cellValue, eventDetail) {
-        var row = this;
-        return (row.updateCell(cellName, cellValue, eventDetail) ||
-            row.insertCell(cellName, cellValue, eventDetail));
+        var _a;
+        return this.setCells((_a = {}, _a[cellName] = cellValue, _a), eventDetail);
+    };
+    /**
+     * Updates and inserts cells in this row.
+     *
+     * @param {Record<string,DataTableRow.CellType>} cells
+     * Cells as a dictionary of names and values.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * True, if all cells were set, otherwise false.
+     *
+     * @emits DataTableRow#setCell
+     * @emits DataTableRow#afterSetCell
+     * @emits DataTableRow#afterChangeRow
+     */
+    DataTableRow.prototype.setCells = function (cells, eventDetail) {
+        var row = this, rowCells = this.cells, cellNames = Object.keys(cells);
+        if (cellNames.indexOf('id') >= 0 ||
+            row.id === 'NULL') {
+            return false;
+        }
+        for (var i = 0, iEnd = cellNames.length, cellName = void 0, cellValue = void 0; i < iEnd; ++i) {
+            cellName = cellNames[i];
+            cellValue = cells[cellName];
+            row.emit({
+                type: 'setCell',
+                cellName: cellName,
+                cellValue: cellValue,
+                detail: eventDetail
+            });
+            rowCells[cellName] = cellValue;
+            row.emit({
+                type: 'afterSetCell',
+                cellName: cellName,
+                cellValue: cellValue,
+                detail: eventDetail
+            });
+        }
+        row.emit({
+            type: 'afterChangeRow',
+            detail: eventDetail
+        });
+        return true;
     };
     /**
      * Converts the row to a class JSON.
@@ -475,50 +458,6 @@ var DataTableRow = /** @class */ (function () {
             }
         }
         return json;
-    };
-    /**
-     * Updates the value of a cell in this row.
-     *
-     * @param {string} cellName
-     * Cell name in this row to update.
-     *
-     * @param {DataTableRow.CellType} cellValue
-     * Cell value to update to.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {boolean}
-     * True, if the cell was found and updated, otherwise false.
-     *
-     * @emits DataTableRow#updateCell
-     * @emits DataTableRow#afterUpdateCell
-     */
-    DataTableRow.prototype.updateCell = function (cellName, cellValue, eventDetail) {
-        var row = this, cells = row.cells;
-        if (cellName === 'id' ||
-            row.id === 'NULL' ||
-            !row.hasCell(cellName)) {
-            return false;
-        }
-        row.emit({
-            type: 'updateCell',
-            cellName: cellName,
-            cellValue: cellValue,
-            detail: eventDetail
-        });
-        cells[cellName] = cellValue;
-        row.emit({
-            type: 'afterUpdateCell',
-            cellName: cellName,
-            cellValue: cellValue,
-            detail: eventDetail
-        });
-        row.emit({
-            type: 'afterChangeRow',
-            detail: eventDetail
-        });
-        return true;
     };
     /* *
      *

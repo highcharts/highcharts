@@ -18,10 +18,8 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
         row.on('afterClearRow', registerEvent);
         row.on('deleteCell', registerEvent);
         row.on('afterDeleteCell', registerEvent);
-        row.on('insertCell', registerEvent);
-        row.on('afterInsertCell', registerEvent);
-        row.on('updateCell', registerEvent);
-        row.on('afterUpdateCell', registerEvent);
+        row.on('setCell', registerEvent);
+        row.on('afterSetCell', registerEvent);
         row.on('afterChangeRow', registerEvent);
     }
 
@@ -66,16 +64,16 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    dataTable.getRow('a').updateCell('text', 'test');
+    dataTable.getRow('a').setCell('text', 'test');
     assert.deepEqual(
         registeredEvents,
         [
-            'updateCell',
-            'afterUpdateCell',
+            'setCell',
+            'afterSetCell',
             'afterUpdateRow', // table gets informed first because of initial JSON
             'afterChangeRow',
         ],
-        'Events for DataTableRow.updateCell (1) should be in expected order.'
+        'Events for DataTableRow.setCell (1) should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -100,29 +98,29 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
     );
 
     registeredEvents.length = 0;
-    dataRow.insertCell('new', 'new');
+    dataRow.setCell('new', 'new');
     assert.deepEqual(
         registeredEvents,
         [
-            'insertCell',
-            'afterInsertCell',
+            'setCell',
+            'afterSetCell',
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events for DataTableRow.insertCell should be in expected order.'
+        'Events for DataTableRow.setCell (2) should be in expected order.'
     );
 
     registeredEvents.length = 0;
-    dataRow.updateCell('text', 'test');
+    dataRow.setCell('text', 'test');
     assert.deepEqual(
         registeredEvents,
         [
-            'updateCell',
-            'afterUpdateCell',
+            'setCell',
+            'afterSetCell',
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events for DataTableRow.updateCell (2) should be in expected order.'
+        'Events for DataTableRow.setCell (3) should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -135,7 +133,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events for DataTableRow.updateCell (2) should be in expected order.'
+        'Events for DataTableRow.deleteCell should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -377,7 +375,7 @@ QUnit.test('DataTable column methods', function (assert) {
         'DataTable should prioritize alias.'
     );
 
-    table.removeColumnAlias('population');
+    table.deleteColumnAlias('population');
     assert.notDeepEqual(
         table.getColumn('population'),
         table.getColumn('gdp'),
@@ -424,16 +422,6 @@ QUnit.test('DataTable column methods', function (assert) {
     assert.ok(
         table.deleteColumn('Cols'),
         'Deleting existing column returns true'
-    );
-
-    assert.notOk(
-        table.deleteColumn('Cols'),
-        'Trying to delete again returns false'
-    );
-
-    assert.notOk(
-        table.deleteColumn('nonexistantcolumn'),
-        'Deleting a non-existant column should return false.'
     );
 
     assert.notOk(

@@ -1,9 +1,9 @@
 import '../../../../code/es-modules/Core/Renderer/SVG/SVGRenderer.js';
 import GoogleSheetsStore from '../../../../code/es-modules/Data/Stores/GoogleSheetsStore.js';
-import GroupDataModifier from '../../../../code/es-modules/Data/Modifiers/GroupDataModifier.js';
+import GroupModifier from '../../../../code/es-modules/Data/Modifiers/GroupModifier.js';
 
-import ChainDataModifier from '../../../../code/es-modules/Data/Modifiers/ChainDataModifier.js';
-import RangeDataModifier from '../../../../code/es-modules/Data/Modifiers/RangeDataModifier.js';
+import ChainModifier from '../../../../code/es-modules/Data/Modifiers/ChainModifier.js';
+import RangeModifier from '../../../../code/es-modules/Data/Modifiers/RangeModifier.js';
 
 import DataSeriesConverter from '../../../../code/es-modules/Data/DataSeriesConverter.js';
 
@@ -61,8 +61,10 @@ Highcharts.chart('chart3', {
             y: 'customY'
         }
     });
-    const table = dataSeriesConverter.setDataTable(chart.series);
-    console.log('table from LINE series -> ', table);
+
+    dataSeriesConverter.updateDataTable(chart.series);
+    console.log(dataSeriesConverter.getAllSeriesData());
+    console.log('table from LINE series -> ', dataSeriesConverter.table);
 });
 
 Highcharts.stockChart('chart4', {
@@ -89,8 +91,11 @@ Highcharts.stockChart('chart4', {
             open: 'customOpen'
         }
     });
-    const table = dataSeriesConverter.setDataTable(chart.series);
-    console.log('table from OHLC series -> ', table);
+
+    dataSeriesConverter.updateDataTable(chart.series);
+    console.log(dataSeriesConverter.getAllSeriesData());
+    console.log(dataSeriesConverter.getSeriesData(chart.series[0].id));
+    console.log('table from OHLC series -> ', dataSeriesConverter.table);
 });
 
 const store = new GoogleSheetsStore(undefined, {
@@ -101,9 +106,9 @@ const store = new GoogleSheetsStore(undefined, {
     // endRow: 52
 });
 
-const modifierChain = new ChainDataModifier();
-const groupModifier = new GroupDataModifier({ groupColumn: 'Margin  (Trump)' });
-const rangeModifier = new RangeDataModifier({ ranges: [{ column: 'value', maxValue: 0, minValue: -999 }] });
+const modifierChain = new ChainModifier();
+const groupModifier = new GroupModifier({ groupColumn: 'Margin  (Trump)' });
+const rangeModifier = new RangeModifier({ ranges: [{ column: 'value', maxValue: 0, minValue: -999 }] });
 
 modifierChain.add(groupModifier);
 modifierChain.add(rangeModifier);

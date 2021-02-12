@@ -131,10 +131,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         if (typeof cells.id === 'string') {
             this.id = cells.id;
-            if (
-                cells.id === 'NULL' &&
-                DataTableRow.NULL
-            ) {
+            if (cells.id === 'NULL') {
                 return DataTableRow.NULL;
             }
         } else {
@@ -221,6 +218,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      *
      * @emits DataTableRow#deleteCell
      * @emits DataTableRow#afterDeleteCell
+     * @emits DataTableRow#afterChangeRow
      */
     public deleteCell(
         cellName: string,
@@ -232,8 +230,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         if (
             cellName === 'id' ||
-            row.id === 'NULL' ||
-            !row.hasCell(cellName)
+            row.id === 'NULL'
         ) {
             return false;
         }
@@ -261,59 +258,6 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
         return true;
     }
 
-    /**
-     * Removes a cell and returns the content of the cell.
-     * @param {string} cellName
-     * The name of the cell to remove.
-     * Cells with the name `id` cannot be removed, and will return `undefined`.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {DataTableRow.CellType}
-     * Returns the value of the removed cell.
-     *
-     * @emits DataTableRow#removeCell
-     * @emits DataTableRow#afterRemoveCell
-     */
-    public removeCell(
-        cellName: string,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): DataTableRow.CellType {
-        const row = this,
-            cells = row.cells,
-            cellValue = cells[cellName];
-
-        if (
-            cellName === 'id' ||
-            row.id === 'NULL' ||
-            !row.hasCell(cellName)
-        ) {
-            return void 0;
-        }
-
-        row.emit({
-            type: 'removeCell',
-            cellName,
-            cellValue,
-            detail: eventDetail
-        });
-
-        row.deleteCell(cellName, eventDetail); // delete row.cells[cellName];
-
-        row.emit({
-            type: 'afterRemoveCell',
-            cellName,
-            cellValue,
-            detail: eventDetail
-        });
-        row.emit({
-            type: 'afterChangeRow',
-            detail: eventDetail
-        });
-
-        return cellValue;
-    }
     /**
      * Emits an event on this row to all registered callbacks of the given
      * event.
@@ -459,65 +403,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * True, if a cell with the name exists.
      */
     public hasCell(cellName: string): boolean {
-        return (this.getCellNames().indexOf(cellName) !== -1);
-    }
-
-    /**
-     * Adds a cell to this row.
-     *
-     * @param {string} cellName
-     * Name of the cell.
-     *
-     * @param {DataTableRow.CellType} cellValue
-     * Value of the cell.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {boolean}
-     * Returns true, if the cell was added to the row. Returns false, if `id`
-     * was used as cell name, or if the cell already exists.
-     *
-     * @emits DataTableRow#insertCell
-     * @emits DataTableRow#afterInsertCell
-     */
-    public insertCell(
-        cellName: string,
-        cellValue: DataTableRow.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): boolean {
-        const row = this,
-            cells = row.cells;
-
-        if (
-            cellName === 'id' ||
-            row.id === 'NULL' ||
-            row.hasCell(cellName)
-        ) {
-            return false;
-        }
-
-        row.emit({
-            type: 'insertCell',
-            cellName,
-            cellValue,
-            detail: eventDetail
-        });
-
-        cells[cellName] = cellValue;
-
-        row.emit({
-            type: 'afterInsertCell',
-            cellName,
-            cellValue,
-            detail: eventDetail
-        });
-        row.emit({
-            type: 'afterChangeRow',
-            detail: eventDetail
-        });
-
-        return true;
+        return (this.getCellNames().indexOf(cellName) >= 0);
     }
 
     /**
@@ -550,7 +436,44 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     }
 
     /**
-     * Updates or inserts a cell in this row.
+     * Deletes a cell and returns the content of the cell.
+     *
+     * @param {string} cellName
+     * The name of the cell to remove.
+     * Cells with the name `id` cannot be removed, and will return `undefined`.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataTableRow.CellType}
+     * Returns the value of the removed cell.
+     *
+     * @emits DataTableRow#deleteCell
+     * @emits DataTableRow#afterDeleteCell
+     * @emits DataTableRow#afterChangeRow
+     */
+    public removeCell(
+        cellName: string,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTableRow.CellType {
+        const row = this,
+            cells = row.cells,
+            cellValue = cells[cellName];
+
+        if (
+            cellName === 'id' ||
+            row.id === 'NULL'
+        ) {
+            return void 0;
+        }
+
+        row.deleteCell(cellName, eventDetail); // delete row.cells[cellName];
+
+        return cellValue;
+    }
+
+    /**
+     * Sets a cell in this row.
      *
      * @param {string} cellName
      * Name of the cell.
@@ -562,23 +485,86 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * Custom information for pending events.
      *
      * @return {boolean}
-     * True, if the cell was set, otherwise false.
+     * Returns true, if the cell was set in this row. Returns false, if `id`
+     * was used as cell name, or row is null.
      *
-     * @emits DataTableRow#insertCell
-     * @emits DataTableRow#afterInsertCell
-     * @emits DataTableRow#updateCell
-     * @emits DataTableRow#afterUpdateCell
+     * @emits DataTableRow#setCell
+     * @emits DataTableRow#afterSetCell
+     * @emits DataTableRow#afterChangeRow
      */
     public setCell(
         cellName: string,
         cellValue: DataTableRow.CellType,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
-        const row = this;
-        return (
-            row.updateCell(cellName, cellValue, eventDetail) ||
-            row.insertCell(cellName, cellValue, eventDetail)
-        );
+        return this.setCells({ [cellName]: cellValue }, eventDetail);
+    }
+
+    /**
+     * Updates and inserts cells in this row.
+     *
+     * @param {Record<string,DataTableRow.CellType>} cells
+     * Cells as a dictionary of names and values.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * True, if all cells were set, otherwise false.
+     *
+     * @emits DataTableRow#setCell
+     * @emits DataTableRow#afterSetCell
+     * @emits DataTableRow#afterChangeRow
+     */
+    public setCells(
+        cells: Record<string, DataTableRow.CellType>,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        const row = this,
+            rowCells = this.cells,
+            cellNames = Object.keys(cells);
+
+        if (
+            cellNames.indexOf('id') >= 0 ||
+            row.id === 'NULL'
+        ) {
+            return false;
+        }
+
+        for (
+            let i = 0,
+                iEnd = cellNames.length,
+                cellName: string,
+                cellValue: DataTableRow.CellType;
+            i < iEnd;
+            ++i
+        ) {
+            cellName = cellNames[i];
+            cellValue = cells[cellName];
+
+            row.emit({
+                type: 'setCell',
+                cellName,
+                cellValue,
+                detail: eventDetail
+            });
+
+            rowCells[cellName] = cellValue;
+
+            row.emit({
+                type: 'afterSetCell',
+                cellName,
+                cellValue,
+                detail: eventDetail
+            });
+        }
+
+        row.emit({
+            type: 'afterChangeRow',
+            detail: eventDetail
+        });
+
+        return true;
     }
 
     /**
@@ -602,7 +588,12 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
             json.id = this.id;
         }
 
-        for (let i = 0, iEnd = cellNames.length; i < iEnd; ++i) {
+        for (
+            let i = 0,
+                iEnd = cellNames.length;
+            i < iEnd;
+            ++i
+        ) {
             name = cellNames[i];
             value = cells[name];
 
@@ -629,64 +620,6 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         return json;
     }
-
-    /**
-     * Updates the value of a cell in this row.
-     *
-     * @param {string} cellName
-     * Cell name in this row to update.
-     *
-     * @param {DataTableRow.CellType} cellValue
-     * Cell value to update to.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {boolean}
-     * True, if the cell was found and updated, otherwise false.
-     *
-     * @emits DataTableRow#updateCell
-     * @emits DataTableRow#afterUpdateCell
-     */
-    public updateCell(
-        cellName: string,
-        cellValue: DataTableRow.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): boolean {
-        const row = this,
-            cells = row.cells;
-
-        if (
-            cellName === 'id' ||
-            row.id === 'NULL' ||
-            !row.hasCell(cellName)
-        ) {
-            return false;
-        }
-
-        row.emit({
-            type: 'updateCell',
-            cellName,
-            cellValue,
-            detail: eventDetail
-        });
-
-        cells[cellName] = cellValue;
-
-        row.emit({
-            type: 'afterUpdateCell',
-            cellName,
-            cellValue,
-            detail: eventDetail
-        });
-        row.emit({
-            type: 'afterChangeRow',
-            detail: eventDetail
-        });
-
-        return true;
-    }
-
 }
 
 /* *
@@ -706,9 +639,7 @@ namespace DataTableRow {
     export interface CellEventObject extends DataEventEmitter.EventObject {
         readonly type: (
             'deleteCell'|'afterDeleteCell'|
-            'removeCell'|'afterRemoveCell'|
-            'insertCell'|'afterInsertCell'|
-            'updateCell'|'afterUpdateCell'
+            'setCell'|'afterSetCell'
         );
         readonly cellName: string;
         readonly cellValue: CellType;

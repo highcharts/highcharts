@@ -30,7 +30,7 @@ test('GoogleDataStore', function (assert) {
             e.table.getRow(1).getCellNames().includes('null'),
             'Columns where the first value is of type `null`, should be assigned an unique name'
         )
-        e.table.getRow(1).insertCell('null');
+        e.table.getRow(1).setCell('null');
         assert.ok(
             e.table.getRow(1).getCellNames().includes('null'),
             'A string value of `null` is ok'

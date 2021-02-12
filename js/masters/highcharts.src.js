@@ -9,6 +9,7 @@
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import Utilities from '../Core/Utilities.js';
+import AST from '../Core/Renderer/HTML/AST.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
 import '../Core/Renderer/HTML/HTMLElement.js';
 import '../Core/Renderer/HTML/HTMLRenderer.js';
@@ -36,6 +37,8 @@ import '../Series/Pie/PieSeries.js';
 import '../Core/Series/DataLabels.js';
 import '../Extensions/OverlappingDataLabels.js';
 import '../Core/Responsive.js';
+
+// Utilities
 Highcharts.addEvent = Utilities.addEvent;
 Highcharts.arrayMax = Utilities.arrayMax;
 Highcharts.arrayMin = Utilities.arrayMin;
@@ -82,5 +85,9 @@ Highcharts.timeUnits = Utilities.timeUnits;
 Highcharts.uniqueKey = Utilities.uniqueKey;
 Highcharts.useSerialIds = Utilities.useSerialIds;
 Highcharts.wrap = Utilities.wrap;
+
+// Classes
+Highcharts.AST = AST;
 Highcharts.Series = Series;
+
 export default Highcharts;

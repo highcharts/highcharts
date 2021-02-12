@@ -25,6 +25,7 @@ const SOURCE_GLOBS = [
     'js/Core/Chart/GanttChart.js',
     'js/Core/Chart/StockChart.js',
     'js/Core/Color/Color.js',
+    'js/Core/Renderer/HTML/AST.js',
     'js/Core/Renderer/SVG/SVGElement.js',
     'js/Core/Renderer/SVG/SVGRenderer.js',
     'js/Extensions/DataGrouping.js',
