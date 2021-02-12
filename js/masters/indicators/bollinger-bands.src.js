@@ -6,7 +6,7 @@
  *
  * Indicator series type for Highstock
  *
- * (c) 2010-2019 Paweł Fus
+ * (c) 2010-2021 Paweł Fus
  *
  * License: www.highcharts.com/license
  */

@@ -6,7 +6,7 @@
  *
  * Indicator series type for Highstock
  *
- * (c) 2010-2019 Wojciech Chmiel
+ * (c) 2010-2021 Wojciech Chmiel
  *
  * License: www.highcharts.com/license
  */

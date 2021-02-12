@@ -59,18 +59,6 @@ const {
 
 /* *
  *
- *  Declarations
- *
- * */
-
-declare module '../../Core/Series/SeriesLike' {
-    interface SeriesLike {
-        invertable?: boolean;
-    }
-}
-
-/* *
- *
  *  Class
  *
  * */
@@ -1155,7 +1143,7 @@ interface SankeySeries extends Highcharts.NodesSeries {
     destroy: Highcharts.NodesMixin['destroy'];
     forceDL: boolean;
     init(chart: Chart, options: SankeySeriesOptions): void;
-    invertable: boolean;
+    invertible: boolean;
     isCartesian: boolean;
     orderNodes: boolean;
     pointArrayMap: Array<string>;
@@ -1170,7 +1158,7 @@ extend(SankeySeries.prototype, {
     createNode: NodesMixin.createNode,
     destroy: NodesMixin.destroy,
     forceDL: true,
-    invertable: true,
+    invertible: true,
     isCartesian: false,
     orderNodes: true,
     pointArrayMap: ['from', 'to'],

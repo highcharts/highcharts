@@ -1187,11 +1187,14 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
 chartProto.collectionsWithUpdate.push('annotations');
 // Let chart.update() create annoations on demand
 chartProto.collectionsWithInit.annotations = [chartProto.addAnnotation];
-chartProto.callbacks.push(function (chart) {
-    chart.annotations = [];
-    if (!chart.options.annotations) {
-        chart.options.annotations = [];
+// Create lookups initially
+addEvent(Chart, 'afterInit', function () {
+    this.annotations = [];
+    if (!this.options.annotations) {
+        this.options.annotations = [];
     }
+});
+chartProto.callbacks.push(function (chart) {
     chart.plotBoxClip = this.renderer.clipRect(this.plotBox);
     chart.controlPointsGroup = chart.renderer
         .g('control-points')
@@ -1199,8 +1202,14 @@ chartProto.callbacks.push(function (chart) {
         .clip(chart.plotBoxClip)
         .add();
     chart.options.annotations.forEach(function (annotationOptions, i) {
-        var annotation = chart.initAnnotation(annotationOptions);
-        chart.options.annotations[i] = annotation.options;
+        if (
+        // Verify that it has not been previously added in a responsive rule
+        !chart.annotations.some(function (annotation) {
+            return annotation.options === annotationOptions;
+        })) {
+            var annotation = chart.initAnnotation(annotationOptions);
+            chart.options.annotations[i] = annotation.options;
+        }
     });
     chart.drawAnnotations();
     addEvent(chart, 'redraw', chart.drawAnnotations);

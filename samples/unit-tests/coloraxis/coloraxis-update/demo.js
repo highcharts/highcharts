@@ -62,7 +62,7 @@ QUnit.test('Color axis updates', function (assert) {
 QUnit.test('Color axis update with responsive rules', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'heatmap',
+            type: 'pie', // #14395
             width: 600,
             height: 400
         },

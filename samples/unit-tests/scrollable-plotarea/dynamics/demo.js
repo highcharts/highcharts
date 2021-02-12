@@ -6,17 +6,28 @@ QUnit.test('Test dynamic behaviour of Scrollable PlotArea', function (assert) {
                 minWidth: 2000,
                 scrollPositionX: 1
             }
-        }
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
     });
 
     chart.setTitle({ text: 'New title' });
 
-    assert.equal(
-        chart.title.element.parentNode.parentNode.classList.contains(
-            'highcharts-fixed'
-        ),
-        true,
+    assert.ok(
+        chart.fixedRenderer.box.contains(chart.title.element),
         'Title should be outside the scrollable plot area (#11966)'
+    );
+
+    chart.update({
+        yAxis: {
+            lineWidth: 1
+        }
+    });
+
+    assert.ok(
+        chart.fixedRenderer.box.contains(chart.yAxis[0].axisGroup.element),
+        'Y-axis should be outside the scrollable plot area (#8862)'
     );
 });
 
@@ -101,3 +112,27 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test('#12517: Reset zoom button', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            scrollablePlotArea: {
+                minWidth: 2000
+            },
+            zoomType: 'x'
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+
+    const controller = new TestController(chart);
+    controller.pan([200, 200], [300, 200]);
+
+    const button = chart.resetZoomButton;
+
+    assert.ok(
+        button.translateX + button.width < chart.chartWidth,
+        'Reset zoom button should be within chart'
+    );
+});

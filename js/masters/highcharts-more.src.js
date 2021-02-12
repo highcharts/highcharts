@@ -3,7 +3,7 @@
  * @module highcharts/highcharts-more
  * @requires highcharts
  *
- * (c) 2009-2018 Torstein Honsi
+ * (c) 2009-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

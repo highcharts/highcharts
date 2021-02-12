@@ -11,7 +11,7 @@ import H from '../../Globals.js';
 import U from '../../Utilities.js';
 import AST from '../HTML/AST.js';
 var doc = H.doc, SVG_NS = H.SVG_NS;
-var attr = U.attr, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
+var attr = U.attr, erase = U.erase, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
 /**
  * SVG Text Builder
  * @private
@@ -305,6 +305,16 @@ var TextBuilder = /** @class */ (function () {
             }
         };
         nodes.forEach(modifyChild);
+        // Remove empty spans from the beginning because SVG's getBBox doesn't
+        // count empty lines. The use case is tooltip where the header is empty.
+        while (nodes[0]) {
+            if (nodes[0].tagName === 'tspan' && !nodes[0].children) {
+                nodes.splice(0, 1);
+            }
+            else {
+                break;
+            }
+        }
     };
     /*
      * Truncate the text node contents to a given length. Used when the css

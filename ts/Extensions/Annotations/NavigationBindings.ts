@@ -536,7 +536,6 @@ class NavigationBindings {
             !closestPolyfill(clickEvent.target as any, '.' + PREFIX + 'popup')
         ) {
             fireEvent(navigation, 'closePopup');
-            navigation.deselectAnnotation();
         }
 
         if (!selectedButton || !selectedButton.start) {
@@ -1085,7 +1084,6 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
             );
         } else {
             // Deselect current:
-            navigation.deselectAnnotation();
             fireEvent(navigation, 'closePopup');
         }
         // Let bubble event to chart.click:
@@ -1487,6 +1485,10 @@ setOptions({
             }
         }
     }
+});
+
+addEvent(NavigationBindings, 'closePopup', function (this: NavigationBindings): void {
+    this.deselectAnnotation();
 });
 
 export default NavigationBindings;

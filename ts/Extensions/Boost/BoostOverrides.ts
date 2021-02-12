@@ -566,6 +566,16 @@ Series.prototype.destroyGraphics = function (): void {
             (series as any)[prop] = (series as any)[prop].destroy();
         }
     });
+
+    if ((this as any).getZonesGraphs) {
+        const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
+        props.forEach((prop): void => {
+            const zoneGraph: Highcharts.SVGElement = (this as any)[prop[0]];
+            if (zoneGraph) {
+                (this as any)[prop[0]] = zoneGraph.destroy();
+            }
+        });
+    }
 };
 
 // Set default options

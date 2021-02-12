@@ -5,7 +5,7 @@
  *
  * ColorAxis module
  *
- * (c) 2012-2019 Pawel Potaczek
+ * (c) 2012-2021 Pawel Potaczek
  *
  * License: www.highcharts.com/license
  */

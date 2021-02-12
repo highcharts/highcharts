@@ -30,12 +30,14 @@ Highcharts.chart('container', {
             ['CEO', 'CTO'],
             ['CEO', 'CPO'],
             ['CEO', 'CSO'],
-            ['CEO', 'CMO'],
             ['CEO', 'HR'],
             ['CTO', 'Product'],
             ['CTO', 'Web'],
             ['CSO', 'Sales'],
-            ['CMO', 'Market']
+            ['HR', 'Market'],
+            ['CSO', 'Market'],
+            ['HR', 'Market'],
+            ['CTO', 'Market']
         ],
         levels: [{
             level: 0,
@@ -66,42 +68,28 @@ Highcharts.chart('container', {
             id: 'CEO',
             title: 'CEO',
             name: 'Grethe Hjetland',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132317/Grethe.jpg'
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131126/Highsoft_03862_.jpg'
         }, {
             id: 'HR',
             title: 'HR/CFO',
             name: 'Anne Jorunn Fjærestad',
             color: '#007ad0',
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132314/AnneJorunn.jpg',
-            column: 3,
-            offset: '75%'
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131210/Highsoft_04045_.jpg'
         }, {
             id: 'CTO',
             title: 'CTO',
             name: 'Christer Vasseng',
-            column: 4,
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12140620/Christer.jpg',
-            layout: 'hanging'
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131120/Highsoft_04074_.jpg'
         }, {
             id: 'CPO',
             title: 'CPO',
             name: 'Torstein Hønsi',
-            column: 4,
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12131849/Torstein1.jpg'
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131213/Highsoft_03998_.jpg'
         }, {
             id: 'CSO',
             title: 'CSO',
             name: 'Anita Nesse',
-            column: 4,
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/12132313/Anita.jpg',
-            layout: 'hanging'
-        }, {
-            id: 'CMO',
-            title: 'CMO',
-            name: 'Vidar Brekke',
-            column: 4,
-            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2018/11/13105551/Vidar.jpg',
-            layout: 'hanging'
+            image: 'https://wp-assets.highcharts.com/www-highcharts-com/blog/wp-content/uploads/2020/03/17131156/Highsoft_03834_.jpg'
         }, {
             id: 'Product',
             name: 'Product developers'
@@ -113,7 +101,8 @@ Highcharts.chart('container', {
             name: 'Sales team'
         }, {
             id: 'Market',
-            name: 'Marketing team'
+            name: 'Marketing team',
+            column: 5
         }],
         colorByPoint: false,
         color: '#007ad0',
