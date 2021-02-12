@@ -9,7 +9,7 @@
  * */
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
-var attr = U.attr, createElement = U.createElement, discardElement = U.discardElement, error = U.error, objectEach = U.objectEach, splat = U.splat;
+var attr = U.attr, createElement = U.createElement, discardElement = U.discardElement, error = U.error, isString = U.isString, objectEach = U.objectEach, splat = U.splat;
 /**
  * Serialized form of an SVG/HTML definition, including children.
  *
@@ -71,7 +71,7 @@ var AST = /** @class */ (function () {
             }
             if (['background', 'dynsrc', 'href', 'lowsrc', 'src']
                 .indexOf(key) !== -1) {
-                valid = /^(http|\/)/.test(val);
+                valid = isString(val) && AST.allowedReferences.some(function (ref) { return val.indexOf(ref) === 0; });
             }
             if (!valid) {
                 error("Highcharts warning: Invalid attribute '" + key + "' in config");
@@ -377,6 +377,27 @@ var AST = /** @class */ (function () {
         'y1',
         'y2',
         'zIndex'
+    ];
+    /**
+     * The list of allowed references for referring attributes like `href` and
+     * `src`. Attribute values will only be allowed if they start with one of
+     * these strings.
+     *
+     * @example
+     * // Allow tel:
+     * Highcharts.AST.allowedReferences.push('tel:');
+     *
+     * @name Highcharts.AST.allowedReferences
+     * @static
+     */
+    AST.allowedReferences = [
+        'https://',
+        'http://',
+        'mailto:',
+        '/',
+        '../',
+        './',
+        '#'
     ];
     return AST;
 }());

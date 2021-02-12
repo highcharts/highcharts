@@ -12,12 +12,12 @@ import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
 import U from '../../Utilities.js';
-import { SVGDOMElement } from '../DOMElementType';
 const {
     attr,
     createElement,
     discardElement,
     error,
+    isString,
     objectEach,
     splat
 } = U;
@@ -225,6 +225,28 @@ class AST {
     ];
 
     /**
+     * The list of allowed references for referring attributes like `href` and
+     * `src`. Attribute values will only be allowed if they start with one of
+     * these strings.
+     *
+     * @example
+     * // Allow tel:
+     * Highcharts.AST.allowedReferences.push('tel:');
+     *
+     * @name Highcharts.AST.allowedReferences
+     * @static
+     */
+    public static allowedReferences = [
+        'https://',
+        'http://',
+        'mailto:',
+        '/',
+        '../',
+        './',
+        '#'
+    ];
+
+    /**
      * Filter an object of SVG or HTML attributes against the allow list.
      *
      * @static
@@ -248,7 +270,9 @@ class AST {
                 ['background', 'dynsrc', 'href', 'lowsrc', 'src']
                     .indexOf(key) !== -1
             ) {
-                valid = /^(http|\/)/.test(val);
+                valid = isString(val) && AST.allowedReferences.some(
+                    (ref): boolean => val.indexOf(ref) === 0
+                );
             }
             if (!valid) {
                 error(`Highcharts warning: Invalid attribute '${key}' in config`);
