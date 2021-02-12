@@ -4,8 +4,9 @@
  *
  * */
 
-import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
+import type { PointMarkerOptions } from '../../Core/Series/PointOptions';
+import type { SeriesDataSortingOptions } from '../../Core/Series/SeriesOptions';
 
 /* *
  *
@@ -15,6 +16,9 @@ import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 
 export interface DataPlotOptions {
     dataLabels?: DataLabelOptions;
+    dataSorting?: SeriesDataSortingOptions;
+    index?: number;
+    keys?: Array<string>;
     markerOptions?: PointMarkerOptions;
     zIndex?: number;
 }

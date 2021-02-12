@@ -93,6 +93,8 @@ class DataPoint {
 
     public graphic?: SVGElement;
 
+    public index?: number;
+
     public readonly options: DataPointOptions;
 
     public readonly series: DataSeries;
@@ -168,7 +170,7 @@ class DataPoint {
                 point.update(
                     DataPoint.getPointOptionsFromTableRow(
                         this,
-                        series.pointArrayMap
+                        series.options.keys || series.pointArrayMap
                     ) || {},
                     false,
                     false

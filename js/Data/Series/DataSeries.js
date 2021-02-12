@@ -11,6 +11,7 @@ import DataPoint from './DataPoint.js';
 import DataTable from '../DataTable.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import SortModifier from '../Modifiers/SortModifier.js';
 import U from '../../Core/Utilities.js';
 var cleanRecursively = U.cleanRecursively, extend = U.extend, fireEvent = U.fireEvent, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
 /* *
@@ -167,15 +168,10 @@ var DataSeries = /** @class */ (function () {
     DataSeries.prototype.setData = function (data) {
         DEBUG && console.log('DataSeries.setData');
         var series = this;
-        if (series.table.getRowCount() > 0) {
-            // @todo find point/rows to update
-        }
-        else {
-            series.setTable(DataSeries.getTableFromSeriesOptions({
-                data: data,
-                keys: series.pointArrayMap
-            }));
-        }
+        series.setTable(DataSeries.getTableFromSeriesOptions({
+            data: data,
+            keys: series.pointArrayMap
+        }));
     };
     /** @private */
     DataSeries.prototype.setOptions = function (options) {
@@ -197,42 +193,27 @@ var DataSeries = /** @class */ (function () {
      */
     DataSeries.prototype.setTable = function (table) {
         DEBUG && console.log('DataSeries.setTable');
-        var series = this, seriesData = series.data, seriesDataLength = seriesData.length, tableRows = table.getAllRows(), tableRowsLength = tableRows.length, SeriesPoint = series.pointClass;
+        var series = this, dataSorting = series.options.dataSorting, pointsToKeep = [], seriesData = series.data, seriesDataLength = seriesData.length, tableRows = table.getAllRows(), tableRowsLength = tableRows.length, PointClass = series.pointClass;
         if (series.table === table) {
             return;
         }
+        if (dataSorting && dataSorting.enabled) {
+            table = (new SortModifier({
+                orderByColumn: series.pointArrayMap[0],
+                orderInColumn: 'x'
+            })).execute(table);
+        }
         series.destroyTableListeners();
         series.table = table;
-        for (var i = 0, iEnd = tableRowsLength, point = void 0, tableRow = void 0; i < iEnd; ++i) {
-            point = seriesData[i];
-            tableRow = tableRows[i];
-            if (tableRow.isNull()) {
-                if (point) {
-                    point.destroy();
-                }
-                seriesData[i] = null;
-            }
-            else if (point &&
-                point.tableRow !== tableRow) {
-                point.setTableRow(tableRow);
-            }
-            else {
-                seriesData[i] = new SeriesPoint(series, tableRow, i);
-            }
-        }
-        if (seriesDataLength > tableRowsLength) {
-            for (var i = tableRowsLength, iEnd = seriesDataLength, point = void 0; i < iEnd; ++i) {
-                point = seriesData[i];
-                if (point) {
-                    point.destroy();
-                }
-            }
-            seriesData.length = tableRowsLength;
-        }
         series.tableListeners.push(table.on('afterInsertRow', function (e) {
             if (e.type === 'afterInsertRow') {
-                var index = e.index, row = e.row;
-                seriesData.splice(index, 0, new DataPoint(series, row, index));
+                var index = e.index, row = e.row, point = new PointClass(series, row, index);
+                if (index >= seriesData.length) {
+                    seriesData[index] = point;
+                }
+                else {
+                    seriesData.splice(index, 0, point);
+                }
             }
         }), table.on('afterDeleteRow', function (e) {
             if (e.type === 'afterUpdateRow') {
@@ -240,7 +221,58 @@ var DataSeries = /** @class */ (function () {
                 seriesData.splice(index, 1);
             }
         }));
-        // series.tableListener =  ---> point listener?
+        for (var i = 0, iEnd = tableRowsLength, point = void 0, pointTableRow = void 0, tableRow = void 0; i < iEnd; ++i) {
+            point = seriesData[i];
+            tableRow = tableRows[i];
+            if (!tableRow.autoId) {
+                for (var j = 0, jEnd = seriesData.length, id = tableRow.id; j < jEnd; ++j) {
+                    point = seriesData[j];
+                    if (point &&
+                        point.tableRow.id === id) {
+                        break;
+                    }
+                }
+                if (!point) {
+                    point = seriesData[i];
+                }
+            }
+            if (tableRow.isNull()) {
+                if (point) {
+                    point.destroy();
+                    point = null;
+                }
+                seriesData[i] = null;
+            }
+            else if (point) {
+                pointTableRow = point.tableRow;
+                if (pointTableRow.id !== tableRow.id) {
+                    point.setTableRow(tableRow);
+                }
+                else if (pointTableRow !== tableRow) {
+                    pointTableRow.setCells(tableRow.getAllCells());
+                }
+            }
+            else {
+                point = new PointClass(series, tableRow, i);
+                seriesData[i] = point;
+            }
+            if (point) {
+                pointsToKeep.push(point);
+            }
+        }
+        if (seriesDataLength > tableRowsLength) {
+            for (var i = 0, iEnd = seriesDataLength, point = void 0; i < iEnd; ++i) {
+                point = seriesData[i];
+                if (point) {
+                    if (!pointsToKeep.indexOf(point)) {
+                        point.destroy();
+                    }
+                    else {
+                        point.index = i;
+                    }
+                }
+            }
+        }
     };
     DataSeries.prototype.translate = function () {
         DEBUG && console.log('DataSeries.translate');
@@ -252,7 +284,11 @@ var DataSeries = /** @class */ (function () {
         var series = this;
         options = cleanRecursively(options, series.options);
         fireEvent(series, 'update', { options: options });
-        series.options = merge(series.options, options);
+        series.options = merge(series.options, {
+            animation: false,
+            index: pick(series.options.index, series.index)
+        }, options);
+        series.setData(options.data || []);
         fireEvent(series, 'afterUpdate');
         if (pick(redraw, true)) {
             series.chart.redraw();

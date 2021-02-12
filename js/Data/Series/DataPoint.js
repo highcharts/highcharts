@@ -75,7 +75,7 @@ var DataPoint = /** @class */ (function () {
             }
             point.tableRow = tableRow;
             point.tableRowListener = tableRow.on('afterChangeRow', function () {
-                point.update(DataPoint.getPointOptionsFromTableRow(this, series.pointArrayMap) || {}, false, false);
+                point.update(DataPoint.getPointOptionsFromTableRow(this, series.options.keys || series.pointArrayMap) || {}, false, false);
                 series.isDirty = true;
                 series.isDirtyData = true;
                 // POC by Torstein

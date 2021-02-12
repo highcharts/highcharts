@@ -3,6 +3,9 @@ import '../../../../code/es-modules/Data/Series/DataSeries.js';
 
 Highcharts.chart('chart', {
     debug: true,
+    chart: {
+        width: 600
+    },
     title: {
         text: 'DataSeries study'
     },
@@ -11,11 +14,12 @@ Highcharts.chart('chart', {
     },
     series: [{
         type: 'data',
-        data: [1, 2, 3]
+        data: (new Array(50))
     }]
 }, function (chart) {
-    const table = chart.series[0].table;
+    const table = chart.series[0].table,
+        tableRowCount = table.getRowCount();
     window.setInterval(function () {
-        table.getRow(Math.floor(Math.random() * 3)).updateCell('y', Math.random() * 10);
-    }, 3000);
+        table.getRow(Math.floor(Math.random() * tableRowCount)).updateCell('y', Math.random() * 30);
+    }, 1000);
 });

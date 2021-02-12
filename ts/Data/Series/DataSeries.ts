@@ -11,9 +11,7 @@ import type Chart from '../../Core/Chart/Chart';
 import type DataPlotOptions from './DataPlotOptions';
 import type DataPointOptions from './DataPointOptions';
 import type DataSeriesOptions from './DataSeriesOptions';
-import type DataTableRow from '../DataTableRow';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type SeriesLike from '../../Core/Series/SeriesLike';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
@@ -21,8 +19,10 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import CS from '../../Core/Series/Series.js';
 import DataPoint from './DataPoint.js';
 import DataTable from '../DataTable.js';
+import DataTableRow from '../DataTableRow.js';
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
+import SortModifier from '../Modifiers/SortModifier.js';
 import U from '../../Core/Utilities.js';
 const {
     cleanRecursively,
@@ -109,6 +109,8 @@ class DataSeries {
     public readonly data: Array<(this['pointClass']['prototype']|null)>;
 
     public group?: SVGElement;
+
+    public index?: number;
 
     public isDirty?: boolean;
 
@@ -299,9 +301,7 @@ class DataSeries {
             let i = 0,
                 iEnd = points.length,
                 point: (DataPoint|null);
-
             i < iEnd;
-
             ++i
         ) {
             point = points[i];
@@ -313,20 +313,16 @@ class DataSeries {
 
     /** @deprecated */
     public setData(
-        data: Array<DataPointOptions|PointShortOptions|undefined>
+        data: Array<(DataPointOptions|PointShortOptions|undefined)>
     ): void {
         DEBUG && console.log('DataSeries.setData');
 
         const series = this;
 
-        if (series.table.getRowCount() > 0) {
-            // @todo find point/rows to update
-        } else {
-            series.setTable(DataSeries.getTableFromSeriesOptions({
-                data: data as any,
-                keys: series.pointArrayMap
-            }));
-        }
+        series.setTable(DataSeries.getTableFromSeriesOptions({
+            data: data as any,
+            keys: series.pointArrayMap
+        }));
     }
 
     /** @private */
@@ -370,67 +366,33 @@ class DataSeries {
     ): void {
         DEBUG && console.log('DataSeries.setTable');
 
+        type PointType = typeof PointClass['prototype'];
+
         const series = this,
+            dataSorting = series.options.dataSorting,
+            pointsToKeep: Array<PointType> = [],
             seriesData = series.data,
             seriesDataLength = seriesData.length,
             tableRows = table.getAllRows(),
             tableRowsLength = tableRows.length,
-            SeriesPoint = series.pointClass;
+            PointClass = series.pointClass;
 
         if (series.table === table) {
             return;
         }
 
+        if (dataSorting && dataSorting.enabled) {
+            table = (
+                new SortModifier({
+                    orderByColumn: series.pointArrayMap[0],
+                    orderInColumn: 'x'
+                })
+            ).execute(table);
+        }
+
         series.destroyTableListeners();
 
         series.table = table;
-
-        for (
-            let i = 0,
-                iEnd = tableRowsLength,
-                point: (this['pointClass']['prototype']|null),
-                tableRow: DataTableRow;
-
-            i < iEnd;
-
-            ++i
-        ) {
-            point = seriesData[i];
-            tableRow = tableRows[i];
-            if (tableRow.isNull()) {
-                if (point) {
-                    point.destroy();
-                }
-                seriesData[i] = null;
-            } else if (
-                point &&
-                point.tableRow !== tableRow
-            ) {
-                point.setTableRow(tableRow);
-            } else {
-                seriesData[i] = new SeriesPoint(series, tableRow, i);
-            }
-        }
-
-        if (seriesDataLength > tableRowsLength) {
-            for (
-                let i = tableRowsLength,
-                    iEnd = seriesDataLength,
-                    point: (this['pointClass']['prototype']|null);
-
-                i < iEnd;
-
-                ++i
-            ) {
-                point = seriesData[i];
-                if (point) {
-                    point.destroy();
-                }
-            }
-
-            seriesData.length = tableRowsLength;
-        }
-
         series.tableListeners.push(
             table.on('afterInsertRow', function (
                 this: DataTable,
@@ -438,10 +400,16 @@ class DataSeries {
             ): void {
                 if (e.type === 'afterInsertRow') {
                     const {
-                        index,
-                        row
-                    } = e;
-                    seriesData.splice(index, 0, new DataPoint(series, row, index));
+                            index,
+                            row
+                        } = e,
+                        point = new PointClass(series, row, index);
+
+                    if (index >= seriesData.length) {
+                        seriesData[index] = point;
+                    } else {
+                        seriesData.splice(index, 0, point);
+                    }
                 }
             }),
             table.on('afterDeleteRow', function (
@@ -455,7 +423,81 @@ class DataSeries {
             })
         );
 
-        // series.tableListener =  ---> point listener?
+        for (
+            let i = 0,
+                iEnd = tableRowsLength,
+                point: (PointType|null),
+                pointTableRow: DataTableRow,
+                tableRow: DataTableRow;
+            i < iEnd;
+            ++i
+        ) {
+            point = seriesData[i];
+            tableRow = tableRows[i];
+
+            if (!tableRow.autoId) {
+                for (
+                    let j = 0,
+                        jEnd = seriesData.length,
+                        id = tableRow.id;
+
+                    j < jEnd;
+
+                    ++j
+                ) {
+                    point = seriesData[j];
+                    if (
+                        point &&
+                        point.tableRow.id === id
+                    ) {
+                        break;
+                    }
+                }
+                if (!point) {
+                    point = seriesData[i];
+                }
+            }
+
+            if (tableRow.isNull()) {
+                if (point) {
+                    point.destroy();
+                    point = null;
+                }
+                seriesData[i] = null;
+            } else if (point) {
+                pointTableRow = point.tableRow;
+                if (pointTableRow.id !== tableRow.id) {
+                    point.setTableRow(tableRow);
+                } else if (pointTableRow !== tableRow) {
+                    pointTableRow.setCells(tableRow.getAllCells());
+                }
+            } else {
+                point = new PointClass(series, tableRow, i);
+                seriesData[i] = point;
+            }
+            if (point) {
+                pointsToKeep.push(point);
+            }
+        }
+
+        if (seriesDataLength > tableRowsLength) {
+            for (
+                let i = 0,
+                    iEnd = seriesDataLength,
+                    point: (PointType|null);
+                i < iEnd;
+                ++i
+            ) {
+                point = seriesData[i];
+                if (point) {
+                    if (!pointsToKeep.indexOf(point)) {
+                        point.destroy();
+                    } else {
+                        point.index = i;
+                    }
+                }
+            }
+        }
     }
 
     public translate(): void {
@@ -478,7 +520,16 @@ class DataSeries {
 
         fireEvent(series, 'update', { options });
 
-        series.options = merge(series.options, options);
+        series.options = merge(
+            series.options,
+            {
+                animation: false,
+                index: pick(series.options.index, series.index)
+            },
+            options
+        );
+
+        series.setData(options.data || []);
 
         fireEvent(series, 'afterUpdate');
 
