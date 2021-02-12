@@ -125,4 +125,12 @@ QUnit.test('RangeSelector.dropdown', assert => {
         isSelectInsideChart(),
         'Select should be outside chart'
     );
+
+    chart.update({
+        rangeSelector: {
+            buttons: [],
+            dropdown: 'always'
+        }
+    });
+    assert.ok(true, '#15124: Attempting to collapse with no buttons should not throw');
 });

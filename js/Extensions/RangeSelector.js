@@ -1732,7 +1732,7 @@ var RangeSelector = /** @class */ (function () {
         }
         var align = options.buttonPosition.align;
         this.positionButtons();
-        if (align === 'right' || align === 'center') {
+        if (buttons.length > 0 && (align === 'right' || align === 'center')) {
             this.alignButtonGroup(xOffsetForExportButton, buttons[this.currentButtonIndex()].getBBox().width);
         }
         this.showDropdown();
@@ -1788,7 +1788,7 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.showDropdown = function () {
         var _a = this, buttonGroup = _a.buttonGroup, buttons = _a.buttons, chart = _a.chart, dropdown = _a.dropdown;
-        if (buttonGroup && dropdown) {
+        if (buttons.length > 0 && buttonGroup && dropdown) {
             var translateX = buttonGroup.translateX, translateY = buttonGroup.translateY;
             var bBox = buttons[this.currentButtonIndex()].getBBox();
             css(dropdown, {
