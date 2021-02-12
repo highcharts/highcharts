@@ -2442,7 +2442,7 @@ class RangeSelector {
 
         this.positionButtons();
 
-        if (align === 'right' || align === 'center') {
+        if (buttons.length > 0 && (align === 'right' || align === 'center')) {
             this.alignButtonGroup(
                 xOffsetForExportButton,
                 buttons[this.currentButtonIndex()].getBBox().width
@@ -2526,7 +2526,7 @@ class RangeSelector {
             dropdown
         } = this;
 
-        if (buttonGroup && dropdown) {
+        if (buttons.length > 0 && buttonGroup && dropdown) {
             const { translateX, translateY } = buttonGroup;
             const bBox = buttons[this.currentButtonIndex()].getBBox();
             css(dropdown, {
