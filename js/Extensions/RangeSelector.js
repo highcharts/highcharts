@@ -1256,7 +1256,9 @@ var RangeSelector = /** @class */ (function () {
                 height: 0,
                 zIndex: inputsZIndex
             });
-            this.renderButtons();
+            if (this.buttonOptions.length) {
+                this.renderButtons();
+            }
             // First create a wrapper outside the container in order to make
             // the inputs work and make export correct
             if (container.parentNode) {
@@ -1723,7 +1725,7 @@ var RangeSelector = /** @class */ (function () {
                 hasActiveButton = true;
             }
         });
-        if (!hasActiveButton && buttons.length > 0) {
+        if (!hasActiveButton) {
             if (dropdown) {
                 dropdown.selectedIndex = 0;
             }
@@ -1732,7 +1734,7 @@ var RangeSelector = /** @class */ (function () {
         }
         var align = options.buttonPosition.align;
         this.positionButtons();
-        if (buttons.length > 0 && (align === 'right' || align === 'center')) {
+        if (align === 'right' || align === 'center') {
             this.alignButtonGroup(xOffsetForExportButton, buttons[this.currentButtonIndex()].getBBox().width);
         }
         this.showDropdown();
@@ -1788,7 +1790,7 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.showDropdown = function () {
         var _a = this, buttonGroup = _a.buttonGroup, buttons = _a.buttons, chart = _a.chart, dropdown = _a.dropdown;
-        if (buttons.length > 0 && buttonGroup && dropdown) {
+        if (buttonGroup && dropdown) {
             var translateX = buttonGroup.translateX, translateY = buttonGroup.translateY;
             var bBox = buttons[this.currentButtonIndex()].getBBox();
             css(dropdown, {
