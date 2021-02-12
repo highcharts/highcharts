@@ -24,8 +24,8 @@ import type {
 } from './IKHOptions';
 import type IKHPoint from './IKHPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Point from '../../../Core/Series/Point';
-import type Series from '../../../Core/Series/Series';
+import type LinePoint from '../../../Series/Line/LinePoint';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Color from '../../../Core/Color/Color.js';
@@ -746,9 +746,10 @@ class IKHIndicator extends SMAIndicator {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
+        indicator.color = mainColor;
     }
 
-    public getGraphPath(points: Array<Point>): SVGPath {
+    public getGraphPath(points: Array<LinePoint>): SVGPath {
         var indicator = this,
             path: SVGPath = [],
             spanA: SVGPath,
@@ -782,7 +783,7 @@ class IKHIndicator extends SMAIndicator {
         return path;
     }
 
-    public getValues <TLinkedSeries extends Series>(
+    public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: IKHParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {

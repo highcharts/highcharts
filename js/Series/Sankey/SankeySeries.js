@@ -828,7 +828,7 @@ extend(SankeySeries.prototype, {
     createNode: NodesMixin.createNode,
     destroy: NodesMixin.destroy,
     forceDL: true,
-    invertable: true,
+    invertible: true,
     isCartesian: false,
     orderNodes: true,
     pointArrayMap: ['from', 'to'],

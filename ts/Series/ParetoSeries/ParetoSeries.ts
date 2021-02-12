@@ -18,9 +18,14 @@
 
 import type ParetoPoint from './ParetoPoint';
 import type ParetoSeriesOptions from './ParetoSeriesOptions';
+
 import DerivedSeriesMixin from '../../Mixins/DerivedSeries.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
-const { series: Series } = SeriesRegistry;
+const {
+    seriesTypes: {
+        line: LineSeries
+    }
+} = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
     correctFloat,
@@ -44,7 +49,7 @@ const {
  * @augments Highcharts.Series
  */
 
-class ParetoSeries extends Series {
+class ParetoSeries extends LineSeries {
 
     /* *
      *
@@ -75,7 +80,7 @@ class ParetoSeries extends Series {
      * @optionparent plotOptions.pareto
      */
     public static defaultOptions: ParetoSeriesOptions = merge(
-        Series.defaultOptions,
+        LineSeries.defaultOptions,
         {
             /**
              * Higher zIndex than column series to draw line above shapes.

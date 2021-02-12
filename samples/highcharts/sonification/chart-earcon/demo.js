@@ -10,6 +10,7 @@ var chart = Highcharts.chart('container', {
     },
     sonification: {
         duration: 7000,
+        masterVolume: 0.3,
         defaultInstrumentOptions: {
             minFrequency: 220,
             maxFrequency: 2200,
@@ -41,7 +42,17 @@ var chart = Highcharts.chart('container', {
                     }
                 ));
             }
-        }]
+        }],
+        events: {
+            onPointStart: function (e, point) {
+                point.onMouseOver();
+            },
+            onEnd: function () {
+                document.getElementById('sonify').style.visibility = 'visible';
+                document.getElementById('overlay').style.visibility = 'visible';
+                document.getElementById('stop').style.visibility = 'hidden';
+            }
+        }
     },
     series: [{
         data: [1, 2, 4, 5, 7, 9, 11, 13]
@@ -54,5 +65,16 @@ var chart = Highcharts.chart('container', {
 
 
 document.getElementById('sonify').onclick = function () {
+    document.getElementById('sonify').style.visibility = 'hidden';
+    document.getElementById('overlay').style.visibility = 'hidden';
+    document.getElementById('stop').style.visibility = 'visible';
     chart.sonify();
+    document.getElementById('stop').focus();
+};
+
+document.getElementById('stop').onclick = function () {
+    chart.cancelSonify();
+    document.getElementById('sonify').style.visibility = 'visible';
+    document.getElementById('overlay').style.visibility = 'visible';
+    document.getElementById('stop').style.visibility = 'hidden';
 };

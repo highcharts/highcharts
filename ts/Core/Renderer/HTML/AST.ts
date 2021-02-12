@@ -11,6 +11,9 @@
 import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
+const {
+    SVG_NS
+} = H;
 import U from '../../Utilities.js';
 const {
     attr,
@@ -57,6 +60,14 @@ declare global {
     }
 }
 
+// In IE8, DOMParser is undefined. IE9 and batik are only able to parse XML.
+let hasValidDOMParser = false;
+try {
+    hasValidDOMParser = Boolean(
+        new DOMParser().parseFromString('', 'text/html')
+    );
+} catch (e) { } // eslint-disable-line no-empty
+
 /**
  * Represents an AST
  * @private
@@ -71,7 +82,9 @@ class AST {
         'button',
         'caption',
         'circle',
+        'clipPath',
         'code',
+        'defs',
         'div',
         'em',
         'feComponentTransfer',
@@ -109,6 +122,7 @@ class AST {
         'style',
         'sub',
         'sup',
+        'svg',
         'table',
         'text',
         'thead',
@@ -135,6 +149,7 @@ class AST {
         'aria-roledescription',
         'aria-selected',
         'class',
+        'clip-path',
         'color',
         'colspan',
         'cx',
@@ -154,6 +169,7 @@ class AST {
         'opacity',
         'orient',
         'padding',
+        'paddingLeft',
         'patternUnits',
         'r',
         'refX',
@@ -187,6 +203,19 @@ class AST {
         'zIndex'
     ];
 
+    /**
+     * Filter attributes against the allow list.
+     *
+     * @private
+     * @static
+     *
+     * @function Highcharts.AST#filterUserAttributes
+     *
+     * @param {SVGAttributes} attributes The attributes to filter
+     *
+     * @return {SVGAttributes}
+     * The filtered attributes
+     */
     public static filterUserAttributes(
         attributes: SVGAttributes
     ): SVGAttributes {
@@ -214,7 +243,6 @@ class AST {
      * markup string. The markup is safely parsed by the AST class to avoid
      * XSS vulnerabilities.
      *
-     * @private
      * @static
      *
      * @function Highcharts.AST#setElementHTML
@@ -253,8 +281,9 @@ class AST {
      * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement}
      * The inserted node.
      */
-    public addToDOM(parent: Element): HTMLElement|SVGElement {
-        const NS = parent.namespaceURI || H.SVG_NS;
+    public addToDOM(
+        parent: Element
+    ): HTMLElement|SVGElement {
 
         /**
          * @private
@@ -285,6 +314,10 @@ class AST {
                         node = textNode;
 
                     } else if (AST.allowedTags.indexOf(tagName) !== -1) {
+                        const NS = tagName === 'svg' ?
+                            SVG_NS :
+                            (subParent.namespaceURI || SVG_NS);
+
                         const element = H.doc.createElementNS(NS, tagName);
                         const attributes = item.attributes || {};
 
@@ -352,19 +385,15 @@ class AST {
         }
 
         const nodes: Highcharts.ASTNode[] = [];
+
         let doc;
         let body;
-        if (
-            // IE9 is only able to parse XML
-            /MSIE 9.0/.test(navigator.userAgent) ||
-            // IE8-
-            typeof DOMParser === 'undefined'
-        ) {
+        if (hasValidDOMParser) {
+            doc = new DOMParser().parseFromString(markup, 'text/html');
+        } else {
             body = createElement('div');
             body.innerHTML = markup;
             doc = { body };
-        } else {
-            doc = new DOMParser().parseFromString(markup, 'text/html');
         }
 
         const appendChildNodes = (

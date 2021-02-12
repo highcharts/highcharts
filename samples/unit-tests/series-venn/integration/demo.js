@@ -149,6 +149,11 @@ QUnit.test(
             ]
         });
 
+        assert.ok(
+            chart.series[0].points[0].graphic.attr('class'),
+            '#15009: CSS class should be set'
+        );
+
         assert.strictEqual(
             chart.series[0].points[2].graphic.opacity,
             0.75,

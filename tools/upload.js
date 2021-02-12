@@ -62,6 +62,7 @@ const uploadFiles = params => {
         bucket,
         profile,
         callback,
+        contentCallback,
         onError = Promise.reject,
         files,
         s3Params = {}
@@ -86,6 +87,9 @@ const uploadFiles = params => {
                 let content;
                 try {
                     content = fs.readFileSync(from, '');
+                    if (contentCallback) {
+                        content = contentCallback(from, content);
+                    }
                 } catch (err) {
                     errors.push(err);
                 }

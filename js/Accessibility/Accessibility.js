@@ -34,6 +34,7 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/Options.js';
 import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
+import HTMLUtilities from './Utils/HTMLUtilities.js';
 import './A11yI18n.js';
 import './FocusBorder.js';
 // Add default options
@@ -45,6 +46,7 @@ merge(true, defaultOptions, defaultOptionsA11Y, {
 });
 // Expose functionality on Highcharts namespace
 H.A11yChartUtilities = ChartUtilities;
+H.A11yHTMLUtilities = HTMLUtilities;
 H.KeyboardNavigationHandler = KeyboardNavigationHandler;
 H.AccessibilityComponent = AccessibilityComponent;
 /* eslint-disable no-invalid-this, valid-jsdoc */

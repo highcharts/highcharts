@@ -89,7 +89,8 @@ var chart = Highcharts.chart('container', {
         accessibility: {
             description: 'Months of the year'
         },
-        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        crosshair: true
     }],
 
     yAxis: {

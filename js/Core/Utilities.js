@@ -1572,12 +1572,14 @@ function keys(obj) {
 function offset(el) {
     var docElem = doc.documentElement, box = (el.parentElement || el.parentNode) ?
         el.getBoundingClientRect() :
-        { top: 0, left: 0 };
+        { top: 0, left: 0, width: 0, height: 0 };
     return {
         top: box.top + (win.pageYOffset || docElem.scrollTop) -
             (docElem.clientTop || 0),
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
-            (docElem.clientLeft || 0)
+            (docElem.clientLeft || 0),
+        width: box.width,
+        height: box.height
     };
 }
 /* eslint-disable valid-jsdoc */

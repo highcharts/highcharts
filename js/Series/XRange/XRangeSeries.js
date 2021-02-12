@@ -397,6 +397,23 @@ var XRangeSeries = /** @class */ (function (_super) {
             'animate' :
             'attr');
     };
+    /**
+     * @private
+     * @function Highcharts.XRangeSeries#isPointInside
+     */
+    XRangeSeries.prototype.isPointInside = function (point) {
+        var shapeArgs = point.shapeArgs, plotX = point.plotX, plotY = point.plotY;
+        if (!shapeArgs) {
+            return _super.prototype.isPointInside.apply(this, arguments);
+        }
+        var isInside = typeof plotX !== 'undefined' &&
+            typeof plotY !== 'undefined' &&
+            plotY >= 0 &&
+            plotY <= this.yAxis.len &&
+            shapeArgs.x + shapeArgs.width >= 0 &&
+            plotX <= this.xAxis.len;
+        return isInside;
+    };
     /* *
      *
      * Static properties

@@ -9,12 +9,12 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     PPOOptions,
     PPOParamsOptions
 } from './PPOOptions';
 import type PPOPoint from './PPOPoint';
-import type Series from '../../../Core/Series/Series';
 
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
@@ -115,7 +115,7 @@ class PPOIndicator extends EMAIndicator {
         );
     }
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PPOParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries> | undefined) {

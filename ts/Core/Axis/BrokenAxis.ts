@@ -12,6 +12,7 @@
 
 import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisBreakBorderObject, AxisBreakObject } from './Types';
+import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
@@ -560,7 +561,7 @@ class BrokenAxis {
          * @return {Highcharts.SVGPathArray}
          * Gapped path
          */
-        seriesProto.gappedPath = function (): SVGPath {
+        seriesProto.gappedPath = function (this: LineSeries): SVGPath {
             var currentDataGrouping = this.currentDataGrouping,
                 groupingSize = currentDataGrouping && currentDataGrouping.gapSize,
                 gapSize = this.options.gapSize,

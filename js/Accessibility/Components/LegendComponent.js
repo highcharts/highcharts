@@ -215,7 +215,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         }
         var itemLabel = this.chart.langFormat('accessibility.legend.legendItem', {
             chart: this.chart,
-            itemName: item.name
+            itemName: stripHTMLTags(item.name)
         }), attribs = {
             tabindex: -1,
             'aria-pressed': item.visible,

@@ -6,7 +6,7 @@
  *
  * Indicator series type for Highstock
  *
- * (c) 2010-2019 Kacper Madej
+ * (c) 2010-2021 Kacper Madej
  *
  * License: www.highcharts.com/license
  */

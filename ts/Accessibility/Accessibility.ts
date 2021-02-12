@@ -85,6 +85,7 @@ declare global {
             points: Array<AccessibilityPoint>;
         }
         let A11yChartUtilities: A11yChartUtilities;
+        let A11yHTMLUtilities: typeof HTMLUtilities;
     }
 }
 
@@ -102,6 +103,7 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/Options.js';
 import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
+import HTMLUtilities from './Utils/HTMLUtilities.js';
 import './A11yI18n.js';
 import './FocusBorder.js';
 
@@ -122,9 +124,9 @@ merge(
 
 // Expose functionality on Highcharts namespace
 H.A11yChartUtilities = ChartUtilities;
+H.A11yHTMLUtilities = HTMLUtilities;
 H.KeyboardNavigationHandler = KeyboardNavigationHandler as any;
 H.AccessibilityComponent = AccessibilityComponent as any;
-
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

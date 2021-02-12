@@ -21,6 +21,7 @@ const {
     series: Series,
     seriesTypes: {
         area: AreaSeries,
+        line: LineSeries,
         scatter: ScatterSeries
     }
 } = SeriesRegistry;
@@ -97,7 +98,7 @@ class PolygonSeries extends ScatterSeries {
      *
      * */
     public getGraphPath(): SVGPath {
-        var graphPath: SVGPath = Series.prototype.getGraphPath.call(this),
+        var graphPath: SVGPath = LineSeries.prototype.getGraphPath.call(this),
             i = graphPath.length + 1;
 
         // Close all segments
