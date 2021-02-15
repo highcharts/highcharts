@@ -1,4 +1,6 @@
 import Layout from './layout/Layout';
+import type GUI from './layout/GUI';
+
 import U from '../Core/Utilities.js';
 
 const {
@@ -13,7 +15,10 @@ class Dashboard {
     * */
 
     protected static readonly defaultOptions: Dashboard.Options = {
-        layouts: []
+		gui: {
+			enabled: true,
+			layouts: []
+		}
         // components: []
     };
 
@@ -26,14 +31,16 @@ class Dashboard {
         renderTo: (string|globalThis.HTMLElement),
         options: Dashboard.Options
     ) {
-        this.options = merge(Dashboard.defaultOptions, options);
+		this.options = merge(Dashboard.defaultOptions, options);
+		this.layouts = [];
         /*
         * TODO
         *
-        * 1. loop over layouts + init
+        * 1. Loop over layouts + init
         * 2. Bindings elements
         *
         */
+	   this.setLayouts();
     }
 
     /* *
@@ -41,12 +48,31 @@ class Dashboard {
     *  Properties
     *
     * */
-    public readonly options: Dashboard.Options;
+	public readonly options: Dashboard.Options;
+	public layouts: Array<Layout>;
+	/* *
+     *
+     *  Functions
+     *
+     * */
+	public setLayouts(): void {
+		const gui = this.options.gui;
+		const layoutsOptions = gui.layouts;
+		for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
+            this.layouts.push(
+				new Layout(
+					gui.enabled,
+					layoutsOptions[i]
+				)
+			)
+        }
+	}
+	
 }
 
 namespace Dashboard {
     export interface Options {
-        layouts: Array<Layout.Options>;
+		gui: GUI.Options
         // components: Array<>;
     }
 }
