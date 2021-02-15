@@ -1771,7 +1771,9 @@ class RangeSelector {
                 zIndex: inputsZIndex
             });
 
-            this.renderButtons();
+            if (this.buttonOptions.length) {
+                this.renderButtons();
+            }
 
             // First create a wrapper outside the container in order to make
             // the inputs work and make export correct
@@ -2429,7 +2431,7 @@ class RangeSelector {
             }
         });
 
-        if (!hasActiveButton && buttons.length > 0) {
+        if (!hasActiveButton) {
             if (dropdown) {
                 dropdown.selectedIndex = 0;
             }

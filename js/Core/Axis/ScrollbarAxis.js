@@ -31,6 +31,18 @@ var ScrollbarAxis = /** @class */ (function () {
      * Scrollbar class to use.
      */
     ScrollbarAxis.compose = function (AxisClass, ScrollbarClass) {
+        var getExtremes = function (axis) {
+            var axisMin = pick(axis.options && axis.options.min, axis.min);
+            var axisMax = pick(axis.options && axis.options.max, axis.max);
+            return {
+                axisMin: axisMin,
+                axisMax: axisMax,
+                scrollMin: defined(axis.dataMin) ?
+                    Math.min(axisMin, axis.min, axis.dataMin, pick(axis.threshold, Infinity)) : axisMin,
+                scrollMax: defined(axis.dataMax) ?
+                    Math.max(axisMax, axis.max, axis.dataMax, pick(axis.threshold, -Infinity)) : axisMax
+            };
+        };
         // Wrap axis initialization and create scrollbar if enabled:
         addEvent(AxisClass, 'afterInit', function () {
             var axis = this;
@@ -42,9 +54,7 @@ var ScrollbarAxis = /** @class */ (function () {
                 axis.options.startOnTick = axis.options.endOnTick = false;
                 axis.scrollbar = new ScrollbarClass(axis.chart.renderer, axis.options.scrollbar, axis.chart);
                 addEvent(axis.scrollbar, 'changed', function (e) {
-                    var axisMin = pick(axis.options && axis.options.min, axis.min), axisMax = pick(axis.options && axis.options.max, axis.max), unitedMin = defined(axis.dataMin) ?
-                        Math.min(axisMin, axis.min, axis.dataMin) : axisMin, unitedMax = defined(axis.dataMax) ?
-                        Math.max(axisMax, axis.max, axis.dataMax) : axisMax, range = unitedMax - unitedMin, to, from;
+                    var _a = getExtremes(axis), axisMin = _a.axisMin, axisMax = _a.axisMax, unitedMin = _a.scrollMin, unitedMax = _a.scrollMax, range = unitedMax - unitedMin, to, from;
                     // #12834, scroll when show/hide series, wrong extremes
                     if (!defined(axisMin) || !defined(axisMax)) {
                         return;
@@ -78,9 +88,7 @@ var ScrollbarAxis = /** @class */ (function () {
         });
         // Wrap rendering axis, and update scrollbar if one is created:
         addEvent(AxisClass, 'afterRender', function () {
-            var axis = this, scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, pick(axis.dataMin, axis.min) // #6930
-            ), scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, pick(axis.dataMax, axis.max) // #6930
-            ), scrollbar = axis.scrollbar, offset = axis.axisTitleMargin + (axis.titleOffset || 0), scrollbarsOffsets = axis.chart.scrollbarsOffsets, axisMargin = axis.options.margin || 0, offsetsIndex, from, to;
+            var axis = this, _a = getExtremes(axis), scrollMin = _a.scrollMin, scrollMax = _a.scrollMax, scrollbar = axis.scrollbar, offset = axis.axisTitleMargin + (axis.titleOffset || 0), scrollbarsOffsets = axis.chart.scrollbarsOffsets, axisMargin = axis.options.margin || 0, offsetsIndex, from, to;
             if (scrollbar) {
                 if (axis.horiz) {
                     // Reserve space for labels/title

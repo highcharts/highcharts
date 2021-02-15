@@ -464,18 +464,49 @@ var SVGRenderer = /** @class */ (function () {
             // locally in the module.
             if (!defined(hasInternalReferenceBug)) {
                 var id = uniqueKey();
-                var svg = "<svg width=\"8\" height=\"8\">\n                <defs>\n                    <clipPath id=\"" + id + "\"><rect width=\"4\" height=\"4\" />\n                </defs>\n                <rect id=\"hitme\" width=\"8\" height=\"8\"\n                    clip-path=\"url(#" + id + ")\" fill=\"rgba(0,0,0,0.001)\" />\n                </svg>";
-                var div = createElement('div', void 0, {
+                var ast = new AST([{
+                        tagName: 'svg',
+                        attributes: {
+                            width: 8,
+                            height: 8
+                        },
+                        children: [{
+                                tagName: 'defs',
+                                children: [{
+                                        tagName: 'clipPath',
+                                        attributes: {
+                                            id: id
+                                        },
+                                        children: [{
+                                                tagName: 'rect',
+                                                attributes: {
+                                                    width: 4,
+                                                    height: 4
+                                                }
+                                            }]
+                                    }]
+                            }, {
+                                tagName: 'rect',
+                                attributes: {
+                                    id: 'hitme',
+                                    width: 8,
+                                    height: 8,
+                                    'clip-path': "url(#" + id + ")",
+                                    fill: 'rgba(0,0,0,0.001)'
+                                }
+                            }]
+                    }]);
+                var svg = ast.addToDOM(doc.body);
+                css(svg, {
                     position: 'fixed',
                     top: 0,
                     left: 0,
                     zIndex: 9e5
-                }, doc.body, true);
-                div.innerHTML = svg;
+                });
                 var hitElement = doc.elementFromPoint(6, 6);
                 hasInternalReferenceBug =
                     (hitElement && hitElement.id) === 'hitme';
-                doc.body.removeChild(div);
+                doc.body.removeChild(svg);
             }
             if (hasInternalReferenceBug) {
                 return win.location.href
