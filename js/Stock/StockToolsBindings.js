@@ -1609,7 +1609,7 @@ var stockToolsBindings = {
                 // line
                 lastPrice: {
                     enabled: !lastPrice,
-                    color: 'red'
+                    color: (options.lastPrice && options.lastPrice.color) || '#ff0000'
                 },
                 // label
                 lastVisiblePrice: {
