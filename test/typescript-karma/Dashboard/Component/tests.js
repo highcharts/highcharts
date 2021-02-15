@@ -4,6 +4,11 @@ import HTMLComponent from '/base/js/Dashboard/Component/HTMLComponent.js';
 import Component from '/base/js/Dashboard/Component/Component.js';
 import CSVStore from '/base/js/Data/Stores/CSVStore.js';
 
+import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
+import Stock from '/base/code/es-modules/masters/highstock.src.js';
+import Gantt from '/base/code/es-modules/masters/highcharts-gantt.src.js';
+import Maps from '/base/code/es-modules/masters/highmaps.src.js';
+
 const { test, only } = QUnit;
 
 /** @type {Component.Event['type'][]} */
@@ -301,4 +306,24 @@ test('HTMLComponent events', function (assert) {
 
     Component.removeComponent(component);
     Component.removeComponent(componentWithStore);
+});
+
+only('ChartComponent constructors', function (assert) {
+    const constructorMap = {
+        '': Highcharts,
+        'stock': Stock,
+        'maps': Maps,
+        'gantt': Gantt
+    }
+
+    Object.keys(constructorMap).forEach(HCType =>{
+        const component = new ChartComponent({
+            Highcharts: constructorMap[HCType],
+            chartConstructor: HCType,
+            chartOptions: {}
+        }).load();
+        // Test that the constructor creates a chart
+        assert.ok(component.chart, `Able to create a ${HCType} chart`);
+
+    })
 });

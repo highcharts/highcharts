@@ -31,12 +31,8 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 };
 import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
-// eslint-disable-next-line
-// @ts-ignore
-import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
-import 'https://code.highcharts.com/es-modules/Extensions/DraggablePoints.js';
-import 'https://code.highcharts.com/es-modules/Extensions/Exporting.js';
-import 'https://code.highcharts.com/es-modules/Extensions/ExportData.js';
+import H from '../../Core/Globals.js';
+var Highcharts = H;
 import U from '../../Core/Utilities.js';
 var createElement = U.createElement, merge = U.merge, uniqueKey = U.uniqueKey;
 var ChartComponent = /** @class */ (function (_super) {
@@ -47,6 +43,8 @@ var ChartComponent = /** @class */ (function (_super) {
         options = merge(ChartComponent.defaultOptions, options);
         _this = _super.call(this, options) || this;
         _this.options = options;
+        _this.charter = _this.options.Highcharts;
+        _this.chartConstructor = _this.options.chartConstructor;
         _this.type = 'chart';
         _this.chartContainer = createElement('figure');
         if (_this.options.chartClassName) {
@@ -55,10 +53,12 @@ var ChartComponent = /** @class */ (function (_super) {
         if (_this.options.chartID) {
             _this.chartContainer.id = _this.options.chartID;
         }
-        _this.chartOptions = _this.options.chartOptions;
+        _this.chartOptions = _this.options.chartOptions || {};
         // Extend via event.
         _this.on('resize', function (e) {
-            _this.chart.setSize(e.width, e.height);
+            if (_this.chart) {
+                _this.chart.setSize(e.width, e.height);
+            }
         });
         var table = (_a = _this.store) === null || _a === void 0 ? void 0 : _a.table;
         if (table) {
@@ -93,7 +93,9 @@ var ChartComponent = /** @class */ (function (_super) {
     ChartComponent.prototype.update = function (options) {
         var _a;
         _super.prototype.update.call(this, options);
-        this.chart.update(((_a = this.options) === null || _a === void 0 ? void 0 : _a.chartOptions) || {});
+        if (this.chart) {
+            this.chart.update(((_a = this.options) === null || _a === void 0 ? void 0 : _a.chartOptions) || {});
+        }
         this.emit({ type: 'afterUpdate' });
         return this;
     };
@@ -101,20 +103,44 @@ var ChartComponent = /** @class */ (function (_super) {
         var _a;
         var series = new DataSeriesConverter((_a = this.store) === null || _a === void 0 ? void 0 : _a.table, {})
             .getAllSeriesData();
-        this.chart.update({ series: series }, true);
+        if (this.chart) {
+            this.chart.update({ series: series }, true);
+        }
     };
     ChartComponent.prototype.initChart = function () {
         var _a;
-        // Handle series
         var series = new DataSeriesConverter((_a = this.store) === null || _a === void 0 ? void 0 : _a.table, {});
-        this.chartOptions.series = __spreadArrays(series.getAllSeriesData(), this.chartOptions.series);
-        this.chart = Highcharts.chart(this.chartContainer, this.chartOptions);
-        var _b = this.dimensions, width = _b.width, height = _b.height;
-        this.chart.setSize(width, height);
+        this.chartOptions.series = this.chartOptions.series ? __spreadArrays(series.getAllSeriesData(), this.chartOptions.series) :
+            series.getAllSeriesData();
+        this.constructChart();
+        if (this.chart) {
+            var _b = this.dimensions, width = _b.width, height = _b.height;
+            this.chart.setSize(width, height);
+        }
+    };
+    ChartComponent.prototype.constructChart = function () {
+        var constructorMap = {
+            '': 'chart',
+            stock: 'stockChart',
+            map: 'mapChart',
+            gantt: 'ganttChart'
+        };
+        if (this.chartConstructor !== 'chart') {
+            var constructor = constructorMap[this.chartConstructor];
+            if (this.charter[constructor]) {
+                this.chart = new this.charter[constructor](this.chartContainer, this.chartOptions);
+                return this.chart;
+            }
+        }
+        if (typeof this.charter.chart !== 'function') {
+            throw new Error('Chart constructor not found');
+        }
+        this.chart = this.charter.chart(this.chartContainer, this.chartOptions);
+        return this.chart;
     };
     ChartComponent.defaultOptions = __assign(__assign({}, Component.defaultOptions), { chartClassName: 'chart-container', chartID: 'chart-' + uniqueKey(), chartOptions: {
             series: []
-        } });
+        }, Highcharts: Highcharts, chartConstructor: 'chart' });
     return ChartComponent;
 }(Component));
 export default ChartComponent;

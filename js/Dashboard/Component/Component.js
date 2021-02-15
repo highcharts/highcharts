@@ -14,8 +14,8 @@ var createElement = U.createElement, merge = U.merge, fireEvent = U.fireEvent, a
 var Component = /** @class */ (function () {
     function Component(options) {
         this.tableEvents = [];
-        this.id = 'dashboard-component-' + uniqueKey();
         this.options = merge(Component.defaultOptions, options);
+        this.id = this.options.id;
         this.parentElement = this.options.parentElement;
         this.type = this.options.type;
         this.store = this.options.store;
@@ -28,6 +28,8 @@ var Component = /** @class */ (function () {
         this.element = createElement('div', {
             className: this.options.className
         });
+        // Add the component instance to the registry
+        Component.addComponent(this);
     }
     /**
      * Adds a component instance to the registry
@@ -62,6 +64,9 @@ var Component = /** @class */ (function () {
         var _this = this;
         var ids = this.getAllComponentIDs();
         return ids.map(function (id) { return _this.instanceRegistry[id]; });
+    };
+    Component.getComponentById = function (id) {
+        return this.instanceRegistry[id];
     };
     Component.relayMessage = function (sender, // Possibly layout?
     message, // should probably be a typical event with optional payloads
@@ -161,8 +166,6 @@ var Component = /** @class */ (function () {
                 e.message.callback.apply(_this);
             }
         });
-        // Add the component instance to the registry
-        Component.addComponent(this);
         return this;
     };
     /**
@@ -222,7 +225,8 @@ var Component = /** @class */ (function () {
     Component.defaultOptions = {
         className: 'highcharts-dashboard-component',
         parentElement: document.body,
-        type: ''
+        type: '',
+        id: 'dashboard-component-' + uniqueKey()
     };
     return Component;
 }());

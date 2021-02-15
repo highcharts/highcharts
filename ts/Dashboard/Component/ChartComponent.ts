@@ -1,13 +1,10 @@
-import type CSSObject from '../../Core/Renderer/CSSObject.js';
+import type CSSObject from '../../Core/Renderer/CSSObject';
+import type Chart from '../../Core/Chart/Chart';
 import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
-// eslint-disable-next-line
-// @ts-ignore
-import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
-import 'https://code.highcharts.com/es-modules/Extensions/DraggablePoints.js';
-import 'https://code.highcharts.com/es-modules/Extensions/Exporting.js';
-import 'https://code.highcharts.com/es-modules/Extensions/ExportData.js';
 
+import H from '../../Core/Globals.js';
+const Highcharts = H;
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -23,22 +20,29 @@ class ChartComponent extends Component<ChartComponent.Event> {
         chartID: 'chart-' + uniqueKey(),
         chartOptions: {
             series: []
-        }
+        },
+        Highcharts,
+        chartConstructor: 'chart'
     }
 
     public chartOptions: Highcharts.Options;
-    public chart: any;
+    public chart?: Chart;
     public chartContainer: HTMLElement;
     public options: ChartComponent.ComponentOptions;
+    public charter: typeof H;
+    public chartConstructor: ChartComponent.constructorType;
 
     constructor(options: Partial<ChartComponent.ComponentOptions>) {
         options = merge(
             ChartComponent.defaultOptions,
             options
         );
+
         super(options);
         this.options = options as ChartComponent.ComponentOptions;
 
+        this.charter = this.options.Highcharts;
+        this.chartConstructor = this.options.chartConstructor;
         this.type = 'chart';
 
         this.chartContainer = createElement('figure');
@@ -49,11 +53,13 @@ class ChartComponent extends Component<ChartComponent.Event> {
             this.chartContainer.id = this.options.chartID;
         }
 
-        this.chartOptions = this.options.chartOptions;
+        this.chartOptions = this.options.chartOptions || {};
 
         // Extend via event.
         this.on('resize', (e: Component.ResizeEvent): void => {
-            this.chart.setSize(e.width, e.height);
+            if (this.chart) {
+                this.chart.setSize(e.width, e.height);
+            }
         });
 
 
@@ -92,8 +98,9 @@ class ChartComponent extends Component<ChartComponent.Event> {
 
     public update(options: Partial<ChartComponent.ComponentOptions>): this {
         super.update(options);
-        this.chart.update(this.options?.chartOptions || {});
-
+        if (this.chart) {
+            this.chart.update(this.options?.chartOptions || {});
+        }
         this.emit({ type: 'afterUpdate' });
         return this;
     }
@@ -102,16 +109,46 @@ class ChartComponent extends Component<ChartComponent.Event> {
         const series = new DataSeriesConverter(this.store?.table, {})
             .getAllSeriesData();
 
-        this.chart.update({ series }, true);
+        if (this.chart) {
+            this.chart.update({ series }, true);
+        }
     }
 
     private initChart(): void {
-        // Handle series
         const series = new DataSeriesConverter(this.store?.table, {});
-        this.chartOptions.series = [...series.getAllSeriesData(), ...this.chartOptions.series];
-        this.chart = Highcharts.chart(this.chartContainer, this.chartOptions);
-        const { width, height } = this.dimensions;
-        this.chart.setSize(width, height);
+        this.chartOptions.series = this.chartOptions.series ?
+            [...series.getAllSeriesData(), ...this.chartOptions.series] :
+            series.getAllSeriesData();
+        this.constructChart();
+
+        if (this.chart) {
+            const { width, height } = this.dimensions;
+            this.chart.setSize(width, height);
+        }
+    }
+
+    private constructChart(): Chart {
+        const constructorMap = {
+            '': 'chart',
+            stock: 'stockChart',
+            map: 'mapChart',
+            gantt: 'ganttChart'
+        };
+
+        if (this.chartConstructor !== 'chart') {
+            const constructor = constructorMap[this.chartConstructor];
+            if ((this.charter as any)[constructor]) {
+                this.chart = new (this.charter as any)[constructor](this.chartContainer, this.chartOptions) as Chart;
+                return this.chart;
+            }
+        }
+
+        if (typeof this.charter.chart !== 'function') {
+            throw new Error('Chart constructor not found');
+        }
+
+        this.chart = this.charter.chart(this.chartContainer, this.chartOptions);
+        return this.chart;
     }
 
 }
@@ -119,6 +156,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
 export namespace ChartComponent {
 
     export type ComponentType = ChartComponent;
+
+    export type constructorType = 'chart' | 'stock' | 'map' | 'gantt';
     export interface Event extends Component.Event {
     }
     export interface UpdateEvent extends Component.UpdateEvent {
@@ -129,6 +168,8 @@ export namespace ChartComponent {
         chartClassName?: string;
         chartID?: string;
         style?: CSSObject;
+        Highcharts: typeof H;
+        chartConstructor: ChartComponent.constructorType;
     }
 }
 

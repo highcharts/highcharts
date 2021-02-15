@@ -55,10 +55,11 @@ namespace Component {
         // allow overwriting gui elements
         navigationBindings?: Highcharts.NavigationBindingsOptionsObject[];
         events?: Record<Event['type'], Function>;
+        id: string;
     }
 }
 
-abstract class Component<TEventObject extends Component.Event> {
+abstract class Component<TEventObject extends Component.Event = Component.Event> {
 
     /**
      *
@@ -112,6 +113,10 @@ abstract class Component<TEventObject extends Component.Event> {
         return ids.map((id): Component<any> => this.instanceRegistry[id]);
     }
 
+    public static getComponentById(id: string): Component | undefined {
+        return this.instanceRegistry[id];
+    }
+
     public static relayMessage(
         sender: Component<any>, // Possibly layout?
         message: (string | MessageEvent), // should probably be a typical event with optional payloads
@@ -137,7 +142,8 @@ abstract class Component<TEventObject extends Component.Event> {
     public static defaultOptions: Component.ComponentOptions = {
         className: 'highcharts-dashboard-component',
         parentElement: document.body,
-        type: ''
+        type: '',
+        id: 'dashboard-component-' + uniqueKey()
     }
 
     public parentElement: HTMLElement;
@@ -152,8 +158,8 @@ abstract class Component<TEventObject extends Component.Event> {
     protected hasLoaded: boolean;
 
     constructor(options: Partial<Component.ComponentOptions>) {
-        this.id = 'dashboard-component-' + uniqueKey();
         this.options = merge(Component.defaultOptions, options);
+        this.id = this.options.id;
         this.parentElement = this.options.parentElement;
         this.type = this.options.type;
         this.store = this.options.store;
@@ -167,6 +173,9 @@ abstract class Component<TEventObject extends Component.Event> {
         this.element = createElement('div', {
             className: this.options.className
         });
+
+        // Add the component instance to the registry
+        Component.addComponent(this);
     }
 
     public attachStore(store: DataStore<any>): void {
@@ -259,9 +268,6 @@ abstract class Component<TEventObject extends Component.Event> {
                 e.message.callback.apply(this);
             }
         });
-
-        // Add the component instance to the registry
-        Component.addComponent(this);
 
         return this;
     }
