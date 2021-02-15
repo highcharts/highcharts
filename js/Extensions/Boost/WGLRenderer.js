@@ -464,10 +464,10 @@ function GLRenderer(postRenderCallback) {
                 beginSegment();
                 continue;
             }
-            if (nx && nx >= xMin && nx <= xMax && !series.is('scatter')) {
+            if (nx && nx >= xMin && nx <= xMax) {
                 nextInside = true;
             }
-            if (px && px >= xMin && px <= xMax && !series.is('scatter')) {
+            if (px && px >= xMin && px <= xMax) {
                 prevInside = true;
             }
             if (isRange) {
