@@ -395,6 +395,19 @@ function downloadSVGLocal(
             }
         }
 
+        // Workaround for #15135, zero width spaces, which Highcharts uses to
+        // break lines, are not correctly rendered in PDF. Replace it with a
+        // regular space and offset by some pixels to compensate.
+        [].forEach.call(
+            svgElement.querySelectorAll('tspan'),
+            (tspan: SVGDOMElement): void => {
+                if (tspan.textContent === '\u200B') {
+                    tspan.textContent = ' ';
+                    tspan.setAttribute('dx', -5);
+                }
+            }
+        );
+
         win.svg2pdf(svgElement, pdf, { removeInvalid: true });
         return pdf.output('datauristring');
     }
