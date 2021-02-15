@@ -84,6 +84,56 @@ function getFakeMouseEvent(type) {
     return { type: type };
 }
 /**
+ * Get an appropriate heading level for an element. Corresponds to the
+ * heading level below the previous heading in the DOM.
+ *
+ * Note: Only detects previous headings in the DOM that are siblings,
+ * ancestors, or previous siblings of ancestors. Headings that are nested below
+ * siblings of ancestors (cousins et.al) are not picked up. This is because it
+ * is ambiguous whether or not the nesting is for layout purposes or indicates a
+ * separate section.
+ *
+ * @private
+ * @param {Highcharts.HTMLDOMElement} [element]
+ * @return {string} The heading tag name (h1, h2 etc).
+ * If no nearest heading is found, "p" is returned.
+ */
+function getHeadingTagNameForElement(element) {
+    var getIncreasedHeadingLevel = function (tagName) {
+        var headingLevel = parseInt(tagName.slice(1), 10);
+        var newLevel = Math.min(6, headingLevel + 1);
+        return 'h' + newLevel;
+    };
+    var isHeading = function (tagName) { return /H[1-6]/.test(tagName); };
+    var getPreviousSiblingsHeading = function (el) {
+        var sibling = el;
+        while (sibling = sibling.previousSibling) { // eslint-disable-line
+            var tagName = sibling.tagName || '';
+            if (isHeading(tagName)) {
+                return tagName;
+            }
+        }
+        return '';
+    };
+    var getHeadingRecursive = function (el) {
+        var prevSiblingsHeading = getPreviousSiblingsHeading(el);
+        if (prevSiblingsHeading) {
+            return getIncreasedHeadingLevel(prevSiblingsHeading);
+        }
+        // No previous siblings are headings, try parent node
+        var parent = el.parentElement;
+        if (!parent) {
+            return 'p';
+        }
+        var parentTagName = parent.tagName;
+        if (isHeading(parentTagName)) {
+            return getIncreasedHeadingLevel(parentTagName);
+        }
+        return getHeadingRecursive(parent);
+    };
+    return getHeadingRecursive(element);
+}
+/**
  * Remove an element from the DOM.
  * @private
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [element]
@@ -162,6 +212,7 @@ var HTMLUtilities = {
     escapeStringForHTML: escapeStringForHTML,
     getElement: getElement,
     getFakeMouseEvent: getFakeMouseEvent,
+    getHeadingTagNameForElement: getHeadingTagNameForElement,
     removeElement: removeElement,
     reverseChildNodes: reverseChildNodes,
     setElAttrs: setElAttrs,

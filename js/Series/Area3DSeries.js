@@ -10,19 +10,18 @@
 'use strict';
 import Math3D from '../Extensions/Math3D.js';
 var perspective = Math3D.perspective;
-import Series from '../Core/Series/Series.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-var seriesTypes = SeriesRegistry.seriesTypes;
+var _a = SeriesRegistry.seriesTypes, AreaSeriesClass = _a.area, LineSeriesClass = _a.line;
 import U from '../Core/Utilities.js';
 var pick = U.pick, wrap = U.wrap;
 /* eslint-disable no-invalid-this */
-wrap(seriesTypes.area.prototype, 'getGraphPath', function (proceed) {
+wrap(AreaSeriesClass.prototype, 'getGraphPath', function (proceed) {
     var series = this, svgPath = proceed.apply(series, [].slice.call(arguments, 1));
     // Do not do this if the chart is not 3D
     if (!series.chart.is3d()) {
         return svgPath;
     }
-    var getGraphPath = Series.prototype.getGraphPath, graphPath = [], options = series.options, stacking = options.stacking, bottomPath, bottomPoints = [], graphPoints = [], i, areaPath, connectNulls = pick(// #10574
+    var getGraphPath = LineSeriesClass.prototype.getGraphPath, graphPath = [], options = series.options, stacking = options.stacking, bottomPath, bottomPoints = [], graphPoints = [], i, areaPath, connectNulls = pick(// #10574
     options.connectNulls, stacking === 'percent'), translatedThreshold = Math.round(// #10909
     series.yAxis.getThreshold(options.threshold)), options3d;
     if (series.rawPointsX) {

@@ -58,9 +58,8 @@ QUnit.test(
     }
 );
 
-QUnit.test('Render scatter points (#4507)', function (assert) {
-    var UNDEFINED;
-    $('#container').highcharts({
+QUnit.test('Undefined and null z scatter points (#4507, #12548)', function (assert) {
+    const chart = Highcharts.chart('container', {
         chart: {
             options3d: {
                 enabled: true,
@@ -89,7 +88,8 @@ QUnit.test('Render scatter points (#4507)', function (assert) {
                 type: 'scatter',
                 data: [
                     {
-                        y: 100000
+                        y: 100000,
+                        z: null
                     },
                     {
                         y: 20000
@@ -108,10 +108,9 @@ QUnit.test('Render scatter points (#4507)', function (assert) {
         ]
     });
 
-    assert.strictEqual(
-        $('#container').highcharts().series[0].points[2].graphic !== UNDEFINED,
-        true,
-        'Valid placement'
+    assert.ok(
+        chart.series[0].points.every(p => p.graphic),
+        'All points should have rendered'
     );
 });
 

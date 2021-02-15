@@ -239,7 +239,7 @@ class ScatterSeries extends LineSeries {
                 this.graph.strokeWidth()
             )
         ) {
-            super.drawGraph.call(this);
+            super.drawGraph();
         }
     }
 

@@ -10,6 +10,6 @@ Highcharts.stockChart('container', {
     },
     series: [{
         type: 'line',
-        data: Array.from(Array(50)).map(() => Math.random() * 10)
+        data: Array.from({ length: 50 }, () => Math.random() * 10)
     }]
 });

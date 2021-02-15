@@ -306,6 +306,14 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         ]
     });
 
+    const colorBefore = chart.series[1].graphchikouLine.attr('stroke');
+    chart.redraw();
+    assert.strictEqual(
+        chart.series[1].graphchikouLine.attr('stroke'),
+        colorBefore,
+        '#15042: Line color should not change on redraw'
+    );
+
     assert.strictEqual(
         chart.series[0].points.length,
         chart.series[1].points.length -

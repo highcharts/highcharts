@@ -213,9 +213,16 @@ QUnit[Highcharts.hasWebGLSupport() ? 'test' : 'skip'](
     `Error handler while the series is not declared as an array of numbers and
     turbo threshold enabled, #13957.`,
     function (assert) {
-        Highcharts.addEvent(Highcharts.Chart, 'displayError', function (e) {
-            assert.strictEqual(e.code, 12, 'Error 12 should be invoked');
-        });
+        var done = assert.async(),
+            remove = Highcharts.addEvent(
+                Highcharts.Chart,
+                'displayError',
+                function (e) {
+                    assert.strictEqual(e.code, 12, 'Error 12 should be invoked');
+                    remove();
+                    done();
+                }
+            );
         Highcharts.stockChart('container', {
             series: [
                 {

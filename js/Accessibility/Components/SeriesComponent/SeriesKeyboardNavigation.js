@@ -93,11 +93,14 @@ function isSkipSeries(series) {
  * @return {boolean|number|undefined}
  */
 function isSkipPoint(point) {
+    var _a;
     var a11yOptions = point.series.chart.options.accessibility;
+    var pointA11yDisabled = ((_a = point.options.accessibility) === null || _a === void 0 ? void 0 : _a.enabled) === false;
     return point.isNull &&
         a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
         point.visible === false ||
         point.isInside === false ||
+        pointA11yDisabled ||
         isSkipSeries(point.series);
 }
 /**

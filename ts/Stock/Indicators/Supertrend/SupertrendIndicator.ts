@@ -10,7 +10,7 @@
 
 import type ColorType from '../../../Core/Color/ColorType';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type { SeriesOptions } from '../../../Core/Series/SeriesOptions';
 import type {
     SupertrendOptions,
@@ -513,7 +513,7 @@ class SupertrendIndicator extends SMAIndicator {
     //      Current Close > Current FINAL LOWERBAND
     //     ) THAN Current FINAL LOWERBAND
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: SupertrendParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

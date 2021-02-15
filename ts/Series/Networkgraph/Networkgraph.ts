@@ -25,15 +25,19 @@ import type {
     DataLabelOptions,
     DataLabelTextPathOptions
 } from '../../Core/Series/DataLabelOptions';
-import type LinePoint from '../Line/LinePoint';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
+import type {
+    SeriesOptions,
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
@@ -113,7 +117,7 @@ declare global {
             linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkTextPath?: DataLabelTextPathOptions;
         }
-        interface NetworkgraphPointOptions extends LinePointOptions, NodesPointOptions {
+        interface NetworkgraphPointOptions extends PointOptions, NodesPointOptions {
             color?: ColorType;
             colorIndex?: number;
             dashStyle?: string;
@@ -122,7 +126,7 @@ declare global {
             opacity?: number;
             width?: number;
         }
-        interface NetworkgraphSeriesOptions extends LineSeriesOptions, NodesSeriesOptions {
+        interface NetworkgraphSeriesOptions extends SeriesOptions, NodesSeriesOptions {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
@@ -131,7 +135,7 @@ declare global {
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
         }
-        class NetworkgraphPoint extends LinePoint implements DragNodesPoint, NodesPoint {
+        class NetworkgraphPoint extends Point implements DragNodesPoint, NodesPoint {
             public className: NodesPoint['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];

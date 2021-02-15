@@ -452,7 +452,7 @@ if (!svg) {
      */
     Pointer.prototype.normalize = function<T extends PointerEvent> (
         e: (T|MouseEvent|PointerEvent|TouchEvent),
-        chartPosition?: Highcharts.OffsetObject
+        chartPosition?: Highcharts.ChartPositionObject
     ): T {
 
         e = e || win.event;

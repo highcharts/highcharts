@@ -3,7 +3,7 @@
  * @module highcharts/themes/sunset
  * @requires highcharts
  *
- * (c) 2009-2019 Highsoft AS
+ * (c) 2009-2021 Highsoft AS
  *
  * License: www.highcharts.com/license
  */

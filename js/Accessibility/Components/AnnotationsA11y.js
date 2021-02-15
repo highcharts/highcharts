@@ -73,6 +73,7 @@ function getAnnotationLabelDescription(label) {
     var langFormatStr = 'accessibility.screenReaderSection.annotations.description' + pointsSelector;
     var context = {
         annotationText: labelText,
+        annotation: label,
         numPoints: numPoints,
         annotationPoint: pointValueDescriptions[0],
         additionalAnnotationPoints: pointValueDescriptions.slice(1)
@@ -106,7 +107,7 @@ function getAnnotationsInfoHTML(chart) {
         return '';
     }
     var annotationItems = getAnnotationListItems(chart);
-    return "<ul>" + annotationItems.join(' ') + "</ul>";
+    return "<ul style=\"list-style-type: none\">" + annotationItems.join(' ') + "</ul>";
 }
 /**
  * Return the texts for the annotation(s) connected to a point, or empty array

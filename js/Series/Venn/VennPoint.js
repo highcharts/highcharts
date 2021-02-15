@@ -57,7 +57,7 @@ var VennPoint = /** @class */ (function (_super) {
     return VennPoint;
 }(ScatterSeries.prototype.pointClass));
 extend(VennPoint.prototype, {
-    draw: DrawPointMixin.draw
+    draw: DrawPointMixin.drawPoint
 });
 /* *
  *

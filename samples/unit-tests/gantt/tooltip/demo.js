@@ -20,16 +20,18 @@ QUnit.test('Gantt tooltip', assert => {
 
     chart.series[0].points[0].onMouseOver();
     assert.strictEqual(
-        chart.tooltip.label.text.element.textContent,
-        'Series 1TaskStart: Tuesday, Jan  1, 2019End: Monday, Jan  7, 2019',
+        chart.tooltip.label.text.element.textContent
+            .replace(/\u200B/g, ';'),
+        'Series 1;Task;Start: Tuesday, Jan  1, 2019;End: Monday, Jan  7, 2019;',
         'All times on midnight - tooltip should show the date without time'
     );
 
     chart.series[0].points[1].onMouseOver();
 
     assert.strictEqual(
-        chart.tooltip.label.text.element.textContent,
-        'Series 1MilestoneSaturday, Jan  5, 2019',
+        chart.tooltip.label.text.element.textContent
+            .replace(/\u200B/g, ';'),
+        'Series 1;Milestone;Saturday, Jan  5, 2019;',
         'All times on midnight - tooltip should show the date without time'
     );
 
@@ -50,17 +52,25 @@ QUnit.test('Gantt tooltip', assert => {
     });
 
     chart.series[0].points[0].onMouseOver();
-    assert.strictEqual(
-        chart.tooltip.label.text.element.textContent,
-        'Series 1TaskStart: Tuesday, Jan  1, 08:00End: Monday, Jan  7, 16:00',
+    assert.deepEqual(
+        chart.tooltip.label.text.element.textContent
+            .split('\u200B'),
+        [
+            "Series 1",
+            "Task",
+            "Start: Tuesday, Jan  1, 08:00",
+            "End: Monday, Jan  7, 16:00",
+            ""
+        ],
         'Intraday times - tooltip should show the date and time of day'
     );
 
     chart.series[0].points[1].onMouseOver();
 
     assert.strictEqual(
-        chart.tooltip.label.text.element.textContent,
-        'Series 1MilestoneSaturday, Jan  5, 12:00',
+        chart.tooltip.label.text.element.textContent
+            .replace(/\u200B/g, ';'),
+        'Series 1;Milestone;Saturday, Jan  5, 12:00;',
         'Intraday times - tooltip should show the date and time of day'
     );
 });
@@ -89,8 +99,9 @@ QUnit.test(
 
         tooltip.refresh(p1);
         assert.strictEqual(
-            chart.container.querySelector('.highcharts-tooltip').textContent,
-            'Series 1Task 1Start: Monday, Jun  1, 18:00End: Tuesday, Jun  2, 18:00',
+            chart.container.querySelector('.highcharts-tooltip').textContent
+                .replace(/\u200B/g, ';'),
+            'Series 1;Task 1;Start: Monday, Jun  1, 18:00;End: Tuesday, Jun  2, 18:00;',
             'The tooltip should show the start and end shifted 6 hours relative to UTC.'
         );
     }
