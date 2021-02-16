@@ -1761,6 +1761,16 @@ class TreemapSeries extends ScatterSeries {
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
         rootNode = series.nodeMap[rootId];
+
+        if (
+            rootId !== '' &&
+            (!rootNode || !rootNode.children.length)
+        ) {
+            series.setRootNode('', false);
+            rootId = series.rootNode;
+            rootNode = series.nodeMap[rootId];
+        }
+
         series.renderTraverseUpButton(rootId);
         series.mapOptionsToLevel = getLevelOptions<this>({
             from: rootNode.level + 1,
@@ -1771,14 +1781,7 @@ class TreemapSeries extends ScatterSeries {
                 colorByPoint: options.colorByPoint
             }
         }) as any;
-        if (
-            rootId !== '' &&
-            (!rootNode || !rootNode.children.length)
-        ) {
-            series.setRootNode('', false);
-            rootId = series.rootNode;
-            rootNode = series.nodeMap[rootId];
-        }
+
         // Parents of the root node is by default visible
         TreemapUtilities.recursive(series.nodeMap[series.rootNode], function (
             node: TreemapSeries.NodeObject

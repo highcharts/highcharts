@@ -99,14 +99,12 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
             this.scrollablePixelsX = scrollablePixelsX = Math.max(0, scrollableMinWidth - this.chartWidth);
             if (scrollablePixelsX) {
                 this.scrollablePlotBox = merge(this.plotBox);
-                this.plotWidth += scrollablePixelsX;
+                this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
-                    this.plotBox.height += scrollablePixelsX;
                 }
                 else {
                     this.clipBox.width += scrollablePixelsX;
-                    this.plotBox.width += scrollablePixelsX;
                 }
                 corrections = {
                     // Corrections for right side
@@ -119,14 +117,12 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
             this.scrollablePixelsY = scrollablePixelsY = Math.max(0, scrollableMinHeight - this.chartHeight);
             if (scrollablePixelsY) {
                 this.scrollablePlotBox = merge(this.plotBox);
-                this.plotHeight += scrollablePixelsY;
+                this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;
-                    this.plotBox.width += scrollablePixelsY;
                 }
                 else {
                     this.clipBox.height += scrollablePixelsY;
-                    this.plotBox.height += scrollablePixelsY;
                 }
                 corrections = {
                     2: { name: 'bottom', value: scrollablePixelsY }

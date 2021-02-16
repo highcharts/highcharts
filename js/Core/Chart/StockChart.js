@@ -682,7 +682,8 @@ addEvent(Series, 'render', function () {
     if (!(chart.is3d && chart.is3d()) &&
         !chart.polar &&
         this.xAxis &&
-        !this.xAxis.isRadial // Gauge, #6192
+        !this.xAxis.isRadial && // Gauge, #6192
+        this.options.clip !== false // #15128
     ) {
         clipHeight = this.yAxis.len;
         // Include xAxis line width (#8031) but only if the Y axis ends on the

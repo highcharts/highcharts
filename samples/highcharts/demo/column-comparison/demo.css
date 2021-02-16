@@ -21,6 +21,7 @@
   padding: 0.5rem;
   outline: none;
   transition-duration: 0.3s;
+  margin: 0;
 }
 
 .buttons button:first-child {

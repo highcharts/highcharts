@@ -205,7 +205,7 @@ declare global {
  * @name Highcharts.PointAccessibilityOptionsObject#enabled
  * @type {boolean|undefined}
  * @requires modules/accessibility
- * @since next
+ * @since 9.0.1
  */
 
 /* *
@@ -853,7 +853,7 @@ var options: DeepPartial<Highcharts.Options> = {
      * exposed to assistive technology.
      *
      * @type      {boolean}
-     * @since     next
+     * @since 9.0.1
      * @apioption series.line.data.accessibility.enabled
      */
 
