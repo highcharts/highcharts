@@ -1,35 +1,24 @@
 .selectors-container {
-	font-size: 1.2em;
+	background: #f2f2f2;
+	margin-bottom: 1rem;
+	font-size: 0;
 }
 
-.lhs-col {
-	width: 48%;
+.selectors-container .col {
+	font-size: 1.2rem;
+	width: calc(50% - 1em);
+	padding: 0.5em;
 	display: inline-block;
 }
 
-.left-select {
+.selectors-container select {
 	width: 100%;
-}
-
-.rhs-col {
-	width: 48%;
-	margin-left: 2%;
-	display: inline-block;
-}
-
-.right-select {
-	width: 100%;
+	font-size: 16px; /* prevent page zoom in iOS */
 }
 
 @media (max-width: 768px) {
-	.lhs-col,
-	.rhs-col {
+	.selectors-container .col {
 		display: block;
-		width: 100%;
-	}
-
-	.rhs-col {
-		margin-left: 0px;
-		margin-top: 15px;
+		width: calc(100% - 1em);
 	}
 }
