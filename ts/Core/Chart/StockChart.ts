@@ -101,6 +101,7 @@ declare module '../Series/SeriesLike' {
         compareValue?: number;
         modifyValue?(value?: number, point?: Point): (number|undefined);
         setCompare(compare?: string): void;
+        initCompare(compare?: string): void;
     }
 }
 
@@ -810,7 +811,7 @@ Series.prototype.init = function (): void {
     seriesInit.apply(this, arguments as any);
 
     // Set comparison mode
-    this.setCompare(this.options.compare as any);
+    this.initCompare(this.options.compare as any);
 };
 
 /**
@@ -825,7 +826,20 @@ Series.prototype.init = function (): void {
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
 Series.prototype.setCompare = function (compare?: string): void {
+    this.initCompare(compare);
 
+    // Survive to export, #5485
+    this.userOptions.compare = compare;
+};
+
+/**
+ * @ignore
+ * @function Highcharts.Series#initCompare
+ *
+ * @param {string} [compare]
+ *        Can be one of `null` (default), `"percent"` or `"value"`.
+ */
+Series.prototype.initCompare = function (compare?: string): void {
     // Set or unset the modifyValue method
     this.modifyValue = (compare === 'value' || compare === 'percent') ?
         function (
@@ -861,14 +875,10 @@ Series.prototype.setCompare = function (compare?: string): void {
         } :
         null as any;
 
-    // Survive to export, #5485
-    this.userOptions.compare = compare;
-
     // Mark dirty
     if (this.chart.hasRendered) {
         this.isDirty = true;
     }
-
 };
 
 /**

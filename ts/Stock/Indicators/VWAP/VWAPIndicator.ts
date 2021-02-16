@@ -14,7 +14,7 @@
 
 import type Chart from '../../../Core/Chart/Chart';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     VWAPOptions,
     VWAPParamsOptions
@@ -97,7 +97,7 @@ class VWAPIndicator extends SMAIndicator {
      *
      * */
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: VWAPParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -109,7 +109,7 @@ class VWAPIndicator extends SMAIndicator {
             ) = (series.yData as any),
             period: number = (params.period as any),
             isOHLC = true,
-            volumeSeries: Series;
+            volumeSeries: TLinkedSeries;
 
         // Checks if volume series exists
         if (!(volumeSeries = (
@@ -152,11 +152,11 @@ class VWAPIndicator extends SMAIndicator {
      * @param {number} period - number of points to be calculated
      * @return {object} - Object contains computed VWAP
      **/
-    public calculateVWAPValues<TLinkedSeries extends Series>(
+    public calculateVWAPValues<TLinkedSeries extends LineSeries>(
         isOHLC: boolean,
         xValues: Array<number>,
         yValues: (Array<number>|Array<[number, number, number, number]>),
-        volumeSeries: Series,
+        volumeSeries: TLinkedSeries,
         period: number
     ): IndicatorValuesObject<TLinkedSeries> {
         var volumeValues: Array<number> = (volumeSeries.yData as any),

@@ -99,7 +99,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
         var chart = this.chart, credits = chart.credits;
         if (credits) {
             if (credits.textStr) {
-                credits.element.setAttribute('aria-label', chart.langFormat('accessibility.credits', { creditsStr: credits.textStr }));
+                credits.element.setAttribute('aria-label', chart.langFormat('accessibility.credits', { creditsStr: stripHTMLTags(credits.textStr) }));
             }
             unhideChartElementFromAT(chart, credits.element);
         }

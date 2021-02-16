@@ -45,6 +45,7 @@ declare global {
             data: Array<ColorMapPoint>;
             parallelArrays: Array<string>;
             pointArrayMap: Array<string>;
+            points: Array<ColorMapPoint>;
             trackerGroups: Array<string>;
             colorAttribs(point: ColorMapPoint): SVGAttributes;
         }

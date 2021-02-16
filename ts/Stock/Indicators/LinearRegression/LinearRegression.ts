@@ -17,7 +17,7 @@ import type {
     RegressionLineParametersObject
 } from './LinearRegressionOptions';
 import type LinearRegressionPoint from './LinearRegressionPoint';
-import type Series from '../../../Core/Series/Series';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -256,7 +256,7 @@ class LinearRegressionIndicator extends SMAIndicator {
     }
 
     // Required to be implemented - starting point for indicator's logic
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         this: LinearRegressionIndicator,
         baseSeries: TLinkedSeries,
         regressionSeriesParams:

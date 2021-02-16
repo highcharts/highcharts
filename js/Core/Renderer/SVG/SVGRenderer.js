@@ -16,7 +16,7 @@ import SVGLabel from './SVGLabel.js';
 import AST from '../HTML/AST.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, pInt = U.pInt, uniqueKey = U.uniqueKey;
 /**
  * A clipping rectangle that can be applied to one or more {@link SVGElement}
  * instances. It is instanciated with the {@link SVGRenderer#clipRect} function
@@ -215,7 +215,7 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
 * @type {number|undefined}
 */
 /* eslint-disable no-invalid-this, valid-jsdoc */
-var charts = H.charts, deg2rad = H.deg2rad, doc = H.doc, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
+var charts = H.charts, deg2rad = H.deg2rad, doc = H.doc, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, noop = H.noop, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win, hasInternalReferenceBug;
 /**
  * Allows direct access to the Highcharts rendering layer in order to draw
  * primitive shapes like circles, rectangles, paths or text directly on a chart,
@@ -376,17 +376,7 @@ var SVGRenderer = /** @class */ (function () {
         this.box = element;
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
-        // #24, #672, #1070
-        this.url = ((isFirefox || isWebKit) &&
-            doc.getElementsByTagName('base').length) ?
-            win.location.href
-                .split('#')[0] // remove the hash
-                .replace(/<[^>]*>/g, '') // wing cut HTML
-                // escape parantheses and quotes
-                .replace(/([\('\)])/g, '\\$1')
-                // replace spaces (needed for Safari only)
-                .replace(/ /g, '%20') :
-            '';
+        this.url = this.getReferenceURL();
         // Add description
         desc = this.createElement('desc').add();
         desc.element.appendChild(doc.createTextNode('Created with @product.name@ @product.version@'));
@@ -441,6 +431,94 @@ var SVGRenderer = /** @class */ (function () {
     SVGRenderer.prototype.definition = function (def) {
         var ast = new AST([def]);
         return ast.addToDOM(this.defs.element);
+    };
+    /**
+     * Get the prefix needed for internal URL references to work in certain
+     * cases. Some older browser versions had a bug where internal url
+     * references in SVG attributes, on the form `url(#some-id)`, would fail if
+     * a base tag was present in the page. There were also issues with
+     * `history.pushState` related to this prefix.
+     *
+     * Related issues: #24, #672, #1070, #5244.
+     *
+     * The affected browsers are:
+     * - Chrome <= 53 (May 2018)
+     * - Firefox <= 51 (January 2017)
+     * - Safari/Mac <= 12.1 (2018 or 2019)
+     * - Safari/iOS <= 13
+     *
+     * @todo Remove this hack when time has passed. All the affected browsers
+     * are evergreens, so it is increasingly unlikely that users are affected by
+     * the bug.
+     *
+     * @return {string}
+     * The prefix to use. An empty string for modern browsers.
+     */
+    SVGRenderer.prototype.getReferenceURL = function () {
+        if ((isFirefox || isWebKit) &&
+            doc.getElementsByTagName('base').length) {
+            // Detect if a clip path is taking effect by performing a hit test
+            // outside the clipped area. If the hit element is the rectangle
+            // that was supposed to be clipped, the bug is present. This only
+            // has to be performed once per page load, so we store the result
+            // locally in the module.
+            if (!defined(hasInternalReferenceBug)) {
+                var id = uniqueKey();
+                var ast = new AST([{
+                        tagName: 'svg',
+                        attributes: {
+                            width: 8,
+                            height: 8
+                        },
+                        children: [{
+                                tagName: 'defs',
+                                children: [{
+                                        tagName: 'clipPath',
+                                        attributes: {
+                                            id: id
+                                        },
+                                        children: [{
+                                                tagName: 'rect',
+                                                attributes: {
+                                                    width: 4,
+                                                    height: 4
+                                                }
+                                            }]
+                                    }]
+                            }, {
+                                tagName: 'rect',
+                                attributes: {
+                                    id: 'hitme',
+                                    width: 8,
+                                    height: 8,
+                                    'clip-path': "url(#" + id + ")",
+                                    fill: 'rgba(0,0,0,0.001)'
+                                }
+                            }]
+                    }]);
+                var svg = ast.addToDOM(doc.body);
+                css(svg, {
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    zIndex: 9e5
+                });
+                var hitElement = doc.elementFromPoint(6, 6);
+                hasInternalReferenceBug =
+                    (hitElement && hitElement.id) === 'hitme';
+                doc.body.removeChild(svg);
+            }
+            if (hasInternalReferenceBug) {
+                return win.location.href
+                    .split('#')[0] // remove the hash
+                    .replace(/<[^>]*>/g, '') // wing cut HTML
+                    // escape parantheses and quotes
+                    .replace(/([\('\)])/g, '\\$1')
+                    // replace spaces (needed for Safari only)
+                    .replace(/ /g, '%20');
+            }
+        }
+        return '';
     };
     /**
      * Get the global style setting for the renderer.

@@ -49,7 +49,6 @@ export interface SeriesLike {
     type: string;
     userOptions: DeepPartial<SeriesOptions>;
     visible: boolean;
-    drawGraph(): void;
     render(): void;
     translate(): void;
     update(options: DeepPartial<SeriesOptions>): void;

@@ -11,12 +11,12 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     ROCOptions,
     ROCParamsOptions
 } from './ROCOptions';
 import type ROCPoint from './ROCPoint';
-import type Series from '../../../Core/Series/Series';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
@@ -131,7 +131,7 @@ class ROCIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: ROCParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

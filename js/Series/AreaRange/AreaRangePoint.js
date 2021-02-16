@@ -116,18 +116,6 @@ var AreaRangePoint = /** @class */ (function (_super) {
         }
         return path;
     };
-    AreaRangePoint.prototype.destroyElements = function () {
-        var graphics = ['lowerGraphic', 'upperGraphic'];
-        graphics.forEach(function (graphicName) {
-            if (this[graphicName]) {
-                this[graphicName] =
-                    this[graphicName].destroy();
-            }
-        }, this);
-        // Clear graphic for states, removed in the above each:
-        this.graphic = null;
-        return pointProto.destroyElements.apply(this, arguments);
-    };
     AreaRangePoint.prototype.isValid = function () {
         return isNumber(this.low) && isNumber(this.high);
     };

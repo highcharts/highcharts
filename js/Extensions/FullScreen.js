@@ -100,7 +100,7 @@ var Fullscreen = /** @class */ (function () {
      * @requires    modules/full-screen
      */
     Fullscreen.prototype.close = function () {
-        var fullscreen = this, chart = fullscreen.chart;
+        var fullscreen = this, chart = fullscreen.chart, optionsChart = chart.options.chart;
         // Don't fire exitFullscreen() when user exited using 'Escape' button.
         if (fullscreen.isOpen &&
             fullscreen.browserProps &&
@@ -111,6 +111,15 @@ var Fullscreen = /** @class */ (function () {
         if (fullscreen.unbindFullscreenEvent) {
             fullscreen.unbindFullscreenEvent();
         }
+        chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
+        fullscreen.origWidth = void 0;
+        fullscreen.origHeight = void 0;
+        if (optionsChart) {
+            optionsChart.width = fullscreen.origWidthOption;
+            optionsChart.height = fullscreen.origHeightOption;
+        }
+        fullscreen.origWidthOption = void 0;
+        fullscreen.origHeightOption = void 0;
         fullscreen.isOpen = false;
         fullscreen.setButtonText();
     };
@@ -127,7 +136,13 @@ var Fullscreen = /** @class */ (function () {
      * @requires    modules/full-screen
      */
     Fullscreen.prototype.open = function () {
-        var fullscreen = this, chart = fullscreen.chart;
+        var fullscreen = this, chart = fullscreen.chart, optionsChart = chart.options.chart;
+        if (optionsChart) {
+            fullscreen.origWidthOption = optionsChart.width;
+            fullscreen.origHeightOption = optionsChart.height;
+        }
+        fullscreen.origWidth = chart.chartWidth;
+        fullscreen.origHeight = chart.chartHeight;
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
             fullscreen.unbindFullscreenEvent = addEvent(chart.container.ownerDocument, // chart's document
@@ -138,6 +153,7 @@ var Fullscreen = /** @class */ (function () {
                     fullscreen.close();
                 }
                 else {
+                    chart.setSize(null, null, false);
                     fullscreen.isOpen = true;
                     fullscreen.setButtonText();
                 }

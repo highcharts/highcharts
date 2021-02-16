@@ -513,14 +513,15 @@ var Pointer = /** @class */ (function () {
             scaleX: 1,
             scaleY: 1
         };
+        var offsetWidth = container.offsetWidth;
+        var offsetHeight = container.offsetHeight;
         // #13342 - tooltip was not visible in Chrome, when chart
         // updates height.
-        if (container.offsetWidth > 2 && // #13342
-            container.offsetHeight > 2 && // #13342
-            container.getBoundingClientRect) {
-            var bb = container.getBoundingClientRect();
-            this.chartPosition.scaleX = bb.width / container.offsetWidth;
-            this.chartPosition.scaleY = bb.height / container.offsetHeight;
+        if (offsetWidth > 2 && // #13342
+            offsetHeight > 2 // #13342
+        ) {
+            this.chartPosition.scaleX = pos.width / offsetWidth;
+            this.chartPosition.scaleY = pos.height / offsetHeight;
         }
         return this.chartPosition;
     };
