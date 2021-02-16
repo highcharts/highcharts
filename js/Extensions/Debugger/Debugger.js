@@ -8,10 +8,15 @@
  *
  * */
 'use strict';
-import H from '../Core/Globals.js';
-import Chart from '../Core/Chart/Chart.js';
-import U from '../Core/Utilities.js';
+import Chart from '../../Core/Chart/Chart.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
 var addEvent = U.addEvent, isNumber = U.isNumber, setOptions = U.setOptions;
+/* *
+ *
+ *  Compositions
+ *
+ * */
 setOptions({
     /**
      * @optionparent chart
