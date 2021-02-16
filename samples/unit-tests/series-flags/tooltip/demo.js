@@ -90,8 +90,8 @@ QUnit.test(
 
         chart.tooltip.refresh(chart.series[2].points[0]);
         assert.strictEqual(
-            chart.container.getElementsByClassName('highcharts-label-box').length,
-            6,
-            'The tooltip box next to the flag with empty title should be ivisible (#6332).'
+            chart.tooltip.label.element.childNodes.length,
+            1,
+            'The tooltip box next to the flag with empty title should not be created(#6332).'
         );
     });
