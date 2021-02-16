@@ -1634,10 +1634,9 @@ class RangeSelector {
 
         // handle changes in the input boxes
         input.onchange = (): void => {
-            updateExtremes();
-
-            // Blur input when clicking date input calendar
+            // Update extremes and blur input when clicking date input calendar
             if (!keyDown) {
+                updateExtremes();
                 rangeSelector.hideInput(name);
                 input.blur();
             }
@@ -1650,8 +1649,13 @@ class RangeSelector {
             }
         };
 
-        input.onkeydown = (): void => {
+        input.onkeydown = (event: KeyboardEvent): void => {
             keyDown = true;
+
+            // Arrow keys
+            if (event.keyCode === 38 || event.keyCode === 40) {
+                updateExtremes();
+            }
         };
 
         input.onkeyup = (): void => {
@@ -1771,7 +1775,9 @@ class RangeSelector {
                 zIndex: inputsZIndex
             });
 
-            this.renderButtons();
+            if (this.buttonOptions.length) {
+                this.renderButtons();
+            }
 
             // First create a wrapper outside the container in order to make
             // the inputs work and make export correct
@@ -2429,7 +2435,7 @@ class RangeSelector {
             }
         });
 
-        if (!hasActiveButton && buttons.length > 0) {
+        if (!hasActiveButton) {
             if (dropdown) {
                 dropdown.selectedIndex = 0;
             }

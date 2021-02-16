@@ -1583,29 +1583,29 @@ var Navigator = /** @class */ (function () {
         // Adding this multiple times to the same axis is no problem, as
         // duplicates should be discarded by the browser.
         if (baseSeries[0] && baseSeries[0].xAxis) {
-            addEvent(baseSeries[0].xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
+            baseSeries[0].eventsToUnbind.push(addEvent(baseSeries[0].xAxis, 'foundExtremes', this.modifyBaseAxisExtremes));
         }
         baseSeries.forEach(function (base) {
             // Link base series show/hide to navigator series visibility
-            addEvent(base, 'show', function () {
+            base.eventsToUnbind.push(addEvent(base, 'show', function () {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(true, false);
                 }
-            });
-            addEvent(base, 'hide', function () {
+            }));
+            base.eventsToUnbind.push(addEvent(base, 'hide', function () {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(false, false);
                 }
-            });
+            }));
             // Respond to updated data in the base series, unless explicitily
             // not adapting to data changes.
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
                 if (base.xAxis) {
-                    addEvent(base, 'updatedData', this.updatedDataHandler);
+                    base.eventsToUnbind.push(addEvent(base, 'updatedData', this.updatedDataHandler));
                 }
             }
             // Handle series removal
-            addEvent(base, 'remove', function () {
+            base.eventsToUnbind.push(addEvent(base, 'remove', function () {
                 if (this.navigatorSeries) {
                     erase(navigator.series, this.navigatorSeries);
                     if (defined(this.navigatorSeries.options)) {
@@ -1613,7 +1613,7 @@ var Navigator = /** @class */ (function () {
                     }
                     delete this.navigatorSeries;
                 }
-            });
+            }));
         }, this);
     };
     /**

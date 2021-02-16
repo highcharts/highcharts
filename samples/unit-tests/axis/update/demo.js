@@ -129,6 +129,13 @@ QUnit.test('General yAxis updates', function (assert) {
         'Last index should be less than yAxis array length (#8075) - part II'
     );
 
+    chart.yAxis[2].remove();
+    assert.strictEqual(
+        chart.options.yAxis.length,
+        1,
+        '#11930: Both the dynamically added axes should be removed from chart.options'
+    );
+
     chart.update({
         series: [{
             yAxis: 0

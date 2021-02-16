@@ -121,6 +121,31 @@ QUnit.test('General Navigator tests', function (assert) {
         x,
         y;
 
+    const eventCount = el => {
+        let count = 0;
+        //eslint-disable-next-line
+        for (const t in el.hcEvents) {
+            count += el.hcEvents[t].length;
+        }
+        return count;
+    };
+
+    const before = eventCount(chart.series[0]);
+    const beforeAxis = eventCount(chart.xAxis[0]);
+
+    chart.series[0].update();
+
+    assert.strictEqual(
+        eventCount(chart.series[0]),
+        before,
+        '#10296: Navigator should not leak events into series on Series.update'
+    );
+    assert.strictEqual(
+        eventCount(chart.xAxis[0]),
+        beforeAxis,
+        '#10296: Navigator should not leak events into xAxis on Series.update'
+    );
+
     chart.series[0].hide();
 
     assert.deepEqual(
