@@ -377,7 +377,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     // Check if the label has to be drawn
     if (!defined(this.crosshair.label) ||
         !this.crosshair.label.enabled ||
-        !this.cross) {
+        !this.cross ||
+        !isNumber(this.min) ||
+        !isNumber(this.max)) {
         return;
     }
     var chart = this.chart, log = this.logarithmic, options = this.options.crosshair.label, // the label's options
@@ -386,7 +388,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     left = this.left, // left position
     top = this.top, // top position
     crossLabel = this.crossLabel, // the svgElement
-    posx, posy, crossBox, formatOption = options.format, formatFormat = '', limit, align, tickInside = this.options.tickPosition === 'inside', snap = this.crosshair.snap !== false, value, offset = 0, 
+    posx, posy, crossBox, formatOption = options.format, formatFormat = '', limit, align, tickInside = this.options.tickPosition === 'inside', snap = this.crosshair.snap !== false, offset = 0, 
     // Use last available event (#5287)
     e = event.e || (this.cross && this.cross.e), point = event.point, min = this.min, max = this.max;
     if (log) {
@@ -399,7 +401,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     // If the label does not exist yet, create it.
     if (!crossLabel) {
         crossLabel = this.crossLabel = chart.renderer
-            .label(null, null, null, options.shape || 'callout')
+            .label('', 0, void 0, options.shape || 'callout')
             .addClass('highcharts-crosshair-label' + (this.series[0] &&
             ' highcharts-color-' + this.series[0].colorIndex))
             .attr({
@@ -428,12 +430,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         }
     }
     if (horiz) {
-        posx = snap ? point.plotX + left : e.chartX;
+        posx = snap ? (point.plotX || 0) + left : e.chartX;
         posy = top + (opposite ? 0 : this.height);
     }
     else {
         posx = opposite ? this.width + left : 0;
-        posy = snap ? point.plotY + top : e.chartY;
+        posy = snap ? (point.plotY || 0) + top : e.chartY;
     }
     if (!formatOption && !options.formatter) {
         if (this.dateTime) {
@@ -443,14 +445,14 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
             '{value' + (formatFormat ? ':' + formatFormat : '') + '}';
     }
     // Show the label
-    value = snap ?
-        point[this.isXAxis ? 'x' : 'y'] :
+    var value = snap ?
+        (this.isXAxis ? point.x : point.y) :
         this.toValue(horiz ? e.chartX : e.chartY);
-    // Crosshair should be rendered within Axis range (#7219)
-    // Also, the point of currentPriceIndicator
-    // should be inside the plot area, #14879.
-    var isInside = point ? point.series.isPointInside(point) :
-        value > min && value < max;
+    // Crosshair should be rendered within Axis range (#7219). Also, the point
+    // of currentPriceIndicator should be inside the plot area, #14879.
+    var isInside = point ?
+        point.series.isPointInside(point) :
+        (isNumber(value) && value > min && value < max);
     crossLabel.attr({
         text: formatOption ?
             format(formatOption, { value: value }, chart) :
