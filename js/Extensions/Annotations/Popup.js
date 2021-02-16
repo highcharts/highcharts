@@ -212,6 +212,12 @@ H.Popup.prototype = {
      * @private
      */
     closePopup: function () {
+        var chart = this.chart;
+        // When map navigation enabled, restore the scroll behaviour, #12100.
+        if (chart.mapNavigation) {
+            chart.mapNavigation.unbindMouseWheel = void 0;
+            chart.mapNavigation.updateEvents(chart.options.mapNavigation);
+        }
         this.popup.container.style.display = 'none';
     },
     /**
@@ -224,6 +230,11 @@ H.Popup.prototype = {
      */
     showForm: function (type, chart, options, callback) {
         this.popup = chart.navigationBindings.popup;
+        // When the map navigation enabled, and pop up is shown,
+        // unbind the scroll, #12100.
+        this.chart.mapNavigation &&
+            this.chart.mapNavigation.unbindMouseWheel &&
+            this.chart.mapNavigation.unbindMouseWheel();
         // show blank popup
         this.showPopup();
         // indicator form
