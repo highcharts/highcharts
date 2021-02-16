@@ -12,5 +12,8 @@
 
 'use strict';
 
-import '../../error-messages.js';
-import '../../Extensions/Debugger.js';
+import Highcharts from '../../Core/Globals.js';
+import ErrorMessages from '../../Extensions/Debugger/ErrorMessages.js';
+Highcharts.errorMessages = ErrorMessages;
+
+import '../../Extensions/Debugger/Debugger.js';

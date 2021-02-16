@@ -10,10 +10,31 @@
 
 'use strict';
 
-import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import H from '../Core/Globals.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
 
-declare module '../Core/Chart/ChartLike'{
+import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+
+import Chart from '../../Core/Chart/Chart.js';
+import ErrorMessages from './ErrorMessages.js';
+import H from '../../Core/Globals.js';
+import U from '../../Core/Utilities.js';
+const {
+    addEvent,
+    isNumber,
+    setOptions
+} = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
+
+declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         errorElements?: Array<SVGElement>;
     }
@@ -28,21 +49,15 @@ declare global {
         interface ChartOptions {
             displayErrors?: boolean;
         }
-        interface ErrorMessageObject {
-            title: string;
-            text: string;
-        }
-        const errorMessages: (Record<string, ErrorMessageObject>|undefined);
+        let errorMessages: typeof ErrorMessages;
     }
 }
 
-import Chart from '../Core/Chart/Chart.js';
-import U from '../Core/Utilities.js';
-const {
-    addEvent,
-    isNumber,
-    setOptions
-} = U;
+/* *
+ *
+ *  Compositions
+ *
+ * */
 
 setOptions({
     /**
