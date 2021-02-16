@@ -19,10 +19,12 @@ Adding HTML from an untrusted source into the DOM is a potential security risk, 
 
 In practice we do this by using the browser's built-in `DOMParser` to parse incoming strings, transform the result into an [abstract syntax tree](https://api.highcharts.com/class-reference/Highcharts.AST), then check the tags and attributes against allow lists. Unknown tags and attributes are removed.
 
-If your config comes from a trusted source, you may add tags or attributes to the allow lists:
+If your config comes from a trusted source, you may add tags, attributes or reference patterns to the allow lists:
 ```js
 Highcharts.AST.allowedTags.push('blink');
 Highcharts.AST.allowedAttributes.push('data-value');
+// Allow links to the `tel` protocol
+Highcharts.AST.allowedReferences.push('tel:');
 ```
 
 ### Format strings
