@@ -6756,6 +6756,7 @@ class Series {
             // must use user options when changing type because series.options
             // is merged in with type specific plotOptions
             oldOptions = series.userOptions,
+            oldFullOptions = series.options,
             seriesOptions: SeriesOptions,
             initialType = series.initialType || series.type,
             plotOptions = chart.options.plotOptions,
@@ -6972,6 +6973,9 @@ class Series {
 
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
+
+        series.isDirtyStacks = oldFullOptions.stacking !== this.options.stacking ||
+            oldFullOptions.centerInCategory !== this.options.centerInCategory;
 
         fireEvent(this, 'afterUpdate');
 

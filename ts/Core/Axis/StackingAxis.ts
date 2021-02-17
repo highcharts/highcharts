@@ -135,7 +135,7 @@ class StackingAxisAdditions {
      * Set all the stacks to initial states and destroy unused ones.
      * @private
      */
-    public resetStacks(): void {
+    public resetStacks(destroyAll?: boolean): void {
         const stacking = this;
         const axis = stacking.axis;
         const stacks = stacking.stacks;
@@ -149,7 +149,7 @@ class StackingAxisAdditions {
                     key: string
                 ): void {
                     // Clean up memory after point deletion (#1044, #4320)
-                    if ((stack.touched as any) < stacking.stacksTouched) {
+                    if ((stack.touched as any) < stacking.stacksTouched || destroyAll) {
                         stack.destroy();
                         delete type[key];
 

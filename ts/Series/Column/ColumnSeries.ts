@@ -794,11 +794,8 @@ class ColumnSeries extends Series {
             // done in the `setGroupedPoints` function.
             objectEach(
                 this.yAxis.stacking && this.yAxis.stacking.stacks,
-                (stack: Record<string, Highcharts.StackItem>, key: string): void => {
-                    // Skip the centerInCategory stack when stacking is enabled
-                    const skip = stacking && key.slice(-5) === 'group';
-
-                    if (typeof point.x === 'number' && !skip) {
+                (stack: Record<string, Highcharts.StackItem>): void => {
+                    if (typeof point.x === 'number') {
                         const stackItem = stack[point.x.toString()];
 
                         if (stackItem) {

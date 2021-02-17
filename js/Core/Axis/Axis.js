@@ -1782,13 +1782,17 @@ var Axis = /** @class */ (function () {
      */
     Axis.prototype.setScale = function () {
         var _a, _b, _c, _d, _e;
-        var axis = this, isDirtyAxisLength, isDirtyData = false, isXAxisDirty = false;
+        var axis = this, isDirtyAxisLength, isDirtyData = false, isDirtyStacks = false, isXAxisDirty = false;
         axis.series.forEach(function (series) {
             var _a;
             isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
             // When x axis is dirty, we need new data extremes for y as
             // well:
             isXAxisDirty = isXAxisDirty || ((_a = series.xAxis) === null || _a === void 0 ? void 0 : _a.isDirty) || false;
+            if (!axis.isXAxis) {
+                isDirtyStacks = isDirtyStacks || series.isDirtyStacks || false;
+                series.isDirtyStacks = false;
+            }
         });
         // set the new axisLength
         axis.setAxisSize();
@@ -1803,7 +1807,7 @@ var Axis = /** @class */ (function () {
             axis.userMax !== ((_c = axis.old) === null || _c === void 0 ? void 0 : _c.userMax) ||
             axis.alignToOthers()) {
             if (axis.stacking) {
-                axis.stacking.resetStacks();
+                axis.stacking.resetStacks(isDirtyStacks);
             }
             axis.forceRedraw = false;
             // get data extremes if needed

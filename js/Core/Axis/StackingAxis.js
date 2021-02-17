@@ -84,7 +84,7 @@ var StackingAxisAdditions = /** @class */ (function () {
      * Set all the stacks to initial states and destroy unused ones.
      * @private
      */
-    StackingAxisAdditions.prototype.resetStacks = function () {
+    StackingAxisAdditions.prototype.resetStacks = function (destroyAll) {
         var stacking = this;
         var axis = stacking.axis;
         var stacks = stacking.stacks;
@@ -92,7 +92,7 @@ var StackingAxisAdditions = /** @class */ (function () {
             objectEach(stacks, function (type) {
                 objectEach(type, function (stack, key) {
                     // Clean up memory after point deletion (#1044, #4320)
-                    if (stack.touched < stacking.stacksTouched) {
+                    if (stack.touched < stacking.stacksTouched || destroyAll) {
                         stack.destroy();
                         delete type[key];
                         // Reset stacks
