@@ -1310,15 +1310,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             ];
             chart.setSize(width, void 0, false);
         }
-        // Hide all body content
-        printReverseInfo.childNodes.forEach(function (node, i) {
-            if (node.nodeType === 1) {
-                printReverseInfo.origDisplay[i] = node.style.display;
-                node.style.display = 'none';
-            }
-        });
-        // Pull out the chart
         if (H.printingChart) {
+            // Hide all body content
+            printReverseInfo.childNodes.forEach(function (node, i) {
+                if (node.nodeType === 1) {
+                    printReverseInfo.origDisplay[i] = node.style.display;
+                    node.style.display = 'none';
+                }
+            });
+            // Pull out the chart
             chart.moveContainers(body);
         }
         // Storage details for undo action after printing
@@ -1343,16 +1343,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             return void 0;
         }
         var childNodes = chart.printReverseInfo.childNodes, origDisplay = chart.printReverseInfo.origDisplay, resetParams = chart.printReverseInfo.resetParams;
-        // put the chart back in
+        // Put the chart back in
         if (H.printingChart) {
             chart.moveContainers(chart.renderTo);
+            // Restore all body content
+            childNodes.forEach(function (node, i) {
+                if (node.nodeType === 1) {
+                    node.style.display = (origDisplay[i] || '');
+                }
+            });
         }
-        // restore all body content
-        childNodes.forEach(function (node, i) {
-            if (node.nodeType === 1) {
-                node.style.display = (origDisplay[i] || '');
-            }
-        });
         chart.isPrinting = false;
         // Reset printMaxWidth
         if (resetParams) {
