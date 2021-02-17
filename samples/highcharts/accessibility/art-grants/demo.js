@@ -84,6 +84,10 @@ Highcharts.chart('container', {
         }
     }],
 
+    credits: {
+        enabled: false
+    },
+
     plotOptions: {
         column: {
             keys: ['name', 'y'],

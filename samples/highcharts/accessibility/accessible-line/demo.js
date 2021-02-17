@@ -9,6 +9,10 @@ Highcharts.chart('container', {
         symbolWidth: 40
     },
 
+    credits: {
+        enabled: false
+    },
+
     title: {
         text: 'Most common desktop screen readers'
     },

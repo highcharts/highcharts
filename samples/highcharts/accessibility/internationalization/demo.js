@@ -161,6 +161,10 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
             }
         },
 
+        credits: {
+            enabled: false
+        },
+
         series: [{
             name: 'AAPL',
             data: data,

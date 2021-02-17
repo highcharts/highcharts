@@ -10,7 +10,10 @@ Highcharts.chart('container', {
         text: 'Total fruit consumption'
     },
     xAxis: {
-        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+        categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas'],
+        accessibility: {
+            description: 'Fruits'
+        }
     },
     yAxis: {
         min: 0,
@@ -19,9 +22,7 @@ Highcharts.chart('container', {
         }
     },
     accessibility: {
-        screenReaderSection: {
-            beforeChartFormat: 'Total fruit consumption.'
-        }
+        landmarkVerobsity: 'one'
     },
     series: [{
         name: 'John',
