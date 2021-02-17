@@ -26,6 +26,7 @@ import type {
     XRangePointPartialFillOptions
 } from './XRangePointOptions';
 import type XRangeSeriesOptions from './XRangeSeriesOptions';
+import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import H from '../../Core/Globals.js';
 import Color from '../../Core/Color/Color.js';
 const { parse: color } = Color;
@@ -657,6 +658,30 @@ class XRangeSeries extends ColumnSeries {
                 'animate' :
                 'attr'
         );
+    }
+
+    /**
+     * @private
+     * @function Highcharts.XRangeSeries#isPointInside
+     */
+    public isPointInside(point: (Record<string, number>|XRangePoint)): boolean {
+        const shapeArgs = point.shapeArgs as SVGAttributes,
+            plotX = point.plotX,
+            plotY = point.plotY;
+
+        if (!shapeArgs) {
+            return super.isPointInside.apply(this, arguments);
+        }
+
+        const isInside =
+            typeof plotX !== 'undefined' &&
+            typeof plotY !== 'undefined' &&
+            plotY >= 0 &&
+            plotY <= this.yAxis.len &&
+            shapeArgs.x + shapeArgs.width >= 0 &&
+            plotX <= this.xAxis.len;
+
+        return isInside;
     }
 
     /*

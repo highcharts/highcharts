@@ -521,7 +521,7 @@ Series.prototype.init = function () {
     // Call base method
     seriesInit.apply(this, arguments);
     // Set comparison mode
-    this.setCompare(this.options.compare);
+    this.initCompare(this.options.compare);
 };
 /**
  * Highstock only. Set the
@@ -535,6 +535,18 @@ Series.prototype.init = function () {
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
 Series.prototype.setCompare = function (compare) {
+    this.initCompare(compare);
+    // Survive to export, #5485
+    this.userOptions.compare = compare;
+};
+/**
+ * @ignore
+ * @function Highcharts.Series#initCompare
+ *
+ * @param {string} [compare]
+ *        Can be one of `null` (default), `"percent"` or `"value"`.
+ */
+Series.prototype.initCompare = function (compare) {
     // Set or unset the modifyValue method
     this.modifyValue = (compare === 'value' || compare === 'percent') ?
         function (value, point) {
@@ -559,8 +571,6 @@ Series.prototype.setCompare = function (compare) {
             return 0;
         } :
         null;
-    // Survive to export, #5485
-    this.userOptions.compare = compare;
     // Mark dirty
     if (this.chart.hasRendered) {
         this.isDirty = true;
@@ -672,7 +682,8 @@ addEvent(Series, 'render', function () {
     if (!(chart.is3d && chart.is3d()) &&
         !chart.polar &&
         this.xAxis &&
-        !this.xAxis.isRadial // Gauge, #6192
+        !this.xAxis.isRadial && // Gauge, #6192
+        this.options.clip !== false // #15128
     ) {
         clipHeight = this.yAxis.len;
         // Include xAxis line width (#8031) but only if the Y axis ends on the

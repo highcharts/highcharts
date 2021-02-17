@@ -13,12 +13,12 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     PSAROptions,
     PSARParamsOptions
 } from './PSAROptions';
 import type PSARPoint from './PSARPoint';
-import type Series from '../../../Core/Series/Series';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -240,7 +240,7 @@ class PSARIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: PSARParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {

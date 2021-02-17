@@ -228,7 +228,8 @@ Chart.prototype.currentOptions = function (options) {
         var i;
         objectEach(options, function (val, key) {
             if (!depth &&
-                chart.collectionsWithUpdate.indexOf(key) > -1) {
+                chart.collectionsWithUpdate.indexOf(key) > -1 &&
+                curr[key]) {
                 val = splat(val);
                 ret[key] = [];
                 // Iterate over collections like series, xAxis or yAxis and map

@@ -303,6 +303,10 @@ var TimelineSeries = /** @class */ (function (_super) {
         colorByPoint: true,
         stickyTracking: false,
         ignoreHiddenPoint: true,
+        /**
+         * @ignore
+         * @private
+         */
         legendType: 'point',
         lineWidth: 4,
         tooltip: {

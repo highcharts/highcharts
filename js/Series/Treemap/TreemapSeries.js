@@ -825,6 +825,12 @@ var TreemapSeries = /** @class */ (function (_super) {
         // @todo Only if series.isDirtyData is true
         tree = series.tree = series.getTree();
         rootNode = series.nodeMap[rootId];
+        if (rootId !== '' &&
+            (!rootNode || !rootNode.children.length)) {
+            series.setRootNode('', false);
+            rootId = series.rootNode;
+            rootNode = series.nodeMap[rootId];
+        }
         series.renderTraverseUpButton(rootId);
         series.mapOptionsToLevel = getLevelOptions({
             from: rootNode.level + 1,
@@ -835,12 +841,6 @@ var TreemapSeries = /** @class */ (function (_super) {
                 colorByPoint: options.colorByPoint
             }
         });
-        if (rootId !== '' &&
-            (!rootNode || !rootNode.children.length)) {
-            series.setRootNode('', false);
-            rootId = series.rootNode;
-            rootNode = series.nodeMap[rootId];
-        }
         // Parents of the root node is by default visible
         TreemapUtilities.recursive(series.nodeMap[series.rootNode], function (node) {
             var next = false, p = node.parent;

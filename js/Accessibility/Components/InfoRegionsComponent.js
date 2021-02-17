@@ -21,7 +21,7 @@ var getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 import ChartUtilities from '../Utils/ChartUtilities.js';
 var getAxisDescription = ChartUtilities.getAxisDescription, getAxisRangeDescription = ChartUtilities.getAxisRangeDescription, getChartTitle = ChartUtilities.getChartTitle, unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
-var addClass = HTMLUtilities.addClass, setElAttrs = HTMLUtilities.setElAttrs, escapeStringForHTML = HTMLUtilities.escapeStringForHTML, stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString, getElement = HTMLUtilities.getElement, visuallyHideElement = HTMLUtilities.visuallyHideElement;
+var addClass = HTMLUtilities.addClass, escapeStringForHTML = HTMLUtilities.escapeStringForHTML, getElement = HTMLUtilities.getElement, getHeadingTagNameForElement = HTMLUtilities.getHeadingTagNameForElement, setElAttrs = HTMLUtilities.setElAttrs, stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString, visuallyHideElement = HTMLUtilities.visuallyHideElement;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -244,6 +244,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             .screenReaderSection.beforeChartFormat, axesDesc = this.getAxesDescription(), shouldHaveSonifyBtn = chart.sonify && ((_a = chart.options.sonification) === null || _a === void 0 ? void 0 : _a.enabled), sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
             chart.index, dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
             chart.index, annotationsList = getAnnotationsInfoHTML(chart), annotationsTitleStr = chart.langFormat('accessibility.screenReaderSection.annotations.heading', { chart: chart }), context = {
+            headingTagName: getHeadingTagNameForElement(chart.renderTo),
             chartTitle: getChartTitle(chart),
             typeDescription: this.getTypeDescriptionText(),
             chartSubtitle: this.getSubtitleText(),

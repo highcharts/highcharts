@@ -389,6 +389,7 @@ var IKHIndicator = /** @class */ (function (_super) {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
+        indicator.color = mainColor;
     };
     IKHIndicator.prototype.getGraphPath = function (points) {
         var indicator = this, path = [], spanA, spanAarr = [];

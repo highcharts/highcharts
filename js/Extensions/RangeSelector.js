@@ -227,7 +227,7 @@ extend(defaultOptions, {
          *         Dropdown option
          *
          * @validvalue ["always", "responsive", "never"]
-         * @since next
+         * @since 9.0.0
          */
         dropdown: 'responsive',
         /**
@@ -237,6 +237,7 @@ extend(defaultOptions, {
          * @sample {highstock} stock/rangeselector/enabled/
          *         Disable the range selector
          *
+         * @type {boolean|undefined}
          * @default {highstock} true
          */
         enabled: void 0,
@@ -326,7 +327,7 @@ extend(defaultOptions, {
          * @type      {Highcharts.ColorString}
          * @since     1.3.7
          */
-        inputBoxBorderColor: palette.neutralColor20,
+        inputBoxBorderColor: 'none',
         /**
          * The pixel height of the date input boxes.
          *
@@ -337,14 +338,16 @@ extend(defaultOptions, {
          */
         inputBoxHeight: 17,
         /**
-         * The pixel width of the date input boxes.
+         * The pixel width of the date input boxes. When `undefined`, the width
+         * is fitted to the rendered content.
          *
          * @sample {highstock} stock/rangeselector/styling/
          *         Styling the buttons and inputs
          *
-         * @since     1.3.7
+         * @type   {number|undefined}
+         * @since  1.3.7
          */
-        inputBoxWidth: 90,
+        inputBoxWidth: void 0,
         /**
          * The date format in the input boxes when not selected for editing.
          * Defaults to `%b %e, %Y`.
@@ -393,12 +396,7 @@ extend(defaultOptions, {
          */
         inputEditDateFormat: '%Y-%m-%d',
         /**
-         * Enable or disable the date input boxes. Defaults to enabled when
-         * there is enough space, disabled if not (typically mobile).
-         *
-         * @sample {highstock} stock/rangeselector/input-datepicker/
-         *         Extending the input with a jQuery UI datepicker
-         *
+         * Enable or disable the date input boxes.
          */
         inputEnabled: true,
         /**
@@ -432,7 +430,7 @@ extend(defaultOptions, {
          * The space in pixels between the labels and the date input boxes in
          * the range selector.
          *
-         * @since next
+         * @since 9.0.0
          */
         inputSpacing: 5,
         /**
@@ -480,7 +478,12 @@ extend(defaultOptions, {
          * @type      {Highcharts.CSSObject}
          * @apioption rangeSelector.inputStyle
          */
-        inputStyle: {},
+        inputStyle: {
+            /** @ignore */
+            color: palette.highlightColor80,
+            /** @ignore */
+            cursor: 'pointer'
+        },
         /**
          * CSS styles for the labels - the Zoom, From and To texts.
          *
@@ -498,7 +501,7 @@ extend(defaultOptions, {
         }
     }
 });
-defaultOptions.lang = merge(defaultOptions.lang, 
+extend(defaultOptions.lang, 
 /**
  * Language object. The language object is global and it can't be set
  * on each chart initialization. Instead, use `Highcharts.setOptions` to
@@ -531,17 +534,18 @@ defaultOptions.lang = merge(defaultOptions.lang,
     rangeSelectorZoom: 'Zoom',
     /**
      * The text for the label for the "from" input box in the range
-     * selector.
+     * selector. Since v9.0, this string is empty as the label is not
+     * rendered by default.
      *
      * @product highstock gantt
      */
-    rangeSelectorFrom: 'From',
+    rangeSelectorFrom: '',
     /**
      * The text for the label for the "to" input box in the range selector.
      *
      * @product highstock gantt
      */
-    rangeSelectorTo: 'To'
+    rangeSelectorTo: '→'
 });
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -1074,11 +1078,12 @@ var RangeSelector = /** @class */ (function () {
             }
         }
         // Create the text label
+        var text = lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'];
         var label = renderer
-            .label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], 0)
+            .label(text, 0)
             .addClass('highcharts-range-label')
             .attr({
-            padding: 2
+            padding: text ? 2 : 0
         })
             .add(inputGroup);
         // Create an SVG label that shows updated date ranges and and records
@@ -1153,9 +1158,9 @@ var RangeSelector = /** @class */ (function () {
         var keyDown = false;
         // handle changes in the input boxes
         input.onchange = function () {
-            updateExtremes();
-            // Blur input when clicking date input calendar
+            // Update extremes and blur input when clicking date input calendar
             if (!keyDown) {
+                updateExtremes();
                 rangeSelector.hideInput(name);
                 input.blur();
             }
@@ -1166,8 +1171,12 @@ var RangeSelector = /** @class */ (function () {
                 updateExtremes();
             }
         };
-        input.onkeydown = function () {
+        input.onkeydown = function (event) {
             keyDown = true;
+            // Arrow keys
+            if (event.keyCode === 38 || event.keyCode === 40) {
+                updateExtremes();
+            }
         };
         input.onkeyup = function () {
             keyDown = false;
@@ -1251,7 +1260,9 @@ var RangeSelector = /** @class */ (function () {
                 height: 0,
                 zIndex: inputsZIndex
             });
-            this.renderButtons();
+            if (this.buttonOptions.length) {
+                this.renderButtons();
+            }
             // First create a wrapper outside the container in order to make
             // the inputs work and make export correct
             if (container.parentNode) {
@@ -1288,15 +1299,10 @@ var RangeSelector = /** @class */ (function () {
                     this.minDateBox,
                     this.maxLabel,
                     this.maxDateBox
-                ].forEach(function (label, i) {
-                    if (label) {
+                ].forEach(function (label) {
+                    if (label && label.width) {
                         label.attr({ x: x_1 });
                         x_1 += label.width + options.inputSpacing;
-                        // For version <= 8 compliance
-                        // @todo remove this if we change the design
-                        if (i % 2) {
-                            x_1 += options.inputSpacing;
-                        }
                     }
                 });
             }
@@ -1723,7 +1729,7 @@ var RangeSelector = /** @class */ (function () {
                 hasActiveButton = true;
             }
         });
-        if (!hasActiveButton && buttons.length > 0) {
+        if (!hasActiveButton) {
             if (dropdown) {
                 dropdown.selectedIndex = 0;
             }

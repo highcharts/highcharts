@@ -12,7 +12,7 @@
  *
  * */
 
-import type Series from '../../Core/Series/Series';
+import type LineSeries from '../../Series/Line/LineSeries';
 
 /* *
  *
@@ -20,7 +20,7 @@ import type Series from '../../Core/Series/Series';
  *
  * */
 
-export interface IndicatorValuesObject<TLinkedSeries extends typeof Series.prototype> {
+export interface IndicatorValuesObject<TLinkedSeries extends typeof LineSeries.prototype> {
     values: Array<Array<(
         Highcharts.ExtractArrayType<TLinkedSeries['xData']>|
         Highcharts.ExtractArrayType<TLinkedSeries['yData']>

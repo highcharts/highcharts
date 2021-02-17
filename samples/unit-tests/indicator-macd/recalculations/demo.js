@@ -488,3 +488,26 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
     chart.series[1].remove();
     assert.ok(true, 'No error when removing MACD without lines (#8848).');
 });
+
+QUnit.test('#14977: Index param', assert => {
+    const xData = [...Array(50).keys()];
+    const yData = xData.map(() => {
+        const y = Math.random();
+        return [y, y * 2, y, y * 2];
+    });
+
+    const getValues = index =>
+        Highcharts.seriesTypes.macd.prototype.getValues({
+            xData,
+            yData
+        }, Highcharts.merge(
+            Highcharts.getOptions().plotOptions.macd.params,
+            { index }
+        )).values;
+
+    assert.notStrictEqual(
+        getValues(0)[0][3],
+        getValues(1)[0][3],
+        'getValues should return different values when passed different index param'
+    );
+});

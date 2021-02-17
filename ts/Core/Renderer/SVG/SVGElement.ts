@@ -44,7 +44,6 @@ const {
     deg2rad,
     doc,
     hasTouch,
-    isFirefox,
     noop,
     svg,
     SVG_NS,
@@ -181,7 +180,7 @@ declare global {
             public removeClass(
                 className: (string|RegExp)
             ): SVGElement;
-            public removeTextOutline(tspans: Array<SVGDOMElement>): void;
+            public removeTextOutline(): void;
             public rotationOriginXSetter(value: any, key: string): void;
             public rotationOriginYSetter(value: any, key: string): void;
             public rotationSetter(value: any, key: string): void;
@@ -869,32 +868,26 @@ class SVGElement {
      */
     public applyTextOutline(textOutline: string): void {
         var elem = this.element,
-            tspans: Array<SVGDOMElement>,
             hasContrast = textOutline.indexOf('contrast') !== -1,
-            styles: CSSObject = {},
-            color: ColorString,
-            strokeWidth: string,
-            firstRealChild: SVGDOMElement;
+            styles: CSSObject = {};
 
         // When the text shadow is set to contrast, use dark stroke for light
         // text and vice versa.
         if (hasContrast) {
             styles.textOutline = textOutline = textOutline.replace(
                 /contrast/g,
-                this.renderer.getContrast(elem.style.fill as any)
+                this.renderer.getContrast(elem.style.fill)
             );
         }
 
         // Extract the stroke width and color
-        textOutline = textOutline.split(' ') as any;
-        color = textOutline[textOutline.length - 1];
-        strokeWidth = textOutline[0];
+        const parts = textOutline.split(' ');
+        const color: ColorString = parts[parts.length - 1];
+        let strokeWidth = parts[0];
 
         if (strokeWidth && strokeWidth !== 'none' && H.svg) {
 
             this.fakeTS = true; // Fake text shadow
-
-            tspans = [].slice.call(elem.getElementsByTagName('tspan'));
 
             // In order to get the right y position of the clone,
             // copy over the y setter
@@ -906,60 +899,50 @@ class SVGElement {
             strokeWidth = strokeWidth.replace(
                 /(^[\d\.]+)(.*?)$/g,
                 function (match: string, digit: string, unit: string): string {
-                    return (2 * (digit as any)) + unit;
+                    return (2 * Number(digit)) + unit;
                 }
             );
 
             // Remove shadows from previous runs.
-            this.removeTextOutline(tspans);
+            this.removeTextOutline();
 
-            // Check if the element contains RTL characters.
-            // Comparing against Hebrew and Arabic characters,
-            // excluding Arabic digits. Source:
-            // https://www.unicode.org/Public/UNIDATA/extracted/DerivedBidiClass.txt
-            const isRTL = elem.textContent ?
-                /^[\u0591-\u065F\u066A-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
-                    .test(elem.textContent) : false;
-            // For each of the tspans, create a stroked copy behind it.
-            firstRealChild = elem.firstChild as any;
-            tspans.forEach(function (
-                tspan: SVGDOMElement,
-                y: number
-            ): void {
-                var clone: any;
-
-                // Let the first line start at the correct X position
-                if (y === 0) {
-                    tspan.setAttribute('x', elem.getAttribute('x') as any);
-                    y = elem.getAttribute('y') as any;
-                    tspan.setAttribute('y', y || 0);
-                    if (y === null) {
-                        elem.setAttribute('y', 0);
-                    }
-                }
-
-                // Create the clone and apply outline properties.
-                // For RTL elements apply outline properties for orginal element
-                // to prevent outline from overlapping the text.
-                // For RTL in Firefox keep the orginal order (#10162).
-                clone = tspan.cloneNode(true);
-                attr((isRTL && !isFirefox) ? tspan : clone, {
-                    'class': 'highcharts-text-outline',
-                    fill: color,
-                    stroke: color,
-                    'stroke-width': strokeWidth,
-                    'stroke-linejoin': 'round'
-                });
-                elem.insertBefore(clone, firstRealChild);
+            const outline = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            attr(outline, {
+                'class': 'highcharts-text-outline',
+                fill: color,
+                stroke: color,
+                'stroke-width': strokeWidth,
+                'stroke-linejoin': 'round'
             });
 
-            // Create a whitespace between tspan and clone,
-            // to fix the display of Arabic characters in Firefox.
-            if (isRTL && isFirefox && tspans[0]) {
-                const whitespace = tspans[0].cloneNode(true);
-                whitespace.textContent = ' ';
-                elem.insertBefore(whitespace, firstRealChild);
-            }
+            // For each of the tspans and text nodes, create a copy in the
+            // outline.
+            [].forEach.call(
+                elem.childNodes,
+                (childNode: ChildNode): void => {
+                    const clone = childNode.cloneNode(true);
+                    if ((clone as any).removeAttribute) {
+                        ['fill', 'stroke', 'stroke-width', 'stroke'].forEach(
+                            (prop): void => (clone as any).removeAttribute(prop)
+                        );
+                    }
+                    outline.appendChild(clone);
+                }
+            );
+
+            // Insert an absolutely positioned break before the original text
+            // to keep it in place
+            const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            br.textContent = '\u200B';
+            attr(br, {
+                x: elem.getAttribute('x'),
+                y: elem.getAttribute('y')
+            });
+
+            // Insert the outline
+            outline.appendChild(br);
+            elem.insertBefore(outline, elem.firstChild);
+
         }
     }
 
@@ -1609,7 +1592,7 @@ class SVGElement {
         path: SVGElement
     ): void {
         const textElement = elem.getElementsByTagName('text')[0];
-        let tspans: NodeListOf<ChildNode>;
+        let childNodes: NodeListOf<ChildNode>;
 
         if (textElement) {
             // Remove textPath attributes
@@ -1624,10 +1607,10 @@ class SVGElement {
                 textElement.getElementsByTagName('textPath').length
             ) {
                 // Move nodes to <text>
-                tspans = this.textPathWrapper.element.childNodes;
-                // Now move all <tspan>'s to the <textPath> node
-                while (tspans.length) {
-                    textElement.appendChild(tspans[0]);
+                childNodes = this.textPathWrapper.element.childNodes;
+                // Now move all <tspan>'s and text nodes to the <textPath> node
+                while (childNodes.length) {
+                    textElement.appendChild(childNodes[0]);
                 }
                 // Remove <textPath> from the DOM
                 textElement.removeChild(this.textPathWrapper.element);
@@ -1820,14 +1803,13 @@ class SVGElement {
                     toggleTextShadowShim = this.fakeTS && function (
                         display: string
                     ): void {
-                        [].forEach.call(
-                            element.querySelectorAll(
-                                '.highcharts-text-outline'
-                            ),
-                            function (tspan: SVGDOMElement): void {
-                                tspan.style.display = display;
-                            }
-                        );
+                        const outline = element.querySelector(
+                            '.highcharts-text-outline'
+                        ) as DOMElementType|undefined;
+
+                        if (outline) {
+                            css(outline, { display });
+                        }
                     };
 
                     // Workaround for #3842, Firefox reporting wrong bounding
@@ -2181,21 +2163,15 @@ class SVGElement {
     }
 
     /**
+     *
      * @private
-     * @param {Array<Highcharts.SVGDOMElement>} tspans
-     * Text spans.
      */
-    public removeTextOutline(tspans: Array<SVGDOMElement>): void {
-        // Iterate from the end to
-        // support removing items inside the cycle (#6472).
-        var i = tspans.length,
-            tspan;
-        while (i--) {
-            tspan = tspans[i];
-            if (tspan.getAttribute('class') === 'highcharts-text-outline') {
-                // Remove then erase
-                erase(tspans, this.element.removeChild(tspan));
-            }
+    public removeTextOutline(): void {
+        const outline = this.element
+            .querySelector('tspan.highcharts-text-outline') as SVGDOMElement;
+
+        if (outline) {
+            this.safeRemoveChild(outline);
         }
     }
 
@@ -2269,6 +2245,7 @@ class SVGElement {
         textPathOptions: Record<string, any>
     ): SVGElement {
         var elem = this.element,
+            textNode = this.text ? this.text.element : elem,
             attribsMap = {
                 textAnchor: 'text-anchor'
             },
@@ -2277,7 +2254,6 @@ class SVGElement {
             textPathElement: DOMElementType,
             textPathId,
             textPathWrapper: SVGElement = this.textPathWrapper as any,
-            tspans,
             firstTime = !textPathWrapper;
 
         // Defaults
@@ -2306,10 +2282,7 @@ class SVGElement {
             } else if (textPathWrapper) {
                 // Case after drillup when spans were added into
                 // the DOM outside the textPathWrapper parentGroup
-                this.removeTextOutline.call(
-                    textPathWrapper.parentGroup,
-                    [].slice.call(elem.getElementsByTagName('tspan'))
-                );
+                this.removeTextOutline.call(textPathWrapper.parentGroup);
             }
             // label() has padding, text() doesn't
             if (this.options && this.options.padding) {
@@ -2333,29 +2306,30 @@ class SVGElement {
 
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
-                tspans = elem.getElementsByTagName('tspan');
 
-                // Now move all <tspan>'s to the <textPath> node
-                while (tspans.length) {
-                    // Remove "y" from tspans, as Firefox translates them
-                    tspans[0].setAttribute('y', 0);
-                    // Remove "x" from tspans
-                    if (isNumber(attrs.dx)) {
-                        tspans[0].setAttribute('x', -attrs.dx);
+                // Adjust the position
+                textNode.setAttribute('y', 0); // Firefox
+                if (isNumber(attrs.dx)) {
+                    textNode.setAttribute('x', -attrs.dx);
+                }
+
+                // Move all <tspan>'s and text nodes to the <textPath> node. Do
+                // not move other elements like <title> or <path>
+                const childNodes = [].slice.call(textNode.childNodes);
+                for (let i = 0; i < childNodes.length; i++) {
+                    const childNode: any = childNodes[i];
+                    if (
+                        childNode.nodeType === Node.TEXT_NODE ||
+                        childNode.nodeName === 'tspan'
+                    ) {
+                        textPathElement.appendChild(childNode);
                     }
-                    textPathElement.appendChild(tspans[0]);
                 }
             }
 
             // Add <textPath> to the DOM
-            if (
-                adder &&
-                textPathWrapper
-            ) {
-                textPathWrapper.add({
-                    // label() is placed in a group, text() is standalone
-                    element: this.text ? this.text.element : elem
-                } as any);
+            if (adder && textPathWrapper) {
+                textPathWrapper.add({ element: textNode } as any);
             }
 
             // Set basic options:
@@ -2393,10 +2367,7 @@ class SVGElement {
             elem.removeAttribute('transform');
 
             // Remove shadows and text outlines
-            this.removeTextOutline.call(
-                textPathWrapper,
-                [].slice.call(elem.getElementsByTagName('tspan'))
-            );
+            this.removeTextOutline.call(textPathWrapper);
 
             // Remove background and border for label(), see #10545
             // Alternatively, we can disable setting background rects in

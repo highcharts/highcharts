@@ -1,18 +1,111 @@
-/* eslint func-style: 0, no-console: 0, max-len: 0 */
-const gulp = require('gulp');
+/* eslint-disable callback-return */
+/* eslint-disable func-style */
+/* eslint-disable no-console */
+/* eslint-disable quotes */
+/* eslint-disable require-jsdoc */
 
-const uploadAPIDocs = () => {
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+const gulp = require('gulp'),
+    Path = require('path');
+
+/* *
+ *
+ *  Constants
+ *
+ * */
+
+const HTML_HEAD_STATIC = [
+    [
+        '',
+        '<script',
+        'id="Cookiebot"',
+        'src="https://consent.cookiebot.com/uc.js"',
+        'data-cbid="8be0770c-8b7f-4e2d-aeb5-2cfded81e177"',
+        'data-blockingmode="auto"',
+        'type="text/javascript"',
+        '></script>'
+    ].join('\n        '),
+    [
+        '',
+        '<!-- Google Tag Manager -->',
+        `<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':`,
+        `new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],`,
+        `j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=`,
+        `'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);`,
+        `})(window,document,'script','dataLayer','GTM-5WLVCCK');</script>`,
+        `<!-- End Google Tag Manager -->`
+    ].join('\n        ')
+].join('\n');
+
+/* *
+ *
+ *  Functions
+ *
+ * */
+
+function updateFileContent(filePath, fileContent) {
+    switch (Path.extname(filePath)) {
+        case '.htm':
+        case '.html':
+            fileContent = Buffer.from(
+                fileContent
+                    .toString()
+                    .replace(/^(.*\<\/head\>.*)$/m, HTML_HEAD_STATIC + '\n$1')
+            );
+            break;
+        default:
+    }
+    return fileContent;
+}
+
+function uploadFilesTest(params) {
+    const fs = require('fs');
+    const mkDirP = require('mkdirp');
+
+    return new Promise(resolve => {
+        const callback = params.callback,
+            contentCallback = params.contentCallback,
+            errors = [];
+
+        let from,
+            to,
+            content;
+
+        params.files.forEach(file => {
+            try {
+                from = file.from;
+                to = Path.join('./build/upload-api/', file.to);
+                content = fs.readFileSync(from, '');
+                if (contentCallback) {
+                    content = contentCallback(from, content);
+                }
+                mkDirP.sync(Path.dirname(to));
+                fs.writeFileSync(to, content);
+                if (callback) {
+                    callback();
+                }
+            } catch (error) {
+                console.error(error);
+                errors.push(error);
+            }
+        });
+
+        resolve({ errors: [] });
+    });
+}
+
+function uploadAPIDocs() {
     const {
         getFilesInFolder
     } = require('highcharts-assembler/src/build.js');
     const colors = require('colors');
     const isString = x => typeof x === 'string';
     const ProgressBar = require('../../progress-bar.js');
-    const {
-        join,
-        relative,
-        sep
-    } = require('path');
     const {
         asyncForeach,
         uploadFiles
@@ -26,7 +119,8 @@ const uploadAPIDocs = () => {
             argv.files.split(',') :
             getFilesInFolder(sourceFolder, true, '')
     );
-    if (!bucket) {
+
+    if (!bucket && !argv.test) {
         throw new Error('No --bucket argument specified or env. variable HIGHCHARTS_APIDOCS_BUCKET is empty or unset.');
     }
 
@@ -53,6 +147,7 @@ const uploadAPIDocs = () => {
             bucket,
             profile: argv.profile,
             callback: argv.silent ? false : doTick,
+            contentCallback: updateFileContent,
             onError
         };
         const getMapOfFromTo = fileName => {
@@ -63,7 +158,7 @@ const uploadAPIDocs = () => {
                 to = parts.join('/');
             }
             return {
-                from: join(sourceFolder, fileName),
+                from: Path.join(sourceFolder, fileName),
                 to
             };
         };
@@ -74,14 +169,14 @@ const uploadAPIDocs = () => {
     const commands = [];
     return asyncForeach(tags, tag => Promise
         .resolve(getUploadConfig(tag))
-        .then(uploadFiles)
+        .then(argv.test ? uploadFilesTest : uploadFiles)
         .then(result => {
             const { errors } = result;
             if (errors.length) {
                 const erroredFiles = errors
-                    .map(e => relative(sourceFolder, e.from)
+                    .map(e => Path.relative(sourceFolder, e.from)
                         // Make path command line friendly.
-                        .split(sep)
+                        .split(Path.sep)
                         .join('/'));
                 commands.push(`gulp upload-api --tags ${tag} --files ${erroredFiles.join(',')}`);
             }
@@ -95,16 +190,18 @@ const uploadAPIDocs = () => {
                 ].join('\n'));
             }
         });
-};
+}
 
 uploadAPIDocs.description = 'Uploads API docs to the designated bucket';
 uploadAPIDocs.flags = {
     '--bucket': 'The S3 bucket to upload to.',
+    '--files': 'Upload selected files relative to current working directory. (optional)',
     '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
                     'standard AWS environment variables for credentials will be used. (optional)',
-    '--tags': 'Tags to upload under (optional)',
+    '--tags': 'Subfolders to upload under (optional)',
     '--noextensions': 'Remove file extensions for uploaded files (destination). Useful for testing/serving directly from S3 bucket (optional)',
-    '--silent': 'Don\'t produce progress output. (optional)'
+    '--silent': 'Don\'t produce progress output. (optional)',
+    '--test': 'Will save processed files for S3 bucket in a local directory instead of uploading. (optional)'
 };
 
 

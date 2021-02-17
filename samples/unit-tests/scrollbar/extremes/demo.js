@@ -339,3 +339,34 @@ QUnit.test('Toggle chart.scrollbar', assert => {
         "xAxis's tick should equal min and max values (#13184)."
     );
 });
+
+QUnit.test('#13473: Threshold', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+        yAxis: {
+            max: 200,
+            scrollbar: {
+                enabled: true
+            }
+        },
+        series: [{
+            data: [100, 200, 500]
+        }]
+    });
+
+    const scrollbar = chart.yAxis[0].scrollbar;
+    scrollbar.buttonToMinClick({
+        trigger: 'scrollbar'
+    });
+    scrollbar.buttonToMaxClick({
+        trigger: 'scrollbar'
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].min,
+        0,
+        'It should be possible to scroll back down to the threshold after scrolling up'
+    );
+});

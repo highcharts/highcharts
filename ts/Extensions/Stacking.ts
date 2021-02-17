@@ -32,6 +32,7 @@ const {
     defined,
     destroyObjectProperties,
     format,
+    isArray,
     isNumber,
     pick
 } = U;
@@ -759,6 +760,10 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
             }
 
         } else if (stacking === 'group') {
+            if (isArray(y)) {
+                y = y[0];
+            }
+
             // In this stack, the total is the number of valid points
             if (y !== null) {
                 stack.total = (stack.total || 0) + 1;

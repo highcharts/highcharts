@@ -679,7 +679,7 @@ class Chart {
         fireEvent(this, 'beforeRedraw');
 
         var chart = this,
-            axes = chart.axes,
+            axes: Array<Axis> = chart.hasCartesianSeries ? chart.axes : chart.colorAxis || [],
             series = chart.series,
             pointer = chart.pointer,
             legend = chart.legend,
@@ -687,7 +687,6 @@ class Chart {
             redrawLegend = chart.isDirtyLegend,
             hasStackedSeries: (boolean|undefined),
             hasDirtyStacks,
-            hasCartesianSeries = chart.hasCartesianSeries,
             isDirtyBox = chart.isDirtyBox,
             i,
             serie,
@@ -773,48 +772,44 @@ class Chart {
         }
 
 
-        if (hasCartesianSeries) {
-            // set axes scales
-            axes.forEach(function (axis): void {
-                axis.updateNames();
-                axis.setScale();
-            });
-        }
+        // set axes scales
+        axes.forEach(function (axis): void {
+            axis.updateNames();
+            axis.setScale();
+        });
 
         chart.getMargins(); // #3098
 
-        if (hasCartesianSeries) {
-            // If one axis is dirty, all axes must be redrawn (#792, #2169)
-            axes.forEach(function (axis): void {
-                if (axis.isDirty) {
-                    isDirtyBox = true;
-                }
-            });
+        // If one axis is dirty, all axes must be redrawn (#792, #2169)
+        axes.forEach(function (axis): void {
+            if (axis.isDirty) {
+                isDirtyBox = true;
+            }
+        });
 
-            // redraw axes
-            axes.forEach(function (axis: Highcharts.Axis): void {
+        // redraw axes
+        axes.forEach(function (axis): void {
 
-                // Fire 'afterSetExtremes' only if extremes are set
-                var key = axis.min + ',' + axis.max;
+            // Fire 'afterSetExtremes' only if extremes are set
+            var key = axis.min + ',' + axis.max;
 
-                if (axis.extKey !== key) { // #821, #4452
-                    axis.extKey = key;
+            if (axis.extKey !== key) { // #821, #4452
+                axis.extKey = key;
 
-                    // prevent a recursive call to chart.redraw() (#1119)
-                    afterRedraw.push(function (): void {
-                        fireEvent(
-                            axis,
-                            'afterSetExtremes',
-                            extend(axis.eventArgs, axis.getExtremes())
-                        ); // #747, #751
-                        delete axis.eventArgs;
-                    });
-                }
-                if (isDirtyBox || hasStackedSeries) {
-                    axis.redraw();
-                }
-            });
-        }
+                // prevent a recursive call to chart.redraw() (#1119)
+                afterRedraw.push(function (): void {
+                    fireEvent(
+                        axis,
+                        'afterSetExtremes',
+                        extend(axis.eventArgs, axis.getExtremes())
+                    ); // #747, #751
+                    delete axis.eventArgs;
+                });
+            }
+            if (isDirtyBox || hasStackedSeries) {
+                axis.redraw();
+            }
+        });
 
         // the plot areas size has changed
         if (isDirtyBox) {
@@ -2392,6 +2387,11 @@ class Chart {
         // Credits
         chart.addCredits();
 
+        // Handle responsiveness
+        if (chart.setResponsive) {
+            chart.setResponsive();
+        }
+
         // Set flag
         chart.hasRendered = true;
 
@@ -2607,14 +2607,8 @@ class Chart {
             }
         }
 
-        // Handle responsiveness. Has to fire after extensions are loaded
-        addEvent(chart, 'load', function (): void {
-            if (chart.setResponsive) {
-                chart.setResponsive(true);
-            }
-        });
-
         chart.render();
+        chart.pointer.getChartPosition(); // #14973
 
         // Fire the load event if there are no external images
         if (!chart.renderer.imgCount && !chart.hasLoaded) {
@@ -3214,15 +3208,13 @@ class Chart {
 
                 // In stock charts, the navigator series are also part of the
                 // chart.series array, but those series should not be handled
-                // here (#8196).
-                if (coll === 'series') {
-                    indexMap = [];
-                    chart[coll].forEach(function (s, i): void {
-                        if (!s.options.isInternal) {
-                            indexMap.push(pick(s.options.index, i));
-                        }
-                    });
-                }
+                // here (#8196) and neither should the navigator axis (#9671).
+                indexMap = [];
+                (chart as any)[coll].forEach(function (s: (Series|Axis), i: number): void {
+                    if (!s.options.isInternal) {
+                        indexMap.push(pick(s.options.index, i));
+                    }
+                });
 
                 splat((options as any)[coll]).forEach(function (newOptions, i): void {
                     const hasId = defined(newOptions.id);
@@ -3234,7 +3226,7 @@ class Chart {
                     }
 
                     // No match by id found, match by index instead
-                    if (!item) {
+                    if (!item && (chart as any)[coll]) {
                         item = (chart as any)[coll][indexMap ? indexMap[i] : i];
 
                         // Check if we grabbed an item with an exising but
@@ -3396,7 +3388,7 @@ class Chart {
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spaceBox' ?
                     null :
-                    'plotBox'
+                    this.scrollablePlotBox || 'plotBox'
             );
 
         /**
@@ -3610,13 +3602,13 @@ class Chart {
 
                 // General calculations of panning state.
                 // This is related to using vertical panning. (#11315).
-                axis.series.forEach(function (series): void {
-                    if (
-                        hasVerticalPanning &&
-                        !isX && (
-                            !panningState || panningState.isDirty
-                        )
-                    ) {
+                if (
+                    hasVerticalPanning &&
+                    !isX && (
+                        !panningState || panningState.isDirty
+                    )
+                ) {
+                    axis.series.forEach(function (series): void {
                         const processedData = series.getProcessedData(true),
                             dataExtremes = series.getExtremes(
                                 processedData.yData, true
@@ -3644,8 +3636,8 @@ class Chart {
                                 panningState.startMax
                             );
                         }
-                    }
-                });
+                    });
+                }
 
                 paddedMin = Math.min(
                     pick(panningState?.startMin, extremes.dataMin),

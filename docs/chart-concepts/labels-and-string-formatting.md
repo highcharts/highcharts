@@ -14,7 +14,18 @@ Most places where text is handled in Highcharts, it is also followed by an optio
 
 Using HTML also works around some older browser bugs with bi-directional text. Read more under [Internationalization.](https://highcharts.com/docs/advanced-chart-features/internationalization)
 
-Please note that this may become a security risk by running unauthorized code in the browser, if the content of the label comes from an untrusted source.
+### Filtering
+Adding HTML from an untrusted source into the DOM is a potential security risk, as it may execute unauthorized code in the browser. This is known as [cross-site scripting or XSS](https://en.wikipedia.org/wiki/Cross-site_scripting). Since Highcharts v9 we aim to filter all HTML that is added through the chart options structure - except function callbacks, which are already by definition executing code in the browser. Our design goal is that as long as the chart options are valid JSON (which rules out functions), they should be XSS safe.
+
+In practice we do this by using the browser's built-in `DOMParser` to parse incoming strings, transform the result into an [abstract syntax tree](https://api.highcharts.com/class-reference/Highcharts.AST), then check the tags and attributes against allow lists. Unknown tags and attributes are removed.
+
+If your config comes from a trusted source, you may add tags, attributes or reference patterns to the allow lists:
+```js
+Highcharts.AST.allowedTags.push('blink');
+Highcharts.AST.allowedAttributes.push('data-value');
+// Allow links to the `tel` protocol
+Highcharts.AST.allowedReferences.push('tel:');
+```
 
 ### Format strings
 
@@ -40,35 +51,35 @@ For full control over string handling and additional scripting capabilities arou
 
 Since 6.0.6, the [accessibility module](https://www.highcharts.com/docs/chart-concepts/accessibility) supports more advanced format strings, by also by also handling arrays and plural conditionals. The options this applies to can be found under [lang.accessibility](https://api.highcharts.com/highcharts/lang.accessibility). Arrays can be indexed as follows:
 
-    
+
     Format: 'This is the first index: {myArray[0]}. The last: {myArray[-1]}.'
     Context: { myArray: [0, 1, 2, 3, 4, 5] }
     Result: 'This is the first index: 0. The last: 5.'
 
 They can also be iterated using the `#each()` function. This will repeat the contents of the bracket expression for each element. Example:
 
-    
+
     Format: 'List contains: {#each(myArray)cm }'
     Context: { myArray: [0, 1, 2] }
     Result: 'List contains: 0cm 1cm 2cm '
 
 The `#each()` function optionally takes a length parameter. If positive, this parameter specifies the max number of elements to iterate through. If negative, the function will subtract the number from the length of the array. Use this to stop iterating before the array ends. Example:
 
-    
+
     Format: 'List contains: {#each(myArray, -1), }and {myArray[-1]}.'
     Context: { myArray: [0, 1, 2, 3] }
     Result: 'List contains: 0, 1, 2, and 3.'
 
 Use the `#plural()` function to pick a string depending on whether or not a context object is 1. Basic arguments are `#plural(obj, plural, singular)`. Example:
 
-    
+
     Format: 'Has {numPoints} {#plural(numPoints, points, point}.'
     Context: { numPoints: 5 }
     Result: 'Has 5 points.'
 
 Optionally there are additional parameters for dual and none: `#plural(obj,plural,singular,dual,none)`. Example:
 
-    
+
     Format: 'Has {#plural(numPoints, many points, one point, two points, none}.'
     Context: { numPoints: 2 }
     Result: 'Has two points.'

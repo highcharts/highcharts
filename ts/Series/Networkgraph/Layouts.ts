@@ -280,6 +280,7 @@ extend(
 
             layout.prevSystemTemperature = layout.systemTemperature;
             layout.systemTemperature = layout.getSystemTemperature();
+
             if (layout.enableSimulation) {
                 series.forEach(function (s): void {
                     // Chart could be destroyed during the simulation

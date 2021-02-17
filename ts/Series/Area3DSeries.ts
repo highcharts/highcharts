@@ -17,10 +17,13 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Math3D from '../Extensions/Math3D.js';
 const { perspective } = Math3D;
 
-import Series from '../Core/Series/Series.js';
-
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
-const { seriesTypes } = SeriesRegistry;
+const {
+    seriesTypes: {
+        area: AreaSeriesClass,
+        line: LineSeriesClass
+    }
+} = SeriesRegistry;
 
 import U from '../Core/Utilities.js';
 const {
@@ -30,7 +33,7 @@ const {
 
 /* eslint-disable no-invalid-this */
 
-wrap(seriesTypes.area.prototype, 'getGraphPath', function (
+wrap(AreaSeriesClass.prototype, 'getGraphPath', function (
     this: AreaSeries,
     proceed: Function
 ): SVGPath {
@@ -43,7 +46,7 @@ wrap(seriesTypes.area.prototype, 'getGraphPath', function (
         return svgPath;
     }
 
-    var getGraphPath = Series.prototype.getGraphPath,
+    var getGraphPath = LineSeriesClass.prototype.getGraphPath,
         graphPath: SVGPath = [],
         options = series.options,
         stacking = options.stacking,

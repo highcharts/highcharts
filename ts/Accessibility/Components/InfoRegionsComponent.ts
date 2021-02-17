@@ -43,10 +43,11 @@ const {
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
     addClass,
-    setElAttrs,
     escapeStringForHTML,
-    stripHTMLTagsFromString,
     getElement,
+    getHeadingTagNameForElement,
+    setElAttrs,
+    stripHTMLTagsFromString,
     visuallyHideElement
 } = HTMLUtilities;
 
@@ -493,6 +494,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 { chart: chart }
             ),
             context = {
+                headingTagName: getHeadingTagNameForElement(chart.renderTo),
                 chartTitle: getChartTitle(chart),
                 typeDescription: this.getTypeDescriptionText(),
                 chartSubtitle: this.getSubtitleText(),

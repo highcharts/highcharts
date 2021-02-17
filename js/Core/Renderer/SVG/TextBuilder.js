@@ -11,7 +11,7 @@ import H from '../../Globals.js';
 import U from '../../Utilities.js';
 import AST from '../HTML/AST.js';
 var doc = H.doc, SVG_NS = H.SVG_NS;
-var attr = U.attr, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
+var attr = U.attr, erase = U.erase, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
 /**
  * SVG Text Builder
  * @private
@@ -30,9 +30,17 @@ var TextBuilder = /** @class */ (function () {
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
+    /**
+     * Build an SVG representation of the pseudo HTML given in the object's
+     * svgElement.
+     *
+     * @private
+     *
+     * @return {void}.
+     */
     TextBuilder.prototype.buildSVG = function () {
         var wrapper = this.svgElement;
-        var textNode = wrapper.element, renderer = wrapper.renderer, forExport = renderer.forExport, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, lines, childNodes = textNode.childNodes, parentX = attr(textNode, 'x'), textCache, isSubsequentLine, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
+        var textNode = wrapper.element, renderer = wrapper.renderer, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, childNodes = textNode.childNodes, textCache, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
         var regexMatchBreaks = /<br.*?>/g;
         // The buildText code is quite heavy, so if we're not changing something
         // that affects the text, skip it (#6113).
@@ -49,14 +57,13 @@ var TextBuilder = /** @class */ (function () {
             return;
         }
         wrapper.textCache = textCache;
+        delete wrapper.actualWidth;
         // Remove old text
         while (i--) {
             textNode.removeChild(childNodes[i]);
         }
-        // Skip tspans, add text directly to text node. The forceTSpan is a hook
-        // used in text outline hack.
+        // Simple strings, add text directly and return
         if (!hasMarkup &&
-            !this.textOutline &&
             !this.ellipsis &&
             !this.width &&
             (textStr.indexOf(' ') === -1 ||
@@ -88,61 +95,56 @@ var TextBuilder = /** @class */ (function () {
             if (tempParent) {
                 tempParent.removeChild(textNode);
             }
-            // Apply the text outline
-            if (isString(this.textOutline) && wrapper.applyTextOutline) {
-                wrapper.applyTextOutline(this.textOutline);
-            }
+        }
+        // Apply the text outline
+        if (isString(this.textOutline) && wrapper.applyTextOutline) {
+            wrapper.applyTextOutline(this.textOutline);
         }
     };
+    /**
+     * Modify the DOM of the generated SVG structure. This function only does
+     * operations that cannot be done until the elements are attached to the
+     * DOM, like doing layout based on rendered metrics of the added elements.
+     *
+     * @private
+     *
+     * @return {void}
+     */
     TextBuilder.prototype.modifyDOM = function () {
         var _this = this;
-        // Add line breaks by replacing the br tags with x and dy attributes on
-        // the next tspan
-        [].forEach.call(this.svgElement.element.querySelectorAll('br'), function (br) {
-            var _a;
-            var nextSibling = br.nextSibling;
-            if (nextSibling &&
-                br.previousSibling // #5261
-            ) {
-                // If the new line starts with a text node, we can't apply
-                // dy directly to it, so we create a tspan and move the text
-                // node inside it
-                if (!(nextSibling instanceof SVGElement)) {
-                    var tspan = doc.createElementNS(SVG_NS, 'tspan');
-                    (_a = br.parentElement) === null || _a === void 0 ? void 0 : _a.insertBefore(tspan, nextSibling);
-                    tspan.appendChild(nextSibling);
-                    nextSibling = tspan;
-                }
-                attr(nextSibling, {
-                    dy: _this.getLineHeight(nextSibling),
-                    x: attr(_this.svgElement.element, 'x')
+        var wrapper = this.svgElement;
+        var x = attr(wrapper.element, 'x');
+        // Modify hard line breaks by applying the rendered line height
+        [].forEach.call(wrapper.element.querySelectorAll('tspan.highcharts-br'), function (br) {
+            if (br.nextSibling && br.previousSibling) { // #5261
+                attr(br, {
+                    // Since the break is inserted in front of the next
+                    // line, we need to use the next sibling for the line
+                    // height
+                    dy: _this.getLineHeight(br.nextSibling),
+                    x: x
                 });
             }
-            br.remove();
         });
         // Constrain the line width, either by ellipsis or wrapping
-        var tspans = [].slice.call(this.svgElement.element.getElementsByTagName('tspan'));
-        var lineLength = 0;
         var width = this.width || 0;
         if (!width) {
             return;
         }
-        tspans.forEach(function (tspan) {
-            var text = tspan.textContent || '';
+        // Insert soft line breaks into each text node
+        var modifyTextNode = function (textNode, parentElement) {
+            var text = textNode.textContent || '';
             var words = text
                 .replace(/([^\^])-/g, '$1- ') // Split on hyphens
                 // .trim()
                 .split(' '); // #1273
-            var hasWhiteSpace = !_this.noWrap && (words.length > 1 || tspans.length > 1);
-            var dy = _this.getLineHeight(tspan);
-            var wrapLineNo = 0;
-            // First tspan after a <br>
-            if (tspan.getAttribute('x') !== null) {
-                lineLength = 0;
-            }
+            var hasWhiteSpace = !_this.noWrap && (words.length > 1 || wrapper.element.childNodes.length > 1);
+            var dy = _this.getLineHeight(parentElement);
+            var lineNo = 0;
+            var startAt = wrapper.actualWidth;
             if (_this.ellipsis) {
                 if (text) {
-                    _this.truncate(tspan, text, void 0, 0, 
+                    _this.truncate(textNode, text, void 0, 0, 
                     // Target width
                     Math.max(0, 
                     // Substract the font face to make room for the
@@ -155,27 +157,25 @@ var TextBuilder = /** @class */ (function () {
                 }
             }
             else if (hasWhiteSpace) {
-                var lastTspan = tspan;
+                var lines = [];
+                // Remove preceding siblings in order to make the text length
+                // calculation correct in the truncate function
+                var precedingSiblings = [];
+                while (parentElement.firstChild &&
+                    parentElement.firstChild !== textNode) {
+                    precedingSiblings.push(parentElement.firstChild);
+                    parentElement.removeChild(parentElement.firstChild);
+                }
                 while (words.length) {
-                    var insertedTspan = void 0;
-                    // For subsequent lines, create tspans with the same style
-                    // attributes as the first tspan.
-                    if (words.length && !_this.noWrap && wrapLineNo > 0) {
-                        var styleAttribute = attr(tspan, 'style');
-                        var parentX = attr(_this.svgElement.element, 'x');
-                        insertedTspan = doc.createElementNS(SVG_NS, 'tspan');
-                        attr(insertedTspan, { dy: dy, x: parentX });
-                        if (styleAttribute) { // #390
-                            attr(insertedTspan, 'style', styleAttribute);
-                        }
-                        // Start by appending the full remaining text
-                        insertedTspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
-                        lastTspan.parentNode.insertBefore(insertedTspan, lastTspan.nextSibling);
-                        lastTspan = insertedTspan;
+                    // Apply the previous line
+                    if (words.length && !_this.noWrap && lineNo > 0) {
+                        lines.push(textNode.textContent || '');
+                        textNode.textContent = words.join(' ')
+                            .replace(/- /g, '-');
                     }
                     // For each line, truncate the remaining
                     // words into the line length.
-                    _this.truncate(lastTspan, void 0, words, wrapLineNo === 0 ? (lineLength || 0) : 0, width, 
+                    _this.truncate(textNode, void 0, words, lineNo === 0 ? (startAt || 0) : 0, width, 
                     // Build the text to test for
                     function (t, currentIndex) {
                         return words
@@ -183,33 +183,85 @@ var TextBuilder = /** @class */ (function () {
                             .join(' ')
                             .replace(/- /g, '-');
                     });
-                    lineLength = _this.svgElement.actualWidth;
-                    wrapLineNo++;
+                    startAt = wrapper.actualWidth;
+                    lineNo++;
                 }
+                // Reinsert the preceding child nodes
+                precedingSiblings.forEach(function (childNode) {
+                    parentElement.insertBefore(childNode, textNode);
+                });
+                // Insert the previous lines before the original text node
+                lines.forEach(function (line) {
+                    // Insert the line
+                    parentElement.insertBefore(doc.createTextNode(line), textNode);
+                    // Insert a break
+                    var br = doc.createElementNS(SVG_NS, 'tspan');
+                    br.textContent = '\u200B'; // zero-width space
+                    attr(br, { dy: dy, x: x });
+                    parentElement.insertBefore(br, textNode);
+                });
             }
+        };
+        // Recurse down the DOM tree and handle line breaks for each text node
+        var modifyChildren = (function (node) {
+            var childNodes = [].slice.call(node.childNodes);
+            childNodes.forEach(function (childNode) {
+                if (childNode.nodeType === Node.TEXT_NODE) {
+                    modifyTextNode(childNode, node);
+                }
+                else {
+                    // Reset word-wrap width readings after hard breaks
+                    if (childNode.className.baseVal
+                        .indexOf('highcharts-br') !== -1) {
+                        wrapper.actualWidth = 0;
+                    }
+                    // Recurse down to child node
+                    modifyChildren(childNode);
+                }
+            });
         });
+        modifyChildren(wrapper.element);
     };
-    TextBuilder.prototype.getLineHeight = function (tspan) {
+    /**
+     * Get the rendered line height of a <text>, <tspan> or pure text node.
+     *
+     * @param {DOMElementType|Text} node The node to check for
+     *
+     * @return {number} The rendered line height
+     */
+    TextBuilder.prototype.getLineHeight = function (node) {
         var fontSizeStyle;
+        // If the node is a text node, use its parent
+        var element = node.nodeType === Node.TEXT_NODE ?
+            node.parentElement :
+            node;
         if (!this.renderer.styledMode) {
             fontSizeStyle =
-                /(px|em)$/.test(tspan && tspan.style.fontSize) ?
-                    tspan.style.fontSize :
+                element && /(px|em)$/.test(element.style.fontSize) ?
+                    element.style.fontSize :
                     (this.fontSize || this.renderer.style.fontSize || 12);
         }
         return this.textLineHeight ?
             parseInt(this.textLineHeight.toString(), 10) :
-            this.renderer.fontMetrics(fontSizeStyle, 
-            // Get the computed size from parent if not explicit
-            (tspan.getAttribute('style') ? tspan : this.svgElement.element)).h;
+            this.renderer.fontMetrics(fontSizeStyle, element || this.svgElement.element).h;
     };
-    // Transform HTML to SVG, validate
-    TextBuilder.prototype.modifyTree = function (elements) {
+    /**
+     * Transform a pseudo HTML AST node tree into an SVG structure. We do as
+     * much heavy lifting as we can here, before doing the final processing in
+     * the modifyDOM function. The original data is mutated.
+     *
+     * @private
+     *
+     * @param {ASTNode[]} nodes The AST nodes
+     *
+     * @return {void}
+     */
+    TextBuilder.prototype.modifyTree = function (nodes) {
         var _this = this;
-        var modifyChild = function (elem, i) {
-            var tagName = elem.tagName;
+        var modifyChild = function (node, i) {
+            var tagName = node.tagName;
             var styledMode = _this.renderer.styledMode;
-            var attributes = elem.attributes || {};
+            var attributes = node.attributes || {};
             // Apply styling to text tags
             if (tagName === 'b' || tagName === 'strong') {
                 if (styledMode) {
@@ -231,38 +283,36 @@ var TextBuilder = /** @class */ (function () {
             if (isString(attributes.style)) {
                 attributes.style = attributes.style.replace(/(;| |^)color([ :])/, '$1fill$2');
             }
-            // Trim whitespace off the beginning of new lines
             if (tagName === 'br') {
-                var nextElem = elements[i + 1];
-                if (nextElem && nextElem.textContent) {
-                    nextElem.textContent =
-                        nextElem.textContent.replace(/^ +/gm, '');
+                attributes['class'] = 'highcharts-br'; // eslint-disable-line dot-notation
+                node.textContent = '\u200B'; // zero-width space
+                // Trim whitespace off the beginning of new lines
+                var nextNode = nodes[i + 1];
+                if (nextNode && nextNode.textContent) {
+                    nextNode.textContent =
+                        nextNode.textContent.replace(/^ +/gm, '');
                 }
             }
-            if (tagName !== 'a' && tagName !== 'br') {
-                elem.tagName = 'tspan';
+            if (tagName !== '#text' && tagName !== 'a') {
+                node.tagName = 'tspan';
             }
-            elem.attributes = attributes;
+            node.attributes = attributes;
             // Recurse
-            if (elem.children) {
-                elem.children
+            if (node.children) {
+                node.children
                     .filter(function (c) { return c.tagName !== '#text'; })
                     .forEach(modifyChild);
             }
         };
-        elements.forEach(modifyChild);
-    };
-    TextBuilder.prototype.parseAttribute = function (s, attr) {
-        var start, delimiter;
-        start = s.indexOf('<');
-        s = s.substring(start, s.indexOf('>') - start);
-        start = s.indexOf(attr + '=');
-        if (start !== -1) {
-            start = start + attr.length + 1;
-            delimiter = s.charAt(start);
-            if (delimiter === '"' || delimiter === "'") { // eslint-disable-line quotes
-                s = s.substring(start + 1);
-                return s.substring(0, s.indexOf(delimiter));
+        nodes.forEach(modifyChild);
+        // Remove empty spans from the beginning because SVG's getBBox doesn't
+        // count empty lines. The use case is tooltip where the header is empty.
+        while (nodes[0]) {
+            if (nodes[0].tagName === 'tspan' && !nodes[0].children) {
+                nodes.splice(0, 1);
+            }
+            else {
+                break;
             }
         }
     };
@@ -272,7 +322,7 @@ var TextBuilder = /** @class */ (function () {
      * character by character to the given length. If not, the text is
      * word-wrapped line by line.
      */
-    TextBuilder.prototype.truncate = function (tspan, text, words, startAt, width, getString) {
+    TextBuilder.prototype.truncate = function (textNode, text, words, startAt, width, getString) {
         var svgElement = this.svgElement;
         var renderer = svgElement.renderer, rotation = svgElement.rotation;
         // Cache the lengths to avoid checking the same twice
@@ -284,28 +334,21 @@ var TextBuilder = /** @class */ (function () {
         var currentIndex = maxIndex;
         var str;
         var actualWidth;
-        var updateTSpan = function (s) {
-            if (tspan.firstChild) {
-                tspan.removeChild(tspan.firstChild);
-            }
-            if (s) {
-                tspan.appendChild(doc.createTextNode(s));
-            }
-        };
         var getSubStringLength = function (charEnd, concatenatedEnd) {
             // charEnd is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
             var end = concatenatedEnd || charEnd;
-            if (typeof lengths[end] === 'undefined') {
+            var parentNode = textNode.parentNode;
+            if (parentNode && typeof lengths[end] === 'undefined') {
                 // Modern browsers
-                if (tspan.getSubStringLength) {
+                if (parentNode.getSubStringLength) {
                     // Fails with DOM exception on unit-tests/legend/members
                     // of unknown reason. Desired width is 0, text content
                     // is "5" and end is 1.
                     try {
                         lengths[end] = startAt +
-                            tspan.getSubStringLength(0, words ? end + 1 : end);
+                            parentNode.getSubStringLength(0, words ? end + 1 : end);
                     }
                     catch (e) {
                         '';
@@ -313,15 +356,15 @@ var TextBuilder = /** @class */ (function () {
                     // Legacy
                 }
                 else if (renderer.getSpanWidth) { // #9058 jsdom
-                    updateTSpan(getString(text || words, charEnd));
+                    textNode.textContent = getString(text || words, charEnd);
                     lengths[end] = startAt +
-                        renderer.getSpanWidth(svgElement, tspan);
+                        renderer.getSpanWidth(svgElement, textNode);
                 }
             }
             return lengths[end];
         };
         svgElement.rotation = 0; // discard rotation when computing box
-        actualWidth = getSubStringLength(tspan.textContent.length);
+        actualWidth = getSubStringLength(textNode.textContent.length);
         if (startAt + actualWidth > width) {
             // Do a binary search for the index where to truncate the text
             while (minIndex <= maxIndex) {
@@ -351,12 +394,12 @@ var TextBuilder = /** @class */ (function () {
             // word wrap it means the whole first word.
             if (maxIndex === 0) {
                 // Remove ellipsis
-                updateTSpan('');
+                textNode.textContent = '';
                 // If the new text length is one less than the original, we don't
                 // need the ellipsis
             }
             else if (!(text && maxIndex === text.length - 1)) {
-                updateTSpan(str || getString(text || words, currentIndex));
+                textNode.textContent = str || getString(text || words, currentIndex);
             }
         }
         // When doing line wrapping, prepare for the next line by removing the
@@ -367,6 +410,16 @@ var TextBuilder = /** @class */ (function () {
         svgElement.actualWidth = actualWidth;
         svgElement.rotation = rotation; // Apply rotation again.
     };
+    /*
+     * Un-escape HTML entities based on the public `renderer.escapes` list
+     *
+     * @private
+     *
+     * @param {string} inputStr The string to unescape
+     * @param {Array<string>} [except] Exceptions
+     *
+     * @return {string} The processed string
+     */
     TextBuilder.prototype.unescapeEntities = function (inputStr, except) {
         objectEach(this.renderer.escapes, function (value, key) {
             if (!except || except.indexOf(value) === -1) {

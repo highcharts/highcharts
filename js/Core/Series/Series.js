@@ -296,14 +296,15 @@ var Series = /** @class */ (function () {
         fireEvent(this, 'bindAxes', null, function () {
             // repeat for xAxis and yAxis
             (series.axisTypes || []).forEach(function (AXIS) {
+                var index = 0;
                 // loop through the chart's axis objects
                 chart[AXIS].forEach(function (axis) {
                     axisOptions = axis.options;
                     // apply if the series xAxis or yAxis option mathches
                     // the number of the axis, or if undefined, use the
                     // first axis
-                    if (seriesOptions[AXIS] ===
-                        axisOptions.index ||
+                    if ((seriesOptions[AXIS] === index &&
+                        !axisOptions.isInternal) ||
                         (typeof seriesOptions[AXIS] !==
                             'undefined' &&
                             seriesOptions[AXIS] === axisOptions.id) ||
@@ -330,6 +331,9 @@ var Series = /** @class */ (function () {
                         series[AXIS] = axis;
                         // mark dirty for redraw
                         axis.isDirty = true;
+                    }
+                    if (!axisOptions.isInternal) {
+                        index++;
                     }
                 });
                 // The series needs an X and an Y axis
@@ -1535,7 +1539,7 @@ var Series = /** @class */ (function () {
     Series.prototype.getValidPoints = function (points, insideOnly, allowNull) {
         var chart = this.chart;
         // #3916, #5029, #5085
-        return (points || this.points || []).filter(function isValidPoint(point) {
+        return (points || this.points || []).filter(function (point) {
             if (insideOnly && !chart.isInsidePlot(point.plotX, point.plotY, chart.inverted)) {
                 return false;
             }
@@ -1604,6 +1608,7 @@ var Series = /** @class */ (function () {
                 '_sharedClip',
                 animation && animation.duration,
                 animation && animation.easing,
+                animation && animation.defer,
                 clipBox.height,
                 options.xAxis,
                 options.yAxis
@@ -1966,138 +1971,6 @@ var Series = /** @class */ (function () {
         });
     };
     /**
-     * Get the graph path.
-     *
-     * @private
-     * @function Highcharts.Series#getGraphPath
-     */
-    Series.prototype.getGraphPath = function (points, nullsAsZeroes, connectCliffs) {
-        var series = this, options = series.options, step = options.step, reversed, graphPath = [], xMap = [], gap;
-        points = points || series.points;
-        // Bottom of a stack is reversed
-        reversed = points.reversed;
-        if (reversed) {
-            points.reverse();
-        }
-        // Reverse the steps (#5004)
-        step = {
-            right: 1,
-            center: 2
-        }[step] || (step && 3);
-        if (step && reversed) {
-            step = 4 - step;
-        }
-        // Remove invalid points, especially in spline (#5015)
-        points = this.getValidPoints(points, false, !(options.connectNulls && !nullsAsZeroes && !connectCliffs));
-        // Build the line
-        points.forEach(function (point, i) {
-            var plotX = point.plotX, plotY = point.plotY, lastPoint = points[i - 1], 
-            // the path to this point from the previous
-            pathToPoint;
-            if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
-                !connectCliffs) {
-                gap = true; // ... and continue
-            }
-            // Line series, nullsAsZeroes is not handled
-            if (point.isNull && !defined(nullsAsZeroes) && i > 0) {
-                gap = !options.connectNulls;
-                // Area series, nullsAsZeroes is set
-            }
-            else if (point.isNull && !nullsAsZeroes) {
-                gap = true;
-            }
-            else {
-                if (i === 0 || gap) {
-                    pathToPoint = [[
-                            'M',
-                            point.plotX,
-                            point.plotY
-                        ]];
-                    // Generate the spline as defined in the SplineSeries object
-                }
-                else if (series.getPointSpline) {
-                    pathToPoint = [series.getPointSpline(points, point, i)];
-                }
-                else if (step) {
-                    if (step === 1) { // right
-                        pathToPoint = [[
-                                'L',
-                                lastPoint.plotX,
-                                plotY
-                            ]];
-                    }
-                    else if (step === 2) { // center
-                        pathToPoint = [[
-                                'L',
-                                (lastPoint.plotX + plotX) / 2,
-                                lastPoint.plotY
-                            ], [
-                                'L',
-                                (lastPoint.plotX + plotX) / 2,
-                                plotY
-                            ]];
-                    }
-                    else {
-                        pathToPoint = [[
-                                'L',
-                                plotX,
-                                lastPoint.plotY
-                            ]];
-                    }
-                    pathToPoint.push([
-                        'L',
-                        plotX,
-                        plotY
-                    ]);
-                }
-                else {
-                    // normal line to next point
-                    pathToPoint = [[
-                            'L',
-                            plotX,
-                            plotY
-                        ]];
-                }
-                // Prepare for animation. When step is enabled, there are
-                // two path nodes for each x value.
-                xMap.push(point.x);
-                if (step) {
-                    xMap.push(point.x);
-                    if (step === 2) { // step = center (#8073)
-                        xMap.push(point.x);
-                    }
-                }
-                graphPath.push.apply(graphPath, pathToPoint);
-                gap = false;
-            }
-        });
-        graphPath.xMap = xMap;
-        series.graphPath = graphPath;
-        return graphPath;
-    };
-    /**
-     * Get zones properties for building graphs. Extendable by series with
-     * multiple lines within one series.
-     *
-     * @private
-     * @function Highcharts.Series#getZonesGraphs
-     */
-    Series.prototype.getZonesGraphs = function (props) {
-        // Add the zone properties if any
-        this.zones.forEach(function (zone, i) {
-            var propset = [
-                'zone-graph-' + i,
-                'highcharts-graph highcharts-zone-graph-' + i + ' ' +
-                    (zone.className || '')
-            ];
-            if (!this.chart.styledMode) {
-                propset.push((zone.color || this.color), (zone.dashStyle || this.options.dashStyle));
-            }
-            props.push(propset);
-        }, this);
-        return props;
-    };
-    /**
      * Clip the graphs into zones for colors and styling.
      *
      * @private
@@ -2366,7 +2239,7 @@ var Series = /** @class */ (function () {
         }
         // SVGRenderer needs to know this before drawing elements (#1089,
         // #1795)
-        group.inverted = series.isCartesian || series.invertable ?
+        group.inverted = pick(series.invertible, series.isCartesian) ?
             inverted : false;
         // Draw the graph if any
         if (series.drawGraph) {
@@ -3224,7 +3097,7 @@ var Series = /** @class */ (function () {
                     // Animate the graph stroke-width.
                     graph.animate(attribs, stateAnimation);
                     while (series['zone-graph-' + i]) {
-                        series['zone-graph-' + i].attr(attribs);
+                        series['zone-graph-' + i].animate(attribs, stateAnimation);
                         i = i + 1;
                     }
                 }
