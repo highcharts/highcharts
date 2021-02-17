@@ -2795,6 +2795,7 @@ var Series = /** @class */ (function () {
      * @fires Highcharts.Series#event:afterUpdate
      */
     Series.prototype.update = function (options, redraw) {
+        var _a;
         options = cleanRecursively(options, this.userOptions);
         fireEvent(this, 'update', { options: options });
         var series = this, chart = series.chart, 
@@ -2951,6 +2952,11 @@ var Series = /** @class */ (function () {
                     }
                 }
             }, this);
+            (_a = this.nodes) === null || _a === void 0 ? void 0 : _a.forEach(function (node) {
+                if (node && node.series) {
+                    node.resolveColor();
+                }
+            });
         }
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
