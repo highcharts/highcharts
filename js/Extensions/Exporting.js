@@ -1435,7 +1435,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     button.setState(0);
                 }
                 chart.openMenu = false;
-                css(chart.renderTo, { overflow: 'hidden' }); // #10361
+                // #10361, #9998
+                css(chart.renderTo, { overflow: 'hidden' });
+                css(chart.container, { overflow: 'hidden' });
                 U.clearTimeout(menu.hideTimer);
                 fireEvent(chart, 'exportMenuHidden');
             };
@@ -1527,7 +1529,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             menuStyle.top = (y + height - menuPadding) + 'px';
         }
         css(menu, menuStyle);
-        css(chart.renderTo, { overflow: '' }); // #10361
+        // #10361, #9998
+        css(chart.renderTo, { overflow: '' });
+        css(chart.container, { overflow: '' });
         chart.openMenu = true;
         fireEvent(chart, 'exportMenuShown');
     },
@@ -1876,9 +1880,9 @@ Chart.prototype.inlineStyles = function () {
      * @return {void}
      */
     function tearDown() {
-        dummySVG.parentNode.remove();
+        dummySVG.parentNode.removeChild(dummySVG);
         // Remove trash from DOM that stayed after each exporting
-        iframe.remove();
+        iframe.parentNode.removeChild(iframe);
     }
     recurse(this.container.querySelector('svg'));
     tearDown();

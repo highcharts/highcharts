@@ -515,3 +515,26 @@ QUnit.test('After changing the MACD params all points should calculate properly,
         the MACD series which should start from the long period value.`
     );
 });
+
+QUnit.test('#14977: Index param', assert => {
+    const xData = [...Array(50).keys()];
+    const yData = xData.map(() => {
+        const y = Math.random();
+        return [y, y * 2, y, y * 2];
+    });
+
+    const getValues = index =>
+        Highcharts.seriesTypes.macd.prototype.getValues({
+            xData,
+            yData
+        }, Highcharts.merge(
+            Highcharts.getOptions().plotOptions.macd.params,
+            { index }
+        )).values;
+
+    assert.notStrictEqual(
+        getValues(0)[0][3],
+        getValues(1)[0][3],
+        'getValues should return different values when passed different index param'
+    );
+});

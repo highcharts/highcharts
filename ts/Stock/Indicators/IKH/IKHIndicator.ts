@@ -746,6 +746,7 @@ class IKHIndicator extends SMAIndicator {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
+        indicator.color = mainColor;
     }
 
     public getGraphPath(points: Array<LinePoint>): SVGPath {

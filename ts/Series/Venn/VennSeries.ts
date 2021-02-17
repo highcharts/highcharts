@@ -83,7 +83,7 @@ const {
 declare global {
     namespace Highcharts {
         class VennPoint extends ScatterPoint implements DrawPoint {
-            public draw: typeof DrawPointMixin.draw;
+            public draw: typeof DrawPointMixin.drawPoint;
             public isValid: () => boolean;
             public options: VennPointOptions;
             public series: VennSeries;

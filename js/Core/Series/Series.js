@@ -296,14 +296,15 @@ var Series = /** @class */ (function () {
         fireEvent(this, 'bindAxes', null, function () {
             // repeat for xAxis and yAxis
             (series.axisTypes || []).forEach(function (AXIS) {
+                var index = 0;
                 // loop through the chart's axis objects
                 chart[AXIS].forEach(function (axis) {
                     axisOptions = axis.options;
                     // apply if the series xAxis or yAxis option mathches
                     // the number of the axis, or if undefined, use the
                     // first axis
-                    if (seriesOptions[AXIS] ===
-                        axisOptions.index ||
+                    if ((seriesOptions[AXIS] === index &&
+                        !axisOptions.isInternal) ||
                         (typeof seriesOptions[AXIS] !==
                             'undefined' &&
                             seriesOptions[AXIS] === axisOptions.id) ||
@@ -330,6 +331,9 @@ var Series = /** @class */ (function () {
                         series[AXIS] = axis;
                         // mark dirty for redraw
                         axis.isDirty = true;
+                    }
+                    if (!axisOptions.isInternal) {
+                        index++;
                     }
                 });
                 // The series needs an X and an Y axis
@@ -2235,7 +2239,7 @@ var Series = /** @class */ (function () {
         }
         // SVGRenderer needs to know this before drawing elements (#1089,
         // #1795)
-        group.inverted = series.isCartesian || series.invertable ?
+        group.inverted = pick(series.invertible, series.isCartesian) ?
             inverted : false;
         // Draw the graph if any
         if (series.drawGraph) {
@@ -3091,7 +3095,7 @@ var Series = /** @class */ (function () {
                     // Animate the graph stroke-width.
                     graph.animate(attribs, stateAnimation);
                     while (series['zone-graph-' + i]) {
-                        series['zone-graph-' + i].attr(attribs);
+                        series['zone-graph-' + i].animate(attribs, stateAnimation);
                         i = i + 1;
                     }
                 }

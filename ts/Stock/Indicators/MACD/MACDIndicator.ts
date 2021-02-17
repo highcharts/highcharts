@@ -394,14 +394,16 @@ class MACDIndicator extends SMAIndicator {
         shortEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
             series,
             {
-                period: params.shortPeriod
+                period: params.shortPeriod,
+                index: params.index
             }
         ) as any);
 
         longEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
             series,
             {
-                period: params.longPeriod
+                period: params.longPeriod,
+                index: params.index
             }
         ) as any);
 

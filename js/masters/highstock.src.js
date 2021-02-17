@@ -2,7 +2,7 @@
  * @license Highstock JS v@product.version@ (@product.date@)
  * @module highcharts/highstock
  *
- * (c) 2009-2018 Torstein Honsi
+ * (c) 2009-2021 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */

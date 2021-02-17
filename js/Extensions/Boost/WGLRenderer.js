@@ -558,27 +558,6 @@ function GLRenderer(postRenderCallback) {
                     // x = plotWidth;
                 }
             }
-            if (drawAsBar) {
-                // maxVal = y;
-                minVal = low;
-                if (low === false || typeof low === 'undefined') {
-                    if (y < 0) {
-                        minVal = y;
-                    }
-                    else {
-                        minVal = 0;
-                    }
-                }
-                if (!isRange && !isStacked) {
-                    minVal = Math.max(threshold === null ? yMin : threshold, // #5268
-                    yMin); // #8731
-                }
-                if (!settings.useGPUTranslations) {
-                    minVal = yAxis.toPixels(minVal, true);
-                }
-                // Need to add an extra point here
-                vertice(x, minVal, 0, 0, pcolor);
-            }
             // No markers on out of bounds things.
             // Out of bound things are shown if and only if the next
             // or previous point is inside the rect.
@@ -608,6 +587,27 @@ function GLRenderer(postRenderCallback) {
                     ++skipped;
                 }
                 continue;
+            }
+            if (drawAsBar) {
+                // maxVal = y;
+                minVal = low;
+                if (low === false || typeof low === 'undefined') {
+                    if (y < 0) {
+                        minVal = y;
+                    }
+                    else {
+                        minVal = 0;
+                    }
+                }
+                if (!isRange && !isStacked) {
+                    minVal = Math.max(threshold === null ? yMin : threshold, // #5268
+                    yMin); // #8731
+                }
+                if (!settings.useGPUTranslations) {
+                    minVal = yAxis.toPixels(minVal, true);
+                }
+                // Need to add an extra point here
+                vertice(x, minVal, 0, 0, pcolor);
             }
             // Do step line if enabled.
             // Draws an additional point at the old Y at the new X.
@@ -678,7 +678,7 @@ function GLRenderer(postRenderCallback) {
         if (settings.debug.timeSeriesProcessing) {
             console.time('building ' + s.type + ' series'); // eslint-disable-line no-console
         }
-        series.push({
+        var obj = {
             segments: [],
             // from: data.length,
             markerFrom: markerData.length,
@@ -706,9 +706,15 @@ function GLRenderer(postRenderCallback) {
                 'treemap': 'triangles',
                 'bubble': 'points'
             }[s.type] || 'line_strip'
-        });
+        };
+        if (s.index >= series.length) {
+            series.push(obj);
+        }
+        else {
+            series[s.index] = obj;
+        }
         // Add the series data to our buffer(s)
-        pushSeriesData(s, series[series.length - 1]);
+        pushSeriesData(s, obj);
         if (settings.debug.timeSeriesProcessing) {
             console.timeEnd('building ' + s.type + ' series'); // eslint-disable-line no-console
         }

@@ -24,6 +24,10 @@ QUnit.test('General series clip tests', assert => {
                     },
                     {
                         data: [400000000, 600000000]
+                    },
+                    {
+                        clip: false,
+                        data: [1, 2, 3]
                     }
                 ]
             },
@@ -32,6 +36,11 @@ QUnit.test('General series clip tests', assert => {
             {
                 duration: 15
             }
+        );
+
+        assert.notOk(
+            chart.series[2].clipBox,
+            '#15128: Series with clip=false should not have stock clipping applied'
         );
 
         setTimeout(() => {
