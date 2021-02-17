@@ -4,10 +4,10 @@ import HTMLComponent from '/base/js/Dashboard/Component/HTMLComponent.js';
 import Component from '/base/js/Dashboard/Component/Component.js';
 import CSVStore from '/base/js/Data/Stores/CSVStore.js';
 
-import Highcharts from '/base/code/es-modules/masters/highcharts.src.js';
-import Stock from '/base/code/es-modules/masters/highstock.src.js';
-import Gantt from '/base/code/es-modules/masters/highcharts-gantt.src.js';
-import Maps from '/base/code/es-modules/masters/highmaps.src.js';
+import Highcharts from '/base/js/masters/highcharts.src.js';
+import Stock from '/base/js/masters/highstock.src.js';
+import Gantt from '/base/js/masters/highcharts-gantt.src.js';
+import Maps from '/base/js/masters/highmaps.src.js';
 
 const { test, only } = QUnit;
 
@@ -66,7 +66,7 @@ test('ChartComponent events', function (assert) {
     const expectedEvents = ['load', 'afterLoad', 'render', 'afterRender']
     assert.deepEqual(registeredEvents, expectedEvents);
 
-    component.attachStore(store)
+    component.setStore(store)
     expectedEvents.push('storeAttached');
     assert.deepEqual(
         registeredEvents,
@@ -172,8 +172,8 @@ test('ChartComponent events', function (assert) {
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
 
-    Component.removeComponent(component);
-    Component.removeComponent(componentWithStore);
+    Component.removeInstance(component);
+    Component.removeInstance(componentWithStore);
 
 });
 
@@ -198,12 +198,12 @@ test('HTMLComponent events', function (assert) {
     const expectedEvents = ['load', 'afterLoad', 'render', 'afterRender']
     assert.deepEqual(registeredEvents, expectedEvents);
 
-    component.attachStore(store)
+    component.setStore(store);
     expectedEvents.push('storeAttached');
     assert.deepEqual(
         registeredEvents,
         expectedEvents,
-        'Attaching a store should fire an evnet'
+        'Attaching a store should fire an event'
     );
 
     emptyArray(registeredEvents);
@@ -295,7 +295,6 @@ test('HTMLComponent events', function (assert) {
     });
 
     expectedEvents.push('message', 'message');
-
     assert.deepEqual(
         registeredEvents,
         expectedEvents
@@ -304,11 +303,11 @@ test('HTMLComponent events', function (assert) {
     emptyArray(registeredEvents);
     emptyArray(expectedEvents);
 
-    Component.removeComponent(component);
-    Component.removeComponent(componentWithStore);
+    Component.removeInstance(component);
+    Component.removeInstance(componentWithStore);
 });
 
-only('ChartComponent constructors', function (assert) {
+test('ChartComponent constructors', function (assert) {
     const constructorMap = {
         '': Highcharts,
         'stock': Stock,

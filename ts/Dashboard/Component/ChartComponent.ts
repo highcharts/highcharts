@@ -1,10 +1,11 @@
 import type CSSObject from '../../Core/Renderer/CSSObject';
-import type Chart from '../../Core/Chart/Chart';
+import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
+import DataStore from '../../Data/Stores/DataStore.js';
+import DataJSON from '../../Data/DataJSON.js';
 
 import H from '../../Core/Globals.js';
-const Highcharts = H;
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -12,18 +13,54 @@ const {
     uniqueKey
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
 class ChartComponent extends Component<ChartComponent.Event> {
 
-    public static defaultOptions = {
-        ...Component.defaultOptions,
-        chartClassName: 'chart-container',
-        chartID: 'chart-' + uniqueKey(),
-        chartOptions: {
-            series: []
-        },
-        Highcharts,
-        chartConstructor: 'chart'
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+    public static defaultOptions = merge(
+        Component.defaultOptions,
+        {
+            chartClassName: 'chart-container',
+            chartID: 'chart-' + uniqueKey(),
+            chartOptions: {
+                series: []
+            },
+            Highcharts: H,
+            chartConstructor: ''
+        });
+
+    public static fromJSON(json: ChartComponent.ClassJSON): ChartComponent {
+        const options = json.options;
+        const chartOptions = JSON.parse(json.options.chartOptions || '');
+        const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
+
+        const component = new ChartComponent(
+            merge(
+                options,
+                {
+                    chartOptions,
+                    Highcharts, // TODO: Find a solution
+                    store: store instanceof DataStore ? store : void 0
+                }
+            )
+        );
+
+        return component;
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public chartOptions: Highcharts.Options;
     public chart?: Chart;
@@ -32,12 +69,17 @@ class ChartComponent extends Component<ChartComponent.Event> {
     public charter: typeof H;
     public chartConstructor: ChartComponent.constructorType;
 
+    /* *
+     *
+     *  Constructor
+     *
+     * */
+
     constructor(options: Partial<ChartComponent.ComponentOptions>) {
         options = merge(
             ChartComponent.defaultOptions,
             options
         );
-
         super(options);
         this.options = options as ChartComponent.ComponentOptions;
 
@@ -73,6 +115,12 @@ class ChartComponent extends Component<ChartComponent.Event> {
         }
     }
 
+    /* *
+     *
+     *  Class methods
+     *
+     * */
+
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -93,6 +141,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
 
     public redraw(): this {
         super.redraw();
+        this.initChart();
         return this.render();
     }
 
@@ -138,8 +187,10 @@ class ChartComponent extends Component<ChartComponent.Event> {
         if (this.chartConstructor !== 'chart') {
             const constructor = constructorMap[this.chartConstructor];
             if ((this.charter as any)[constructor]) {
-                this.chart = new (this.charter as any)[constructor](this.chartContainer, this.chartOptions) as Chart;
-                return this.chart;
+                this.chart = new (this.charter as any)[constructor](this.chartContainer, this.chartOptions);
+                if (this.chart instanceof Chart) {
+                    return this.chart;
+                }
             }
         }
 
@@ -151,9 +202,30 @@ class ChartComponent extends Component<ChartComponent.Event> {
         return this.chart;
     }
 
+    public toJSON(): ChartComponent.ClassJSON {
+        const chartOptions = JSON.stringify(this.options.chartOptions),
+            Highcharts = this.options.Highcharts,
+            chartConstructor = this.options.chartConstructor;
+
+        const base = super.toJSON();
+        return {
+            ...base,
+            options: {
+                ...base.options,
+                chartOptions,
+                Highcharts: Highcharts.product,
+                chartConstructor
+            }
+        };
+    }
 }
 
-export namespace ChartComponent {
+/* *
+ *
+ *  Namespace
+ *
+ * */
+namespace ChartComponent {
 
     export type ComponentType = ChartComponent;
 
@@ -171,6 +243,25 @@ export namespace ChartComponent {
         Highcharts: typeof H;
         chartConstructor: ChartComponent.constructorType;
     }
+
+
+    export interface ComponentJSONOptions extends Component.ComponentJSONOptions {
+        chartOptions?: string;
+        chartClassName?: string;
+        chartID?: string;
+        style?: CSSObject;
+        Highcharts: string; // reference?
+        chartConstructor: ChartComponent.constructorType;
+    }
+
+    export interface ClassJSON extends Component.ClassJSON {
+        options: ChartComponent.ComponentJSONOptions;
+    }
 }
 
+/* *
+ *
+ *  Default export
+ *
+ * */
 export default ChartComponent;

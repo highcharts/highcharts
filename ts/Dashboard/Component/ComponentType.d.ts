@@ -10,7 +10,7 @@
  *
  * */
 
-import type { ChartComponent } from './ChartComponent';
+import type ChartComponent from './ChartComponent';
 import HTMLComponent from './HTMLComponent';
 
 /* *

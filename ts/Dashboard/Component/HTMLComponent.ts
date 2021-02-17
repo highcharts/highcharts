@@ -5,40 +5,66 @@ const {
     merge
 } = U;
 import AST from '../../Core/Renderer/HTML/AST.js';
-import CSSObject from '../../Core/Renderer/CSSObject.js';
-
-namespace HTMLComponent {
-
-    export type ComponentType = HTMLComponent;
-    export interface HTMLComponentOptions extends Component.ComponentOptions {
-        elements?: Highcharts.ASTNode[];
-    }
-
-    export interface HTMLComponentEventObject extends Component.Event {
-    }
-
-    export interface HTMLComponentUpdateEvent extends Component.UpdateEvent {
-        options?: HTMLComponentOptions;
-    }
-}
+import DataJSON from '../../Data/DataJSON.js';
+import DataStore from '../../Data/Stores/DataStore.js';
 
 class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
 
-    public static defaultOptions = {
-        ...Component.defaultOptions,
-        elements: []
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+    public static defaultOptions = merge(
+        Component.defaultOptions,
+        {
+            elements: []
+        }
+    );
+
+    /* *
+     *
+     *  Static functions
+     *
+     * */
+
+    public static fromJSON(json: HTMLComponent.ClassJSON): HTMLComponent {
+        const options = json.options;
+        const elements = json.elements?.map((el): Highcharts.ASTNode => JSON.parse(el));
+        const store = json.store?.$class ? DataStore.getStore(json.store?.$class) : void 0;
+
+        const component = new HTMLComponent(
+            merge(
+                options,
+                { elements, store: store as any }
+            )
+        );
+
+        return component;
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     private innerElements: HTMLElement[];
     private elements: Highcharts.ASTNode[];
     public options: HTMLComponent.HTMLComponentOptions;
 
+    /* *
+     *
+     *  Class constructor
+     *
+     * */
+
     constructor(options: Partial<HTMLComponent.HTMLComponentOptions>) {
-        super(options);
         options = merge(
             HTMLComponent.defaultOptions,
             options
         );
+        super(options);
 
         this.options = options as HTMLComponent.HTMLComponentOptions;
 
@@ -53,6 +79,13 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
         });
     }
 
+
+    /* *
+     *
+     *  Class methods
+     *
+     * */
+
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -62,14 +95,13 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
             this.element.appendChild(element);
         });
         this.parentElement.appendChild(this.element);
-        this.hasLoaded = true;
         this.emit({ type: 'afterLoad' });
         return this;
     }
 
     public render(): this {
         super.render(); // Fires the render event and calls load
-        this.emit({ type: 'afterRender', component: this, detail: { sender: this.id } });
+        this.emit({ type: 'afterRender', component: this });
         return this;
     }
 
@@ -88,13 +120,13 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
         }
 
         this.render();
-        this.emit({ type: 'afterRedraw', component: this, detail: { sender: this.id } });
+        this.emit({ type: 'afterRedraw', component: this });
         return this;
     }
 
     public update(options: Partial<HTMLComponent.HTMLComponentOptions>): this {
         super.update(options);
-        this.emit({ type: 'afterUpdate' });
+        this.emit({ type: 'afterUpdate', component: this });
         return this;
     }
 
@@ -102,13 +134,66 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
     // the exportdata branch
     private constructTree(): void {
         this.elements.forEach((el): void => {
-            const created = createElement(el.tagName || 'div', el.attributes, el.attributes?.style as CSSObject);
+            const { attributes } = el;
+
+            const createdElement = createElement(
+                el.tagName || 'div',
+                attributes,
+                typeof attributes?.style !== 'string' ?
+                    attributes?.style :
+                    void 0
+            );
             if (el.textContent) {
-                AST.setElementHTML(created, el.textContent);
+                AST.setElementHTML(createdElement, el.textContent);
             }
-            this.innerElements.push(created);
+            this.innerElements.push(createdElement);
         });
+    }
+
+    public toJSON(): HTMLComponent.ClassJSON {
+        const elements = (this.options.elements || [])
+            .map((el): string => JSON.stringify(el));
+
+        return merge(
+            super.toJSON(),
+            { elements }
+        );
     }
 }
 
+
+/* *
+ *
+ *  Namespace
+ *
+ * */
+namespace HTMLComponent {
+
+    export type ComponentType = HTMLComponent;
+    export interface HTMLComponentOptions extends Component.ComponentOptions {
+        elements?: Highcharts.ASTNode[];
+    }
+
+    export interface HTMLComponentJSONOptions extends Component.ComponentJSONOptions {
+        elements: DataJSON.JSONObject[];
+    }
+
+    export interface HTMLComponentEventObject extends Component.Event {
+    }
+
+    export interface HTMLComponentUpdateEvent extends Component.UpdateEvent {
+        options?: HTMLComponentOptions;
+    }
+
+    export interface ClassJSON extends Component.ClassJSON {
+        elements?: string[];
+        events?: string[];
+    }
+}
+
+/* *
+ *
+ *  Default export
+ *
+ * */
 export default HTMLComponent;

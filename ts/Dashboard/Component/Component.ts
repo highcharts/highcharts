@@ -1,6 +1,7 @@
+import type ComponentType from './ComponentType';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
-import type ComponentType from './ComponentType';
+import type DataJSON from '../../Data/DataJSON';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -11,53 +12,6 @@ const {
     isFunction,
     uniqueKey
 } = U;
-namespace Component {
-    type eventTypes =
-        'render' | 'afterRender' |
-        'redraw' | 'afterRedraw' |
-        'load' | 'afterLoad' |
-        'update' | 'afterUpdate' |
-        'message' | 'tableChanged' |
-        'resize' | 'storeAttached';
-    type ComponentEventTypes = ResizeEvent | MessageEvent | UpdateEvent | TableChangedEvent | Event;
-    export interface ResizeEvent extends Event {
-        width?: number;
-        height?: number;
-    }
-
-    export interface MessageEvent extends Event {
-        message?: Partial<{
-            callback: Function;
-        }>;
-    }
-
-    export interface UpdateEvent extends Event {
-        options?: ComponentOptions;
-    }
-
-    export interface TableChangedEvent extends Event {
-        options?: ComponentOptions;
-    }
-    /**
-     * The default event object for a component
-     */
-    export interface Event extends DataEventEmitter.EventObject {
-        readonly type: eventTypes;
-        component?: Component<any>;
-    }
-
-    export interface ComponentOptions {
-        parentElement: HTMLElement;
-        store?: DataStore<any>;
-        dimensions?: { width: number; height: number };
-        className?: string;
-        type: string;
-        // allow overwriting gui elements
-        navigationBindings?: Highcharts.NavigationBindingsOptionsObject[];
-        events?: Record<Event['type'], Function>;
-        id: string;
-    }
-}
 
 abstract class Component<TEventObject extends Component.Event = Component.Event> {
 
@@ -77,11 +31,58 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     public static instanceRegistry: Record<string, Component<any>> = {};
 
     /**
+     * Regular expression to extract the  name (group 1) from the
+     * stringified class type.
+     */
+    private static readonly nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
+
+    public static addComponent(componentClass: ComponentType): boolean {
+        const name = Component.getName(componentClass),
+            registry = Component.registry;
+
+        if (
+            typeof name === 'undefined' ||
+            registry[name]
+        ) {
+            return false;
+        }
+
+        registry[name] = componentClass;
+
+        return true;
+    }
+
+    public static getAllComponentNames(): Array<string> {
+        return Object.keys(Component.registry);
+    }
+
+    public static getAllComponents(): Record<string, ComponentType> {
+        return merge(Component.registry);
+    }
+
+    /**
+     * Extracts the name from a given component class.
+     *
+     * @param {DataStore} component
+     * Component class to extract the name from.
+     *
+     * @return {string}
+     * Component name, if the extraction was successful, otherwise an empty
+     * string.
+     */
+    private static getName(component: (NewableFunction | ComponentType)): string {
+        return (
+            component.toString().match(Component.nameRegExp) ||
+            ['', '']
+        )[1];
+    }
+
+    /**
      * Adds a component instance to the registry
      * @param {Component} component
      * The component to add
      */
-    public static addComponent(component: Component<any>): void {
+    public static addInstance(component: Component<any>): void {
         Component.instanceRegistry[component.id] = component;
     }
 
@@ -90,7 +91,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      * @param {Component} component
      * The component to remove
      */
-    public static removeComponent(component: Component<any>): void {
+    public static removeInstance(component: Component<any>): void {
         delete Component.instanceRegistry[component.id];
     }
 
@@ -99,7 +100,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      * @return {string[]}
      * Array of component IDs
      */
-    public static getAllComponentIDs(): string[] {
+    public static getAllInstanceIDs(): string[] {
         return Object.keys(this.instanceRegistry);
     }
 
@@ -108,12 +109,12 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      * @return {ComponentType[]}
      * Array of components
      */
-    public static getAllComponents(): Component<any>[] {
-        const ids = this.getAllComponentIDs();
+    public static getAllInstances(): Component<any>[] {
+        const ids = this.getAllInstanceIDs();
         return ids.map((id): Component<any> => this.instanceRegistry[id]);
     }
 
-    public static getComponentById(id: string): Component | undefined {
+    public static getInstanceById(id: string): Component | undefined {
         return this.instanceRegistry[id];
     }
 
@@ -122,7 +123,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         message: (string | MessageEvent), // should probably be a typical event with optional payloads
         target: string = 'all' // currently all or type. Could also add groups
     ): void {
-        this.getAllComponentIDs()
+        this.getAllInstanceIDs()
             .filter((id): boolean => id !== sender.id)
             .forEach((componentID): void => {
                 const component = this.instanceRegistry[componentID];
@@ -139,11 +140,15 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             });
     }
 
+    protected static getUUID(): string {
+        return 'dashboard-component-' + uniqueKey();
+    }
+
     public static defaultOptions: Component.ComponentOptions = {
         className: 'highcharts-dashboard-component',
         parentElement: document.body,
         type: '',
-        id: 'dashboard-component-' + uniqueKey()
+        id: ''
     }
 
     public parentElement: HTMLElement;
@@ -159,8 +164,21 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
 
     constructor(options: Partial<Component.ComponentOptions>) {
         this.options = merge(Component.defaultOptions, options);
-        this.id = this.options.id;
-        this.parentElement = this.options.parentElement;
+        this.id = this.options.id && this.options.id.length ?
+            this.options.id :
+            Component.getUUID();
+
+        if (typeof this.options.parentElement === 'string') {
+            const el = document.getElementById(this.options.parentElement);
+            if (!el) {
+                throw new Error('Could not find element with id: ' + this.options.parentElement);
+            }
+            this.parentElement = el;
+
+        } else {
+            this.parentElement = this.options.parentElement;
+        }
+
         this.type = this.options.type;
         this.store = this.options.store;
         this.hasLoaded = false;
@@ -175,40 +193,53 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         });
 
         // Add the component instance to the registry
-        Component.addComponent(this);
+        Component.addInstance(this);
     }
 
-    public attachStore(store: DataStore<any>): void {
+    public setStore(store: DataStore<any> | undefined): this {
         this.store = store;
-        // Set up event listeners
-        [
-            'afterInsertRow',
-            'afterDeleteRow',
-            'afterChangeRow',
-            'afterUpdateRow',
-            'afterClearTable'
-        ].forEach((event: any): void => {
-            this.tableEvents.push(store.table.on(event, (e): void => {
+        if (store) {
+            // Set up event listeners
+            [
+                'afterInsertRow',
+                'afterDeleteRow',
+                'afterChangeRow',
+                'afterUpdateRow',
+                'afterClearTable'
+            ].forEach((event: any): void => {
+                this.tableEvents.push(store.table.on(event, (e): void => {
 
-                clearInterval(this.tableEventTimeout);
-                this.tableEventTimeout = setTimeout((): void => {
-                    this.emit({
-                        ...e as any,
-                        type: 'tableChanged'
-                    });
-                    this.tableEventTimeout = void 0;
-                }, 0);
-            }));
-        });
-
-        this.tableEvents.push(store.on('afterLoad', (e): void => {
-            this.emit({
-                ...e,
-                type: 'tableChanged'
+                    clearInterval(this.tableEventTimeout);
+                    this.tableEventTimeout = setTimeout((): void => {
+                        this.emit({
+                            ...e as any,
+                            type: 'tableChanged'
+                        });
+                        this.tableEventTimeout = void 0;
+                    }, 0);
+                }));
             });
-        }));
+
+            this.tableEvents.push(store.on('afterLoad', (e): void => {
+                this.emit({
+                    ...e,
+                    type: 'tableChanged'
+                });
+            }));
+        }
+
+        // Clean up old event listeners
+        if (!store && this.tableEvents.length) {
+            while (this.tableEvents.length) {
+                const eventCallback = this.tableEvents.pop();
+                if (typeof eventCallback === 'function') {
+                    eventCallback();
+                }
+            }
+        }
 
         fireEvent(this, 'storeAttached', { store });
+        return this;
     }
 
     public resize(width: number, height: number): this {
@@ -246,8 +277,9 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      * @return {this}
      */
     public load(): this {
-        if (this.store) {
-            this.attachStore(this.store);
+        // Set up the store on inital load if it has not been done
+        if (!this.hasLoaded && this.store) {
+            this.setStore(this.store);
         }
 
         /* this.parentElement.appendChild(this.element); */
@@ -268,6 +300,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
                 e.message.callback.apply(this);
             }
         });
+
+        this.hasLoaded = true;
 
         return this;
     }
@@ -334,6 +368,87 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         Component.relayMessage(this, message, target);
     }
 
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @return {Component.ClassJSON}
+     * Class JSON of this Component instance.
+     */
+    public toJSON(): Component.ClassJSON {
+        return {
+            $class: Component.getName(this.constructor),
+            store: this.store?.toJSON(),
+            options: {
+                parentElement: this.parentElement.id,
+                dimensions: this.options.dimensions,
+                type: this.options.type,
+                id: this.options.id || this.id
+            }
+        };
+    }
 }
 
+namespace Component {
+
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        store?: DataStore.ClassJSON;
+        options: ComponentJSONOptions;
+    }
+
+    export type eventTypes =
+        'render' | 'afterRender' |
+        'redraw' | 'afterRedraw' |
+        'load' | 'afterLoad' |
+        'update' | 'afterUpdate' |
+        'message' | 'tableChanged' |
+        'resize' | 'storeAttached';
+    type ComponentEventTypes = ResizeEvent | MessageEvent | UpdateEvent | TableChangedEvent | Event;
+    export interface ResizeEvent extends Event {
+        width?: number;
+        height?: number;
+    }
+
+    export interface MessageEvent extends Event {
+        message?: Partial<{
+            callback: Function;
+        }>;
+    }
+
+    export interface UpdateEvent extends Event {
+        options?: ComponentOptions;
+    }
+
+    export interface TableChangedEvent extends Event {
+        options?: ComponentOptions;
+    }
+    /**
+     * The default event object for a component
+     */
+    export interface Event extends DataEventEmitter.EventObject {
+        readonly type: eventTypes;
+        component?: Component<any>;
+    }
+
+    export interface ComponentOptions {
+        parentElement: HTMLElement | string;
+        store?: DataStore<any>;
+        dimensions?: { width: number; height: number };
+        className?: string;
+        type: string;
+        // allow overwriting gui elements
+        navigationBindings?: Highcharts.NavigationBindingsOptionsObject[];
+        events?: Record<Event['type'], Function>;
+        id?: string;
+    }
+
+    // JSON compatible options for exprot
+    export interface ComponentJSONOptions extends DataJSON.JSONObject {
+        store?: DataStore.ClassJSON; // store id
+        parentElement: string; // ID?
+        dimensions?: { width: number; height: number };
+        className?: string;
+        type: string;
+        id: string;
+    }
+}
 export default Component;

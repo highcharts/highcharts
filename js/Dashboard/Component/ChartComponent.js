@@ -29,14 +29,26 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
+import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
+import DataStore from '../../Data/Stores/DataStore.js';
+import DataJSON from '../../Data/DataJSON.js';
 import H from '../../Core/Globals.js';
-var Highcharts = H;
 import U from '../../Core/Utilities.js';
 var createElement = U.createElement, merge = U.merge, uniqueKey = U.uniqueKey;
+/* *
+ *
+ *  Class
+ *
+ * */
 var ChartComponent = /** @class */ (function (_super) {
     __extends(ChartComponent, _super);
+    /* *
+     *
+     *  Constructor
+     *
+     * */
     function ChartComponent(options) {
         var _a;
         var _this = this;
@@ -71,6 +83,22 @@ var ChartComponent = /** @class */ (function (_super) {
         }
         return _this;
     }
+    ChartComponent.fromJSON = function (json) {
+        var options = json.options;
+        var chartOptions = JSON.parse(json.options.chartOptions || '');
+        var store = json.store ? DataJSON.fromJSON(json.store) : void 0;
+        var component = new ChartComponent(merge(options, {
+            chartOptions: chartOptions,
+            Highcharts: Highcharts,
+            store: store instanceof DataStore ? store : void 0
+        }));
+        return component;
+    };
+    /* *
+     *
+     *  Class methods
+     *
+     * */
     ChartComponent.prototype.load = function () {
         this.emit({ type: 'load' });
         _super.prototype.load.call(this);
@@ -88,6 +116,7 @@ var ChartComponent = /** @class */ (function (_super) {
     };
     ChartComponent.prototype.redraw = function () {
         _super.prototype.redraw.call(this);
+        this.initChart();
         return this.render();
     };
     ChartComponent.prototype.update = function (options) {
@@ -129,7 +158,9 @@ var ChartComponent = /** @class */ (function (_super) {
             var constructor = constructorMap[this.chartConstructor];
             if (this.charter[constructor]) {
                 this.chart = new this.charter[constructor](this.chartContainer, this.chartOptions);
-                return this.chart;
+                if (this.chart instanceof Chart) {
+                    return this.chart;
+                }
             }
         }
         if (typeof this.charter.chart !== 'function') {
@@ -138,9 +169,30 @@ var ChartComponent = /** @class */ (function (_super) {
         this.chart = this.charter.chart(this.chartContainer, this.chartOptions);
         return this.chart;
     };
-    ChartComponent.defaultOptions = __assign(__assign({}, Component.defaultOptions), { chartClassName: 'chart-container', chartID: 'chart-' + uniqueKey(), chartOptions: {
+    ChartComponent.prototype.toJSON = function () {
+        var chartOptions = JSON.stringify(this.options.chartOptions), Highcharts = this.options.Highcharts, chartConstructor = this.options.chartConstructor;
+        var base = _super.prototype.toJSON.call(this);
+        return __assign(__assign({}, base), { options: __assign(__assign({}, base.options), { chartOptions: chartOptions, Highcharts: Highcharts.product, chartConstructor: chartConstructor }) });
+    };
+    /* *
+     *
+     *  Static properties
+     *
+     * */
+    ChartComponent.defaultOptions = merge(Component.defaultOptions, {
+        chartClassName: 'chart-container',
+        chartID: 'chart-' + uniqueKey(),
+        chartOptions: {
             series: []
-        }, Highcharts: Highcharts, chartConstructor: 'chart' });
+        },
+        Highcharts: H,
+        chartConstructor: ''
+    });
     return ChartComponent;
 }(Component));
+/* *
+ *
+ *  Default export
+ *
+ * */
 export default ChartComponent;

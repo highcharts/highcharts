@@ -15,8 +15,19 @@ var Component = /** @class */ (function () {
     function Component(options) {
         this.tableEvents = [];
         this.options = merge(Component.defaultOptions, options);
-        this.id = this.options.id;
-        this.parentElement = this.options.parentElement;
+        this.id = this.options.id && this.options.id.length ?
+            this.options.id :
+            Component.getUUID();
+        if (typeof this.options.parentElement === 'string') {
+            var el = document.getElementById(this.options.parentElement);
+            if (!el) {
+                throw new Error('Could not find element with id: ' + this.options.parentElement);
+            }
+            this.parentElement = el;
+        }
+        else {
+            this.parentElement = this.options.parentElement;
+        }
         this.type = this.options.type;
         this.store = this.options.store;
         this.hasLoaded = false;
@@ -29,14 +40,43 @@ var Component = /** @class */ (function () {
             className: this.options.className
         });
         // Add the component instance to the registry
-        Component.addComponent(this);
+        Component.addInstance(this);
     }
+    Component.addComponent = function (componentClass) {
+        var name = Component.getName(componentClass), registry = Component.registry;
+        if (typeof name === 'undefined' ||
+            registry[name]) {
+            return false;
+        }
+        registry[name] = componentClass;
+        return true;
+    };
+    Component.getAllComponentNames = function () {
+        return Object.keys(Component.registry);
+    };
+    Component.getAllComponents = function () {
+        return merge(Component.registry);
+    };
+    /**
+     * Extracts the name from a given component class.
+     *
+     * @param {DataStore} component
+     * Component class to extract the name from.
+     *
+     * @return {string}
+     * Component name, if the extraction was successful, otherwise an empty
+     * string.
+     */
+    Component.getName = function (component) {
+        return (component.toString().match(Component.nameRegExp) ||
+            ['', ''])[1];
+    };
     /**
      * Adds a component instance to the registry
      * @param {Component} component
      * The component to add
      */
-    Component.addComponent = function (component) {
+    Component.addInstance = function (component) {
         Component.instanceRegistry[component.id] = component;
     };
     /**
@@ -44,7 +84,7 @@ var Component = /** @class */ (function () {
      * @param {Component} component
      * The component to remove
      */
-    Component.removeComponent = function (component) {
+    Component.removeInstance = function (component) {
         delete Component.instanceRegistry[component.id];
     };
     /**
@@ -52,7 +92,7 @@ var Component = /** @class */ (function () {
      * @return {string[]}
      * Array of component IDs
      */
-    Component.getAllComponentIDs = function () {
+    Component.getAllInstanceIDs = function () {
         return Object.keys(this.instanceRegistry);
     };
     /**
@@ -60,12 +100,12 @@ var Component = /** @class */ (function () {
      * @return {ComponentType[]}
      * Array of components
      */
-    Component.getAllComponents = function () {
+    Component.getAllInstances = function () {
         var _this = this;
-        var ids = this.getAllComponentIDs();
+        var ids = this.getAllInstanceIDs();
         return ids.map(function (id) { return _this.instanceRegistry[id]; });
     };
-    Component.getComponentById = function (id) {
+    Component.getInstanceById = function (id) {
         return this.instanceRegistry[id];
     };
     Component.relayMessage = function (sender, // Possibly layout?
@@ -74,7 +114,7 @@ var Component = /** @class */ (function () {
     ) {
         var _this = this;
         if (target === void 0) { target = 'all'; }
-        this.getAllComponentIDs()
+        this.getAllInstanceIDs()
             .filter(function (id) { return id !== sender.id; })
             .forEach(function (componentID) {
             var component = _this.instanceRegistry[componentID];
@@ -90,29 +130,44 @@ var Component = /** @class */ (function () {
             }
         });
     };
-    Component.prototype.attachStore = function (store) {
+    Component.getUUID = function () {
+        return 'dashboard-component-' + uniqueKey();
+    };
+    Component.prototype.setStore = function (store) {
         var _this = this;
         this.store = store;
-        // Set up event listeners
-        [
-            'afterInsertRow',
-            'afterDeleteRow',
-            'afterChangeRow',
-            'afterUpdateRow',
-            'afterClearTable'
-        ].forEach(function (event) {
-            _this.tableEvents.push(store.table.on(event, function (e) {
-                clearInterval(_this.tableEventTimeout);
-                _this.tableEventTimeout = setTimeout(function () {
-                    _this.emit(__assign(__assign({}, e), { type: 'tableChanged' }));
-                    _this.tableEventTimeout = void 0;
-                }, 0);
+        if (store) {
+            // Set up event listeners
+            [
+                'afterInsertRow',
+                'afterDeleteRow',
+                'afterChangeRow',
+                'afterUpdateRow',
+                'afterClearTable'
+            ].forEach(function (event) {
+                _this.tableEvents.push(store.table.on(event, function (e) {
+                    clearInterval(_this.tableEventTimeout);
+                    _this.tableEventTimeout = setTimeout(function () {
+                        _this.emit(__assign(__assign({}, e), { type: 'tableChanged' }));
+                        _this.tableEventTimeout = void 0;
+                    }, 0);
+                }));
+            });
+            this.tableEvents.push(store.on('afterLoad', function (e) {
+                _this.emit(__assign(__assign({}, e), { type: 'tableChanged' }));
             }));
-        });
-        this.tableEvents.push(store.on('afterLoad', function (e) {
-            _this.emit(__assign(__assign({}, e), { type: 'tableChanged' }));
-        }));
+        }
+        // Clean up old event listeners
+        if (!store && this.tableEvents.length) {
+            while (this.tableEvents.length) {
+                var eventCallback = this.tableEvents.pop();
+                if (typeof eventCallback === 'function') {
+                    eventCallback();
+                }
+            }
+        }
         fireEvent(this, 'storeAttached', { store: store });
+        return this;
     };
     Component.prototype.resize = function (width, height) {
         this.dimensions = { width: width, height: height };
@@ -146,8 +201,9 @@ var Component = /** @class */ (function () {
      */
     Component.prototype.load = function () {
         var _this = this;
-        if (this.store) {
-            this.attachStore(this.store);
+        // Set up the store on inital load if it has not been done
+        if (!this.hasLoaded && this.store) {
+            this.setStore(this.store);
         }
         /* this.parentElement.appendChild(this.element); */
         // Setup event listeners
@@ -166,6 +222,7 @@ var Component = /** @class */ (function () {
                 e.message.callback.apply(_this);
             }
         });
+        this.hasLoaded = true;
         return this;
     };
     /**
@@ -217,16 +274,40 @@ var Component = /** @class */ (function () {
         Component.relayMessage(this, message, target);
     };
     /**
+     * Converts the class instance to a class JSON.
+     *
+     * @return {Component.ClassJSON}
+     * Class JSON of this Component instance.
+     */
+    Component.prototype.toJSON = function () {
+        var _a;
+        return {
+            $class: Component.getName(this.constructor),
+            store: (_a = this.store) === null || _a === void 0 ? void 0 : _a.toJSON(),
+            options: {
+                parentElement: this.parentElement.id,
+                dimensions: this.options.dimensions,
+                type: this.options.type,
+                id: this.options.id || this.id
+            }
+        };
+    };
+    /**
      *
      * Record of component instances
      *
      */
     Component.instanceRegistry = {};
+    /**
+     * Regular expression to extract the  name (group 1) from the
+     * stringified class type.
+     */
+    Component.nameRegExp = /^function\s+(\w*?)(?:Component)?\s*\(/;
     Component.defaultOptions = {
         className: 'highcharts-dashboard-component',
         parentElement: document.body,
         type: '',
-        id: 'dashboard-component-' + uniqueKey()
+        id: ''
     };
     return Component;
 }());
