@@ -113,8 +113,32 @@ declare module '../Series/SeriesOptions' {
     }
 }
 
-declare class StockChart extends Chart {
-    // nothing here yet
+class StockChart extends Chart {
+    /**
+     * Factory for creating different axis types.
+     * Extended to add stock defaults.
+     *
+     * @private
+     * @function Highcharts.StockChart#createAxis
+     *
+     * @param {string} type
+     *        An axis type.
+     *
+     * @param {Chart.CreateAxisOptionsObject} options
+     *        The axis creation options.
+     *
+     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     */
+    public createAxis(
+        type: string,
+        options: Chart.CreateAxisOptionsObject
+    ): Highcharts.Axis {
+        options.axis = merge(
+            getDefaultAxisOptions(type, options.axis),
+            options.axis
+        );
+        return super.createAxis(type, options);
+    }
 }
 
 declare module '../Renderer/SVG/SVGRendererLike' {
@@ -205,19 +229,7 @@ function stockChart(
         i: number
     ): Highcharts.XAxisOptions {
         return merge(
-            { // defaults
-                minPadding: 0,
-                maxPadding: 0,
-                overscroll: 0,
-                ordinal: true,
-                title: {
-                    text: null
-                },
-                labels: {
-                    overflow: 'justify'
-                },
-                showLastLabel: true
-            } as Highcharts.XAxisOptions,
+            getDefaultAxisOptions('xAxis', xAxisOptions),
             defaultOptions.xAxis, // #3802
             defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
             xAxisOptions, // user options
@@ -237,31 +249,8 @@ function stockChart(
         yAxisOptions: Highcharts.YAxisOptions,
         i: number
     ): Highcharts.YAxisOptions {
-        opposite = pick(yAxisOptions.opposite, true);
         return merge(
-            { // defaults
-                labels: {
-                    y: -2
-                },
-                opposite: opposite,
-
-                /**
-                 * @default {highcharts} true
-                 * @default {highstock} false
-                 * @apioption yAxis.showLastLabel
-                 *
-                 * @private
-                 */
-                showLastLabel: !!(
-                    // #6104, show last label by default for category axes
-                    yAxisOptions.categories ||
-                    yAxisOptions.type === 'category'
-                ),
-
-                title: {
-                    text: null
-                }
-            },
+            getDefaultAxisOptions('yAxis', yAxisOptions),
             defaultOptions.yAxis, // #3802
             defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
             yAxisOptions // user options
@@ -1087,6 +1076,59 @@ addEvent(Chart, 'update', function (
         delete options.scrollbar;
     }
 });
+
+/**
+ * Get stock-specific default axis options.
+ *
+ * @private
+ * @function getDefaultAxisOptions
+ * @param {string} type
+ * @param {Highcharts.AxisOptions} options
+ * @return {Highcharts.AxisOptions}
+ */
+function getDefaultAxisOptions(type: string, options: Highcharts.AxisOptions): Highcharts.AxisOptions {
+    if (type === 'xAxis') {
+        return {
+            minPadding: 0,
+            maxPadding: 0,
+            overscroll: 0,
+            ordinal: true,
+            title: {
+                text: null
+            },
+            labels: {
+                overflow: 'justify'
+            },
+            showLastLabel: true
+        };
+    }
+    if (type === 'yAxis') {
+        return {
+            labels: {
+                y: -2
+            },
+            opposite: pick(options.opposite, true),
+
+            /**
+             * @default {highcharts} true
+             * @default {highstock} false
+             * @apioption yAxis.showLastLabel
+             *
+             * @private
+             */
+            showLastLabel: !!(
+                // #6104, show last label by default for category axes
+                options.categories ||
+                options.type === 'category'
+            ),
+
+            title: {
+                text: null
+            }
+        };
+    }
+    return {};
+}
 
 /* *
  *

@@ -8,6 +8,19 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import H from '../Globals.js';
@@ -29,6 +42,32 @@ import '../Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
 import '../../Extensions/RangeSelector.js';
+var StockChart = /** @class */ (function (_super) {
+    __extends(StockChart, _super);
+    function StockChart() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    /**
+     * Factory for creating different axis types.
+     * Extended to add stock defaults.
+     *
+     * @private
+     * @function Highcharts.StockChart#createAxis
+     *
+     * @param {string} type
+     *        An axis type.
+     *
+     * @param {Chart.CreateAxisOptionsObject} options
+     *        The axis creation options.
+     *
+     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     */
+    StockChart.prototype.createAxis = function (type, options) {
+        options.axis = merge(getDefaultAxisOptions(type, options.axis), options.axis);
+        return _super.prototype.createAxis.call(this, type, options);
+    };
+    return StockChart;
+}(Chart));
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /* *
  *
@@ -80,19 +119,7 @@ function stockChart(a, b, c) {
     navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true);
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
-        return merge({
-            minPadding: 0,
-            maxPadding: 0,
-            overscroll: 0,
-            ordinal: true,
-            title: {
-                text: null
-            },
-            labels: {
-                overflow: 'justify'
-            },
-            showLastLabel: true
-        }, defaultOptions.xAxis, // #3802
+        return merge(getDefaultAxisOptions('xAxis', xAxisOptions), defaultOptions.xAxis, // #3802
         defaultOptions.xAxis && defaultOptions.xAxis[i], // #7690
         xAxisOptions, // user options
         {
@@ -105,27 +132,7 @@ function stockChart(a, b, c) {
     });
     // apply Y axis options to both single and multi y axes
     options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
-        opposite = pick(yAxisOptions.opposite, true);
-        return merge({
-            labels: {
-                y: -2
-            },
-            opposite: opposite,
-            /**
-             * @default {highcharts} true
-             * @default {highstock} false
-             * @apioption yAxis.showLastLabel
-             *
-             * @private
-             */
-            showLastLabel: !!(
-            // #6104, show last label by default for category axes
-            yAxisOptions.categories ||
-                yAxisOptions.type === 'category'),
-            title: {
-                text: null
-            }
-        }, defaultOptions.yAxis, // #3802
+        return merge(getDefaultAxisOptions('yAxis', yAxisOptions), defaultOptions.yAxis, // #3802
         defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
         yAxisOptions // user options
         );
@@ -729,6 +736,55 @@ addEvent(Chart, 'update', function (e) {
         delete options.scrollbar;
     }
 });
+/**
+ * Get stock-specific default axis options.
+ *
+ * @private
+ * @function getDefaultAxisOptions
+ * @param {string} type
+ * @param {Highcharts.AxisOptions} options
+ * @return {Highcharts.AxisOptions}
+ */
+function getDefaultAxisOptions(type, options) {
+    if (type === 'xAxis') {
+        return {
+            minPadding: 0,
+            maxPadding: 0,
+            overscroll: 0,
+            ordinal: true,
+            title: {
+                text: null
+            },
+            labels: {
+                overflow: 'justify'
+            },
+            showLastLabel: true
+        };
+    }
+    if (type === 'yAxis') {
+        return {
+            labels: {
+                y: -2
+            },
+            opposite: pick(options.opposite, true),
+            /**
+             * @default {highcharts} true
+             * @default {highstock} false
+             * @apioption yAxis.showLastLabel
+             *
+             * @private
+             */
+            showLastLabel: !!(
+            // #6104, show last label by default for category axes
+            options.categories ||
+                options.type === 'category'),
+            title: {
+                text: null
+            }
+        };
+    }
+    return {};
+}
 /* *
  *
  *  Compatibility
