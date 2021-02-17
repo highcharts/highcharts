@@ -39,10 +39,11 @@ var DataSeriesConverter = /** @class */ (function () {
      */
     function DataSeriesConverter(table, options) {
         if (table === void 0) { table = new DataTable(); }
+        if (options === void 0) { options = {}; }
         this.table = table;
         this.options = options;
-        this.seriesPointArrayMaps = {};
-        this.seriesIds = [];
+        this.seriesIdMap = {};
+        this.seriesMeta = [];
     }
     /* *
      *
@@ -59,9 +60,10 @@ var DataSeriesConverter = /** @class */ (function () {
      * Returns an array of series points opitons.
      */
     DataSeriesConverter.prototype.getSeriesData = function (seriesId) {
-        var converter = this, table = converter.table, options = converter.options || {}, columnMap = options.columnMap || {}, seriesData = [], pointArrayMap = converter.seriesPointArrayMaps[seriesId] || ['y'];
-        var pointOptions, row, cellName, cell, mappedProp, isCellFound;
+        var converter = this, table = converter.table, seriesData = [];
+        var pointOptions, row, cellName, cell, isCellFound, pointArrayMap;
         if (seriesId) {
+            pointArrayMap = converter.seriesIdMap[seriesId].pointArrayMap || ['y'];
             for (var i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
                 row = table.getRow(i);
                 if (row) {
@@ -70,8 +72,7 @@ var DataSeriesConverter = /** @class */ (function () {
                         x: table.converter.asNumber(row.getCell('x'))
                     };
                     for (var j = 0, jEnd = pointArrayMap.length; j < jEnd; j++) {
-                        mappedProp = columnMap[pointArrayMap[j]];
-                        cellName = (mappedProp ? mappedProp : pointArrayMap[j]) + '_' + seriesId;
+                        cellName = pointArrayMap[j] + '_' + seriesId;
                         cell = row.getCell(cellName);
                         if (cell) {
                             isCellFound = true;
@@ -95,8 +96,8 @@ var DataSeriesConverter = /** @class */ (function () {
     DataSeriesConverter.prototype.getAllSeriesData = function () {
         var converter = this, seriesOptions = [];
         var id;
-        for (var i = 0, iEnd = converter.seriesIds.length; i < iEnd; i++) {
-            id = converter.seriesIds[i];
+        for (var i = 0, iEnd = converter.seriesMeta.length; i < iEnd; i++) {
+            id = converter.seriesMeta[i].id;
             seriesOptions.push({
                 id: id,
                 data: converter.getSeriesData(id)
@@ -114,11 +115,12 @@ var DataSeriesConverter = /** @class */ (function () {
      * Custom information for pending events.
      */
     DataSeriesConverter.prototype.updateDataTable = function (allSeries, eventDetail) {
-        var table = this.table, columnMap = (this.options || {}).columnMap || {};
-        var columns, series, pointArrayMap, pointArrayMapLength, options, keys, data, elem, row, y, needsArrayMap, xIndex, yIndex, yValueName, yValueIndex, yValueId, id;
+        var table = this.table;
+        var columns, series, seriesMeta, pointArrayMap, pointArrayMapLength, options, keys, data, elem, row, y, needsArrayMap, xIndex, yIndex, yValueName, yValueIndex, yValueId, id;
         if (allSeries && allSeries.length) {
-            this.seriesIds = [];
-            this.seriesPointArrayMaps = {};
+            this.options.seriesOptions = [];
+            this.seriesMeta = [];
+            this.seriesIdMap = {};
             for (var i = 0, iEnd = allSeries.length; i < iEnd; i++) {
                 series = allSeries[i];
                 // Add a unique ID to the series if none is assigned.
@@ -129,11 +131,17 @@ var DataSeriesConverter = /** @class */ (function () {
                 options = series.options;
                 keys = options.keys;
                 data = series.options.data || [];
-                this.seriesIds.push(series.id);
-                this.seriesPointArrayMaps[series.id] = pointArrayMap;
+                seriesMeta = {
+                    id: series.id,
+                    pointArrayMap: pointArrayMap,
+                    options: series.options
+                };
+                this.options.seriesOptions.push(series.options);
+                this.seriesMeta.push(seriesMeta);
+                this.seriesIdMap[series.id] = seriesMeta;
                 for (var j = 0, jEnd = data.length; j < jEnd; j++) {
                     elem = data[j];
-                    y = columnMap.y ? columnMap.y + yValueId : 'y' + yValueId;
+                    y = 'y' + yValueId;
                     columns = {};
                     needsArrayMap = pointArrayMapLength > 1;
                     if (typeof elem === 'number') {
@@ -148,8 +156,7 @@ var DataSeriesConverter = /** @class */ (function () {
                                 yValueIndex = keys && keys.indexOf(pointArrayMap[k]) > -1 ?
                                     keys.indexOf(pointArrayMap[k]) : k + elem.length -
                                     pointArrayMapLength;
-                                yValueName = columnMap[pointArrayMap[k]] ?
-                                    columnMap[pointArrayMap[k]] : pointArrayMap[k];
+                                yValueName = pointArrayMap[k];
                                 columns[yValueName + yValueId] = elem[yValueIndex];
                             }
                         }
@@ -162,8 +169,7 @@ var DataSeriesConverter = /** @class */ (function () {
                         if (needsArrayMap) {
                             var elemSet = elem;
                             for (var k = 0; k < pointArrayMapLength; k++) {
-                                yValueName = columnMap[pointArrayMap[k]] ?
-                                    columnMap[pointArrayMap[k]] : pointArrayMap[k];
+                                yValueName = pointArrayMap[k];
                                 columns[yValueName + yValueId] = elemSet[yValueName];
                             }
                         }

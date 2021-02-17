@@ -55,11 +55,11 @@ class DataSeriesConverter {
      * @param {DataSeriesConverter.Options} [options]
      * DataSeriesConverter options.
      */
-    public constructor(table: DataTable = new DataTable(), options: DataSeriesConverter.Options) {
+    public constructor(table: DataTable = new DataTable(), options: DataSeriesConverter.Options = {}) {
         this.table = table;
         this.options = options;
-        this.seriesPointArrayMaps = {};
-        this.seriesIds = [];
+        this.seriesIdMap = {};
+        this.seriesMeta = [];
     }
 
     /* *
@@ -72,14 +72,15 @@ class DataSeriesConverter {
     public options: DataSeriesConverter.Options;
 
     /**
-     * Stored series PointArrayMaps.
+     * Registry as record object with series IDs and their
+     * meta information instance.
      */
-    public seriesPointArrayMaps: Record<string, string | Array<string>>;
+    public seriesIdMap: Record<string, DataSeriesConverter.SeriesMeta>;
 
     /**
-     * Stored series ids.
+     * Array of all series meta information stored in the table.
      */
-    public seriesIds: Array<string>;
+    public seriesMeta: Array<DataSeriesConverter.SeriesMeta>;
 
     /* *
      *
@@ -99,19 +100,18 @@ class DataSeriesConverter {
     getSeriesData(seriesId: string): Array<PointOptions> {
         const converter = this,
             table = converter.table,
-            options = converter.options || {},
-            columnMap = options.columnMap || {},
-            seriesData = [],
-            pointArrayMap = converter.seriesPointArrayMaps[seriesId] || ['y'];
+            seriesData = [];
 
         let pointOptions: Record<string, number>,
             row,
             cellName,
             cell,
-            mappedProp,
-            isCellFound;
+            isCellFound,
+            pointArrayMap;
 
         if (seriesId) {
+            pointArrayMap = converter.seriesIdMap[seriesId].pointArrayMap || ['y'];
+
             for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
                 row = table.getRow(i);
 
@@ -122,8 +122,7 @@ class DataSeriesConverter {
                     };
 
                     for (let j = 0, jEnd = pointArrayMap.length; j < jEnd; j++) {
-                        mappedProp = columnMap[pointArrayMap[j]];
-                        cellName = (mappedProp ? mappedProp : pointArrayMap[j]) + '_' + seriesId;
+                        cellName = pointArrayMap[j] + '_' + seriesId;
                         cell = row.getCell(cellName);
 
                         if (cell) {
@@ -154,8 +153,8 @@ class DataSeriesConverter {
 
         let id;
 
-        for (let i = 0, iEnd = converter.seriesIds.length; i < iEnd; i++) {
-            id = converter.seriesIds[i];
+        for (let i = 0, iEnd = converter.seriesMeta.length; i < iEnd; i++) {
+            id = converter.seriesMeta[i].id;
 
             seriesOptions.push({
                 id: id,
@@ -179,11 +178,11 @@ class DataSeriesConverter {
         allSeries: Array<LineSeries>,
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
-        const table = this.table,
-            columnMap = (this.options || {}).columnMap || {};
+        const table = this.table;
 
         let columns: Record<string, DataTableRow.CellType>,
             series,
+            seriesMeta,
             pointArrayMap,
             pointArrayMapLength,
             options,
@@ -201,8 +200,9 @@ class DataSeriesConverter {
             id;
 
         if (allSeries && allSeries.length) {
-            this.seriesIds = [];
-            this.seriesPointArrayMaps = {};
+            this.options.seriesOptions = [];
+            this.seriesMeta = [];
+            this.seriesIdMap = {};
 
             for (let i = 0, iEnd = allSeries.length; i < iEnd; i++) {
                 series = allSeries[i];
@@ -215,12 +215,19 @@ class DataSeriesConverter {
                 keys = options.keys;
                 data = series.options.data || [];
 
-                this.seriesIds.push(series.id);
-                this.seriesPointArrayMaps[series.id] = pointArrayMap;
+                seriesMeta = {
+                    id: series.id,
+                    pointArrayMap: pointArrayMap,
+                    options: series.options
+                };
+
+                this.options.seriesOptions.push(series.options);
+                this.seriesMeta.push(seriesMeta);
+                this.seriesIdMap[series.id] = seriesMeta;
 
                 for (let j = 0, jEnd = data.length; j < jEnd; j++) {
                     elem = data[j];
-                    y = columnMap.y ? columnMap.y + yValueId : 'y' + yValueId;
+                    y = 'y' + yValueId;
                     columns = {};
                     needsArrayMap = pointArrayMapLength > 1;
 
@@ -237,8 +244,7 @@ class DataSeriesConverter {
                                     keys.indexOf(pointArrayMap[k]) : k + elem.length -
                                         pointArrayMapLength;
 
-                                yValueName = columnMap[pointArrayMap[k]] ?
-                                    columnMap[pointArrayMap[k]] : pointArrayMap[k];
+                                yValueName = pointArrayMap[k];
                                 columns[yValueName + yValueId] = elem[yValueIndex];
                             }
                         } else {
@@ -252,8 +258,7 @@ class DataSeriesConverter {
                             const elemSet = elem as Record<string, DataTableRow.CellType>;
 
                             for (let k = 0; k < pointArrayMapLength; k++) {
-                                yValueName = columnMap[pointArrayMap[k]] ?
-                                    columnMap[pointArrayMap[k]] : pointArrayMap[k];
+                                yValueName = pointArrayMap[k];
                                 columns[yValueName + yValueId] = elemSet[yValueName];
                             }
                         } else {
@@ -285,8 +290,13 @@ class DataSeriesConverter {
  * */
 namespace DataSeriesConverter {
     export interface Options {
-        type?: string;
-        columnMap?: Record<string, string>;
+        seriesOptions?: Array<SeriesOptions>;
+    }
+
+    export interface SeriesMeta {
+        id: string;
+        pointArrayMap: Array<string>;
+        options: SeriesOptions;
     }
 }
 /* *

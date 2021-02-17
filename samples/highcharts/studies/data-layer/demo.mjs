@@ -56,15 +56,24 @@ Highcharts.chart('chart3', {
         }]
     }]
 }, function (chart) {
-    const dataSeriesConverter = new DataSeriesConverter(undefined, {
-        columnMap: {
-            y: 'customY'
-        }
-    });
+    // Create new dataSeriesConverter.
+    const dataSeriesConverter = new DataSeriesConverter();
 
+    // Save series data in the dataSeriesConverter dataTable.
     dataSeriesConverter.updateDataTable(chart.series);
-    console.log(dataSeriesConverter.getAllSeriesData());
-    console.log('table from LINE series -> ', dataSeriesConverter.table);
+
+    console.group('LINE series:');
+
+    // Log the series data.
+    const seriesId = chart.series[0].id;
+    console.log('series[0] data: ', dataSeriesConverter.getSeriesData(seriesId));
+
+    // Log all series data.
+    console.log('all series data: ', dataSeriesConverter.getAllSeriesData());
+
+    // Show dataSeriesConverter dataTable.
+    console.log('dataTable: ', dataSeriesConverter.table);
+    console.groupEnd();
 });
 
 Highcharts.stockChart('chart4', {
@@ -86,16 +95,23 @@ Highcharts.stockChart('chart4', {
         ]
     }]
 }, function (chart) {
-    const dataSeriesConverter = new DataSeriesConverter(undefined, {
-        columnMap: {
-            open: 'customOpen'
-        }
-    });
+    const dataSeriesConverter = new DataSeriesConverter();
 
+    // Save series data in the dataSeriesConverter dataTable.
     dataSeriesConverter.updateDataTable(chart.series);
-    console.log(dataSeriesConverter.getAllSeriesData());
-    console.log(dataSeriesConverter.getSeriesData(chart.series[0].id));
-    console.log('table from OHLC series -> ', dataSeriesConverter.table);
+
+    console.group('OHLC series:');
+
+    // Log the series data.
+    const seriesId = chart.series[0].id;
+    console.log('series[0] data: ', dataSeriesConverter.getSeriesData(seriesId));
+
+    // Log all series data.
+    console.log('all series data: ', dataSeriesConverter.getAllSeriesData());
+
+    // Show dataSeriesConverter dataTable.
+    console.log('dataTable: ', dataSeriesConverter.table);
+    console.groupEnd();
 });
 
 const store = new GoogleSheetsStore(undefined, {
