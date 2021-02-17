@@ -263,7 +263,6 @@ var NavigationBindings = /** @class */ (function () {
             // TO DO: Polyfill for IE11?
             !closestPolyfill(clickEvent.target, '.' + PREFIX + 'popup')) {
             fireEvent(navigation, 'closePopup');
-            navigation.deselectAnnotation();
         }
         if (!selectedButton || !selectedButton.start) {
             return;
@@ -714,7 +713,6 @@ function selectableAnnotation(annotationType) {
         }
         else {
             // Deselect current:
-            navigation.deselectAnnotation();
             fireEvent(navigation, 'closePopup');
         }
         // Let bubble event to chart.click:
@@ -1038,5 +1036,8 @@ setOptions({
             }
         }
     }
+});
+addEvent(NavigationBindings, 'closePopup', function () {
+    this.deselectAnnotation();
 });
 export default NavigationBindings;

@@ -20,6 +20,7 @@ WIP on vertical scrollable plot area (#9378). To do:
 
 'use strict';
 
+import type BBoxObject from '../Core/Renderer/BBoxObject';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -35,6 +36,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    merge,
     pick
 } = U;
 
@@ -49,6 +51,7 @@ declare module '../Core/Chart/ChartLike'{
         scrollableMask?: Highcharts.SVGElement;
         scrollablePixelsX?: number;
         scrollablePixelsY?: number;
+        scrollablePlotBox?: BBoxObject;
         applyFixed(): void;
         moveFixedElements(): void;
         setUpScrolling(): void;
@@ -152,13 +155,12 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinWidth - this.chartWidth
             );
             if (scrollablePixelsX) {
-                this.plotWidth += scrollablePixelsX;
+                this.scrollablePlotBox = merge(this.plotBox);
+                this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
-                    (this.clipBox as any).height += scrollablePixelsX;
-                    this.plotBox.height += scrollablePixelsX;
+                    this.clipBox.height += scrollablePixelsX;
                 } else {
-                    (this.clipBox as any).width += scrollablePixelsX;
-                    this.plotBox.width += scrollablePixelsX;
+                    this.clipBox.width += scrollablePixelsX;
                 }
 
                 corrections = {
@@ -174,13 +176,12 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinHeight - this.chartHeight
             );
             if (scrollablePixelsY) {
-                this.plotHeight += scrollablePixelsY;
+                this.scrollablePlotBox = merge(this.plotBox);
+                this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
-                    (this.clipBox as any).width += scrollablePixelsY;
-                    this.plotBox.width += scrollablePixelsY;
+                    this.clipBox.width += scrollablePixelsY;
                 } else {
-                    (this.clipBox as any).height += scrollablePixelsY;
-                    this.plotBox.height += scrollablePixelsY;
+                    this.clipBox.height += scrollablePixelsY;
                 }
                 corrections = {
                     2: { name: 'bottom', value: scrollablePixelsY }

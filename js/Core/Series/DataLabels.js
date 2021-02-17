@@ -429,10 +429,13 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
             (
             // If the data label is inside the align box, it is enough
             // that parts of the align box is inside the plot area
-            // (#12370)
-            options.inside && alignTo && chart.isInsidePlot(plotX, inverted ?
-                alignTo.x + 1 :
-                alignTo.y + alignTo.height - 1, inverted))), setStartPos = function (alignOptions) {
+            // (#12370). When stacking, it is always inside regardless
+            // of the option (#15148).
+            pick(options.inside, !!this.options.stacking) &&
+                alignTo &&
+                chart.isInsidePlot(plotX, inverted ?
+                    alignTo.x + 1 :
+                    alignTo.y + alignTo.height - 1, inverted))), setStartPos = function (alignOptions) {
         if (enabledDataSorting && series.xAxis && !justify) {
             series.setDataLabelStartPos(point, dataLabel, isNew, isInsidePlot, alignOptions);
         }

@@ -144,6 +144,19 @@ H.layouts.packedbubble = extendClass(
                 });
             }
         },
+        isStable: function (this: PackedBubbleLayout): boolean { // #14439, new stable check.
+            var tempDiff = Math.abs(
+                (this.prevSystemTemperature as any) -
+                (this.systemTemperature as any)
+            );
+
+            var upScaledTemperature = 10 * (this.systemTemperature as any) /
+                Math.sqrt(this.nodes.length);
+
+            return Math.abs(upScaledTemperature) < 1 &&
+                tempDiff < 0.00001 ||
+                (this.temperature as any) <= 0;
+        },
         setCircularPositions: function (this: PackedBubbleLayout): void {
             var layout = this,
                 box = layout.box,

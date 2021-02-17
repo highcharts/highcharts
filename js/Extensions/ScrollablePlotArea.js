@@ -24,7 +24,7 @@ import Chart from '../Core/Chart/Chart.js';
 import Series from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick;
+var addEvent = U.addEvent, createElement = U.createElement, merge = U.merge, pick = U.pick;
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
  * the plot area of the chart. If the size gets smaller than this, typically
@@ -98,14 +98,13 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
         if (scrollableMinWidth) {
             this.scrollablePixelsX = scrollablePixelsX = Math.max(0, scrollableMinWidth - this.chartWidth);
             if (scrollablePixelsX) {
-                this.plotWidth += scrollablePixelsX;
+                this.scrollablePlotBox = merge(this.plotBox);
+                this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
-                    this.plotBox.height += scrollablePixelsX;
                 }
                 else {
                     this.clipBox.width += scrollablePixelsX;
-                    this.plotBox.width += scrollablePixelsX;
                 }
                 corrections = {
                     // Corrections for right side
@@ -117,14 +116,13 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
         else if (scrollableMinHeight) {
             this.scrollablePixelsY = scrollablePixelsY = Math.max(0, scrollableMinHeight - this.chartHeight);
             if (scrollablePixelsY) {
-                this.plotHeight += scrollablePixelsY;
+                this.scrollablePlotBox = merge(this.plotBox);
+                this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;
-                    this.plotBox.width += scrollablePixelsY;
                 }
                 else {
                     this.clipBox.height += scrollablePixelsY;
-                    this.plotBox.height += scrollablePixelsY;
                 }
                 corrections = {
                     2: { name: 'bottom', value: scrollablePixelsY }

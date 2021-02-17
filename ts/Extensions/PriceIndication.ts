@@ -120,8 +120,8 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 addEvent(Series, 'afterRender', function (): void {
-    var serie = this,
-        seriesOptions = serie.options,
+    var series = this,
+        seriesOptions = series.options,
         pointRange = seriesOptions.pointRange,
         lastVisiblePrice = seriesOptions.lastVisiblePrice,
         lastPrice = seriesOptions.lastPrice;
@@ -129,16 +129,16 @@ addEvent(Series, 'afterRender', function (): void {
     if ((lastVisiblePrice || lastPrice) &&
             seriesOptions.id !== 'highcharts-navigator-series') {
 
-        var xAxis = serie.xAxis,
-            yAxis = serie.yAxis,
+        var xAxis = series.xAxis,
+            yAxis = series.yAxis,
             origOptions = yAxis.crosshair,
             origGraphic = yAxis.cross,
             origLabel = yAxis.crossLabel,
-            points = serie.points,
-            yLength = (serie.yData as any).length,
+            points = series.points,
+            yLength = (series.yData as any).length,
             pLength = points.length,
-            x = (serie.xData as any)[(serie.xData as any).length - 1],
-            y = (serie.yData as any)[yLength - 1],
+            x = (series.xData as any)[(series.xData as any).length - 1],
+            y = (series.yData as any)[yLength - 1],
             lastPoint,
             yValue,
             crop;
@@ -147,7 +147,7 @@ addEvent(Series, 'afterRender', function (): void {
 
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
 
-            yAxis.cross = serie.lastPrice;
+            yAxis.cross = series.lastPrice;
             yValue = isArray(y) ? y[3] : y;
 
             yAxis.drawCrosshair((null as any), ({
@@ -158,9 +158,9 @@ addEvent(Series, 'afterRender', function (): void {
             }) as any);
 
             // Save price
-            if (serie.yAxis.cross) {
-                serie.lastPrice = serie.yAxis.cross;
-                serie.lastPrice.y = yValue;
+            if (series.yAxis.cross) {
+                series.lastPrice = series.yAxis.cross;
+                series.lastPrice.y = yValue;
             }
         }
 
@@ -175,27 +175,28 @@ addEvent(Series, 'afterRender', function (): void {
                 color: 'transparent'
             }, seriesOptions.lastVisiblePrice);
 
-            yAxis.cross = serie.lastVisiblePrice;
+            yAxis.cross = series.lastVisiblePrice;
             lastPoint = points[pLength - crop];
 
-            if (serie.crossLabel) {
-                serie.crossLabel.destroy();
-                // Set to undefined to avoid collision with
-                // the yAxis crosshair #11480
-                delete yAxis.crossLabel;
+            if (series.crossLabel) {
+                series.crossLabel.destroy();
             }
+            // Set to undefined to avoid collision with
+            // the yAxis crosshair #11480
+            // Delete the crossLabel each time the code is invoked, #13876.
+            delete yAxis.crossLabel;
 
             // Save price
             yAxis.drawCrosshair((null as any), lastPoint);
 
             if (yAxis.cross) {
-                serie.lastVisiblePrice = yAxis.cross;
+                series.lastVisiblePrice = yAxis.cross;
                 if (typeof lastPoint.y === 'number') {
-                    serie.lastVisiblePrice.y = lastPoint.y;
+                    series.lastVisiblePrice.y = lastPoint.y;
                 }
             }
 
-            serie.crossLabel = yAxis.crossLabel;
+            series.crossLabel = yAxis.crossLabel;
         }
 
         // Restore crosshair:
