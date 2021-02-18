@@ -11,7 +11,7 @@
 import A from '../Animation/AnimationUtilities.js';
 var getDeferredAnimation = A.getDeferredAnimation;
 import U from '../Utilities.js';
-var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * Adds stacking support to axes.
@@ -84,17 +84,17 @@ var StackingAxisAdditions = /** @class */ (function () {
      * Set all the stacks to initial states and destroy unused ones.
      * @private
      */
-    StackingAxisAdditions.prototype.resetStacks = function (destroyAll) {
-        var stacking = this;
-        var axis = stacking.axis;
-        var stacks = stacking.stacks;
+    StackingAxisAdditions.prototype.resetStacks = function () {
+        var _this = this;
+        var _a = this, axis = _a.axis, stacks = _a.stacks;
         if (!axis.isXAxis) {
             objectEach(stacks, function (type) {
-                objectEach(type, function (stack, key) {
+                objectEach(type, function (stack, x) {
                     // Clean up memory after point deletion (#1044, #4320)
-                    if (stack.touched < stacking.stacksTouched || destroyAll) {
+                    if (isNumber(stack.touched) &&
+                        stack.touched < _this.stacksTouched) {
                         stack.destroy();
-                        delete type[key];
+                        delete type[x];
                         // Reset stacks
                     }
                     else {

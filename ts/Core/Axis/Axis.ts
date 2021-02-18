@@ -6042,7 +6042,6 @@ class Axis {
         var axis: Highcharts.Axis = this as any,
             isDirtyAxisLength,
             isDirtyData: (boolean|undefined) = false,
-            isDirtyStacks = false,
             isXAxisDirty = false;
 
         axis.series.forEach(function (series): void {
@@ -6051,11 +6050,6 @@ class Axis {
             // When x axis is dirty, we need new data extremes for y as
             // well:
             isXAxisDirty = isXAxisDirty || series.xAxis?.isDirty || false;
-
-            if (!axis.isXAxis) {
-                isDirtyStacks = isDirtyStacks || series.isDirtyStacks || false;
-                series.isDirtyStacks = false;
-            }
         });
 
         // set the new axisLength
@@ -6075,7 +6069,7 @@ class Axis {
         ) {
 
             if (axis.stacking) {
-                axis.stacking.resetStacks(isDirtyStacks);
+                axis.stacking.resetStacks();
             }
 
             axis.forceRedraw = false;

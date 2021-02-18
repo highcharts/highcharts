@@ -2800,7 +2800,7 @@ var Series = /** @class */ (function () {
         var series = this, chart = series.chart, 
         // must use user options when changing type because series.options
         // is merged in with type specific plotOptions
-        oldOptions = series.userOptions, oldFullOptions = series.options, seriesOptions, initialType = series.initialType || series.type, plotOptions = chart.options.plotOptions, newType = (options.type ||
+        oldOptions = series.userOptions, seriesOptions, initialType = series.initialType || series.type, plotOptions = chart.options.plotOptions, newType = (options.type ||
             oldOptions.type ||
             chart.options.chart.type), keepPoints = !(
         // Indicators, histograms etc recalculate the data. It should be
@@ -2954,8 +2954,6 @@ var Series = /** @class */ (function () {
         }
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
-        series.isDirtyStacks = oldFullOptions.stacking !== this.options.stacking ||
-            oldFullOptions.centerInCategory !== this.options.centerInCategory;
         fireEvent(this, 'afterUpdate');
         if (pick(redraw, true)) {
             chart.redraw(keepPoints ? void 0 : false);
