@@ -91,33 +91,5 @@
 	"32": {
 		"title": "Deprecated function or property",
 		"text": "<h1>Deprecated function or property</h1><p>This error occurs when using a deprecated function or property. Consult the <a href=\"https://api.highcharts.com/\">API documentation</a> for alternatives, if no replacement is mentioned by the error itself.</p>"
-	},
-	"meta": {
-		"files": [
-			"errors/10/readme.md",
-			"errors/10/enduser.md",
-			"errors/11/readme.md",
-			"errors/12/readme.md",
-			"errors/13/readme.md",
-			"errors/14/readme.md",
-			"errors/15/readme.md",
-			"errors/16/readme.md",
-			"errors/17/readme.md",
-			"errors/18/readme.md",
-			"errors/19/readme.md",
-			"errors/20/readme.md",
-			"errors/21/readme.md",
-			"errors/22/readme.md",
-			"errors/23/readme.md",
-			"errors/24/readme.md",
-			"errors/25/readme.md",
-			"errors/26/readme.md",
-			"errors/27/readme.md",
-			"errors/28/readme.md",
-			"errors/29/readme.md",
-			"errors/30/readme.md",
-			"errors/31/readme.md",
-			"errors/32/readme.md"
-		]
 	}
 }

@@ -992,30 +992,30 @@ H.defaultOptions = {
          *
          * @sample  {highcharts} highcharts/chart/pankey/ Zooming and panning
          * @sample  {highstock} stock/chart/panning/ Zooming and xy panning
-         *
-         * @product highcharts highstock gantt
-         * @apioption chart.panning
          */
-        /**
-         * Enable or disable chart panning.
-         *
-         * @type      {boolean}
-         * @default   {highcharts} false
-         * @default   {highstock} true
-         * @apioption chart.panning.enabled
-         */
-        /**
-         * Decides in what dimensions the user can pan the chart. Can be
-         * one of `x`, `y`, or `xy`.
-         *
-         * @sample {highcharts} highcharts/chart/panning-type
-         *         Zooming and xy panning
-         *
-         * @type    {string}
-         * @validvalue ["x", "y", "xy"]
-         * @default x
-         * @apioption chart.panning.type
-         */
+        panning: {
+            /**
+             * Enable or disable chart panning.
+             *
+             * @type      {boolean}
+             * @default   {highcharts} false
+             * @default   {highstock|highmaps} true
+             */
+            enabled: false,
+            /**
+             * Decides in what dimensions the user can pan the chart. Can be
+             * one of `x`, `y`, or `xy`.
+             *
+             * @sample {highcharts} highcharts/chart/panning-type
+             *         Zooming and xy panning
+             *
+             * @type       {string}
+             * @validvalue ["x", "y", "xy"]
+             * @default    {highcharts|highstock} x
+             * @default    {highmaps} xy
+             */
+            type: 'x'
+        },
         /**
          * Equivalent to [zoomType](#chart.zoomType), but for multitouch
          * gestures only. By default, the `pinchType` is the same as the
@@ -1495,7 +1495,7 @@ H.defaultOptions = {
          * @since 9.0.0
          * @sample     highcharts/chart/zoombysingletouch
          *             Zoom by single touch enabled, with buttons to toggle
-         * @product    highcharts higstock gantt
+         * @product    highcharts highstock gantt
          */
         zoomBySingleTouch: false,
         /**

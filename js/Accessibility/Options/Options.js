@@ -48,7 +48,7 @@ import palette from '../../Core/Color/Palette.js';
 * @name Highcharts.PointAccessibilityOptionsObject#enabled
 * @type {boolean|undefined}
 * @requires modules/accessibility
-* @since next
+* @since 9.0.1
 */
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
@@ -647,7 +647,7 @@ var options = {
      * exposed to assistive technology.
      *
      * @type      {boolean}
-     * @since     next
+     * @since 9.0.1
      * @apioption series.line.data.accessibility.enabled
      */
     /**
