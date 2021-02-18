@@ -11,7 +11,6 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-
 import '../../Stock/Indicators/LinearRegression/LinearRegression.js';
 // eslint-disable-next-line max-len
 import '../../Stock/Indicators/LinearRegressionSlopes/LinearRegressionSlopes.js';

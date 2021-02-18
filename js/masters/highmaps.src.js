@@ -9,6 +9,5 @@
 'use strict';
 import Highcharts from './highcharts.src.js';
 import './modules/map.src.js';
-
 Highcharts.product = 'Highmaps';
 export default Highcharts;

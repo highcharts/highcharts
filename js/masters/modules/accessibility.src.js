@@ -11,5 +11,4 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-
 import '../../Accessibility/Accessibility.js';
