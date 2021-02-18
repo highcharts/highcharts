@@ -53,7 +53,6 @@ declare module '../Core/Series/PointLike' {
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
-        isDirtyStacks?: boolean;
         isRadialBar?: boolean;
         negStacks?: any; // @todo
         singleStacks?: any; // @todo
