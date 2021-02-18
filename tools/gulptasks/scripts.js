@@ -88,6 +88,11 @@ function shouldRun() {
         );
     }
 
+    // Return true if JS files have not been built
+    if (!fs.existsSync(path.join(JS_DIRECTORY, '/Core/globals.js'))) {
+        return true;
+    }
+
     const latestCodeHash = fslib.getDirectoryHash(
         CODE_DIRECTORY, true, stringlib.removeComments
     );
