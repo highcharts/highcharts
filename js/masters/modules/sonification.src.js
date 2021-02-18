@@ -9,7 +9,5 @@
  *
  * License: www.highcharts.com/license
  */
-
 'use strict';
-
 import '../../Extensions/Sonification/Sonification.js';
