@@ -6,6 +6,10 @@ fieldset {
 	border: none;
 }
 
+.highcharts-description, legend, label {
+	font-family: "Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;
+  }
+
 .container {
 	max-width: 800px;
 	height: 400px;
