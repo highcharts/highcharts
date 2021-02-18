@@ -353,6 +353,7 @@ const groupData = function (
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
+        groupAll = this.options.dataGrouping && this.options.dataGrouping.groupAll,
         pos = 0,
         start = 0,
         valuesLen,
@@ -408,7 +409,7 @@ const groupData = function (
             // get group x and y
             pointX = groupPositions[pos];
             series.dataGroupInfo = {
-                start: (series.cropStart as any) + start,
+                start: groupAll ? start : ((series.cropStart as any) + start),
                 length: values[0].length
             };
             groupedY = approximationFn.apply(series, values);

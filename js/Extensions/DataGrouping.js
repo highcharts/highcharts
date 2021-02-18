@@ -139,7 +139,7 @@ var groupData = function (xData, yData, groupPositions, approximation) {
     var series = this, data = series.data, dataOptions = series.options && series.options.data, groupedXData = [], groupedYData = [], groupMap = [], dataLength = xData.length, pointX, pointY, groupedY, 
     // when grouping the fake extended axis for panning,
     // we don't need to consider y
-    handleYData = !!yData, values = [], approximationFn, pointArrayMap = series.pointArrayMap, pointArrayMapLength = pointArrayMap && pointArrayMap.length, extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']), pos = 0, start = 0, valuesLen, i, j;
+    handleYData = !!yData, values = [], approximationFn, pointArrayMap = series.pointArrayMap, pointArrayMapLength = pointArrayMap && pointArrayMap.length, extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']), groupAll = this.options.dataGrouping && this.options.dataGrouping.groupAll, pos = 0, start = 0, valuesLen, i, j;
     /**
      * @private
      */
@@ -179,7 +179,7 @@ var groupData = function (xData, yData, groupPositions, approximation) {
             // get group x and y
             pointX = groupPositions[pos];
             series.dataGroupInfo = {
-                start: series.cropStart + start,
+                start: groupAll ? start : (series.cropStart + start),
                 length: values[0].length
             };
             groupedY = approximationFn.apply(series, values);
