@@ -4,13 +4,7 @@
 import CP from '../../Core/Series/Point.js';
 import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
-var getOptions = U.getOptions, merge = U.merge;
-/* *
- *
- *  Constants
- *
- * */
-var DEBUG = !!getOptions().debug;
+var extend = U.extend, merge = U.merge;
 /* *
  *
  *  Class
@@ -23,7 +17,7 @@ var DataPoint = /** @class */ (function () {
      *
      * */
     function DataPoint(series, data, x) {
-        DEBUG && console.log('DataPoint.constructor');
+        console.log('DataPoint.constructor');
         this.options = { x: x };
         this.series = series;
         this.tableRow = DataTableRow.NULL;
@@ -42,7 +36,7 @@ var DataPoint = /** @class */ (function () {
      *
      * */
     DataPoint.prototype.destroy = function () {
-        DEBUG && console.log('DataPoint.destroy');
+        console.log('DataPoint.destroy');
         var point = this;
         point.tableRow = DataTableRow.NULL;
         if (point.tableRowListener) {
@@ -50,7 +44,7 @@ var DataPoint = /** @class */ (function () {
         }
     };
     DataPoint.prototype.render = function (parent) {
-        DEBUG && console.log('DataPoint.render');
+        console.log('DataPoint.render');
         var point = this, tableRow = point.tableRow, valueKey = point.series.pointArrayMap[0];
         if (point.graphic) {
             point.graphic.destroy();
@@ -67,7 +61,7 @@ var DataPoint = /** @class */ (function () {
             .add(parent);
     };
     DataPoint.prototype.setTableRow = function (tableRow) {
-        DEBUG && console.log('DataPoint.setTableRow');
+        console.log('DataPoint.setTableRow');
         var point = this, series = point.series, chart = series.chart;
         if (point.tableRow !== tableRow) {
             if (point.tableRowListener) {
@@ -87,14 +81,16 @@ var DataPoint = /** @class */ (function () {
                 }
             });
         }
-        point.update(DataPoint.getPointOptionsFromTableRow(tableRow, series.pointArrayMap) || {}, false, false);
+        point.update(DataPoint.getPointOptionsFromTableRow(tableRow, series.pointArrayMap) || {}, true, false);
     };
     DataPoint.prototype.update = function (options, redraw, animation) {
-        DEBUG && console.log('DataPoint.update');
-        var point = this;
+        console.log('DataPoint.update');
+        var point = this, series = point.series;
         merge(true, point.options, options);
         if (redraw) {
-            point.series.chart.redraw(animation);
+            series.isDirty = true;
+            series.isDirtyData = true;
+            series.chart.redraw(animation);
         }
     };
     /* *

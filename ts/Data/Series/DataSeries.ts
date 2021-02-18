@@ -28,18 +28,9 @@ const {
     cleanRecursively,
     extend,
     fireEvent,
-    getOptions,
     merge,
     pick
 } = U;
-
-/* *
- *
- *  Constants
- *
- * */
-
-const DEBUG = !!(getOptions() as any).debug;
 
 /* *
  *
@@ -83,7 +74,7 @@ class DataSeries {
         chart: Chart,
         options: DeepPartial<DataSeriesOptions> = {}
     ) {
-        DEBUG && console.log('DataSeries.constructor');
+        console.log('DataSeries.constructor');
 
         this.chart = chart;
         this.data = [];
@@ -141,13 +132,13 @@ class DataSeries {
      * */
 
     public destroy(): void {
-        DEBUG && console.log('DataSeries.destroy');
+        console.log('DataSeries.destroy');
 
         this.destroyTableListeners();
     }
 
     public destroyTableListeners(): void {
-        DEBUG && console.log('DataSeries.destroyTableListeners');
+        console.log('DataSeries.destroyTableListeners');
 
         const series = this,
             tableListeners = series.tableListeners.slice();
@@ -193,7 +184,7 @@ class DataSeries {
     } */
 
     public hasData(): boolean {
-        DEBUG && console.log('DataSeries.hasData');
+        console.log('DataSeries.hasData');
 
         return (this.table.getRowCount() > 0);
     }
@@ -203,7 +194,7 @@ class DataSeries {
         chart: Chart,
         options: DataSeriesOptions
     ): void {
-        DEBUG && console.log('DataSeries.init');
+        console.log('DataSeries.init');
 
         const series = this;
 
@@ -224,7 +215,7 @@ class DataSeries {
     public plotGroup(
         parent: SVGElement
     ): SVGElement {
-        DEBUG && console.log('DataSeries.plotGroup');
+        console.log('DataSeries.plotGroup');
 
         const series = this,
             {
@@ -260,7 +251,7 @@ class DataSeries {
     }
 
     public redraw(): void {
-        DEBUG && console.log('DataSeries.redraw');
+        console.log('DataSeries.redraw');
 
         const series = this;
 
@@ -280,7 +271,7 @@ class DataSeries {
     public render(
         parent?: SVGElement
     ): void {
-        DEBUG && console.log('DataSeries.render');
+        console.log('DataSeries.render');
 
         const series = this,
             chart = series.chart,
@@ -315,7 +306,7 @@ class DataSeries {
     public setData(
         data: Array<(DataPointOptions|PointShortOptions|undefined)>
     ): void {
-        DEBUG && console.log('DataSeries.setData');
+        console.log('DataSeries.setData');
 
         const series = this;
 
@@ -329,7 +320,7 @@ class DataSeries {
     private setOptions(
         options: DeepPartial<DataSeriesOptions>
     ): DataSeriesOptions {
-        DEBUG && console.log('DataSeries.setOptions');
+        console.log('DataSeries.setOptions');
 
         const series = this,
             chart = series.chart;
@@ -364,7 +355,7 @@ class DataSeries {
     public setTable(
         table: DataTable
     ): void {
-        DEBUG && console.log('DataSeries.setTable');
+        console.log('DataSeries.setTable');
 
         type PointType = typeof PointClass['prototype'];
 
@@ -501,7 +492,7 @@ class DataSeries {
     }
 
     public translate(): void {
-        DEBUG && console.log('DataSeries.translate');
+        console.log('DataSeries.translate');
 
         const series = this;
 
@@ -512,7 +503,7 @@ class DataSeries {
         options: DataSeriesOptions,
         redraw?: boolean
     ): void {
-        DEBUG && console.log('DataSeries.update');
+        console.log('DataSeries.update');
 
         const series = this;
 

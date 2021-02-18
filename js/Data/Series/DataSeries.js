@@ -13,13 +13,7 @@ import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import SortModifier from '../Modifiers/SortModifier.js';
 import U from '../../Core/Utilities.js';
-var cleanRecursively = U.cleanRecursively, extend = U.extend, fireEvent = U.fireEvent, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
-/* *
- *
- *  Constants
- *
- * */
-var DEBUG = !!getOptions().debug;
+var cleanRecursively = U.cleanRecursively, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick;
 /* *
  *
  *  Class
@@ -33,7 +27,7 @@ var DataSeries = /** @class */ (function () {
      * */
     function DataSeries(chart, options) {
         if (options === void 0) { options = {}; }
-        DEBUG && console.log('DataSeries.constructor');
+        console.log('DataSeries.constructor');
         this.chart = chart;
         this.data = [];
         this.linkedSeries = [];
@@ -52,11 +46,11 @@ var DataSeries = /** @class */ (function () {
      *
      * */
     DataSeries.prototype.destroy = function () {
-        DEBUG && console.log('DataSeries.destroy');
+        console.log('DataSeries.destroy');
         this.destroyTableListeners();
     };
     DataSeries.prototype.destroyTableListeners = function () {
-        DEBUG && console.log('DataSeries.destroyTableListeners');
+        console.log('DataSeries.destroyTableListeners');
         var series = this, tableListeners = series.tableListeners.slice();
         series.tableListeners.length = 0;
         for (var i = 0, iEnd = tableListeners.length; i < iEnd; ++i) {
@@ -96,12 +90,12 @@ var DataSeries = /** @class */ (function () {
         }
     } */
     DataSeries.prototype.hasData = function () {
-        DEBUG && console.log('DataSeries.hasData');
+        console.log('DataSeries.hasData');
         return (this.table.getRowCount() > 0);
     };
     /** @deprecated */
     DataSeries.prototype.init = function (chart, options) {
-        DEBUG && console.log('DataSeries.init');
+        console.log('DataSeries.init');
         var series = this;
         fireEvent(series, 'init');
         series.chart = chart;
@@ -112,7 +106,7 @@ var DataSeries = /** @class */ (function () {
         fireEvent(series, 'afterInit');
     };
     DataSeries.prototype.plotGroup = function (parent) {
-        DEBUG && console.log('DataSeries.plotGroup');
+        console.log('DataSeries.plotGroup');
         var series = this, chart = series.chart, options = series.options, zIndex = options.zIndex, attributes = {
             translateX: chart.plotLeft,
             translateY: chart.plotTop,
@@ -135,7 +129,7 @@ var DataSeries = /** @class */ (function () {
             .add(parent);
     };
     DataSeries.prototype.redraw = function () {
-        DEBUG && console.log('DataSeries.redraw');
+        console.log('DataSeries.redraw');
         var series = this;
         series.translate();
         series.render();
@@ -148,7 +142,7 @@ var DataSeries = /** @class */ (function () {
      * Render series as points.
      */
     DataSeries.prototype.render = function (parent) {
-        DEBUG && console.log('DataSeries.render');
+        console.log('DataSeries.render');
         var series = this, chart = series.chart, points = series.points, renderer = chart.renderer;
         var group = series.group;
         if (parent) {
@@ -166,7 +160,7 @@ var DataSeries = /** @class */ (function () {
     };
     /** @deprecated */
     DataSeries.prototype.setData = function (data) {
-        DEBUG && console.log('DataSeries.setData');
+        console.log('DataSeries.setData');
         var series = this;
         series.setTable(DataSeries.getTableFromSeriesOptions({
             data: data,
@@ -175,7 +169,7 @@ var DataSeries = /** @class */ (function () {
     };
     /** @private */
     DataSeries.prototype.setOptions = function (options) {
-        DEBUG && console.log('DataSeries.setOptions');
+        console.log('DataSeries.setOptions');
         var series = this, chart = series.chart;
         fireEvent(series, 'setOptions', { userOptions: options });
         series.options = merge(DataSeries.defaultOptions, (chart &&
@@ -192,7 +186,7 @@ var DataSeries = /** @class */ (function () {
      * Add or update table.
      */
     DataSeries.prototype.setTable = function (table) {
-        DEBUG && console.log('DataSeries.setTable');
+        console.log('DataSeries.setTable');
         var series = this, dataSorting = series.options.dataSorting, pointsToKeep = [], seriesData = series.data, seriesDataLength = seriesData.length, tableRows = table.getAllRows(), tableRowsLength = tableRows.length, PointClass = series.pointClass;
         if (series.table === table) {
             return;
@@ -275,12 +269,12 @@ var DataSeries = /** @class */ (function () {
         }
     };
     DataSeries.prototype.translate = function () {
-        DEBUG && console.log('DataSeries.translate');
+        console.log('DataSeries.translate');
         var series = this;
         series.points = series.data.slice();
     };
     DataSeries.prototype.update = function (options, redraw) {
-        DEBUG && console.log('DataSeries.update');
+        console.log('DataSeries.update');
         var series = this;
         options = cleanRecursively(options, series.options);
         fireEvent(series, 'update', { options: options });

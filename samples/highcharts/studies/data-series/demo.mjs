@@ -17,9 +17,15 @@ Highcharts.chart('chart', {
         data: (new Array(50))
     }]
 }, function (chart) {
-    const table = chart.series[0].table,
+    const series = chart.series[0],
+        table = series.table,
         tableRowCount = table.getRowCount();
+    /*window.setInterval(function () {
+        table.getRow(Math.floor(Math.random() * tableRowCount)).setCell('y', Math.random() * 30);
+    }, 1000);*/
     window.setInterval(function () {
-        table.getRow(Math.floor(Math.random() * tableRowCount)).updateCell('y', Math.random() * 30);
-    }, 1000);
+        series.update({
+            data: [Math.random() * 30]
+        });
+    }, 10000);
 });

@@ -11,13 +11,14 @@
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type DataPointOptions from './DataPointOptions';
 import type DataSeries from './DataSeries';
+import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 
 import CP from '../../Core/Series/Point.js';
 import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 const {
-    getOptions,
+    extend,
     merge
 } = U;
 
@@ -32,14 +33,6 @@ declare module '../../Core/Chart/ChartLike' {
         redrawTimer?: number;
     }
 }
-
-/* *
- *
- *  Constants
- *
- * */
-
-const DEBUG = !!(getOptions() as any).debug;
 
 /* *
  *
@@ -67,10 +60,10 @@ class DataPoint {
 
     public constructor(
         series: DataSeries,
-        data?: (DataPointOptions|DataTableRow),
+        data?: (DataPointOptions|DataTableRow|PointShortOptions),
         x?: number
     ) {
-        DEBUG && console.log('DataPoint.constructor');
+        console.log('DataPoint.constructor');
 
         this.options = { x };
         this.series = series;
@@ -110,7 +103,7 @@ class DataPoint {
      * */
 
     public destroy(): void {
-        DEBUG && console.log('DataPoint.destroy');
+        console.log('DataPoint.destroy');
 
         const point = this;
 
@@ -122,7 +115,7 @@ class DataPoint {
     }
 
     public render(parent: SVGElement): void {
-        DEBUG && console.log('DataPoint.render');
+        console.log('DataPoint.render');
 
         const point = this,
             tableRow = point.tableRow,
@@ -152,7 +145,7 @@ class DataPoint {
     public setTableRow(
         tableRow: DataTableRow
     ): void {
-        DEBUG && console.log('DataPoint.setTableRow');
+        console.log('DataPoint.setTableRow');
 
         const point = this,
             series = point.series,
@@ -193,7 +186,7 @@ class DataPoint {
                 tableRow,
                 series.pointArrayMap
             ) || {},
-            false,
+            true,
             false
         );
     }
@@ -203,14 +196,17 @@ class DataPoint {
         redraw?: boolean,
         animation?: (false|AnimationOptions)
     ): void {
-        DEBUG && console.log('DataPoint.update');
+        console.log('DataPoint.update');
 
-        const point = this;
+        const point = this,
+            series = point.series;
 
         merge(true, point.options, options);
 
         if (redraw) {
-            point.series.chart.redraw(animation);
+            series.isDirty = true;
+            series.isDirtyData = true;
+            series.chart.redraw(animation);
         }
     }
 
