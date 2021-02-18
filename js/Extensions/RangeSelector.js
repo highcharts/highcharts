@@ -1158,9 +1158,9 @@ var RangeSelector = /** @class */ (function () {
         var keyDown = false;
         // handle changes in the input boxes
         input.onchange = function () {
-            updateExtremes();
-            // Blur input when clicking date input calendar
+            // Update extremes and blur input when clicking date input calendar
             if (!keyDown) {
+                updateExtremes();
                 rangeSelector.hideInput(name);
                 input.blur();
             }
@@ -1171,8 +1171,12 @@ var RangeSelector = /** @class */ (function () {
                 updateExtremes();
             }
         };
-        input.onkeydown = function () {
+        input.onkeydown = function (event) {
             keyDown = true;
+            // Arrow keys
+            if (event.keyCode === 38 || event.keyCode === 40) {
+                updateExtremes();
+            }
         };
         input.onkeyup = function () {
             keyDown = false;
@@ -1256,7 +1260,9 @@ var RangeSelector = /** @class */ (function () {
                 height: 0,
                 zIndex: inputsZIndex
             });
-            this.renderButtons();
+            if (this.buttonOptions.length) {
+                this.renderButtons();
+            }
             // First create a wrapper outside the container in order to make
             // the inputs work and make export correct
             if (container.parentNode) {
@@ -1723,7 +1729,7 @@ var RangeSelector = /** @class */ (function () {
                 hasActiveButton = true;
             }
         });
-        if (!hasActiveButton && buttons.length > 0) {
+        if (!hasActiveButton) {
             if (dropdown) {
                 dropdown.selectedIndex = 0;
             }

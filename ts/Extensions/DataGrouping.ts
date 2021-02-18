@@ -469,7 +469,7 @@ const groupData = function (
         // for this specific group
         if (pointArrayMap) {
 
-            var index = (series.cropStart as any) + i,
+            var index = series.options.dataGrouping?.groupAll ? i : (series.cropStart as any) + i,
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
@@ -1188,6 +1188,8 @@ export default dataGrouping;
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-approximation
  *         Approximation callback with custom data
+ * @sample {highstock} stock/plotoptions/series-datagrouping-simple-approximation
+ *         Simple approximation demo
  *
  * @type       {Highcharts.DataGroupingApproximationValue|Function}
  * @apioption  plotOptions.series.dataGrouping.approximation

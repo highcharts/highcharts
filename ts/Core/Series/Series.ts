@@ -3135,6 +3135,7 @@ class Series {
 
             // repeat for xAxis and yAxis
             (series.axisTypes || []).forEach(function (AXIS: string): void {
+                let index = 0;
 
                 // loop through the chart's axis objects
                 (chart as any)[AXIS].forEach(function (
@@ -3146,8 +3147,10 @@ class Series {
                     // the number of the axis, or if undefined, use the
                     // first axis
                     if (
-                        (seriesOptions as any)[AXIS] ===
-                        axisOptions.index ||
+                        (
+                            (seriesOptions as any)[AXIS] === index &&
+                            !axisOptions.isInternal
+                        ) ||
                         (
                             typeof (seriesOptions as any)[AXIS] !==
                             'undefined' &&
@@ -3182,6 +3185,10 @@ class Series {
 
                         // mark dirty for redraw
                         axis.isDirty = true;
+                    }
+
+                    if (!axisOptions.isInternal) {
+                        index++;
                     }
                 });
 
