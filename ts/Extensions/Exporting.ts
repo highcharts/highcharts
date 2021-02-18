@@ -1276,8 +1276,14 @@ H.post = function (
     discardElement(form);
 };
 
+// Enter or exit print mode as response to `window.print`. When printing a
+// single chart, the `chart.beforePrint` function is called from
+// `chart.print()`, and the page is given time to prepare before printing.
+// Otherwise Chrome would not redraw correctly.
 const enterExitPrint = (enter: boolean): void => {
-    const charts = H.printingChart ? [H.printingChart] : H.charts;
+    const charts = H.printingChart ?
+        (enter ? [] : [H.printingChart]) :
+        H.charts;
 
     charts.forEach((chart): void => {
         if (chart) {
@@ -1290,7 +1296,7 @@ const enterExitPrint = (enter: boolean): void => {
     });
 };
 
-// Chrome and Safari can use this
+// Chrome and Safari can use this. Safari needs it (#7255)
 if (H.isWebKit) {
     win.matchMedia('print').addEventListener(
         'change',
@@ -1848,8 +1854,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         H.printingChart = chart;
 
-        win.focus(); // #1510
-        win.print();
+        chart.beforePrint();
+
+        setTimeout((): void => {
+            win.focus(); // #1510
+            win.print();
+        }, 1);
 
     },
 

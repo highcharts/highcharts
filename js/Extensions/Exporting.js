@@ -948,8 +948,14 @@ H.post = function (url, data, formAttributes) {
     // clean up
     discardElement(form);
 };
+// Enter or exit print mode as response to `window.print`. When printing a
+// single chart, the `chart.beforePrint` function is called from
+// `chart.print()`, and the page is given time to prepare before printing.
+// Otherwise Chrome would not redraw correctly.
 var enterExitPrint = function (enter) {
-    var charts = H.printingChart ? [H.printingChart] : H.charts;
+    var charts = H.printingChart ?
+        (enter ? [] : [H.printingChart]) :
+        H.charts;
     charts.forEach(function (chart) {
         if (chart) {
             if (enter) {
@@ -961,7 +967,7 @@ var enterExitPrint = function (enter) {
         }
     });
 };
-// Chrome and Safari can use this
+// Chrome and Safari can use this. Safari needs it (#7255)
 if (H.isWebKit) {
     win.matchMedia('print').addEventListener('change', function (mqlEvent) { return enterExitPrint(mqlEvent.matches); });
     // Not supported (as of 2021) on iOS and partly Android, therefore matchMedia
@@ -1386,8 +1392,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             return;
         }
         H.printingChart = chart;
-        win.focus(); // #1510
-        win.print();
+        chart.beforePrint();
+        setTimeout(function () {
+            win.focus(); // #1510
+            win.print();
+        }, 1);
     },
     /**
      * Display a popup menu for choosing the export type.
