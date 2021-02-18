@@ -25,8 +25,8 @@ function task() {
 
         Promise
             .resolve()
-            .then(errorMessages())
-            .then(processLib.exec('npx tsc --project ts'))
+            .then(() => errorMessages())
+            .then(() => processLib.exec('npx tsc --project ts'))
             .then(function (output) {
                 processLib.isRunning('scripts-ts', false);
                 resolve(output);
