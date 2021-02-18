@@ -14,28 +14,20 @@ const gulp = require('gulp');
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
+async function task() {
 
     const errorMessages = require('../error-messages.js'),
         processLib = require('./lib/process');
+    processLib.isRunning('scripts-ts', true);
 
-    return new Promise((resolve, reject) => {
+    try {
+        await errorMessages();
+        return processLib.exec('npx tsc --project ts');
+    } catch (error) {
+        processLib.isRunning('scripts-ts', false);
+        throw (error);
+    }
 
-        processLib.isRunning('scripts-ts', true);
-
-        Promise
-            .resolve()
-            .then(errorMessages())
-            .then(processLib.exec('npx tsc --project ts'))
-            .then(function (output) {
-                processLib.isRunning('scripts-ts', false);
-                resolve(output);
-            })
-            .catch(function (error) {
-                processLib.isRunning('scripts-ts', false);
-                reject(error);
-            });
-    });
 }
 
 gulp.task('scripts-ts', task);
