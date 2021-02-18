@@ -2787,13 +2787,13 @@ class Axis {
          *     [1, 2, 3, 4, 6, 8, 12]
          * ], [
          *     'day',
-         *     [1]
+         *     [1, 2]
          * ], [
          *     'week',
-         *     [1]
+         *     [1, 2]
          * ], [
          *     'month',
-         *     [1, 3, 6]
+         *     [1, 2, 3, 4, 6]
          * ], [
          *     'year',
          *     null
@@ -7927,8 +7927,27 @@ class Axis {
         erase(chart.axes, this);
         erase((chart as any)[key], this);
 
-        if (isArray((chart.options as any)[key])) {
-            (chart.options as any)[key].splice(this.options.index, 1);
+        const chartAxisOptions: Highcharts.AxisOptions[] = (chart.options as any)[key];
+
+        if (isArray(chartAxisOptions) && defined(this.options.index)) {
+            const chartAxisOption = chartAxisOptions[this.options.index];
+
+            // #11930: Some axes such as NavigatorAxis do not get added to
+            // chart.options, so there might be a mismatch between
+            // Axis.options.index and the index of the axis in the chart
+            // options array for axes added after the navigator axis.
+            if (chartAxisOption && chartAxisOption.index === this.options.index) {
+                chartAxisOptions.splice(this.options.index, 1);
+            } else {
+                // Find the correct axis in chart.options if the index
+                // doesnt match
+                for (let i = 0; i < chartAxisOptions.length; i++) {
+                    if (chartAxisOptions[i].index === this.options.index) {
+                        chartAxisOptions.splice(i, 1);
+                        break;
+                    }
+                }
+            }
         } else { // color axis, #6488
             delete (chart.options as any)[key];
         }
