@@ -3134,6 +3134,19 @@ SVGRenderer.prototype.symbols = {
             ['Z']
         ];
     },
+    'triangle-right': function (
+        x: number,
+        y: number,
+        w: number,
+        h: number
+    ): SVGPath {
+        return [
+            ['M', x, y],
+            ['L', x + w, y + h / 2],
+            ['L', x, y + h],
+            ['Z']
+        ];
+    },
     diamond: function (
         x: number,
         y: number,

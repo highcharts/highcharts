@@ -2207,6 +2207,14 @@ SVGRenderer.prototype.symbols = {
             ['Z']
         ];
     },
+    'triangle-right': function (x, y, w, h) {
+        return [
+            ['M', x, y],
+            ['L', x + w, y + h / 2],
+            ['L', x, y + h],
+            ['Z']
+        ];
+    },
     diamond: function (x, y, w, h) {
         return [
             ['M', x + w / 2, y],

@@ -549,6 +549,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
 };
 Chart.prototype.applyDrilldown = function () {
     var drilldownLevels = this.drilldownLevels, levelToRemove;
+    fireEvent(this, 'applyDrilldown');
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
         levelToRemove = drilldownLevels[drilldownLevels.length - 1].levelNumber;
         this.drilldownLevels.forEach(function (level) {
@@ -573,7 +574,6 @@ Chart.prototype.applyDrilldown = function () {
     this.pointer.reset();
     this.redraw();
     fireEvent(this, 'afterDrilldown');
-    this.redraw();
 };
 Chart.prototype.getDrilldownBackText = function () {
     var drilldownLevels = this.drilldownLevels, lastLevel;
@@ -584,9 +584,8 @@ Chart.prototype.getDrilldownBackText = function () {
     }
 };
 Chart.prototype.showDrillUpButton = function () {
-    var _a, _b;
     var chart = this, backText = this.getDrilldownBackText(), buttonOptions = chart.options.drilldown.drillUpButton, attr, states;
-    if (!this.drillUpButton && !((_b = (_a = chart.options.drilldown) === null || _a === void 0 ? void 0 : _a.breadcrumbs) === null || _b === void 0 ? void 0 : _b.enabled)) {
+    if (!this.drillUpButton) {
         attr = buttonOptions.theme;
         states = attr && attr.states;
         this.drillUpButton = this.renderer.button(backText, null, null, function () {

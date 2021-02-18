@@ -66,14 +66,13 @@ QUnit.test('Breadcrumbs button', function (assert) {
             }]
         }]
     });
-    const series = chart.series[0],
-        point = series.points[0];
+    const series = chart.series[0];
     series.setRootNode('1_1_1');
     assert.ok(
         chart.drillUpButton.element,
         'Initially, the breadcrumbs should be disabled and the single drillUp button should exist.'
     );
-    chart.update({
+    chart.series[0].update({
         breadcrumbs: {
             showOnlyLast: false
         }
@@ -84,15 +83,13 @@ QUnit.test('Breadcrumbs button', function (assert) {
         'Breadcrumbs group should be created.'
     );
     const buttons = chart.breadcrumbs.breadcrumbsGroup.element.childNodes;
-
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Lemon',
         'The last button should have text Lemon.'
     );
-    series.onClickDrillToNode({ point });
-
     chart.breadcrumbs.multipleDrillUp(0);
+
     assert.strictEqual(
         buttons[buttons.length - 1].textContent,
         'Fruits',

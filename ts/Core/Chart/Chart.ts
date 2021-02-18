@@ -738,15 +738,8 @@ class Chart {
             axes = chart.axes,
             series = chart.series,
             pointer = chart.pointer,
-            legend = chart.legend,
-            legendUserOptions = chart.userOptions.legend,
-            redrawLegend = chart.isDirtyLegend,
-            hasStackedSeries: (boolean|undefined),
-            hasDirtyStacks,
             hasCartesianSeries = chart.hasCartesianSeries,
             isDirtyBox = chart.isDirtyBox,
-            i,
-            serie,
             renderer = chart.renderer,
             isHiddenChart = renderer.isHidden(),
             afterRedraw = [] as Array<Function>;
@@ -765,71 +758,12 @@ class Chart {
             chart.temporaryDisplay();
         }
 
-        fireEvent(this, 'setOffsets');
-
-        // Adjust title layout (reflow multiline text)
-        chart.layOutTitles();
-
-        // link stacked series
-        i = series.length;
-        while (i--) {
-            serie = series[i];
-
-            if (serie.options.stacking) {
-                hasStackedSeries = true;
-
-                if (serie.isDirty) {
-                    hasDirtyStacks = true;
-                    break;
-                }
-            }
-        }
-        if (hasDirtyStacks) { // mark others as dirty
-            i = series.length;
-            while (i--) {
-                serie = series[i];
-                if (serie.options.stacking) {
-                    serie.isDirty = true;
-                }
-            }
-        }
-
-        // Handle updated data in the series
-        series.forEach(function (serie: Highcharts.Series): void {
-            if (serie.isDirty) {
-                if (serie.options.legendType === 'point') {
-                    if (typeof (serie as Highcharts.PieSeries).updateTotals === 'function') {
-                        (serie as Highcharts.PieSeries).updateTotals();
-                    }
-                    redrawLegend = true;
-                } else if (
-                    legendUserOptions &&
-                    (
-                        legendUserOptions.labelFormatter ||
-                        legendUserOptions.labelFormat
-                    )
-                ) {
-                    redrawLegend = true; // #2165
-                }
-            }
-            if (serie.isDirtyData) {
-                fireEvent(serie, 'updatedData');
-            }
-        });
-
-        // handle added or removed series
-        if (redrawLegend && legend && legend.options.enabled) {
-            // draw legend graphics
-            legend.render();
-
-            chart.isDirtyLegend = false;
-        }
+        chart.setOffsets();
 
         // reset stacks
-        if (hasStackedSeries) {
+        if (chart.hasStackedSeries) {
             chart.getStacks();
         }
-
 
         if (hasCartesianSeries) {
             // set axes scales
@@ -873,7 +807,7 @@ class Chart {
                         delete axis.eventArgs;
                     });
                 }
-                if (isDirtyBox || hasStackedSeries) {
+                if (isDirtyBox || chart.hasStackedSeries) {
                     axis.redraw();
                 }
             });
@@ -1668,6 +1602,70 @@ class Chart {
     }
 
     /**
+     * The method used for getting info about dirty series
+     * before the final plot area is set.
+     *
+     * @private
+     * @function Highcharts.Chart#markDirtySeries
+     */
+    public markDirtySeries(this: Chart): void {
+        const chart = this,
+            series = chart.series,
+            legendUserOptions = chart.userOptions.legend;
+
+        let i = series.length,
+            serie,
+            hasStackedSeries: (boolean|undefined),
+            hasDirtyStacks;
+
+        while (i--) {
+            serie = series[i];
+
+            if (serie.options.stacking) {
+                hasStackedSeries = true;
+
+                if (serie.isDirty) {
+                    hasDirtyStacks = true;
+                    break;
+                }
+            }
+        }
+        if (hasDirtyStacks) { // mark others as dirty
+            i = series.length;
+            while (i--) {
+                serie = series[i];
+                if (serie.options.stacking) {
+                    serie.isDirty = true;
+                }
+            }
+        }
+
+        // Handle updated data in the series
+        series.forEach(function (serie: Highcharts.Series): void {
+            if (serie.isDirty) {
+                if (serie.options.legendType === 'point') {
+                    if (typeof (serie as Highcharts.PieSeries).updateTotals === 'function') {
+                        (serie as Highcharts.PieSeries).updateTotals();
+                    }
+                    chart.isDirtyLegend = true;
+                } else if (
+                    legendUserOptions &&
+                    (
+                        legendUserOptions.labelFormatter ||
+                        legendUserOptions.labelFormat
+                    )
+                ) {
+                    chart.isDirtyLegend = true; // #2165
+                }
+            }
+            if (serie.isDirtyData) {
+                fireEvent(serie, 'updatedData');
+            }
+        });
+        chart.hasStackedSeries = hasStackedSeries;
+    }
+
+    /**
      * Reflows the chart to its container. By default, the chart reflows
      * automatically to its container following a `window.resize` event, as per
      * the [chart.reflow](https://api.highcharts.com/highcharts/chart.reflow)
@@ -1724,6 +1722,33 @@ class Chart {
             }
             chart.containerWidth = width as any;
             chart.containerHeight = height as any;
+        }
+    }
+
+    /**
+     * The method used for adding the offsets to the axis before
+     * the final plot area is set.
+     *
+     * @private
+     * @function Highcharts.Chart#setOffsets
+     */
+    public setOffsets(this: Chart): void {
+        const chart = this,
+            legend = chart.legend;
+
+        fireEvent(this, 'setOffsets');
+
+        // Adjust title layout (reflow multiline text)
+        this.layOutTitles();
+
+        this.markDirtySeries();
+
+        // handle added or removed series
+        if (chart.isDirtyLegend && legend && legend.options.enabled) {
+            // draw legend graphics
+            legend.render();
+
+            chart.isDirtyLegend = false;
         }
     }
 
@@ -2760,6 +2785,7 @@ class Chart {
 
 interface Chart extends Highcharts.ChartLike {
     callbacks: Array<Chart.CallbackFunction>;
+    hasStackedSeries?: boolean;
 }
 
 // Hook for adding callbacks in modules

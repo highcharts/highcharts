@@ -20,16 +20,16 @@ QUnit.test('Breadcrumbs format', function (assert) {
                     y: 3
                 }]
             }],
-            breadcrumbs: {
-                enabled: true,
-                showOnlyLast: false,
-                events: {
-                    click: function () {
-                        return false;
-                    }
-                }
-            },
             drilldown: {
+                breadcrumbs: {
+                    enabled: true,
+                    showOnlyLast: false,
+                    events: {
+                        click: function () {
+                            return false;
+                        }
+                    }
+                },
                 animation: false,
                 series: [{
                     name: "Fruits",
@@ -56,10 +56,12 @@ QUnit.test('Breadcrumbs format', function (assert) {
     );
 
     chart.update({
-        breadcrumbs: {
-            events: {
-                click: function () {
-                    return true;
+        drilldown: {
+            breadcrumbs: {
+                events: {
+                    click: function () {
+                        return true;
+                    }
                 }
             }
         }
@@ -70,5 +72,4 @@ QUnit.test('Breadcrumbs format', function (assert) {
         0,
         'When click event returns true, drillup should be performed and buttons removed.'
     );
-
 });

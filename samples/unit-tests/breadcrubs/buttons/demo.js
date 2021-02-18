@@ -87,8 +87,10 @@ QUnit.test('Breadcrumbs button', function (assert) {
     chart.drillUp();
 
     chart.update({
-        breadcrumbs: {
-            showOnlyLast: false
+        drilldown: {
+            breadcrumbs: {
+                showOnlyLast: false
+            }
         }
     });
 
@@ -153,12 +155,12 @@ QUnit.test('Breadcrumbs format', function (assert) {
                 y: 3
             }]
         }],
-        breadcrumbs: {
-            enabled: true,
-            showOnlyLast: false,
-            format: 'Go to {value}'
-        },
         drilldown: {
+            breadcrumbs: {
+                enabled: true,
+                showOnlyLast: false,
+                format: 'Go to {point.name}'
+            },
             animation: false,
             series: [{
                 name: "Fruits",
@@ -205,21 +207,21 @@ QUnit.test('Breadcrumbs formatter', function (assert) {
                     y: 3
                 }]
             }],
-            breadcrumbs: {
-                enabled: true,
-                showOnlyLast: false,
-                formatter: function (breadcrumb) {
-                    let index;
-
-                    if (breadcrumb[0] === null) {
-                        index = 0;
-                    } else {
-                        index = breadcrumb[0] + 1;
-                    }
-                    return labels[index];
-                }
-            },
             drilldown: {
+                breadcrumbs: {
+                    enabled: true,
+                    showOnlyLast: false,
+                    formatter: function (breadcrumb) {
+                        let index;
+
+                        if (breadcrumb[0] === null) {
+                            index = 0;
+                        } else {
+                            index = breadcrumb[0] + 1;
+                        }
+                        return labels[index];
+                    }
+                },
                 animation: false,
                 series: [{
                     name: "Fruits",
@@ -274,10 +276,10 @@ QUnit.test('Breadcrumbs with no series name, lang', function (assert) {
                 y: 3
             }]
         }],
-        breadcrumbs: {
-            enabled: true
-        },
         drilldown: {
+            breadcrumbs: {
+                enabled: true
+            },
             animation: false,
             series: [{
                 name: "Fruits",
