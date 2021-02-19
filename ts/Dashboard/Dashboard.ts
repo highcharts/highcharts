@@ -15,10 +15,10 @@ class Dashboard {
     * */
 
     protected static readonly defaultOptions: Dashboard.Options = {
-		gui: {
-			enabled: true,
-			layouts: []
-		}
+        gui: {
+            enabled: true,
+            layouts: []
+        }
         // components: []
     };
 
@@ -31,8 +31,8 @@ class Dashboard {
         renderTo: (string|globalThis.HTMLElement),
         options: Dashboard.Options
     ) {
-		this.options = merge(Dashboard.defaultOptions, options);
-		this.layouts = [];
+        this.options = merge(Dashboard.defaultOptions, options);
+        this.layouts = [];
         /*
         * TODO
         *
@@ -40,7 +40,7 @@ class Dashboard {
         * 2. Bindings elements
         *
         */
-	   this.setLayouts();
+        this.setLayouts();
     }
 
     /* *
@@ -48,31 +48,30 @@ class Dashboard {
     *  Properties
     *
     * */
-	public readonly options: Dashboard.Options;
-	public layouts: Array<Layout>;
-	/* *
+    public readonly options: Dashboard.Options;
+    public layouts: Array<Layout>;
+    /* *
      *
      *  Functions
      *
      * */
-	public setLayouts(): void {
-		const gui = this.options.gui;
-		const layoutsOptions = gui.layouts;
-		for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
+    public setLayouts(): void {
+        const gui = this.options.gui;
+        const layoutsOptions = gui.layouts;
+        for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
             this.layouts.push(
-				new Layout(
-					gui.enabled,
-					layoutsOptions[i]
-				)
-			)
+                new Layout(
+                    gui.enabled,
+                    layoutsOptions[i]
+                )
+            );
         }
-	}
-	
+    }
 }
 
 namespace Dashboard {
     export interface Options {
-		gui: GUI.Options
+        gui: GUI.Options;
         // components: Array<>;
     }
 }

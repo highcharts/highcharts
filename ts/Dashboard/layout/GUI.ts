@@ -1,4 +1,7 @@
 import type Layout from './Layout';
+import type {
+    HTMLDOMElement
+} from '../Core/Renderer/DOMElementType';
 
 class GUI {
     /* *
@@ -6,33 +9,34 @@ class GUI {
     *  Constructors
     *
     * */
-	public constructor(
-		options: Layout.Options
-	) {
+    public constructor(
+        options: Layout.Options
+    ) {
         this.options = options;
-		this.createHTML();
+        this.html = this.createHTML();
     }
-    
+
     /* *
-	*
-	*  Properties
-	*
-	* */
+    *
+    *  Properties
+    *
+    * */
     public options: Layout.Options;
-	/* *
-	*
-	*  Functions
-	*
-	* */
-	public createHTML (): string {
+    public html: HTMLDOMElement = void 0 as any;
+    /* *
+    *
+    *  Functions
+    *
+    * */
+    public createHTML(): string {
         /*
-		* TODO
+        * TODO
         *
         * 1. Assing HTML to layout's container
-		* 2. Create layout structure
-		* 3. Create cols
-		* 4. Create rows
-		*
+        * 2. Create layout structure
+        * 3. Create cols
+        * 4. Create rows
+        *
         */
 
         /**
@@ -57,7 +61,7 @@ class GUI {
     }
 }
 interface GUI {
-    
+    html: HTMLDOMElement|null;
 }
 
 namespace GUI {
