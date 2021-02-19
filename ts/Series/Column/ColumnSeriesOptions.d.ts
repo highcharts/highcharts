@@ -27,7 +27,7 @@ import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
  * */
 
 declare module '../../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         borderColor?: ColorType;
         borderDashStyle?: DashStyleValue;
         borderRadius?: number;
