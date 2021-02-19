@@ -8,7 +8,7 @@ const dashboard = new Dashboard('container', {
             colClassName: 'custom-column',
             rows: [{
                 id: 'dashboard-row-0',
-                cols: [{
+                columns: [{
                     width: 0.7,
                     id: 'dashboard-col-0'
                 }, {
@@ -16,14 +16,14 @@ const dashboard = new Dashboard('container', {
                 }]
             }, {
                 id: 'dashboard-row-1',
-                cols: [{
+                columns: [{
                     id: 'dashboard-col-2'
                 }]
             }]
         }, {
             rows: [{
                 id: 'dashboard-row-2',
-                cols: [{
+                columns: [{
                     id: 'dashboard-col-3'
                 }]
             }]

@@ -65,7 +65,8 @@ class Layout {
         if (guiEnabled) {
             if (renderer) {
                 // Generate layout HTML structure.
-                layoutHTML = renderer.renderLayout(
+                layoutHTML = renderer.createHTML(
+                    layout.options,
                     layout.dashboardContainer
                 );
             } else {

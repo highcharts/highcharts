@@ -6,28 +6,28 @@ body {
     margin-top: 50px;
 }
 
-.row {
+.highcharts-dashboard-row {
     display: flex;
     position: relative;
     flex-wrap: wrap;
 }
 
-.layout .row .col {
+.highcharts-dashboard-layout .row .col {
     box-sizing: border-box;
     border: 1px dashed rgba(0, 0, 0, 0);
 }
 
-.layout.edit-mode .row:hover .col {
+.highcharts-dashboard-layout.edit-mode .row:hover .col {
     border: 1px dashed #bdbdbd;
     cursor: pointer;
 }
 
-.layout.edit-mode .row:hover .col .toolbar,
-.layout.edit-mode .add-item {
+.highcharts-dashboard-layout.edit-mode .row:hover .col .toolbar,
+.highcharts-dashboard-layout.edit-mode .add-item {
     display: block;
 }
 
-.col {
+.highcharts-dashboard-col {
     position: relative;
 }
 
@@ -51,7 +51,7 @@ body {
     width: 100%;
 }
 
-.card {
+.highcharts-dashboard-card {
     position: relative;
     margin: 15px;
     padding: 15px;
@@ -63,13 +63,13 @@ body {
     border-radius: .25rem;
 }
 
-.card .title-wrapper {
+.highcharts-dashboard-card .title-wrapper {
     margin: 0px;
     padding-bottom: 15px;
     border-bottom: 1px solid rgba(26, 54, 126, 0.125);
 }
 
-.toolbar {
+.highcharts-dashboard-toolbar {
     position: absolute;
     z-index: 10;
     top: 0px;
@@ -78,20 +78,20 @@ body {
     font-weight: bold;
 }
 
-.toolbar .tools-row {
+.highcharts-dashboard-toolbar .tools-row {
     display: inline-block;
     float: left;
     background-color: #839bc4;
     padding: 0px 10px;
 }
 
-.toolbar .tools-column {
+.highcharts-dashboard-toolbar .tools-column {
     display: inline-block;
     background-color: #c3cad8;
     padding: 0px 10px;
 }
 
-.toolbar .drag-drop {
+.highcharts-dashboard-toolbar .drag-drop {
     display: inline-block;
     cursor: move;
     text-indent: -9999px;
@@ -101,8 +101,8 @@ body {
     margin-right: 10px;
 }
 
-.toolbar .edit-col,
-.toolbar .edit-row {
+.highcharts-dashboard-toolbar .edit-col,
+.highcharts-dashboard-toolbar .edit-row {
     background: url("https://code.highcharts.com/8.2.2/gfx/stock-icons/edit.svg") no-repeat 50% 50%;
     background-size: cover;
     font-size: 0px;

@@ -34,7 +34,7 @@ var Layout = /** @class */ (function () {
         if (guiEnabled) {
             if (renderer) {
                 // Generate layout HTML structure.
-                layoutHTML = renderer.renderLayout(layout.dashboardContainer);
+                layoutHTML = renderer.createHTML(layout.options, layout.dashboardContainer);
             }
             else {
                 // Throw an error - GUIRenderer module required!
