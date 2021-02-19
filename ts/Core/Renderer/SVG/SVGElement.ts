@@ -935,8 +935,8 @@ class SVGElement {
             const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
             br.textContent = '\u200B';
             attr(br, {
-                x: elem.getAttribute('x'),
-                y: elem.getAttribute('y')
+                x: Number(elem.getAttribute('x')),
+                y: Number(elem.getAttribute('y'))
             });
 
             // Insert the outline
@@ -1036,7 +1036,7 @@ class SVGElement {
         if (typeof hash === 'string' && typeof val !== 'undefined') {
             key = hash;
             hash = {};
-            hash[key] = val;
+            (hash as any)[key] = val;
         }
 
         // used as a getter: first argument is a string, second is undefined
@@ -1228,10 +1228,10 @@ class SVGElement {
                 // Keep < 2.2 kompatibility
                 if (isArray(gradAttr)) {
                     (colorOptions as any)[gradName] = gradAttr = {
-                        x1: gradAttr[0],
-                        y1: gradAttr[1],
-                        x2: gradAttr[2],
-                        y2: gradAttr[3],
+                        x1: gradAttr[0] as number,
+                        y1: gradAttr[1] as number,
+                        x2: gradAttr[2] as number,
+                        y2: gradAttr[3] as number,
                         gradientUnits: 'userSpaceOnUse'
                     };
                 }
@@ -1290,7 +1290,7 @@ class SVGElement {
                         if (stop[1].indexOf('rgba') === 0) {
                             colorObject = Color.parse(stop[1]);
                             stopColor = colorObject.get('rgb') as any;
-                            stopOpacity = colorObject.get('a');
+                            stopOpacity = colorObject.get('a') as any;
                         } else {
                             stopColor = stop[1];
                             stopOpacity = 1;
@@ -2667,7 +2667,7 @@ class SVGElement {
             'anchorY',
             'clockwise'
         ].forEach(function (key: string): void {
-            wrapper[key] = pick(hash[key], wrapper[key]);
+            wrapper[key] = pick((hash as any)[key], wrapper[key]);
         });
 
         wrapper.attr({

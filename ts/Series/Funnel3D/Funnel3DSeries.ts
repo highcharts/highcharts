@@ -435,7 +435,7 @@ class Funnel3DSeries extends ColumnSeries {
                 width: getWidthAt(point.plotY),
 
                 y: y1,
-                bottom: shapeArgs.height,
+                bottom: shapeArgs.height || 0,
 
                 fullWidth: width
             };

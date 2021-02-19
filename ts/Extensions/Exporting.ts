@@ -2107,12 +2107,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.exportSVGElements = [];
         }
 
-        if (btnOptions.enabled === false) {
+        if (btnOptions.enabled === false || !btnOptions.theme) {
             return;
         }
 
 
-        var attr: SVGAttributes = btnOptions.theme as any,
+        var attr = btnOptions.theme,
             states = attr.states,
             hover = states && states.hover,
             select = states && states.select,
@@ -2475,7 +2475,10 @@ Chart.prototype.inlineStyles = function (): void {
                 // to inline it. Top-level props should be diffed against parent
                 // (#7687).
                 if (
-                    (parentStyles[prop] !== val || node.nodeName === 'svg') &&
+                    (
+                        (parentStyles as any)[prop] !== val ||
+                        node.nodeName === 'svg'
+                    ) &&
                     defaultStyles[node.nodeName][prop] !== val
                 ) {
                     // Attributes

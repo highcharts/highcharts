@@ -2409,7 +2409,7 @@ class RangeSelector {
 
         const getAttribs = (text?: string): SVGAttributes => ({
             text: text ? `${text} ▾` : '▾',
-            width: 'auto',
+            width: void 0,
             paddingLeft: 8,
             paddingRight: 8
         });
@@ -2489,8 +2489,8 @@ class RangeSelector {
             button.attr({
                 text: rangeOptions.text,
                 width: options.buttonTheme.width || 28,
-                paddingLeft: 'unset',
-                paddingRight: 'unset'
+                paddingLeft: void 0,
+                paddingRight: void 0
             });
 
             if (button.state < 2) {
