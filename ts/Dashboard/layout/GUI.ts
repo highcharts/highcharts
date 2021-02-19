@@ -1,3 +1,6 @@
+import type {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import type Layout from './Layout.js';
 
 class GUI {
@@ -7,10 +10,13 @@ class GUI {
     *
     * */
     public constructor(
+        dashboardContainer: HTMLDOMElement,
         options: Layout.Options
     ) {
         this.options = options;
-        this.createHTML();
+        this.dashboardContainer = dashboardContainer;
+        // temporary solution until create an options parser
+        this.dashboardContainer.innerHTML = this.createHTML();
     }
 
     /* *
@@ -19,6 +25,7 @@ class GUI {
     *
     * */
     public options: Layout.Options;
+    public dashboardContainer: HTMLDOMElement;
     /* *
     *
     *  Functions
@@ -39,21 +46,42 @@ class GUI {
          * Static HTML for demo
          */
         return `
-            <div class="row">
-                <div class="col"></div>
-                <div class="col"></div>
-                <div class="col"></div>
+            <div class="">
+                <div class="row">
+                    <div class="col">
+                        <div class="card"></div>
+                    </div>
+                    <div class="col">
+                        <div class="card"></div>
+                    </div>                    
+                    <div class="col">
+                        <div class="card"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="card"></div>
+                    </div>
+                    <div class="col">
+                        <div class="card"></div>
+                    </div>                    
+                    <div class="col">
+                        <div class="card"></div>
+                    </div>
+                </div>                
+                <div class="row">
+                    <div class="col">
+                        <div class="card"></div>
+                    </div>
+                    <div class="col">
+                        <div class="card"></div>
+                    </div>                    
+                    <div class="col">
+                        <div class="card"></div>
+                    </div>
+                </div>
             </div>
-            <div class="row">
-                <div class="col"></div>
-                <div class="col"></div>
-                <div class="col"></div>
-            </div>            
-            <div class="row">
-                <div class="col"></div>
-                <div class="col"></div>
-                <div class="col"></div>
-            </div>`;
+        `;
     }
 }
 interface GUI {

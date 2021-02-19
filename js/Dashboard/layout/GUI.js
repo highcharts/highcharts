@@ -4,9 +4,10 @@ var GUI = /** @class */ (function () {
     *  Constructors
     *
     * */
-    function GUI(options) {
+    function GUI(dashboardContainer, options) {
         this.options = options;
-        this.createHTML();
+        this.dashboardContainer = dashboardContainer;
+        this.dashboardContainer.innerHTML = this.createHTML();
     }
     /* *
     *
@@ -26,7 +27,7 @@ var GUI = /** @class */ (function () {
         /**
          * Static HTML for demo
          */
-        return "\n            <div class=\"row\">\n                <div class=\"col\"></div>\n                <div class=\"col\"></div>\n                <div class=\"col\"></div>\n            </div>\n            <div class=\"row\">\n                <div class=\"col\"></div>\n                <div class=\"col\"></div>\n                <div class=\"col\"></div>\n            </div>            \n            <div class=\"row\">\n                <div class=\"col\"></div>\n                <div class=\"col\"></div>\n                <div class=\"col\"></div>\n            </div>";
+        return "\n            <div class=\"\">\n                <div class=\"row\">\n                    <div class=\"col\">\n                        <div class=\"card\"></div>\n                    </div>\n                    <div class=\"col\">\n                        <div class=\"card\"></div>\n                    </div>                    \n                    <div class=\"col\">\n                        <div class=\"card\"></div>\n                    </div>\n                </div>\n                <div class=\"row\">\n                    <div class=\"col\">\n                        <div class=\"card\"></div>\n                    </div>\n                    <div class=\"col\">\n                        <div class=\"card\"></div>\n                    </div>                    \n                    <div class=\"col\">\n                        <div class=\"card\"></div>\n                    </div>\n                </div>                \n                <div class=\"row\">\n                    <div class=\"col\">\n                        <div class=\"card\"></div>\n                    </div>\n                    <div class=\"col\">\n                        <div class=\"card\"></div>\n                    </div>                    \n                    <div class=\"col\">\n                        <div class=\"card\"></div>\n                    </div>\n                </div>\n            </div>\n        ";
     };
     return GUI;
 }());

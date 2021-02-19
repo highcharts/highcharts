@@ -1,3 +1,6 @@
+import type {
+    HTMLDOMElement
+} from '../../Core/Renderer/DOMElementType';
 import GUI from './GUI.js';
 import Row from './Row.js';
 
@@ -8,13 +11,18 @@ class Layout {
     *
     * */
     public constructor(
+        dashboardContainer: HTMLDOMElement,
         guiEnabled: boolean,
         options: Layout.Options
     ) {
         this.options = options;
+        this.dashboardContainer = dashboardContainer;
 
         if (guiEnabled) {
-            new GUI(options);
+            this.gui = new GUI(
+                dashboardContainer,
+                options
+            );
         }
 
         this.setLayout();
@@ -26,6 +34,8 @@ class Layout {
     *
     * */
     public options: Layout.Options;
+    public dashboardContainer: HTMLDOMElement;
+    public gui?: GUI;
     /* *
     *
     *  Functions

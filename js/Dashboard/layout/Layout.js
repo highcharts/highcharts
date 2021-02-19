@@ -5,10 +5,11 @@ var Layout = /** @class */ (function () {
     *  Constructors
     *
     * */
-    function Layout(guiEnabled, options) {
+    function Layout(dashboardContainer, guiEnabled, options) {
         this.options = options;
+        this.dashboardContainer = dashboardContainer;
         if (guiEnabled) {
-            new GUI(options);
+            this.gui = new GUI(dashboardContainer, options);
         }
         this.setLayout();
     }
