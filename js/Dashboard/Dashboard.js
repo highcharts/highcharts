@@ -25,7 +25,7 @@ var Dashboard = /** @class */ (function () {
         // Only for generating GUI for now
         // @TODO - add rederer when edit mode enabled
         if (this.options.gui.enabled) {
-            this.renderer = new GUIRenderer(this.container, this.options.gui);
+            this.renderer = new GUIRenderer(this.options.gui);
         }
         this.setLayouts();
     }

@@ -30,3 +30,5 @@ const dashboard = new Dashboard('container', {
         }]
     }
 });
+
+console.log(dashboard);

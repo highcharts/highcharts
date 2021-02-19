@@ -24,6 +24,7 @@ class Layout {
         }
 
         this.setLayout(guiEnabled);
+        // this.addRows();
     }
 
     /* *
@@ -33,6 +34,7 @@ class Layout {
     * */
     public options: Layout.Options;
     public dashboardContainer: HTMLDOMElement;
+    public container?: HTMLDOMElement;
     public renderer?: GUIRenderer;
 
     /* *
@@ -46,21 +48,34 @@ class Layout {
         *
         * 1. Set reference to container
         * 2. Create layout structure
-        * 3. Init cols
-        * 4. Init rows
         *
         */
 
         const layout = this;
 
+        let layoutHTML;
+
         if (guiEnabled) {
-            if (!layout.renderer) {
+            if (layout.renderer) {
+                // Generate layout HTML structure.
+                layoutHTML = layout.renderer.renderLayout(layout.dashboardContainer);
+            } else {
                 // Throw an error - GUIRenderer module required!
             }
-
-            // Generate layout HTML structure.
-            // layout.renderer.renderLayout
+        } else {
+            // layoutHTML = from user gui
         }
+
+        this.container = layoutHTML;
+    }
+
+    public addRows(): void {
+        /*
+        * TODO
+        *
+        * 1. Init rows
+        *
+        */
     }
 }
 

@@ -11,6 +11,7 @@ var Layout = /** @class */ (function () {
             this.renderer = renderer;
         }
         this.setLayout(guiEnabled);
+        // this.addRows();
     }
     /* *
     *
@@ -23,18 +24,31 @@ var Layout = /** @class */ (function () {
         *
         * 1. Set reference to container
         * 2. Create layout structure
-        * 3. Init cols
-        * 4. Init rows
         *
         */
         var layout = this;
+        var layoutHTML;
         if (guiEnabled) {
-            if (!layout.renderer) {
+            if (layout.renderer) {
+                // Generate layout HTML structure.
+                layoutHTML = layout.renderer.renderLayout(layout.dashboardContainer);
+            }
+            else {
                 // Throw an error - GUIRenderer module required!
             }
-            // Generate layout HTML structure.
-            // layout.renderer.renderLayout
         }
+        else {
+            // layoutHTML = from user gui
+        }
+        this.container = layoutHTML;
+    };
+    Layout.prototype.addRows = function () {
+        /*
+        * TODO
+        *
+        * 1. Init rows
+        *
+        */
     };
     return Layout;
 }());
