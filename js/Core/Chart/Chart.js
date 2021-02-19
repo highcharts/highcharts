@@ -2440,7 +2440,7 @@ var Chart = /** @class */ (function () {
      */
     Chart.prototype.showResetZoom = function () {
         var chart = this, lang = defaultOptions.lang, btnOptions = chart.options.chart.resetZoomButton, theme = btnOptions.theme, states = theme.states, alignTo = (btnOptions.relativeTo === 'chart' ||
-            btnOptions.relativeTo === 'spaceBox' ?
+            btnOptions.relativeTo === 'spacingBox' ?
             null :
             this.scrollablePlotBox || 'plotBox');
         /**

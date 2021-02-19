@@ -867,34 +867,37 @@ Chart.prototype.showDrillUpButton = function (): void {
         backText = this.getDrilldownBackText(),
         buttonOptions = (chart.options.drilldown as any).drillUpButton,
         attr,
-        states;
+        states,
+        alignTo = (
+            buttonOptions.relativeTo === 'chart' ||
+            buttonOptions.relativeTo === 'spacingBox' ?
+                null :
+                this.scrollablePlotBox || 'plotBox'
+        );
 
     if (!this.drillUpButton) {
         attr = buttonOptions.theme;
         states = attr && attr.states;
 
-        this.drillUpButton = this.renderer.button(
-            backText as any,
-            null as any,
-            null as any,
-            function (): void {
-                chart.drillUp();
-            },
-            attr,
-            states && states.hover,
-            states && states.select
-        )
+        this.drillUpButton = this.renderer
+            .button(
+                backText as any,
+                null as any,
+                null as any,
+                function (): void {
+                    chart.drillUp();
+                },
+                attr,
+                states && states.hover,
+                states && states.select
+            )
             .addClass('highcharts-drillup-button')
             .attr({
                 align: buttonOptions.position.align,
                 zIndex: 7
             })
             .add()
-            .align(
-                buttonOptions.position,
-                false,
-                buttonOptions.relativeTo || 'plotBox'
-            );
+            .align(buttonOptions.position, false, alignTo as any);
     } else {
         this.drillUpButton.attr({
             text: backText
