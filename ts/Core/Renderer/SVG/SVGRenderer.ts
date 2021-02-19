@@ -37,6 +37,7 @@ import SVGLabel from './SVGLabel.js';
 import AST from '../HTML/AST.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
+import options from '../../../Accessibility/Options/Options';
 const {
     addEvent,
     attr,
@@ -1087,6 +1088,10 @@ class SVGRenderer {
             // (reference to options.rangeSelector.buttonTheme)
             normalState = theme ? merge(theme) : {},
             userNormalStyle = normalState && normalState.style || {};
+
+        if (normalState.states) {
+            delete normalState.states; // (#15178)
+        }
 
         // Remove stylable attributes
         normalState = AST.filterUserAttributes(normalState);

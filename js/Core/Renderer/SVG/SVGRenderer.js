@@ -708,6 +708,9 @@ var SVGRenderer = /** @class */ (function () {
         // Make a copy of normalState (#13798)
         // (reference to options.rangeSelector.buttonTheme)
         normalState = theme ? merge(theme) : {}, userNormalStyle = normalState && normalState.style || {};
+        if (normalState.states) {
+            delete normalState.states; // (#15178)
+        }
         // Remove stylable attributes
         normalState = AST.filterUserAttributes(normalState);
         // Default, non-stylable attributes
