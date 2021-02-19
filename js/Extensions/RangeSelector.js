@@ -1026,7 +1026,7 @@ var RangeSelector = /** @class */ (function () {
             var parts = inputDate.split('-');
             date = Date.UTC(pInt(parts[0]), pInt(parts[1]) - 1, pInt(parts[2]));
         }
-        if (time && useUTC) {
+        if (time && useUTC && isNumber(date)) {
             date += time.getTimezoneOffset(date);
         }
         return date;

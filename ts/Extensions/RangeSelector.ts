@@ -1459,7 +1459,7 @@ class RangeSelector {
             );
         }
 
-        if (time && useUTC) {
+        if (time && useUTC && isNumber(date)) {
             date += time.getTimezoneOffset(date);
         }
 

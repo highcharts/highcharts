@@ -424,7 +424,9 @@ seriesProto.processData = function () {
             xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth();
         // Execute grouping if the amount of points is greater than the limit
         // defined in groupPixelWidth
-        if (groupPixelWidth) {
+        if (groupPixelWidth &&
+            processedXData &&
+            processedXData.length) {
             hasGroupedData = true;
             // Force recreation of point instances in series.translate, #5699
             series.isDirty = true;
