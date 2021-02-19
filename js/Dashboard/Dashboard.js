@@ -1,4 +1,6 @@
 import Layout from './layout/Layout.js';
+import GUIRenderer from './layout/GUIRenderer.js';
+// import type GUI from './layout/GUI.js';
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
 var doc = H.doc;
@@ -16,11 +18,15 @@ var Dashboard = /** @class */ (function () {
         /*
         * TODO
         *
-        * 1. Loop over layouts + init
         * 2. Bindings elements
         *
         */
         this.initContainer(renderTo);
+        // Only for generating GUI for now
+        // @TODO - add rederer when edit mode enabled
+        if (this.options.gui.enabled) {
+            this.renderer = new GUIRenderer(this.container, this.options.gui);
+        }
         this.setLayouts();
     }
     /* *
@@ -30,6 +36,10 @@ var Dashboard = /** @class */ (function () {
      * */
     /**
      * initContainer
+     *
+     * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+     * The DOM element to render to, or its id.
+     *
      */
     Dashboard.prototype.initContainer = function (renderTo) {
         var dashboard = this;
@@ -46,10 +56,9 @@ var Dashboard = /** @class */ (function () {
      * setLayouts
      */
     Dashboard.prototype.setLayouts = function () {
-        var gui = this.options.gui;
-        var layoutsOptions = gui.layouts;
+        var options = this.options, layoutsOptions = options.gui.layouts;
         for (var i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
-            this.layouts.push(new Layout(this.container, gui.enabled, layoutsOptions[i]));
+            this.layouts.push(new Layout(this.container, layoutsOptions[i], options.gui.enabled, this.renderer));
         }
     };
     /* *

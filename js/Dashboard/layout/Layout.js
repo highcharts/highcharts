@@ -1,24 +1,23 @@
-import GUI from './GUI.js';
 var Layout = /** @class */ (function () {
     /* *
     *
     *  Constructors
     *
     * */
-    function Layout(dashboardContainer, guiEnabled, options) {
+    function Layout(dashboardContainer, options, guiEnabled, renderer) {
         this.options = options;
         this.dashboardContainer = dashboardContainer;
-        if (guiEnabled) {
-            this.gui = new GUI(dashboardContainer, options);
+        if (renderer) {
+            this.renderer = renderer;
         }
-        this.setLayout();
+        this.setLayout(guiEnabled);
     }
     /* *
     *
     *  Functions
     *
     * */
-    Layout.prototype.setLayout = function () {
+    Layout.prototype.setLayout = function (guiEnabled) {
         /*
         * TODO
         *
@@ -28,6 +27,14 @@ var Layout = /** @class */ (function () {
         * 4. Init rows
         *
         */
+        var layout = this;
+        if (guiEnabled) {
+            if (!layout.renderer) {
+                // Throw an error - GUIRenderer module required!
+            }
+            // Generate layout HTML structure.
+            // layout.renderer.renderLayout
+        }
     };
     return Layout;
 }());

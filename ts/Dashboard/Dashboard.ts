@@ -1,5 +1,6 @@
 import Layout from './layout/Layout.js';
-import type GUI from './layout/GUI.js';
+import GUIRenderer from './layout/GUIRenderer.js';
+// import type GUI from './layout/GUI.js';
 
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
@@ -39,15 +40,25 @@ class Dashboard {
     ) {
         this.options = merge(Dashboard.defaultOptions, options);
         this.layouts = [];
-        
+
         /*
         * TODO
         *
-        * 1. Loop over layouts + init
         * 2. Bindings elements
         *
         */
+
         this.initContainer(renderTo);
+
+        // Only for generating GUI for now
+        // @TODO - add rederer when edit mode enabled
+        if (this.options.gui.enabled) {
+            this.renderer = new GUIRenderer(
+                this.container,
+                this.options.gui
+            );
+        }
+
         this.setLayouts();
     }
 
@@ -59,6 +70,8 @@ class Dashboard {
     public options: Dashboard.Options;
     public layouts: Array<Layout>;
     public container: globalThis.HTMLElement = void 0 as any;
+    public renderer?: GUIRenderer;
+
     /* *
      *
      *  Functions
@@ -67,11 +80,15 @@ class Dashboard {
 
     /**
      * initContainer
+     *
+     * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+     * The DOM element to render to, or its id.
+     *
      */
     public initContainer(
         renderTo: (string|globalThis.HTMLElement)
     ): void {
-        let dashboard = this;
+        const dashboard = this;
 
         if (isString(renderTo)) {
             dashboard.container = renderTo =
@@ -87,14 +104,16 @@ class Dashboard {
      * setLayouts
      */
     public setLayouts(): void {
-        const gui = this.options.gui;
-        const layoutsOptions = gui.layouts;
+        const options = this.options,
+            layoutsOptions = options.gui.layouts;
+
         for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
             this.layouts.push(
                 new Layout(
                     this.container,
-                    gui.enabled,
-                    layoutsOptions[i]
+                    layoutsOptions[i],
+                    options.gui.enabled,
+                    this.renderer
                 )
             );
         }
@@ -103,8 +122,13 @@ class Dashboard {
 
 namespace Dashboard {
     export interface Options {
-        gui: GUI.Options;
+        gui: GUIOptions;
         // components: Array<>;
+    }
+
+    export interface GUIOptions {
+        enabled: boolean;
+        layouts: Array<Layout.Options>;
     }
 }
 

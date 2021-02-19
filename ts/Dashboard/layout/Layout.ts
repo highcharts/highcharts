@@ -1,8 +1,8 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
-import GUI from './GUI.js';
 import Row from './Row.js';
+import GUIRenderer from './GUIRenderer.js';
 
 class Layout {
     /* *
@@ -12,20 +12,18 @@ class Layout {
     * */
     public constructor(
         dashboardContainer: HTMLDOMElement,
-        guiEnabled: boolean,
-        options: Layout.Options
+        options: Layout.Options,
+        guiEnabled?: boolean,
+        renderer?: GUIRenderer
     ) {
         this.options = options;
         this.dashboardContainer = dashboardContainer;
 
-        if (guiEnabled) {
-            this.gui = new GUI(
-                dashboardContainer,
-                options
-            );
+        if (renderer) {
+            this.renderer = renderer;
         }
 
-        this.setLayout();
+        this.setLayout(guiEnabled);
     }
 
     /* *
@@ -35,13 +33,14 @@ class Layout {
     * */
     public options: Layout.Options;
     public dashboardContainer: HTMLDOMElement;
-    public gui?: GUI;
+    public renderer?: GUIRenderer;
+
     /* *
     *
     *  Functions
     *
     * */
-    public setLayout(): void {
+    public setLayout(guiEnabled?: boolean): void {
         /*
         * TODO
         *
@@ -51,6 +50,17 @@ class Layout {
         * 4. Init rows
         *
         */
+
+        const layout = this;
+
+        if (guiEnabled) {
+            if (!layout.renderer) {
+                // Throw an error - GUIRenderer module required!
+            }
+
+            // Generate layout HTML structure.
+            // layout.renderer.renderLayout
+        }
     }
 }
 

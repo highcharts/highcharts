@@ -1,9 +1,8 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
-import type Layout from './Layout.js';
 
-class GUI {
+class GUIRenderer {
     /* *
     *
     *  Constructors
@@ -11,7 +10,7 @@ class GUI {
     * */
     public constructor(
         dashboardContainer: HTMLDOMElement,
-        options: Layout.Options
+        options: GUIRenderer.Options
     ) {
         this.options = options;
         this.dashboardContainer = dashboardContainer;
@@ -24,7 +23,7 @@ class GUI {
     *  Properties
     *
     * */
-    public options: Layout.Options;
+    public options: GUIRenderer.Options;
     public dashboardContainer: HTMLDOMElement;
     /* *
     *
@@ -84,15 +83,12 @@ class GUI {
         `;
     }
 }
-interface GUI {
+interface GUIRenderer {
 
 }
 
-namespace GUI {
-    export interface Options {
-        enabled: boolean;
-        layouts: Array<Layout.Options>;
-    }
+namespace GUIRenderer {
+    export interface Options {}
 }
 
-export default GUI;
+export default GUIRenderer;
