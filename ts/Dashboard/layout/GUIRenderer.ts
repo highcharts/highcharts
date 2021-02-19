@@ -7,6 +7,7 @@ const {
     createElement
 } = U;
 
+const PREFIX = 'highcharts-dashboard';
 class GUIRenderer {
     /* *
     *
@@ -36,7 +37,7 @@ class GUIRenderer {
         return createElement(
             'div', {
                 // id: 'dashboard-layout-1',
-                className: 'dashboard-layout'
+                className: PREFIX + 'layout'
             },
             {},
             container
