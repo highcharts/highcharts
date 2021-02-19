@@ -107,6 +107,10 @@ H.errorMessages = {
         "title": "Deprecated function or property",
         "text": "<h1>Deprecated function or property</h1><p>This error occurs when using a deprecated function or property. Consult the <a href=\"https://api.highcharts.com/\">API documentation</a> for alternatives, if no replacement is mentioned by the error itself.</p>"
     },
+    "33": {
+        "title": "Can't find gui.js library",
+        "text": "<h1>Can't find gui.js library</h1><p>Using the gui.enabled option requires the gui.js library to be loaded.</p>"
+    },
     "meta": {
         "files": [
             "errors/10/readme.md",
@@ -132,7 +136,8 @@ H.errorMessages = {
             "errors/29/readme.md",
             "errors/30/readme.md",
             "errors/31/readme.md",
-            "errors/32/readme.md"
+            "errors/32/readme.md",
+            "errors/33/readme.md"
         ]
     }
 };

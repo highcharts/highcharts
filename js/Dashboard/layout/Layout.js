@@ -1,3 +1,5 @@
+import U from '../../Core/Utilities.js';
+var error = U.error;
 var Layout = /** @class */ (function () {
     /* *
     *
@@ -22,19 +24,21 @@ var Layout = /** @class */ (function () {
         /*
         * TODO
         *
-        * 1. Set reference to container
+        *
         * 2. Create layout structure
         *
         */
         var layout = this;
+        var renderer = layout.renderer;
         var layoutHTML;
         if (guiEnabled) {
-            if (layout.renderer) {
+            if (renderer) {
                 // Generate layout HTML structure.
-                layoutHTML = layout.renderer.renderLayout(layout.dashboardContainer);
+                layoutHTML = renderer.renderLayout(layout.dashboardContainer);
             }
             else {
                 // Throw an error - GUIRenderer module required!
+                error(33, true);
             }
         }
         else {
