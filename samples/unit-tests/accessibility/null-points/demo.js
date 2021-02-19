@@ -55,3 +55,32 @@ QUnit.test('Dynamic null points', function (assert) {
         'Point should have a new dummy marker graphic after update to null point.'
     );
 });
+
+// Issue #14966
+QUnit.test('Updating null point', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [{
+                x: 1,
+                y: 20
+            }, {
+                x: 2,
+                y: null
+            }, {
+                x: 3,
+                y: 20
+            }, {
+                x: 4,
+                y: 30
+            }]
+        }]
+    });
+
+    chart.series[0].points[1].select(true, true);
+
+    assert.notStrictEqual(
+        chart.series[0].points[1].graphic.y,
+        NaN,
+        'Point graphic y shouldn\'t be NaN.'
+    );
+});
