@@ -6798,11 +6798,6 @@ class Series {
                     }
                 }
             }, this);
-            this.nodes?.forEach(function (node): void {
-                if (node && node.series) {
-                    node.resolveColor();
-                }
-            });
         }
 
         series.initialType = initialType;

@@ -511,11 +511,19 @@ extend(NetworkgraphSeries.prototype, {
      * @private
      */
     init: function () {
+        var _this = this;
         Series.prototype.init.apply(this, arguments);
         addEvent(this, 'updatedData', function () {
-            if (this.layout) {
-                this.layout.stop();
+            if (_this.layout) {
+                _this.layout.stop();
             }
+        });
+        addEvent(this, 'afterUpdate', function () {
+            _this.nodes.forEach(function (node) {
+                if (node && node.series) {
+                    node.resolveColor();
+                }
+            });
         });
         return this;
     },

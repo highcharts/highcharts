@@ -746,10 +746,18 @@ extend(NetworkgraphSeries.prototype, {
 
         Series.prototype.init.apply(this, arguments as any);
 
-        addEvent<NetworkgraphSeries>(this, 'updatedData', function (): void {
+        addEvent(this, 'updatedData', (): void => {
             if (this.layout) {
                 this.layout.stop();
             }
+        });
+
+        addEvent(this, 'afterUpdate', (): void => {
+            this.nodes.forEach((node): void => {
+                if (node && node.series) {
+                    node.resolveColor();
+                }
+            });
         });
 
         return this;
