@@ -6,6 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
+// @ts-nocheck
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import Utilities from '../Core/Utilities.js';

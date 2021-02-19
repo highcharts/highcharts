@@ -6,6 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
+// @ts-nocheck
 'use strict';
 import Highcharts from './highcharts.src.js';
 import './modules/gantt.src.js';
