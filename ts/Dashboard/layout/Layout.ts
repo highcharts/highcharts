@@ -4,6 +4,12 @@ import type {
 import Row from './Row.js';
 import GUIRenderer from './GUIRenderer.js';
 
+import U from '../../Core/Utilities.js';
+
+const {
+    error
+} = U;
+
 class Layout {
     /* *
     *
@@ -46,27 +52,32 @@ class Layout {
         /*
         * TODO
         *
-        * 1. Set reference to container
+        * 
         * 2. Create layout structure
         *
         */
 
         const layout = this;
+        const renderer = layout.renderer;
 
         let layoutHTML;
 
         if (guiEnabled) {
-            if (layout.renderer) {
+            if (renderer) {
                 // Generate layout HTML structure.
-                layoutHTML = layout.renderer.renderLayout(layout.dashboardContainer);
+                layoutHTML = renderer.renderLayout(
+                    layout.dashboardContainer
+                );
             } else {
                 // Throw an error - GUIRenderer module required!
+                error(33, true);
             }
         } else {
             // layoutHTML = from user gui
         }
 
         this.container = layoutHTML;
+        
     }
 
     public addRows(): void {
