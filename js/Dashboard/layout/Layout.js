@@ -1,4 +1,4 @@
-import GUI from './GUI';
+import GUI from './GUI.js';
 var Layout = /** @class */ (function () {
     /* *
     *
@@ -21,7 +21,7 @@ var Layout = /** @class */ (function () {
         /*
         * TODO
         *
-        * 1. Set container
+        * 1. Set reference to container
         * 2. Create layout structure
         * 3. Init cols
         * 4. Init rows

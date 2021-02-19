@@ -1,4 +1,4 @@
-import Layout from './layout/Layout';
+import Layout from './layout/Layout.js';
 import U from '../Core/Utilities.js';
 var merge = U.merge;
 var Dashboard = /** @class */ (function () {

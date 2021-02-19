@@ -1,7 +1,4 @@
-import type Layout from './Layout';
-import type {
-    HTMLDOMElement
-} from '../Core/Renderer/DOMElementType';
+import type Layout from './Layout.js';
 
 class GUI {
     /* *
@@ -13,7 +10,7 @@ class GUI {
         options: Layout.Options
     ) {
         this.options = options;
-        this.html = this.createHTML();
+        this.createHTML();
     }
 
     /* *
@@ -22,7 +19,6 @@ class GUI {
     *
     * */
     public options: Layout.Options;
-    public html: HTMLDOMElement = void 0 as any;
     /* *
     *
     *  Functions
@@ -61,7 +57,7 @@ class GUI {
     }
 }
 interface GUI {
-    html: HTMLDOMElement|null;
+
 }
 
 namespace GUI {

@@ -1,5 +1,5 @@
-import Layout from './layout/Layout';
-import type GUI from './layout/GUI';
+import Layout from './layout/Layout.js';
+import type GUI from './layout/GUI.js';
 
 import U from '../Core/Utilities.js';
 

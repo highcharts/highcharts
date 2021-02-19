@@ -1,5 +1,5 @@
-import GUI from './GUI';
-import Row from './Row';
+import GUI from './GUI.js';
+import Row from './Row.js';
 
 class Layout {
     /* *
