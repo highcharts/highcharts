@@ -44,6 +44,7 @@ export interface SVGAttributes {
     height?: number;
     href?: string;
     id?: string;
+    in?: string;
     innerR?: number;
     inverted?: boolean;
     longArc?: number;
@@ -55,15 +56,21 @@ export interface SVGAttributes {
     paddingRight?: number;
     preserveAspectRatio?: string;
     r?: number;
+    rx?: number;
+    ry?: number;
     rotation?: number;
     rotationOriginX?: number;
     rotationOriginY?: number;
     scaleX?: number;
     scaleY?: number;
+    slope?: number;
     start?: number;
+    stdDeviation?: number;
     stroke?: ColorType;
     'stroke-linecap'?: 'butt'|'round'|'square';
-    'stroke-width'?: number;
+    'stroke-linejoin'?: 'butt'|'round'|'square';
+    'stroke-opacity'?: number;
+    'stroke-width'?: number|string;
     // @todo: Create special ButtonTheme class for exporting and RangeSelector
     states?: any;
     'stop-color'?: string;
@@ -72,12 +79,14 @@ export interface SVGAttributes {
     text?: string;
     'text-align'?: 'center'|'left'|'right';
     title?: string;
+    transform?: string;
     translateX?: number;
     translateY?: number;
+    type?: string;
     version?: string;
     viewBox?: string;
     visibility?: 'hidden'|'inherit'|'visible';
-    width?: number;
+    width?: number|string;
     x?: number;
     x1?: number;
     x2?: number;

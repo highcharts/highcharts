@@ -15,7 +15,12 @@
  * */
 
 export interface HTMLAttributes {
-    [key: string]: (boolean|number|string|Function|undefined);
+    // [key: string]: (boolean|number|string|Function|undefined);
+    class?: string;
+    colspan?: number;
+    scope?: string;
+    rowspan?: number;
+    valign?: 'bottom'|'middle'|'top';
 }
 
 export default HTMLAttributes;

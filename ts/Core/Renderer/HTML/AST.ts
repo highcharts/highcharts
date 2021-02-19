@@ -8,6 +8,7 @@
  *
  * */
 
+import type HTMLAttributes from '../HTML/HTMLAttributes';
 import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
@@ -52,7 +53,7 @@ const {
 declare global {
     namespace Highcharts {
         interface ASTNode {
-            attributes?: SVGAttributes;
+            attributes?: HTMLAttributes&SVGAttributes;
             children?: Array<ASTNode>;
             tagName?: string;
             textContent?: string;
