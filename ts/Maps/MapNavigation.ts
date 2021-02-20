@@ -38,6 +38,7 @@ const {
     pick
 } = U;
 import './MapNavigationOptionsDefault.js';
+import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
 
 /* *
  *
@@ -158,10 +159,10 @@ MapNavigation.prototype.update = function (
     var chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
         buttonOptions,
-        attr: SVGAttributes,
-        states: SVGAttributes,
-        hoverStates: SVGAttributes,
-        selectStates: SVGAttributes,
+        attr: ButtonThemeObject,
+        states: ButtonThemeStatesObject|undefined,
+        hoverStates: SVGAttributes|undefined,
+        selectStates: SVGAttributes|undefined,
         outerHandler = function (
             this: SVGElement,
             e: (Event|Record<string, any>)
@@ -192,10 +193,10 @@ MapNavigation.prototype.update = function (
             buttonOptions = merge(o.buttonOptions, button);
 
             // Presentational
-            if (!chart.styledMode) {
-                attr = buttonOptions.theme as any;
+            if (!chart.styledMode && buttonOptions.theme) {
+                attr = buttonOptions.theme;
                 attr.style = merge(
-                    (buttonOptions.theme as any).style,
+                    buttonOptions.theme.style,
                     buttonOptions.style // #3203
                 );
                 states = attr.states;
@@ -205,14 +206,14 @@ MapNavigation.prototype.update = function (
 
             button = chart.renderer
                 .button(
-                    buttonOptions.text as any,
+                    buttonOptions.text || '',
                     0,
                     0,
                     outerHandler,
                     attr,
                     hoverStates,
                     selectStates,
-                    0 as any,
+                    void 0,
                     n === 'zoomIn' ? 'topbutton' : 'bottombutton'
                 )
                 .addClass('highcharts-map-navigation highcharts-' + ({

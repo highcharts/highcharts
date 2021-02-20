@@ -306,7 +306,7 @@ class Funnel3DSeries extends ColumnSeries {
             y5: (number|null),
             //
             h: number,
-            shapeArgs: SVGAttributes;
+            shapeArgs: any; // @todo: Type it. It's an extended SVGAttributes.
 
         // Return the width at a specific y coordinate
         series.getWidthAt = getWidthAt = function (y: number): number {

@@ -17,6 +17,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
@@ -157,7 +158,7 @@ declare global {
             symbolX?: number;
             symbolY?: number;
             text?: string;
-            theme?: SVGAttributes;
+            theme?: ButtonThemeObject;
             titleKey?: string;
             verticalAlign?: VerticalAlignValue;
             width?: number;

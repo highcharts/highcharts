@@ -34,7 +34,6 @@ export class ColumnPoint extends Point {
     options: ColumnPointOptions;
     pointWidth: number;
     series: ColumnSeries;
-    shapeArgs?: BBoxObject;
 }
 
 declare module '../../Core/Series/PointLike' {

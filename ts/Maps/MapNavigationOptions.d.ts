@@ -19,7 +19,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type CSSObject from '../Core/Renderer/CSSObject';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 
 /* *
  *
@@ -37,7 +37,7 @@ export interface MapNavigationButtonOptions {
     padding?: number;
     style?: CSSObject;
     text?: string;
-    theme?: SVGAttributes;
+    theme?: ButtonThemeObject;
     verticalAlign?: VerticalAlignValue;
     width?: number;
     x?: number;

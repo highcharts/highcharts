@@ -14,6 +14,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
@@ -111,7 +112,7 @@ declare global {
             buttonPosition: RangeSelectorPositionOptions;
             buttons?: Array<RangeSelectorButtonsOptions>;
             buttonSpacing: number;
-            buttonTheme: SVGAttributes;
+            buttonTheme: ButtonThemeObject;
             dropdown: 'always'|'never'|'responsive';
             enabled?: boolean;
             floating: boolean;
@@ -2409,10 +2410,10 @@ class RangeSelector {
 
         const getAttribs = (text?: string): SVGAttributes => ({
             text: text ? `${text} ▾` : '▾',
-            width: void 0,
+            width: 'auto',
             paddingLeft: 8,
             paddingRight: 8
-        });
+        } as unknown as SVGAttributes);
 
         if (zoomText) {
             zoomText.hide();
@@ -2489,8 +2490,8 @@ class RangeSelector {
             button.attr({
                 text: rangeOptions.text,
                 width: options.buttonTheme.width || 28,
-                paddingLeft: void 0,
-                paddingRight: void 0
+                paddingLeft: 'unset',
+                paddingRight: 'unset'
             });
 
             if (button.state < 2) {

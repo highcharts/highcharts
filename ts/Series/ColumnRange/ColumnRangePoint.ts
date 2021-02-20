@@ -51,7 +51,6 @@ class ColumnRangePoint extends AreaRangePoint {
     public options: ColumnRangePointOptions = void 0 as any;
     public barX: typeof ColumnPoint.prototype['barX'] = void 0 as any;
     public pointWidth: typeof ColumnPoint.prototype['pointWidth'] = void 0 as any;
-    public shapeArgs: BBoxObject = void 0 as any;
     public shapeType: typeof ColumnPoint.prototype['shapeType'] = void 0 as any;
 
     public isValid(): boolean {

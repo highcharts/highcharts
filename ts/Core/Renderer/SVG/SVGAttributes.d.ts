@@ -27,6 +27,10 @@ import type SVGPath from './SVGPath';
 
 export interface SVGAttributes {
     // [key: string]: any;
+    align?: 'left'|'center'|'right';
+    alphaCorrection?: number;
+    anchorX?: number;
+    anchorY?: number;
     class?: string;
     'clip-path'?: string;
     clockwise?: number;
@@ -34,9 +38,11 @@ export interface SVGAttributes {
     cx?: number;
     cy?: number;
     d?: (string|SVGPath);
+    dashstyle?: DashStyleValue;
+    depth?: number;
+    display?: ''|'block'|'none';
     dx?: number;
     dy?: number;
-    dashstyle?: DashStyleValue;
     end?: number;
     fill?: ColorType;
     'fill-opacity'?: number;
@@ -51,9 +57,13 @@ export interface SVGAttributes {
     matrix?: Array<number>;
     offset?: number;
     opacity?: number;
+    open?: boolean;
     padding?: number;
-    paddingLeft?: number;
-    paddingRight?: number;
+    paddingLeft?: number|'unset';
+    paddingRight?: number|'unset';
+    patternContentUnits?: 'userSpaceOnUse'|'objectBoundingBox';
+    patternTransform?: string;
+    patternUnits?: 'userSpaceOnUse';
     preserveAspectRatio?: string;
     r?: number;
     rx?: number;
@@ -70,12 +80,14 @@ export interface SVGAttributes {
     'stroke-linecap'?: 'butt'|'round'|'square';
     'stroke-linejoin'?: 'butt'|'round'|'square';
     'stroke-opacity'?: number;
-    'stroke-width'?: number|string;
+    'stroke-width'?: number;
+    strokeWidth?: number; // Used in PatternFill, transformed to stroke-width
     // @todo: Create special ButtonTheme class for exporting and RangeSelector
-    states?: any;
+    // states?: any;
     'stop-color'?: string;
     'stop-opacity'?: number;
     style?: CSSObject|string;
+    tableValues?: string;
     text?: string;
     'text-align'?: 'center'|'left'|'right';
     title?: string;
@@ -86,13 +98,14 @@ export interface SVGAttributes {
     version?: string;
     viewBox?: string;
     visibility?: 'hidden'|'inherit'|'visible';
-    width?: number|string;
+    width?: number;
     x?: number;
     x1?: number;
     x2?: number;
     y?: number;
     y1?: number;
     y2?: number;
+    z?: number;
     zIndex?: number;
 }
 
