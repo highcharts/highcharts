@@ -13,6 +13,7 @@
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
+import ColorType from '../Core/Color/ColorType';
 const {
     addEvent,
     isArray,
@@ -46,6 +47,7 @@ declare global {
         }
         interface LastVisiblePriceLabelOptions {
             enabled: true;
+            color?: ColorType;
         }
     }
 }

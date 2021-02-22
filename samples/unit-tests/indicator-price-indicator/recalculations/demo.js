@@ -178,7 +178,7 @@ function (assert) {
                     }
                 },
                 lastPrice: {
-                    color: 'red'
+                    color: '#ff0000'
                 }
             }]
         }),
@@ -242,7 +242,7 @@ function (assert) {
     );
     assert.strictEqual(
         chart.series[0].lastPrice.stroke,
-        'red',
+        '#ff0000',
         'Cross label fill color should be red.'
     );
 
@@ -278,7 +278,7 @@ function (assert) {
     );
     assert.strictEqual(
         chart.series[0].lastPrice.stroke,
-        'red',
+        '#ff0000',
         'Cross label fill color should be red again.'
     );
 });
@@ -317,5 +317,85 @@ QUnit.test('The lastPrice color, #15074.', function (assert) {
         chart.series[0].lastPrice.attr('stroke'),
         '#00ff00',
         'The lastPrice color should remain the same after toggle.'
+    );
+});
+
+QUnit.test('The currentPriceIndicator for multiple series, #14888.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            yAxis: [{
+                height: '60%'
+            }, {
+                top: '65%',
+                height: '35%'
+            }],
+            stockTools: {
+                gui: {
+                    enabled: true,
+                    buttons: [
+                        "currentPriceIndicator"
+                    ]
+                }
+            },
+            series: [{
+                id: 'main',
+                color: '#00ffff',
+                data: [2, 6, 8, 6, 3, 1, 1, 3, 5, 6, 9, 9, 9, 7, 4, 2, 1, 9]
+            }, {
+                type: 'sma',
+                linkedTo: 'main',
+                color: '#ff00ff'
+            }, {
+                type: 'column',
+                color: '#000000',
+                yAxis: 1,
+                data: [10, 2, 5, 6, 1, 3, 5, 1, 3, 5, 4, 1, 3, 5, 6, 4, 1, 4]
+            }]
+        }),
+        button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
+
+    // Click the currentPriceIndicator button in the stock tools.
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings, button);
+
+    assert.strictEqual(
+        chart.series[0].lastPrice.attr('stroke'),
+        chart.series[0].color,
+        'The first series lastPrice line should have color as series.'
+    );
+    assert.strictEqual(
+        chart.series[0].crossLabel.attr('fill'),
+        chart.series[0].color,
+        'The first series lastVisiblePrice label should have color as series.'
+    );
+    assert.strictEqual(
+        chart.series[1].lastPrice.attr('stroke'),
+        chart.series[1].color,
+        'Indicator lastPrice line should have color as series.'
+    );
+    assert.strictEqual(
+        chart.series[1].crossLabel.attr('fill'),
+        chart.series[1].color,
+        'Indicator lastVisiblePrice label should have color as series.'
+    );
+    assert.strictEqual(
+        chart.series[1].lastPrice.attr('stroke'),
+        chart.series[1].color,
+        'Volume lastPrice line should have color as series.'
+    );
+    assert.strictEqual(
+        chart.series[1].crossLabel.attr('fill'),
+        chart.series[1].color,
+        'Volume lastVisiblePrice label should have color as series.'
+    );
+
+    chart.series[0].update({
+        lastPrice: {
+            color: '#ff0000'
+        }
+    });
+    assert.strictEqual(
+        chart.series[0].lastPrice.attr('stroke'),
+        '#ff0000',
+        'Options declared for the lastPrice should overwrite the default one.'
     );
 });

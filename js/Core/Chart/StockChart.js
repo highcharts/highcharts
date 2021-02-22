@@ -416,6 +416,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
             crossLabel
                 .attr({
                 fill: options.backgroundColor ||
+                    point && point.color || // #14888
                     (this.series[0] && this.series[0].color) ||
                     palette.neutralColor60,
                 stroke: options.borderColor || '',

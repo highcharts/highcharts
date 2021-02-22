@@ -1594,7 +1594,7 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
-            var chart = this.chart, series = chart.series[0], options = series.options, lastVisiblePrice = (options.lastVisiblePrice &&
+            var chart = this.chart, series = chart.series, options = series[0].options, lastVisiblePrice = (options.lastVisiblePrice &&
                 options.lastVisiblePrice.enabled), lastPrice = options.lastPrice && options.lastPrice.enabled, gui = chart.stockTools, iconsURL = gui.getIconsURL();
             if (gui && gui.guiEnabled) {
                 if (lastPrice) {
@@ -1608,18 +1608,22 @@ var stockToolsBindings = {
                             'current-price-hide.svg")';
                 }
             }
-            series.update({
-                // line
-                lastPrice: {
-                    enabled: !lastPrice
-                },
-                // label
-                lastVisiblePrice: {
-                    enabled: !lastVisiblePrice,
-                    label: {
-                        enabled: true
+            series.forEach(function (serie) {
+                serie.update({
+                    // line
+                    lastPrice: {
+                        enabled: !lastPrice,
+                        color: serie.options.lastPrice && serie.options.lastPrice.color || serie.color // #14888
+                    },
+                    // label
+                    lastVisiblePrice: {
+                        enabled: !lastVisiblePrice,
+                        label: {
+                            enabled: true,
+                            color: serie.options.lastPrice && serie.options.lastPrice.color || serie.color // #14888
+                        }
                     }
-                }
+                });
             });
             fireEvent(this, 'deselectButton', { button: button });
         }
