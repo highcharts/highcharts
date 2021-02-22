@@ -531,7 +531,7 @@ class ColumnSeries extends Series {
             options = series.options,
             inverted = this.chart.inverted,
             attr: SVGAttributes = {},
-            translateProp = inverted ? 'translateX' : 'translateY',
+            translateProp: 'translateX'|'translateY' = inverted ? 'translateX' : 'translateY',
             translateStart: number,
             translatedThreshold;
 
@@ -557,7 +557,7 @@ class ColumnSeries extends Series {
             series.group.attr(attr);
 
         } else { // run the animation
-            translateStart = series.group.attr(translateProp) as any;
+            translateStart = Number(series.group.attr(translateProp));
             series.group.animate(
                 { scaleY: 1 },
                 extend(animObject(series.options.animation), {
@@ -1128,7 +1128,7 @@ class ColumnSeries extends Series {
                 // Set starting position for point sliding animation.
                 if (series.enabledDataSorting) {
                     point.startXPos = series.xAxis.reversed ?
-                        -(shapeArgs ? shapeArgs.width : 0) :
+                        -(shapeArgs ? (shapeArgs.width || 0) : 0) :
                         series.xAxis.width;
                 }
 

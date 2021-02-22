@@ -387,7 +387,7 @@ class AST {
                                 key !== 'children' &&
                                 key !== 'textContent'
                             ) {
-                                attributes[key] = val;
+                                (attributes as any)[key] = val;
                             }
                         });
                         attr(
@@ -438,7 +438,7 @@ class AST {
      */
     private parseMarkup(markup: string): Highcharts.ASTNode[] {
         interface Attribute {
-            name: string;
+            name: keyof SVGAttributes|keyof HTMLAttributes;
             value: string;
         }
 
@@ -478,7 +478,7 @@ class AST {
 
             // Add attributes
             if (parsedAttributes) {
-                const attributes: SVGAttributes = {};
+                const attributes: HTMLAttributes&SVGAttributes = {};
                 [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
                     attributes[attrib.name] = attrib.value;
                 });

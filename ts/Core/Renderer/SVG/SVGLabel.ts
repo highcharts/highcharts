@@ -142,7 +142,7 @@ class SVGLabel extends SVGElement {
             left: 0,
             center: 0.5,
             right: 1
-        } as SVGAttributes)[value];
+        })[value];
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
