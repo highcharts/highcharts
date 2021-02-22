@@ -69,7 +69,7 @@ declare global {
  *
  * @type      {boolean}
  * @product   highstock
- * @default   true
+ * @default   false
  * @apioption plotOptions.series.lastVisiblePrice.enabled
  */
 
@@ -83,7 +83,7 @@ declare global {
  *
  * @type      {boolean}
  * @product   highstock
- * @default   true
+ * @default   false
  * @apioption plotOptions.series.lastVisiblePrice.label.enabled
  *
  */
@@ -105,16 +105,16 @@ declare global {
  *
  * @type      {boolean}
  * @product   highstock
- * @default   true
+ * @default   false
  * @apioption plotOptions.series.lastPrice.enabled
  */
 
 /**
  * The color of the line of last price.
+ * By default, the line has the same color as the series.
  *
  * @type      {string}
  * @product   highstock
- * @default   red
  * @apioption plotOptions.series.lastPrice.color
  *
  */
