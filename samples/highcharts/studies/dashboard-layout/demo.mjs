@@ -4,8 +4,9 @@ const dashboard = new Dashboard('container', {
     gui: {
         enabled: true,
         layouts: [{
-            rowClassName: 'custom-row',
-            colClassName: 'custom-column',
+            id: 'layout-1', // mandatory
+            rowClassName: 'custom-row', // optional
+            columnClassName: 'custom-column', // optional
             rows: [{
                 id: 'dashboard-row-0',
                 columns: [{
@@ -21,6 +22,7 @@ const dashboard = new Dashboard('container', {
                 }]
             }]
         }, {
+            id: 'layout-2', // mandatory
             rows: [{
                 id: 'dashboard-row-2',
                 columns: [{

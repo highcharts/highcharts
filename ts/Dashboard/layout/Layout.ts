@@ -56,7 +56,7 @@ class Layout {
             dashboard = layout.dashboard,
             renderer = layout.dashboard.renderer;
 
-        if (dashboard.options.gui.enabled) {
+        if (dashboard.guiEnabled) {
             if (renderer) {
                 // Generate layout HTML structure.
                 this.container = renderer.renderLayout(
@@ -86,7 +86,10 @@ class Layout {
 
     public addRow(options: Row.Options): Row {
         const layout = this,
-            row = new Row(layout, options);
+            row = new Row(
+                layout,
+                options
+            );
 
         layout.rows.push(row);
 
@@ -99,8 +102,9 @@ interface Layout {
 }
 namespace Layout {
     export interface Options {
+        id?: string;
         rowClassName: string;
-        colClassName: string;
+        columnClassName: string;
         rows: Array<Row.Options>;
     }
 }

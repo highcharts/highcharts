@@ -28,7 +28,7 @@ var Layout = /** @class */ (function () {
         *
         */
         var layout = this, dashboard = layout.dashboard, renderer = layout.dashboard.renderer;
-        if (dashboard.options.gui.enabled) {
+        if (dashboard.guiEnabled) {
             if (renderer) {
                 // Generate layout HTML structure.
                 this.container = renderer.renderLayout(layout.dashboard.container);

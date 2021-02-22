@@ -1,5 +1,5 @@
 import U from './../../Core/Utilities.js';
-var createElement = U.createElement;
+var createElement = U.createElement, pick = U.pick;
 var PREFIX = 'highcharts-dashboard-';
 var GUIRenderer = /** @class */ (function () {
     /* *
@@ -23,10 +23,26 @@ var GUIRenderer = /** @class */ (function () {
         }, {}, container);
     };
     // @TODO add docs, improve it
-    GUIRenderer.prototype.renderRow = function (container) {
+    GUIRenderer.prototype.renderRow = function (row, container) {
+        var layoutOptions = row.layout.options;
+        return createElement('div', {
+            id: row.options.id || '',
+            className: layoutOptions.rowClassName + ' ' + PREFIX + 'row'
+        }, {}, container);
+    };
+    // @TODO add docs, improve it
+    GUIRenderer.prototype.renderColumn = function (column, container) {
+        var layoutOptions = column.row.layout.options;
+        return createElement('div', {
+            id: column.options.id || '',
+            className: layoutOptions.columnClassName + ' ' + PREFIX + 'column'
+        }, {}, container);
+    };
+    // @TODO add docs, improve it
+    GUIRenderer.prototype.renderCard = function (container) {
         return createElement('div', {
             // id: 'dashboard-row-1',
-            className: PREFIX + 'row'
+            className: PREFIX + 'card'
         }, {}, container);
     };
     return GUIRenderer;

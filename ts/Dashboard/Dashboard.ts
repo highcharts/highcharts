@@ -39,6 +39,7 @@ class Dashboard {
     ) {
         this.options = merge(Dashboard.defaultOptions, options);
         this.layouts = [];
+        this.guiEnabled = this.options.gui.enabled;
 
         /*
         * TODO
@@ -51,7 +52,7 @@ class Dashboard {
 
         // Only for generating GUI for now
         // @TODO - add rederer when edit mode enabled
-        if (this.options.gui.enabled) {
+        if (this.guiEnabled) {
             this.renderer = new GUIRenderer({});
         }
 
@@ -67,6 +68,7 @@ class Dashboard {
     public layouts: Array<Layout>;
     public container: globalThis.HTMLElement = void 0 as any;
     public renderer?: GUIRenderer;
+    public guiEnabled: (boolean|undefined);
 
     /* *
      *
