@@ -334,7 +334,7 @@ var DataTable = /** @class */ (function () {
         var nonNullRow, row;
         for (var i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
-            if (!row.isNull()) {
+            if (!row.isNull) {
                 nonNullRow = row;
                 break;
             }

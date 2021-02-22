@@ -131,12 +131,14 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 
         if (typeof cells.id === 'string') {
             this.id = cells.id;
+            this.isNull = true;
             if (cells.id === 'NULL') {
                 return DataTableRow.NULL;
             }
         } else {
             this.autoId = true;
             this.id = uniqueKey();
+            this.isNull = false;
         }
 
         delete cells.id;
@@ -151,7 +153,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     /**
      * Indicates an automatically generated id, if no ID-cell was provided.
      */
-    public autoId: boolean;
+    public readonly autoId: boolean;
 
     /**
      * Record object of all cell names with their values in this rows.
@@ -167,7 +169,12 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     /**
      * ID to distinguish the row in a table from other rows.
      */
-    public id: string;
+    public readonly id: string;
+
+    /**
+     * True, if this row is an instance of `DataTableRow.NULL`.
+     */
+    public readonly isNull: boolean;
 
     /* *
      *
@@ -404,16 +411,6 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      */
     public hasCell(cellName: string): boolean {
         return (this.getCellNames().indexOf(cellName) >= 0);
-    }
-
-    /**
-     * Checks if this row is null; therefor an instance of `DataTableRow.NULL`.
-     *
-     * @return {boolean}
-     * True, if row is null.
-     */
-    public isNull(): boolean {
-        return (this === DataTableRow.NULL);
     }
 
     /**

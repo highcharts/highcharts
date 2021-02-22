@@ -45,6 +45,7 @@ var DataTableRow = /** @class */ (function () {
         this.converter = converter;
         if (typeof cells.id === 'string') {
             this.id = cells.id;
+            this.isNull = true;
             if (cells.id === 'NULL') {
                 return DataTableRow.NULL;
             }
@@ -52,6 +53,7 @@ var DataTableRow = /** @class */ (function () {
         else {
             this.autoId = true;
             this.id = uniqueKey();
+            this.isNull = false;
         }
         delete cells.id;
     }
@@ -298,15 +300,6 @@ var DataTableRow = /** @class */ (function () {
      */
     DataTableRow.prototype.hasCell = function (cellName) {
         return (this.getCellNames().indexOf(cellName) >= 0);
-    };
-    /**
-     * Checks if this row is null; therefor an instance of `DataTableRow.NULL`.
-     *
-     * @return {boolean}
-     * True, if row is null.
-     */
-    DataTableRow.prototype.isNull = function () {
-        return (this === DataTableRow.NULL);
     };
     /**
      * Registers a callback for a specific event.
