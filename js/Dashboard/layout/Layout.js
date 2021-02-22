@@ -1,3 +1,4 @@
+import Row from './Row.js';
 import U from '../../Core/Utilities.js';
 var error = U.error;
 var Layout = /** @class */ (function () {
@@ -6,21 +7,19 @@ var Layout = /** @class */ (function () {
     *  Constructors
     *
     * */
-    function Layout(dashboardContainer, options, guiEnabled, renderer) {
+    function Layout(dashboard, options) {
         this.options = options;
-        this.dashboardContainer = dashboardContainer;
-        if (renderer) {
-            this.renderer = renderer;
-        }
-        this.setLayout(guiEnabled);
-        // this.addRows();
+        this.dashboard = dashboard;
+        this.rows = [];
+        this.setLayoutContainer();
+        this.setRows();
     }
     /* *
     *
     *  Functions
     *
     * */
-    Layout.prototype.setLayout = function (guiEnabled) {
+    Layout.prototype.setLayoutContainer = function () {
         /*
         * TODO
         *
@@ -28,13 +27,11 @@ var Layout = /** @class */ (function () {
         * 2. Create layout structure
         *
         */
-        var layout = this;
-        var renderer = layout.renderer;
-        var layoutHTML;
-        if (guiEnabled) {
+        var layout = this, dashboard = layout.dashboard, renderer = layout.dashboard.renderer;
+        if (dashboard.options.gui.enabled) {
             if (renderer) {
                 // Generate layout HTML structure.
-                layoutHTML = renderer.createHTML(layout.options, layout.dashboardContainer);
+                this.container = renderer.renderLayout(layout.dashboard.container);
             }
             else {
                 // Throw an error - GUIRenderer module required!
@@ -42,17 +39,21 @@ var Layout = /** @class */ (function () {
             }
         }
         else {
-            // layoutHTML = from user gui
+            // this.container = from user gui
         }
-        this.container = layoutHTML;
     };
-    Layout.prototype.addRows = function () {
-        /*
-        * TODO
-        *
-        * 1. Init rows
-        *
-        */
+    Layout.prototype.setRows = function () {
+        var layout = this, rowsOptions = layout.options.rows;
+        var rowOptions;
+        for (var i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
+            rowOptions = rowsOptions[i];
+            layout.addRow(rowOptions);
+        }
+    };
+    Layout.prototype.addRow = function (options) {
+        var layout = this, row = new Row(layout, options);
+        layout.rows.push(row);
+        return row;
     };
     return Layout;
 }());

@@ -2,7 +2,7 @@ import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import Row from './Row.js';
-import GUIRenderer from './GUIRenderer.js';
+import Dashboard from './../Dashboard.js';
 
 import U from '../../Core/Utilities.js';
 
@@ -17,20 +17,15 @@ class Layout {
     *
     * */
     public constructor(
-        dashboardContainer: HTMLDOMElement,
-        options: Layout.Options,
-        guiEnabled?: boolean,
-        renderer?: GUIRenderer
+        dashboard: Dashboard,
+        options: Layout.Options
     ) {
         this.options = options;
-        this.dashboardContainer = dashboardContainer;
+        this.dashboard = dashboard;
+        this.rows = [];
 
-        if (renderer) {
-            this.renderer = renderer;
-        }
-
-        this.setLayout(guiEnabled);
-        // this.addRows();
+        this.setLayoutContainer();
+        this.setRows();
     }
 
     /* *
@@ -39,55 +34,63 @@ class Layout {
     *
     * */
     public options: Layout.Options;
-    public dashboardContainer: HTMLDOMElement;
+    public dashboard: Dashboard;
+    public rows: Array<Row>;
     public container?: HTMLDOMElement;
-    public renderer?: GUIRenderer;
 
     /* *
     *
     *  Functions
     *
     * */
-    public setLayout(guiEnabled?: boolean): void {
+    public setLayoutContainer(): void {
         /*
         * TODO
         *
-        * 
+        *
         * 2. Create layout structure
         *
         */
 
-        const layout = this;
-        const renderer = layout.renderer;
+        const layout = this,
+            dashboard = layout.dashboard,
+            renderer = layout.dashboard.renderer;
 
-        let layoutHTML;
-
-        if (guiEnabled) {
+        if (dashboard.options.gui.enabled) {
             if (renderer) {
                 // Generate layout HTML structure.
-                layoutHTML = renderer.createHTML(
-                    layout.options,
-                    layout.dashboardContainer
+                this.container = renderer.renderLayout(
+                    layout.dashboard.container
                 );
             } else {
                 // Throw an error - GUIRenderer module required!
                 error(33, true);
             }
         } else {
-            // layoutHTML = from user gui
+            // this.container = from user gui
         }
-
-        this.container = layoutHTML;
-        
     }
 
-    public addRows(): void {
-        /*
-        * TODO
-        *
-        * 1. Init rows
-        *
-        */
+    public setRows(): void {
+        const layout = this,
+            rowsOptions = layout.options.rows;
+
+        let rowOptions;
+
+        for (let i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
+            rowOptions = rowsOptions[i];
+
+            layout.addRow(rowOptions);
+        }
+    }
+
+    public addRow(options: Row.Options): Row {
+        const layout = this,
+            row = new Row(layout, options);
+
+        layout.rows.push(row);
+
+        return row;
     }
 }
 

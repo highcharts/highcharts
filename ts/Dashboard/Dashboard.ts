@@ -1,6 +1,5 @@
 import Layout from './layout/Layout.js';
 import GUIRenderer from './layout/GUIRenderer.js';
-// import type GUI from './layout/GUI.js';
 
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
@@ -53,9 +52,7 @@ class Dashboard {
         // Only for generating GUI for now
         // @TODO - add rederer when edit mode enabled
         if (this.options.gui.enabled) {
-            this.renderer = new GUIRenderer(
-                this.options.gui
-            );
+            this.renderer = new GUIRenderer({});
         }
 
         this.setLayouts();
@@ -103,16 +100,15 @@ class Dashboard {
      * setLayouts
      */
     public setLayouts(): void {
-        const options = this.options,
+        const dashboard = this,
+            options = dashboard.options,
             layoutsOptions = options.gui.layouts;
 
         for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
-            this.layouts.push(
+            dashboard.layouts.push(
                 new Layout(
-                    this.container,
-                    layoutsOptions[i],
-                    options.gui.enabled,
-                    this.renderer
+                    dashboard,
+                    layoutsOptions[i]
                 )
             );
         }
