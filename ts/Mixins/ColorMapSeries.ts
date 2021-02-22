@@ -143,7 +143,7 @@ const colorMapSeriesMixin = {
         var ret: SVGAttributes = {};
 
         if (defined(point.color)) {
-            ret[this.colorProp || 'fill'] = point.color;
+            (ret as any)[this.colorProp || 'fill'] = point.color;
         }
         return ret;
     }

@@ -31,6 +31,13 @@ export interface SVGAttributes {
     alphaCorrection?: number;
     anchorX?: number;
     anchorY?: number;
+    /**
+     * Dummy property used for custom step animations
+     */
+    animator?: number;
+    'aria-expanded'?: boolean;
+    'aria-hidden'?: boolean;
+    'aria-label'?: string;
     class?: string;
     'clip-path'?: string;
     clockwise?: number;
@@ -71,6 +78,7 @@ export interface SVGAttributes {
     rotation?: number;
     rotationOriginX?: number;
     rotationOriginY?: number;
+    rounded?: boolean;
     scaleX?: number;
     scaleY?: number;
     slope?: number;
@@ -87,6 +95,8 @@ export interface SVGAttributes {
     'stop-color'?: string;
     'stop-opacity'?: number;
     style?: CSSObject|string;
+    'sweep-flag'?: 0|1;
+    tabindex?: number;
     tableValues?: string;
     text?: string;
     'text-align'?: 'center'|'left'|'right';

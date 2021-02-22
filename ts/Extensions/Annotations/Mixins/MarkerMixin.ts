@@ -244,6 +244,7 @@ addEvent(Chart, 'afterGetContainer', function (): void {
         if (
             def.tagName === 'marker' &&
             attributes &&
+            attributes.id &&
             attributes.display !== 'none'
         ) {
             this.renderer.addMarker(attributes.id, def);

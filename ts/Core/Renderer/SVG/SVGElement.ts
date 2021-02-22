@@ -911,7 +911,7 @@ class SVGElement {
                 'class': 'highcharts-text-outline',
                 fill: color,
                 stroke: color,
-                'stroke-width': strokeWidth,
+                'stroke-width': strokeWidth as any,
                 'stroke-linejoin': 'round'
             });
 
@@ -1253,9 +1253,9 @@ class SVGElement {
 
                 // Build the unique key to detect whether we need to create a
                 // new element (#1282)
-                objectEach(gradAttr, function (val: string, n: string): void {
+                objectEach(gradAttr, function (value, n): void {
                     if (n !== 'id') {
-                        (key as any).push(n, val);
+                        (key as any).push(n, value);
                     }
                 });
                 objectEach(stops, function (val): void {
@@ -2356,10 +2356,10 @@ class SVGElement {
             }
 
             // Additional attributes
-            objectEach(attrs, function (val: string, key: string): void {
+            objectEach(attrs, function (val, key): void {
                 textPathElement.setAttribute(
                     (attribsMap as any)[key] || key,
-                    val
+                    val as any
                 );
             });
 
@@ -2630,7 +2630,7 @@ class SVGElement {
         } else if (val !== '') {
             dummy = doc.createElementNS(SVG_NS, 'rect') as SVGDOMElement;
             attr(dummy, {
-                width: val,
+                width: val as any,
                 'stroke-width': 0
             });
             (this.element.parentNode as any).appendChild(dummy);

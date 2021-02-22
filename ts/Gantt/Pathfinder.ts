@@ -18,6 +18,7 @@ import type {
 import type Axis from '../Core/Axis/Axis';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
 import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -109,7 +110,7 @@ declare global {
         }
         interface ConnectorsOptions {
             algorithmMargin?: number;
-            dashStyle?: string;
+            dashStyle?: DashStyleValue;
             enabled?: boolean;
             endMarker?: ConnectorsEndMarkerOptions;
             lineColor?: ColorString;

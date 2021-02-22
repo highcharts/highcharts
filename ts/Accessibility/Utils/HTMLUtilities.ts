@@ -212,7 +212,7 @@ function setElAttrs(
     attrs: (HTMLAttributes|SVGAttributes)
 ): void {
     Object.keys(attrs).forEach(function (attr: string): void {
-        var val = attrs[attr];
+        var val = (attrs as any)[attr];
         if (val === null) {
             el.removeAttribute(attr);
         } else {
