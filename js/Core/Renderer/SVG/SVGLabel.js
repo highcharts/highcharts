@@ -92,11 +92,11 @@ var SVGLabel = /** @class */ (function (_super) {
      *
      * */
     SVGLabel.prototype.alignSetter = function (value) {
-        var alignFactor = {
+        var alignFactor = ({
             left: 0,
             center: 0.5,
             right: 1
-        }[value];
+        })[value];
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing

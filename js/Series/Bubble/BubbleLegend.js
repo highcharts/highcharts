@@ -522,7 +522,10 @@ var BubbleLegend = /** @class */ (function () {
         // Render bubble symbol
         symbols.bubbleItems.push(renderer
             .circle(posX, elementCenter + crispMovement, absoluteRadius)
-            .attr(styledMode ? {} : range.bubbleStyle)
+            .attr(
+        // @todo: Resolve bad typing of bubbleStyle. CSSObject can't
+        // be passed to .attr.
+        (styledMode ? {} : range.bubbleStyle))
             .addClass((styledMode ?
             'highcharts-color-' +
                 this.options.seriesIndex + ' ' :
@@ -535,7 +538,10 @@ var BubbleLegend = /** @class */ (function () {
             ['M', posX, posY],
             ['L', posX + connectorLength, posY]
         ], options.connectorWidth))
-            .attr(styledMode ? {} : range.connectorStyle)
+            .attr(
+        // @todo: Resolve bad typing of connectorStyle. CSSObject
+        // can't be passed to .attr.
+        (styledMode ? {} : range.connectorStyle))
             .addClass((styledMode ?
             'highcharts-color-' +
                 this.options.seriesIndex + ' ' : '') +
@@ -544,7 +550,10 @@ var BubbleLegend = /** @class */ (function () {
         // Render label
         label = renderer
             .text(this.formatLabel(range), labelX, labelY + labelMovement)
-            .attr(styledMode ? {} : range.labelStyle)
+            .attr(
+        // @todo: Resolve bad typing of labelStyle. CSSObject can't
+        // be passed to .attr.
+        (styledMode ? {} : range.labelStyle))
             .addClass('highcharts-bubble-legend-labels ' +
             (options.labels.className || '')).add(this.legendSymbol);
         labels.push(label);

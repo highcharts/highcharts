@@ -250,8 +250,8 @@ var DumbbellSeries = /** @class */ (function (_super) {
      */
     DumbbellSeries.prototype.markerAttribs = function () {
         var ret = areaRangeProto.markerAttribs.apply(this, arguments);
-        ret.x = Math.floor(ret.x);
-        ret.y = Math.floor(ret.y);
+        ret.x = Math.floor(ret.x || 0);
+        ret.y = Math.floor(ret.y || 0);
         return ret;
     };
     /**

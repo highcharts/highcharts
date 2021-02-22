@@ -1117,7 +1117,7 @@ var Tooltip = /** @class */ (function () {
                 var isHeader = point.isHeader;
                 // Store the tooltip label referance on the series
                 var owner = isHeader ? tooltip : point.series;
-                var tt = owner.tt = updatePartialTooltip(owner.tt, point, str);
+                var tt = owner.tt = updatePartialTooltip(owner.tt, point, str.toString());
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
                 var bBox = tt.getBBox();

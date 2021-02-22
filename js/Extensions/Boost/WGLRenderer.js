@@ -334,11 +334,12 @@ function GLRenderer(postRenderCallback) {
                 });
             }
             points.forEach(function (point) {
-                var plotY = point.plotY, shapeArgs, swidth, pointAttr;
+                var plotY = point.plotY, swidth, pointAttr;
                 if (typeof plotY !== 'undefined' &&
                     !isNaN(plotY) &&
-                    point.y !== null) {
-                    shapeArgs = point.shapeArgs;
+                    point.y !== null &&
+                    point.shapeArgs) {
+                    var _a = point.shapeArgs, _b = _a.x, x_1 = _b === void 0 ? 0 : _b, _c = _a.y, y_1 = _c === void 0 ? 0 : _c, _d = _a.width, width_1 = _d === void 0 ? 0 : _d, _e = _a.height, height_1 = _e === void 0 ? 0 : _e;
                     pointAttr = chart.styledMode ?
                         point.series
                             .colorAttribs(point) :
@@ -362,7 +363,7 @@ function GLRenderer(postRenderCallback) {
                         scolor[0] /= 255.0;
                         scolor[1] /= 255.0;
                         scolor[2] /= 255.0;
-                        pushRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height, scolor);
+                        pushRect(x_1, y_1, width_1, height_1, scolor);
                         swidth /= 2;
                     }
                     // } else {
@@ -374,12 +375,12 @@ function GLRenderer(postRenderCallback) {
                     // bottom-right. This causes a vertical and horizontal flip
                     // in the resulting image, making it rotated 180 degrees.
                     if (series.type === 'heatmap' && chart.inverted) {
-                        shapeArgs.x = xAxis.len - shapeArgs.x;
-                        shapeArgs.y = yAxis.len - shapeArgs.y;
-                        shapeArgs.width = -shapeArgs.width;
-                        shapeArgs.height = -shapeArgs.height;
+                        x_1 = xAxis.len - x_1;
+                        y_1 = yAxis.len - y_1;
+                        width_1 = -width_1;
+                        height_1 = -height_1;
                     }
-                    pushRect(shapeArgs.x + swidth, shapeArgs.y + swidth, shapeArgs.width - (swidth * 2), shapeArgs.height - (swidth * 2), pcolor);
+                    pushRect(x_1 + swidth, y_1 + swidth, width_1 - (swidth * 2), height_1 - (swidth * 2), pcolor);
                 }
             });
             closeSegment();

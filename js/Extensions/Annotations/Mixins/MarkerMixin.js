@@ -91,12 +91,13 @@ var defaultMarkers = {
     }
 };
 SVGRenderer.prototype.addMarker = function (id, markerOptions) {
+    var _a;
     var options = { attributes: { id: id } };
     var attrs = {
         stroke: markerOptions.color || 'none',
         fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
     };
-    options.children = markerOptions.children.map(function (child) {
+    options.children = (_a = markerOptions.children) === null || _a === void 0 ? void 0 : _a.map(function (child) {
         return merge(attrs, child);
     });
     var ast = merge(true, {
@@ -169,6 +170,7 @@ addEvent(Chart, 'afterGetContainer', function () {
         var attributes = def.attributes;
         if (def.tagName === 'marker' &&
             attributes &&
+            attributes.id &&
             attributes.display !== 'none') {
             this.renderer.addMarker(attributes.id, def);
         }

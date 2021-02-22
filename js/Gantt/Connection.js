@@ -309,10 +309,10 @@ function getPointBB(point) {
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
         return {
-            xMin: shapeArgs.x,
-            xMax: shapeArgs.x + shapeArgs.width,
-            yMin: shapeArgs.y,
-            yMax: shapeArgs.y + shapeArgs.height
+            xMin: shapeArgs.x || 0,
+            xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+            yMin: shapeArgs.y || 0,
+            yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
         };
     }
     // Otherwise use plotX/plotY and bb

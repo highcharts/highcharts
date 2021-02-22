@@ -206,7 +206,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             var button = getExportMenuButtonElement(this.chart);
             this.exportButtonProxy = this.createProxyButton(button, this.exportProxyGroup, {
                 'aria-label': chart.langFormat('accessibility.exporting.menuButtonLabel', { chart: chart }),
-                'aria-expanded': 'false'
+                'aria-expanded': false
             });
         }
     },

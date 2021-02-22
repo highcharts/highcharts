@@ -94,8 +94,7 @@ var VBPIndicator = /** @class */ (function (_super) {
             indicator.setData([]);
             indicator.zoneStarts = [];
             if (indicator.zoneLinesSVG) {
-                indicator.zoneLinesSVG.destroy();
-                delete indicator.zoneLinesSVG;
+                indicator.zoneLinesSVG = indicator.zoneLinesSVG.destroy();
             }
         }
         /* eslint-enable require-jsdoc */
@@ -115,12 +114,17 @@ var VBPIndicator = /** @class */ (function (_super) {
     };
     // Initial animation
     VBPIndicator.prototype.animate = function (init) {
-        var series = this, inverted = series.chart.inverted, group = series.group, attr = {}, translate, position;
+        var series = this, inverted = series.chart.inverted, group = series.group, attr = {}, position;
         if (!init && group) {
-            translate = inverted ? 'translateY' : 'translateX';
             position = inverted ? series.yAxis.top : series.xAxis.left;
-            group['forceAnimate:' + translate] = true;
-            attr[translate] = position;
+            if (inverted) {
+                group['forceAnimate:translateY'] = true;
+                attr.translateY = position;
+            }
+            else {
+                group['forceAnimate:translateX'] = true;
+                attr.translateX = position;
+            }
             group.animate(attr, extend(animObject(series.options.animation), {
                 step: function (val, fx) {
                     series.group.attr({
@@ -272,7 +276,9 @@ var VBPIndicator = /** @class */ (function (_super) {
             if (this.points.length) {
                 this.setData([]);
                 this.zoneStarts = [];
-                this.zoneLinesSVG.destroy();
+                if (this.zoneLinesSVG) {
+                    this.zoneLinesSVG = this.zoneLinesSVG.destroy();
+                }
             }
             return [];
         }

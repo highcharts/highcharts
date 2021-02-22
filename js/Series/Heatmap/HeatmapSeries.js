@@ -165,8 +165,10 @@ var HeatmapSeries = /** @class */ (function (_super) {
                     shapeArgs[dimension[0]]) + (pointStateOptions[dimension[0] + 'Plus'] ||
                     seriesStateOptions[dimension[0] + 'Plus'] || 0);
                 // Align marker by a new size.
-                attribs[dimension[1]] = shapeArgs[dimension[1]] +
-                    (shapeArgs[dimension[0]] - attribs[dimension[0]]) / 2;
+                attribs[dimension[1]] =
+                    shapeArgs[dimension[1]] +
+                        (shapeArgs[dimension[0]] -
+                            attribs[dimension[0]]) / 2;
             });
         }
         return state ? attribs : shapeArgs;

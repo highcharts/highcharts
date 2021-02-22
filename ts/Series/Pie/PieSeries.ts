@@ -1035,8 +1035,7 @@ class PieSeries extends Series {
             end = startAngleRad + (cumulative * circ);
 
             // set the shape
-            point.shapeType = 'arc';
-            point.shapeArgs = {
+            const shapeArgs = {
                 x: positions[0],
                 y: positions[1],
                 r: positions[2] / 2,
@@ -1044,6 +1043,8 @@ class PieSeries extends Series {
                 start: Math.round(start * precision) / precision,
                 end: Math.round(end * precision) / precision
             };
+            point.shapeType = 'arc';
+            point.shapeArgs = shapeArgs;
 
             // Used for distance calculation for specific point.
             point.labelDistance = pick(
@@ -1057,8 +1058,8 @@ class PieSeries extends Series {
             // Compute point.labelDistance if it's defined as percentage
             // of slice radius (#8854)
             point.labelDistance = relativeLength(
-                point.labelDistance as any,
-                point.shapeArgs.r
+                point.labelDistance,
+                shapeArgs.r
             );
 
             // Saved for later dataLabels distance calculation.

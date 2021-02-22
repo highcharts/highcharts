@@ -128,7 +128,7 @@ var animate = function (el, params, opt) {
         // Stop current running animation of this property
         stop(el, prop);
         fx = new Fx(el, opt, prop);
-        end = null;
+        end = void 0;
         if (prop === 'd' && isArray(params.d)) {
             fx.paths = fx.initPath(el, el.pathArray, params.d);
             fx.toD = params.d;
@@ -147,7 +147,7 @@ var animate = function (el, params, opt) {
         if (!end) {
             end = val;
         }
-        if (end && end.match && end.match('px')) {
+        if (typeof end === 'string' && end.match('px')) {
             end = end.replace(/px/g, ''); // #4351
         }
         fx.run(start, end, unit);

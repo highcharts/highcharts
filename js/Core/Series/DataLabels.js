@@ -595,7 +595,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
     var chart = this.chart, align = options.align, verticalAlign = options.verticalAlign, off, justified, padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
     var _a = options.x, x = _a === void 0 ? 0 : _a, _b = options.y, y = _b === void 0 ? 0 : _b;
     // Off left
-    off = alignAttr.x + padding;
+    off = (alignAttr.x || 0) + padding;
     if (off < 0) {
         if (align === 'right' && x >= 0) {
             options.align = 'left';
@@ -607,7 +607,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
         justified = true;
     }
     // Off right
-    off = alignAttr.x + bBox.width - padding;
+    off = (alignAttr.x || 0) + bBox.width - padding;
     if (off > chart.plotWidth) {
         if (align === 'left' && x <= 0) {
             options.align = 'right';
@@ -631,7 +631,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
         justified = true;
     }
     // Off bottom
-    off = alignAttr.y + bBox.height - padding;
+    off = (alignAttr.y || 0) + bBox.height - padding;
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top' && y <= 0) {
             options.verticalAlign = 'bottom';

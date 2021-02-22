@@ -179,8 +179,8 @@ var DependencyWheelSeries = /** @class */ (function (_super) {
         this.nodeColumns[0].forEach(function (node) {
             // Don't render the nodes if sum is 0 #12453
             if (node.sum) {
-                var shapeArgs = node.shapeArgs, centerX = center[0], centerY = center[1], r = center[2] / 2, innerR = r - options.nodeWidth, start = startAngle + factor * shapeArgs.y, end = startAngle +
-                    factor * (shapeArgs.y + shapeArgs.height);
+                var shapeArgs = node.shapeArgs, centerX = center[0], centerY = center[1], r = center[2] / 2, innerR = r - options.nodeWidth, start = startAngle + factor * (shapeArgs.y || 0), end = startAngle +
+                    factor * ((shapeArgs.y || 0) + (shapeArgs.height || 0));
                 // Middle angle
                 node.angle = start + (end - start) / 2;
                 node.shapeType = 'arc';

@@ -369,8 +369,14 @@ var WaterfallSeries = /** @class */ (function (_super) {
                 path.length &&
                 ((!stacking && prevPoint.y < 0 && !reversedYAxis) ||
                     (prevPoint.y > 0 && reversedYAxis))) {
-                path[path.length - 2][2] += prevArgs.height;
-                path[path.length - 1][2] += prevArgs.height;
+                var nextLast = path[path.length - 2];
+                if (nextLast && typeof nextLast[2] === 'number') {
+                    nextLast[2] += prevArgs.height || 0;
+                }
+                var last = path[path.length - 1];
+                if (last && typeof last[2] === 'number') {
+                    last[2] += prevArgs.height || 0;
+                }
             }
         }
         return path;

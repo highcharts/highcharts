@@ -323,10 +323,10 @@ var PackedBubbleSeries = /** @class */ (function (_super) {
             opacity: nodeMarker.fillOpacity,
             stroke: nodeMarker.lineColor || series.color,
             'stroke-width': nodeMarker.lineWidth
-        }, visibility = series.visible ? 'inherit' : 'hidden';
+        };
         // create the group for parent Nodes if doesn't exist
         if (!this.parentNodesGroup) {
-            series.parentNodesGroup = series.plotGroup('parentNodesGroup', 'parentNode', visibility, 0.1, chart.seriesGroup);
+            series.parentNodesGroup = series.plotGroup('parentNodesGroup', 'parentNode', series.visible ? 'inherit' : 'hidden', 0.1, chart.seriesGroup);
             series.group.attr({
                 zIndex: 2
             });

@@ -240,8 +240,8 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (point) {
                 var bBox = point.shapeArgs || point.graphic.getBBox();
                 return {
-                    x: bBox.x,
-                    y: bBox.y + bBox.height
+                    x: bBox.x || 0,
+                    y: (bBox.y || 0) + (bBox.height || 0)
                 };
             },
             handleFormatter: columnDragDropProps.y.handleFormatter,
@@ -266,8 +266,8 @@ if (seriesTypes.columnrange) {
             handlePositioner: function (point) {
                 var bBox = point.shapeArgs || point.graphic.getBBox();
                 return {
-                    x: bBox.x,
-                    y: bBox.y
+                    x: bBox.x || 0,
+                    y: bBox.y || 0
                 };
             },
             handleFormatter: columnDragDropProps.y.handleFormatter,
@@ -297,7 +297,7 @@ if (seriesTypes.boxplot) {
             resizeSide: 'bottom',
             handlePositioner: function (point) {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.lowPlot
                 };
             },
@@ -322,7 +322,7 @@ if (seriesTypes.boxplot) {
             resizeSide: 'bottom',
             handlePositioner: function (point) {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.q1Plot
                 };
             },
@@ -353,7 +353,7 @@ if (seriesTypes.boxplot) {
             resizeSide: 'top',
             handlePositioner: function (point) {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.q3Plot
                 };
             },
@@ -378,7 +378,7 @@ if (seriesTypes.boxplot) {
             resizeSide: 'top',
             handlePositioner: function (point) {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.highPlot
                 };
             },
@@ -1631,10 +1631,10 @@ Series.prototype.getGuideBox = function (points) {
         var bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
         if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
             changed = true;
-            minX = Math.min(bBox.x, minX);
-            maxX = Math.max(bBox.x + bBox.width, maxX);
-            minY = Math.min(bBox.y, minY);
-            maxY = Math.max(bBox.y + bBox.height, maxY);
+            minX = Math.min(bBox.x || 0, minX);
+            maxX = Math.max((bBox.x || 0) + (bBox.width || 0), maxX);
+            minY = Math.min(bBox.y || 0, minY);
+            maxY = Math.max((bBox.y || 0) + (bBox.height || 0), maxY);
         }
     });
     return changed ? chart.renderer.rect(minX, minY, maxX - minX, maxY - minY) : chart.renderer.g();
@@ -1719,7 +1719,7 @@ Point.prototype.showDragHandles = function () {
     // for it.
     objectEach(series.dragDropProps, function (val, key) {
         var handleOptions = merge(defaultDragHandleOptions, val.handleOptions, options.dragHandle), handleAttrs = {
-            className: handleOptions.className,
+            'class': handleOptions.className,
             'stroke-width': handleOptions.lineWidth,
             fill: handleOptions.color,
             stroke: handleOptions.lineColor

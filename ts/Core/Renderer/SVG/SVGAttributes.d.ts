@@ -61,6 +61,8 @@ export interface SVGAttributes {
     innerR?: number;
     inverted?: boolean;
     longArc?: number;
+    markerHeight?: number;
+    markerWidth?: number;
     matrix?: Array<number>;
     offset?: number;
     opacity?: number;
@@ -73,6 +75,8 @@ export interface SVGAttributes {
     patternUnits?: 'userSpaceOnUse';
     preserveAspectRatio?: string;
     r?: number;
+    refX?: number;
+    refY?: number;
     rx?: number;
     ry?: number;
     rotation?: number;

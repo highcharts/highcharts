@@ -228,18 +228,17 @@ wrap(columnProto, 'plotGroup', function (proceed, prop, _name, _visibility, _zIn
 // When series is not added to group it is needed to change setVisible method to
 // allow correct Legend funcionality. This wrap is basing on pie chart series.
 wrap(columnProto, 'setVisible', function (proceed, vis) {
-    var series = this, pointVis;
+    var series = this;
     if (series.chart.is3d()) {
         series.data.forEach(function (point) {
             point.visible = point.options.visible = vis =
                 typeof vis === 'undefined' ?
                     !pick(series.visible, point.visible) : vis;
-            pointVis = vis ? 'visible' : 'hidden';
             series.options.data[series.data.indexOf(point)] =
                 point.options;
             if (point.graphic) {
                 point.graphic.attr({
-                    visibility: pointVis
+                    visibility: vis ? 'visible' : 'hidden'
                 });
             }
         });

@@ -319,14 +319,16 @@ SVGRenderer.prototype.addPattern = function (options, animation) {
     pattern.id = id;
     // Use an SVG path for the pattern
     if (options.path) {
-        path = options.path;
+        path = U.isObject(options.path) ?
+            options.path :
+            { d: options.path };
         // The background
         if (options.backgroundColor) {
             rect(options.backgroundColor);
         }
         // The pattern
         attribs = {
-            'd': path.d || path
+            'd': path.d
         };
         if (!this.styledMode) {
             attribs.stroke = path.stroke || color;

@@ -89,14 +89,14 @@ var TreeGridTick;
      * @private
      */
     function renderLabelIcon(tick, params) {
-        var treeGrid = tick.treeGrid, isNew = !treeGrid.labelIcon, renderer = params.renderer, labelBox = params.xy, options = params.options, width = options.width, height = options.height, iconCenter = {
-            x: labelBox.x - (width / 2) - options.padding,
+        var treeGrid = tick.treeGrid, isNew = !treeGrid.labelIcon, renderer = params.renderer, labelBox = params.xy, options = params.options, width = options.width || 0, height = options.height || 0, iconCenter = {
+            x: labelBox.x - (width / 2) - (options.padding || 0),
             y: labelBox.y - (height / 2)
         }, rotation = params.collapsed ? 90 : 180, shouldRender = params.show && isNumber(iconCenter.y);
         var icon = treeGrid.labelIcon;
         if (!icon) {
             treeGrid.labelIcon = icon = renderer
-                .path(renderer.symbols[options.type](options.x, options.y, width, height))
+                .path(renderer.symbols[options.type](options.x || 0, options.y || 0, width, height))
                 .addClass('highcharts-label-icon')
                 .add(params.group);
         }
@@ -106,13 +106,11 @@ var TreeGridTick;
         if (!renderer.styledMode) {
             icon
                 .attr({
-                'stroke-width': 1,
-                'fill': pick(params.color, palette.neutralColor60)
-            })
-                .css({
                 cursor: 'pointer',
+                'fill': pick(params.color, palette.neutralColor60),
+                'stroke-width': 1,
                 stroke: options.lineColor,
-                strokeWidth: options.lineWidth
+                strokeWidth: options.lineWidth || 0
             });
         }
         // Update the icon positions
@@ -140,7 +138,8 @@ var TreeGridTick;
             level = (node && node.depth) || 1;
             result.x += (
             // Add space for symbols
-            ((symbolOptions.width) + (symbolOptions.padding * 2)) +
+            ((symbolOptions.width || 0) +
+                ((symbolOptions.padding || 0) * 2)) +
                 // Apply indentation
                 ((level - 1) * indentation));
         }

@@ -38,7 +38,7 @@ declare global {
             defs?: Record<string, ASTNode>;
         }
         interface SVGRenderer {
-            addMarker(id: string, markerOptions: SVGAttributes): SVGElement;
+            addMarker(id: string, markerOptions: ASTNode): SVGElement;
         }
     }
 }
@@ -128,16 +128,16 @@ var defaultMarkers: Record<string, Highcharts.ASTNode> = {
 
 SVGRenderer.prototype.addMarker = function (
     id: string,
-    markerOptions: SVGAttributes
+    markerOptions: Highcharts.ASTNode
 ): SVGElement {
     var options: Highcharts.ASTNode = { attributes: { id } };
 
     var attrs: SVGAttributes = {
-        stroke: markerOptions.color || 'none',
-        fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
+        stroke: (markerOptions as any).color || 'none',
+        fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
     };
 
-    options.children = markerOptions.children.map(function (
+    options.children = markerOptions.children?.map(function (
         child: Highcharts.ASTNode
     ): Highcharts.ASTNode {
         return merge(attrs, child);

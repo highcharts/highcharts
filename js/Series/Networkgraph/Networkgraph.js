@@ -583,7 +583,7 @@ extend(NetworkgraphSeries.prototype, {
         if (!defined(point.plotY)) {
             attribs.y = 0;
         }
-        attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
+        attribs.x = (point.plotX || 0) - (attribs.width || 0) / 2;
         return attribs;
     },
     /**

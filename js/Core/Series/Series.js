@@ -1751,7 +1751,7 @@ var Series = /** @class */ (function () {
                     // Set starting position for point sliding animation.
                     if (series.enabledDataSorting) {
                         point.startXPos = xAxis.reversed ?
-                            -markerAttribs.width :
+                            -(markerAttribs.width || 0) :
                             xAxis.width;
                     }
                     var isInside = point.isInside !== false;
@@ -1762,7 +1762,7 @@ var Series = /** @class */ (function () {
                             .animate(markerAttribs);
                     }
                     else if (isInside &&
-                        (markerAttribs.width > 0 || point.hasImage)) {
+                        ((markerAttribs.width || 0) > 0 || point.hasImage)) {
                         /**
                          * The graphic representation of the point.
                          * Typically this is a simple shape, like a `rect`
@@ -2227,7 +2227,8 @@ var Series = /** @class */ (function () {
         // hidden, and looks bad in other oldIE
         animDuration = (!series.finishedAnimating &&
             chart.renderer.isSVG &&
-            animOptions.duration), visibility = series.visible ? 'inherit' : 'hidden', // #2597
+            animOptions.duration), visibility = series.visible ?
+            'inherit' : 'hidden', // #2597
         zIndex = options.zIndex, hasRendered = series.hasRendered, chartSeriesGroup = chart.seriesGroup, inverted = chart.inverted;
         fireEvent(this, 'render');
         // the group

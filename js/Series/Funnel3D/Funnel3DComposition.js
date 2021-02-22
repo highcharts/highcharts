@@ -250,7 +250,8 @@ extend(H.Renderer.prototype, {
      * Generates paths and zIndexes.
      * @private
      */
-    funnel3dPath: function (shapeArgs) {
+    funnel3dPath: function (shapeArgs // @todo: Type it. It's an extended SVGAttributes.
+    ) {
         // Check getCylinderEnd for better error message if
         // the cylinder module is missing
         if (!this.getCylinderEnd) {

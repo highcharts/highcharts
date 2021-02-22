@@ -572,8 +572,8 @@ var SVGElement = /** @class */ (function () {
             var br = doc.createElementNS(SVG_NS, 'tspan');
             br.textContent = '\u200B';
             attr(br, {
-                x: elem.getAttribute('x'),
-                y: elem.getAttribute('y')
+                x: Number(elem.getAttribute('x')),
+                y: Number(elem.getAttribute('y'))
             });
             // Insert the outline
             outline_1.appendChild(br);
@@ -794,9 +794,9 @@ var SVGElement = /** @class */ (function () {
                 }
                 // Build the unique key to detect whether we need to create a
                 // new element (#1282)
-                objectEach(gradAttr, function (val, n) {
+                objectEach(gradAttr, function (value, n) {
                     if (n !== 'id') {
-                        key.push(n, val);
+                        key.push(n, value);
                     }
                 });
                 objectEach(stops, function (val) {

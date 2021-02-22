@@ -115,9 +115,9 @@ SVGRenderer.prototype.face3d = function (args) {
             delete hash.enabled;
             delete hash.vertexes;
             delete hash.insidePlotArea;
-            var chart = charts[renderer.chartIndex], vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea), path = renderer.toLinePath(vertexes2d, true), area = shapeArea(vertexes2d), visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+            var chart = charts[renderer.chartIndex], vertexes2d = perspective(this.vertexes, chart, this.insidePlotArea), path = renderer.toLinePath(vertexes2d, true), area = shapeArea(vertexes2d);
             hash.d = path;
-            hash.visibility = visibility;
+            hash.visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
         }
         return SVGElement.prototype.attr.apply(this, arguments);
     };
@@ -217,11 +217,11 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 };
 // Generates a cuboid path and zIndexes
 SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
-    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z || 0, 
+    var x = shapeArgs.x || 0, y = shapeArgs.y || 0, z = shapeArgs.z || 0, 
     // For side calculation (right/left)
     // there is a need for height (and other shapeArgs arguments)
     // to be at least 1px
-    h = shapeArgs.height, w = shapeArgs.width, d = shapeArgs.depth, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
+    h = shapeArgs.height || 0, w = shapeArgs.width || 0, d = shapeArgs.depth || 0, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
     // Priority for x axis is the biggest,
     // because of x direction has biggest influence on zIndex
     incrementX = 1000000, 
@@ -596,15 +596,15 @@ SVGRenderer.prototype.arc3d = function (attribs) {
 };
 // Generate the paths required to draw a 3D arc
 SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
-    var cx = shapeArgs.x, // x coordinate of the center
-    cy = shapeArgs.y, // y coordinate of the center
-    start = shapeArgs.start, // start angle
-    end = shapeArgs.end - 0.00001, // end angle
-    r = shapeArgs.r, // radius
+    var cx = shapeArgs.x || 0, // x coordinate of the center
+    cy = shapeArgs.y || 0, // y coordinate of the center
+    start = shapeArgs.start || 0, // start angle
+    end = (shapeArgs.end || 0) - 0.00001, // end angle
+    r = shapeArgs.r || 0, // radius
     ir = shapeArgs.innerR || 0, // inner radius
     d = shapeArgs.depth || 0, // depth
-    alpha = shapeArgs.alpha, // alpha rotation of the chart
-    beta = shapeArgs.beta; // beta rotation of the chart
+    alpha = shapeArgs.alpha || 0, // alpha rotation of the chart
+    beta = shapeArgs.beta || 0; // beta rotation of the chart
     // Derived Variables
     var cs = Math.cos(start), // cosinus of the start angle
     ss = Math.sin(start), // sinus of the start angle

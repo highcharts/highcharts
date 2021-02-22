@@ -1554,7 +1554,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.exportDivElements = [];
             chart.exportSVGElements = [];
         }
-        if (btnOptions.enabled === false) {
+        if (btnOptions.enabled === false || !btnOptions.theme) {
             return;
         }
         var attr = btnOptions.theme, states = attr.states, hover = states && states.hover, select = states && states.select, callback;
@@ -1805,7 +1805,8 @@ Chart.prototype.inlineStyles = function () {
                 // If parent node has the same style, it gets inherited, no need
                 // to inline it. Top-level props should be diffed against parent
                 // (#7687).
-                if ((parentStyles[prop] !== val || node.nodeName === 'svg') &&
+                if ((parentStyles[prop] !== val ||
+                    node.nodeName === 'svg') &&
                     defaultStyles[node.nodeName][prop] !== val) {
                     // Attributes
                     if (!inlineToAttributes ||

@@ -205,7 +205,8 @@ var TreemapSeries = /** @class */ (function (_super) {
         // boundaries in treemaps by applying ellipsis overflow.
         // The issue was happening when datalabel's text contained a
         // long sequence of characters without a whitespace.
-        if (!defined(style.textOverflow) &&
+        if (style &&
+            !defined(style.textOverflow) &&
             dataLabel.text &&
             dataLabel.getBBox().width > dataLabel.text.textWidth) {
             dataLabel.css({
@@ -673,16 +674,15 @@ var TreemapSeries = /** @class */ (function (_super) {
                 var y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
                 var y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
                 // Set point values
-                point.shapeArgs = {
+                var shapeArgs = {
                     x: Math.min(x1, x2),
                     y: Math.min(y1, y2),
                     width: Math.abs(x2 - x1),
                     height: Math.abs(y2 - y1)
                 };
-                point.plotX =
-                    point.shapeArgs.x + (point.shapeArgs.width / 2);
-                point.plotY =
-                    point.shapeArgs.y + (point.shapeArgs.height / 2);
+                point.plotX = shapeArgs.x + (shapeArgs.width / 2);
+                point.plotY = shapeArgs.y + (shapeArgs.height / 2);
+                point.shapeArgs = shapeArgs;
             }
             else {
                 // Reset visibility

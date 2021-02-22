@@ -86,7 +86,7 @@ var GanttSeries = /** @class */ (function (_super) {
         var series = this, seriesOpts = series.options, renderer = series.chart.renderer, shapeArgs = point.shapeArgs, plotY = point.plotY, graphic = point.graphic, state = point.selected && 'select', cutOff = seriesOpts.stacking && !seriesOpts.borderRadius, diamondShape;
         if (point.options.milestone) {
             if (isNumber(plotY) && point.y !== null && point.visible !== false) {
-                diamondShape = renderer.symbols.diamond(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+                diamondShape = renderer.symbols.diamond(shapeArgs.x || 0, shapeArgs.y || 0, shapeArgs.width || 0, shapeArgs.height || 0);
                 if (graphic) {
                     graphic[verb]({
                         d: diamondShape
@@ -121,9 +121,9 @@ var GanttSeries = /** @class */ (function (_super) {
         XRangeSeries.prototype.translatePoint.call(series, point);
         if (point.options.milestone) {
             shapeArgs = point.shapeArgs;
-            size = shapeArgs.height;
+            size = shapeArgs.height || 0;
             point.shapeArgs = {
-                x: shapeArgs.x - (size / 2),
+                x: (shapeArgs.x || 0) - (size / 2),
                 y: shapeArgs.y,
                 width: size,
                 height: size

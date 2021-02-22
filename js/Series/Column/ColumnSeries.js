@@ -98,7 +98,7 @@ var ColumnSeries = /** @class */ (function (_super) {
             series.group.attr(attr);
         }
         else { // run the animation
-            translateStart = series.group.attr(translateProp);
+            translateStart = Number(series.group.attr(translateProp));
             series.group.animate({ scaleY: 1 }, extend(animObject(series.options.animation), {
                 // Do the scale synchronously to ensure smooth
                 // updating (#5030, #7228)
@@ -490,7 +490,7 @@ var ColumnSeries = /** @class */ (function (_super) {
                 // Set starting position for point sliding animation.
                 if (series.enabledDataSorting) {
                     point.startXPos = series.xAxis.reversed ?
-                        -(shapeArgs ? shapeArgs.width : 0) :
+                        -(shapeArgs ? (shapeArgs.width || 0) : 0) :
                         series.xAxis.width;
                 }
                 if (!graphic) {

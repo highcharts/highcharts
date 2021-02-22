@@ -119,7 +119,7 @@ var ControllableLabel = /** @class */ (function () {
             height: label.height
         }, 
         //
-        x = alignAttr.x - chart.plotLeft, y = alignAttr.y - chart.plotTop;
+        x = (alignAttr.x || 0) - chart.plotLeft, y = (alignAttr.y || 0) - chart.plotTop;
         // Off left
         off = x + padding;
         if (off < 0) {

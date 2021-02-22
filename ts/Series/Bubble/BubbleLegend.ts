@@ -143,6 +143,7 @@ declare global {
             public maxLabel: BBoxObject;
             public movementX: number;
             public ranges: Array<BubbleLegendRangesOptions>;
+            public selected: undefined;
             public setState: Function;
             public symbols: Record<string, Array<SVGElement>>;
             public options: BubbleLegendOptions;

@@ -128,7 +128,7 @@ var ColumnRangeSeries = /** @class */ (function (_super) {
         columnProto.translate.apply(series);
         // Set plotLow and plotHigh
         series.points.forEach(function (point) {
-            var shapeArgs = point.shapeArgs, minPointLength = series.options.minPointLength, heightDifference, height, y;
+            var shapeArgs = point.shapeArgs || {}, minPointLength = series.options.minPointLength, heightDifference, height, y;
             point.plotHigh = plotHigh = safeBounds(yAxis.translate(point.high, 0, 1, 0, 1));
             point.plotLow = safeBounds(point.plotY);
             // adjust shape
@@ -153,16 +153,17 @@ var ColumnRangeSeries = /** @class */ (function (_super) {
             else {
                 shapeArgs.height = height;
                 shapeArgs.y = y;
+                var _a = shapeArgs.x, x = _a === void 0 ? 0 : _a, _b = shapeArgs.width, width = _b === void 0 ? 0 : _b;
                 point.tooltipPos = chart.inverted ?
                     [
                         yAxis.len + yAxis.pos - chart.plotLeft - y -
                             height / 2,
                         xAxis.len + xAxis.pos - chart.plotTop -
-                            shapeArgs.x - shapeArgs.width / 2,
+                            x - width / 2,
                         height
                     ] : [
-                    xAxis.left - chart.plotLeft + shapeArgs.x +
-                        shapeArgs.width / 2,
+                    xAxis.left - chart.plotLeft + x +
+                        width / 2,
                     yAxis.pos - chart.plotTop + y + height / 2,
                     height
                 ]; // don't inherit from column tooltip position - #3372

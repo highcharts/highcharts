@@ -38,7 +38,6 @@ var ColumnRangePoint = /** @class */ (function (_super) {
         _this.options = void 0;
         _this.barX = void 0;
         _this.pointWidth = void 0;
-        _this.shapeArgs = void 0;
         _this.shapeType = void 0;
         return _this;
     }

@@ -637,7 +637,8 @@ Chart.prototype.getTable = function (useLocalDecimalPoint) {
         var html = "<" + node.tagName;
         if (attributes) {
             Object.keys(attributes).forEach(function (key) {
-                html += " " + key + "=\"" + attributes[key] + "\"";
+                var value = attributes[key];
+                html += " " + key + "=\"" + value + "\"";
             });
         }
         html += '>';

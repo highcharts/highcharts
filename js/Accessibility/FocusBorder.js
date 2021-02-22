@@ -110,9 +110,9 @@ extend(SVGElement.prototype, {
      *
      * @param {number} margin
      *
-     * @param {Highcharts.CSSObject} style
+     * @param {SVGAttributes} attribs
      */
-    addFocusBorder: function (margin, style) {
+    addFocusBorder: function (margin, attribs) {
         // Allow updating by just adding new border
         if (this.focusBorder) {
             this.removeFocusBorder();
@@ -176,7 +176,7 @@ extend(SVGElement.prototype, {
                 }
             }
         }
-        this.focusBorder = this.renderer.rect(borderPosX, borderPosY, borderWidth, borderHeight, parseInt((style && style.borderRadius || 0).toString(), 10))
+        this.focusBorder = this.renderer.rect(borderPosX, borderPosY, borderWidth, borderHeight, parseInt((attribs && attribs.r || 0).toString(), 10))
             .addClass('highcharts-focus-border')
             .attr({
             zIndex: 99
@@ -184,11 +184,11 @@ extend(SVGElement.prototype, {
             .add(this.parentGroup);
         if (!this.renderer.styledMode) {
             this.focusBorder.attr({
-                stroke: style && style.stroke,
-                'stroke-width': style && style.strokeWidth
+                stroke: attribs && attribs.stroke,
+                'stroke-width': attribs && attribs.strokeWidth
             });
         }
-        addUpdateFocusBorderHooks(this, margin, style);
+        addUpdateFocusBorderHooks(this, margin, attribs);
         addDestroyFocusBorderHook(this);
     },
     /**
@@ -217,8 +217,8 @@ H.Chart.prototype.renderFocusBorder = function () {
         if (focusBorderOptions.enabled) {
             focusElement.addFocusBorder(focusBorderOptions.margin, {
                 stroke: focusBorderOptions.style.color,
-                strokeWidth: focusBorderOptions.style.lineWidth,
-                borderRadius: focusBorderOptions.style.borderRadius
+                'stroke-width': focusBorderOptions.style.lineWidth,
+                r: focusBorderOptions.style.borderRadius
             });
         }
     }

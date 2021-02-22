@@ -65,7 +65,7 @@ var DependencyWheelPoint = /** @class */ (function (_super) {
      * @private
      */
     DependencyWheelPoint.prototype.getDataLabelPath = function (label) {
-        var renderer = this.series.chart.renderer, shapeArgs = this.shapeArgs, upperHalf = this.angle < 0 || this.angle > Math.PI, start = shapeArgs.start, end = shapeArgs.end;
+        var renderer = this.series.chart.renderer, shapeArgs = this.shapeArgs, upperHalf = this.angle < 0 || this.angle > Math.PI, start = shapeArgs.start || 0, end = shapeArgs.end || 0;
         if (!this.dataLabelPath) {
             this.dataLabelPath = renderer
                 .arc({

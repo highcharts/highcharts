@@ -391,7 +391,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         };
         if (el && chart) {
             setElAttrs(el, {
-                tabindex: '-1'
+                tabindex: -1
             });
             el.onclick = function (e) {
                 var _a;
@@ -409,7 +409,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         var el = this.viewDataTableButton = getElement(tableButtonId), chart = this.chart, tableId = tableButtonId.replace('hc-linkto-', '');
         if (el) {
             setElAttrs(el, {
-                tabindex: '-1',
+                tabindex: -1,
                 'aria-expanded': !!getElement(tableId)
             });
             el.onclick = chart.options.accessibility

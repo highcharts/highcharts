@@ -407,7 +407,7 @@ var SankeySeries = /** @class */ (function (_super) {
                 translationFactor);
             var y = Math.min(node.nodeY + linkTop, 
             // Prevent links from spilling below the node (#12014)
-            node.nodeY + ((_a = node.shapeArgs) === null || _a === void 0 ? void 0 : _a.height) - linkHeight);
+            node.nodeY + (((_a = node.shapeArgs) === null || _a === void 0 ? void 0 : _a.height) || 0) - linkHeight);
             return y;
         };
         var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart, translationFactor = this.translationFactor, linkHeight = Math.max(point.weight * translationFactor, this.options.minLinkWidth), options = this.options, curvy = ((chart.inverted ? -this.colDistance : this.colDistance) *
@@ -512,7 +512,7 @@ var SankeySeries = /** @class */ (function (_super) {
      * @private
      */
     SankeySeries.prototype.translateNode = function (node, column) {
-        var translationFactor = this.translationFactor, chart = this.chart, options = this.options, sum = node.getSum(), height = Math.max(Math.round(sum * translationFactor), this.options.minLinkWidth), crisp = Math.round(options.borderWidth) % 2 / 2, nodeOffset = column.offset(node, translationFactor), fromNodeTop = Math.floor(pick(nodeOffset.absoluteTop, (column.top(translationFactor) +
+        var translationFactor = this.translationFactor, chart = this.chart, options = this.options, sum = node.getSum(), nodeHeight = Math.max(Math.round(sum * translationFactor), this.options.minLinkWidth), crisp = Math.round(options.borderWidth) % 2 / 2, nodeOffset = column.offset(node, translationFactor), fromNodeTop = Math.floor(pick(nodeOffset.absoluteTop, (column.top(translationFactor) +
             nodeOffset.relativeTop))) + crisp, left = Math.floor(this.colDistance * node.column +
             options.borderWidth / 2) + crisp, nodeLeft = chart.inverted ?
             chart.plotSizeX - left :
@@ -524,23 +524,13 @@ var SankeySeries = /** @class */ (function (_super) {
             node.shapeType = 'rect';
             node.nodeX = nodeLeft;
             node.nodeY = fromNodeTop;
-            if (!chart.inverted) {
-                node.shapeArgs = {
-                    x: nodeLeft,
-                    y: fromNodeTop,
-                    width: node.options.width || options.width || nodeWidth,
-                    height: node.options.height || options.height || height
-                };
+            var x = nodeLeft, y = fromNodeTop, width = node.options.width || options.width || nodeWidth, height = node.options.height || options.height || nodeHeight;
+            if (chart.inverted) {
+                x = nodeLeft - nodeWidth;
+                y = chart.plotSizeY - fromNodeTop - nodeHeight;
+                width = node.options.height || options.height || nodeWidth;
+                height = node.options.width || options.width || nodeHeight;
             }
-            else {
-                node.shapeArgs = {
-                    x: nodeLeft - nodeWidth,
-                    y: chart.plotSizeY - fromNodeTop - height,
-                    width: node.options.height || options.height || nodeWidth,
-                    height: node.options.width || options.width || height
-                };
-            }
-            node.shapeArgs.display = node.hasShape() ? '' : 'none';
             // Calculate data label options for the point
             node.dlOptions = SankeySeries.getDLOptions({
                 level: this.mapOptionsToLevel[node.level],
@@ -550,12 +540,19 @@ var SankeySeries = /** @class */ (function (_super) {
             node.plotY = 1;
             // Set the anchor position for tooltips
             node.tooltipPos = chart.inverted ? [
-                chart.plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
-                chart.plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
+                chart.plotSizeY - y - height / 2,
+                chart.plotSizeX - x - width / 2
             ] : [
-                node.shapeArgs.x + node.shapeArgs.width / 2,
-                node.shapeArgs.y + node.shapeArgs.height / 2
+                x + width / 2,
+                y + height / 2
             ];
+            node.shapeArgs = {
+                x: x,
+                y: y,
+                width: width,
+                height: height,
+                display: node.hasShape() ? '' : 'none'
+            };
         }
         else {
             node.dlOptions = {
