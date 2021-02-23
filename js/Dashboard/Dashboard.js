@@ -1,4 +1,5 @@
 import Layout from './layout/Layout.js';
+import Bindings from './layout/Bindings.js';
 import GUIRenderer from './layout/GUIRenderer.js';
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
@@ -15,6 +16,7 @@ var Dashboard = /** @class */ (function () {
         this.options = merge(Dashboard.defaultOptions, options);
         this.layouts = [];
         this.guiEnabled = this.options.gui.enabled;
+        this.components = [];
         /*
         * TODO
         *
@@ -27,7 +29,11 @@ var Dashboard = /** @class */ (function () {
         if (this.guiEnabled) {
             this.renderer = new GUIRenderer({});
         }
+        // Init layouts
         this.setLayouts();
+        // Init Bindings
+        this.bindings = new Bindings();
+        this.setComponents();
     }
     /* *
      *
@@ -61,6 +67,17 @@ var Dashboard = /** @class */ (function () {
             dashboard.layouts.push(new Layout(dashboard, merge({}, options.gui.layoutOptions, layoutsOptions[i])));
         }
     };
+    Dashboard.prototype.setComponents = function () {
+        var dashboard = this, components = dashboard.options.components;
+        var component, compontentCard;
+        for (var i = 0, iEnd = components.length; i < iEnd; ++i) {
+            component = this.bindings.addComponent(components[i]);
+            dashboard.components.push({
+                options: components[i],
+                component: component
+            });
+        }
+    };
     /* *
     *
     *  Static Properties
@@ -71,8 +88,8 @@ var Dashboard = /** @class */ (function () {
             enabled: true,
             layoutOptions: {},
             layouts: []
-        }
-        // components: []
+        },
+        components: []
     };
     return Dashboard;
 }());

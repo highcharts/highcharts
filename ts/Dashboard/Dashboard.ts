@@ -1,8 +1,10 @@
 import Layout from './layout/Layout.js';
+import Bindings from './layout/Bindings.js';
 import GUIRenderer from './layout/GUIRenderer.js';
 
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
+import { HTMLDOMElement } from '../Core/Renderer/DOMElementType.js';
 const {
     doc
 } = H;
@@ -25,8 +27,8 @@ class Dashboard {
             enabled: true,
             layoutOptions: {},
             layouts: []
-        }
-        // components: []
+        },
+        components: []
     };
 
     /* *
@@ -41,6 +43,7 @@ class Dashboard {
         this.options = merge(Dashboard.defaultOptions, options);
         this.layouts = [];
         this.guiEnabled = this.options.gui.enabled;
+        this.components = [];
 
         /*
         * TODO
@@ -57,7 +60,12 @@ class Dashboard {
             this.renderer = new GUIRenderer({});
         }
 
+        // Init layouts
         this.setLayouts();
+
+        // Init Bindings
+        this.bindings = new Bindings();
+        this.setComponents();
     }
 
     /* *
@@ -67,10 +75,11 @@ class Dashboard {
     * */
     public options: Dashboard.Options;
     public layouts: Array<Layout>;
+    public components: Array<Bindings.ComponentOptions>;
     public container: globalThis.HTMLElement = void 0 as any;
     public renderer?: GUIRenderer;
     public guiEnabled: (boolean|undefined);
-
+    public bindings: Bindings;
     /* *
      *
      *  Functions
@@ -116,12 +125,31 @@ class Dashboard {
             );
         }
     }
+
+    public setComponents(): void {
+        const dashboard = this,
+            components = dashboard.options.components;
+
+        let component,
+        compontentCard;
+
+        for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
+            component = this.bindings.addComponent(
+                components[i]
+            );
+
+            dashboard.components.push({
+                options: components[i],
+                component: component
+            });
+        }
+    }
 }
 
 namespace Dashboard {
     export interface Options {
         gui: GUIOptions;
-        // components: Array<>;
+        components: Array<Bindings.ComponentType>;
     }
 
     export interface GUIOptions {

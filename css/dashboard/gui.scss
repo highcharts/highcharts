@@ -12,23 +12,24 @@ body {
     flex-wrap: wrap;
 }
 
-.highcharts-dashboard-layout .row .col {
+.highcharts-dashboard-column {
+    position: relative;
+    flex: 1;
+}
+
+.highcharts-dashboard-layout .highcharts-dashboard-row .highcharts-dashboard-column  {
     box-sizing: border-box;
     border: 1px dashed rgba(0, 0, 0, 0);
 }
 
-.highcharts-dashboard-layout.edit-mode .row:hover .col {
+.highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row :hover .highcharts-dashboard-column  {
     border: 1px dashed #bdbdbd;
     cursor: pointer;
 }
 
-.highcharts-dashboard-layout.edit-mode .row:hover .col .toolbar,
+.highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row:hover .highcharts-dashboard-column .toolbar,
 .highcharts-dashboard-layout.edit-mode .add-item {
     display: block;
-}
-
-.highcharts-dashboard-col {
-    position: relative;
 }
 
 .w-1-5 {
@@ -210,7 +211,7 @@ ul.elem-menu li:first-child {
         flex-direction: column;
     }
 
-    .highcharts-dashboard-col {
+    .highcharts-dashboard-column {
         flex: 1;
     }
 

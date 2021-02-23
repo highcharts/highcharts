@@ -3,6 +3,7 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 import Row from './Row.js';
 import Dashboard from './../Dashboard.js';
+import Bindings from './Bindings.js';
 
 import U from '../../Core/Utilities.js';
 
@@ -24,6 +25,7 @@ class Layout {
         this.dashboard = dashboard;
         this.rows = [];
 
+        // GUI structure
         this.setLayoutContainer();
         this.setRows();
     }

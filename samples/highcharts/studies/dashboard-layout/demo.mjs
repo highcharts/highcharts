@@ -30,7 +30,40 @@ const dashboard = new Dashboard('container', {
                 }]
             }]
         }]
-    }
+    },
+    components: [{
+        column: 'dashboard-col-0',
+        isResizable: true,
+        type: 'chart',
+        events: {
+            onLoad: function () {
+                // call action		
+            }
+        }
+    }, {
+        column: 'dashboard-col-1',
+        type: 'description',
+        config: {
+            title: 'Sample layout 1',
+            description: 'Lorem ipsum'
+        }
+    }, {
+        column: 'dashboard-col-2',
+        type: 'chart',
+        events: {
+            onLoad: function () {
+                // call action		
+            }
+        }
+    }, {
+        column: 'dashboard-col-3',
+        type: 'chart',
+        events: {
+            onLoad: function () {
+                // call action		
+            }
+        }
+    }]
 });
 
 console.log(dashboard);
@@ -51,7 +84,24 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
             columnClassName: 'col-test', // optional
             cardClassName: 'card-test' // optional
         }]
-    }
+    },
+    components: [{
+        column: 'chart-1',
+        isResizable: true,
+        type: 'chart',
+        events: {
+            onLoad: function () {
+                // call action		
+            }
+        }
+    }, {
+        column: 'chart-2',
+        type: 'description',
+        config: {
+            title: 'Sample layout 1',
+            description: 'Lorem ipsum'
+        }
+    }]
 });
 
 console.log(dashboardBootstrap);

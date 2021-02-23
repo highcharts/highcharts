@@ -11,6 +11,7 @@ var Layout = /** @class */ (function () {
         this.options = options;
         this.dashboard = dashboard;
         this.rows = [];
+        // GUI structure
         this.setLayoutContainer();
         this.setRows();
     }
