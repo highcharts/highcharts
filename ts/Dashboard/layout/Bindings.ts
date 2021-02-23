@@ -26,21 +26,41 @@ class Bindings {
     * */
     public addComponent(
         options: Bindings.ComponentType
-    ): HTMLComponent|undefined {
+    ): HTMLComponent|ChartComponent|undefined {
         const compontentCard = document.querySelectorAll('#' + options.column + ' > .highcharts-dashboard-card')[0];
 
         let component;
+
         if (compontentCard) {
-            component = new HTMLComponent({
-                parentElement: compontentCard as HTMLDOMElement,
-                elements: [{
-                    tagName: 'img',
-                    attributes: {
-                        src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                        title: 'I heard you like components'
+            if (options.type === 'chart') {
+                component = new ChartComponent({
+                    parentElement: compontentCard as HTMLDOMElement,
+                    chartOptions: {
+                        series: [{
+                            name: 'Series from options',
+                            data: [1, 2, 3, 4]
+                        }],
+                        chart: {
+                            animation: false
+                        }
+                    },
+                    dimensions: {
+                        width: 400,
+                        height: 400
                     }
-                }]
-            });
+                });
+            } else {
+                component = new HTMLComponent({
+                    parentElement: compontentCard as HTMLDOMElement,
+                    elements: [{
+                        tagName: 'img',
+                        attributes: {
+                            src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                            title: 'I heard you like components'
+                        }
+                    }]
+                });
+            }
 
             component.render();
         }
@@ -56,6 +76,7 @@ namespace Bindings {
 
     export interface ComponentType {
         column: string;
+        type: string;
     }    
     export interface ComponentOptions {
         options: any;

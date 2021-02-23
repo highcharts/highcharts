@@ -1,3 +1,4 @@
+import ChartComponent from './../Component/ChartComponent.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
 var Bindings = /** @class */ (function () {
     function Bindings() {
@@ -23,16 +24,36 @@ var Bindings = /** @class */ (function () {
         var compontentCard = document.querySelectorAll('#' + options.column + ' > .highcharts-dashboard-card')[0];
         var component;
         if (compontentCard) {
-            component = new HTMLComponent({
-                parentElement: compontentCard,
-                elements: [{
-                        tagName: 'img',
-                        attributes: {
-                            src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                            title: 'I heard you like components'
+            if (options.type === 'chart') {
+                component = new ChartComponent({
+                    parentElement: compontentCard,
+                    chartOptions: {
+                        series: [{
+                                name: 'Series from options',
+                                data: [1, 2, 3, 4]
+                            }],
+                        chart: {
+                            animation: false
                         }
-                    }]
-            });
+                    },
+                    dimensions: {
+                        width: 400,
+                        height: 400
+                    }
+                });
+            }
+            else {
+                component = new HTMLComponent({
+                    parentElement: compontentCard,
+                    elements: [{
+                            tagName: 'img',
+                            attributes: {
+                                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                                title: 'I heard you like components'
+                            }
+                        }]
+                });
+            }
             component.render();
         }
         return component;

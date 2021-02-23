@@ -1,5 +1,8 @@
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
 
+// Bring in other forms of Highcharts
+import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/highcharts.src.js';
+
 const dashboard = new Dashboard('container', {
     gui: {
         enabled: true,
