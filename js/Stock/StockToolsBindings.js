@@ -36,14 +36,21 @@ var bindingsUtils = NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
  */
 bindingsUtils.addFlagFromForm = function (type) {
     return function (e) {
-        var navigation = this, chart = navigation.chart, toolbar = chart.stockTools, getFieldType = bindingsUtils.getFieldType, point = bindingsUtils.attractToPoint(e, chart), pointConfig = {
+        var navigation = this, chart = navigation.chart, toolbar = chart.stockTools, getFieldType = bindingsUtils.getFieldType, point = bindingsUtils.attractToPoint(e, chart), pointConfig, seriesOptions;
+        if (!point) {
+            return;
+        }
+        pointConfig = {
             x: point.x,
             y: point.y
-        }, seriesOptions = {
+        };
+        seriesOptions = {
             type: 'flags',
             onSeries: point.series.id,
             shape: type,
             data: [pointConfig],
+            xAxis: point.xAxis,
+            yAxis: point.yAxis,
             point: {
                 events: {
                     click: function () {
@@ -222,18 +229,28 @@ bindingsUtils.manageIndicators = function (data) {
  * @return {void}
  */
 bindingsUtils.updateHeight = function (e, annotation) {
-    annotation.update({
-        typeOptions: {
-            height: this.chart.pointer.getCoordinates(e).yAxis[0].value -
-                annotation.options.typeOptions.points[1].y
-        }
-    });
+    var coordsY = this.getAssignedAxis(this.chart.pointer.getCoordinates(e), 'y');
+    if (coordsY) {
+        annotation.update({
+            typeOptions: {
+                height: coordsY.value -
+                    annotation.options.typeOptions.points[1].y
+            }
+        });
+    }
 };
 // @todo
 // Consider using getHoverData(), but always kdTree (columns?)
 bindingsUtils.attractToPoint = function (e, chart) {
-    var coords = chart.pointer.getCoordinates(e), x = coords.xAxis[0].value, y = coords.yAxis[0].value, distX = Number.MAX_VALUE, closestPoint;
-    chart.series.forEach(function (series) {
+    var coords = chart.pointer.getCoordinates(e), coordsX = NavigationBindings.prototype.getAssignedAxis(coords, 'x'), coordsY = NavigationBindings.prototype.getAssignedAxis(coords, 'y'), distX = Number.MAX_VALUE, closestPoint, x, y;
+    // Exit if clicked out of axes area.
+    if (!coordsX || !coordsY) {
+        return;
+    }
+    x = coordsX.value;
+    y = coordsY.value;
+    // Search by 'x' but only in yAxis' series.
+    coordsY.axis.series.forEach(function (series) {
         series.points.forEach(function (point) {
             if (point && distX > Math.abs(point.x - x)) {
                 distX = Math.abs(point.x - x);
@@ -246,8 +263,8 @@ bindingsUtils.attractToPoint = function (e, chart) {
         y: closestPoint.y,
         below: y < closestPoint.y,
         series: closestPoint.series,
-        xAxis: closestPoint.series.xAxis.index || 0,
-        yAxis: closestPoint.series.yAxis.index || 0
+        xAxis: closestPoint.series.xAxis.options.index || 0,
+        yAxis: closestPoint.series.yAxis.options.index || 0
     };
 };
 /**
@@ -284,18 +301,20 @@ bindingsUtils.isNotNavigatorYAxis = function (axis) {
  */
 bindingsUtils.updateNthPoint = function (startIndex) {
     return function (e, annotation) {
-        var options = annotation.options.typeOptions, coords = this.chart.pointer.getCoordinates(e), x = coords.xAxis[0].value, y = coords.yAxis[0].value;
-        options.points.forEach(function (point, index) {
-            if (index >= startIndex) {
-                point.x = x;
-                point.y = y;
-            }
-        });
-        annotation.update({
-            typeOptions: {
-                points: options.points
-            }
-        });
+        var options = annotation.options.typeOptions, coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y');
+        if (coordsX && coordsY) {
+            options.points.forEach(function (point, index) {
+                if (index >= startIndex) {
+                    point.x = coordsX.value;
+                    point.y = coordsY.value;
+                }
+            });
+            annotation.update({
+                typeOptions: {
+                    points: options.points
+                }
+            });
+        }
     };
 };
 // Extends NavigationBindigs to support indicators and resizers:
@@ -511,16 +530,22 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'segment',
                 type: 'crookedLine',
                 typeOptions: {
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.segment.annotationsOptions);
@@ -545,19 +570,25 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'arrowSegment',
                 type: 'crookedLine',
                 typeOptions: {
                     line: {
                         markerEnd: 'arrow'
                     },
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.arrowSegment.annotationsOptions);
@@ -582,17 +613,23 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'ray',
                 type: 'crookedLine',
                 typeOptions: {
                     type: 'ray',
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.ray.annotationsOptions);
@@ -617,7 +654,11 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'arrowRay',
                 type: 'infinityLine',
                 typeOptions: {
@@ -625,12 +666,14 @@ var stockToolsBindings = {
                     line: {
                         markerEnd: 'arrow'
                     },
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.arrowRay.annotationsOptions);
@@ -654,17 +697,23 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'infinityLine',
                 type: 'infinityLine',
                 typeOptions: {
                     type: 'line',
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.infinityLine.annotationsOptions);
@@ -689,7 +738,11 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'arrowInfinityLine',
                 type: 'infinityLine',
                 typeOptions: {
@@ -697,12 +750,14 @@ var stockToolsBindings = {
                     line: {
                         markerEnd: 'arrow'
                     },
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.arrowInfinityLine.annotationsOptions);
@@ -726,7 +781,11 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'horizontalLine',
                 type: 'infinityLine',
                 draggable: 'y',
@@ -754,15 +813,21 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'verticalLine',
                 type: 'infinityLine',
                 draggable: 'x',
                 typeOptions: {
                     type: 'verticalLine',
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.verticalLine.annotationsOptions);
@@ -784,19 +849,25 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'crooked3',
                 type: 'crookedLine',
                 typeOptions: {
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.crooked3.annotationsOptions);
@@ -822,25 +893,31 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'crookedLine',
                 type: 'crookedLine',
                 typeOptions: {
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.crooked5.annotationsOptions);
@@ -868,22 +945,28 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'elliott3',
                 type: 'elliottWave',
                 typeOptions: {
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 },
                 labelOptions: {
@@ -915,28 +998,34 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'elliott5',
                 type: 'elliottWave',
                 typeOptions: {
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 },
                 labelOptions: {
@@ -970,16 +1059,20 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'measure',
                 type: 'measure',
                 typeOptions: {
                     selectType: 'x',
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     point: {
-                        x: coords.xAxis[0].value,
-                        y: coords.yAxis[0].value,
-                        xAxis: 0,
-                        yAxis: 0
+                        x: coordsX.value,
+                        y: coordsY.value
                     },
                     crosshairX: {
                         strokeWidth: 1,
@@ -1024,16 +1117,20 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'measure',
                 type: 'measure',
                 typeOptions: {
                     selectType: 'y',
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     point: {
-                        x: coords.xAxis[0].value,
-                        y: coords.yAxis[0].value,
-                        xAxis: 0,
-                        yAxis: 0
+                        x: coordsX.value,
+                        y: coordsY.value
                     },
                     crosshairX: {
                         enabled: false,
@@ -1078,16 +1175,20 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'measure',
                 type: 'measure',
                 typeOptions: {
                     selectType: 'xy',
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     point: {
-                        x: coords.xAxis[0].value,
-                        y: coords.yAxis[0].value,
-                        xAxis: 0,
-                        yAxis: 0
+                        x: coordsX.value,
+                        y: coordsY.value
                     },
                     background: {
                         width: 0,
@@ -1131,16 +1232,22 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'fibonacci',
                 type: 'fibonacci',
                 typeOptions: {
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 },
                 labelOptions: {
@@ -1171,16 +1278,22 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'parallelChannel',
                 type: 'tunnel',
                 typeOptions: {
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.parallelChannel.annotationsOptions);
@@ -1206,24 +1319,30 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, options = merge({
+            var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            if (!coordsX || !coordsY) {
+                return;
+            }
+            options = merge({
                 langKey: 'pitchfork',
                 type: 'pitchfork',
                 typeOptions: {
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value,
+                            x: coordsX.value,
+                            y: coordsY.value,
                             controlPoint: {
                                 style: {
                                     fill: 'red'
                                 }
                             }
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }, {
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }],
                     innerBackground: {
                         fill: 'rgba(100, 170, 255, 0.8)'
@@ -1258,7 +1377,11 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart), navigation = this.chart.options.navigation, verticalCounter = !defined(this.verticalCounter) ? 0 :
-                this.verticalCounter, options = merge({
+                this.verticalCounter, options, annotation;
+            if (!closestPoint) {
+                return;
+            }
+            options = merge({
                 langKey: 'verticalCounter',
                 type: 'verticalLine',
                 typeOptions: {
@@ -1283,7 +1406,7 @@ var stockToolsBindings = {
                     stroke: 'rgba(0, 0, 0, 0.75)',
                     strokeWidth: 1
                 }
-            }, navigation.annotationsOptions, navigation.bindings.verticalCounter.annotationsOptions), annotation;
+            }, navigation.annotationsOptions, navigation.bindings.verticalCounter.annotationsOptions);
             annotation = this.chart.addAnnotation(options);
             verticalCounter++;
             annotation.options.events.click.call(annotation, {});
@@ -1304,7 +1427,11 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var closestPoint = bindingsUtils.attractToPoint(e, this.chart), navigation = this.chart.options.navigation, options = merge({
+            var closestPoint = bindingsUtils.attractToPoint(e, this.chart), navigation = this.chart.options.navigation, options, annotation;
+            if (!closestPoint) {
+                return;
+            }
+            options = merge({
                 langKey: 'verticalLabel',
                 type: 'verticalLine',
                 typeOptions: {
@@ -1328,7 +1455,7 @@ var stockToolsBindings = {
                     stroke: 'rgba(0, 0, 0, 0.75)',
                     strokeWidth: 1
                 }
-            }, navigation.annotationsOptions, navigation.bindings.verticalLabel.annotationsOptions), annotation;
+            }, navigation.annotationsOptions, navigation.bindings.verticalLabel.annotationsOptions);
             annotation = this.chart.addAnnotation(options);
             annotation.options.events.click.call(annotation, {});
         }
@@ -1348,7 +1475,11 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
-            var closestPoint = bindingsUtils.attractToPoint(e, this.chart), navigation = this.chart.options.navigation, options = merge({
+            var closestPoint = bindingsUtils.attractToPoint(e, this.chart), navigation = this.chart.options.navigation, options, annotation;
+            if (!closestPoint) {
+                return;
+            }
+            options = merge({
                 langKey: 'verticalArrow',
                 type: 'verticalLine',
                 typeOptions: {
@@ -1371,7 +1502,7 @@ var stockToolsBindings = {
                     stroke: 'rgba(0, 0, 0, 0.75)',
                     strokeWidth: 1
                 }
-            }, navigation.annotationsOptions, navigation.bindings.verticalArrow.annotationsOptions), annotation;
+            }, navigation.annotationsOptions, navigation.bindings.verticalArrow.annotationsOptions);
             annotation = this.chart.addAnnotation(options);
             annotation.options.events.click.call(annotation, {});
         }

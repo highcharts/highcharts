@@ -82,15 +82,19 @@ var bindingsUtils = {
      * Annotation to be updated
      */
     updateRectSize: function (event, annotation) {
-        var chart = annotation.chart, options = annotation.options.typeOptions, coords = chart.pointer.getCoordinates(event), width = coords.xAxis[0].value - options.point.x, height = options.point.y - coords.yAxis[0].value;
-        annotation.update({
-            typeOptions: {
-                background: {
-                    width: chart.inverted ? height : width,
-                    height: chart.inverted ? width : height
+        var chart = annotation.chart, options = annotation.options.typeOptions, coords = chart.pointer.getCoordinates(event), coordsX = NavigationBindings.prototype.getAssignedAxis(coords, 'x'), coordsY = NavigationBindings.prototype.getAssignedAxis(coords, 'y'), width, height;
+        if (coordsX && coordsY) {
+            width = coordsX.value - options.point.x;
+            height = options.point.y - coordsY.value;
+            annotation.update({
+                typeOptions: {
+                    background: {
+                        width: chart.inverted ? height : width,
+                        height: chart.inverted ? width : height
+                    }
                 }
-            }
-        });
+            });
+        }
     },
     /**
      * Get field type according to value
@@ -271,7 +275,7 @@ var NavigationBindings = /** @class */ (function () {
             // Call init method:
             navigation.currentUserDetails = selectedButton.start.call(navigation, clickEvent);
             // If steps exists (e.g. Annotations), bind them:
-            if (selectedButton.steps) {
+            if (navigation.currentUserDetails && selectedButton.steps) {
                 navigation.stepIndex = 0;
                 navigation.steps = true;
                 navigation.mouseMoveEvent = navigation.nextEvent =
@@ -585,6 +589,38 @@ var NavigationBindings = /** @class */ (function () {
     NavigationBindings.prototype.destroy = function () {
         this.removeEvents();
     };
+    /**
+     * Returns the first xAxis or yAxis that was clicked with its value.
+     *
+     * @private
+     * @function Highcharts.NavigationBindings#getAssignedAxis
+     *
+     * @param {Highcharts.PointerAxisCoordinatesObject} coords
+     *        All the chart's axes with a current pointer's axis value.
+     *
+     * @param {string} xOrY
+     *        'x' or 'y' indicating axis.
+     *
+     * @return {Highcharts.PointerAxisCoordinateObject}
+     *         Object with a first found axis and its value that pointer
+     *         is currently pointing.
+     */
+    NavigationBindings.prototype.getAssignedAxis = function (coords, xOrY) {
+        objectEach(coords, function (value, prop) {
+            coords[prop] = value.filter(function (coord) {
+                var axisMin = coord.axis.min, axisMax = coord.axis.max, 
+                // Correct axis edges when axis has series
+                // with pointRange (like column)
+                minPointOffset = pick(coord.axis.minPointOffset, 0);
+                return coord.value >= (axisMin - minPointOffset) &&
+                    coord.value <= (axisMax + minPointOffset) &&
+                    // don't count navigator axis
+                    !coord.axis.options.isInternal;
+            });
+        });
+        // [0] - If the axes overlap, return the first axis that was found.
+        return coords[xOrY + 'Axis'][0];
+    };
     /* *
      *
      *  Static Properties
@@ -833,17 +869,23 @@ setOptions({
                 className: 'highcharts-circle-annotation',
                 /** @ignore-option */
                 start: function (e) {
-                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation;
+                    var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation;
+                    // Exit if clicked out of axes area
+                    if (!coordsX || !coordsY) {
+                        return;
+                    }
                     return this.chart.addAnnotation(merge({
                         langKey: 'circle',
                         type: 'basicAnnotation',
                         shapes: [{
                                 type: 'circle',
+                                xAxis: coordsX.axis.options.index,
+                                yAxis: coordsY.axis.options.index,
                                 point: {
-                                    xAxis: 0,
-                                    yAxis: 0,
-                                    x: coords.xAxis[0].value,
-                                    y: coords.yAxis[0].value
+                                    x: coordsX.value,
+                                    y: coordsY.value,
+                                    xAxis: coordsX.axis.options.index,
+                                    yAxis: coordsY.axis.options.index
                                 },
                                 r: 5
                             }]
@@ -856,7 +898,9 @@ setOptions({
                 /** @ignore-option */
                 steps: [
                     function (e, annotation) {
-                        var point = annotation.options.shapes[0].point, x = this.chart.xAxis[0].toPixels(point.x), y = this.chart.yAxis[0].toPixels(point.y), inverted = this.chart.inverted, distance = Math.max(Math.sqrt(Math.pow(inverted ? y - e.chartX : x - e.chartX, 2) +
+                        var shapesOptions = annotation.options.shapes[0], x = this.chart.xAxis[shapesOptions.xAxis]
+                            .toPixels(shapesOptions.point.x), y = this.chart.yAxis[shapesOptions.yAxis]
+                            .toPixels(shapesOptions.point.y), inverted = this.chart.inverted, distance = Math.max(Math.sqrt(Math.pow(inverted ? y - e.chartX : x - e.chartX, 2) +
                             Math.pow(inverted ? x - e.chartY : y - e.chartY, 2)), 5);
                         annotation.update({
                             shapes: [{
@@ -878,30 +922,35 @@ setOptions({
                 className: 'highcharts-rectangle-annotation',
                 /** @ignore-option */
                 start: function (e) {
-                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, x = coords.xAxis[0].value, y = coords.yAxis[0].value;
+                    var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, x, y;
+                    if (!coordsX || !coordsY) {
+                        return;
+                    }
+                    x = coordsX.value;
+                    y = coordsY.value;
                     return this.chart.addAnnotation(merge({
                         langKey: 'rectangle',
                         type: 'basicAnnotation',
                         shapes: [{
                                 type: 'path',
                                 points: [{
-                                        xAxis: 0,
-                                        yAxis: 0,
+                                        xAxis: coordsX.axis.options.index,
+                                        yAxis: coordsY.axis.options.index,
                                         x: x,
                                         y: y
                                     }, {
-                                        xAxis: 0,
-                                        yAxis: 0,
+                                        xAxis: coordsX.axis.options.index,
+                                        yAxis: coordsY.axis.options.index,
                                         x: x,
                                         y: y
                                     }, {
-                                        xAxis: 0,
-                                        yAxis: 0,
+                                        xAxis: coordsX.axis.options.index,
+                                        yAxis: coordsY.axis.options.index,
                                         x: x,
                                         y: y
                                     }, {
-                                        xAxis: 0,
-                                        yAxis: 0,
+                                        xAxis: coordsX.axis.options.index,
+                                        yAxis: coordsY.axis.options.index,
                                         x: x,
                                         y: y
                                     }]
@@ -915,19 +964,23 @@ setOptions({
                 /** @ignore-option */
                 steps: [
                     function (e, annotation) {
-                        var points = annotation.options.shapes[0].points, coords = this.chart.pointer.getCoordinates(e), x = coords.xAxis[0].value, y = coords.yAxis[0].value;
-                        // Top right point
-                        points[1].x = x;
-                        // Bottom right point (cursor position)
-                        points[2].x = x;
-                        points[2].y = y;
-                        // Bottom left
-                        points[3].y = y;
-                        annotation.update({
-                            shapes: [{
-                                    points: points
-                                }]
-                        });
+                        var points = annotation.options.shapes[0].points, coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), x, y;
+                        if (coordsX && coordsY) {
+                            x = coordsX.value;
+                            y = coordsY.value;
+                            // Top right point
+                            points[1].x = x;
+                            // Bottom right point (cursor position)
+                            points[2].x = x;
+                            points[2].y = y;
+                            // Bottom left
+                            points[3].y = y;
+                            annotation.update({
+                                shapes: [{
+                                        points: points
+                                    }]
+                            });
+                        }
                     }
                 ]
             },
@@ -942,7 +995,10 @@ setOptions({
                 className: 'highcharts-label-annotation',
                 /** @ignore-option */
                 start: function (e) {
-                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation;
+                    var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation;
+                    if (!coordsX || !coordsY) {
+                        return;
+                    }
                     return this.chart.addAnnotation(merge({
                         langKey: 'label',
                         type: 'basicAnnotation',
@@ -951,10 +1007,10 @@ setOptions({
                         },
                         labels: [{
                                 point: {
-                                    xAxis: 0,
-                                    yAxis: 0,
-                                    x: coords.xAxis[0].value,
-                                    y: coords.yAxis[0].value
+                                    xAxis: coordsX.axis.options.index,
+                                    yAxis: coordsY.axis.options.index,
+                                    x: coordsX.value,
+                                    y: coordsY.value
                                 },
                                 overflow: 'none',
                                 crop: true

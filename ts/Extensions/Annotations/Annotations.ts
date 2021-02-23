@@ -179,6 +179,8 @@ declare global {
             markerStart?: string;
             point?: (string|AnnotationMockPointOptionsObject);
             points?: Array<(string|AnnotationMockPointOptionsObject)>;
+            xAxis: number;
+            yAxis: number;
         }
         interface AnnotationsTypeOptions {
             background?: AnnotationsShapeOptions;
