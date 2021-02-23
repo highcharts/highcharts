@@ -130,11 +130,12 @@ var PieSeries = /** @class */ (function (_super) {
                     innerR: this.center[3] / 2
                 })
             });
+            var userColor = (options.colorByPoint ? (this.userOptions.color) : (options.color));
             if (!this.chart.styledMode) {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: options.color ||
+                    stroke: userColor ||
                         palette.neutralColor20
                 });
             }
