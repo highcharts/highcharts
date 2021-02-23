@@ -298,6 +298,30 @@ bindingsUtils.updateNthPoint = function (startIndex) {
         });
     };
 };
+/**
+ * Check if any of the price indicators are enabled.
+ * @private
+ * @function bindingsUtils.isLastPriceEnabled
+ *
+ * @param {array} series
+ *        Array of series.
+ *
+ * @return {string}
+ *         Tells which indicator is enabled.
+ */
+bindingsUtils.isPriceIndicatorEnabled = function (series) {
+    var priceIndicatorEnabled = '';
+    series.forEach(function (serie) {
+        var options = serie.options, lastVisiblePrice = options.lastVisiblePrice && options.lastVisiblePrice.enabled, lastPrice = options.lastPrice && options.lastPrice.enabled;
+        if (lastVisiblePrice || lastPrice) {
+            priceIndicatorEnabled = 'atLeastOneEnabled';
+        }
+        if (!lastVisiblePrice && !lastPrice) {
+            priceIndicatorEnabled = 'bothDisabled';
+        }
+    });
+    return priceIndicatorEnabled;
+};
 // Extends NavigationBindigs to support indicators and resizers:
 extend(NavigationBindings.prototype, {
     /* eslint-disable valid-jsdoc */
@@ -1594,33 +1618,44 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
-            var chart = this.chart, series = chart.series[0], options = series.options, lastVisiblePrice = (options.lastVisiblePrice &&
-                options.lastVisiblePrice.enabled), lastPrice = options.lastPrice && options.lastPrice.enabled, gui = chart.stockTools, iconsURL = gui.getIconsURL();
+            var chart = this.chart, series = chart.series, priceIndicatorEnabled = this.chart.navigationBindings.utils.isPriceIndicatorEnabled(series), gui = chart.stockTools, iconsURL = gui.getIconsURL();
             if (gui && gui.guiEnabled) {
-                if (lastPrice) {
+                // Reset all and disable both indicators
+                if (priceIndicatorEnabled === 'atLeastOneEnabled') {
                     button.firstChild.style['background-image'] =
                         'url("' + iconsURL +
                             'current-price-show.svg")';
+                    series.forEach(function (serie) {
+                        serie.update({
+                            lastPrice: {
+                                enabled: false
+                            },
+                            lastVisiblePrice: {
+                                enabled: false
+                            }
+                        }, false);
+                    });
                 }
-                else {
+                else if (priceIndicatorEnabled === 'bothDisabled') {
                     button.firstChild.style['background-image'] =
                         'url("' + iconsURL +
                             'current-price-hide.svg")';
+                    series.forEach(function (serie) {
+                        serie.update({
+                            lastPrice: {
+                                enabled: true
+                            },
+                            lastVisiblePrice: {
+                                enabled: true,
+                                label: {
+                                    enabled: true
+                                }
+                            }
+                        }, false);
+                    });
                 }
+                chart.redraw();
             }
-            series.update({
-                // line
-                lastPrice: {
-                    enabled: !lastPrice
-                },
-                // label
-                lastVisiblePrice: {
-                    enabled: !lastVisiblePrice,
-                    label: {
-                        enabled: true
-                    }
-                }
-            });
             fireEvent(this, 'deselectButton', { button: button });
         }
     },

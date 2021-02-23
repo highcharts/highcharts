@@ -319,3 +319,75 @@ QUnit.test('The lastPrice color, #15074.', function (assert) {
         'The lastPrice color should remain the same after toggle.'
     );
 });
+
+
+QUnit.test('The currentPriceIndicator in StockTools, #15029.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            stockTools: {
+                gui: {
+                    enabled: true,
+                    buttons: ['currentPriceIndicator']
+                }
+            },
+            series: [{
+                data: [1, 2, 4, 6, 1, 5, 2.5],
+                lastPrice: {
+                    enabled: true,
+                    color: '#00ff00'
+                }
+            }]
+        }),
+        button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
+
+    assert.ok(
+        chart.series[0].lastPrice,
+        'When declared in options the lastPrice line should exist.'
+    );
+    assert.notOk(
+        chart.series[0].lastVisiblePrice,
+        'The lastVisiblePrice should not exist.'
+    );
+
+    // Click the button in StockTools.
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings, button);
+
+    assert.notOk(
+        chart.series[0].lastPrice,
+        'The lastPrice should not exist.'
+    );
+    assert.notOk(
+        chart.series[0].lastVisiblePrice,
+        'The lastVisiblePrice should not exist.'
+    );
+
+    // Click the button in StockTools once again.
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings, button);
+
+    assert.ok(
+        chart.series[0].lastPrice,
+        'The lastPrice should exist.'
+    );
+    assert.ok(
+        chart.series[0].lastVisiblePrice,
+        'The lastVisiblePrice should exist.'
+    );
+
+    chart.series[0].update({
+        lastVisiblePrice: {
+            enabled: false
+        }
+    });
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings, button);
+
+    assert.notOk(
+        chart.series[0].lastPrice,
+        'The lastPrice should not exist.'
+    );
+    assert.notOk(
+        chart.series[0].lastVisiblePrice,
+        'The lastVisiblePrice should not exist.'
+    );
+});
