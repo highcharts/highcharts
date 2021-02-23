@@ -206,15 +206,15 @@ ul.elem-menu li:first-child {
         width: 100%;
     }
 
-    .row {
+    .highcharts-dashboard-row {
         flex-direction: column;
     }
 
-    .col {
+    .highcharts-dashboard-col {
         flex: 1;
     }
 
-    .card {
+    .highcharts-dashboard-card {
         flex: 1;
     }
 }

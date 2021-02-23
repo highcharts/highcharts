@@ -1,5 +1,42 @@
 <link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/dashboard/gui.css">
 
-<h1>Dashboard</h1>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<h1>Dashboard (Default GUI)</h1>
 <div id="container">
+</div>
+
+<h1>Dashboard (User GUI - bootstrap)</h1>
+
+<style>
+/* Custom Users' style */
+.col,
+[class*="col-"] {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  border: 1px solid rgba(26, 54, 126, 0.125)
+}
+</style>
+
+<div id="container-bootstrap">
+    <div class="container" id="layout-bt-1">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col col-6"></div>
+            <div class="col"></div>
+        </div>
+        <div class="row">
+            <div class="col"></div>
+            <div class="col col-5"></div>
+            <div class="col"></div>
+        </div>
+    </div>
+    <div class="container" id="layout-bt-2">
+        <div class="row">
+            <div class="col"></div>
+            <div class="col"></div>
+            <div class="col"></div>
+        </div>
+    </div>
 </div>

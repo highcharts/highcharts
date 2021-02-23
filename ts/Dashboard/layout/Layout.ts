@@ -67,13 +67,21 @@ class Layout {
                 error(33, true);
             }
         } else {
-            // this.container = from user gui
+            const layoutId = layout.options.id;
+
+            if (layoutId) {
+                const layoutContainer = document.getElementById(layoutId);
+
+                if (layoutContainer) {
+                    this.container = layoutContainer;
+                }
+            }
         }
     }
 
     public setRows(): void {
         const layout = this,
-            rowsOptions = layout.options.rows;
+            rowsOptions = layout.options.rows || [];
 
         let rowOptions;
 

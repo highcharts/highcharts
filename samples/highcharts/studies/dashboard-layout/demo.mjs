@@ -34,3 +34,22 @@ const dashboard = new Dashboard('container', {
 });
 
 console.log(dashboard);
+
+const dashboardBootstrap = new Dashboard('container-bootstrap', {
+    gui: {
+        enabled: false,
+        layouts: [{
+            id: 'layout-bt-1', // mandatory
+            rowClassName: 'row', // optional
+            columnClassName: 'col', // optional
+            cardClassName: 'card' // optional
+        }, {
+            id: 'layout-bt-2', // mandatory
+            rowClassName: 'row', // optional
+            columnClassName: 'col', // optional
+            cardClassName: 'card' // optional
+        }]
+    }
+});
+
+console.log(dashboardBootstrap);

@@ -39,11 +39,17 @@ var Layout = /** @class */ (function () {
             }
         }
         else {
-            // this.container = from user gui
+            var layoutId = layout.options.id;
+            if (layoutId) {
+                var layoutContainer = document.getElementById(layoutId);
+                if (layoutContainer) {
+                    this.container = layoutContainer;
+                }
+            }
         }
     };
     Layout.prototype.setRows = function () {
-        var layout = this, rowsOptions = layout.options.rows;
+        var layout = this, rowsOptions = layout.options.rows || [];
         var rowOptions;
         for (var i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
             rowOptions = rowsOptions[i];
