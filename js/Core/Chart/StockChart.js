@@ -703,7 +703,7 @@ addEvent(Series, 'render', function () {
         // the series is rendered again before starting animating, in
         // compliance with a responsive rule (#13858).
         if (!chart.hasLoaded || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
-            this.clipBox = merge(chart.clipBox);
+            this.clipBox = this.clipBox || merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
             // On redrawing, resizing etc, update the clip rectangle
