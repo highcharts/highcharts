@@ -60,7 +60,23 @@ var chart = Highcharts.chart('container', {
         data: [4, 5, 9, 5, 2, 1, 4, 6]
     }, {
         data: [2, 2, 2, 7, 9, 11, 13, 12]
-    }]
+    }],
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 450
+            },
+            chartOptions: {
+                chart: {
+                    spacingLeft: 3,
+                    spacingRight: 5
+                },
+                yAxis: {
+                    visible: false
+                }
+            }
+        }]
+    }
 });
 
 

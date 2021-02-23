@@ -373,7 +373,7 @@ var FlagsSeries = /** @class */ (function (_super) {
          * @product   highstock
          */
         tooltip: {
-            pointFormat: '{point.text}<br/>'
+            pointFormat: '{point.text}'
         },
         threshold: null,
         /**

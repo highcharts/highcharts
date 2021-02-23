@@ -282,3 +282,40 @@ function (assert) {
         'Cross label fill color should be red again.'
     );
 });
+
+QUnit.test('The lastPrice color, #15074.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            stockTools: {
+                gui: {
+                    enabled: true,
+                    buttons: ['currentPriceIndicator']
+                }
+            },
+            series: [{
+                data: [1, 2, 4, 6, 1, 5, 2.5],
+                lastPrice: {
+                    enabled: true,
+                    color: '#00ff00'
+                }
+            }]
+        }),
+        button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
+
+    assert.strictEqual(
+        chart.series[0].lastPrice.attr('stroke'),
+        '#00ff00',
+        'The lastPrice color should be as declared in the options.'
+    );
+
+    // Toggle the currentPriceIndicator button in the stock tools.
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings, button);
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
+        chart.navigationBindings, button);
+
+    assert.strictEqual(
+        chart.series[0].lastPrice.attr('stroke'),
+        '#00ff00',
+        'The lastPrice color should remain the same after toggle.'
+    );
+});

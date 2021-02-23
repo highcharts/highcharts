@@ -89,10 +89,10 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
                 fontFamily: 'Arial'
             }
         },
-        accessibilty: {
+        accessibility: {
             landmarkVerbosity: 'one',
             screenReaderSection: {
-                beforeChartFormat: 'Financial line chart showing AAPL stock prices, with an additional navigator series showing an overview of the stock.'
+                beforeChartFormat: '<p>The chart is demonstrating that you can switch between multiple languages in the same chart.</p><p>Financial line chart showing AAPL stock prices, with an additional navigator series showing an overview of the stock.</p>'
             },
             series: {
                 pointDescriptionEnabledThreshold: 30
@@ -161,6 +161,10 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
             }
         },
 
+        credits: {
+            enabled: false
+        },
+
         series: [{
             name: 'AAPL',
             data: data,
@@ -201,7 +205,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
                     }
                 },
                 screenReaderSection: {
-                    beforeChartFormat: 'Finansielt linjediagram som viser AAPL aksjepriser, med tilhørende navigeringsserie som gir et overblikk over aksjen.'
+                    beforeChartFormat: '<p>The chart is demonstrating that you can switch between multiple languages in the same chart.</p><p>Finansielt linjediagram som viser AAPL aksjepriser, med tilhørende navigeringsserie som gir et overblikk over aksjen.</p>'
                 }
             },
             rangeSelector: {
@@ -252,7 +256,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
                     }
                 },
                 screenReaderSection: {
-                    beforeChartFormat: 'Liniendiagramm des AAPL-Aktienkurses mit zusätzlichem Navigationsdiagramm für einen Überblick über den Aktienkurs.'
+                    beforeChartFormat: '<p>The chart is demonstrating that you can switch between multiple languages in the same chart.</p><p>Liniendiagramm des AAPL-Aktienkurses mit zusätzlichem Navigationsdiagramm für einen Überblick über den Aktienkurs.</p>'
                 }
             },
             rangeSelector: {

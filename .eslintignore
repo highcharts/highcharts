@@ -1,14 +1,5 @@
 docs/sidebars.js
-js/Accessibility/**/*.js
-js/Core/**/*.js
-js/Data/**/*.js
-js/Extensions/**/*.js
-js/Gantt/**/*.js
-js/Maps/**/*.js
-js/Mixins/**/*.js
-js/Series/**/*.js
-js/Stock/**/*.js
-js/Themes/**/*.js
+js/**/*.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js
 samples/highcharts/esm/async-await/demo.js

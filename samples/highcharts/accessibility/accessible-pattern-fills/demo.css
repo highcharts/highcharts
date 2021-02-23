@@ -5,6 +5,10 @@
 	float: left;
 }
 
+.highcharts-description {
+  font-family: "Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;
+}
+
 @media (min-width: 768px){
   .container {
     width: 50%;
