@@ -17,13 +17,14 @@ class Row {
     * */
     public constructor(
         layout: Layout,
-        options: Row.Options
+        options: Row.Options,
+        rowElement?: HTMLElement
     ) {
         this.options = options;
         this.layout = layout;
         this.columns = [];
 
-        this.setRowContainer();
+        this.setRowContainer(rowElement);
         this.setColumns();
     }
 
@@ -42,21 +43,26 @@ class Row {
     *  Functions
     *
     * */
-    public setRowContainer(): void {
+    public setRowContainer(rowElement?: HTMLElement): void {
         const row = this,
             layout = row.layout,
             renderer = layout.dashboard.renderer;
 
-        if (layout.dashboard.guiEnabled) {
+        // @ToDo use try catch block
+        if (layout.dashboard.guiEnabled && !rowElement) {
             if (renderer && layout.container) {
                 // Generate row HTML structure.
-                this.container = renderer.renderRow(
+                row.container = renderer.renderRow(
                     row,
                     layout.container
                 );
+            } else {
+                // Error
             }
+        } else if (rowElement instanceof HTMLElement) { // @ToDo check if this is enough
+            row.container = rowElement;
         } else {
-            // this.container = from user gui
+            // Error
         }
     }
     /**
@@ -64,28 +70,52 @@ class Row {
      */
     public setColumns(): void {
         const row = this,
-            rowsOptions = row.options.columns;
+            layout = row.layout,
+            columnsOptions = row.options.columns || [];
 
-        let rowOptions;
+        let columnOptions,
+            columnsElements,
+            columnElement,
+            i, iEnd;
 
-        for (let i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
-            rowOptions = rowsOptions[i];
-            row.addColumn(rowOptions);
+        if (layout.dashboard.guiEnabled) {
+            for (i = 0, iEnd = columnsOptions.length; i < iEnd; ++i) {
+                columnOptions = columnsOptions[i];
+                row.addColumn(columnOptions);
+            }
+        } else if (row.container) {
+            columnsElements = row.container.getElementsByClassName(layout.options.columnClassName);
+
+            for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
+                columnElement = columnsElements[i];
+
+                if (columnElement instanceof HTMLElement) { // @ToDo check if this is enough
+                    row.addColumn({}, columnElement);
+                }
+            }
         }
 
     }
+
     /**
      * addColumn
+     *
+     * @param {Column.Options} [options]
+     * Options for the row column.
+     *
+     * @param {HTMLElement} [columnElement]
+     * HTML element of the column.
+     *
+     * @return {Column}
      */
-    public addColumn(options: Column.Options): Column {
+    public addColumn(
+        options: Column.Options,
+        columnElement?: HTMLElement
+    ): Column {
         const row = this,
-            column = new Column(
-                row,
-                options
-            );
+            column = new Column(row, options, columnElement);
 
         row.columns.push(column);
-
         return column;
     }
 }
@@ -93,7 +123,7 @@ class Row {
 namespace Row {
     export interface Options {
         id?: string;
-        columns: Array<Column.Options>;
+        columns?: Array<Column.Options>;
     }
 }
 

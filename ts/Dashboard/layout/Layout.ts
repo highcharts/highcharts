@@ -44,14 +44,6 @@ class Layout {
     *
     * */
     public setLayoutContainer(): void {
-        /*
-        * TODO
-        *
-        *
-        * 2. Create layout structure
-        *
-        */
-
         const layout = this,
             dashboard = layout.dashboard,
             renderer = layout.dashboard.renderer;
@@ -83,24 +75,37 @@ class Layout {
         const layout = this,
             rowsOptions = layout.options.rows || [];
 
-        let rowOptions;
+        let rowOptions,
+            rowsElements,
+            rowElement,
+            i, iEnd;
 
-        for (let i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
-            rowOptions = rowsOptions[i];
+        if (layout.dashboard.guiEnabled) {
+            for (i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
+                rowOptions = rowsOptions[i];
+                layout.addRow(rowOptions);
+            }
+        } else if (layout.container) {
+            rowsElements = layout.container.getElementsByClassName(layout.options.rowClassName);
 
-            layout.addRow(rowOptions);
+            for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
+                rowElement = rowsElements[i];
+
+                if (rowElement instanceof HTMLElement) { // @ToDo check if this is enough
+                    layout.addRow({}, rowElement);
+                }
+            }
         }
     }
 
-    public addRow(options: Row.Options): Row {
+    public addRow(
+        options: Row.Options,
+        rowElement?: HTMLElement
+    ): Row {
         const layout = this,
-            row = new Row(
-                layout,
-                options
-            );
+            row = new Row(layout, options, rowElement);
 
         layout.rows.push(row);
-
         return row;
     }
 }

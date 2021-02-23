@@ -23,6 +23,7 @@ class Dashboard {
     protected static readonly defaultOptions: Dashboard.Options = {
         gui: {
             enabled: true,
+            layoutOptions: {},
             layouts: []
         }
         // components: []
@@ -110,7 +111,7 @@ class Dashboard {
             dashboard.layouts.push(
                 new Layout(
                     dashboard,
-                    layoutsOptions[i]
+                    merge({}, options.gui.layoutOptions, layoutsOptions[i])
                 )
             );
         }
@@ -125,6 +126,7 @@ namespace Dashboard {
 
     export interface GUIOptions {
         enabled: boolean;
+        layoutOptions: Partial<Layout.Options>;
         layouts: Array<Layout.Options>;
     }
 }

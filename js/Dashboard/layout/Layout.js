@@ -20,13 +20,6 @@ var Layout = /** @class */ (function () {
     *
     * */
     Layout.prototype.setLayoutContainer = function () {
-        /*
-        * TODO
-        *
-        *
-        * 2. Create layout structure
-        *
-        */
         var layout = this, dashboard = layout.dashboard, renderer = layout.dashboard.renderer;
         if (dashboard.guiEnabled) {
             if (renderer) {
@@ -50,14 +43,25 @@ var Layout = /** @class */ (function () {
     };
     Layout.prototype.setRows = function () {
         var layout = this, rowsOptions = layout.options.rows || [];
-        var rowOptions;
-        for (var i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
-            rowOptions = rowsOptions[i];
-            layout.addRow(rowOptions);
+        var rowOptions, rowsElements, rowElement, i, iEnd;
+        if (layout.dashboard.guiEnabled) {
+            for (i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
+                rowOptions = rowsOptions[i];
+                layout.addRow(rowOptions);
+            }
+        }
+        else if (layout.container) {
+            rowsElements = layout.container.getElementsByClassName(layout.options.rowClassName);
+            for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
+                rowElement = rowsElements[i];
+                if (rowElement instanceof HTMLElement) { // @ToDo check if this is enough
+                    layout.addRow({}, rowElement);
+                }
+            }
         }
     };
-    Layout.prototype.addRow = function (options) {
-        var layout = this, row = new Row(layout, options);
+    Layout.prototype.addRow = function (options, rowElement) {
+        var layout = this, row = new Row(layout, options, rowElement);
         layout.rows.push(row);
         return row;
     };

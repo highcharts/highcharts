@@ -58,7 +58,7 @@ var Dashboard = /** @class */ (function () {
     Dashboard.prototype.setLayouts = function () {
         var dashboard = this, options = dashboard.options, layoutsOptions = options.gui.layouts;
         for (var i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
-            dashboard.layouts.push(new Layout(dashboard, layoutsOptions[i]));
+            dashboard.layouts.push(new Layout(dashboard, merge({}, options.gui.layoutOptions, layoutsOptions[i])));
         }
     };
     /* *
@@ -69,6 +69,7 @@ var Dashboard = /** @class */ (function () {
     Dashboard.defaultOptions = {
         gui: {
             enabled: true,
+            layoutOptions: {},
             layouts: []
         }
         // components: []

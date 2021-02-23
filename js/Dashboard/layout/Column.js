@@ -4,28 +4,35 @@ var Column = /** @class */ (function () {
     *  Constructors
     *
     * */
-    function Column(row, options) {
+    function Column(row, options, columnElement) {
         this.options = options;
         this.row = row;
-        this.setColumnContainer();
+        this.setColumnContainer(columnElement);
     }
     /* *
     *
     *  Functions
     *
     * */
-    Column.prototype.setColumnContainer = function () {
+    Column.prototype.setColumnContainer = function (columnElement) {
         var column = this, row = column.row, dashboard = row.layout.dashboard, renderer = dashboard.renderer;
+        // @ToDo use try catch block
         if (dashboard.guiEnabled) {
             if (renderer && row.container) {
                 // Generate column HTML structure
-                this.container = renderer.renderColumn(column, row.container);
+                column.container = renderer.renderColumn(column, row.container);
                 // render card HTML structure
-                renderer.renderCard(this.container);
+                renderer.renderCard(column.container);
             }
             else {
-                // this.container = from user gui
+                // Error
             }
+        }
+        else if (columnElement instanceof HTMLElement) { // @ToDo check if this is enough
+            column.container = columnElement;
+        }
+        else {
+            // Error
         }
     };
     return Column;

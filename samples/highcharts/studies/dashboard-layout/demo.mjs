@@ -38,16 +38,18 @@ console.log(dashboard);
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
     gui: {
         enabled: false,
-        layouts: [{
-            id: 'layout-bt-1', // mandatory
+        layoutOptions: {
             rowClassName: 'row', // optional
             columnClassName: 'col', // optional
             cardClassName: 'card' // optional
+        },
+        layouts: [{
+            id: 'layout-bt-1' // mandatory
         }, {
             id: 'layout-bt-2', // mandatory
-            rowClassName: 'row', // optional
-            columnClassName: 'col', // optional
-            cardClassName: 'card' // optional
+            rowClassName: 'row-test', // optional
+            columnClassName: 'col-test', // optional
+            cardClassName: 'card-test' // optional
         }]
     }
 });

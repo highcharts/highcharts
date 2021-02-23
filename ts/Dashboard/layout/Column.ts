@@ -10,12 +10,13 @@ class Column {
     * */
     public constructor(
         row: Row,
-        options: Column.Options
+        options: Column.Options,
+        columnElement?: HTMLElement
     ) {
         this.options = options;
         this.row = row;
 
-        this.setColumnContainer();
+        this.setColumnContainer(columnElement);
     }
 
     /* *
@@ -32,27 +33,32 @@ class Column {
     *
     * */
 
-    public setColumnContainer(): void {
+    public setColumnContainer(columnElement?: HTMLElement): void {
         const column = this,
             row = column.row,
             dashboard = row.layout.dashboard,
             renderer = dashboard.renderer;
 
+        // @ToDo use try catch block
         if (dashboard.guiEnabled) {
             if (renderer && row.container) {
                 // Generate column HTML structure
-                this.container = renderer.renderColumn(
+                column.container = renderer.renderColumn(
                     column,
                     row.container
                 );
 
                 // render card HTML structure
                 renderer.renderCard(
-                    this.container
+                    column.container
                 );
             } else {
-                // this.container = from user gui
+                // Error
             }
+        } else if (columnElement instanceof HTMLElement) { // @ToDo check if this is enough
+            column.container = columnElement;
+        } else {
+            // Error
         }
     }
 }
@@ -60,7 +66,7 @@ class Column {
 namespace Column {
     export interface Options {
         width?: number;
-        id: string;
+        id?: string;
     }
 }
 
