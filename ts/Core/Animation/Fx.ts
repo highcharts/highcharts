@@ -416,7 +416,9 @@ class Fx {
                 // For areas, the bottom path goes back again to the left, so we
                 // need to append a copy of the last point.
                 if (isArea) {
-                    arr.push(arr[arr.length - 1]);
+                    const z: any = arr.pop();
+
+                    arr.push(arr[arr.length - 1], z); // append point and the Z
                 }
             }
         }
