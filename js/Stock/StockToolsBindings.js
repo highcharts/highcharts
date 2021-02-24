@@ -791,9 +791,11 @@ var stockToolsBindings = {
                 draggable: 'y',
                 typeOptions: {
                     type: 'horizontalLine',
+                    xAxis: coordsX.axis.options.index,
+                    yAxis: coordsY.axis.options.index,
                     points: [{
-                            x: coords.xAxis[0].value,
-                            y: coords.yAxis[0].value
+                            x: coordsX.value,
+                            y: coordsY.value
                         }]
                 }
             }, navigation.annotationsOptions, navigation.bindings.horizontalLine.annotationsOptions);
