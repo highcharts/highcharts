@@ -347,6 +347,11 @@ QUnit.test('The currentPriceIndicator in StockTools, #15029.', function (assert)
         chart.series[0].lastVisiblePrice,
         'The lastVisiblePrice should not exist.'
     );
+    assert.strictEqual(
+        button.childNodes[0].style['background-image'].split('/')[6],
+        'current-price-hide.svg")',
+        'When the chart initialized with the price indicator, the button should show an icon to hide.'
+    );
 
     // Click the button in StockTools.
     chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
@@ -360,6 +365,11 @@ QUnit.test('The currentPriceIndicator in StockTools, #15029.', function (assert)
         chart.series[0].lastVisiblePrice,
         'The lastVisiblePrice should not exist.'
     );
+    assert.strictEqual(
+        button.childNodes[0].style['background-image'].split('/')[6],
+        'current-price-show.svg")',
+        'After a click, the button should suggest a possibility to show a price indicator.'
+    );
 
     // Click the button in StockTools once again.
     chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
@@ -372,6 +382,11 @@ QUnit.test('The currentPriceIndicator in StockTools, #15029.', function (assert)
     assert.ok(
         chart.series[0].lastVisiblePrice,
         'The lastVisiblePrice should exist.'
+    );
+    assert.strictEqual(
+        button.childNodes[0].style['background-image'].split('/')[6],
+        'current-price-hide.svg")',
+        'After the second click, the button should change again.'
     );
 
     chart.series[0].update({
@@ -389,5 +404,10 @@ QUnit.test('The currentPriceIndicator in StockTools, #15029.', function (assert)
     assert.notOk(
         chart.series[0].lastVisiblePrice,
         'The lastVisiblePrice should not exist.'
+    );
+    assert.strictEqual(
+        button.childNodes[0].style['background-image'].split('/')[6],
+        'current-price-show.svg")',
+        'After an update and click, the button should suggest a possibility to show a price indicator again.'
     );
 });

@@ -298,30 +298,6 @@ bindingsUtils.updateNthPoint = function (startIndex) {
         });
     };
 };
-/**
- * Check if any of the price indicators are enabled.
- * @private
- * @function bindingsUtils.isLastPriceEnabled
- *
- * @param {array} series
- *        Array of series.
- *
- * @return {string}
- *         Tells which indicator is enabled.
- */
-bindingsUtils.isPriceIndicatorEnabled = function (series) {
-    var priceIndicatorEnabled = '';
-    series.forEach(function (serie) {
-        var options = serie.options, lastVisiblePrice = options.lastVisiblePrice && options.lastVisiblePrice.enabled, lastPrice = options.lastPrice && options.lastPrice.enabled;
-        if (lastVisiblePrice || lastPrice) {
-            priceIndicatorEnabled = 'atLeastOneEnabled';
-        }
-        if (!lastVisiblePrice && !lastPrice) {
-            priceIndicatorEnabled = 'bothDisabled';
-        }
-    });
-    return priceIndicatorEnabled;
-};
 // Extends NavigationBindigs to support indicators and resizers:
 extend(NavigationBindings.prototype, {
     /* eslint-disable valid-jsdoc */
@@ -1618,8 +1594,8 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
-            var chart = this.chart, series = chart.series, priceIndicatorEnabled = this.chart.navigationBindings.utils.isPriceIndicatorEnabled(series), gui = chart.stockTools, iconsURL = gui.getIconsURL();
-            if (gui && gui.guiEnabled) {
+            var chart = this.chart, series = chart.series, priceIndicatorEnabled = chart.stockTools && chart.stockTools.isPriceIndicatorEnabled, gui = chart.stockTools, iconsURL = gui.getIconsURL();
+            if (gui && gui.guiEnabled && chart.stockTools) {
                 // Reset all and disable both indicators
                 if (priceIndicatorEnabled === 'atLeastOneEnabled') {
                     button.firstChild.style['background-image'] =
@@ -1635,6 +1611,7 @@ var stockToolsBindings = {
                             }
                         }, false);
                     });
+                    chart.stockTools.isPriceIndicatorEnabled = 'bothDisabled';
                 }
                 else if (priceIndicatorEnabled === 'bothDisabled') {
                     button.firstChild.style['background-image'] =
@@ -1653,6 +1630,7 @@ var stockToolsBindings = {
                             }
                         }, false);
                     });
+                    chart.stockTools.isPriceIndicatorEnabled = 'atLeastOneEnabled';
                 }
                 chart.redraw();
             }

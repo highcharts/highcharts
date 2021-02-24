@@ -799,11 +799,36 @@ var Toolbar = /** @class */ (function () {
         this.arrowDown = void 0;
         this.arrowUp = void 0;
         this.arrowWrapper = void 0;
+        this.isPriceIndicatorEnabled = void 0;
         this.listWrapper = void 0;
         this.showhideBtn = void 0;
         this.submenu = void 0;
         this.toolbar = void 0;
         this.wrapper = void 0;
+        /**
+         * Check if any of the price indicators are enabled.
+         * @private
+         * @function bindingsUtils.isLastPriceEnabled
+         *
+         * @param {array} series
+         *        Array of series.
+         *
+         * @return {string}
+         *         Tells which indicator is enabled.
+         */
+        this.checkIfPriceIndicatorEnabled = function (series) {
+            var priceIndicatorEnabled = '';
+            series.forEach(function (serie) {
+                var lastVisiblePrice = serie.lastVisiblePrice && serie.lastVisiblePrice.enabled, lastPrice = serie.lastPrice && serie.lastPrice.enabled;
+                if (lastVisiblePrice || lastPrice) {
+                    priceIndicatorEnabled = 'atLeastOneEnabled';
+                }
+                if (!lastVisiblePrice && !lastPrice) {
+                    priceIndicatorEnabled = 'bothDisabled';
+                }
+            });
+            return priceIndicatorEnabled;
+        };
         this.chart = chart;
         this.options = options;
         this.lang = langOptions;
@@ -988,6 +1013,14 @@ var Toolbar = /** @class */ (function () {
         else {
             mainButton.style['background-image'] = 'url(' +
                 this.iconsURL + btnOptions.symbol + ')';
+        }
+        // Change the initial button background if necessary.
+        if (btnName === 'currentPriceIndicator' && this.chart.options.series) {
+            this.isPriceIndicatorEnabled = this.checkIfPriceIndicatorEnabled(this.chart.options.series);
+            if (this.isPriceIndicatorEnabled === 'atLeastOneEnabled') {
+                mainButton.style['background-image'] =
+                    'url("' + this.iconsURL + 'current-price-hide.svg")';
+            }
         }
         return {
             buttonWrapper: buttonWrapper,

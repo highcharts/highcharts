@@ -17,6 +17,7 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
+import SeriesOptions from '../Core/Series/SeriesOptions';
 const {
     addEvent,
     createElement,
@@ -108,6 +109,7 @@ declare global {
             public eventsToUnbind: Array<Function>;
             public guiEnabled: (boolean|undefined);
             public iconsURL: string;
+            public isPriceEnabled: string;
             public lang: (Record<string, string>|undefined);
             public listWrapper: HTMLDOMElement;
             public options: StockToolsGuiOptions;
@@ -136,6 +138,7 @@ declare global {
                 buttonWrapper: HTMLDOMElement,
                 button: StockToolsGuiDefinitionsButtonsOptions
             ): void;
+            public checkIfPriceIndicatorEnabled(series: SeriesOptions): string;
             public createHTML(): void;
             public destroy(): void;
             public eraseActiveButtons(
@@ -1012,6 +1015,7 @@ class Toolbar {
     public eventsToUnbind: Array<Function>;
     public guiEnabled: (boolean|undefined);
     public iconsURL: string;
+    public isPriceIndicatorEnabled: string = void 0 as any;
     public lang: (Record<string, string>|undefined);
     public listWrapper: HTMLDOMElement = void 0 as any;
     public options: Highcharts.StockToolsGuiOptions;
@@ -1224,6 +1228,34 @@ class Toolbar {
         });
     }
     /**
+     * Check if any of the price indicators are enabled.
+     * @private
+     * @function bindingsUtils.isLastPriceEnabled
+     *
+     * @param {array} series
+     *        Array of series.
+     *
+     * @return {string}
+     *         Tells which indicator is enabled.
+     */
+    public checkIfPriceIndicatorEnabled = function (series: SeriesOptions[]): string {
+        let priceIndicatorEnabled: string = '';
+
+        series.forEach(function (serie): void {
+            const lastVisiblePrice = serie.lastVisiblePrice && serie.lastVisiblePrice.enabled,
+                lastPrice = serie.lastPrice && serie.lastPrice.enabled;
+
+            if (lastVisiblePrice || lastPrice) {
+                priceIndicatorEnabled = 'atLeastOneEnabled';
+            }
+
+            if (!lastVisiblePrice && !lastPrice) {
+                priceIndicatorEnabled = 'bothDisabled';
+            }
+        });
+        return priceIndicatorEnabled;
+    };
+    /**
      * Create single button. Consist of HTML elements `li`, `span`, and (if
      * exists) submenu container.
      * @private
@@ -1266,7 +1298,6 @@ class Toolbar {
             className: PREFIX + 'menu-item-btn'
         }, null as any, buttonWrapper);
 
-
         // submenu
         if (items && items.length) {
 
@@ -1281,6 +1312,16 @@ class Toolbar {
         } else {
             (mainButton.style as any)['background-image'] = 'url(' +
                 this.iconsURL + btnOptions.symbol + ')';
+        }
+
+        // Change the initial button background if necessary.
+        if (btnName === 'currentPriceIndicator' && this.chart.options.series) {
+            this.isPriceIndicatorEnabled = this.checkIfPriceIndicatorEnabled(this.chart.options.series);
+
+            if (this.isPriceIndicatorEnabled === 'atLeastOneEnabled') {
+                (mainButton as any).style['background-image'] =
+                'url("' + this.iconsURL + 'current-price-hide.svg")';
+            }
         }
 
         return {

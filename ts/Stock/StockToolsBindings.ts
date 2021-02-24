@@ -90,7 +90,6 @@ declare global {
         interface StockToolsNavigationBindingsUtilsObject extends NavigationBindingUtils {
             addFlagFromForm(this: NavigationBindings, type: string): Function;
             attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject;
-            isPriceIndicatorEnabled(series: Series[]): string;
             isNotNavigatorYAxis(axis: AxisType): boolean;
             manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
             updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
@@ -486,36 +485,6 @@ bindingsUtils.updateNthPoint = function (
             }
         });
     };
-};
-
-/**
- * Check if any of the price indicators are enabled.
- * @private
- * @function bindingsUtils.isLastPriceEnabled
- *
- * @param {array} series
- *        Array of series.
- *
- * @return {string}
- *         Tells which indicator is enabled.
- */
-bindingsUtils.isPriceIndicatorEnabled = function (series: Series[]): string {
-    let priceIndicatorEnabled: string = '';
-
-    series.forEach(function (serie): void {
-        const options = serie.options,
-            lastVisiblePrice = options.lastVisiblePrice && options.lastVisiblePrice.enabled,
-            lastPrice = options.lastPrice && options.lastPrice.enabled;
-
-        if (lastVisiblePrice || lastPrice) {
-            priceIndicatorEnabled = 'atLeastOneEnabled';
-        }
-
-        if (!lastVisiblePrice && !lastPrice) {
-            priceIndicatorEnabled = 'bothDisabled';
-        }
-    });
-    return priceIndicatorEnabled;
 };
 
 // Extends NavigationBindigs to support indicators and resizers:
@@ -2079,11 +2048,11 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         ): void {
             var chart = this.chart,
                 series = chart.series,
-                priceIndicatorEnabled = (this.chart.navigationBindings.utils as any).isPriceIndicatorEnabled(series),
+                priceIndicatorEnabled = chart.stockTools && chart.stockTools.isPriceIndicatorEnabled,
                 gui: Highcharts.Toolbar = chart.stockTools as any,
                 iconsURL = gui.getIconsURL();
 
-            if (gui && gui.guiEnabled) {
+            if (gui && gui.guiEnabled && chart.stockTools) {
                 // Reset all and disable both indicators
                 if (priceIndicatorEnabled === 'atLeastOneEnabled') {
                     (button.firstChild as any).style['background-image'] =
@@ -2100,6 +2069,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                             }
                         }, false);
                     });
+                    chart.stockTools.isPriceIndicatorEnabled = 'bothDisabled';
+
                 } else if (priceIndicatorEnabled === 'bothDisabled') {
                     (button.firstChild as any).style['background-image'] =
                             'url("' + iconsURL +
@@ -2118,6 +2089,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                             }
                         }, false);
                     });
+                    chart.stockTools.isPriceIndicatorEnabled = 'atLeastOneEnabled';
                 }
 
                 chart.redraw();
