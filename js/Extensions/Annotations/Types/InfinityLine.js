@@ -79,7 +79,7 @@ var InfinityLine = /** @class */ (function (_super) {
             firstPoint[xOrY]);
     };
     InfinityLine.findEdgePoint = function (firstPoint, secondPoint) {
-        var xAxis = firstPoint.series.xAxis, yAxis = secondPoint.series.yAxis, firstPointPixels = MockPoint.pointToPixels(firstPoint), secondPointPixels = MockPoint.pointToPixels(secondPoint), deltaX = secondPointPixels.x - firstPointPixels.x, deltaY = secondPointPixels.y - firstPointPixels.y, xAxisMin = xAxis.left, xAxisMax = xAxisMin + xAxis.width, yAxisMin = yAxis.top, yAxisMax = yAxisMin + yAxis.height, xLimit = deltaX < 0 ? xAxisMin : xAxisMax, yLimit = deltaY < 0 ? yAxisMin : yAxisMax, edgePoint = {
+        var chart = firstPoint.series.chart, xAxis = firstPoint.series.xAxis, yAxis = secondPoint.series.yAxis, firstPointPixels = MockPoint.pointToPixels(firstPoint), secondPointPixels = MockPoint.pointToPixels(secondPoint), deltaX = secondPointPixels.x - firstPointPixels.x, deltaY = secondPointPixels.y - firstPointPixels.y, xAxisMin = xAxis.left, xAxisMax = xAxisMin + xAxis.width, yAxisMin = yAxis.top, yAxisMax = yAxisMin + yAxis.height, xLimit = deltaX < 0 ? xAxisMin : xAxisMax, yLimit = deltaY < 0 ? yAxisMin : yAxisMax, edgePoint = {
             x: deltaX === 0 ? firstPointPixels.x : xLimit,
             y: deltaY === 0 ? firstPointPixels.y : yLimit
         }, edgePointX, edgePointY, swap;
@@ -95,8 +95,8 @@ var InfinityLine = /** @class */ (function (_super) {
                 edgePoint.y = yLimit;
             }
         }
-        edgePoint.x -= xAxisMin;
-        edgePoint.y -= yAxisMin;
+        edgePoint.x -= chart.plotLeft;
+        edgePoint.y -= chart.plotTop;
         if (firstPoint.series.chart.inverted) {
             swap = edgePoint.x;
             edgePoint.x = edgePoint.y;

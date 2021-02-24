@@ -10,7 +10,8 @@ import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
-    merge
+    merge,
+    pick
 } = U;
 
 /**
@@ -58,19 +59,17 @@ class VerticalLine extends Annotation {
         target: Highcharts.AnnotationControllable
     ): Highcharts.AnnotationMockPointOptionsObject {
         var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
+            chart = annotation.chart,
             point = annotation.points[0],
+            top = pick(point.series.yAxis?.top, 0),
+            offset = annotation.options.typeOptions.label.offset,
             xy = MockPoint.pointToPixels(point, true),
-            y = xy.y,
-            offset = annotation.options.typeOptions.label.offset;
-
-        if (annotation.chart.inverted) {
-            y = xy.x;
-        }
+            y = xy[chart.inverted ? 'x' : 'y'];
 
         return {
             x: point.x as any,
             xAxis: point.series.xAxis,
-            y: y + offset
+            y: y + offset + top - chart.plotTop
         };
     }
 
@@ -78,11 +77,13 @@ class VerticalLine extends Annotation {
         target: Highcharts.AnnotationControllable
     ): Highcharts.AnnotationMockPointOptionsObject {
         var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
+            chart = annotation.chart,
             typeOptions = annotation.options.typeOptions,
             point = annotation.points[0],
+            top = pick(point.series.yAxis?.top, 0),
             yOffset = typeOptions.yOffset,
             xy = MockPoint.pointToPixels(point, true),
-            y = xy[annotation.chart.inverted ? 'x' : 'y'];
+            y = xy[chart.inverted ? 'x' : 'y'];
 
         if (typeOptions.label.offset < 0) {
             yOffset *= -1;
@@ -91,7 +92,7 @@ class VerticalLine extends Annotation {
         return {
             x: point.x as any,
             xAxis: point.series.xAxis,
-            y: y + yOffset
+            y: y + yOffset + top - chart.plotTop
         };
     }
 
