@@ -60,7 +60,9 @@ Chart.prototype.adjustHeight = function () {
                     var clipRect = series.sharedClipKey &&
                         chart[series.sharedClipKey];
                     if (clipRect) {
-                        clipRect.attr({
+                        clipRect.attr(chart.inverted ? {
+                            width: chart.plotHeight
+                        } : {
                             height: chart.plotHeight
                         });
                     }

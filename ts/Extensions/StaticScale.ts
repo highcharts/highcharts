@@ -115,7 +115,9 @@ Chart.prototype.adjustHeight = function (): void {
                         (chart as any)[series.sharedClipKey];
 
                     if (clipRect) {
-                        clipRect.attr({
+                        clipRect.attr(chart.inverted ? {
+                            width: chart.plotHeight
+                        } : {
                             height: chart.plotHeight
                         });
                     }
