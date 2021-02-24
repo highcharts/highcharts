@@ -258,7 +258,11 @@ function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
 
     return Promise.all([
         new Promise((resolve, reject) => fs.writeFile(jsonPath,
-            JSON.stringify(parsedErrors, undefined, '\t').replace(/\n/g, EOL),
+            JSON.stringify(
+                parsedErrors,
+                undefined,
+                '\t'
+            ).replace(/\n/g, EOL),
             err => (err ? reject(err) : resolve())
         )),
         new Promise((resolve, reject) => fs.writeFile(modulePath, [
@@ -276,7 +280,11 @@ function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
                 '\'use strict\';',
                 ,
                 'const errorMessages: Record<string, Record<string, string>> = ' +
-                JSON.stringify(parsedErrors, undefined, '    ') +
+                JSON.stringify(
+                    parsedErrors,
+                    undefined,
+                    '    '
+                ).replace(/\n/g, EOL) +
                 ';',
                 ,
                 'export default errorMessages;'
@@ -284,7 +292,6 @@ function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
             err => (err ? reject(err) : resolve())
         ))
     ]);
-    
 }
 
 module.exports = function () {
