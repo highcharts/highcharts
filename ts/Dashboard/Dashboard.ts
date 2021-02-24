@@ -1,10 +1,10 @@
-import Layout from './layout/Layout.js';
-import Bindings from './layout/Bindings.js';
-import GUIRenderer from './layout/GUIRenderer.js';
+import Layout from './Layout/Layout.js';
+import Bindings from './Actions/Bindings.js';
+import GUIRenderer from './Layout/GUIRenderer.js';
 
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
-import { HTMLDOMElement } from '../Core/Renderer/DOMElementType.js';
+
 const {
     doc
 } = H;

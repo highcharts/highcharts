@@ -33,18 +33,6 @@ class GUIRenderer {
     *  Functions
     *
     * */
-
-    // @TODO add docs, improve it
-    public renderCard(container: HTMLDOMElement): HTMLDOMElement {
-        return createElement(
-            'div', {
-                // id: 'dashboard-row-1',
-                className: PREFIX + 'card'
-            },
-            {},
-            container
-        );
-    }
 }
 
 
