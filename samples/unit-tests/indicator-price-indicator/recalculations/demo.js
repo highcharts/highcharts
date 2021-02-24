@@ -332,7 +332,7 @@ QUnit.test('The currentPriceIndicator for multiple series, #14888.', function (a
                 gui: {
                     enabled: true,
                     buttons: [
-                        "currentPriceIndicator"
+                        'currentPriceIndicator'
                     ]
                 }
             },
@@ -357,36 +357,20 @@ QUnit.test('The currentPriceIndicator for multiple series, #14888.', function (a
     chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
         chart.navigationBindings, button);
 
-    assert.strictEqual(
-        chart.series[0].lastPrice.attr('stroke'),
-        chart.series[0].color,
-        'The first series lastPrice line should have color as series.'
-    );
-    assert.strictEqual(
-        chart.series[0].crossLabel.attr('fill'),
-        chart.series[0].color,
-        'The first series lastVisiblePrice label should have color as series.'
-    );
-    assert.strictEqual(
-        chart.series[1].lastPrice.attr('stroke'),
-        chart.series[1].color,
-        'Indicator lastPrice line should have color as series.'
-    );
-    assert.strictEqual(
-        chart.series[1].crossLabel.attr('fill'),
-        chart.series[1].color,
-        'Indicator lastVisiblePrice label should have color as series.'
-    );
-    assert.strictEqual(
-        chart.series[1].lastPrice.attr('stroke'),
-        chart.series[1].color,
-        'Volume lastPrice line should have color as series.'
-    );
-    assert.strictEqual(
-        chart.series[1].crossLabel.attr('fill'),
-        chart.series[1].color,
-        'Volume lastVisiblePrice label should have color as series.'
-    );
+    chart.series.forEach(function (serie) {
+        if (serie.options.id !== 'highcharts-navigator-series') {
+            assert.strictEqual(
+                serie.lastPrice.attr('stroke'),
+                serie.color,
+                'Each series lastPrice line should have color as series.'
+            );
+            assert.strictEqual(
+                serie.crossLabel.attr('fill'),
+                serie.color,
+                'Each series lastVisiblePrice label should have color as series.'
+            );
+        }
+    });
 
     chart.series[0].update({
         lastPrice: {

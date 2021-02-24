@@ -74,11 +74,13 @@ var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge;
 /* eslint-disable no-invalid-this */
 addEvent(Series, 'afterRender', function () {
     var series = this, seriesOptions = series.options, pointRange = seriesOptions.pointRange, lastVisiblePrice = seriesOptions.lastVisiblePrice, lastPrice = seriesOptions.lastPrice;
-    if ((lastVisiblePrice || lastPrice) &&
-        seriesOptions.id !== 'highcharts-navigator-series') {
+    if ((lastVisiblePrice || lastPrice) && seriesOptions.id !== 'highcharts-navigator-series') {
         var xAxis = series.xAxis, yAxis = series.yAxis, origOptions = yAxis.crosshair, origGraphic = yAxis.cross, origLabel = yAxis.crossLabel, points = series.points, yLength = series.yData.length, pLength = points.length, x = series.xData[series.xData.length - 1], y = series.yData[yLength - 1], lastPoint, yValue, crop;
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
+            yAxis.crosshair = yAxis.options.crosshair = merge({
+                color: series.color // default color from the series #14888
+            }, seriesOptions.lastPrice);
             yAxis.cross = series.lastPrice;
             yValue = isArray(y) ? y[3] : y;
             yAxis.drawCrosshair(null, ({
@@ -93,12 +95,10 @@ addEvent(Series, 'afterRender', function () {
                 series.lastPrice.y = yValue;
             }
         }
-        if (lastVisiblePrice &&
-            lastVisiblePrice.enabled &&
-            pLength > 0) {
+        if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
             crop = (points[pLength - 1].x === x) || pointRange === null ? 1 : 2;
             yAxis.crosshair = yAxis.options.crosshair = merge({
-                color: 'transparent'
+                color: 'transparent' // line invisible by default
             }, seriesOptions.lastVisiblePrice);
             yAxis.cross = series.lastVisiblePrice;
             lastPoint = points[pLength - crop];

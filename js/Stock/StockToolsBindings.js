@@ -1612,19 +1612,18 @@ var stockToolsBindings = {
                 serie.update({
                     // line
                     lastPrice: {
-                        enabled: !lastPrice,
-                        color: serie.options.lastPrice && serie.options.lastPrice.color || serie.color // #14888
+                        enabled: !lastPrice
                     },
                     // label
                     lastVisiblePrice: {
                         enabled: !lastVisiblePrice,
                         label: {
-                            enabled: true,
-                            color: serie.options.lastPrice && serie.options.lastPrice.color || serie.color // #14888
+                            enabled: true
                         }
                     }
-                });
+                }, false);
             });
+            chart.redraw();
             fireEvent(this, 'deselectButton', { button: button });
         }
     },

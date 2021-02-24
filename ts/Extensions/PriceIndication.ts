@@ -26,7 +26,6 @@ declare module '../Core/Series/SeriesLike' {
         lastVisiblePrice?: SVGElement;
         crossLabel?: SVGElement;
     }
-
 }
 
 declare module '../Core/Series/SeriesOptions' {
@@ -128,9 +127,7 @@ addEvent(Series, 'afterRender', function (): void {
         lastVisiblePrice = seriesOptions.lastVisiblePrice,
         lastPrice = seriesOptions.lastPrice;
 
-    if ((lastVisiblePrice || lastPrice) &&
-            seriesOptions.id !== 'highcharts-navigator-series') {
-
+    if ((lastVisiblePrice || lastPrice) && seriesOptions.id !== 'highcharts-navigator-series') {
         var xAxis = series.xAxis,
             yAxis = series.yAxis,
             origOptions = yAxis.crosshair,
@@ -146,8 +143,11 @@ addEvent(Series, 'afterRender', function (): void {
             crop;
 
         if (lastPrice && lastPrice.enabled) {
-
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
+
+            yAxis.crosshair = yAxis.options.crosshair = merge({
+                color: series.color // default color from the series #14888
+            }, seriesOptions.lastPrice);
 
             yAxis.cross = series.lastPrice;
             yValue = isArray(y) ? y[3] : y;
@@ -166,15 +166,11 @@ addEvent(Series, 'afterRender', function (): void {
             }
         }
 
-        if (lastVisiblePrice &&
-            lastVisiblePrice.enabled &&
-            pLength > 0
-        ) {
-
+        if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
             crop = (points[pLength - 1].x === x) || pointRange === null ? 1 : 2;
 
             yAxis.crosshair = yAxis.options.crosshair = merge({
-                color: 'transparent'
+                color: 'transparent' // line invisible by default
             }, seriesOptions.lastVisiblePrice);
 
             yAxis.cross = series.lastVisiblePrice;
