@@ -16,29 +16,6 @@ var GUIRenderer = /** @class */ (function () {
     *
     * */
     // @TODO add docs, improve it
-    GUIRenderer.prototype.renderLayout = function (container) {
-        return createElement('div', {
-            // id: 'dashboard-layout-1',
-            className: PREFIX + 'layout'
-        }, {}, container);
-    };
-    // @TODO add docs, improve it
-    GUIRenderer.prototype.renderRow = function (row, container) {
-        var layoutOptions = row.layout.options;
-        return createElement('div', {
-            id: row.options.id || '',
-            className: layoutOptions.rowClassName + ' ' + PREFIX + 'row'
-        }, {}, container);
-    };
-    // @TODO add docs, improve it
-    GUIRenderer.prototype.renderColumn = function (column, container) {
-        var layoutOptions = column.row.layout.options;
-        return createElement('div', {
-            id: column.options.id || '',
-            className: layoutOptions.columnClassName + ' ' + PREFIX + 'column'
-        }, {}, container);
-    };
-    // @TODO add docs, improve it
     GUIRenderer.prototype.renderCard = function (container) {
         return createElement('div', {
             // id: 'dashboard-row-1',

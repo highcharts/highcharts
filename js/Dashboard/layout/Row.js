@@ -1,43 +1,38 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Column from './Column.js';
-import U from '../../Core/Utilities.js';
-var error = U.error;
-var Row = /** @class */ (function () {
+import GUIElement from './GUIElement.js';
+var Row = /** @class */ (function (_super) {
+    __extends(Row, _super);
     /* *
     *
     *  Constructors
     *
     * */
     function Row(layout, options, rowElement) {
-        this.options = options;
-        this.layout = layout;
-        this.columns = [];
-        this.setRowContainer(rowElement);
-        this.setColumns();
+        var _this = _super.call(this, options) || this;
+        _this.layout = layout;
+        _this.columns = [];
+        _this.setElementContainer(layout.dashboard.guiEnabled, layout.container, rowElement);
+        _this.setColumns();
+        return _this;
     }
     /* *
     *
     *  Functions
     *
     * */
-    Row.prototype.setRowContainer = function (rowElement) {
-        var row = this, layout = row.layout, renderer = layout.dashboard.renderer;
-        // @ToDo use try catch block
-        if (layout.dashboard.guiEnabled && !rowElement) {
-            if (renderer && layout.container) {
-                // Generate row HTML structure.
-                row.container = renderer.renderRow(row, layout.container);
-            }
-            else {
-                // Error
-            }
-        }
-        else if (rowElement instanceof HTMLElement) { // @ToDo check if this is enough
-            row.container = rowElement;
-        }
-        else {
-            // Error
-        }
-    };
     /**
      * setColumns
      */
@@ -77,5 +72,5 @@ var Row = /** @class */ (function () {
         return column;
     };
     return Row;
-}());
+}(GUIElement));
 export default Row;

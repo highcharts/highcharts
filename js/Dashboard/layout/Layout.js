@@ -1,47 +1,39 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Row from './Row.js';
-import U from '../../Core/Utilities.js';
-var error = U.error;
-var Layout = /** @class */ (function () {
+import GUIElement from './GUIElement.js';
+var Layout = /** @class */ (function (_super) {
+    __extends(Layout, _super);
     /* *
     *
     *  Constructors
     *
     * */
     function Layout(dashboard, options) {
-        this.options = options;
-        this.dashboard = dashboard;
-        this.rows = [];
+        var _this = _super.call(this, options) || this;
+        _this.dashboard = dashboard;
+        _this.rows = [];
         // GUI structure
-        this.setLayoutContainer();
-        this.setRows();
+        _this.setElementContainer(dashboard.guiEnabled, dashboard.container);
+        _this.setRows();
+        return _this;
     }
     /* *
     *
     *  Functions
     *
     * */
-    Layout.prototype.setLayoutContainer = function () {
-        var layout = this, dashboard = layout.dashboard, renderer = layout.dashboard.renderer;
-        if (dashboard.guiEnabled) {
-            if (renderer) {
-                // Generate layout HTML structure.
-                this.container = renderer.renderLayout(layout.dashboard.container);
-            }
-            else {
-                // Throw an error - GUIRenderer module required!
-                error(33, true);
-            }
-        }
-        else {
-            var layoutId = layout.options.id;
-            if (layoutId) {
-                var layoutContainer = document.getElementById(layoutId);
-                if (layoutContainer) {
-                    this.container = layoutContainer;
-                }
-            }
-        }
-    };
     Layout.prototype.setRows = function () {
         var layout = this, rowsOptions = layout.options.rows || [];
         var rowOptions, rowsElements, rowElement, i, iEnd;
@@ -67,5 +59,5 @@ var Layout = /** @class */ (function () {
         return row;
     };
     return Layout;
-}());
+}(GUIElement));
 export default Layout;

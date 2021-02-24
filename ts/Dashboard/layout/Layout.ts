@@ -1,17 +1,8 @@
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
 import Row from './Row.js';
 import Dashboard from './../Dashboard.js';
-import Bindings from './Bindings.js';
+import GUIElement from './GUIElement.js';
 
-import U from '../../Core/Utilities.js';
-
-const {
-    error
-} = U;
-
-class Layout {
+class Layout extends GUIElement {
     /* *
     *
     *  Constructors
@@ -21,12 +12,13 @@ class Layout {
         dashboard: Dashboard,
         options: Layout.Options
     ) {
-        this.options = options;
+        super(options);
+
         this.dashboard = dashboard;
         this.rows = [];
 
         // GUI structure
-        this.setLayoutContainer();
+        this.setElementContainer(dashboard.guiEnabled, dashboard.container);
         this.setRows();
     }
 
@@ -35,44 +27,14 @@ class Layout {
     *  Properties
     *
     * */
-    public options: Layout.Options;
     public dashboard: Dashboard;
     public rows: Array<Row>;
-    public container?: HTMLDOMElement;
 
     /* *
     *
     *  Functions
     *
     * */
-    public setLayoutContainer(): void {
-        const layout = this,
-            dashboard = layout.dashboard,
-            renderer = layout.dashboard.renderer;
-
-        if (dashboard.guiEnabled) {
-            if (renderer) {
-                // Generate layout HTML structure.
-                this.container = renderer.renderLayout(
-                    layout.dashboard.container
-                );
-            } else {
-                // Throw an error - GUIRenderer module required!
-                error(33, true);
-            }
-        } else {
-            const layoutId = layout.options.id;
-
-            if (layoutId) {
-                const layoutContainer = document.getElementById(layoutId);
-
-                if (layoutContainer) {
-                    this.container = layoutContainer;
-                }
-            }
-        }
-    }
-
     public setRows(): void {
         const layout = this,
             rowsOptions = layout.options.rows || [];

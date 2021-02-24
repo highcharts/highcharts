@@ -1,15 +1,8 @@
-import type {
-    HTMLDOMElement
-} from '../../Core/Renderer/DOMElementType';
 import Layout from './Layout.js';
 import Column from './Column.js';
-import U from '../../Core/Utilities.js';
+import GUIElement from './GUIElement.js';
 
-const {
-    error
-} = U;
-
-class Row {
+class Row extends GUIElement {
     /* *
     *
     *  Constructors
@@ -20,11 +13,12 @@ class Row {
         options: Row.Options,
         rowElement?: HTMLElement
     ) {
-        this.options = options;
+        super(options);
+
         this.layout = layout;
         this.columns = [];
 
-        this.setRowContainer(rowElement);
+        this.setElementContainer(layout.dashboard.guiEnabled, layout.container, rowElement);
         this.setColumns();
     }
 
@@ -33,45 +27,22 @@ class Row {
     *  Properties
     *
     * */
-    public options: Row.Options;
     public layout: Layout;
     public columns: Array<Column>;
-    public container?: HTMLDOMElement;
 
     /* *
     *
     *  Functions
     *
     * */
-    public setRowContainer(rowElement?: HTMLElement): void {
-        const row = this,
-            layout = row.layout,
-            renderer = layout.dashboard.renderer;
 
-        // @ToDo use try catch block
-        if (layout.dashboard.guiEnabled && !rowElement) {
-            if (renderer && layout.container) {
-                // Generate row HTML structure.
-                row.container = renderer.renderRow(
-                    row,
-                    layout.container
-                );
-            } else {
-                // Error
-            }
-        } else if (rowElement instanceof HTMLElement) { // @ToDo check if this is enough
-            row.container = rowElement;
-        } else {
-            // Error
-        }
-    }
     /**
      * setColumns
      */
     public setColumns(): void {
         const row = this,
             layout = row.layout,
-            columnsOptions = row.options.columns || [];
+            columnsOptions = (row.options as any).columns || [];
 
         let columnOptions,
             columnsElements,

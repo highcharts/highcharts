@@ -1,40 +1,30 @@
-var Column = /** @class */ (function () {
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+import GUIElement from './GUIElement.js';
+var Column = /** @class */ (function (_super) {
+    __extends(Column, _super);
     /* *
     *
     *  Constructors
     *
     * */
     function Column(row, options, columnElement) {
-        this.options = options;
-        this.row = row;
-        this.setColumnContainer(columnElement);
+        var _this = _super.call(this, options) || this;
+        _this.row = row;
+        _this.setElementContainer(row.layout.dashboard.guiEnabled, row.container, columnElement);
+        return _this;
     }
-    /* *
-    *
-    *  Functions
-    *
-    * */
-    Column.prototype.setColumnContainer = function (columnElement) {
-        var column = this, row = column.row, dashboard = row.layout.dashboard, renderer = dashboard.renderer;
-        // @ToDo use try catch block
-        if (dashboard.guiEnabled) {
-            if (renderer && row.container) {
-                // Generate column HTML structure
-                column.container = renderer.renderColumn(column, row.container);
-                // render card HTML structure
-                renderer.renderCard(column.container);
-            }
-            else {
-                // Error
-            }
-        }
-        else if (columnElement instanceof HTMLElement) { // @ToDo check if this is enough
-            column.container = columnElement;
-        }
-        else {
-            // Error
-        }
-    };
     return Column;
-}());
+}(GUIElement));
 export default Column;
