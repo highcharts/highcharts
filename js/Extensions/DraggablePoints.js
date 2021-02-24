@@ -161,11 +161,11 @@ var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         },
         // Position handle at bottom if column is below threshold
         handlePositioner: function (point) {
-            var bBox = point.shapeArgs || point.graphic.getBBox();
+            var bBox = point.shapeArgs || point.graphic.getBBox(), bottom = (!point.series.yAxis.reversed && point.y >= (point.series.options.threshold || 0)) ||
+                (point.series.yAxis.reversed && point.y < (point.series.options.threshold || 0));
             return {
                 x: bBox.x,
-                y: point.y >= (point.series.options.threshold || 0) ?
-                    bBox.y : bBox.y + bBox.height
+                y: bottom ? bBox.y : bBox.y + bBox.height
             };
         },
         // Horizontal handle
