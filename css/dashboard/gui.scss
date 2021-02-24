@@ -52,7 +52,7 @@ body {
     width: 100%;
 }
 
-.highcharts-dashboard-card {
+.highcharts-dashboard-column > .highcharts-dashboard-component {
     position: relative;
     margin: 15px;
     padding: 15px;
@@ -64,7 +64,11 @@ body {
     border-radius: .25rem;
 }
 
-.highcharts-dashboard-card .title-wrapper {
+.highcharts-dashboard-component > * {
+    width: 100%;
+}
+
+.highcharts-dashboard-column > .highcharts-dashboard-component .title-wrapper {
     margin: 0px;
     padding-bottom: 15px;
     border-bottom: 1px solid rgba(26, 54, 126, 0.125);
@@ -215,7 +219,7 @@ ul.elem-menu li:first-child {
         flex: 1;
     }
 
-    .highcharts-dashboard-card {
+    .highcharts-dashboard-component {
         flex: 1;
     }
 }

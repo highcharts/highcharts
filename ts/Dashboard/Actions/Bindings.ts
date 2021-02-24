@@ -27,7 +27,7 @@ class Bindings {
     public addComponent(
         options: Bindings.ComponentType
     ): HTMLComponent|ChartComponent|undefined {
-        const compontentCard = document.querySelectorAll('#' + options.column + ' > .highcharts-dashboard-card')[0];
+        const compontentCard = document.getElementById(options.column);
 
         let component;
 
