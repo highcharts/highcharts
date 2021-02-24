@@ -11,6 +11,7 @@
 
 const fs = require('fs');
 const path = require('path').posix;
+const EOL = require('os').EOL;
 
 /* *
  *
@@ -257,7 +258,7 @@ function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
 
     return Promise.all([
         new Promise((resolve, reject) => fs.writeFile(jsonPath,
-            JSON.stringify(parsedErrors, undefined, '\t'),
+            JSON.stringify(parsedErrors, undefined, '\t').replace(/\n/g, EOL),
             err => (err ? reject(err) : resolve())
         )),
         new Promise((resolve, reject) => fs.writeFile(modulePath, [
@@ -279,7 +280,7 @@ function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
                 ';',
                 ,
                 'export default errorMessages;'
-        ].join('\n'),
+        ].join(EOL),
             err => (err ? reject(err) : resolve())
         ))
     ]);
