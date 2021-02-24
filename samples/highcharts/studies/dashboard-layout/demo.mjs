@@ -45,14 +45,14 @@ const dashboard = new Dashboard('container', {
         }
     }, {
         column: 'dashboard-col-1',
-        type: 'description',
+        type: 'html',
         config: {
             title: 'Sample layout 1',
             description: 'Lorem ipsum'
         }
     }, {
         column: 'dashboard-col-2',
-        type: 'chart',
+        type: 'group',
         events: {
             onLoad: function () {
                 // call action		
@@ -99,7 +99,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         }
     }, {
         column: 'chart-2',
-        type: 'description',
+        type: 'html',
         config: {
             title: 'Sample layout 1',
             description: 'Lorem ipsum'
