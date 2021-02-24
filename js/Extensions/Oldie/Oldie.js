@@ -514,10 +514,10 @@ if (!svg) {
                         '" />'
                     ];
                     shadow = createElement(renderer.prepVML(markup), null, {
-                        left: pInt(elemStyle.left) +
-                            pick(shadowOptions.offsetX, 1),
-                        top: pInt(elemStyle.top) +
-                            pick(shadowOptions.offsetY, 1)
+                        left: (pInt(elemStyle.left) +
+                            pick(shadowOptions.offsetX, 1)) + 'px',
+                        top: (pInt(elemStyle.top) +
+                            pick(shadowOptions.offsetY, 1)) + 'px'
                     });
                     if (cutOff) {
                         shadow.cutOff = strokeWidth + 1;
@@ -1122,10 +1122,10 @@ if (!svg) {
             var ren = this, parentStyle = parentNode.style, imgStyle = element.tagName === 'IMG' && element.style; // #1111
             css(element, {
                 flip: 'x',
-                left: pInt(parentStyle.width) -
-                    (imgStyle ? pInt(imgStyle.top) : 1),
-                top: pInt(parentStyle.height) -
-                    (imgStyle ? pInt(imgStyle.left) : 1),
+                left: (pInt(parentStyle.width) -
+                    (imgStyle ? pInt(imgStyle.top) : 1)) + 'px',
+                top: (pInt(parentStyle.height) -
+                    (imgStyle ? pInt(imgStyle.left) : 1)) + 'px',
                 rotation: -90
             });
             // Recursively invert child elements, needed for nested composite

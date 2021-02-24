@@ -15,7 +15,10 @@
  * */
 
 import type ColorType from '../../Color/ColorType';
-import type CSSObject from '../CSSObject';
+import type {
+    CSSObject,
+    CursorValue
+} from '../CSSObject';
 import DashStyleValue from '../DashStyleValue';
 import type SVGPath from './SVGPath';
 
@@ -41,7 +44,7 @@ export interface SVGAttributes {
     class?: string;
     'clip-path'?: string;
     clockwise?: number;
-    cursor?: string;
+    cursor?: CursorValue;
     cx?: number;
     cy?: number;
     d?: (string|SVGPath);

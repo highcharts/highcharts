@@ -214,13 +214,13 @@ const animate = function (
         fx = new Fx(el as any, opt as any, prop);
         end = void 0;
 
-        if (prop === 'd' && isArray(params.d)) {
+        if ((prop as any) === 'd' && isArray((params as any).d)) {
             fx.paths = fx.initPath(
                 el as any,
                 (el as any).pathArray,
-                params.d
+                (params as any).d
             );
-            fx.toD = params.d as any;
+            fx.toD = (params as any).d;
             start = 0;
             end = 1;
         } else if ((el as any).attr) {

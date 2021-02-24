@@ -358,10 +358,11 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
         var rotationStyle: CSSObject = {},
             cssTransformKey = this.renderer.getTransformKey();
 
-        rotationStyle[cssTransformKey] = rotationStyle.transform =
+        (rotationStyle as any)[cssTransformKey] = rotationStyle.transform =
             'rotate(' + rotation + 'deg)';
-        rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] =
-        rotationStyle.transformOrigin =
+        (rotationStyle as any)[
+            cssTransformKey + (isFirefox ? 'Origin' : '-origin')
+        ] = rotationStyle.transformOrigin =
             (alignCorrection * 100) + '% ' + baseline + 'px';
         css(this.element, rotationStyle);
     },

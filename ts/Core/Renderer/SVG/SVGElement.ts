@@ -1360,7 +1360,7 @@ class SVGElement {
         if (oldStyles) {
             objectEach(styles, function (style, n): void {
                 if (oldStyles && oldStyles[n] !== style) {
-                    newStyles[n] = style;
+                    (newStyles as any)[n] = style;
                     hasNew = true;
                 }
             });

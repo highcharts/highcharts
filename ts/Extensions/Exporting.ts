@@ -2480,7 +2480,7 @@ Chart.prototype.inlineStyles = function (): void {
                         (parentStyles as any)[prop] !== val ||
                         node.nodeName === 'svg'
                     ) &&
-                    defaultStyles[node.nodeName][prop] !== val
+                    (defaultStyles[node.nodeName] as any)[prop] !== val
                 ) {
                     // Attributes
                     if (
@@ -2538,10 +2538,10 @@ Chart.prototype.inlineStyles = function (): void {
             if (H.isFirefox || H.isMS) {
                 // Some browsers put lots of styles on the prototype
                 for (var p in styles) { // eslint-disable-line guard-for-in
-                    filterStyles(styles[p] as any, p);
+                    filterStyles((styles as any)[p], p);
                 }
             } else {
-                objectEach(styles, filterStyles);
+                objectEach(styles, filterStyles as any);
             }
 
             // Apply styles

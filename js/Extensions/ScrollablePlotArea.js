@@ -174,16 +174,16 @@ addEvent(Chart, 'render', function () {
  */
 Chart.prototype.setUpScrolling = function () {
     var _this = this;
-    var attribs = {
+    var css = {
         WebkitOverflowScrolling: 'touch',
         overflowX: 'hidden',
         overflowY: 'hidden'
     };
     if (this.scrollablePixelsX) {
-        attribs.overflowX = 'auto';
+        css.overflowX = 'auto';
     }
     if (this.scrollablePixelsY) {
-        attribs.overflowY = 'auto';
+        css.overflowY = 'auto';
     }
     // Insert a container with position relative
     // that scrolling and fixed container renders to (#10555)
@@ -195,7 +195,7 @@ Chart.prototype.setUpScrolling = function () {
     // Add the necessary divs to provide scrolling
     this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
-    }, attribs, this.scrollingParent);
+    }, css, this.scrollingParent);
     // On scroll, reset the chart position because it applies to the scrolled
     // container
     addEvent(this.scrollingContainer, 'scroll', function () {

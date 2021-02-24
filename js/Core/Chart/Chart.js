@@ -994,7 +994,7 @@ var Chart = /** @class */ (function () {
                 zIndex: 0,
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
                 userSelect: 'none' // #13503
-            }, optionsChart.style);
+            }, optionsChart.style || {});
         }
         /**
          * The containing HTML element of the chart. The container is

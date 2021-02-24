@@ -123,9 +123,9 @@ class SVGLabel extends SVGElement {
      *
      * @private
      * @name Highcharts.SVGLabel#textProps
-     * @type {Array<string>}
+     * @type {Array<keyof CSSObject>}
      */
-    public static textProps: Array<string> = [
+    public static textProps: Array<keyof CSSObject> = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
         'textOutline', 'textOverflow', 'width'
@@ -189,9 +189,9 @@ class SVGLabel extends SVGElement {
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
-            SVGLabel.textProps.forEach((prop: string): void => {
+            SVGLabel.textProps.forEach((prop): void => {
                 if (typeof styles[prop] !== 'undefined') {
-                    textStyles[prop] = styles[prop];
+                    (textStyles as any)[prop] = styles[prop];
                     delete styles[prop];
                 }
             });

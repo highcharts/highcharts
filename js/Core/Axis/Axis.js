@@ -2186,7 +2186,7 @@ var Axis = /** @class */ (function () {
             // #7028
             var cssWidth = (_a = labelOptions === null || labelOptions === void 0 ? void 0 : labelOptions.style) === null || _a === void 0 ? void 0 : _a.width;
             if (cssWidth !== void 0) {
-                return parseInt(cssWidth, 10);
+                return parseInt(String(cssWidth), 10);
             }
             if (marginLeft) {
                 return marginLeft - chart.spacing[3];

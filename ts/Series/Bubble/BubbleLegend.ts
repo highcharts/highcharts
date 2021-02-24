@@ -666,7 +666,7 @@ class BubbleLegend {
                 key !== 'fontSize' &&
                 key !== 'z-index'
             ) {
-                additionalLabelsStyle[key] = value;
+                (additionalLabelsStyle as any)[key] = value;
             }
         });
 
