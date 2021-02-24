@@ -1777,19 +1777,7 @@ class Tooltip {
                 leftMostBoxX = chartLeft + x;
             }
 
-            const adjustedValues: { x?: number; anchorX?: number } = {};
-            if (tooltip.outside) {
-                if (!isHeader && chartLeft + x < chartLeft) {
-                    adjustedValues.x = 0;
-                }
-                if (isHeader && leftMostBoxX < chartLeft) {
-                    const offset = chartLeft - leftMostBoxX;
-                    adjustedValues.anchorX = anchorX + offset;
-                }
-            }
-
-            // Put the label in place
-            box.tt.attr({
+            const attributes = {
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
                 x,
                 /* NOTE: y should equal pos to be consistent with !split
@@ -1800,13 +1788,23 @@ class Tooltip {
                 y: pos + distributionBoxTop,
                 anchorX,
                 anchorY
-            });
+            };
 
-            // Set the adjusted values.
-            // For an unknown reason, x cannot be set to 0 above
-            if (Object.keys(adjustedValues)) {
-                box.tt.attr(adjustedValues);
+            // Handle left-aligned tooltips overflowing the chart area
+            if (tooltip.outside) {
+                const offset = chartLeft - leftMostBoxX;
+                if (!isHeader && chartLeft + x < chartLeft) {
+                    attributes.x = x + offset;
+                    attributes.anchorX = anchorX + offset;
+                }
+                if (isHeader && leftMostBoxX < chartLeft) {
+                    attributes.x = offset;
+                    attributes.anchorX = anchorX + offset;
+                }
             }
+
+            // Put the label in place
+            box.tt.attr(attributes);
 
         });
 
