@@ -1594,15 +1594,14 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
-            var chart = this.chart, series = chart.series, priceIndicatorEnabled = chart.stockTools && chart.stockTools.isPriceIndicatorEnabled, gui = chart.stockTools, iconsURL = gui.getIconsURL();
+            var chart = this.chart, series = chart.series, priceIndicatorEnabled = chart.stockTools && chart.stockTools.priceIndicatorEnabled, gui = chart.stockTools, iconsURL = gui.getIconsURL();
             if (gui && gui.guiEnabled && chart.stockTools) {
                 // Reset all and disable both indicators
-                if (priceIndicatorEnabled === 'atLeastOneEnabled') {
+                if (priceIndicatorEnabled) {
                     button.firstChild.style['background-image'] =
-                        'url("' + iconsURL +
-                            'current-price-show.svg")';
-                    series.forEach(function (serie) {
-                        serie.update({
+                        'url("' + iconsURL + 'current-price-show.svg")';
+                    series.forEach(function (series) {
+                        series.update({
                             lastPrice: {
                                 enabled: false
                             },
@@ -1611,14 +1610,13 @@ var stockToolsBindings = {
                             }
                         }, false);
                     });
-                    chart.stockTools.isPriceIndicatorEnabled = 'bothDisabled';
+                    chart.stockTools.priceIndicatorEnabled = false;
                 }
-                else if (priceIndicatorEnabled === 'bothDisabled') {
+                else {
                     button.firstChild.style['background-image'] =
-                        'url("' + iconsURL +
-                            'current-price-hide.svg")';
-                    series.forEach(function (serie) {
-                        serie.update({
+                        'url("' + iconsURL + 'current-price-hide.svg")';
+                    series.forEach(function (series) {
+                        series.update({
                             lastPrice: {
                                 enabled: true
                             },
@@ -1630,7 +1628,7 @@ var stockToolsBindings = {
                             }
                         }, false);
                     });
-                    chart.stockTools.isPriceIndicatorEnabled = 'atLeastOneEnabled';
+                    chart.stockTools.priceIndicatorEnabled = true;
                 }
                 chart.redraw();
             }

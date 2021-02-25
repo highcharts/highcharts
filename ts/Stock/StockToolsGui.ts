@@ -109,7 +109,7 @@ declare global {
             public eventsToUnbind: Array<Function>;
             public guiEnabled: (boolean|undefined);
             public iconsURL: string;
-            public isPriceEnabled: string;
+            public priceIndicatorEnabled: boolean;
             public lang: (Record<string, string>|undefined);
             public listWrapper: HTMLDOMElement;
             public options: StockToolsGuiOptions;
@@ -138,7 +138,7 @@ declare global {
                 buttonWrapper: HTMLDOMElement,
                 button: StockToolsGuiDefinitionsButtonsOptions
             ): void;
-            public checkIfPriceIndicatorEnabled(series: SeriesOptions): string;
+            public isPriceIndicatorEnabled(series: SeriesOptions[]): boolean;
             public createHTML(): void;
             public destroy(): void;
             public eraseActiveButtons(
@@ -1015,7 +1015,7 @@ class Toolbar {
     public eventsToUnbind: Array<Function>;
     public guiEnabled: (boolean|undefined);
     public iconsURL: string;
-    public isPriceIndicatorEnabled: string = void 0 as any;
+    public priceIndicatorEnabled: boolean = false;
     public lang: (Record<string, string>|undefined);
     public listWrapper: HTMLDOMElement = void 0 as any;
     public options: Highcharts.StockToolsGuiOptions;
@@ -1238,19 +1238,19 @@ class Toolbar {
      * @return {string}
      *         Tells which indicator is enabled.
      */
-    public checkIfPriceIndicatorEnabled = function (series: SeriesOptions[]): string {
-        let priceIndicatorEnabled: string = '';
+    public isPriceIndicatorEnabled = function (series: SeriesOptions[]): boolean {
+        let priceIndicatorEnabled = false;
 
         series.forEach(function (serie): void {
             const lastVisiblePrice = serie.lastVisiblePrice && serie.lastVisiblePrice.enabled,
                 lastPrice = serie.lastPrice && serie.lastPrice.enabled;
 
             if (lastVisiblePrice || lastPrice) {
-                priceIndicatorEnabled = 'atLeastOneEnabled';
+                priceIndicatorEnabled = true;
             }
 
             if (!lastVisiblePrice && !lastPrice) {
-                priceIndicatorEnabled = 'bothDisabled';
+                priceIndicatorEnabled = false;
             }
         });
         return priceIndicatorEnabled;
@@ -1316,9 +1316,9 @@ class Toolbar {
 
         // Change the initial button background if necessary.
         if (btnName === 'currentPriceIndicator' && this.chart.options.series) {
-            this.isPriceIndicatorEnabled = this.checkIfPriceIndicatorEnabled(this.chart.options.series);
+            this.priceIndicatorEnabled = this.isPriceIndicatorEnabled(this.chart.options.series);
 
-            if (this.isPriceIndicatorEnabled === 'atLeastOneEnabled') {
+            if (this.priceIndicatorEnabled) {
                 (mainButton as any).style['background-image'] =
                 'url("' + this.iconsURL + 'current-price-hide.svg")';
             }

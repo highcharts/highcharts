@@ -799,7 +799,7 @@ var Toolbar = /** @class */ (function () {
         this.arrowDown = void 0;
         this.arrowUp = void 0;
         this.arrowWrapper = void 0;
-        this.isPriceIndicatorEnabled = void 0;
+        this.priceIndicatorEnabled = false;
         this.listWrapper = void 0;
         this.showhideBtn = void 0;
         this.submenu = void 0;
@@ -816,15 +816,15 @@ var Toolbar = /** @class */ (function () {
          * @return {string}
          *         Tells which indicator is enabled.
          */
-        this.checkIfPriceIndicatorEnabled = function (series) {
-            var priceIndicatorEnabled = '';
+        this.isPriceIndicatorEnabled = function (series) {
+            var priceIndicatorEnabled = false;
             series.forEach(function (serie) {
                 var lastVisiblePrice = serie.lastVisiblePrice && serie.lastVisiblePrice.enabled, lastPrice = serie.lastPrice && serie.lastPrice.enabled;
                 if (lastVisiblePrice || lastPrice) {
-                    priceIndicatorEnabled = 'atLeastOneEnabled';
+                    priceIndicatorEnabled = true;
                 }
                 if (!lastVisiblePrice && !lastPrice) {
-                    priceIndicatorEnabled = 'bothDisabled';
+                    priceIndicatorEnabled = false;
                 }
             });
             return priceIndicatorEnabled;
@@ -1016,8 +1016,8 @@ var Toolbar = /** @class */ (function () {
         }
         // Change the initial button background if necessary.
         if (btnName === 'currentPriceIndicator' && this.chart.options.series) {
-            this.isPriceIndicatorEnabled = this.checkIfPriceIndicatorEnabled(this.chart.options.series);
-            if (this.isPriceIndicatorEnabled === 'atLeastOneEnabled') {
+            this.priceIndicatorEnabled = this.isPriceIndicatorEnabled(this.chart.options.series);
+            if (this.priceIndicatorEnabled) {
                 mainButton.style['background-image'] =
                     'url("' + this.iconsURL + 'current-price-hide.svg")';
             }

@@ -2048,19 +2048,18 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         ): void {
             var chart = this.chart,
                 series = chart.series,
-                priceIndicatorEnabled = chart.stockTools && chart.stockTools.isPriceIndicatorEnabled,
+                priceIndicatorEnabled = chart.stockTools && chart.stockTools.priceIndicatorEnabled,
                 gui: Highcharts.Toolbar = chart.stockTools as any,
                 iconsURL = gui.getIconsURL();
 
             if (gui && gui.guiEnabled && chart.stockTools) {
                 // Reset all and disable both indicators
-                if (priceIndicatorEnabled === 'atLeastOneEnabled') {
+                if (priceIndicatorEnabled) {
                     (button.firstChild as any).style['background-image'] =
-                            'url("' + iconsURL +
-                            'current-price-show.svg")';
+                            'url("' + iconsURL + 'current-price-show.svg")';
 
-                    series.forEach(function (serie): void {
-                        serie.update({
+                    series.forEach(function (series): void {
+                        series.update({
                             lastPrice: {
                                 enabled: false
                             },
@@ -2069,15 +2068,13 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                             }
                         }, false);
                     });
-                    chart.stockTools.isPriceIndicatorEnabled = 'bothDisabled';
+                    chart.stockTools.priceIndicatorEnabled = false;
 
-                } else if (priceIndicatorEnabled === 'bothDisabled') {
+                } else {
                     (button.firstChild as any).style['background-image'] =
-                            'url("' + iconsURL +
-                            'current-price-hide.svg")';
-
-                    series.forEach(function (serie): void {
-                        serie.update({
+                            'url("' + iconsURL + 'current-price-hide.svg")';
+                    series.forEach(function (series): void {
+                        series.update({
                             lastPrice: {
                                 enabled: true
                             },
@@ -2089,7 +2086,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                             }
                         }, false);
                     });
-                    chart.stockTools.isPriceIndicatorEnabled = 'atLeastOneEnabled';
+                    chart.stockTools.priceIndicatorEnabled = true;
                 }
 
                 chart.redraw();
