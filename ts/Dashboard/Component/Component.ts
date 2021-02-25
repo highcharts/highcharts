@@ -280,7 +280,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         this.dimensions.width = dimensions.width.value;
 
         this.element.style.width = dimensions.width.value + dimensions.width.type;
-        this.element.style.height = dimensions.height + dimensions.height.type;
+        this.element.style.height = dimensions.height.value + dimensions.height.type;
 
         fireEvent(this, 'resize', {
             width,
