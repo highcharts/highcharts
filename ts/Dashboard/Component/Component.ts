@@ -242,10 +242,45 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         return this;
     }
 
-    public resize(width: number, height: number): this {
-        this.dimensions = { width, height };
-        this.element.style.width = this.dimensions.width + 'px';
-        this.element.style.height = this.dimensions.height + 'px';
+    public resize(
+        width: number | string = this.dimensions.width,
+        height: number | string = this.dimensions.height
+    ): this {
+        const percentageRegex = /\%$/;
+        const dimensions: Record<'width' | 'height', {
+            value: number; type: 'px' | '%';
+        }> = {
+            width: { value: 0, type: 'px' },
+            height: { value: 0, type: 'px' }
+        };
+
+        if (typeof width === 'string') {
+            if (width.match(percentageRegex)) {
+                dimensions.width.value = Number(width.replace(percentageRegex, ''));
+                dimensions.width.type = '%';
+            }
+            // Perhaps somewhat naive
+            dimensions.width.value = Number(width.replace('px', ''));
+        } else {
+            dimensions.width.value = width;
+        }
+
+        if (typeof height === 'string') {
+            if (height.match(percentageRegex)) {
+                dimensions.height.value = Number(height.replace(percentageRegex, ''));
+                dimensions.height.type = '%';
+            }
+            // Perhaps somewhat naive
+            dimensions.height.value = Number(height.replace('px', ''));
+        } else {
+            dimensions.height.value = height;
+        }
+
+        this.dimensions.height = dimensions.height.value;
+        this.dimensions.width = dimensions.width.value;
+
+        this.element.style.width = dimensions.width.value + dimensions.width.type;
+        this.element.style.height = dimensions.height.value + dimensions.height.type;
 
         fireEvent(this, 'resize', {
             width,
@@ -316,6 +351,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         if (!this.hasLoaded) {
             this.load();
         }
+        this.resize();
 
         const e = {
             component: this

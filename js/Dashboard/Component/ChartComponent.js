@@ -69,7 +69,7 @@ var ChartComponent = /** @class */ (function (_super) {
         // Extend via event.
         _this.on('resize', function (e) {
             if (_this.chart) {
-                _this.chart.setSize(e.width, e.height);
+                _this.chart.setSize(_this.dimensions.width, _this.dimensions.height);
             }
         });
         var table = (_a = _this.store) === null || _a === void 0 ? void 0 : _a.table;
