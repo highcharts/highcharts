@@ -167,7 +167,7 @@ var NavigationBindings = /** @class */ (function () {
         [].forEach.call(bindingsContainer, function (subContainer) {
             navigation.eventsToUnbind.push(addEvent(subContainer, 'click', function (event) {
                 var bindings = navigation.getButtonEvents(subContainer, event);
-                if (bindings) {
+                if (bindings && bindings.button.className.indexOf('highcharts-disabled-btn') === -1) {
                     navigation.bindingsButtonClick(bindings.button, bindings.events, event);
                 }
             }));
@@ -1035,6 +1035,43 @@ setOptions({
                 defer: 0
             }
         }
+    }
+});
+addEvent(H.Chart, 'render', function () {
+    var chart = this, navigationBindings = chart.navigationBindings, disabledClassName = 'highcharts-disabled-btn';
+    if (chart && navigationBindings) {
+        // check if the buttons should be enabled/disabled based on
+        // visible series
+        var buttonsEnabled_1 = false;
+        this.series.forEach(function (series) {
+            if (!series.navigatorSeries && series.visible) {
+                buttonsEnabled_1 = true;
+            }
+        });
+        objectEach(navigationBindings.boundClassNames, function (value, key) {
+            // get the HTML element coresponding to the
+            // className taken from StockToolsBindings
+            if (chart.stockTools && chart.stockTools.toolbar) {
+                var buttonNode = chart.stockTools.toolbar.querySelectorAll('.' + key);
+                if (buttonNode) {
+                    if (!buttonsEnabled_1 && !value.alwaysEnabled) {
+                        buttonNode.forEach(function (button) {
+                            if (button.className.indexOf(disabledClassName) === -1) {
+                                button.className += ' ' + disabledClassName;
+                            }
+                        });
+                    }
+                    else if (buttonsEnabled_1) {
+                        buttonNode.forEach(function (button) {
+                            // enable all buttons by deleting the className
+                            if (button.className.indexOf(disabledClassName) !== -1) {
+                                button.classList.remove(disabledClassName);
+                            }
+                        });
+                    }
+                }
+            }
+        });
     }
 });
 addEvent(NavigationBindings, 'closePopup', function () {

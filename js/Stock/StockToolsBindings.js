@@ -1021,6 +1021,7 @@ var stockToolsBindings = {
     measureY: {
         /** @ignore-option */
         className: 'highcharts-measure-y',
+        alwaysEnabled: true,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
@@ -1572,6 +1573,7 @@ var stockToolsBindings = {
     fullScreen: {
         /** @ignore-option */
         className: 'highcharts-full-screen',
+        alwaysEnabled: true,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
@@ -1696,11 +1698,12 @@ var stockToolsBindings = {
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-save-chart", "init": function() {}}
+     * @default {"className": "highcharts-save-chart", alwaysEnabled: true, "init": function() {}}
      */
     saveChart: {
         /** @ignore-option */
         className: 'highcharts-save-chart',
+        alwaysEnabled: true,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {

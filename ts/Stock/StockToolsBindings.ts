@@ -735,7 +735,7 @@ extend(NavigationBindings.prototype, {
  * @since        7.0.0
  * @optionparent navigation.bindings
  */
-var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObject> = {
+var stockToolsBindings: any = {
     // Line type annotations:
     /**
      * A segment annotation bindings. Includes `start` and one event in `steps`
@@ -1352,6 +1352,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
     measureY: {
         /** @ignore-option */
         className: 'highcharts-measure-y',
+        alwaysEnabled: true,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): Annotation {
@@ -2014,6 +2015,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
     fullScreen: {
         /** @ignore-option */
         className: 'highcharts-full-screen',
+        alwaysEnabled: true,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (
@@ -2185,11 +2187,12 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-save-chart", "init": function() {}}
+     * @default {"className": "highcharts-save-chart", alwaysEnabled: true, "init": function() {}}
      */
     saveChart: {
         /** @ignore-option */
         className: 'highcharts-save-chart',
+        alwaysEnabled: true,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (

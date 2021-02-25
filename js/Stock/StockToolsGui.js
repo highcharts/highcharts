@@ -722,6 +722,13 @@ setOptions({
                 },
                 fullScreen: {
                     /**
+                     * flag defining if the button should be active
+                     * when all series are invisible
+                     *
+                     * @type {boolean}
+                     */
+                    keepDisplayed: true,
+                    /**
                      * A predefined background symbol for the button.
                      *
                      * @type   {string}
@@ -729,6 +736,13 @@ setOptions({
                     symbol: 'fullscreen.svg'
                 },
                 saveChart: {
+                    /**
+                     * flag defining if the button should be active
+                     * when all series are invisible
+                     *
+                     * @type {boolean}
+                     */
+                    keepDisplayed: true,
                     /**
                      * A predefined background symbol for the button.
                      *
@@ -1138,6 +1152,10 @@ var Toolbar = /** @class */ (function () {
         var buttonWrapper = button.parentNode, buttonWrapperClass = buttonWrapper.classList.value, 
         // main button in first level og GUI
         mainNavButton = buttonWrapper.parentNode.parentNode;
+        // if the button is disabled, don't do anything
+        if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
+            return;
+        }
         // set class
         mainNavButton.className = '';
         if (buttonWrapperClass) {
