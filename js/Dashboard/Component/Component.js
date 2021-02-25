@@ -32,7 +32,7 @@ var Component = /** @class */ (function () {
         this.store = this.options.store;
         this.hasLoaded = false;
         // Initial dimensions
-        this.dimensions = this.options.dimensions || {
+        this.dimensions = {
             width: this.parentElement.scrollWidth,
             height: this.parentElement.scrollHeight
         };
@@ -261,10 +261,12 @@ var Component = /** @class */ (function () {
      * @return {this}
      */
     Component.prototype.render = function () {
+        var _a, _b;
         if (!this.hasLoaded) {
             this.load();
+            // Call resize to set the sizes
+            this.resize((_a = this.options.dimensions) === null || _a === void 0 ? void 0 : _a.width, (_b = this.options.dimensions) === null || _b === void 0 ? void 0 : _b.height);
         }
-        this.resize();
         var e = {
             component: this
         };
@@ -317,7 +319,7 @@ var Component = /** @class */ (function () {
             store: (_a = this.store) === null || _a === void 0 ? void 0 : _a.toJSON(),
             options: {
                 parentElement: this.parentElement.id,
-                dimensions: this.options.dimensions,
+                dimensions: this.dimensions,
                 type: this.options.type,
                 id: this.options.id || this.id
             }

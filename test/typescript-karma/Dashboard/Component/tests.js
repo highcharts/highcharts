@@ -326,3 +326,102 @@ test('ChartComponent constructors', function (assert) {
 
     })
 });
+
+only('component resizing', function(assert) {
+
+    const parent = document.createElement('div');
+    parent.id = 'test';
+    parent.style.width = '1000px';
+    parent.style.height = '500px';
+
+    document.body.appendChild(parent)
+
+    const component = new HTMLComponent({
+        parentElement: parent
+    }).render()
+    assert.deepEqual(
+        {
+            width: component.element.style.width,
+            height: component.element.style.height
+        },
+        {
+            width: parent.style.width,
+            height: parent.style.height
+        },
+        'Component with no dimensional options sets size to parent element'
+    );
+
+    component.resize(200)
+    assert.deepEqual(
+        {
+            width: component.element.style.width,
+            height: component.element.style.height
+        },
+        {
+            width: '200px',
+            height: parent.style.height
+        },
+        'Should be able to update just the width'
+    );
+
+    component.resize(undefined, 300)
+
+    assert.deepEqual(
+        {
+            width: component.element.style.width,
+            height: component.element.style.height
+        },
+        {
+            width: '200px',
+            height: '300px'
+        },
+        'Should be able to update just the height'
+    );
+
+    component.destroy();
+
+    const widthComponent = new HTMLComponent({
+        parentElement: parent,
+        dimensions: {
+            width: '100'
+        }
+    }).render();
+    assert.strictEqual(widthComponent.dimensions.width, 100)
+    assert.strictEqual(widthComponent.dimensions.height, parent.scrollHeight)
+
+    widthComponent.destroy()
+
+    const heightComponent = new HTMLComponent({
+        parentElement: parent,
+        dimensions: {
+            height: '100'
+        }
+    }).render();
+    assert.strictEqual(heightComponent.dimensions.width, parent.scrollWidth)
+    assert.strictEqual(heightComponent.dimensions.height, 100)
+
+    heightComponent.destroy()
+
+    const emptyDimensions = new HTMLComponent({
+        parentElement: parent,
+        dimensions: {}
+    }).render();
+    assert.strictEqual(emptyDimensions.dimensions.width, parent.scrollWidth)
+    assert.strictEqual(emptyDimensions.element.style.height, parent.style.height)
+
+    emptyDimensions.destroy();
+
+    // const percentageDimensions = new HTMLComponent({
+    //     parentElement: parent,
+    //     dimensions: {
+    //         width: '50%',
+    //         height: '50%'
+    //     }
+    // }).render();
+    // assert.strictEqual(percentageDimensions.dimensions.width, parent.scrollWidth / 2)
+    // assert.strictEqual(percentageDimensions.dimensions.height, parent.scrollHeight / 2 )
+    //
+    // percentageDimensions.destroy();
+
+
+})
