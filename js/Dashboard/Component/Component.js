@@ -170,9 +170,39 @@ var Component = /** @class */ (function () {
         return this;
     };
     Component.prototype.resize = function (width, height) {
-        this.dimensions = { width: width, height: height };
-        this.element.style.width = this.dimensions.width + 'px';
-        this.element.style.height = this.dimensions.height + 'px';
+        if (width === void 0) { width = this.dimensions.width; }
+        if (height === void 0) { height = this.dimensions.height; }
+        var percentageRegex = /\%$/;
+        var dimensions = {
+            width: { value: 0, type: 'px' },
+            height: { value: 0, type: 'px' }
+        };
+        if (typeof width === 'string') {
+            if (width.match(percentageRegex)) {
+                dimensions.width.value = Number(width.replace(percentageRegex, ''));
+                dimensions.width.type = '%';
+            }
+            // Perhaps somewhat naive
+            dimensions.width.value = Number(width.replace('px', ''));
+        }
+        else {
+            dimensions.width.value = width;
+        }
+        if (typeof height === 'string') {
+            if (height.match(percentageRegex)) {
+                dimensions.height.value = Number(height.replace(percentageRegex, ''));
+                dimensions.height.type = '%';
+            }
+            // Perhaps somewhat naive
+            dimensions.height.value = Number(height.replace('px', ''));
+        }
+        else {
+            dimensions.height.value = height;
+        }
+        this.dimensions.height = dimensions.height.value;
+        this.dimensions.width = dimensions.width.value;
+        this.element.style.width = dimensions.width.value + dimensions.width.type;
+        this.element.style.height = dimensions.height + dimensions.height.type;
         fireEvent(this, 'resize', {
             width: width,
             height: height
@@ -234,6 +264,7 @@ var Component = /** @class */ (function () {
         if (!this.hasLoaded) {
             this.load();
         }
+        this.resize();
         var e = {
             component: this
         };
