@@ -1021,7 +1021,6 @@ var stockToolsBindings = {
     measureY: {
         /** @ignore-option */
         className: 'highcharts-measure-y',
-        alwaysEnabled: true,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (e) {
