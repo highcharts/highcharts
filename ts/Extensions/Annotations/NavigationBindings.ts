@@ -92,6 +92,7 @@ declare global {
             init?: Function;
             start?: Function;
             steps?: Array<Function>;
+            alwaysEnabled?: boolean;
         }
         interface NavigationBindingsUtilsObject {
             getFieldType(value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text');

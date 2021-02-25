@@ -55,7 +55,6 @@ declare global {
         }
         interface StockToolsGuiDefinitionsButtonOptions {
             symbol?: string;
-            keepDisplayed?: boolean;
         }
         interface StockToolsGuiDefinitionsButtonsOptions {
             [key: string]: (Array<string>|StockToolsGuiDefinitionsButtonOptions);
@@ -883,13 +882,6 @@ setOptions({
                 },
                 fullScreen: {
                     /**
-                     * flag defining if the button should be active
-                     * when all series are invisible
-                     *
-                     * @type {boolean}
-                     */
-                    keepDisplayed: true,
-                    /**
                      * A predefined background symbol for the button.
                      *
                      * @type   {string}
@@ -897,13 +889,6 @@ setOptions({
                     symbol: 'fullscreen.svg'
                 },
                 saveChart: {
-                    /**
-                     * flag defining if the button should be active
-                     * when all series are invisible
-                     *
-                     * @type {boolean}
-                     */
-                    keepDisplayed: true,
                     /**
                      * A predefined background symbol for the button.
                      *

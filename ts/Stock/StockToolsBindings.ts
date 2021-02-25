@@ -735,7 +735,7 @@ extend(NavigationBindings.prototype, {
  * @since        7.0.0
  * @optionparent navigation.bindings
  */
-var stockToolsBindings: any = {
+var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObject> = {
     // Line type annotations:
     /**
      * A segment annotation bindings. Includes `start` and one event in `steps`
@@ -1352,7 +1352,6 @@ var stockToolsBindings: any = {
     measureY: {
         /** @ignore-option */
         className: 'highcharts-measure-y',
-        alwaysEnabled: true,
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): Annotation {
