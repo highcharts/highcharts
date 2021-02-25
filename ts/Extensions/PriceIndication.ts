@@ -127,7 +127,10 @@ addEvent(Series, 'afterRender', function (): void {
         lastVisiblePrice = seriesOptions.lastVisiblePrice,
         lastPrice = seriesOptions.lastPrice;
 
-    if ((lastVisiblePrice || lastPrice) && seriesOptions.id !== 'highcharts-navigator-series') {
+    if (
+        (lastVisiblePrice || lastPrice) &&
+         seriesOptions.id !== 'highcharts-navigator-series'
+    ) {
         var xAxis = series.xAxis,
             yAxis = series.yAxis,
             origOptions = yAxis.crosshair,

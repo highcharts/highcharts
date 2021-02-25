@@ -2069,8 +2069,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 }
             }
 
-            series.forEach(function (serie): void {
-                serie.update({
+            series.forEach(function (series): void {
+                series.update({
                     // line
                     lastPrice: {
                         enabled: !lastPrice

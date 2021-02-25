@@ -331,9 +331,7 @@ QUnit.test('The currentPriceIndicator for multiple series, #14888.', function (a
             stockTools: {
                 gui: {
                     enabled: true,
-                    buttons: [
-                        'currentPriceIndicator'
-                    ]
+                    buttons: ['currentPriceIndicator']
                 }
             },
             series: [{
@@ -357,17 +355,17 @@ QUnit.test('The currentPriceIndicator for multiple series, #14888.', function (a
     chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
         chart.navigationBindings, button);
 
-    chart.series.forEach(function (serie) {
-        if (serie.options.id !== 'highcharts-navigator-series') {
+    chart.series.forEach(function (series) {
+        if (series.options.id !== 'highcharts-navigator-series') {
             assert.strictEqual(
-                serie.lastPrice.attr('stroke'),
-                serie.color,
-                'Each series lastPrice line should have color as series.'
+                series.lastPrice.attr('stroke'),
+                series.color,
+                'Each series\' lastPrice line should have color as series.'
             );
             assert.strictEqual(
-                serie.crossLabel.attr('fill'),
-                serie.color,
-                'Each series lastVisiblePrice label should have color as series.'
+                series.crossLabel.attr('fill'),
+                series.color,
+                'Each series\' lastVisiblePrice label should have color as series.'
             );
         }
     });

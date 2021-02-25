@@ -1608,8 +1608,8 @@ var stockToolsBindings = {
                             'current-price-hide.svg")';
                 }
             }
-            series.forEach(function (serie) {
-                serie.update({
+            series.forEach(function (series) {
+                series.update({
                     // line
                     lastPrice: {
                         enabled: !lastPrice

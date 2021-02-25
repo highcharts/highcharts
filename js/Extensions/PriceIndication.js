@@ -74,7 +74,8 @@ var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge;
 /* eslint-disable no-invalid-this */
 addEvent(Series, 'afterRender', function () {
     var series = this, seriesOptions = series.options, pointRange = seriesOptions.pointRange, lastVisiblePrice = seriesOptions.lastVisiblePrice, lastPrice = seriesOptions.lastPrice;
-    if ((lastVisiblePrice || lastPrice) && seriesOptions.id !== 'highcharts-navigator-series') {
+    if ((lastVisiblePrice || lastPrice) &&
+        seriesOptions.id !== 'highcharts-navigator-series') {
         var xAxis = series.xAxis, yAxis = series.yAxis, origOptions = yAxis.crosshair, origGraphic = yAxis.cross, origLabel = yAxis.crossLabel, points = series.points, yLength = series.yData.length, pLength = points.length, x = series.xData[series.xData.length - 1], y = series.yData[yLength - 1], lastPoint, yValue, crop;
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
