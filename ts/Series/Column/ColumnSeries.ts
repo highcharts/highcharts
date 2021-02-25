@@ -962,7 +962,7 @@ class ColumnSeries extends Series {
                         yAxis.pos - chart.plotLeft,
                         yAxis.len + yAxis.pos - chart.plotLeft
                     ),
-                    xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
+                    xAxis.len + xAxis.pos - chart.plotTop - barX - barW / 2,
                     barH
                 ] :
                 [
