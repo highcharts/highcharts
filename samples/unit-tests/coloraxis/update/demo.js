@@ -93,11 +93,6 @@ QUnit.test('Color axis update (#3207)', function (assert) {
         ]
     });
 
-    assert.notOk(
-        Array.isArray(chart.options.colorAxis),
-        'chart.options.colorAxis should not be an array'
-    );
-
     assert.equal(
         chart.series[0].points[1].color,
         'black',
@@ -119,6 +114,11 @@ QUnit.test('Color axis update (#3207)', function (assert) {
         ]
     });
 
+    assert.ok(
+        Array.isArray(chart.options.colorAxis),
+        '#15213: chart.options.colorAxis should still be an array'
+    );
+
     assert.equal(
         chart.series[0].points[1].color,
         'blue',
@@ -127,7 +127,7 @@ QUnit.test('Color axis update (#3207)', function (assert) {
     assert.equal(chart.legend.allItems.length, 2, 'Two legend items');
 
     assert.strictEqual(
-        chart.options.colorAxis.reversed,
+        chart.options.colorAxis[0].reversed,
         false,
         '#14834: reversed should still be false'
     );
@@ -137,7 +137,7 @@ QUnit.test('Color axis update (#3207)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.options.colorAxis.reversed,
+        chart.options.colorAxis[0].reversed,
         true,
         '#14834: Updating reversed should also work'
     );

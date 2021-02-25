@@ -7870,9 +7870,8 @@ class Axis {
 
         options = merge(this.userOptions, options);
 
-        // Color Axis is not an array,
         // This change is applied in the ColorAxis wrapper
-        if ((chart.options as any)[this.coll].indexOf) {
+        if (this.coll !== 'colorAxis') {
             // Don't use this.options.index,
             // StockChart has Axes in navigator too
             (chart.options as any)[this.coll][

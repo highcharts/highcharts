@@ -3095,9 +3095,8 @@ var Axis = /** @class */ (function () {
     Axis.prototype.update = function (options, redraw) {
         var chart = this.chart, newEvents = ((options && options.events) || {});
         options = merge(this.userOptions, options);
-        // Color Axis is not an array,
         // This change is applied in the ColorAxis wrapper
-        if (chart.options[this.coll].indexOf) {
+        if (this.coll !== 'colorAxis') {
             // Don't use this.options.index,
             // StockChart has Axes in navigator too
             chart.options[this.coll][chart.options[this.coll].indexOf(this.userOptions)] = options;
