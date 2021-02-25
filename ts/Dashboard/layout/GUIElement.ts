@@ -4,8 +4,8 @@ import type {
 import Layout from './Layout.js';
 import Row from './Row.js';
 import Column from './Column.js';
-import type HTMLAttributes from './../../Core/Renderer/HTML/HTMLAttributes';
-import U from './../../Core/Utilities.js';
+import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
+import U from '../../Core/Utilities.js';
 
 const {
     createElement
@@ -55,7 +55,7 @@ abstract class GUIElement {
         return type;
     }
 
-    public setElementContainer(
+    protected setElementContainer(
         render?: boolean,
         parentContainer?: HTMLDOMElement,
         element?: (HTMLElement|string)
@@ -67,7 +67,6 @@ abstract class GUIElement {
         let attribs: HTMLAttributes,
             className,
             elem;
-
 
         // @ToDo use try catch block
         if (render && parentContainer) {
@@ -95,6 +94,64 @@ abstract class GUIElement {
         } else {
             // Error
         }
+    }
+
+    protected setInnerElements(
+        render?: boolean
+    ): void {
+        const guiElement = this,
+            innerElementsOptions = (guiElement.options as any).rows ||
+                (guiElement.options as any).columns || [];
+
+        let options,
+            innerElements,
+            innerElement;
+
+        if (render) {
+            for (let i = 0, iEnd = innerElementsOptions.length; i < iEnd; ++i) {
+                options = innerElementsOptions[i];
+                guiElement.addInnerElement(options);
+            }
+        } else if (guiElement.container) {
+            if (guiElement instanceof Layout) {
+                innerElements = guiElement.container
+                    .getElementsByClassName(guiElement.options.rowClassName);
+            } else if (guiElement instanceof Row) {
+                innerElements = guiElement.container
+                    .getElementsByClassName(guiElement.layout.options.columnClassName);
+            }
+
+            if (innerElements) {
+                for (let i = 0, iEnd = innerElements.length; i < iEnd; ++i) {
+                    innerElement = innerElements[i];
+
+                    if (innerElement instanceof HTMLElement) { // @ToDo check if this is enough
+                        guiElement.addInnerElement({}, innerElement);
+                    }
+                }
+            }
+        }
+    }
+
+    private addInnerElement(
+        options: Column.Options,
+        element?: HTMLElement
+    ): (GUIElement|undefined) {
+        const guiElement = this;
+
+        let innerGUIElement;
+
+        if (guiElement instanceof Layout) {
+            innerGUIElement = new Row(guiElement, options, element);
+            guiElement.rows.push(innerGUIElement);
+        } else if (guiElement instanceof Row) {
+            innerGUIElement = new Column(guiElement, options, element);
+            guiElement.columns.push(innerGUIElement);
+        } else {
+            // Error
+        }
+
+        return innerGUIElement;
     }
 }
 

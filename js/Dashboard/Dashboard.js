@@ -1,6 +1,5 @@
 import Layout from './Layout/Layout.js';
 import Bindings from './Actions/Bindings.js';
-import GUIRenderer from './Layout/GUIRenderer.js';
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
 var doc = H.doc;
@@ -24,11 +23,6 @@ var Dashboard = /** @class */ (function () {
         *
         */
         this.initContainer(renderTo);
-        // Only for generating GUI for now
-        // @TODO - add rederer when edit mode enabled
-        if (this.guiEnabled) {
-            this.renderer = new GUIRenderer({});
-        }
         // Init layouts
         this.setLayouts();
         // Init Bindings
@@ -69,7 +63,7 @@ var Dashboard = /** @class */ (function () {
     };
     Dashboard.prototype.setComponents = function () {
         var dashboard = this, components = dashboard.options.components;
-        var component, compontentCard;
+        var component;
         for (var i = 0, iEnd = components.length; i < iEnd; ++i) {
             component = this.bindings.addComponent(components[i]);
             dashboard.components.push({

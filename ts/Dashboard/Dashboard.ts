@@ -1,6 +1,5 @@
 import Layout from './Layout/Layout.js';
 import Bindings from './Actions/Bindings.js';
-import GUIRenderer from './Layout/GUIRenderer.js';
 
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
@@ -54,12 +53,6 @@ class Dashboard {
 
         this.initContainer(renderTo);
 
-        // Only for generating GUI for now
-        // @TODO - add rederer when edit mode enabled
-        if (this.guiEnabled) {
-            this.renderer = new GUIRenderer({});
-        }
-
         // Init layouts
         this.setLayouts();
 
@@ -77,7 +70,6 @@ class Dashboard {
     public layouts: Array<Layout>;
     public components: Array<Bindings.ComponentOptions>;
     public container: globalThis.HTMLElement = void 0 as any;
-    public renderer?: GUIRenderer;
     public guiEnabled: (boolean|undefined);
     public bindings: Bindings;
     /* *
@@ -130,8 +122,7 @@ class Dashboard {
         const dashboard = this,
             components = dashboard.options.components;
 
-        let component,
-        compontentCard;
+        let component;
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             component = this.bindings.addComponent(

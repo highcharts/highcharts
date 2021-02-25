@@ -1,5 +1,5 @@
 import Row from './Row.js';
-import Dashboard from './../Dashboard.js';
+import Dashboard from '../Dashboard.js';
 import GUIElement from './GUIElement.js';
 
 class Layout extends GUIElement {
@@ -19,7 +19,7 @@ class Layout extends GUIElement {
 
         // GUI structure
         this.setElementContainer(dashboard.guiEnabled, dashboard.container);
-        this.setRows();
+        this.setInnerElements(dashboard.guiEnabled);
     }
 
     /* *
@@ -35,33 +35,6 @@ class Layout extends GUIElement {
     *  Functions
     *
     * */
-    public setRows(): void {
-        const layout = this,
-            rowsOptions = layout.options.rows || [];
-
-        let rowOptions,
-            rowsElements,
-            rowElement,
-            i, iEnd;
-
-        if (layout.dashboard.guiEnabled) {
-            for (i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
-                rowOptions = rowsOptions[i];
-                layout.addRow(rowOptions);
-            }
-        } else if (layout.container) {
-            rowsElements = layout.container.getElementsByClassName(layout.options.rowClassName);
-
-            for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
-                rowElement = rowsElements[i];
-
-                if (rowElement instanceof HTMLElement) { // @ToDo check if this is enough
-                    layout.addRow({}, rowElement);
-                }
-            }
-        }
-    }
-
     public addRow(
         options: Row.Options,
         rowElement?: HTMLElement

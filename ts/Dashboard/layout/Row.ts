@@ -19,7 +19,7 @@ class Row extends GUIElement {
         this.columns = [];
 
         this.setElementContainer(layout.dashboard.guiEnabled, layout.container, rowElement);
-        this.setColumns();
+        this.setInnerElements(layout.dashboard.guiEnabled);
     }
 
     /* *
@@ -35,38 +35,6 @@ class Row extends GUIElement {
     *  Functions
     *
     * */
-
-    /**
-     * setColumns
-     */
-    public setColumns(): void {
-        const row = this,
-            layout = row.layout,
-            columnsOptions = (row.options as any).columns || [];
-
-        let columnOptions,
-            columnsElements,
-            columnElement,
-            i, iEnd;
-
-        if (layout.dashboard.guiEnabled) {
-            for (i = 0, iEnd = columnsOptions.length; i < iEnd; ++i) {
-                columnOptions = columnsOptions[i];
-                row.addColumn(columnOptions);
-            }
-        } else if (row.container) {
-            columnsElements = row.container.getElementsByClassName(layout.options.columnClassName);
-
-            for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
-                columnElement = columnsElements[i];
-
-                if (columnElement instanceof HTMLElement) { // @ToDo check if this is enough
-                    row.addColumn({}, columnElement);
-                }
-            }
-        }
-
-    }
 
     /**
      * addColumn

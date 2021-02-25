@@ -25,7 +25,7 @@ var Row = /** @class */ (function (_super) {
         _this.layout = layout;
         _this.columns = [];
         _this.setElementContainer(layout.dashboard.guiEnabled, layout.container, rowElement);
-        _this.setColumns();
+        _this.setInnerElements(layout.dashboard.guiEnabled);
         return _this;
     }
     /* *
@@ -33,28 +33,6 @@ var Row = /** @class */ (function (_super) {
     *  Functions
     *
     * */
-    /**
-     * setColumns
-     */
-    Row.prototype.setColumns = function () {
-        var row = this, layout = row.layout, columnsOptions = row.options.columns || [];
-        var columnOptions, columnsElements, columnElement, i, iEnd;
-        if (layout.dashboard.guiEnabled) {
-            for (i = 0, iEnd = columnsOptions.length; i < iEnd; ++i) {
-                columnOptions = columnsOptions[i];
-                row.addColumn(columnOptions);
-            }
-        }
-        else if (row.container) {
-            columnsElements = row.container.getElementsByClassName(layout.options.columnClassName);
-            for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
-                columnElement = columnsElements[i];
-                if (columnElement instanceof HTMLElement) { // @ToDo check if this is enough
-                    row.addColumn({}, columnElement);
-                }
-            }
-        }
-    };
     /**
      * addColumn
      *

@@ -1,5 +1,6 @@
 import type Row from './Row.js';
 import GUIElement from './GUIElement.js';
+
 class Column extends GUIElement {
     /* *
     *
