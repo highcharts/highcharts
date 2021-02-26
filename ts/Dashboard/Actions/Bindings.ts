@@ -1,3 +1,4 @@
+import Component from './../Component/Component.js';
 import ChartComponent from './../Component/ChartComponent.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
 import GroupComponent from './../Component/GroupComponent.js';
@@ -28,25 +29,41 @@ class Bindings {
     public addComponent(
         options: Bindings.ComponentType
     ): HTMLComponent|ChartComponent|GroupComponent|undefined {
-        const compontentParent = document.getElementById(options.column);
+        const compontentContainer = document.getElementById(options.column);
+        const bindings = this;
+        const events = options.events;
+
         let component;
 
-        if (compontentParent) {
+        // call events
+        if (events && events.onLoad) {
+            events.onLoad.call();
+        }
 
+        // add elements to containers
+        if (compontentContainer) {
             switch (options.type) {
                 case 'chart':
-                    component = this.chartComponent(compontentParent);
+                    component = bindings.chartComponent(
+                        compontentContainer,
+                        options
+                    );
                     break;
                 case 'html':
-                    component = this.HTMLComponent(compontentParent);
+                    component = bindings.htmlComponent(
+                        compontentContainer,
+                        options
+                    );
                     break;
-                case 'group':
-                    component = this.groupComponent(compontentParent);
-                    break;
+                /*case 'group':
+                    component = bindings.groupComponent(
+                        compontentContainer,
+                        options.config
+                    );
+                    break;*/
                 default:
                     component = void 0;
             }
-
             component?.render();
         }
 
@@ -57,41 +74,26 @@ class Bindings {
      * chartComponent
      */
     public chartComponent(
-        compontentParent: HTMLDOMElement
+        compontentContainer: HTMLDOMElement,
+        options: Bindings.ComponentType
     ):ChartComponent {
         return new ChartComponent({
-            parentElement: compontentParent as HTMLDOMElement,
-            chartOptions: {
-                series: [{
-                    name: 'Series from options',
-                    data: [1, 2, 3, 4]
-                }],
-                chart: {
-                    animation: false
-                }
-            },
-            dimensions: {
-                width: 400,
-                height: 400
-            }
+            parentElement: compontentContainer as HTMLDOMElement,
+            chartOptions: options.chartOptions,
+            dimensions: options.dimensions
         });
     }
 
     /**
      * HTMLComponent
      */
-    public HTMLComponent(
-        compontentParent: HTMLDOMElement
+    public htmlComponent(
+        compontentContainer: HTMLDOMElement,
+        options: Bindings.ComponentType
     ):HTMLComponent {
         return new HTMLComponent({
-            parentElement: compontentParent as HTMLDOMElement,
-            elements: [{
-                tagName: 'img',
-                attributes: {
-                    src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                    title: 'I heard you like components'
-                }
-            }]
+            parentElement: compontentContainer as HTMLDOMElement,
+            elements: options.elements
         });
     }
 
@@ -99,10 +101,10 @@ class Bindings {
      * groupComponent
      */
     public groupComponent(
-        compontentParent: HTMLDOMElement
+        compontentContainer: HTMLDOMElement
     ): GroupComponent {
         return new GroupComponent({
-            parentElement: compontentParent,
+            parentElement: compontentContainer,
             direction: 'column',
             components: [
                 new HTMLComponent({
@@ -136,6 +138,10 @@ namespace Bindings {
     export interface ComponentType {
         column: string;
         type: string;
+        chartOptions?: any;
+        elements?: any;
+        dimensions?: { width: number; height: number };
+        events?: any;
     }    
     export interface ComponentOptions {
         options: any;

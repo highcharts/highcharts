@@ -22,19 +22,29 @@ var Bindings = /** @class */ (function () {
     *
     * */
     Bindings.prototype.addComponent = function (options) {
-        var compontentParent = document.getElementById(options.column);
+        var compontentContainer = document.getElementById(options.column);
+        var bindings = this;
+        var events = options.events;
         var component;
-        if (compontentParent) {
+        // call events
+        if (events && events.onLoad) {
+            events.onLoad.call();
+        }
+        // add elements to containers
+        if (compontentContainer) {
             switch (options.type) {
                 case 'chart':
-                    component = this.chartComponent(compontentParent);
+                    component = bindings.chartComponent(compontentContainer, options);
                     break;
                 case 'html':
-                    component = this.HTMLComponent(compontentParent);
+                    component = bindings.htmlComponent(compontentContainer, options);
                     break;
-                case 'group':
-                    component = this.groupComponent(compontentParent);
-                    break;
+                /*case 'group':
+                    component = bindings.groupComponent(
+                        compontentContainer,
+                        options.config
+                    );
+                    break;*/
                 default:
                     component = void 0;
             }
@@ -45,45 +55,28 @@ var Bindings = /** @class */ (function () {
     /**
      * chartComponent
      */
-    Bindings.prototype.chartComponent = function (compontentParent) {
+    Bindings.prototype.chartComponent = function (compontentContainer, options) {
         return new ChartComponent({
-            parentElement: compontentParent,
-            chartOptions: {
-                series: [{
-                        name: 'Series from options',
-                        data: [1, 2, 3, 4]
-                    }],
-                chart: {
-                    animation: false
-                }
-            },
-            dimensions: {
-                width: 400,
-                height: 400
-            }
+            parentElement: compontentContainer,
+            chartOptions: options.chartOptions,
+            dimensions: options.dimensions
         });
     };
     /**
      * HTMLComponent
      */
-    Bindings.prototype.HTMLComponent = function (compontentParent) {
+    Bindings.prototype.htmlComponent = function (compontentContainer, options) {
         return new HTMLComponent({
-            parentElement: compontentParent,
-            elements: [{
-                    tagName: 'img',
-                    attributes: {
-                        src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                        title: 'I heard you like components'
-                    }
-                }]
+            parentElement: compontentContainer,
+            elements: options.elements
         });
     };
     /**
      * groupComponent
      */
-    Bindings.prototype.groupComponent = function (compontentParent) {
+    Bindings.prototype.groupComponent = function (compontentContainer) {
         return new GroupComponent({
-            parentElement: compontentParent,
+            parentElement: compontentContainer,
             direction: 'column',
             components: [
                 new HTMLComponent({

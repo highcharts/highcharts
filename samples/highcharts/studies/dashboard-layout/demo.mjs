@@ -38,32 +38,80 @@ const dashboard = new Dashboard('container', {
         column: 'dashboard-col-0',
         isResizable: true,
         type: 'chart',
+        chartOptions: {
+            type: 'pie',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }],
+            chart: {
+                animation: false
+            }
+        },
+        dimensions: {
+            width: 400,
+            height: 400
+        },
         events: {
             onLoad: function () {
                 // call action		
+                console.log('dashboard-col-0 onload event');	
             }
         }
     }, {
         column: 'dashboard-col-1',
         type: 'html',
-        config: {
-            title: 'Sample layout 1',
-            description: 'Lorem ipsum'
-        }
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }]
     }, {
         column: 'dashboard-col-2',
-        type: 'group',
+        type: 'chart',
+        chartOptions: {
+            type: 'column',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }],
+            chart: {
+                animation: false
+            }
+        },
+        dimensions: {
+            width: 400,
+            height: 400
+        },
         events: {
             onLoad: function () {
-                // call action		
+                // call action	
+                console.log('dashboard-col-2 onload event');	
             }
         }
     }, {
         column: 'dashboard-col-3',
         type: 'chart',
+        chartOptions: {
+            type: 'line',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }],
+            chart: {
+                animation: false
+            }
+        },
+        dimensions: {
+            width: 400,
+            height: 400
+        },
         events: {
             onLoad: function () {
                 // call action		
+                console.log('dashboard-col-3 onload event');	
             }
         }
     }]
@@ -92,18 +140,40 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         column: 'chart-1',
         isResizable: true,
         type: 'chart',
+        chartOptions: {
+            type: 'column',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }],
+            chart: {
+                animation: false
+            }
+        },
+        dimensions: {
+            width: 400,
+            height: 400
+        },
         events: {
             onLoad: function () {
                 // call action		
+                console.log('chart-1 onload event');	
             }
         }
     }, {
         column: 'chart-2',
         type: 'html',
-        config: {
+        /*config: {
             title: 'Sample layout 1',
             description: 'Lorem ipsum'
-        }
+        }*/
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }]
     }]
 });
 
