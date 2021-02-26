@@ -1,3 +1,11 @@
+Highcharts.setOptions({
+    lang: {
+        accessibility: {
+            chartContainerLabel: 'Click points to sonify chart.'
+        }
+    }
+});
+
 Highcharts.chart('container', {
     chart: {
         type: 'scatter'
@@ -7,6 +15,9 @@ Highcharts.chart('container', {
     },
     legend: {
         enabled: false
+    },
+    accessibility: {
+        landmarkVerbosity: 'one'
     },
     series: [{
         marker: {

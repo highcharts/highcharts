@@ -1,3 +1,11 @@
+Highcharts.setOptions({
+    lang: {
+        accessibility: {
+            chartContainerLabel: 'Click play button to sonify chart.'
+        }
+    }
+});
+
 var chart = Highcharts.chart('container', {
     chart: {
         type: 'spline'
@@ -53,6 +61,9 @@ var chart = Highcharts.chart('container', {
                 document.getElementById('stop').style.visibility = 'hidden';
             }
         }
+    },
+    accessibility: {
+        landmarkVerbosity: 'one'
     },
     series: [{
         data: [1, 2, 4, 5, 7, 9, 11, 13]
