@@ -63,9 +63,6 @@ var GUIElement = /** @class */ (function () {
             // Error
         }
     };
-    GUIElement.prototype.setInnerElement = function () {
-        console.log('aaaa');
-    };
     return GUIElement;
 }());
 export default GUIElement;
