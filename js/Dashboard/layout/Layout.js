@@ -26,7 +26,7 @@ var Layout = /** @class */ (function (_super) {
         _this.rows = [];
         // GUI structure
         _this.setElementContainer(dashboard.guiEnabled, dashboard.container);
-        _this.setInnerElements(dashboard.guiEnabled);
+        _this.setRows();
         return _this;
     }
     /* *
@@ -34,6 +34,25 @@ var Layout = /** @class */ (function (_super) {
     *  Functions
     *
     * */
+    Layout.prototype.setRows = function () {
+        var layout = this, rowsOptions = layout.options.rows || [];
+        var rowOptions, rowsElements, rowElement, i, iEnd;
+        if (layout.dashboard.guiEnabled) {
+            for (i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
+                rowOptions = rowsOptions[i];
+                layout.addRow(rowOptions);
+            }
+        }
+        else if (layout.container) {
+            rowsElements = layout.container.getElementsByClassName(layout.options.rowClassName);
+            for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
+                rowElement = rowsElements[i];
+                if (rowElement instanceof HTMLElement) { // @ToDo check if this is enough
+                    layout.addRow({}, rowElement);
+                }
+            }
+        }
+    };
     Layout.prototype.addRow = function (options, rowElement) {
         var layout = this, row = new Row(layout, options, rowElement);
         layout.rows.push(row);
