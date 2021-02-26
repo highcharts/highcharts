@@ -38,24 +38,26 @@ var VerticalLine = /** @class */ (function (_super) {
      *
      * */
     VerticalLine.connectorFirstPoint = function (target) {
-        var _a;
-        var annotation = target.annotation, chart = annotation.chart, point = annotation.points[0], top = pick((_a = point.series.yAxis) === null || _a === void 0 ? void 0 : _a.top, 0), offset = annotation.options.typeOptions.label.offset, xy = MockPoint.pointToPixels(point, true), y = xy[chart.inverted ? 'x' : 'y'];
+        var _a, _b;
+        var annotation = target.annotation, chart = annotation.chart, inverted = chart.inverted, point = annotation.points[0], left = pick((_a = point.series.yAxis) === null || _a === void 0 ? void 0 : _a.left, 0), top = pick((_b = point.series.yAxis) === null || _b === void 0 ? void 0 : _b.top, 0), offset = annotation.options.typeOptions.label.offset, y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
         return {
             x: point.x,
             xAxis: point.series.xAxis,
-            y: y + offset + top - chart.plotTop
+            y: y + offset +
+                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
         };
     };
     VerticalLine.connectorSecondPoint = function (target) {
-        var _a;
-        var annotation = target.annotation, chart = annotation.chart, typeOptions = annotation.options.typeOptions, point = annotation.points[0], top = pick((_a = point.series.yAxis) === null || _a === void 0 ? void 0 : _a.top, 0), yOffset = typeOptions.yOffset, xy = MockPoint.pointToPixels(point, true), y = xy[chart.inverted ? 'x' : 'y'];
+        var _a, _b;
+        var annotation = target.annotation, chart = annotation.chart, inverted = chart.inverted, typeOptions = annotation.options.typeOptions, point = annotation.points[0], left = pick((_a = point.series.yAxis) === null || _a === void 0 ? void 0 : _a.left, 0), top = pick((_b = point.series.yAxis) === null || _b === void 0 ? void 0 : _b.top, 0), yOffset = typeOptions.yOffset, y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
         if (typeOptions.label.offset < 0) {
             yOffset *= -1;
         }
         return {
             x: point.x,
             xAxis: point.series.xAxis,
-            y: y + yOffset + top - chart.plotTop
+            y: y + yOffset +
+                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
         };
     };
     /* *

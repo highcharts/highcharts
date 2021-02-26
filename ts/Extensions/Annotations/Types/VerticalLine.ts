@@ -60,16 +60,18 @@ class VerticalLine extends Annotation {
     ): Highcharts.AnnotationMockPointOptionsObject {
         var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
             chart = annotation.chart,
+            inverted = chart.inverted,
             point = annotation.points[0],
+            left = pick(point.series.yAxis?.left, 0),
             top = pick(point.series.yAxis?.top, 0),
             offset = annotation.options.typeOptions.label.offset,
-            xy = MockPoint.pointToPixels(point, true),
-            y = xy[chart.inverted ? 'x' : 'y'];
+            y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
         return {
             x: point.x as any,
             xAxis: point.series.xAxis,
-            y: y + offset + top - chart.plotTop
+            y: y + offset +
+                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
         };
     }
 
@@ -78,12 +80,13 @@ class VerticalLine extends Annotation {
     ): Highcharts.AnnotationMockPointOptionsObject {
         var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
             chart = annotation.chart,
+            inverted = chart.inverted,
             typeOptions = annotation.options.typeOptions,
             point = annotation.points[0],
+            left = pick(point.series.yAxis?.left, 0),
             top = pick(point.series.yAxis?.top, 0),
             yOffset = typeOptions.yOffset,
-            xy = MockPoint.pointToPixels(point, true),
-            y = xy[chart.inverted ? 'x' : 'y'];
+            y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
         if (typeOptions.label.offset < 0) {
             yOffset *= -1;
@@ -92,7 +95,8 @@ class VerticalLine extends Annotation {
         return {
             x: point.x as any,
             xAxis: point.series.xAxis,
-            y: y + yOffset + top - chart.plotTop
+            y: y + yOffset +
+                (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
         };
     }
 
