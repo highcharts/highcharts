@@ -1,5 +1,5 @@
 import type Row from './Row.js';
-import GUIElement from './GUIElement.js';
+import { GUIElement, PREFIX } from './GUIElement.js';
 
 class Column extends GUIElement {
     /* *
@@ -12,14 +12,22 @@ class Column extends GUIElement {
         options: Column.Options,
         columnElement?: HTMLElement
     ) {
-        super(options);
+        const columnClassName = row.layout.options.columnClassName;
+
+        super();
+
+        this.options = options;
 
         this.row = row;
         this.setElementContainer(
-            'column',
             row.layout.dashboard.guiEnabled,
             row.container,
-            columnElement
+            {
+                id: options.id,
+                className: columnClassName ?
+                    columnClassName + ' ' + PREFIX + 'column' : PREFIX + 'column'
+            },
+            columnElement || options.id
         );
     }
 
@@ -29,6 +37,7 @@ class Column extends GUIElement {
     *
     * */
     public row: Row;
+    public options: Column.Options;
 
     /* *
     *

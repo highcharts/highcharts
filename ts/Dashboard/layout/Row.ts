@@ -1,6 +1,6 @@
 import Layout from './Layout.js';
 import Column from './Column.js';
-import GUIElement from './GUIElement.js';
+import { GUIElement, PREFIX } from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
     pick
@@ -16,16 +16,23 @@ class Row extends GUIElement {
         options: Row.Options,
         rowElement?: HTMLElement
     ) {
-        super(options);
+        const rowClassName = layout.options.rowClassName;
+
+        super();
 
         this.layout = layout;
         this.columns = [];
+        this.options = options;
 
         this.setElementContainer(
-            'row',
             layout.dashboard.guiEnabled,
             layout.container,
-            rowElement
+            {
+                id: options.id,
+                className: rowClassName ?
+                    rowClassName + ' ' + PREFIX + 'row' : PREFIX + 'row'
+            },
+            rowElement || options.id
         );
         this.setColumns();
     }
@@ -37,6 +44,7 @@ class Row extends GUIElement {
     * */
     public layout: Layout;
     public columns: Array<Column>;
+    public options: Row.Options;
 
     /* *
     *
@@ -45,18 +53,16 @@ class Row extends GUIElement {
     * */
 
     public setColumns(): void {
-        const row = this;
+        const row = this,
+            columnsElements = pick(
+                row.options.columns,
+                row.container?.getElementsByClassName(
+                    row.layout.options.columnClassName
+                )
+            ) || [];
 
-        let columnsElements,
-            columnElement,
+        let columnElement,
             i, iEnd;
-
-        columnsElements = pick(
-            (row.options as Row.Options).columns || [],
-            row?.container?.getElementsByClassName(
-                row.layout.options.columnClassName
-            )
-        );
 
         for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
             columnElement = columnsElements[i];

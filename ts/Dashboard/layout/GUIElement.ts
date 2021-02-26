@@ -19,18 +19,12 @@ abstract class GUIElement {
     *  Constructors
     *
     * */
-    public constructor(
-        options: (Layout.Options|Row.Options|Column.Options)
-    ) {
-        this.options = options;
-    }
 
     /* *
     *
     *  Properties
     *
     * */
-    public options: (Layout.Options|Row.Options|Column.Options);
     public container?: HTMLDOMElement;
 
     /* *
@@ -38,44 +32,28 @@ abstract class GUIElement {
     *  Functions
     *
     * */
-    // @ToDo return dictionary type instead of string
     protected setElementContainer(
-        type: string,
         render?: boolean,
         parentContainer?: HTMLDOMElement,
-        element?: (HTMLElement|string)
+        attribs: HTMLAttributes = {},
+        elementOrId?: (HTMLElement|string)
     ): void {
-        const guiElement = this,
-            options = guiElement.options;
+        const guiElement = this;
 
-        let attribs: HTMLAttributes,
-            className,
-            elem;
+        let elem;
 
         // @ToDo use try catch block
         if (render && parentContainer) {
-            attribs = {};
-
-            if (options.id) {
-                attribs.id = options.id;
-            }
-
-            // @ToDo remove as any.
-            className = (options as any)[type + 'ClassName'];
-            attribs.className = className ? 
-                className + ' ' + PREFIX + type :
-                PREFIX + type;
-
             guiElement.container = createElement(
                 'div',
                 attribs,
                 {},
                 parentContainer
             );
-        } else if (element instanceof HTMLElement) { // @ToDo check if this is enough
-            guiElement.container = element;
-        } else if (typeof options.id === 'string') {
-            elem = document.getElementById(options.id);
+        } else if (elementOrId instanceof HTMLElement) { // @ToDo check if this is enough
+            guiElement.container = elementOrId;
+        } else if (typeof elementOrId === 'string') {
+            elem = document.getElementById(elementOrId);
 
             if (elem) {
                 guiElement.container = elem;
@@ -89,8 +67,6 @@ abstract class GUIElement {
 
 }
 
-interface GUIElement {
-    options: (Layout.Options|Row.Options|Column.Options);
-}
+interface GUIElement {}
 
-export default GUIElement;
+export { GUIElement, PREFIX };

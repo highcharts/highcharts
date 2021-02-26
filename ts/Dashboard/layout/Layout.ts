@@ -1,6 +1,6 @@
 import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
-import GUIElement from './GUIElement.js';
+import { GUIElement, PREFIX } from './GUIElement.js';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -16,16 +16,21 @@ class Layout extends GUIElement {
         dashboard: Dashboard,
         options: Layout.Options
     ) {
-        super(options);
+        super();
 
         this.dashboard = dashboard;
         this.rows = [];
+        this.options = options;
 
         // GUI structure
         this.setElementContainer(
-            'layout',
             dashboard.guiEnabled,
-            dashboard.container
+            dashboard.container,
+            {
+                id: options.id,
+                className: PREFIX + 'layout'
+            },
+            options.id
         );
         this.setRows();
     }
@@ -37,6 +42,7 @@ class Layout extends GUIElement {
     * */
     public dashboard: Dashboard;
     public rows: Array<Row>;
+    public options: Layout.Options;
 
     /* *
     *
@@ -44,18 +50,16 @@ class Layout extends GUIElement {
     *
     * */
     public setRows(): void {
-        const layout = this;
+        const layout = this,
+            rowsElements = pick(
+                layout.options.rows,
+                layout.container?.getElementsByClassName(
+                    layout.options.rowClassName
+                )
+            ) || [];
 
-        let rowsElements,
-            rowElement,
+        let rowElement,
             i, iEnd;
-
-        rowsElements = pick(
-            (layout.options as Layout.Options).rows || [],
-            layout?.container?.getElementsByClassName(
-                layout.options.rowClassName
-            )
-        );
 
         for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
             rowElement = rowsElements[i];

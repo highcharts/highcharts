@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import Column from './Column.js';
-import GUIElement from './GUIElement.js';
+import { GUIElement, PREFIX } from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 var pick = U.pick;
 var Row = /** @class */ (function (_super) {
@@ -23,10 +23,17 @@ var Row = /** @class */ (function (_super) {
     *
     * */
     function Row(layout, options, rowElement) {
-        var _this = _super.call(this, options) || this;
+        var _this = this;
+        var rowClassName = layout.options.rowClassName;
+        _this = _super.call(this) || this;
         _this.layout = layout;
         _this.columns = [];
-        _this.setElementContainer('row', layout.dashboard.guiEnabled, layout.container, rowElement);
+        _this.options = options;
+        _this.setElementContainer(layout.dashboard.guiEnabled, layout.container, {
+            id: options.id,
+            className: rowClassName ?
+                rowClassName + ' ' + PREFIX + 'row' : PREFIX + 'row'
+        }, rowElement || options.id);
         _this.setColumns();
         return _this;
     }
@@ -37,9 +44,8 @@ var Row = /** @class */ (function (_super) {
     * */
     Row.prototype.setColumns = function () {
         var _a;
-        var row = this;
-        var columnsElements, columnElement, i, iEnd;
-        columnsElements = pick(row.options.columns || [], (_a = row === null || row === void 0 ? void 0 : row.container) === null || _a === void 0 ? void 0 : _a.getElementsByClassName(row.layout.options.columnClassName));
+        var row = this, columnsElements = pick(row.options.columns, (_a = row.container) === null || _a === void 0 ? void 0 : _a.getElementsByClassName(row.layout.options.columnClassName)) || [];
+        var columnElement, i, iEnd;
         for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
             columnElement = columnsElements[i];
             row.addColumn(row.layout.dashboard.guiEnabled ? columnElement : {}, columnElement instanceof HTMLElement ? columnElement : void 0);

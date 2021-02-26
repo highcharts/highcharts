@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import Row from './Row.js';
-import GUIElement from './GUIElement.js';
+import { GUIElement, PREFIX } from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 var pick = U.pick;
 var Layout = /** @class */ (function (_super) {
@@ -23,11 +23,15 @@ var Layout = /** @class */ (function (_super) {
     *
     * */
     function Layout(dashboard, options) {
-        var _this = _super.call(this, options) || this;
+        var _this = _super.call(this) || this;
         _this.dashboard = dashboard;
         _this.rows = [];
+        _this.options = options;
         // GUI structure
-        _this.setElementContainer('layout', dashboard.guiEnabled, dashboard.container);
+        _this.setElementContainer(dashboard.guiEnabled, dashboard.container, {
+            id: options.id,
+            className: PREFIX + 'layout'
+        }, options.id);
         _this.setRows();
         return _this;
     }
@@ -38,9 +42,8 @@ var Layout = /** @class */ (function (_super) {
     * */
     Layout.prototype.setRows = function () {
         var _a;
-        var layout = this;
-        var rowsElements, rowElement, i, iEnd;
-        rowsElements = pick(layout.options.rows || [], (_a = layout === null || layout === void 0 ? void 0 : layout.container) === null || _a === void 0 ? void 0 : _a.getElementsByClassName(layout.options.rowClassName));
+        var layout = this, rowsElements = pick(layout.options.rows, (_a = layout.container) === null || _a === void 0 ? void 0 : _a.getElementsByClassName(layout.options.rowClassName)) || [];
+        var rowElement, i, iEnd;
         for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
             rowElement = rowsElements[i];
             layout.addRow(layout.dashboard.guiEnabled ? rowElement : {}, rowElement instanceof HTMLElement ? rowElement : void 0);
