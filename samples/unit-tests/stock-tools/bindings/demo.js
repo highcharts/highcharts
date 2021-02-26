@@ -398,3 +398,65 @@ QUnit.test('Bindings general tests', function (assert) {
         qunitContainer.style.display = 'block';
     }
 });
+
+QUnit.test('Stock Tools annotations\' positions with yAxis.top (#15075)', assert => {
+    const chart = Highcharts.stockChart('container', {
+            chart: {
+                width: 800
+            },
+            yAxis: {
+                top: '40%',
+                height: '60%'
+            },
+            series: [{
+                data: [4, 2, 5, 6, 4]
+            }]
+        }),
+        series = chart.series[0],
+        yAxis = series.yAxis;
+
+    let point = series.points[1];
+
+    // Add vertical counter annotation near to the second point
+    chart.navigationBindings.options.bindings.verticalLabel.start.call(
+        chart.navigationBindings,
+        {
+            chartX: point.plotX,
+            chartY: point.plotY + yAxis.top
+        }
+    );
+
+    let annotationBBox = chart.annotations[0].graphic.getBBox();
+
+    assert.strictEqual(
+        annotationBBox.y + annotationBBox.height + 10,
+        point.plotY + yAxis.top,
+        'Annotation\'s element should be placed 10px from the second point.'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    point = series.points[2];
+
+    // Add vertical arrow annotation near to the third point on inverted chart
+    chart.navigationBindings.options.bindings.verticalArrow.start.call(
+        chart.navigationBindings,
+        {
+            chartX: chart.plotLeft + yAxis.len - point.plotY,
+            chartY: chart.plotTop + series.xAxis.len - point.plotX
+        }
+    );
+
+    annotationBBox = chart.annotations[1].graphic.getBBox();
+
+    assert.close(
+        (annotationBBox.x + (annotationBBox.width) + 10),
+        chart.plotLeft + yAxis.len - point.plotY,
+        1,
+        'Annotation\'s element should be placed 10px from the third point.'
+    );
+});
