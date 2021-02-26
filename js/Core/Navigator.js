@@ -1360,7 +1360,7 @@ var Navigator = /** @class */ (function () {
                 var range = navigator.size, to = range * this.to, from = range * this.from;
                 navigator.hasDragged = navigator.scrollbar.hasDragged;
                 navigator.render(0, 0, from, to);
-                if (chart.options.scrollbar.liveRedraw ||
+                if (pick(this.options.liveRedraw, H.svg && !H.isTouchDevice && !this.chart.isBoosting) ||
                     (e.DOMType !== 'mousemove' &&
                         e.DOMType !== 'touchmove')) {
                     setTimeout(function () {
