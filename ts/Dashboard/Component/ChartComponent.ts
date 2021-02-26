@@ -10,7 +10,8 @@ import U from '../../Core/Utilities.js';
 const {
     createElement,
     merge,
-    uniqueKey
+    uniqueKey,
+    getStyle
 } = U;
 
 /* *
@@ -87,7 +88,13 @@ class ChartComponent extends Component<ChartComponent.Event> {
         this.chartConstructor = this.options.chartConstructor;
         this.type = 'chart';
 
-        this.chartContainer = createElement('figure');
+        this.chartContainer = createElement(
+            'figure',
+            void 0,
+            void 0,
+            this.element,
+            true
+        );
         if (this.options.chartClassName) {
             this.chartContainer.classList.add(this.options.chartClassName);
         }
@@ -100,7 +107,10 @@ class ChartComponent extends Component<ChartComponent.Event> {
         // Extend via event.
         this.on('resize', (e: Component.ResizeEvent): void => {
             if (this.chart) {
-                this.chart.setSize(this.dimensions.width, this.dimensions.height);
+                this.chart.setSize(
+                    Number(getStyle(this.element, 'width')),
+                    Number(getStyle(this.element, 'height'))
+                );
             }
         });
 
