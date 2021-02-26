@@ -308,3 +308,8 @@ Highcharts.chart('container', {
         enabled: false
     }
 });
+
+document.getElementById('removeOverlay').onclick = function () {
+    document.getElementById('overlay').style.visibility = 'hidden';
+    document.getElementById('removeOverlay').style.visibility = 'hidden';
+};
