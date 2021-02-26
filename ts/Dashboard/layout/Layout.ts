@@ -2,6 +2,10 @@ import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
 import GUIElement from './GUIElement.js';
 
+import U from '../../Core/Utilities.js';
+const {
+    pick
+} = U;
 class Layout extends GUIElement {
     /* *
     *
@@ -18,7 +22,10 @@ class Layout extends GUIElement {
         this.rows = [];
 
         // GUI structure
-        this.setElementContainer(dashboard.guiEnabled, dashboard.container);
+        this.setElementContainer(
+            dashboard.guiEnabled,
+            dashboard.container
+        );
         this.setRows();
     }
 
@@ -36,29 +43,25 @@ class Layout extends GUIElement {
     *
     * */
     public setRows(): void {
-        const layout = this,
-            rowsOptions = layout.options.rows || [];
+        const layout = this;
 
-        let rowOptions,
-            rowsElements,
+        let rowsElements,
             rowElement,
             i, iEnd;
 
-        if (layout.dashboard.guiEnabled) {
-            for (i = 0, iEnd = rowsOptions.length; i < iEnd; ++i) {
-                rowOptions = rowsOptions[i];
-                layout.addRow(rowOptions);
-            }
-        } else if (layout.container) {
-            rowsElements = layout.container.getElementsByClassName(layout.options.rowClassName);
+        rowsElements = pick(
+            (layout.options as Layout.Options).rows || [],
+            layout?.container?.getElementsByClassName(
+                layout.options.rowClassName
+            )
+        );
 
-            for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
-                rowElement = rowsElements[i];
-
-                if (rowElement instanceof HTMLElement) { // @ToDo check if this is enough
-                    layout.addRow({}, rowElement);
-                }
-            }
+        for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
+            rowElement = rowsElements[i];
+            layout.addRow(
+                layout.dashboard.guiEnabled ? rowElement : {},
+                rowElement instanceof HTMLElement ? rowElement : void 0
+            );
         }
     }
 

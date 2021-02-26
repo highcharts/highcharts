@@ -13,6 +13,8 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import Column from './Column.js';
 import GUIElement from './GUIElement.js';
+import U from '../../Core/Utilities.js';
+var pick = U.pick;
 var Row = /** @class */ (function (_super) {
     __extends(Row, _super);
     /* *
@@ -34,22 +36,13 @@ var Row = /** @class */ (function (_super) {
     *
     * */
     Row.prototype.setColumns = function () {
-        var row = this, layout = row.layout, columnsOptions = row.options.columns || [];
-        var columnOptions, columnsElements, columnElement, i, iEnd;
-        if (layout.dashboard.guiEnabled) {
-            for (i = 0, iEnd = columnsOptions.length; i < iEnd; ++i) {
-                columnOptions = columnsOptions[i];
-                row.addColumn(columnOptions);
-            }
-        }
-        else if (row.container) {
-            columnsElements = row.container.getElementsByClassName(layout.options.columnClassName);
-            for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
-                columnElement = columnsElements[i];
-                if (columnElement instanceof HTMLElement) { // @ToDo check if this is enough
-                    row.addColumn({}, columnElement);
-                }
-            }
+        var _a;
+        var row = this;
+        var columnsElements, columnElement, i, iEnd;
+        columnsElements = pick(row.options.columns || [], (_a = row === null || row === void 0 ? void 0 : row.container) === null || _a === void 0 ? void 0 : _a.getElementsByClassName(row.layout.options.columnClassName));
+        for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
+            columnElement = columnsElements[i];
+            row.addColumn(row.layout.dashboard.guiEnabled ? columnElement : {}, columnElement instanceof HTMLElement ? columnElement : void 0);
         }
     };
     /**

@@ -1,7 +1,10 @@
 import Layout from './Layout.js';
 import Column from './Column.js';
 import GUIElement from './GUIElement.js';
-
+import U from '../../Core/Utilities.js';
+const {
+    pick
+} = U;
 class Row extends GUIElement {
     /* *
     *
@@ -18,7 +21,11 @@ class Row extends GUIElement {
         this.layout = layout;
         this.columns = [];
 
-        this.setElementContainer(layout.dashboard.guiEnabled, layout.container, rowElement);
+        this.setElementContainer(
+            layout.dashboard.guiEnabled,
+            layout.container,
+            rowElement
+        );
         this.setColumns();
     }
 
@@ -37,30 +44,25 @@ class Row extends GUIElement {
     * */
 
     public setColumns(): void {
-        const row = this,
-            layout = row.layout,
-            columnsOptions = (row.options as any).columns || [];
+        const row = this;
 
-        let columnOptions,
-            columnsElements,
+        let columnsElements,
             columnElement,
             i, iEnd;
 
-        if (layout.dashboard.guiEnabled) {
-            for (i = 0, iEnd = columnsOptions.length; i < iEnd; ++i) {
-                columnOptions = columnsOptions[i];
-                row.addColumn(columnOptions);
-            }
-        } else if (row.container) {
-            columnsElements = row.container.getElementsByClassName(layout.options.columnClassName);
+        columnsElements = pick(
+            (row.options as Row.Options).columns || [],
+            row?.container?.getElementsByClassName(
+                row.layout.options.columnClassName
+            )
+        );
 
-            for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
-                columnElement = columnsElements[i];
-
-                if (columnElement instanceof HTMLElement) { // @ToDo check if this is enough
-                    row.addColumn({}, columnElement);
-                }
-            }
+        for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
+            columnElement = columnsElements[i];
+            row.addColumn(
+                row.layout.dashboard.guiEnabled ? columnElement : {},
+                columnElement instanceof HTMLElement ? columnElement : void 0
+            );
         }
     }
 
