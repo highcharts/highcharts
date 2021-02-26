@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import U from '../../Core/Utilities.js';
-var createElement = U.createElement, merge = U.merge, fireEvent = U.fireEvent, addEvent = U.addEvent, objectEach = U.objectEach, isFunction = U.isFunction, uniqueKey = U.uniqueKey;
+var createElement = U.createElement, merge = U.merge, fireEvent = U.fireEvent, addEvent = U.addEvent, objectEach = U.objectEach, isFunction = U.isFunction, uniqueKey = U.uniqueKey, getStyle = U.getStyle;
 var Component = /** @class */ (function () {
     function Component(options) {
         this.tableEvents = [];
@@ -33,8 +33,8 @@ var Component = /** @class */ (function () {
         this.hasLoaded = false;
         // Initial dimensions
         this.dimensions = {
-            width: this.parentElement.scrollWidth,
-            height: this.parentElement.scrollHeight
+            width: Number(getStyle(this.parentElement, 'width')),
+            height: Number(getStyle(this.parentElement, 'height'))
         };
         this.element = createElement('div', {
             className: this.options.className

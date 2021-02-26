@@ -10,7 +10,8 @@ const {
     addEvent,
     objectEach,
     isFunction,
-    uniqueKey
+    uniqueKey,
+    getStyle
 } = U;
 
 abstract class Component<TEventObject extends Component.Event = Component.Event> {
@@ -184,8 +185,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         this.hasLoaded = false;
         // Initial dimensions
         this.dimensions = {
-            width: this.parentElement.scrollWidth,
-            height: this.parentElement.scrollHeight
+            width: Number(getStyle(this.parentElement, 'width')),
+            height: Number(getStyle(this.parentElement, 'height'))
         };
 
         this.element = createElement('div', {
