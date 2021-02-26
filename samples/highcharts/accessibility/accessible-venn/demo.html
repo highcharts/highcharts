@@ -3,10 +3,16 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 
-<figure class="highcharts-figure">
-    <div id="container"></div>
-    <div id="dyncaption" aria-hidden="true">
-        <div class="caption-arrow"></div>
-        <div id="caption-content"></div>
+<div id="outer">
+    <div id="overlay">
+        <button class="btn btn-overlay" id="removeOverlay"><span>Try our </span><span>Venn diagram</span></button>
     </div>
-</figure>
+        <figure class="highcharts-figure">
+            <div id="container"></div>
+            <div id="dyncaption" aria-hidden="true">
+                <div class="caption-arrow"></div>
+                <div id="caption-content"></div>
+            </div>
+        </figure>
+    </div>
+</div>
