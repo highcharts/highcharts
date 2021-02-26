@@ -23,6 +23,7 @@ class Layout extends GUIElement {
 
         // GUI structure
         this.setElementContainer(
+            'layout',
             dashboard.guiEnabled,
             dashboard.container
         );

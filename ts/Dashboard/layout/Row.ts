@@ -22,6 +22,7 @@ class Row extends GUIElement {
         this.columns = [];
 
         this.setElementContainer(
+            'row',
             layout.dashboard.guiEnabled,
             layout.container,
             rowElement

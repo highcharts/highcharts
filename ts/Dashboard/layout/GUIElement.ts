@@ -39,30 +39,14 @@ abstract class GUIElement {
     *
     * */
     // @ToDo return dictionary type instead of string
-    public getType(): string {
-        const guiElement = this;
-
-        let type = '';
-
-        if (guiElement instanceof Layout) {
-            type = 'layout';
-        } else if (guiElement instanceof Row) {
-            type = 'row';
-        } else if (guiElement instanceof Column) {
-            type = 'column';
-        }
-
-        return type;
-    }
-
     protected setElementContainer(
+        type: string,
         render?: boolean,
         parentContainer?: HTMLDOMElement,
         element?: (HTMLElement|string)
     ): void {
         const guiElement = this,
-            options = guiElement.options,
-            type = guiElement.getType();
+            options = guiElement.options;
 
         let attribs: HTMLAttributes,
             className,
@@ -78,9 +62,16 @@ abstract class GUIElement {
 
             // @ToDo remove as any.
             className = (options as any)[type + 'ClassName'];
-            attribs.className = className ? className + ' ' + PREFIX + type : PREFIX + type;
+            attribs.className = className ? 
+                className + ' ' + PREFIX + type :
+                PREFIX + type;
 
-            guiElement.container = createElement('div', attribs, {}, parentContainer);
+            guiElement.container = createElement(
+                'div',
+                attribs,
+                {},
+                parentContainer
+            );
         } else if (element instanceof HTMLElement) { // @ToDo check if this is enough
             guiElement.container = element;
         } else if (typeof options.id === 'string') {

@@ -22,7 +22,7 @@ var Column = /** @class */ (function (_super) {
     function Column(row, options, columnElement) {
         var _this = _super.call(this, options) || this;
         _this.row = row;
-        _this.setElementContainer(row.layout.dashboard.guiEnabled, row.container, columnElement);
+        _this.setElementContainer('column', row.layout.dashboard.guiEnabled, row.container, columnElement);
         return _this;
     }
     return Column;

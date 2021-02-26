@@ -27,7 +27,7 @@ var Layout = /** @class */ (function (_super) {
         _this.dashboard = dashboard;
         _this.rows = [];
         // GUI structure
-        _this.setElementContainer(dashboard.guiEnabled, dashboard.container);
+        _this.setElementContainer('layout', dashboard.guiEnabled, dashboard.container);
         _this.setRows();
         return _this;
     }

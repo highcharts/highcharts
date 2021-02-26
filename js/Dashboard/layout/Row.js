@@ -26,7 +26,7 @@ var Row = /** @class */ (function (_super) {
         var _this = _super.call(this, options) || this;
         _this.layout = layout;
         _this.columns = [];
-        _this.setElementContainer(layout.dashboard.guiEnabled, layout.container, rowElement);
+        _this.setElementContainer('row', layout.dashboard.guiEnabled, layout.container, rowElement);
         _this.setColumns();
         return _this;
     }

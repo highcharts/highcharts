@@ -15,7 +15,12 @@ class Column extends GUIElement {
         super(options);
 
         this.row = row;
-        this.setElementContainer(row.layout.dashboard.guiEnabled, row.container, columnElement);
+        this.setElementContainer(
+            'column',
+            row.layout.dashboard.guiEnabled,
+            row.container,
+            columnElement
+        );
     }
 
     /* *
