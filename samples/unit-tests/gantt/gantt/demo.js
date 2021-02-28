@@ -756,4 +756,85 @@
             'There should be no errors in the console.'
         );
     });
+
+    QUnit.test('Collapsible nodes with scrollablePlotArea should not decrement the chart height, #13884.', assert => {
+        const { fireEvent } = Highcharts;
+        const chart = Highcharts.ganttChart('container', {
+            chart: {
+                scrollablePlotArea: {
+                    minHeight: 400,
+                    opacity: 1
+                },
+                height: 300
+            },
+            series: [{
+                data: [{
+                    name: 'New offices',
+                    id: 'new_offices'
+                }, {
+                    name: 'Prepare office building',
+                    parent: 'new_offices',
+                    start: 1,
+                    end: 10
+                }, {
+                    name: 'Inspect building',
+                    parent: 'new_offices',
+                    start: 3,
+                    end: 4
+                }, {
+                    name: 'Passed inspection',
+                    parent: 'new_offices',
+                    start: 3,
+                    milestone: true
+                }]
+            }]
+        });
+
+        const yAxis = chart.yAxis[0],
+            label = yAxis.ticks[0].label,
+            previousPlotHeight = chart.plotHeight;
+
+        fireEvent(label.element, 'click');
+        assert.strictEqual(
+            previousPlotHeight,
+            chart.plotHeight,
+            'The chart height should remain the same.'
+        );
+    });
+
+    QUnit.test('The addPoint method should add only one point, #14188.', assert => {
+        const chart = Highcharts.ganttChart('container', {
+            plotOptions: {
+                series: {
+                    dragDrop: {
+                        draggableX: true
+                    }
+                }
+            },
+            series: [{
+                data: [{
+                    start: 1,
+                    end: 3,
+                    name: 'Task 1'
+                }, {
+                    start: 4,
+                    end: 8,
+                    name: 'Task 2'
+                }]
+            }]
+        });
+
+        const pointAmount = chart.series[0].data.length;
+
+        chart.series[0].addPoint({
+            start: 4,
+            end: 5,
+            name: 'Taks 3'
+        });
+
+        assert.ok(
+            chart.series[0].data.length - pointAmount === 1,
+            'Only one point should be added.'
+        );
+    });
 }());
