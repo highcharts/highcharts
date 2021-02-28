@@ -123,6 +123,67 @@ H.layouts['reingold-fruchterman'].prototype, {
             height: h
         };
     },
+    placeOnBitmap: function () {
+        var createBitmap = function (chart, columnNumb, rawNumb, startingColumn) {
+            // start the bitmapArr with an empty column
+            var bitmapArr = [], columnWidth = (chart.chartWidth || 1) / columnNumb, rawHeight = (chart.chartHeight || 1) / rawNumb;
+            var columnInd = 0, rawInd = 0;
+            for (var column = 0; column < (chart.chartWidth || 0); column += columnWidth) {
+                bitmapArr.push([]);
+                for (var raw = 0; raw < (chart.chartHeight || 0); raw += rawHeight) {
+                    // Create the bitmap for snapping flowChart nodes
+                    // [centerX, centerY, placed]
+                    bitmapArr[columnInd].push([column + columnWidth / 2, raw + rawHeight / 2, 0]);
+                    rawInd++;
+                }
+                columnInd++;
+            }
+            return bitmapArr;
+        };
+        var placeNode = function (chart, node, bitmapArr, acceptableDistanceX, acceptableDistanceY, firstNode, startingColumn) {
+            var nodePlaced = false;
+            var distanceX = acceptableDistanceX;
+            var distanceY = acceptableDistanceY;
+            // // Place first node in the middle TODO REBUILD
+            // if (firstNode) {
+            //     node.plotX = chart.chartWidth / 2;
+            //     node.plotY = chart.plotTop;
+            //     (node as any).fixedPosition = true;
+            // }
+            for (var cI = 0 || 0; cI < bitmapArr.length; cI++) {
+                for (var rI = startingColumn || 0; rI < bitmapArr[cI].length; rI++) {
+                    if (!nodePlaced &&
+                        Math.abs(((node.plotY || 0) + chart.plotTop) -
+                            bitmapArr[cI][rI][0]) <= distanceY &&
+                        Math.abs(((node.plotX || 0) + chart.plotLeft) -
+                            bitmapArr[cI][rI][1]) <= distanceX) {
+                        if (!bitmapArr[cI][rI][2]) {
+                            node.plotX = bitmapArr[cI][rI][1] - chart.plotLeft;
+                            node.plotY = bitmapArr[cI][rI][0] - chart.plotTop;
+                            nodePlaced = true;
+                            node.fixedPosition = true;
+                            bitmapArr[cI][rI][2] = 1;
+                        }
+                        else {
+                            // if already taken, try with further diameter
+                            distanceX += Math.max(bitmapArr[cI][rI][0], bitmapArr[cI][rI][1]);
+                        }
+                    }
+                }
+            }
+            // If node was not placed, start again with further distance
+            if (!nodePlaced) {
+                distanceX += Math.max(bitmapArr[0][0][0], bitmapArr[0][0][1]);
+                placeNode(chart, node, bitmapArr, distanceX, distanceX, firstNode, 0);
+            }
+        };
+        if (this.chart) {
+            var bitmapArr = createBitmap(this.chart, 10, 10);
+            for (var i = 0; i < this.nodes.length; i++) {
+                placeNode(this.chart, this.nodes[i], bitmapArr, 10, 10, !i, 0);
+            }
+        }
+    },
     setK: function () {
         // Optimal distance between nodes,
         // available space around the node:
@@ -288,6 +349,9 @@ H.layouts['reingold-fruchterman'].prototype, {
     barycenterForces: function () {
         this.getBarycenter();
         this.force('barycenter');
+    },
+    gravityForces: function () {
+        this.force('gravity');
     },
     getBarycenter: function () {
         var systemMass = 0, cx = 0, cy = 0;
@@ -526,6 +590,9 @@ addEvent(Chart, 'render', function () {
             this.graphLayoutsLookup.forEach(layoutStep);
         }
         if (afterRender) {
+            this.graphLayoutsLookup.forEach(function (layout) {
+                layout.options.flowChart && layout.placeOnBitmap();
+            });
             this.series.forEach(function (s) {
                 if (s && s.layout) {
                     s.render();

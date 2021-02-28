@@ -34,6 +34,7 @@ declare global {
             ): void;
             attractiveForceFunction(d: number, k: number): number;
             barycenter(this: NetworkgraphLayout): void;
+            gravity(this: NetworkgraphLayout): void;
             getK(layout: NetworkgraphLayout): number;
             integrate(
                 layout: NetworkgraphLayout,
@@ -58,6 +59,7 @@ declare global {
             attractive: Function;
             attractiveForceFunction: Function;
             barycenter: Function;
+            gravity: Function;
             getK: Function;
             integrate: Function;
             repulsive: Function;
@@ -77,6 +79,7 @@ declare global {
             ): void;
             attractiveForceFunction(d: number, k: number): number;
             barycenter(this: NetworkgraphLayout): void;
+            gravity(this: NetworkgraphLayout): void;
             getK(layout: NetworkgraphLayout): number;
             integrate(
                 layout: NetworkgraphLayout,
@@ -145,6 +148,32 @@ H.networkgraphIntegrations = {
             yFactor = (yFactor - (this.box.top + this.box.height) / 2) *
                 (gravitationalConstant as any);
 
+            this.nodes.forEach(function (node: Point): void {
+                if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
+                    (node.plotX as any) -=
+                        xFactor / (node.mass as any) / (node.degree as any);
+                    (node.plotY as any) -=
+                        yFactor / (node.mass as any) / (node.degree as any);
+                }
+            });
+        },
+        /**
+         * Gravity force. Calculate and applys gravity forces on the
+         * nodes, directed down or right.
+         *
+         * In Verlet integration, force is applied on a node immidatelly to it's
+         * `plotX` and `plotY` position.
+         *
+         * @private
+         * @return {void}
+         */
+        gravity: function (this: Highcharts.NetworkgraphLayout): void {
+            var gravitationalConstant = this.options.gravitationalConstant,
+                xFactor = (this.barycenter as any).xFactor,
+                yFactor = (this.barycenter as any).yFactor;
+            // To consider:
+            xFactor = 0;
+            yFactor = 10;
             this.nodes.forEach(function (node: Point): void {
                 if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
                     (node.plotX as any) -=
@@ -384,6 +413,38 @@ H.networkgraphIntegrations = {
             });
         },
         /**
+         * Gravity force. Calculate and applys gravity forces on the
+         * nodes, directed down or right.
+         *
+         * In Verlet integration, force is applied on a node immidatelly to it's
+         * `plotX` and `plotY` position.
+         *
+         * @private
+         * @return {void}
+         */
+        gravity: function (this: Highcharts.NetworkgraphLayout): void {
+            var xFactor = 0,
+                yFactor = 1000,
+                columnsWidth = this.chart ? this.chart.chartWidth / 10 : 0;
+
+            (this as any).columns = (this as any).columns || [];
+            this.nodes.forEach(function (node: Point, index: number): void {
+                if (index === 0) { // center first node, don't use gravity
+                    (node.dispX as any) -=
+                        ((node.plotX || 0) - (columnsWidth * 5));
+                    (node.dispY as any) -=
+                    ((node.plotY || 0) - 20);
+                } else if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
+                    // if node is not fixed, attach gravity force in y direction
+                    (node.dispY as any) += yFactor / (node.mass as any) / (node.degree as any);
+
+                    // also, move it to the center column
+                    (node.dispX as any) -=
+                        0 * ((node.plotX || 0) - (columnsWidth * 5));
+                }
+            });
+        },
+        /**
          * Repulsive force.
          *
          * @private
@@ -429,8 +490,8 @@ H.networkgraphIntegrations = {
             distanceR: number
         ): void {
             var massFactor = link.getMass(),
-                translatedX = (distanceXY.x / distanceR) * force,
-                translatedY = (distanceXY.y / distanceR) * force;
+                translatedX = ((distanceXY.x) / distanceR) * force / 1,
+                translatedY = ((distanceXY.y) / distanceR) * force / 1;
 
             if (!link.fromNode.fixedPosition) {
                 (link.fromNode.dispX as any) -=
@@ -445,6 +506,17 @@ H.networkgraphIntegrations = {
                 (link.toNode.dispY as any) +=
                     translatedY * massFactor.toNode / link.toNode.degree;
             }
+
+            /*
+            // attractive force is using spring forces,
+            // treating links as springs
+            if ((link.toNode.plotY || 0) - (link.fromNode.plotY || 0) > 50) {
+                (link.toNode.plotY as any) -=
+                (((distanceXY.y) / distanceR) * 100 - distanceXY.y) * 0.1;
+                (link.toNode.plotX as any) -=
+                    (((distanceXY.x) / distanceR) - distanceXY.x) * 0.01;
+            }
+            */
         },
         /**
          * Integration method.
