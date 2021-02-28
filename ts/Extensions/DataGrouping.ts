@@ -74,7 +74,7 @@ declare module '../Core/Series/SeriesLike' {
 }
 
 declare module '../Core/Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         dataGrouping?: Highcharts.DataGroupingOptionsObject;
     }
 }

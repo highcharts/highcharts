@@ -30,8 +30,11 @@ const {
  * Declarations
  *
  * */
+
 type NonArray<T> = T extends Array<unknown> ? never : T;
+
 type NonFunction<T> = T extends Function ? never : T;
+
 type NullType = (null|undefined);
 
 /**

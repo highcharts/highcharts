@@ -79,13 +79,24 @@ export type SeriesFindNearestPointByValue = ('x'|'xy');
 
 export type SeriesLinecapValue = ('butt'|'round'|'square'|string);
 
+export interface SeriesOptions extends SeriesPlotOptions {
+    data?: Array<(PointOptions|PointShortOptions)>;
+    id?: string;
+    index?: number;
+    /** @private */
+    isInternal?: boolean;
+    name?: string;
+    type?: string;
+    zIndex?: number;
+}
+
 /**
  * Helper interface for series types to add options to all series options.
  *
  * Use the `declare module` pattern to overload the interface in this definition
  * file.
  */
-export interface SeriesOptions {
+export interface SeriesPlotOptions {
     allowPointSelect?: boolean;
     animation?: (boolean|DeepPartial<AnimationOptions>);
     className?: string;
@@ -98,17 +109,12 @@ export interface SeriesOptions {
     crisp?: (boolean|number);
     cursor?: (string|CursorValue);
     dashStyle?: DashStyleValue;
-    data?: Array<(PointOptions|PointShortOptions)>;
     dataSorting?: SeriesDataSortingOptions;
     enableMouseTracking?: boolean;
     events?: SeriesEventsOptions;
     findNearestPointBy?: SeriesFindNearestPointByValue;
     getExtremesFromAll?: boolean;
-    id?: string;
-    index?: number;
     inactiveOtherPoints?: boolean;
-    /** @private */
-    isInternal?: boolean;
     joinBy?: (string|Array<string>);
     kdNow?: boolean;
     keys?: Array<string>;
@@ -117,7 +123,6 @@ export interface SeriesOptions {
     lineWidth?: number;
     linkedTo?: string;
     marker?: PointMarkerOptions;
-    name?: string;
     negativeColor?: ColorType;
     opacity?: number;
     point?: SeriesPointOptions;
@@ -130,11 +135,9 @@ export interface SeriesOptions {
     step?: SeriesStepValue;
     stickyTracking?: boolean;
     turboThreshold?: number;
-    type?: string;
     visible?: boolean;
     xAxis?: (number|string);
     yAxis?: (number|string);
-    zIndex?: number;
     zoneAxis?: string;
     zones?: Array<SeriesZonesOptions>;
 }
@@ -199,7 +202,7 @@ export interface SeriesZonesOptions {
 
 /* *
  *
- *  Export
+ *  Default Export
  *
  * */
 

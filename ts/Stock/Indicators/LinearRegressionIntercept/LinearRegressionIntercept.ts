@@ -61,7 +61,7 @@ class LinearRegressionInterceptIndicator extends LinearRegressionIndicator {
      * @requires     stock/indicators/linearregressionintercept
      * @optionparent plotOptions.linearregressionintercept
      */
-    public static defaultOptions: LinearRegressionParamsOptions = merge(
+    public static defaultOptions: LinearRegressionOptions = merge(
         LinearRegressionIndicator.defaultOptions
     );
 

@@ -60,7 +60,7 @@ class LinearRegressionAngleIndicator extends LinearRegressionIndicator {
      * @requires     stock/indicators/linearregressionangle
      * @optionparent plotOptions.linearregressionangle
      */
-    public static defaultOptions: LinearRegressionParamsOptions = merge(
+    public static defaultOptions: LinearRegressionOptions = merge(
         SMAIndicator.defaultOptions, {
             tooltip: { // add a degree symbol
                 pointFormat: '<span style="color:{point.color}">\u25CF</span>' +

@@ -69,7 +69,7 @@ declare module './Series/SeriesLike' {
 }
 
 declare module './Series/SeriesOptions' {
-    interface SeriesOptions {
+    interface SeriesPlotOptions {
         navigatorOptions?: SeriesOptions;
         showInNavigator?: boolean;
     }
