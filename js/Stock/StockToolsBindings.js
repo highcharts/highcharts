@@ -234,7 +234,8 @@ bindingsUtils.updateHeight = function (e, annotation) {
 bindingsUtils.attractToPoint = function (e, chart) {
     var coords = chart.pointer.getCoordinates(e), x = coords.xAxis[0].value, y = coords.yAxis[0].value, distX = Number.MAX_VALUE, closestPoint;
     chart.series.forEach(function (series) {
-        series.points.forEach(function (point) {
+        var _a;
+        (_a = series.points) === null || _a === void 0 ? void 0 : _a.forEach(function (point) {
             if (point && distX > Math.abs(point.x - x)) {
                 distX = Math.abs(point.x - x);
                 closestPoint = point;

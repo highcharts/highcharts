@@ -406,7 +406,7 @@ bindingsUtils.attractToPoint = function (
         closestPoint: (Point|undefined);
 
     chart.series.forEach(function (series): void {
-        series.points.forEach(function (point): void {
+        series.points?.forEach(function (point): void {
             if (point && distX > Math.abs((point.x as any) - x)) {
                 distX = Math.abs((point.x as any) - x);
                 closestPoint = point;
