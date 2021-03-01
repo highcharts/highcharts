@@ -87,12 +87,12 @@ declare global {
             events: NavigationBindingsOptionsObject;
         }
         interface NavigationBindingsOptionsObject {
+            alwaysEnabled?: boolean;
             className: string;
             end?: Function;
             init?: Function;
             start?: Function;
             steps?: Array<Function>;
-            alwaysEnabled?: boolean;
         }
         interface NavigationBindingsUtilsObject {
             getFieldType(value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text');
@@ -1488,48 +1488,49 @@ setOptions({
     }
 });
 addEvent(H.Chart, 'render', function (): void {
-    var chart = this,
+    const chart = this,
         navigationBindings = chart.navigationBindings,
         disabledClassName = 'highcharts-disabled-btn';
 
     if (chart && navigationBindings) {
-        // check if the buttons should be enabled/disabled based on
-        // visible series
+        // Check if the buttons should be enabled/disabled based on
+        // visible series.
 
         let buttonsEnabled = false;
-        this.series.forEach(function (series): void {
+        chart.series.forEach(function (series): void {
             if (!series.navigatorSeries && series.visible) {
                 buttonsEnabled = true;
             }
         });
 
-        objectEach(navigationBindings.boundClassNames, function (value: any, key): void {
-            // get the HTML element coresponding to the
-            // className taken from StockToolsBindings
+        objectEach(
+            navigationBindings.boundClassNames,
+            function (value: Highcharts.NavigationBindingsOptionsObject, key: string): void {
+                // Get the HTML element coresponding to the
+                // className taken from StockToolsBindings.
 
-            if (chart.stockTools && chart.stockTools.toolbar) {
-                const buttonNode = chart.stockTools.toolbar.querySelectorAll('.' + key);
+                if (chart.stockTools && chart.stockTools.toolbar) {
+                    const buttonNode = chart.stockTools.toolbar.querySelectorAll('.' + key);
 
-                if (buttonNode) {
-
-                    if (!buttonsEnabled && !value.alwaysEnabled) {
-                        buttonNode.forEach(function (button): void {
-
-                            if (button.className.indexOf(disabledClassName) === -1) {
-                                button.className += ' ' + disabledClassName;
-                            }
-                        });
-                    } else if (buttonsEnabled) {
-                        buttonNode.forEach(function (button): void {
-                            // enable all buttons by deleting the className
-                            if (button.className.indexOf(disabledClassName) !== -1) {
-                                button.classList.remove(disabledClassName);
-                            }
-                        });
+                    if (buttonNode) {
+                        if (!buttonsEnabled && !value.alwaysEnabled) {
+                            buttonNode.forEach(function (button): void {
+                                if (button.className.indexOf(disabledClassName) === -1) {
+                                    button.className += ' ' + disabledClassName;
+                                }
+                            });
+                        } else if (buttonsEnabled) {
+                            buttonNode.forEach(function (button): void {
+                                // Enable all buttons by deleting the className.
+                                if (button.className.indexOf(disabledClassName) !== -1) {
+                                    button.classList.remove(disabledClassName);
+                                }
+                            });
+                        }
                     }
                 }
             }
-        });
+        );
     }
 });
 
