@@ -354,6 +354,12 @@ QUnit.test('Networkgraph and series updates', assert => {
         ]
     });
 
+    assert.strictEqual(
+        chart.series[0].nodes[0].color,
+        'red',
+        '#15134: Updating color should work'
+    );
+
     assert.ok(
         true,
         'No errors when updating series and chart at the same time (#13570).'

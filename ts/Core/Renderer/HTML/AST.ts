@@ -163,7 +163,7 @@ class AST {
      * // Allow a custom, trusted attribute
      * Highcharts.AST.allowedAttributes.push('data-value');
      *
-     * @name Highcharts.AST.allowedTags
+     * @name Highcharts.AST.allowedAttributes
      * @static
      */
     public static allowedAttributes = [
