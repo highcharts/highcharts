@@ -1,6 +1,5 @@
 import U from '../../Core/Utilities.js';
 var createElement = U.createElement;
-var PREFIX = 'highcharts-dashboard-';
 var GUIElement = /** @class */ (function () {
     function GUIElement() {
     }
@@ -9,6 +8,22 @@ var GUIElement = /** @class */ (function () {
     *  Functions
     *
     * */
+    /**
+     * Create or set existing HTML element as a GUIElement container.
+     *
+     * @param {boolean} render
+     * Decide wheather to render a new element or not.
+     *
+     * @param {HTMLDOMElement} parentContainer
+     * The container for a new HTML element.
+     *
+     * @param {HTMLAttributes} attribs
+     * Attributes for a new HTML element.
+     *
+     * @param {HTMLElement|string} elementOrId
+     * HTML element or id of HTML element that will be set
+     * as a GUIELement container.
+     */
     GUIElement.prototype.setElementContainer = function (render, parentContainer, attribs, elementOrId) {
         if (attribs === void 0) { attribs = {}; }
         var guiElement = this;
@@ -35,4 +50,4 @@ var GUIElement = /** @class */ (function () {
     };
     return GUIElement;
 }());
-export { GUIElement, PREFIX };
+export default GUIElement;

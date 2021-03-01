@@ -1,9 +1,6 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
-import Layout from './Layout.js';
-import Row from './Row.js';
-import Column from './Column.js';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
 
@@ -11,20 +8,23 @@ const {
     createElement
 } = U;
 
-const PREFIX = 'highcharts-dashboard-';
-
 abstract class GUIElement {
-    /* *
-    *
-    *  Constructors
-    *
-    * */
+    /**
+     *
+     * Prefix of a GUIElement HTML class name.
+     *
+     */
+    protected static readonly prefix: 'highcharts-dashboard-';
 
     /* *
     *
     *  Properties
     *
     * */
+
+    /**
+     * HTML container of a GUIElement.
+     */
     public container?: HTMLDOMElement;
 
     /* *
@@ -32,6 +32,23 @@ abstract class GUIElement {
     *  Functions
     *
     * */
+
+    /**
+     * Create or set existing HTML element as a GUIElement container.
+     *
+     * @param {boolean} render
+     * Decide wheather to render a new element or not.
+     *
+     * @param {HTMLDOMElement} parentContainer
+     * The container for a new HTML element.
+     *
+     * @param {HTMLAttributes} attribs
+     * Attributes for a new HTML element.
+     *
+     * @param {HTMLElement|string} elementOrId
+     * HTML element or id of HTML element that will be set
+     * as a GUIELement container.
+     */
     protected setElementContainer(
         render?: boolean,
         parentContainer?: HTMLDOMElement,
@@ -69,4 +86,4 @@ abstract class GUIElement {
 
 interface GUIElement {}
 
-export { GUIElement, PREFIX };
+export default GUIElement;

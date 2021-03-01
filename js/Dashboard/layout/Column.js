@@ -11,14 +11,26 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { GUIElement, PREFIX } from './GUIElement.js';
+import GUIElement from './GUIElement.js';
 var Column = /** @class */ (function (_super) {
     __extends(Column, _super);
     /* *
     *
-    *  Constructors
+    *  Constructor
     *
     * */
+    /**
+     * Constructs an instance of the Column class.
+     *
+     * @param {Row} row
+     * Reference to the row instance.
+     *
+     * @param {Column.Options} options
+     * Options for the column.
+     *
+     * @param {HTMLElement} columnElement
+     * The container of the column HTML element.
+     */
     function Column(row, options, columnElement) {
         var _this = this;
         var columnClassName = row.layout.options.columnClassName;
@@ -28,7 +40,7 @@ var Column = /** @class */ (function (_super) {
         _this.setElementContainer(row.layout.dashboard.guiEnabled, row.container, {
             id: options.id,
             className: columnClassName ?
-                columnClassName + ' ' + PREFIX + 'column' : PREFIX + 'column'
+                columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
         }, columnElement || options.id);
         return _this;
     }

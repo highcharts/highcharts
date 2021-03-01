@@ -1,12 +1,25 @@
 import type Row from './Row.js';
-import { GUIElement, PREFIX } from './GUIElement.js';
+import GUIElement from './GUIElement.js';
 
 class Column extends GUIElement {
     /* *
     *
-    *  Constructors
+    *  Constructor
     *
     * */
+
+    /**
+     * Constructs an instance of the Column class.
+     *
+     * @param {Row} row
+     * Reference to the row instance.
+     *
+     * @param {Column.Options} options
+     * Options for the column.
+     *
+     * @param {HTMLElement} columnElement
+     * The container of the column HTML element.
+     */
     public constructor(
         row: Row,
         options: Column.Options,
@@ -25,7 +38,7 @@ class Column extends GUIElement {
             {
                 id: options.id,
                 className: columnClassName ?
-                    columnClassName + ' ' + PREFIX + 'column' : PREFIX + 'column'
+                    columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
             },
             columnElement || options.id
         );
@@ -36,14 +49,16 @@ class Column extends GUIElement {
     *  Properties
     *
     * */
-    public row: Row;
-    public options: Column.Options;
 
-    /* *
-    *
-    *  Functions
-    *
-    * */
+    /**
+     * Reference to the row instance.
+     */
+    public row: Row;
+
+    /**
+     * The column options.
+     */
+    public options: Column.Options;
 }
 
 namespace Column {

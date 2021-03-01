@@ -12,16 +12,25 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import Row from './Row.js';
-import { GUIElement, PREFIX } from './GUIElement.js';
+import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 var pick = U.pick;
 var Layout = /** @class */ (function (_super) {
     __extends(Layout, _super);
     /* *
     *
-    *  Constructors
+    *  Constructor
     *
     * */
+    /**
+     * Constructs an instance of the Layout class.
+     *
+     * @param {Dashboard} dashboard
+     * Reference to the dashboard instance.
+     *
+     * @param {Layout.Options} options
+     * Options for the layout.
+     */
     function Layout(dashboard, options) {
         var _this = _super.call(this) || this;
         _this.dashboard = dashboard;
@@ -30,7 +39,7 @@ var Layout = /** @class */ (function (_super) {
         // GUI structure
         _this.setElementContainer(dashboard.guiEnabled, dashboard.container, {
             id: options.id,
-            className: PREFIX + 'layout'
+            className: GUIElement.prefix + 'layout'
         }, options.id);
         _this.setRows();
         return _this;
@@ -40,6 +49,9 @@ var Layout = /** @class */ (function (_super) {
     *  Functions
     *
     * */
+    /**
+     * Set the layout rows using rows options or rowClassName.
+     */
     Layout.prototype.setRows = function () {
         var _a;
         var layout = this, rowsElements = pick(layout.options.rows, (_a = layout.container) === null || _a === void 0 ? void 0 : _a.getElementsByClassName(layout.options.rowClassName)) || [];
@@ -49,6 +61,17 @@ var Layout = /** @class */ (function (_super) {
             layout.addRow(layout.dashboard.guiEnabled ? rowElement : {}, rowElement instanceof HTMLElement ? rowElement : void 0);
         }
     };
+    /**
+     * Add a new Row instance to the layout rows array.
+     *
+     * @param {Row.Options} options
+     * Options of a row.
+     *
+     * @param {HTMLElement} rowElement
+     * The container for a new row HTML element.
+     *
+     * @return {Row}
+     */
     Layout.prototype.addRow = function (options, rowElement) {
         var layout = this, row = new Row(layout, options, rowElement);
         layout.rows.push(row);

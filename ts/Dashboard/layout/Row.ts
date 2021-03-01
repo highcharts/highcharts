@@ -1,6 +1,6 @@
 import Layout from './Layout.js';
 import Column from './Column.js';
-import { GUIElement, PREFIX } from './GUIElement.js';
+import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
     pick
@@ -8,9 +8,22 @@ const {
 class Row extends GUIElement {
     /* *
     *
-    *  Constructors
+    *  Constructor
     *
     * */
+
+    /**
+     * Constructs an instance of the Row class.
+     *
+     * @param {Layout} layout
+     * Reference to the layout instance.
+     *
+     * @param {Row.Options} options
+     * Options for the row.
+     *
+     * @param {HTMLElement} rowElement
+     * The container of the row HTML element.
+     */
     public constructor(
         layout: Layout,
         options: Row.Options,
@@ -30,7 +43,7 @@ class Row extends GUIElement {
             {
                 id: options.id,
                 className: rowClassName ?
-                    rowClassName + ' ' + PREFIX + 'row' : PREFIX + 'row'
+                    rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
             },
             rowElement || options.id
         );
@@ -42,8 +55,20 @@ class Row extends GUIElement {
     *  Properties
     *
     * */
+
+    /**
+     * Reference to the layout instance.
+     */
     public layout: Layout;
+
+    /**
+     * Array of the row columns.
+     */
     public columns: Array<Column>;
+
+    /**
+     * The row options.
+     */
     public options: Row.Options;
 
     /* *
@@ -52,6 +77,9 @@ class Row extends GUIElement {
     *
     * */
 
+    /**
+     * Set the row columns using column options or columnClassName.
+     */
     public setColumns(): void {
         const row = this,
             columnsElements = pick(
@@ -74,13 +102,13 @@ class Row extends GUIElement {
     }
 
     /**
-     * addColumn
+     * Add a new Column instance to the row columns array.
      *
      * @param {Column.Options} [options]
      * Options for the row column.
      *
      * @param {HTMLElement} [columnElement]
-     * HTML element of the column.
+     * The container for a new column HTML element.
      *
      * @return {Column}
      */

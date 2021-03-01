@@ -1,6 +1,6 @@
 import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
-import { GUIElement, PREFIX } from './GUIElement.js';
+import GUIElement from './GUIElement.js';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -9,9 +9,19 @@ const {
 class Layout extends GUIElement {
     /* *
     *
-    *  Constructors
+    *  Constructor
     *
     * */
+
+    /**
+     * Constructs an instance of the Layout class.
+     *
+     * @param {Dashboard} dashboard
+     * Reference to the dashboard instance.
+     *
+     * @param {Layout.Options} options
+     * Options for the layout.
+     */
     public constructor(
         dashboard: Dashboard,
         options: Layout.Options
@@ -28,7 +38,7 @@ class Layout extends GUIElement {
             dashboard.container,
             {
                 id: options.id,
-                className: PREFIX + 'layout'
+                className: GUIElement.prefix + 'layout'
             },
             options.id
         );
@@ -40,8 +50,20 @@ class Layout extends GUIElement {
     *  Properties
     *
     * */
+
+    /**
+     * Reference to the dashboard instance.
+     */
     public dashboard: Dashboard;
+
+    /**
+     * Array of the layout rows.
+     */
     public rows: Array<Row>;
+
+    /**
+     * The layout options.
+     */
     public options: Layout.Options;
 
     /* *
@@ -49,6 +71,10 @@ class Layout extends GUIElement {
     *  Functions
     *
     * */
+
+    /**
+     * Set the layout rows using rows options or rowClassName.
+     */
     public setRows(): void {
         const layout = this,
             rowsElements = pick(
@@ -70,6 +96,17 @@ class Layout extends GUIElement {
         }
     }
 
+    /**
+     * Add a new Row instance to the layout rows array.
+     *
+     * @param {Row.Options} options
+     * Options of a row.
+     *
+     * @param {HTMLElement} rowElement
+     * The container for a new row HTML element.
+     *
+     * @return {Row}
+     */
     public addRow(
         options: Row.Options,
         rowElement?: HTMLElement

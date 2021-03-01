@@ -12,16 +12,28 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import Column from './Column.js';
-import { GUIElement, PREFIX } from './GUIElement.js';
+import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 var pick = U.pick;
 var Row = /** @class */ (function (_super) {
     __extends(Row, _super);
     /* *
     *
-    *  Constructors
+    *  Constructor
     *
     * */
+    /**
+     * Constructs an instance of the Row class.
+     *
+     * @param {Layout} layout
+     * Reference to the layout instance.
+     *
+     * @param {Row.Options} options
+     * Options for the row.
+     *
+     * @param {HTMLElement} rowElement
+     * The container of the row HTML element.
+     */
     function Row(layout, options, rowElement) {
         var _this = this;
         var rowClassName = layout.options.rowClassName;
@@ -32,7 +44,7 @@ var Row = /** @class */ (function (_super) {
         _this.setElementContainer(layout.dashboard.guiEnabled, layout.container, {
             id: options.id,
             className: rowClassName ?
-                rowClassName + ' ' + PREFIX + 'row' : PREFIX + 'row'
+                rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
         }, rowElement || options.id);
         _this.setColumns();
         return _this;
@@ -42,6 +54,9 @@ var Row = /** @class */ (function (_super) {
     *  Functions
     *
     * */
+    /**
+     * Set the row columns using column options or columnClassName.
+     */
     Row.prototype.setColumns = function () {
         var _a;
         var row = this, columnsElements = pick(row.options.columns, (_a = row.container) === null || _a === void 0 ? void 0 : _a.getElementsByClassName(row.layout.options.columnClassName)) || [];
@@ -52,13 +67,13 @@ var Row = /** @class */ (function (_super) {
         }
     };
     /**
-     * addColumn
+     * Add a new Column instance to the row columns array.
      *
      * @param {Column.Options} [options]
      * Options for the row column.
      *
      * @param {HTMLElement} [columnElement]
-     * HTML element of the column.
+     * The container for a new column HTML element.
      *
      * @return {Column}
      */
