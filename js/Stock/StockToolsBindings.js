@@ -1568,7 +1568,7 @@ var stockToolsBindings = {
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-full-screen", "init": function() {}}
+     * @default {"className": "alwaysEnabled": true, "highcharts-full-screen", "init": function() {}}
      */
     fullScreen: {
         /** @ignore-option */
@@ -1698,7 +1698,7 @@ var stockToolsBindings = {
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-save-chart", alwaysEnabled: true, "init": function() {}}
+     * @default {"className": "highcharts-save-chart", "alwaysEnabled": true, "init": function() {}}
      */
     saveChart: {
         /** @ignore-option */

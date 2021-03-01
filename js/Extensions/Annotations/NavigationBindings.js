@@ -1040,17 +1040,17 @@ setOptions({
 addEvent(H.Chart, 'render', function () {
     var chart = this, navigationBindings = chart.navigationBindings, disabledClassName = 'highcharts-disabled-btn';
     if (chart && navigationBindings) {
-        // check if the buttons should be enabled/disabled based on
-        // visible series
+        // Check if the buttons should be enabled/disabled based on
+        // visible series.
         var buttonsEnabled_1 = false;
-        this.series.forEach(function (series) {
+        chart.series.forEach(function (series) {
             if (!series.navigatorSeries && series.visible) {
                 buttonsEnabled_1 = true;
             }
         });
         objectEach(navigationBindings.boundClassNames, function (value, key) {
-            // get the HTML element coresponding to the
-            // className taken from StockToolsBindings
+            // Get the HTML element coresponding to the
+            // className taken from StockToolsBindings.
             if (chart.stockTools && chart.stockTools.toolbar) {
                 var buttonNode = chart.stockTools.toolbar.querySelectorAll('.' + key);
                 if (buttonNode) {
@@ -1063,7 +1063,7 @@ addEvent(H.Chart, 'render', function () {
                     }
                     else if (buttonsEnabled_1) {
                         buttonNode.forEach(function (button) {
-                            // enable all buttons by deleting the className
+                            // Enable all buttons by deleting the className.
                             if (button.className.indexOf(disabledClassName) !== -1) {
                                 button.classList.remove(disabledClassName);
                             }
