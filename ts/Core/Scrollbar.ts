@@ -138,6 +138,7 @@ declare global {
             public removeEvents(): void;
             public render(): void;
             public setRange(from: number, to: number): void;
+            public shouldUpdateExtremes(eventType: string): boolean;
             public update(options: Highcharts.ScrollbarOptions): void;
             public updatePosition(from: number, to: number): void;
         }
@@ -1117,6 +1118,29 @@ class Scrollbar {
         }
 
         scroller.rendered = true;
+    }
+
+    /**
+     * Checks if the extremes should be updated in response to a scrollbar
+     * change event.
+     *
+     * @private
+     * @function Highcharts.Scrollbar#shouldUpdateExtremes
+     * @param  {string} eventType
+     * @return {boolean}
+     */
+    public shouldUpdateExtremes(eventType: string): boolean {
+        return (
+            pick(
+                this.options.liveRedraw,
+                H.svg && !H.isTouchDevice && !this.chart.isBoosting
+            ) ||
+            // Mouseup always should change extremes
+            eventType === 'mouseup' ||
+            eventType === 'touchend' ||
+            // Internal events
+            !defined(eventType)
+        );
     }
 
     public trackClick(e: PointerEvent): void {

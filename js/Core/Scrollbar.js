@@ -554,6 +554,23 @@ var Scrollbar = /** @class */ (function () {
         }
         scroller.rendered = true;
     };
+    /**
+     * Checks if the extremes should be updated in response to a scrollbar
+     * change event.
+     *
+     * @private
+     * @function Highcharts.Scrollbar#shouldUpdateExtremes
+     * @param  {string} eventType
+     * @return {boolean}
+     */
+    Scrollbar.prototype.shouldUpdateExtremes = function (eventType) {
+        return (pick(this.options.liveRedraw, H.svg && !H.isTouchDevice && !this.chart.isBoosting) ||
+            // Mouseup always should change extremes
+            eventType === 'mouseup' ||
+            eventType === 'touchend' ||
+            // Internal events
+            !defined(eventType));
+    };
     Scrollbar.prototype.trackClick = function (e) {
         var scroller = this;
         var normalizedEvent = scroller.chart.pointer.normalize(e), range = scroller.to - scroller.from, top = scroller.y + scroller.scrollbarTop, left = scroller.x + scroller.scrollbarLeft;

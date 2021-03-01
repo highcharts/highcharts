@@ -7,7 +7,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../Globals.js';
 import U from '../Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -70,12 +69,7 @@ var ScrollbarAxis = /** @class */ (function () {
                         to = unitedMin + range * (1 - this.from);
                         from = unitedMin + range * (1 - this.to);
                     }
-                    if (pick(this.options.liveRedraw, H.svg && !H.isTouchDevice && !this.chart.isBoosting) ||
-                        // Mouseup always should change extremes
-                        e.DOMType === 'mouseup' ||
-                        e.DOMType === 'touchend' ||
-                        // Internal events
-                        !defined(e.DOMType)) {
+                    if (this.shouldUpdateExtremes(e.DOMType)) {
                         axis.setExtremes(from, to, true, e.DOMType !== 'mousemove' && e.DOMType !== 'touchmove', e);
                     }
                     else {
