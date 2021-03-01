@@ -54,7 +54,7 @@ function jsdocWrappers() {
 
     const argv = require('yargs').argv;
     const promises = [];
-    const wrappers = (argv.wrappers.split(',') || ['android', 'ios']);
+    const wrappers = (argv.wrappers || 'android,ios').split(',');
 
     if (argv.help) {
         log.message([
