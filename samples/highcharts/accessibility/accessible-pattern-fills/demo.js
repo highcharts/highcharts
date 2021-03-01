@@ -20,6 +20,9 @@ Highcharts.chart('container-area', {
     exporting: {
         enabled: false
     },
+    credits: {
+        enabled: false
+    },
 
     lang: {
         accessibility: {
@@ -80,6 +83,10 @@ Highcharts.chart('container-col', {
     },
 
     legend: {
+        enabled: false
+    },
+
+    credits: {
         enabled: false
     },
 
@@ -218,6 +225,10 @@ Highcharts.chart('container-pie', {
         borderColor: '#8ae'
     },
 
+    credits: {
+        enabled: false
+    },
+
     plotOptions: {
         series: {
             dataLabels: {
@@ -272,6 +283,10 @@ Highcharts.chart('container-line', {
     },
 
     legend: {
+        enabled: false
+    },
+
+    credits: {
         enabled: false
     },
 

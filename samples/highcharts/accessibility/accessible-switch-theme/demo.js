@@ -167,30 +167,6 @@ const darkTheme = {
         }
     },
 
-    legend: {
-        backgroundColor: 'transparent',
-        itemStyle: {
-            color: textBright
-        },
-        itemHoverStyle: {
-            color: '#FFF'
-        },
-        itemHiddenStyle: {
-            color: '#606063'
-        },
-        title: {
-            style: {
-                color: '#D0D0D0'
-            }
-        }
-    },
-
-    credits: {
-        style: {
-            color: textBright
-        }
-    },
-
     labels: {
         style: {
             color: '#707073'
@@ -291,6 +267,12 @@ function makeChart(constructor, type, series) {
         },
         title: {
             text: `${capitalizeString(type)} chart`
+        },
+        legend: {
+            enabled: false
+        },
+        credits: {
+            enabled: false
         },
         accessibility: {
             screenReaderSection: {

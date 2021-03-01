@@ -2073,8 +2073,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             series.update({
                 // line
                 lastPrice: {
-                    enabled: !lastPrice,
-                    color: 'red'
+                    enabled: !lastPrice
                 },
                 // label
                 lastVisiblePrice: {
