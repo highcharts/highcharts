@@ -14,7 +14,7 @@ abstract class GUIElement {
      * Prefix of a GUIElement HTML class name.
      *
      */
-    protected static readonly prefix: 'highcharts-dashboard-';
+    protected static readonly prefix: string = 'highcharts-dashboard-';
 
     /* *
     *

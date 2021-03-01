@@ -48,6 +48,12 @@ var GUIElement = /** @class */ (function () {
             // Error
         }
     };
+    /**
+     *
+     * Prefix of a GUIElement HTML class name.
+     *
+     */
+    GUIElement.prefix = 'highcharts-dashboard-';
     return GUIElement;
 }());
 export default GUIElement;
