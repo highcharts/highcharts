@@ -754,22 +754,13 @@ var Point = /** @class */ (function () {
      * @return {void}
      */
     Point.prototype.resolveColor = function () {
-        var series = this.series, colors, optionsChart = series.chart.options.chart, colorCount = optionsChart.colorCount, styledMode = series.chart.styledMode, colorIndex;
+        var series = this.series, colors, optionsChart = series.chart.options.chart, colorCount = optionsChart.colorCount, styledMode = series.chart.styledMode, colorIndex, color;
         // remove points nonZonedColor for later recalculation
         delete this.nonZonedColor;
-        /**
-         * The point's current color.
-         *
-         * @name Highcharts.Point#color
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
-         */
-        if (!styledMode && !this.options.color) {
-            this.color = series.color; // #3445
-        }
         if (series.options.colorByPoint) {
             if (!styledMode) {
                 colors = series.options.colors || series.chart.options.colors;
-                this.color = this.color || colors[series.colorCounter];
+                color = colors[series.colorCounter];
                 colorCount = colors.length;
             }
             colorIndex = series.colorCounter;
@@ -780,9 +771,19 @@ var Point = /** @class */ (function () {
             }
         }
         else {
+            if (!styledMode) {
+                color = series.color;
+            }
             colorIndex = series.colorIndex;
         }
         this.colorIndex = pick(this.options.colorIndex, colorIndex);
+        /**
+         * The point's current color.
+         *
+         * @name Highcharts.Point#color
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+         */
+        this.color = pick(this.options.color, color);
     };
     /**
      * Set a value in an object, on the property defined by key. The key

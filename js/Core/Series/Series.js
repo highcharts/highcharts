@@ -583,11 +583,6 @@ var Series = /** @class */ (function () {
         if (this.chart.styledMode) {
             this.getCyclic('color');
         }
-        else if (this.options.colorByPoint) {
-            // #4359, selected slice got series.color even when colorByPoint
-            // was set.
-            this.options.color = null;
-        }
         else {
             this.getCyclic('color', this.options.color ||
                 defaultOptions.plotOptions[this.type].color, this.chart.options.colors);

@@ -3408,10 +3408,6 @@ class Series {
         if (this.chart.styledMode) {
             this.getCyclic('color');
 
-        } else if (this.options.colorByPoint) {
-            // #4359, selected slice got series.color even when colorByPoint
-            // was set.
-            this.options.color = null as any;
         } else {
             this.getCyclic(
                 'color',

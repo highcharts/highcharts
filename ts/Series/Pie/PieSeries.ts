@@ -775,14 +775,11 @@ class PieSeries extends Series {
                 )
             });
 
-            const userColor = (options.colorByPoint ? (this.userOptions.color) : (options.color));
-
             if (!this.chart.styledMode) {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: (userColor as any) ||
-                    palette.neutralColor20
+                    stroke: options.color || palette.neutralColor20
                 });
             }
 
