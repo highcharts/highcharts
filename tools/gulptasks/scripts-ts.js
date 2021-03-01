@@ -16,20 +16,23 @@ const gulp = require('gulp');
  */
 function task() {
 
-    const processLib = require('./lib/process');
+    const errorMessages = require('../error-messages.js'),
+        processLib = require('./lib/process');
 
     return new Promise((resolve, reject) => {
 
         processLib.isRunning('scripts-ts', true);
 
-        processLib
-            .exec('npx tsc --project ts')
+        Promise
+            .resolve()
+            .then(() => errorMessages())
+            .then(() => processLib.exec('npx tsc --project ts'))
             .then(function (output) {
-                processLib.isRunning('scripts-ts', true);
+                processLib.isRunning('scripts-ts', false);
                 resolve(output);
             })
             .catch(function (error) {
-                processLib.isRunning('scripts-ts', true);
+                processLib.isRunning('scripts-ts', false);
                 reject(error);
             });
     });

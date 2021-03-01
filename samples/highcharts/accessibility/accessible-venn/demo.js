@@ -56,6 +56,10 @@ Highcharts.chart('container', {
         margin: 0
     },
 
+    credits: {
+        enabled: false
+    },
+
     series: [{
         type: 'venn',
         borderColor: '#333',
