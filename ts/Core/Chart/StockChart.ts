@@ -113,7 +113,142 @@ declare module '../Series/SeriesOptions' {
     }
 }
 
+declare module '../Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        crispPolyLine(points: SVGPath, width: number): SVGPath;
+    }
+}
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface Options {
+            isStock?: boolean;
+        }
+    }
+}
+
 class StockChart extends Chart {
+    /**
+     * Initializes the chart. The constructor's arguments are passed on
+     * directly.
+     *
+     * @function Highcharts.StockChart#init
+     *
+     * @param {Highcharts.Options} userOptions
+     *        Custom options.
+     *
+     * @param {Function} [callback]
+     *        Function to run when the chart has loaded and and all external
+     *        images are loaded.
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.StockChart#event:init
+     * @fires Highcharts.StockChart#event:afterInit
+     */
+    public init(
+        userOptions: Partial<Highcharts.Options>,
+        callback?: Chart.CallbackFunction
+    ): void {
+        // to increase performance, don't merge the data
+        var seriesOptions = userOptions.series,
+            defaultOptions = getOptions(),
+            // Always disable startOnTick:true on the main axis when the
+            // navigator is enabled (#1090)
+            navigatorEnabled = pick(
+                userOptions.navigator && userOptions.navigator.enabled,
+                (defaultOptions.navigator as any).enabled,
+                true
+            );
+
+        // apply X axis options to both single and multi y axes
+        userOptions.xAxis = splat(userOptions.xAxis || {}).map(function (
+            xAxisOptions: Highcharts.XAxisOptions,
+            i: number
+        ): Highcharts.XAxisOptions {
+            return merge(
+                getDefaultAxisOptions('xAxis', xAxisOptions),
+                defaultOptions.xAxis, // #3802
+                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
+                xAxisOptions, // user options
+                { // forced options
+                    type: 'datetime',
+                    categories: null
+                },
+                (navigatorEnabled ? {
+                    startOnTick: false,
+                    endOnTick: false
+                } : null) as any
+            );
+        });
+
+        // apply Y axis options to both single and multi y axes
+        userOptions.yAxis = splat(userOptions.yAxis || {}).map(function (
+            yAxisOptions: Highcharts.YAxisOptions,
+            i: number
+        ): Highcharts.YAxisOptions {
+            return merge(
+                getDefaultAxisOptions('yAxis', yAxisOptions),
+                defaultOptions.yAxis, // #3802
+                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
+                yAxisOptions // user options
+            );
+        });
+
+        userOptions.series = void 0;
+
+        userOptions = merge(
+            {
+                chart: {
+                    panning: {
+                        enabled: true,
+                        type: 'x'
+                    },
+                    pinchType: 'x'
+                },
+                navigator: {
+                    enabled: navigatorEnabled
+                },
+                scrollbar: {
+                    // #4988 - check if setOptions was called
+                    enabled: pick((defaultOptions.scrollbar as any).enabled, true)
+                },
+                rangeSelector: {
+                    // #4988 - check if setOptions was called
+                    enabled: pick(
+                        (defaultOptions.rangeSelector as any).enabled,
+                        true
+                    )
+                },
+                title: {
+                    text: null
+                },
+                tooltip: {
+                    split: pick((defaultOptions.tooltip as any).split, true),
+                    crosshairs: true
+                },
+                legend: {
+                    enabled: false
+                }
+
+            },
+
+            userOptions, // user's options
+
+            { // forced options
+                isStock: true // internal flag
+            }
+        );
+
+        userOptions.series = seriesOptions;
+
+        super.init(userOptions, callback);
+    }
+
     /**
      * Factory for creating different axis types.
      * Extended to add stock defaults.
@@ -138,24 +273,6 @@ class StockChart extends Chart {
             options.axis
         );
         return super.createAxis(type, options);
-    }
-}
-
-declare module '../Renderer/SVG/SVGRendererLike' {
-    interface SVGRendererLike {
-        crispPolyLine(points: SVGPath, width: number): SVGPath;
-    }
-}
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Options {
-            isStock?: boolean;
-        }
     }
 }
 
@@ -208,105 +325,7 @@ function stockChart(
     b?: (Chart.CallbackFunction|Highcharts.Options),
     c?: Chart.CallbackFunction
 ): StockChart {
-    var hasRenderToArg = isString(a) || (a as any).nodeName,
-        options = arguments[hasRenderToArg ? 1 : 0],
-        userOptions = options,
-        // to increase performance, don't merge the data
-        seriesOptions = options.series,
-        defaultOptions = getOptions(),
-        opposite,
-        // Always disable startOnTick:true on the main axis when the navigator
-        // is enabled (#1090)
-        navigatorEnabled = pick(
-            options.navigator && options.navigator.enabled,
-            (defaultOptions.navigator as any).enabled,
-            true
-        );
-
-    // apply X axis options to both single and multi y axes
-    options.xAxis = splat(options.xAxis || {}).map(function (
-        xAxisOptions: Highcharts.XAxisOptions,
-        i: number
-    ): Highcharts.XAxisOptions {
-        return merge(
-            getDefaultAxisOptions('xAxis', xAxisOptions),
-            defaultOptions.xAxis, // #3802
-            defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
-            xAxisOptions, // user options
-            { // forced options
-                type: 'datetime',
-                categories: null
-            },
-            (navigatorEnabled ? {
-                startOnTick: false,
-                endOnTick: false
-            } : null) as any
-        );
-    });
-
-    // apply Y axis options to both single and multi y axes
-    options.yAxis = splat(options.yAxis || {}).map(function (
-        yAxisOptions: Highcharts.YAxisOptions,
-        i: number
-    ): Highcharts.YAxisOptions {
-        return merge(
-            getDefaultAxisOptions('yAxis', yAxisOptions),
-            defaultOptions.yAxis, // #3802
-            defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
-            yAxisOptions // user options
-        );
-    });
-
-    options.series = null;
-
-    options = merge(
-        {
-            chart: {
-                panning: {
-                    enabled: true,
-                    type: 'x'
-                },
-                pinchType: 'x'
-            },
-            navigator: {
-                enabled: navigatorEnabled
-            },
-            scrollbar: {
-                // #4988 - check if setOptions was called
-                enabled: pick((defaultOptions.scrollbar as any).enabled, true)
-            },
-            rangeSelector: {
-                // #4988 - check if setOptions was called
-                enabled: pick(
-                    (defaultOptions.rangeSelector as any).enabled,
-                    true
-                )
-            },
-            title: {
-                text: null
-            },
-            tooltip: {
-                split: pick((defaultOptions.tooltip as any).split, true),
-                crosshairs: true
-            },
-            legend: {
-                enabled: false
-            }
-
-        },
-
-        options, // user's options
-
-        { // forced options
-            isStock: true // internal flag
-        }
-    );
-
-    options.series = userOptions.series = seriesOptions;
-
-    return hasRenderToArg ?
-        new StockChart(a as any, options, c) :
-        new StockChart(options, b as any);
+    return new StockChart(a as any, b as any, c);
 }
 
 /* *
@@ -1136,15 +1155,15 @@ function getDefaultAxisOptions(type: string, options: Highcharts.AxisOptions): H
  *
  * */
 
-(H as any).StockChart = (H as any).stockChart = stockChart;
-
+(H as any).stockChart = stockChart;
+(H as any).StockChart = StockChart;
 /* *
  *
  *  Default Export
  *
  * */
 
-export default stockChart;
+export default StockChart;
 
 /* *
  *
