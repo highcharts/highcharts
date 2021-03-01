@@ -173,8 +173,8 @@ function stockChart(a, b, c) {
     });
     options.series = userOptions.series = seriesOptions;
     return hasRenderToArg ?
-        new Chart(a, options, c) :
-        new Chart(options, b);
+        new StockChart(a, options, c) :
+        new StockChart(options, b);
 }
 /* *
  *

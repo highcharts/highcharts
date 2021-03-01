@@ -305,8 +305,8 @@ function stockChart(
     options.series = userOptions.series = seriesOptions;
 
     return hasRenderToArg ?
-        new Chart(a as any, options, c) :
-        new Chart(options, b as any);
+        new StockChart(a as any, options, c) :
+        new StockChart(options, b as any);
 }
 
 /* *
