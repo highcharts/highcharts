@@ -38,12 +38,12 @@ export default class GroupComponent extends Component {
         this.components.forEach((comp): void => {
             comp.parentElement = this.element;
             if (this.options.direction === 'column') {
-                comp.dimensions.width = this.options.dimensions?.width || 500;
-                comp.dimensions.height = (this.options.dimensions?.height || 500) / this.components.length;
+                comp.dimensions.width = this.dimensions.width;
+                comp.dimensions.height = (this.dimensions.height) / this.components.length;
             }
             if (this.options.direction === 'row') {
-                comp.dimensions.height = this.options.dimensions?.height || 500;
-                comp.dimensions.width = ((this.options.dimensions?.width || 500) / this.components.length) - 50;
+                comp.dimensions.height = this.dimensions.height || 500;
+                comp.dimensions.width = ((this.dimensions.width || 500) / this.components.length) - 50;
             }
             comp.render();
         });

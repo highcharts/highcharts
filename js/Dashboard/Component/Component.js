@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import U from '../../Core/Utilities.js';
-var createElement = U.createElement, merge = U.merge, fireEvent = U.fireEvent, addEvent = U.addEvent, objectEach = U.objectEach, isFunction = U.isFunction, uniqueKey = U.uniqueKey;
+var createElement = U.createElement, merge = U.merge, fireEvent = U.fireEvent, addEvent = U.addEvent, objectEach = U.objectEach, isFunction = U.isFunction, uniqueKey = U.uniqueKey, getStyle = U.getStyle;
 var Component = /** @class */ (function () {
     function Component(options) {
         this.tableEvents = [];
@@ -32,9 +32,9 @@ var Component = /** @class */ (function () {
         this.store = this.options.store;
         this.hasLoaded = false;
         // Initial dimensions
-        this.dimensions = this.options.dimensions || {
-            width: this.parentElement.scrollWidth,
-            height: this.parentElement.scrollHeight
+        this.dimensions = {
+            width: Number(getStyle(this.parentElement, 'width')),
+            height: Number(getStyle(this.parentElement, 'height'))
         };
         this.element = createElement('div', {
             className: this.options.className
@@ -261,10 +261,12 @@ var Component = /** @class */ (function () {
      * @return {this}
      */
     Component.prototype.render = function () {
+        var _a, _b;
         if (!this.hasLoaded) {
             this.load();
+            // Call resize to set the sizes
+            this.resize((_a = this.options.dimensions) === null || _a === void 0 ? void 0 : _a.width, (_b = this.options.dimensions) === null || _b === void 0 ? void 0 : _b.height);
         }
-        this.resize();
         var e = {
             component: this
         };
@@ -317,7 +319,7 @@ var Component = /** @class */ (function () {
             store: (_a = this.store) === null || _a === void 0 ? void 0 : _a.toJSON(),
             options: {
                 parentElement: this.parentElement.id,
-                dimensions: this.options.dimensions,
+                dimensions: this.dimensions,
                 type: this.options.type,
                 id: this.options.id || this.id
             }

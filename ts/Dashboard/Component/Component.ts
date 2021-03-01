@@ -10,7 +10,8 @@ const {
     addEvent,
     objectEach,
     isFunction,
-    uniqueKey
+    uniqueKey,
+    getStyle
 } = U;
 
 abstract class Component<TEventObject extends Component.Event = Component.Event> {
@@ -153,7 +154,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
 
     public parentElement: HTMLElement;
     public store?: DataStore<any>; // the attached store
-    public dimensions: { width: number; height: number };
+    public readonly dimensions: { width: number; height: number };
     public element: HTMLElement;
     public options: Component.ComponentOptions;
     public type: string;
@@ -183,9 +184,9 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         this.store = this.options.store;
         this.hasLoaded = false;
         // Initial dimensions
-        this.dimensions = this.options.dimensions || {
-            width: this.parentElement.scrollWidth,
-            height: this.parentElement.scrollHeight
+        this.dimensions = {
+            width: Number(getStyle(this.parentElement, 'width')),
+            height: Number(getStyle(this.parentElement, 'height'))
         };
 
         this.element = createElement('div', {
@@ -347,11 +348,11 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      * @return {this}
      */
     public render(): this {
-
         if (!this.hasLoaded) {
             this.load();
+            // Call resize to set the sizes
+            this.resize(this.options.dimensions?.width, this.options.dimensions?.height);
         }
-        this.resize();
 
         const e = {
             component: this
@@ -416,7 +417,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             store: this.store?.toJSON(),
             options: {
                 parentElement: this.parentElement.id,
-                dimensions: this.options.dimensions,
+                dimensions: this.dimensions,
                 type: this.options.type,
                 id: this.options.id || this.id
             }
@@ -468,7 +469,7 @@ namespace Component {
     export interface ComponentOptions {
         parentElement: HTMLElement | string;
         store?: DataStore<any>;
-        dimensions?: { width: number; height: number };
+        dimensions?: { width?: number | string; height?: number | string };
         className?: string;
         type: string;
         // allow overwriting gui elements

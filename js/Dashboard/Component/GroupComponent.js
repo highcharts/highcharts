@@ -45,15 +45,14 @@ var GroupComponent = /** @class */ (function (_super) {
         this.element.style.display = 'flex';
         this.element.style.flexDirection = this.options.direction;
         this.components.forEach(function (comp) {
-            var _a, _b, _c, _d;
             comp.parentElement = _this.element;
             if (_this.options.direction === 'column') {
-                comp.dimensions.width = ((_a = _this.options.dimensions) === null || _a === void 0 ? void 0 : _a.width) || 500;
-                comp.dimensions.height = (((_b = _this.options.dimensions) === null || _b === void 0 ? void 0 : _b.height) || 500) / _this.components.length;
+                comp.dimensions.width = _this.dimensions.width;
+                comp.dimensions.height = (_this.dimensions.height) / _this.components.length;
             }
             if (_this.options.direction === 'row') {
-                comp.dimensions.height = ((_c = _this.options.dimensions) === null || _c === void 0 ? void 0 : _c.height) || 500;
-                comp.dimensions.width = ((((_d = _this.options.dimensions) === null || _d === void 0 ? void 0 : _d.width) || 500) / _this.components.length) - 50;
+                comp.dimensions.height = _this.dimensions.height || 500;
+                comp.dimensions.width = ((_this.dimensions.width || 500) / _this.components.length) - 50;
             }
             comp.render();
         });
