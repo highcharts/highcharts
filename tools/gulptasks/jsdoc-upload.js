@@ -162,13 +162,13 @@ function updateFileContent(filePath, fileContent) {
  * @param {S3} targetStorage
  * AWS S3 instance to upload to.
  *
- * @param {object} targetConfig
- * AWS bucket configuration.
+ * @param {string} targetBucket
+ * AWS S3 bucket to upload to.
  *
  * @return {Promise}
  * Promise to keep.
  */
-function uploadSource(sourceFolder, targetStorage, targetConfig) {
+function uploadSource(sourceFolder, targetStorage, targetBucket) {
     const log = require('./lib/log');
 
     log.message(`Start upload of "${sourceFolder}"...`);
@@ -192,10 +192,11 @@ function uploadSource(sourceFolder, targetStorage, targetConfig) {
 
                 return targetStorage
                     .putObject({
+                        Bucket: targetBucket,
                         Key: filePath,
                         Body: fileContent,
                         ContentType: MIME_TYPE[path.extname(filePath)],
-                        ...targetConfig
+                        ACL: 'public-read'
                     })
                     .promise()
                     .then(() => log.message(filePath, 'uploaded'));
@@ -218,6 +219,7 @@ function jsdocUpload() {
         bucket,
         docs,
         help,
+        profile,
         test
     } = require('yargs').argv;
     const sourceFolders = (docs || '/')
@@ -245,18 +247,19 @@ function jsdocUpload() {
         });
     } else {
         const targetStorage = new aws.S3({
-            region: (process.env.AWS_REGION || 'eu-west-1')
+            region: (process.env.AWS_REGION || 'eu-west-1'),
+            credentials: (
+                profile ?
+                    new aws.SharedIniFileCredentials({ profile }) :
+                    void 0
+            )
         });
-        const targetConfig = {
-            ACL: 'public-read',
-            Bucket: bucket
-        };
 
         sourceFolders.forEach(sourceFolder => {
             promiseChain = promiseChain.then(() => uploadSource(
                 sourceFolder,
                 targetStorage,
-                targetConfig
+                bucket
             ));
         });
     }
