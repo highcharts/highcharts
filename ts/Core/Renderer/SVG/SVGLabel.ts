@@ -123,7 +123,7 @@ class SVGLabel extends SVGElement {
      *
      * @private
      * @name Highcharts.SVGLabel#textProps
-     * @type {Array<keyof CSSObject>}
+     * @type {Array<string>}
      */
     public static textProps: Array<keyof CSSObject> = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',

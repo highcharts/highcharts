@@ -400,7 +400,7 @@ var SVGLabel = /** @class */ (function (_super) {
      *
      * @private
      * @name Highcharts.SVGLabel#textProps
-     * @type {Array<keyof CSSObject>}
+     * @type {Array<string>}
      */
     SVGLabel.textProps = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
