@@ -7749,11 +7749,6 @@ class Axis {
             if (!graphic) {
                 this.cross = graphic = chart.renderer
                     .path()
-                    .addClass(
-                        'highcharts-crosshair highcharts-crosshair-' +
-                        (categorized ? 'category ' : 'thin ') +
-                        (options as any).className
-                    )
                     .attr({
                         zIndex: pick((options as any).zIndex, 2)
                     })
@@ -7780,6 +7775,12 @@ class Axis {
                             dashstyle: (options as any).dashStyle
                         });
                     }
+                } else {
+                    graphic.addClass( // #15222
+                        'highcharts-crosshair highcharts-crosshair-' +
+                        (categorized ? 'category ' : 'thin ') +
+                        (options as any).className
+                    );
                 }
             }
 

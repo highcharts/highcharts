@@ -2993,9 +2993,6 @@ var Axis = /** @class */ (function () {
             if (!graphic) {
                 this.cross = graphic = chart.renderer
                     .path()
-                    .addClass('highcharts-crosshair highcharts-crosshair-' +
-                    (categorized ? 'category ' : 'thin ') +
-                    options.className)
                     .attr({
                     zIndex: pick(options.zIndex, 2)
                 })
@@ -3019,6 +3016,12 @@ var Axis = /** @class */ (function () {
                             dashstyle: options.dashStyle
                         });
                     }
+                }
+                else {
+                    graphic.addClass(// #15222
+                    'highcharts-crosshair highcharts-crosshair-' +
+                        (categorized ? 'category ' : 'thin ') +
+                        options.className);
                 }
             }
             graphic.show().attr({
