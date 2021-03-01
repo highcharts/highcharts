@@ -10,7 +10,7 @@ const gulp = require('gulp');
  *
  * */
 
-// require('./lint-js');
+require('./lint-ts');
 require('./update');
 
 gulp.task('lint', gulp.series(
