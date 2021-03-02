@@ -398,3 +398,56 @@ QUnit.test('Bindings general tests', function (assert) {
         qunitContainer.style.display = 'block';
     }
 });
+
+QUnit.test('Stock Tools: drawing line annotations (#15155)', assert => {
+    const chart = Highcharts.stockChart('container', {
+            chart: {
+                width: 800,
+                plotBorderWidth: 1
+            },
+            series: [{
+                data: [4, 2, 5, 6, 4]
+            }]
+        }),
+        plotLeft = chart.plotLeft,
+        plotTop = chart.plotTop,
+        xAxisLenght = chart.xAxis[0].len,
+        yAxisLenght = chart.yAxis[0].len;
+
+    // init infinityLine
+    chart.navigationBindings.options.bindings.infinityLine.start.call(
+        chart.navigationBindings,
+        {
+            // the center of the plotarea
+            chartX: plotLeft + xAxisLenght / 2,
+            chartY: plotTop + yAxisLenght / 2
+        }
+    );
+
+    const infinityLine = chart.annotations[0]; // initiated infinityLine
+
+    // 'move mouse' so the infinityLine can be drawn
+    chart.navigationBindings.options.bindings.infinityLine.steps[0].call(
+        chart.navigationBindings,
+        {
+            // direction: top-right corner of the plotarea
+            chartX: plotLeft + xAxisLenght * 3 / 4,
+            chartY: plotTop + yAxisLenght * 1 / 4
+        },
+        infinityLine
+    );
+
+    // The infinityLine should be drawn from bottom-left to top-right plotarea corner.
+
+    assert.strictEqual(
+        xAxisLenght,
+        infinityLine.graphic.element.getBBox().width,
+        'The width of infinityLine\'s graphic box should be the same as xAxis width.'
+    );
+
+    assert.strictEqual(
+        yAxisLenght,
+        infinityLine.graphic.element.getBBox().height,
+        'The width of infinityLine\'s graphic box should be the same as yAxis height.'
+    );
+});
