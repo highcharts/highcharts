@@ -411,17 +411,17 @@ test('component resizing', function(assert) {
 
     emptyDimensions.destroy();
 
-    // const percentageDimensions = new HTMLComponent({
-    //     parentElement: parent,
-    //     dimensions: {
-    //         width: '50%',
-    //         height: '50%'
-    //     }
-    // }).render();
-    // assert.strictEqual(percentageDimensions.dimensions.width, parent.scrollWidth / 2)
-    // assert.strictEqual(percentageDimensions.dimensions.height, parent.scrollHeight / 2 )
-    //
-    // percentageDimensions.destroy();
+    const percentageDimensions = new HTMLComponent({
+        parentElement: parent,
+        dimensions: {
+            width: '50%',
+            height: '50%'
+        }
+    }).render();
+    assert.strictEqual(percentageDimensions.dimensions.width, parent.scrollWidth / 2)
+    assert.strictEqual(percentageDimensions.dimensions.height, parent.scrollHeight / 2 )
+
+    percentageDimensions.destroy();
 
 
 })

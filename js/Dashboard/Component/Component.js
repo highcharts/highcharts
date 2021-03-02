@@ -182,8 +182,10 @@ var Component = /** @class */ (function () {
                 dimensions.width.value = Number(width.replace(percentageRegex, ''));
                 dimensions.width.type = '%';
             }
-            // Perhaps somewhat naive
-            dimensions.width.value = Number(width.replace('px', ''));
+            else {
+                // Perhaps somewhat naive
+                dimensions.width.value = Number(width.replace('px', ''));
+            }
         }
         else {
             dimensions.width.value = width;
@@ -193,14 +195,20 @@ var Component = /** @class */ (function () {
                 dimensions.height.value = Number(height.replace(percentageRegex, ''));
                 dimensions.height.type = '%';
             }
-            // Perhaps somewhat naive
-            dimensions.height.value = Number(height.replace('px', ''));
+            else {
+                // Perhaps somewhat naive
+                dimensions.height.value = Number(height.replace('px', ''));
+            }
         }
         else {
             dimensions.height.value = height;
         }
-        this.dimensions.height = dimensions.height.value;
-        this.dimensions.width = dimensions.width.value;
+        this.dimensions.height = dimensions.height.type === '%' ?
+            Number(getStyle(this.parentElement, 'height')) * (dimensions.height.value / 100) :
+            dimensions.height.value;
+        this.dimensions.width = dimensions.width.type === '%' ?
+            Number(getStyle(this.parentElement, 'width')) * (dimensions.width.value / 100) :
+            dimensions.width.value;
         this.element.style.width = dimensions.width.value + dimensions.width.type;
         this.element.style.height = dimensions.height.value + dimensions.height.type;
         fireEvent(this, 'resize', {
