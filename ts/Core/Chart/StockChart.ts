@@ -128,19 +128,8 @@ declare global {
         interface Options {
             isStock?: boolean;
         }
-        function stockChart(
-            options: Options,
-            callback?: Chart.CallbackFunction
-        ): StockChart;
-        function stockChart(
-            renderTo: (string|HTMLDOMElement),
-            options: Options,
-            callback?: Chart.CallbackFunction
-        ): StockChart;
-        let StockChart: ChartClass;
     }
 }
-type ChartClass = typeof StockChart;
 
 class StockChart extends Chart {
     /**
@@ -1163,21 +1152,18 @@ function getDefaultAxisOptions(type: string, options: Highcharts.AxisOptions): H
     return {};
 }
 
-/* *
- *
- *  Compatibility
- *
- * */
+const stockModule = {
+    stockChart,
+    StockChart
+};
 
-H.stockChart = stockChart;
-H.StockChart = StockChart;
 /* *
  *
  *  Default Export
  *
  * */
 
-export default StockChart;
+export default stockModule;
 
 /* *
  *
