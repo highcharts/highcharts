@@ -442,12 +442,12 @@ QUnit.test('Stock Tools: drawing line annotations (#15155)', assert => {
     assert.strictEqual(
         xAxisLenght,
         infinityLine.graphic.element.getBBox().width,
-        'The width of infinityLine\'s graphic box should be the same as xAxis width.'
+        'The width of the infinityLine\'s graphic box should be the same as the xAxis\' width.'
     );
 
     assert.strictEqual(
         yAxisLenght,
         infinityLine.graphic.element.getBBox().height,
-        'The width of infinityLine\'s graphic box should be the same as yAxis height.'
+        'The height of the infinityLine\'s graphic box should be the same as the yAxis\' height.'
     );
 });
