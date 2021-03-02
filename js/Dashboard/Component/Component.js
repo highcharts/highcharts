@@ -33,8 +33,8 @@ var Component = /** @class */ (function () {
         this.hasLoaded = false;
         // Initial dimensions
         this.dimensions = {
-            width: Number(getStyle(this.parentElement, 'width')),
-            height: Number(getStyle(this.parentElement, 'height'))
+            width: 0,
+            height: 0
         };
         this.element = createElement('div', {
             className: this.options.className
@@ -265,7 +265,7 @@ var Component = /** @class */ (function () {
         if (!this.hasLoaded) {
             this.load();
             // Call resize to set the sizes
-            this.resize((_a = this.options.dimensions) === null || _a === void 0 ? void 0 : _a.width, (_b = this.options.dimensions) === null || _b === void 0 ? void 0 : _b.height);
+            this.resize(((_a = this.options.dimensions) === null || _a === void 0 ? void 0 : _a.width) || getStyle(this.parentElement, 'width'), ((_b = this.options.dimensions) === null || _b === void 0 ? void 0 : _b.height) || getStyle(this.parentElement, 'height'));
         }
         var e = {
             component: this

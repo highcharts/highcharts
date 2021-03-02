@@ -327,7 +327,7 @@ test('ChartComponent constructors', function (assert) {
     })
 });
 
-only('component resizing', function(assert) {
+test('component resizing', function(assert) {
 
     const parent = document.createElement('div');
     parent.id = 'test';

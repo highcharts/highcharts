@@ -185,8 +185,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         this.hasLoaded = false;
         // Initial dimensions
         this.dimensions = {
-            width: Number(getStyle(this.parentElement, 'width')),
-            height: Number(getStyle(this.parentElement, 'height'))
+            width: 0,
+            height: 0
         };
 
         this.element = createElement('div', {
@@ -351,7 +351,10 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         if (!this.hasLoaded) {
             this.load();
             // Call resize to set the sizes
-            this.resize(this.options.dimensions?.width, this.options.dimensions?.height);
+            this.resize(
+                this.options.dimensions?.width || getStyle(this.parentElement, 'width'),
+                this.options.dimensions?.height || getStyle(this.parentElement, 'height')
+            );
         }
 
         const e = {
