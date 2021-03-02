@@ -69,6 +69,9 @@ const dashboard = new Dashboard('container', {
             onLoad: function () {
                 // call action		
                 console.log('dashboard-col-0 onload event');	
+            },
+            redraw: function () {
+                console.log('dashboard-col-0 redraw event');
             }
         }
     }, {

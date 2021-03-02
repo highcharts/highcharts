@@ -1,6 +1,8 @@
 import ChartComponent from './../Component/ChartComponent.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
 import GroupComponent from './../Component/GroupComponent.js';
+import U from '../../Core/Utilities.js';
+var addEvent = U.addEvent, fireEvent = U.fireEvent;
 var Bindings = /** @class */ (function () {
     function Bindings() {
     }
@@ -26,10 +28,6 @@ var Bindings = /** @class */ (function () {
         var bindings = this;
         var events = options.events;
         var component;
-        // call events
-        if (events && events.onLoad) {
-            events.onLoad.call();
-        }
         // add elements to containers
         if (compontentContainer) {
             switch (options.type) {
@@ -50,6 +48,13 @@ var Bindings = /** @class */ (function () {
             }
             component === null || component === void 0 ? void 0 : component.render();
         }
+        // add events
+        if (component) {
+            for (var key in events) {
+                addEvent(component, key, events[key]);
+            }
+        }
+        fireEvent(component, 'onLoad');
         return component;
     };
     /**

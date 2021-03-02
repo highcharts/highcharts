@@ -6,6 +6,12 @@ import GroupComponent from './../Component/GroupComponent.js';
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+
+import U from '../../Core/Utilities.js';
+const {
+    addEvent,
+    fireEvent
+} = U;
 class Bindings {
     /* *
     *
@@ -28,17 +34,12 @@ class Bindings {
     * */
     public addComponent(
         options: Bindings.ComponentType
-    ): HTMLComponent|ChartComponent|GroupComponent|undefined {
+    ): HTMLComponent|ChartComponent|GroupComponent|undefined { //
         const compontentContainer = document.getElementById(options.column);
         const bindings = this;
         const events = options.events;
 
         let component;
-
-        // call events
-        if (events && events.onLoad) {
-            events.onLoad.call();
-        }
 
         // add elements to containers
         if (compontentContainer) {
@@ -64,8 +65,22 @@ class Bindings {
                 default:
                     component = void 0;
             }
+
             component?.render();
         }
+
+        // add events
+        if (component) {
+            for (let key in events) {
+                addEvent(
+                    component,
+                    key,
+                    events[key]
+                );
+            }
+        }
+
+        fireEvent(component, 'onLoad');
 
         return component;
     }

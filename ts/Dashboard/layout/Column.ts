@@ -5,7 +5,9 @@ import type Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
-    merge
+    merge,
+    pick,
+    addEvent
 } = U;
 class Column extends GUIElement {
     /* *
@@ -53,6 +55,7 @@ class Column extends GUIElement {
                 options.style
             )
         );
+
     }
 
     /* *

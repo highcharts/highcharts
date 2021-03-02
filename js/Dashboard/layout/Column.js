@@ -13,7 +13,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
-var merge = U.merge;
+var merge = U.merge, pick = U.pick, addEvent = U.addEvent;
 var Column = /** @class */ (function (_super) {
     __extends(Column, _super);
     /* *
