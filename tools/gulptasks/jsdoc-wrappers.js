@@ -26,6 +26,7 @@ function getDownloadTask(wrapper) {
         case 'android':
             return process.exec(
                 'git clone --depth 1 https://github.com/highcharts/highcharts-android-dev.git && ' +
+                'rm -rf build/api/android && ' +
                 'mkdir -p build/api/android && ' +
                 'mv highcharts-android-dev/JavaDoc build/api/android/highcharts && ' +
                 'rm -rf highcharts-android-dev'
@@ -33,6 +34,7 @@ function getDownloadTask(wrapper) {
         case 'ios':
             return process.exec(
                 'git clone --depth 1 https://github.com/highcharts/highcharts-ios-dev.git && ' +
+                'rm -rf build/api/ios && ' +
                 'mkdir -p build/api/ios && ' +
                 'mv highcharts-ios-dev/api build/api/ios/highcharts && ' +
                 'rm -rf highcharts-ios-dev'

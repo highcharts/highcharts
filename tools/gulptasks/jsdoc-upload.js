@@ -87,6 +87,31 @@ const SOURCE_ROOT = 'build/api';
  * */
 
 /**
+ * Converts an array of items into chunks of sub-arrays with 1000 items.
+ *
+ * @param {Array<*>} items
+ * Array to split into chunks.
+ *
+ * @return {Array<Array<*>>}
+ * Array of chunks.
+ */
+function getChunks(items) {
+    items = items.slice();
+
+    if (items.length <= 1000) {
+        return [items];
+    }
+
+    const chunks = [];
+
+    while (items.length) {
+        chunks.push(items.splice(0, 1000));
+    }
+
+    return chunks;
+}
+
+/**
  * Deletes file keys in a S3 bucket.
  *
  * @param {AWS.S3} storage
@@ -95,27 +120,22 @@ const SOURCE_ROOT = 'build/api';
  * @param {string} bucket
  * AWS S3 bucket to use.
  *
- * @param {Array<string>} fileKeys
- * File keys to delete.
+ * @param {string} fileKey
+ * File key to delete.
  *
  * @return {Promise}
  * Promise to keep.
  */
-function deleteFileKeys(storage, bucket, ...fileKeys) {
+function deleteFileKey(storage, bucket, fileKey) {
+    const log = require('./lib/log');
+
     return storage
-        .deleteObjects({
+        .deleteObject({
             Bucket: bucket,
-            Delete: { Objects: fileKeys.map(fileKey => ({ Key: fileKey })) }
+            Key: fileKey
         })
         .promise()
-        .then(response => {
-            if (response.Errors) {
-                throw new Error(
-                    'Deletion of file keys failed!',
-                    response.Errors
-                );
-            }
-        });
+        .then(() => log.message(fileKey, 'deleted'));
 }
 
 /**
@@ -278,25 +298,6 @@ function uploadFolder(
 
     let promiseChain = Promise.resolve();
 
-    log.message(`Start upload of "${sourceFolder}"...`);
-
-    const files = glob
-        .sync(path.posix.join(sourceFolder, '**/*'))
-        .filter(sourcePath => (
-            path.basename(sourcePath).indexOf('.') !== 0 &&
-            fs.lstatSync(sourcePath).isFile()
-        ));
-
-    files.forEach(filePath => {
-        promiseChain = promiseChain.then(() => {
-            if (test) {
-                log.message(filePath, 'would be uploaded');
-            } else {
-                uploadFile(filePath, targetStorage, bucket);
-            }
-        });
-    });
-
     if (synchronize) {
         promiseChain = promiseChain
             .then(() => log.message(`Start synchronization of "${sourceFolder}"...`))
@@ -312,15 +313,45 @@ function uploadFolder(
                     .filter(fileKey => !fileKey.match(versionPattern))
                     .filter(fileKey => !fs.existsSync(path.join(SOURCE_ROOT, fileKey)));
 
-                if (test) {
-                    fileKeys.forEach(fileKey => {
-                        log.message(fileKey, 'would be deleted');
+                let deletePromises = Promise.resolve();
+
+                fileKeys.forEach(fileKey => {
+                    deletePromises = deletePromises.then(() => {
+                        if (test) {
+                            log.message(fileKey, 'would be deleted');
+                            return Promise.resolve();
+                        }
+
+                        return deleteFileKey(targetStorage, bucket, fileKey);
                     });
-                } else {
-                    deleteFileKeys(targetStorage, bucket, fileKeys);
-                }
+                });
+
+                return deletePromises;
             });
     }
+
+    promiseChain = promiseChain.then(() => log.message(`Start upload of "${sourceFolder}"...`));
+
+    const filePaths = glob
+        .sync(path.posix.join(sourceFolder, '**/*'))
+        .filter(sourcePath => (
+            path.basename(sourcePath).indexOf('.') !== 0 &&
+            fs.lstatSync(sourcePath).isFile()
+        ));
+
+    getChunks(filePaths).forEach(filePathsChunk => {
+        promiseChain = promiseChain.then(
+            () => Promise
+                .all(filePathsChunk.map(filePath => {
+                    if (test) {
+                        log.message(filePath, 'would be uploaded');
+                        return Promise.resolve();
+                    }
+                    return uploadFile(filePath, targetStorage, bucket);
+                }))
+                .then(() => void 0)
+        );
+    });
 
     return promiseChain;
 }
