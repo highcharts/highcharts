@@ -29,6 +29,7 @@ var GroupComponent = /** @class */ (function (_super) {
         var _this = _super.call(this, options) || this;
         _this.options = __assign(__assign({}, GroupComponent.defaultOptions), options);
         _this.components = options.components || [];
+        _this.element.classList.add('group-component');
         return _this;
     }
     GroupComponent.prototype.load = function () {
@@ -45,15 +46,14 @@ var GroupComponent = /** @class */ (function (_super) {
         this.element.style.display = 'flex';
         this.element.style.flexDirection = this.options.direction;
         this.components.forEach(function (comp) {
+            var _a, _b;
             comp.parentElement = _this.element;
-            if (_this.options.direction === 'column') {
-                comp.dimensions.width = _this.dimensions.width;
-                comp.dimensions.height = (_this.dimensions.height) / _this.components.length;
-            }
-            if (_this.options.direction === 'row') {
-                comp.dimensions.height = _this.dimensions.height || 500;
-                comp.dimensions.width = ((_this.dimensions.width || 500) / _this.components.length) - 50;
-            }
+            comp.options.dimensions = _this.options.direction === 'column' ? {
+                height: ((_a = comp.options.dimensions) === null || _a === void 0 ? void 0 : _a.height) || ((1 / _this.components.length) * 100) + '%'
+            } : {
+                width: ((_b = comp.options.dimensions) === null || _b === void 0 ? void 0 : _b.width) || ((1 / _this.components.length) * 100) + '%'
+            };
+            comp.element.classList.replace('highcharts-dashboard-component', 'child-component');
             comp.render();
         });
         return this;
