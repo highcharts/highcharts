@@ -1,3 +1,6 @@
+/* eslint-disable */
+
+// WIP
 import type ComponentTypes from './ComponentType';
 import Component from './Component.js';
 
