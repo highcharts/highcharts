@@ -48,10 +48,10 @@ const dashboard = new Dashboard('container', {
                 animation: false
             }
         },
-        dimensions: {
+        /*dimensions: {
             width: 400,
             height: 400
-        },
+        },*/
         events: {
             onLoad: function () {
                 // call action		
@@ -83,7 +83,7 @@ const dashboard = new Dashboard('container', {
         },
         dimensions: {
             width: 400,
-            height: 400
+            // height: 400
         },
         events: {
             onLoad: function () {
@@ -105,8 +105,8 @@ const dashboard = new Dashboard('container', {
             }
         },
         dimensions: {
-            width: 400,
-            height: 400
+            width: '100%',
+            //height:  400
         },
         events: {
             onLoad: function () {
@@ -150,10 +150,10 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
                 animation: false
             }
         },
-        dimensions: {
+        /*dimensions: {
             width: 400,
             height: 400
-        },
+        },*/
         events: {
             onLoad: function () {
                 // call action		
