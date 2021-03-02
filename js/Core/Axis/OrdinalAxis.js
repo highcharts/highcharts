@@ -202,10 +202,14 @@ var OrdinalAxis;
                             max: extremes.dataMax + overscroll
                         };
                     },
+                    getGroupPixelWidth: axisProto.getGroupPixelWidth,
+                    getTimeTicks: axisProto.getTimeTicks,
                     options: {
                         ordinal: true
                     },
-                    ordinal: {},
+                    ordinal: {
+                        getGroupIntervalFactor: this.getGroupIntervalFactor
+                    },
                     ordinal2lin: axisProto.ordinal2lin,
                     val2lin: axisProto.val2lin // #2590
                 };
@@ -235,8 +239,8 @@ var OrdinalAxis;
                             enabled: false
                         }
                     };
-                    series.processData.apply(fakeSeries);
                     fakeAxis.series.push(fakeSeries);
+                    series.processData.apply(fakeSeries, [true]);
                 });
                 // Run beforeSetTickPositions to compute the ordinalPositions
                 axis.ordinal.beforeSetTickPositions.apply({ axis: fakeAxis });

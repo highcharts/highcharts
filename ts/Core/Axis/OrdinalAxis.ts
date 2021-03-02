@@ -398,10 +398,14 @@ namespace OrdinalAxis {
                             max: extremes.dataMax + (overscroll as any)
                         } as any;
                     },
+                    getGroupPixelWidth: axisProto.getGroupPixelWidth,
+                    getTimeTicks: axisProto.getTimeTicks,
                     options: {
                         ordinal: true
                     },
-                    ordinal: {},
+                    ordinal: {
+                        getGroupIntervalFactor: this.getGroupIntervalFactor
+                    },
                     ordinal2lin: axisProto.ordinal2lin, // #6276
                     val2lin: axisProto.val2lin // #2590
                 } as any;
@@ -436,10 +440,9 @@ namespace OrdinalAxis {
                             enabled: false
                         }
                     };
-                    series.processData.apply(fakeSeries);
-
-
                     fakeAxis.series.push(fakeSeries);
+
+                    series.processData.apply(fakeSeries, [true]);
                 });
 
                 // Run beforeSetTickPositions to compute the ordinalPositions
