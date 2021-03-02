@@ -12,6 +12,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import GUIElement from './GUIElement.js';
+import U from '../../Core/Utilities.js';
+var merge = U.merge;
 var Column = /** @class */ (function (_super) {
     __extends(Column, _super);
     /* *
@@ -41,7 +43,7 @@ var Column = /** @class */ (function (_super) {
             id: options.id,
             className: columnClassName ?
                 columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
-        }, columnElement || options.id);
+        }, columnElement || options.id, merge(row.layout.options.style, row.options.style, options.style));
         return _this;
     }
     return Column;

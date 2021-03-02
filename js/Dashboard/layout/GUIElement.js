@@ -24,13 +24,13 @@ var GUIElement = /** @class */ (function () {
      * HTML element or id of HTML element that will be set
      * as a GUIELement container.
      */
-    GUIElement.prototype.setElementContainer = function (render, parentContainer, attribs, elementOrId) {
+    GUIElement.prototype.setElementContainer = function (render, parentContainer, attribs, elementOrId, style) {
         if (attribs === void 0) { attribs = {}; }
         var guiElement = this;
         var elem;
         // @ToDo use try catch block
         if (render && parentContainer) {
-            guiElement.container = createElement('div', attribs, {}, parentContainer);
+            guiElement.container = createElement('div', attribs, style || {}, parentContainer);
         }
         else if (elementOrId instanceof HTMLElement) { // @ToDo check if this is enough
             guiElement.container = elementOrId;

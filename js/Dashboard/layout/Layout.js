@@ -40,7 +40,7 @@ var Layout = /** @class */ (function (_super) {
         _this.setElementContainer(dashboard.guiEnabled, dashboard.container, {
             id: options.id,
             className: GUIElement.prefix + 'layout'
-        }, options.id);
+        }, options.id, _this.options.style);
         _this.setRows();
         return _this;
     }

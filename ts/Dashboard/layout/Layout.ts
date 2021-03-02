@@ -1,6 +1,9 @@
 import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
 import GUIElement from './GUIElement.js';
+import type {
+    CSSObject
+} from '../../Core/Renderer/CSSObject';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -40,7 +43,8 @@ class Layout extends GUIElement {
                 id: options.id,
                 className: GUIElement.prefix + 'layout'
             },
-            options.id
+            options.id,
+            this.options.style
         );
         this.setRows();
     }
@@ -128,6 +132,7 @@ namespace Layout {
         rowClassName: string;
         columnClassName: string;
         rows: Array<Row.Options>;
+        style?: CSSObject;
     }
 }
 

@@ -1,6 +1,9 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type {
+    CSSObject
+} from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
 
@@ -53,7 +56,8 @@ abstract class GUIElement {
         render?: boolean,
         parentContainer?: HTMLDOMElement,
         attribs: HTMLAttributes = {},
-        elementOrId?: (HTMLElement|string)
+        elementOrId?: (HTMLElement|string),
+        style?: CSSObject
     ): void {
         const guiElement = this;
 
@@ -64,7 +68,7 @@ abstract class GUIElement {
             guiElement.container = createElement(
                 'div',
                 attribs,
-                {},
+                style || {},
                 parentContainer
             );
         } else if (elementOrId instanceof HTMLElement) { // @ToDo check if this is enough

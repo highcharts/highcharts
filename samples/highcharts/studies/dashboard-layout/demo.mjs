@@ -10,16 +10,29 @@ const dashboard = new Dashboard('container', {
             id: 'layout-1', // mandatory
             rowClassName: 'custom-row', // optional
             columnClassName: 'custom-column', // optional
+            style: {
+                fontSize: '1.5em',
+                color: 'blue'
+            },
             rows: [{
                 id: 'dashboard-row-0',
                 columns: [{
                     width: 0.7,
-                    id: 'dashboard-col-0'
+                    id: 'dashboard-col-0',
+                    style: {
+                        color: 'yellow'
+                    }
                 }, {
-                    id: 'dashboard-col-1'
+                    id: 'dashboard-col-1',
+                    style: {
+                        color: 'orange'
+                    }
                 }]
             }, {
                 id: 'dashboard-row-1',
+                style: {
+                    color: 'red'
+                },
                 columns: [{
                     id: 'dashboard-col-2'
                 }]
@@ -67,6 +80,8 @@ const dashboard = new Dashboard('container', {
                 src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
                 title: 'I heard you like components'
             }
+        }, {
+            textContent: 'Loreum ipsum'
         }]
     }, {
         column: 'dashboard-col-2',

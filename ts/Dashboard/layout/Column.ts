@@ -1,6 +1,12 @@
+import type {
+    CSSObject
+} from '../../Core/Renderer/CSSObject';
 import type Row from './Row.js';
 import GUIElement from './GUIElement.js';
-
+import U from '../../Core/Utilities.js';
+const {
+    merge
+} = U;
 class Column extends GUIElement {
     /* *
     *
@@ -40,7 +46,12 @@ class Column extends GUIElement {
                 className: columnClassName ?
                     columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
             },
-            columnElement || options.id
+            columnElement || options.id,
+            merge(
+                row.layout.options.style,
+                row.options.style,
+                options.style
+            )
         );
     }
 
@@ -65,6 +76,7 @@ namespace Column {
     export interface Options {
         width?: number;
         id?: string;
+        style?: CSSObject;
     }
 }
 

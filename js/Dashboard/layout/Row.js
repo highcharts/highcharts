@@ -14,7 +14,7 @@ var __extends = (this && this.__extends) || (function () {
 import Column from './Column.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
-var pick = U.pick;
+var pick = U.pick, merge = U.merge;
 var Row = /** @class */ (function (_super) {
     __extends(Row, _super);
     /* *
@@ -45,7 +45,7 @@ var Row = /** @class */ (function (_super) {
             id: options.id,
             className: rowClassName ?
                 rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
-        }, rowElement || options.id);
+        }, rowElement || options.id, merge(layout.options.style, options.style));
         _this.setColumns();
         return _this;
     }

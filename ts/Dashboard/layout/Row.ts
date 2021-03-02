@@ -1,9 +1,13 @@
+import type {
+    CSSObject
+} from '../../Core/Renderer/CSSObject';
 import Layout from './Layout.js';
 import Column from './Column.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
-    pick
+    pick,
+    merge
 } = U;
 class Row extends GUIElement {
     /* *
@@ -45,7 +49,8 @@ class Row extends GUIElement {
                 className: rowClassName ?
                     rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
             },
-            rowElement || options.id
+            rowElement || options.id,
+            merge(layout.options.style, options.style)
         );
         this.setColumns();
     }
@@ -128,6 +133,7 @@ namespace Row {
     export interface Options {
         id?: string;
         columns?: Array<Column.Options>;
+        style?: CSSObject;
     }
 }
 
