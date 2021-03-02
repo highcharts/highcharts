@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import U from '../../Core/Utilities.js';
-var createElement = U.createElement, merge = U.merge, fireEvent = U.fireEvent, addEvent = U.addEvent, objectEach = U.objectEach, isFunction = U.isFunction, uniqueKey = U.uniqueKey, getStyle = U.getStyle;
+var createElement = U.createElement, merge = U.merge, fireEvent = U.fireEvent, addEvent = U.addEvent, objectEach = U.objectEach, isFunction = U.isFunction, uniqueKey = U.uniqueKey, getStyle = U.getStyle, relativeLength = U.relativeLength, defined = U.defined;
 var Component = /** @class */ (function () {
     function Component(options) {
         this.tableEvents = [];
@@ -33,8 +33,8 @@ var Component = /** @class */ (function () {
         this.hasLoaded = false;
         // Initial dimensions
         this.dimensions = {
-            width: 0,
-            height: 0
+            width: null,
+            height: null
         };
         this.element = createElement('div', {
             className: this.options.className
@@ -169,48 +169,36 @@ var Component = /** @class */ (function () {
         fireEvent(this, 'storeAttached', { store: store });
         return this;
     };
+    /**
+     * Resize the component
+     * @param {number|string|null} [width]
+     * The width to set the component to.
+     * Can be pixels, a percentage string or null.
+     * Null will unset the style
+     * @param {number|string|null} [height]
+     * The height to set the component to.
+     * Can be pixels, a percentage string or null.
+     * Null will unset the style
+     *
+     * @return {this} this
+     */
     Component.prototype.resize = function (width, height) {
-        if (width === void 0) { width = this.dimensions.width; }
-        if (height === void 0) { height = this.dimensions.height; }
-        var percentageRegex = /\%$/;
-        var dimensions = {
-            width: { value: 0, type: 'px' },
-            height: { value: 0, type: 'px' }
-        };
-        if (typeof width === 'string') {
-            if (width.match(percentageRegex)) {
-                dimensions.width.value = Number(width.replace(percentageRegex, ''));
-                dimensions.width.type = '%';
-            }
-            else {
-                // Perhaps somewhat naive
-                dimensions.width.value = Number(width.replace('px', ''));
-            }
+        if (height) {
+            this.dimensions.height = relativeLength(height, Number(getStyle(this.parentElement, 'height')));
+            this.element.style.height = this.dimensions.height + 'px';
         }
-        else {
-            dimensions.width.value = width;
+        if (width) {
+            this.dimensions.width = relativeLength(width, Number(getStyle(this.parentElement, 'width')));
+            this.element.style.width = this.dimensions.width + 'px';
         }
-        if (typeof height === 'string') {
-            if (height.match(percentageRegex)) {
-                dimensions.height.value = Number(height.replace(percentageRegex, ''));
-                dimensions.height.type = '%';
-            }
-            else {
-                // Perhaps somewhat naive
-                dimensions.height.value = Number(height.replace('px', ''));
-            }
+        if (height === null) {
+            this.dimensions.height = null;
+            this.element.style.removeProperty('height');
         }
-        else {
-            dimensions.height.value = height;
+        if (width === null) {
+            this.dimensions.width = null;
+            this.element.style.removeProperty('width');
         }
-        this.dimensions.height = dimensions.height.type === '%' ?
-            Number(getStyle(this.parentElement, 'height')) * (dimensions.height.value / 100) :
-            dimensions.height.value;
-        this.dimensions.width = dimensions.width.type === '%' ?
-            Number(getStyle(this.parentElement, 'width')) * (dimensions.width.value / 100) :
-            dimensions.width.value;
-        this.element.style.width = dimensions.width.value + dimensions.width.type;
-        this.element.style.height = dimensions.height.value + dimensions.height.type;
         fireEvent(this, 'resize', {
             width: width,
             height: height
@@ -273,7 +261,7 @@ var Component = /** @class */ (function () {
         if (!this.hasLoaded) {
             this.load();
             // Call resize to set the sizes
-            this.resize(((_a = this.options.dimensions) === null || _a === void 0 ? void 0 : _a.width) || getStyle(this.parentElement, 'width'), ((_b = this.options.dimensions) === null || _b === void 0 ? void 0 : _b.height) || getStyle(this.parentElement, 'height'));
+            this.resize(((_a = this.options.dimensions) === null || _a === void 0 ? void 0 : _a.width) || null, ((_b = this.options.dimensions) === null || _b === void 0 ? void 0 : _b.height) || null);
         }
         var e = {
             component: this
@@ -322,12 +310,22 @@ var Component = /** @class */ (function () {
      */
     Component.prototype.toJSON = function () {
         var _a;
+        var dimensions = {
+            width: 0,
+            height: 0
+        };
+        objectEach(this.dimensions, function (value, key) {
+            if (value === null) {
+                return;
+            }
+            dimensions[key] = value;
+        });
         return {
             $class: Component.getName(this.constructor),
             store: (_a = this.store) === null || _a === void 0 ? void 0 : _a.toJSON(),
             options: {
                 parentElement: this.parentElement.id,
-                dimensions: this.dimensions,
+                dimensions: dimensions,
                 type: this.options.type,
                 id: this.options.id || this.id
             }

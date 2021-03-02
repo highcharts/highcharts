@@ -11,7 +11,9 @@ const {
     objectEach,
     isFunction,
     uniqueKey,
-    getStyle
+    getStyle,
+    relativeLength,
+    defined
 } = U;
 
 abstract class Component<TEventObject extends Component.Event = Component.Event> {
@@ -154,7 +156,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
 
     public parentElement: HTMLElement;
     public store?: DataStore<any>; // the attached store
-    public readonly dimensions: { width: number; height: number };
+    public dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
     public options: Component.ComponentOptions;
     public type: string;
@@ -185,8 +187,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         this.hasLoaded = false;
         // Initial dimensions
         this.dimensions = {
-            width: 0,
-            height: 0
+            width: null,
+            height: null
         };
 
         this.element = createElement('div', {
@@ -243,51 +245,41 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         return this;
     }
 
+    /**
+     * Resize the component
+     * @param {number|string|null} [width]
+     * The width to set the component to.
+     * Can be pixels, a percentage string or null.
+     * Null will unset the style
+     * @param {number|string|null} [height]
+     * The height to set the component to.
+     * Can be pixels, a percentage string or null.
+     * Null will unset the style
+     *
+     * @return {this} this
+     */
     public resize(
-        width: number | string = this.dimensions.width,
-        height: number | string = this.dimensions.height
+        width?: number | string | null,
+        height?: number | string | null
     ): this {
-        const percentageRegex = /\%$/;
-        const dimensions: Record<'width' | 'height', {
-            value: number; type: 'px' | '%';
-        }> = {
-            width: { value: 0, type: 'px' },
-            height: { value: 0, type: 'px' }
-        };
-
-        if (typeof width === 'string') {
-            if (width.match(percentageRegex)) {
-                dimensions.width.value = Number(width.replace(percentageRegex, ''));
-                dimensions.width.type = '%';
-            } else {
-                // Perhaps somewhat naive
-                dimensions.width.value = Number(width.replace('px', ''));
-            }
-        } else {
-            dimensions.width.value = width;
+        if (height) {
+            this.dimensions.height = relativeLength(height, Number(getStyle(this.parentElement, 'height')));
+            this.element.style.height = this.dimensions.height + 'px';
+        }
+        if (width) {
+            this.dimensions.width = relativeLength(width, Number(getStyle(this.parentElement, 'width')));
+            this.element.style.width = this.dimensions.width + 'px';
         }
 
-        if (typeof height === 'string') {
-            if (height.match(percentageRegex)) {
-                dimensions.height.value = Number(height.replace(percentageRegex, ''));
-                dimensions.height.type = '%';
-            } else {
-                // Perhaps somewhat naive
-                dimensions.height.value = Number(height.replace('px', ''));
-            }
-        } else {
-            dimensions.height.value = height;
+        if (height === null) {
+            this.dimensions.height = null;
+            this.element.style.removeProperty('height');
         }
 
-        this.dimensions.height = dimensions.height.type === '%' ?
-            Number(getStyle(this.parentElement, 'height')) * (dimensions.height.value / 100) :
-            dimensions.height.value;
-        this.dimensions.width = dimensions.width.type === '%' ?
-            Number(getStyle(this.parentElement, 'width')) * (dimensions.width.value / 100) :
-            dimensions.width.value;
-
-        this.element.style.width = dimensions.width.value + dimensions.width.type;
-        this.element.style.height = dimensions.height.value + dimensions.height.type;
+        if (width === null) {
+            this.dimensions.width = null;
+            this.element.style.removeProperty('width');
+        }
 
         fireEvent(this, 'resize', {
             width,
@@ -358,8 +350,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             this.load();
             // Call resize to set the sizes
             this.resize(
-                this.options.dimensions?.width || getStyle(this.parentElement, 'width'),
-                this.options.dimensions?.height || getStyle(this.parentElement, 'height')
+                this.options.dimensions?.width || null,
+                this.options.dimensions?.height || null
             );
         }
 
@@ -421,12 +413,22 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
      * Class JSON of this Component instance.
      */
     public toJSON(): Component.ClassJSON {
+        const dimensions: Record<'width' | 'height', number> = {
+            width: 0,
+            height: 0
+        };
+        objectEach(this.dimensions, function (value, key): void {
+            if (value === null) {
+                return;
+            }
+            dimensions[key] = value;
+        });
         return {
             $class: Component.getName(this.constructor),
             store: this.store?.toJSON(),
             options: {
                 parentElement: this.parentElement.id,
-                dimensions: this.dimensions,
+                dimensions,
                 type: this.options.type,
                 id: this.options.id || this.id
             }
