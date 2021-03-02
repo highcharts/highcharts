@@ -583,6 +583,9 @@ var Series = /** @class */ (function () {
         if (this.chart.styledMode) {
             this.getCyclic('color');
         }
+        else if (this.options.colorByPoint) {
+            this.color = palette.neutralColor20;
+        }
         else {
             this.getCyclic('color', this.options.color ||
                 defaultOptions.plotOptions[this.type].color, this.chart.options.colors);
