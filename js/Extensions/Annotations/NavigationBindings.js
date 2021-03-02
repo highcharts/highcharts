@@ -1037,6 +1037,23 @@ setOptions({
         }
     }
 });
+addEvent(H.Chart, 'render', function () {
+    var chart = this, stockTools = chart.stockTools, button = chart.stockTools &&
+        chart.stockTools.toolbar &&
+        chart.stockTools.toolbar.querySelector('.highcharts-current-price-indicator');
+    // Change the initial button background.
+    if (stockTools && chart.options.series && button) {
+        stockTools.priceIndicatorEnabled = stockTools.isPriceIndicatorEnabled(chart.series);
+        if (stockTools.priceIndicatorEnabled) {
+            button.firstChild.style['background-image'] =
+                'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+        }
+        else {
+            button.firstChild.style['background-image'] =
+                'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+        }
+    }
+});
 addEvent(NavigationBindings, 'closePopup', function () {
     this.deselectAnnotation();
 });

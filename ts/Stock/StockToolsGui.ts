@@ -17,7 +17,7 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
-import SeriesOptions from '../Core/Series/SeriesOptions';
+import Series from '../Core/Series/Series';
 const {
     addEvent,
     createElement,
@@ -138,7 +138,7 @@ declare global {
                 buttonWrapper: HTMLDOMElement,
                 button: StockToolsGuiDefinitionsButtonsOptions
             ): void;
-            public isPriceIndicatorEnabled(series: SeriesOptions[]): boolean;
+            public isPriceIndicatorEnabled(series: Series[]): boolean;
             public createHTML(): void;
             public destroy(): void;
             public eraseActiveButtons(
@@ -1235,22 +1235,18 @@ class Toolbar {
      * @param {array} series
      *        Array of series.
      *
-     * @return {string}
+     * @return {boolean}
      *         Tells which indicator is enabled.
      */
-    public isPriceIndicatorEnabled = function (series: SeriesOptions[]): boolean {
+    public isPriceIndicatorEnabled = function (series: Series[]): boolean {
         let priceIndicatorEnabled = false;
 
-        series.forEach(function (serie): void {
-            const lastVisiblePrice = serie.lastVisiblePrice && serie.lastVisiblePrice.enabled,
-                lastPrice = serie.lastPrice && serie.lastPrice.enabled;
+        series.forEach(function (series): void {
+            const lastVisiblePrice = series.lastVisiblePrice,
+                lastPrice = series.lastPrice;
 
             if (lastVisiblePrice || lastPrice) {
                 priceIndicatorEnabled = true;
-            }
-
-            if (!lastVisiblePrice && !lastPrice) {
-                priceIndicatorEnabled = false;
             }
         });
         return priceIndicatorEnabled;
@@ -1312,16 +1308,6 @@ class Toolbar {
         } else {
             (mainButton.style as any)['background-image'] = 'url(' +
                 this.iconsURL + btnOptions.symbol + ')';
-        }
-
-        // Change the initial button background if necessary.
-        if (btnName === 'currentPriceIndicator' && this.chart.options.series) {
-            this.priceIndicatorEnabled = this.isPriceIndicatorEnabled(this.chart.options.series);
-
-            if (this.priceIndicatorEnabled) {
-                (mainButton as any).style['background-image'] =
-                'url("' + this.iconsURL + 'current-price-hide.svg")';
-            }
         }
 
         return {

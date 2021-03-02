@@ -813,18 +813,15 @@ var Toolbar = /** @class */ (function () {
          * @param {array} series
          *        Array of series.
          *
-         * @return {string}
+         * @return {boolean}
          *         Tells which indicator is enabled.
          */
         this.isPriceIndicatorEnabled = function (series) {
             var priceIndicatorEnabled = false;
-            series.forEach(function (serie) {
-                var lastVisiblePrice = serie.lastVisiblePrice && serie.lastVisiblePrice.enabled, lastPrice = serie.lastPrice && serie.lastPrice.enabled;
+            series.forEach(function (series) {
+                var lastVisiblePrice = series.lastVisiblePrice, lastPrice = series.lastPrice;
                 if (lastVisiblePrice || lastPrice) {
                     priceIndicatorEnabled = true;
-                }
-                if (!lastVisiblePrice && !lastPrice) {
-                    priceIndicatorEnabled = false;
                 }
             });
             return priceIndicatorEnabled;
@@ -1013,14 +1010,6 @@ var Toolbar = /** @class */ (function () {
         else {
             mainButton.style['background-image'] = 'url(' +
                 this.iconsURL + btnOptions.symbol + ')';
-        }
-        // Change the initial button background if necessary.
-        if (btnName === 'currentPriceIndicator' && this.chart.options.series) {
-            this.priceIndicatorEnabled = this.isPriceIndicatorEnabled(this.chart.options.series);
-            if (this.priceIndicatorEnabled) {
-                mainButton.style['background-image'] =
-                    'url("' + this.iconsURL + 'current-price-hide.svg")';
-            }
         }
         return {
             buttonWrapper: buttonWrapper,

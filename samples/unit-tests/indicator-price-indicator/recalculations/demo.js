@@ -391,6 +391,10 @@ QUnit.test('The currentPriceIndicator in StockTools, #15029.', function (assert)
             enabled: false
         }
     });
+    assert.ok(
+        button.childNodes[0].style['background-image'].indexOf('hide') !== -1,
+        'After an update, the button should suggest a possibility to hide a price indicator.'
+    );
     chart.navigationBindings.options.bindings.currentPriceIndicator.init
         .call(chart.navigationBindings, button);
 
