@@ -3408,6 +3408,9 @@ class Series {
         if (this.chart.styledMode) {
             this.getCyclic('color');
 
+        } else if (this.options.colorByPoint) {
+            this.color = palette.neutralColor20;
+
         } else {
             this.getCyclic(
                 'color',
