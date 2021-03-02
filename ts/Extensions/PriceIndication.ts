@@ -148,9 +148,11 @@ addEvent(Series, 'afterRender', function (): void {
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
 
-            yAxis.crosshair = yAxis.options.crosshair = merge({
-                color: series.color // default color from the series #14888
-            }, seriesOptions.lastPrice);
+            if (!series.chart.styledMode) {
+                yAxis.crosshair = yAxis.options.crosshair = merge({
+                    color: series.color // default color from the series #14888
+                }, seriesOptions.lastPrice);
+            }
 
             yAxis.cross = series.lastPrice;
             yValue = isArray(y) ? y[3] : y;
