@@ -22,7 +22,7 @@ const path = require('path');
  *
  * */
 
-const HELP = [
+const HELP_MESSAGE = [
     'Uploads API documentation of "build/api" folder.',
     '',
     '--bucket  S3 bucket to upload to.',
@@ -30,6 +30,8 @@ const HELP = [
     '--profile AWS profile to load from AWS credentials file. If no profile',
     '          is provided the default profile or standard AWS environment',
     '          variables for credentials will be used. (optional)',
+    '--sync    Synchronize the S3 bucket; deletes remote files that are not',
+    '          found in the local folder. (optional)',
     '--test    Test run without uploading. (optional)'
 ].join('\n');
 
@@ -85,40 +87,93 @@ const SOURCE_ROOT = 'build/api';
  * */
 
 /**
- * Tests files in source folder.
+ * Deletes file keys in a S3 bucket.
  *
- * @param {string} sourceFolder
- * Source folder to test.
+ * @param {AWS.S3} storage
+ * AWS S3 storage to use.
+ *
+ * @param {string} bucket
+ * AWS S3 bucket to use.
+ *
+ * @param {Array<string>} fileKeys
+ * File keys to delete.
  *
  * @return {Promise}
  * Promise to keep.
  */
-function testSource(sourceFolder) {
-    const log = require('./lib/log');
-
-    log.message(`Test files in "${sourceFolder}"...`);
-
-    let promiseChain = Promise.resolve();
-
-    glob
-        .sync(sourceFolder)
-        .filter(sourcePath => (
-            path.basename(sourcePath).indexOf('.') !== 0 &&
-            fs.lstatSync(sourcePath).isFile()
-        ))
-        .forEach(filePath => {
-            promiseChain = promiseChain.then(() => {
-                const fileContent = fs.readFileSync(filePath);
-                if (updateFileContent(filePath, fileContent) !== fileContent) {
-                    log.message(
-                        path.relative(SOURCE_ROOT, filePath),
-                        'will be modified'
-                    );
-                }
-            });
+function deleteFileKeys(storage, bucket, ...fileKeys) {
+    return storage
+        .deleteObjects({
+            Bucket: bucket,
+            Delete: { Objects: fileKeys.map(fileKey => ({ Key: fileKey })) }
+        })
+        .promise()
+        .then(response => {
+            if (response.Errors) {
+                throw new Error(
+                    'Deletion of file keys failed!',
+                    response.Errors
+                );
+            }
         });
+}
 
-    return promiseChain;
+/**
+ * Fetches keys from an S3 bucket.
+ *
+ * @param {AWS.S3} storage
+ * AWS S3 instance to fetch from.
+ *
+ * @param {string} bucket
+ * AWS S3 bucket to fetch from.
+ *
+ * @param {string} [keyPrefix]
+ * Limit fetch to keys with given prefix.
+ *
+ * @return {Array<string>}
+ * Fetched file keys.
+ */
+function fetchFileKeys(storage, bucket, keyPrefix) {
+    return new Promise((resolve, reject) => {
+        const files = [];
+        // eslint-disable-next-line require-jsdoc
+        function fetch(continuationToken) {
+            storage
+                .listObjectsV2({
+                    Bucket: bucket,
+                    ContinuationToken: continuationToken,
+                    StartAfter: keyPrefix
+                })
+                .promise()
+                .then(response => {
+                    if (response.Contents) {
+                        files.push(
+                            ...response.Contents
+                                .map(item => item.Key)
+                                .filter(key => {
+                                    if (key.startsWith(keyPrefix)) {
+                                        return true;
+                                    }
+
+                                    delete response.NextContinuationToken;
+                                    return false;
+                                })
+                        );
+                    }
+
+                    if (
+                        response.IsTruncated &&
+                        response.NextContinuationToken
+                    ) {
+                        return fetch(response.NextContinuationToken);
+                    }
+
+                    return resolve(files);
+                })
+                .catch(reject);
+        }
+        fetch();
+    });
 }
 
 /**
@@ -136,7 +191,8 @@ function testSource(sourceFolder) {
 function updateFileContent(filePath, fileContent) {
     if (
         !/^(?:foot|head)(?:er)?/g.test(path.basename(filePath)) &&
-        !fileContent.includes('<frame')
+        !fileContent.includes('<frame') &&
+        !fileContent.includes('<iframe')
     ) {
         switch (path.extname(filePath)) {
             case '.htm':
@@ -153,13 +209,14 @@ function updateFileContent(filePath, fileContent) {
     return fileContent;
 }
 
+
 /**
- * Uploads a folder to the bucket.
+ * Uploads a file to the bucket.
  *
- * @param {string} sourceFolder
- * Source path to load from.
+ * @param {string} sourceFile
+ * File to upload.
  *
- * @param {S3} targetStorage
+ * @param {AWS.S3} targetStorage
  * AWS S3 instance to upload to.
  *
  * @param {string} targetBucket
@@ -168,66 +225,127 @@ function updateFileContent(filePath, fileContent) {
  * @return {Promise}
  * Promise to keep.
  */
-function uploadSource(sourceFolder, targetStorage, targetBucket) {
+function uploadFile(sourceFile, targetStorage, targetBucket) {
     const log = require('./lib/log');
 
-    log.message(`Start upload of "${sourceFolder}"...`);
+    const fileContent = updateFileContent(
+        sourceFile,
+        fs.readFileSync(sourceFile)
+    );
+    const filePath = path.relative(SOURCE_ROOT, sourceFile);
+
+    return targetStorage
+        .putObject({
+            Bucket: targetBucket,
+            Key: filePath,
+            Body: fileContent,
+            ContentType: MIME_TYPE[path.extname(filePath)],
+            ACL: 'public-read'
+        })
+        .promise()
+        .then(() => log.message(filePath, 'uploaded'));
+}
+
+/**
+ * Uploads a folder to the bucket.
+ *
+ * @param {string} sourceFolder
+ * Source path to load from.
+ *
+ * @param {AWS.S3} targetStorage
+ * AWS S3 instance to upload to.
+ *
+ * @param {string} bucket
+ * AWS S3 bucket to upload to.
+ *
+ * @param {boolean} synchronize
+ * Deletes all files in the AWS S3 bucket, that do not exist locally.
+ *
+ * @param {boolean} test
+ * Does not upload or delete.
+ *
+ * @return {Promise}
+ * Promise to keep.
+ */
+function uploadFolder(
+    sourceFolder,
+    targetStorage,
+    bucket,
+    synchronize,
+    test
+) {
+    const log = require('./lib/log');
 
     let promiseChain = Promise.resolve();
 
-    glob
-        .sync(sourceFolder)
+    log.message(`Start upload of "${sourceFolder}"...`);
+
+    const files = glob
+        .sync(path.posix.join(sourceFolder, '**/*'))
         .filter(sourcePath => (
             path.basename(sourcePath).indexOf('.') !== 0 &&
             fs.lstatSync(sourcePath).isFile()
-        ))
-        .forEach(filePath => {
-            promiseChain = promiseChain.then(() => {
-                const fileContent = updateFileContent(
-                    filePath,
-                    fs.readFileSync(filePath)
-                );
+        ));
 
-                filePath = path.relative(SOURCE_ROOT, filePath);
-
-                return targetStorage
-                    .putObject({
-                        Bucket: targetBucket,
-                        Key: filePath,
-                        Body: fileContent,
-                        ContentType: MIME_TYPE[path.extname(filePath)],
-                        ACL: 'public-read'
-                    })
-                    .promise()
-                    .then(() => log.message(filePath, 'uploaded'));
-            });
+    files.forEach(filePath => {
+        promiseChain = promiseChain.then(() => {
+            if (test) {
+                log.message(filePath, 'would be uploaded');
+            } else {
+                uploadFile(filePath, targetStorage, bucket);
+            }
         });
+    });
+
+    if (synchronize) {
+        promiseChain = promiseChain
+            .then(() => log.message(`Start synchronization of "${sourceFolder}"...`))
+            .then(() => fetchFileKeys(
+                targetStorage,
+                bucket,
+                path.relative(SOURCE_ROOT, sourceFolder)
+            ))
+            .then(fileKeys => {
+                const versionPattern = /\d+\.\d+/;
+
+                fileKeys = fileKeys
+                    .filter(fileKey => !fileKey.match(versionPattern))
+                    .filter(fileKey => !fs.existsSync(path.join(SOURCE_ROOT, fileKey)));
+
+                if (test) {
+                    fileKeys.forEach(fileKey => {
+                        log.message(fileKey, 'would be deleted');
+                    });
+                } else {
+                    deleteFileKeys(targetStorage, bucket, fileKeys);
+                }
+            });
+    }
 
     return promiseChain;
 }
 
 /**
- * Upload code for wrapper API docs (iOS/Android) to S3.
+ * Uploads API documentation.
  *
  * @return {Promise}
  * Promise to keep.
  */
 function jsdocUpload() {
     const aws = require('aws-sdk');
+    const lfs = require('./lib/fs');
     const log = require('./lib/log');
     const {
         bucket,
         docs,
         help,
         profile,
+        sync,
         test
     } = require('yargs').argv;
-    const sourceFolders = (docs || '/')
-        .split(',')
-        .map(docFolder => path.posix.join(SOURCE_ROOT, docFolder, '**/*'));
 
     if (help) {
-        log.message(HELP);
+        log.message(HELP_MESSAGE);
         return Promise.resolve();
     }
 
@@ -239,32 +357,33 @@ function jsdocUpload() {
         throw new Error(`Source directory "${SOURCE_ROOT}" not found.`);
     }
 
+    const sourceFolders = (
+        typeof docs === 'string' ?
+            docs.split(',').map(folder => path.join(SOURCE_ROOT, folder)) :
+            lfs.getDirectoryPaths(SOURCE_ROOT)
+    );
+    const targetStorage = new aws.S3({
+        region: (process.env.AWS_REGION || 'eu-west-1'),
+        credentials: (
+            profile ?
+                new aws.SharedIniFileCredentials({ profile }) :
+                void 0
+        )
+    });
+
     let promiseChain = Promise.resolve();
 
-    if (test) {
-        sourceFolders.forEach(sourceFolder => {
-            promiseChain = promiseChain.then(() => testSource(sourceFolder));
-        });
-    } else {
-        const targetStorage = new aws.S3({
-            region: (process.env.AWS_REGION || 'eu-west-1'),
-            credentials: (
-                profile ?
-                    new aws.SharedIniFileCredentials({ profile }) :
-                    void 0
-            )
-        });
+    sourceFolders.forEach(sourceFolder => {
+        promiseChain = promiseChain.then(() => uploadFolder(
+            sourceFolder,
+            targetStorage,
+            bucket,
+            sync,
+            test
+        ));
+    });
 
-        sourceFolders.forEach(sourceFolder => {
-            promiseChain = promiseChain.then(() => uploadSource(
-                sourceFolder,
-                targetStorage,
-                bucket
-            ));
-        });
-    }
-
-    promiseChain.catch(log.failure);
+    promiseChain = promiseChain.catch(log.failure);
 
     return promiseChain;
 }
