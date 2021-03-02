@@ -10,7 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
-import Highcharts from '../highcharts.src.js';
+import Highcharts from '../../Core/Globals.js';
 import '../../Core/Axis/OrdinalAxis.js';
 import './broken-axis.src.js';
 import '../../Extensions/DataGrouping.js';
