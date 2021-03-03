@@ -11,32 +11,25 @@ var GUIElement = /** @class */ (function () {
     /**
      * Create or set existing HTML element as a GUIElement container.
      *
-     * @param {boolean} render
-     * Decide wheather to render a new element or not.
-     *
-     * @param {HTMLDOMElement} parentContainer
-     * The container for a new HTML element.
-     *
-     * @param {HTMLAttributes} attribs
-     * Attributes for a new HTML element.
-     *
-     * @param {HTMLElement|string} elementOrId
-     * HTML element or id of HTML element that will be set
-     * as a GUIELement container.
+     * @param {GUIElement.ContainerOptions} options
+     * Options.
      */
-    GUIElement.prototype.setElementContainer = function (render, parentContainer, attribs, elementOrId, style) {
-        if (attribs === void 0) { attribs = {}; }
+    GUIElement.prototype.setElementContainer = function (options) {
         var guiElement = this;
         var elem;
         // @ToDo use try catch block
-        if (render && parentContainer) {
-            guiElement.container = createElement('div', attribs, style || {}, parentContainer);
+        if (options.render && options.parentContainer) {
+            // Purge empty id attribute.
+            if (options.attribs && !options.attribs.id) {
+                delete options.attribs.id;
+            }
+            guiElement.container = createElement('div', options.attribs || {}, options.style || {}, options.parentContainer);
         }
-        else if (elementOrId instanceof HTMLElement) { // @ToDo check if this is enough
-            guiElement.container = elementOrId;
+        else if (options.element instanceof HTMLElement) { // @ToDo check if this is enough
+            guiElement.container = options.element;
         }
-        else if (typeof elementOrId === 'string') {
-            elem = document.getElementById(elementOrId);
+        else if (typeof options.elementId === 'string') {
+            elem = document.getElementById(options.elementId);
             if (elem) {
                 guiElement.container = elem;
             }

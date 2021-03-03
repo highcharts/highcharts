@@ -39,42 +39,34 @@ abstract class GUIElement {
     /**
      * Create or set existing HTML element as a GUIElement container.
      *
-     * @param {boolean} render
-     * Decide wheather to render a new element or not.
-     *
-     * @param {HTMLDOMElement} parentContainer
-     * The container for a new HTML element.
-     *
-     * @param {HTMLAttributes} attribs
-     * Attributes for a new HTML element.
-     *
-     * @param {HTMLElement|string} elementOrId
-     * HTML element or id of HTML element that will be set
-     * as a GUIELement container.
+     * @param {GUIElement.ContainerOptions} options
+     * Options.
      */
     protected setElementContainer(
-        render?: boolean,
-        parentContainer?: HTMLDOMElement,
-        attribs: HTMLAttributes = {},
-        elementOrId?: (HTMLElement|string),
-        style?: CSSObject
+        options: GUIElement.SetElementContainerOptions
     ): void {
         const guiElement = this;
 
         let elem;
 
         // @ToDo use try catch block
-        if (render && parentContainer) {
+        if (options.render && options.parentContainer) {
+
+            // Purge empty id attribute.
+            if (options.attribs && !options.attribs.id) {
+                delete options.attribs.id;
+            }
+
             guiElement.container = createElement(
                 'div',
-                attribs,
-                style || {},
-                parentContainer
+                options.attribs || {},
+                options.style || {},
+                options.parentContainer
             );
-        } else if (elementOrId instanceof HTMLElement) { // @ToDo check if this is enough
-            guiElement.container = elementOrId;
-        } else if (typeof elementOrId === 'string') {
-            elem = document.getElementById(elementOrId);
+        } else if (options.element instanceof HTMLElement) { // @ToDo check if this is enough
+            guiElement.container = options.element;
+        } else if (typeof options.elementId === 'string') {
+            elem = document.getElementById(options.elementId);
 
             if (elem) {
                 guiElement.container = elem;
@@ -88,6 +80,15 @@ abstract class GUIElement {
 
 }
 
-interface GUIElement {}
+namespace GUIElement {
+    export interface SetElementContainerOptions {
+        render?: boolean;
+        parentContainer?: HTMLDOMElement;
+        attribs?: HTMLAttributes;
+        style?: CSSObject;
+        element?: HTMLElement;
+        elementId?: string;
+    }
+}
 
 export default GUIElement;

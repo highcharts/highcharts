@@ -36,16 +36,16 @@ class Layout extends GUIElement {
         this.options = options;
 
         // GUI structure
-        this.setElementContainer(
-            dashboard.guiEnabled,
-            dashboard.container,
-            {
+        this.setElementContainer({
+            render: dashboard.guiEnabled,
+            parentContainer: dashboard.container,
+            attribs: {
                 id: options.id,
                 className: GUIElement.prefix + 'layout'
             },
-            options.id,
-            this.options.style
-        );
+            elementId: options.id,
+            style: this.options.style
+        });
         this.setRows();
     }
 

@@ -41,11 +41,18 @@ var Row = /** @class */ (function (_super) {
         _this.layout = layout;
         _this.columns = [];
         _this.options = options;
-        _this.setElementContainer(layout.dashboard.guiEnabled, layout.container, {
-            id: options.id,
-            className: rowClassName ?
-                rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
-        }, rowElement || options.id, merge(layout.options.style, options.style));
+        _this.setElementContainer({
+            render: layout.dashboard.guiEnabled,
+            parentContainer: layout.container,
+            attribs: {
+                id: options.id,
+                className: rowClassName ?
+                    rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
+            },
+            element: rowElement,
+            elementId: options.id,
+            style: merge(layout.options.style, options.style)
+        });
         _this.setColumns();
         return _this;
     }

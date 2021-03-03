@@ -15,12 +15,14 @@ const dashboard = new Dashboard('container', {
                 color: 'blue'
             },
             rows: [{
-                id: 'dashboard-row-0',
+                // id: 'dashboard-row-0',
                 columns: [{
                     width: 0.7,
                     id: 'dashboard-col-0',
                     style: {
-                        color: 'yellow'
+                        color: 'yellow',
+                        flex: 2,
+                        height: '100px'
                     }
                 }, {
                     id: 'dashboard-col-1',
@@ -67,8 +69,8 @@ const dashboard = new Dashboard('container', {
         },*/
         events: {
             onLoad: function () {
-                // call action		
-                console.log('dashboard-col-0 onload event');	
+                // call action
+                console.log('dashboard-col-0 onload event');
             },
             redraw: function () {
                 console.log('dashboard-col-0 redraw event');
@@ -100,13 +102,13 @@ const dashboard = new Dashboard('container', {
             }
         },
         dimensions: {
-            width: 400,
+            width: 400
             // height: 400
         },
         events: {
             onLoad: function () {
-                // call action	
-                console.log('dashboard-col-2 onload event');	
+                // call action
+                console.log('dashboard-col-2 onload event');
             }
         }
     }, {
@@ -123,13 +125,13 @@ const dashboard = new Dashboard('container', {
             }
         },
         dimensions: {
-            width: '100%',
+            width: '100%'
             //height:  400
         },
         events: {
             onLoad: function () {
-                // call action		
-                console.log('dashboard-col-3 onload event');	
+                // call action
+                console.log('dashboard-col-3 onload event');
             }
         }
     }]
@@ -174,8 +176,8 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         },*/
         events: {
             onLoad: function () {
-                // call action		
-                console.log('chart-1 onload event');	
+                // call action
+                console.log('chart-1 onload event');
             }
         }
     }, {

@@ -2,7 +2,7 @@ import ChartComponent from './../Component/ChartComponent.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
 import GroupComponent from './../Component/GroupComponent.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, objectEach = U.objectEach;
 var Bindings = /** @class */ (function () {
     function Bindings() {
     }
@@ -37,12 +37,12 @@ var Bindings = /** @class */ (function () {
                 case 'html':
                     component = bindings.htmlComponent(compontentContainer, options);
                     break;
-                /*case 'group':
-                    component = bindings.groupComponent(
-                        compontentContainer,
-                        options.config
-                    );
-                    break;*/
+                // case 'group':
+                //     component = bindings.groupComponent(
+                //         compontentContainer,
+                //         options.config
+                //     );
+                //     break;
                 default:
                     component = void 0;
             }
@@ -50,16 +50,13 @@ var Bindings = /** @class */ (function () {
         }
         // add events
         if (component) {
-            for (var key in events) {
-                addEvent(component, key, events[key]);
-            }
+            objectEach(events, function (fn, key) {
+                addEvent(component, key, fn);
+            });
         }
         fireEvent(component, 'onLoad');
         return component;
     };
-    /**
-     * chartComponent
-     */
     Bindings.prototype.chartComponent = function (compontentContainer, options) {
         return new ChartComponent({
             parentElement: compontentContainer,
@@ -67,18 +64,12 @@ var Bindings = /** @class */ (function () {
             dimensions: options.dimensions
         });
     };
-    /**
-     * HTMLComponent
-     */
     Bindings.prototype.htmlComponent = function (compontentContainer, options) {
         return new HTMLComponent({
             parentElement: compontentContainer,
             elements: options.elements
         });
     };
-    /**
-     * groupComponent
-     */
     Bindings.prototype.groupComponent = function (compontentContainer) {
         return new GroupComponent({
             parentElement: compontentContainer,

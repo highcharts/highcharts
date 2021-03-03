@@ -10,7 +10,8 @@ import type {
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent
+    fireEvent,
+    objectEach
 } = U;
 class Bindings {
     /* *
@@ -39,7 +40,7 @@ class Bindings {
         const bindings = this;
         const events = options.events;
 
-        let component;
+        let component: HTMLComponent|ChartComponent|GroupComponent|undefined;
 
         // add elements to containers
         if (compontentContainer) {
@@ -56,12 +57,12 @@ class Bindings {
                         options
                     );
                     break;
-                /*case 'group':
-                    component = bindings.groupComponent(
-                        compontentContainer,
-                        options.config
-                    );
-                    break;*/
+                // case 'group':
+                //     component = bindings.groupComponent(
+                //         compontentContainer,
+                //         options.config
+                //     );
+                //     break;
                 default:
                     component = void 0;
             }
@@ -71,13 +72,14 @@ class Bindings {
 
         // add events
         if (component) {
-            for (let key in events) {
+            objectEach(events, (fn, key): void => {
                 addEvent(
                     component,
                     key,
-                    events[key]
+                    fn
                 );
-            }
+            });
+
         }
 
         fireEvent(component, 'onLoad');
@@ -85,13 +87,10 @@ class Bindings {
         return component;
     }
 
-    /**
-     * chartComponent
-     */
     public chartComponent(
         compontentContainer: HTMLDOMElement,
         options: Bindings.ComponentType
-    ):ChartComponent {
+    ): ChartComponent {
         return new ChartComponent({
             parentElement: compontentContainer as HTMLDOMElement,
             chartOptions: options.chartOptions,
@@ -99,22 +98,16 @@ class Bindings {
         });
     }
 
-    /**
-     * HTMLComponent
-     */
     public htmlComponent(
         compontentContainer: HTMLDOMElement,
         options: Bindings.ComponentType
-    ):HTMLComponent {
+    ): HTMLComponent {
         return new HTMLComponent({
             parentElement: compontentContainer as HTMLDOMElement,
             elements: options.elements
         });
     }
 
-    /**
-     * groupComponent
-     */
     public groupComponent(
         compontentContainer: HTMLDOMElement
     ): GroupComponent {
@@ -142,7 +135,6 @@ class Bindings {
             ]
         });
     }
-    
 }
 
 namespace Bindings {
@@ -157,7 +149,7 @@ namespace Bindings {
         elements?: any;
         dimensions?: { width: number; height: number };
         events?: any;
-    }    
+    }
     export interface ComponentOptions {
         options: any;
         component: ChartComponent|HTMLComponent|GroupComponent|undefined;

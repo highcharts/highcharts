@@ -41,17 +41,18 @@ class Row extends GUIElement {
         this.columns = [];
         this.options = options;
 
-        this.setElementContainer(
-            layout.dashboard.guiEnabled,
-            layout.container,
-            {
+        this.setElementContainer({
+            render: layout.dashboard.guiEnabled,
+            parentContainer: layout.container,
+            attribs: {
                 id: options.id,
                 className: rowClassName ?
                     rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
             },
-            rowElement || options.id,
-            merge(layout.options.style, options.style)
-        );
+            element: rowElement,
+            elementId: options.id,
+            style: merge(layout.options.style, options.style)
+        });
         this.setColumns();
     }
 

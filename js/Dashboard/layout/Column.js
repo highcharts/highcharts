@@ -39,11 +39,18 @@ var Column = /** @class */ (function (_super) {
         _this = _super.call(this) || this;
         _this.options = options;
         _this.row = row;
-        _this.setElementContainer(row.layout.dashboard.guiEnabled, row.container, {
-            id: options.id,
-            className: columnClassName ?
-                columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
-        }, columnElement || options.id, merge(row.layout.options.style, row.options.style, options.style));
+        _this.setElementContainer({
+            render: row.layout.dashboard.guiEnabled,
+            parentContainer: row.container,
+            attribs: {
+                id: options.id,
+                className: columnClassName ?
+                    columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
+            },
+            element: columnElement,
+            elementId: options.id,
+            style: merge(row.layout.options.style, row.options.style, options.style)
+        });
         return _this;
     }
     return Column;

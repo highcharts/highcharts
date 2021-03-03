@@ -40,21 +40,22 @@ class Column extends GUIElement {
         this.options = options;
 
         this.row = row;
-        this.setElementContainer(
-            row.layout.dashboard.guiEnabled,
-            row.container,
-            {
+        this.setElementContainer({
+            render: row.layout.dashboard.guiEnabled,
+            parentContainer: row.container,
+            attribs: {
                 id: options.id,
                 className: columnClassName ?
                     columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
             },
-            columnElement || options.id,
-            merge(
+            element: columnElement,
+            elementId: options.id,
+            style: merge(
                 row.layout.options.style,
                 row.options.style,
                 options.style
             )
-        );
+        });
 
     }
 

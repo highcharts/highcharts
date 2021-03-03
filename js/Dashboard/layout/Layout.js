@@ -37,10 +37,16 @@ var Layout = /** @class */ (function (_super) {
         _this.rows = [];
         _this.options = options;
         // GUI structure
-        _this.setElementContainer(dashboard.guiEnabled, dashboard.container, {
-            id: options.id,
-            className: GUIElement.prefix + 'layout'
-        }, options.id, _this.options.style);
+        _this.setElementContainer({
+            render: dashboard.guiEnabled,
+            parentContainer: dashboard.container,
+            attribs: {
+                id: options.id,
+                className: GUIElement.prefix + 'layout'
+            },
+            elementId: options.id,
+            style: _this.options.style
+        });
         _this.setRows();
         return _this;
     }
