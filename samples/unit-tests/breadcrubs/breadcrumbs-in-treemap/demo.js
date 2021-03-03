@@ -74,7 +74,7 @@ QUnit.test('Breadcrumbs button', function (assert) {
     );
     chart.series[0].update({
         breadcrumbs: {
-            showOnlyLast: false
+            showFullPath: true
         }
     });
 

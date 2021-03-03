@@ -23,7 +23,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
             drilldown: {
                 breadcrumbs: {
                     enabled: true,
-                    showOnlyLast: false,
+                    showFullPath: true,
                     events: {
                         click: function () {
                             return false;

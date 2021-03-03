@@ -89,7 +89,7 @@ QUnit.test('Breadcrumbs button', function (assert) {
     chart.update({
         drilldown: {
             breadcrumbs: {
-                showOnlyLast: false
+                showFullPath: true
             }
         }
     });
@@ -158,7 +158,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
         drilldown: {
             breadcrumbs: {
                 enabled: true,
-                showOnlyLast: false,
+                showFullPath: true,
                 format: 'Go to {point.name}'
             },
             animation: false,
@@ -210,7 +210,7 @@ QUnit.test('Breadcrumbs formatter', function (assert) {
             drilldown: {
                 breadcrumbs: {
                     enabled: true,
-                    showOnlyLast: false,
+                    showFullPath: true,
                     formatter: function (breadcrumb) {
                         let index;
 

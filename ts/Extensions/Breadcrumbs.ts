@@ -51,7 +51,7 @@ declare global {
             formatter?: BreadcrumbsButtonsFormatter;
             position?: BreadcrumbsAlignOptions;
             separator?: SeparatorOptions;
-            showOnlyLast?: boolean;
+            showFullPath?: boolean;
             style?: CSSObject;
             useHTML?: boolean;
             zIndex?: number;
@@ -133,14 +133,6 @@ const defaultBreadcrumbsOptions = {
      * @since     next
      */
     buttonPadding: 5,
-
-    /**
-     * Show only last button instead of whole drillUp tree.
-     *
-     * @type      {boolean}
-     * @since     next
-     */
-    showOnlyLast: true,
 
     /**
      * Fires when clicking on the breadcrumbs button.
@@ -228,20 +220,6 @@ const defaultBreadcrumbsOptions = {
     },
 
     /**
-     * A CSS styles for all breadcrumbs.
-     *
-     * In styled mode, the breadcrumbs buttons are styled by the
-     * `.highcharts-range-selector-buttons .highcharts-button` rule with its
-     * different states.
-     *  @type {Highcharts.SVGAttributes}
-     * @since     next
-     */
-    style: {
-        'fill': '#ffffff',
-        'position': 'absolute'
-    },
-
-    /**
      * Options object for Breadcrumbs separator.
      *
      * @since     next
@@ -270,6 +248,28 @@ const defaultBreadcrumbsOptions = {
          * @since     next
          */
         size: 10
+    },
+
+    /**
+     * Show full path or only a single button.
+     *
+     * @type      {boolean}
+     * @since     next
+     */
+    showFullPath: false,
+
+    /**
+     * A CSS styles for all breadcrumbs.
+     *
+     * In styled mode, the breadcrumbs buttons are styled by the
+     * `.highcharts-range-selector-buttons .highcharts-button` rule with its
+     * different states.
+     *  @type {Highcharts.SVGAttributes}
+     * @since     next
+     */
+    style: {
+        'fill': '#ffffff',
+        'position': 'absolute'
     },
 
     /**
@@ -512,7 +512,7 @@ class Breadcrumbs {
         const breadcrumbs = this,
             chart = breadcrumbs.chart,
             breadcrumbsOptions = breadcrumbs.options,
-            arrow = breadcrumbsOptions.showOnlyLast ? '◁ ' : '',
+            arrow = breadcrumbsOptions.showFullPath ? '' : '◁ ',
             lang = chart.options.lang;
 
         return breadcrumbsOptions.formatter && breadcrumbsOptions.formatter(breadcrumb, breadcrumbs) ||
@@ -538,7 +538,7 @@ class Breadcrumbs {
             breadcrumbsOptions = breadcrumbs.options;
 
         // The full path of buttons is visible.
-        if (breadcrumbsOptions && !breadcrumbsOptions.showOnlyLast && this.breadcrumbsGroup) {
+        if (breadcrumbsOptions && breadcrumbsOptions.showFullPath && this.breadcrumbsGroup) {
             breadcrumbsList.forEach(function (el): void {
                 const button = el[2],
                     separator = el[3];
@@ -605,22 +605,7 @@ class Breadcrumbs {
                     lastBreadcrumbs.element.getBBox().width + buttonPadding : 0;
             const posY: number = buttonPadding;
 
-            if (breadcrumbsOptions.showOnlyLast) {
-                const previousBreadcrumb = breadcrumbsList[breadcrumbsList.length - 2],
-                    drilldownLevels = chart.drilldownLevels;
-
-                if (!chart.drillUpButton &&
-                    (
-                        (drilldownLevels && drilldownLevels.length) ||
-                        (this.isTreemap && this.level >= 0)
-                    )
-                ) {
-                    chart.drillUpButton = breadcrumbs.renderButton(previousBreadcrumb, posX, posY);
-                } else if (chart.drillUpButton) {
-                    // Update button.
-                    this.updateSingleButton();
-                }
-            } else {
+            if (breadcrumbsOptions.showFullPath) {
                 // Make sure that only one type of button is visible.
                 if (chart.drillUpButton) {
                     chart.drillUpButton.destroy();
@@ -647,6 +632,21 @@ class Breadcrumbs {
                         posX += separator ? separator.getBBox().width + buttonPadding : 0;
                     }
                 });
+            } else {
+                const previousBreadcrumb = breadcrumbsList[breadcrumbsList.length - 2],
+                    drilldownLevels = chart.drilldownLevels;
+
+                if (!chart.drillUpButton &&
+                    (
+                        (drilldownLevels && drilldownLevels.length) ||
+                        (this.isTreemap && this.level >= 0)
+                    )
+                ) {
+                    chart.drillUpButton = breadcrumbs.renderButton(previousBreadcrumb, posX, posY);
+                } else if (chart.drillUpButton) {
+                    // Update button.
+                    this.updateSingleButton();
+                }
             }
         }
 
@@ -671,7 +671,7 @@ class Breadcrumbs {
                 breadcrumbsList[breadcrumbsList.length - 1][0] - drillAmount :
                 breadcrumbsList[breadcrumbsList.length - 1][0] + 1;
 
-        if (!this.options.showOnlyLast) {
+        if (this.options.showFullPath) {
             if (breadcrumbsList && breadcrumbsList.length) {
                 for (let i = 0; i < drillNumber; i++) {
 
@@ -732,9 +732,7 @@ class Breadcrumbs {
         if (this.level === 0) {
             this.destroyGroup();
         } else {
-            if (this.options.showOnlyLast) {
-                this.updateSingleButton();
-            } else {
+            if (this.options.showFullPath) {
                 const el = breadcrumbsList[breadcrumbsList.length - 1],
                     button = el && el[2],
                     conector = el && el[3],
@@ -748,6 +746,8 @@ class Breadcrumbs {
                 // Remove SVG elements fromt the DOM.
                 button && button.destroy();
                 conector && conector.destroy();
+            } else {
+                this.updateSingleButton();
             }
             breadcrumbsList.pop();
         }
@@ -796,11 +796,12 @@ class Breadcrumbs {
                     // Prevent from click on the current level
                     if (callDefaultEvent !== false &&
                         breadcrumbsList[breadcrumbsList.length - 1][1].name !== button.textStr &&
-                        !breadcrumbsOptions.showOnlyLast) {
+                        breadcrumbsOptions.showFullPath
+                    ) {
                         breadcrumbs.multipleDrillUp(breadcrumb[0] as number);
                     }
-                    if (callDefaultEvent !== false &&
-                        breadcrumbsOptions.showOnlyLast) {
+
+                    if (callDefaultEvent !== false && !breadcrumbsOptions.showFullPath) {
                         breadcrumbs.multipleDrillUp(null as any);
                     }
                 })
@@ -889,7 +890,7 @@ class Breadcrumbs {
     }
 
     /**
-    * Update button text when the showOnlyLast set to true.
+    * Update button text when the showFullPath set to false.
     * @function Highcharts.Breadcrumbs#updateSingleButton
     *
     * @requires  modules/breadcrumbs
