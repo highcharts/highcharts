@@ -1024,7 +1024,6 @@ class ColumnSeries extends Series {
             stroke = (
                 (point && (point as any)[strokeOption]) ||
                 (options as any)[strokeOption] ||
-                this.color ||
                 fill
             ),
             strokeWidth = (point && (point as any)[strokeWidthOption]) ||

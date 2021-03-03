@@ -3386,7 +3386,7 @@ class Chart {
             states = theme.states,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
-                btnOptions.relativeTo === 'spaceBox' ?
+                btnOptions.relativeTo === 'spacingBox' ?
                     null :
                     this.scrollablePlotBox || 'plotBox'
             );

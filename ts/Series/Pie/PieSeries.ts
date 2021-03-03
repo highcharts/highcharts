@@ -779,8 +779,7 @@ class PieSeries extends Series {
                 this.graph.attr({
                     'stroke-width': options.borderWidth,
                     fill: options.fillColor || 'none',
-                    stroke: (options.color as any) ||
-                    palette.neutralColor20
+                    stroke: options.color || palette.neutralColor20
                 });
             }
 
