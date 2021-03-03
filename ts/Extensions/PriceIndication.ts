@@ -148,10 +148,13 @@ addEvent(Series, 'afterRender', function (): void {
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
 
-            if (!series.chart.styledMode) {
-                yAxis.crosshair = yAxis.options.crosshair = merge({
-                    color: series.color // default color from the series #14888
-                }, seriesOptions.lastPrice);
+            if (!series.chart.styledMode &&
+                    yAxis.crosshair &&
+                    yAxis.options.crosshair &&
+                    seriesOptions.lastPrice
+            ) {
+                // Set the default color from the series, #14888.
+                yAxis.crosshair.color = yAxis.options.crosshair.color = seriesOptions.lastPrice.color || series.color;
             }
 
             yAxis.cross = series.lastPrice;

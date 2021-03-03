@@ -79,10 +79,12 @@ addEvent(Series, 'afterRender', function () {
         var xAxis = series.xAxis, yAxis = series.yAxis, origOptions = yAxis.crosshair, origGraphic = yAxis.cross, origLabel = yAxis.crossLabel, points = series.points, yLength = series.yData.length, pLength = points.length, x = series.xData[series.xData.length - 1], y = series.yData[yLength - 1], lastPoint, yValue, crop;
         if (lastPrice && lastPrice.enabled) {
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
-            if (!series.chart.styledMode) {
-                yAxis.crosshair = yAxis.options.crosshair = merge({
-                    color: series.color // default color from the series #14888
-                }, seriesOptions.lastPrice);
+            if (!series.chart.styledMode &&
+                yAxis.crosshair &&
+                yAxis.options.crosshair &&
+                seriesOptions.lastPrice) {
+                // Set the default color from the series, #14888.
+                yAxis.crosshair.color = yAxis.options.crosshair.color = seriesOptions.lastPrice.color || series.color;
             }
             yAxis.cross = series.lastPrice;
             yValue = isArray(y) ? y[3] : y;
