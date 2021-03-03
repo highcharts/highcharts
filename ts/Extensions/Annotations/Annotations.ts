@@ -99,9 +99,9 @@ declare global {
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
-            xAxis?: (number|string|AxisType|null);
+            xAxis?: (number|AxisType);
             y: number;
-            yAxis?: (number|string|AxisType|null);
+            yAxis?: (number|AxisType);
         }
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
@@ -179,8 +179,6 @@ declare global {
             markerStart?: string;
             point?: (string|AnnotationMockPointOptionsObject);
             points?: Array<(string|AnnotationMockPointOptionsObject)>;
-            xAxis: number;
-            yAxis: number;
         }
         interface AnnotationsTypeOptions {
             background?: AnnotationsShapeOptions;

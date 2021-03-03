@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type { AxisType } from '../../Core/Axis/Types';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import Series from '../../Core/Series/Series.js';
 
@@ -224,11 +225,12 @@ class MockPoint {
     public static pointToOptions(
         point: Highcharts.AnnotationPointType
     ): Highcharts.AnnotationMockPointOptionsObject {
+
         return {
             x: point.x as any,
             y: point.y as any,
-            xAxis: point.series.xAxis,
-            yAxis: point.series.yAxis
+            xAxis: point.series.xAxis as AxisType,
+            yAxis: point.series.yAxis as AxisType
         };
     }
 

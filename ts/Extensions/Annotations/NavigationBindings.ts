@@ -1279,8 +1279,6 @@ setOptions({
                                 type: 'basicAnnotation',
                                 shapes: [{
                                     type: 'circle',
-                                    xAxis: coordsX.axis.options.index,
-                                    yAxis: coordsY.axis.options.index,
                                     point: {
                                         x: coordsX.value,
                                         y: coordsY.value,
@@ -1306,11 +1304,12 @@ setOptions({
                         e: PointerEvent,
                         annotation: Annotation
                     ): void {
-                        var shapesOptions = annotation.options.shapes[0],
-                            x = this.chart.xAxis[shapesOptions.xAxis]
-                                .toPixels((shapesOptions.point as any).x),
-                            y = this.chart.yAxis[shapesOptions.yAxis]
-                                .toPixels((shapesOptions.point as any).y),
+                        var mockPointOpts = annotation.options.shapes[0]
+                                .point as Highcharts.AnnotationMockPointOptionsObject,
+                            x = this.chart.xAxis[mockPointOpts.xAxis as number]
+                                .toPixels(mockPointOpts.x),
+                            y = this.chart.yAxis[mockPointOpts.yAxis as number]
+                                .toPixels(mockPointOpts.y),
                             inverted = this.chart.inverted,
                             distance = Math.max(
                                 Math.sqrt(

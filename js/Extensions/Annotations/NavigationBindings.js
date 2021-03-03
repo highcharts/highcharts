@@ -879,8 +879,6 @@ setOptions({
                         type: 'basicAnnotation',
                         shapes: [{
                                 type: 'circle',
-                                xAxis: coordsX.axis.options.index,
-                                yAxis: coordsY.axis.options.index,
                                 point: {
                                     x: coordsX.value,
                                     y: coordsY.value,
@@ -898,9 +896,10 @@ setOptions({
                 /** @ignore-option */
                 steps: [
                     function (e, annotation) {
-                        var shapesOptions = annotation.options.shapes[0], x = this.chart.xAxis[shapesOptions.xAxis]
-                            .toPixels(shapesOptions.point.x), y = this.chart.yAxis[shapesOptions.yAxis]
-                            .toPixels(shapesOptions.point.y), inverted = this.chart.inverted, distance = Math.max(Math.sqrt(Math.pow(inverted ? y - e.chartX : x - e.chartX, 2) +
+                        var mockPointOpts = annotation.options.shapes[0]
+                            .point, x = this.chart.xAxis[mockPointOpts.xAxis]
+                            .toPixels(mockPointOpts.x), y = this.chart.yAxis[mockPointOpts.yAxis]
+                            .toPixels(mockPointOpts.y), inverted = this.chart.inverted, distance = Math.max(Math.sqrt(Math.pow(inverted ? y - e.chartX : x - e.chartX, 2) +
                             Math.pow(inverted ? x - e.chartY : y - e.chartY, 2)), 5);
                         annotation.update({
                             shapes: [{

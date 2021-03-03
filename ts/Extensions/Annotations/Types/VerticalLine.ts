@@ -7,6 +7,7 @@
 'use strict';
 
 import Annotation from '../Annotations.js';
+import type { AxisType } from '../../../Core/Axis/Types';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {
@@ -69,7 +70,7 @@ class VerticalLine extends Annotation {
 
         return {
             x: point.x as any,
-            xAxis: point.series.xAxis,
+            xAxis: point.series.xAxis as AxisType,
             y: y + offset
         };
     }
@@ -90,7 +91,7 @@ class VerticalLine extends Annotation {
 
         return {
             x: point.x as any,
-            xAxis: point.series.xAxis,
+            xAxis: point.series.xAxis as AxisType,
             y: y + yOffset
         };
     }
