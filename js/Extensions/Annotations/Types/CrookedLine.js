@@ -101,18 +101,6 @@ CrookedLine.prototype.defaultOptions = merge(Annotation.prototype.defaultOptions
      */
     typeOptions: {
         /**
-         * This number defines which xAxis the point is connected to.
-         * It refers to either the axis id or the index of the axis
-         * in the xAxis array.
-         */
-        xAxis: 0,
-        /**
-         * This number defines which yAxis the point is connected to.
-         * It refers to either the axis id or the index of the axis
-         * in the xAxis array.
-         */
-        yAxis: 0,
-        /**
          * @type      {Array<*>}
          * @apioption annotations.crookedLine.typeOptions.points
          */

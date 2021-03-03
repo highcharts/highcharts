@@ -878,16 +878,6 @@ merge(Annotation.prototype,
          * @apioption annotations.labels.point.y
          */
         /**
-         * This number defines which xAxis the point is connected to.
-         * It refers to either the axis id or the index of the axis in
-         * the xAxis array. If the option is not configured or the axis
-         * is not found the point's x coordinate refers to the chart
-         * pixels.
-         *
-         * @type      {number|string|null}
-         * @apioption annotations.labels.point.xAxis
-         */
-        /**
          * This number defines which yAxis the point is connected to.
          * It refers to either the axis id or the index of the axis in
          * the yAxis array. If the option is not configured or the axis

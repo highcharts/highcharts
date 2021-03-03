@@ -557,18 +557,6 @@ Measure.prototype.defaultOptions = merge(Annotation.prototype.defaultOptions,
          * mouse. Can be one of x, y or xy.
          */
         selectType: 'xy',
-        /**
-         * This number defines which xAxis the point is connected to.
-         * It refers to either the axis id or the index of the axis
-         * in the xAxis array.
-         */
-        xAxis: 0,
-        /**
-         * This number defines which yAxis the point is connected to.
-         * It refers to either the axis id or the index of the axis
-         * in the yAxis array.
-         */
-        yAxis: 0,
         background: {
             /**
              * The color of the rectangle.
