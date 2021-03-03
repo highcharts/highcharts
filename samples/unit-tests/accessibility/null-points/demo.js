@@ -54,4 +54,12 @@ QUnit.test('Dynamic null points', function (assert) {
         'rect',
         'Point should have a new dummy marker graphic after update to null point.'
     );
+
+    nullPoint.select(true, true);
+
+    assert.notStrictEqual(
+        nullPoint.graphic.attr('y'),
+        "NaN",
+        'Point graphic y shouldn\'t be NaN.'
+    );
 });
