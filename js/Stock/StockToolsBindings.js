@@ -242,7 +242,8 @@ bindingsUtils.updateHeight = function (e, annotation) {
 // @todo
 // Consider using getHoverData(), but always kdTree (columns?)
 bindingsUtils.attractToPoint = function (e, chart) {
-    var coords = chart.pointer.getCoordinates(e), coordsX = NavigationBindings.prototype.getAssignedAxis(coords, 'x'), coordsY = NavigationBindings.prototype.getAssignedAxis(coords, 'y'), distX = Number.MAX_VALUE, closestPoint, x, y;
+    var _a, _b;
+    var coords = chart.pointer.getCoordinates(e), coordsX = (_a = chart.navigationBindings) === null || _a === void 0 ? void 0 : _a.getAssignedAxis(coords, 'x'), coordsY = (_b = chart.navigationBindings) === null || _b === void 0 ? void 0 : _b.getAssignedAxis(coords, 'y'), distX = Number.MAX_VALUE, closestPoint, x, y;
     // Exit if clicked out of axes area.
     if (!coordsX || !coordsY) {
         return;
@@ -531,6 +532,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -571,6 +573,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -614,6 +617,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -655,6 +659,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -698,6 +703,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -739,6 +745,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -782,6 +789,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -816,6 +824,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -852,6 +861,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -896,6 +906,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -948,6 +959,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1001,6 +1013,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1062,6 +1075,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1120,6 +1134,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1178,6 +1193,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1235,6 +1251,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1281,6 +1298,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1322,6 +1340,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, options;
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1380,6 +1399,7 @@ var stockToolsBindings = {
         start: function (e) {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart), navigation = this.chart.options.navigation, verticalCounter = !defined(this.verticalCounter) ? 0 :
                 this.verticalCounter, options, annotation;
+            // Exit if clicked out of axes area
             if (!closestPoint) {
                 return;
             }
@@ -1430,6 +1450,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart), navigation = this.chart.options.navigation, options, annotation;
+            // Exit if clicked out of axes area
             if (!closestPoint) {
                 return;
             }
@@ -1478,6 +1499,7 @@ var stockToolsBindings = {
         /** @ignore-option */
         start: function (e) {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart), navigation = this.chart.options.navigation, options, annotation;
+            // Exit if clicked out of axes area
             if (!closestPoint) {
                 return;
             }

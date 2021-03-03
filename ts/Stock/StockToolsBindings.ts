@@ -416,8 +416,8 @@ bindingsUtils.attractToPoint = function (
     chart: Chart
 ): Highcharts.NavigationBindingsAttractionObject | void {
     var coords = chart.pointer.getCoordinates(e),
-        coordsX = NavigationBindings.prototype.getAssignedAxis(coords, 'x'),
-        coordsY = NavigationBindings.prototype.getAssignedAxis(coords, 'y'),
+        coordsX = chart.navigationBindings?.getAssignedAxis(coords, 'x'),
+        coordsY = chart.navigationBindings?.getAssignedAxis(coords, 'y'),
         distX = Number.MAX_VALUE,
         closestPoint: (Point|undefined),
         x: number,
@@ -788,6 +788,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -842,6 +843,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -899,6 +901,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -954,6 +957,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1011,6 +1015,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1066,6 +1071,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1120,6 +1126,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1165,6 +1172,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1215,6 +1223,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1273,6 +1282,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1339,6 +1349,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1406,6 +1417,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1481,6 +1493,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1553,6 +1566,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1625,6 +1639,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1696,6 +1711,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1756,6 +1772,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1811,6 +1828,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 navigation = this.chart.options.navigation,
                 options;
 
+            // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
@@ -1883,6 +1901,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 options,
                 annotation;
 
+            // Exit if clicked out of axes area
             if (!closestPoint) {
                 return;
             }
@@ -1948,6 +1967,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 options,
                 annotation;
 
+            // Exit if clicked out of axes area
             if (!closestPoint) {
                 return;
             }
@@ -2010,6 +2030,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 options,
                 annotation;
 
+            // Exit if clicked out of axes area
             if (!closestPoint) {
                 return;
             }

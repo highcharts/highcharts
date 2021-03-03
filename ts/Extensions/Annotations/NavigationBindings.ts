@@ -195,8 +195,8 @@ const bindingsUtils = {
         var chart = annotation.chart,
             options = annotation.options.typeOptions,
             coords = chart.pointer.getCoordinates(event),
-            coordsX = NavigationBindings.prototype.getAssignedAxis(coords, 'x'),
-            coordsY = NavigationBindings.prototype.getAssignedAxis(coords, 'y'),
+            coordsX = chart.navigationBindings.getAssignedAxis(coords, 'x'),
+            coordsY = chart.navigationBindings.getAssignedAxis(coords, 'y'),
             width,
             height;
 
@@ -1355,6 +1355,7 @@ setOptions({
                         x,
                         y;
 
+                    // Exit if clicked out of axes area
                     if (!coordsX || !coordsY) {
                         return;
                     }
@@ -1455,6 +1456,7 @@ setOptions({
                         coordsY = this.getAssignedAxis(coords, 'y'),
                         navigation = this.chart.options.navigation;
 
+                    // Exit if clicked out of axes area
                     if (!coordsX || !coordsY) {
                         return;
                     }

@@ -82,7 +82,7 @@ var bindingsUtils = {
      * Annotation to be updated
      */
     updateRectSize: function (event, annotation) {
-        var chart = annotation.chart, options = annotation.options.typeOptions, coords = chart.pointer.getCoordinates(event), coordsX = NavigationBindings.prototype.getAssignedAxis(coords, 'x'), coordsY = NavigationBindings.prototype.getAssignedAxis(coords, 'y'), width, height;
+        var chart = annotation.chart, options = annotation.options.typeOptions, coords = chart.pointer.getCoordinates(event), coordsX = chart.navigationBindings.getAssignedAxis(coords, 'x'), coordsY = chart.navigationBindings.getAssignedAxis(coords, 'y'), width, height;
         if (coordsX && coordsY) {
             width = coordsX.value - options.point.x;
             height = options.point.y - coordsY.value;
@@ -922,6 +922,7 @@ setOptions({
                 /** @ignore-option */
                 start: function (e) {
                     var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation, x, y;
+                    // Exit if clicked out of axes area
                     if (!coordsX || !coordsY) {
                         return;
                     }
@@ -995,6 +996,7 @@ setOptions({
                 /** @ignore-option */
                 start: function (e) {
                     var coords = this.chart.pointer.getCoordinates(e), coordsX = this.getAssignedAxis(coords, 'x'), coordsY = this.getAssignedAxis(coords, 'y'), navigation = this.chart.options.navigation;
+                    // Exit if clicked out of axes area
                     if (!coordsX || !coordsY) {
                         return;
                     }
