@@ -1673,3 +1673,9 @@ addEvent(H.Chart, 'drillup', function (): void {
         this.resetZoomButton = this.resetZoomButton.destroy();
     }
 });
+
+addEvent(H.Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
+    if (!e.skipAxes && this.drillUpButton) {
+        this.drillUpButton.align();
+    }
+});
