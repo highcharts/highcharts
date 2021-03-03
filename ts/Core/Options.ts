@@ -1434,32 +1434,31 @@ H.defaultOptions = {
          *
          * @sample  {highcharts} highcharts/chart/pankey/ Zooming and panning
          * @sample  {highstock} stock/chart/panning/ Zooming and xy panning
-         *
-         * @product highcharts highstock gantt
-         * @apioption chart.panning
          */
+        panning: {
+            /**
+             * Enable or disable chart panning.
+             *
+             * @type      {boolean}
+             * @default   {highcharts} false
+             * @default   {highstock|highmaps} true
+             */
+            enabled: false,
 
-        /**
-         * Enable or disable chart panning.
-         *
-         * @type      {boolean}
-         * @default   {highcharts} false
-         * @default   {highstock} true
-         * @apioption chart.panning.enabled
-         */
-
-        /**
-         * Decides in what dimensions the user can pan the chart. Can be
-         * one of `x`, `y`, or `xy`.
-         *
-         * @sample {highcharts} highcharts/chart/panning-type
-         *         Zooming and xy panning
-         *
-         * @type    {string}
-         * @validvalue ["x", "y", "xy"]
-         * @default x
-         * @apioption chart.panning.type
-         */
+            /**
+             * Decides in what dimensions the user can pan the chart. Can be
+             * one of `x`, `y`, or `xy`.
+             *
+             * @sample {highcharts} highcharts/chart/panning-type
+             *         Zooming and xy panning
+             *
+             * @type       {string}
+             * @validvalue ["x", "y", "xy"]
+             * @default    {highcharts|highstock} x
+             * @default    {highmaps} xy
+             */
+            type: 'x'
+        },
 
         /**
          * Equivalent to [zoomType](#chart.zoomType), but for multitouch

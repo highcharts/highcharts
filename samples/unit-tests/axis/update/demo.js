@@ -135,6 +135,26 @@ QUnit.test('General yAxis updates', function (assert) {
         1,
         '#11930: Both the dynamically added axes should be removed from chart.options'
     );
+
+    chart.update({
+        series: [{
+            yAxis: 0
+        }, {
+            yAxis: 1
+        }],
+        yAxis: [{}, {}]
+    }, true, true);
+
+    assert.strictEqual(
+        chart.yAxis.length,
+        3,
+        '#9671: There should be 3 axes'
+    );
+    assert.strictEqual(
+        chart.series[1].yAxis,
+        chart.yAxis[2],
+        '#9671: The second series should be bound to the second axis'
+    );
 });
 
 QUnit.test('Updates after new Axis', function (assert) {

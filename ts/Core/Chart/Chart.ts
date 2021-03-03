@@ -3208,15 +3208,13 @@ class Chart {
 
                 // In stock charts, the navigator series are also part of the
                 // chart.series array, but those series should not be handled
-                // here (#8196).
-                if (coll === 'series') {
-                    indexMap = [];
-                    chart[coll].forEach(function (s, i): void {
-                        if (!s.options.isInternal) {
-                            indexMap.push(pick(s.options.index, i));
-                        }
-                    });
-                }
+                // here (#8196) and neither should the navigator axis (#9671).
+                indexMap = [];
+                (chart as any)[coll].forEach(function (s: (Series|Axis), i: number): void {
+                    if (!s.options.isInternal) {
+                        indexMap.push(pick(s.options.index, i));
+                    }
+                });
 
                 splat((options as any)[coll]).forEach(function (newOptions, i): void {
                     const hasId = defined(newOptions.id);
@@ -3388,7 +3386,7 @@ class Chart {
             states = theme.states,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
-                btnOptions.relativeTo === 'spaceBox' ?
+                btnOptions.relativeTo === 'spacingBox' ?
                     null :
                     this.scrollablePlotBox || 'plotBox'
             );

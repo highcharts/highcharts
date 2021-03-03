@@ -340,7 +340,7 @@ QUnit.test('Managing tech indicators in Stock Tools', function (assert) {
         false
     );
 
-    chart.series[1].update({ yAxis: 2 });
+    chart.series[1].update({ yAxis: 1 });
 
     chart.navigationBindings.utils.manageIndicators.call(
         chart.navigationBindings,
