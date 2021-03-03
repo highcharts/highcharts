@@ -1833,9 +1833,12 @@ class RangeSelector {
                     this.maxLabel,
                     this.maxDateBox
                 ].forEach((label): void => {
-                    if (label && label.width) {
-                        label.attr({ x });
-                        x += label.width + options.inputSpacing;
+                    if (label) {
+                        const { width } = label.getBBox();
+                        if (width) {
+                            label.attr({ x });
+                            x += width + options.inputSpacing;
+                        }
                     }
                 });
             }
