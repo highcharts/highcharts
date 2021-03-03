@@ -246,14 +246,19 @@ class SVGLabel extends SVGElement {
      * Return the bounding box of the box, not the group.
      */
     public getBBox(): BBoxObject {
-        const bBox = this.bBox;
+        // If we have a text string and the DOM bBox was 0, it typically means
+        // that the label was first rendered hidden, so we need to update the
+        // bBox (#15246)
+        if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
+            this.updateBoxSize();
+        }
         const padding = this.padding;
         const paddingLeft = pick(this.paddingLeft, padding);
         return {
             width: this.width,
             height: this.height,
-            x: bBox.x - paddingLeft,
-            y: bBox.y - padding
+            x: this.bBox.x - paddingLeft,
+            y: this.bBox.y - padding
         };
     }
 
