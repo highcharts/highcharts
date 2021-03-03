@@ -17,6 +17,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
+import Series from '../../Core/Series/Series';
 const {
     addEvent,
     attr,
@@ -95,6 +96,7 @@ declare global {
         }
         interface NavigationBindingsUtilsObject {
             getFieldType(value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text');
+            isPriceIndicatorEnabled(series: Series[]): boolean;
             updateRectSize(event: PointerEvent, annotation: Annotation): void;
         }
         interface NavigationEventsOptions {
@@ -179,6 +181,44 @@ function closestPolyfill(el: Element, s: string): (Element|null) {
  */
 const bindingsUtils = {
     /**
+     * Get field type according to value
+     *
+     * @private
+     * @function Highcharts.NavigationBindingsUtilsObject.getFieldType
+     *
+     * @param {'boolean'|'number'|'string'} value
+     * Atomic type (one of: string, number, boolean)
+     *
+     * @return {'checkbox'|'number'|'text'}
+     * Field type (one of: text, number, checkbox)
+     */
+    getFieldType: function (value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text') {
+        return ({
+            'string': 'text',
+            'number': 'number',
+            'boolean': 'checkbox'
+        } as Record<string, ('checkbox'|'number'|'text')>)[
+            typeof value
+        ];
+    },
+
+    /**
+     * Check if any of the price indicators are enabled.
+     * @private
+     * @function bindingsUtils.isLastPriceEnabled
+     *
+     * @param {array} series
+     *        Array of series.
+     *
+     * @return {boolean}
+     *         Tells which indicator is enabled.
+     */
+    isPriceIndicatorEnabled: function (series: Series[]): boolean {
+
+        return series.some((s): Highcharts.SVGElement|undefined => s.lastVisiblePrice || s.lastPrice);
+    },
+
+    /**
      * Update size of background (rect) in some annotations: Measure, Simple
      * Rect.
      *
@@ -206,28 +246,6 @@ const bindingsUtils = {
                 }
             }
         });
-    },
-
-    /**
-     * Get field type according to value
-     *
-     * @private
-     * @function Highcharts.NavigationBindingsUtilsObject.getFieldType
-     *
-     * @param {'boolean'|'number'|'string'} value
-     * Atomic type (one of: string, number, boolean)
-     *
-     * @return {'checkbox'|'number'|'text'}
-     * Field type (one of: text, number, checkbox)
-     */
-    getFieldType: function (value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text') {
-        return ({
-            'string': 'text',
-            'number': 'number',
-            'boolean': 'checkbox'
-        } as Record<string, ('checkbox'|'number'|'text')>)[
-            typeof value
-        ];
     }
 };
 
@@ -1495,9 +1513,7 @@ addEvent(H.Chart, 'render', function (): void {
 
     // Change the initial button background.
     if (stockTools && chart.options.series && button) {
-        stockTools.priceIndicatorEnabled = stockTools.isPriceIndicatorEnabled(chart.series);
-
-        if (stockTools.priceIndicatorEnabled) {
+        if (bindingsUtils.isPriceIndicatorEnabled(chart.series)) {
             (button as any).firstChild.style['background-image'] =
             'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
         } else {

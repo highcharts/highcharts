@@ -17,7 +17,6 @@ import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import U from '../Core/Utilities.js';
-import Series from '../Core/Series/Series';
 const {
     addEvent,
     createElement,
@@ -138,7 +137,6 @@ declare global {
                 buttonWrapper: HTMLDOMElement,
                 button: StockToolsGuiDefinitionsButtonsOptions
             ): void;
-            public isPriceIndicatorEnabled(series: Series[]): boolean;
             public createHTML(): void;
             public destroy(): void;
             public eraseActiveButtons(
@@ -1227,30 +1225,6 @@ class Toolbar {
             }
         });
     }
-    /**
-     * Check if any of the price indicators are enabled.
-     * @private
-     * @function bindingsUtils.isLastPriceEnabled
-     *
-     * @param {array} series
-     *        Array of series.
-     *
-     * @return {boolean}
-     *         Tells which indicator is enabled.
-     */
-    public isPriceIndicatorEnabled = function (series: Series[]): boolean {
-        let priceIndicatorEnabled = false;
-
-        series.forEach(function (series): void {
-            const lastVisiblePrice = series.lastVisiblePrice,
-                lastPrice = series.lastPrice;
-
-            if (lastVisiblePrice || lastPrice) {
-                priceIndicatorEnabled = true;
-            }
-        });
-        return priceIndicatorEnabled;
-    };
     /**
      * Create single button. Consist of HTML elements `li`, `span`, and (if
      * exists) submenu container.

@@ -1594,10 +1594,10 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
-            var chart = this.chart, series = chart.series, priceIndicatorEnabled = chart.stockTools && chart.stockTools.priceIndicatorEnabled, gui = chart.stockTools;
+            var chart = this.chart, series = chart.series, gui = chart.stockTools;
             if (gui && gui.guiEnabled && chart.stockTools) {
                 // Reset all and disable both indicators
-                if (priceIndicatorEnabled) {
+                if (bindingsUtils.isPriceIndicatorEnabled(chart.series)) {
                     series.forEach(function (series) {
                         series.update({
                             lastPrice: {
@@ -1608,7 +1608,6 @@ var stockToolsBindings = {
                             }
                         }, false);
                     });
-                    chart.stockTools.priceIndicatorEnabled = false;
                 }
                 else {
                     series.forEach(function (series) {
@@ -1624,7 +1623,6 @@ var stockToolsBindings = {
                             }
                         }, false);
                     });
-                    chart.stockTools.priceIndicatorEnabled = true;
                 }
                 chart.redraw();
             }

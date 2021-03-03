@@ -805,27 +805,6 @@ var Toolbar = /** @class */ (function () {
         this.submenu = void 0;
         this.toolbar = void 0;
         this.wrapper = void 0;
-        /**
-         * Check if any of the price indicators are enabled.
-         * @private
-         * @function bindingsUtils.isLastPriceEnabled
-         *
-         * @param {array} series
-         *        Array of series.
-         *
-         * @return {boolean}
-         *         Tells which indicator is enabled.
-         */
-        this.isPriceIndicatorEnabled = function (series) {
-            var priceIndicatorEnabled = false;
-            series.forEach(function (series) {
-                var lastVisiblePrice = series.lastVisiblePrice, lastPrice = series.lastPrice;
-                if (lastVisiblePrice || lastPrice) {
-                    priceIndicatorEnabled = true;
-                }
-            });
-            return priceIndicatorEnabled;
-        };
         this.chart = chart;
         this.options = options;
         this.lang = langOptions;

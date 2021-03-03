@@ -69,6 +69,39 @@ function closestPolyfill(el, s) {
  */
 var bindingsUtils = {
     /**
+     * Get field type according to value
+     *
+     * @private
+     * @function Highcharts.NavigationBindingsUtilsObject.getFieldType
+     *
+     * @param {'boolean'|'number'|'string'} value
+     * Atomic type (one of: string, number, boolean)
+     *
+     * @return {'checkbox'|'number'|'text'}
+     * Field type (one of: text, number, checkbox)
+     */
+    getFieldType: function (value) {
+        return {
+            'string': 'text',
+            'number': 'number',
+            'boolean': 'checkbox'
+        }[typeof value];
+    },
+    /**
+     * Check if any of the price indicators are enabled.
+     * @private
+     * @function bindingsUtils.isLastPriceEnabled
+     *
+     * @param {array} series
+     *        Array of series.
+     *
+     * @return {boolean}
+     *         Tells which indicator is enabled.
+     */
+    isPriceIndicatorEnabled: function (series) {
+        return series.some(function (s) { return s.lastVisiblePrice || s.lastPrice; });
+    },
+    /**
      * Update size of background (rect) in some annotations: Measure, Simple
      * Rect.
      *
@@ -91,25 +124,6 @@ var bindingsUtils = {
                 }
             }
         });
-    },
-    /**
-     * Get field type according to value
-     *
-     * @private
-     * @function Highcharts.NavigationBindingsUtilsObject.getFieldType
-     *
-     * @param {'boolean'|'number'|'string'} value
-     * Atomic type (one of: string, number, boolean)
-     *
-     * @return {'checkbox'|'number'|'text'}
-     * Field type (one of: text, number, checkbox)
-     */
-    getFieldType: function (value) {
-        return {
-            'string': 'text',
-            'number': 'number',
-            'boolean': 'checkbox'
-        }[typeof value];
     }
 };
 /**
@@ -1043,8 +1057,7 @@ addEvent(H.Chart, 'render', function () {
         chart.stockTools.toolbar.querySelector('.highcharts-current-price-indicator');
     // Change the initial button background.
     if (stockTools && chart.options.series && button) {
-        stockTools.priceIndicatorEnabled = stockTools.isPriceIndicatorEnabled(chart.series);
-        if (stockTools.priceIndicatorEnabled) {
+        if (bindingsUtils.isPriceIndicatorEnabled(chart.series)) {
             button.firstChild.style['background-image'] =
                 'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
         }

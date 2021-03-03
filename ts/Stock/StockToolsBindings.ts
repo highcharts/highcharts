@@ -2048,12 +2048,11 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         ): void {
             var chart = this.chart,
                 series = chart.series,
-                priceIndicatorEnabled = chart.stockTools && chart.stockTools.priceIndicatorEnabled,
                 gui: Highcharts.Toolbar = chart.stockTools as any;
 
             if (gui && gui.guiEnabled && chart.stockTools) {
                 // Reset all and disable both indicators
-                if (priceIndicatorEnabled) {
+                if (bindingsUtils.isPriceIndicatorEnabled(chart.series)) {
                     series.forEach(function (series): void {
                         series.update({
                             lastPrice: {
@@ -2064,8 +2063,6 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                             }
                         }, false);
                     });
-                    chart.stockTools.priceIndicatorEnabled = false;
-
                 } else {
                     series.forEach(function (series): void {
                         series.update({
@@ -2080,7 +2077,6 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                             }
                         }, false);
                     });
-                    chart.stockTools.priceIndicatorEnabled = true;
                 }
 
                 chart.redraw();
