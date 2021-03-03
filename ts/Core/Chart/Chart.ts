@@ -2836,10 +2836,6 @@ class Chart {
             axis = new Axis(this, userOptions);
         }
 
-        // Push the new axis options to the chart options
-        (chartOptions as any)[type] = splat((chartOptions as any)[type] || {});
-        (chartOptions as any)[type].push(userOptions);
-
         if (isColorAxis) {
             this.isDirtyLegend = true;
 

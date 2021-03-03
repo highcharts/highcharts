@@ -7870,16 +7870,6 @@ class Axis {
 
         options = merge(this.userOptions, options);
 
-        // Color Axis is not an array,
-        // This change is applied in the ColorAxis wrapper
-        if ((chart.options as any)[this.coll].indexOf) {
-            // Don't use this.options.index,
-            // StockChart has Axes in navigator too
-            (chart.options as any)[this.coll][
-                (chart.options as any)[this.coll].indexOf(this.userOptions)
-            ] = options;
-        }
-
         // Remove old events, if no new exist (#8161)
         objectEach(
             (chart.options as any)[this.coll].events,
@@ -7926,31 +7916,6 @@ class Axis {
         // Remove the axis
         erase(chart.axes, this);
         erase((chart as any)[key], this);
-
-        const chartAxisOptions: Highcharts.AxisOptions[] = (chart.options as any)[key];
-
-        if (isArray(chartAxisOptions) && defined(this.options.index)) {
-            const chartAxisOption = chartAxisOptions[this.options.index];
-
-            // #11930: Some axes such as NavigatorAxis do not get added to
-            // chart.options, so there might be a mismatch between
-            // Axis.options.index and the index of the axis in the chart
-            // options array for axes added after the navigator axis.
-            if (chartAxisOption && chartAxisOption.index === this.options.index) {
-                chartAxisOptions.splice(this.options.index, 1);
-            } else {
-                // Find the correct axis in chart.options if the index
-                // doesnt match
-                for (let i = 0; i < chartAxisOptions.length; i++) {
-                    if (chartAxisOptions[i].index === this.options.index) {
-                        chartAxisOptions.splice(i, 1);
-                        break;
-                    }
-                }
-            }
-        } else { // color axis, #6488
-            delete (chart.options as any)[key];
-        }
 
         (chart as any)[key].forEach(function (
             axis: Highcharts.Axis,
