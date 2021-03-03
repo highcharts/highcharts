@@ -82,7 +82,7 @@ class Bindings {
 
         }
 
-        fireEvent(component, 'onLoad');
+        fireEvent(component, 'mount');
 
         return component;
     }

@@ -54,7 +54,7 @@ var Bindings = /** @class */ (function () {
                 addEvent(component, key, fn);
             });
         }
-        fireEvent(component, 'onLoad');
+        fireEvent(component, 'mount');
         return component;
     };
     Bindings.prototype.chartComponent = function (compontentContainer, options) {
