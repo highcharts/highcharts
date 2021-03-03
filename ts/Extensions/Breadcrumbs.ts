@@ -119,175 +119,6 @@ declare global {
         }
     }
 }
-/**
- * Options for breadcrumbs
- *
- * @since   next
- * @product highcharts
- */
-const defaultBreadcrumbsOptions = {
-    /**
-     * The default padding for each button and separator.
-     *
-     * @type      {boolean}
-     * @since     next
-     */
-    buttonPadding: 5,
-
-    /**
-     * Fires when clicking on the breadcrumbs button.
-     * Two arguments are passed to the function. First breadcrumb button
-     * as an SVG element. Second is the breadcrumbs class,
-     * containing reference to the chart, series etc.
-     *
-     * ```js
-     * click: function(button, breadcrumbs) {
-     *   console.log(button);
-     * }
-     * ```
-     *
-     * Return false to stop default button's click action.
-     *
-     * @type      {Highcharts.DrilldownBreadcrumbsClickCallbackFunction}
-     * @since     next
-     */
-
-    /**
-     * When the breadcrumbs is floating, the plot area will not move
-     * to make space for it. By default, the chart will not make space
-     * for the buttons.
-     * This property won't work when positioned in the middle.
-     *
-     * @type      {boolean}
-     * @since     next
-     */
-    floating: true,
-
-    /**
-     * A format string for the breadcrumbs button.
-     * Variables are enclosed by curly brackets.
-     * Available values are passed in the declared point options.
-     *
-     * @type      {string}
-     * @since     next
-     * @default   '{point.name}'
-     * @sample TO DO
-     *         Display custom values in breadcrumb button.
-     */
-    format: '{point.name}',
-
-    /**
-     * Callback function to format the breadcrumb text from scratch.
-     *
-     * @param {Highcharts.Breadcrumbs} breadcrumbs
-     *        The breadcrumbs instance
-     *
-     * @return {string}
-     *         Formatted text or false
-     * @since    next
-     */
-
-    /**
-     * Positioning for the button row. The breadcrumbs buttons
-     * will be aligned properly for the default chart layout
-     * (title,  subtitle, legend, range selector) for the custom chart
-     * layout set the position properties.
-     */
-    position: {
-        /**
-         * Horizontal alignment of the breadcrumbs buttons.
-         *
-         * @type {Highcharts.AlignValue}
-         */
-        align: 'left',
-
-        /**
-         * Vertical alignment of the breadcrumbs buttons.
-         *
-         * @type {Highcharts.VerticalAlignValue}
-         */
-        verticalAlign: 'top',
-
-        /**
-         * The X offset of the breadcrumbs button group.
-         */
-        x: 0,
-
-        /**
-         * The Y offset of the breadcrumbs button group.
-         */
-        y: 0
-    },
-
-    /**
-     * Options object for Breadcrumbs separator.
-     *
-     * @since     next
-     */
-    separator: {
-        /**
-         * A predefined shape or symbol for the separator. Other possible
-         *  values are `'circle'`, `'square'`,`'diamond'`.
-         * Custom callbacks for symbol path generation can also be added to
-         * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
-         * used by its method name.
-         *
-         * Additionally, the URL to a graphic can be given on this form:
-         * `'url(graphic.png)'`. Note that for the image to be applied to
-         * exported charts, its URL needs to be accessible by the export
-         * server. Recommended size of image is 10x10px.
-         *
-         * @type      {string}
-         * @since     next
-         */
-        symbol: 'triangle-right',
-        /**
-         * A size of the separator
-         *
-         * @type      {number}
-         * @since     next
-         */
-        size: 10
-    },
-
-    /**
-     * Show full path or only a single button.
-     *
-     * @type      {boolean}
-     * @since     next
-     */
-    showFullPath: false,
-
-    /**
-     * A CSS styles for all breadcrumbs.
-     *
-     * In styled mode, the breadcrumbs buttons are styled by the
-     * `.highcharts-range-selector-buttons .highcharts-button` rule with its
-     * different states.
-     *  @type {Highcharts.SVGAttributes}
-     * @since     next
-     */
-    style: {
-        'fill': '#ffffff',
-        'position': 'absolute'
-    },
-
-    /**
-     * A useHTML property.
-     *
-     * @type      {boolean}
-     * @since     next
-     */
-    useHTML: false,
-
-    /**
-     * The zIndex of the group.
-     *
-     * @type      {boolean}
-     * @since     next
-     */
-    zIndex: 7
-};
 
 // Add language support.
 extend(
@@ -317,6 +148,176 @@ extend(
  *        User options
  */
 class Breadcrumbs {
+    /**
+     * Options for breadcrumbs
+     *
+     * @since   next
+     * @product highcharts
+     */
+    public static defaultBreadcrumbsOptions = {
+        /**
+         * The default padding for each button and separator.
+         *
+         * @type      {boolean}
+         * @since     next
+         */
+        buttonPadding: 5,
+
+        /**
+         * Fires when clicking on the breadcrumbs button.
+         * Two arguments are passed to the function. First breadcrumb button
+         * as an SVG element. Second is the breadcrumbs class,
+         * containing reference to the chart, series etc.
+         *
+         * ```js
+         * click: function(button, breadcrumbs) {
+         *   console.log(button);
+         * }
+         * ```
+         *
+         * Return false to stop default button's click action.
+         *
+         * @type      {Highcharts.DrilldownBreadcrumbsClickCallbackFunction}
+         * @since     next
+         */
+
+        /**
+         * When the breadcrumbs is floating, the plot area will not move
+         * to make space for it. By default, the chart will not make space
+         * for the buttons.
+         * This property won't work when positioned in the middle.
+         *
+         * @type      {boolean}
+         * @since     next
+         */
+        floating: true,
+
+        /**
+         * A format string for the breadcrumbs button.
+         * Variables are enclosed by curly brackets.
+         * Available values are passed in the declared point options.
+         *
+         * @type      {string}
+         * @since     next
+         * @default   '{point.name}'
+         * @sample TO DO
+         *         Display custom values in breadcrumb button.
+         */
+        format: '{point.name}',
+
+        /**
+         * Callback function to format the breadcrumb text from scratch.
+         *
+         * @param {Highcharts.Breadcrumbs} breadcrumbs
+         *        The breadcrumbs instance
+         *
+         * @return {string}
+         *         Formatted text or false
+         * @since    next
+         */
+
+        /**
+         * Positioning for the button row. The breadcrumbs buttons
+         * will be aligned properly for the default chart layout
+         * (title,  subtitle, legend, range selector) for the custom chart
+         * layout set the position properties.
+         */
+        position: {
+            /**
+             * Horizontal alignment of the breadcrumbs buttons.
+             *
+             * @type {Highcharts.AlignValue}
+             */
+            align: 'left',
+
+            /**
+             * Vertical alignment of the breadcrumbs buttons.
+             *
+             * @type {Highcharts.VerticalAlignValue}
+             */
+            verticalAlign: 'top',
+
+            /**
+             * The X offset of the breadcrumbs button group.
+             */
+            x: 0,
+
+            /**
+             * The Y offset of the breadcrumbs button group.
+             */
+            y: 0
+        },
+
+        /**
+         * Options object for Breadcrumbs separator.
+         *
+         * @since     next
+         */
+        separator: {
+            /**
+             * A predefined shape or symbol for the separator. Other possible
+             *  values are `'circle'`, `'square'`,`'diamond'`.
+             * Custom callbacks for symbol path generation can also be added to
+             * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
+             * used by its method name.
+             *
+             * Additionally, the URL to a graphic can be given on this form:
+             * `'url(graphic.png)'`. Note that for the image to be applied to
+             * exported charts, its URL needs to be accessible by the export
+             * server. Recommended size of image is 10x10px.
+             *
+             * @type      {string}
+             * @since     next
+             */
+            symbol: 'triangle-right',
+            /**
+             * A size of the separator
+             *
+             * @type      {number}
+             * @since     next
+             */
+            size: 10
+        },
+
+        /**
+         * Show full path or only a single button.
+         *
+         * @type      {boolean}
+         * @since     next
+         */
+        showFullPath: false,
+
+        /**
+         * A CSS styles for all breadcrumbs.
+         *
+         * In styled mode, the breadcrumbs buttons are styled by the
+         * `.highcharts-range-selector-buttons .highcharts-button` rule with its
+         * different states.
+         *  @type {Highcharts.SVGAttributes}
+         * @since     next
+         */
+        style: {
+            'fill': '#ffffff',
+            'position': 'absolute'
+        },
+
+        /**
+         * A useHTML property.
+         *
+         * @type      {boolean}
+         * @since     next
+         */
+        useHTML: false,
+
+        /**
+         * The zIndex of the group.
+         *
+         * @type      {boolean}
+         * @since     next
+         */
+        zIndex: 7
+    };
+
     public chart: Chart = void 0 as any;
     public breadcrumbsGroup: Highcharts.SVGElement = void 0 as any;
     public breadcrumbsList: Array<Array<any>> = [];
@@ -330,7 +331,7 @@ class Breadcrumbs {
     }
 
     public init(chart: Chart, userOptions: Highcharts.BreadcrumbsOptions, isTreemap: boolean): void {
-        const chartOptions = merge(defaultBreadcrumbsOptions, userOptions);
+        const chartOptions = merge(Breadcrumbs.defaultBreadcrumbsOptions, userOptions);
 
         this.chart = chart;
         this.options = chartOptions || {};
