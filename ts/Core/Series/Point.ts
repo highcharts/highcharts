@@ -1215,25 +1215,16 @@ class Point {
                 series.chart.options.chart as Highcharts.ChartOptions,
             colorCount = optionsChart.colorCount,
             styledMode = series.chart.styledMode,
-            colorIndex: number;
+            colorIndex: number,
+            color;
 
         // remove points nonZonedColor for later recalculation
         delete (this as any).nonZonedColor;
 
-        /**
-         * The point's current color.
-         *
-         * @name Highcharts.Point#color
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
-         */
-        if (!styledMode && !(this.options as any).color) {
-            this.color = series.color; // #3445
-        }
-
         if (series.options.colorByPoint) {
             if (!styledMode) {
                 colors = series.options.colors || series.chart.options.colors;
-                this.color = this.color || (colors as any)[series.colorCounter];
+                color = (colors as any)[series.colorCounter];
                 colorCount = (colors as any).length;
             }
             colorIndex = series.colorCounter;
@@ -1243,10 +1234,21 @@ class Point {
                 series.colorCounter = 0;
             }
         } else {
+            if (!styledMode) {
+                color = series.color;
+            }
             colorIndex = series.colorIndex as any;
         }
 
         this.colorIndex = pick(this.options.colorIndex, colorIndex);
+
+        /**
+         * The point's current color.
+         *
+         * @name Highcharts.Point#color
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+         */
+        this.color = pick(this.options.color, color);
     }
 
     /**
@@ -1758,7 +1760,8 @@ class Point {
         }
 
         // Apply hover styles to the existing point
-        if (point.graphic) {
+        // Prevent from dummy null points (#14966)
+        if (point.graphic && !point.hasDummyGraphic) {
 
             if (previousState) {
                 point.graphic.removeClass('highcharts-point-' + previousState);

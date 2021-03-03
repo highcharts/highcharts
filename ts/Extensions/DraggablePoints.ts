@@ -405,13 +405,21 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         },
         // Position handle at bottom if column is below threshold
         handlePositioner: function (point: ColumnPoint): PositionObject {
-            var bBox: BBoxObject =
-                (point.shapeArgs as any) || (point.graphic as any).getBBox();
+            var bBox = (
+                    point.shapeArgs ||
+                    (point.graphic && point.graphic.getBBox()) ||
+                    {}
+                ),
+                reversed = point.series.yAxis.reversed,
+                threshold = point.series.options.threshold || 0,
+                y = point.y || 0,
+                bottom =
+                    (!reversed && y >= threshold) ||
+                    (reversed && y < threshold);
 
             return {
-                x: bBox.x,
-                y: (point.y as any) >= (point.series.options.threshold || 0) ?
-                    bBox.y : bBox.y + bBox.height
+                x: bBox.x || 0,
+                y: bottom ? (bBox.y || 0) : (bBox.y || 0) + (bBox.height || 0)
             };
         },
         // Horizontal handle

@@ -17,7 +17,6 @@ require('./dist-examples');
 require('./dist-productsjs');
 require('./jsdoc-dts');
 require('./lint-dts');
-require('./lint-js');
 require('./scripts-clean');
 require('./scripts-compile');
 require('./scripts-css');
@@ -27,7 +26,6 @@ Gulp.task(
     'dist',
     Gulp.series(
         'lint-ts',
-        'lint-js',
         'scripts-clean',
         'scripts-css',
         'scripts-ts',
