@@ -1,0 +1,80 @@
+
+/*chart thumbnails*/
+#container{
+	padding-bottom:30px;
+	margin-top:30px;
+	display:grid;
+	grid-template-columns: repeat(auto-fill, 50%);
+	grid-template-rows: repeat(2, 100px);
+}
+
+#container .gridChart
+{
+	border:1px solid #ebebeb;
+	border-radius: 4px;
+	filter: grayscale(1);
+	opacity:1;
+}
+#container .gridChart:hover{
+	filter: grayscale(0);
+	opacity:1;
+}
+
+/*buy a license button*/
+#container .btn{
+	grid-column: 1 / span 2;
+	max-width:80%;
+	justify-self:center;
+	margin-top:30px;
+}
+
+#container #patterns,
+#container #scatter,
+#container #soloBubble{
+	display: none;
+}
+		
+
+@media (min-width: 768px){
+
+	/*demo button*/
+	#container .btn{
+		grid-column: 2 / span 3;
+		max-width:190px;
+		justify-self:center;
+		margin-top:30px;
+	}
+
+	#container{
+		margin-top:10px;
+		grid-template-columns:repeat(5,160px);
+		grid-template-rows: repeat(1, 100px);
+	}
+	#container #soloBubble
+	{
+		display: inline-block;
+	}
+
+	
+}
+
+@media (min-width: 960px){
+
+	#container{
+		grid-template-columns:repeat(6,160px);
+		grid-template-rows: repeat(1, 100px);
+	}
+	/*demo button*/
+	#container .btn{
+		grid-column: 3 / span 2;
+		max-width:190px;
+		justify-self:center;
+		margin-top:30px;
+	}
+	
+	#container #scatter{
+		display: inline-block;
+	}
+
+}
+
