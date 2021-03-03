@@ -80,6 +80,8 @@ const MIME_TYPE = {
 
 const SOURCE_ROOT = 'build/api';
 
+const TEST_ROOT = 'build/api-test';
+
 /* *
  *
  *  Functions
@@ -123,11 +125,19 @@ function getChunks(items) {
  * @param {string} fileKey
  * File key to delete.
  *
+ * @param {boolean} test
+ * Does not delete, just test local.
+ *
  * @return {Promise}
  * Promise to keep.
  */
-function deleteFileKey(storage, bucket, fileKey) {
+function deleteFileKey(storage, bucket, fileKey, test) {
     const log = require('./lib/log');
+
+    if (test) {
+        log.message(fileKey, 'would be deleted');
+        return Promise.resolve();
+    }
 
     return storage
         .deleteObject({
@@ -209,23 +219,26 @@ function fetchFileKeys(storage, bucket, keyPrefix) {
  * Updated file content.
  */
 function updateFileContent(filePath, fileContent) {
-    if (
-        !/^(?:foot|head)(?:er)?/g.test(path.basename(filePath)) &&
-        !fileContent.includes('<frame') &&
-        !fileContent.includes('<iframe')
-    ) {
-        switch (path.extname(filePath)) {
-            case '.htm':
-            case '.html':
+    const basename = path.basename(filePath);
+
+    switch (path.extname(filePath)) {
+        case '.htm':
+        case '.html':
+            if (
+                !/^(?:(?:foot|head)(?:er)?|index)|-frame\.html?/.test(basename) &&
+                !fileContent.includes('<frame') &&
+                !fileContent.includes('<iframe')
+            ) {
                 fileContent = Buffer.from(
                     fileContent
                         .toString()
                         .replace(/^(.*\<\/head\>.*)$/m, HTML_HEAD_STATIC + '\n$1')
                 );
-                break;
-            default:
-        }
+            }
+            break;
+        default:
     }
+
     return fileContent;
 }
 
@@ -242,17 +255,46 @@ function updateFileContent(filePath, fileContent) {
  * @param {string} targetBucket
  * AWS S3 bucket to upload to.
  *
+ * @param {boolean} test
+ * Does not upload, just test local.
+ *
  * @return {Promise}
  * Promise to keep.
  */
-function uploadFile(sourceFile, targetStorage, targetBucket) {
+function uploadFile(
+    sourceFile,
+    targetStorage,
+    targetBucket,
+    test
+) {
     const log = require('./lib/log');
-
     const fileContent = updateFileContent(
         sourceFile,
         fs.readFileSync(sourceFile)
     );
+
     const filePath = path.relative(SOURCE_ROOT, sourceFile);
+
+    if (test) {
+        return new Promise((resolve, reject) => {
+            const testPath = path.join(TEST_ROOT, filePath);
+            const testFolderPath = path.dirname(testPath);
+            try {
+                if (!fs.existsSync(testFolderPath)) {
+                    fs.mkdirSync(testFolderPath, { recursive: true });
+                }
+                fs.writeFileSync(
+                    testPath,
+                    fileContent,
+                    { encoding: 'binary' }
+                );
+                log.message(testPath, 'would be uploaded');
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
 
     return targetStorage
         .putObject({
@@ -282,7 +324,7 @@ function uploadFile(sourceFile, targetStorage, targetBucket) {
  * Deletes all files in the AWS S3 bucket, that do not exist locally.
  *
  * @param {boolean} test
- * Does not upload or delete.
+ * Does not upload or delete, just test local.
  *
  * @return {Promise}
  * Promise to keep.
@@ -316,14 +358,12 @@ function uploadFolder(
                 let deletePromises = Promise.resolve();
 
                 fileKeys.forEach(fileKey => {
-                    deletePromises = deletePromises.then(() => {
-                        if (test) {
-                            log.message(fileKey, 'would be deleted');
-                            return Promise.resolve();
-                        }
-
-                        return deleteFileKey(targetStorage, bucket, fileKey);
-                    });
+                    deletePromises = deletePromises.then(() => deleteFileKey(
+                        targetStorage,
+                        bucket,
+                        fileKey,
+                        test
+                    ));
                 });
 
                 return deletePromises;
@@ -340,17 +380,14 @@ function uploadFolder(
         ));
 
     getChunks(filePaths).forEach(filePathsChunk => {
-        promiseChain = promiseChain.then(
-            () => Promise
-                .all(filePathsChunk.map(filePath => {
-                    if (test) {
-                        log.message(filePath, 'would be uploaded');
-                        return Promise.resolve();
-                    }
-                    return uploadFile(filePath, targetStorage, bucket);
-                }))
-                .then(() => void 0)
-        );
+        promiseChain = promiseChain.then(() => Promise.all(
+            filePathsChunk.map(filePath => uploadFile(
+                filePath,
+                targetStorage,
+                bucket,
+                test
+            ))
+        ));
     });
 
     return promiseChain;
@@ -384,7 +421,10 @@ function jsdocUpload() {
         throw new Error('No --bucket specified.');
     }
 
-    if (!fs.lstatSync(SOURCE_ROOT).isDirectory()) {
+    if (
+        !fs.existsSync(SOURCE_ROOT) ||
+        !fs.lstatSync(SOURCE_ROOT).isDirectory()
+    ) {
         throw new Error(`Source directory "${SOURCE_ROOT}" not found.`);
     }
 
@@ -403,6 +443,19 @@ function jsdocUpload() {
     });
 
     let promiseChain = Promise.resolve();
+
+    if (test) {
+        if (fs.existsSync(TEST_ROOT)) {
+            promiseChain = promiseChain.then(() => fs.rmdirSync(
+                TEST_ROOT,
+                { recursive: true }
+            ));
+        }
+        promiseChain = promiseChain.then(() => fs.mkdirSync(
+            TEST_ROOT,
+            { recursive: true }
+        ));
+    }
 
     sourceFolders.forEach(sourceFolder => {
         promiseChain = promiseChain.then(() => uploadFolder(
