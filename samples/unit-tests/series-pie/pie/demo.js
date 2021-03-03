@@ -117,7 +117,8 @@ QUnit.test(
                     innerSize: 40,
                     startAngle: -90,
                     endAngle: 90,
-                    center: ['50%', '75%']
+                    center: ['50%', '75%'],
+                    color: '#c0ffee'
                 }
             },
 
@@ -127,6 +128,13 @@ QUnit.test(
         });
 
         var graph = chart.series[0].graph;
+
+        // Issue #13646
+        assert.strictEqual(
+            chart.userOptions.plotOptions.pie.color,
+            '#c0ffee',
+            'The empty circle should be a user-specified color (#13646).'
+        );
 
         // Issue #13229
         assert.ok(
