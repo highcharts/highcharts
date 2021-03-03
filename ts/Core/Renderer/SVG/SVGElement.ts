@@ -934,9 +934,13 @@ class SVGElement {
             // to keep it in place
             const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
             br.textContent = '\u200B';
-            attr(br, {
-                x: Number(elem.getAttribute('x')),
-                y: Number(elem.getAttribute('y'))
+
+            // Copy x and y if not null
+            (['x', 'y'] as Array<'x'|'y'>).forEach((key): void => {
+                const value = elem.getAttribute(key);
+                if (value) {
+                    br.setAttribute(key, value);
+                }
             });
 
             // Insert the outline
