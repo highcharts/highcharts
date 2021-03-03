@@ -10,9 +10,13 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
 import '../../Series/XRange/XRangeSeries.js';
 import '../../Series/Gantt/GanttSeries.js';
-import '../../Core/Chart/GanttChart.js';
+import G from '../../Core/Chart/GanttChart.js';
 import '../../Core/Scrollbar.js';
 import '../../Extensions/RangeSelector.js';
 import '../../Core/Navigator.js';
+
+(Highcharts as any).ganttChart = G.ganttChart;
+(Highcharts as any).GanttChart = G.GanttChart;

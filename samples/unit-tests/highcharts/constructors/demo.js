@@ -190,7 +190,7 @@ QUnit.test('Highmaps', function (assert) {
         }
     });
 
-    chart = new Highcharts.Map({
+    chart = new Highcharts.MapChart({
         chart: {
             renderTo: 'container'
         },
@@ -213,7 +213,7 @@ QUnit.test('Highmaps', function (assert) {
     );
     assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
-    chart = new Highcharts.Map({
+    chart = new Highcharts.MapChart({
         chart: {
             renderTo: document.getElementById('container')
         },
@@ -237,7 +237,7 @@ QUnit.test('Highmaps', function (assert) {
     assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
     calledBack = false;
-    chart = new Highcharts.Map(
+    chart = new Highcharts.MapChart(
         {
             chart: {
                 renderTo: 'container'
@@ -265,7 +265,7 @@ QUnit.test('Highmaps', function (assert) {
     assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
     chart = $('#container')
-        .highcharts('Map', {
+        .highcharts('MapChart', {
             series: [
                 {
                     data: [

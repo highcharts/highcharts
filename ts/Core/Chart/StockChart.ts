@@ -25,7 +25,6 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
-import H from '../Globals.js';
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
@@ -286,8 +285,8 @@ class StockChart extends Chart {
 
 /**
  * Factory function for creating new stock charts. Creates a new
- * {@link Highcharts.Chart|Chart} object with different default options than the
- * basic Chart.
+ * {@link Highcharts.StockChart|StockChart} object with different default
+ * options than the basic Chart.
  *
  * @example
  * var chart = Highcharts.stockChart('container', {
@@ -317,7 +316,7 @@ class StockChart extends Chart {
  *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
  *        handler is equivalent.
  *
- * @return {Highcharts.Chart}
+ * @return {Highcharts.StockChart}
  *         The chart object.
  */
 function stockChart(

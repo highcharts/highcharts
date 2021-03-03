@@ -10,6 +10,7 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Highcharts from '../../Core/Globals.js';
 import '../../Core/Axis/MapAxis.js';
 import '../../Core/Axis/ColorAxis.js';
 import '../../Mixins/ColorMapSeries.js';
@@ -21,4 +22,8 @@ import '../../Series/MapPoint/MapPointSeries.js';
 import '../../Series/MapBubble/MapBubbleSeries.js';
 import '../../Series/Heatmap/HeatmapSeries.js';
 import '../../Extensions/GeoJSON.js';
-import '../../Maps/Map.js';
+import M from '../../Core/Chart/MapChart.js';
+
+(Highcharts as any).mapChart = M.mapChart;
+(Highcharts as any).MapChart = (Highcharts as any).Map = M.MapChart;
+(Highcharts as any).maps = M.maps;
