@@ -313,6 +313,7 @@ Chart.prototype.moveFixedElements = function (): void {
             '.highcharts-navigator-yaxis',
             '.highcharts-navigator',
             '.highcharts-reset-zoom',
+            '.highcharts-drillup-button',
             '.highcharts-scrollbar',
             '.highcharts-subtitle',
             '.highcharts-title'
@@ -405,6 +406,7 @@ Chart.prototype.applyFixed = function (): void {
             .add();
 
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
+        addEvent(this, 'afterDrilldown', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
         addEvent(Axis, 'afterInit', (): void => {
             this.scrollableDirty = true;
