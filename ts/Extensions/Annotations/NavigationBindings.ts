@@ -1509,8 +1509,12 @@ addEvent(H.Chart, 'render', function (): void {
                 // Get the HTML element coresponding to the
                 // className taken from StockToolsBindings.
 
-                if (chart.stockTools && chart.stockTools.toolbar) {
-                    const buttonNode = chart.stockTools.toolbar.querySelectorAll('.' + key);
+                if (
+                    chart.navigationBindings &&
+                    chart.navigationBindings.container &&
+                    chart.navigationBindings.container[0]
+                ) {
+                    const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
 
                     if (buttonNode) {
                         if (!buttonsEnabled && !value.alwaysEnabled) {
