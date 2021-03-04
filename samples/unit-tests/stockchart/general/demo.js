@@ -88,7 +88,7 @@ QUnit.test('Stock chart with overshooting range (#4501)', function (assert) {
     );
 });
 
-QUnit.test('Default plot options for stock chart', function (assert) {
+QUnit.test('Default options for stock chart', function (assert) {
     const chart = Highcharts.stockChart('container', {
         series: [
             {
@@ -106,6 +106,11 @@ QUnit.test('Default plot options for stock chart', function (assert) {
         },
         scrollbar: {
             enabled: false
+        },
+        plotOptions: {
+            series: {
+                compare: 'value'
+            }
         }
     });
 
@@ -141,5 +146,27 @@ QUnit.test('Default plot options for stock chart', function (assert) {
         chart.series[0].options.marker.radius,
         5,
         'The individual series marker should be respected'
+    );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                compare: 'percent'
+            }
+        }
+    });
+
+    assert.strictEqual(
+        chart.series[0].options.compare,
+        'percent',
+        '#14932: Updating compare through plotOptions should be possible'
+    );
+
+    chart.addAxis({});
+
+    assert.strictEqual(
+        chart.yAxis[1].options.title.text,
+        null,
+        'Axis should have stock defaults applied'
     );
 });

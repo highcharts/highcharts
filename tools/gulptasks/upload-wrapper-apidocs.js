@@ -32,7 +32,7 @@ function toS3Path(fromPath, prefix) {
     };
 }
 /**
- * Upload code for wrapper api docs (iOS/Android) to S3 (see example https://api-docs-bucket.highcharts.com).
+ * Uploads code for wrapper api docs (iOS/Android) to a S3 bucket.
  *
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
@@ -71,7 +71,7 @@ function uploadWrapperAPIDocs() {
 
 uploadWrapperAPIDocs.description = 'Uploads Wrapper API docs (ios, android) to S3';
 uploadWrapperAPIDocs.flags = {
-    '--bucket': 'S3 bucket to upload to. Normally this is api-docs-bucket.highcharts.com',
+    '--bucket': 'S3 bucket to upload to.',
     '--release-version': 'Version to upload.', // --version seems to be reserved by gulp
     '--only-upload': 'Comma separated list of wrappers to upload. I.e ios,android (optional)',
     '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +

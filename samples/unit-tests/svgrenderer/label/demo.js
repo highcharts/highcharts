@@ -51,14 +51,6 @@ QUnit.test('Left trim (#5261)', function (assert) {
         300
     );
 
-    var correctLabel = ren
-        .label('Hello World', 100, 25)
-        .attr({
-            'stroke-width': 1,
-            stroke: 'blue'
-        })
-        .add();
-
     var label = ren
         .label('<br>Hello World', 100, 50)
         .attr({
@@ -68,9 +60,22 @@ QUnit.test('Left trim (#5261)', function (assert) {
         .add();
 
     assert.strictEqual(
-        label.element.querySelector('tspan').getAttribute('dy'),
+        label.element.querySelector('tspan'),
         null,
-        'Initial break should have no dy'
+        'Initial break should be left out'
+    );
+
+    label = ren.label('<span> </span><br>Hello World', 100, 50)
+        .attr({
+            'stroke-width': 1,
+            stroke: 'blue'
+        })
+        .add();
+
+    assert.strictEqual(
+        label.element.querySelector('tspan'),
+        null,
+        'Initial empty break should be left out'
     );
 
     label = ren

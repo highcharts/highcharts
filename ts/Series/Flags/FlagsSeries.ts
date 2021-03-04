@@ -198,7 +198,7 @@ class FlagsSeries extends ColumnSeries {
          * @product   highstock
          */
         tooltip: {
-            pointFormat: '{point.text}<br/>'
+            pointFormat: '{point.text}'
         },
 
         threshold: null as any,
@@ -692,6 +692,9 @@ extend(FlagsSeries.prototype, {
      * @function Highcharts.seriesTypes.flags#invertGroups
      */
     invertGroups: noop as any,
+
+    // Flags series group should not be invertible (#14063).
+    invertible: false,
 
     noSharedTooltip: true,
 

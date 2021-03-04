@@ -26,6 +26,7 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
+    merge,
     uniqueKey
 } = U;
 
@@ -191,10 +192,10 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
         this.emit({ type: 'clearTable', detail: eventDetail });
 
-        const rowIds = this.getAllRowIds();
+        const rowIDs = this.getAllRowIds();
 
-        for (let i = 0, iEnd = rowIds.length; i < iEnd; ++i) {
-            this.unwatchRow(rowIds[i], true);
+        for (let i = 0, iEnd = rowIDs.length; i < iEnd; ++i) {
+            this.unwatchRow(rowIDs[i], true);
         }
 
         this.rows.length = 0;
@@ -260,13 +261,15 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * The alias for the column. Cannot be `id`, or an alias already in use
      *
      * @return {boolean}
-     * True if successfully added, false if already in used or reserved.
+     * True if successfully added, false if already in use or reserved.
      */
     public createColumnAlias(columnName: string, alias: string): boolean {
         if (alias === 'id' || this.aliasMap[alias]) {
             return false;
         }
+
         this.aliasMap[alias] = columnName;
+
         return true;
     }
 
@@ -290,6 +293,16 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         return success;
+    }
+
+    /**
+     * Deletes a column alias for this table.
+     *
+     * @param {string} alias
+     * The alias to delete.
+     */
+    public deleteColumnAlias(alias: string): void {
+        delete this.aliasMap[alias];
     }
 
     /**
@@ -408,18 +421,15 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             aliasMap = table.aliasMap,
             rows = table.rows,
             noColumnNames = !columnNamesOrAlias.length,
-            columnSorter = (
-                usePresentationOrder &&
-                table.presentationState.getColumnSorter()
-            ),
+            presentationSorter = table.presentationState.getColumnSorter(),
             columns: Record<string, Array<DataTableRow.CellType>> = {};
 
         let columnName: string,
             row: DataTableRow,
             cell: DataTableRow.CellType;
 
-        if (columnSorter) {
-            columnNamesOrAlias.sort(columnSorter);
+        if (usePresentationOrder) {
+            columnNamesOrAlias.sort(presentationSorter);
         }
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
@@ -427,8 +437,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
             if (noColumnNames) {
                 columnNamesOrAlias = row.getCellNames();
-                if (columnSorter) {
-                    columnNamesOrAlias.sort(columnSorter);
+                if (usePresentationOrder) {
+                    columnNamesOrAlias.sort(presentationSorter);
                 }
                 columnNamesOrAlias.unshift('id');
             }
@@ -470,7 +480,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
-            if (!row.isNull()) {
+            if (!row.isNull) {
                 nonNullRow = row;
                 break;
             }
@@ -489,19 +499,20 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Column value of the column in this row.
      */
     public getRow(row: (number|string)): (DataTableRow|undefined) {
+        const table = this;
 
         if (typeof row === 'string') {
-            return this.rowsIdMap[row];
+            return table.rowsIdMap[row];
         }
 
-        return this.rows[row];
+        return table.rows[row];
     }
 
     /**
      * Retrieves a cell value based on row index/ID
      * and column name/alias.
      *
-     * @param {string | number} rowID
+     * @param {string|number} row
      * The row to select.
      *
      * @param {string} columnNameOrAlias
@@ -510,10 +521,14 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @return {DataTableRow.CellType}
      * The value of the cell.
      */
-    public getRowCell(rowID: string | number, columnNameOrAlias: string): DataTableRow.CellType {
-        const cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
+    public getRowCell(
+        row: (string|number),
+        columnNameOrAlias: string
+    ): DataTableRow.CellType {
+        const cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias,
+            foundRow = this.getRow(row);
 
-        return this.getRow(rowID)?.getCell(cellName);
+        return foundRow && foundRow.getCell(cellName);
     }
 
     /**
@@ -527,6 +542,25 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public getRowCount(): number {
         return this.rows.length;
+    }
+
+    /**
+     * Returns the index of a given row in this table.
+     *
+     * @param {string|DataTableRow} row
+     * Row to determ index for.
+     *
+     * @return {number}
+     * Index of the row in this table, -1 if not found.
+     */
+    public getRowIndex(row: (string|DataTableRow)): number {
+        const table = this;
+
+        if (typeof row === 'string') {
+            row = table.rowsIdMap[row];
+        }
+
+        return table.rows.indexOf(row);
     }
 
     /**
@@ -562,46 +596,73 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     public insertRow(
         row: DataTableRow,
         eventDetail?: DataEventEmitter.EventDetail,
-        index: number = this.rows.length
+        index?: number
     ): boolean {
         const table = this,
             rows = table.rows,
             rowsIdMap = table.rowsIdMap,
-            rowId = row.id;
+            rowsLength = rows.length,
+            rowID = row.id;
 
-        if (rowsIdMap[rowId]) {
+        if (rowsIdMap[rowID]) {
             return false;
         }
 
-        table.emit({ type: 'insertRow', detail: eventDetail, index, row });
+        table.emit({
+            type: 'insertRow',
+            detail: eventDetail,
+            index: (index || rowsLength),
+            row
+        });
 
-        rows.splice(index, 0, row);
-        this.rowsIdMap[rowId] = row;
-        this.watchRow(row);
+        if (
+            !index ||
+            index === rowsLength
+        ) {
+            rows.push(row);
+        } else {
+            rows.splice(index, 0, row);
+        }
 
-        table.emit({ type: 'afterInsertRow', detail: eventDetail, index, row });
+        rowsIdMap[rowID] = row;
+        table.watchRow(row);
+
+        table.emit({
+            type: 'afterInsertRow',
+            detail: eventDetail,
+            index: (index || rowsLength),
+            row
+        });
 
         return true;
     }
 
     /**
      * Inserts an array of rows into the table
+     *
      * @param {Array<DataTableRow>} rows
      * Array of rows to insert
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Details for insertRow event
      *
-     * @return {this}
+     * @return {boolean}
      * The datatable with the inserted rows
      */
-    public insertRows(rows: Array<DataTableRow>, eventDetail?: DataEventEmitter.EventDetail): this {
-        for (let i = 0; i < rows.length; i++) {
-            const row = rows[i];
-            this.insertRow(row, eventDetail);
+    public insertRows(
+        rows: Array<DataTableRow>,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        for (
+            let i = 0,
+                iEnd = rows.length;
+            i < iEnd;
+            ++i
+        ) {
+            this.insertRow(rows[i], eventDetail);
         }
 
-        return this;
+        return true;
     }
 
     /**
@@ -643,30 +704,18 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
         this.emit({ type: 'removeColumn', detail: eventDetail, columnName });
 
-        for (let i = 0, rowCount = rows.length; i < rowCount; i++) {
+        for (
+            let i = 0,
+                rowCount = rows.length;
+            i < rowCount;
+            ++i
+        ) {
             cellValueArray.push(rows[i].removeCell(columnName));
         }
 
         this.emit({ type: 'afterRemoveColumn', detail: eventDetail, columnName, values: cellValueArray });
 
         return cellValueArray;
-    }
-
-    /**
-     * Removes a column alias from the table
-     *
-     * @param {string} alias
-     * The alias to remove
-     *
-     * @return {boolean}
-     * True if successfully removed, false if the alias was not found
-     */
-    public removeColumnAlias(alias: string): boolean {
-        if (this.aliasMap[alias]) {
-            delete this.aliasMap[alias];
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -730,6 +779,56 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
+     * Replaces a row in this table with a new row. The new row must not be part
+     * found in this table.
+     *
+     * @param {number|string|DataTableRow} oldRow
+     * Row index, row ID, or row to replace.
+     *
+     * @param {DataTableRow} newRow
+     * Row as the replacement.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * True, if row was successfully replaced, otherwise false.
+     *
+     * @emits DataTable#deleteRow
+     * @emits DataTable#afterDeleteRow
+     * @emits DataTable#insertRow
+     * @emits DataTable#afterInsertRow
+     */
+    public replaceRow(
+        oldRow: (number|string|DataTableRow),
+        newRow: DataTableRow,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        const table = this,
+            tableRows = table.rows,
+            tableRowsIdMap = table.rowsIdMap,
+            index = (
+                typeof oldRow === 'number' ?
+                    oldRow :
+                    table.getRowIndex(oldRow)
+            );
+
+        oldRow = tableRows[index];
+
+        if (
+            !oldRow ||
+            tableRowsIdMap[newRow.id]
+        ) {
+            return false;
+        }
+
+        table.deleteRow(oldRow);
+        table.insertRow(newRow, eventDetail, index);
+
+        return true;
+    }
+
+    /**
      * Sets a column of cells from an array of cell values
      *
      * @param {string} columnNameOrAlias
@@ -738,28 +837,63 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {Array<DataTableRow.CellType>} cells
      * Ann array of cell values to set.
      *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {boolean}
      * `true` if successful, `false` if unable to insert all values.
      *
      */
     public setColumn(
         columnNameOrAlias: string,
-        cells: Array<DataTableRow.CellType>
+        cells: Array<DataTableRow.CellType>,
+        eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
-        const rowIDs = this.getAllRowIds();
-        let success = false;
-        for (let i = 0, iEnd = Math.max(cells.length, rowIDs.length); i < iEnd; i++) {
-            success = this.setRowCell(rowIDs[i], columnNameOrAlias, cells[i], true);
+        const table = this,
+            rows = table.getAllRows();
+
+        if (columnNameOrAlias === 'id') {
+            return false;
         }
 
-        return success;
+        columnNameOrAlias = (table.aliasMap[columnNameOrAlias] || columnNameOrAlias);
+
+        for (
+            let i = 0,
+                iEnd = Math.max(cells.length, rows.length),
+                row: DataTableRow,
+                cellValue: DataTableRow.CellType;
+            i < iEnd;
+            ++i
+        ) {
+            row = rows[i];
+            cellValue = cells[i];
+
+            if (
+                (
+                    row &&
+                    !row.setCell(columnNameOrAlias, cellValue, eventDetail)
+                ) ||
+                (
+                    !row &&
+                    !table.insertRow(
+                        new DataTableRow({ [columnNameOrAlias]: cellValue }),
+                        eventDetail
+                    )
+                )
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
      * Sets a cell value based on the rowID/index and column name/alias.
      * Will insert a new row if the specified row does not exist.
      *
-     * @param {string | number | undefined} rowID
+     * @param {string|number|undefined} rowID
      * The ID or index of the row.
      *
      * @param {string} columnNameOrAlias
@@ -768,43 +902,77 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {DataTableRow.CellType} value
      * The value to set the cell to.
      *
-     * @param {boolean} [allowUndefined]
-     * Whether to allow for an `undefined` rowID.
-     * If `true` the method will insert a new row with a generated ID.
-     * Defaults to `false`.
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
      *
      * @return {boolean}
      * `true` if successful, `false` if not
      */
     public setRowCell(
-        rowID: (string | number | undefined),
+        rowID: (string|number|undefined),
         columnNameOrAlias: string,
         value: DataTableRow.CellType,
-        allowUndefined: boolean = false
+        eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
-        const cellName = this.aliasMap[columnNameOrAlias] || columnNameOrAlias;
+        return this.setRowCells(
+            rowID,
+            { [columnNameOrAlias]: value },
+            eventDetail
+        );
+    }
 
-        if (!allowUndefined && !rowID) {
-            return false;
+    /**
+     * Sets cell values based on the rowID/index and column names and column
+     * alias. Will insert a new row if the specified row does not exist.
+     *
+     * @param {string|number|undefined} rowID
+     * The ID or index of the row.
+     *
+     * @param {Record<string,DataTableRow.CellType>} cells
+     * Cells as a dictionary of names and values.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * Returns `true` if successful, otherwise `false`.
+     */
+    public setRowCells(
+        rowID: (string|number|undefined),
+        cells: Record<string, DataTableRow.CellType>,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        const table = this,
+            aliasMap = table.aliasMap,
+            cellNames = Object.keys(cells);
+
+        cells = merge(cells);
+
+        for (
+            let i = 0,
+                iEnd = cellNames.length,
+                cellName: string;
+            i < iEnd;
+            ++i
+        ) {
+            cellName = cellNames[i];
+
+            if (aliasMap[cellName]) {
+                cells[aliasMap[cellName]] = cells[cellName];
+                delete cells[cellName];
+            }
         }
 
-        // Insert a row with the specified ID if not found
-        if (!rowID || !this.getRow(rowID)) {
-            const rowToInsert = DataTableRow.fromJSON({
-                $class: 'DataTableRow',
-                id: rowID
-            });
-            this.insertRow(rowToInsert);
-            rowID = rowToInsert.id;
+        if (rowID) {
+            const row = this.getRow(rowID);
+            if (row) {
+                return row.setCells(cells, eventDetail);
+            }
         }
 
-        const row = this.getRow(rowID);
+        cells.id = (cells.id || rowID);
 
-        if (row) {
-            return row.setCell(cellName, value);
-        }
-
-        return false;
+        return table.insertRow(new DataTableRow(cells), eventDetail);
     }
 
     /**
@@ -835,22 +1003,22 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Removes the watch callbacks from in a row, so that version tag of the
      * table get not updated anymore, if the row is modified.
      *
-     * @param {string} rowId
+     * @param {string} rowID
      * Row or row ID to unwatch.
      *
      * @param {boolean} [skipDelete]
      * True, to skip the deletion of the unregister functions. Usefull when
      * modifying multiple rows in a batch.
      */
-    private unwatchRow(rowId: string, skipDelete?: boolean): void {
+    private unwatchRow(rowID: string, skipDelete?: boolean): void {
         const unwatchIdMap = this.unwatchIdMap,
-            unwatch = unwatchIdMap[rowId];
+            unwatch = unwatchIdMap[rowID];
 
         if (unwatch) {
             unwatch();
 
             if (!skipDelete) {
-                delete unwatchIdMap[rowId];
+                delete unwatchIdMap[rowID];
             }
         }
     }

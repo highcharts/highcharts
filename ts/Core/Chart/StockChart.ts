@@ -101,6 +101,7 @@ declare module '../Series/SeriesLike' {
         compareValue?: number;
         modifyValue?(value?: number, point?: Point): (number|undefined);
         setCompare(compare?: string): void;
+        initCompare(compare?: string): void;
     }
 }
 
@@ -110,10 +111,6 @@ declare module '../Series/SeriesOptions' {
         compareBase?: (0|100);
         compareStart?: boolean;
     }
-}
-
-declare class StockChart extends Chart {
-    // nothing here yet
 }
 
 declare module '../Renderer/SVG/SVGRendererLike' {
@@ -131,6 +128,151 @@ declare global {
         interface Options {
             isStock?: boolean;
         }
+    }
+}
+
+class StockChart extends Chart {
+    /**
+     * Initializes the chart. The constructor's arguments are passed on
+     * directly.
+     *
+     * @function Highcharts.StockChart#init
+     *
+     * @param {Highcharts.Options} userOptions
+     *        Custom options.
+     *
+     * @param {Function} [callback]
+     *        Function to run when the chart has loaded and and all external
+     *        images are loaded.
+     *
+     * @return {void}
+     *
+     * @fires Highcharts.StockChart#event:init
+     * @fires Highcharts.StockChart#event:afterInit
+     */
+    public init(
+        userOptions: Partial<Highcharts.Options>,
+        callback?: Chart.CallbackFunction
+    ): void {
+        // to increase performance, don't merge the data
+        var seriesOptions = userOptions.series,
+            defaultOptions = getOptions(),
+            // Always disable startOnTick:true on the main axis when the
+            // navigator is enabled (#1090)
+            navigatorEnabled = pick(
+                userOptions.navigator && userOptions.navigator.enabled,
+                (defaultOptions.navigator as any).enabled,
+                true
+            );
+
+        // apply X axis options to both single and multi y axes
+        userOptions.xAxis = splat(userOptions.xAxis || {}).map(function (
+            xAxisOptions: Highcharts.XAxisOptions,
+            i: number
+        ): Highcharts.XAxisOptions {
+            return merge(
+                getDefaultAxisOptions('xAxis', xAxisOptions),
+                defaultOptions.xAxis, // #3802
+                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
+                xAxisOptions, // user options
+                { // forced options
+                    type: 'datetime',
+                    categories: null
+                },
+                (navigatorEnabled ? {
+                    startOnTick: false,
+                    endOnTick: false
+                } : null) as any
+            );
+        });
+
+        // apply Y axis options to both single and multi y axes
+        userOptions.yAxis = splat(userOptions.yAxis || {}).map(function (
+            yAxisOptions: Highcharts.YAxisOptions,
+            i: number
+        ): Highcharts.YAxisOptions {
+            return merge(
+                getDefaultAxisOptions('yAxis', yAxisOptions),
+                defaultOptions.yAxis, // #3802
+                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
+                yAxisOptions // user options
+            );
+        });
+
+        userOptions.series = void 0;
+
+        userOptions = merge(
+            {
+                chart: {
+                    panning: {
+                        enabled: true,
+                        type: 'x'
+                    },
+                    pinchType: 'x'
+                },
+                navigator: {
+                    enabled: navigatorEnabled
+                },
+                scrollbar: {
+                    // #4988 - check if setOptions was called
+                    enabled: pick((defaultOptions.scrollbar as any).enabled, true)
+                },
+                rangeSelector: {
+                    // #4988 - check if setOptions was called
+                    enabled: pick(
+                        (defaultOptions.rangeSelector as any).enabled,
+                        true
+                    )
+                },
+                title: {
+                    text: null
+                },
+                tooltip: {
+                    split: pick((defaultOptions.tooltip as any).split, true),
+                    crosshairs: true
+                },
+                legend: {
+                    enabled: false
+                }
+
+            },
+
+            userOptions, // user's options
+
+            { // forced options
+                isStock: true // internal flag
+            }
+        );
+
+        userOptions.series = seriesOptions;
+
+        super.init(userOptions, callback);
+    }
+
+    /**
+     * Factory for creating different axis types.
+     * Extended to add stock defaults.
+     *
+     * @private
+     * @function Highcharts.StockChart#createAxis
+     *
+     * @param {string} type
+     *        An axis type.
+     *
+     * @param {Chart.CreateAxisOptionsObject} options
+     *        The axis creation options.
+     *
+     * @return {Highcharts.Axis | Highcharts.ColorAxis}
+     */
+    public createAxis(
+        type: string,
+        options: Chart.CreateAxisOptionsObject
+    ): Highcharts.Axis {
+        options.axis = merge(
+            getDefaultAxisOptions(type, options.axis),
+            options.axis
+        );
+        return super.createAxis(type, options);
     }
 }
 
@@ -183,140 +325,7 @@ function stockChart(
     b?: (Chart.CallbackFunction|Highcharts.Options),
     c?: Chart.CallbackFunction
 ): StockChart {
-    var hasRenderToArg = isString(a) || (a as any).nodeName,
-        options = arguments[hasRenderToArg ? 1 : 0],
-        userOptions = options,
-        // to increase performance, don't merge the data
-        seriesOptions = options.series,
-        defaultOptions = getOptions(),
-        opposite,
-        // Always disable startOnTick:true on the main axis when the navigator
-        // is enabled (#1090)
-        navigatorEnabled = pick(
-            options.navigator && options.navigator.enabled,
-            (defaultOptions.navigator as any).enabled,
-            true
-        );
-
-    // apply X axis options to both single and multi y axes
-    options.xAxis = splat(options.xAxis || {}).map(function (
-        xAxisOptions: Highcharts.XAxisOptions,
-        i: number
-    ): Highcharts.XAxisOptions {
-        return merge(
-            { // defaults
-                minPadding: 0,
-                maxPadding: 0,
-                overscroll: 0,
-                ordinal: true,
-                title: {
-                    text: null
-                },
-                labels: {
-                    overflow: 'justify'
-                },
-                showLastLabel: true
-            } as Highcharts.XAxisOptions,
-            defaultOptions.xAxis, // #3802
-            defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
-            xAxisOptions, // user options
-            { // forced options
-                type: 'datetime',
-                categories: null
-            },
-            (navigatorEnabled ? {
-                startOnTick: false,
-                endOnTick: false
-            } : null) as any
-        );
-    });
-
-    // apply Y axis options to both single and multi y axes
-    options.yAxis = splat(options.yAxis || {}).map(function (
-        yAxisOptions: Highcharts.YAxisOptions,
-        i: number
-    ): Highcharts.YAxisOptions {
-        opposite = pick(yAxisOptions.opposite, true);
-        return merge(
-            { // defaults
-                labels: {
-                    y: -2
-                },
-                opposite: opposite,
-
-                /**
-                 * @default {highcharts} true
-                 * @default {highstock} false
-                 * @apioption yAxis.showLastLabel
-                 *
-                 * @private
-                 */
-                showLastLabel: !!(
-                    // #6104, show last label by default for category axes
-                    yAxisOptions.categories ||
-                    yAxisOptions.type === 'category'
-                ),
-
-                title: {
-                    text: null
-                }
-            },
-            defaultOptions.yAxis, // #3802
-            defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
-            yAxisOptions // user options
-        );
-    });
-
-    options.series = null;
-
-    options = merge(
-        {
-            chart: {
-                panning: {
-                    enabled: true,
-                    type: 'x'
-                },
-                pinchType: 'x'
-            },
-            navigator: {
-                enabled: navigatorEnabled
-            },
-            scrollbar: {
-                // #4988 - check if setOptions was called
-                enabled: pick((defaultOptions.scrollbar as any).enabled, true)
-            },
-            rangeSelector: {
-                // #4988 - check if setOptions was called
-                enabled: pick(
-                    (defaultOptions.rangeSelector as any).enabled,
-                    true
-                )
-            },
-            title: {
-                text: null
-            },
-            tooltip: {
-                split: pick((defaultOptions.tooltip as any).split, true),
-                crosshairs: true
-            },
-            legend: {
-                enabled: false
-            }
-
-        },
-
-        options, // user's options
-
-        { // forced options
-            isStock: true // internal flag
-        }
-    );
-
-    options.series = userOptions.series = seriesOptions;
-
-    return hasRenderToArg ?
-        new Chart(a as any, options, c) :
-        new Chart(options, b as any);
+    return new StockChart(a as any, b as any, c);
 }
 
 /* *
@@ -623,7 +632,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     if (
         !defined((this.crosshair as any).label) ||
         !(this.crosshair as any).label.enabled ||
-        !this.cross
+        !this.cross ||
+        !isNumber(this.min) ||
+        !isNumber(this.max)
     ) {
         return;
     }
@@ -645,7 +656,6 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         align,
         tickInside = this.options.tickPosition === 'inside',
         snap = (this.crosshair as any).snap !== false,
-        value,
         offset = 0,
         // Use last available event (#5287)
         e = event.e || (this.cross && this.cross.e),
@@ -654,8 +664,8 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         max = this.max;
 
     if (log) {
-        min = log.lin2log(min as any);
-        max = log.lin2log(max as any);
+        min = log.lin2log(min);
+        max = log.lin2log(max);
     }
 
     align = (horiz ? 'center' : opposite ?
@@ -666,9 +676,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     if (!crossLabel) {
         crossLabel = this.crossLabel = chart.renderer
             .label(
-                null as any,
-                null as any,
-                null as any,
+                '',
+                0,
+                void 0,
                 options.shape || 'callout'
             )
             .addClass(
@@ -705,11 +715,11 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     if (horiz) {
-        posx = snap ? (point.plotX as any) + left : e.chartX;
+        posx = snap ? (point.plotX || 0) + left : e.chartX;
         posy = top + (opposite ? 0 : this.height);
     } else {
         posx = opposite ? this.width + left : 0;
-        posy = snap ? (point.plotY as any) + top : e.chartY;
+        posy = snap ? (point.plotY || 0) + top : e.chartY;
     }
 
     if (!formatOption && !options.formatter) {
@@ -721,21 +731,23 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     // Show the label
-    value = snap ?
-        point[this.isXAxis ? 'x' : 'y'] :
+    const value = snap ?
+        (this.isXAxis ? point.x : point.y) :
         this.toValue(horiz ? e.chartX : e.chartY);
+
+    // Crosshair should be rendered within Axis range (#7219). Also, the point
+    // of currentPriceIndicator should be inside the plot area, #14879.
+    const isInside = point ?
+        point.series.isPointInside(point) :
+        (isNumber(value) && value > min && value < max);
 
     crossLabel.attr({
         text: formatOption ?
-            format(formatOption, { value: value }, chart) :
+            format(formatOption, { value }, chart) :
             options.formatter.call(this, value),
         x: posx,
         y: posy,
-        // Crosshair should be rendered within Axis range (#7219)
-        visibility:
-            (value as any) < (min as any) || (value as any) > (max as any) ?
-                'hidden' :
-                'visible'
+        visibility: isInside ? 'visible' : 'hidden'
     });
 
     crossBox = crossLabel.getBBox();
@@ -808,7 +820,7 @@ Series.prototype.init = function (): void {
     seriesInit.apply(this, arguments as any);
 
     // Set comparison mode
-    this.setCompare(this.options.compare as any);
+    this.initCompare(this.options.compare as any);
 };
 
 /**
@@ -823,7 +835,20 @@ Series.prototype.init = function (): void {
  *        Can be one of `null` (default), `"percent"` or `"value"`.
  */
 Series.prototype.setCompare = function (compare?: string): void {
+    this.initCompare(compare);
 
+    // Survive to export, #5485
+    this.userOptions.compare = compare;
+};
+
+/**
+ * @ignore
+ * @function Highcharts.Series#initCompare
+ *
+ * @param {string} [compare]
+ *        Can be one of `null` (default), `"percent"` or `"value"`.
+ */
+Series.prototype.initCompare = function (compare?: string): void {
     // Set or unset the modifyValue method
     this.modifyValue = (compare === 'value' || compare === 'percent') ?
         function (
@@ -859,14 +884,10 @@ Series.prototype.setCompare = function (compare?: string): void {
         } :
         null as any;
 
-    // Survive to export, #5485
-    this.userOptions.compare = compare;
-
     // Mark dirty
     if (this.chart.hasRendered) {
         this.isDirty = true;
     }
-
 };
 
 /**
@@ -1017,7 +1038,8 @@ addEvent(Series, 'render', function (): void {
         !(chart.is3d && chart.is3d()) &&
         !chart.polar &&
         this.xAxis &&
-        !this.xAxis.isRadial // Gauge, #6192
+        !this.xAxis.isRadial && // Gauge, #6192
+        this.options.clip !== false // #15128
     ) {
 
         clipHeight = this.yAxis.len;
@@ -1077,13 +1099,63 @@ addEvent(Chart, 'update', function (
     }
 });
 
-/* *
+/**
+ * Get stock-specific default axis options.
  *
- *  Compatibility
- *
- * */
+ * @private
+ * @function getDefaultAxisOptions
+ * @param {string} type
+ * @param {Highcharts.AxisOptions} options
+ * @return {Highcharts.AxisOptions}
+ */
+function getDefaultAxisOptions(type: string, options: Highcharts.AxisOptions): Highcharts.AxisOptions {
+    if (type === 'xAxis') {
+        return {
+            minPadding: 0,
+            maxPadding: 0,
+            overscroll: 0,
+            ordinal: true,
+            title: {
+                text: null
+            },
+            labels: {
+                overflow: 'justify'
+            },
+            showLastLabel: true
+        };
+    }
+    if (type === 'yAxis') {
+        return {
+            labels: {
+                y: -2
+            },
+            opposite: pick(options.opposite, true),
 
-(H as any).StockChart = (H as any).stockChart = stockChart;
+            /**
+             * @default {highcharts} true
+             * @default {highstock} false
+             * @apioption yAxis.showLastLabel
+             *
+             * @private
+             */
+            showLastLabel: !!(
+                // #6104, show last label by default for category axes
+                options.categories ||
+                options.type === 'category'
+            ),
+
+            title: {
+                text: null
+            }
+        };
+    }
+    return {};
+}
+
+const stockModule = {
+    stockChart,
+    StockChart
+};
 
 /* *
  *
@@ -1091,7 +1163,7 @@ addEvent(Chart, 'update', function (
  *
  * */
 
-export default stockChart;
+export default stockModule;
 
 /* *
  *

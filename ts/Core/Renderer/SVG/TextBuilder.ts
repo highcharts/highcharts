@@ -22,6 +22,7 @@ const {
 
 const {
     attr,
+    erase,
     isString,
     objectEach,
     pick
@@ -424,6 +425,16 @@ class TextBuilder {
         };
 
         nodes.forEach(modifyChild);
+
+        // Remove empty spans from the beginning because SVG's getBBox doesn't
+        // count empty lines. The use case is tooltip where the header is empty.
+        while (nodes[0]) {
+            if (nodes[0].tagName === 'tspan' && !nodes[0].children) {
+                nodes.splice(0, 1);
+            } else {
+                break;
+            }
+        }
     }
 
     /*

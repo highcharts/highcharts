@@ -32,7 +32,9 @@ const {
     defined,
     destroyObjectProperties,
     format,
+    isArray,
     isNumber,
+    objectEach,
     pick
 } = U;
 
@@ -613,6 +615,9 @@ StackingAxis.compose(Axis);
  * @return {void}
  */
 Series.prototype.setGroupedPoints = function (): void {
+
+    const stacking = this.yAxis.stacking;
+
     if (
         this.options.centerInCategory &&
         (this.is('column') || this.is('columnrange')) &&
@@ -623,6 +628,16 @@ Series.prototype.setGroupedPoints = function (): void {
         this.chart.series.length > 1
     ) {
         Series.prototype.setStackedPoints.call(this, 'group');
+
+    // After updating, if we now have proper stacks, we must delete the group
+    // pseudo stacks (#14986)
+    } else if (stacking) {
+        objectEach(stacking.stacks, (type, key): void => {
+            if (key.slice(-5) === 'group') {
+                objectEach(type, (stack): void => stack.destroy());
+                delete stacking.stacks[key];
+            }
+        });
     }
 };
 
@@ -758,6 +773,10 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
             }
 
         } else if (stacking === 'group') {
+            if (isArray(y)) {
+                y = y[0];
+            }
+
             // In this stack, the total is the number of valid points
             if (y !== null) {
                 stack.total = (stack.total || 0) + 1;

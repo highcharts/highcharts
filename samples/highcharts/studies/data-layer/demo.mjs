@@ -1,9 +1,9 @@
 import '../../../../code/es-modules/Core/Renderer/SVG/SVGRenderer.js';
 import GoogleSheetsStore from '../../../../code/es-modules/Data/Stores/GoogleSheetsStore.js';
-import GroupDataModifier from '../../../../code/es-modules/Data/Modifiers/GroupDataModifier.js';
+import GroupModifier from '../../../../code/es-modules/Data/Modifiers/GroupModifier.js';
 
-import ChainDataModifier from '../../../../code/es-modules/Data/Modifiers/ChainDataModifier.js';
-import RangeDataModifier from '../../../../code/es-modules/Data/Modifiers/RangeDataModifier.js';
+import ChainModifier from '../../../../code/es-modules/Data/Modifiers/ChainModifier.js';
+import RangeModifier from '../../../../code/es-modules/Data/Modifiers/RangeModifier.js';
 
 import DataSeriesConverter from '../../../../code/es-modules/Data/DataSeriesConverter.js';
 
@@ -56,13 +56,24 @@ Highcharts.chart('chart3', {
         }]
     }]
 }, function (chart) {
-    const dataSeriesConverter = new DataSeriesConverter(undefined, {
-        columnMap: {
-            y: 'customY'
-        }
-    });
-    const table = dataSeriesConverter.setDataTable(chart.series);
-    console.log('table from LINE series -> ', table);
+    // Create new dataSeriesConverter.
+    const dataSeriesConverter = new DataSeriesConverter();
+
+    // Save series data in the dataSeriesConverter dataTable.
+    dataSeriesConverter.updateDataTable(chart.series);
+
+    console.group('LINE series:');
+
+    // Log the series data.
+    const seriesId = chart.series[0].id;
+    console.log('series[0] data: ', dataSeriesConverter.getSeriesData(seriesId));
+
+    // Log all series data.
+    console.log('all series data: ', dataSeriesConverter.getAllSeriesData());
+
+    // Show dataSeriesConverter dataTable.
+    console.log('dataTable: ', dataSeriesConverter.table);
+    console.groupEnd();
 });
 
 Highcharts.stockChart('chart4', {
@@ -84,13 +95,23 @@ Highcharts.stockChart('chart4', {
         ]
     }]
 }, function (chart) {
-    const dataSeriesConverter = new DataSeriesConverter(undefined, {
-        columnMap: {
-            open: 'customOpen'
-        }
-    });
-    const table = dataSeriesConverter.setDataTable(chart.series);
-    console.log('table from OHLC series -> ', table);
+    const dataSeriesConverter = new DataSeriesConverter();
+
+    // Save series data in the dataSeriesConverter dataTable.
+    dataSeriesConverter.updateDataTable(chart.series);
+
+    console.group('OHLC series:');
+
+    // Log the series data.
+    const seriesId = chart.series[0].id;
+    console.log('series[0] data: ', dataSeriesConverter.getSeriesData(seriesId));
+
+    // Log all series data.
+    console.log('all series data: ', dataSeriesConverter.getAllSeriesData());
+
+    // Show dataSeriesConverter dataTable.
+    console.log('dataTable: ', dataSeriesConverter.table);
+    console.groupEnd();
 });
 
 const store = new GoogleSheetsStore(undefined, {
@@ -101,9 +122,9 @@ const store = new GoogleSheetsStore(undefined, {
     // endRow: 52
 });
 
-const modifierChain = new ChainDataModifier();
-const groupModifier = new GroupDataModifier({ groupColumn: 'Margin  (Trump)' });
-const rangeModifier = new RangeDataModifier({ ranges: [{ column: 'value', maxValue: 0, minValue: -999 }] });
+const modifierChain = new ChainModifier();
+const groupModifier = new GroupModifier({ groupColumn: 'Margin  (Trump)' });
+const rangeModifier = new RangeModifier({ ranges: [{ column: 'value', maxValue: 0, minValue: -999 }] });
 
 modifierChain.add(groupModifier);
 modifierChain.add(rangeModifier);

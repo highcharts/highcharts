@@ -85,5 +85,13 @@ QUnit.test(
                 'Flag clipped (#8546).'
             );
         }
-    }
-);
+        // Empty shared tooltip visible, when text is not defined in flag point, #6332
+        chart.tooltip.update({ split: true });
+
+        chart.tooltip.refresh(chart.series[2].points[0]);
+        assert.strictEqual(
+            chart.tooltip.label.element.childNodes.length,
+            1,
+            'The tooltip box next to the flag with empty title should not be created(#6332).'
+        );
+    });

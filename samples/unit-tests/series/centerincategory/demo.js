@@ -91,6 +91,74 @@ QUnit.test('series.centerInCategory', function (assert) {
         '#14910: Group stack should not be removed on redraw'
     );
 
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    let point = chart.series[0].points[0];
+
+    const tooltipY = chart.plotHeight - point.tooltipPos[1];
+    assert.ok(
+        tooltipY > point.shapeArgs.x &&
+            tooltipY < point.shapeArgs.x + point.shapeArgs.width,
+        '#15217: Tooltip should be positioned on top of the bar'
+    );
+
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        series: chart.series.map((s, i) => ({
+            stacking: 'normal',
+            stack: i <= 1 ? 'stack1' : 'stack2',
+            data: s.data
+        }))
+    });
+
+    assert.ok(
+        chart.series[3].points[0].shapeArgs.x + chart.plotLeft >
+            chart.xAxis[0].ticks[0].mark.element.getBBox().x,
+        '#14980: Toggling stacking with centerInCategory enabled should work'
+    );
+
+    chart.update({
+        chart: {
+            type: 'columnrange'
+        },
+        series: [
+            {
+                name: 'Tokyo',
+                data: [2, null, 2, null]
+            },
+            {
+                name: 'Warsaw',
+                data: [2, [3, 5], 1]
+            },
+            {
+                name: 'Madrid',
+                data: [null, 3]
+            },
+            {
+                name: 'Another',
+                data: [1, 2, 4, [2, 6]]
+            },
+            {
+                name: 'Test',
+                data: [1, null, 4]
+            }
+        ]
+    });
+
+    point = chart.series[3].points[3];
+    const tickX = chart.xAxis[0].ticks[3].mark.element.getBBox().x;
+    assert.ok(
+        chart.plotLeft + point.shapeArgs.x < tickX &&
+            chart.plotLeft + point.shapeArgs.x + point.shapeArgs.width > tickX,
+        '#15045: Point should be centered on the tick'
+    );
+
     /*
     chart.series[1].setData([
         [0, 2],

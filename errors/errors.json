@@ -95,34 +95,5 @@
 	"33": {
 		"title": "Can't find gui.js library",
 		"text": "<h1>Can't find gui.js library</h1><p>Using the gui.enabled option requires the gui.js library to be loaded.</p>"
-	},
-	"meta": {
-		"files": [
-			"errors/10/readme.md",
-			"errors/10/enduser.md",
-			"errors/11/readme.md",
-			"errors/12/readme.md",
-			"errors/13/readme.md",
-			"errors/14/readme.md",
-			"errors/15/readme.md",
-			"errors/16/readme.md",
-			"errors/17/readme.md",
-			"errors/18/readme.md",
-			"errors/19/readme.md",
-			"errors/20/readme.md",
-			"errors/21/readme.md",
-			"errors/22/readme.md",
-			"errors/23/readme.md",
-			"errors/24/readme.md",
-			"errors/25/readme.md",
-			"errors/26/readme.md",
-			"errors/27/readme.md",
-			"errors/28/readme.md",
-			"errors/29/readme.md",
-			"errors/30/readme.md",
-			"errors/31/readme.md",
-			"errors/32/readme.md",
-			"errors/33/readme.md"
-		]
 	}
 }

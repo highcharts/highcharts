@@ -21,6 +21,7 @@ const {
     addEvent,
     destroyObjectProperties,
     fireEvent,
+    isNumber,
     objectEach,
     pick
 } = U;
@@ -136,22 +137,19 @@ class StackingAxisAdditions {
      * @private
      */
     public resetStacks(): void {
-        const stacking = this;
-        const axis = stacking.axis;
-        const stacks = stacking.stacks;
+        const { axis, stacks } = this;
 
         if (!axis.isXAxis) {
-            objectEach(stacks, function (
-                type: Record<string, Highcharts.StackItem>
-            ): void {
-                objectEach(type, function (
-                    stack: Highcharts.StackItem,
-                    key: string
-                ): void {
+
+            objectEach(stacks, (type): void => {
+                objectEach(type, (stack, x): void => {
                     // Clean up memory after point deletion (#1044, #4320)
-                    if ((stack.touched as any) < stacking.stacksTouched) {
+                    if (
+                        isNumber(stack.touched) &&
+                        stack.touched < this.stacksTouched
+                    ) {
                         stack.destroy();
-                        delete type[key];
+                        delete type[x];
 
                     // Reset stacks
                     } else {

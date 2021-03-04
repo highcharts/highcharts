@@ -115,9 +115,8 @@ test('asNumber', function (assert) {
         'Should handle negative numbers'
     );
 
-    assert.strictEqual(
-        converter.asNumber(''),
-        0,
+    assert.ok(
+        isNaN(converter.asNumber('')),
         'Should handle empty strings'
     );
 

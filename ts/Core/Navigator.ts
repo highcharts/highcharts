@@ -2030,10 +2030,7 @@ class Navigator {
                 navigator.hasDragged = (navigator.scrollbar as any).hasDragged;
                 navigator.render(0, 0, from, to);
 
-                if ((chart.options.scrollbar as any).liveRedraw ||
-                    ((e as any).DOMType !== 'mousemove' &&
-                    (e as any).DOMType !== 'touchmove')
-                ) {
+                if (this.shouldUpdateExtremes((e as any).DOMType)) {
                     setTimeout(function (): void {
                         navigator.onMouseUp(e);
                     });
@@ -2352,36 +2349,36 @@ class Navigator {
         // Adding this multiple times to the same axis is no problem, as
         // duplicates should be discarded by the browser.
         if (baseSeries[0] && baseSeries[0].xAxis) {
-            addEvent(
+            baseSeries[0].eventsToUnbind.push(addEvent(
                 baseSeries[0].xAxis,
                 'foundExtremes',
                 this.modifyBaseAxisExtremes
-            );
+            ));
         }
 
         baseSeries.forEach(function (base): void {
             // Link base series show/hide to navigator series visibility
-            addEvent(base, 'show', function (): void {
+            base.eventsToUnbind.push(addEvent(base, 'show', function (): void {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(true, false);
                 }
-            });
-            addEvent(base, 'hide', function (): void {
+            }));
+            base.eventsToUnbind.push(addEvent(base, 'hide', function (): void {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(false, false);
                 }
-            });
+            }));
 
             // Respond to updated data in the base series, unless explicitily
             // not adapting to data changes.
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
                 if (base.xAxis) {
-                    addEvent(base, 'updatedData', this.updatedDataHandler);
+                    base.eventsToUnbind.push(addEvent(base, 'updatedData', this.updatedDataHandler));
                 }
             }
 
             // Handle series removal
-            addEvent(base, 'remove', function (): void {
+            base.eventsToUnbind.push(addEvent(base, 'remove', function (): void {
                 if (this.navigatorSeries) {
                     erase(navigator.series as any, this.navigatorSeries);
                     if (defined(this.navigatorSeries.options)) {
@@ -2389,7 +2386,7 @@ class Navigator {
                     }
                     delete this.navigatorSeries;
                 }
-            });
+            }));
         }, this);
     }
 

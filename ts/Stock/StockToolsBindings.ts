@@ -53,8 +53,9 @@ declare global {
             getYAxisPositions(
                 yAxes: Array<AxisType>,
                 plotHeight: number,
-                defaultHeight: number
-            ): Array<Record<string, number>>;
+                defaultHeight: number,
+                removedYAxisHeight?: string
+            ): YAxisPositions;
             /** @requires modules/stock-tools */
             getYAxisResizers(
                 yAxes: Array<AxisType>
@@ -67,7 +68,7 @@ declare global {
                 adder?: number
             ): Array<Record<string, number>>;
             /** @requires modules/stock-tools */
-            resizeYAxes (defaultHeight?: number): void;
+            resizeYAxes (removedYAxisHeight?: string): void;
         }
         interface NavigationBindingsAttractionObject {
             x: number;
@@ -76,6 +77,11 @@ declare global {
             series: Series;
             xAxis: number;
             yAxis: number;
+        }
+
+        interface YAxisPositions {
+            positions: Array<Record<string, number>>;
+            allAxesHeight: number;
         }
         interface NavigationBindingsResizerObject {
             controlledAxis?: Record<string, Array<number>>;
@@ -287,8 +293,9 @@ bindingsUtils.manageIndicators = function (
             series.remove(false);
 
             if (indicatorsWithAxes.indexOf(series.type) >= 0) {
+                const removedYAxisHeight = yAxis.options.height;
                 yAxis.remove(false);
-                navigation.resizeYAxes();
+                navigation.resizeYAxes(removedYAxisHeight as string);
             }
         }
     } else {
@@ -499,41 +506,66 @@ extend(NavigationBindings.prototype, {
      * @param {number} defaultHeight
      *        Default height in percents.
      *
-     * @return {Array}
-     *         An array of calculated positions in percentages.
-     *         Format: `{top: Number, height: Number}`
+     * @param {string} removedYAxisHeight
+     *        Height of the removed yAxis in percents.
+     *
+     * @return {Highcharts.YAxisPositions}
+     *         An object containing an array of calculated positions
+     *         in percentages. Format: `{top: Number, height: Number}`
+     *         and maximum value of top + height of axes.
      */
     getYAxisPositions: function (
         yAxes: Array<AxisType>,
         plotHeight: number,
-        defaultHeight: number
-    ): Array<Record<string, number>> {
-        var positions: (Array<Record<string, number>>|undefined),
-            allAxesHeight = 0;
-
+        defaultHeight: number,
+        removedYAxisHeight?: string
+    ): Highcharts.YAxisPositions {
+        var positions: Array<Record<string, number>>|undefined,
+            allAxesHeight = 0,
+            previousAxisHeight: number,
+            removedHeight: number;
         /** @private */
-        function isPercentage(prop: (number|string|undefined)): boolean {
+        function isPercentage(prop: number | string | undefined): boolean {
             return defined(prop) && !isNumber(prop) && (prop.match('%') as any);
         }
 
-        positions = yAxes.map(function (
-            yAxis: AxisType
-        ): Record<string, number> {
-            var height = isPercentage(yAxis.options.height) ?
+        if (removedYAxisHeight) {
+            removedHeight = correctFloat((parseFloat(removedYAxisHeight) / 100));
+        }
+
+        positions = yAxes.map(function (yAxis: AxisType, index: number): Record<string, number> {
+            var height = correctFloat(isPercentage(yAxis.options.height) ?
                     parseFloat(yAxis.options.height as any) / 100 :
-                    yAxis.height / plotHeight,
-                top = isPercentage(yAxis.options.top) ?
+                    yAxis.height / plotHeight),
+                top = correctFloat(isPercentage(yAxis.options.top) ?
                     parseFloat(yAxis.options.top as any) / 100 :
-                    correctFloat(
-                        yAxis.top - yAxis.chart.plotTop
-                    ) / plotHeight;
+                    (yAxis.top - yAxis.chart.plotTop) / plotHeight);
 
-            // New yAxis does not contain "height" info yet
-            if (!isNumber(height)) {
-                height = defaultHeight / 100;
+            // New axis' height is NaN so we can check if
+            // the axis is newly created this way
+            if (!removedHeight) {
+                if (!isNumber(height)) {
+                    // Check if the previous axis is the
+                    // indicator axis (every indicator inherits from sma)
+                    height = yAxes[index - 1].series.every((s: Series): boolean => s.is('sma')) ?
+                        previousAxisHeight : defaultHeight / 100;
+                }
+
+                if (!isNumber(top)) {
+                    top = allAxesHeight;
+                }
+
+                previousAxisHeight = height;
+
+                allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+            } else {
+                if (top <= allAxesHeight) {
+                    allAxesHeight = correctFloat(Math.max(allAxesHeight, (top || 0) + (height || 0)));
+                } else {
+                    top = correctFloat(top - removedHeight);
+                    allAxesHeight = correctFloat(allAxesHeight + height);
+                }
             }
-
-            allAxesHeight = correctFloat(allAxesHeight + height);
 
             return {
                 height: height * 100,
@@ -541,9 +573,7 @@ extend(NavigationBindings.prototype, {
             };
         });
 
-        (positions as any).allAxesHeight = allAxesHeight;
-
-        return positions;
+        return { positions, allAxesHeight };
     },
 
     /**
@@ -595,112 +625,66 @@ extend(NavigationBindings.prototype, {
     },
     /**
      * Resize all yAxes (except navigator) to fit the plotting height. Method
-     * checks if new axis is added, then shrinks other main axis up to 5 panes.
-     * If added is more thatn 5 panes, it rescales all other axes to fit new
-     * yAxis.
+     * checks if new axis is added, if the new axis will fit under previous
+     * axes it is placed there. If not, current plot area is scaled
+     * to make room for new axis.
      *
-     * If axis is removed, and we have more than 5 panes, rescales all other
-     * axes. If chart has less than 5 panes, first pane receives all extra
-     * space.
+     * If axis is removed, the current plot area streaches to fit into 100%
+     * of the plot area.
      *
      * @private
      * @function Highcharts.NavigationBindings#resizeYAxes
-     * @param {number} [defaultHeight]
-     * Default height for yAxis
+     * @param {string} [removedYAxisHeight]
+     *
+     *
      */
     resizeYAxes: function (
         this: Highcharts.StockToolsNavigationBindings,
-        defaultHeight?: number
+        removedYAxisHeight?: string
     ): void {
-        defaultHeight = defaultHeight || 20; // in %, but as a number
+        // The height of the new axis before rescalling. In %, but as a number.
+        const defaultHeight = 20;
         var chart = this.chart,
             // Only non-navigator axes
             yAxes = chart.yAxis.filter(bindingsUtils.isNotNavigatorYAxis),
             plotHeight = chart.plotHeight,
-            allAxesLength = yAxes.length,
             // Gather current heights (in %)
-            positions = this.getYAxisPositions(
+            { positions, allAxesHeight } = this.getYAxisPositions(
                 yAxes,
                 plotHeight,
-                defaultHeight
+                defaultHeight,
+                removedYAxisHeight
             ),
-            resizers = this.getYAxisResizers(yAxes),
-            allAxesHeight: number = (positions as any).allAxesHeight,
-            changedSpace = defaultHeight;
+            resizers = this.getYAxisResizers(yAxes);
 
-        // More than 100%
-        if (allAxesHeight > 1) {
-            // Simple case, add new panes up to 5
-            if (allAxesLength < 6) {
-                // Added axis, decrease first pane's height:
-                positions[0].height = correctFloat(
-                    positions[0].height - changedSpace
-                );
-                // And update all other "top" positions:
-                positions = this.recalculateYAxisPositions(
-                    positions,
-                    changedSpace
-                );
-            } else {
-                // We have more panes, rescale all others to gain some space,
-                // This is new height for upcoming yAxis:
-                defaultHeight = 100 / allAxesLength;
-                // This is how much we need to take from each other yAxis:
-                changedSpace = defaultHeight / (allAxesLength - 1);
-
-                // Now update all positions:
-                positions = this.recalculateYAxisPositions(
-                    positions,
-                    changedSpace,
-                    true,
-                    -1
-                );
-            }
-            // Set last position manually:
-            positions[allAxesLength - 1] = {
-                top: correctFloat(100 - defaultHeight),
-                height: defaultHeight
+        // check if the axis is being either added or removed and
+        // if the new indicator axis will fit under existing axes.
+        // if so, there is no need to scale them.
+        if (
+            !removedYAxisHeight &&
+            allAxesHeight <= correctFloat(0.8 + defaultHeight / 100)
+        ) {
+            positions[positions.length - 1] = {
+                height: defaultHeight,
+                top: correctFloat(allAxesHeight * 100 - defaultHeight)
             };
-
         } else {
-            // Less than 100%
-            changedSpace = correctFloat(1 - allAxesHeight) * 100;
-            // Simple case, return first pane it's space:
-            if (allAxesLength < 5) {
-                positions[0].height = correctFloat(
-                    positions[0].height + changedSpace
-                );
-
-                positions = this.recalculateYAxisPositions(
-                    positions,
-                    changedSpace
-                );
-            } else {
-                // There were more panes, return to each pane a bit of space:
-                changedSpace /= allAxesLength;
-                // Removed axis, add extra space to the first pane:
-                // And update all other positions:
-                positions = this.recalculateYAxisPositions(
-                    positions,
-                    changedSpace,
-                    true,
-                    1
-                );
-            }
+            positions.forEach(function (position: Record<string, number>): void {
+                position.height = (position.height / (allAxesHeight * 100)) * 100;
+                position.top = (position.top / (allAxesHeight * 100)) * 100;
+            });
         }
 
-        positions.forEach(function (
-            position: Record<string, number>,
-            index: number
-        ): void {
-            // if (index === 0) debugger;
+        positions.forEach(function (position: Record<string, number>, index: number): void {
             yAxes[index].update({
                 height: position.height + '%',
                 top: position.top + '%',
-                resize: resizers[index]
+                resize: resizers[index],
+                offset: 0
             }, false);
         });
     },
+
     /**
      * Utility to modify calculated positions according to the remaining/needed
      * space. Later, these positions are used in `yAxis.update({ top, height })`
@@ -2088,8 +2072,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             series.update({
                 // line
                 lastPrice: {
-                    enabled: !lastPrice,
-                    color: 'red'
+                    enabled: !lastPrice
                 },
                 // label
                 lastVisiblePrice: {

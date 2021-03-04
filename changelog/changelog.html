@@ -14,6 +14,157 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-v9.0.1"></a>
+              <a href="#highcharts-v9.0.1">Highcharts Basic v9.0.1 (2021-02-16)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-9.0.1.zip" title="Download the zip archive for Highcharts Basic v9.0.1"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Exposed <code>Highcharts.AST</code> and provided samples of overriding the HTML allow lists.</li>
+              <li>Auto compute heading level for the pre-chart accessibility description.</li>
+              <li>Added success callback for <code>exportChartLocal</code>, see #11403.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="heading-9-0-1-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#9-0-1-bug-fixes"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="9-0-1-bug-fixes" class="collapse" aria-labelledby="heading-9-0-1-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #12422 and #9124, un-boosted graphics remained visible after resetting zoom on boosted charts when using zones.</li>
+                      <li>Fixed #12517, <code>resetZoomButton</code> did not show when using <code>scrollablePlotArea</code>.</li>
+                      <li>Fixed #15045, <a href="https://api.highcharts.com/highcharts/plotOptions.column.centerInCategory">centerInCategory</a> did not work with <code>columnrange</code> series.</li>
+                      <li>Fixed #11909, updating boost options did not work.</li>
+                      <li>Fixed #12031, tooltip <code>distance</code> did not scale correctly with <a href="https://api.highcharts.com/highcharts/tooltip.outside">outside</a> set to <code>false</code>.</li>
+                      <li>Fixed #12047, some columns were not completely vertical when using boost with <a href="https://api.highcharts.com/highcharts/boost.useGPUTranslations">useGPUTranslations</a> set to <code>false</code>.</li>
+                      <li>Fixed #12061, <code>stroke-width</code> animation did not work when using zones.</li>
+                      <li>Fixed #13222, chart size was wrong after exiting fullscreen.</li>
+                      <li>Fixed #15022, vertical panning was limited to the first series extremes after zooming in.</li>
+                      <li>Fixed #15037, a regression causing failure with text parsing in PhantomJS.</li>
+                      <li>Fixed #8862, #12112, y-axis did not stay fixed after <a href="https://api.highcharts.com/highcharts/plotOptions.series.point.events.update">update</a> when using <code>scrollablePlotArea</code>.</li>
+                      <li>Fixed #15009, setting <code>className</code> on points in venn series did not work.</li>
+                      <li>Fixed #12548, 3d scatter chart rendered no points when the first point had <code>z</code> set to <code>null</code>.</li>
+                      <li>Fixed #14973, pattern fill failed to render when <code>&lt;base&gt;</code> tag was present and <code>window.location</code> was manipulated via <code>history.pushState</code>.</li>
+                      <li>Fixed #14395, updating <code>colorAxis</code> legend layout did not work with non-cartesian series.</li>
+                      <li>Fixed #14954, offline export with <a href="https://api.highcharts.com/highcharts/chart.styledMode">styledMode</a> enabled sometimes failed in IE.</li>
+                      <li>Fixed #14110, hovering labels with <code>useHTML</code> set to <code>true</code> threw in IE.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
+              <a id="highcharts-v9.0.0"></a>
+              <a href="#highcharts-v9.0.0">Highcharts Basic v9.0.0 (2021-02-02)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-9.0.0.zip" title="Download the zip archive for Highcharts Basic v9.0.0"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Improved security by filtering all HTML configuration strings and abstract syntax trees through allow lists before inserting into the DOM.</li>
+              <li>Added support for area series in 3D charts.</li>
+              <li>Added new feature <a href="https://api.highcharts.com/highcharts/chart.zoomBySingleTouch">chart.zoomBySingleTouch</a> to provide optional mouse-like selection zooming for touch devices. See #14775.</li>
+              <li>Added accessibility support for legend title #(14872) and provided more intuitive legend item labels for assistive technology (#14837).</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="heading-9-0-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#9-0-0-upgrade-notes"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="9-0-0-upgrade-notes" class="collapse" aria-labelledby="heading-9-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Due to improved security, some tags or attributes may be removed from HTML configuration options like labels or tooltip formats and formatters. Read more <a href="https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#filtering">in the docs</a> on how to allow them.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="heading-9-0-0-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#9-0-0-bug-fixes"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="9-0-0-bug-fixes" class="collapse" aria-labelledby="heading-9-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #14138, tooltip was displayed outside <code>plotArea</code> for columns when they were exceeding <code>yAxis</code> extremes.</li>
+                      <li>Fixed #13490, point hovering effects such as <code>tooltip</code> stopped working after disabling <a href="https://api.highcharts.com/highcharts/chart.polar">chart.polar</a> with <a href="https://api.highcharts.com/highcharts/plotOptions.series.point.events.update">update</a>.</li>
+                      <li>Fixed #10322, limit local timezone to timestamps without timezone.</li>
+                      <li>Fixed #14910, <a href="https://api.highcharts.com/highcharts/plotOptions.column.centerInCategory">centerInCategory</a> broke after zooming twice.</li>
+                      <li>Fixed #8095, reset zoom button was not visible after drilldown.</li>
+                      <li>Fixed #14893, removed misleading default value in the <code>labels.format</code> docs.</li>
+                      <li>Fixed #11494, setting <code>z-index</code> on tooltip with <a href="https://api.highcharts.com/highcharts/tooltip.outside">outside</a> set to <code>true</code> through chart options was not possible.</li>
+                      <li>Fixed #14351, <code>solidgauge</code> pane flickered on <a href="https://api.highcharts.com/highcharts/plotOptions.series.point.events.update">update</a>.</li>
+                      <li>Fixed #14771, incorrect tooltip position on inverted chart with adjusted axis width.</li>
+                      <li>Fixed #14053, plot bands added before <a href="https://api.highcharts.com/highcharts/plotOptions.series.point.events.update">update</a> with <a href="https://api.highcharts.com/highcharts/chart.events.redraw">redraw</a> set to <code>false</code> were not added when dynamically adding plot bands between the <a href="https://api.highcharts.com/highcharts/plotOptions.series.point.events.update">update</a> and a <a href="https://api.highcharts.com/highcharts/chart.events.redraw">redraw</a>.</li>
+                      <li>Fixed #14148, <code>waterfall</code> chart with reversed <code>yAxis</code> rendered wrong stacking connectors.</li>
+                      <li>Fixed #14209, histogram after <code>setData</code> with empty array wasn&#39;t updated.</li>
+                      <li>Fixed #14876, <code>minPointLength</code> columns did not show for series with only zero values when combined with series with only negative values.</li>
+                      <li>Fixed #14834, <code>colorAxis</code> ignored <code>reversed</code> option set in chart config on <a href="https://api.highcharts.com/highcharts/plotOptions.series.point.events.update">update</a>.</li>
+                      <li>Fixed #14793, Z axis broke on <a href="https://api.highcharts.com/highcharts/plotOptions.series.point.events.update">update</a>.</li>
+                      <li>Fixed #14833, column series axis breaks did not render correctly.</li>
+                      <li>Fixed #14283, problems with dynamically updating the color axis <code>visible</code> property.</li>
+                      <li>Fixed #14858, left and right-aligned callout labels with the anchor above or below sometimes missed anchor lines when there was no room for a chevron.</li>
+                      <li>Fixed #13220, #12788, #12489, #11975, wrong pointer position after changing size or scale on a parent element. <code>Chart.reflow</code> now needs to be called after scale changes and <code>Chart.updateContainerScaling</code> has been removed.</li>
+                      <li>Fixed #14305, original chart options got mutated on <a href="https://api.highcharts.com/highcharts/plotOptions.series.point.events.update">update</a>.</li>
+                      <li>Fixed #14830, exporting waterfall chart with stack labels and hidden series threw.</li>
+                      <li>Fixed #8635, zooming variwide chart did not work.</li>
+                      <li>Fixed #8742, some <code>stackLabels</code> did not render with <code>dataLabels</code> enabled.</li>
+                      <li>Fixed #8795, hovering the chart after zooming in and using <code>setData</code> with <a href="https://api.highcharts.com/highcharts/chart.events.redraw">redraw</a> set to <code>false</code> threw.</li>
+                      <li>Fixed #14549, incorrect clip-path for added axis.</li>
+                      <li>Fixed #13283, an issue with the data module&#39;s CSV parser. Hex colors (and any other strings following a hash) were treated as a comment and ignored.</li>
+                      <li>Fixed #14769, axis label formatter was called with NaN values when the axis was short and series consisted of only null values.</li>
+                      <li>Fixed #13996, #13488, pointer position was wrong after chart element was scrolled inside another element.</li>
+                      <li>Fixed #14773, <a href="https://api.highcharts.com/highcharts/chart.styledMode">styledMode</a> pie series not updating color correctly second time.</li>
+                      <li>Fixed a11y issue with absolute positioning, touches #14090.</li>
+                      <li>Fixed the initialization of <code>Time.variableTimezone</code>, it caused <code>Time</code> to sometimes return the wrong time when <code>useUTC</code> was set to <code>false</code>.</li>
+                      <li>Fixed #14623, <code>Point.colorIndex</code> did not pick up <code>Series.colorIndex</code> updates.</li>
+                      <li>Fixed #14584, setting <code>dataLabels.allowOverlap</code> to <code>false</code> did not work properly for sankey series.</li>
+                      <li>Fixed #14624, <a href="https://api.highcharts.com/highcharts/chart.panning.type">panning.type</a> enabled panning while <code>panning.enabled = false</code>.</li>
+                      <li>Fixed #14649, dynamically updating visual attributes on points in flag series did not work.</li>
+                      <li>Fixed #14637, setting <code>pointPlacement</code> to <code>between</code> placed line series points on ticks instead of between them.</li>
+                      <li>Fixed #14315, setting X axis extremes outside the chart series&#39; data range threw.</li>
+                      <li>Fixed #14246, pie point stayed hidden after first legend item click when <code>ignoreHiddenPoint</code> was set to <code>false</code>.</li>
+                      <li>Fixed #14236, stacked area chart did not render correctly with the <code>broken-axis</code> module loaded and a <a href="https://api.highcharts.com/highcharts/plotOptions.series.gapSize">gapSize</a> greater than <code>0</code>.</li>
+                      <li>Fixed #13948, exported PDFs containing linear gradients with multiple 0 offset stops had errors.</li>
+                      <li>Fixed #13961, <code>datetime</code> axis had missing ticks when <code>Chart.time</code> had half-hour <code>timezone</code> or <code>timezoneOffset</code> set.</li>
+                      <li>Fixed #13804, 3d pie animation in inactive tab threw.</li>
+                      <li>Fixed #13716, annotations added in responsive rules did not work.</li>
+                      <li>Fixed #14746, column chart with null data, datetime axis and <code>useUTC</code> set to <code>false</code> threw.</li>
+                      <li>Fixed #14765, <code>Highcharts.patterns</code> global was missing.</li>
+                      <li>Fixed #14444, boosted inverted chart had wrong clip-path.</li>
+                      <li>Fixed #14244, tooltip in column-based series with multiple <code>xAxis</code> had wrong position.</li>
+                      <li>Fixed #14362, no animation when a series was added dynamically.</li>
+                      <li>Fixed #14426, it was not possible to pan vertically to 0 after zooming.</li>
+                      <li>Fixed #14458, drilling down 3d chart points with the same name threw.</li>
+                      <li>Fixed #14425, last histogram bin sometimes had inaccurate x2.</li>
+                      <li>Fixed #14417, charts displayed parts of the data when min or max exceeded extreme values.</li>
+                      <li>Fixed #14397, <code>networkgraph</code> simulation restarted on <code>series.update()</code>.</li>
+                      <li>Fixed #14078, all points rendered in all series with <a href="https://api.highcharts.com/highcharts/boost.usePreallocated">boost.usePreallocated</a> on.</li>
+                      <li>Fixed #14428, enabling <code>drilldown</code> through <code>Point.update()</code> did not work.</li>
+                      <li>Fixed #14214, parliament chart (item series type) threw error on negative values. Negative values should be ignored like in the pie series.</li>
+                      <li>Fixed #14433, dependency wheel data labels had wrong position for items covering more than 180 degrees of the wheel.</li>
+                      <li>Fixed #14260, series graph color was affected by <code>marker.fillColor</code> in Boost.</li>
+                      <li>Fixed #14289, histogram series entered an infinite loop when passed certain data values.</li>
+                      <li>Fixed #14379, when <code>scrollablePlotArea</code> was enabled, gauge axis was not scrolling along.</li>
+                      <li>Fixed #14440, <code>ColumnRangeSeries</code> missed <code>adjustForMissingColumns</code>.</li>
+                      <li>Fixed #13277, event listener leakage in several series and export module.</li>
+                      <li>Fixed regressions with <code>chart.update</code> and <code>chart.setSize</code>, causing side effects like stacks not updating and series not.</li>
+                      <li>Fixed #14023, for small numbers and decimals argument set to zero, the <code>numberFormater</code> returned wrong values.</li>
+                      <li>Fixed #13957, added error handler while mixed series data in boost.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highcharts-v8.2.2"></a>
               <a href="#highcharts-v8.2.2">Highcharts Basic v8.2.2 (2020-10-22)</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-8.2.2.zip" title="Download the zip archive for Highcharts Basic v8.2.2"><i class="fas fa-download"></i></a></span>
@@ -5695,6 +5846,96 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-stock-v9.0.1"></a>
+              <a href="#highcharts-stock-v9.0.1">Highcharts Stock v9.0.1 (2021-02-16)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-9.0.1.zip" title="Download the zip archive for Highcharts Stock v9.0.1"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 9.0.1 above also apply to Highcharts Stock 9.0.1.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hs-heading-9-0-1-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#hs-9-0-1-bug-fixes"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="hs-9-0-1-bug-fixes" class="collapse" aria-labelledby="hs-heading-9-0-1-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #15124, range selector with inputs wider than the plot and no buttons threw.</li>
+                      <li>Fixed #14977, MACD indicator <code>index</code> param did not work.</li>
+                      <li>Fixed #13473, it was not possible to scroll back down to the <code>threshold</code> after scrolling up with <code>yAxis.scrollbar</code> enabled and no explicit <code>yAxis.min</code> set.</li>
+                      <li>Fixed #15042, IKH indicator lines changed color on the first redraw.</li>
+                      <li>Fixed #14063, an error was thrown when scrolling an inverted chart with a flag series.</li>
+                      <li>Fixed #14280, Stock Tools GUI popup - clicking on the &#39;x&#39; button didn&#39;t call the <a href="https://api.highcharts.com/highstock/navigation.events.closePopup">closePopup</a> event.</li>
+                      <li>Fixed #14932, #13251, updating <code>compare</code> through <code>plotOptions</code> did not work.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
+              <a id="highcharts-stock-v9.0.0"></a>
+              <a href="#highcharts-stock-v9.0.0">Highcharts Stock v9.0.0 (2021-02-02)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-9.0.0.zip" title="Download the zip archive for Highcharts Stock v9.0.0"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 9.0.0 above also apply to Highcharts Stock 9.0.0.</li>
+              <li>Added new feature, <code>rangeSelector.dropdown</code>. This feature allows the range selector button row to be collapsed into a dropdown when space is limited. The new behavior may be forced, disabled or responsive (default).</li>
+              <li>New graphic design for the range selector date inputs. Simplified visual appearance and flexible width based on the rendered content.</li>
+              <li>Added native browser date pickers to the range selector. Supported browsers are Chrome, Firefox, Edge and Safari for mobile. Other browsers fall back to text inputs.</li>
+              <li>Added <a href="https://api.highcharts.com/highstock/rangeSelector.buttons.title">rangeSelector.buttons.title</a> option for assistive technology and general accessibility (#14437), and assistive technology announcement on range selector button click (#14438).</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+                <div id="hs-heading-9-0-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#hs-9-0-0-upgrade-notes"><span> Upgrade notes </span></button>
+                  </h4>
+                </div>
+                <div id="hs-9-0-0-upgrade-notes" class="collapse" aria-labelledby="hs-heading-9-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>The range selector date input fields have a new visual appearance. See <a href="https://jsfiddle.net/highcharts/vto4af69/">this fiddle</a> on how to revert to the old design.</li>
+                      <li>Range selector inputs will now be of type <code>date</code>, <code>datetime-local</code> or <code>time</code>, depending on the required granularity. For supporting browsers, date picker widgets will be presented. For non-supporting browsers, it falls back to the legacy <code>text</code> input functionality.</li>
+                    </ul>
+
+                  </div>
+                </div>
+                <div id="hs-heading-9-0-0-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#hs-9-0-0-bug-fixes"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="hs-9-0-0-bug-fixes" class="collapse" aria-labelledby="hs-heading-9-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #14495, the <code>lastVisiblePrice</code> label in price-indicator module overwrote the <a href="https://api.highcharts.com/highstock/xAxis.crosshair.label.backgroundColor">crosshair.label.backgroundColor</a> property.</li>
+                      <li>Fixed #14416, range selector ignored the <a href="https://api.highcharts.com/highstock/time.timezoneOffset">time.timezoneOffset</a> setting.</li>
+                      <li>Fixed #14826, the tooltip border color did not reflect the <code>upColor</code> of OHLC and candlestick series.</li>
+                      <li>Fixed #9744, stock toolbar overlapped left-aligned title and legend.</li>
+                      <li>Fixed memory leak in range selector, chart <code>load</code> event listeners leaked on <a href="https://api.highcharts.com/highstock/plotOptions.series.point.events.update">update</a>.</li>
+                      <li>Fixed #11669, enabling range selector with <a href="https://api.highcharts.com/highstock/plotOptions.series.point.events.update">update</a> did not work properly.</li>
+                      <li>Fixed #14292, right-aligned range selector buttons were positioned outside the chart after animating in.</li>
+                      <li>Fixed #14691, incorrect order of annotation subtitles in pop-ups in Firefox.</li>
+                      <li>Fixed #14193, scrollbar did not work on touch devices.</li>
+                      <li>Fixed #14698, issue with how the <code>EMAPercent</code> was calculated in the DEMA and TEMA indicator.</li>
+                      <li>Fixed #14544, range selector did not fully support slashes in date inputs.</li>
+                      <li>Fixed #14505, when one of the chart series had a single point, the navigator handles could be dragged beyond the default <a href="https://api.highcharts.com/highstock/xAxis.minRange">xAxis.minRange</a>. The computed <a href="https://api.highcharts.com/highstock/xAxis.minRange">minRange</a> was <code>NaN</code>.</li>
+                      <li>Fixed #14436, range selector styling with keyboard navigation.</li>
+                      <li>Fixed #13934, chart crashed when <code>dataGrouping</code> was disabled and axis extremes were set outside the data range.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highcharts-stock-v8.2.2"></a>
               <a href="#highcharts-stock-v8.2.2">Highcharts Stock v8.2.2 (2020-10-22)</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Stock-8.2.2.zip" title="Download the zip archive for Highcharts Stock v8.2.2"><i class="fas fa-download"></i></a></span>
@@ -8646,6 +8887,42 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-maps-v9.0.1"></a>
+              <a href="#highcharts-maps-v9.0.1">Highcharts Maps v9.0.1 (2021-02-16)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-9.0.1.zip" title="Download the zip archive for Highcharts Maps v9.0.1"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 9.0.1 above also apply to Highcharts Maps 9.0.1.</li>
+            </ul>
+            <p class="release-header">
+              <a id="highcharts-maps-v9.0.0"></a>
+              <a href="#highcharts-maps-v9.0.0">Highcharts Maps v9.0.0 (2021-02-02)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-9.0.0.zip" title="Download the zip archive for Highcharts Maps v9.0.0"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 9.0.0 above also apply to Highcharts Maps 9.0.0.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hm-heading-9-0-0-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#hm-9-0-0-bug-fixes"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="hm-9-0-0-bug-fixes" class="collapse" aria-labelledby="hm-heading-9-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #13981, no map displayed when using marker clusters and empty data array.</li>
+                      <li>Fixed #14343, cluster marker image animation had wrong position.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highcharts-maps-v8.2.2"></a>
               <a href="#highcharts-maps-v8.2.2">Highcharts Maps v8.2.2 (2020-10-22)</a>
               <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Maps-8.2.2.zip" title="Download the zip archive for Highcharts Maps v8.2.2"><i class="fas fa-download"></i></a></span>
@@ -9945,6 +10222,62 @@
             <h4 id="highcharts-gantt">Highcharts Gantt</h4>
           </div>
           <div class="changelog-container">
+            <p class="release-header">
+              <a id="highcharts-gantt-v9.0.1"></a>
+              <a href="#highcharts-gantt-v9.0.1">Highcharts Gantt v9.0.1 (2021-02-16)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Gantt-9.0.1.zip" title="Download the zip archive for Highcharts Gantt v9.0.1"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 9.0.1 above also apply to Highcharts Gantt 9.0.1.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hg-heading-9-0-1-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#hg-9-0-1-bug-fixes"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="hg-9-0-1-bug-fixes" class="collapse" aria-labelledby="hg-heading-9-0-1-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #12691, gantt connector disappeared when a task was partially visible.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
+              <a id="highcharts-gantt-v9.0.0"></a>
+              <a href="#highcharts-gantt-v9.0.0">Highcharts Gantt v9.0.0 (2021-02-02)</a>
+              <span class="download-link" ><a href="https://code.highcharts.com/zips/Highcharts-Gantt-9.0.0.zip" title="Download the zip archive for Highcharts Gantt v9.0.0"><i class="fas fa-download"></i></a></span>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 9.0.0 above also apply to Highcharts Gantt 9.0.0.</li>
+            </ul>
+            <div class="accordion card-group">
+              <div class="card">
+
+                <div id="hg-heading-9-0-0-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#hg-9-0-0-bug-fixes"><span> Bug fixes </span></button>
+                  </h4>
+                </div>
+                <div id="hg-9-0-0-bug-fixes" class="collapse" aria-labelledby="hg-heading-9-0-0-bug-fixes" data-parent=".accordion">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #14868, axis labels were positioned incorrectly in non-Gantt charts when the Gantt package was imported.</li>
+                      <li>Fixed #14808, Gantt with scrollbar and <a href="https://api.highcharts.com/gantt/xAxis.uniqueNames">uniqueNames</a> threw an error.</li>
+                      <li>Fixed #14147, in xrange/gantt series, the tooltip wasn&#39;t centered above the point if there were more than one series in the chart.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
             <p class="release-header">
               <a id="highcharts-gantt-v8.2.2"></a>
               <a href="#highcharts-gantt-v8.2.2">Highcharts Gantt v8.2.2 (2020-10-22)</a>

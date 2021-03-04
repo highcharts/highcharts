@@ -2306,25 +2306,22 @@ class SVGElement {
 
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
-                const childNodes = [].slice.call(textNode.childNodes);
 
-                // Now move all <tspan>'s and text nodes to the <textPath> node
+                // Adjust the position
+                textNode.setAttribute('y', 0); // Firefox
+                if (isNumber(attrs.dx)) {
+                    textNode.setAttribute('x', -attrs.dx);
+                }
+
+                // Move all <tspan>'s and text nodes to the <textPath> node. Do
+                // not move other elements like <title> or <path>
+                const childNodes = [].slice.call(textNode.childNodes);
                 for (let i = 0; i < childNodes.length; i++) {
                     const childNode: any = childNodes[i];
                     if (
-                        // Copy only tspans and text, not title and path
                         childNode.nodeType === Node.TEXT_NODE ||
                         childNode.nodeName === 'tspan'
                     ) {
-                        if (childNode.setAttribute) {
-                            // Remove "y" from tspans, as Firefox translates
-                            // them
-                            childNode.setAttribute('y', 0);
-                            // Remove "x" from tspans
-                            if (isNumber(attrs.dx)) {
-                                childNode.setAttribute('x', -attrs.dx);
-                            }
-                        }
                         textPathElement.appendChild(childNode);
                     }
                 }

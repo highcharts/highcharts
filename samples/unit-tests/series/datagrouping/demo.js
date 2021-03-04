@@ -1,4 +1,6 @@
 QUnit.test('General dataGrouping options', function (assert) {
+    let calledWithNaN = false;
+
     var chart = Highcharts.stockChart('container', {
         chart: {
             type: 'column'
@@ -33,8 +35,55 @@ QUnit.test('General dataGrouping options', function (assert) {
             {
                 type: 'scatter',
                 data: [[1, 1]]
+            },
+            {
+                type: 'ohlc',
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: [
+                    [1, 2, 1, 2],
+                    [2, 4, 2, 4],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2]
+                ]
+            },
+            {
+                type: 'ohlc',
+                dataGrouping: {
+                    groupAll: false
+                },
+                data: [
+                    [1, 2, 1, 2],
+                    [2, 4, 2, 4],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2]
+                ]
+            },
+            {
+                data: []
             }
-        ]
+        ],
+        time: {
+            getTimezoneOffset: timestamp => {
+                if (Number.isNaN(timestamp)) {
+                    calledWithNaN = true;
+                }
+                return new Date().getTimezoneOffset();
+            }
+        }
     });
 
     assert.ok(
@@ -52,6 +101,22 @@ QUnit.test('General dataGrouping options', function (assert) {
         chart.series[1].points[0].y,
         4,
         'Only visible points are used to calculate gorups (#5344)'
+    );
+
+    assert.strictEqual(
+        chart.series[3].points[0].open,
+        1,
+        'All OHLC points are used (#9738)'
+    );
+    assert.strictEqual(
+        chart.series[4].points[0].open,
+        2,
+        'Only visible OHLC points are used (#9738)'
+    );
+
+    assert.notOk(
+        calledWithNaN,
+        'Empty series should not cause getTimezoneOffset to get called with NaN timestamp (#13247)'
     );
 });
 

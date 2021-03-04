@@ -200,7 +200,7 @@ class DataConverter {
         if (typeof value === 'string') {
             return value !== '' && value !== '0' && value !== 'false';
         }
-        return this.asNumber(value) !== 0;
+        return !!this.asNumber(value);
     }
 
     /**
@@ -245,10 +245,13 @@ class DataConverter {
             return value ? 1 : 0;
         }
         if (typeof value === 'string') {
-            const trimVal = this.trim(value),
-                cast = parseFloat(trimVal);
-
-            return !isNaN(cast) ? cast : 0;
+            if (value.indexOf(' ') > -1) {
+                value = value.replace(/\s+/g, '');
+            }
+            if (this.decimalRegex) {
+                value = value.replace(this.decimalRegex, '$1.$2');
+            }
+            return parseFloat(value);
         }
         if (value instanceof Date) {
             return value.getDate();
@@ -256,7 +259,8 @@ class DataConverter {
         if (value) {
             return value.getRowCount();
         }
-        return 0;
+
+        return NaN;
     }
 
     /**
