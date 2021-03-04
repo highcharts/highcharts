@@ -3725,8 +3725,8 @@ class Chart {
 }
 
 addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
-    if (!e.skipAxes && this.resetZoomButton) {
-        this.resetZoomButton.align();
+    if (!e.skipAxes) {
+        this.renderer.align();
     }
 });
 
