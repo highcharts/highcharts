@@ -1526,6 +1526,19 @@ class Axis {
              */
 
             /**
+             * Whether to allow the axis´s labels to overlap
+             * 
+             * @sample {highcharts} highcharts/xaxis/labels-allowoverlap-true/
+             *         X axis labels overlap enabled
+             * 
+             * @type {boolean}
+             * @default false
+             * @apioption xAxis.labels.overlap
+             * 
+             */
+            
+
+            /**
              * For horizontal axes, the allowed degrees of label rotation
              * to prevent overlapping labels. If there is enough space,
              * labels are not rotated. As the chart gets narrower, it
