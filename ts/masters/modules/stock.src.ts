@@ -20,7 +20,7 @@ import '../../Series/Flags/FlagsSeries.js';
 import '../../Core/Scrollbar.js';
 import '../../Core/Navigator.js';
 import '../../Extensions/RangeSelector.js';
-import S from '../../Core/Chart/StockChart.js';
+import StockChart from '../../Core/Chart/StockChart.js';
 
-(Highcharts as any).stockChart = S.stockChart;
-(Highcharts as any).StockChart = S.StockChart;
+(Highcharts as any).StockChart = StockChart;
+(Highcharts as any).stockChart = StockChart.stockChart;

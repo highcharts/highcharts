@@ -37,6 +37,15 @@ const {
 
 import '../../Series/Gantt/GanttSeries.js';
 
+/**
+ * Gantt-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
+ *
+ * @requires modules/gantt
+ *
+ * @class
+ * @name Highcharts.GanttChart
+ * @extends Highcharts.Chart
+ */
 class GanttChart extends Chart {
     /**
      * Initializes the chart. The constructor's arguments are passed on
@@ -156,50 +165,47 @@ class GanttChart extends Chart {
 
 /* eslint-disable valid-jsdoc */
 
-/**
- * The factory function for creating new gantt charts. Creates a new {@link
- * Highcharts.GanttChart|GanttChart} object with different default options than
- * the basic Chart.
- *
- * @example
- * // Render a chart in to div#container
- * var chart = Highcharts.ganttChart('container', {
- *     title: {
- *         text: 'My chart'
- *     },
- *     series: [{
- *         data: ...
- *     }]
- * });
- *
- * @function Highcharts.ganttChart
- *
- * @param {string|Highcharts.HTMLDOMElement} renderTo
- *        The DOM element to render to, or its id.
- *
- * @param {Highcharts.Options} options
- *        The chart options structure.
- *
- * @param {Highcharts.ChartCallbackFunction} [callback]
- *        Function to run when the chart has loaded and and all external images
- *        are loaded. Defining a
- *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
- *        handler is equivalent.
- *
- * @return {Highcharts.GanttChart}
- *         Returns the Chart object.
- */
-function ganttChart(
-    a: (string|HTMLDOMElement|Highcharts.Options),
-    b?: (Chart.CallbackFunction|Highcharts.Options),
-    c?: Chart.CallbackFunction
-): GanttChart {
-    return new GanttChart(a as any, b as any, c);
+namespace GanttChart {
+    /**
+     * The factory function for creating new gantt charts. Creates a new {@link
+     * Highcharts.GanttChart|GanttChart} object with different default options
+     * than the basic Chart.
+     *
+     * @example
+     * // Render a chart in to div#container
+     * var chart = Highcharts.ganttChart('container', {
+     *     title: {
+     *         text: 'My chart'
+     *     },
+     *     series: [{
+     *         data: ...
+     *     }]
+     * });
+     *
+     * @function Highcharts.ganttChart
+     *
+     * @param {string|Highcharts.HTMLDOMElement} renderTo
+     *        The DOM element to render to, or its id.
+     *
+     * @param {Highcharts.Options} options
+     *        The chart options structure.
+     *
+     * @param {Highcharts.ChartCallbackFunction} [callback]
+     *        Function to run when the chart has loaded and and all external
+     *        images are loaded. Defining a
+     *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
+     *        handler is equivalent.
+     *
+     * @return {Highcharts.GanttChart}
+     *         Returns the Chart object.
+     */
+    export function ganttChart(
+        a: (string|HTMLDOMElement|Highcharts.Options),
+        b?: (Chart.CallbackFunction|Highcharts.Options),
+        c?: Chart.CallbackFunction
+    ): GanttChart {
+        return new GanttChart(a as any, b as any, c);
+    }
 }
 
-const ganttModule = {
-    ganttChart,
-    GanttChart
-};
-
-export default ganttModule;
+export default GanttChart;

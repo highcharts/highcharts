@@ -33,11 +33,11 @@ const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import M from '../../Core/Chart/MapChart.js';
+import MapChart from '../../Core/Chart/MapChart.js';
 const {
     maps,
     splitPath
-} = M;
+} = MapChart;
 import MapPoint from './MapPoint.js';
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
