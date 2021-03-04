@@ -424,18 +424,13 @@ QUnit.test(
             getAssignedAxis = chart.navigationBindings.utils.getAssignedAxis,
             offset = 3;
 
-        let coords,
-            coordsX,
-            coordsY;
-
         // The yAxes overlap - y coord on both of them
-        coords = getCoordinates({
-            chartX: chart.yAxis[1].left + offset,
-            chartY: chart.yAxis[1].top + offset
-        });
-
-        coordsX = getAssignedAxis(coords, 'x');
-        coordsY = getAssignedAxis(coords, 'y');
+        let coords = getCoordinates({
+                chartX: chart.yAxis[1].left + offset,
+                chartY: chart.yAxis[1].top + offset
+            }),
+            coordsX = getAssignedAxis(coords.xAxis),
+            coordsY = getAssignedAxis(coords.yAxis);
 
         assert.strictEqual(
             coordsY.axis.options.id,
@@ -453,8 +448,8 @@ QUnit.test(
             chartY: chart.plotTop - offset
         });
 
-        coordsX = getAssignedAxis(coords, 'x');
-        coordsY = getAssignedAxis(coords, 'y');
+        coordsX = getAssignedAxis(coords.xAxis);
+        coordsY = getAssignedAxis(coords.yAxis);
 
         assert.notOk(
             coordsX,
@@ -472,8 +467,8 @@ QUnit.test(
             chartY: chart.plotTop + offset
         });
 
-        coordsX = getAssignedAxis(coords, 'x');
-        coordsY = getAssignedAxis(coords, 'y');
+        coordsX = getAssignedAxis(coords.xAxis);
+        coordsY = getAssignedAxis(coords.yAxis);
 
         assert.ok(
             coordsX,
@@ -491,8 +486,8 @@ QUnit.test(
             chartY: chart.yAxis[0].top + offset
         });
 
-        coordsX = getAssignedAxis(coords, 'x');
-        coordsY = getAssignedAxis(coords, 'y');
+        coordsX = getAssignedAxis(coords.xAxis);
+        coordsY = getAssignedAxis(coords.yAxis);
 
         assert.ok(
             coordsX,
@@ -511,8 +506,8 @@ QUnit.test(
             chartY: chart.yAxis[0].top + chart.yAxis[0].len + offset
         });
 
-        coordsX = getAssignedAxis(coords, 'x');
-        coordsY = getAssignedAxis(coords, 'y');
+        coordsX = getAssignedAxis(coords.xAxis);
+        coordsY = getAssignedAxis(coords.yAxis);
 
         assert.ok(
             coordsX,
@@ -529,7 +524,7 @@ QUnit.test(
             chartY: chart.yAxis[1].top + offset
         });
 
-        coordsY = getAssignedAxis(coords, 'y');
+        coordsY = getAssignedAxis(coords.yAxis);
 
         assert.strictEqual(
             coordsY.axis.options.id,
