@@ -1,11 +1,11 @@
 System requirements
 ===
 
-Highcharts is solely based on native browser technologies and doesn't require client side plugins like Flash or Java. Furthermore you don't need to install anything on your server. No PHP or ASP.NET. Highcharts needs only the highcharts.js core to run.
+Highcharts is a standalone library, which means that it does not require any additional frameworks or plugins to work. It is solely based on native browser technologies, and all core functionality runs in the browser. As it is a front-end library, Highcharts can be used with any server that can serve static files. It needs only the core `highcharts.js` script to run.
 
-Highcharts works in all modern browsers including mobile devices and Internet Explorer from version 6. Standard browsers use [SVG](https://www.w3.org/Graphics/SVG/) for the graphics rendering. In legacy Internet Explorer (IE8 and before) graphics are drawn using [VML](https://www.w3.org/TR/NOTE-VML).
+There are Highcharts wrappers available for frameworks such as React and Vue, as well as for native iOS and Android development. See our [wrapper overview](https://www.highcharts.com/wrappers-addons-and-plugins/wrappers/) for more information.
 
-Highcharts runs on any server that supports HTML. You can even run Highcharts locally from a filesystem, since all the rendering is done locally in a browser.
+Highcharts works on all modern browsers and mobile devices. Legacy browsers – primarily IE 6-8 – are supported using polyfills and the [oldIE module](#supporting-ie-6-8).
 
 Browser compatibility
 ---------------------
