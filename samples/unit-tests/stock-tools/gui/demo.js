@@ -73,8 +73,8 @@ QUnit.test('Disabling and Enabling stock Tools buttons, when series are invisibl
     button.innerHTML = 'dummy button';
 
     toolsContainer.appendChild(button);
-    document.getElementById('container').parentNode.insertBefore(toolsContainer, document.getElementById('container'));
 
+    document.getElementById('container').parentNode.insertBefore(toolsContainer, document.getElementById('container'));
 
     var chart = Highcharts.stockChart('container', {
         stockTools: {
@@ -95,7 +95,6 @@ QUnit.test('Disabling and Enabling stock Tools buttons, when series are invisibl
         }
     });
 
-    //document.body.appendChild(toolsContainer);
     var controller = new TestController(chart);
     toolsContainer.style.position = 'absolute';
     toolsContainer.style['z-index'] = 99999;
@@ -117,23 +116,22 @@ QUnit.test('Disabling and Enabling stock Tools buttons, when series are invisibl
         ]
     });
 
-    controller.click(5, 5);
-    controller.triggerEvent('click', 10, 10);
+    controller.click(10, 10);
     assert.equal(wasInitCalled, true, 'Init function should be executed, after series was added.');
 
     chart.series[0].setVisible(false);
     wasInitCalled = false;
-    controller.triggerEvent('click', 10, 10);
+    controller.click(10, 10);
     assert.equal(wasInitCalled, false, 'Init function should not be called, when series are invisible.');
 
     chart.series[0].setVisible(true);
     wasInitCalled = false;
-    controller.triggerEvent('click', 10, 10);
+    controller.click(10, 10);
     assert.equal(wasInitCalled, true, 'Init function should not be called, when series are visible.');
 
     chart.series[0].remove();
     wasInitCalled = false;
-    controller.triggerEvent('click', 10, 10);
+    controller.click(10, 10);
     assert.equal(wasInitCalled, false, 'Init function should not be called, after deleting the series.');
 
     chart.addSeries({
@@ -165,7 +163,7 @@ QUnit.test('Disabling and Enabling stock Tools buttons, when series are invisibl
 
     chart.series[0].setVisible(false);
     wasInitCalled = false;
-    controller.triggerEvent('click', 10, 10);
+    controller.click(10, 10);
     assert.equal(
         wasInitCalled,
         true,

@@ -1498,7 +1498,7 @@ addEvent(H.Chart, 'render', function (): void {
 
         let buttonsEnabled = false;
         chart.series.forEach(function (series): void {
-            if (!series.navigatorSeries && series.visible) {
+            if (!series.options.isInternal && series.visible) {
                 buttonsEnabled = true;
             }
         });
@@ -1509,6 +1509,10 @@ addEvent(H.Chart, 'render', function (): void {
                 // Get the HTML element coresponding to the
                 // className taken from StockToolsBindings.
 
+                if (value.alwaysEnabled) {
+                    return;
+                }
+
                 if (
                     chart.navigationBindings &&
                     chart.navigationBindings.container &&
@@ -1517,13 +1521,13 @@ addEvent(H.Chart, 'render', function (): void {
                     const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
 
                     if (buttonNode) {
-                        if (!buttonsEnabled && !value.alwaysEnabled) {
+                        if (!buttonsEnabled) {
                             buttonNode.forEach(function (button): void {
                                 if (button.className.indexOf(disabledClassName) === -1) {
                                     button.className += ' ' + disabledClassName;
                                 }
                             });
-                        } else if (buttonsEnabled) {
+                        } else {
                             buttonNode.forEach(function (button): void {
                                 // Enable all buttons by deleting the className.
                                 if (button.className.indexOf(disabledClassName) !== -1) {
