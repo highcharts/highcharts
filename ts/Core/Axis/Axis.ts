@@ -1543,7 +1543,6 @@ class Axis {
              * @apioption xAxis.labels.overlap
              * 
              */
-            
 
             /**
              * For horizontal axes, the allowed degrees of label rotation
