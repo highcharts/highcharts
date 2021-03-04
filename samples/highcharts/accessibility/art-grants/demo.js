@@ -70,7 +70,11 @@ Highcharts.chart('container', {
         gridLineWidth: 0,
         labels: {
             formatter: function () {
-                return '$' + (this.value / 1000) + (this.value ? 'k' : '');
+                var isM = this.value / 1000000 > 1;
+                return '$' + (isM ?
+                    (this.value / 1000000) + (this.value ? 'M' : '') :
+                    (this.value / 1000) + (this.value ? 'k' : '')
+                );
             },
             style: {
                 color: '#8F6666'
@@ -134,6 +138,23 @@ Highcharts.chart('container', {
                 }
             }
         }
+    },
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 400
+            },
+            chartOptions: {
+                chart: {
+                    spacingLeft: 3,
+                    spacingRight: 5
+                },
+                yAxis: [{}, {
+                    visible: false
+                }]
+            }
+        }]
     },
 
     series: [{
