@@ -163,7 +163,7 @@ function deleteFileKey(storage, bucket, fileKey, test) {
 }
 
 /**
- * Fetches items from an S3 bucket.
+ * Fetches keys with modification time from an S3 bucket.
  *
  * @param {AWS.S3} storage
  * AWS S3 instance to fetch from.
@@ -286,6 +286,25 @@ function synchronizeFolder(
 
                     return Promise.resolve();
                 })
+            ));
+        });
+
+        const filePaths = glob
+            .sync(path.posix.join(sourceFolder, '**/*'))
+            .filter(sourcePath => (
+                path.basename(sourcePath).indexOf('.') !== 0 &&
+                fs.lstatSync(sourcePath).isFile() &&
+                !fileKeys.includes(path.relative(SOURCE_ROOT, sourcePath))
+            ));
+
+        getChunks(filePaths).forEach(filePathsChunk => {
+            synchronizePromises = synchronizePromises.then(() => Promise.all(
+                filePathsChunk.map(filePath => uploadFile(
+                    filePath,
+                    targetStorage,
+                    bucket,
+                    test
+                ))
             ));
         });
 
