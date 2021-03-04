@@ -203,3 +203,14 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
 });
 
 console.log(dashboardBootstrap);
+
+console.log('========');
+
+console.log(Highcharts.fireEvent(
+    document.getElementById('dashboard-col-0'),
+    'mountColumn',
+    {},
+    function(e) {
+        console.log('fireEvent', this, e);
+    }
+));

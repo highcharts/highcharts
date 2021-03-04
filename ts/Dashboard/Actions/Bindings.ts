@@ -65,6 +65,11 @@ class Bindings {
 
         let component: HTMLComponent|ChartComponent|GroupComponent|undefined;
 
+        const column = fireEvent(
+            compontentContainer,
+            'click'
+        );
+
         // add elements to containers
         if (compontentContainer) {
             switch (options.type) {

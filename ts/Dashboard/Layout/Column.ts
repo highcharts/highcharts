@@ -39,6 +39,8 @@ class Column extends GUIElement {
         this.id = options.id;
         this.options = options;
 
+        const column = this;
+
         this.row = row;
         this.setElementContainer({
             render: row.layout.dashboard.guiEnabled,

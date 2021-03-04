@@ -6,6 +6,7 @@ import type {
 } from '../../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
+import Column from './Column.js';
 
 const {
     addEvent,
