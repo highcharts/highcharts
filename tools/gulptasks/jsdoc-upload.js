@@ -299,18 +299,21 @@ function synchronizeFolder(
 
         getChunks(filePaths).forEach(filePathsChunk => {
             synchronizePromises = synchronizePromises.then(() => Promise.all(
-                filePathsChunk.map(filePath => uploadFile(
-                    filePath,
-                    targetStorage,
-                    bucket,
-                    test
-                ))
+                filePathsChunk.map(filePath => {
+                    didSomeWork = true;
+                    return uploadFile(
+                        filePath,
+                        targetStorage,
+                        bucket,
+                        test
+                    );
+                })
             ));
         });
 
         synchronizePromises = synchronizePromises.then(() => {
             if (!didSomeWork) {
-                log.warn('Found nothing new to delete or update.');
+                log.warn('Found nothing new to delete or upload.');
             }
         });
 
