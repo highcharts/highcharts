@@ -11,15 +11,28 @@ var nextMouseOver = null;
 // Overlay code
 
 function removeOverlay() {
+    getEl('venn-figure').setAttribute('aria-hidden', false);
+    getEl('before').removeEventListener('focus', removeOverlay);
+    getEl('after').removeEventListener('focus', removeOverlay);
+    getEl('before').focus();
+
     getEl('overlay').style.visibility = 'hidden';
     getEl('removeOverlay').style.visibility = 'hidden';
+    getEl('removeOverlay').setAttribute('aria-expanded', true);
     getEl('before').setAttribute('tabindex', '-1');
-    getEl('after').setAttribute('tabindex', '-1');
-    getEl('venn-figure').setAttribute('aria-hidden', false);
+    getEl('after').removeAttribute('tabindex');
+
+    setTimeout(function () {
+        getEl('after').innerHTML = 'Venn diagram displayed';
+    }, 100);
+    setTimeout(function () {
+        getEl('after').innerHTML = '';
+    }, 800);
 }
 
-getEl('before').onfocus = removeOverlay;
-getEl('after').onfocus = removeOverlay;
+getEl('before').addEventListener('focus', removeOverlay);
+getEl('after').addEventListener('focus', removeOverlay);
+
 getEl('removeOverlay').onclick = removeOverlay;
 
 

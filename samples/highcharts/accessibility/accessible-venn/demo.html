@@ -5,7 +5,7 @@
 
 <div id="outer">
     <div id="overlay">
-        <button class="btn btn-overlay" id="removeOverlay"><span>Try our </span><span>Venn diagram</span></button>
+        <button aria-expanded="false" class="btn btn-overlay" id="removeOverlay"><span>Try our </span><span>Venn diagram</span></button>
     </div>
     <div id="before" tabindex="0"></div>
     <figure class="highcharts-figure" id="venn-figure" aria-hidden="true">
@@ -15,5 +15,5 @@
             <div id="caption-content"></div>
         </div>
     </figure>
-    <div id="after" tabindex="0"></div>
+    <p id="after" tabindex="0" aria-live="polite" style="color:#fff;opacity:0;position:absolute;width:1;height:1;"></p>
 </div>
