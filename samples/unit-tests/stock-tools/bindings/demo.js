@@ -399,6 +399,59 @@ QUnit.test('Bindings general tests', function (assert) {
     }
 });
 
+QUnit.test('Stock Tools: drawing line annotations (#15155)', assert => {
+    const chart = Highcharts.stockChart('container', {
+            chart: {
+                width: 800,
+                plotBorderWidth: 1
+            },
+            series: [{
+                data: [4, 2, 5, 6, 4]
+            }]
+        }),
+        plotLeft = chart.plotLeft,
+        plotTop = chart.plotTop,
+        xAxisLength = chart.xAxis[0].len,
+        yAxisLength = chart.yAxis[0].len;
+
+    // init infinityLine
+    chart.navigationBindings.options.bindings.infinityLine.start.call(
+        chart.navigationBindings,
+        {
+            // the center of the plotarea
+            chartX: plotLeft + xAxisLength / 2,
+            chartY: plotTop + yAxisLength / 2
+        }
+    );
+
+    const infinityLine = chart.annotations[0]; // initiated infinityLine
+
+    // 'move mouse' so the infinityLine can be drawn
+    chart.navigationBindings.options.bindings.infinityLine.steps[0].call(
+        chart.navigationBindings,
+        {
+            // direction: top-right corner of the plotarea
+            chartX: plotLeft + xAxisLength * 3 / 4,
+            chartY: plotTop + yAxisLength * 1 / 4
+        },
+        infinityLine
+    );
+
+    // The infinityLine should be drawn from bottom-left to top-right plotarea corner.
+
+    assert.strictEqual(
+        xAxisLength,
+        infinityLine.graphic.element.getBBox().width,
+        'The width of the infinityLine\'s graphic box should be the same as the xAxis\' width.'
+    );
+
+    assert.strictEqual(
+        yAxisLength,
+        infinityLine.graphic.element.getBBox().height,
+        'The height of the infinityLine\'s graphic box should be the same as the yAxis\' height.'
+    );
+});
+
 QUnit.test('Stock Tools annotations\' positions with yAxis.top (#15075)', assert => {
     const chart = Highcharts.stockChart('container', {
             chart: {
@@ -426,12 +479,13 @@ QUnit.test('Stock Tools annotations\' positions with yAxis.top (#15075)', assert
         }
     );
 
+    const yOffset = chart.annotations[0].options.typeOptions.yOffset;
     let annotationBBox = chart.annotations[0].graphic.getBBox();
 
     assert.strictEqual(
-        annotationBBox.y + annotationBBox.height + 10,
+        annotationBBox.y + annotationBBox.height + yOffset,
         point.plotY + yAxis.top,
-        'Annotation\'s element should be placed 10px from the second point.'
+        'Annotation\'s element should be placed ' + yOffset + 'px from the second point.'
     );
 
     chart.update({
@@ -454,9 +508,9 @@ QUnit.test('Stock Tools annotations\' positions with yAxis.top (#15075)', assert
     annotationBBox = chart.annotations[1].graphic.getBBox();
 
     assert.close(
-        (annotationBBox.x + (annotationBBox.width) + 10),
+        (annotationBBox.x + (annotationBBox.width) + yOffset),
         chart.plotLeft + yAxis.len - point.plotY,
         1,
-        'Annotation\'s element should be placed 10px from the third point.'
+        'Annotation\'s element should be placed ' + yOffset + 'px from the third point.'
     );
 });

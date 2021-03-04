@@ -1490,10 +1490,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
         });
 
-        // Assign an internal key to ensure a one-to-one mapping (#5924)
+        const colls: Record<string, boolean> = {};
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
+            // Assign an internal key to ensure a one-to-one mapping (#5924)
             if (!axis.userOptions.internalKey) { // #6444
                 axis.userOptions.internalKey = uniqueKey();
+            }
+
+            if (!axis.options.isInternal) {
+                if (!colls[axis.coll]) {
+                    colls[axis.coll] = true;
+                    (options as any)[axis.coll] = [];
+                }
+
+                (options as any)[axis.coll].push(merge(axis.userOptions, {
+                    visible: axis.visible
+                }));
             }
         });
 

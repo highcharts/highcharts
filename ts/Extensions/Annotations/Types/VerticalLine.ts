@@ -62,8 +62,8 @@ class VerticalLine extends Annotation {
             chart = annotation.chart,
             inverted = chart.inverted,
             point = annotation.points[0],
-            left = pick(point.series.yAxis?.left, 0),
-            top = pick(point.series.yAxis?.top, 0),
+            left = pick(point.series.yAxis && point.series.yAxis.left, 0),
+            top = pick(point.series.yAxis && point.series.yAxis.top, 0),
             offset = annotation.options.typeOptions.label.offset,
             y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
@@ -83,8 +83,8 @@ class VerticalLine extends Annotation {
             inverted = chart.inverted,
             typeOptions = annotation.options.typeOptions,
             point = annotation.points[0],
-            left = pick(point.series.yAxis?.left, 0),
-            top = pick(point.series.yAxis?.top, 0),
+            left = pick(point.series.yAxis && point.series.yAxis.left, 0),
+            top = pick(point.series.yAxis && point.series.yAxis.top, 0),
             yOffset = typeOptions.yOffset,
             y = MockPoint.pointToPixels(point, true)[inverted ? 'x' : 'y'];
 
