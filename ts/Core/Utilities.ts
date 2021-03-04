@@ -2390,12 +2390,12 @@ function fireEvent<T>(
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
-        extend(e, eventArguments);
+        eventArguments = extend(e, eventArguments);
 
         if ((el as any).dispatchEvent) {
-            (el as any).dispatchEvent(e);
+            (el as any).dispatchEvent(eventArguments);
         } else {
-            (el as any).fireEvent(type, e);
+            (el as any).fireEvent(type, eventArguments);
         }
 
     } else if ((el as any).hcEvents) {
