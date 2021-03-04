@@ -1,3 +1,15 @@
+.visually-hidden {
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  overflow: hidden;
+  white-space: nowrap;
+  clip: rect(1px, 1px, 1px, 1px);
+  margin-top: -3px;
+  filter: alpha(opacity=1);
+  opacity: 0.01;
+}
+
 .btn {
   background-color: #25386f;
   border: 1 px solid #25386f;
