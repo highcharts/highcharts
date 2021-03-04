@@ -331,8 +331,6 @@ test('component resizing', function(assert) {
 
     const parent = document.createElement('div');
     parent.id = 'test';
-    parent.style.width = '1000px';
-    parent.style.height = '500px';
 
     document.body.appendChild(parent)
 
@@ -378,6 +376,7 @@ test('component resizing', function(assert) {
         'Should be able to update just the height. Width should stay the same.'
     );
 
+    parent.style.width = '1000px';
     parent.style.height = '200px';
     component.resize('100%', '100%');
     assert.deepEqual(
@@ -395,7 +394,6 @@ test('component resizing', function(assert) {
     component.destroy();
 
     const widthComponent = new HTMLComponent({
-        parentElement: parent,
         dimensions: {
             width: '100'
         }
@@ -406,7 +404,6 @@ test('component resizing', function(assert) {
     widthComponent.destroy()
 
     const heightComponent = new HTMLComponent({
-        parentElement: parent,
         dimensions: {
             height: '100'
         }
@@ -417,9 +414,8 @@ test('component resizing', function(assert) {
     heightComponent.destroy()
 
     const emptyDimensions = new HTMLComponent({
-        parentElement: parent,
         dimensions: {}
-    }).render();
+   }).render();
     assert.strictEqual(emptyDimensions.dimensions.width, null)
     assert.strictEqual(emptyDimensions.element.style.height, "")
 

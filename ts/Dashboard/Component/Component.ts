@@ -262,6 +262,25 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         width?: number | string | null,
         height?: number | string | null
     ): this {
+
+        // If undefined, and parent has set style,
+        // set to parents height minus padding, margin, etc
+        if (height === void 0 && this.parentElement.style.height) {
+            const parentHeight = Number(getStyle(this.parentElement, 'height'));
+            const elementHeight = Number(getStyle(this.element, 'height'));
+            const diff = this.element.offsetHeight - elementHeight;
+
+            height = parentHeight - diff;
+        }
+
+        if (width === void 0 && this.parentElement.style.width) {
+            const parentWidth = Number(getStyle(this.parentElement, 'width'));
+            const elementWidth = Number(getStyle(this.element, 'width'));
+            const diff = this.element.offsetWidth - elementWidth;
+
+            width = parentWidth - diff;
+        }
+
         if (height) {
             this.dimensions.height = relativeLength(height, Number(getStyle(this.parentElement, 'height')));
             this.element.style.height = this.dimensions.height + 'px';
@@ -350,8 +369,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             this.load();
             // Call resize to set the sizes
             this.resize(
-                this.options.dimensions?.width || null,
-                this.options.dimensions?.height || null
+                this.options.dimensions?.width,
+                this.options.dimensions?.height
             );
         }
 
