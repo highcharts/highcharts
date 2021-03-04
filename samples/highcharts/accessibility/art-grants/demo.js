@@ -1,14 +1,8 @@
 function dollarFormat(x) {
-    return '$' + Highcharts.numberFormat(x, 0);
+    return '$' + Highcharts.numberFormat(x, 0, '.', ',');
 }
 
 var colors = Highcharts.getOptions().colors;
-
-Highcharts.setOptions({
-    lang: {
-        thousandsSep: ','
-    }
-});
 
 Highcharts.chart('container', {
     chart: {
@@ -22,6 +16,9 @@ Highcharts.chart('container', {
                     series.name + ', ' + dollarFormat(series.points[0].y) :
                     series.name + ' grant amounts, bar series with ' + series.points.length + ' bars.';
             }
+        },
+        point: {
+            valuePrefix: '$'
         },
         keyboardNavigation: {
             seriesNavigation: {
@@ -100,15 +97,7 @@ Highcharts.chart('container', {
             groupPadding: 0,
             tooltip: {
                 headerFormat: '<span style="font-size: 10px"><span style="color:{point.color}">\u25CF</span> {series.name}</span><br/>',
-                pointFormatter: function () {
-                    return this.name + ': <b>' + dollarFormat(this.y) + '</b><br/>';
-                }
-            },
-            accessibility: {
-                pointDescriptionFormatter: function (point) {
-                    return (point.index + 1) + '. ' + point.name + ' ' +
-                        dollarFormat(point.y) + '.';
-                }
+                pointFormat: '{point.name}: <b>${point.y:,.0f}</b><br/>'
             }
         },
         line: {
