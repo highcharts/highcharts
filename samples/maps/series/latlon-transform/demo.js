@@ -3,7 +3,7 @@ var chart,
     position;
 
 // Initiate the chart
-chart = Highcharts.Map({
+chart = new Highcharts.Map({
     chart: {
         renderTo: 'container'
     },
