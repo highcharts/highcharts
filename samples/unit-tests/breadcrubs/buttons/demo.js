@@ -1,4 +1,4 @@
-QUnit.test('Breadcrumbs button', function (assert) {
+QUnit.test('Breadcrumbs button- check if the created path is correct.', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -133,7 +133,7 @@ QUnit.test('Breadcrumbs button', function (assert) {
     );
 });
 
-QUnit.test('Breadcrumbs format', function (assert) {
+QUnit.test('Breadcrumbs button format.', function (assert) {
     const chart = Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -184,7 +184,7 @@ QUnit.test('Breadcrumbs format', function (assert) {
     );
 });
 
-QUnit.test('Breadcrumbs formatter', function (assert) {
+QUnit.test('Breadcrumbs button formatter.', function (assert) {
     const labels = [1, 2, 3, 4],
         chart = Highcharts.chart('container', {
             chart: {
@@ -300,5 +300,114 @@ QUnit.test('Breadcrumbs with no series name, lang', function (assert) {
         buttons[buttons.length - 1].textContent,
         '◁ Major',
         'The button should show ◁ Major.'
+    );
+});
+
+QUnit.test('Breadcrumbs button positioning.', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column',
+            width: 600
+        },
+        xAxis: {
+            type: 'category'
+        },
+        title: {
+            text: null
+        },
+        series: [{
+            name: "Supply",
+            data: [{
+                name: "Fruits",
+                y: 5,
+                drilldown: "Fruits"
+            },
+            {
+                name: "Vegetables",
+                y: 6,
+                drilldown: "Vegetables"
+            },
+            {
+                name: "Meat",
+                y: 3
+            }
+            ]
+        }],
+        drilldown: {
+            animation: false,
+            breadcrumbs: {
+                showFullPath: true,
+                position: {
+                    align: 'center'
+                }
+            },
+            series: [{
+                name: "Fruits",
+                id: "Fruits",
+                data: [{
+                    name: "Citrus",
+                    y: 2,
+                    drilldown: "Citrus"
+                }, {
+                    name: "Tropical",
+                    y: 5,
+                    drilldown: "Tropical"
+                },
+                ['Other', 1]
+                ]
+            }, {
+                name: "Vegetables",
+                id: "Vegetables",
+                data: [
+                    ["Potatoes", 2],
+                    ["Cucumber", 4]
+                ]
+            }, {
+                name: "Citrus",
+                id: "Citrus",
+                data: [{
+                    name: "Lemon",
+                    y: 5,
+                    drilldown: "Lemon"
+                },
+                ["Orange", 4]
+                ]
+            }, {
+                name: "Tropical",
+                id: "Tropical",
+                data: [
+                    ["Banana", 1],
+                    ["Mango", 3]
+                ]
+            }]
+        }
+    });
+
+    chart.series[0].points[0].doDrilldown();
+    let breadcrumbsWidth = chart.breadcrumbs.breadcrumbsGroup.getBBox().width,
+        breadcrumbsXPosition = chart.breadcrumbs.breadcrumbsGroup.translateX;
+
+    assert.strictEqual(
+        breadcrumbsXPosition + breadcrumbsWidth / 2,
+        chart.chartWidth / 2,
+        'When buttons are aligned to the centre, their centre point should be in the middle of the chart width.'
+    );
+
+    chart.series[0].points[0].doDrilldown();
+    breadcrumbsWidth = chart.breadcrumbs.breadcrumbsGroup.getBBox().width;
+    breadcrumbsXPosition = chart.breadcrumbs.breadcrumbsGroup.translateX;
+    assert.close(
+        breadcrumbsXPosition + breadcrumbsWidth / 2,
+        chart.chartWidth / 2,
+        1,
+        'After each iteration, the breadcrumbs group should stay in the middle.'
+    );
+
+    chart.drillUp();
+    assert.close(
+        breadcrumbsXPosition + breadcrumbsWidth / 2,
+        chart.chartWidth / 2,
+        1,
+        'After each iteration, the breadcrumbs group should stay in the middle.'
     );
 });

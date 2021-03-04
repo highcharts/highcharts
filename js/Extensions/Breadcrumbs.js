@@ -249,9 +249,6 @@ var Breadcrumbs = /** @class */ (function () {
                 chart.drillUpButton = void 0;
             }
         }
-        if (breadcrumbsOptions && breadcrumbsOptions.position && breadcrumbsOptions.position.align !== 'left') {
-            breadcrumbs.alignGroup();
-        }
     };
     /**
      * Create a group, then draw breadcrumbs together with the separators.

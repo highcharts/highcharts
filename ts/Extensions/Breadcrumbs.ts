@@ -564,10 +564,6 @@ class Breadcrumbs {
                 chart.drillUpButton = void 0;
             }
         }
-
-        if (breadcrumbsOptions && breadcrumbsOptions.position && breadcrumbsOptions.position.align !== 'left') {
-            breadcrumbs.alignGroup();
-        }
     }
 
     /**
