@@ -466,7 +466,8 @@ declare global {
  *        Reference to the chart that causes the error. Used in 'debugger'
  *        module to display errors directly on the chart.
  *        Important note: This argument is undefined for errors that lack
- *        access to the Chart instance.
+ *        access to the Chart instance. In such case, the error will be
+ *        displayed on the last created chart.
  *
  * @param {Highcharts.Dictionary<string>} [params]
  *        Additional parameters for the generated message.
@@ -515,6 +516,8 @@ function error(
         message += additionalMessages;
     }
 
+    // Display error on the chart causing the error or the last created chart.
+    chart = chart || find(charts.slice().reverse(), (c?: Chart): boolean => !!c);
     if (chart) {
         fireEvent(
             chart,

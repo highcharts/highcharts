@@ -129,4 +129,12 @@ QUnit.test('Debugger mode', function (assert) {
     chart.redraw();
 
     assert.strictEqual(chart.errorElements, null, 'Error correctly removed');
+
+    Highcharts.error('test');
+
+    assert.strictEqual(
+        2,
+        chart.errorElements.length,
+        'Error correctly shown on a chart'
+    );
 });
