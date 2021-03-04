@@ -1533,7 +1533,7 @@ class Axis {
              * 
              * @type {boolean}
              * @default false
-             * @apioption xAxis.labels.overlap
+             * @apioption xAxis.labels.allowOverlap
              * 
              */
 
