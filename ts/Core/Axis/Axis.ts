@@ -1534,14 +1534,14 @@ class Axis {
 
             /**
              * Whether to allow the axis´s labels to overlap
-             * 
+             *
              * @sample {highcharts} highcharts/xaxis/labels-allowoverlap-true/
              *         X axis labels overlap enabled
-             * 
+             *
              * @type {boolean}
              * @default false
              * @apioption xAxis.labels.allowOverlap
-             * 
+             *
              */
 
             /**
