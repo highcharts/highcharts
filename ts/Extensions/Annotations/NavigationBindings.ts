@@ -195,8 +195,8 @@ const bindingsUtils = {
         var chart = annotation.chart,
             options = annotation.options.typeOptions,
             coords = chart.pointer.getCoordinates(event),
-            coordsX = chart.navigationBindings.getAssignedAxis(coords, 'x'),
-            coordsY = chart.navigationBindings.getAssignedAxis(coords, 'y'),
+            coordsX = chart.navigationBindings.utils.getAssignedAxis(coords, 'x'),
+            coordsY = chart.navigationBindings.utils.getAssignedAxis(coords, 'y'),
             width,
             height;
 
@@ -235,6 +235,46 @@ const bindingsUtils = {
         } as Record<string, ('checkbox'|'number'|'text')>)[
             typeof value
         ];
+    },
+    /**
+     * Returns the first xAxis or yAxis that was clicked with its value.
+     *
+     * @private
+     * @function Highcharts.NavigationBindingsUtilsObject#getAssignedAxis
+     *
+     * @param {Highcharts.PointerAxisCoordinatesObject} coords
+     *        All the chart's axes with a current pointer's axis value.
+     *
+     * @param {string} xOrY
+     *        'x' or 'y' indicating axis.
+     *
+     * @return {Highcharts.PointerAxisCoordinateObject}
+     *         Object with a first found axis and its value that pointer
+     *         is currently pointing.
+     */
+    getAssignedAxis(
+        coords: Highcharts.PointerAxisCoordinatesObject,
+        xOrY: ('x'|'y')
+    ): Highcharts.PointerAxisCoordinateObject {
+        objectEach(coords, function (value, prop): void {
+            coords[prop] = value.filter(
+                function (coord): boolean {
+                    const axisMin = coord.axis.min as number,
+                        axisMax = coord.axis.max as number,
+                        // Correct axis edges when axis has series
+                        // with pointRange (like column)
+                        minPointOffset = pick(coord.axis.minPointOffset, 0);
+
+                    return coord.value >= (axisMin - minPointOffset) &&
+                        coord.value <= (axisMax + minPointOffset) &&
+                        // don't count navigator axis
+                        !coord.axis.options.isInternal;
+                }
+            );
+        });
+
+        // [0] - If the axes overlap, return the first axis that was found.
+        return coords[xOrY + 'Axis' as 'xAxis'|'yAxis'][0];
     }
 };
 
@@ -976,46 +1016,6 @@ class NavigationBindings {
     public destroy(): void {
         this.removeEvents();
     }
-    /**
-     * Returns the first xAxis or yAxis that was clicked with its value.
-     *
-     * @private
-     * @function Highcharts.NavigationBindings#getAssignedAxis
-     *
-     * @param {Highcharts.PointerAxisCoordinatesObject} coords
-     *        All the chart's axes with a current pointer's axis value.
-     *
-     * @param {string} xOrY
-     *        'x' or 'y' indicating axis.
-     *
-     * @return {Highcharts.PointerAxisCoordinateObject}
-     *         Object with a first found axis and its value that pointer
-     *         is currently pointing.
-     */
-    public getAssignedAxis(
-        coords: Highcharts.PointerAxisCoordinatesObject,
-        xOrY: ('x'|'y')
-    ): Highcharts.PointerAxisCoordinateObject {
-        objectEach(coords, function (value, prop): void {
-            coords[prop] = value.filter(
-                function (coord): boolean {
-                    const axisMin = coord.axis.min as number,
-                        axisMax = coord.axis.max as number,
-                        // Correct axis edges when axis has series
-                        // with pointRange (like column)
-                        minPointOffset = pick(coord.axis.minPointOffset, 0);
-
-                    return coord.value >= (axisMin - minPointOffset) &&
-                        coord.value <= (axisMax + minPointOffset) &&
-                        // don't count navigator axis
-                        !coord.axis.options.isInternal;
-                }
-            );
-        });
-
-        // [0] - If the axes overlap, return the first axis that was found.
-        return coords[xOrY + 'Axis' as 'xAxis'|'yAxis'][0];
-    }
 }
 
 interface NavigationBindings {
@@ -1263,8 +1263,8 @@ setOptions({
                     e: PointerEvent
                 ): Annotation|void {
                     var coords = this.chart.pointer.getCoordinates(e),
-                        coordsX = this.getAssignedAxis(coords, 'x'),
-                        coordsY = this.getAssignedAxis(coords, 'y'),
+                        coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                        coordsY = this.utils.getAssignedAxis(coords, 'y'),
                         navigation = this.chart.options.navigation;
 
                     // Exit if clicked out of axes area
@@ -1349,8 +1349,8 @@ setOptions({
                     e: PointerEvent
                 ): Annotation|void {
                     var coords = this.chart.pointer.getCoordinates(e),
-                        coordsX = this.getAssignedAxis(coords, 'x'),
-                        coordsY = this.getAssignedAxis(coords, 'y'),
+                        coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                        coordsY = this.utils.getAssignedAxis(coords, 'y'),
                         navigation = this.chart.options.navigation,
                         x,
                         y;
@@ -1412,8 +1412,8 @@ setOptions({
                         var points: Array<Highcharts.AnnotationMockPointOptionsObject> =
                                 annotation.options.shapes[0].points as any,
                             coords = this.chart.pointer.getCoordinates(e),
-                            coordsX = this.getAssignedAxis(coords, 'x'),
-                            coordsY = this.getAssignedAxis(coords, 'y'),
+                            coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                            coordsY = this.utils.getAssignedAxis(coords, 'y'),
                             x, y;
 
                         if (coordsX && coordsY) {
@@ -1452,8 +1452,8 @@ setOptions({
                     e: PointerEvent
                 ): Annotation|void {
                     var coords = this.chart.pointer.getCoordinates(e),
-                        coordsX = this.getAssignedAxis(coords, 'x'),
-                        coordsY = this.getAssignedAxis(coords, 'y'),
+                        coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                        coordsY = this.utils.getAssignedAxis(coords, 'y'),
                         navigation = this.chart.options.navigation;
 
                     // Exit if clicked out of axes area

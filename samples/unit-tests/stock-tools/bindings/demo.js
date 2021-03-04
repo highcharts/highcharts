@@ -421,7 +421,7 @@ QUnit.test(
                 }]
             }),
             getCoordinates = chart.pointer.getCoordinates.bind(chart.pointer),
-            getAssignedAxis = chart.navigationBindings.getAssignedAxis,
+            getAssignedAxis = chart.navigationBindings.utils.getAssignedAxis,
             offset = 3;
 
         let coords,

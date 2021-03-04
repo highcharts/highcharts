@@ -395,7 +395,7 @@ bindingsUtils.updateHeight = function (
     e: PointerEvent,
     annotation: Annotation
 ): void {
-    const coordsY = this.getAssignedAxis(
+    const coordsY = this.utils.getAssignedAxis(
         this.chart.pointer.getCoordinates(e), 'y'
     );
 
@@ -416,8 +416,8 @@ bindingsUtils.attractToPoint = function (
     chart: Chart
 ): Highcharts.NavigationBindingsAttractionObject | void {
     var coords = chart.pointer.getCoordinates(e),
-        coordsX = chart.navigationBindings?.getAssignedAxis(coords, 'x'),
-        coordsY = chart.navigationBindings?.getAssignedAxis(coords, 'y'),
+        coordsX = chart.navigationBindings?.utils.getAssignedAxis(coords, 'x'),
+        coordsY = chart.navigationBindings?.utils.getAssignedAxis(coords, 'y'),
         distX = Number.MAX_VALUE,
         closestPoint: (Point|undefined),
         x: number,
@@ -493,8 +493,8 @@ bindingsUtils.updateNthPoint = function (
     ): void {
         var options = annotation.options.typeOptions,
             coords = this.chart.pointer.getCoordinates(e),
-            coordsX = this.getAssignedAxis(coords, 'x'),
-            coordsY = this.getAssignedAxis(coords, 'y');
+            coordsX = this.utils.getAssignedAxis(coords, 'x'),
+            coordsY = this.utils.getAssignedAxis(coords, 'y');
 
         if (coordsX && coordsY) {
             (options.points as any).forEach(function (
@@ -783,8 +783,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -838,8 +838,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -896,8 +896,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -952,8 +952,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1010,8 +1010,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1066,8 +1066,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1121,8 +1121,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1167,8 +1167,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1218,8 +1218,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1277,8 +1277,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1344,8 +1344,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1412,8 +1412,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1488,8 +1488,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1561,8 +1561,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1634,8 +1634,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1706,8 +1706,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1767,8 +1767,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
@@ -1823,8 +1823,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             e: PointerEvent
         ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
-                coordsX = this.getAssignedAxis(coords, 'x'),
-                coordsY = this.getAssignedAxis(coords, 'y'),
+                coordsX = this.utils.getAssignedAxis(coords, 'x'),
+                coordsY = this.utils.getAssignedAxis(coords, 'y'),
                 navigation = this.chart.options.navigation,
                 options;
 
