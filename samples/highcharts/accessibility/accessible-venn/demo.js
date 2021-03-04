@@ -8,6 +8,23 @@ var getEl = function (id) {
 };
 var nextMouseOver = null;
 
+// Overlay code
+
+function removeOverlay() {
+    getEl('overlay').style.visibility = 'hidden';
+    getEl('removeOverlay').style.visibility = 'hidden';
+    getEl('before').setAttribute('tabindex', '-1');
+    getEl('after').setAttribute('tabindex', '-1');
+    getEl('venn-figure').setAttribute('aria-hidden', false);
+}
+
+getEl('before').onfocus = removeOverlay;
+getEl('after').onfocus = removeOverlay;
+getEl('removeOverlay').onclick = removeOverlay;
+
+
+// Venn code
+
 function removeHover() {
     getByClass('dataLabel').forEach(function (e) {
         e.classList.remove('over');
@@ -308,8 +325,3 @@ Highcharts.chart('container', {
         enabled: false
     }
 });
-
-document.getElementById('removeOverlay').onclick = function () {
-    document.getElementById('overlay').style.visibility = 'hidden';
-    document.getElementById('removeOverlay').style.visibility = 'hidden';
-};
