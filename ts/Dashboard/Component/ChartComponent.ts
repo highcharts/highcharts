@@ -5,7 +5,8 @@ import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataJSON from '../../Data/DataJSON.js';
 
-import H from '../../Core/Globals.js';
+import Highcharts from '../../masters/highcharts.src.js';
+
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -34,7 +35,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
             chartOptions: {
                 series: []
             },
-            Highcharts: H,
+            Highcharts,
             chartConstructor: ''
         });
 
@@ -67,7 +68,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
     public chart?: Chart;
     public chartContainer: HTMLElement;
     public options: ChartComponent.ComponentOptions;
-    public charter: typeof H;
+    public charter: typeof Highcharts;
     public chartConstructor: ChartComponent.constructorType;
 
     /* *
@@ -250,7 +251,7 @@ namespace ChartComponent {
         chartClassName?: string;
         chartID?: string;
         style?: CSSObject;
-        Highcharts: typeof H;
+        Highcharts: typeof Highcharts;
         chartConstructor: ChartComponent.constructorType;
     }
 
