@@ -2,8 +2,7 @@
  * Copyright (C) Highsoft AS
  */
 
-/* eslint-disable func-style, no-console, no-use-before-define, quotes */
-/* eslint func-style: 0, no-console: 0, max-len: 0 */
+/* eslint-disable func-style, no-use-before-define, quotes */
 
 /* *
  *
@@ -27,9 +26,11 @@ const HELP_MESSAGE = [
     '',
     '--bucket  S3 bucket to upload to.',
     '--docs    Subfolders of "build/api" to upload. (optional)',
+    '--helpme  This help.',
     '--profile AWS profile to load from AWS credentials file. If no profile',
     '          is provided the default profile or standard AWS environment',
     '          variables for credentials will be used. (optional)',
+    '--speak   Says if task failed or succeeded. (optional)',
     '--sync    Synchronize the S3 bucket; deletes remote files that are not',
     '          found in the local folder. (optional)',
     '--test    Test run without uploading. (optional)'
@@ -87,6 +88,19 @@ const TEST_ROOT = 'build/api-test';
  *  Functions
  *
  * */
+
+/**
+ * Delays promise chain for given time.
+ *
+ * @param {number} milliseconds
+ * Seconds to delay
+ *
+ * @return {Promise}
+ * Promise to keep.
+ */
+function delay(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
 
 /**
  * Converts an array of items into chunks of sub-arrays with 100 items.
@@ -160,7 +174,7 @@ function deleteFileKey(storage, bucket, fileKey, test) {
  * @param {string} [keyPrefix]
  * Limit fetch to items with given key prefix.
  *
- * @return {Record<string, Date>}
+ * @return {Promise<Record<string, Date>>}
  * Fetched file items.
  */
 function fetchFileModificationTimes(storage, bucket, keyPrefix) {
@@ -225,7 +239,7 @@ function synchronizeFolder(
 ) {
     const log = require('./lib/log');
 
-    log.message(`Start synchronization of "${sourceFolder}"...`);
+    log.warn(`Start synchronization of "${sourceFolder}"...`);
 
     return fetchFileModificationTimes(
         targetStorage,
@@ -235,7 +249,8 @@ function synchronizeFolder(
         const fileKeys = Object.keys(fileModificationTimes);
         const versionPattern = /\d+\.\d+/;
 
-        let synchronizePromises = Promise.resolve();
+        let synchronizePromises = delay(1000),
+            didSomeWork = false;
 
         getChunks(fileKeys).forEach(fileKeysChunk => {
             synchronizePromises = synchronizePromises.then(() => Promise.all(
@@ -247,6 +262,7 @@ function synchronizeFolder(
                     }
 
                     if (!fs.existsSync(filePath)) {
+                        didSomeWork = true;
                         return deleteFileKey(
                             targetStorage,
                             bucket,
@@ -259,6 +275,7 @@ function synchronizeFolder(
                         fileModificationTimes[fileKey] <
                         fs.lstatSync(filePath).mtime
                     ) {
+                        didSomeWork = true;
                         return uploadFile(
                             filePath,
                             targetStorage,
@@ -270,6 +287,12 @@ function synchronizeFolder(
                     return Promise.resolve();
                 })
             ));
+        });
+
+        synchronizePromises = synchronizePromises.then(() => {
+            if (!didSomeWork) {
+                log.warn('Found nothing new to delete or update.');
+            }
         });
 
         return synchronizePromises;
@@ -403,7 +426,7 @@ function uploadFolder(
 ) {
     const log = require('./lib/log');
 
-    log.message(`Start upload of "${sourceFolder}"...`);
+    log.warn(`Start upload of "${sourceFolder}"...`);
 
     const filePaths = glob
         .sync(path.posix.join(sourceFolder, '**/*'))
@@ -412,7 +435,7 @@ function uploadFolder(
             fs.lstatSync(sourcePath).isFile()
         ));
 
-    let uploadPromises = Promise.resolve();
+    let uploadPromises = delay(1000);
 
     getChunks(filePaths).forEach(filePathsChunk => {
         uploadPromises = uploadPromises.then(() => Promise.all(
@@ -441,14 +464,16 @@ function jsdocUpload() {
     const {
         bucket,
         docs,
-        help,
+        helpme,
         profile,
+        speak,
         sync,
         test
     } = require('yargs').argv;
 
-    if (help) {
-        log.message(HELP_MESSAGE);
+    if (helpme) {
+        // eslint-disable-next-line no-console
+        console.log(HELP_MESSAGE);
         return Promise.resolve();
     }
 
@@ -463,7 +488,7 @@ function jsdocUpload() {
         throw new Error(`Source directory "${SOURCE_ROOT}" not found.`);
     }
 
-    const sourceFolders = (
+    const sourceItems = (
         typeof docs === 'string' ?
             docs.split(',').map(folder => path.join(SOURCE_ROOT, folder)) :
             lfs.getDirectoryPaths(SOURCE_ROOT)
@@ -492,25 +517,47 @@ function jsdocUpload() {
         ));
     }
 
-    sourceFolders.forEach(sourceFolder => {
+    sourceItems.forEach(sourceItem => {
         promiseChain = promiseChain.then(() => (
-            sync ?
-                synchronizeFolder(
-                    sourceFolder,
-                    targetStorage,
-                    bucket,
-                    test
+            fs.lstatSync(sourceItem).isFile() ?
+                (
+                    log.warn(`Start upload of "${sourceItem}"...`),
+                    uploadFile(
+                        sourceItem,
+                        targetStorage,
+                        bucket,
+                        test
+                    )
                 ) :
-                uploadFolder(
-                    sourceFolder,
-                    targetStorage,
-                    bucket,
-                    test
-                )
+                sync ?
+                    synchronizeFolder(
+                        sourceItem,
+                        targetStorage,
+                        bucket,
+                        test
+                    ) :
+                    uploadFolder(
+                        sourceItem,
+                        targetStorage,
+                        bucket,
+                        test
+                    )
         ));
     });
 
-    promiseChain = promiseChain.catch(log.failure);
+    promiseChain = promiseChain
+        .then(() => {
+            log.success('Done.');
+            if (speak) {
+                log.say(`${sync ? 'Synchronization' : 'Upload'} done.`);
+            }
+        })
+        .catch(error => {
+            log.failure(error);
+            if (speak) {
+                log.say(`${sync ? 'Synchronization' : 'Upload'} failed!`);
+            }
+        });
 
     return promiseChain;
 }

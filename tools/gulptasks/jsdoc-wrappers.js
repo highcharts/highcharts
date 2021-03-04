@@ -58,9 +58,10 @@ function jsdocWrappers() {
     const promises = [];
     const wrappers = (argv.wrappers || 'android,ios').split(',');
 
-    if (argv.help) {
-        log.message([
-            '--help This help message',
+    if (argv.helpme) {
+        // eslint-disable-next-line no-console
+        console.log([
+            '--helpme   This help message',
             '--wrappers [name] Download only named wrappers (comma separated).'
         ].join('\n'));
         return Promise.resolve();
