@@ -1517,8 +1517,8 @@ addEvent(H.Chart, 'render', function (): void {
                     chart.navigationBindings.container[0]
                 ) {
 
-                // Get the HTML element coresponding to the
-                // className taken from StockToolsBindings.
+                    // Get the HTML element coresponding to the
+                    // className taken from StockToolsBindings.
                     const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
 
                     if (buttonNode) {
