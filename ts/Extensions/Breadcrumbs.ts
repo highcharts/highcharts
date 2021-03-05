@@ -156,9 +156,9 @@ class Breadcrumbs {
      */
     public static defaultBreadcrumbsOptions = {
         /**
-         * The default padding for each button and separator.
+         * The default padding for each button and separator in each direction.
          *
-         * @type      {boolean}
+         * @type      {number}
          * @since     next
          */
         buttonPadding: 5,
@@ -175,10 +175,11 @@ class Breadcrumbs {
          * }
          * ```
          *
-         * Return false to stop default button's click action.
+         * Return false to stop default buttons click action.
          *
          * @type      {Highcharts.DrilldownBreadcrumbsClickCallbackFunction}
          * @since     next
+         * @apioption breadcrumbs.events.click
          */
 
         /**
@@ -186,6 +187,9 @@ class Breadcrumbs {
          * to make space for it. By default, the chart will not make space
          * for the buttons.
          * This property won't work when positioned in the middle.
+         *
+         * @sample {highcharts} highcharts/breadcrumbs/floating
+         *          Organization chart drilldown
          *
          * @type      {boolean}
          * @since     next
@@ -200,8 +204,8 @@ class Breadcrumbs {
          * @type      {string}
          * @since     next
          * @default   '{point.name}'
-         * @sample TO DO
-         *         Display custom values in breadcrumb button.
+         * @sample {highcharts} highcharts/breadcrumbs/format
+         *          Display custom values in breadcrumb button.
          */
         format: '{point.name}',
 
@@ -214,6 +218,7 @@ class Breadcrumbs {
          * @return {string}
          *         Formatted text or false
          * @since    next
+         * @apioption breadcrumbs.formatter
          */
 
         /**
@@ -221,6 +226,8 @@ class Breadcrumbs {
          * will be aligned properly for the default chart layout
          * (title,  subtitle, legend, range selector) for the custom chart
          * layout set the position properties.
+         * @sample {highcharts} highcharts/breadcrumbs/position
+         *          Custom button positioning.
          */
         position: {
             /**
@@ -284,6 +291,8 @@ class Breadcrumbs {
          *
          * @type      {boolean}
          * @since     next
+         * @sample {highcharts} highcharts/breadcrumbs/show-full-path
+         *          Show full path.
          */
         showFullPath: false,
 
@@ -339,7 +348,7 @@ class Breadcrumbs {
     }
 
     /**
-     * Align the breadcrumbs group.
+     * Align the breadcrumbs group depending on the alignment.
      *
      * @requires  modules/breadcrumbs
      *
@@ -366,7 +375,6 @@ class Breadcrumbs {
 
             // Change the initial position based on other elements on the chart.
             if (positionOptions.verticalAlign === 'top') {
-
                 calcPosition.y += chart.titleOffset && chart.titleOffset[0] || 0;
 
                 if (rangeSelector && rangeSelector.group) {
@@ -703,12 +711,13 @@ class Breadcrumbs {
 
         this.calculateLevel();
 
-        if (breadcrumbsGroup && this.breadcrumbsList.length) {
-            this.alignGroup();
-        }
         if (this.isDirty) {
             this.createList();
             this.draw();
+        }
+
+        if (breadcrumbsGroup && this.breadcrumbsList.length) {
+            this.alignGroup();
         }
 
         this.isDirty = false;
@@ -809,7 +818,7 @@ class Breadcrumbs {
                 .add(breadcrumbs.breadcrumbsGroup);
 
             if (!chart.styledMode) {
-                button.attr(breadcrumbsOptions.style as any);
+                button.attr(breadcrumbsOptions.style as CSSObject);
             }
             return button;
         }
@@ -941,7 +950,7 @@ class Breadcrumbs {
 /* eslint-disable no-invalid-this */
 
 if (!H.Breadcrumbs) {
-    H.Breadcrumbs = Breadcrumbs as any;
+    H.Breadcrumbs = Breadcrumbs as typeof Breadcrumbs;
 
     addEvent(Chart, 'setOffsets', function (): void {
         this.breadcrumbs && this.breadcrumbs.setMargins();
@@ -958,7 +967,7 @@ if (!H.Breadcrumbs) {
     });
 
     addEvent(Chart, 'redraw', function (): void {
-        this.breadcrumbs?.redraw();
+        this.breadcrumbs && this.breadcrumbs.redraw();
     });
 
     addEvent(Chart, 'beforeDrillUp', function (): void {

@@ -58,7 +58,7 @@ var Breadcrumbs = /** @class */ (function () {
         this.isTreemap = isTreemap;
     };
     /**
-     * Align the breadcrumbs group.
+     * Align the breadcrumbs group depending on the alignment.
      *
      * @requires  modules/breadcrumbs
      *
@@ -365,12 +365,12 @@ var Breadcrumbs = /** @class */ (function () {
     Breadcrumbs.prototype.redraw = function () {
         var breadcrumbsGroup = this.breadcrumbsGroup;
         this.calculateLevel();
-        if (breadcrumbsGroup && this.breadcrumbsList.length) {
-            this.alignGroup();
-        }
         if (this.isDirty) {
             this.createList();
             this.draw();
+        }
+        if (breadcrumbsGroup && this.breadcrumbsList.length) {
+            this.alignGroup();
         }
         this.isDirty = false;
     };
@@ -555,9 +555,9 @@ var Breadcrumbs = /** @class */ (function () {
      */
     Breadcrumbs.defaultBreadcrumbsOptions = {
         /**
-         * The default padding for each button and separator.
+         * The default padding for each button and separator in each direction.
          *
-         * @type      {boolean}
+         * @type      {number}
          * @since     next
          */
         buttonPadding: 5,
@@ -573,16 +573,20 @@ var Breadcrumbs = /** @class */ (function () {
          * }
          * ```
          *
-         * Return false to stop default button's click action.
+         * Return false to stop default buttons click action.
          *
          * @type      {Highcharts.DrilldownBreadcrumbsClickCallbackFunction}
          * @since     next
+         * @apioption breadcrumbs.events.click
          */
         /**
          * When the breadcrumbs is floating, the plot area will not move
          * to make space for it. By default, the chart will not make space
          * for the buttons.
          * This property won't work when positioned in the middle.
+         *
+         * @sample {highcharts} highcharts/breadcrumbs/floating
+         *          Organization chart drilldown
          *
          * @type      {boolean}
          * @since     next
@@ -596,8 +600,8 @@ var Breadcrumbs = /** @class */ (function () {
          * @type      {string}
          * @since     next
          * @default   '{point.name}'
-         * @sample TO DO
-         *         Display custom values in breadcrumb button.
+         * @sample {highcharts} highcharts/breadcrumbs/format
+         *          Display custom values in breadcrumb button.
          */
         format: '{point.name}',
         /**
@@ -609,12 +613,15 @@ var Breadcrumbs = /** @class */ (function () {
          * @return {string}
          *         Formatted text or false
          * @since    next
+         * @apioption breadcrumbs.formatter
          */
         /**
          * Positioning for the button row. The breadcrumbs buttons
          * will be aligned properly for the default chart layout
          * (title,  subtitle, legend, range selector) for the custom chart
          * layout set the position properties.
+         * @sample {highcharts} highcharts/breadcrumbs/position
+         *          Custom button positioning.
          */
         position: {
             /**
@@ -673,6 +680,8 @@ var Breadcrumbs = /** @class */ (function () {
          *
          * @type      {boolean}
          * @since     next
+         * @sample {highcharts} highcharts/breadcrumbs/show-full-path
+         *          Show full path.
          */
         showFullPath: false,
         /**
@@ -720,8 +729,7 @@ if (!H.Breadcrumbs) {
         }
     });
     addEvent(Chart, 'redraw', function () {
-        var _a;
-        (_a = this.breadcrumbs) === null || _a === void 0 ? void 0 : _a.redraw();
+        this.breadcrumbs && this.breadcrumbs.redraw();
     });
     addEvent(Chart, 'beforeDrillUp', function () {
         if (this.breadcrumbs) {
