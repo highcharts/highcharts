@@ -242,7 +242,7 @@ const bindingsUtils = {
      * @private
      * @function Highcharts.NavigationBindingsUtilsObject#getAssignedAxis
      *
-     * @param {Array<Highcharts.PointerAxisCoordinateObject} coords
+     * @param {Array<Highcharts.PointerAxisCoordinateObject>} coords
      *        All the chart's x or y axes with a current pointer's axis value.
      *
      * @return {Highcharts.PointerAxisCoordinateObject}
