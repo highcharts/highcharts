@@ -103,7 +103,8 @@ class InfinityLine extends CrookedLine {
         firstPoint: Highcharts.AnnotationPointType,
         secondPoint: Highcharts.AnnotationPointType
     ): PositionObject {
-        var xAxis: Highcharts.Axis = firstPoint.series.xAxis as any,
+        var chart = firstPoint.series.chart,
+            xAxis: Highcharts.Axis = firstPoint.series.xAxis as any,
             yAxis: Highcharts.Axis = secondPoint.series.yAxis as any,
             firstPointPixels = MockPoint.pointToPixels(firstPoint),
             secondPointPixels = MockPoint.pointToPixels(secondPoint),
@@ -147,8 +148,8 @@ class InfinityLine extends CrookedLine {
             }
         }
 
-        edgePoint.x -= xAxisMin;
-        edgePoint.y -= yAxisMin;
+        edgePoint.x -= chart.plotLeft;
+        edgePoint.y -= chart.plotTop;
 
         if (firstPoint.series.chart.inverted) {
             swap = edgePoint.x;
