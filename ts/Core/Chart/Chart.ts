@@ -1922,6 +1922,7 @@ class Chart {
                 axis.setAxisSize();
                 axis.setAxisTranslation();
             });
+            this.renderer.alignElements();
         }
 
         fireEvent(chart, 'afterSetChartSize', { skipAxes: skipAxes });
@@ -3723,12 +3724,6 @@ class Chart {
     }
 
 }
-
-addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
-    if (!e.skipAxes) {
-        this.renderer.align();
-    }
-});
 
 /* *
  *

@@ -139,7 +139,7 @@ declare global {
             public unSubPixelFix?: Function;
             public url: string;
             public width: number;
-            public align(): void;
+            public alignElements(): void;
             public arc(attribs: SVGAttributes): SVGElement;
             public arc(
                 x?: number,
@@ -1578,7 +1578,7 @@ class SVGRenderer {
             duration: pick(animate, true) ? void 0 : 0
         });
 
-        renderer.align();
+        renderer.alignElements();
     }
 
     /**
@@ -2476,14 +2476,13 @@ class SVGRenderer {
      * Re-align all aligned elements.
      *
      * @private
-     * @function Highcharts.SVGRenderer#align
+     * @function Highcharts.SVGRenderer#alignElements
      * @return {void}
      */
-    public align(): void {
-        let i = this.alignedObjects.length;
-        while (i--) {
-            this.alignedObjects[i].align();
-        }
+    public alignElements(): void {
+        this.alignedObjects.forEach((el): void => {
+            el.align();
+        });
     }
 }
 
