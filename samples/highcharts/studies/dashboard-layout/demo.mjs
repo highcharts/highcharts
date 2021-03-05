@@ -69,8 +69,8 @@ const dashboard = new Dashboard('container', {
         },*/
         events: {
             mount: function () {
-                // call action		
-                console.log('dashboard-col-0 mount event');	
+                // call action
+                console.log('dashboard-col-0 mount event');
             },
             unmount: function () {
                 console.log('dashboard-col-0 unmount event');
@@ -107,7 +107,7 @@ const dashboard = new Dashboard('container', {
         },
         events: {
             mount: function () {
-                // call action	
+                // call action
                 console.log('dashboard-col-2 mount event');
             }
         }
@@ -130,7 +130,7 @@ const dashboard = new Dashboard('container', {
         },
         events: {
             mount: function () {
-                // call action		
+                // call action
                 console.log('dashboard-col-3 mount event');
             }
         }
@@ -176,7 +176,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         },*/
         events: {
             mount: function () {
-                // call action		
+                // call action
                 console.log('chart-1 mount event');
             }
         }

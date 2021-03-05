@@ -24,8 +24,14 @@ class Dashboard {
     protected static readonly defaultOptions: Dashboard.Options = {
         gui: {
             enabled: true,
-            layoutOptions: {},
+            layoutOptions: {
+                rowClassName: void 0,
+                columnClassName: void 0
+            },
             layouts: []
+        },
+        componentOptions: {
+            isResizable: true
         },
         components: []
     };
@@ -42,7 +48,7 @@ class Dashboard {
         this.options = merge(Dashboard.defaultOptions, options);
         this.layouts = [];
         this.guiEnabled = this.options.gui.enabled;
-        this.components = [];
+        this.mountedComponents = [];
 
         /*
         * TODO
@@ -68,7 +74,7 @@ class Dashboard {
     * */
     public options: Dashboard.Options;
     public layouts: Array<Layout>;
-    public components: Array<Bindings.ComponentOptions>;
+    public mountedComponents: Array<Bindings.MountedComponentsOptions>;
     public container: globalThis.HTMLElement = void 0 as any;
     public guiEnabled: (boolean|undefined);
     public bindings: Bindings;
@@ -129,7 +135,7 @@ class Dashboard {
                 components[i]
             );
 
-            dashboard.components.push({
+            dashboard.mountedComponents.push({
                 options: components[i],
                 component: component
             });
@@ -140,7 +146,8 @@ class Dashboard {
 namespace Dashboard {
     export interface Options {
         gui: GUIOptions;
-        components: Array<Bindings.ComponentType>;
+        components: Array<Bindings.ComponentOptions>;
+        componentOptions: Partial<Bindings.ComponentOptions>;
     }
 
     export interface GUIOptions {

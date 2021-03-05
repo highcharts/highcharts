@@ -37,6 +37,7 @@ class Column extends GUIElement {
 
         super();
 
+        this.id = options.id;
         this.options = options;
 
         this.row = row;
@@ -56,7 +57,6 @@ class Column extends GUIElement {
                 options.style
             )
         });
-
     }
 
     /* *
@@ -64,6 +64,11 @@ class Column extends GUIElement {
     *  Properties
     *
     * */
+
+    /**
+     * Column id.
+     */
+    public id: string;
 
     /**
      * Reference to the row instance.
@@ -78,8 +83,8 @@ class Column extends GUIElement {
 
 namespace Column {
     export interface Options {
+        id: string;
         width?: number;
-        id?: string;
         style?: CSSObject;
     }
 }

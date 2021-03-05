@@ -34,7 +34,7 @@ class Bindings {
     *
     * */
     public addComponent(
-        options: Bindings.ComponentType
+        options: Bindings.ComponentOptions
     ): HTMLComponent|ChartComponent|GroupComponent|undefined { //
         const compontentContainer = document.getElementById(options.column);
         const bindings = this;
@@ -89,7 +89,7 @@ class Bindings {
 
     public chartComponent(
         compontentContainer: HTMLDOMElement,
-        options: Bindings.ComponentType
+        options: Bindings.ComponentOptions
     ): ChartComponent {
         return new ChartComponent({
             parentElement: compontentContainer as HTMLDOMElement,
@@ -100,7 +100,7 @@ class Bindings {
 
     public htmlComponent(
         compontentContainer: HTMLDOMElement,
-        options: Bindings.ComponentType
+        options: Bindings.ComponentOptions
     ): HTMLComponent {
         return new HTMLComponent({
             parentElement: compontentContainer as HTMLDOMElement,
@@ -142,15 +142,16 @@ namespace Bindings {
 
     }
 
-    export interface ComponentType {
+    export interface ComponentOptions {
         column: string;
         type: string;
         chartOptions?: any;
+        isResizable?: boolean;
         elements?: any;
         dimensions?: { width: number; height: number };
         events?: any;
     }
-    export interface ComponentOptions {
+    export interface MountedComponentsOptions {
         options: any;
         component: ChartComponent|HTMLComponent|GroupComponent|undefined;
     }

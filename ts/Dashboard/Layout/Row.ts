@@ -101,7 +101,7 @@ class Row extends GUIElement {
         for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
             columnElement = columnsElements[i];
             row.addColumn(
-                row.layout.dashboard.guiEnabled ? columnElement : {},
+                row.layout.dashboard.guiEnabled ? columnElement : { id: '' },
                 columnElement instanceof HTMLElement ? columnElement : void 0
             );
         }
