@@ -17,6 +17,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
@@ -157,7 +158,7 @@ declare global {
             symbolX?: number;
             symbolY?: number;
             text?: string;
-            theme?: SVGAttributes;
+            theme?: ButtonThemeObject;
             titleKey?: string;
             verticalAlign?: VerticalAlignValue;
             width?: number;
@@ -2119,12 +2120,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.exportSVGElements = [];
         }
 
-        if (btnOptions.enabled === false) {
+        if (btnOptions.enabled === false || !btnOptions.theme) {
             return;
         }
 
 
-        var attr: SVGAttributes = btnOptions.theme as any,
+        var attr = btnOptions.theme,
             states = attr.states,
             hover = states && states.hover,
             select = states && states.select,
@@ -2487,8 +2488,11 @@ Chart.prototype.inlineStyles = function (): void {
                 // to inline it. Top-level props should be diffed against parent
                 // (#7687).
                 if (
-                    (parentStyles[prop] !== val || node.nodeName === 'svg') &&
-                    defaultStyles[node.nodeName][prop] !== val
+                    (
+                        (parentStyles as any)[prop] !== val ||
+                        node.nodeName === 'svg'
+                    ) &&
+                    (defaultStyles[node.nodeName] as any)[prop] !== val
                 ) {
                     // Attributes
                     if (
@@ -2546,10 +2550,10 @@ Chart.prototype.inlineStyles = function (): void {
             if (H.isFirefox || H.isMS) {
                 // Some browsers put lots of styles on the prototype
                 for (var p in styles) { // eslint-disable-line guard-for-in
-                    filterStyles(styles[p] as any, p);
+                    filterStyles((styles as any)[p], p);
                 }
             } else {
-                objectEach(styles, filterStyles);
+                objectEach(styles, filterStyles as any);
             }
 
             // Apply styles

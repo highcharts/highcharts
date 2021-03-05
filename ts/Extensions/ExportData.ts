@@ -177,6 +177,7 @@ declare global {
 
 
 import DownloadURL from '../Extensions/DownloadURL.js';
+import HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 const { downloadURL } = DownloadURL;
 
 
@@ -954,7 +955,8 @@ Chart.prototype.getTable = function (
 
         if (attributes) {
             Object.keys(attributes).forEach((key): void => {
-                html += ` ${key}="${attributes[key]}"`;
+                const value = (attributes as any)[key];
+                html += ` ${key}="${value}"`;
             });
         }
         html += '>';
@@ -1023,7 +1025,7 @@ Chart.prototype.getTableAST = function (
         getCellHTMLFromValue = function (
             tagName: string,
             classes: (string|null),
-            attributes: SVGAttributes,
+            attributes: HTMLAttributes,
             value: (number|string)
         ): Highcharts.ASTNode {
             var textContent = pick(value, ''),

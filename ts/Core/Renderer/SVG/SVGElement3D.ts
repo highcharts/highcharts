@@ -199,7 +199,7 @@ namespace SVGElement3D {
                 var key = args;
 
                 args = {} as SVGAttributes;
-                args[key] = val;
+                (args as any)[key] = val;
             }
 
             if ((args as any).shapeArgs || defined((args as any).x)) {

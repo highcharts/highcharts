@@ -6603,7 +6603,7 @@ class Axis {
             // #7028
             const cssWidth = labelOptions?.style?.width;
             if (cssWidth !== void 0) {
-                return parseInt(cssWidth, 10);
+                return parseInt(String(cssWidth), 10);
             }
 
             if (marginLeft) {
