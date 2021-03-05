@@ -3384,7 +3384,7 @@ class Chart {
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
                     null :
-                    this.scrollablePlotBox || 'plotBox'
+                    'scrollablePlotBox'
             );
 
         /**
