@@ -240,7 +240,7 @@ var OrdinalAxis;
                         }
                     };
                     fakeAxis.series.push(fakeSeries);
-                    series.processData.apply(fakeSeries, [true]);
+                    series.processData.apply(fakeSeries);
                 });
                 // Run beforeSetTickPositions to compute the ordinalPositions
                 axis.ordinal.beforeSetTickPositions.apply({ axis: fakeAxis });

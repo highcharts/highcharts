@@ -775,13 +775,11 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
         indexArray = index[Object.keys(index)[0]],
         indexLength = indexArray.length,
         splicedIndex = // get data for current extremes
-            indexArray.splice(indexLength - positionsLength, positionsLength),
-        areEqual = positions.every(function (element, index) {
-            return element === splicedIndex[index];
-        });
+            indexArray.splice(indexLength - positionsLength, positionsLength);
 
-    assert.ok(
-        areEqual,
+    assert.deepEqual(
+        positions,
+        splicedIndex,
         `When the ordinal axis and data grouping enabled,
         getExtendedPositions should return fake series where
         the data is grouped the same as in the original series. 
