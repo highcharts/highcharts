@@ -14,6 +14,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
@@ -111,7 +112,7 @@ declare global {
             buttonPosition: RangeSelectorPositionOptions;
             buttons?: Array<RangeSelectorButtonsOptions>;
             buttonSpacing: number;
-            buttonTheme: SVGAttributes;
+            buttonTheme: ButtonThemeObject;
             dropdown: 'always'|'never'|'responsive';
             enabled?: boolean;
             floating: boolean;
@@ -1833,9 +1834,12 @@ class RangeSelector {
                     this.maxLabel,
                     this.maxDateBox
                 ].forEach((label): void => {
-                    if (label && label.width) {
-                        label.attr({ x });
-                        x += label.width + options.inputSpacing;
+                    if (label) {
+                        const { width } = label.getBBox();
+                        if (width) {
+                            label.attr({ x });
+                            x += width + options.inputSpacing;
+                        }
                     }
                 });
             }
@@ -2412,7 +2416,7 @@ class RangeSelector {
             width: 'auto',
             paddingLeft: 8,
             paddingRight: 8
-        });
+        } as unknown as SVGAttributes);
 
         if (zoomText) {
             zoomText.hide();

@@ -677,10 +677,6 @@ class ColorAxis extends Axis implements AxisLike {
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
 
-        // Keep the options structure updated for export. Unlike xAxis and
-        // yAxis, the colorAxis is not an array. (#3207)
-        chart.options[axis.coll] = options;
-
         super.init(chart, options);
 
         // Base init() pushes it to the xAxis array, now pop it again

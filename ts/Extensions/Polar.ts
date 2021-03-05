@@ -998,7 +998,7 @@ if (seriesTypes.column) {
                     labelPos =
                         (this as Highcharts.PolarSeries).yAxis.postTranslate(
                         // angle
-                            (shapeArgs.start + shapeArgs.end) / 2 -
+                            ((shapeArgs.start || 0) + (shapeArgs.end || 0)) / 2 -
                             (this as Highcharts.PolarSeries)
                                 .xAxis.startAngleRad,
                             // radius

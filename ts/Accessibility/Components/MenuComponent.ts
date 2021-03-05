@@ -333,7 +333,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                         'accessibility.exporting.menuButtonLabel',
                         { chart: chart }
                     ),
-                    'aria-expanded': 'false'
+                    'aria-expanded': false
                 }
             );
         }

@@ -68,7 +68,7 @@ export interface SupertrendGroupedPointsObject {
 }
 
 export interface SupertrendLineObject {
-    [index: string]: (Record<string, SVGAttributes>|undefined);
+    [index: string]: (Record<string, any>|undefined);
 }
 
 export default SupertrendOptions;

@@ -1045,7 +1045,7 @@ Series.prototype.justifyDataLabel = function (
     let { x = 0, y = 0 } = options;
 
     // Off left
-    off = alignAttr.x + padding;
+    off = (alignAttr.x || 0) + padding;
     if (off < 0) {
         if (align === 'right' && x >= 0) {
             options.align = 'left';
@@ -1057,7 +1057,7 @@ Series.prototype.justifyDataLabel = function (
     }
 
     // Off right
-    off = alignAttr.x + bBox.width - padding;
+    off = (alignAttr.x || 0) + bBox.width - padding;
     if (off > chart.plotWidth) {
         if (align === 'left' && x <= 0) {
             options.align = 'right';
@@ -1081,7 +1081,7 @@ Series.prototype.justifyDataLabel = function (
     }
 
     // Off bottom
-    off = alignAttr.y + bBox.height - padding;
+    off = (alignAttr.y || 0) + bBox.height - padding;
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top' && y <= 0) {
             options.verticalAlign = 'bottom';
@@ -1234,7 +1234,7 @@ if (seriesTypes.pie) {
                 point.dataLabel
                     .attr({
                         width: 'auto'
-                    }).css({
+                    } as unknown as SVGAttributes).css({
                         width: 'auto',
                         textOverflow: 'clip'
                     });
