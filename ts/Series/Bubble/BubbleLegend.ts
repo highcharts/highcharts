@@ -143,6 +143,7 @@ declare global {
             public maxLabel: BBoxObject;
             public movementX: number;
             public ranges: Array<BubbleLegendRangesOptions>;
+            public selected: undefined;
             public setState: Function;
             public symbols: Record<string, Array<SVGElement>>;
             public options: BubbleLegendOptions;
@@ -585,11 +586,11 @@ class BubbleLegend {
             options = this.options,
             series = this.chart.series[options.seriesIndex as any],
             baseline = this.legend.baseline,
-            bubbleStyle: SVGAttributes = {
+            bubbleStyle = {
                 'z-index': options.zIndex,
                 'stroke-width': options.borderWidth
             },
-            connectorStyle: SVGAttributes = {
+            connectorStyle = {
                 'z-index': options.zIndex,
                 'stroke-width': options.connectorWidth
             },
@@ -603,12 +604,12 @@ class BubbleLegend {
             i: number
         ): void {
             if (!styledMode) {
-                bubbleStyle.stroke = pick(
+                (bubbleStyle as any).stroke = pick(
                     range.borderColor,
                     options.borderColor,
                     series.color
                 );
-                bubbleStyle.fill = pick(
+                (bubbleStyle as any).fill = pick(
                     range.color,
                     options.color,
                     fillOpacity !== 1 ?
@@ -616,7 +617,7 @@ class BubbleLegend {
                             .get('rgba') :
                         series.color
                 );
-                connectorStyle.stroke = pick(
+                (connectorStyle as any).stroke = pick(
                     range.connectorColor,
                     options.connectorColor,
                     series.color
@@ -665,7 +666,7 @@ class BubbleLegend {
                 key !== 'fontSize' &&
                 key !== 'z-index'
             ) {
-                additionalLabelsStyle[key] = value;
+                (additionalLabelsStyle as any)[key] = value;
             }
         });
 
@@ -813,7 +814,9 @@ class BubbleLegend {
                     absoluteRadius
                 )
                 .attr(
-                    styledMode ? {} : range.bubbleStyle
+                    // @todo: Resolve bad typing of bubbleStyle. CSSObject can't
+                    // be passed to .attr.
+                    (styledMode ? {} : range.bubbleStyle) as SVGAttributes
                 )
                 .addClass(
                     (
@@ -840,7 +843,9 @@ class BubbleLegend {
                     options.connectorWidth as any
                 ))
                 .attr(
-                    styledMode ? {} : range.connectorStyle
+                    // @todo: Resolve bad typing of connectorStyle. CSSObject
+                    // can't be passed to .attr.
+                    (styledMode ? {} : range.connectorStyle) as SVGAttributes
                 )
                 .addClass(
                     (
@@ -863,7 +868,9 @@ class BubbleLegend {
                 labelY + labelMovement
             )
             .attr(
-                styledMode ? {} : range.labelStyle
+                // @todo: Resolve bad typing of labelStyle. CSSObject can't
+                // be passed to .attr.
+                (styledMode ? {} : range.labelStyle) as SVGAttributes
             )
             .addClass(
                 'highcharts-bubble-legend-labels ' +

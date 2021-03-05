@@ -18,6 +18,7 @@ import type ColorType from '../Core/Color/ColorType';
 import type {
     CursorValue
 } from '../Core/Renderer/CSSObject';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
@@ -67,7 +68,7 @@ declare global {
             cursor?: CursorValue;
             enabled?: boolean;
             lineColor?: ColorType;
-            lineDashStyle?: string;
+            lineDashStyle?: DashStyleValue;
             lineWidth?: number;
             x?: number;
             y?: number;

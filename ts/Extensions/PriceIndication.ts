@@ -13,6 +13,7 @@
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
+import ColorType from '../Core/Color/ColorType';
 const {
     addEvent,
     isArray,
@@ -25,7 +26,6 @@ declare module '../Core/Series/SeriesLike' {
         lastVisiblePrice?: SVGElement;
         crossLabel?: SVGElement;
     }
-
 }
 
 declare module '../Core/Series/SeriesOptions' {
@@ -46,6 +46,7 @@ declare global {
         }
         interface LastVisiblePriceLabelOptions {
             enabled: true;
+            color?: ColorType;
         }
     }
 }
@@ -67,7 +68,7 @@ declare global {
  *
  * @type      {boolean}
  * @product   highstock
- * @default   true
+ * @default   false
  * @apioption plotOptions.series.lastVisiblePrice.enabled
  */
 
@@ -81,7 +82,7 @@ declare global {
  *
  * @type      {boolean}
  * @product   highstock
- * @default   true
+ * @default   false
  * @apioption plotOptions.series.lastVisiblePrice.label.enabled
  *
  */
@@ -103,16 +104,16 @@ declare global {
  *
  * @type      {boolean}
  * @product   highstock
- * @default   true
+ * @default   false
  * @apioption plotOptions.series.lastPrice.enabled
  */
 
 /**
  * The color of the line of last price.
+ * By default, the line has the same color as the series.
  *
  * @type      {string}
  * @product   highstock
- * @default   red
  * @apioption plotOptions.series.lastPrice.color
  *
  */
@@ -126,9 +127,10 @@ addEvent(Series, 'afterRender', function (): void {
         lastVisiblePrice = seriesOptions.lastVisiblePrice,
         lastPrice = seriesOptions.lastPrice;
 
-    if ((lastVisiblePrice || lastPrice) &&
-            seriesOptions.id !== 'highcharts-navigator-series') {
-
+    if (
+        (lastVisiblePrice || lastPrice) &&
+         seriesOptions.id !== 'highcharts-navigator-series'
+    ) {
         var xAxis = series.xAxis,
             yAxis = series.yAxis,
             origOptions = yAxis.crosshair,
@@ -144,8 +146,16 @@ addEvent(Series, 'afterRender', function (): void {
             crop;
 
         if (lastPrice && lastPrice.enabled) {
-
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
+
+            if (!series.chart.styledMode &&
+                    yAxis.crosshair &&
+                    yAxis.options.crosshair &&
+                    seriesOptions.lastPrice
+            ) {
+                // Set the default color from the series, #14888.
+                yAxis.crosshair.color = yAxis.options.crosshair.color = seriesOptions.lastPrice.color || series.color;
+            }
 
             yAxis.cross = series.lastPrice;
             yValue = isArray(y) ? y[3] : y;
@@ -164,15 +174,11 @@ addEvent(Series, 'afterRender', function (): void {
             }
         }
 
-        if (lastVisiblePrice &&
-            lastVisiblePrice.enabled &&
-            pLength > 0
-        ) {
-
+        if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
             crop = (points[pLength - 1].x === x) || pointRange === null ? 1 : 2;
 
             yAxis.crosshair = yAxis.options.crosshair = merge({
-                color: 'transparent'
+                color: 'transparent' // line invisible by default
             }, seriesOptions.lastVisiblePrice);
 
             yAxis.cross = series.lastVisiblePrice;

@@ -18,6 +18,7 @@ import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import palette from '../../Core/Color/Palette.js';
+import ColorType from '../../Core/Color/ColorType';
 
 declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
@@ -60,7 +61,7 @@ declare global {
             enabled: boolean;
             hideBrowserFocusOutline: boolean;
             margin: number;
-            style: CSSObject;
+            style: FocusBorderStyleObject;
         }
         interface AccessibilityKeyboardNavigationOptions {
             enabled: boolean;
@@ -120,6 +121,11 @@ declare global {
         }
         interface ExportingOptions {
             accessibility?: ExportingAccessibilityOptions;
+        }
+        interface FocusBorderStyleObject {
+            borderRadius?: number;
+            color?: ColorType;
+            lineWidth?: number;
         }
         interface LegendAccessibilityKeyboardNavigationOptions {
             enabled: boolean;

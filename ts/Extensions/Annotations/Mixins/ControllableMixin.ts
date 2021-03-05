@@ -231,7 +231,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
             styledMode = this.chart.styledMode;
 
         for (key in options) { // eslint-disable-line guard-for-in
-            mappedKey = map[key];
+            mappedKey = (map as any)[key];
 
             if (
                 mappedKey &&
@@ -241,7 +241,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
                         .indexOf(mappedKey) === -1
                 )
             ) {
-                attrs[mappedKey] = (options as any)[key];
+                (attrs as any)[mappedKey] = (options as any)[key];
             }
         }
 

@@ -5178,7 +5178,7 @@ class Series {
                     // Set starting position for point sliding animation.
                     if (series.enabledDataSorting) {
                         point.startXPos = xAxis.reversed ?
-                            -markerAttribs.width :
+                            -(markerAttribs.width || 0) :
                             xAxis.width;
                     }
 
@@ -5191,7 +5191,7 @@ class Series {
 
                     } else if (
                         isInside &&
-                        (markerAttribs.width > 0 || point.hasImage)
+                        ((markerAttribs.width || 0) > 0 || point.hasImage)
                     ) {
 
                         /**
@@ -5752,7 +5752,7 @@ class Series {
     public plotGroup(
         prop: string,
         name: string,
-        visibility: string,
+        visibility: 'hidden'|'inherit'|'visible',
         zIndex?: number,
         parent?: SVGElement
     ): SVGElement {
@@ -5881,7 +5881,8 @@ class Series {
                 chart.renderer.isSVG &&
                 animOptions.duration
             ),
-            visibility = series.visible ? 'inherit' : 'hidden', // #2597
+            visibility: 'hidden'|'inherit'|'visible' = series.visible ?
+                'inherit' : 'hidden', // #2597
             zIndex = options.zIndex,
             hasRendered = series.hasRendered,
             chartSeriesGroup = chart.seriesGroup,
