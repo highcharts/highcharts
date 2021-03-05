@@ -24,6 +24,6 @@ import '../../Series/Heatmap/HeatmapSeries.js';
 import '../../Extensions/GeoJSON.js';
 import MapChart from '../../Core/Chart/MapChart.js';
 
-(Highcharts as any).MapChart = (Highcharts as any).Map = MapChart;
-(Highcharts as any).mapChart = MapChart.mapChart;
+(Highcharts as any).MapChart = MapChart;
+(Highcharts as any).mapChart = (Highcharts as any).Map = MapChart.mapChart;
 (Highcharts as any).maps = MapChart.maps;

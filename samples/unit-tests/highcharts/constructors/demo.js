@@ -213,7 +213,7 @@ QUnit.test('Highmaps', function (assert) {
     );
     assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
-    chart = new Highcharts.MapChart({
+    chart = Highcharts.Map({
         chart: {
             renderTo: document.getElementById('container')
         },
