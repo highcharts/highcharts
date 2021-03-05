@@ -62,16 +62,16 @@ QUnit.test('Stocktools GUI', function (assert) {
     */
 });
 
-QUnit.test('Disabling and Enabling stock Tools buttons, when series are invisible, #14192', function (assert) {
+QUnit.test('Disabling and enabling stock tools buttons, when series are invisible, #14192', function (assert) {
     var wasInitCalled = false;
 
     // Creating test controller and adding styles to button.
-    var toolsContainer = document.createElement('div');
+    const toolsContainer = document.createElement('div'),
+        button = document.createElement('button');
+
     toolsContainer.className += 'tools-container';
-    var button = document.createElement('button');
     button.className += 'dummy-button';
     button.innerHTML = 'dummy button';
-
     toolsContainer.appendChild(button);
 
     document.getElementById('container').parentNode.insertBefore(toolsContainer, document.getElementById('container'));
@@ -100,51 +100,43 @@ QUnit.test('Disabling and Enabling stock Tools buttons, when series are invisibl
     toolsContainer.style['z-index'] = 99999;
 
     controller.click(10, 10);
-    assert.equal(wasInitCalled, false, 'Init function should not be executed, when there is no series.');
+    assert.equal(wasInitCalled,
+        false,
+        'Init function should not be executed, when there is no series.');
 
     wasInitCalled = false;
     chart.addSeries({
-        id: 'aapl',
-        data: [
-            [0, 1, 2, 3, 4],
-            [1, 1, 2, 3, 4],
-            [2, 1, 2, 3, 4],
-            [3, 1, 2, 3, 4],
-            [4, 1, 2, 3, 4],
-            [5, 1, 2, 3, 4],
-            [5, 1, 2, 3, 4]
-        ]
+        data: [1, 2, 3, 2, 3, 2]
     });
 
     controller.click(10, 10);
-    assert.equal(wasInitCalled, true, 'Init function should be executed, after series was added.');
+    assert.equal(wasInitCalled,
+        true,
+        'Init function should be executed, after series was added.');
 
     chart.series[0].setVisible(false);
     wasInitCalled = false;
     controller.click(10, 10);
-    assert.equal(wasInitCalled, false, 'Init function should not be called, when series are invisible.');
+    assert.equal(wasInitCalled,
+        false,
+        'Init function should not be called, when series are invisible.');
 
     chart.series[0].setVisible(true);
     wasInitCalled = false;
     controller.click(10, 10);
-    assert.equal(wasInitCalled, true, 'Init function should not be called, when series are visible.');
+    assert.equal(wasInitCalled,
+        true,
+        'Init function should not be called, when series are visible.');
 
     chart.series[0].remove();
     wasInitCalled = false;
     controller.click(10, 10);
-    assert.equal(wasInitCalled, false, 'Init function should not be called, after deleting the series.');
+    assert.equal(wasInitCalled,
+        false,
+        'Init function should not be called, after deleting the series.');
 
     chart.addSeries({
-        id: 'aapl',
-        data: [
-            [0, 1, 2, 3, 4],
-            [1, 1, 2, 3, 4],
-            [2, 1, 2, 3, 4],
-            [3, 1, 2, 3, 4],
-            [4, 1, 2, 3, 4],
-            [5, 1, 2, 3, 4],
-            [5, 1, 2, 3, 4]
-        ]
+        data: [1, 2, 3, 2, 3, 2]
     });
 
     chart.update({
