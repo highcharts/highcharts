@@ -799,7 +799,6 @@ var Toolbar = /** @class */ (function () {
         this.arrowDown = void 0;
         this.arrowUp = void 0;
         this.arrowWrapper = void 0;
-        this.priceIndicatorEnabled = false;
         this.listWrapper = void 0;
         this.showhideBtn = void 0;
         this.submenu = void 0;

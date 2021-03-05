@@ -1051,6 +1051,7 @@ setOptions({
         }
     }
 });
+// Check if the correct price indicator button is displayed, #15029.
 addEvent(H.Chart, 'render', function () {
     var chart = this, stockTools = chart.stockTools, button = chart.stockTools &&
         chart.stockTools.toolbar &&

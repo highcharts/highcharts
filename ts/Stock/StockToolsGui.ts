@@ -108,7 +108,6 @@ declare global {
             public eventsToUnbind: Array<Function>;
             public guiEnabled: (boolean|undefined);
             public iconsURL: string;
-            public priceIndicatorEnabled: boolean;
             public lang: (Record<string, string>|undefined);
             public listWrapper: HTMLDOMElement;
             public options: StockToolsGuiOptions;
@@ -1013,7 +1012,6 @@ class Toolbar {
     public eventsToUnbind: Array<Function>;
     public guiEnabled: (boolean|undefined);
     public iconsURL: string;
-    public priceIndicatorEnabled: boolean = false;
     public lang: (Record<string, string>|undefined);
     public listWrapper: HTMLDOMElement = void 0 as any;
     public options: Highcharts.StockToolsGuiOptions;

@@ -2048,37 +2048,16 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         ): void {
             var chart = this.chart,
                 series = chart.series,
-                gui: Highcharts.Toolbar = chart.stockTools as any;
+                gui = chart.stockTools,
+                priceIndicatorEnabled = bindingsUtils.isPriceIndicatorEnabled(chart.series);
 
-            if (gui && gui.guiEnabled && chart.stockTools) {
-                // Reset all and disable both indicators
-                if (bindingsUtils.isPriceIndicatorEnabled(chart.series)) {
-                    series.forEach(function (series): void {
-                        series.update({
-                            lastPrice: {
-                                enabled: false
-                            },
-                            lastVisiblePrice: {
-                                enabled: false
-                            }
-                        }, false);
-                    });
-                } else {
-                    series.forEach(function (series): void {
-                        series.update({
-                            lastPrice: {
-                                enabled: true
-                            },
-                            lastVisiblePrice: {
-                                enabled: true,
-                                label: {
-                                    enabled: true
-                                }
-                            }
-                        }, false);
-                    });
-                }
-
+            if (gui && gui.guiEnabled) {
+                series.forEach(function (series): void {
+                    series.update({
+                        lastPrice: { enabled: !priceIndicatorEnabled },
+                        lastVisiblePrice: { enabled: !priceIndicatorEnabled, label: { enabled: true } }
+                    }, false);
+                });
                 chart.redraw();
             }
 

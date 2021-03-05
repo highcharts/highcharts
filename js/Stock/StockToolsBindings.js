@@ -1594,36 +1594,14 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
-            var chart = this.chart, series = chart.series, gui = chart.stockTools;
-            if (gui && gui.guiEnabled && chart.stockTools) {
-                // Reset all and disable both indicators
-                if (bindingsUtils.isPriceIndicatorEnabled(chart.series)) {
-                    series.forEach(function (series) {
-                        series.update({
-                            lastPrice: {
-                                enabled: false
-                            },
-                            lastVisiblePrice: {
-                                enabled: false
-                            }
-                        }, false);
-                    });
-                }
-                else {
-                    series.forEach(function (series) {
-                        series.update({
-                            lastPrice: {
-                                enabled: true
-                            },
-                            lastVisiblePrice: {
-                                enabled: true,
-                                label: {
-                                    enabled: true
-                                }
-                            }
-                        }, false);
-                    });
-                }
+            var chart = this.chart, series = chart.series, gui = chart.stockTools, priceIndicatorEnabled = bindingsUtils.isPriceIndicatorEnabled(chart.series);
+            if (gui && gui.guiEnabled) {
+                series.forEach(function (series) {
+                    series.update({
+                        lastPrice: { enabled: !priceIndicatorEnabled },
+                        lastVisiblePrice: { enabled: !priceIndicatorEnabled, label: { enabled: true } }
+                    }, false);
+                });
                 chart.redraw();
             }
             fireEvent(this, 'deselectButton', { button: button });
