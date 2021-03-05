@@ -128,17 +128,24 @@ class Dashboard {
         const dashboard = this,
             components = dashboard.options.components;
 
-        let component;
+        let component,
+            column;
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            component = this.bindings.addComponent(
-                components[i]
-            );
+            component = this.bindings.addComponent(components[i]);
+            column = dashboard.bindings.getColumn(components[i].column);
 
-            dashboard.mountedComponents.push({
-                options: components[i],
-                component: component
-            });
+            if (column && component) {
+                column.mountedComponent = component; // @ToDo column.addComponent() perhaps? - checks if column is free
+
+                dashboard.mountedComponents.push({
+                    options: components[i],
+                    component: component,
+                    column: column
+                });
+            } else {
+                // Error
+            }
         }
     }
 }

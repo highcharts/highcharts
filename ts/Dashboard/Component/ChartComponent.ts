@@ -260,7 +260,7 @@ namespace ChartComponent {
         chartOptions?: string;
         chartClassName?: string;
         chartID?: string;
-        style?: CSSObject;
+        // style?: CSSObject;
         Highcharts: string; // reference?
         chartConstructor: ChartComponent.constructorType;
     }

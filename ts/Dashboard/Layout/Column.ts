@@ -2,6 +2,7 @@ import type {
     CSSObject
 } from '../../Core/Renderer/CSSObject';
 import type Row from './Row.js';
+import type Component from './../Component/Component.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -33,9 +34,10 @@ class Column extends GUIElement {
         options: Column.Options,
         columnElement?: HTMLElement
     ) {
-        const columnClassName = row.layout.options.columnClassName;
-
         super();
+
+        const self = this,
+            columnClassName = row.layout.options.columnClassName;
 
         this.id = options.id;
         this.options = options;
@@ -56,6 +58,10 @@ class Column extends GUIElement {
                 row.options.style,
                 options.style
             )
+        });
+
+        addEvent(this.container, 'bindedColumn', function (e): void {
+            (e as any).column = self; // @ToDo remove as any
         });
     }
 
@@ -79,6 +85,11 @@ class Column extends GUIElement {
      * The column options.
      */
     public options: Column.Options;
+
+    /**
+     * Component mounted in the column.
+     */
+    public mountedComponent?: Component;
 }
 
 namespace Column {

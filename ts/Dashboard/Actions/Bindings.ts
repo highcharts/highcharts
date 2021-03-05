@@ -8,6 +8,7 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 
 import U from '../../Core/Utilities.js';
+import Column from '../Layout/Column.js';
 const {
     addEvent,
     fireEvent,
@@ -79,12 +80,25 @@ class Bindings {
                     fn
                 );
             });
-
         }
 
         fireEvent(component, 'mount');
 
         return component;
+    }
+
+    public getColumn(
+        id: string
+    ): Column|undefined {
+        const container = document.getElementById(id);
+
+        let column;
+
+        fireEvent(container, 'bindedColumn', {}, function (e): void {
+            column = (e as any).column; // @ToDo remove as any
+        });
+
+        return column;
     }
 
     public chartComponent(
@@ -154,6 +168,7 @@ namespace Bindings {
     export interface MountedComponentsOptions {
         options: any;
         component: ChartComponent|HTMLComponent|GroupComponent|undefined;
+        column: Column;
     }
 }
 
