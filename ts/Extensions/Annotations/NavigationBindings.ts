@@ -1509,9 +1509,9 @@ setOptions({
 addEvent(H.Chart, 'render', function (): void {
     const chart = this,
         stockTools = chart.stockTools,
-        button = chart.stockTools &&
-            chart.stockTools.toolbar &&
-            (chart.stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any);
+        button = stockTools &&
+            stockTools.toolbar &&
+            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
 
     // Change the initial button background.
     if (stockTools && chart.options.series && button) {

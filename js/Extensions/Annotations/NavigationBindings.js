@@ -1053,9 +1053,9 @@ setOptions({
 });
 // Check if the correct price indicator button is displayed, #15029.
 addEvent(H.Chart, 'render', function () {
-    var chart = this, stockTools = chart.stockTools, button = chart.stockTools &&
-        chart.stockTools.toolbar &&
-        chart.stockTools.toolbar.querySelector('.highcharts-current-price-indicator');
+    var chart = this, stockTools = chart.stockTools, button = stockTools &&
+        stockTools.toolbar &&
+        stockTools.toolbar.querySelector('.highcharts-current-price-indicator');
     // Change the initial button background.
     if (stockTools && chart.options.series && button) {
         if (bindingsUtils.isPriceIndicatorEnabled(chart.series)) {
