@@ -724,7 +724,12 @@ class SVGElement {
             alignTo = this.alignTo;
         }
 
-        box = pick(box, (renderer as any)[alignTo as any], renderer as any);
+        box = pick(
+            box,
+            (renderer as any)[alignTo as any],
+            alignTo === 'scrollablePlotBox' ? (renderer as any).plotBox : void 0,
+            renderer as any
+        );
 
         // Assign variables
         align = (alignOptions as any).align;
