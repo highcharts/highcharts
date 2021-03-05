@@ -1701,5 +1701,25 @@ addEvent(NavigationBindings, 'deselectButton', function (
     }
 });
 
+// Check if the correct price indicator button is displayed, #15029.
+addEvent(H.Chart, 'render', function (): void {
+    const chart = this,
+        stockTools = chart.stockTools,
+        button = stockTools &&
+            stockTools.toolbar &&
+            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
+
+    // Change the initial button background.
+    if (stockTools && chart.navigationBindings && chart.options.series && button) {
+        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+        } else {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+        }
+    }
+});
+
 H.Toolbar = Toolbar as any;
 export default H.Toolbar;

@@ -91,6 +91,7 @@ declare global {
             addFlagFromForm(this: NavigationBindings, type: string): Function;
             attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject;
             isNotNavigatorYAxis(axis: AxisType): boolean;
+            isPriceIndicatorEnabled(series: Series[]): boolean;
             manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
             updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
@@ -439,6 +440,23 @@ bindingsUtils.attractToPoint = function (
 bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
     return axis.userOptions.className !== PREFIX + 'navigator-yaxis';
 };
+
+/**
+ * Check if any of the price indicators are enabled.
+ * @private
+ * @function bindingsUtils.isLastPriceEnabled
+ *
+ * @param {array} series
+ *        Array of series.
+ *
+ * @return {boolean}
+ *         Tells which indicator is enabled.
+ */
+bindingsUtils.isPriceIndicatorEnabled = function (series: Series[]): boolean {
+
+    return series.some((s): Highcharts.SVGElement|undefined => s.lastVisiblePrice || s.lastPrice);
+};
+
 /**
  * Update each point after specified index, most of the annotations use
  * this. For example crooked line: logic behind updating each point is the

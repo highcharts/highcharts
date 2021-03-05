@@ -17,11 +17,9 @@ import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-import Series from '../../Core/Series/Series';
 const {
     addEvent,
     attr,
-    extend,
     format,
     fireEvent,
     isArray,
@@ -96,7 +94,6 @@ declare global {
         }
         interface NavigationBindingsUtilsObject {
             getFieldType(value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text');
-            isPriceIndicatorEnabled(series: Series[]): boolean;
             updateRectSize(event: PointerEvent, annotation: Annotation): void;
         }
         interface NavigationEventsOptions {
@@ -200,22 +197,6 @@ const bindingsUtils = {
         } as Record<string, ('checkbox'|'number'|'text')>)[
             typeof value
         ];
-    },
-
-    /**
-     * Check if any of the price indicators are enabled.
-     * @private
-     * @function bindingsUtils.isLastPriceEnabled
-     *
-     * @param {array} series
-     *        Array of series.
-     *
-     * @return {boolean}
-     *         Tells which indicator is enabled.
-     */
-    isPriceIndicatorEnabled: function (series: Series[]): boolean {
-
-        return series.some((s): Highcharts.SVGElement|undefined => s.lastVisiblePrice || s.lastPrice);
     },
 
     /**
@@ -1501,26 +1482,6 @@ setOptions({
             animation: {
                 defer: 0
             }
-        }
-    }
-});
-
-// Check if the correct price indicator button is displayed, #15029.
-addEvent(H.Chart, 'render', function (): void {
-    const chart = this,
-        stockTools = chart.stockTools,
-        button = stockTools &&
-            stockTools.toolbar &&
-            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
-
-    // Change the initial button background.
-    if (stockTools && chart.options.series && button) {
-        if (bindingsUtils.isPriceIndicatorEnabled(chart.series)) {
-            button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
-        } else {
-            button.firstChild.style['background-image'] =
-            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
         }
     }
 });

@@ -13,7 +13,7 @@ import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, extend = U.extend, format = U.format, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, setOptions = U.setOptions;
+var addEvent = U.addEvent, attr = U.attr, format = U.format, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, setOptions = U.setOptions;
 /**
  * A config object for navigation bindings in annotations.
  *
@@ -86,20 +86,6 @@ var bindingsUtils = {
             'number': 'number',
             'boolean': 'checkbox'
         }[typeof value];
-    },
-    /**
-     * Check if any of the price indicators are enabled.
-     * @private
-     * @function bindingsUtils.isLastPriceEnabled
-     *
-     * @param {array} series
-     *        Array of series.
-     *
-     * @return {boolean}
-     *         Tells which indicator is enabled.
-     */
-    isPriceIndicatorEnabled: function (series) {
-        return series.some(function (s) { return s.lastVisiblePrice || s.lastPrice; });
     },
     /**
      * Update size of background (rect) in some annotations: Measure, Simple
@@ -1048,23 +1034,6 @@ setOptions({
             animation: {
                 defer: 0
             }
-        }
-    }
-});
-// Check if the correct price indicator button is displayed, #15029.
-addEvent(H.Chart, 'render', function () {
-    var chart = this, stockTools = chart.stockTools, button = stockTools &&
-        stockTools.toolbar &&
-        stockTools.toolbar.querySelector('.highcharts-current-price-indicator');
-    // Change the initial button background.
-    if (stockTools && chart.options.series && button) {
-        if (bindingsUtils.isPriceIndicatorEnabled(chart.series)) {
-            button.firstChild.style['background-image'] =
-                'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
-        }
-        else {
-            button.firstChild.style['background-image'] =
-                'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
         }
     }
 });

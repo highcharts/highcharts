@@ -266,6 +266,20 @@ bindingsUtils.isNotNavigatorYAxis = function (axis) {
     return axis.userOptions.className !== PREFIX + 'navigator-yaxis';
 };
 /**
+ * Check if any of the price indicators are enabled.
+ * @private
+ * @function bindingsUtils.isLastPriceEnabled
+ *
+ * @param {array} series
+ *        Array of series.
+ *
+ * @return {boolean}
+ *         Tells which indicator is enabled.
+ */
+bindingsUtils.isPriceIndicatorEnabled = function (series) {
+    return series.some(function (s) { return s.lastVisiblePrice || s.lastPrice; });
+};
+/**
  * Update each point after specified index, most of the annotations use
  * this. For example crooked line: logic behind updating each point is the
  * same, only index changes when adding an annotation.
