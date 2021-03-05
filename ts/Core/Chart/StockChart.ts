@@ -700,7 +700,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
             crossLabel
                 .attr({
                     fill: options.backgroundColor ||
-                        (this.series[0] && this.series[0].color) ||
+                        point && point.series && point.series.color || // #14888
                         palette.neutralColor60,
                     stroke: options.borderColor || '',
                     'stroke-width': options.borderWidth || 0
