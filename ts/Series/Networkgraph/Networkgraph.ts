@@ -1242,6 +1242,7 @@ extend(NetworkgraphPoint.prototype, {
                 .path(
                     this.getLinkPath()
                 )
+                .addClass(this.getClassName(), true)
                 .add(this.series.group);
 
             if (!this.series.chart.styledMode) {
