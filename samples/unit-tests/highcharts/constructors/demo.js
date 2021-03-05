@@ -237,7 +237,7 @@ QUnit.test('Highmaps', function (assert) {
     assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
     calledBack = false;
-    chart = new Highcharts.MapChart(
+    chart = new Highcharts.Map(
         {
             chart: {
                 renderTo: 'container'
@@ -265,7 +265,7 @@ QUnit.test('Highmaps', function (assert) {
     assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
     chart = $('#container')
-        .highcharts('MapChart', {
+        .highcharts('Map', {
             series: [
                 {
                     data: [
