@@ -38,6 +38,9 @@ export interface CSSObject {
     // [key: string]: (boolean|number|string|undefined);
     'align-items'?: string;
     '-ms-touch-action'?: string;
+    '-ms-transform'?: string;
+    '-o-transform'?: string;
+    '-webkit-transform'?: string;
     backgroundColor?: ColorString;
     borderRadius?: number|string;
     border?: string|0;
@@ -70,6 +73,7 @@ export interface CSSObject {
     'max-height'?: string;
     'max-width'?: string;
     MozBoxShadow?: string;
+    MozTransform?: string;
     opacity?: number;
     overflow?: string;
     overflowX?: string;
