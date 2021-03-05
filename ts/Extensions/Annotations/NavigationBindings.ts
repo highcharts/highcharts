@@ -1506,8 +1506,6 @@ addEvent(H.Chart, 'render', function (): void {
         objectEach(
             navigationBindings.boundClassNames,
             function (value: Highcharts.NavigationBindingsOptionsObject, key: string): void {
-                // Get the HTML element coresponding to the
-                // className taken from StockToolsBindings.
 
                 if (value.alwaysEnabled) {
                     return;
@@ -1518,6 +1516,9 @@ addEvent(H.Chart, 'render', function (): void {
                     chart.navigationBindings.container &&
                     chart.navigationBindings.container[0]
                 ) {
+
+                // Get the HTML element coresponding to the
+                // className taken from StockToolsBindings.
                     const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
 
                     if (buttonNode) {
