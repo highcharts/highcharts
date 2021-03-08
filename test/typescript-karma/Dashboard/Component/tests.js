@@ -9,7 +9,7 @@ import Stock from '/base/js/masters/highstock.src.js';
 import Gantt from '/base/js/masters/highcharts-gantt.src.js';
 import Maps from '/base/js/masters/highmaps.src.js';
 
-const { test, only } = QUnit;
+const { test, only,skip } = QUnit;
 
 /** @type {Component.Event['type'][]} */
 const eventTypes = [
@@ -46,8 +46,10 @@ function registerEvents(component) {
     eventTypes.forEach(eventType => component.on(eventType, registerEvent))
 }
 
+
+
 test('ChartComponent events', function (assert) {
-    const parentElement = document.createElement('div');
+    const parentElement = document.getElementById('container');
     const store = new CSVStore(undefined, {
         csv: '1,2,3',
         firstRowAsNames: false
@@ -56,7 +58,7 @@ test('ChartComponent events', function (assert) {
     store.load();
 
     const component = new ChartComponent({
-        parentElement
+        parentElement: 'container'
     });
 
 
@@ -332,7 +334,7 @@ test('component resizing', function(assert) {
     const parent = document.createElement('div');
     parent.id = 'test';
 
-    document.body.appendChild(parent)
+    document.getElementById('container').appendChild(parent)
 
     const component = new HTMLComponent({
         parentElement: parent
@@ -428,8 +430,19 @@ test('component resizing', function(assert) {
             height: '50%'
         }
     }).render();
-    assert.strictEqual(percentageDimensions.dimensions.width, parent.scrollWidth / 2)
-    assert.strictEqual(percentageDimensions.dimensions.height, parent.scrollHeight / 2 )
+
+    let rect = percentageDimensions.element.getBoundingClientRect()
+    assert.strictEqual(rect.width, parent.scrollWidth / 2)
+    assert.strictEqual(rect.height, parent.scrollHeight / 2 )
+
+
+    // With padding
+    percentageDimensions.element.style.padding = '5px';
+    percentageDimensions.resize('50%', '50%')
+
+    rect = percentageDimensions.element.getBoundingClientRect()
+    assert.strictEqual(rect.width, parent.scrollWidth / 2)
+    assert.strictEqual(rect.height, parent.scrollHeight / 2)
 
     percentageDimensions.destroy();
 
@@ -437,14 +450,13 @@ test('component resizing', function(assert) {
 });
 
 test('ChartComponent resizing', function(assert) {
-
-    const parentElement = document.createElement('div');
-    parentElement.style.width = '500px';
-
-    document.body.appendChild(parentElement);
+    const parent = document.createElement('div');
+    parent.id = 'test';
+    parent.style.width = '500px';
+    document.getElementById('container').appendChild(parent)
 
     const component = new ChartComponent({
-        parentElement,
+        parentElement: parent,
         chartOptions: {},
         dimensions: {
             height: '100%',

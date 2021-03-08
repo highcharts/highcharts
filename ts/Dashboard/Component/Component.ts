@@ -266,27 +266,22 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         // If undefined, and parent has set style,
         // set to parents height minus padding, margin, etc
         if (height === void 0 && this.parentElement.style.height) {
-            const parentHeight = Number(getStyle(this.parentElement, 'height'));
-            const elementHeight = Number(getStyle(this.element, 'height'));
-            const diff = this.element.offsetHeight - elementHeight;
-
-            height = parentHeight - diff;
+            height = '100%';
         }
 
         if (width === void 0 && this.parentElement.style.width) {
-            const parentWidth = Number(getStyle(this.parentElement, 'width'));
-            const elementWidth = Number(getStyle(this.element, 'width'));
-            const diff = this.element.offsetWidth - elementWidth;
-
-            width = parentWidth - diff;
+            width = '100%';
         }
 
         if (height) {
-            this.dimensions.height = relativeLength(height, Number(getStyle(this.parentElement, 'height')));
+            // Get offset for border, padding, margin
+            const diff = this.element.offsetHeight - Number(getStyle(this.element, 'height'));
+            this.dimensions.height = relativeLength(height, Number(getStyle(this.parentElement, 'height')), -diff);
             this.element.style.height = this.dimensions.height + 'px';
         }
         if (width) {
-            this.dimensions.width = relativeLength(width, Number(getStyle(this.parentElement, 'width')));
+            const diff = this.element.offsetWidth - Number(getStyle(this.element, 'width'));
+            this.dimensions.width = relativeLength(width, Number(getStyle(this.parentElement, 'width')), -diff);
             this.element.style.width = this.dimensions.width + 'px';
         }
 
