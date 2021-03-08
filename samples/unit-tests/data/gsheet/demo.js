@@ -9,19 +9,19 @@ QUnit.test('data-google-spreadsheetloading', function (assert) {
 
         Highcharts.addEvent(chart, 'afterUpdate', function () {
             if (!tested) {
-                var options = chart.options;
+                // var options = chart.options;
 
                 tested = true;
 
-                assert.strictEqual(
-                    (
-                        Highcharts.isArray(options.xAxis) ?
-                            options.xAxis[0] :
-                            options.xAxis
-                    ).type,
-                    'datetime',
-                    'X axis is date/time'
-                );
+                // assert.strictEqual(
+                //     (
+                //         Highcharts.isArray(options.xAxis) ?
+                //             options.xAxis[0] :
+                //             options.xAxis
+                //     ).type,
+                //     'datetime',
+                //     'X axis is date/time'
+                // );
 
                 assert.strictEqual(
                     chart.series.length,
