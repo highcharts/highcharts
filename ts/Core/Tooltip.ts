@@ -1583,7 +1583,7 @@ class Tooltip {
         function updatePartialTooltip(
             partialTooltip: (SVGElement|undefined),
             point: (Point & { isHeader?: boolean }),
-            str: (boolean|string)
+            str: string
         ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point;
@@ -1668,7 +1668,7 @@ class Tooltip {
                 // Store the tooltip label referance on the series
                 const owner = isHeader ? tooltip : point.series;
                 const tt = owner.tt = updatePartialTooltip(
-                    owner.tt, point, str
+                    owner.tt, point, str.toString()
                 );
 
                 // Get X position now, so we can move all to the other side in

@@ -3,6 +3,8 @@ Data grouping
 
 Data grouping replaces a sequence of data points in a series with one grouped point. The values of each grouped point is calculated from the original values of every point used. The [groupPixelWidth](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.groupPixelWidth) option defines how large the groups should be.
 
+![data-grouping.png](data-grouping.png)
+
 By default, the grouping [approximation](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.approximation) depends on the type of series:
 
 *   Line type series use an _average_ approximation.

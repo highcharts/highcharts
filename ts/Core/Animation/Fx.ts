@@ -416,7 +416,9 @@ class Fx {
                 // For areas, the bottom path goes back again to the left, so we
                 // need to append a copy of the last point.
                 if (isArea) {
-                    arr.push(arr[arr.length - 1]);
+                    const z: any = arr.pop();
+
+                    arr.push(arr[arr.length - 1], z); // append point and the Z
                 }
             }
         }
@@ -440,7 +442,7 @@ class Fx {
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                const segmentToAdd = arr[arr.length / positionFactor - 1].slice();
+                const segmentToAdd = arr[Math.floor(arr.length / positionFactor) - 1].slice();
 
                 // Disable the first control point of curve segments
                 if (segmentToAdd[0] === 'C') {
@@ -453,7 +455,7 @@ class Fx {
 
                 } else {
 
-                    const lowerSegmentToAdd = arr[arr.length / positionFactor].slice();
+                    const lowerSegmentToAdd = arr[Math.floor(arr.length / positionFactor)].slice();
                     arr.splice(
                         arr.length / 2,
                         0,

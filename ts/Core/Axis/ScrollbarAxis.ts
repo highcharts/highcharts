@@ -131,17 +131,7 @@ class ScrollbarAxis {
                         from = unitedMin + range * (1 - (this.to as any));
                     }
 
-                    if (
-                        pick(
-                            this.options.liveRedraw,
-                            H.svg && !H.isTouchDevice && !this.chart.isBoosting
-                        ) ||
-                        // Mouseup always should change extremes
-                        e.DOMType === 'mouseup' ||
-                        e.DOMType === 'touchend' ||
-                        // Internal events
-                        !defined(e.DOMType)
-                    ) {
+                    if (this.shouldUpdateExtremes(e.DOMType)) {
                         axis.setExtremes(
                             from,
                             to,

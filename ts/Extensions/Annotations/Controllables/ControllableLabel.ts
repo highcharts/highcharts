@@ -175,8 +175,8 @@ class ControllableLabel implements ControllableMixin.Type {
                 height: label.height
             },
             //
-            x = alignAttr.x - chart.plotLeft,
-            y = alignAttr.y - chart.plotTop;
+            x = (alignAttr.x || 0) - chart.plotLeft,
+            y = (alignAttr.y || 0) - chart.plotTop;
 
         // Off left
         off = x + padding;

@@ -221,7 +221,7 @@ columnProto.translate3dShapes = function (): void {
                 ) {
                     // Set args to 0 if column is outside the chart.
                     for (var key in shapeArgs) { // eslint-disable-line guard-for-in
-                        shapeArgs[key] = 0;
+                        (shapeArgs as any)[key] = 0;
                     }
                     // #7103 outside3dPlot flag is set on Points which are
                     // currently outside of plot.
@@ -382,20 +382,18 @@ wrap(
         proceed: Function,
         vis?: boolean
     ): void {
-        var series = this,
-            pointVis: string;
+        var series = this;
 
         if (series.chart.is3d()) {
             series.data.forEach(function (point): void {
                 point.visible = point.options.visible = vis =
                     typeof vis === 'undefined' ?
                         !pick(series.visible, point.visible) : vis;
-                pointVis = vis ? 'visible' : 'hidden';
                 (series.options.data as any)[series.data.indexOf(point)] =
                     point.options;
                 if (point.graphic) {
                     point.graphic.attr({
-                        visibility: pointVis
+                        visibility: vis ? 'visible' : 'hidden'
                     });
                 }
             });

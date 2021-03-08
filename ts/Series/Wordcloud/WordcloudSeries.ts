@@ -403,8 +403,8 @@ class WordcloudSeries extends ColumnSeries {
             // Check if point was placed, if so delete it, otherwise place it
             // on the correct positions.
             if (isObject(delta)) {
-                attr.x += delta.x;
-                attr.y += delta.y;
+                attr.x = (attr.x || 0) + delta.x;
+                attr.y = (attr.y || 0) + delta.y;
                 rectangle.left += delta.x;
                 rectangle.right += delta.x;
                 rectangle.top += delta.y;

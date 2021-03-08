@@ -1387,7 +1387,7 @@ class Chart {
             oldChartIndex,
             Ren,
             containerId = uniqueKey(),
-            containerStyle,
+            containerStyle: CSSObject|undefined,
             key;
 
         if (!renderTo) {
@@ -1445,7 +1445,7 @@ class Chart {
 
         // Create the inner container
         if (!chart.styledMode) {
-            containerStyle = extend({
+            containerStyle = extend<CSSObject>({
                 position: 'relative',
                 // needed for context menu (avoidscrollbars) and content
                 // overflow in IE
@@ -1457,7 +1457,7 @@ class Chart {
                 zIndex: 0, // #1072
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
                 userSelect: 'none' // #13503
-            }, optionsChart.style as any);
+            }, optionsChart.style || {});
         }
 
         /**
@@ -2836,10 +2836,6 @@ class Chart {
             axis = new Axis(this, userOptions);
         }
 
-        // Push the new axis options to the chart options
-        (chartOptions as any)[type] = splat((chartOptions as any)[type] || {});
-        (chartOptions as any)[type].push(userOptions);
-
         if (isColorAxis) {
             this.isDirtyLegend = true;
 
@@ -3386,7 +3382,7 @@ class Chart {
             states = theme.states,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
-                btnOptions.relativeTo === 'spaceBox' ?
+                btnOptions.relativeTo === 'spacingBox' ?
                     null :
                     this.scrollablePlotBox || 'plotBox'
             );

@@ -841,7 +841,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 options = merge(
                     {
                         langKey: 'ray',
-                        type: 'crookedLine',
+                        type: 'infinityLine',
                         typeOptions: {
                             type: 'ray',
                             points: [{
@@ -2047,8 +2047,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             button: HTMLDOMElement
         ): void {
             var chart = this.chart,
-                series = chart.series[0],
-                options = series.options,
+                series = chart.series,
+                options = series[0].options,
                 lastVisiblePrice = (
                     options.lastVisiblePrice &&
                     options.lastVisiblePrice.enabled
@@ -2069,19 +2069,22 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 }
             }
 
-            series.update({
-                // line
-                lastPrice: {
-                    enabled: !lastPrice
-                },
-                // label
-                lastVisiblePrice: {
-                    enabled: !lastVisiblePrice,
-                    label: {
-                        enabled: true
+            series.forEach(function (series): void {
+                series.update({
+                    // line
+                    lastPrice: {
+                        enabled: !lastPrice
+                    },
+                    // label
+                    lastVisiblePrice: {
+                        enabled: !lastVisiblePrice,
+                        label: {
+                            enabled: true
+                        }
                     }
-                }
+                }, false);
             });
+            chart.redraw();
 
             fireEvent(
                 this,

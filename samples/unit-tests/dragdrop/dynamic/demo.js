@@ -136,6 +136,7 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
     assertNoEvents();
 
     chart.addSeries({
+        type: 'column',
         data: [7, 8, 9],
         dragDrop: {
             draggableY: true
@@ -144,6 +145,18 @@ QUnit.test('Dragdrop enabled in dynamic chart', function (assert) {
 
     assert.ok(chart.unbindDragDropMouseUp, 'Has mouse up event');
     assert.ok(chart.hasAddedDragDropEvents, 'Has events added flag');
+
+    chart.yAxis[0].update({
+        reversed: true
+    });
+
+    const point = chart.series[1].points[0];
+    point.showDragHandles();
+
+    assert.ok(
+        Math.abs(chart.dragHandles.undefined.translateY - point.plotY) < 1,
+        '#9549: Handle should be below the point when yAxis is reversed'
+    );
 });
 
 QUnit.test('Dragdrop and logarithmic axes', function (assert) {
