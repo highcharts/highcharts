@@ -92,7 +92,8 @@ const donut = Highcharts.chart('donut', {
         enabled: false
     },
     tooltip: {
-        enabled: true
+        enabled: true,
+        outside: true
     },
     plotOptions: {
         pie: {
@@ -154,7 +155,8 @@ const graph = Highcharts.chart('graph', {
         enabled: false
     },
     tooltip: {
-        enabled: true
+        enabled: true,
+        outside: true
     },
     series: [{
         label: {
@@ -196,6 +198,7 @@ const network = Highcharts.chart('network', {
     },
     tooltip: {
         enabled: true,
+        outside: true,
         formatter: function () {
             var info = '';
             switch (this.color) {
@@ -375,7 +378,8 @@ const scatter = Highcharts.chart('scatter', {
         enabled: false
     },
     tooltip: {
-        enabled: true
+        enabled: true,
+        outside: true
     },
     credits: {
         enabled: false
@@ -959,6 +963,7 @@ const bubble = Highcharts.chart('soloBubble', {
     },
     tooltip: {
         useHTML: true,
+        outside: true,
         enabled: true,
         pointFormat: '<b>{point.name}:</b> {point.y}</sub>'
     },
@@ -1039,6 +1044,9 @@ Highcharts.chart('lineAreaColumn',  {
             negativeColor: true,
             negativeColorFill: 'blue'
         }
+    },
+    tooltip: {
+        outside: true
     },
     series: [{
         name: 'Spline',
