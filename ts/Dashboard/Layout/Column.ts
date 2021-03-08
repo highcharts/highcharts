@@ -36,8 +36,7 @@ class Column extends GUIElement {
     ) {
         super();
 
-        const self = this,
-            columnClassName = row.layout.options.columnClassName;
+        const columnClassName = row.layout.options.columnClassName;
 
         this.id = options.id;
         this.options = options;
@@ -58,10 +57,6 @@ class Column extends GUIElement {
                 row.options.style,
                 options.style
             )
-        });
-
-        addEvent(this.container, 'bindedColumn', function (e): void {
-            (e as any).column = self; // @ToDo remove as any
         });
     }
 

@@ -8,7 +8,8 @@ import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
 
 const {
-    createElement
+    createElement,
+    addEvent
 } = U;
 
 abstract class GUIElement {
@@ -76,6 +77,16 @@ abstract class GUIElement {
         } else {
             // Error
         }
+
+        // Set bindedGUIElement event on GUIElement container.
+        if (guiElement.container) {
+            addEvent(guiElement.container, 'bindedGUIElement', function (
+                e: GUIElement.BindedGUIElementEvent
+            ): void {
+                e.guiElement = guiElement;
+                e.stopImmediatePropagation();
+            });
+        }
     }
 
 }
@@ -88,6 +99,10 @@ namespace GUIElement {
         style?: CSSObject;
         element?: HTMLElement;
         elementId?: string;
+    }
+
+    export interface BindedGUIElementEvent extends Event {
+        guiElement: GUIElement;
     }
 }
 

@@ -21,8 +21,7 @@ const dashboard = new Dashboard('container', {
                     id: 'dashboard-col-0',
                     style: {
                         color: 'yellow',
-                        flex: 2,
-                        height: '100px'
+                        flex: 2
                     }
                 }, {
                     id: 'dashboard-col-1',
@@ -138,6 +137,12 @@ const dashboard = new Dashboard('container', {
 });
 
 console.log(dashboard);
+
+console.group('Bindings get GUI element by ID or HTML element (getColumn, getRow, getLayout)');
+console.log('column: ', dashboard.bindings.getColumn('dashboard-col-0'));
+console.log('row: ', dashboard.bindings.getRow(dashboard.layouts[0].rows[0].container));
+console.log('layout: ', dashboard.bindings.getLayout('layout-1'));
+console.groupEnd();
 
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
     gui: {

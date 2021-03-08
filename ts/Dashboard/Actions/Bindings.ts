@@ -6,9 +6,13 @@ import GroupComponent from './../Component/GroupComponent.js';
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type GUIElement from '../Layout/GUIElement';
 
 import U from '../../Core/Utilities.js';
 import Column from '../Layout/Column.js';
+import Row from '../Layout/Row.js';
+import Layout from '../Layout/Layout.js';
+
 const {
     addEvent,
     fireEvent,
@@ -34,6 +38,24 @@ class Bindings {
     *  Functions
     *
     * */
+
+    private getGUIElement(idOrElement: string): GUIElement|undefined {
+        const container = typeof idOrElement === 'string' ?
+            document.getElementById(idOrElement) : idOrElement;
+
+        let guiElement;
+
+        if (container instanceof HTMLElement) {
+            fireEvent(container, 'bindedGUIElement', {}, function (
+                e: GUIElement.BindedGUIElementEvent
+            ): void {
+                guiElement = e.guiElement;
+            });
+        }
+
+        return guiElement;
+    }
+
     public addComponent(
         options: Bindings.ComponentOptions
     ): HTMLComponent|ChartComponent|GroupComponent|undefined { //
@@ -87,18 +109,19 @@ class Bindings {
         return component;
     }
 
-    public getColumn(
-        id: string
-    ): Column|undefined {
-        const container = document.getElementById(id);
+    public getColumn(idOrElement: string): Column|undefined {
+        const column = this.getGUIElement(idOrElement);
+        return column instanceof Column ? column : void 0;
+    }
 
-        let column;
+    public getRow(idOrElement: string): Row|undefined {
+        const row = this.getGUIElement(idOrElement);
+        return row instanceof Row ? row : void 0;
+    }
 
-        fireEvent(container, 'bindedColumn', {}, function (e): void {
-            column = (e as any).column; // @ToDo remove as any
-        });
-
-        return column;
+    public getLayout(idOrElement: string): Layout|undefined {
+        const layout = this.getGUIElement(idOrElement);
+        return layout instanceof Layout ? layout : void 0;
     }
 
     public chartComponent(
