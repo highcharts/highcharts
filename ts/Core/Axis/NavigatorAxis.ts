@@ -62,7 +62,7 @@ class NavigatorAxisAdditions {
 
     public axis: NavigatorAxis;
     public fake?: boolean;
-    public previousZoom?: [(number|null), (number|null)];
+    public previousZoom?: [(number|undefined), (number|undefined)];
 
     /* *
      *

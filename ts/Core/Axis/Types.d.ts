@@ -53,8 +53,8 @@ export interface AxisLike {
     chart: Chart;
     coll: string;
     isXAxis?: boolean;
-    max: (null|number);
-    min: (null|number);
+    max?: number;
+    min?: number;
     options: Highcharts.AxisOptions;
     reversed?: boolean;
     series: Array<Series>;

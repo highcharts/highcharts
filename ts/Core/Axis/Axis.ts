@@ -388,10 +388,10 @@ declare global {
             public left: number;
             public len: number;
             public linkedParent?: Axis;
-            public max: (null|number);
+            public max?: number;
             public maxLabelDimensions?: SizeObject;
             public maxLabelLength: number;
-            public min: (null|number);
+            public min?: number;
             public minorTickInterval: number;
             public minorTicks: Record<string, Tick>;
             public minPixelPadding: number;
@@ -401,8 +401,8 @@ declare global {
             public offset: number;
             public old?: {
                 len: number;
-                max: number|null;
-                min: number|null;
+                max?: number;
+                min?: number;
                 transA: number;
                 userMax?: number;
                 userMin?: number;
@@ -3963,10 +3963,10 @@ class Axis {
     public left: number = void 0 as any;
     public len: number = void 0 as any;
     public linkedParent?: Axis;
-    public max: (null|number) = void 0 as any;
+    public max?: number;
     public maxLabelDimensions?: SizeObject;
     public maxLabelLength: number = void 0 as any;
-    public min: (null|number) = void 0 as any;
+    public min?: number;
     public minorTickInterval: number = void 0 as any;
     public minorTicks: Record<string, Tick> = void 0 as any;
     public minPixelPadding: number = void 0 as any;
@@ -3976,8 +3976,8 @@ class Axis {
     public offset: number = void 0 as any;
     public old?: { // @todo create a type
         len: number;
-        max: number|null;
-        min: number|null;
+        max?: number;
+        min?: number;
         transA: number;
         userMax?: number;
         userMin?: number;
@@ -4216,22 +4216,24 @@ class Axis {
         /**
          * The maximum value of the axis. In a logarithmic axis, this is the
          * logarithm of the real value, and the real value can be obtained from
-         * {@link Axis#getExtremes}.
+         * {@link Axis#getExtremes}. If none of the axis' data series contain
+         * values, `max` is `undefined`.
          *
          * @name Highcharts.Axis#max
-         * @type {number|null}
+         * @type {number|undefined}
          */
-        axis.max = null;
+        axis.max = void 0;
 
         /**
          * The minimum value of the axis. In a logarithmic axis, this is the
          * logarithm of the real value, and the real value can be obtained from
-         * {@link Axis#getExtremes}.
+         * {@link Axis#getExtremes}. If none of the axis' data series contain
+         * values, `min` is `undefined`.
          *
          * @name Highcharts.Axis#min
-         * @type {number|null}
+         * @type {number|undefined}
          */
-        axis.min = null;
+        axis.min = void 0;
 
         /**
          * The processed crosshair options.
