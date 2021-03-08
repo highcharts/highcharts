@@ -1922,7 +1922,7 @@ class Chart {
                 axis.setAxisSize();
                 axis.setAxisTranslation();
             });
-            this.renderer.alignElements();
+            renderer.alignElements();
         }
 
         fireEvent(chart, 'afterSetChartSize', { skipAxes: skipAxes });

@@ -2481,9 +2481,7 @@ class SVGRenderer {
      * @return {void}
      */
     public alignElements(): void {
-        this.alignedObjects.forEach((el): void => {
-            el.align();
-        });
+        this.alignedObjects.forEach((el): SVGElement => el.align());
     }
 }
 
