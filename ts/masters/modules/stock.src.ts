@@ -22,5 +22,4 @@ import '../../Core/Navigator.js';
 import '../../Extensions/RangeSelector.js';
 import StockChart from '../../Core/Chart/StockChart.js';
 
-(Highcharts as any).StockChart = StockChart;
-(Highcharts as any).stockChart = StockChart.stockChart;
+(Highcharts as any).StockChart = (Highcharts as any).stockChart = StockChart.stockChart;

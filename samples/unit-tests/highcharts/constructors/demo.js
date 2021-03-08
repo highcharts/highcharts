@@ -139,7 +139,7 @@ QUnit.test('Highstock', function (assert) {
     assert.strictEqual(typeof chart.rangeSelector, 'object', 'Is stock chart');
 
     calledBack = false;
-    chart = new Highcharts.StockChart(
+    chart = Highcharts.StockChart(
         {
             chart: {
                 renderTo: 'container'
