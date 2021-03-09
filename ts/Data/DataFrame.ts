@@ -11,7 +11,78 @@ const {
     uniqueKey
 } = U;
 
-class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
+class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Class {
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    public static fromJSON(
+        json: DataFrame.ClassJSON,
+        converter?: DataConverter
+    ): DataFrame {
+        const columns: DataFrame.ColumnCollection = {},
+            jsonColumns = json.columns,
+            columnNames = Object.keys(jsonColumns);
+
+        for (
+            let i = 0,
+                iEnd = columnNames.length,
+                columnName: string,
+                column: DataFrame.Column,
+                jsonColumn: DataFrame.ColumnJSON;
+            i < iEnd;
+            ++i
+        ) {
+            columnName = columnNames[i];
+            columns[columnName] = column = [];
+            jsonColumn = jsonColumns[columnName];
+            for (
+                let j = 0,
+                    jEnd = jsonColumn.length,
+                    jsonCell: DataFrame.ColumnJSON[0];
+                j < jEnd;
+                ++j
+            ) {
+                jsonCell = jsonColumn[j];
+                if (typeof jsonCell === 'object' && jsonCell) {
+                    column[j] = DataFrame.fromJSON(jsonCell, converter);
+                } else {
+                    column[j] = jsonCell;
+                }
+            }
+        }
+
+        const frame = new DataFrame(
+            columns,
+            json.id,
+            (
+                json.presentationState &&
+                DataPresentationState.fromJSON(json.presentationState)
+            ),
+            converter
+        );
+
+        if (json.aliasMap) {
+            const aliasMap = (json.aliasMap || {}),
+                aliases = Object.keys(aliasMap);
+
+            for (
+                let i = 0,
+                    iEnd = aliases.length,
+                    alias: string;
+                i < iEnd;
+                ++i
+            ) {
+                alias = aliases[i];
+                frame.aliasMap[alias] = aliasMap[alias];
+            }
+        }
+
+        return frame;
+    }
 
     /* *
      *
@@ -42,7 +113,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
 
             for (let i = 0, iEnd = myColumnNames.length; i < iEnd; ++i) {
                 columnName = myColumnNames[i];
-                column = [...columns[columnName]];
+                column = columns[columnName].slice();
                 myColumns[columnName] = column;
                 maxRowCount = Math.max(maxRowCount, column.length);
             }
@@ -95,13 +166,13 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
      * */
 
     /**
-     * Removes all rows from this frame.
+     * Removes all columns and rows from this data frame.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits DataTable#clearFrame
-     * @emits DataTable#afterClearTable
+     * @emits DataFrame#clearFrame
+     * @emits DataFrame#afterClearTable
      */
     public clear(eventDetail?: DataEventEmitter.EventDetail): void {
 
@@ -113,9 +184,24 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
         this.emit({ type: 'afterClearFrame', detail: eventDetail });
     }
 
-    public clone(): DataFrame {
-        const frame = this,
-            newFrame = new DataFrame(
+    /**
+     * Returns a clone of this data frame.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataFrame}
+     * Clone of this data frame.
+     *
+     * @emits DataFrame#cloneFrame
+     * @emits DataFrame#afterCloneFrame
+     */
+    public clone(eventDetail?: DataEventEmitter.EventDetail): DataFrame {
+        const frame = this;
+
+        frame.emit({ type: 'cloneFrame', detail: eventDetail });
+
+        const frameClone = new DataFrame(
                 frame.columns,
                 frame.id,
                 frame.presentationState,
@@ -123,7 +209,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
             ),
             aliases = Object.keys(frame.aliasMap);
 
-        newFrame.versionTag = frame.versionTag;
+        frameClone.versionTag = frame.versionTag;
 
         for (
             let k = 0,
@@ -133,7 +219,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
             ++k
         ) {
             alias = aliases[k];
-            newFrame.aliasMap[alias] = frame.aliasMap[alias];
+            frameClone.aliasMap[alias] = frame.aliasMap[alias];
         }
 
         if (frame.hcEvents) {
@@ -149,12 +235,18 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
 
                 for (let j = 0, jEnd = eventArr.length; j < jEnd; j++) {
                     eventFunction = (eventArr[j] as any).fn;
-                    newFrame.on(eventName, eventFunction);
+                    frameClone.on(eventName, eventFunction);
                 }
             }
         }
 
-        return newFrame;
+        frame.emit({
+            type: 'afterCloneFrame',
+            detail: eventDetail,
+            frameClone
+        });
+
+        return frameClone;
     }
 
     /**
@@ -163,11 +255,18 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
      * @param {string} columnName
      * Name (no alias) of column that shall be deleted.
      *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {DataFrame.Column|undefined}
      * Returns the deleted column, if found.
+     *
+     * @emits DataFrame#deleteColumn
+     * @emits DataFrame#afterDeleteColumn
      */
     public deleteColumn(
-        columnName: string
+        columnName: string,
+        eventDetail?: DataEventEmitter.EventDetail
     ): (DataFrame.Column|undefined) {
         const frame = this,
             columnNames = frame.columnNames,
@@ -175,8 +274,24 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
             deletedColumn = columns[columnName];
 
         if (deletedColumn) {
+
+            frame.emit({
+                type: 'deleteColumn',
+                cellValues: deletedColumn,
+                columnName,
+                detail: eventDetail
+            });
+
             columnNames.splice(columnNames.indexOf(columnName), 1);
             delete columns[columnName];
+
+            frame.emit({
+                type: 'afterDeleteColumn',
+                cellValues: deletedColumn,
+                columnName,
+                detail: eventDetail
+            });
+
             return deletedColumn;
         }
     }
@@ -213,8 +328,8 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
      * @return {DataFrame.Row|undefined}
      * Returns the deleted row, if found.
      *
-     * @emits DataTable#deleteRow
-     * @emits DataTable#afterDeleteRow
+     * @emits DataFrame#deleteRow
+     * @emits DataFrame#afterDeleteRow
      */
     public deleteRow(
         rowIndex: number,
@@ -222,26 +337,29 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
     ): (DataFrame.Row|undefined) {
         const frame = this,
             columnNames = frame.columnNames,
-            columns = frame.columns,
-            deletedRow: DataFrame.Row = [];
+            columns = frame.columns;
 
-        this.emit({
-            type: 'deleteRow',
-            detail: eventDetail,
-            rowIndex
-        });
+        if (rowIndex < frame.rowCount) {
+            const deletedRow: DataFrame.Row = [];
 
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            deletedRow.push(...columns[columnNames[i]].splice(rowIndex, 1));
+            frame.emit({
+                type: 'deleteRow',
+                detail: eventDetail,
+                rowIndex
+            });
+
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                deletedRow.push(...columns[columnNames[i]].splice(rowIndex, 1));
+            }
+
+            frame.emit({
+                type: 'afterDeleteRow',
+                detail: eventDetail,
+                rowIndex
+            });
+
+            return deletedRow;
         }
-
-        this.emit({
-            type: 'afterDeleteRow',
-            detail: eventDetail,
-            rowIndex
-        });
-
-        return deletedRow;
     }
 
     /**
@@ -275,7 +393,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
             ++i
         ) {
             columnName = columnNames[i];
-            allColumns[columnName] = [...columns[columnName]];
+            allColumns[columnName] = columns[columnName].slice();
         }
 
         return allColumns;
@@ -397,7 +515,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
             column = columns[columnNameOrAlias];
 
             if (column) {
-                fetchedColumns[columnNameOrAlias] = [...column];
+                fetchedColumns[columnNameOrAlias] = column.slice();
             }
         }
 
@@ -562,12 +680,19 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
      * @param {DataFrame.Column} cellValues
      * Values to set in the column.
      *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
      * @return {boolean}
      * Returns `true` if successful, `false` if not.
+     *
+     * @emits DataFrame#setColumn
+     * @emits DataFrame#afterSetColumn
      */
     public setColumn(
         columnNameOrAlias: string,
-        cellValues: DataFrame.Column = []
+        cellValues: DataFrame.Column = [],
+        eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const frame = this,
             columns = frame.columns;
@@ -576,11 +701,25 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
             frame.aliasMap[columnNameOrAlias] || columnNameOrAlias
         );
 
+        frame.emit({
+            type: 'setColumn',
+            cellValues,
+            columnName: columnNameOrAlias,
+            detail: eventDetail
+        });
+
         if (!columns[columnNameOrAlias]) {
             frame.columnNames.push(columnNameOrAlias);
         }
 
-        columns[columnNameOrAlias] = [...cellValues];
+        columns[columnNameOrAlias] = cellValues.slice();
+
+        frame.emit({
+            type: 'afterSetColumn',
+            cellValues,
+            columnName: columnNameOrAlias,
+            detail: eventDetail
+        });
 
         return true;
     }
@@ -620,9 +759,12 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
      *
      * @return {boolean}
      * Returns `true` if successful, otherwise `false`.
+     *
+     * @emits DataFrame#setRow
+     * @emits DataFrame#afterSetRow
      */
     public setRow(
-        rowIndex: (number|undefined),
+        rowIndex: number = this.rowCount,
         cellValues: Array<DataFrame.CellType>,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
@@ -630,15 +772,25 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
             columnNames = frame.columnNames,
             columns = frame.columns;
 
-        if (typeof rowIndex === 'undefined') {
-            rowIndex = frame.rowCount++;
-        } else if (rowIndex >= frame.rowCount) {
+        frame.emit({
+            type: 'setRow',
+            detail: eventDetail,
+            rowIndex
+        });
+
+        if (rowIndex >= frame.rowCount) {
             frame.rowCount = (rowIndex + 1);
         }
 
         for (let i = 0, iEnd = cellValues.length; i < iEnd; ++i) {
             columns[columnNames[i]][rowIndex] = cellValues[i];
         }
+
+        frame.emit({
+            type: 'afterSetRow',
+            detail: eventDetail,
+            rowIndex
+        });
 
         return true;
     }
@@ -694,107 +846,187 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject> {
         return false;
     }
 
+    /**
+     * Converts the frame to a class JSON.
+     *
+     * @return {DataJSON.ClassJSON}
+     * Class JSON of this frame.
+     */
+    public toJSON(): DataFrame.ClassJSON {
+        const frame = this,
+            columnNames = frame.columnNames,
+            columns = frame.columns,
+            json: DataFrame.ClassJSON = {
+                $class: 'DataFrame',
+                columns: {},
+                id: frame.id
+            },
+            jsonColumns = json.columns,
+            rowCount = frame.rowCount;
+
+        if (frame.presentationState.isSet()) {
+            json.presentationState = this.presentationState.toJSON();
+        }
+
+        for (
+            let i = 0,
+                iEnd = columnNames.length,
+                columnName: string,
+                column: DataFrame.Column,
+                jsonColumn: DataFrame.ColumnJSON;
+            i < iEnd;
+            ++i
+        ) {
+            columnName = columnNames[i];
+            column = columns[columnName];
+            jsonColumns[columnName] = jsonColumn = [];
+            for (
+                let j = 0,
+                    jEnd = rowCount,
+                    cell: DataFrame.CellType;
+                j < jEnd;
+                ++j
+            ) {
+                cell = column[j];
+                if (typeof cell === 'object' && cell) {
+                    jsonColumn[j] = cell.toJSON();
+                } else {
+                    jsonColumn[j] = cell;
+                }
+            }
+        }
+
+        return json;
+    }
+
 }
 
+/* *
+ *
+ *  Class Prototype
+ *
+ * */
 interface DataFrame extends DataEventEmitter<DataFrame.EventObject> {
     // nothing here yet
 }
 
+/* *
+ *
+ *  Class Namespace
+ *
+ * */
+
 namespace DataFrame {
 
     /**
-     * Possible value types for a column in a row.
-     *
-     * *Please note:* `Date` and `DataTable` are not JSON-compatible and have
-     * to be converted with the help of their `toJSON()` function.
+     * Possible value types for a cell.
      */
-    export type CellType = (
-        boolean|null|number|string|undefined
-    );
+    export type CellType = (DataFrame|DataJSON.JSONPrimitive);
 
     /**
      * All information objects of DataTable events.
      */
-    export type EventObject = (RowEventObject|TableEventObject|ColumnEventObject);
-
-    /**
-     * Event types related to a row in a table.
-     */
-    export type RowEventType = (
-        'deleteRow'|'afterDeleteRow'|
-        'insertRow'|'afterInsertRow'|
-        'afterUpdateRow'
+    export type EventObject = (
+        ColumnEventObject|
+        FrameEventObject|
+        RowEventObject
     );
 
     /**
-    * Event types related to a column in the table.
-    */
-    export type ColumnEventType = (
-        'removeColumn'|'afterRemoveColumn'
-    );
-
-    /**
-     * Event types related to the table itself.
-     */
-    export type TableEventType = (
-        'clearFrame'|'afterClearFrame'
-    );
-
-    /**
-     * Describes the class JSON of a DataTable.
+     * Class JSON of a DataFrame.
      */
     export interface ClassJSON extends DataJSON.ClassJSON {
+        aliasMap?: Record<string, string>;
+        columns: ColumnCollectionJSON;
+        id: string;
         presentationState?: DataPresentationState.ClassJSON;
-        columnNames: Array<string>;
-        columns: Array<Column>;
     }
 
     /**
-     * An array of column values.
+     * Array of column values.
      */
     export interface Column extends Array<DataFrame.CellType> {
         [index: number]: DataFrame.CellType;
     }
 
     /**
-     * A record of columns, where the key is the column name
-     * and the value is an array of column values
+     * JSON Array of column values.
+     */
+    export interface ColumnJSON extends DataJSON.JSONArray {
+        [index: number]: (DataJSON.JSONPrimitive|DataFrame.ClassJSON);
+    }
+
+    /**
+     * Record of columns, where the key is the column name or requested alias
+     * and the value is an array of column values.
      */
     export interface ColumnCollection {
         [columnNameOrAlias: string]: Column;
     }
 
     /**
-     * Describes the information object for column-related events.
+     * Record of columns, where the key is the column name or requested alias
+     * and the value is an array of column values.
      */
-    export interface ColumnEventObject extends DataEventEmitter.EventObject {
-        readonly type: ColumnEventType;
-        readonly columnName: string;
-        readonly values?: Array<DataFrame.CellType>;
+    export interface ColumnCollectionJSON {
+        [columnNameOrAlias: string]: ColumnJSON;
     }
 
     /**
-     * An array of row values.
+     * Event object for column-related events.
+     */
+    export interface ColumnEventObject extends DataEventEmitter.EventObject {
+        readonly type: (
+            'deleteColumn'|'afterDeleteColumn'|
+            'setColumn'|'afterSetColumn'
+        );
+        readonly columnName: string;
+        readonly cellValues?: Array<DataFrame.CellType>;
+    }
+
+    /**
+     * Event object for frame-related events.
+     */
+    export interface FrameEventObject extends DataEventEmitter.EventObject {
+        readonly type: (
+            'clearFrame'|'afterClearFrame'|
+            'cloneFrame'|'afterCloneFrame'
+        );
+        readonly frameClone?: DataFrame;
+    }
+
+    /**
+     * Array of row values.
      */
     export interface Row extends Array<DataFrame.CellType> {
         [index: number]: DataFrame.CellType;
     }
 
     /**
-     * Describes the information object for row-related events.
+     * Event object for row-related events.
      */
     export interface RowEventObject extends DataEventEmitter.EventObject {
-        readonly type: RowEventType;
+        readonly type: (
+            'deleteRow'|'afterDeleteRow'|
+            'setRow'|'afterSetRow'
+        );
         readonly rowIndex: number;
     }
 
-    /**
-     * Describes the information object for table-related events.
-     */
-    export interface TableEventObject extends DataEventEmitter.EventObject {
-        readonly type: TableEventType;
-    }
-
 }
+
+/* *
+ *
+ *  Registry
+ *
+ * */
+
+DataJSON.addClass(DataFrame);
+
+/* *
+ *
+ *  Default Export
+ *
+ * */
 
 export default DataFrame;

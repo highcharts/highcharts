@@ -15,10 +15,12 @@
  *  Imports
  *
  * */
+
+import type DataFrame from './DataFrame.js';
 import type DataTable from './DataTable.js';
 import type DataJSON from './DataJSON';
-import U from './../Core/Utilities.js';
 
+import U from './../Core/Utilities.js';
 const {
     merge,
     isNumber
@@ -611,7 +613,7 @@ namespace DataConverter {
      * Contains supported types to convert values from and to.
      */
     export type Type = (
-        boolean|null|number|string|Date|DataTable|undefined
+        boolean|null|number|string|DataFrame|DataTable|Date|undefined
     );
 
     /**
