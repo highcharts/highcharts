@@ -143,7 +143,7 @@ namespace TreeGridAxis {
     }
 
     export interface Options extends Highcharts.XAxisOptions {
-        labels?: LabelsOptions;
+        labels: LabelsOptions;
     }
 
     export interface TreeGridNode extends Highcharts.TreeNode {

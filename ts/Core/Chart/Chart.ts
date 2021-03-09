@@ -2323,7 +2323,7 @@ class Chart {
             if (
                 axis.horiz &&
                 axis.visible &&
-                (axis.options.labels as any).enabled &&
+                axis.options.labels.enabled &&
                 axis.series.length
             ) {
                 // 21 is the most common correction for X axis labels

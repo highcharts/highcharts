@@ -1241,7 +1241,7 @@ class GridAxis {
      */
     public static onInit(
         this: Axis,
-        e: { userOptions?: Highcharts.AxisOptions }
+        e: { userOptions?: DeepPartial<Highcharts.AxisOptions> }
     ): void {
         const axis = this;
         const userOptions = e.userOptions || {};

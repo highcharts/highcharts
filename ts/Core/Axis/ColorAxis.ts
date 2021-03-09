@@ -90,7 +90,10 @@ declare global {
             labelRight?: number;
         }
         interface Options {
-            colorAxis?: (ColorAxis.Options|Array<ColorAxis.Options>);
+            colorAxis?: (
+                DeepPartial<ColorAxis.Options>|
+                Array<DeepPartial<ColorAxis.Options>>
+            );
         }
         let ColorAxis: ColorAxisClass;
     }
@@ -606,7 +609,10 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public constructor(chart: Chart, userOptions: ColorAxis.Options) {
+    public constructor(
+        chart: Chart,
+        userOptions: DeepPartial<ColorAxis.Options>
+    ) {
         super(chart, userOptions);
         this.init(chart, userOptions);
     }
@@ -653,7 +659,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public init(
         chart: Chart,
-        userOptions: ColorAxis.Options
+        userOptions: DeepPartial<ColorAxis.Options>
     ): void {
         const axis = this;
         const legend = chart.options.legend || {},
@@ -696,7 +702,7 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public initDataClasses(userOptions: ColorAxis.Options): void {
+    public initDataClasses(userOptions: DeepPartial<ColorAxis.Options>): void {
         const axis = this;
         var chart = axis.chart,
             dataClasses,
@@ -1217,7 +1223,7 @@ class ColorAxis extends Axis implements AxisLike {
      * and call {@link Highcharts.Chart#redraw} after.
      */
     public update(
-        newOptions: ColorAxis.Options,
+        newOptions: DeepPartial<ColorAxis.Options>,
         redraw?: boolean
     ): void {
         const axis = this,
