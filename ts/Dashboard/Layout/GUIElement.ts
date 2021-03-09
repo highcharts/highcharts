@@ -8,8 +8,9 @@ import type HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes';
 import U from '../../Core/Utilities.js';
 
 const {
+    addEvent,
     createElement,
-    addEvent
+    objectEach
 } = U;
 
 abstract class GUIElement {
@@ -30,6 +31,12 @@ abstract class GUIElement {
      * HTML container of a GUIElement.
      */
     public container?: HTMLDOMElement;
+
+    /**
+     * The function to remove bindedGUIElement
+     * event on GUIElement container.
+     */
+    public removeBindedEventFn?: Function;
 
     /* *
     *
@@ -80,13 +87,40 @@ abstract class GUIElement {
 
         // Set bindedGUIElement event on GUIElement container.
         if (guiElement.container) {
-            addEvent(guiElement.container, 'bindedGUIElement', function (
-                e: GUIElement.BindedGUIElementEvent
-            ): void {
-                e.guiElement = guiElement;
-                e.stopImmediatePropagation();
-            });
+            guiElement.removeBindedEventFn = addEvent(
+                guiElement.container,
+                'bindedGUIElement',
+                function (e: GUIElement.BindedGUIElementEvent): void {
+                    e.guiElement = guiElement;
+                    e.stopImmediatePropagation();
+                }
+            );
         }
+    }
+
+    /**
+     * Destroy the element, its container, event hooks
+     * and all properties.
+     */
+    protected destroy(): undefined {
+        const guiElement = this;
+
+        // Remove bindedGUIElement event.
+        if (guiElement.removeBindedEventFn) {
+            guiElement.removeBindedEventFn();
+        }
+
+        // Remove HTML container.
+        if (guiElement.container && guiElement.container.parentNode) {
+            guiElement.container.parentNode.removeChild(guiElement.container);
+        }
+
+        // Delete all properties.
+        objectEach(guiElement, function (val: unknown, key: string): void {
+            delete (guiElement as Record<string, any>)[key];
+        });
+
+        return;
     }
 
 }

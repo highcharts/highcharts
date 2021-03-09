@@ -11,7 +11,8 @@ const {
 const {
     merge,
     error,
-    isString
+    isString,
+    objectEach
 } = U;
 
 class Dashboard {
@@ -147,6 +148,27 @@ class Dashboard {
                 // Error
             }
         }
+    }
+
+    /**
+     * Destroy the element and its layouts.
+     */
+    public destroy(): undefined {
+        const dashboard = this;
+
+        // Destroy layouts.
+        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
+            dashboard.layouts[i].destroy();
+        }
+
+        // @ToDo Destroy bindings.
+
+        // Delete all properties.
+        objectEach(dashboard, function (val: unknown, key: string): void {
+            delete (dashboard as Record<string, any>)[key];
+        });
+
+        return;
     }
 }
 

@@ -122,6 +122,23 @@ class Layout extends GUIElement {
         layout.rows.push(row);
         return row;
     }
+
+    /**
+     * Destroy the element, its container, event hooks
+     * and inner rows.
+     */
+    public destroy(): undefined {
+        const layout = this;
+
+        // Destroy rows.
+        for (let i = 0, iEnd = layout.rows.length; i < iEnd; ++i) {
+            layout.rows[i].destroy();
+        }
+
+        super.destroy();
+
+        return;
+    }
 }
 
 interface Layout {

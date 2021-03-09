@@ -128,6 +128,23 @@ class Row extends GUIElement {
         row.columns.push(column);
         return column;
     }
+
+    /**
+     * Destroy the element, its container, event hooks
+     * and inner columns.
+     */
+    public destroy(): undefined {
+        const row = this;
+
+        // Destroy columns.
+        for (let i = 0, iEnd = row.columns.length; i < iEnd; ++i) {
+            row.columns[i].destroy();
+        }
+
+        super.destroy();
+
+        return;
+    }
 }
 
 namespace Row {

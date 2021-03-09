@@ -6,9 +6,7 @@ import type Component from './../Component/Component.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
 const {
-    merge,
-    pick,
-    addEvent
+    merge
 } = U;
 class Column extends GUIElement {
     /* *
@@ -85,6 +83,23 @@ class Column extends GUIElement {
      * Component mounted in the column.
      */
     public mountedComponent?: Component;
+
+    /**
+     * Destroy the element, its container, event hooks
+     * and mounted component.
+     */
+    public destroy(): undefined {
+        const column = this;
+
+        // Destroy mounted component.
+        if (column.mountedComponent) {
+            column.mountedComponent.destroy();
+        }
+
+        super.destroy();
+
+        return;
+    }
 }
 
 namespace Column {
