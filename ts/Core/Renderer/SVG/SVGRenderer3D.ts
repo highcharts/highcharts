@@ -87,6 +87,16 @@ declare module './SVGRendererLike' {
     }
 }
 
+interface SVGAttributesExtended extends SVGAttributes {
+    alpha?: number;
+    beta?: number;
+    center?: number;
+    enabled?: boolean;
+    faces?: SVGElement[];
+    insidePlotArea?: boolean;
+    vertexes?: Position3DObject[];
+}
+
 /* *
  *
  *  Constants
@@ -218,7 +228,7 @@ SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
 
     ret.attr = function (
         this: SVGElement,
-        hash?: (string|SVGAttributes)
+        hash?: (string|SVGAttributesExtended)
     ): (number|string|SVGElement) {
 
         if (
@@ -246,18 +256,17 @@ SVGRenderer.prototype.face3d = function (args?: SVGAttributes): SVGElement {
                     this.insidePlotArea
                 ),
                 path = renderer.toLinePath(vertexes2d, true),
-                area = shapeArea(vertexes2d),
-                visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
+                area = shapeArea(vertexes2d);
 
             hash.d = path;
-            hash.visibility = visibility;
+            hash.visibility = (this.enabled && area > 0) ? 'visible' : 'hidden';
         }
         return SVGElement.prototype.attr.apply(this, arguments as any);
     } as any;
 
     ret.animate = function (
         this: SVGElement,
-        params: SVGAttributes
+        params: SVGAttributesExtended
     ): SVGElement {
         if (
             typeof params === 'object' &&
@@ -327,7 +336,7 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
 
     result.attr = function (
         this: SVGElement,
-        hash?: (string|SVGAttributes),
+        hash?: (string|SVGAttributesExtended),
         val?: string,
         complete?: Function,
         continueAnimation?: boolean
@@ -357,7 +366,7 @@ SVGRenderer.prototype.polyhedron = function (args?: SVGAttributes): SVGElement {
 
     result.animate = function (
         this: SVGElement,
-        params: SVGAttributes,
+        params: SVGAttributesExtended,
         duration?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement {
@@ -415,17 +424,17 @@ SVGRenderer.prototype.cuboid = function (
 // Generates a cuboid path and zIndexes
 SVGRenderer.prototype.cuboidPath = function (
     this: Highcharts.SVGRenderer,
-    shapeArgs: SVGAttributes
+    shapeArgs: SVGAttributesExtended
 ): SVGCuboid {
-    var x = shapeArgs.x,
-        y = shapeArgs.y,
+    var x = shapeArgs.x || 0,
+        y = shapeArgs.y || 0,
         z = shapeArgs.z || 0,
         // For side calculation (right/left)
         // there is a need for height (and other shapeArgs arguments)
         // to be at least 1px
-        h = shapeArgs.height,
-        w = shapeArgs.width,
-        d = shapeArgs.depth,
+        h = shapeArgs.height || 0,
+        w = shapeArgs.width || 0,
+        d = shapeArgs.depth || 0,
         chart = charts[this.chartIndex],
         front: Array<number>,
         back: Array<number>,
@@ -659,7 +668,7 @@ SVGRenderer.prototype.cuboidPath = function (
 };
 
 // SECTORS //
-SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
+SVGRenderer.prototype.arc3d = function (attribs: SVGAttributesExtended): SVGElement {
 
     var wrapper = this.g(),
         renderer = wrapper.renderer,
@@ -670,7 +679,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
      * object with only custom attr.
      * @private
      */
-    function suckOutCustom(params: SVGAttributes): (SVGAttributes|undefined) {
+    function suckOutCustom(params: SVGAttributesExtended): (SVGAttributesExtended|undefined) {
         var hasCA = false,
             ca = {} as SVGAttributes,
             key: string;
@@ -679,8 +688,8 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
 
         for (key in params) {
             if (customAttribs.indexOf(key) !== -1) {
-                ca[key] = params[key];
-                delete params[key];
+                (ca as any)[key] = (params as any)[key];
+                delete (params as any)[key];
                 hasCA = true;
             }
         }
@@ -736,7 +745,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
      * Compute the transformed paths and set them to the composite shapes
      * @private
      */
-    wrapper.setPaths = function (attribs: SVGAttributes): void {
+    wrapper.setPaths = function (attribs: SVGAttributesExtended): void {
 
         var paths = wrapper.renderer.arc3dPath(attribs),
             zIndex = paths.zTop * 100;
@@ -811,8 +820,8 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
         if (typeof params === 'object') {
             paramArr = suckOutCustom(params);
             if (paramArr) {
-                ca = paramArr[0];
-                arguments[0] = paramArr[1];
+                ca = (paramArr as any)[0];
+                arguments[0] = (paramArr as any)[1];
                 extend(wrapper.attribs, ca);
                 wrapper.setPaths(wrapper.attribs as any);
             }
@@ -824,7 +833,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
     // the shapes directly, and update the shapes from the animation step.
     wrapper.animate = function (
         this: SVGElement,
-        params: SVGAttributes,
+        params: SVGAttributesExtended,
         animation?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement {
@@ -848,11 +857,11 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
             // Params need to have a property in order for the step to run
             // (#5765, #7097, #7437)
             wrapper[randomProp] = 0;
-            params[randomProp] = 1;
+            (params as any)[randomProp] = 1;
             wrapper[randomProp + 'Setter'] = H.noop;
 
             if (paramArr) {
-                to = paramArr[0]; // custom attr
+                to = (paramArr as any)[0]; // custom attr
                 anim.step = function (a: unknown, fx: Fx): void {
 
                     /**
@@ -860,7 +869,7 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
                      */
                     function interpolate(key: string): number {
                         return (from as any)[key] + (
-                            pick(to[key], (from as any)[key]) -
+                            pick((to as any)[key], (from as any)[key]) -
                             (from as any)[key]
                         ) * fx.pos;
                     }
@@ -926,17 +935,17 @@ SVGRenderer.prototype.arc3d = function (attribs: SVGAttributes): SVGElement {
 
 // Generate the paths required to draw a 3D arc
 SVGRenderer.prototype.arc3dPath = function (
-    shapeArgs: SVGAttributes
+    shapeArgs: SVGAttributesExtended
 ): SVGArc3D {
-    var cx: number = shapeArgs.x, // x coordinate of the center
-        cy: number = shapeArgs.y, // y coordinate of the center
-        start = shapeArgs.start, // start angle
-        end = shapeArgs.end - 0.00001, // end angle
-        r = shapeArgs.r, // radius
+    var cx = shapeArgs.x || 0, // x coordinate of the center
+        cy = shapeArgs.y || 0, // y coordinate of the center
+        start = shapeArgs.start || 0, // start angle
+        end = (shapeArgs.end || 0) - 0.00001, // end angle
+        r = shapeArgs.r || 0, // radius
         ir = shapeArgs.innerR || 0, // inner radius
         d = shapeArgs.depth || 0, // depth
-        alpha = shapeArgs.alpha, // alpha rotation of the chart
-        beta = shapeArgs.beta; // beta rotation of the chart
+        alpha = shapeArgs.alpha || 0, // alpha rotation of the chart
+        beta = shapeArgs.beta || 0; // beta rotation of the chart
 
     // Derived Variables
     var cs = Math.cos(start), // cosinus of the start angle

@@ -732,7 +732,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
         if (el && chart) {
             setElAttrs(el, {
-                tabindex: '-1'
+                tabindex: -1
             });
 
             el.onclick = function (e): void {
@@ -762,7 +762,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
         if (el) {
             setElAttrs(el, {
-                tabindex: '-1',
+                tabindex: -1,
                 'aria-expanded': !!getElement(tableId)
             });
 

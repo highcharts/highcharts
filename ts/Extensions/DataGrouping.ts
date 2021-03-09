@@ -353,6 +353,7 @@ const groupData = function (
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
+        groupAll = this.options.dataGrouping && this.options.dataGrouping.groupAll,
         pos = 0,
         start = 0,
         valuesLen,
@@ -408,7 +409,7 @@ const groupData = function (
             // get group x and y
             pointX = groupPositions[pos];
             series.dataGroupInfo = {
-                start: (series.cropStart as any) + start,
+                start: groupAll ? start : ((series.cropStart as any) + start),
                 length: values[0].length
             };
             groupedY = approximationFn.apply(series, values);
@@ -710,7 +711,11 @@ seriesProto.processData = function (): any {
 
         // Execute grouping if the amount of points is greater than the limit
         // defined in groupPixelWidth
-        if (groupPixelWidth) {
+        if (
+            groupPixelWidth &&
+            processedXData &&
+            processedXData.length
+        ) {
             hasGroupedData = true;
 
             // Force recreation of point instances in series.translate, #5699
@@ -735,21 +740,19 @@ seriesProto.processData = function (): any {
                         defaultDataGroupingUnits
                     ),
                     // Processed data may extend beyond axis (#4907)
-                    Math.min(xMin, (processedXData as any)[0]),
+                    Math.min(xMin, processedXData[0]),
                     Math.max(
                         xMax,
-                        (processedXData as any)[
-                            (processedXData as any).length - 1
-                        ]
+                        processedXData[processedXData.length - 1]
                     ),
-                    xAxis.options.startOfWeek as any,
-                    processedXData as any,
-                    series.closestPointRange as any
+                    xAxis.options.startOfWeek,
+                    processedXData,
+                    series.closestPointRange
                 ),
                 groupedData = seriesProto.groupData.apply(
                     series,
                     [
-                        processedXData as any,
+                        processedXData,
                         processedYData as any,
                         groupPositions,
                         (dataGroupingOptions as any).approximation

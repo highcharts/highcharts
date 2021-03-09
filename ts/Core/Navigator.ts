@@ -2030,10 +2030,7 @@ class Navigator {
                 navigator.hasDragged = (navigator.scrollbar as any).hasDragged;
                 navigator.render(0, 0, from, to);
 
-                if ((chart.options.scrollbar as any).liveRedraw ||
-                    ((e as any).DOMType !== 'mousemove' &&
-                    (e as any).DOMType !== 'touchmove')
-                ) {
+                if (this.shouldUpdateExtremes((e as any).DOMType)) {
                     setTimeout(function (): void {
                         navigator.onMouseUp(e);
                     });

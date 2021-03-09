@@ -859,7 +859,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                 options = merge(
                     {
                         langKey: 'ray',
-                        type: 'crookedLine',
+                        type: 'infinityLine',
                         typeOptions: {
                             type: 'ray',
                             points: [{
