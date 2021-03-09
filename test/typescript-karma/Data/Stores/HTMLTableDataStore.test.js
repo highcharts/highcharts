@@ -1,7 +1,7 @@
 import HTMLTableStore from '/base/js/Data/Stores/HTMLTableStore.js'
 import HTMLTableParser from '/base/js/Data/Parsers/HTMLTableParser.js'
 import U from '/base/js/Core/Utilities.js';
-import { registerStoreEvents, testExportedDataTable } from '../utils.js'
+import { registerStoreEvents, testExportedDataTable } from './utils.js'
 import CSVStore from '/base/js/Data/Stores/CSVStore.js';
 const { test, only } = QUnit;
 const { createElement } = U;

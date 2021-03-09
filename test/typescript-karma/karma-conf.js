@@ -133,7 +133,7 @@ module.exports = function (config) {
                 .split(',')
                 .filter(path => !!path)
                 .map(path => ({
-                    pattern: `test/typescript-karma/${path}/!(demo).js`,
+                    pattern: `test/typescript-karma/${path}.test.js`,
                     type: 'module'
                 })) :
             // all tests
