@@ -164,6 +164,23 @@ jobs:
       - <<: *load_workspace
       - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >>
 
+
+  check_for_samples_changes_and_deploy:
+    <<: *defaults
+    description: Checks for changes in samples/ and samples/*/demo and triggers deploy via highcharts-demo-manager
+    parameters:
+      always_deploy:
+        description: "Deploy regardless of finding changes in on last commit"
+        type: boolean
+        default: false
+      include_thumbnails:
+        description: "Include thumbnails in the build"
+        type: boolean
+        default: false
+    steps:
+      - <<: *load_workspace
+      - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >> <<# parameters.always_deploy >>--thumbnails<</ parameters.always_deploy >>
+
   generate_release_reference_images:
     <<: *defaults
     description: Generate visual tests reference images
@@ -465,6 +482,17 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-prod
+      - check_for_samples_changes_and_deploy:
+          # On release, make sure everything is up to date and force update thumbnails
+          requires: [generate_release_reference_images]
+          always_deploy: true
+          include_thumbnails: true
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-prod
 
   nightly:
     triggers:
@@ -532,6 +560,13 @@ workflows:
       - deploy_to_highcharts_dist:
           requires: [build_dist]
           context: highcharts-staging
+      # Trigger samples/demo updates
+      - check_for_samples_changes_and_deploy:
+          requires: [build_dist]
+          filters:
+            branches:
+              only: [master]
+          context: highcharts-prod
 
   reset_visual_test_references:
     when: << pipeline.parameters.run_reset_tests >>
