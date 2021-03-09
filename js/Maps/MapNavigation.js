@@ -154,10 +154,14 @@ MapNavigation.prototype.updateEvents = function (options) {
     if (pick(options.enableMouseWheelZoom, options.enabled)) {
         this.unbindMouseWheel = this.unbindMouseWheel || addEvent(chart.container, typeof doc.onmousewheel === 'undefined' ?
             'DOMMouseScroll' : 'mousewheel', function (e) {
-            chart.pointer.onContainerMouseWheel(e);
-            // Issue #5011, returning false from non-jQuery event does
-            // not prevent default
-            stopEvent(e);
+            // Prevent scrolling when the pointer is over the element
+            // with that class, for example anotation popup #12100.
+            if (!chart.pointer.inClass(e.target, 'highcharts-no-mousewheel')) {
+                chart.pointer.onContainerMouseWheel(e);
+                // Issue #5011, returning false from non-jQuery event does
+                // not prevent default
+                stopEvent(e);
+            }
             return false;
         });
     }
