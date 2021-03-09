@@ -139,7 +139,7 @@ QUnit.test('Highstock', function (assert) {
     assert.strictEqual(typeof chart.rangeSelector, 'object', 'Is stock chart');
 
     calledBack = false;
-    chart = Highcharts.StockChart(
+    chart = new Highcharts.StockChart(
         {
             chart: {
                 renderTo: 'container'
@@ -213,7 +213,7 @@ QUnit.test('Highmaps', function (assert) {
     );
     assert.strictEqual(chart.series[0].type, 'map', 'Is map chart');
 
-    chart = Highcharts.Map({
+    chart = new Highcharts.Map({
         chart: {
             renderTo: document.getElementById('container')
         },

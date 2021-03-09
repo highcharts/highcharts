@@ -33,7 +33,7 @@ QUnit.test('Point selected color after updating. (#3529)', function (assert) {
     var chart;
 
     // Initiate the chart
-    $('#container').highcharts('MapChart', {
+    $('#container').highcharts('Map', {
         series: [
             {
                 allowPointSelect: true,

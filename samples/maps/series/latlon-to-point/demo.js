@@ -1,9 +1,5 @@
 // Initiate the chart
-const chart = new Highcharts.Map({
-    chart: {
-        renderTo: 'container'
-    },
-
+const chart = Highcharts.mapChart('container', {
     title: {
         text: 'Highmaps lat/lon demo'
     },

@@ -3,11 +3,7 @@ var chart,
     position;
 
 // Initiate the chart
-chart = new Highcharts.Map({
-    chart: {
-        renderTo: 'container'
-    },
-
+chart = Highcharts.mapChart('container', {
     title: {
         text: 'Highmaps lat/lon demo'
     },

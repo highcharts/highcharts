@@ -804,7 +804,7 @@ QUnit.test('Stacked box plot (#3894)', function (assert) {
     ];
 
     // Initiate the chart
-    $('#container').highcharts('MapChart', {
+    $('#container').highcharts('Map', {
         title: {
             text: 'Highmaps basic demo'
         },
