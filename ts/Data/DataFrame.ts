@@ -1,3 +1,21 @@
+/* *
+ *
+ *  Data Layer
+ *
+ *  (c) 2012-2021 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataEventEmitter from './DataEventEmitter';
 
 import DataConverter from './DataConverter.js';
@@ -7,10 +25,18 @@ import U from '../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    merge,
     uniqueKey
 } = U;
 
+/* *
+ *
+ *  Class
+ *
+ * */
+
+/**
+ * Class to manage columns and rows in a frame structure.
+ */
 class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Class {
 
     /* *
@@ -19,6 +45,18 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
      *
      * */
 
+    /**
+     * Converts a supported class JSON to a DataFrame instance.
+     *
+     * @param {DataFrame.ClassJSON} json
+     * Class JSON (usually with a $class property) to convert.
+     *
+     * @param {DataConverter} [converter]
+     * Converter for conversions of cell values.
+     *
+     * @return {DataFrame}
+     * DataFrame instance from the class JSON.
+     */
     public static fromJSON(
         json: DataFrame.ClassJSON,
         converter?: DataConverter
@@ -90,8 +128,24 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
      *
      * */
 
+
+    /**
+     * Constructs an instance of the DataFrame class.
+     *
+     * @param {DataFrame.ColumnCollection} [columns]
+     * Record of columns.
+     *
+     * @param {string} [id]
+     * DataFrame identifier.
+     *
+     * @param {DataPresentationState} [presentationState]
+     * Presentation state for the DataFrame.
+     *
+     * @param {DataConverter} [converter]
+     * Converter for conversions of cell values.
+     */
     public constructor(
-        columns: Record<string, DataFrame.Column> = {},
+        columns: DataFrame.ColumnCollection = {},
         id?: string,
         presentationState: DataPresentationState = new DataPresentationState(),
         converter: DataConverter = new DataConverter()
@@ -118,10 +172,6 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
                 maxRowCount = Math.max(maxRowCount, column.length);
             }
 
-            for (let i = 0, iEnd = myColumnNames.length; i < iEnd; ++i) {
-                myColumns[myColumnNames[i]].length = maxRowCount;
-            }
-
             this.rowCount = maxRowCount;
         }
     }
@@ -139,7 +189,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
     public readonly aliasMap: Record<string, string> = {};
 
     /**
-     * Converter for value conversions in table rows.
+     * Converter for type conversions of cell values.
      */
     public readonly converter: DataConverter;
 
@@ -152,12 +202,6 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
     public readonly presentationState: DataPresentationState;
 
     private rowCount: number;
-
-    /**
-     * Internal version tag that changes with each modification of the table or
-     * a related row.
-     */
-    private versionTag?: string;
 
     /* *
      *
@@ -172,16 +216,18 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
      * Custom information for pending events.
      *
      * @emits DataFrame#clearFrame
-     * @emits DataFrame#afterClearTable
+     * @emits DataFrame#afterClearFrame
      */
     public clear(eventDetail?: DataEventEmitter.EventDetail): void {
+        const frame = this;
 
-        this.emit({ type: 'clearFrame', detail: eventDetail });
+        frame.emit({ type: 'clearFrame', detail: eventDetail });
 
-        this.columns = {};
-        this.columnNames.length = 0;
+        frame.columns = {};
+        frame.columnNames.length = 0;
+        frame.rowCount = 0;
 
-        this.emit({ type: 'afterClearFrame', detail: eventDetail });
+        frame.emit({ type: 'afterClearFrame', detail: eventDetail });
     }
 
     /**
@@ -208,8 +254,6 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
                 frame.converter
             ),
             aliases = Object.keys(frame.aliasMap);
-
-        frameClone.versionTag = frame.versionTag;
 
         for (
             let k = 0,
@@ -250,7 +294,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Deletes a column from the table.
+     * Deletes a column from the frame.
      *
      * @param {string} columnName
      * Name (no alias) of column that shall be deleted.
@@ -311,7 +355,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
             deletedAlias = aliasMap[alias];
 
         if (deletedAlias) {
-            delete this.aliasMap[alias];
+            delete frame.aliasMap[alias];
             return deletedAlias;
         }
     }
@@ -351,6 +395,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
             for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
                 deletedRow.push(...columns[columnNames[i]].splice(rowIndex, 1));
             }
+            frame.rowCount--;
 
             frame.emit({
                 type: 'afterDeleteRow',
@@ -363,7 +408,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Emits an event on this table to all registered callbacks of the given
+     * Emits an event on this frame to all registered callbacks of the given
      * event.
      *
      * @param {DataFrame.EventObject} e
@@ -547,39 +592,6 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Get a row matching a specific cell value.
-     *
-     * @param {string} columnNameOrAlias
-     * Column to search in.
-     *
-     * @param {DataFrame.CellType} cellValue
-     * Cell value to search for. `NaN` and `undefined` are not supported.
-     *
-     * @return {DataFrame.Row|undefined}
-     * First row with value.
-     */
-    public getRowBy(
-        columnNameOrAlias: string,
-        cellValue: DataFrame.CellType
-    ): (DataFrame.Row|undefined) {
-        const frame = this;
-
-        columnNameOrAlias = (
-            frame.aliasMap[columnNameOrAlias] || columnNameOrAlias
-        );
-
-        const column = frame.columns[columnNameOrAlias];
-
-        if (column) {
-            const rowIndex = column.indexOf(cellValue);
-
-            if (rowIndex > -1) {
-                return frame.getRow(rowIndex);
-            }
-        }
-    }
-
-    /**
      * Returns the column value for the given row.
      *
      * @param {number} rowIndex
@@ -609,16 +621,53 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Returns the number of rows in this table.
+     * Returns the number of rows in this frame.
      *
      * @return {number}
-     * Number of rows in this table.
+     * Number of rows in this frame.
      *
      * @todo Consider implementation via property getter `.length` depending on
      *       browser support.
      */
     public getRowCount(): number {
         return this.rowCount;
+    }
+
+    /**
+     * Retrieves the index of the first row matching a specific cell value.
+     *
+     * @param {string} columnNameOrAlias
+     * Column to search in.
+     *
+     * @param {DataFrame.CellType} cellValue
+     * Cell value to search for. `NaN` and `undefined` are not supported.
+     *
+     * @param {number} [rowOffset]
+     * Row offset to start searching.
+     *
+     * @return {number|undefined}
+     * Index of the first row matching the cell value.
+     */
+    public getRowIndexBy(
+        columnNameOrAlias: string,
+        cellValue: DataFrame.CellType,
+        rowOffset?: number
+    ): (number|undefined) {
+        const frame = this;
+
+        columnNameOrAlias = (
+            frame.aliasMap[columnNameOrAlias] || columnNameOrAlias
+        );
+
+        const column = frame.columns[columnNameOrAlias];
+
+        if (column) {
+            const rowIndex = column.indexOf(cellValue, rowOffset);
+
+            if (rowIndex > -1) {
+                return rowIndex;
+            }
+        }
     }
 
     /**
@@ -669,6 +718,86 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
         callback: DataEventEmitter.EventCallback<this, DataFrame.EventObject>
     ): Function {
         return addEvent(this, type, callback);
+    }
+
+    /**
+     * Sets a cell value based on the row index and column name or alias.
+     * Will insert a new row if the specified row does not exist.
+     *
+     * @param {number|undefined} rowIndex
+     * Row index to set. Do not set to add a new row.
+     *
+     * @param {string} columnNameOrAlias
+     * Column name or alias to set.
+     *
+     * @param {DataFrame.CellType} cellValue
+     * Cell value to set.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * `true` if successful, `false` if not
+     *
+     * @emits DataFrame#setRow
+     * @emits DataFrame#setCell
+     * @emits DataFrame#afterSetCell
+     * @emits DataFrame#afterSetRow
+     */
+    public setCell(
+        rowIndex: number = this.rowCount,
+        columnNameOrAlias: string,
+        cellValue: DataFrame.CellType,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        const frame = this,
+            columns = frame.columns;
+
+        columnNameOrAlias = (
+            frame.aliasMap[columnNameOrAlias] || columnNameOrAlias
+        );
+
+        const column = columns[columnNameOrAlias];
+
+        if (column) {
+            frame.emit({
+                type: 'setCell',
+                cellValue,
+                columnName: columnNameOrAlias,
+                detail: eventDetail,
+                rowIndex
+            });
+
+            frame.emit({
+                type: 'setRow',
+                detail: eventDetail,
+                rowIndex
+            });
+
+            if (rowIndex >= frame.rowCount) {
+                frame.rowCount = (rowIndex + 1);
+            }
+
+            column[rowIndex] = cellValue;
+
+            frame.emit({
+                type: 'afterSetRow',
+                detail: eventDetail,
+                rowIndex
+            });
+
+            frame.emit({
+                type: 'afterSetCell',
+                cellValue,
+                columnName: columnNameOrAlias,
+                detail: eventDetail,
+                rowIndex
+            });
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -737,10 +866,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
      * True if successfully changed, false if reserved.
      */
     public setColumnAlias(columnAlias: string, columnName: string): boolean {
-        const aliasMap = this.aliasMap;
-
-        aliasMap[columnAlias] = columnName;
-
+        this.aliasMap[columnAlias] = columnName;
         return true;
     }
 
@@ -782,7 +908,12 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
             frame.rowCount = (rowIndex + 1);
         }
 
-        for (let i = 0, iEnd = cellValues.length; i < iEnd; ++i) {
+        for (
+            let i = 0,
+                iEnd = Math.min(columnNames.length, cellValues.length);
+            i < iEnd;
+            ++i
+        ) {
             columns[columnNames[i]][rowIndex] = cellValues[i];
         }
 
@@ -793,57 +924,6 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
         });
 
         return true;
-    }
-
-    /**
-     * Sets a cell value based on the row ID/index and column name/alias.
-     * Will insert a new row if the specified row does not exist.
-     *
-     * @param {number|undefined} rowIndex
-     * Row index to set. Do not set to add a new row.
-     *
-     * @param {string} columnNameOrAlias
-     * Column name or alias to set.
-     *
-     * @param {DataFrame.CellType} cellValue
-     * Cell value to set.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {boolean}
-     * `true` if successful, `false` if not
-     */
-    public setRowCell(
-        rowIndex: (number|undefined),
-        columnNameOrAlias: string,
-        cellValue: DataFrame.CellType,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): boolean {
-        const frame = this,
-            columns = frame.columns;
-
-        columnNameOrAlias = (
-            frame.aliasMap[columnNameOrAlias] || columnNameOrAlias
-        );
-
-        const column = columns[columnNameOrAlias];
-
-        if (column) {
-            if (!rowIndex) {
-                rowIndex = column.length;
-            }
-
-            if (rowIndex >= frame.rowCount) {
-                frame.rowCount = (rowIndex + 1);
-            }
-
-            column[rowIndex] = cellValue;
-
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -865,7 +945,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
             rowCount = frame.rowCount;
 
         if (frame.presentationState.isSet()) {
-            json.presentationState = this.presentationState.toJSON();
+            json.presentationState = frame.presentationState.toJSON();
         }
 
         for (
@@ -906,6 +986,7 @@ class DataFrame implements DataEventEmitter<DataFrame.EventObject>, DataJSON.Cla
  *  Class Prototype
  *
  * */
+
 interface DataFrame extends DataEventEmitter<DataFrame.EventObject> {
     // nothing here yet
 }
@@ -916,6 +997,9 @@ interface DataFrame extends DataEventEmitter<DataFrame.EventObject> {
  *
  * */
 
+/**
+ * Additionally it provides necessary types for events and JSON conversion.
+ */
 namespace DataFrame {
 
     /**
@@ -924,13 +1008,26 @@ namespace DataFrame {
     export type CellType = (DataFrame|DataJSON.JSONPrimitive);
 
     /**
-     * All information objects of DataTable events.
+     * All information objects of DataFrame events.
      */
     export type EventObject = (
+        CellEventObject|
         ColumnEventObject|
         FrameEventObject|
         RowEventObject
     );
+
+    /**
+     * Event object for cell-related events.
+     */
+    export interface CellEventObject extends DataEventEmitter.EventObject {
+        readonly type: (
+            'setCell'|'afterSetCell'
+        );
+        readonly cellValue: CellType;
+        readonly columnName: string;
+        readonly rowIndex: number;
+    }
 
     /**
      * Class JSON of a DataFrame.
