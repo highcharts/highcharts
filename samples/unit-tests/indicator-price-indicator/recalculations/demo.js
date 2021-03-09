@@ -207,8 +207,8 @@ function (assert) {
     );
 
     // Show currentPriceIndicator with the label.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
-        chart.navigationBindings, button);
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init
+        .call(chart.navigationBindings, button);
     assert.strictEqual(
         chart.series[0].crossLabel.element.getAttribute('visibility'),
         'visible',
@@ -247,8 +247,8 @@ function (assert) {
     );
 
     // Hide lastPrice and currentPriceIndicator.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
-        chart.navigationBindings, button);
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init
+        .call(chart.navigationBindings, button);
     assert.notOk(
         chart.series[0].crossLabel,
         'Series price indicator should not exist.'
@@ -259,8 +259,8 @@ function (assert) {
     );
 
     // Show again the lastPrice and currentPriceIndicator.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
-        chart.navigationBindings, button);
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init
+        .call(chart.navigationBindings, button);
     assert.strictEqual(
         chart.yAxis[0].crossLabel.element.getAttribute('visibility'),
         'visible',
@@ -308,10 +308,10 @@ QUnit.test('The lastPrice color, #15074.', function (assert) {
     );
 
     // Toggle the currentPriceIndicator button in the stock tools.
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
-        chart.navigationBindings, button);
-    chart.navigationBindings.options.bindings.currentPriceIndicator.init.call(
-        chart.navigationBindings, button);
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init
+        .call(chart.navigationBindings, button);
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init
+        .call(chart.navigationBindings, button);
 
     assert.strictEqual(
         chart.series[0].lastPrice.attr('stroke'),
@@ -379,5 +379,96 @@ QUnit.test('The currentPriceIndicator for multiple series, #14888.', function (a
         chart.series[0].lastPrice.attr('stroke'),
         '#ff0000',
         'Options declared for the lastPrice should overwrite the default one.'
+    );
+});
+
+QUnit.test('The currentPriceIndicator in StockTools, #15029.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            stockTools: {
+                gui: {
+                    enabled: true,
+                    buttons: ['currentPriceIndicator']
+                }
+            },
+            series: [{
+                data: [1, 2, 4, 6, 1, 5, 2.5],
+                lastPrice: {
+                    enabled: true,
+                    color: '#00ff00'
+                }
+            }]
+        }),
+        button = chart.stockTools.listWrapper.childNodes[0].childNodes[0];
+
+    assert.ok(
+        chart.series[0].lastPrice,
+        'When declared in options the lastPrice line should exist.'
+    );
+    assert.notOk(
+        chart.series[0].lastVisiblePrice,
+        'The lastVisiblePrice should not exist.'
+    );
+    assert.ok(
+        button.childNodes[0].style['background-image'].indexOf('hide') !== -1,
+        'When the chart initialized with the price indicator, the button should show an icon to hide.'
+    );
+
+    // Click the button in StockTools.
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init
+        .call(chart.navigationBindings, button);
+
+    assert.notOk(
+        chart.series[0].lastPrice,
+        'The lastPrice should not exist.'
+    );
+    assert.notOk(
+        chart.series[0].lastVisiblePrice,
+        'The lastVisiblePrice should not exist.'
+    );
+    assert.ok(
+        button.childNodes[0].style['background-image'].indexOf('show') !== -1,
+        'After a click, the button should suggest a possibility to show a price indicator.'
+    );
+
+    // Click the button in StockTools once again.
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init
+        .call(chart.navigationBindings, button);
+
+    assert.ok(
+        chart.series[0].lastPrice,
+        'The lastPrice should exist.'
+    );
+    assert.ok(
+        chart.series[0].lastVisiblePrice,
+        'The lastVisiblePrice should exist.'
+    );
+    assert.ok(
+        button.childNodes[0].style['background-image'].indexOf('hide') !== -1,
+        'After the second click, the button should change again.'
+    );
+
+    chart.series[0].update({
+        lastVisiblePrice: {
+            enabled: false
+        }
+    });
+    assert.ok(
+        button.childNodes[0].style['background-image'].indexOf('hide') !== -1,
+        'After an update, the button should suggest a possibility to hide a price indicator.'
+    );
+    chart.navigationBindings.options.bindings.currentPriceIndicator.init
+        .call(chart.navigationBindings, button);
+
+    assert.notOk(
+        chart.series[0].lastPrice,
+        'The lastPrice should not exist.'
+    );
+    assert.notOk(
+        chart.series[0].lastVisiblePrice,
+        'The lastVisiblePrice should not exist.'
+    );
+    assert.ok(
+        button.childNodes[0].style['background-image'].indexOf('show') !== -1,
+        'After an update and click, the button should suggest a possibility to show a price indicator again.'
     );
 });

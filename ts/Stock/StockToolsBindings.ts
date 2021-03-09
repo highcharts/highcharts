@@ -91,6 +91,7 @@ declare global {
             addFlagFromForm(this: NavigationBindings, type: string): Function;
             attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject;
             isNotNavigatorYAxis(axis: AxisType): boolean;
+            isPriceIndicatorEnabled(series: Series[]): boolean;
             manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
             updateHeight(this: NavigationBindings, e: PointerEvent, annotation: Annotation): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
@@ -439,6 +440,23 @@ bindingsUtils.attractToPoint = function (
 bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
     return axis.userOptions.className !== PREFIX + 'navigator-yaxis';
 };
+
+/**
+ * Check if any of the price indicators are enabled.
+ * @private
+ * @function bindingsUtils.isLastPriceEnabled
+ *
+ * @param {array} series
+ *        Array of series.
+ *
+ * @return {boolean}
+ *         Tells which indicator is enabled.
+ */
+bindingsUtils.isPriceIndicatorEnabled = function (series: Series[]): boolean {
+
+    return series.some((s): Highcharts.SVGElement|undefined => s.lastVisiblePrice || s.lastPrice);
+};
+
 /**
  * Update each point after specified index, most of the annotations use
  * this. For example crooked line: logic behind updating each point is the
@@ -2048,43 +2066,18 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         ): void {
             var chart = this.chart,
                 series = chart.series,
-                options = series[0].options,
-                lastVisiblePrice = (
-                    options.lastVisiblePrice &&
-                    options.lastVisiblePrice.enabled
-                ),
-                lastPrice = options.lastPrice && options.lastPrice.enabled,
-                gui: Highcharts.Toolbar = chart.stockTools as any,
-                iconsURL = gui.getIconsURL();
+                gui = chart.stockTools,
+                priceIndicatorEnabled = bindingsUtils.isPriceIndicatorEnabled(chart.series);
 
             if (gui && gui.guiEnabled) {
-                if (lastPrice) {
-                    (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                        'current-price-show.svg")';
-                } else {
-                    (button.firstChild as any).style['background-image'] =
-                        'url("' + iconsURL +
-                        'current-price-hide.svg")';
-                }
+                series.forEach(function (series): void {
+                    series.update({
+                        lastPrice: { enabled: !priceIndicatorEnabled },
+                        lastVisiblePrice: { enabled: !priceIndicatorEnabled, label: { enabled: true } }
+                    }, false);
+                });
+                chart.redraw();
             }
-
-            series.forEach(function (series): void {
-                series.update({
-                    // line
-                    lastPrice: {
-                        enabled: !lastPrice
-                    },
-                    // label
-                    lastVisiblePrice: {
-                        enabled: !lastVisiblePrice,
-                        label: {
-                            enabled: true
-                        }
-                    }
-                }, false);
-            });
-            chart.redraw();
 
             fireEvent(
                 this,
