@@ -277,7 +277,7 @@ class Tick {
 
     public movedLabel?: SVGElement;
 
-    public options?: Highcharts.AxisOptions;
+    public options?: DeepPartial<Highcharts.AxisOptions>;
 
     public parameters: Highcharts.TickParametersObject;
 

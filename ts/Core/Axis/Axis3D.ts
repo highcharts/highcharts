@@ -147,11 +147,11 @@ class Axis3DAdditions {
             beta = deg2rad * (chart.options.chart as any).options3d.beta,
             positionMode = pick(
                 isTitle && (axis.options.title as any).position3d,
-                (axis.options.labels as any).position3d
+                axis.options.labels.position3d
             ),
             skew = pick(
                 isTitle && (axis.options.title as any).skew3d,
-                (axis.options.labels as any).skew3d
+                axis.options.labels.skew3d
             ),
             frame = chart.chart3d.frame3d,
             plotLeft = chart.plotLeft,

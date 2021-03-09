@@ -159,8 +159,8 @@ declare global {
             userMin: number;
         }
         interface Options {
-            xAxis?: (XAxisOptions|Array<XAxisOptions>);
-            yAxis?: (YAxisOptions|Array<YAxisOptions>);
+            xAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
+            yAxis?: (DeepPartial<YAxisOptions>|Array<DeepPartial<YAxisOptions>>);
         }
         interface XAxisAccessibilityOptions {
             description?: string;
@@ -207,6 +207,7 @@ declare global {
         }
         interface XAxisLabelsOptions {
             align?: AlignValue;
+            allowOverlap?: boolean;
             autoRotation?: (false|Array<number>);
             autoRotationLimit?: number;
             distance?: number;
@@ -218,7 +219,7 @@ declare global {
             overflow?: OptionsOverflowValue;
             padding?: number;
             reserveSpace?: boolean;
-            rotation?: number;
+            rotation?: number|'auto';
             staggerLines?: number;
             step?: number;
             style?: CSSObject;
@@ -247,7 +248,7 @@ declare global {
             height?: (number|string);
             id?: string;
             isX?: boolean;
-            labels?: XAxisLabelsOptions;
+            labels: XAxisLabelsOptions;
             left?: (number|string);
             lineColor?: ColorType;
             lineWidth?: number;
@@ -342,7 +343,10 @@ declare global {
             public static defaultTopAxisOptions: AxisOptions;
             public static defaultYAxisOptions: YAxisOptions;
             public static keepProps: Array<string>;
-            public constructor(chart: Chart, userOptions: AxisOptions);
+            public constructor(
+                chart: Chart,
+                userOptions: DeepPartial<AxisOptions>
+            );
             public _addedPlotLB?: boolean;
             public allowZoomOutside?: boolean;
             public alternateBands: Record<string, PlotLineOrBand>;
@@ -482,7 +486,10 @@ declare global {
             public hasData(): boolean;
             public hasVerticalPanning(): boolean;
             public hideCrosshair(): void;
-            public init(chart: Chart, userOptions: AxisOptions): void;
+            public init(
+                chart: Chart,
+                userOptions: DeepPartial<AxisOptions>
+            ): void;
             public labelMetrics(): FontMetricsObject;
             public minFromRange(): (number|undefined);
             public nameToX(point: Point): number;
@@ -525,7 +532,7 @@ declare global {
                 endOnTick?: boolean
             ): void;
             public unsquish(): number;
-            public update(options: AxisOptions, redraw?: boolean): void;
+            public update(options: DeepPartial<AxisOptions>, redraw?: boolean): void;
             public updateNames(): void;
             public validatePositiveValue(value: unknown): boolean;
             public zoom(newMin: number, newMax: number): boolean;
@@ -3909,7 +3916,10 @@ class Axis {
      *
      * */
 
-    public constructor(chart: Chart, userOptions: DeepPartial<Highcharts.AxisOptions>) {
+    public constructor(
+        chart: Chart,
+        userOptions: DeepPartial<Highcharts.AxisOptions>
+    ) {
         this.init(chart, userOptions);
     }
 
@@ -4302,7 +4312,7 @@ class Axis {
     public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
         this.options = merge(
             Axis.defaultOptions,
-            ((this.coll === 'yAxis') as any) && Axis.defaultYAxisOptions,
+            (this.coll === 'yAxis') && Axis.defaultYAxisOptions,
             [
                 Axis.defaultTopAxisOptions,
                 Axis.defaultRightAxisOptions,
@@ -4345,7 +4355,7 @@ class Axis {
             i = numericSymbols && numericSymbols.length,
             multi,
             ret: (string|undefined),
-            formatOption = (axis.options.labels as any).format,
+            formatOption = axis.options.labels.format,
 
             // make sure the same symbol is added for all labels on a linear
             // axis
@@ -6451,8 +6461,8 @@ class Axis {
         var index = this.tickPositions && this.tickPositions[0] || 0;
 
         return this.chart.renderer.fontMetrics(
-            (this.options.labels as any).style &&
-            (this.options.labels as any).style.fontSize,
+            this.options.labels.style &&
+            this.options.labels.style.fontSize,
             this.ticks[index] && this.ticks[index].label
         );
     }
@@ -6480,8 +6490,8 @@ class Axis {
                 ) /
                 tickInterval
             ),
-            rotation: any,
-            rotationOption = (labelOptions as any).rotation,
+            rotation: number|undefined,
+            rotationOption = labelOptions.rotation,
             labelMetrics = this.labelMetrics(),
             step,
             bestScore = Number.MAX_VALUE,
@@ -6508,14 +6518,14 @@ class Axis {
             };
 
         if (horiz) {
-            autoRotation = !(labelOptions as any).staggerLines &&
-                !(labelOptions as any).step &&
+            autoRotation = !labelOptions.staggerLines &&
+                !labelOptions.step &&
                 ( // #3971
                     defined(rotationOption) ?
                         [rotationOption] :
                         slotSize < pick(
-                            (labelOptions as any).autoRotationLimit, 80
-                        ) && (labelOptions as any).autoRotation
+                            labelOptions.autoRotationLimit, 80
+                        ) && labelOptions.autoRotation
                 );
 
             if (autoRotation) {
@@ -6547,12 +6557,15 @@ class Axis {
                 });
             }
 
-        } else if (!(labelOptions as any).step) { // #4411
+        } else if (!labelOptions.step) { // #4411
             newTickInterval = getStep(labelMetrics.h);
         }
 
         this.autoRotation = autoRotation;
-        this.labelRotation = pick(rotation, rotationOption);
+        this.labelRotation = pick(
+            rotation,
+            isNumber(rotationOption) ? rotationOption : 0
+        );
 
         return newTickInterval;
     }
@@ -6601,7 +6614,7 @@ class Axis {
 
         if (!horiz) {
             // #7028
-            const cssWidth = labelOptions?.style?.width;
+            const cssWidth = labelOptions.style?.width;
             if (cssWidth !== void 0) {
                 return parseInt(String(cssWidth), 10);
             }
@@ -6634,12 +6647,12 @@ class Axis {
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
                 1,
-                Math.round(slotWidth - 2 * ((labelOptions as any).padding || 5))
+                Math.round(slotWidth - 2 * (labelOptions.padding || 5))
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
-            textOverflowOption = ((labelOptions as any).style &&
-                (labelOptions as any).style.textOverflow),
+            textOverflowOption = (labelOptions.style &&
+                labelOptions.style.textOverflow),
             commonWidth: number,
             commonTextOverflow: string,
             maxLabelLength = 0,
@@ -6648,14 +6661,14 @@ class Axis {
             pos;
 
         // Set rotation option unless it is "auto", like in gauges
-        if (!isString((labelOptions as any).rotation)) {
+        if (!isString(labelOptions.rotation)) {
             // #4443:
-            attr.rotation = (labelOptions as any).rotation || 0;
+            attr.rotation = labelOptions.rotation || 0;
         }
 
         // Get the longest label length
-        tickPositions.forEach(function (tick: (number|Highcharts.Tick)): void {
-            tick = ticks[tick as any];
+        tickPositions.forEach(function (tickPosition): void {
+            const tick = ticks[tickPosition];
 
             // Replace label - sorting animation
             if (tick.movedLabel) {
@@ -6664,10 +6677,10 @@ class Axis {
 
             if (
                 tick &&
-                (tick as any).label &&
-                (tick as any).label.textPxLength > maxLabelLength
+                tick.label &&
+                tick.label.textPxLength > maxLabelLength
             ) {
-                maxLabelLength = (tick as any).label.textPxLength;
+                maxLabelLength = tick.label.textPxLength;
             }
         });
         this.maxLabelLength = maxLabelLength;
@@ -6959,7 +6972,7 @@ class Axis {
         axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
         // Set/reset staggerLines
-        axis.staggerLines = axis.horiz && (labelOptions as any).staggerLines;
+        axis.staggerLines = (axis.horiz && labelOptions.staggerLines) || void 0;
 
         // Create the axisGroup and gridGroup elements on first iteration
         if (!axis.axisGroup) {
@@ -6989,7 +7002,7 @@ class Axis {
             axis.labelGroup = createGroup(
                 'axis-labels',
                 '-labels',
-                (labelOptions as any).zIndex || 7
+                labelOptions.zIndex || 7
             );
         }
 
@@ -7012,7 +7025,7 @@ class Axis {
                 ({ 1: 'left', 3: 'right' } as any)[side] === axis.labelAlign
             );
             if (pick(
-                (labelOptions as any).reserveSpace,
+                labelOptions.reserveSpace,
                 axis.labelAlign === 'center' ? true : null,
                 axis.reserveSpaceDefault
             )) {
@@ -7084,10 +7097,10 @@ class Axis {
             labelOffsetPadded += directionFactor * (
                 horiz ?
                     pick(
-                        (labelOptions as any).y,
+                        labelOptions.y,
                         axis.tickRotCorr.y + directionFactor * 8
                     ) :
-                    (labelOptions as any).x
+                    (labelOptions.x || 0)
             );
         }
 
@@ -7106,7 +7119,7 @@ class Axis {
 
         axisOffset[side] = Math.max(
             axisOffset[side],
-            (axis.axisTitleMargin as any) + titleOffset +
+            (axis.axisTitleMargin || 0) + titleOffset +
             directionFactor * axis.offset,
             labelOffsetPadded, // #3027
             tickPositions && tickPositions.length && tickSize ?
@@ -7862,7 +7875,7 @@ class Axis {
      *        false and call {@link Chart#redraw} after.
      */
     public update(
-        options: Highcharts.AxisOptions,
+        options: DeepPartial<Highcharts.AxisOptions>,
         redraw?: boolean
     ): void {
         var chart = this.chart,

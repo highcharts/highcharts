@@ -95,8 +95,8 @@ H.ganttChart = function (
 
     // apply X axis options to both single and multi x axes
     options.xAxis = options.xAxis.map(function (
-        xAxisOptions: Highcharts.XAxisOptions,
-        i: number
+        xAxisOptions,
+        i
     ): Highcharts.XAxisOptions {
         if (i === 1) { // Second xAxis
             defaultLinkedTo = 0;
@@ -140,7 +140,7 @@ H.ganttChart = function (
         );
     });
 
-    options.series = null as any;
+    delete options.series;
 
     options = merge(
         true,

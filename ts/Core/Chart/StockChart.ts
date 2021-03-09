@@ -1110,7 +1110,10 @@ addEvent(Chart, 'update', function (
  * @param {Highcharts.AxisOptions} options
  * @return {Highcharts.AxisOptions}
  */
-function getDefaultAxisOptions(type: string, options: Highcharts.AxisOptions): Highcharts.AxisOptions {
+function getDefaultAxisOptions(
+    type: string,
+    options: Highcharts.AxisOptions
+): DeepPartial<Highcharts.AxisOptions> {
     if (type === 'xAxis') {
         return {
             minPadding: 0,
