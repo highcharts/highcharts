@@ -55,9 +55,10 @@ declare global {
             new(...args: Array<any>): T;
         }
         interface ErrorMessageEventObject {
+            chart?: Chart;
             code: number;
-            message: string;
-            params: Record<string, string>;
+            message?: string;
+            params?: Record<string, string>;
         }
         interface EventCallbackFunction<T> {
             (this: T, eventArguments: (Record<string, any>|Event)): (boolean|void);
@@ -516,18 +517,12 @@ function error(
         message += additionalMessages;
     }
 
-    // Display error on the chart causing the error or the last created chart.
-    chart = chart || find(charts.slice().reverse(), (c?: Chart): boolean => !!c);
-    if (chart) {
-        fireEvent(
-            chart,
-            'displayError',
-            { code, message, params } as Highcharts.ErrorMessageEventObject,
-            defaultHandler
-        );
-    } else {
-        defaultHandler();
-    }
+    fireEvent(
+        Highcharts,
+        'displayError',
+        { chart, code, message, params },
+        defaultHandler
+    );
 
     error.messages.push(message);
 }
@@ -2388,7 +2383,14 @@ function fireEvent<T>(
     eventArguments = eventArguments || {};
 
     if (doc.createEvent &&
-        ((el as any).dispatchEvent || (el as any).fireEvent)
+        (
+            (el as any).dispatchEvent ||
+            (
+                (el as any).fireEvent &&
+                // Enable firing events on Highcharts instance.
+                (el as any) !== H
+            )
+        )
     ) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
