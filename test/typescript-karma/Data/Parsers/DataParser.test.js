@@ -1,31 +1,31 @@
 import DataParser from '/base/js/Data/Parsers/DataParser.js';
-import DataTableRow from '/base/js/Data/DataTableRow.js';
-import DataTable from '/base/js/Data/DataTable.js';
+import OldTownTableRow from '/base/js/Data/OldTownTableRow.js';
+import OldTownTable from '/base/js/Data/OldTownTable.js';
 
 QUnit.test('DataParser.getColumnsFromTable with missing cells', function (assert) {
 
-    const table = new DataTable();
+    const table = new OldTownTable();
 
-    table.insertRow(new DataTableRow(
+    table.insertRow(new OldTownTableRow(
         {
             id: 'Row1',
             column1: 'value',
             column3: 'value'
         }
     ))
-    table.insertRow(new DataTableRow(
+    table.insertRow(new OldTownTableRow(
         {
             id: 'Row2',
             column3: 'value'
         }
     ))
-    table.insertRow(new DataTableRow(
+    table.insertRow(new OldTownTableRow(
         {
             id: 'Row3',
             column4: 'value'
         }
     ))
-    table.insertRow(new DataTableRow(
+    table.insertRow(new OldTownTableRow(
         {
             id: 'Row4',
             column1: 'value',

@@ -19,8 +19,8 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
 
-import DataTable from '../DataTable.js';
-import DataTableRow from '../DataTableRow.js';
+import OldTownTable from '../OldTownTable.js';
+import OldTownTableRow from '../OldTownTableRow.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -65,23 +65,23 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Converts the DataTable instance to a record of columns.
+     * Converts the OldTownTable instance to a record of columns.
      *
-     * @param {DataTable} table
+     * @param {OldTownTable} table
      * Table to convert.
      *
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state.
      *
-     * @return {Array<Array<DataTableRow.CellType>>}
+     * @return {Array<Array<OldTownTableRow.CellType>>}
      * A record of columns, where the key is the name of the column,
      * and the values are the content of the column.
      */
     public static getColumnsFromTable(
-        table: DataTable,
+        table: OldTownTable,
         usePresentationOrder?: boolean
-    ): Array<Array<DataTableRow.CellType>> {
-        const columnsObject: DataTable.ColumnCollection = {
+    ): Array<Array<OldTownTableRow.CellType>> {
+        const columnsObject: OldTownTable.ColumnCollection = {
                 id: []
             },
             rows = table.getAllRows();
@@ -134,30 +134,30 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         }
 
         return columnNames.map(
-            (columnName: string): Array<DataTableRow.CellType> => columnsObject[columnName]
+            (columnName: string): Array<OldTownTableRow.CellType> => columnsObject[columnName]
         );
     }
 
     /**
-     * Converts a simple two dimensional array to a DataTable instance. The
+     * Converts a simple two dimensional array to a OldTownTable instance. The
      * array needs to be structured like a DataFrame, so that the first
      * dimension becomes the columns and the second dimension the rows.
      *
-     * @param {Array<Array<DataTableRow.CellType>>} [columns]
+     * @param {Array<Array<OldTownTableRow.CellType>>} [columns]
      * Array to convert.
      *
      * @param {Array<string>} [headers]
      * Column names to use.
      *
-     * @return {DataTable}
-     * DataTable instance from the arrays.
+     * @return {OldTownTable}
+     * OldTownTable instance from the arrays.
      */
     public static getTableFromColumns(
-        columns: Array<Array<DataTableRow.CellType>> = [],
+        columns: Array<Array<OldTownTableRow.CellType>> = [],
         headers: Array<string> = []
-    ): DataTable {
+    ): OldTownTable {
         const columnsLength = columns.length,
-            table = new DataTable();
+            table = new OldTownTable();
 
         // Assign an unique id for every column
         // without a provided name
@@ -174,7 +174,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
                 const idColumn = columns.splice(idIndex, 1)[0];
 
                 for (let i = 0, iEnd = idColumn.length; i < iEnd; ++i) {
-                    table.insertRow(new DataTableRow({ id: idColumn[i] }));
+                    table.insertRow(new OldTownTableRow({ id: idColumn[i] }));
                 }
 
                 headers.splice(idIndex, 1);
@@ -196,9 +196,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
 
     /**
      * Getter for the data table
-     * @return {DataTable}
+     * @return {OldTownTable}
      */
-    public abstract getTable(): DataTable;
+    public abstract getTable(): OldTownTable;
 
     /**
      * Emits an event on the DataParser instance.
@@ -267,7 +267,7 @@ namespace DataParser {
      */
     export interface EventObject extends DataEventEmitter.EventObject {
         readonly type: ('parse' | 'afterParse' | 'parseError');
-        readonly columns: DataTableRow.CellType[][];
+        readonly columns: OldTownTableRow.CellType[][];
         readonly error?: (string | Error);
         readonly headers: string[];
     }

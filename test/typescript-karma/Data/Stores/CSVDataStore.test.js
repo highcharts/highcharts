@@ -1,6 +1,6 @@
 import CSVStore from '/base/js/Data/Stores/CSVStore.js'
 import { registerStoreEvents, testExportedDataTable } from './utils.js'
-import DataTable from '/base/js/Data/DataTable.js';
+import OldTownTable from '/base/js/Data/OldTownTable.js';
 
 const { test, only } = QUnit;
 
@@ -160,7 +160,7 @@ test('CSVStore from URL', function (assert) {
 
         // Check that the store is updated
         // with the new dataset when polling
-        states[pollNumber] = new DataTable(e.table.getAllRows())
+        states[pollNumber] = new OldTownTable(e.table.getAllRows())
 
         if (pollNumber > 0 && states[pollNumber]) {
             assert.strictEqual(

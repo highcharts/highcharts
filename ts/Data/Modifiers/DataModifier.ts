@@ -21,7 +21,7 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
 import type ModifierType from './ModifierType';
-import type DataTable from '../DataTable';
+import type OldTownTable from '../OldTownTable';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -38,7 +38,7 @@ const {
  * */
 
 /**
- * Abstract class to provide an interface for modifying DataTable.
+ * Abstract class to provide an interface for modifying OldTownTable.
  */
 abstract class DataModifier<TEventObject extends DataEventEmitter.EventObject = DataModifier.EventObject>
 implements DataEventEmitter<TEventObject>, DataJSON.Class {
@@ -69,7 +69,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Adds a modifier class to the registry. The modifier has to provide the
      * `DataModifier.options` property and the `DataModifier.execute` method to
-     * modify the DataTable.
+     * modify the OldTownTable.
      *
      * @param {DataModifier} modifier
      * Modifier class (aka class constructor) to register.
@@ -167,19 +167,19 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Applies modifications to the table rows and returns a new table with the
      * modified rows.
      *
-     * @param {DataTable} table
+     * @param {OldTownTable} table
      * Table to modify.
      *
-     * @return {DataTable}
+     * @return {OldTownTable}
      * New modified table.
      */
-    public abstract execute(table: DataTable): DataTable;
+    public abstract execute(table: OldTownTable): OldTownTable;
 
     /**
      * Runs a timed execution of the modifier on the given datatable.
      * Can be configured to run multiple times.
      *
-     * @param {DataTable} dataTable
+     * @param {OldTownTable} dataTable
      * The datatable to execute
      *
      * @param {DataModifier.BenchmarkOptions} options
@@ -190,7 +190,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      *
      */
     public benchmark(
-        dataTable: DataTable,
+        dataTable: OldTownTable,
         options?: DataModifier.BenchmarkOptions
     ): Array<number> {
         const results: Array<number> = [];
@@ -321,7 +321,7 @@ namespace DataModifier {
         readonly type: (
             'execute'|'afterExecute'
         );
-        readonly table: DataTable;
+        readonly table: OldTownTable;
     }
 
     export interface BenchmarkEventObject extends DataEventEmitter.EventObject {

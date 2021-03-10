@@ -1,19 +1,19 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import DataTableRow from '/base/js/Data/DataTableRow.js';
+import OldTownTable from '/base/js/Data/OldTownTable.js';
+import OldTownTableRow from '/base/js/Data/OldTownTableRow.js';
 import SortModifier from '/base/js/Data/Modifiers/SortModifier.js';
 
 QUnit.test('SortModifier.execute', (assert) => {
 
-    const table = new DataTable([
-            new DataTableRow({
+    const table = new OldTownTable([
+            new OldTownTableRow({
                 x: 0,
                 y: 3
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 1,
                 y: 1
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 2,
                 y: 2
             }),

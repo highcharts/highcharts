@@ -1,18 +1,18 @@
 import DataParser from '/base/js/Data/Parsers/DataParser.js';
 import DataSeriesConverter from '/base/js/Data/DataSeriesConverter.js';
-import DataTableRow from '/base/js/Data/DataTableRow.js';
-import DataTable from '/base/js/Data/DataTable.js';
+import OldTownTableRow from '/base/js/Data/OldTownTableRow.js';
+import OldTownTable from '/base/js/Data/OldTownTable.js';
 
-QUnit.test('DataTable and DataTableRow events', function (assert) {
+QUnit.test('OldTownTable and OldTownTableRow events', function (assert) {
 
     const registeredEvents = [];
 
-    /** @param {DataTableRow.CellEventObject|DataTable.RowEventObject} e */
+    /** @param {OldTownTableRow.CellEventObject|OldTownTable.RowEventObject} e */
     function registerEvent(e) {
         registeredEvents.push(e.type);
     }
 
-    /** @param {DataTableRow} row */
+    /** @param {OldTownTableRow} row */
     function registerTableRow(row) {
         row.on('clearRow', registerEvent);
         row.on('afterClearRow', registerEvent);
@@ -23,7 +23,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
         row.on('afterChangeRow', registerEvent);
     }
 
-    /** @param {DataTable} table */
+    /** @param {OldTownTable} table */
     function registerTable(table) {
         table.on('clearTable', registerEvent);
         table.on('afterClearTable', registerEvent);
@@ -35,16 +35,16 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
         table.getAllRows().forEach(registerTableRow);
     }
 
-    const dataTable = DataTable.fromJSON({
-        $class: 'DataTable',
+    const dataTable = OldTownTable.fromJSON({
+        $class: 'OldTownTable',
         rows: [{
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             id: 'a',
             text: 'text'
         }]
     });
-    const dataRow = new DataTableRow({
-        $class: 'DataTableRow',
+    const dataRow = new OldTownTableRow({
+        $class: 'OldTownTableRow',
         id: 'b',
         text: 'text'
     });
@@ -60,7 +60,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'insertRow',
             'afterInsertRow',
         ],
-        'Events for DataTable.insertRow should be in expected order.'
+        'Events for OldTownTable.insertRow should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -73,7 +73,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterUpdateRow', // table gets informed first because of initial JSON
             'afterChangeRow',
         ],
-        'Events for DataTableRow.setCell (1) should be in expected order.'
+        'Events for OldTownTableRow.setCell (1) should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -94,7 +94,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'deleteRow',
             'afterDeleteRow'
         ],
-        'Events for DataTableRow.deleteRow should be in expected order.'
+        'Events for OldTownTableRow.deleteRow should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -107,7 +107,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events for DataTableRow.setCell (2) should be in expected order.'
+        'Events for OldTownTableRow.setCell (2) should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -120,7 +120,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events for DataTableRow.setCell (3) should be in expected order.'
+        'Events for OldTownTableRow.setCell (3) should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -133,7 +133,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events for DataTableRow.deleteCell should be in expected order.'
+        'Events for OldTownTableRow.deleteCell should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -146,11 +146,11 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'afterChangeRow',
             'afterUpdateRow',
         ],
-        'Events for DataTableRow.clear should be in expected order.'
+        'Events for OldTownTableRow.clear should be in expected order.'
     );
 
     registeredEvents.length = 0;
-    dataTable.replaceRow(dataRow, new DataTableRow());
+    dataTable.replaceRow(dataRow, new OldTownTableRow());
     assert.deepEqual(
         registeredEvents,
         [
@@ -159,7 +159,7 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'insertRow',
             'afterInsertRow'
         ],
-        'Events for DataTableRow.replaceRow should be in expected order.'
+        'Events for OldTownTableRow.replaceRow should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -170,44 +170,44 @@ QUnit.test('DataTable and DataTableRow events', function (assert) {
             'clearTable',
             'afterClearTable'
         ],
-        'Events for DataTable.clear should be in expected order.'
+        'Events for OldTownTable.clear should be in expected order.'
     );
 
 });
 
-QUnit.test('DataTable JSON support', function (assert) {
+QUnit.test('OldTownTable JSON support', function (assert) {
 
     const json = {
-        $class: 'DataTable',
+        $class: 'OldTownTable',
         rows: [{
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             id: 'a',
             column1: 'value1',
             column2: 0.0002,
             column3: false
         }, {
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             id: 'b',
             column1: 'value1',
             column2: 'value2',
             column3: {
-                $class: 'DataTable',
+                $class: 'OldTownTable',
                 rows: [{
-                    $class: 'DataTableRow',
+                    $class: 'OldTownTableRow',
                     id: 'ba',
                     column1: 'value1'
                 }, {
-                    $class: 'DataTableRow',
+                    $class: 'OldTownTableRow',
                     id: 'bb',
                     column1: 'value1'
                 }, {
-                    $class: 'DataTableRow',
+                    $class: 'OldTownTableRow',
                     id: 'bc',
                     column1: 'value1'
                 }]
             }
         }, {
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             id: 'c',
             column1: 'value1',
             column2: 'value2',
@@ -215,7 +215,7 @@ QUnit.test('DataTable JSON support', function (assert) {
         }]
     };
 
-    const table = DataTable.fromJSON(json);
+    const table = OldTownTable.fromJSON(json);
 
     const rowA = table.getRow('a');
     const rowB = table.getRow('b');
@@ -274,30 +274,30 @@ QUnit.test('DataTable JSON support', function (assert) {
 
 });
 
-QUnit.test('DataTable.getColumns', function (assert) {
+QUnit.test('OldTownTable.getColumns', function (assert) {
 
-    const table = new DataTable([
-            new DataTableRow({
+    const table = new OldTownTable([
+            new OldTownTableRow({
                 id: 'a',
                 column1: 'value1',
                 column2: 0.0002,
                 column3: false
             }),
-            DataTableRow.NULL,
-            new DataTableRow({
+            OldTownTableRow.NULL,
+            new OldTownTableRow({
                 id: 'b',
                 column1: 'value1',
                 column2: 'value2',
-                column3: new DataTable([
-                    new DataTableRow({
+                column3: new OldTownTable([
+                    new OldTownTableRow({
                         id: 'ba',
                         column1: 'value1'
                     }),
-                    new DataTableRow({
+                    new OldTownTableRow({
                         id: 'bb',
                         column1: 'value1'
                     }),
-                    new DataTableRow({
+                    new OldTownTableRow({
                         id: 'bc',
                         column1: 'value1'
                     })
@@ -323,8 +323,8 @@ QUnit.test('DataTable.getColumns', function (assert) {
 
 });
 
-QUnit.test('DataTable column methods', function (assert) {
-    const table = new DataTable();
+QUnit.test('OldTownTable column methods', function (assert) {
+    const table = new OldTownTable();
 
     table.aliasMap = {
         'x': 'population',
@@ -333,24 +333,24 @@ QUnit.test('DataTable column methods', function (assert) {
         'f': 'population'
     }
 
-    table.insertRow(DataTableRow.fromJSON({
-        $class: 'DataTableRow',
+    table.insertRow(OldTownTableRow.fromJSON({
+        $class: 'OldTownTableRow',
         id: 'Norway',
         population: 41251,
         gdp: 150
     }))
 
-    table.insertRow(DataTableRow.fromJSON({
-        $class: 'DataTableRow',
+    table.insertRow(OldTownTableRow.fromJSON({
+        $class: 'OldTownTableRow',
         id: 'Sweden',
         population: 21251,
         gdp: 950
     }))
 
-    table.insertRow(DataTableRow.fromJSON({
-        $class: 'DataTableRow',
+    table.insertRow(OldTownTableRow.fromJSON({
+        $class: 'OldTownTableRow',
         id: 'Finland',
-        population: (new DataTable()).toJSON(),
+        population: (new OldTownTable()).toJSON(),
         gdp: 950,
         nonexistant: 1
     }));
@@ -365,14 +365,14 @@ QUnit.test('DataTable column methods', function (assert) {
     assert.deepEqual(
         table.getColumn('x'),
         table.getColumns(['population'])['population'],
-        'DataTable should return correct rows for alias.'
+        'OldTownTable should return correct rows for alias.'
     );
 
     table.createColumnAlias('gdp', 'population')
     assert.deepEqual(
         table.getColumn('population'),
         table.getColumn('gdp'),
-        'DataTable should prioritize alias.'
+        'OldTownTable should prioritize alias.'
     );
 
     table.deleteColumnAlias('population');
@@ -443,11 +443,11 @@ QUnit.test('DataTable column methods', function (assert) {
 
 });
 
-QUnit.test('DataTable.renameColumn', function (assert) {
+QUnit.test('OldTownTable.renameColumn', function (assert) {
 
-    const table = new DataTable();
+    const table = new OldTownTable();
 
-    table.insertRow(new DataTableRow({
+    table.insertRow(new OldTownTableRow({
         column1: true,
         existingColumn: true
     }));
@@ -455,18 +455,18 @@ QUnit.test('DataTable.renameColumn', function (assert) {
     // Move
     assert.ok(
         table.renameColumn('column1', 'newColumn'),
-        'DataTable should move cells of a column to a new column.'
+        'OldTownTable should move cells of a column to a new column.'
     );
     assert.deepEqual(
         table.getColumns(['column1', 'newColumn']),
         { newColumn: [true] },
-        'DataTable should only return renamed column.'
+        'OldTownTable should only return renamed column.'
     );
 
     // Force move
     assert.ok(
         table.renameColumn('newColumn', 'existingColumn', true),
-        'DataTable should move cell of a column to an existing column (with force).'
+        'OldTownTable should move cell of a column to an existing column (with force).'
     );
     assert.deepEqual(
         table.getColumns(['newColumn', 'existingColumn']),
@@ -479,7 +479,7 @@ QUnit.test('DataTable.renameColumn', function (assert) {
 
     assert.ok(
         table.renameColumn('existingColumn', 'existingColumnAlias', true, true),
-        'DataTable should be able to move the cells of a column to an existing column (by alias with force).'
+        'OldTownTable should be able to move the cells of a column to an existing column (by alias with force).'
     );
     assert.deepEqual(
         table.getColumns(['existingColumnAlias', 'existingColumn']),
@@ -491,7 +491,7 @@ QUnit.test('DataTable.renameColumn', function (assert) {
 
     assert.notOk(
         table.renameColumn('nonexistant', 'existingColumn'),
-        'DataTable should fail when trying to move a non-existant column.'
+        'OldTownTable should fail when trying to move a non-existant column.'
     );
     assert.deepEqual(
         table.getColumns(['nonexistant', 'existingColumn']),
@@ -500,21 +500,21 @@ QUnit.test('DataTable.renameColumn', function (assert) {
 
     assert.notOk(
         table.renameColumn('existingColumn', 'existingColumn'),
-        'DataTable should fail when trying to move an existing column without force.'
+        'OldTownTable should fail when trying to move an existing column without force.'
     );
 
     assert.notOk(
         table.renameColumn('id', 'newIDColumn'),
-        'DataTable should fail when trying to move a column with the name "id".'
+        'OldTownTable should fail when trying to move a column with the name "id".'
     );
     assert.notOk(
         table.getColumn('newIDColumn'),
-        'DataTable should fail when trying to move a column with the name "id".'
+        'OldTownTable should fail when trying to move a column with the name "id".'
     );
 
     assert.notOk(
         table.renameColumn('existingColumn', 'id'),
-        'DataTable should fail when trying to move a column with the name "id".'
+        'OldTownTable should fail when trying to move a column with the name "id".'
     );
     assert.deepEqual(
         table.getColumns(['existingColumn', 'id']),
@@ -525,14 +525,14 @@ QUnit.test('DataTable.renameColumn', function (assert) {
     );
 });
 
-QUnit.test('DataTable.clone', function (assert) {
+QUnit.test('OldTownTable.clone', function (assert) {
 
     const dataSeriesConverter = new DataSeriesConverter(undefined, {
         columnMap: { y: 'y-test' }
     });
 
-    const table = new DataTable([], dataSeriesConverter);
-    const row = new DataTableRow({ id: 'row1', x: 1 });
+    const table = new OldTownTable([], dataSeriesConverter);
+    const row = new OldTownTableRow({ id: 'row1', x: 1 });
 
     table.insertRow(row);
     table.setRowCell('row1', 'x', 100);
@@ -547,7 +547,7 @@ QUnit.test('DataTable.clone', function (assert) {
     assert.notStrictEqual(
         table,
         tableClone,
-        'Cloned table should be a new DataTable instance.'
+        'Cloned table should be a new OldTownTable instance.'
     );
 
     assert.strictEqual(
@@ -582,11 +582,11 @@ QUnit.test('DataTable.clone', function (assert) {
 });
 
 
-QUnit.test('DataTable.setTableRows', function (assert) {
+QUnit.test('OldTownTable.setTableRows', function (assert) {
 
-    const originalTable = new DataTable();
+    const originalTable = new OldTownTable();
 
-    originalTable.insertRow(new DataTableRow({
+    originalTable.insertRow(new OldTownTableRow({
         column1: true,
         existingColumn: true
     }));

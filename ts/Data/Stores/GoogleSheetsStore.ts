@@ -17,7 +17,7 @@ const {
 } = AjaxMixin;
 import DataJSON from './../DataJSON.js';
 import DataStore from './DataStore.js';
-import DataTable from '../DataTable.js';
+import OldTownTable from '../OldTownTable.js';
 import U from '../../Core/Utilities.js';
 import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
 const {
@@ -53,7 +53,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
 
     public static fromJSON(json: GoogleSheetsStore.ClassJSON): GoogleSheetsStore {
         const options = json.options,
-            table = DataTable.fromJSON(json.table),
+            table = OldTownTable.fromJSON(json.table),
             store = new GoogleSheetsStore(table, options);
 
         store.metadata = merge(json.metadata);
@@ -70,8 +70,8 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
     /**
      * Constructs an instance of GoogleSheetsStore
      *
-     * @param {DataTable} table
-     * Optional DataTable to create the store from
+     * @param {OldTownTable} table
+     * Optional OldTownTable to create the store from
      *
      * @param {CSVStore.OptionsType} options
      * Options for the store and parser
@@ -80,7 +80,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
      * Optional parser to replace the default parser
      */
     public constructor(
-        table: DataTable,
+        table: OldTownTable,
         options: (
             Partial<GoogleSheetsStore.Options>&
             { googleSpreadsheetKey: string }

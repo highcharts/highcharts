@@ -1,33 +1,33 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import DataTableRow from '/base/js/Data/DataTableRow.js';
+import OldTownTable from '/base/js/Data/OldTownTable.js';
+import OldTownTableRow from '/base/js/Data/OldTownTableRow.js';
 import ChainModifier from '/base/js/Data/Modifiers/ChainModifier.js';
 import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
 import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
 
 QUnit.test('ChainModifier.execute', function (assert) {
 
-    const table = new DataTable([
-            new DataTableRow({
+    const table = new OldTownTable([
+            new OldTownTableRow({
                 x: 1,
                 y: 'a'
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 2,
                 y: 'a'
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 3,
                 y: 'b'
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 4,
                 y: 'b'
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 5,
                 y: 'c'
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 6,
                 y: 'c'
             }),
@@ -57,36 +57,36 @@ QUnit.test('ChainModifier.execute', function (assert) {
     assert.deepEqual(
         modifiedTable.toJSON(),
         {
-            $class: 'DataTable',
+            $class: 'OldTownTable',
             rows: [{
-                $class: 'DataTableRow',
+                $class: 'OldTownTableRow',
                 groupBy: 'y',
                 id: '0',
                 table: {
-                    $class: 'DataTable',
+                    $class: 'OldTownTable',
                     rows: [{
-                        $class: 'DataTableRow',
+                        $class: 'OldTownTableRow',
                         x: 1,
                         y: 'a'
                     }, {
-                        $class: 'DataTableRow',
+                        $class: 'OldTownTableRow',
                         x: 2,
                         y: 'a'
                     }]
                 },
                 value: 'a'
             }, {
-                $class: 'DataTableRow',
+                $class: 'OldTownTableRow',
                 groupBy: 'y',
                 id: '1',
                 table: {
-                    $class: 'DataTable',
+                    $class: 'OldTownTable',
                     rows: [{
-                        $class: 'DataTableRow',
+                        $class: 'OldTownTableRow',
                         x: 3,
                         y: 'b'
                     }, {
-                        $class: 'DataTableRow',
+                        $class: 'OldTownTableRow',
                         x: 4,
                         y: 'b'
                     }]
@@ -114,30 +114,30 @@ QUnit.test('benchmark', function (assert) {
             }]
         })
     );
-    const table = DataTable.fromJSON({
-        $class: 'DataTable',
+    const table = OldTownTable.fromJSON({
+        $class: 'OldTownTable',
         rows: [{
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             x: 1,
             y: 'a'
         }, {
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             x: 2,
             y: 'a'
         }, {
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             x: 3,
             y: 'b'
         }, {
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             x: 4,
             y: 'b'
         }, {
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             x: 5,
             y: 'c'
         }, {
-            $class: 'DataTableRow',
+            $class: 'OldTownTableRow',
             x: 6,
             y: 'c'
         }]

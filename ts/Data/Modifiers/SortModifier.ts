@@ -17,10 +17,10 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
+import type OldTownTableRow from '../OldTownTableRow';
 
 import DataModifier from './DataModifier.js';
-import DataTable from '../DataTable.js';
+import OldTownTable from '../OldTownTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -57,8 +57,8 @@ class SortModifier extends DataModifier {
      * */
 
     private static ascending(
-        a: DataTableRow.CellType,
-        b: DataTableRow.CellType
+        a: OldTownTableRow.CellType,
+        b: OldTownTableRow.CellType
     ): number {
         return (
             !a || !b ? 0 :
@@ -69,8 +69,8 @@ class SortModifier extends DataModifier {
     }
 
     private static descending(
-        a: DataTableRow.CellType,
-        b: DataTableRow.CellType
+        a: OldTownTableRow.CellType,
+        b: OldTownTableRow.CellType
     ): number {
         return (
             !a || !b ? 0 :
@@ -113,9 +113,9 @@ class SortModifier extends DataModifier {
      * */
 
     public execute<T extends DataEventEmitter.EventDetail>(
-        table: DataTable,
+        table: OldTownTable,
         eventDetail?: T
-    ): DataTable {
+    ): OldTownTable {
         const modifier = this,
             {
                 direction,
@@ -135,8 +135,8 @@ class SortModifier extends DataModifier {
         });
 
         const tableRows = table.getAllRows().sort((
-            a: DataTableRow,
-            b: DataTableRow
+            a: OldTownTableRow,
+            b: OldTownTableRow
         ): number => compare(
             a.getCell(orderByColumn),
             b.getCell(orderByColumn)
@@ -147,7 +147,7 @@ class SortModifier extends DataModifier {
                 tableRows[i].setCell(orderInColumn, i);
             }
         } else {
-            table = new DataTable(tableRows);
+            table = new OldTownTable(tableRows);
         }
 
         modifier.emit({

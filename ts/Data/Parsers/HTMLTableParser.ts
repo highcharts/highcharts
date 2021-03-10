@@ -17,11 +17,11 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
+import type OldTownTableRow from '../OldTownTableRow';
 
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
-import DataTable from '../DataTable.js';
+import OldTownTable from '../OldTownTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -33,7 +33,7 @@ const { merge } = U;
  * */
 
 /**
- * Handles parsing and transformation of an HTML table to a DataTable
+ * Handles parsing and transformation of an HTML table to a OldTownTable
  */
 class HTMLTableParser extends DataParser<DataParser.EventObject> {
 
@@ -117,7 +117,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private columns: DataTableRow.CellType[][];
+    private columns: OldTownTableRow.CellType[][];
     private headers: string[];
     public converter: DataConverter;
     public options: HTMLTableParser.ClassJSONOptions;
@@ -149,7 +149,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     ): void {
         const parser = this,
             converter = this.converter,
-            columns: DataTableRow.CellType[][] = [],
+            columns: OldTownTableRow.CellType[][] = [],
             headers: string[] = [],
             parseOptions = merge(parser.options, options),
             {
@@ -271,12 +271,12 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     }
 
     /**
-     * Handles converting the parsed data to a DataTable
+     * Handles converting the parsed data to a OldTownTable
      *
-     * @return {DataTable}
-     * A DataTable from the parsed HTML table
+     * @return {OldTownTable}
+     * A OldTownTable from the parsed HTML table
      */
-    public getTable(): DataTable {
+    public getTable(): OldTownTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 

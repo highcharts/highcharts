@@ -23,8 +23,8 @@ import type DataJSON from '../DataJSON';
 import type StoreType from './StoreType';
 
 import DataParser from '../Parsers/DataParser.js';
-import DataTableRow from '../DataTableRow.js';
-import DataTable from '../DataTable.js';
+import OldTownTableRow from '../OldTownTableRow.js';
+import OldTownTable from '../OldTownTable.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -71,7 +71,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Adds a dataStore class to the registry. The store has to provide the
      * `DataStore.options` property and the `DataStore.load` method to
-     * modify the DataTable.
+     * modify the OldTownTable.
      *
      * @param {DataStore} dataStore
      * Store class (aka class constructor) to register.
@@ -157,14 +157,14 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Constructor for the DataStore class.
      *
-     * @param {DataTable} table
-     * Optional DataTable to use in the DataStore.
+     * @param {OldTownTable} table
+     * Optional OldTownTable to use in the DataStore.
      *
      * @param {DataStore.Metadata} metadata
      * Optional metadata to use in the DataStore.
      */
     public constructor(
-        table: DataTable = new DataTable(),
+        table: OldTownTable = new OldTownTable(),
         metadata: DataStore.Metadata = { columns: {} }
     ) {
         this.table = table;
@@ -189,9 +189,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     public metadata: DataStore.Metadata;
 
     /**
-     * DataTable managed by this DataStore instance.
+     * OldTownTable managed by this DataStore instance.
      */
-    public table: DataTable;
+    public table: OldTownTable;
 
     /* *
      *
@@ -313,7 +313,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         return ({
             columnNames,
             columnValues: columnNames.map(
-                (name: string): DataTableRow.CellType[] => columnsRecord[name]
+                (name: string): OldTownTableRow.CellType[] => columnsRecord[name]
             )
         });
     }
@@ -400,7 +400,7 @@ namespace DataStore {
      * Interface of the class JSON to convert to class instances.
      */
     export interface ClassJSON extends DataJSON.ClassJSON {
-        table: DataTable.ClassJSON;
+        table: OldTownTable.ClassJSON;
         metadata: DataStore.Metadata;
     }
 
@@ -408,7 +408,7 @@ namespace DataStore {
      * The default event object for a datastore
      */
     export interface EventObject extends DataEventEmitter.EventObject {
-        readonly table: DataTable;
+        readonly table: OldTownTable;
     }
 
     /**
@@ -416,7 +416,7 @@ namespace DataStore {
      */
     export interface ColumnsForExportObject {
         columnNames: Array<string>;
-        columnValues: Array<Array<DataTableRow.CellType>>;
+        columnValues: Array<Array<OldTownTableRow.CellType>>;
         columnHeaderFormatter?: Function;
     }
 

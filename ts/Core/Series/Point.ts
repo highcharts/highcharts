@@ -36,7 +36,7 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
-import DataTableRow from '../../Data/DataTableRow.js';
+import OldTownTableRow from '../../Data/OldTownTableRow.js';
 import H from '../Globals.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
@@ -342,9 +342,9 @@ class Point {
      * */
 
     /**
-     * Converts the DataTableRow instance to common series options.
+     * Converts the OldTownTableRow instance to common series options.
      *
-     * @param {DataTableRow} tableRow
+     * @param {OldTownTableRow} tableRow
      * Table row to convert.
      *
      * @param {Array<string>} [keys]
@@ -354,10 +354,10 @@ class Point {
      * Common point options.
      */
     public static getPointOptionsFromTableRow(
-        tableRow: DataTableRow,
+        tableRow: OldTownTableRow,
         keys?: Array<string>
     ): (PointOptions|null) {
-        if (tableRow === DataTableRow.NULL) {
+        if (tableRow === OldTownTableRow.NULL) {
             return null;
         }
 
@@ -382,7 +382,7 @@ class Point {
     }
 
     /**
-     * Converts series options to a DataTable instance.
+     * Converts series options to a OldTownTable instance.
      *
      * @param {Highcharts.PointOptions} pointOptions
      * Point options to convert.
@@ -393,8 +393,8 @@ class Point {
      * @param {number} [x]
      * Point index for x value.
      *
-     * @return {DataTable}
-     * DataTable instance.
+     * @return {OldTownTable}
+     * OldTownTable instance.
      */
     public static getTableRowFromPointOptions(
         pointOptions: (
@@ -403,8 +403,8 @@ class Point {
         ),
         keys: Array<string> = ['y'],
         x: number = 0
-    ): DataTableRow {
-        let tableRow: DataTableRow;
+    ): OldTownTableRow {
+        let tableRow: OldTownTableRow;
 
         keys = keys.slice();
 
@@ -421,21 +421,21 @@ class Point {
             for (let i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
                 tableRowOptions[keys[i] || `${i}`] = pointOptions[i];
             }
-            tableRow = new DataTableRow(tableRowOptions);
+            tableRow = new OldTownTableRow(tableRowOptions);
 
         // Object
         } else if (
             typeof pointOptions === 'object'
         ) {
             if (pointOptions === null) {
-                tableRow = DataTableRow.NULL;
+                tableRow = OldTownTableRow.NULL;
             } else {
-                tableRow = new DataTableRow(flat(pointOptions));
+                tableRow = new OldTownTableRow(flat(pointOptions));
             }
 
         // Primitive
         } else {
-            tableRow = new DataTableRow({
+            tableRow = new OldTownTableRow({
                 x,
                 [keys[0] || 'y']: pointOptions
             });
@@ -450,7 +450,7 @@ class Point {
      *
      * */
 
-    public constructor(series?: Series, tableRow?: DataTableRow) {
+    public constructor(series?: Series, tableRow?: OldTownTableRow) {
         if (series) {
             this.series = series;
         }
@@ -577,7 +577,7 @@ class Point {
 
     public state?: StatesOptionsKey;
 
-    public tableRow?: DataTableRow;
+    public tableRow?: OldTownTableRow;
 
     public tableRowEventRemover?: Function;
 
@@ -740,7 +740,7 @@ class Point {
         return point;
     }
 
-    public attachTableRow(tableRow: DataTableRow): this {
+    public attachTableRow(tableRow: OldTownTableRow): this {
         const point = this,
             series = point.series;
 
@@ -860,7 +860,7 @@ class Point {
         });
     }
 
-    public detachTableRow(): (DataTableRow|undefined) {
+    public detachTableRow(): (OldTownTableRow|undefined) {
         const point = this,
             tableRow = point.tableRow,
             tableRowEventRemover = point.tableRowEventRemover;
@@ -1378,7 +1378,7 @@ class Point {
      * @fires Highcharts.Point#event:update
      */
     public update(
-        options: (DataTableRow|PointOptions|PointShortOptions),
+        options: (OldTownTableRow|PointOptions|PointShortOptions),
         redraw: boolean = true,
         animation?: (boolean|Partial<AnimationOptions>),
         runEvent?: boolean
@@ -1389,7 +1389,7 @@ class Point {
             i: number,
             chart = series.chart,
             pointOptions = (
-                options instanceof DataTableRow ?
+                options instanceof OldTownTableRow ?
                     Point.getPointOptionsFromTableRow(options) :
                     options
             ),

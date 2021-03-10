@@ -17,12 +17,12 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
+import type OldTownTableRow from '../OldTownTableRow';
 import type DataValueType from '../DataValueType';
 
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
-import DataTable from '../DataTable.js';
+import OldTownTable from '../OldTownTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -39,7 +39,7 @@ const {
  * */
 
 /**
- * Handles parsing and transformation of an Google Sheets to a DataTable
+ * Handles parsing and transformation of an Google Sheets to a OldTownTable
  */
 class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
 
@@ -110,7 +110,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private columns: DataTableRow.CellType[][];
+    private columns: OldTownTableRow.CellType[][];
     private headers: string[];
     public converter: DataConverter;
     public options: GoogleSheetsParser.ClassJSONOptions;
@@ -271,12 +271,12 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
     }
 
     /**
-     * Handles converting the parsed data to a DataTable
+     * Handles converting the parsed data to a OldTownTable
      *
-     * @return {DataTable}
-     * A DataTable from the parsed Google Sheet
+     * @return {OldTownTable}
+     * A OldTownTable from the parsed Google Sheet
      */
-    public getTable(): DataTable {
+    public getTable(): OldTownTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 

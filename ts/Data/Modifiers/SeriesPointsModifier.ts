@@ -21,12 +21,12 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import DataModifier from './DataModifier.js';
 import DataJSON from './../DataJSON.js';
-import DataTable from './../DataTable.js';
+import OldTownTable from './../OldTownTable.js';
 import U from './../../Core/Utilities.js';
 const {
     merge
 } = U;
-import DataTableRow from './../DataTableRow.js';
+import OldTownTableRow from './../OldTownTableRow.js';
 
 /* *
  *
@@ -104,30 +104,30 @@ class SeriesPointsModifier extends DataModifier {
      * */
 
     /**
-     * Create new DataTable with the same rows and add alternative
+     * Create new OldTownTable with the same rows and add alternative
      * column names (alias) depending on mapping option.
      *
-     * @param {DataTable} table
+     * @param {OldTownTable} table
      * Table to modify.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {DataTable}
+     * @return {OldTownTable}
      * New modified table.
      */
     public execute(
-        table: DataTable,
+        table: OldTownTable,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+    ): OldTownTable {
         const modifier = this,
             aliasMap = modifier.options.aliasMap || {},
             aliasKeys = Object.keys(aliasMap),
             aliasValues = [],
-            newTable = new DataTable();
+            newTable = new OldTownTable();
 
-        let row: (DataTableRow|undefined),
-            newCells: Record<string, DataTableRow.CellType>,
+        let row: (OldTownTableRow|undefined),
+            newCells: Record<string, OldTownTableRow.CellType>,
             cellName: string,
             cellAliasOrName: string,
             cellNames: Array<string>,
@@ -158,7 +158,7 @@ class SeriesPointsModifier extends DataModifier {
                     newCells[cellAliasOrName] = row.getCell(cellName);
                 }
 
-                newTable.insertRow(new DataTableRow(newCells));
+                newTable.insertRow(new OldTownTableRow(newCells));
             }
         }
 

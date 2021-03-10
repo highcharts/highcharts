@@ -19,10 +19,10 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
+import type OldTownTableRow from '../OldTownTableRow';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
-import DataTable from '../DataTable.js';
+import OldTownTable from '../OldTownTable.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -118,31 +118,31 @@ class RangeModifier extends DataModifier {
      * Applies modifications to the table rows and returns a new table with
      * subtable, containing only the filtered rows.
      *
-     * @param {DataTable} table
+     * @param {OldTownTable} table
      * Table to modify.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {DataTable}
+     * @return {OldTownTable}
      * New modified table.
      */
     public execute(
-        table: DataTable,
+        table: OldTownTable,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+    ): OldTownTable {
         const modifier = this,
             {
                 ranges,
                 strict
             } = modifier.options,
             rows = table.getAllRows(),
-            result = new DataTable();
+            result = new OldTownTable();
 
-        let column: DataTableRow.CellType,
+        let column: OldTownTableRow.CellType,
             range: RangeModifier.RangeOptions,
             rangeColumn: string,
-            row: DataTableRow;
+            row: OldTownTableRow;
 
         this.emit({ type: 'execute', detail: eventDetail, table });
 

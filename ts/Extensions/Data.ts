@@ -30,7 +30,7 @@ const {
     doc
 } = H;
 import Point from '../Core/Series/Point.js';
-import DataTable from '../Data/DataTable.js';
+import OldTownTable from '../Data/OldTownTable.js';
 import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
 import GoogleSheetsParser from '../Data/Parsers/GoogleSheetsParser.js';
 import CSVStore from '../Data/Stores/CSVStore.js';
@@ -1457,7 +1457,7 @@ class Data {
 
         if (csv) {
             csvStore = this.dataStore = new CSVStore(
-                new DataTable(),
+                new OldTownTable(),
                 {
                     csv: csv,
                     csvURL: options.csvURL,
@@ -1508,7 +1508,7 @@ class Data {
 
         if (table) {
             htmlStore = this.dataStore = new HTMLTableStore(
-                new DataTable(),
+                new OldTownTable(),
                 {
                     table: typeof table === 'string' ? table : table.id || ''
                 },
@@ -1676,11 +1676,11 @@ class Data {
      *
      * @function Highcharts.Data#getDataColumnsFromDataTable
      *
-     * @param {DataTable} [table]
+     * @param {OldTownTable} [table]
      *
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
-    public getDataColumnsFromDataTable(table: DataTable): Array<Array<Highcharts.DataValueType>> {
+    public getDataColumnsFromDataTable(table: OldTownTable): Array<Array<Highcharts.DataValueType>> {
         const columns: Array<Array<Highcharts.DataValueType>> = [];
 
         let column: Array<Highcharts.DataValueType>,
@@ -1733,7 +1733,7 @@ class Data {
 
         if (googleSpreadsheetKey) {
             store = this.dataStore = new GoogleSheetsStore(
-                new DataTable(),
+                new OldTownTable(),
                 {
                     googleSpreadsheetKey: googleSpreadsheetKey,
                     enablePolling: options.enablePolling,

@@ -1,23 +1,23 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import DataTableRow from '/base/js/Data/DataTableRow.js';
+import OldTownTable from '/base/js/Data/OldTownTable.js';
+import OldTownTableRow from '/base/js/Data/OldTownTableRow.js';
 import SeriesPointsModifier from '/base/js/Data/Modifiers/SeriesPointsModifier.js';
 
 QUnit.test('SeriesPointsModifier.execute', function (assert) {
 
-    const table = new DataTable([
-            new DataTableRow({
+    const table = new OldTownTable([
+            new OldTownTableRow({
                 id: 'Norway',
                 population: 41251,
                 gdp: 150
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 id: 'Sweden',
                 population: 21251,
                 gdp: 950
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 id: 'Finland',
-                population: (new DataTable()).toJSON(),
+                population: (new OldTownTable()).toJSON(),
                 gdp: 950
             })
         ]),

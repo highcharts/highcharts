@@ -50,7 +50,7 @@ const {
     animObject,
     setAnimation
 } = A;
-import DataTable from '../../Data/DataTable.js';
+import OldTownTable from '../../Data/OldTownTable.js';
 import H from '../Globals.js';
 const {
     hasTouch,
@@ -2638,7 +2638,7 @@ class Series {
      *
      * @private
      *
-     * @param {DataTable} table
+     * @param {OldTownTable} table
      * Table to convert.
      *
      * @param {Array<string>} [keys]
@@ -2648,7 +2648,7 @@ class Series {
      * Common series options.
      */
     public static getSeriesOptionsFromTable(
-        table: DataTable,
+        table: OldTownTable,
         keys?: Array<string>
     ): SeriesOptions {
         const rows = table.getAllRows(),
@@ -2672,20 +2672,20 @@ class Series {
     }
 
     /**
-     * Converts series options to a DataTable instance.
+     * Converts series options to a OldTownTable instance.
      *
      * @private
      *
      * @param {Highcharts.SeriesOptions} seriesOptions
      * Series options to convert.
      *
-     * @return {DataTable}
-     * DataTable instance.
+     * @return {OldTownTable}
+     * OldTownTable instance.
      */
     public static getTableFromSeriesOptions(
         seriesOptions: SeriesOptions
-    ): DataTable {
-        const table = new DataTable(void 0, seriesOptions.id),
+    ): OldTownTable {
+        const table = new OldTownTable(void 0, seriesOptions.id),
             data = (seriesOptions.data || []);
 
         let keys = (seriesOptions.keys || []),

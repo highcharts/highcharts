@@ -11,10 +11,10 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
+import type OldTownTableRow from '../OldTownTableRow';
 import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
-import DataTable from '../DataTable.js';
+import OldTownTable from '../OldTownTable.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableParser from '../Parsers/HTMLTableParser.js';
@@ -62,7 +62,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
     public static fromJSON(json: HTMLTableStore.ClassJSON): HTMLTableStore {
         const options = json.options,
             parser = HTMLTableParser.fromJSON(json.parser),
-            table = DataTable.fromJSON(json.table),
+            table = OldTownTable.fromJSON(json.table),
             store = new HTMLTableStore(table, options, parser);
 
         store.metadata = merge(json.metadata);
@@ -79,8 +79,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
     /**
      * Constructs an instance of HTMLTableDataStore
      *
-     * @param {DataTable} table
-     * Optional DataTable to create the store from
+     * @param {OldTownTable} table
+     * Optional OldTownTable to create the store from
      *
      * @param {HTMLTableStore.OptionsType} options
      * Options for the store and parser
@@ -89,7 +89,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * Optional parser to replace the default parser
      */
     public constructor(
-        table: DataTable = new DataTable(),
+        table: OldTownTable = new OldTownTable(),
         options: HTMLTableStore.OptionsType = {},
         parser?: HTMLTableParser
     ) {
@@ -356,7 +356,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             htmlRows: Array<string> = [],
             columnsCount = columnNames.length;
 
-        const rowArray: Array<Array<DataTableRow.CellType>> = [];
+        const rowArray: Array<Array<OldTownTableRow.CellType>> = [];
 
         let tableHead = '';
 

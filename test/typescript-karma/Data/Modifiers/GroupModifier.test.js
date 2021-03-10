@@ -1,23 +1,23 @@
-import DataTable from '/base/js/Data/DataTable.js';
-import DataTableRow from '/base/js/Data/DataTableRow.js';
+import OldTownTable from '/base/js/Data/OldTownTable.js';
+import OldTownTableRow from '/base/js/Data/OldTownTableRow.js';
 import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
 
 QUnit.test('GroupModifier.execute', function (assert) {
 
-    const table = new DataTable([
-            new DataTableRow({
+    const table = new OldTownTable([
+            new OldTownTableRow({
                 x: 0,
                 y: 'a'
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 0,
                 y: 'b'
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 1,
                 y: 'b'
             }),
-            new DataTableRow({
+            new OldTownTableRow({
                 x: 1,
                 y: 'a'
             })
@@ -29,7 +29,7 @@ QUnit.test('GroupModifier.execute', function (assert) {
 
     assert.ok(
         modifiedTable !== table &&
-        modifiedTable.getRow(0).getCell('table') instanceof DataTable,
+        modifiedTable.getRow(0).getCell('table') instanceof OldTownTable,
         'Filtered table should contain subtables.'
     );
 

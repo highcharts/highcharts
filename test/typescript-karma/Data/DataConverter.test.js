@@ -1,39 +1,39 @@
 const {test, only} = QUnit;
 
 import DataConverter from '/base/js/Data/DataConverter.js';
-import DataTable from '/base/js/Data/DataTable.js';
+import OldTownTable from '/base/js/Data/OldTownTable.js';
 
-const sampleTable = DataTable.fromJSON({
-    $class: 'DataTable',
+const sampleTable = OldTownTable.fromJSON({
+    $class: 'OldTownTable',
     rows: [{
-        $class: 'DataTableRow',
+        $class: 'OldTownTableRow',
         id: 'a',
         column1: 'value1',
         column2: 0.0002,
         column3: false
     }, {
-        $class: 'DataTableRow',
+        $class: 'OldTownTableRow',
         id: 'b',
         column1: 'value1',
         column2: 'value2',
         column3: {
-            $class: 'DataTable',
+            $class: 'OldTownTable',
             rows: [{
-                $class: 'DataTableRow',
+                $class: 'OldTownTableRow',
                 id: 'ba',
                 column1: 'value1'
             }, {
-                $class: 'DataTableRow',
+                $class: 'OldTownTableRow',
                 id: 'bb',
                 column1: 'value1'
             }, {
-                $class: 'DataTableRow',
+                $class: 'OldTownTableRow',
                 id: 'bc',
                 column1: 'value1'
             }]
         }
     }, {
-        $class: 'DataTableRow',
+        $class: 'OldTownTableRow',
         id: 'c',
         column1: 'value1',
         column2: 'value2',
@@ -97,7 +97,7 @@ test('asBoolean', function (assert) {
         true,
         null,
         undefined,
-        new DataTable(),
+        new OldTownTable(),
         sampleTable
     ];
 

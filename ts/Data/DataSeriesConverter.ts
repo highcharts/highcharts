@@ -20,8 +20,8 @@ import type DataEventEmitter from './DataEventEmitter';
 import type LineSeries from '../Series/Line/LineSeries';
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
-import DataTable from './DataTable.js';
-import DataTableRow from './DataTableRow.js';
+import OldTownTable from './OldTownTable.js';
+import OldTownTableRow from './OldTownTableRow.js';
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -35,8 +35,8 @@ const {
  * */
 
 /**
- * Class to convert Highcharts series data to DataTable
- * and get series data from the DataTable.
+ * Class to convert Highcharts series data to OldTownTable
+ * and get series data from the OldTownTable.
  */
 class DataSeriesConverter {
 
@@ -49,13 +49,13 @@ class DataSeriesConverter {
     /**
      * Constructs an instance of the DataSeriesConverter class.
      *
-     * @param {DataTable} [table]
+     * @param {OldTownTable} [table]
      * DataSeriesConverter table to store series data.
      *
      * @param {DataSeriesConverter.Options} [options]
      * DataSeriesConverter options.
      */
-    public constructor(table: DataTable = new DataTable(), options: DataSeriesConverter.Options = {}) {
+    public constructor(table: OldTownTable = new OldTownTable(), options: DataSeriesConverter.Options = {}) {
         this.table = table;
         this.options = options;
         this.seriesIdMap = {};
@@ -68,7 +68,7 @@ class DataSeriesConverter {
      *
      * */
 
-    public table: DataTable;
+    public table: OldTownTable;
     public options: DataSeriesConverter.Options;
 
     /**
@@ -89,7 +89,7 @@ class DataSeriesConverter {
      * */
 
     /**
-     * Get the specific series data stored in the converter DataTable.
+     * Get the specific series data stored in the converter OldTownTable.
      *
      * @param {string} seriesId
      * The id of the series.
@@ -142,7 +142,7 @@ class DataSeriesConverter {
     }
 
     /**
-     * Get all series data stored in the converter DataTable.
+     * Get all series data stored in the converter OldTownTable.
      *
      * @return {Array<SeriesOptions>}
      * Returns an array of series opitons.
@@ -166,21 +166,21 @@ class DataSeriesConverter {
     }
 
     /**
-     * Update the converter DataTable with passed series options.
+     * Update the converter OldTownTable with passed series options.
      *
      * @param {Array<LineSeries>} allSeries
-     * Array of series options to store in the converter DataTable.
+     * Array of series options to store in the converter OldTownTable.
      *
      * @param {DataEventEmitter.EventDetail} eventDetail
      * Custom information for pending events.
      */
-    updateDataTable(
+    updateOldTownTable(
         allSeries: Array<LineSeries>,
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const table = this.table;
 
-        let columns: Record<string, DataTableRow.CellType>,
+        let columns: Record<string, OldTownTableRow.CellType>,
             series,
             seriesMeta,
             pointArrayMap,
@@ -255,7 +255,7 @@ class DataSeriesConverter {
 
                     } else if (elem instanceof Object) {
                         if (needsArrayMap) {
-                            const elemSet = elem as Record<string, DataTableRow.CellType>;
+                            const elemSet = elem as Record<string, OldTownTableRow.CellType>;
 
                             for (let k = 0; k < pointArrayMapLength; k++) {
                                 yValueName = pointArrayMap[k];
@@ -273,7 +273,7 @@ class DataSeriesConverter {
 
                     if (!row) {
                         columns.id = id;
-                        row = new DataTableRow(columns);
+                        row = new OldTownTableRow(columns);
                         table.insertRow(row, eventDetail);
                     } else if (columns[y]) {
                         row.setCell(y, columns[y], eventDetail);

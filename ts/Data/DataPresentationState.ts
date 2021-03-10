@@ -32,7 +32,7 @@ const {
 
 /**
  * Contains presentation information like column order, usually in relation to a
- * DataTable instance.
+ * OldTownTable instance.
  */
 class DataPresentationState implements DataEventEmitter<DataPresentationState.EventObject>, DataJSON.Class {
 

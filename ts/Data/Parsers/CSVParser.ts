@@ -17,11 +17,11 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
+import type OldTownTableRow from '../OldTownTableRow';
 
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
-import DataTable from '../DataTable.js';
+import OldTownTable from '../OldTownTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -29,7 +29,7 @@ const { merge } = U;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
- * Handles parsing and transforming CSV to a DataTable
+ * Handles parsing and transforming CSV to a OldTownTable
  */
 class CSVParser extends DataParser<DataParser.EventObject> {
 
@@ -96,7 +96,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      *  Properties
      *
      * */
-    private columns: Array<Array<DataTableRow.CellType>> = [];
+    private columns: Array<Array<OldTownTableRow.CellType>> = [];
     private headers: Array<string> = [];
     private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
@@ -502,12 +502,12 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         return guessed;
     }
     /**
-     * Handles converting the parsed data to a DataTable
+     * Handles converting the parsed data to a OldTownTable
      *
-     * @returns {DataTable}
-     * A DataTable from the parsed CSV
+     * @returns {OldTownTable}
+     * A OldTownTable from the parsed CSV
      */
-    public getTable(): DataTable {
+    public getTable(): OldTownTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 

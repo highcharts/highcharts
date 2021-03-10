@@ -22,8 +22,8 @@ export function registerStoreEvents(datastore, eventArray, assertObj = {}) {
  *
  * @todo deeper comparisons?
  *
- * @param {DataTable} originalTable
- * @param {DataTable} exportedTable
+ * @param {OldTownTable} originalTable
+ * @param {OldTownTable} exportedTable
  * @param {*} assert QUnit assert object
  */
 export function testExportedDataTable(originalTable, exportedTable, assert) {

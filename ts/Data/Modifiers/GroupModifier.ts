@@ -21,8 +21,8 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
-import DataTable from '../DataTable.js';
-import DataTableRow from '../DataTableRow.js';
+import OldTownTable from '../OldTownTable.js';
+import OldTownTableRow from '../OldTownTableRow.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -115,19 +115,19 @@ class GroupModifier extends DataModifier {
      * - `table`: Subtable containing the grouped rows.
      * - `value`: containing the common value of the group
      *
-     * @param {DataTable} table
+     * @param {OldTownTable} table
      * Table to modify.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {DataTable}
+     * @return {OldTownTable}
      * New modified table.
      */
     public execute(
-        table: DataTable,
+        table: OldTownTable,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTable {
+    ): OldTownTable {
 
         this.emit({ type: 'execute', detail: eventDetail, table });
 
@@ -137,12 +137,12 @@ class GroupModifier extends DataModifier {
                 validValues
             } = modifier.options,
             columnGroups: Array<string> = [],
-            tableGroups: Array<DataTable> = [],
+            tableGroups: Array<OldTownTable> = [],
             valueGroups: Array<DataJSON.JSONPrimitive> = [];
 
         let groupColumn = modifier.options.groupColumn,
-            row: (DataTableRow|undefined),
-            value: DataTableRow.CellType,
+            row: (OldTownTableRow|undefined),
+            value: OldTownTableRow.CellType,
             valueIndex: number;
 
         for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
@@ -155,7 +155,7 @@ class GroupModifier extends DataModifier {
                 value = row.getCell(groupColumn);
 
                 if (
-                    value instanceof DataTable ||
+                    value instanceof OldTownTable ||
                     value instanceof Date ||
                     (
                         invalidValues &&
@@ -172,7 +172,7 @@ class GroupModifier extends DataModifier {
 
                 if (valueIndex === -1) {
                     columnGroups.push(groupColumn);
-                    tableGroups.push(new DataTable([row]));
+                    tableGroups.push(new OldTownTable([row]));
                     valueGroups.push(value);
                 } else {
                     tableGroups[valueIndex].insertRow(row);
@@ -180,10 +180,10 @@ class GroupModifier extends DataModifier {
             }
         }
 
-        table = new DataTable();
+        table = new OldTownTable();
 
         for (let i = 0, iEnd = tableGroups.length; i < iEnd; ++i) {
-            table.insertRow(new DataTableRow({
+            table.insertRow(new OldTownTableRow({
                 id: `${i}`,
                 groupBy: columnGroups[i],
                 table: tableGroups[i],

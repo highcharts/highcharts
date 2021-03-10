@@ -17,7 +17,7 @@
  * */
 
 import type DataEventEmitter from './DataEventEmitter';
-import type DataTable from './DataTable';
+import type OldTownTable from './OldTownTable';
 import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
 import U from '../Core/Utilities.js';
@@ -37,8 +37,8 @@ const {
 /**
  * Class to manage a row with column values.
  */
-class DataTableRow
-implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
+class OldTownTableRow
+implements DataEventEmitter<OldTownTableRow.EventObject>, DataJSON.Class {
 
     /* *
      *
@@ -49,7 +49,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     /**
      * Shared table row representing `null` with id `"NULL"`.
      */
-    public static readonly NULL = new DataTableRow({ id: 'NULL' });
+    public static readonly NULL = new OldTownTableRow({ id: 'NULL' });
 
     /* *
      *
@@ -58,21 +58,21 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * */
 
     /**
-     * Converts a supported class JSON to a DataTableRow instance.
+     * Converts a supported class JSON to a OldTownTableRow instance.
      *
-     * @param {DataTableRow.ClassJSON} json
+     * @param {OldTownTableRow.ClassJSON} json
      * Class JSON (usually with a $class property) to convert.
      *
-     * @return {DataTableRow}
-     * DataTableRow instance from the class JSON.
+     * @return {OldTownTableRow}
+     * OldTownTableRow instance from the class JSON.
      */
-    public static fromJSON(json: DataTableRow.ClassJSON): DataTableRow {
+    public static fromJSON(json: OldTownTableRow.ClassJSON): OldTownTableRow {
         const keys = Object.keys(json).reverse(),
-            columns: DataTableRow.Cells = {};
+            columns: OldTownTableRow.Cells = {};
 
         let columnName: (string|undefined),
-            columnValue: (DataJSON.JSONPrimitive|DataTable.ClassJSON|Array<DataTableRow.ClassJSON>),
-            table: DataTable;
+            columnValue: (DataJSON.JSONPrimitive|OldTownTable.ClassJSON|Array<OldTownTableRow.ClassJSON>),
+            table: OldTownTable;
 
         while (typeof (columnName = keys.pop()) !== 'undefined') {
 
@@ -88,11 +88,11 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
             ) {
                 if (columnValue instanceof Array) {
                     columns[columnName] = DataJSON.fromJSON({
-                        $class: 'DataTable',
+                        $class: 'OldTownTable',
                         rows: columnValue
-                    }) as DataTable;
+                    }) as OldTownTable;
                 } else {
-                    table = DataJSON.fromJSON(columnValue) as DataTable;
+                    table = DataJSON.fromJSON(columnValue) as OldTownTable;
                     table.id = columnName;
                     columns[columnName] = table;
                 }
@@ -101,7 +101,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
             }
         }
 
-        return new DataTableRow(columns);
+        return new OldTownTableRow(columns);
     }
 
     /* *
@@ -111,16 +111,16 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * */
 
     /**
-     * Constructs an instance of the DataTableRow class.
+     * Constructs an instance of the OldTownTableRow class.
      *
-     * @param {DataTableRow.Cells} [cells]
+     * @param {OldTownTableRow.Cells} [cells]
      * Cell values in a record object.
      *
      * @param {DataConverter} [converter]
      * Converter for value conversions.
      */
     constructor(
-        cells: DataTableRow.Cells = {},
+        cells: OldTownTableRow.Cells = {},
         converter: DataConverter = new DataConverter()
     ) {
         cells = merge(cells);
@@ -133,7 +133,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
             this.id = cells.id;
             this.isNull = true;
             if (cells.id === 'NULL') {
-                return DataTableRow.NULL;
+                return OldTownTableRow.NULL;
             }
         } else {
             this.autoId = true;
@@ -159,7 +159,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * Record object of all cell names with their values in this rows.
      * @private
      */
-    private cells: DataTableRow.Cells;
+    private cells: OldTownTableRow.Cells;
 
     /**
      * Converter for value conversions.
@@ -172,7 +172,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     public readonly id: string;
 
     /**
-     * True, if this row is an instance of `DataTableRow.NULL`.
+     * True, if this row is an instance of `OldTownTableRow.NULL`.
      */
     public readonly isNull: boolean;
 
@@ -188,8 +188,8 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits DataTableRow#clearRow
-     * @emits DataTableRow#afterClearRow
+     * @emits OldTownTableRow#clearRow
+     * @emits OldTownTableRow#afterClearRow
      */
     public clear(eventDetail?: DataEventEmitter.EventDetail): void {
         const row = this;
@@ -223,9 +223,9 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @return {boolean}
      * Returns true, if the delete was successful, otherwise false.
      *
-     * @emits DataTableRow#deleteCell
-     * @emits DataTableRow#afterDeleteCell
-     * @emits DataTableRow#afterChangeRow
+     * @emits OldTownTableRow#deleteCell
+     * @emits OldTownTableRow#afterDeleteCell
+     * @emits OldTownTableRow#afterChangeRow
      */
     public deleteCell(
         cellName: string,
@@ -269,20 +269,20 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * Emits an event on this row to all registered callbacks of the given
      * event.
      *
-     * @param {DataTableRow.EventObject} e
+     * @param {OldTownTableRow.EventObject} e
      * Event object with event information.
      */
-    public emit(e: DataTableRow.EventObject): void {
+    public emit(e: OldTownTableRow.EventObject): void {
         fireEvent(this, e.type, e);
     }
 
     /**
      * Returns a copy of the record object of all cell names with their values.
      *
-     * @return {DataTableRow.Cells}
+     * @return {OldTownTableRow.Cells}
      * Copy of the record object with all cell names and values.
      */
-    public getAllCells(): DataTableRow.Cells {
+    public getAllCells(): OldTownTableRow.Cells {
         return merge(this.cells);
     }
 
@@ -292,10 +292,10 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @param {string} cellName
      * Cell name to fetch.
      *
-     * @return {DataTableRow.CellType}
+     * @return {OldTownTableRow.CellType}
      * Cell value in this row.
      */
-    public getCell(cellName: string): DataTableRow.CellType {
+    public getCell(cellName: string): OldTownTableRow.CellType {
         const row = this;
 
         if (row.id === 'NULL') {
@@ -358,15 +358,16 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     }
 
     /**
-     * Tests if the value of the given cell name is a DataTable and returns it.
+     * Tests if the value of the given cell name is a OldTownTable and returns
+     * it.
      *
      * @param {string} cellName
      * Cell name to fetch.
      *
-     * @return {DataTable|undefined}
-     * Cell value of the cell in this row, if it is a DataTable.
+     * @return {OldTownTable|undefined}
+     * Cell value of the cell in this row, if it is a OldTownTable.
      */
-    public getCellAsTable(cellName: string): (DataTable|undefined) {
+    public getCellAsTable(cellName: string): (OldTownTable|undefined) {
         const value = this.getCell(cellName);
 
         if (
@@ -416,18 +417,18 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     /**
      * Registers a callback for a specific event.
      *
-     * @param {DataTableRow.EventTypes} type
+     * @param {OldTownTableRow.EventTypes} type
      * Event type as a string.
      *
-     * @param {DataTableRow.EventCallbacks} callback
+     * @param {OldTownTableRow.EventCallbacks} callback
      * Function to register for an event callback.
      *
      * @return {Function}
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataTableRow.EventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, DataTableRow.EventObject>
+        type: OldTownTableRow.EventObject['type'],
+        callback: DataEventEmitter.EventCallback<this, OldTownTableRow.EventObject>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -442,17 +443,17 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {DataTableRow.CellType}
+     * @return {OldTownTableRow.CellType}
      * Returns the value of the removed cell.
      *
-     * @emits DataTableRow#deleteCell
-     * @emits DataTableRow#afterDeleteCell
-     * @emits DataTableRow#afterChangeRow
+     * @emits OldTownTableRow#deleteCell
+     * @emits OldTownTableRow#afterDeleteCell
+     * @emits OldTownTableRow#afterChangeRow
      */
     public removeCell(
         cellName: string,
         eventDetail?: DataEventEmitter.EventDetail
-    ): DataTableRow.CellType {
+    ): OldTownTableRow.CellType {
         const row = this,
             cells = row.cells,
             cellValue = cells[cellName];
@@ -475,7 +476,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @param {string} cellName
      * Name of the cell.
      *
-     * @param {DataTableRow.CellType} cellValue
+     * @param {OldTownTableRow.CellType} cellValue
      * Value of the cell.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
@@ -485,13 +486,13 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * Returns true, if the cell was set in this row. Returns false, if `id`
      * was used as cell name, or row is null.
      *
-     * @emits DataTableRow#setCell
-     * @emits DataTableRow#afterSetCell
-     * @emits DataTableRow#afterChangeRow
+     * @emits OldTownTableRow#setCell
+     * @emits OldTownTableRow#afterSetCell
+     * @emits OldTownTableRow#afterChangeRow
      */
     public setCell(
         cellName: string,
-        cellValue: DataTableRow.CellType,
+        cellValue: OldTownTableRow.CellType,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         return this.setCells({ [cellName]: cellValue }, eventDetail);
@@ -500,7 +501,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
     /**
      * Updates and inserts cells in this row.
      *
-     * @param {Record<string,DataTableRow.CellType>} cells
+     * @param {Record<string,OldTownTableRow.CellType>} cells
      * Cells as a dictionary of names and values.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
@@ -509,12 +510,12 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @return {boolean}
      * True, if all cells were set, otherwise false.
      *
-     * @emits DataTableRow#setCell
-     * @emits DataTableRow#afterSetCell
-     * @emits DataTableRow#afterChangeRow
+     * @emits OldTownTableRow#setCell
+     * @emits OldTownTableRow#afterSetCell
+     * @emits OldTownTableRow#afterChangeRow
      */
     public setCells(
-        cells: Record<string, DataTableRow.CellType>,
+        cells: Record<string, OldTownTableRow.CellType>,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const row = this,
@@ -532,7 +533,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
             let i = 0,
                 iEnd = cellNames.length,
                 cellName: string,
-                cellValue: DataTableRow.CellType;
+                cellValue: OldTownTableRow.CellType;
             i < iEnd;
             ++i
         ) {
@@ -570,16 +571,16 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
      * @return {DataJSON.ClassJSON}
      * Class JSON of this row.
      */
-    public toJSON(): DataTableRow.ClassJSON {
+    public toJSON(): OldTownTableRow.ClassJSON {
         const row = this,
             cells = row.getAllCells(),
             cellNames = row.getCellNames(),
-            json: DataTableRow.ClassJSON = {
-                $class: 'DataTableRow'
+            json: OldTownTableRow.ClassJSON = {
+                $class: 'OldTownTableRow'
             };
 
         let name: string,
-            value: DataTableRow.CellType;
+            value: OldTownTableRow.CellType;
 
         if (!this.autoId) {
             json.id = this.id;
@@ -601,7 +602,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
                         json[name] = value;
                     } else if (value instanceof Date) {
                         json[name] = value.getTime();
-                    } else { // DataTable
+                    } else { // OldTownTable
                         json[name] = value.toJSON();
                     }
                     continue;
@@ -628,7 +629,7 @@ implements DataEventEmitter<DataTableRow.EventObject>, DataJSON.Class {
 /**
  * Additionally provided types for cells, events, and JSON conversion.
  */
-namespace DataTableRow {
+namespace OldTownTableRow {
 
     /**
      * Describes the information object for cell-related events.
@@ -650,22 +651,22 @@ namespace DataTableRow {
     /**
      * Possible value types for a column in a row.
      *
-     * *Please note:* `Date` and `DataTable` are not JSON-compatible and have
+     * *Please note:* `Date` and `OldTownTable` are not JSON-compatible and have
      * to be converted with the help of their `toJSON()` function.
      */
     export type CellType = (
-        boolean|null|number|string|Date|DataTable|undefined
+        boolean|null|number|string|Date|OldTownTable|undefined
     );
 
     /**
-     * Describes the class JSON of a DataTableRow.
+     * Describes the class JSON of a OldTownTableRow.
      */
     export interface ClassJSON extends DataJSON.ClassJSON {
-        [key: string]: (DataJSON.JSONPrimitive|DataTable.ClassJSON|Array<DataTableRow.ClassJSON>);
+        [key: string]: (DataJSON.JSONPrimitive|OldTownTable.ClassJSON|Array<OldTownTableRow.ClassJSON>);
     }
 
     /**
-     * All information objects of DataTableRow events.
+     * All information objects of OldTownTableRow events.
      */
     export type EventObject = (CellEventObject|RowEventObject);
 
@@ -687,7 +688,7 @@ namespace DataTableRow {
  *
  * */
 
-DataJSON.addClass(DataTableRow);
+DataJSON.addClass(OldTownTableRow);
 
 /* *
  *
@@ -695,4 +696,4 @@ DataJSON.addClass(DataTableRow);
  *
  * */
 
-export default DataTableRow;
+export default OldTownTableRow;
