@@ -132,7 +132,7 @@ namespace MapChart {
      * @name Highcharts.maps
      * @type {Record<string,*>}
      */
-    export const maps: Record<string, any> = {};
+    export const maps: AnyRecord = {};
 
     /**
      * The factory function for creating new map charts. Creates a new {@link

@@ -16,9 +16,7 @@
  *
  * */
 
-import type Chart from './Chart/Chart';
-import type { SeriesTypeRegistry } from './Series/SeriesType';
-import type SizeObject from './Renderer/SizeObject';
+import type GlobalsType from './GlobalsType';
 
 /* *
  *
@@ -27,9 +25,9 @@ import type SizeObject from './Renderer/SizeObject';
  * */
 
 declare global {
-    type GlobalSVGElement = SVGElement;
+    type AnyRecord = Record<string, any>;
     interface CallableFunction {
-        apply<TScope, TArguments extends any[], TReturn>(
+        apply<TScope, TArguments extends Array<unknown>, TReturn>(
             this: (this: TScope, ...args: TArguments) => TReturn,
             thisArg: TScope,
             args?: (TArguments|IArguments)
@@ -48,26 +46,14 @@ declare global {
          * @param o The object to change its prototype.
          * @param proto The value of the new prototype or null.
          */
-        setPrototypeOf?(o: any, proto: object | null): any;
+        setPrototypeOf?<T>(o: T, proto: object | null): T;
     }
-}
-
-declare module './Chart/ChartLike' {
-    interface ChartLike {
-        frameShapes?: any; // @todo highcharts 3d
-        isBoosting?: any; // @todo boost module
-    }
-}
-
-declare module './Series/PointLike' {
-    interface PointLike {
-        startR?: any; // @todo solid-gauge
-        tooltipDateKeys?: any; // @todo xrange
-    }
-}
-
-declare interface HighchartsObjectConstructor extends ObjectConstructor {
-    keys<T extends object>(obj: T): keyof T;
+    /**
+     * @private
+     * @deprecated
+     * @todo: Rename UMD argument `win` to `window`
+     */
+    const win: Window|undefined;
 }
 
 /* *
@@ -81,7 +67,7 @@ declare interface HighchartsObjectConstructor extends ObjectConstructor {
  * @deprecated
  * @todo Rename UMD argument `win` to `window`; move code to `Globals.win`
  */
-const WINDOW = (
+const w = (
     typeof win !== 'undefined' ?
         win :
         typeof window !== 'undefined' ?
@@ -103,32 +89,21 @@ namespace Globals {
 
     /* *
      *
-     *  Aliases
-     *
-     * */
-
-    export const Obj = Object as unknown as HighchartsObjectConstructor;
-
-    export const SVG_NS = 'http://www.w3.org/2000/svg';
-
-    /* *
-     *
      *  Constants
      *
      * */
 
-    export const
+    export const SVG_NS = 'http://www.w3.org/2000/svg',
         product = 'Highcharts',
         version = '@product.version@',
-        win = WINDOW,
+        win = w,
         doc = win.document,
-        nav = win.navigator,
         svg = (
             doc &&
             doc.createElementNS &&
             !!(doc.createElementNS(SVG_NS, 'svg') as SVGSVGElement).createSVGRect
         ),
-        userAgent = (nav && nav.userAgent) || '',
+        userAgent = (win.navigator && win.navigator.userAgent) || '',
         isChrome = userAgent.indexOf('Chrome') !== -1,
         isFirefox = userAgent.indexOf('Firefox') !== -1,
         isMS = /(edge|msie|trident)/i.test(userAgent) && !win.opera,
@@ -141,7 +116,7 @@ namespace Globals {
             parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
         ),
         hasTouch = !!win.TouchEvent,
-        marginNames: ReadonlyArray<string> = [
+        marginNames: GlobalsType['marginNames'] = [
             'plotTop',
             'marginRight',
             'marginBottom',
@@ -178,7 +153,7 @@ namespace Globals {
      * @name Highcharts.charts
      * @type {Array<Highcharts.Chart|undefined>}
      */
-    export const charts: Array<(Chart|undefined)> = [];
+    export const charts: GlobalsType['charts'] = [];
 
     /**
      * A hook for defining additional date format specifiers. New
@@ -193,19 +168,19 @@ namespace Globals {
      * @name Highcharts.dateFormats
      * @type {Record<string, Highcharts.TimeFormatCallbackFunction>}
      */
-    export const dateFormats: Record<string, Highcharts.TimeFormatCallbackFunction> = {};
+    export const dateFormats: GlobalsType['dateFormats'] = {};
 
     /**
      * @private
      * @deprecated
      * @todo Use only `Core/Series/SeriesRegistry.seriesTypes`
      */
-    export const seriesTypes = {} as SeriesTypeRegistry;
+    export const seriesTypes = {} as GlobalsType['seriesTypes'];
 
     /**
      * @private
      */
-    export const symbolSizes: Record<string, SizeObject> = {};
+    export const symbolSizes: GlobalsType['symbolSizes'] = {};
 
     /* *
      *
@@ -227,102 +202,10 @@ namespace Globals {
 
 }
 
-export default Globals as unknown as (typeof Globals&typeof Highcharts);
-
 /* *
  *
- *  API Declarations
+ *  Default Export
  *
  * */
 
-/**
- * Reference to the global SVGElement class as a workaround for a name conflict
- * in the Highcharts namespace.
- *
- * @global
- * @typedef {global.SVGElement} GlobalSVGElement
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
- */
-
-''; // detach doclets above
-
-/* *
- *
- *  Deprecated API
- *
- * */
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    /**
-     * @private
-     * @deprecated
-     * @todo: Rename UMD argument `win` to `window`
-     */
-    const win: Window|undefined;
-    /**
-     * [[include:README.md]]
-     * @deprecated
-     */
-    namespace Highcharts {
-        interface Axis {
-            rightWall?: any; // @todo
-            beforePadding?: Function; // @todo
-        }
-        interface XAxisOptions {
-            stackLabels?: any; // @todo
-        }
-        interface ChartOptions {
-            forExport?: any; // @todo
-        }
-        interface Options {
-            toolbar?: any; // @todo stock-tools
-        }
-    }
-    interface Document {
-        /** @deprecated */
-        exitFullscreen: () => Promise<void>;
-        /** @deprecated */
-        mozCancelFullScreen: Function;
-        /** @deprecated */
-        msExitFullscreen: Function;
-        /** @deprecated */
-        msHidden: boolean;
-        /** @deprecated */
-        webkitExitFullscreen: Function;
-        /** @deprecated */
-        webkitHidden: boolean;
-    }
-    interface Element {
-        /** @deprecated */
-        currentStyle?: ElementCSSInlineStyle;
-        /** @deprecated */
-        mozRequestFullScreen: Function;
-        /** @deprecated */
-        msMatchesSelector: Element['matches'];
-        /** @deprecated */
-        msRequestFullscreen: Function;
-        /** @deprecated */
-        webkitMatchesSelector: Element['matches'];
-        /** @deprecated */
-        webkitRequestFullScreen: Function;
-    }
-    interface PointerEvent {
-        /** @deprecated */
-        readonly toElement: Element;
-    }
-    interface Window {
-        /** @deprecated */
-        createObjectURL?: (typeof URL)['createObjectURL'];
-        /** @deprecated */
-        opera?: unknown;
-        /** @deprecated */
-        webkitAudioContext?: typeof AudioContext;
-        /** @deprecated */
-        webkitURL?: typeof URL;
-    }
-}
+export default Globals as unknown as GlobalsType;

@@ -735,7 +735,7 @@ extend(HeatmapSeries.prototype, {
      * @ignore
      * @deprecated
      */
-    getBox: noop as any,
+    getBox: noop,
 
     getExtremesFromAll: true,
 

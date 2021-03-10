@@ -890,7 +890,7 @@ addEvent(Point, 'update', function (): (boolean|undefined) {
 // range.
 addEvent(Tooltip, 'headerFormatter', function (
     this: Highcharts.Tooltip,
-    e: Record<string, any>
+    e: AnyRecord
 ): void {
     var tooltip = this,
         chart = this.chart,

@@ -3355,7 +3355,7 @@ class Series {
     public getCyclic(
         prop: string,
         value?: any,
-        defaults?: Record<string, any>
+        defaults?: AnyRecord
     ): void {
         var i,
             chart = this.chart,
@@ -6711,6 +6711,8 @@ class Series {
 
             if (casting) {
                 // Modern browsers including IE11
+                // @todo slow, consider alternatives mentioned:
+                // https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,

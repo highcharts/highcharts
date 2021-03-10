@@ -15,6 +15,7 @@
 import type ColorType from '../Color/ColorType';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import Axis from '../Axis/Axis.js';
 import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
@@ -48,6 +49,7 @@ declare module '../Animation/FxLike' {
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         chart3d?: Chart3D['chart3d'];
+        frameShapes?: Record<string, SVGElement>;
         is3d(): boolean;
     }
 }

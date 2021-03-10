@@ -501,7 +501,7 @@ extend(MACDIndicator.prototype, {
     parallelArrays: ['x', 'y', 'signal', 'MACD'],
     pointValKey: 'y',
     // Columns support:
-    markerAttribs: (noop as any),
+    markerAttribs: noop,
     getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
     crispCol: H.seriesTypes.column.prototype.crispCol,
     drawPoints: H.seriesTypes.column.prototype.drawPoints

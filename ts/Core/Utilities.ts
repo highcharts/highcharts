@@ -60,7 +60,7 @@ declare global {
             params: Record<string, string>;
         }
         interface EventCallbackFunction<T> {
-            (this: T, eventArguments: (Record<string, any>|Event)): (boolean|void);
+            (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
         }
         interface EventOptionsObject {
             order?: number;
@@ -286,7 +286,7 @@ declare global {
 
 /**
  * Generic dictionary in TypeScript notation.
- * Use the native `Record<string, any>` instead.
+ * Use the native `AnyRecord` instead.
  *
  * @deprecated
  * @interface Highcharts.Dictionary<T>
@@ -668,11 +668,11 @@ function clamp(value: number, min: number, max: number): number {
  * computing (#9197).
  * @private
  */
-function cleanRecursively<TNew extends Record<string, any>, TOld extends Record<string, any>>(
+function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
     newer: TNew,
     older: TOld
 ): TNew & TOld {
-    var result: Record<string, any> = {};
+    var result: AnyRecord = {};
 
     objectEach(newer, function (_val: unknown, key: (number|string)): void {
         var ob;
@@ -2375,7 +2375,7 @@ function removeEvent<T>(
 function fireEvent<T>(
     el: T,
     type: string,
-    eventArguments?: (Record<string, any>|Event),
+    eventArguments?: (AnyRecord|Event),
     defaultFunction?: (Highcharts.EventCallbackFunction<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */

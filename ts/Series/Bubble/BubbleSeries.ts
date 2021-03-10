@@ -56,6 +56,12 @@ import './BubbleLegend.js';
  *
  * */
 
+declare module '../../Core/Axis/Types' {
+    interface AxisLike {
+        beforePadding?(): void;
+    }
+}
+
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         bubblePadding?: BubbleSeries['bubblePadding'];
@@ -595,9 +601,9 @@ interface BubbleSeries {
 }
 extend(BubbleSeries.prototype, {
     alignDataLabel: ColumnSeries.prototype.alignDataLabel,
-    applyZones: noop as any,
+    applyZones: noop,
     bubblePadding: true,
-    buildKDTree: noop as any,
+    buildKDTree: noop,
     directTouch: true,
     isBubble: true,
     pointArrayMap: ['y', 'z'],

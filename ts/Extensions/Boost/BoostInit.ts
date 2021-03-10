@@ -30,6 +30,7 @@ const {
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         didBoost?: boolean;
+        isBoosting?: boolean;
         markerGroup?: Series['markerGroup'];
     }
 }

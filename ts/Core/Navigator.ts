@@ -2184,7 +2184,7 @@ class Navigator {
                         opacity: 1
                     }
                 }
-            } as Record<string, any>,
+            } as AnyRecord,
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series =
                 (navigator.series || []).filter(function (navSeries): boolean {
@@ -2221,7 +2221,7 @@ class Navigator {
                         {
                             color: base.color,
                             visible: base.visible
-                        } as Record<string, any>,
+                        } as AnyRecord,
                         !isArray(chartNavigatorSeriesOptions) ?
                             chartNavigatorSeriesOptions :
                             (defaultOptions.navigator as any).series

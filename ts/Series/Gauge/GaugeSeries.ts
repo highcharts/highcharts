@@ -633,7 +633,7 @@ extend(GaugeSeries.prototype, {
     // and this will be used on the axes
     angular: true,
     directTouch: true, // #5063
-    drawGraph: noop as any,
+    drawGraph: noop,
     drawTracker: ColumnSeries.prototype.drawTracker,
     fixedBox: true,
     forceDL: true,
