@@ -1453,7 +1453,6 @@ class Tooltip {
                 plotLeft,
                 plotTop,
                 pointer,
-                renderer: ren,
                 scrollablePixelsY = 0,
                 scrollingContainer: {
                     scrollLeft,
@@ -1478,6 +1477,7 @@ class Tooltip {
         };
 
         const tooltipLabel = tooltip.getLabel();
+        const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
 
         let distributionBoxTop = plotTop + scrollTop;
