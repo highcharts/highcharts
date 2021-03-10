@@ -183,14 +183,7 @@ class StockChart extends Chart {
                 defaultOptions.xAxis, // #3802
                 defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
                 xAxisOptions, // user options
-                { // forced options
-                    type: 'datetime',
-                    categories: null
-                },
-                (navigatorEnabled ? {
-                    startOnTick: false,
-                    endOnTick: false
-                } : null) as any
+                getForcedAxisOptions('xAxis', userOptions)
             );
         });
 
@@ -278,7 +271,8 @@ class StockChart extends Chart {
     ): Highcharts.Axis {
         options.axis = merge(
             getDefaultAxisOptions(type, options.axis),
-            options.axis
+            options.axis,
+            getForcedAxisOptions(type, this.userOptions)
         );
         return super.createAxis(type, options);
     }
@@ -383,6 +377,39 @@ function getDefaultAxisOptions(
             title: {
                 text: null
             }
+        };
+    }
+    return {};
+}
+
+/**
+ * Get stock-specific forced axis options.
+ *
+ * @private
+ * @function getForcedAxisOptions
+ * @param {string} type
+ * @param {Highcharts.Options} chartOptions
+ * @return {Highcharts.AxisOptions}
+ */
+function getForcedAxisOptions(
+    type: string,
+    chartOptions: Highcharts.Options
+): DeepPartial<Highcharts.AxisOptions> {
+    if (type === 'xAxis') {
+        const defaultOptions = getOptions(),
+            // Always disable startOnTick:true on the main axis when the
+            // navigator is enabled (#1090)
+            navigatorEnabled = pick(
+                chartOptions.navigator && chartOptions.navigator.enabled,
+                (defaultOptions.navigator as any).enabled,
+                true
+            );
+
+        return {
+            type: 'datetime',
+            categories: void 0,
+            startOnTick: navigatorEnabled ? false : void 0,
+            endOnTick: navigatorEnabled ? false : void 0
         };
     }
     return {};
