@@ -21,6 +21,7 @@ WIP on vertical scrollable plot area (#9378). To do:
 'use strict';
 
 import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -55,6 +56,12 @@ declare module '../Core/Chart/ChartLike'{
         applyFixed(): void;
         moveFixedElements(): void;
         setUpScrolling(): void;
+    }
+}
+
+declare module '../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        scrollablePlotBox?: BBoxObject;
     }
 }
 
@@ -155,7 +162,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinWidth - this.chartWidth
             );
             if (scrollablePixelsX) {
-                this.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
                 this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
@@ -176,7 +183,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinHeight - this.chartHeight
             );
             if (scrollablePixelsY) {
-                this.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
                 this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;
@@ -245,17 +252,17 @@ addEvent(Chart, 'render', function (): void {
  */
 Chart.prototype.setUpScrolling = function (): void {
 
-    var attribs = {
+    const css: CSSObject = {
         WebkitOverflowScrolling: 'touch',
         overflowX: 'hidden',
         overflowY: 'hidden'
     };
 
     if (this.scrollablePixelsX) {
-        attribs.overflowX = 'auto';
+        css.overflowX = 'auto';
     }
     if (this.scrollablePixelsY) {
-        attribs.overflowY = 'auto';
+        css.overflowY = 'auto';
     }
 
     // Insert a container with position relative
@@ -274,7 +281,7 @@ Chart.prototype.setUpScrolling = function (): void {
     // Add the necessary divs to provide scrolling
     this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
-    }, attribs, this.scrollingParent);
+    }, css, this.scrollingParent);
 
     // On scroll, reset the chart position because it applies to the scrolled
     // container

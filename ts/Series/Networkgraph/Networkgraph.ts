@@ -858,7 +858,7 @@ extend(NetworkgraphSeries.prototype, {
             attribs.y = 0;
         }
 
-        attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
+        attribs.x = (point.plotX || 0) - (attribs.width || 0) / 2;
 
         return attribs;
     },
@@ -1242,6 +1242,7 @@ extend(NetworkgraphPoint.prototype, {
                 .path(
                     this.getLinkPath()
                 )
+                .addClass(this.getClassName(), true)
                 .add(this.series.group);
 
             if (!this.series.chart.styledMode) {

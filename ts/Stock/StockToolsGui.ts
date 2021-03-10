@@ -1266,7 +1266,6 @@ class Toolbar {
             className: PREFIX + 'menu-item-btn'
         }, null as any, buttonWrapper);
 
-
         // submenu
         if (items && items.length) {
 
@@ -1699,6 +1698,26 @@ addEvent(NavigationBindings, 'deselectButton', function (
             button = (button.parentNode as any).parentNode;
         }
         gui.selectButton(button);
+    }
+});
+
+// Check if the correct price indicator button is displayed, #15029.
+addEvent(H.Chart, 'render', function (): void {
+    const chart = this,
+        stockTools = chart.stockTools,
+        button = stockTools &&
+            stockTools.toolbar &&
+            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
+
+    // Change the initial button background.
+    if (stockTools && chart.navigationBindings && chart.options.series && button) {
+        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+        } else {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+        }
     }
 });
 

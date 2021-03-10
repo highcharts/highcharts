@@ -81,8 +81,8 @@ class GanttChart extends Chart {
 
         // apply X axis options to both single and multi x axes
         userOptions.xAxis = userOptions.xAxis.map(function (
-            xAxisOptions: Highcharts.XAxisOptions,
-            i: number
+            xAxisOptions,
+            i
         ): Highcharts.XAxisOptions {
             if (i === 1) { // Second xAxis
                 defaultLinkedTo = 0;
@@ -126,7 +126,7 @@ class GanttChart extends Chart {
             );
         });
 
-        userOptions.series = void 0;
+        delete userOptions.series;
 
         userOptions = merge(
             true,

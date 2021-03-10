@@ -452,7 +452,7 @@ function addFormattedValue(
              * @apioption yAxis.tooltipValueFormat
              */
             yAxisOptions.tooltipValueFormat,
-            (yAxisOptions.labels as any).format
+            yAxisOptions.labels.format
         );
 
         if (labelFormat) {

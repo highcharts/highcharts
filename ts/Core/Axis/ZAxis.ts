@@ -33,7 +33,10 @@ declare module '../Chart/ChartLike'{
 declare global {
     namespace Highcharts {
         interface Options {
-            zAxis?: (Highcharts.AxisOptions|Array<Highcharts.AxisOptions>);
+            zAxis?: (
+                DeepPartial<Highcharts.AxisOptions>|
+                Array<DeepPartial<Highcharts.AxisOptions>>
+            );
         }
     }
 }
@@ -229,9 +232,9 @@ class ZAxis extends Axis implements AxisLike {
      */
     public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
 
-        userOptions = merge<Highcharts.AxisOptions>({
-            offset: 0 as any,
-            lineWidth: 0 as any
+        userOptions = merge<DeepPartial<Highcharts.AxisOptions>>({
+            offset: 0,
+            lineWidth: 0
         }, userOptions);
 
         // #14793, this used to be set on the prototype

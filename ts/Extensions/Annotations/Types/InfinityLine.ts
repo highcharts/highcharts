@@ -55,8 +55,8 @@ class InfinityLine extends CrookedLine {
                 points = annotation.points,
                 type = annotation.options.typeOptions.type;
 
-            if (type === 'horizontalLine') {
-                // Horizontal line has only one point,
+            if (type === 'horizontalLine' || type === 'verticalLine') {
+                // Horizontal and vertical lines have only one point,
                 // make a copy of it:
                 points = [
                     points[0],
@@ -64,23 +64,9 @@ class InfinityLine extends CrookedLine {
                         annotation.chart,
                         points[0].target,
                         {
-                            x: points[0].x + 1,
-                            y: points[0].y,
-                            xAxis: points[0].options.xAxis,
-                            yAxis: points[0].options.yAxis
-                        }
-                    )
-                ];
-            } else if (type === 'verticalLine') {
-                // The same for verticalLine type:
-                points = [
-                    points[0],
-                    new MockPoint(
-                        annotation.chart,
-                        points[0].target,
-                        {
-                            x: points[0].x,
-                            y: points[0].y + 1,
+                            // add 0 or 1 to x or y depending on type
+                            x: points[0].x + +(type === 'horizontalLine'),
+                            y: points[0].y + +(type === 'verticalLine'),
                             xAxis: points[0].options.xAxis,
                             yAxis: points[0].options.yAxis
                         }
@@ -117,7 +103,8 @@ class InfinityLine extends CrookedLine {
         firstPoint: Highcharts.AnnotationPointType,
         secondPoint: Highcharts.AnnotationPointType
     ): PositionObject {
-        var xAxis: Highcharts.Axis = firstPoint.series.xAxis as any,
+        var chart = firstPoint.series.chart,
+            xAxis: Highcharts.Axis = firstPoint.series.xAxis as any,
             yAxis: Highcharts.Axis = secondPoint.series.yAxis as any,
             firstPointPixels = MockPoint.pointToPixels(firstPoint),
             secondPointPixels = MockPoint.pointToPixels(secondPoint),
@@ -161,8 +148,8 @@ class InfinityLine extends CrookedLine {
             }
         }
 
-        edgePoint.x -= xAxisMin;
-        edgePoint.y -= yAxisMin;
+        edgePoint.x -= chart.plotLeft;
+        edgePoint.y -= chart.plotTop;
 
         if (firstPoint.series.chart.inverted) {
             swap = edgePoint.x;
@@ -196,7 +183,11 @@ class InfinityLine extends CrookedLine {
                 InfinityLine.endEdgePoint
             ];
 
-        if (typeOptions.type.match(/Line/g)) {
+        // Be case-insensitive (#15155) e.g.:
+        // - line
+        // - horizontalLine
+        // - verticalLine
+        if (typeOptions.type.match(/line/gi)) {
             points[0] = InfinityLine.startEdgePoint;
         }
 

@@ -872,7 +872,7 @@ Chart.prototype.showDrillUpButton = function (): void {
             buttonOptions.relativeTo === 'chart' ||
             buttonOptions.relativeTo === 'spacingBox' ?
                 null :
-                this.scrollablePlotBox || 'plotBox'
+                'scrollablePlotBox'
         );
 
     if (!this.drillUpButton) {

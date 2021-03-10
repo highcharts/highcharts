@@ -931,7 +931,7 @@ function attr(
     // else if prop is defined, it is a hash of key/value pairs
     } else {
         objectEach(prop, function (val, key): void {
-            elem.setAttribute(key, val);
+            elem.setAttribute(key, val as any);
         });
     }
     return ret;
@@ -2390,12 +2390,12 @@ function fireEvent<T>(
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
-        extend(e, eventArguments);
+        eventArguments = extend(e, eventArguments);
 
         if ((el as any).dispatchEvent) {
-            (el as any).dispatchEvent(e);
+            (el as any).dispatchEvent(eventArguments);
         } else {
-            (el as any).fireEvent(type, e);
+            (el as any).fireEvent(type, eventArguments);
         }
 
     } else if ((el as any).hcEvents) {

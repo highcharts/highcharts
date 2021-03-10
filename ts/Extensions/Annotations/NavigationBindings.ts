@@ -20,7 +20,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     attr,
-    extend,
     format,
     fireEvent,
     isArray,
@@ -179,6 +178,28 @@ function closestPolyfill(el: Element, s: string): (Element|null) {
  */
 const bindingsUtils = {
     /**
+     * Get field type according to value
+     *
+     * @private
+     * @function Highcharts.NavigationBindingsUtilsObject.getFieldType
+     *
+     * @param {'boolean'|'number'|'string'} value
+     * Atomic type (one of: string, number, boolean)
+     *
+     * @return {'checkbox'|'number'|'text'}
+     * Field type (one of: text, number, checkbox)
+     */
+    getFieldType: function (value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text') {
+        return ({
+            'string': 'text',
+            'number': 'number',
+            'boolean': 'checkbox'
+        } as Record<string, ('checkbox'|'number'|'text')>)[
+            typeof value
+        ];
+    },
+
+    /**
      * Update size of background (rect) in some annotations: Measure, Simple
      * Rect.
      *
@@ -206,28 +227,6 @@ const bindingsUtils = {
                 }
             }
         });
-    },
-
-    /**
-     * Get field type according to value
-     *
-     * @private
-     * @function Highcharts.NavigationBindingsUtilsObject.getFieldType
-     *
-     * @param {'boolean'|'number'|'string'} value
-     * Atomic type (one of: string, number, boolean)
-     *
-     * @return {'checkbox'|'number'|'text'}
-     * Field type (one of: text, number, checkbox)
-     */
-    getFieldType: function (value: ('boolean'|'number'|'string')): ('checkbox'|'number'|'text') {
-        return ({
-            'string': 'text',
-            'number': 'number',
-            'boolean': 'checkbox'
-        } as Record<string, ('checkbox'|'number'|'text')>)[
-            typeof value
-        ];
     }
 };
 

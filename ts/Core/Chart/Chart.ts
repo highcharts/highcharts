@@ -1387,7 +1387,7 @@ class Chart {
             oldChartIndex,
             Ren,
             containerId = uniqueKey(),
-            containerStyle,
+            containerStyle: CSSObject|undefined,
             key;
 
         if (!renderTo) {
@@ -1445,7 +1445,7 @@ class Chart {
 
         // Create the inner container
         if (!chart.styledMode) {
-            containerStyle = extend({
+            containerStyle = extend<CSSObject>({
                 position: 'relative',
                 // needed for context menu (avoidscrollbars) and content
                 // overflow in IE
@@ -1457,7 +1457,7 @@ class Chart {
                 zIndex: 0, // #1072
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
                 userSelect: 'none' // #13503
-            }, optionsChart.style as any);
+            }, optionsChart.style || {});
         }
 
         /**
@@ -1922,6 +1922,7 @@ class Chart {
                 axis.setAxisSize();
                 axis.setAxisTranslation();
             });
+            renderer.alignElements();
         }
 
         fireEvent(chart, 'afterSetChartSize', { skipAxes: skipAxes });
@@ -2322,7 +2323,7 @@ class Chart {
             if (
                 axis.horiz &&
                 axis.visible &&
-                (axis.options.labels as any).enabled &&
+                axis.options.labels.enabled &&
                 axis.series.length
             ) {
                 // 21 is the most common correction for X axis labels
@@ -2835,10 +2836,6 @@ class Chart {
         } else {
             axis = new Axis(this, userOptions);
         }
-
-        // Push the new axis options to the chart options
-        (chartOptions as any)[type] = splat((chartOptions as any)[type] || {});
-        (chartOptions as any)[type].push(userOptions);
 
         if (isColorAxis) {
             this.isDirtyLegend = true;
@@ -3388,7 +3385,7 @@ class Chart {
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
                     null :
-                    this.scrollablePlotBox || 'plotBox'
+                    'scrollablePlotBox'
             );
 
         /**

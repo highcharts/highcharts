@@ -3,10 +3,6 @@ How to set options
 
 Highcharts use a JavaScript object structure to define the options or settings of a chart. This article explains how the options object works and how to use it.
 
-*   [The options object](#1)
-
-*   [Global options](#2)
-
 The options object
 ------------------
 
@@ -40,7 +36,7 @@ var chart1 = Highcharts.chart({
     }]
 });
 ```
-    
+
 
 To get the most out of Highcharts, it is important to understand how the options object works and how it can be altered programmatically. These are some key concepts on JavaScript objects:
 
@@ -90,7 +86,7 @@ options.series.push({
     data: [3, 4, 2]
 })
 ```
-    
+
 
 *   Another fact that can come in handy when working on JavaScript objects, is that the dot notation and square bracket notation are equivalent, so you can access all members by their string names. Which in practice means that `options.charts.renderTo` is always the same as: `options['charts']['renderTo']`
 
@@ -149,7 +145,7 @@ var chart2 = new Highcharts.Chart({
     }]
 });
 ```
-    
+
 
 Note: The themes supplied with Highcharts download use this function. See [Themes](https://highcharts.com/docs/chart-design-and-style/themes) for more information.
 

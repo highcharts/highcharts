@@ -341,7 +341,10 @@ namespace StockChart {
  * @param {Highcharts.AxisOptions} options
  * @return {Highcharts.AxisOptions}
  */
-function getDefaultAxisOptions(type: string, options: Highcharts.AxisOptions): Highcharts.AxisOptions {
+function getDefaultAxisOptions(
+    type: string,
+    options: Highcharts.AxisOptions
+): DeepPartial<Highcharts.AxisOptions> {
     if (type === 'xAxis') {
         return {
             minPadding: 0,
@@ -757,7 +760,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
             crossLabel
                 .attr({
                     fill: options.backgroundColor ||
-                        (this.series[0] && this.series[0].color) ||
+                        point && point.series && point.series.color || // #14888
                         palette.neutralColor60,
                     stroke: options.borderColor || '',
                     'stroke-width': options.borderWidth || 0
@@ -1115,9 +1118,11 @@ addEvent(Series, 'render', function (): void {
             }
         }
 
-        // First render, initial clip box
-        if (!this.clipBox && this.isDirty && !this.isDirtyData) {
-            this.clipBox = merge(chart.clipBox);
+        // First render, initial clip box. clipBox also needs to be updated if
+        // the series is rendered again before starting animating, in
+        // compliance with a responsive rule (#13858).
+        if (!chart.hasLoaded || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
+            this.clipBox = this.clipBox || merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
 

@@ -70,6 +70,18 @@ QUnit.test('Zoom type', function (assert) {
         6,
         'The zoom button should have Z index 6, below tooltip (#6096)'
     );
+
+    const buttonY = chart.resetZoomButton.translateY - chart.plotTop;
+    chart.update({
+        title: {
+            text: void 0
+        }
+    });
+    assert.strictEqual(
+        chart.resetZoomButton.translateY - chart.plotTop,
+        buttonY,
+        'The zoom button should have been re-aligned'
+    );
 });
 
 QUnit.test('Zooming scatter charts', function (assert) {

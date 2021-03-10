@@ -724,7 +724,12 @@ class SVGElement {
             alignTo = this.alignTo;
         }
 
-        box = pick(box, (renderer as any)[alignTo as any], renderer as any);
+        box = pick(
+            box,
+            (renderer as any)[alignTo as any],
+            alignTo === 'scrollablePlotBox' ? (renderer as any).plotBox : void 0,
+            renderer as any
+        );
 
         // Assign variables
         align = (alignOptions as any).align;
@@ -911,7 +916,7 @@ class SVGElement {
                 'class': 'highcharts-text-outline',
                 fill: color,
                 stroke: color,
-                'stroke-width': strokeWidth,
+                'stroke-width': strokeWidth as any,
                 'stroke-linejoin': 'round'
             });
 
@@ -934,9 +939,13 @@ class SVGElement {
             // to keep it in place
             const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
             br.textContent = '\u200B';
-            attr(br, {
-                x: elem.getAttribute('x'),
-                y: elem.getAttribute('y')
+
+            // Copy x and y if not null
+            (['x', 'y'] as Array<'x'|'y'>).forEach((key): void => {
+                const value = elem.getAttribute(key);
+                if (value) {
+                    br.setAttribute(key, value);
+                }
             });
 
             // Insert the outline
@@ -1036,7 +1045,7 @@ class SVGElement {
         if (typeof hash === 'string' && typeof val !== 'undefined') {
             key = hash;
             hash = {};
-            hash[key] = val;
+            (hash as any)[key] = val;
         }
 
         // used as a getter: first argument is a string, second is undefined
@@ -1228,10 +1237,10 @@ class SVGElement {
                 // Keep < 2.2 kompatibility
                 if (isArray(gradAttr)) {
                     (colorOptions as any)[gradName] = gradAttr = {
-                        x1: gradAttr[0],
-                        y1: gradAttr[1],
-                        x2: gradAttr[2],
-                        y2: gradAttr[3],
+                        x1: gradAttr[0] as number,
+                        y1: gradAttr[1] as number,
+                        x2: gradAttr[2] as number,
+                        y2: gradAttr[3] as number,
                         gradientUnits: 'userSpaceOnUse'
                     };
                 }
@@ -1253,9 +1262,9 @@ class SVGElement {
 
                 // Build the unique key to detect whether we need to create a
                 // new element (#1282)
-                objectEach(gradAttr, function (val: string, n: string): void {
+                objectEach(gradAttr, function (value, n): void {
                     if (n !== 'id') {
-                        (key as any).push(n, val);
+                        (key as any).push(n, value);
                     }
                 });
                 objectEach(stops, function (val): void {
@@ -1290,7 +1299,7 @@ class SVGElement {
                         if (stop[1].indexOf('rgba') === 0) {
                             colorObject = Color.parse(stop[1]);
                             stopColor = colorObject.get('rgb') as any;
-                            stopOpacity = colorObject.get('a');
+                            stopOpacity = colorObject.get('a') as any;
                         } else {
                             stopColor = stop[1];
                             stopOpacity = 1;
@@ -1360,7 +1369,7 @@ class SVGElement {
         if (oldStyles) {
             objectEach(styles, function (style, n): void {
                 if (oldStyles && oldStyles[n] !== style) {
-                    newStyles[n] = style;
+                    (newStyles as any)[n] = style;
                     hasNew = true;
                 }
             });
@@ -2356,10 +2365,10 @@ class SVGElement {
             }
 
             // Additional attributes
-            objectEach(attrs, function (val: string, key: string): void {
+            objectEach(attrs, function (val, key): void {
                 textPathElement.setAttribute(
                     (attribsMap as any)[key] || key,
-                    val
+                    val as any
                 );
             });
 
@@ -2630,7 +2639,7 @@ class SVGElement {
         } else if (val !== '') {
             dummy = doc.createElementNS(SVG_NS, 'rect') as SVGDOMElement;
             attr(dummy, {
-                width: val,
+                width: val as any,
                 'stroke-width': 0
             });
             (this.element.parentNode as any).appendChild(dummy);
@@ -2667,7 +2676,7 @@ class SVGElement {
             'anchorY',
             'clockwise'
         ].forEach(function (key: string): void {
-            wrapper[key] = pick(hash[key], wrapper[key]);
+            wrapper[key] = pick((hash as any)[key], wrapper[key]);
         });
 
         wrapper.attr({
