@@ -127,7 +127,7 @@ class Layout extends GUIElement {
      * Destroy the element, its container, event hooks
      * and inner rows.
      */
-    public destroy(): undefined {
+    public destroy(): void {
         const layout = this;
 
         // Destroy rows.
@@ -136,8 +136,6 @@ class Layout extends GUIElement {
         }
 
         super.destroy();
-
-        return;
     }
 }
 

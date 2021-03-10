@@ -102,7 +102,7 @@ abstract class GUIElement {
      * Destroy the element, its container, event hooks
      * and all properties.
      */
-    protected destroy(): undefined {
+    protected destroy(): void {
         const guiElement = this;
 
         // Remove bindedGUIElement event.
@@ -119,8 +119,6 @@ abstract class GUIElement {
         objectEach(guiElement, function (val: unknown, key: string): void {
             delete (guiElement as Record<string, any>)[key];
         });
-
-        return;
     }
 
 }
