@@ -53,7 +53,7 @@ declare global {
     namespace Highcharts {
 
         interface ChartOptions {
-            parallelAxes?: XAxisOptions;
+            parallelAxes?: DeepPartial<XAxisOptions>;
             parallelCoordinates?: boolean;
         }
         interface ParallelChart extends Chart {

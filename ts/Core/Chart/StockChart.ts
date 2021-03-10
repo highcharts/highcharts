@@ -1112,7 +1112,7 @@ addEvent(Chart, 'update', function (
  */
 function getDefaultAxisOptions(
     type: string,
-    options: Highcharts.AxisOptions
+    options: DeepPartial<Highcharts.AxisOptions>
 ): DeepPartial<Highcharts.AxisOptions> {
     if (type === 'xAxis') {
         return {

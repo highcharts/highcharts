@@ -97,10 +97,10 @@ class RadialAxis {
     public static defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
         gridLineWidth: 1, // spokes
         labels: {
-            align: null as any, // auto
+            align: void 0, // auto
             distance: 15,
             x: 0,
-            y: null as any, // auto
+            y: void 0, // auto
             style: {
                 textOverflow: 'none' // wrap lines by default (#7248)
             }
@@ -115,11 +115,11 @@ class RadialAxis {
      * The default options extend defaultYAxisOptions.
      * @private
      */
-    public static defaultRadialGaugeOptions: RadialAxisOptions = {
+    public static defaultRadialGaugeOptions: DeepPartial<RadialAxisOptions> = {
         labels: {
             align: 'center',
             x: 0,
-            y: null as any // auto
+            y: void 0 // auto
         },
         minorGridLineWidth: 0,
         minorTickInterval: 'auto',
@@ -139,7 +139,7 @@ class RadialAxis {
      * Radial axis, like a spoke in a polar chart.
      * @private
      */
-    public static defaultRadialOptions: RadialAxisOptions = {
+    public static defaultRadialOptions: DeepPartial<RadialAxisOptions> = {
 
         /**
          * In a polar chart, this is the angle of the Y axis in degrees, where
@@ -936,6 +936,7 @@ class RadialAxis {
                 // Apply the stack labels for yAxis in case of inverted chart
                 if (inverted && coll === 'yAxis') {
                     axis.defaultPolarOptions.stackLabels = AxisClass.defaultYAxisOptions.stackLabels;
+                    axis.defaultPolarOptions.reversedStacks = true;
                 }
             }
 
@@ -1055,10 +1056,10 @@ class RadialAxis {
 
             var labelBBox = label.getBBox(),
                 labelOptions = axis.options.labels,
-                optionsY = (labelOptions as any).y,
+                optionsY = labelOptions.y,
                 ret,
                 centerSlot = 20, // 20 degrees to each side at the top and bottom
-                align = (labelOptions as any).align,
+                align = labelOptions.align,
                 angle = (
                     (
                         (axis.translate(this.pos) as any) + axis.startAngleRad +
@@ -1073,27 +1074,27 @@ class RadialAxis {
                 translateY = 0,
                 translateX = 0,
                 labelYPosCorrection =
-                    (labelOptions as any).y === null ? -labelBBox.height * 0.3 : 0;
+                    !defined(optionsY) ? -labelBBox.height * 0.3 : 0;
 
             if (axis.isRadial) { // Both X and Y axes in a polar chart
                 ret = axis.getPosition(
                     this.pos,
                     (axis.center[2] / 2) +
                         relativeLength(
-                            pick((labelOptions as any).distance, -25),
+                            pick(labelOptions.distance, -25),
                             axis.center[2] / 2,
                             -axis.center[2] / 2
                         )
                 );
 
                 // Automatically rotated
-                if ((labelOptions as any).rotation === 'auto') {
+                if (labelOptions.rotation === 'auto') {
                     label.attr({
                         rotation: angle
                     });
 
                 // Vertically centered
-                } else if (optionsY === null) {
+                } else if (!defined(optionsY)) {
                     optionsY = (
                         axis.chart.renderer
                             .fontMetrics(label.styles && label.styles.fontSize).b -
@@ -1102,7 +1103,7 @@ class RadialAxis {
                 }
 
                 // Automatic alignment
-                if (align === null) {
+                if (!defined(align)) {
                     if (axis.isCircular) { // Y axis
                         if (
                             labelBBox.width >
@@ -1130,7 +1131,7 @@ class RadialAxis {
 
                 // Auto alignment for solid-gauges with two labels (#10635)
                 if (
-                    align === 'auto' &&
+                    align as any === 'auto' &&
                     axis.tickPositions.length === 2 &&
                     axis.isCircular
                 ) {
@@ -1202,8 +1203,8 @@ class RadialAxis {
                     label.translate(translateX, translateY + labelYPosCorrection);
                 }
 
-                e.pos.x = ret.x + (labelOptions as any).x;
-                e.pos.y = ret.y + optionsY;
+                e.pos.x = ret.x + (labelOptions.x || 0);
+                e.pos.y = ret.y + (optionsY || 0);
 
             }
         });

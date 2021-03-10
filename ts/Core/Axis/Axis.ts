@@ -230,7 +230,7 @@ declare global {
         }
         interface XAxisOptions {
             accessibility?: XAxisAccessibilityOptions;
-            alignTicks?: boolean;
+            alignTicks: boolean;
             allowDecimals?: boolean;
             alternateGridColor?: ColorType;
             breaks?: Array<XAxisBreaksOptions>;
@@ -238,74 +238,74 @@ declare global {
             ceiling?: number;
             className?: string;
             crosshair?: (boolean|XAxisCrosshairOptions);
-            endOnTick?: boolean;
+            endOnTick: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
-            gridLineColor?: ColorType;
-            gridLineDashStyle?: DashStyleValue;
-            gridLineWidth?: number;
-            gridZIndex?: number;
+            gridLineColor: ColorType;
+            gridLineDashStyle: DashStyleValue;
+            gridLineWidth: number;
+            gridZIndex: number;
             height?: (number|string);
             id?: string;
             isX?: boolean;
             labels: XAxisLabelsOptions;
             left?: (number|string);
-            lineColor?: ColorType;
-            lineWidth?: number;
+            lineColor: ColorType;
+            lineWidth: number;
             linkedTo?: number;
             margin?: number;
             max?: (null|number);
-            maxPadding?: number;
+            maxPadding: number;
             maxRange?: number;
             maxZoom?: number;
             min?: (null|number);
-            minorGridLineColor?: ColorType;
-            minorGridLineDashStyle?: DashStyleValue;
-            minorGridLineWidth?: number;
-            minorTickColor?: ColorType;
+            minorGridLineColor: ColorType;
+            minorGridLineDashStyle: DashStyleValue;
+            minorGridLineWidth: number;
+            minorTickColor: ColorType;
             minorTickInterval?: ('auto'|null|number);
-            minorTickLength?: number;
-            minorTickPosition?: AxisMinorTickPositionValue;
+            minorTickLength: number;
+            minorTickPosition: AxisMinorTickPositionValue;
             minorTicks?: boolean;
             minorTickWidth?: number;
-            minPadding?: number;
+            minPadding: number;
             minRange?: number;
             minTickInterval?: number;
             offset?: number;
             offsets?: [number, number, number, number];
-            opposite?: boolean;
+            opposite: boolean;
             ordinal?: boolean;
             overscroll?: number;
             pane?: number;
             range?: number;
             reversed?: boolean;
-            reversedStacks?: boolean;
-            showEmpty?: boolean;
-            showFirstLabel?: boolean;
-            showLastLabel?: boolean;
+            reversedStacks: boolean;
+            showEmpty: boolean;
+            showFirstLabel: boolean;
+            showLastLabel: boolean;
             side?: number;
             softMax?: number;
             softMin?: number;
-            startOfWeek?: number;
-            startOnTick?: boolean;
+            startOfWeek: number;
+            startOnTick: boolean;
             tickAmount?: number;
-            tickColor?: ColorType;
+            tickColor: ColorType;
             tickInterval?: number;
-            tickLength?: number;
-            tickmarkPlacement?: AxisTickmarkPlacementValue;
-            tickPixelInterval?: number;
-            tickPosition?: AxisTickPositionValue;
+            tickLength: number;
+            tickmarkPlacement: AxisTickmarkPlacementValue;
+            tickPixelInterval: number;
+            tickPosition: AxisTickPositionValue;
             tickPositioner?: AxisTickPositionerCallbackFunction;
             tickPositions?: AxisTickPositionsArray;
-            tickWidth?: (number|undefined);
+            tickWidth?: number;
             title: XAxisTitleOptions;
             top?: (number|string);
-            type?: AxisTypeValue;
-            uniqueNames?: boolean;
-            visible?: boolean;
+            type: AxisTypeValue;
+            uniqueNames: boolean;
+            visible: boolean;
             width?: (number|string);
-            zIndex?: number;
-            zoomEnabled?: boolean;
+            zIndex: number;
+            zoomEnabled: boolean;
         }
         interface XAxisTitleOptions {
             align?: AxisTitleAlignValue;
@@ -844,16 +844,15 @@ class Axis {
          *
          * Disabled for logarithmic axes.
          *
-         * @type      {boolean}
-         * @default   true
          * @product   highcharts highstock gantt
-         * @apioption xAxis.alignTicks
          */
+        alignTicks: true,
 
         /**
          * Whether to allow decimals in this axis' ticks. When counting
          * integers, like persons or hits on a web page, decimals should
-         * be avoided in the labels.
+         * be avoided in the labels. By default, decimals are allowed on small
+         * scale axes.
          *
          * @see [minTickInterval](#xAxis.minTickInterval)
          *
@@ -862,11 +861,11 @@ class Axis {
          * @sample {highcharts|highstock} highcharts/yaxis/allowdecimals-false/
          *         False
          *
-         * @type      {boolean}
-         * @default   true
+         * @type      {boolean|undefined}
+         * @default   undefined
          * @since     2.0
-         * @apioption xAxis.allowDecimals
          */
+        allowDecimals: void 0,
 
         /**
          * When using an alternate grid color, a band is painted across the
@@ -1227,17 +1226,18 @@ class Axis {
          */
 
         /**
+         * The Z index for the axis group.
+         */
+        zIndex: 2,
+
+        /**
          * Whether to zoom axis. If `chart.zoomType` is set, the option allows
          * to disable zooming on an individual axis.
          *
          * @sample {highcharts} highcharts/xaxis/zoomenabled/
          *         Zoom enabled is false
-         *
-         *
-         * @type      {boolean}
-         * @default   enabled
-         * @apioption xAxis.zoomEnabled
          */
+        zoomEnabled: true,
 
         /**
          * For a datetime axis, the scale will automatically adjust to the
@@ -1468,10 +1468,9 @@ class Axis {
          *         Long dashes
          *
          * @type      {Highcharts.DashStyleValue}
-         * @default   Solid
          * @since     1.2
-         * @apioption xAxis.gridLineDashStyle
          */
+        gridLineDashStyle: 'Solid',
 
         /**
          * The Z index of the grid lines.
@@ -1479,11 +1478,9 @@ class Axis {
          * @sample {highcharts|highstock} highcharts/xaxis/gridzindex/
          *         A Z index of 4 renders the grid above the graph
          *
-         * @type      {number}
-         * @default   1
          * @product   highcharts highstock gantt
-         * @apioption xAxis.gridZIndex
          */
+        gridZIndex: 1,
 
         /**
          * An id for the axis. This can be used after render time to get
@@ -1951,10 +1948,9 @@ class Axis {
          *         Long dashes on minor grid lines
          *
          * @type      {Highcharts.DashStyleValue}
-         * @default   Solid
          * @since     1.2
-         * @apioption xAxis.minorGridLineDashStyle
          */
+        minorGridLineDashStyle: 'Solid',
 
         /**
          * Specific tick interval in axis units for the minor ticks. On a linear
@@ -2125,10 +2121,8 @@ class Axis {
          * @sample {highstock} stock/xaxis/offset/
          *         Y axis offset by 70 px
          *
-         * @type      {number}
-         * @default   0
-         * @apioption xAxis.offset
          */
+        offset: void 0,
 
         /**
          * Whether to display the axis on the opposite side of the normal. The
@@ -2141,11 +2135,10 @@ class Axis {
          * @sample {highstock} stock/xaxis/opposite/
          *         Y axis on left side
          *
-         * @type      {boolean}
          * @default   {highcharts|highstock|highmaps} false
          * @default   {gantt} true
-         * @apioption xAxis.opposite
          */
+        opposite: false,
 
         /**
          * In an ordinal axis, the points are equally spaced in the chart
@@ -2224,10 +2217,10 @@ class Axis {
          *         Reversed Y axis
          *
          * @type      {boolean}
-         * @default   false
+         * @default   undefined
          * @apioption xAxis.reversed
          */
-        // reversed: false,
+        reversed: void 0,
 
         /**
          * This option determines how stacks should be ordered within a group.
@@ -2240,12 +2233,10 @@ class Axis {
          * @sample {highstock} highcharts/xaxis/reversedstacks/
          *         Reversed stacks comparison
          *
-         * @type      {boolean}
-         * @default   false
          * @since     6.1.1
          * @product   highcharts highstock
-         * @apioption xAxis.reversedStacks
          */
+        reversedStacks: false,
 
         /**
          * An optional scrollbar to display on the X axis in response to
@@ -2286,11 +2277,8 @@ class Axis {
          *         Set to false on X axis
          * @sample {highstock} stock/xaxis/showfirstlabel/
          *         Labels below plot lines on Y axis
-         *
-         * @type      {boolean}
-         * @default   true
-         * @apioption xAxis.showFirstLabel
          */
+        showFirstLabel: true,
 
         /**
          * Whether to show the last tick label. Defaults to `true` on cartesian
@@ -2301,11 +2289,9 @@ class Axis {
          * @sample {highstock} stock/xaxis/showfirstlabel/
          *         Labels below plot lines on Y axis
          *
-         * @type      {boolean}
-         * @default   true
          * @product   highcharts highstock gantt
-         * @apioption xAxis.showLastLabel
          */
+        showLastLabel: true,
 
         /**
          * A soft maximum for the axis. If the series data maximum is less than
@@ -2765,12 +2751,10 @@ class Axis {
          * @sample {highcharts} highcharts/xaxis/uniquenames-false/
          *         False
          *
-         * @type      {boolean}
-         * @default   true
          * @since     4.2.7
          * @product   highcharts gantt
-         * @apioption xAxis.uniqueNames
          */
+        uniqueNames: true,
 
         /**
          * Datetime axis only. An array determining what time intervals the
@@ -2816,12 +2800,10 @@ class Axis {
          * Whether axis, including axis title, line, ticks and labels, should
          * be visible.
          *
-         * @type      {boolean}
-         * @default   true
          * @since     4.1.9
          * @product   highcharts highstock gantt
-         * @apioption xAxis.visible
          */
+        visible: true,
 
         /**
          * Color of the minor, secondary grid lines.
@@ -2930,8 +2912,6 @@ class Axis {
          */
         gridLineColor: palette.neutralColor10,
 
-        // gridLineDashStyle: 'solid',
-
         /**
          * The width of the grid lines extending the ticks across the plot area.
          *
@@ -2945,11 +2925,8 @@ class Axis {
          * @sample {highstock} stock/xaxis/gridlinewidth/
          *         2px lines
          *
-         * @type      {number}
-         * @default   0
-         * @apioption xAxis.gridLineWidth
          */
-        // gridLineWidth: 0,
+        gridLineWidth: 0,
 
         /**
          * The height as the vertical axis. If it's a number, it is
@@ -3012,7 +2989,7 @@ class Axis {
      *
      * @private
      */
-    public static defaultYAxisOptions: Highcharts.YAxisOptions = {
+    public static defaultYAxisOptions: DeepPartial<Highcharts.YAxisOptions> = {
 
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
@@ -3117,6 +3094,7 @@ class Axis {
          * @product   highcharts highstock
          * @apioption yAxis.reversedStacks
          */
+        reversedStacks: true,
 
         /**
          * Solid gauge series only. Color stops for the solid gauge. Use this
@@ -3859,7 +3837,7 @@ class Axis {
      */
 
     // This variable extends the defaultOptions for left axes.
-    public static defaultLeftAxisOptions: Highcharts.AxisOptions = {
+    public static defaultLeftAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             x: -15
         },
@@ -3869,7 +3847,7 @@ class Axis {
     };
 
     // This variable extends the defaultOptions for right axes.
-    public static defaultRightAxisOptions: Highcharts.AxisOptions = {
+    public static defaultRightAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             x: 15
         },
@@ -3879,7 +3857,7 @@ class Axis {
     };
 
     // This variable extends the defaultOptions for bottom axes.
-    public static defaultBottomAxisOptions: Highcharts.AxisOptions = {
+    public static defaultBottomAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             autoRotation: [-45],
             x: 0
@@ -3893,7 +3871,7 @@ class Axis {
     };
 
     // This variable extends the defaultOptions for top axes.
-    public static defaultTopAxisOptions: Highcharts.AxisOptions = {
+    public static defaultTopAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             autoRotation: [-45],
             x: 0
@@ -4152,8 +4130,8 @@ class Axis {
          * @type {boolean}
          */
         axis.reversed = pick(options.reversed, axis.reversed);
-        axis.visible = options.visible !== false;
-        axis.zoomEnabled = options.zoomEnabled !== false;
+        axis.visible = options.visible;
+        axis.zoomEnabled = options.zoomEnabled;
 
         // Initial categories
         axis.hasNames =
@@ -4937,7 +4915,7 @@ class Axis {
                         axis.dateTime.normalizeTimeTickInterval(minorTickInterval),
                         min,
                         max,
-                        options.startOfWeek as any
+                        options.startOfWeek
                     )
                 );
             } else {
@@ -5125,14 +5103,14 @@ class Axis {
         point.series.requireSorting = false;
 
         if (!defined(nameX)) {
-            nameX = this.options.uniqueNames === false ?
-                point.series.autoIncrement() :
+            nameX = this.options.uniqueNames ?
                 (
                     explicitCategories ?
-                        (names as any).indexOf(point.name) :
-                        pick((names as any).keys[point.name as any], -1)
+                        names.indexOf(point.name) :
+                        pick((names as any).keys[point.name], -1)
 
-                );
+                ) :
+                point.series.autoIncrement();
         }
         if (nameX === -1) { // Not found in currenct categories
             if (!explicitCategories) {
@@ -5470,13 +5448,13 @@ class Axis {
             defined(axis.min) &&
             defined(axis.max)
         ) {
-            length = (axis.max as any) - (axis.min as any);
+            length = axis.max - axis.min;
             if (length) {
                 if (!defined(hardMin) && minPadding) {
-                    (axis.min as any) -= length * minPadding;
+                    axis.min -= length * minPadding;
                 }
                 if (!defined(hardMax) && maxPadding) {
-                    (axis.max as any) += length * maxPadding;
+                    axis.max += length * maxPadding;
                 }
             }
         }
@@ -5557,12 +5535,13 @@ class Axis {
 
         } else if (
             isLinked &&
+            axis.linkedParent &&
             !tickIntervalOption &&
             tickPixelIntervalOption ===
-                (axis.linkedParent as any).options.tickPixelInterval
+                axis.linkedParent.options.tickPixelInterval
         ) {
             axis.tickInterval = tickIntervalOption =
-                (axis.linkedParent as any).tickInterval;
+                axis.linkedParent.tickInterval;
 
         } else {
             axis.tickInterval = pick(
@@ -5577,8 +5556,8 @@ class Axis {
                     1 :
                     // don't let it be more than the data range
                     ((axis.max as any) - (axis.min as any)) *
-                    (tickPixelIntervalOption as any) /
-                    Math.max(axis.len, tickPixelIntervalOption as any)
+                    tickPixelIntervalOption /
+                    Math.max(axis.len, tickPixelIntervalOption)
             );
         }
 
@@ -5885,7 +5864,7 @@ class Axis {
         if (
             // Only if alignTicks is true
             (this.chart.options.chart as any).alignTicks !== false &&
-            options.alignTicks !== false &&
+            options.alignTicks &&
 
             // Disabled when startOnTick or endOnTick are false (#7604)
             options.startOnTick !== false &&
@@ -6833,9 +6812,11 @@ class Axis {
         return this.series.some(function (s): boolean {
             return s.hasData();
         }) ||
-        ((this.options.showEmpty as any) &&
-        defined(this.min) &&
-        defined(this.max));
+        (
+            this.options.showEmpty &&
+            defined(this.min) &&
+            defined(this.max)
+        );
     }
 
     /**
@@ -6969,7 +6950,7 @@ class Axis {
 
         // For reuse in Axis.render
         hasData = axis.hasData();
-        axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
+        axis.showAxis = showAxis = hasData || options.showEmpty;
 
         // Set/reset staggerLines
         axis.staggerLines = (axis.horiz && labelOptions.staggerLines) || void 0;
@@ -6992,12 +6973,12 @@ class Axis {
             axis.gridGroup = createGroup(
                 'grid',
                 '-grid',
-                options.gridZIndex || 1
+                options.gridZIndex
             );
             axis.axisGroup = createGroup(
                 'axis',
                 '',
-                options.zIndex || 2
+                options.zIndex
             );
             axis.labelGroup = createGroup(
                 'axis-labels',

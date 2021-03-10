@@ -951,18 +951,21 @@ class Tick {
             type = tick.type,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             renderer = axis.chart.renderer,
-            gridPrefix = type ? type + 'Grid' : 'grid',
-            gridLineWidth = (options as any)[gridPrefix + 'LineWidth'],
-            gridLineColor = (options as any)[gridPrefix + 'LineColor'],
-            dashStyle = (options as any)[gridPrefix + 'LineDashStyle'];
+            gridLineWidth = options.gridLineWidth,
+            gridLineColor = options.gridLineColor,
+            dashStyle = options.gridLineDashStyle;
+
+        if (tick.type === 'minor') {
+            gridLineWidth = options.minorGridLineWidth;
+            gridLineColor = options.minorGridLineColor;
+            dashStyle = options.minorGridLineDashStyle;
+        }
 
         if (!gridLine) {
             if (!axis.chart.styledMode) {
                 attribs.stroke = gridLineColor;
                 attribs['stroke-width'] = gridLineWidth;
-                if (dashStyle) {
-                    attribs.dashstyle = dashStyle;
-                }
+                attribs.dashstyle = dashStyle;
             }
             if (!type) {
                 attribs.zIndex = 1;
@@ -1024,17 +1027,18 @@ class Tick {
             options = axis.options,
             renderer = axis.chart.renderer,
             type = tick.type,
-            tickPrefix = type ? type + 'Tick' : 'tick',
-            tickSize = axis.tickSize(tickPrefix),
+            tickSize = axis.tickSize(type ? type + 'Tick' : 'tick'),
             mark = tick.mark,
             isNewMark = !mark,
             x = xy.x,
             y = xy.y,
             tickWidth = pick(
-                (options as any)[tickPrefix + 'Width'],
+                options[type !== 'minor' ? 'tickWidth' : 'minorTickWidth'],
                 !type && axis.isXAxis ? 1 : 0
             ), // X axis defaults to 1
-            tickColor = (options as any)[tickPrefix + 'Color'];
+            tickColor = options[
+                type !== 'minor' ? 'tickColor' : 'minorTickColor'
+            ];
 
         if (tickSize) {
 
@@ -1124,12 +1128,12 @@ class Tick {
                 (
                     tick.isFirst &&
                     !tick.isLast &&
-                    !pick(options.showFirstLabel, 1 as any)
+                    !options.showFirstLabel
                 ) ||
                 (
                     tick.isLast &&
                     !tick.isFirst &&
-                    !pick(options.showLastLabel, 1 as any)
+                    !options.showLastLabel
                 )
             ) {
                 show = false;

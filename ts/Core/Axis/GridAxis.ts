@@ -1150,7 +1150,8 @@ class GridAxis {
             // If borderWidth is set, then use its value for tick and
             // line width.
             if (isNumber((options.grid as any).borderWidth)) {
-                options.tickWidth = options.lineWidth = gridOptions.borderWidth;
+                options.tickWidth = options.lineWidth =
+                    gridOptions.borderWidth as any;
             }
 
         }

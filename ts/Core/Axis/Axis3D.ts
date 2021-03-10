@@ -368,7 +368,7 @@ class Axis3D {
     /**
      * @optionparent xAxis
      */
-    public static defaultOptions: Highcharts.AxisOptions = {
+    public static defaultOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             /**
              * Defines how the labels are be repositioned according to the 3D
