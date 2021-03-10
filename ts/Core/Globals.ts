@@ -16,7 +16,7 @@
  *
  * */
 
-import type GlobalsType from './GlobalsType';
+import type GlobalsLike from './GlobalsLike';
 
 /* *
  *
@@ -116,7 +116,7 @@ namespace Globals {
             parseInt(userAgent.split('Firefox/')[1], 10) < 4 // issue #38
         ),
         hasTouch = !!win.TouchEvent,
-        marginNames: GlobalsType['marginNames'] = [
+        marginNames: GlobalsLike['marginNames'] = [
             'plotTop',
             'marginRight',
             'marginBottom',
@@ -153,7 +153,7 @@ namespace Globals {
      * @name Highcharts.charts
      * @type {Array<Highcharts.Chart|undefined>}
      */
-    export const charts: GlobalsType['charts'] = [];
+    export const charts: GlobalsLike['charts'] = [];
 
     /**
      * A hook for defining additional date format specifiers. New
@@ -168,19 +168,19 @@ namespace Globals {
      * @name Highcharts.dateFormats
      * @type {Record<string, Highcharts.TimeFormatCallbackFunction>}
      */
-    export const dateFormats: GlobalsType['dateFormats'] = {};
+    export const dateFormats: GlobalsLike['dateFormats'] = {};
 
     /**
      * @private
      * @deprecated
      * @todo Use only `Core/Series/SeriesRegistry.seriesTypes`
      */
-    export const seriesTypes = {} as GlobalsType['seriesTypes'];
+    export const seriesTypes = {} as GlobalsLike['seriesTypes'];
 
     /**
      * @private
      */
-    export const symbolSizes: GlobalsType['symbolSizes'] = {};
+    export const symbolSizes: GlobalsLike['symbolSizes'] = {};
 
     /* *
      *
@@ -208,4 +208,4 @@ namespace Globals {
  *
  * */
 
-export default Globals as unknown as GlobalsType;
+export default Globals as unknown as GlobalsLike;

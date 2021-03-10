@@ -90,10 +90,10 @@ export type InternalNamespace = typeof Highcharts;
 /**
  * Helper interface to add property types to `Globals`.
  *
- * Use the `declare module 'GlobalsType'` pattern to overload the interface in
+ * Use the `declare module 'GlobalsLike'` pattern to overload the interface in
  * this definition file.
  */
-export interface GlobalsType extends InternalNamespace {
+export interface GlobalsLike extends InternalNamespace {
     readonly Obj: ObjectConstructor;
     readonly SVG_NS: string;
     readonly charts: Array<(Chart|undefined)>;
@@ -123,4 +123,4 @@ export interface GlobalsType extends InternalNamespace {
     readonly win: (Window&typeof globalThis);
 }
 
-export default GlobalsType;
+export default GlobalsLike;
