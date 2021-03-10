@@ -93,7 +93,7 @@ addEvent(Highcharts, 'displayError', function (
     if (!chart) {
         return;
     }
-    
+
     var code = e.code,
         msg,
         options = chart.options.chart,
