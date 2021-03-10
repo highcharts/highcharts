@@ -94,7 +94,7 @@ class RadialAxis {
      * Circular axis around the perimeter of a polar chart.
      * @private
      */
-    public static defaultCircularOptions: RadialAxisOptions = {
+    public static defaultCircularOptions: DeepPartial<RadialAxisOptions> = {
         gridLineWidth: 1, // spokes
         labels: {
             align: null as any, // auto
@@ -206,7 +206,7 @@ class RadialAxis {
         // Merge and set options.
         axis.setOptions = function (userOptions: DeepPartial<RadialAxisOptions>): void {
 
-            var options = this.options = merge(
+            var options = this.options = merge<RadialAxisOptions>(
                 (axis.constructor as typeof Axis).defaultOptions,
                 this.defaultPolarOptions,
                 userOptions
@@ -1266,7 +1266,7 @@ interface RadialAxis extends Axis {
     angleRad: number;
     autoConnect?: boolean;
     center: Array<number>;
-    defaultPolarOptions: RadialAxisOptions;
+    defaultPolarOptions: DeepPartial<RadialAxisOptions>;
     endAngleRad: number;
     isCircular?: boolean;
     labelCollector?: Chart.LabelCollectorFunction;

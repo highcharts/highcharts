@@ -574,7 +574,7 @@ namespace TreeGridAxis {
             ticks = axis.ticks;
         let tick = ticks[pos],
             levelOptions,
-            options: (TreeGridAxis.Options | undefined),
+            options: (DeepPartial<TreeGridAxis.Options> | undefined),
             gridNode;
 
         if (

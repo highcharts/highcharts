@@ -73,7 +73,7 @@ declare global {
             public labelPos?: PositionObject;
             public mark?: SVGElement;
             public movedLabel?: SVGElement;
-            public options?: AxisOptions;
+            public options?: DeepPartial<AxisOptions>;
             public parameters: TickParametersObject;
             public prevLabel?: SVGElement;
             public pos: number;

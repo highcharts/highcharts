@@ -298,7 +298,7 @@ declare global {
             tickPositioner?: AxisTickPositionerCallbackFunction;
             tickPositions?: AxisTickPositionsArray;
             tickWidth?: (number|undefined);
-            title?: XAxisTitleOptions;
+            title: XAxisTitleOptions;
             top?: (number|string);
             type?: AxisTypeValue;
             uniqueNames?: boolean;
@@ -6853,11 +6853,11 @@ class Axis {
             opposite = axis.opposite,
             options = axis.options,
             axisTitleOptions = options.title,
-            textAlign,
+            textAlign: AlignValue|undefined,
             styledMode = axis.chart.styledMode;
 
         if (!axis.axisTitle) {
-            textAlign = (axisTitleOptions as any).textAlign;
+            textAlign = axisTitleOptions.textAlign;
             if (!textAlign) {
                 textAlign = ((horiz ? {
                     low: 'left',
@@ -6868,26 +6868,26 @@ class Axis {
                     middle: 'center',
                     high: opposite ? 'left' : 'right'
                 }) as Record<string, AlignValue>)[
-                    (axisTitleOptions as any).align
+                    axisTitleOptions.align as any
                 ];
             }
             axis.axisTitle = renderer
                 .text(
-                    (axisTitleOptions as any).text,
+                    axisTitleOptions.text || '',
                     0,
                     0,
-                    (axisTitleOptions as any).useHTML
+                    axisTitleOptions.useHTML
                 )
                 .attr({
                     zIndex: 7,
-                    rotation: (axisTitleOptions as any).rotation || 0,
+                    rotation: axisTitleOptions.rotation || 0,
                     align: textAlign
                 })
                 .addClass('highcharts-axis-title');
 
             // #7814, don't mutate style option
             if (!styledMode) {
-                axis.axisTitle.css(merge((axisTitleOptions as any).style));
+                axis.axisTitle.css(merge(axisTitleOptions.style));
             }
 
             axis.axisTitle.add(axis.axisGroup);
@@ -6896,7 +6896,7 @@ class Axis {
 
         // Max width defaults to the length of the axis
         if (!styledMode &&
-            !(axisTitleOptions as any).style.width &&
+            !(axisTitleOptions.style as any).width &&
             !axis.isRadial
         ) {
             axis.axisTitle.css({
@@ -7228,12 +7228,12 @@ class Axis {
             margin = horiz ? axisLeft : axisTop,
             opposite = this.opposite,
             offset = this.offset,
-            xOption = (axisTitleOptions as any).x || 0,
-            yOption = (axisTitleOptions as any).y || 0,
+            xOption = axisTitleOptions.x || 0,
+            yOption = axisTitleOptions.y || 0,
             axisTitle = this.axisTitle,
             fontMetrics = this.chart.renderer.fontMetrics(
-                (axisTitleOptions as any).style &&
-                (axisTitleOptions as any).style.fontSize,
+                axisTitleOptions.style &&
+                axisTitleOptions.style.fontSize,
                 axisTitle
             ),
             // The part of a multiline text that is below the baseline of the
@@ -7249,7 +7249,7 @@ class Axis {
                 low: margin + (horiz ? 0 : axisLength),
                 middle: margin + axisLength / 2,
                 high: margin + (horiz ? axisLength : 0)
-            } as any)[(axisTitleOptions as any).align],
+            } as any)[axisTitleOptions.align as any],
 
             // the position in the perpendicular direction of the axis
             offAxis = (horiz ? axisTop + this.height : axisLeft) +

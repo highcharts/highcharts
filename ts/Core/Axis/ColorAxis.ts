@@ -192,7 +192,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @optionparent colorAxis
      * @ignore
      */
-    public static defaultOptions: ColorAxis.Options = {
+    public static defaultColorAxisOptions: DeepPartial<ColorAxis.Options> = {
 
         /**
          * Whether to allow decimals on the color axis.
@@ -667,8 +667,8 @@ class ColorAxis extends Axis implements AxisLike {
                 userOptions.layout !== 'vertical' :
                 legend.layout !== 'vertical';
 
-        const options = merge<ColorAxis.Options>(
-            ColorAxis.defaultOptions,
+        const options = merge<DeepPartial<ColorAxis.Options>>(
+            ColorAxis.defaultColorAxisOptions,
             userOptions,
             {
                 showEmpty: false,
