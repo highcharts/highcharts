@@ -2546,12 +2546,12 @@ const rect = (
     y: number,
     w: number,
     h: number): SVGPath => [
-        ['M', x, y],
-        ['L', x + w, y],
-        ['L', x + w, y + h],
-        ['L', x, y + h],
-        ['Z']
-    ];
+    ['M', x, y],
+    ['L', x + w, y],
+    ['L', x + w, y + h],
+    ['L', x, y + h],
+    ['Z']
+];
 
 /**
  * An extendable collection of functions for defining symbol paths.
