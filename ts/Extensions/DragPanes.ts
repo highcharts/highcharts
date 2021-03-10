@@ -502,7 +502,7 @@ class AxisResizer {
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
             // prev and next configs
-            axesConfigs: Array<Record<string, any>> = [],
+            axesConfigs: Array<AnyRecord> = [],
             stopDrag = false,
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
@@ -644,7 +644,7 @@ class AxisResizer {
         if (!stopDrag) {
             // Now update axes:
             axesConfigs.forEach(function (
-                config: Record<string, any>
+                config: AnyRecord
             ): void {
                 config.axis.update(config.options, false);
             });

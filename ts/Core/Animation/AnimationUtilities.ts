@@ -129,7 +129,7 @@ const animObject = H.animObject = function animObject(
  */
 const getDeferredAnimation = H.getDeferredAnimation = function (
     chart: Chart,
-    animation: (false|DeepPartial<AnimationOptions>),
+    animation: (false|Partial<AnimationOptions>),
     series?: Series
 ): Partial<AnimationOptions> {
 

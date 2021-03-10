@@ -165,7 +165,7 @@ MapNavigation.prototype.update = function (
         selectStates: SVGAttributes|undefined,
         outerHandler = function (
             this: SVGElement,
-            e: (Event|Record<string, any>)
+            e: (Event|AnyRecord)
         ): void {
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)

@@ -809,7 +809,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
 
     // Run fancy cross-animation on supported and equal types
     if (oldSeries.type === newSeries.type) {
-        newSeries.animate = newSeries.animateDrilldown || (noop as any);
+        newSeries.animate = (newSeries.animateDrilldown || noop);
         newSeries.options.animation = true;
     }
 };

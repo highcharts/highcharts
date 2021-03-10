@@ -671,7 +671,7 @@ extend(FlagsSeries.prototype, {
      * @private
      * @function Highcharts.seriesTypes.flags#buildKDTree
      */
-    buildKDTree: noop as any,
+    buildKDTree: noop,
 
     forceCrop: true,
 
@@ -691,7 +691,7 @@ extend(FlagsSeries.prototype, {
      * @private
      * @function Highcharts.seriesTypes.flags#invertGroups
      */
-    invertGroups: noop as any,
+    invertGroups: noop,
 
     // Flags series group should not be invertible (#14063).
     invertible: false,

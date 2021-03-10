@@ -6209,9 +6209,9 @@ class Axis {
             evt = {
                 newMin: newMin,
                 newMax: newMax
-            } as Record<string, any>;
+            } as AnyRecord;
 
-        fireEvent(this, 'zoom', evt, function (e: Record<string, any>): void {
+        fireEvent(this, 'zoom', evt, function (e: AnyRecord): void {
 
             // Use e.newMin and e.newMax - event handlers may have altered them
             var newMin = e.newMin,
@@ -6397,7 +6397,7 @@ class Axis {
             evt = { align: 'center' as AlignValue };
 
         fireEvent(this, 'autoLabelAlign', evt, function (
-            e: Record<string, any>
+            e: AnyRecord
         ): void {
 
             if (angle > 15 && angle < 165) {

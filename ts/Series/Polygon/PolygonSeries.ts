@@ -126,7 +126,7 @@ extend(PolygonSeries.prototype, {
     type: 'polygon',
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     drawTracker: Series.prototype.drawTracker,
-    setStackedPoints: noop as any // No stacking points on polygons (#5310)
+    setStackedPoints: noop // No stacking points on polygons (#5310)
 });
 
 /* *

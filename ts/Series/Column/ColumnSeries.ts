@@ -1317,7 +1317,7 @@ extend(ColumnSeries.prototype, {
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
-    getSymbol: noop as any,
+    getSymbol: noop,
 
     // use separate negative stacks, unlike area stacks where a negative
     // point is substracted from previous (#1910)

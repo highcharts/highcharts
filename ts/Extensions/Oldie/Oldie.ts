@@ -99,7 +99,7 @@ declare global {
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLAttributes extends Record<string, any> {
+        interface VMLAttributes extends AnyRecord {
             d?: VMLPathArray;
             end?: number;
             innerR?: number;

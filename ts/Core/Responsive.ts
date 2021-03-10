@@ -328,24 +328,21 @@ Chart.prototype.currentOptions = function (
 ): Highcharts.Options {
 
     var chart = this,
-        ret = {} as Record<string, any>;
+        ret = {};
 
     /**
      * Recurse over a set of options and its current values,
      * and store the current values in the ret object.
      */
     function getCurrent(
-        options: Highcharts.Options,
-        curr: Record<string, any>,
-        ret: Record<string, any>,
+        options: AnyRecord,
+        curr: AnyRecord,
+        ret: AnyRecord,
         depth: number
     ): void {
         var i;
 
-        objectEach(options, function (
-            val: Record<string, any>,
-            key: string
-        ): void {
+        objectEach(options, function (val, key): void {
             if (
                 !depth &&
                 chart.collectionsWithUpdate.indexOf(key) > -1 &&
