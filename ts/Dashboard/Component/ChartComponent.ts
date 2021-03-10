@@ -4,6 +4,7 @@ import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataJSON from '../../Data/DataJSON.js';
+import DataParser from '../../Data/Parsers/DataParser.js';
 
 import Highcharts from '../../masters/highcharts.src.js';
 
@@ -175,10 +176,17 @@ class ChartComponent extends Component<ChartComponent.Event> {
     }
 
     private initChart(): void {
-        const series = new DataSeriesConverter(this.store?.table, {});
+        // @todo: This should be replaced when series understand dataTable
+        const series: any = [];
+        if (this.store?.table) {
+            const data = DataParser.getColumnsFromTable(this.store?.table, false).slice(1);
+            data.forEach((datum): void => {
+                series.push({ data: datum });
+            });
+        }
         this.chartOptions.series = this.chartOptions.series ?
-            [...series.getAllSeriesData(), ...this.chartOptions.series] :
-            series.getAllSeriesData();
+            [...series, ...this.chartOptions.series] :
+            series;
         this.constructChart();
 
         if (this.chart) {
