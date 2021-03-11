@@ -133,7 +133,7 @@ class Row extends GUIElement {
      * Destroy the element, its container, event hooks
      * and inner columns.
      */
-    public destroy(): undefined {
+    public destroy(): void {
         const row = this;
 
         // Destroy columns.
@@ -142,8 +142,6 @@ class Row extends GUIElement {
         }
 
         super.destroy();
-
-        return;
     }
 }
 

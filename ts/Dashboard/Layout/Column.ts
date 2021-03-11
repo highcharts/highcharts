@@ -88,7 +88,7 @@ class Column extends GUIElement {
      * Destroy the element, its container, event hooks
      * and mounted component.
      */
-    public destroy(): undefined {
+    public destroy(): void {
         const column = this;
 
         // Destroy mounted component.
@@ -97,8 +97,6 @@ class Column extends GUIElement {
         }
 
         super.destroy();
-
-        return;
     }
 }
 
