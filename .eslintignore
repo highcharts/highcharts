@@ -10,6 +10,7 @@ test/test-controller.js
 test/test-template.js
 test/test-utilities.js
 test/typescript-karma
+test/cypress
 tools/eslint-plugin-highcharts/node_modules/**
 tools/jsdoc/storage/**/*.js
 ts/**/*.js

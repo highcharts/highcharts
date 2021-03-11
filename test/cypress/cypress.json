@@ -1,0 +1,5 @@
+{
+    "baseUrl": "http://localhost:5000",
+    "fixturesFolder": "fixtures",
+    "integrationFolder": "integration"
+}
