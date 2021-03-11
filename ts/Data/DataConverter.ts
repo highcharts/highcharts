@@ -16,7 +16,7 @@
  *
  * */
 
-import type DataFrame from './DataFrame.js';
+import type DataTable from './DataTable.js';
 import type OldTownTable from './OldTownTable.js';
 import type DataJSON from './DataJSON';
 
@@ -613,7 +613,7 @@ namespace DataConverter {
      * Contains supported types to convert values from and to.
      */
     export type Type = (
-        boolean|null|number|string|DataFrame|OldTownTable|Date|undefined
+        boolean|null|number|string|DataTable|OldTownTable|Date|undefined
     );
 
     /**
