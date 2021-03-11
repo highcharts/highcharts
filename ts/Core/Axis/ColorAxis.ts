@@ -1168,7 +1168,7 @@ class ColorAxis extends Axis implements AxisLike {
 
                 if (
                     !axis.chart.styledMode &&
-                    axis.crosshair
+                    typeof axis.crosshair === 'object'
                 ) {
                     axis.cross.attr({
                         fill: axis.crosshair.color

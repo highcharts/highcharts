@@ -180,7 +180,7 @@ declare global {
             format?: string;
             formatter?: XAxisCrosshairLabelFormatterCallbackFunction;
             padding?: number;
-            shape?: string;
+            shape?: SymbolKeyValue;
             style?: CSSObject;
         }
         interface XAxisCrosshairOptions {
@@ -4211,11 +4211,11 @@ class Axis {
          * @name Highcharts.Axis#crosshair
          * @type {boolean|Highcharts.AxisCrosshairOptions}
          */
-        axis.crosshair = pick(
+        const crosshair = pick(
             options.crosshair,
-            splat((chart.options.tooltip as any).crosshairs)[isXAxis ? 0 : 1],
-            false
+            splat((chart.options.tooltip as any).crosshairs)[isXAxis ? 0 : 1]
         );
+        axis.crosshair = crosshair === true ? {} : crosshair;
 
         var events = axis.options.events;
 
@@ -7641,7 +7641,7 @@ class Axis {
 
         var path,
             options = this.crosshair,
-            snap = pick((options as any).snap, true),
+            snap = pick(options && options.snap, true),
             pos,
             categorized,
             graphic = this.cross,
@@ -7658,7 +7658,7 @@ class Axis {
 
         if (
             // Disabled in options
-            !this.crosshair ||
+            !options ||
             // Snap
             ((defined(point) || !snap) === false)
         ) {
@@ -7723,17 +7723,17 @@ class Axis {
                     .addClass(
                         'highcharts-crosshair highcharts-crosshair-' +
                         (categorized ? 'category ' : 'thin ') +
-                        (options as any).className
+                        (options.className || '')
                     )
                     .attr({
-                        zIndex: pick((options as any).zIndex, 2)
+                        zIndex: pick(options.zIndex, 2)
                     })
                     .add();
 
                 // Presentational attributes
                 if (!chart.styledMode) {
                     graphic.attr({
-                        stroke: (options as any).color ||
+                        stroke: options.color ||
                             (
                                 categorized ?
                                     Color
@@ -7742,13 +7742,13 @@ class Axis {
                                         .get() :
                                     palette.neutralColor20
                             ),
-                        'stroke-width': pick((options as any).width, 1)
+                        'stroke-width': pick(options.width, 1)
                     }).css({
                         'pointer-events': 'none'
                     });
-                    if ((options as any).dashStyle) {
+                    if (options.dashStyle) {
                         graphic.attr({
-                            dashstyle: (options as any).dashStyle
+                            dashstyle: options.dashStyle
                         });
                     }
                 }

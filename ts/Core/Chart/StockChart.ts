@@ -721,8 +721,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     // Check if the label has to be drawn
     if (
-        !defined((this.crosshair as any).label) ||
-        !(this.crosshair as any).label.enabled ||
+        !this.crosshair ||
+        !this.crosshair.label ||
+        !this.crosshair.label.enabled ||
         !this.cross ||
         !isNumber(this.min) ||
         !isNumber(this.max)
@@ -732,7 +733,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     var chart = this.chart,
         log = this.logarithmic,
-        options = (this.options.crosshair as any).label, // the label's options
+        options = this.crosshair.label, // the label's options
         horiz = this.horiz, // axis orientation
         opposite = this.opposite, // axis position
         left = this.left, // left position
@@ -779,7 +780,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 )
             )
             .attr({
-                align: options.align || align,
+                align: options.align || align as any,
                 padding: pick(options.padding, 8),
                 r: pick(options.borderRadius, 3),
                 zIndex: 2
@@ -801,7 +802,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                     fontWeight: 'normal',
                     fontSize: '11px',
                     textAlign: 'center'
-                }, options.style));
+                }, options.style || {}));
         }
     }
 
@@ -832,10 +833,15 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         point.series.isPointInside(point) :
         (isNumber(value) && value > min && value < max);
 
+    let text = '';
+    if (formatOption) {
+        text = format(formatOption, { value }, chart);
+    } else if (options.formatter && isNumber(value)) {
+        text = options.formatter.call(this, value);
+    }
+
     crossLabel.attr({
-        text: formatOption ?
-            format(formatOption, { value }, chart) :
-            options.formatter.call(this, value),
+        text,
         x: posx,
         y: posy,
         visibility: isInside ? 'visible' : 'hidden'
