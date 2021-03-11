@@ -35,7 +35,6 @@ const {
     isString,
     objectEach,
     pick,
-    setOptions,
     stableSort,
     wrap
 } = U;
