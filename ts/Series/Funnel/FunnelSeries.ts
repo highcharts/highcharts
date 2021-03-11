@@ -573,7 +573,7 @@ class FunnelSeries extends PieSeries {
             };
 
             // Slice is a noop on funnel points
-            point.slice = noop as any;
+            point.slice = noop;
 
             // Mimicking pie data label placement logic
             point.half = half;
@@ -612,7 +612,7 @@ interface FunnelSeries {
     getX(y: number, half: boolean, point: FunnelPoint): number; // added during translate
 }
 extend(FunnelSeries.prototype, {
-    animate: noop as any
+    animate: noop
 });
 
 /* *

@@ -80,7 +80,7 @@ const uploadFiles = params => {
         const s3Put = (filename, data, mime, s3Params = {}) => {
             return new Promise((resolve, reject) => {
                 s3.putObject({
-                    Bucket: Bucket,
+                    Bucket: bucket,
                     Key: filename,
                     Body: data,
                     ContentType: mime,

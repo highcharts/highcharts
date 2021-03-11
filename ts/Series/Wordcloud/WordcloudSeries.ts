@@ -502,10 +502,10 @@ interface WordcloudSeries {
 
 extend(WordcloudSeries.prototype, {
     animate: Series.prototype.animate,
-    animateDrilldown: noop as any,
-    animateDrillupFrom: noop as any,
+    animateDrilldown: noop,
+    animateDrillupFrom: noop,
     pointClass: WordcloudPoint,
-    setClip: noop as any,
+    setClip: noop,
 
     // Strategies used for deciding rotation and initial position of a word. To
     // implement a custom strategy, have a look at the function random for

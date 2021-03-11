@@ -1539,7 +1539,7 @@ extend(PackedBubbleSeries.prototype, {
     requireSorting: false,
 
     // solving #12287
-    searchPoint: H.noop as any,
+    searchPoint: H.noop,
 
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
 

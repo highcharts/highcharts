@@ -128,6 +128,7 @@ declare global {
             index?: number;
         }
         interface ChartOptions {
+            forExport?: boolean;
             renderer?: string;
             skipClone?: boolean;
         }
@@ -363,7 +364,7 @@ class Chart {
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (
-                typeOptions: Record<string, any>,
+                typeOptions: AnyRecord,
                 type: string
             ): void {
                 if (isObject(typeOptions)) { // #8766
@@ -3162,10 +3163,7 @@ class Chart {
         // options.mapNavigation => chart.mapNavigation
         // options.navigator => chart.navigator
         // options.scrollbar => chart.scrollbar
-        objectEach(options, function (
-            val: Record<string, any>,
-            key: string
-        ): void {
+        objectEach(options, function (val, key): void {
             if ((chart as any)[key] &&
                 typeof (chart as any)[key].update === 'function'
             ) {
@@ -3178,7 +3176,7 @@ class Chart {
             // Else, just merge the options. For nodes like loading, noData,
             // plotOptions
             } else if (
-                key !== 'color' &&
+                key !== 'colors' &&
                 chart.collectionsWithUpdate.indexOf(key) === -1
             ) {
                 merge(true, (chart.options as any)[key], (options as any)[key]);

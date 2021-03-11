@@ -1233,7 +1233,7 @@ H.Popup.prototype = {
             return createElement(
                 DIV,
                 {
-                    className: PREFIX + 'tab-item-content'
+                    className: PREFIX + 'tab-item-content ' + PREFIX + 'no-mousewheel'// #12100
                 },
                 null as any,
                 popupDiv

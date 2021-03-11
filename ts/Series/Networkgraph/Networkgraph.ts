@@ -716,7 +716,7 @@ extend(NetworkgraphSeries.prototype, {
     drawTracker: seriesTypes.column.prototype.drawTracker,
     // Animation is run in `series.simulation`.
     animate: null as any,
-    buildKDTree: H.noop as any,
+    buildKDTree: H.noop,
     /**
      * Create a single node that holds information on incoming and outgoing
      * links.

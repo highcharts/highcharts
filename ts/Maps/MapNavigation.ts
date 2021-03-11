@@ -165,7 +165,7 @@ MapNavigation.prototype.update = function (
         selectStates: SVGAttributes|undefined,
         outerHandler = function (
             this: SVGElement,
-            e: (Event|Record<string, any>)
+            e: (Event|AnyRecord)
         ): void {
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)
@@ -296,10 +296,14 @@ MapNavigation.prototype.updateEvents = function (
             typeof doc.onmousewheel === 'undefined' ?
                 'DOMMouseScroll' : 'mousewheel',
             function (e: PointerEvent): boolean {
-                chart.pointer.onContainerMouseWheel(e);
-                // Issue #5011, returning false from non-jQuery event does
-                // not prevent default
-                stopEvent(e as Event);
+                // Prevent scrolling when the pointer is over the element
+                // with that class, for example anotation popup #12100.
+                if (!chart.pointer.inClass(e.target as any, 'highcharts-no-mousewheel')) {
+                    chart.pointer.onContainerMouseWheel(e);
+                    // Issue #5011, returning false from non-jQuery event does
+                    // not prevent default
+                    stopEvent(e as Event);
+                }
                 return false;
             }
         );

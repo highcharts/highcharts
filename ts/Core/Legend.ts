@@ -1117,7 +1117,7 @@ class Legend {
      */
     public proximatePositions(): void {
         var chart = this.chart,
-            boxes = [] as Array<Record<string, any>>,
+            boxes = [] as Array<AnyRecord>,
             alignLeft = this.options.align === 'left';
 
         this.allItems.forEach(function (item): void {

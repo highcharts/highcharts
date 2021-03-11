@@ -78,19 +78,19 @@ declare global {
         interface GeoJSON {
             copyright?: string;
             copyrightShort?: string;
-            crs?: Record<string, any>;
+            crs?: AnyRecord;
             features: Array<GeoJSONFeature>;
             'hc-transform'?: Record<string, GeoJSONTransform>;
             title?: string;
             type?: string;
             version?: string;
         }
-        interface GeoJSONFeature extends Record<string, any> {
+        interface GeoJSONFeature extends AnyRecord {
             type: string;
         }
         interface GeoJSONTransform {
             crs?: string;
-            hitZone?: Record<string, any>;
+            hitZone?: AnyRecord;
             jsonmarginX?: number;
             jsonmarginY?: number;
             jsonres?: number;

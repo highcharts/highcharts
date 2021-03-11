@@ -463,7 +463,7 @@ interface Funnel3DSeries {
 }
 extend(Funnel3DSeries.prototype, {
     pointClass: Funnel3DPoint,
-    translate3dShapes: noop as any
+    translate3dShapes: noop
 });
 
 /* *

@@ -1881,12 +1881,12 @@ interface TreemapSeries extends Highcharts.TreeSeries {
     };
 }
 extend(TreemapSeries.prototype, {
-    buildKDTree: noop as any,
+    buildKDTree: noop,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     getExtremesFromAll: true,
-    getSymbol: noop as any,
+    getSymbol: noop,
     optionalAxis: 'colorAxis',
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
     pointArrayMap: ['value'],

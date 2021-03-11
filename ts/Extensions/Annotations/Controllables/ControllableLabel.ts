@@ -287,11 +287,11 @@ class ControllableLabel implements ControllableMixin.Type {
     public translate(dx: number, dy: number): void {
         var chart = this.annotation.chart,
             // Annotation.options
-            labelOptions: Record<string, any> = this.annotation.userOptions,
+            labelOptions: AnyRecord = this.annotation.userOptions,
             // Chart.options.annotations
             annotationIndex = chart.annotations.indexOf(this.annotation),
             chartAnnotations = chart.options.annotations,
-            chartOptions: Record<string, any> = chartAnnotations[annotationIndex],
+            chartOptions: AnyRecord = chartAnnotations[annotationIndex],
             temp;
 
         if (chart.inverted) {
