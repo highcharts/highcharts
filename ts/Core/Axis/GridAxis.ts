@@ -608,27 +608,24 @@ class GridAxis {
         if (gridOptions.enabled === true) {
             // compute anchor points for each of the title align options
             const {
-                axisTitle: title,
+                axisTitle,
                 height: axisHeight,
                 horiz,
                 left: axisLeft,
                 offset,
                 opposite,
-                options: {
-                    title: axisTitleOptions = {}
-                },
+                options,
                 top: axisTop,
                 width: axisWidth
             } = axis;
             const tickSize = axis.tickSize();
-            const titleWidth = title && title.getBBox().width;
-            const xOption = axisTitleOptions.x || 0;
-            const yOption = axisTitleOptions.y || 0;
-            const titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
+            const titleWidth = axisTitle && axisTitle.getBBox().width;
+            const xOption = options.title.x;
+            const yOption = options.title.y;
+            const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
             const titleFontSize = axis.chart.renderer.fontMetrics(
-                axisTitleOptions.style &&
-                axisTitleOptions.style.fontSize,
-                title
+                options.title.style.fontSize,
+                axisTitle
             ).f;
             const crispCorr = tickSize ? tickSize[0] / 2 : 0;
 
@@ -643,7 +640,7 @@ class GridAxis {
             );
 
             e.titlePosition.x = horiz ?
-                axisLeft - (titleWidth as any) / 2 - titleMargin + xOption :
+                axisLeft - (titleWidth || 0) / 2 - titleMargin + xOption :
                 offAxis + (opposite ? axisWidth : 0) + offset + xOption;
             e.titlePosition.y = horiz ?
                 (

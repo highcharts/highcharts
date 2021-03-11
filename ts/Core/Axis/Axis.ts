@@ -307,18 +307,18 @@ declare global {
             zoomEnabled: boolean;
         }
         interface XAxisTitleOptions {
-            align?: AxisTitleAlignValue;
+            align: AxisTitleAlignValue;
             enabled?: boolean;
             margin?: number;
             offset?: number;
             reserveSpace?: boolean;
-            rotation?: number;
-            style?: CSSObject;
+            rotation: number;
+            style: CSSObject;
             text?: (string|null);
             textAlign?: AlignValue;
-            useHTML?: boolean;
-            x?: number;
-            y?: number;
+            useHTML: boolean;
+            x: number;
+            y: number;
         }
         interface YAxisOptions extends XAxisOptions {
             maxColor?: ColorType;
@@ -2529,7 +2529,26 @@ class Axis {
         title: {
 
             /**
-             * Deprecated. Set the `text` to `null` to disable the title.
+             * Alignment of the title relative to the axis values. Possible
+             * values are "low", "middle" or "high".
+             *
+             * @sample {highcharts} highcharts/xaxis/title-align-low/
+             *         "low"
+             * @sample {highcharts} highcharts/xaxis/title-align-center/
+             *         "middle" by default
+             * @sample {highcharts} highcharts/xaxis/title-align-high/
+             *         "high"
+             * @sample {highcharts} highcharts/yaxis/title-offset/
+             *         Place the Y axis title on top of the axis
+             * @sample {highstock} stock/xaxis/title-align/
+             *         Aligned to "high" value
+             *
+             * @type {Highcharts.AxisTitleAlignValue}
+             */
+            align: 'middle',
+
+            /**
+             * Deprecated. Set the `text` to `undefined` to disable the title.
              *
              * @deprecated
              * @type      {boolean}
@@ -2580,11 +2599,8 @@ class Axis {
              *
              * @sample {highcharts} highcharts/yaxis/title-offset/
              *         Horizontal
-             *
-             * @type      {number}
-             * @default   0
-             * @apioption xAxis.title.rotation
              */
+            rotation: 0,
 
             /**
              * The actual text of the axis title. It can contain basic HTML tags
@@ -2628,48 +2644,24 @@ class Axis {
              * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
              * to render the axis title.
              *
-             * @type      {boolean}
-             * @default   false
              * @product   highcharts highstock gantt
-             * @apioption xAxis.title.useHTML
              */
+            useHTML: false,
 
             /**
              * Horizontal pixel offset of the title position.
              *
-             * @type      {number}
-             * @default   0
              * @since     4.1.6
              * @product   highcharts highstock gantt
-             * @apioption xAxis.title.x
              */
+            x: 0,
 
             /**
              * Vertical pixel offset of the title position.
              *
-             * @type      {number}
              * @product   highcharts highstock gantt
-             * @apioption xAxis.title.y
              */
-
-            /**
-             * Alignment of the title relative to the axis values. Possible
-             * values are "low", "middle" or "high".
-             *
-             * @sample {highcharts} highcharts/xaxis/title-align-low/
-             *         "low"
-             * @sample {highcharts} highcharts/xaxis/title-align-center/
-             *         "middle" by default
-             * @sample {highcharts} highcharts/xaxis/title-align-high/
-             *         "high"
-             * @sample {highcharts} highcharts/yaxis/title-offset/
-             *         Place the Y axis title on top of the axis
-             * @sample {highstock} stock/xaxis/title-align/
-             *         Aligned to "high" value
-             *
-             * @type {Highcharts.AxisTitleAlignValue}
-             */
-            align: 'middle',
+            y: 0,
 
             /**
              * CSS styles for the title. If the title text is longer than the
@@ -6847,7 +6839,7 @@ class Axis {
                 )
                 .attr({
                     zIndex: 7,
-                    rotation: axisTitleOptions.rotation || 0,
+                    rotation: axisTitleOptions.rotation,
                     align: textAlign
                 })
                 .addClass('highcharts-axis-title');
@@ -6863,7 +6855,7 @@ class Axis {
 
         // Max width defaults to the length of the axis
         if (!styledMode &&
-            !(axisTitleOptions.style as any).width &&
+            !axisTitleOptions.style.width &&
             !axis.isRadial
         ) {
             axis.axisTitle.css({
@@ -7195,11 +7187,10 @@ class Axis {
             margin = horiz ? axisLeft : axisTop,
             opposite = this.opposite,
             offset = this.offset,
-            xOption = axisTitleOptions.x || 0,
-            yOption = axisTitleOptions.y || 0,
+            xOption = axisTitleOptions.x,
+            yOption = axisTitleOptions.y,
             axisTitle = this.axisTitle,
             fontMetrics = this.chart.renderer.fontMetrics(
-                axisTitleOptions.style &&
                 axisTitleOptions.style.fontSize,
                 axisTitle
             ),
