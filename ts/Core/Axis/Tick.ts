@@ -395,7 +395,7 @@ class Tick {
                     if (
                         (label as any).getBBox().width <
                         axis.getSlotWidth(tick as any) - 2 *
-                            pick(labelOptions.padding, 5)
+                            labelOptions.padding
                     ) {
                         return;
                     }
@@ -432,7 +432,7 @@ class Tick {
             // (#8809)
             if (
                 label.textWidth &&
-                !(labelOptions.style && labelOptions.style.width) &&
+                !labelOptions.style.width &&
                 !(label.styles as any).width
             ) {
                 label.css({ width: null as any });
@@ -750,9 +750,7 @@ class Tick {
 
         // Check if the label overshoots the chart spacing box. If it does, move
         // it. If it now overshoots the slotWidth, add ellipsis.
-        if (!rotation &&
-            pick((labelOptions as any).overflow, 'justify') === 'justify'
-        ) {
+        if (!rotation && labelOptions.overflow === 'justify') {
             leftPos = pxPos - factor * labelWidth;
             rightPos = pxPos + (1 - factor) * labelWidth;
 
@@ -813,7 +811,7 @@ class Tick {
                 tick.shortenLabel();
             } else {
                 css.width = Math.floor(textWidth) + 'px';
-                if (!((labelOptions as any).style || {}).textOverflow) {
+                if (!(labelOptions.style || {}).textOverflow) {
                     css.textOverflow = 'ellipsis';
                 }
                 (label as any).css(css);
@@ -1104,7 +1102,7 @@ class Tick {
             options = axis.options,
             label = tick.label,
             labelOptions = options.labels,
-            step = (labelOptions as any).step,
+            step = labelOptions.step,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             show = true,
             x = xy.x,
@@ -1141,8 +1139,8 @@ class Tick {
             // Handle label overflow and show or hide accordingly
             } else if (
                 horiz &&
-                !(labelOptions as any).step &&
-                !(labelOptions as any).rotation &&
+                !labelOptions.step &&
+                !labelOptions.rotation &&
                 !old &&
                 opacity !== 0
             ) {

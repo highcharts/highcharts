@@ -208,25 +208,24 @@ declare global {
         interface XAxisLabelsOptions {
             align?: AlignValue;
             allowOverlap?: boolean;
-            autoRotation?: (false|Array<number>);
-            autoRotationLimit?: number;
+            autoRotation?: Array<number>;
+            autoRotationLimit: number;
             distance?: number;
-            enabled?: boolean;
+            enabled: boolean;
             format?: string;
             formatter?: AxisLabelsFormatterCallbackFunction;
-            indentation?: number;
-            maxStaggerLines?: number;
-            overflow?: OptionsOverflowValue;
-            padding?: number;
+            indentation: number;
+            overflow: OptionsOverflowValue;
+            padding: number;
             reserveSpace?: boolean;
             rotation?: number|'auto';
-            staggerLines?: number;
-            step?: number;
-            style?: CSSObject;
-            useHTML?: boolean;
-            x?: number;
+            staggerLines: number;
+            step: number;
+            style: CSSObject;
+            useHTML: boolean;
+            x: number;
             y?: number;
-            zIndex?: number;
+            zIndex: number;
         }
         interface XAxisOptions {
             accessibility?: XAxisAccessibilityOptions;
@@ -1535,20 +1534,22 @@ class Axis {
              * labels are not rotated. As the chart gets narrower, it
              * will start rotating the labels -45 degrees, then remove
              * every second label and try again with rotations 0 and -45 etc.
-             * Set it to `false` to disable rotation, which will
-             * cause the labels to word-wrap if possible.
+             * Set it to `undefined` to disable rotation, which will
+             * cause the labels to word-wrap if possible. Defaults to `[-45]``
+             * on bottom and top axes, `undefined` on left and right axes.
              *
              * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-default/
              *         Default auto rotation of 0 or -45
              * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-0-90/
              *         Custom graded auto rotation
              *
-             * @type      {Array<number>|false}
-             * @default   [-45]
+             * @type      {Array<number>}
+             * @default   undefined
              * @since     4.1.0
              * @product   highcharts highstock gantt
              * @apioption xAxis.labels.autoRotation
              */
+            autoRotation: void 0,
 
             /**
              * When each category width is more than this many pixels, we don't
@@ -1560,22 +1561,20 @@ class Axis {
              * @sample {highcharts} highcharts/xaxis/labels-autorotationlimit/
              *         Lower limit
              *
-             * @type      {number}
-             * @default   80
              * @since     4.1.5
              * @product   highcharts gantt
-             * @apioption xAxis.labels.autoRotationLimit
              */
+            autoRotationLimit: 80,
 
             /**
              * Polar charts only. The label's pixel distance from the perimeter
              * of the plot area.
              *
              * @type      {number}
-             * @default   15
+             * @default   undefined
              * @product   highcharts gantt
-             * @apioption xAxis.labels.distance
              */
+            distance: void 0,
 
             /**
              * Enable or disable the axis labels.
@@ -1663,22 +1662,18 @@ class Axis {
              * `"justify"` labels inside the chart area. If there is room to
              * move it, it will be aligned to the edge, else it will be removed.
              *
-             * @type       {string}
-             * @default    justify
              * @since      2.2.5
              * @validvalue ["allow", "justify"]
-             * @apioption  xAxis.labels.overflow
              */
+            overflow: 'justify',
 
             /**
              * The pixel padding for axis labels, to ensure white space between
              * them.
              *
-             * @type      {number}
-             * @default   5
              * @product   highcharts gantt
-             * @apioption xAxis.labels.padding
              */
+            padding: 5,
 
             /**
              * Whether to reserve space for the labels. By default, space is
@@ -1704,9 +1699,11 @@ class Axis {
              * @product   highcharts gantt
              * @apioption xAxis.labels.reserveSpace
              */
+            reserveSpace: void 0,
 
             /**
-             * Rotation of the labels in degrees.
+             * Rotation of the labels in degrees. When `undefined`, the
+             * `autoRotation` option takes precedence.
              *
              * @sample {highcharts} highcharts/xaxis/labels-rotation/
              *         X axis labels rotated 90°
@@ -1715,26 +1712,27 @@ class Axis {
              * @default   0
              * @apioption xAxis.labels.rotation
              */
+            rotation: void 0,
 
             /**
              * Horizontal axes only. The number of lines to spread the labels
-             * over to make room or tighter labels.
+             * over to make room or tighter labels. 0 disables staggering.
              *
              * @sample {highcharts} highcharts/xaxis/labels-staggerlines/
              *         Show labels over two lines
              * @sample {highstock} stock/xaxis/labels-staggerlines/
              *         Show labels over two lines
              *
-             * @type      {number}
              * @since     2.1
              * @apioption xAxis.labels.staggerLines
              */
+            staggerLines: 0,
 
             /**
              * To show only every _n_'th label on the axis, set the step to _n_.
              * Setting the step to 2 shows every other label.
              *
-             * By default, the step is calculated automatically to avoid
+             * By default, when 0, the step is calculated automatically to avoid
              * overlap. To prevent this, set it to 1\. This usually only
              * happens on a category axis, and is often a sign that you have
              * chosen the wrong axis type.
@@ -1749,19 +1747,15 @@ class Axis {
              * @sample {highcharts} highcharts/xaxis/labels-step-auto/
              *         Auto steps on a category axis
              *
-             * @type      {number}
              * @since     2.1
-             * @apioption xAxis.labels.step
              */
+            step: 0,
 
             /**
              * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
              * to render the labels.
-             *
-             * @type      {boolean}
-             * @default   false
-             * @apioption xAxis.labels.useHTML
              */
+            useHTML: false,
 
             /**
              * The x position offset of all labels relative to the tick
@@ -1786,11 +1780,8 @@ class Axis {
 
             /**
              * The Z index for the axis labels.
-             *
-             * @type      {number}
-             * @default   7
-             * @apioption xAxis.labels.zIndex
              */
+            zIndex: 7,
 
             /**
              * CSS styles for the label. Use `whiteSpace: 'nowrap'` to prevent
@@ -4102,10 +4093,11 @@ class Axis {
 
 
         var options = this.options,
+            labelsOptions = options.labels,
             type = options.type;
 
         axis.labelFormatter = (
-            (options.labels as any).formatter ||
+            (labelsOptions as any).formatter ||
             // can be overwritten by dynamic format
             axis.defaultLabelFormatter
         );
@@ -4264,7 +4256,9 @@ class Axis {
             axis.reversed = true;
         }
 
-        axis.labelRotation = (axis.options as any).labels.rotation;
+        axis.labelRotation = isNumber(labelsOptions.rotation) ?
+            labelsOptions.rotation :
+            void 0;
 
         // register event listeners
         objectEach(events, function (event: any, eventType: string): void {
@@ -6440,7 +6434,6 @@ class Axis {
         var index = this.tickPositions && this.tickPositions[0] || 0;
 
         return this.chart.renderer.fontMetrics(
-            this.options.labels.style &&
             this.options.labels.style.fontSize,
             this.ticks[index] && this.ticks[index].label
         );
@@ -6474,7 +6467,7 @@ class Axis {
             labelMetrics = this.labelMetrics(),
             step,
             bestScore = Number.MAX_VALUE,
-            autoRotation: any,
+            autoRotation: Array<number>|undefined,
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
@@ -6497,15 +6490,13 @@ class Axis {
             };
 
         if (horiz) {
-            autoRotation = !labelOptions.staggerLines &&
-                !labelOptions.step &&
-                ( // #3971
-                    defined(rotationOption) ?
-                        [rotationOption] :
-                        slotSize < pick(
-                            labelOptions.autoRotationLimit, 80
-                        ) && labelOptions.autoRotation
-                );
+            if (!labelOptions.staggerLines && !labelOptions.step) {
+                if (isNumber(rotationOption)) {
+                    autoRotation = [rotationOption];
+                } else if (slotSize < labelOptions.autoRotationLimit) {
+                    autoRotation = labelOptions.autoRotation;
+                }
+            }
 
             if (autoRotation) {
 
@@ -6580,11 +6571,7 @@ class Axis {
             return tick.slotWidth;
         }
 
-        if (
-            horiz &&
-            labelOptions &&
-            (labelOptions.step || 0) < 2
-        ) {
+        if (horiz && labelOptions.step < 2) {
             if (labelOptions.rotation) { // #4415
                 return 0;
             }
@@ -6593,7 +6580,7 @@ class Axis {
 
         if (!horiz) {
             // #7028
-            const cssWidth = labelOptions.style?.width;
+            const cssWidth = labelOptions.style.width;
             if (cssWidth !== void 0) {
                 return parseInt(String(cssWidth), 10);
             }
@@ -6621,17 +6608,16 @@ class Axis {
             tickPositions = this.tickPositions,
             ticks = this.ticks,
             labelOptions = this.options.labels,
-            labelStyleOptions = (labelOptions && labelOptions.style || {}),
+            labelStyleOptions = labelOptions.style,
             horiz = this.horiz,
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
                 1,
-                Math.round(slotWidth - 2 * (labelOptions.padding || 5))
+                Math.round(slotWidth - 2 * labelOptions.padding)
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
-            textOverflowOption = (labelOptions.style &&
-                labelOptions.style.textOverflow),
+            textOverflowOption = labelStyleOptions.textOverflow,
             commonWidth: number,
             commonTextOverflow: string,
             maxLabelLength = 0,
@@ -6641,7 +6627,7 @@ class Axis {
 
         // Set rotation option unless it is "auto", like in gauges
         if (!isString(labelOptions.rotation)) {
-            // #4443:
+            // #4443
             attr.rotation = labelOptions.rotation || 0;
         }
 
@@ -6735,7 +6721,7 @@ class Axis {
         }
 
         // Set the explicit or automatic label alignment
-        this.labelAlign = (labelOptions as any).align ||
+        this.labelAlign = labelOptions.align ||
             this.autoLabelAlign(this.labelRotation as any);
         if (this.labelAlign) {
             attr.align = this.labelAlign;
@@ -6983,7 +6969,7 @@ class Axis {
             axis.labelGroup = createGroup(
                 'axis-labels',
                 '-labels',
-                labelOptions.zIndex || 7
+                labelOptions.zIndex
             );
         }
 
@@ -7081,7 +7067,7 @@ class Axis {
                         labelOptions.y,
                         axis.tickRotCorr.y + directionFactor * 8
                     ) :
-                    (labelOptions.x || 0)
+                    labelOptions.x
             );
         }
 

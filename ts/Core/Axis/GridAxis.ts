@@ -96,9 +96,11 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
     var options = axis.options;
 
     // Center-align by default
+    /*
     if (!options.labels) {
         options.labels = {};
     }
+    */
     options.labels.align = pick(options.labels.align, 'center');
 
     // @todo: Check against tickLabelPlacement between/on etc

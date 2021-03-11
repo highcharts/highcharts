@@ -472,12 +472,12 @@ addEvent(Axis, 'autoLabelAlign', function (
     if (this.chart.options.isStock && this.coll === 'yAxis') {
         key = options.top + ',' + options.height;
         // do it only for the first Y axis of each pane
-        if (!panes[key] && (labelOptions as any).enabled) {
-            if ((labelOptions as any).x === 15) { // default
-                (labelOptions as any).x = 0;
+        if (!panes[key] && labelOptions.enabled) {
+            if (labelOptions.x === 15) { // default
+                labelOptions.x = 0;
             }
-            if (typeof (labelOptions as any).align === 'undefined') {
-                (labelOptions as any).align = 'right';
+            if (typeof labelOptions.align === 'undefined') {
+                labelOptions.align = 'right';
             }
             panes[key] = this;
             (e as any).align = 'right';

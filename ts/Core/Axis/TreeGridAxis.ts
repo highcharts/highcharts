@@ -623,19 +623,13 @@ namespace TreeGridAxis {
     ): SizeObject {
         const axis = this,
             options = axis.options,
-            labelOptions = options && options.labels,
-            indentation = (
-                labelOptions && isNumber(labelOptions.indentation) ?
-                    labelOptions.indentation :
-                    0
-            ),
             retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
-            isTreeGrid = axis.options.type === 'treegrid';
+            isTreeGrid = options.type === 'treegrid';
         let treeDepth: number;
 
         if (isTreeGrid && axis.treeGrid.mapOfPosToGridNode) {
             treeDepth = axis.treeGrid.mapOfPosToGridNode[-1].height || 0;
-            retVal.width += indentation * (treeDepth - 1);
+            retVal.width += options.labels.indentation * (treeDepth - 1);
         }
 
         return retVal;
