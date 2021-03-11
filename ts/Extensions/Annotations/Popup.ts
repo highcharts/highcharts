@@ -35,6 +35,7 @@ const {
     isString,
     objectEach,
     pick,
+    setOptions,
     stableSort,
     wrap
 } = U;
@@ -164,6 +165,41 @@ var indexFilter = /\d/g,
     UL = 'ul',
     LI = 'li',
     H3 = 'h3';
+
+// Lang definitions for indicators parameters in Stock Tools popup, #15170
+setOptions({
+    lang: {
+        navigation: {
+            popup: {
+                // Indicators' params:
+                index: 'Index',
+                period: 'Period',
+                standardDeviation: 'Standard Deviation',
+                periodTenkan: 'Tenkan period',
+                periodSenkouSpanB: 'Senkou Span B period',
+                periodATR: 'ATR period',
+                multiplierATR: 'ATR multiplier',
+                shortPeriod: 'Short period',
+                longPeriod: 'Long period',
+                signalPeriod: 'Signal period',
+                decimals: 'Decimals',
+                algorithm: 'Algorithm',
+                topBand: 'Top band',
+                bottomBand: 'Bottom band',
+                initialAccelerationFactor: 'Initial acceleration factor',
+                maxAccelerationFactor: 'Max acceleration factor',
+                increment: 'Increment',
+                multiplier: 'Multiplier',
+                ranges: 'Ranges',
+                highIndex: 'High index',
+                lowIndex: 'Low index',
+                deviation: 'Deviation',
+                xAxisUnit: 'x-axis unit',
+                factor: 'Factor'
+            }
+        }
+    }
+});
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
