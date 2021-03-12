@@ -3494,6 +3494,9 @@ class Axis {
          * A format string for the data label. Available variables are the same
          * as for `formatter`.
          *
+         * * @sample {highcharts} highcharts/yaxis/stacklabels-formatt/
+         *         Added units to stack total value
+         *
          * @type      {string}
          * @default   {total}
          * @since     3.0.2
@@ -3804,9 +3807,6 @@ class Axis {
             /**
              * Callback JavaScript function to format the label. The value is
              * given by `this.total`.
-             *
-             * @sample {highcharts} highcharts/yaxis/stacklabels-formatter/
-             *         Added units to stack total value
              *
              * @type    {Highcharts.FormatterCallbackFunction<Highcharts.StackItemObject>}
              * @since   2.1.5

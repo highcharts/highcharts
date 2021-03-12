@@ -235,8 +235,10 @@ Highcharts.chart('container', {
         data: browserData,
         size: '60%',
         dataLabels: {
-            formatter: function () {
-                return this.y > 5 ? this.point.name : null;
+            filter: {
+                operator: '>',
+                property: 'y',
+                value: 5
             },
             color: '#ffffff',
             distance: -30
@@ -247,10 +249,10 @@ Highcharts.chart('container', {
         size: '80%',
         innerSize: '60%',
         dataLabels: {
-            formatter: function () {
-                // display only if larger than 1
-                return this.y > 1 ? '<b>' + this.point.name + ':</b> ' +
-                    this.y + '%' : null;
+            filter: {
+                operator: '>',
+                property: 'y',
+                value: 1
             }
         },
         id: 'versions'

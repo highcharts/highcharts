@@ -27,9 +27,7 @@ Highcharts.chart('container', {
         },
         dataLabels: {
             enabled: true,
-            linkFormatter: function () {
-                return '';
-            }
+            linkFormat: ''
         },
         nodes: [{
             id: 'Moscow',

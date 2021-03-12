@@ -47,11 +47,8 @@ Highcharts.getJSON(
                     maxZoom: 0.1
                 },
                 tooltip: {
-                    formatter: function () {
-                        var point = this.points[0];
-                        return '<b>' + point.series.name + '</b><br/>' + Highcharts.dateFormat('%A %B %e %Y', this.x) + ':<br/>' +
-                            '1 USD = ' + Highcharts.numberFormat(point.y, 2) + ' EUR';
-                    },
+                    headerFormat: '<b>{series.name}</b></br>',
+                    pointFormat: '{point.x:%A %B %e %Y}:<br>1 USD = {point.y:.2f} EUR',
                     shared: true
                 },
                 legend: {
@@ -168,9 +165,7 @@ Highcharts.getJSON(
                     showFirstLabel: false
                 },
                 tooltip: {
-                    formatter: function () {
-                        return false;
-                    }
+                    enabled: false
                 },
                 legend: {
                     enabled: false

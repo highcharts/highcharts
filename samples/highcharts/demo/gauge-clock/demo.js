@@ -16,7 +16,9 @@ function getNow() {
  */
 function pad(number, length) {
     // Create an array of the remaining length + 1 and join it with 0's
-    return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+    return new Array(
+        (length || 2) + 1 - String(number).length
+    ).join(0) + number;
 }
 
 var now = getNow();
@@ -94,9 +96,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        formatter: function () {
-            return this.series.chart.tooltipText;
-        }
+        pointFormat: '{series.chart.tooltipText}'
     },
 
     series: [{

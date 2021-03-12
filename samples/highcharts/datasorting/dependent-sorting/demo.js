@@ -68,9 +68,7 @@ var chart = Highcharts.chart('container', {
             dataLabels: {
                 enabled: true,
                 color: '#000000',
-                formatter: function () {
-                    return Highcharts.numberFormat(this.point.value, 1);
-                }
+                format: '{point.value:.1f}'
             }
         }
     },

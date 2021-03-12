@@ -16,9 +16,7 @@ Highcharts.chart('container', {
         opposite: true,
         tickInterval: 24 * 3600 * 1000,
         labels: {
-            formatter: function () {
-                return Highcharts.dateFormat('%a', this.value);
-            }
+            format: '{value:%a}'
         }
     }],
 
