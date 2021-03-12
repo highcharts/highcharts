@@ -6,10 +6,11 @@ import type {
 } from '../../Core/Renderer/CSSObject';
 
 import U from '../../Core/Utilities.js';
-import Column from './Column.js';
+
 const {
     pick
 } = U;
+
 class Layout extends GUIElement {
     /* *
     *
@@ -136,6 +137,33 @@ class Layout extends GUIElement {
         }
 
         super.destroy();
+    }
+    /**
+     * Export layout from the local storage
+     */
+    public exportLayout():void {
+
+    }
+
+    /**
+     * Import layout from the local storage
+     */
+    public importLayout():void {
+
+    }
+
+    /**
+     * Convert layout's option to the JSON
+     */
+    public toJSON():void {
+
+    }
+
+    /**
+     * Init layout, based on JSON
+     */
+    public fromJSON():void {
+
     }
 }
 
