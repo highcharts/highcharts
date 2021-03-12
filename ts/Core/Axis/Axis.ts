@@ -242,7 +242,7 @@ declare global {
             floor?: number;
             gridLineColor: ColorType;
             gridLineDashStyle: DashStyleValue;
-            gridLineWidth: number;
+            gridLineWidth?: number;
             gridZIndex: number;
             height?: (number|string);
             id?: string;
@@ -2897,6 +2897,8 @@ class Axis {
 
         /**
          * The width of the grid lines extending the ticks across the plot area.
+         * Defaults to 1 on the Y axis and 0 on the X axis, except for 3d
+         * charts.
          *
          * In styled mode, the stroke width is given in the
          * `.highcharts-grid-line` class.
@@ -2908,8 +2910,10 @@ class Axis {
          * @sample {highstock} stock/xaxis/gridlinewidth/
          *         2px lines
          *
+         * @type      {number}
+         * @apioption xAxis.gridLineWidth
          */
-        gridLineWidth: 0,
+        gridLineWidth: void 0,
 
         /**
          * The height as the vertical axis. If it's a number, it is

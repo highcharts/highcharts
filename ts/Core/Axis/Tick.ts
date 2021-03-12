@@ -962,7 +962,7 @@ class Tick {
         if (!gridLine) {
             if (!axis.chart.styledMode) {
                 attribs.stroke = gridLineColor;
-                attribs['stroke-width'] = gridLineWidth;
+                attribs['stroke-width'] = gridLineWidth || 0;
                 attribs.dashstyle = dashStyle;
             }
             if (!type) {
