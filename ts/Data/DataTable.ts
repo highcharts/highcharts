@@ -45,6 +45,14 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      *
      * */
 
+    public static readonly NULL: Readonly<DataTable.RowObject> = {};
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
     /**
      * Converts a supported class JSON to a DataTable instance.
      *
@@ -150,31 +158,27 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         presentationState: DataPresentationState = new DataPresentationState(),
         converter: DataConverter = new DataConverter()
     ) {
-
-        const myColumnNames = this.columnNames = Object.keys(columns);
         this.columns = {};
         this.converter = converter;
         this.id = id || uniqueKey();
         this.presentationState = presentationState;
-        this.rowCount = 0;
-        this.versionTag = '';
+        this.versionTag = uniqueKey();
 
-        if (myColumnNames.length) {
-            const myColumns = this.columns;
+        const hasOwnProperty = {}.hasOwnProperty,
+            thisColumns = this.columns;
 
-            let column: DataTable.Column,
-                columnName: string,
-                maxRowCount: number = 0;
+        let column: DataTable.Column,
+            maxRowCount: number = 0;
 
-            for (let i = 0, iEnd = myColumnNames.length; i < iEnd; ++i) {
-                columnName = myColumnNames[i];
+        for (const columnName in columns) {
+            if (hasOwnProperty.call(columns, columnName)) {
                 column = columns[columnName].slice();
-                myColumns[columnName] = column;
+                thisColumns[columnName] = column;
                 maxRowCount = Math.max(maxRowCount, column.length);
             }
-
-            this.rowCount = maxRowCount;
         }
+
+        this.rowCount = maxRowCount;
     }
 
     /* *
@@ -193,8 +197,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Converter for type conversions of cell values.
      */
     public readonly converter: DataConverter;
-
-    private columnNames: Array<string>;
 
     private columns: Record<string, DataTable.Column>;
 
@@ -227,7 +229,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         table.emit({ type: 'clearTable', detail: eventDetail });
 
         table.columns = {};
-        table.columnNames.length = 0;
         table.rowCount = 0;
 
         table.emit({ type: 'afterClearTable', detail: eventDetail });
@@ -291,15 +292,16 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public clearRows(eventDetail?: DataEventEmitter.EventDetail): void {
         const table = this,
-            columnNames = table.columnNames,
             columns = table.columns;
 
         table.emit({ type: 'clearRows', detail: eventDetail });
 
-        table.rowCount = 0;
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columns[columnNames[i]].length = 0;
+        // eslint-disable-next-line guard-for-in
+        for (const columnName in columns) {
+            columns[columnName].length = 0;
         }
+
+        table.rowCount = 0;
 
         table.emit({ type: 'afterClearRows', detail: eventDetail });
     }
@@ -358,6 +360,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             }
         }
 
+        tableClone.versionTag = table.versionTag;
+
         table.emit({
             type: 'afterCloneTable',
             detail: eventDetail,
@@ -387,7 +391,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         eventDetail?: DataEventEmitter.EventDetail
     ): (DataTable.Column|undefined) {
         const table = this,
-            columnNames = table.columnNames,
             columns = table.columns,
             deletedColumn = columns[columnName];
 
@@ -399,7 +402,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 detail: eventDetail
             });
 
-            columnNames.splice(columnNames.indexOf(columnName), 1);
             delete columns[columnName];
 
             table.emit({
@@ -453,36 +455,38 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         eventDetail?: DataEventEmitter.EventDetail
     ): (DataTable.Row|undefined) {
         const table = this,
-            columnNames = table.columnNames,
             columns = table.columns;
 
         if (rowIndex < table.rowCount) {
-            const deletedRow: DataTable.Row = [];
+            const row: DataTable.Row = [];
 
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                deletedRow.push(columns[columnNames[i]][rowIndex]);
+            // eslint-disable-next-line guard-for-in
+            for (const columnName in columns) {
+                row.push(columns[columnName][rowIndex]);
             }
 
             table.emit({
                 type: 'deleteRow',
                 detail: eventDetail,
-                row: deletedRow,
+                row,
                 rowIndex
             });
 
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                deletedRow.push(...columns[columnNames[i]].splice(rowIndex, 1));
+            // eslint-disable-next-line guard-for-in
+            for (const columnName in columns) {
+                row.push(...columns[columnName].splice(rowIndex, 1));
             }
+
             table.rowCount--;
 
             table.emit({
                 type: 'afterDeleteRow',
                 detail: eventDetail,
-                row: deletedRow,
+                row,
                 rowIndex
             });
 
-            return deletedRow;
+            return row;
         }
     }
 
@@ -494,7 +498,23 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Event object with event information.
      */
     public emit(e: DataTable.EventObject): void {
-        fireEvent(this, e.type, e);
+        const frame = this;
+
+        switch (e.type) {
+            case 'afterClearColumn':
+            case 'afterClearRows':
+            case 'afterClearTable':
+            case 'afterDeleteColumn':
+            case 'afterDeleteRow':
+            case 'afterSetCell':
+            case 'afterSetColumn':
+            case 'afterSetRow':
+                frame.versionTag = uniqueKey();
+                break;
+            default:
+        }
+
+        fireEvent(frame, e.type, e);
     }
 
     /**
@@ -505,18 +525,11 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public getAllColumns(): DataTable.ColumnCollection {
         const table = this,
-            columnNames = table.columnNames,
             columns = table.columns,
             allColumns: DataTable.ColumnCollection = {};
 
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
+        // eslint-disable-next-line guard-for-in
+        for (const columnName in columns) {
             allColumns[columnName] = columns[columnName].slice();
         }
 
@@ -532,7 +545,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     public getAllRows(): Array<DataTable.Row> {
         const table = this,
             columns = table.columns,
-            columnNames = table.columnNames,
             rows: Array<DataTable.Row> = [];
 
         for (
@@ -543,9 +555,12 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             ++i
         ) {
             row = [];
-            for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
-                row.push(columns[columnNames[j]][i]);
+
+            // eslint-disable-next-line guard-for-in
+            for (const columnName in columns) {
+                row.push(columns[columnName][i]);
             }
+
             rows.push(row);
         }
 
@@ -580,6 +595,118 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         if (column) {
             return column[rowIndex];
         }
+    }
+
+    /**
+     * Fetches a cell value for the given row as a boolean.
+     *
+     * @param {number} rowIndex
+     * Row index to fetch.
+     *
+     * @param {string} columnNameOrAlias
+     * Column name or alias to fetch.
+     *
+     * @return {boolean}
+     * Returns the cell value of the row as a boolean.
+     */
+    public getCellAsBoolean(
+        rowIndex: number,
+        columnNameOrAlias: string
+    ): boolean {
+        const table = this;
+
+        columnNameOrAlias = (
+            table.aliasMap[columnNameOrAlias] ||
+            columnNameOrAlias
+        );
+
+        const column = table.columns[columnNameOrAlias];
+
+        return table.converter.asBoolean(column && column[rowIndex]);
+    }
+
+    /**
+     * Fetches a cell value for the given row as a date.
+     *
+     * @param {number} rowIndex
+     * Row index to fetch.
+     *
+     * @param {string} columnNameOrAlias
+     * Column name or alias to fetch.
+     *
+     * @return {Date}
+     * Returns the cell value of the row as a date.
+     */
+    public getCellAsDate(
+        rowIndex: number,
+        columnNameOrAlias: string
+    ): Date {
+        const table = this;
+
+        columnNameOrAlias = (
+            table.aliasMap[columnNameOrAlias] ||
+            columnNameOrAlias
+        );
+
+        const column = table.columns[columnNameOrAlias];
+
+        return table.converter.asDate(column && column[rowIndex]);
+    }
+
+    /**
+     * Fetches a cell value for the given row as a number.
+     *
+     * @param {number} rowIndex
+     * Row index to fetch.
+     *
+     * @param {string} columnNameOrAlias
+     * Column name or alias to fetch.
+     *
+     * @return {number}
+     * Returns the cell value of the row as a number.
+     */
+    public getCellAsNumber(
+        rowIndex: number,
+        columnNameOrAlias: string
+    ): number {
+        const table = this;
+
+        columnNameOrAlias = (
+            table.aliasMap[columnNameOrAlias] ||
+            columnNameOrAlias
+        );
+
+        const column = table.columns[columnNameOrAlias];
+
+        return table.converter.asNumber(column && column[rowIndex]);
+    }
+
+    /**
+     * Fetches a cell value for the given row as a string.
+     *
+     * @param {number} rowIndex
+     * Row index to fetch.
+     *
+     * @param {string} columnNameOrAlias
+     * Column name or alias to fetch.
+     *
+     * @return {string}
+     * Returns the cell value of the row as a string.
+     */
+    public getCellAsString(
+        rowIndex: number,
+        columnNameOrAlias: string
+    ): string {
+        const table = this;
+
+        columnNameOrAlias = (
+            table.aliasMap[columnNameOrAlias] ||
+            columnNameOrAlias
+        );
+
+        const column = table.columns[columnNameOrAlias];
+
+        return table.converter.asString(column && column[rowIndex]);
     }
 
     /**
@@ -645,7 +772,12 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         usePresentationOrder?: boolean
     ): Array<string> {
         const table = this,
-            columnNames = table.columnNames.slice();
+            columnNames = [];
+
+        // eslint-disable-next-line guard-for-in
+        for (const columnName in table.columns) {
+            columnNames.push(columnName);
+        }
 
         if (usePresentationOrder && columnNames.length) {
             columnNames.sort(table.presentationState.getColumnSorter());
@@ -711,54 +843,17 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         rowIndex: number,
         usePresentationOrder?: boolean
     ): (DataTable.Row|undefined) {
-        const table = this;
+        const table = this,
+            columnNames = table.getColumnNames(usePresentationOrder),
+            columnNamesLength = columnNames.length,
+            columns = table.columns,
+            row = new Array(columnNamesLength);
 
-        let columnNames = table.columnNames;
-
-        if (usePresentationOrder) {
-            columnNames = columnNames
-                .slice()
-                .sort(table.presentationState.getColumnSorter());
-        }
-
-        const columns = table.columns,
-            row = new Array(columnNames.length);
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+        for (let i = 0; i < columnNamesLength; ++i) {
             row[i] = columns[columnNames[i]][rowIndex];
         }
 
         return row;
-    }
-
-    /**
-     * Fetches a cell value for the given row.
-     *
-     * @param {number} rowIndex
-     * Row index to fetch.
-     *
-     * @param {string} columnNameOrAlias
-     * Column name or alias to fetch.
-     *
-     * @return {DataTable.CellType}
-     * Returns the cell value of the row.
-     */
-    public getRowCell(
-        rowIndex: number,
-        columnNameOrAlias: string
-    ): DataTable.CellType {
-        const table = this;
-
-        columnNameOrAlias = (
-            table.aliasMap[columnNameOrAlias] ||
-            columnNameOrAlias
-        );
-
-        const column = table.columns[columnNameOrAlias];
-
-        if (column) {
-            return column[rowIndex];
-        }
     }
 
     /**
@@ -818,26 +913,41 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {number} rowIndex
      * Row index.
      *
+     * @param {Arra<string>} [columnNamesOrAliases]
+     * Column names or aliases to retrieve.
+     *
      * @return {DataTable.RowObject}
      * Returns the row values, or `undefined` if not found.
      */
     public getRowObject(
-        rowIndex: number
+        rowIndex: number,
+        columnNamesOrAliases?: Array<string>
     ): (DataTable.RowObject|undefined) {
         const table = this,
-            columnNames = table.columnNames,
             columns = table.columns,
             row: DataTable.RowObject = {};
 
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
-            row[columnName] = columns[columnName][rowIndex];
+        if (columnNamesOrAliases) {
+            const aliasMap = table.aliasMap;
+            for (
+                let i = 0,
+                    iEnd = columnNamesOrAliases.length,
+                    columnName: string;
+                i < iEnd;
+                ++i
+            ) {
+                columnName = columnNamesOrAliases[i];
+                columnName = (
+                    aliasMap[columnName] ||
+                    columnName
+                );
+                row[columnName] = columns[columnName][rowIndex];
+            }
+        } else {
+            // eslint-disable-next-line guard-for-in
+            for (const columnName in columns) {
+                row[columnName] = columns[columnName][rowIndex];
+            }
         }
 
         return row;
@@ -860,8 +970,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         rowCount: number = (this.rowCount - rowIndex)
     ): (Array<DataTable.RowObject>) {
         const table = this,
-            columnNames = table.columnNames,
-            columnNamesLength = columnNames.length,
             columns = table.columns,
             rows: Array<DataTable.RowObject> = new Array(rowCount);
 
@@ -871,20 +979,16 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 iEnd = Math.min(
                     table.rowCount,
                     (rowIndex + rowCount)
-                );
+                ),
+                row: DataTable.RowObject;
             i < iEnd;
             ++i, ++i2
         ) {
-            rows[i2] = {};
-            for (
-                let j = 0,
-                    jEnd = columnNamesLength,
-                    columnName: string;
-                j < jEnd;
-                ++j
-            ) {
-                columnName = columnNames[j];
-                rows[i2][columnName] = columns[columnName][i];
+            row = rows[++i2] = {};
+
+            // eslint-disable-next-line guard-for-in
+            for (const columnName in columns) {
+                row[columnName] = columns[columnName][i];
             }
         }
 
@@ -911,17 +1015,9 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         rowCount: number = (this.rowCount - rowIndex),
         usePresentationOrder?: boolean
     ): (Array<DataTable.Row>) {
-        const table = this;
-
-        let columnNames = table.columnNames;
-
-        if (usePresentationOrder) {
-            columnNames = columnNames
-                .slice()
-                .sort(table.presentationState.getColumnSorter());
-        }
-
-        const columnNamesLength = columnNames.length,
+        const table = this,
+            columnNames = table.getColumnNames(usePresentationOrder),
+            columnNamesLength = columnNames.length,
             columns = table.columns,
             rows: Array<DataTable.Row> = new Array(rowCount);
 
@@ -931,17 +1027,28 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 iEnd = Math.min(
                     table.rowCount,
                     (rowIndex + rowCount)
-                );
+                ),
+                row: DataTable.Row;
             i < iEnd;
             ++i, ++i2
         ) {
-            rows[i2] = new Array(columnNamesLength);
-            for (let j = 0, jEnd = columnNamesLength; j < jEnd; ++j) {
-                rows[i2][j] = columns[columnNames[j]][i];
+            row = rows[i2] = new Array(columnNamesLength);
+            for (let j = 0; j < columnNamesLength; ++j) {
+                row[j] = columns[columnNames[j]][i];
             }
         }
 
         return rows;
+    }
+
+    /**
+     * Returns the unique version tag of the current state of the table.
+     *
+     * @return {string}
+     * Unique version tag.
+     */
+    public getVersionTag(): string {
+        return this.versionTag;
     }
 
     /**
@@ -955,10 +1062,10 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public hasColumn(columnNameOrAlias: string): boolean {
         const table = this;
-        return (table.columnNames.indexOf(
+        return !!table.columns[
             table.aliasMap[columnNameOrAlias] ||
             columnNameOrAlias
-        ) !== -1);
+        ];
     }
 
     /**
@@ -1030,26 +1137,19 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         newColumnName: string
     ): boolean {
         const table = this,
-            columnNames = table.columnNames,
-            columnIndex = columnNames.indexOf(columnName);
+            columns = table.columns;
 
-        if (columnIndex !== -1) {
-            const aliasMap = table.aliasMap,
-                columns = table.columns,
-                newColumnIndex = columnNames.indexOf(newColumnName);
+        if (columns[columnName]) {
+            if (columnName !== newColumnName) {
+                const aliasMap = table.aliasMap;
 
-            if (aliasMap[newColumnName]) {
-                delete aliasMap[newColumnName];
+                if (aliasMap[newColumnName]) {
+                    delete aliasMap[newColumnName];
+                }
+
+                columns[newColumnName] = columns[columnName];
+                delete columns[columnName];
             }
-
-            if (newColumnIndex === -1) {
-                columnNames[columnIndex] = newColumnName;
-            } else {
-                columnNames.splice(columnIndex, 1);
-            }
-
-            columns[newColumnName] = columns[columnName];
-            delete columns[columnName];
 
             return true;
         }
@@ -1147,10 +1247,9 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const table = this,
-            columnNames = table.columnNames,
             columns = table.columns;
 
-        columnNameOrAlias = (
+        const columnName = (
             table.aliasMap[columnNameOrAlias] ||
             columnNameOrAlias
         );
@@ -1160,20 +1259,17 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         table.emit({
             type: 'setColumn',
             column: column,
-            columnName: columnNameOrAlias,
+            columnName,
             detail: eventDetail
         });
 
-        columns[columnNameOrAlias] = column;
-        if (columnNames.indexOf(columnNameOrAlias) !== -1) {
-            columnNames.push(columnNameOrAlias);
-        }
+        columns[columnName] = column;
         table.rowCount = Math.max(table.rowCount, column.length);
 
         table.emit({
             type: 'afterSetColumn',
             column: column,
-            columnName: columnNameOrAlias,
+            columnName,
             detail: eventDetail
         });
 
@@ -1278,7 +1374,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const table = this,
-            columnNames = table.columnNames,
             columns = table.columns;
 
         table.emit({
@@ -1292,21 +1387,11 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             table.rowCount = (rowIndex + 1);
         }
 
-        for (
-            let i = 0,
-                iEnd = row.length,
-                column: DataTable.Column,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = (columnNames[i] || `${i}`);
-            column = columns[columnName];
-            if (!column) {
-                column = columns[columnName] = [];
-                columnNames.push(columnName);
-            }
-            column[rowIndex] = row[i];
+        let i = -1;
+
+        // eslint-disable-next-line guard-for-in
+        for (const columnName in columns) {
+            columns[columnName][rowIndex] = row[++i];
         }
 
         table.emit({
@@ -1346,43 +1431,42 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const table = this,
-            columnNames = table.columnNames,
-            columns = table.columns,
-            row: DataTable.Row = [],
-            rowNames = Object.keys(rowObject);
+            columns = table.columns;
 
         table.emit({
             type: 'setRow',
             detail: eventDetail,
-            row,
-            rowIndex
+            rowIndex,
+            rowObject
         });
 
         if (rowIndex >= table.rowCount) {
             table.rowCount = (rowIndex + 1);
         }
-        for (
-            let i = 0,
-                iEnd = rowNames.length,
-                column: DataTable.Column,
-                columnName: string;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = rowNames[i];
-            column = columns[columnName];
-            if (!column) {
-                column = columns[columnName] = [];
-                columnNames.push(columnName);
+
+        if (rowObject === DataTable.NULL) {
+            // eslint-disable-next-line guard-for-in
+            for (const columnName in columns) {
+                columns[columnName][rowIndex] = null;
             }
-            column[rowIndex] = row[columnNames.indexOf(columnName)] = rowObject[columnName];
+        } else {
+            let column: DataTable.Column;
+
+            // eslint-disable-next-line guard-for-in
+            for (const columnName in rowObject) {
+                column = columns[columnName];
+                if (!column) {
+                    column = columns[columnName] = [];
+                }
+                column[rowIndex] = rowObject[columnName];
+            }
         }
 
         table.emit({
             type: 'afterSetRow',
             detail: eventDetail,
-            row,
-            rowIndex
+            rowIndex,
+            rowObject
         });
 
         return true;
@@ -1470,7 +1554,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             ++i, ++i2
         ) {
             failed = (
-                !table.setRow(rows[i], i2, eventDetail) ||
+                !table.setRow(rows[i], rowIndex++, eventDetail) ||
                 failed
             );
         }
@@ -1486,7 +1570,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public toJSON(): DataTable.ClassJSON {
         const table = this,
-            columnNames = table.columnNames,
             columns = table.columns,
             json: DataTable.ClassJSON = {
                 $class: 'DataTable',
@@ -1500,16 +1583,11 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             json.presentationState = table.presentationState.toJSON();
         }
 
-        for (
-            let i = 0,
-                iEnd = columnNames.length,
-                columnName: string,
-                column: DataTable.Column,
-                jsonColumn: DataTable.ColumnJSON;
-            i < iEnd;
-            ++i
-        ) {
-            columnName = columnNames[i];
+        let column: DataTable.Column,
+            jsonColumn: DataTable.ColumnJSON;
+
+        // eslint-disable-next-line guard-for-in
+        for (const columnName in columns) {
             column = columns[columnName];
             jsonColumns[columnName] = jsonColumn = [];
             for (
@@ -1661,8 +1739,9 @@ namespace DataTable {
             'deleteRow'|'afterDeleteRow'|
             'setRow'|'afterSetRow'
         );
-        readonly row: Readonly<Row>;
+        readonly row?: Readonly<Row>;
         readonly rowIndex: number;
+        readonly rowObject?: Readonly<RowObject>;
     }
 
     /**

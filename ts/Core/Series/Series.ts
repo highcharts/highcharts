@@ -39,8 +39,6 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from './SeriesType';
-import type SplinePoint from '../../Series/Spline/SplinePoint';
-import type SplineSeries from '../../Series/Spline/SplineSeries';
 import type { StatesOptionsKey } from './StatesOptions';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -50,7 +48,7 @@ const {
     animObject,
     setAnimation
 } = A;
-import OldTownTable from '../../Data/OldTownTable.js';
+import DataTable from '../../Data/DataTable.js';
 import H from '../Globals.js';
 const {
     hasTouch,
@@ -79,6 +77,7 @@ const {
     extend,
     find,
     fireEvent,
+    flat,
     getNestedProperty,
     isArray,
     isFunction,
@@ -2638,36 +2637,30 @@ class Series {
      *
      * @private
      *
-     * @param {OldTownTable} table
+     * @param {DataTable} table
      * Table to convert.
      *
      * @param {Array<string>} [keys]
-     * Data keys to extract from table rows.
+     * Columns to extract from table.
      *
      * @return {Highcharts.SeriesOptions}
      * Common series options.
      */
     public static getSeriesOptionsFromTable(
-        table: OldTownTable,
+        table: DataTable,
         keys?: Array<string>
     ): SeriesOptions {
-        const rows = table.getAllRows(),
-            data: Array<(PointOptions|null)> = [];
+        const data: Array<(PointOptions|null)> = [];
 
-        let pointStart: (number|undefined);
-
-        for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
-            if (i === 0) {
-                pointStart = rows[i].getCellAsNumber(keys && keys[0] || 'x');
-            }
-            data.push(Point.getPointOptionsFromTableRow(rows[i], keys));
+        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
+            data.push(table.getRowObject(i, keys) || null);
         }
 
         return {
             data,
             id: table.id,
             keys,
-            pointStart
+            pointStart: table.getCellAsNumber(0, (keys && keys[0] || 'x'))
         };
     }
 
@@ -2679,16 +2672,17 @@ class Series {
      * @param {Highcharts.SeriesOptions} seriesOptions
      * Series options to convert.
      *
-     * @return {OldTownTable}
+     * @return {DataTable}
      * OldTownTable instance.
      */
     public static getTableFromSeriesOptions(
         seriesOptions: SeriesOptions
-    ): OldTownTable {
-        const table = new OldTownTable(void 0, seriesOptions.id),
+    ): DataTable {
+        const table = new DataTable(void 0, seriesOptions.id),
             data = (seriesOptions.data || []);
 
         let keys = (seriesOptions.keys || []),
+            dataPoint: (PointOptions|PointShortOptions),
             x = (seriesOptions.pointStart || 0);
 
         if (
@@ -2707,10 +2701,42 @@ class Series {
             keys = ['y'];
         }
 
+        const keysLength = keys.length;
+
+        table.setColumn(
+            data[0] instanceof Array &&
+            data[0].length > keysLength &&
+            typeof data[0][0] === 'string' ?
+                'name' :
+                'x'
+        );
+
+        for (let i = 0, iEnd = keys.length; i < iEnd; ++i) {
+            table.setColumn(keys[i]);
+        }
+
         for (let i = 0, iEnd = data.length; i < iEnd; ++i) {
-            table.insertRow(
-                Point.getTableRowFromPointOptions(data[i], keys, x)
-            );
+            dataPoint = data[i];
+
+            if (typeof dataPoint === 'object') {
+                if (dataPoint instanceof Array) {
+                    table.setRow(
+                        dataPoint.length > keysLength ?
+                            dataPoint :
+                            [x, ...dataPoint]
+                    );
+                } else if (dataPoint === null) {
+                    table.setRowObject(DataTable.NULL);
+                } else {
+                    table.setRowObject(flat(dataPoint) as DataTable.RowObject);
+                }
+            } else {
+                table.setRow([
+                    x,
+                    dataPoint
+                ]);
+            }
+
             x = Series.increment(x, seriesOptions);
         }
 
