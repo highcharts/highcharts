@@ -1,4 +1,5 @@
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
+import ChartComponent from  '../../../../code/es-modules/Dashboard/Component/ChartComponent.js';
 
 // Bring in other forms of Highcharts
 import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/highcharts.src.js';
@@ -144,6 +145,8 @@ console.log('row: ', dashboard.bindings.getRow(dashboard.layouts[0].rows[0].cont
 console.log('layout: ', dashboard.bindings.getLayout('layout-1'));
 console.groupEnd();
 
+console.log('dashboard JSON: ', dashboard.toJSON());
+
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
     gui: {
         enabled: false,
@@ -203,14 +206,3 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
 });
 
 console.log(dashboardBootstrap);
-
-console.log('========');
-
-console.log(Highcharts.fireEvent(
-    document.getElementById('dashboard-col-0'),
-    'mountColumn',
-    {},
-    function(e) {
-        console.log('fireEvent', this, e);
-    }
-));

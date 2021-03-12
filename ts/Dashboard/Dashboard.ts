@@ -1,3 +1,5 @@
+import type DataJSON from '../Data/DataJSON';
+
 import Layout from './Layout/Layout.js';
 import Bindings from './Actions/Bindings.js';
 
@@ -170,6 +172,32 @@ class Dashboard {
 
         return;
     }
+
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @return {Dashboard.ClassJSON}
+     * Class JSON of this Dashboard instance.
+     */
+    public toJSON(): Dashboard.ClassJSON {
+        const dashboard = this,
+            layouts = [];
+
+        // Get layouts JSON.
+        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
+            layouts.push(dashboard.layouts[i].toJSON());
+        }
+
+        return {
+            $class: 'Dashboard',
+            options: {
+                containerId: dashboard.container.id,
+                guiEnabled: dashboard.guiEnabled,
+                layouts: layouts,
+                componentOptions: dashboard.options.componentOptions
+            }
+        };
+    }
 }
 
 namespace Dashboard {
@@ -183,6 +211,17 @@ namespace Dashboard {
         enabled: boolean;
         layoutOptions: Partial<Layout.Options>;
         layouts: Array<Layout.Options>;
+    }
+
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        options: DashboardJSONOptions;
+    }
+
+    export interface DashboardJSONOptions extends DataJSON.JSONObject {
+        containerId: string;
+        guiEnabled: boolean|undefined;
+        layouts: Array<Layout.ClassJSON>;
+        componentOptions: Partial<Bindings.ComponentOptions>;
     }
 }
 

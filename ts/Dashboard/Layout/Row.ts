@@ -1,6 +1,7 @@
 import type {
     CSSObject
 } from '../../Core/Renderer/CSSObject';
+import type DataJSON from '../../Data/DataJSON';
 import Layout from './Layout.js';
 import Column from './Column.js';
 import GUIElement from './GUIElement.js';
@@ -143,6 +144,30 @@ class Row extends GUIElement {
 
         super.destroy();
     }
+
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @return {Row.ClassJSON}
+     * Class JSON of this Row instance.
+     */
+    public toJSON(): Row.ClassJSON {
+        const row = this,
+            columns = [];
+
+        // Get columns JSON.
+        for (let i = 0, iEnd = row.columns.length; i < iEnd; ++i) {
+            columns.push(row.columns[i].toJSON());
+        }
+
+        return {
+            $class: 'Row',
+            options: {
+                containerId: (row.container as HTMLElement).id,
+                columns: columns
+            }
+        };
+    }
 }
 
 namespace Row {
@@ -150,6 +175,15 @@ namespace Row {
         id?: string;
         columns?: Array<Column.Options>;
         style?: CSSObject;
+    }
+
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        options: JSONOptions;
+    }
+
+    export interface JSONOptions extends DataJSON.JSONObject {
+        containerId: string;
+        columns: Array<Column.ClassJSON>;
     }
 }
 

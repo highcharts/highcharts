@@ -1,6 +1,7 @@
 import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
 import GUIElement from './GUIElement.js';
+import type DataJSON from '../../Data/DataJSON';
 import type {
     CSSObject
 } from '../../Core/Renderer/CSSObject';
@@ -138,31 +139,49 @@ class Layout extends GUIElement {
 
         super.destroy();
     }
+
     /**
      * Export layout from the local storage
      */
-    public exportLayout():void {
+    public exportLayout(): void {
 
     }
 
     /**
      * Import layout from the local storage
      */
-    public importLayout():void {
+    public importLayout(): void {
 
     }
 
     /**
-     * Convert layout's option to the JSON
+     * Converts the class instance to a class JSON.
+     *
+     * @return {Layout.ClassJSON}
+     * Class JSON of this Layout instance.
      */
-    public toJSON():void {
+    public toJSON(): Layout.ClassJSON {
+        const layout = this,
+            rows = [];
 
+        // Get rows JSON.
+        for (let i = 0, iEnd = layout.rows.length; i < iEnd; ++i) {
+            rows.push(layout.rows[i].toJSON());
+        }
+
+        return {
+            $class: 'Layout',
+            options: {
+                containerId: (layout.container as HTMLElement).id,
+                rows: rows
+            }
+        };
     }
 
     /**
      * Init layout, based on JSON
      */
-    public fromJSON():void {
+    public fromJSON(): void {
 
     }
 }
@@ -177,6 +196,15 @@ namespace Layout {
         columnClassName: string;
         rows: Array<Row.Options>;
         style?: CSSObject;
+    }
+
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        options: LayoutJSONOptions;
+    }
+
+    export interface LayoutJSONOptions extends DataJSON.JSONObject {
+        containerId: string;
+        rows: Array<Row.ClassJSON>;
     }
 }
 
