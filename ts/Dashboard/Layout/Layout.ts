@@ -141,17 +141,24 @@ class Layout extends GUIElement {
     }
 
     /**
-     * Export layout from the local storage
+     * Export layout's options and save in the local storage
      */
     public exportLayout(): void {
-
+        localStorage.setItem(
+            GUIElement.prefix + this.options.id,
+            JSON.stringify(this.toJSON())
+        );
     }
 
     /**
-     * Import layout from the local storage
+     * Import layout's options from the local storage
      */
     public importLayout(): void {
+        const layoutOptions = localStorage.getItem(
+            GUIElement.prefix + this.options.id
+        );
 
+        this.fromJSON(layoutOptions);
     }
 
     /**
@@ -178,11 +185,10 @@ class Layout extends GUIElement {
         };
     }
 
-    /**
-     * Init layout, based on JSON
-     */
-    public fromJSON(): void {
-
+    public fromJSON(
+        options: any
+    ): void {
+        console.log('init layout from local storage, options:', JSON.parse(options));
     }
 }
 
