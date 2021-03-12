@@ -133,7 +133,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Constructs an instance of the DataTable class.
      *
      * @param {DataTable.ColumnCollection} [columns]
-     * Record of columns.
+     * Collection of columns.
      *
      * @param {string} [id]
      * DataTable identifier.
@@ -553,7 +553,37 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Retrieves the given column, either by the canonical column name, or by an
+     * Fetches a single cell value.
+     *
+     * @param {number} rowIndex
+     * Row index of the cell to retrieve.
+     *
+     * @param {string} columnNameOrAlias
+     * Column name or alias of the cell to retrieve.
+     *
+     * @return {DataTable.CellType}
+     * Returns the cell value or `undefined`.
+     */
+    public getCell(
+        rowIndex: number,
+        columnNameOrAlias: string
+    ): DataTable.CellType {
+        const table = this;
+
+        columnNameOrAlias = (
+            table.aliasMap[columnNameOrAlias] ||
+            columnNameOrAlias
+        );
+
+        const column = table.columns[columnNameOrAlias];
+
+        if (column) {
+            return column[rowIndex];
+        }
+    }
+
+    /**
+     * Fetches the given column, either by the canonical column name, or by an
      * alias.
      *
      * @param {string} columnNameOrAlias
@@ -581,13 +611,13 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Retrieves the column aliases.
+     * Fetches all column aliases.
      *
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state.
      *
      * @return {Array<string>}
-     * Column aliases.
+     * Returns all column aliases.
      */
     public getColumnAliases(
         usePresentationOrder?: boolean
@@ -603,13 +633,13 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Retrieves the column names.
+     * Fetches all column names.
      *
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state.
      *
      * @return {Array<string>}
-     * Column names.
+     * Returns all column names.
      */
     public getColumnNames(
         usePresentationOrder?: boolean
@@ -666,20 +696,32 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Retrieves the row with the given index.
+     * Retrieves the row at a given index.
      *
      * @param {number} rowIndex
      * Row index.
      *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state.
+     *
      * @return {DataTable.Row}
-     * Row values.
+     * Returns the row values, or `undefined` if not found.
      */
     public getRow(
-        rowIndex: number
+        rowIndex: number,
+        usePresentationOrder?: boolean
     ): (DataTable.Row|undefined) {
-        const table = this,
-            columnNames = table.columnNames,
-            columns = table.columns,
+        const table = this;
+
+        let columnNames = table.columnNames;
+
+        if (usePresentationOrder) {
+            columnNames = columnNames
+                .slice()
+                .sort(table.presentationState.getColumnSorter());
+        }
+
+        const columns = table.columns,
             row = new Array(columnNames.length);
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
@@ -690,7 +732,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Returns the column value for the given row.
+     * Fetches a cell value for the given row.
      *
      * @param {number} rowIndex
      * Row index to fetch.
@@ -699,7 +741,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Column name or alias to fetch.
      *
      * @return {DataTable.CellType}
-     * Cell value for the row.
+     * Returns the cell value of the row.
      */
     public getRowCell(
         rowIndex: number,
@@ -770,26 +812,116 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
     }
 
+    /**
+     * Retrieves the row at a given index.
+     *
+     * @param {number} rowIndex
+     * Row index.
+     *
+     * @return {DataTable.RowObject}
+     * Returns the row values, or `undefined` if not found.
+     */
+    public getRowObject(
+        rowIndex: number
+    ): (DataTable.RowObject|undefined) {
+        const table = this,
+            columnNames = table.columnNames,
+            columns = table.columns,
+            row: DataTable.RowObject = {};
+
+        for (
+            let i = 0,
+                iEnd = columnNames.length,
+                columnName: string;
+            i < iEnd;
+            ++i
+        ) {
+            columnName = columnNames[i];
+            row[columnName] = columns[columnName][rowIndex];
+        }
+
+        return row;
+    }
 
     /**
-     * Retrieves a number of rows.
+     * Fetches a number of rows.
      *
      * @param {number} [rowIndex]
-     * Index of the first row to retrieve. Defaults to first row at index `0`.
+     * Index of the first row to fetch. Defaults to first row at index `0`.
      *
      * @param {number} [rowCount]
-     * Number of rows to retrieve. Defaults to maximal number of rows.
+     * Number of rows to fetch. Defaults to maximal number of rows.
+     *
+     * @return {DataTable.RowObject}
+     * Returns retrieved rows.
+     */
+    public getRowObjects(
+        rowIndex: number = 0,
+        rowCount: number = (this.rowCount - rowIndex)
+    ): (Array<DataTable.RowObject>) {
+        const table = this,
+            columnNames = table.columnNames,
+            columnNamesLength = columnNames.length,
+            columns = table.columns,
+            rows: Array<DataTable.RowObject> = new Array(rowCount);
+
+        for (
+            let i = rowIndex,
+                i2 = 0,
+                iEnd = Math.min(
+                    table.rowCount,
+                    (rowIndex + rowCount)
+                );
+            i < iEnd;
+            ++i, ++i2
+        ) {
+            rows[i2] = {};
+            for (
+                let j = 0,
+                    jEnd = columnNamesLength,
+                    columnName: string;
+                j < jEnd;
+                ++j
+            ) {
+                columnName = columnNames[j];
+                rows[i2][columnName] = columns[columnName][i];
+            }
+        }
+
+        return rows;
+    }
+
+    /**
+     * Fetches a number of rows.
+     *
+     * @param {number} [rowIndex]
+     * Index of the first row to fetch. Defaults to first row at index `0`.
+     *
+     * @param {number} [rowCount]
+     * Number of rows to fetch. Defaults to maximal number of rows.
+     *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state.
      *
      * @return {DataTable.Row}
      * Returns retrieved rows.
      */
     public getRows(
         rowIndex: number = 0,
-        rowCount: number = (this.rowCount - rowIndex)
+        rowCount: number = (this.rowCount - rowIndex),
+        usePresentationOrder?: boolean
     ): (Array<DataTable.Row>) {
-        const table = this,
-            columnNames = table.columnNames,
-            columnNamesLength = columnNames.length,
+        const table = this;
+
+        let columnNames = table.columnNames;
+
+        if (usePresentationOrder) {
+            columnNames = columnNames
+                .slice()
+                .sort(table.presentationState.getColumnSorter());
+        }
+
+        const columnNamesLength = columnNames.length,
             columns = table.columns,
             rows: Array<DataTable.Row> = new Array(rowCount);
 
@@ -803,6 +935,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             i < iEnd;
             ++i, ++i2
         ) {
+            rows[i2] = new Array(columnNamesLength);
             for (let j = 0, jEnd = columnNamesLength; j < jEnd; ++j) {
                 rows[i2][j] = columns[columnNames[j]][i];
             }
@@ -1014,6 +1147,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const table = this,
+            columnNames = table.columnNames,
             columns = table.columns;
 
         columnNameOrAlias = (
@@ -1030,11 +1164,10 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             detail: eventDetail
         });
 
-        if (!columns[columnNameOrAlias]) {
-            table.columnNames.push(columnNameOrAlias);
-        }
-
         columns[columnNameOrAlias] = column;
+        if (columnNames.indexOf(columnNameOrAlias) !== -1) {
+            columnNames.push(columnNameOrAlias);
+        }
         table.rowCount = Math.max(table.rowCount, column.length);
 
         table.emit({
@@ -1128,7 +1261,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Cell values of the row.
      *
      * @param {number} [rowIndex]
-     * Index of the row to change. Leave `undefind` to add as a new row.
+     * Index of the row to set. Leave `undefind` to add as a new row.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
@@ -1184,6 +1317,120 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         });
 
         return true;
+    }
+
+
+    /**
+     * Sets cell values for a specifix row index. Will insert a new row, if no
+     * index was provided, or if the index is higher than the total number of
+     * rows. Will create new columns, if not found.
+     *
+     * @param {DataTable.RowObject} rowObject
+     * Cell values of the row.
+     *
+     * @param {number} [rowIndex]
+     * Index of the row to set. Leave `undefind` to add as a new row.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * Returns `true` if successful, otherwise `false`.
+     *
+     * @emits DataTable#setRow
+     * @emits DataTable#afterSetRow
+     */
+    public setRowObject(
+        rowObject: DataTable.RowObject,
+        rowIndex: number = this.rowCount,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        const table = this,
+            columnNames = table.columnNames,
+            columns = table.columns,
+            row: DataTable.Row = [],
+            rowNames = Object.keys(rowObject);
+
+        table.emit({
+            type: 'setRow',
+            detail: eventDetail,
+            row,
+            rowIndex
+        });
+
+        if (rowIndex >= table.rowCount) {
+            table.rowCount = (rowIndex + 1);
+        }
+        for (
+            let i = 0,
+                iEnd = rowNames.length,
+                column: DataTable.Column,
+                columnName: string;
+            i < iEnd;
+            ++i
+        ) {
+            columnName = rowNames[i];
+            column = columns[columnName];
+            if (!column) {
+                column = columns[columnName] = [];
+                columnNames.push(columnName);
+            }
+            column[rowIndex] = row[columnNames.indexOf(columnName)] = rowObject[columnName];
+        }
+
+        table.emit({
+            type: 'afterSetRow',
+            detail: eventDetail,
+            row,
+            rowIndex
+        });
+
+        return true;
+    }
+
+    /**
+     * Sets cell values for multiple rows. Will insert new rows, if no
+     * index was provided, or if the index is higher than the total number of
+     * rows.
+     *
+     * @param {Array<DataTable.RowObject>} rowObjects
+     * Row values to insert.
+     *
+     * @param {number} [rowIndex]
+     * Index of the row to change. Leave `undefind` to add as new rows.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {boolean}
+     * Returns `true` if successful, otherwise `false`.
+     *
+     * @emits DataTable#setRow
+     * @emits DataTable#afterSetRow
+     */
+    public setRowObjects(
+        rowObjects: Array<DataTable.RowObject>,
+        rowIndex: number = this.rowCount,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): boolean {
+        const table = this;
+
+        let failed = false;
+
+        for (
+            let i = 0,
+                i2 = rowIndex,
+                iEnd = rowObjects.length;
+            i < iEnd;
+            ++i, ++i2
+        ) {
+            failed = (
+                !table.setRowObject(rowObjects[i], i2, eventDetail) ||
+                failed
+            );
+        }
+
+        return !failed;
     }
 
     /**
@@ -1359,16 +1606,16 @@ namespace DataTable {
     }
 
     /**
-     * Record of columns, where the key is the column name or requested alias
-     * and the value is an array of column values.
+     * Collection of columns, where the key is the column name (or alias) and
+     * the value is an array of column values.
      */
     export interface ColumnCollection {
         [columnNameOrAlias: string]: Column;
     }
 
     /**
-     * Record of columns, where the key is the column name or requested alias
-     * and the value is an array of column values.
+     * Collection of columns, where the key is the column name and the value is
+     * an array of column values.
      */
     export interface ColumnCollectionJSON {
         [columnNameOrAlias: string]: ColumnJSON;
@@ -1416,6 +1663,13 @@ namespace DataTable {
         );
         readonly row: Readonly<Row>;
         readonly rowIndex: number;
+    }
+
+    /**
+     * Object of row values, where the keys are the column names.
+     */
+    export interface RowObject extends Record<string, CellType> {
+        [column: string]: CellType;
     }
 
 }

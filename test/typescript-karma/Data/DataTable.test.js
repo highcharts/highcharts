@@ -55,12 +55,20 @@ QUnit.test('DataTable Column Aliases', function (assert) {
     table.setColumnAlias('z', 'id');
     table.setColumnAlias('f', 'population');
 
-    table.setColumns({
-        id: [ 'Norway', 'Sweden', 'Finland' ],
-        population: [ 41251, 21251, new DataTable() ],
-        gdp: [ 150, 950, 950 ],
-        nonexistant: [ , , 1 ]
-    });
+    table.setRowObjects([{
+        id: 'My Land',
+        population: 41251,
+        gdp: 150
+    }, {
+        id: 'Your Land',
+        population: 21251,
+        gdp: 950
+    }, {
+        id: 'Our Land',
+        population: new DataTable(),
+        gdp: 950,
+        nonexistant: 1
+    }]);
 
     table.setColumnAlias('beta', 'nonexistant');
     assert.strictEqual(
@@ -90,22 +98,28 @@ QUnit.test('DataTable Column Aliases', function (assert) {
     );
 
     assert.ok(
-        table.setCell(table.getRowIndexBy('id', 'Finland'), 'population', 4),
+        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'population', 4),
         'Table should set cell value for column name.'
     );
     assert.ok(
-        table.setCell(table.getRowIndexBy('id', 'Finland'), 'x', 10),
+        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'x', 10),
         'Table should set cell value for column alias.'
     );
     assert.strictEqual(
-        table.setCell(table.getRowIndexBy('id', 'Finland'), 'population'),
-        table.setCell(table.getRowIndexBy('id', 'Finland'), 'x'),
+        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'population'),
+        table.setCell(table.getRowIndexBy('id', 'Our Land'), 'x'),
         'Table should return cell value for column name and alias.'
     );
 
     assert.ok(
-        table.setCell(table.getRowIndexBy('id', 'Iceland'), 'population', 4),
-        'Table should insert a new row with cell value.'
+        table.setRowObject(
+            {
+                id: 'All Land',
+                population: 4
+            },
+            table.getRowIndexBy('id', 'All Land')
+        ),
+        'Table should insert a new row with cell values.'
     )
 
     // Insert new column with two cells more than the current row count
@@ -123,7 +137,7 @@ QUnit.test('DataTable Column Aliases', function (assert) {
     assert.strictEqual(
         table.getRowCount(),
         colArray.length,
-        'New rows should be inserted'
+        'Table should count inserted rows.'
     );
 
     assert.ok(
@@ -145,7 +159,7 @@ QUnit.test('DataTable Column Aliases', function (assert) {
 
     assert.notOk(
         table.getColumn('population'),
-        'Column "population" should be removed.'
+        'Table should remove column "population".'
     )
 
 });
@@ -281,13 +295,19 @@ QUnit.test('DataTable Events', function (assert) {
 
     registeredEvents.length = 0;
     table.setRow(['b', 'text']);
+    table.setRowObject({
+        id: 'c',
+        text: 'text'
+    });
     assert.deepEqual(
         registeredEvents,
         [
             'setRow',
             'afterSetRow',
+            'setRow',
+            'afterSetRow',
         ],
-        'Events for DataTable.setRow should be in expected order.'
+        'Events for DataTable.setRow and DataTable.setRowObject should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -304,14 +324,14 @@ QUnit.test('DataTable Events', function (assert) {
     registeredEvents.length = 0;
     assert.strictEqual(
         table.getRowCount(),
-        2,
-        'Frame should contain two rows.'
+        3,
+        'Frame should contain three rows.'
     );
     table.deleteRow(0);
     assert.strictEqual(
         table.getRowCount(),
-        1,
-        'Frame should contain one row.'
+        2,
+        'Frame should contain two row.'
     );
     assert.deepEqual(
         registeredEvents,
@@ -384,16 +404,14 @@ QUnit.test('DataTable JSON', function (assert) {
     const json = {
         $class: 'DataTable',
         columns: {
-            id: [ 0, 1, 2 ],
-            a: [ 'a0', 'a1', 'a2'],
-            b: [ 0.0002, 'b1', 'b2'],
-            c: [
+            A: [ 'a0', 'a1', 'a2'],
+            B: [ 0.0002, 'b1', 'b2'],
+            C: [
                 false,
                 {
                     $class: 'DataTable',
                     columns: {
-                        id: [ 0, 1, 2 ],
-                        ca: [ 'ca0', 'ca1', 'ca2' ]
+                        CA: [ 'ca0', 'ca1', 'ca2' ]
                     },
                     id: 'table2'
                 },
@@ -405,16 +423,15 @@ QUnit.test('DataTable JSON', function (assert) {
 
     const table = DataTable.fromJSON(json);
 
-    assert.deepEqual(
-        table.getColumn('id'),
-        [ 0, 1, 2 ],
+    assert.strictEqual(
+        table.getRowCount(),
+        3,
         'Table should contain three rows.'
     );
 
     assert.deepEqual(
         table.getRow(0),
         [
-            0,
             'a0',
             0.0002,
             false
@@ -422,9 +439,11 @@ QUnit.test('DataTable JSON', function (assert) {
         'First row should contain three columns.'
     );
 
+    const tableC1 = table.getColumn('C')[1];
+
     assert.deepEqual(
-        table.getRow(1)[3].getColumn('id'),
-        [ 0, 1, 2 ],
+        tableC1.getColumn('CA'),
+        [ 'ca0', 'ca1', 'ca2' ],
         'Inner table should contain three rows.'
     );
 
@@ -438,9 +457,7 @@ QUnit.test('DataTable JSON', function (assert) {
 
 QUnit.test('DataTable.setRows', function (assert) {
 
-    const table = new DataTable();
-    
-    table.setRows({
+    const table = new DataTable({
         column1: [ true ],
         existingColumn: [ true ]
     });
