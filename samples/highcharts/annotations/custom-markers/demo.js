@@ -22,7 +22,6 @@ Highcharts.chart('container', {
     defs: {
         marker0: {
             tagName: 'marker',
-            render: false, // if false it does not render the element to the dom
             id: 'custom-shape',
             children: [{
                 tagName: 'path',
