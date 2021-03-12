@@ -1,18 +1,19 @@
 // Formula (in percents): chandePointValue = (sH - sL) / (sH + sL) * 100
 
 // Where:
-// sH = sum of the difference between the current close and previous close
+// sH = sum of the difference between the current value and previous value
 // on "up days" for the specified period.
-// sL = sum of the absolute value of the difference between the current close
-// and the previous close on "down days" for the specified period.
+// sL = sum of the absolute value of the difference between the current value
+// and the previous value on "down days" for the specified period.
 
 // Where 2:
-// "Up days" are days when the current close is greater than the previous close.
-// "Down days" are days when the current close is lower than the previous close.
+// "Up days" are days when the current value is greater than the previous value.
+// "Down days" are days when the current value is lower than the previous value.
+
 
 QUnit.skip(
     'Testing Chande Momentum Oscillator (values and updates), #15142.',
-    assert => {
+    function (assert) {
         const chart = Highcharts.stockChart('container', {
                 yAxis: [{
                     height: '48%'
@@ -62,7 +63,7 @@ QUnit.skip(
                         434.33
                     ]
                 }, {
-                    type: 'chande',
+                    type: 'cmo',
                     linkedTo: 'main',
                     yAxis: 1,
                     params: {
