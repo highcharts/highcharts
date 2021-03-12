@@ -75,7 +75,11 @@ namespace SeriesRegistry {
     /** @internal */
     export let series: typeof Series;
 
-    export const seriesTypes = {} as SeriesTypeRegistry;
+    /**
+     * @internal
+     * @todo Move `Globals.seriesTypes` code to her.
+     */
+    export const seriesTypes = H.seriesTypes;
 
     /* *
      *
@@ -211,7 +215,6 @@ namespace SeriesRegistry {
  * */
 
 H.seriesType = SeriesRegistry.seriesType;
-H.seriesTypes = SeriesRegistry.seriesTypes;
 
 /* *
  *

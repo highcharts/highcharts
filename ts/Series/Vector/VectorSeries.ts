@@ -335,19 +335,19 @@ extend(VectorSeries.prototype, {
      * @ignore
      * @deprecated
      */
-    drawGraph: H.noop as any,
+    drawGraph: H.noop,
 
     /**
      * @ignore
      * @deprecated
      */
-    getSymbol: H.noop as any,
+    getSymbol: H.noop,
 
     /**
      * @ignore
      * @deprecated
      */
-    markerAttribs: H.noop as any,
+    markerAttribs: H.noop,
 
     parallelArrays: ['x', 'y', 'length', 'direction'],
 

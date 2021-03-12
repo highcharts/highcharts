@@ -3458,7 +3458,7 @@ class Series {
     public getCyclic(
         prop: string,
         value?: any,
-        defaults?: Record<string, any>
+        defaults?: AnyRecord
     ): void {
         var i,
             chart = this.chart,
@@ -5178,7 +5178,7 @@ class Series {
                     // Set starting position for point sliding animation.
                     if (series.enabledDataSorting) {
                         point.startXPos = xAxis.reversed ?
-                            -markerAttribs.width :
+                            -(markerAttribs.width || 0) :
                             xAxis.width;
                     }
 
@@ -5191,7 +5191,7 @@ class Series {
 
                     } else if (
                         isInside &&
-                        (markerAttribs.width > 0 || point.hasImage)
+                        ((markerAttribs.width || 0) > 0 || point.hasImage)
                     ) {
 
                         /**
@@ -5321,7 +5321,7 @@ class Series {
         attribs = {
             // Math.floor for #1843:
             x: seriesOptions.crisp ?
-                Math.floor(point.plotX as any) - radius :
+                Math.floor(point.plotX as any - radius) :
                 (point.plotX as any) - radius,
             y: (point.plotY as any) - radius
         };
@@ -5752,7 +5752,7 @@ class Series {
     public plotGroup(
         prop: string,
         name: string,
-        visibility: string,
+        visibility: 'hidden'|'inherit'|'visible',
         zIndex?: number,
         parent?: SVGElement
     ): SVGElement {
@@ -5881,7 +5881,8 @@ class Series {
                 chart.renderer.isSVG &&
                 animOptions.duration
             ),
-            visibility = series.visible ? 'inherit' : 'hidden', // #2597
+            visibility: 'hidden'|'inherit'|'visible' = series.visible ?
+                'inherit' : 'hidden', // #2597
             zIndex = options.zIndex,
             hasRendered = series.hasRendered,
             chartSeriesGroup = chart.seriesGroup,
@@ -6813,6 +6814,8 @@ class Series {
 
             if (casting) {
                 // Modern browsers including IE11
+                // @todo slow, consider alternatives mentioned:
+                // https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,

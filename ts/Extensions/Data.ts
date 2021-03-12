@@ -123,7 +123,7 @@ declare global {
             startColumn?: number;
             startRow?: number;
             switchRowsAndColumns?: boolean;
-            table?: (string|GlobalHTMLElement);
+            table?: (string|HTMLElement);
         }
         interface DataParseDateCallbackFunction {
             (dateValue: string): number;

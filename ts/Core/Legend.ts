@@ -1117,7 +1117,7 @@ class Legend {
      */
     public proximatePositions(): void {
         var chart = this.chart,
-            boxes = [] as Array<Record<string, any>>,
+            boxes = [] as Array<AnyRecord>,
             alignLeft = this.options.align === 'left';
 
         this.allItems.forEach(function (item): void {
@@ -1812,8 +1812,8 @@ class Legend {
         item.checkbox = createElement('input', {
             type: 'checkbox',
             className: 'highcharts-legend-checkbox',
-            checked: (item as any).selected,
-            defaultChecked: (item as any).selected // required by IE7
+            checked: item.selected,
+            defaultChecked: item.selected // required by IE7
         }, legend.options.itemCheckboxStyle, legend.chart.container) as any;
 
         addEvent(item.checkbox, 'click', function (event: PointerEvent): void {

@@ -60,7 +60,7 @@ declare global {
             params: Record<string, string>;
         }
         interface EventCallbackFunction<T> {
-            (this: T, eventArguments: (Record<string, any>|Event)): (boolean|void);
+            (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
         }
         interface EventOptionsObject {
             order?: number;
@@ -286,7 +286,7 @@ declare global {
 
 /**
  * Generic dictionary in TypeScript notation.
- * Use the native `Record<string, any>` instead.
+ * Use the native `AnyRecord` instead.
  *
  * @deprecated
  * @interface Highcharts.Dictionary<T>
@@ -700,11 +700,11 @@ function clamp(value: number, min: number, max: number): number {
  * computing (#9197).
  * @private
  */
-function cleanRecursively<TNew extends Record<string, any>, TOld extends Record<string, any>>(
+function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
     newer: TNew,
     older: TOld
 ): TNew & TOld {
-    var result: Record<string, any> = {};
+    var result: AnyRecord = {};
 
     objectEach(newer, function (_val: unknown, key: (number|string)): void {
         var ob;
@@ -963,7 +963,7 @@ function attr(
     // else if prop is defined, it is a hash of key/value pairs
     } else {
         objectEach(prop, function (val, key): void {
-            elem.setAttribute(key, val);
+            elem.setAttribute(key, val as any);
         });
     }
     return ret;
@@ -2407,7 +2407,7 @@ function removeEvent<T>(
 function fireEvent<T>(
     el: T,
     type: string,
-    eventArguments?: (Record<string, any>|Event),
+    eventArguments?: (AnyRecord|Event),
     defaultFunction?: (Highcharts.EventCallbackFunction<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
@@ -2422,12 +2422,12 @@ function fireEvent<T>(
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
 
-        extend(e, eventArguments);
+        eventArguments = extend(e, eventArguments);
 
         if ((el as any).dispatchEvent) {
-            (el as any).dispatchEvent(e);
+            (el as any).dispatchEvent(eventArguments);
         } else {
-            (el as any).fireEvent(type, e);
+            (el as any).fireEvent(type, eventArguments);
         }
 
     } else if ((el as any).hcEvents) {

@@ -306,7 +306,7 @@ class Funnel3DSeries extends ColumnSeries {
             y5: (number|null),
             //
             h: number,
-            shapeArgs: SVGAttributes;
+            shapeArgs: any; // @todo: Type it. It's an extended SVGAttributes.
 
         // Return the width at a specific y coordinate
         series.getWidthAt = getWidthAt = function (y: number): number {
@@ -435,7 +435,7 @@ class Funnel3DSeries extends ColumnSeries {
                 width: getWidthAt(point.plotY),
 
                 y: y1,
-                bottom: shapeArgs.height,
+                bottom: shapeArgs.height || 0,
 
                 fullWidth: width
             };
@@ -463,7 +463,7 @@ interface Funnel3DSeries {
 }
 extend(Funnel3DSeries.prototype, {
     pointClass: Funnel3DPoint,
-    translate3dShapes: noop as any
+    translate3dShapes: noop
 });
 
 /* *

@@ -893,7 +893,7 @@ class Point {
      *
      * @fires Highcharts.Point#event:*
      */
-    public firePointEvent<T extends Record<string, any>|Event>(
+    public firePointEvent<T extends AnyRecord|Event>(
         eventType: string,
         eventArgs?: T,
         defaultFunction?: (
@@ -1146,7 +1146,7 @@ class Point {
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
     ): this['options'] {
-        var ret = {} as Record<string, any>,
+        var ret = {} as AnyRecord,
             series = this.series,
             keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],

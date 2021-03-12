@@ -14,6 +14,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
@@ -111,7 +112,7 @@ declare global {
             buttonPosition: RangeSelectorPositionOptions;
             buttons?: Array<RangeSelectorButtonsOptions>;
             buttonSpacing: number;
-            buttonTheme: SVGAttributes;
+            buttonTheme: ButtonThemeObject;
             dropdown: 'always'|'never'|'responsive';
             enabled?: boolean;
             floating: boolean;
@@ -1374,14 +1375,15 @@ class RangeSelector {
         if (input && dateBox && this.inputGroup) {
             const isTextInput = input.type === 'text';
             const { translateX, translateY } = this.inputGroup;
+            const { inputBoxWidth } = this.options;
 
             css(input, {
-                width: isTextInput ? ((dateBox.width - 2) + 'px') : 'auto',
+                width: isTextInput ? ((dateBox.width + (inputBoxWidth ? -2 : 20)) + 'px') : 'auto',
                 height: isTextInput ? ((dateBox.height - 2) + 'px') : 'auto',
                 border: '2px solid silver'
             });
 
-            if (isTextInput) {
+            if (isTextInput && inputBoxWidth) {
                 css(input, {
                     left: (translateX + dateBox.x) + 'px',
                     top: translateY + 'px'
@@ -1400,7 +1402,7 @@ class RangeSelector {
                         this.chart.chartWidth - input.offsetWidth
                     ) + 'px',
                     top: (
-                        translateY - (input.offsetHeight - dateBox.height) / 2
+                        translateY - 1 - (input.offsetHeight - dateBox.height) / 2
                     ) + 'px'
                 });
             }
@@ -1833,9 +1835,12 @@ class RangeSelector {
                     this.maxLabel,
                     this.maxDateBox
                 ].forEach((label): void => {
-                    if (label && label.width) {
-                        label.attr({ x });
-                        x += label.width + options.inputSpacing;
+                    if (label) {
+                        const { width } = label.getBBox();
+                        if (width) {
+                            label.attr({ x });
+                            x += width + options.inputSpacing;
+                        }
                     }
                 });
             }
@@ -1936,7 +1941,7 @@ class RangeSelector {
                     rangeOptions.text,
                     0,
                     0,
-                    (e: (Event|Record<string, any>)): void => {
+                    (e: (Event|AnyRecord)): void => {
 
                         // extract events from button object and call
                         var buttonEvents = (
@@ -2412,7 +2417,7 @@ class RangeSelector {
             width: 'auto',
             paddingLeft: 8,
             paddingRight: 8
-        });
+        } as unknown as SVGAttributes);
 
         if (zoomText) {
             zoomText.hide();
