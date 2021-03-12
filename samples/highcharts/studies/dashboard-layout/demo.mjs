@@ -144,6 +144,30 @@ console.log('row: ', dashboard.bindings.getRow(dashboard.layouts[0].rows[0].cont
 console.log('layout: ', dashboard.bindings.getLayout('layout-1'));
 console.groupEnd();
 
+/*
+  Bind import layouts btn
+*/
+Highcharts.addEvent(
+    document.getElementById('export'),
+    'click',
+    function () {
+        console.log('Export');
+        dashboard.exportLocal();
+    }
+);
+
+/*
+  Bind export layouts btn
+*/
+Highcharts.addEvent(
+    document.getElementById('import'),
+    'click',
+    function () {
+        console.log('Import');
+        dashboard.importLocal();
+    }
+);
+
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
     gui: {
         enabled: false,

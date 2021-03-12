@@ -170,6 +170,27 @@ class Dashboard {
 
         return;
     }
+    /**
+     * Export layouts from the local storage
+     */
+    public exportLocal(): void {
+        const layouts = this.layouts;
+
+        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
+            layouts[i].exportLayout();
+        }
+    }
+
+    /**
+     * Import layouts from the local storage
+     */
+    public importLocal(): void {
+        const layouts = this.layouts;
+
+        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
+            layouts[i].importLayout();
+        }
+    }
 }
 
 namespace Dashboard {

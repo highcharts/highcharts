@@ -139,31 +139,43 @@ class Layout extends GUIElement {
         super.destroy();
     }
     /**
-     * Export layout from the local storage
+     * Export layout's options and save in the local storage
      */
     public exportLayout():void {
-
+        localStorage.setItem(
+            GUIElement.prefix + this.options.id,
+            this.toJSON()
+        );
     }
 
     /**
-     * Import layout from the local storage
+     * Import layout's options from the local storage
      */
     public importLayout():void {
+        const layoutOptions = localStorage.getItem(
+            GUIElement.prefix + this.options.id
+        );
 
+        this.fromJSON(layoutOptions);
     }
 
     /**
      * Convert layout's option to the JSON
      */
-    public toJSON():void {
-
+    public toJSON():string {
+        // mock json
+        return JSON.stringify({
+            options: {}
+        });
     }
 
     /**
      * Init layout, based on JSON
      */
-    public fromJSON():void {
-
+    public fromJSON(
+        options: any
+    ):void {
+        console.log('init layout from local storage, options:', JSON.parse(options));
     }
 }
 
