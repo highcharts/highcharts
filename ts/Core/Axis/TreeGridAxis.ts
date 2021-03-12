@@ -106,7 +106,7 @@ namespace TreeGridAxis {
      *
      * */
 
-    export interface AxisBreakObject extends AxisTypes.AxisBreakObject {
+    export interface AxisBreakObject extends Highcharts.XAxisBreaksOptions {
         showPoints: boolean;
     }
 
@@ -198,7 +198,7 @@ namespace TreeGridAxis {
     function getBreakFromNode(
         node: GridNode,
         max: number
-    ): Partial<AxisBreakObject> {
+    ): AxisBreakObject {
         var from = node.collapseStart || 0,
             to = node.collapseEnd || 0;
 

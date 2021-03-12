@@ -194,9 +194,9 @@ declare global {
         }
         interface XAxisBreaksOptions {
             breakSize?: number;
-            from?: number;
+            from: number;
             repeat?: number;
-            to?: number;
+            to: number;
         }
         interface XAxisEventsOptions {
             afterBreaks?: AxisEventCallbackFunction;
