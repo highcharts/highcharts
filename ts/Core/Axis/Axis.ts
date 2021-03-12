@@ -4356,7 +4356,9 @@ class Axis {
      * @return {string}
      * The formatted label content.
      */
-    public defaultLabelFormatter(this: Highcharts.AxisLabelsFormatterContextObject<number>): string {
+    public defaultLabelFormatter(
+        this: Highcharts.AxisLabelsFormatterContextObject<number>
+    ): string {
         var axis = this.axis,
             value = isNumber(this.value) ? this.value : NaN,
             time = axis.chart.time,
