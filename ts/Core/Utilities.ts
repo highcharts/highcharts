@@ -1812,7 +1812,7 @@ function getNestedProperty(path: string, parent: unknown): unknown {
             !defined(child) ||
             child instanceof Element ||
             child instanceof HTMLDocument ||
-            child instanceof Window
+            child as unknown === win
         ) {
             return; // return undefined
         }
