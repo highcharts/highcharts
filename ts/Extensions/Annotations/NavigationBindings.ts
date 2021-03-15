@@ -87,7 +87,7 @@ declare global {
             events: NavigationBindingsOptionsObject;
         }
         interface NavigationBindingsOptionsObject {
-            alwaysEnabled?: boolean;
+            noDataState?: 'normal' | 'disabled';
             className: string;
             end?: Function;
             init?: Function;
@@ -1507,10 +1507,6 @@ addEvent(H.Chart, 'render', function (): void {
             navigationBindings.boundClassNames,
             function (value: Highcharts.NavigationBindingsOptionsObject, key: string): void {
 
-                if (value.alwaysEnabled) {
-                    return;
-                }
-
                 if (
                     chart.navigationBindings &&
                     chart.navigationBindings.container &&
@@ -1522,7 +1518,16 @@ addEvent(H.Chart, 'render', function (): void {
                     const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
 
                     if (buttonNode) {
-                        if (!buttonsEnabled) {
+                        if (value.noDataState === 'normal') {
+                            buttonNode.forEach(function (button): void {
+                                // If button has noDataState: 'normal',
+                                // and has disabledClassName,
+                                // remove this className.
+                                if (button.className.indexOf(disabledClassName) !== -1) {
+                                    button.classList.remove(disabledClassName);
+                                }
+                            });
+                        } else if (!buttonsEnabled) {
                             buttonNode.forEach(function (button): void {
                                 if (button.className.indexOf(disabledClassName) === -1) {
                                     button.className += ' ' + disabledClassName;

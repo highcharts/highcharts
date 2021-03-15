@@ -2009,12 +2009,12 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "alwaysEnabled": true, "highcharts-full-screen", "init": function() {}}
+     * @default {"className": "noDataState": "normal", "highcharts-full-screen", "init": function() {}}
      */
     fullScreen: {
         /** @ignore-option */
         className: 'highcharts-full-screen',
-        alwaysEnabled: true,
+        noDataState: 'normal',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (
@@ -2185,12 +2185,12 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-save-chart", "alwaysEnabled": true, "init": function() {}}
+     * @default {"className": "highcharts-save-chart", "noDataState": "normal", "init": function() {}}
      */
     saveChart: {
         /** @ignore-option */
         className: 'highcharts-save-chart',
-        alwaysEnabled: true,
+        noDataState: 'normal',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (

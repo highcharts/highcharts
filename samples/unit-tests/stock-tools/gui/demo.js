@@ -139,23 +139,24 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
 
         chart.addSeries({
             data: [1, 2, 3, 2, 3, 2]
-        });
+        }, false);
 
         chart.update({
             navigation: {
                 bindings: {
                     dummyButton: {
                         className: 'dummy-button',
-                        alwaysEnabled: true,
+                        noDataState: 'normal',
                         init: function () {
                             wasInitCalled = true;
                         }
                     }
                 }
             }
-        });
+        }, false);
 
         chart.series[0].setVisible(false);
+        chart.redraw();
         wasInitCalled = false;
         controller.click(10, 10);
         assert.equal(
