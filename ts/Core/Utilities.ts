@@ -1805,15 +1805,28 @@ function getNestedProperty(path: string, parent: unknown): unknown {
     const pathElements = path.split('.');
 
     while (pathElements.length && defined(parent)) {
-        const child = (parent as Record<string, unknown>)[
-            pathElements.shift() || ''] as Record<string, unknown>;
+        const pathElement = pathElements.shift();
 
+        // Filter on the key
+        if (
+            typeof pathElement === 'undefined' ||
+            pathElement === '__proto__'
+        ) {
+            return; // undefined
+        }
+
+        const child = (parent as Record<string, unknown>)[
+            pathElement
+        ] as Record<string, unknown>;
+
+        // Filter on the child
         if (
             !defined(child) ||
+            typeof child === 'function' ||
             typeof child.nodeType === 'number' ||
             child as unknown === win
         ) {
-            return; // return undefined
+            return; // undefined
         }
 
         // Else, proceed
