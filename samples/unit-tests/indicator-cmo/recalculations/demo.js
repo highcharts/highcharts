@@ -11,9 +11,16 @@
 // "Down days" are days when the current value is lower than the previous value.
 
 
-QUnit.skip(
+QUnit.test(
     'Testing Chande Momentum Oscillator (values and updates), #15142.',
     function (assert) {
+
+        function round(array) {
+            return array.map(function (value) {
+                return value === null ? null : Number(value.toFixed(8));
+            });
+        }
+
         const chart = Highcharts.stockChart('container', {
                 yAxis: [{
                     height: '48%'
@@ -85,9 +92,9 @@ QUnit.skip(
             'number of main series points plus period.'
         );
 
-        assert.strictEqual(
-            chart.series[1].yData,
-            [
+        assert.deepEqual(
+            round(chart.series[1].yData),
+            round([
                 -33.53621424223974,
                 -16.38591117917312,
                 -17.584905660377416,
@@ -120,7 +127,7 @@ QUnit.skip(
                 -19.025050778605245,
                 17.387218045112704,
                 35.982580293957184
-            ],
+            ]),
             'Chande values should be correct.'
         );
 
@@ -131,9 +138,9 @@ QUnit.skip(
             ' to number of main series points plus period.'
         );
 
-        assert.strictEqual(
-            chart.series[1].yData,
-            [
+        assert.deepEqual(
+            round(chart.series[1].yData),
+            round([
                 -33.53621424223974,
                 -16.38591117917312,
                 -17.584905660377416,
@@ -167,7 +174,7 @@ QUnit.skip(
                 17.387218045112704,
                 35.982580293957184,
                 35.90859630032657
-            ],
+            ]),
             'After addPoint: Chande values should be correct.'
         );
 
@@ -186,14 +193,20 @@ QUnit.skip(
             [1535068800000, 20, 30, 10, 26]
         ]);
 
+        chart.series[0].update({
+            type: 'ohlc'
+        });
+
+        chart.series[1].update({});
+
         testNumberOfPoints(
             'After setData (ohlc format): number of Chande points should be equal' +
             ' to number of main series points plus period.'
         );
 
-        assert.strictEqual(
-            chart.series[1].yData,
-            [
+        assert.deepEqual(
+            round(chart.series[1].yData),
+            round([
                 -16.666666666666664,
                 28.57142857142857,
                 5.88235294117647,
@@ -201,7 +214,7 @@ QUnit.skip(
                 -23.076923076923077,
                 16.666666666666664,
                 -11.11111111111111
-            ],
+            ]),
             'After setData (ohlc format): Chande values should be correct.'
         );
 
@@ -217,9 +230,9 @@ QUnit.skip(
             ' to number of main series points plus period.'
         );
 
-        assert.strictEqual(
-            chart.series[1].yData,
-            [-9.090909090909092, 9.090909090909092, 23.809523809523807],
+        assert.deepEqual(
+            round(chart.series[1].yData),
+            round([-9.090909090909092, 9.090909090909092, 23.809523809523807]),
             'After period update: Chande values should be correct.'
         );
 
@@ -231,9 +244,9 @@ QUnit.skip(
             ' to number of main series points plus period.'
         );
 
-        assert.strictEqual(
-            chart.series[1].yData,
-            [-9.090909090909092, 9.090909090909092],
+        assert.deepEqual(
+            round(chart.series[1].yData),
+            round([-9.090909090909092, 9.090909090909092]),
             'After point remove: Chande values should be correct.'
         );
     }

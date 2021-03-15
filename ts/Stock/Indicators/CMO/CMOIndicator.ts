@@ -93,19 +93,11 @@ class CMOIndicator extends SMAIndicator {
             sumOfHigherValues = 0;
 
 
-        // for(let j = i; j > i - period; j --) {
-        //     if (values[j] > values [j - 1]) {
-        //         sumOfHigherValues += Math.abs(values[j] - values[j - 1]);
-        //     } else if (values[j] < values[j - 1]) {
-        //         sumOfLowerValues += Math.abs(values[j] - values[j - 1]);
-        //     }
-        // }
-
-        for (let j = i - period + 1; j < i; j++) {
+        for (let j = i; j > i - period; j--) {
             if (values[j] > values[j - 1]) {
-                sumOfHigherValues += Math.abs(values[j] - values[j - 1]);
+                sumOfHigherValues += values[j] - values[j - 1];
             } else if (values[j] < values[j - 1]) {
-                sumOfLowerValues += Math.abs(values[j] - values[j - 1]);
+                sumOfLowerValues += values[j - 1] - values[j];
             }
         }
 
@@ -120,23 +112,11 @@ class CMOIndicator extends SMAIndicator {
             xVal: Array<number> = series.xData as any,
             yVal: Array<number> | Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
-            decimals: number = params.decimals as any,
-            // CMO starts calculations from the second point
-            // Cause we need to calculate change between two points
-            range = 1,
             CMO: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
             index = params.index as number,
-            gain = 0,
-            loss = 0,
-            CMOPoint: number,
-            change: number,
-            avgGain: number,
-            avgLoss: number,
             i: number,
-            sH: number = 0,
-            sL: number = 0,
             values: Array<number>;
 
         if (xVal.length < period) {
@@ -147,13 +127,13 @@ class CMOIndicator extends SMAIndicator {
             values = yVal as Array<number>;
         } else {
             // in case of the situation, where the series type has data length
-            // longer then 4 (HLC, range), this ensures that we are not trying
+            // shorter then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
             index = Math.min(index, yVal[0].length - 1);
             values = (yVal as Array<Array<number>>).map((value: Array<number>): number => value[index]);
         }
 
-        for (i = period - 1; i < yValLen; i++) {
+        for (i = period; i < yValLen; i++) {
             const { sumOfLowerValues, sumOfHigherValues } = this.calculateSums(period, i, values),
                 x = xData[i],
                 y = 100 * (sumOfHigherValues - sumOfLowerValues) / (sumOfHigherValues + sumOfLowerValues);
