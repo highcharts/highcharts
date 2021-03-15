@@ -70,7 +70,7 @@ class VerticalLine extends Annotation {
 
         return {
             x: point.x as any,
-            xAxis: point.series.xAxis as AxisType,
+            xAxis: point.series.xAxis,
             y: y + offset +
                 (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
         };
@@ -95,7 +95,7 @@ class VerticalLine extends Annotation {
 
         return {
             x: point.x as any,
-            xAxis: point.series.xAxis as AxisType,
+            xAxis: point.series.xAxis,
             y: y + yOffset +
                 (inverted ? (left - chart.plotLeft) : (top - chart.plotTop))
         };

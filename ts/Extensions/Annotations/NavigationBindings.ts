@@ -253,13 +253,14 @@ const bindingsUtils = {
         coords: Array<Highcharts.PointerAxisCoordinateObject>
     ): Highcharts.PointerAxisCoordinateObject {
         return coords.filter(function (coord): boolean {
-            const axisMin = coord.axis.min as number,
-                axisMax = coord.axis.max as number,
+            const axisMin = coord.axis.min,
+                axisMax = coord.axis.max,
                 // Correct axis edges when axis has series
                 // with pointRange (like column)
                 minPointOffset = pick(coord.axis.minPointOffset, 0);
 
-            return coord.value >= (axisMin - minPointOffset) &&
+            return isNumber(axisMin) && isNumber(axisMax) &&
+                coord.value >= (axisMin - minPointOffset) &&
                 coord.value <= (axisMax + minPointOffset) &&
                 // don't count navigator axis
                 !coord.axis.options.isInternal;
@@ -1295,11 +1296,21 @@ setOptions({
                     ): void {
                         var mockPointOpts = annotation.options.shapes[0]
                                 .point as Highcharts.AnnotationMockPointOptionsObject,
-                            x = this.chart.xAxis[mockPointOpts.xAxis as number]
-                                .toPixels(mockPointOpts.x),
-                            y = this.chart.yAxis[mockPointOpts.yAxis as number]
-                                .toPixels(mockPointOpts.y),
                             inverted = this.chart.inverted,
+                            x,
+                            y,
+                            distance;
+
+                        if (
+                            isNumber(mockPointOpts.xAxis) &&
+                            isNumber(mockPointOpts.yAxis)
+                        ) {
+                            x = this.chart.xAxis[mockPointOpts.xAxis]
+                                .toPixels(mockPointOpts.x);
+
+                            y = this.chart.yAxis[mockPointOpts.yAxis]
+                                .toPixels(mockPointOpts.y);
+
                             distance = Math.max(
                                 Math.sqrt(
                                     Math.pow(
@@ -1313,6 +1324,7 @@ setOptions({
                                 ),
                                 5
                             );
+                        }
 
                         annotation.update({
                             shapes: [{
@@ -1337,20 +1349,20 @@ setOptions({
                     this: NavigationBindings,
                     e: PointerEvent
                 ): Annotation|void {
-                    var coords = this.chart.pointer.getCoordinates(e),
+                    const coords = this.chart.pointer.getCoordinates(e),
                         coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                        coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                        navigation = this.chart.options.navigation,
-                        x,
-                        y;
+                        coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
                     // Exit if clicked out of axes area
                     if (!coordsX || !coordsY) {
                         return;
                     }
 
-                    x = coordsX.value;
-                    y = coordsY.value;
+                    const x = coordsX.value,
+                        y = coordsY.value,
+                        xAxis = coordsX.axis.options.index,
+                        yAxis = coordsY.axis.options.index,
+                        navigation = this.chart.options.navigation;
 
                     return this.chart.addAnnotation(
                         merge(
@@ -1359,27 +1371,12 @@ setOptions({
                                 type: 'basicAnnotation',
                                 shapes: [{
                                     type: 'path',
-                                    points: [{
-                                        xAxis: coordsX.axis.options.index,
-                                        yAxis: coordsY.axis.options.index,
-                                        x: x,
-                                        y: y
-                                    }, {
-                                        xAxis: coordsX.axis.options.index,
-                                        yAxis: coordsY.axis.options.index,
-                                        x: x,
-                                        y: y
-                                    }, {
-                                        xAxis: coordsX.axis.options.index,
-                                        yAxis: coordsY.axis.options.index,
-                                        x: x,
-                                        y: y
-                                    }, {
-                                        xAxis: coordsX.axis.options.index,
-                                        yAxis: coordsY.axis.options.index,
-                                        x: x,
-                                        y: y
-                                    }]
+                                    points: [
+                                        { xAxis, yAxis, x, y },
+                                        { xAxis, yAxis, x, y },
+                                        { xAxis, yAxis, x, y },
+                                        { xAxis, yAxis, x, y }
+                                    ]
                                 }]
                             },
                             navigation

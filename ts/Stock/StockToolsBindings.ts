@@ -415,12 +415,17 @@ bindingsUtils.attractToPoint = function (
     chart: Chart
 ): Highcharts.NavigationBindingsAttractionObject | void {
     var coords = chart.pointer.getCoordinates(e),
-        coordsX = chart.navigationBindings?.utils.getAssignedAxis(coords.xAxis),
-        coordsY = chart.navigationBindings?.utils.getAssignedAxis(coords.yAxis),
+        coordsX,
+        coordsY,
         distX = Number.MAX_VALUE,
         closestPoint: (Point|undefined),
         x: number,
         y: number;
+
+    if (chart.navigationBindings) {
+        coordsX = chart.navigationBindings.utils.getAssignedAxis(coords.xAxis);
+        coordsY = chart.navigationBindings.utils.getAssignedAxis(coords.yAxis);
+    }
 
     // Exit if clicked out of axes area.
     if (!coordsX || !coordsY) {
@@ -440,14 +445,16 @@ bindingsUtils.attractToPoint = function (
         });
     });
 
-    return {
-        x: (closestPoint as any).x,
-        y: (closestPoint as any).y,
-        below: y < (closestPoint as any).y,
-        series: (closestPoint as any).series,
-        xAxis: (closestPoint as any).series.xAxis.options.index || 0,
-        yAxis: (closestPoint as any).series.yAxis.options.index || 0
-    };
+    if (closestPoint && closestPoint.x && closestPoint.y) {
+        return {
+            x: closestPoint.x,
+            y: closestPoint.y,
+            below: y < closestPoint.y,
+            series: closestPoint.series,
+            xAxis: closestPoint.series.xAxis.options.index || 0,
+            yAxis: closestPoint.series.yAxis.options.index || 0
+        };
+    }
 };
 
 /**
@@ -1216,39 +1223,35 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'crooked3',
-                    type: 'crookedLine',
-                    typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).crooked3.annotationsOptions
-            );
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'crooked3',
+                        type: 'crookedLine',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y },
+                                { x, y }
+                            ]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).crooked3.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -1275,45 +1278,37 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'crookedLine',
-                    type: 'crookedLine',
-                    typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).crooked5.annotationsOptions
-            );
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'crookedLine',
+                        type: 'crookedLine',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y }
+                            ]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).crooked5.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -1342,47 +1337,41 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'elliott3',
-                    type: 'elliottWave',
-                    typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    },
-                    labelOptions: {
-                        style: {
-                            color: '#666666'
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'elliott3',
+                        type: 'elliottWave',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y }
+                            ]
+                        },
+                        labelOptions: {
+                            style: {
+                                color: '#666666'
+                            }
                         }
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).elliott3.annotationsOptions
-            );
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).elliott3.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -1410,53 +1399,43 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'elliott5',
-                    type: 'elliottWave',
-                    typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    },
-                    labelOptions: {
-                        style: {
-                            color: '#666666'
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'elliott5',
+                        type: 'elliottWave',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y }
+                            ]
+                        },
+                        labelOptions: {
+                            style: {
+                                color: '#666666'
+                            }
                         }
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).elliott5.annotationsOptions
-            );
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).elliott5.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -1486,54 +1465,52 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'measure',
-                    type: 'measure',
-                    typeOptions: {
-                        selectType: 'x',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        point: {
-                            x: coordsX.value,
-                            y: coordsY.value
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'measure',
+                        type: 'measure',
+                        typeOptions: {
+                            selectType: 'x',
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            point: { x, y },
+                            crosshairX: {
+                                strokeWidth: 1,
+                                stroke: '#000000'
+                            },
+                            crosshairY: {
+                                enabled: false,
+                                strokeWidth: 0,
+                                stroke: '#000000'
+                            },
+                            background: {
+                                width: 0,
+                                height: 0,
+                                strokeWidth: 0,
+                                stroke: '#ffffff'
+                            }
                         },
-                        crosshairX: {
-                            strokeWidth: 1,
-                            stroke: '#000000'
-                        },
-                        crosshairY: {
-                            enabled: false,
-                            strokeWidth: 0,
-                            stroke: '#000000'
-                        },
-                        background: {
-                            width: 0,
-                            height: 0,
-                            strokeWidth: 0,
-                            stroke: '#ffffff'
+                        labelOptions: {
+                            style: {
+                                color: '#666666'
+                            }
                         }
                     },
-                    labelOptions: {
-                        style: {
-                            color: '#666666'
-                        }
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).measureX.annotationsOptions
-            );
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).measureX.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -1559,54 +1536,52 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'measure',
-                    type: 'measure',
-                    typeOptions: {
-                        selectType: 'y',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        point: {
-                            x: coordsX.value,
-                            y: coordsY.value
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'measure',
+                        type: 'measure',
+                        typeOptions: {
+                            selectType: 'y',
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            point: { x, y },
+                            crosshairX: {
+                                enabled: false,
+                                strokeWidth: 0,
+                                stroke: '#000000'
+                            },
+                            crosshairY: {
+                                strokeWidth: 1,
+                                stroke: '#000000'
+                            },
+                            background: {
+                                width: 0,
+                                height: 0,
+                                strokeWidth: 0,
+                                stroke: '#ffffff'
+                            }
                         },
-                        crosshairX: {
-                            enabled: false,
-                            strokeWidth: 0,
-                            stroke: '#000000'
-                        },
-                        crosshairY: {
-                            strokeWidth: 1,
-                            stroke: '#000000'
-                        },
-                        background: {
-                            width: 0,
-                            height: 0,
-                            strokeWidth: 0,
-                            stroke: '#ffffff'
+                        labelOptions: {
+                            style: {
+                                color: '#666666'
+                            }
                         }
                     },
-                    labelOptions: {
-                        style: {
-                            color: '#666666'
-                        }
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).measureY.annotationsOptions
-            );
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).measureY.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -1632,52 +1607,50 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'measure',
-                    type: 'measure',
-                    typeOptions: {
-                        selectType: 'xy',
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        point: {
-                            x: coordsX.value,
-                            y: coordsY.value
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'measure',
+                        type: 'measure',
+                        typeOptions: {
+                            selectType: 'xy',
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            point: { x, y },
+                            background: {
+                                width: 0,
+                                height: 0,
+                                strokeWidth: 10
+                            },
+                            crosshairX: {
+                                strokeWidth: 1,
+                                stroke: '#000000'
+                            },
+                            crosshairY: {
+                                strokeWidth: 1,
+                                stroke: '#000000'
+                            }
                         },
-                        background: {
-                            width: 0,
-                            height: 0,
-                            strokeWidth: 10
-                        },
-                        crosshairX: {
-                            strokeWidth: 1,
-                            stroke: '#000000'
-                        },
-                        crosshairY: {
-                            strokeWidth: 1,
-                            stroke: '#000000'
+                        labelOptions: {
+                            style: {
+                                color: '#666666'
+                            }
                         }
                     },
-                    labelOptions: {
-                        style: {
-                            color: '#666666'
-                        }
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).measureXY.annotationsOptions
-            );
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).measureXY.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -1704,41 +1677,39 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'fibonacci',
-                    type: 'fibonacci',
-                    typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    },
-                    labelOptions: {
-                        style: {
-                            color: '#666666'
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'fibonacci',
+                        type: 'fibonacci',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y }
+                            ]
+                        },
+                        labelOptions: {
+                            style: {
+                                color: '#666666'
+                            }
                         }
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).fibonacci.annotationsOptions
-            );
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).fibonacci.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -1765,36 +1736,34 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'parallelChannel',
-                    type: 'tunnel',
-                    typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }]
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).parallelChannel.annotationsOptions
-            );
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'parallelChannel',
+                        type: 'tunnel',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y }
+                            ]
+                        }
+                    },
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).parallelChannel.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },
@@ -1821,50 +1790,47 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             this: NavigationBindings,
             e: PointerEvent
         ): Annotation|void {
-            var coords = this.chart.pointer.getCoordinates(e),
+            const coords = this.chart.pointer.getCoordinates(e),
                 coordsX = this.utils.getAssignedAxis(coords.xAxis),
-                coordsY = this.utils.getAssignedAxis(coords.yAxis),
-                navigation = this.chart.options.navigation,
-                options;
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
             // Exit if clicked out of axes area
             if (!coordsX || !coordsY) {
                 return;
             }
 
-            options = merge(
-                {
-                    langKey: 'pitchfork',
-                    type: 'pitchfork',
-                    typeOptions: {
-                        xAxis: coordsX.axis.options.index,
-                        yAxis: coordsY.axis.options.index,
-                        points: [{
-                            x: coordsX.value,
-                            y: coordsY.value,
-                            controlPoint: {
-                                style: {
-                                    fill: 'red'
+            const x = coordsX.value,
+                y = coordsY.value,
+                navigation = this.chart.options.navigation,
+                options = merge(
+                    {
+                        langKey: 'pitchfork',
+                        type: 'pitchfork',
+                        typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [{
+                                x: coordsX.value,
+                                y: coordsY.value,
+                                controlPoint: {
+                                    style: {
+                                        fill: 'red'
+                                    }
                                 }
+                            },
+                            { x, y },
+                            { x, y }],
+                            innerBackground: {
+                                fill: 'rgba(100, 170, 255, 0.8)'
                             }
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }, {
-                            x: coordsX.value,
-                            y: coordsY.value
-                        }],
-                        innerBackground: {
-                            fill: 'rgba(100, 170, 255, 0.8)'
+                        },
+                        shapeOptions: {
+                            strokeWidth: 2
                         }
                     },
-                    shapeOptions: {
-                        strokeWidth: 2
-                    }
-                },
-                navigation.annotationsOptions,
-                (navigation.bindings as any).pitchfork.annotationsOptions
-            );
+                    navigation.annotationsOptions,
+                    (navigation.bindings as any).pitchfork.annotationsOptions
+                );
 
             return this.chart.addAnnotation(options);
         },

@@ -229,8 +229,8 @@ class MockPoint {
         return {
             x: point.x as any,
             y: point.y as any,
-            xAxis: point.series.xAxis as AxisType,
-            yAxis: point.series.yAxis as AxisType
+            xAxis: point.series.xAxis,
+            yAxis: point.series.yAxis
         };
     }
 

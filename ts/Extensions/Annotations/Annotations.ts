@@ -99,9 +99,9 @@ declare global {
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
-            xAxis?: (number|AxisType);
+            xAxis?: (number|AxisType|null);
             y: number;
-            yAxis?: (number|AxisType);
+            yAxis?: (number|AxisType|null);
         }
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
