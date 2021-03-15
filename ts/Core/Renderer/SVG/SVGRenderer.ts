@@ -37,7 +37,6 @@ import SVGLabel from './SVGLabel.js';
 import AST from '../HTML/AST.js';
 import TextBuilder from './TextBuilder.js';
 import U from '../../Utilities.js';
-import options from '../../../Accessibility/Options/Options';
 const {
     addEvent,
     attr,
