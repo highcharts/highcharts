@@ -234,20 +234,20 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
     }
 };
 
-// addEvent(Chart, 'afterGetContainer', function (): void {
-//     this.options.defs = merge(defaultMarkers, this.options.defs || {});
+addEvent(Chart, 'afterGetContainer', function (): void {
+    this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-//     objectEach(this.options.defs, function (def): void {
-//         const attributes = def.attributes;
-//         if (
-//             def.tagName === 'marker' &&
-//             attributes &&
-//             attributes.id &&
-//             attributes.display !== 'none'
-//         ) {
-//             this.renderer.addMarker(attributes.id, def);
-//         }
-//     }, this);
-// });
+    // objectEach(this.options.defs, function (def): void {
+    //     const attributes = def.attributes;
+    //     if (
+    //         def.tagName === 'marker' &&
+    //         attributes &&
+    //         attributes.id &&
+    //         attributes.display !== 'none'
+    //     ) {
+    //         this.renderer.addMarker(attributes.id, def);
+    //     }
+    // }, this);
+});
 
 export default markerMixin;
