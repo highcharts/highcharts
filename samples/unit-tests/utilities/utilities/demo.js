@@ -442,7 +442,11 @@
                 container: document.getElementById('container'),
                 doc: document,
                 win: window
-            }
+            },
+            fn: function () {
+                return 'Hello';
+            },
+            proto: new Date()
         };
 
         assertEquals(
@@ -573,6 +577,18 @@
             format('{point.dom.win}', { point }),
             '',
             'The window/global should not be accessible through format strings'
+        );
+
+        assert.strictEqual(
+            format('{point.fn}', { point }),
+            '',
+            'Functions should not be accessible through format strings'
+        );
+
+        assert.strictEqual(
+            format('{point.proto.__proto__}', { point }),
+            '',
+            'Prototypes should not be accessible through format strings'
         );
 
         // Reset
