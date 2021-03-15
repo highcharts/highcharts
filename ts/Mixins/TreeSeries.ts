@@ -189,7 +189,7 @@ const getColor = function getColor(
         chartOptionsChart: Highcharts.ChartOptions =
             series.chart.options.chart as any,
         point,
-        level: Record<string, any>,
+        level: AnyRecord,
         colorByPoint,
         colorIndexByPoint,
         color,

@@ -42,6 +42,23 @@ QUnit.test('Overlapping dataLabels should be hidden', function (assert) {
         true,
         'Rotated dataLabel hidden (#7362).'
     );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    allowOverlap: true
+                }
+            }
+        }
+    });
+
+    assert.ok(
+        chart.series[1].points[0].dataLabel.opacity === 1 &&
+            series[1].points[0].dataLabel.element.getAttribute('visibility') !==
+                'hidden',
+        '#13449: dataLabel should be visible after updating allowOverlap'
+    );
 });
 
 QUnit.test(

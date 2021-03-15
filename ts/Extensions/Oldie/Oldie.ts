@@ -99,7 +99,7 @@ declare global {
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLAttributes extends Record<string, any> {
+        interface VMLAttributes extends AnyRecord {
             d?: VMLPathArray;
             end?: number;
             innerR?: number;
@@ -1034,10 +1034,10 @@ if (!svg) {
                         renderer.prepVML(markup as any),
                         null as any,
                         {
-                            left: pInt(elemStyle.left) +
-                                pick(shadowOptions.offsetX, 1),
-                            top: pInt(elemStyle.top) +
-                                pick(shadowOptions.offsetY, 1)
+                            left: (pInt(elemStyle.left) +
+                                pick(shadowOptions.offsetX, 1)) + 'px',
+                            top: (pInt(elemStyle.top) +
+                                pick(shadowOptions.offsetY, 1)) + 'px'
                         }
                     );
                     if (cutOff) {
@@ -1945,10 +1945,10 @@ if (!svg) {
 
             css(element, {
                 flip: 'x',
-                left: pInt(parentStyle.width) -
-                    (imgStyle ? pInt(imgStyle.top) : 1),
-                top: pInt(parentStyle.height) -
-                    (imgStyle ? pInt(imgStyle.left) : 1),
+                left: (pInt(parentStyle.width) -
+                    (imgStyle ? pInt(imgStyle.top) : 1)) + 'px',
+                top: (pInt(parentStyle.height) -
+                    (imgStyle ? pInt(imgStyle.left) : 1)) + 'px',
                 rotation: -90
             });
 

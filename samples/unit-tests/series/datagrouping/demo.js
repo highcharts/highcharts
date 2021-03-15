@@ -1,4 +1,6 @@
 QUnit.test('General dataGrouping options', function (assert) {
+    let calledWithNaN = false;
+
     var chart = Highcharts.stockChart('container', {
         chart: {
             type: 'column'
@@ -69,8 +71,19 @@ QUnit.test('General dataGrouping options', function (assert) {
                     [1, 2, 1, 2],
                     [1, 2, 1, 2]
                 ]
+            },
+            {
+                data: []
             }
-        ]
+        ],
+        time: {
+            getTimezoneOffset: timestamp => {
+                if (Number.isNaN(timestamp)) {
+                    calledWithNaN = true;
+                }
+                return new Date().getTimezoneOffset();
+            }
+        }
     });
 
     assert.ok(
@@ -99,6 +112,11 @@ QUnit.test('General dataGrouping options', function (assert) {
         chart.series[4].points[0].open,
         2,
         'Only visible OHLC points are used (#9738)'
+    );
+
+    assert.notOk(
+        calledWithNaN,
+        'Empty series should not cause getTimezoneOffset to get called with NaN timestamp (#13247)'
     );
 });
 
@@ -746,5 +764,65 @@ QUnit.test('DataGrouping and update', function (assert) {
             - updating one-to-one with IDs
             - DG enabled
         (#11471)`
+    );
+});
+
+QUnit.test('When groupAll: true, group point should have the same start regardless of axis extremes, #15005.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            chart: {
+                type: 'column'
+            },
+            plotOptions: {
+                series: {
+                    dataGrouping: {
+                        enabled: true,
+                        forced: true,
+                        units: [
+                            ['millisecond', [5]]
+                        ]
+                    }
+                }
+            },
+            series: [{
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            }, {
+                data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            }]
+        }),
+        groupAllFirstGroupStart = chart.series[0].points[0].dataGroup.start,
+        groupAllSecondGroupStart = chart.series[0].points[1].dataGroup.start,
+        firstGroupStart = chart.series[1].points[0].dataGroup.start,
+        secondGroupStart = chart.series[1].points[1].dataGroup.start;
+
+    assert.strictEqual(
+        firstGroupStart,
+        0,
+        'When the groupAll: false, and all points visible, the first group should start from the beginning (0).'
+    );
+
+    chart.xAxis[0].setExtremes(1);
+
+    assert.strictEqual(
+        groupAllFirstGroupStart,
+        chart.series[0].points[0].dataGroup.start,
+        'When the groupAll: true, the start of the group should not be changed after changing extremes.'
+    );
+    assert.strictEqual(
+        groupAllSecondGroupStart,
+        chart.series[0].points[1].dataGroup.start,
+        'When the groupAll: true, the start of the group should not be changed after changing extremes.'
+    );
+    assert.strictEqual(
+        chart.series[1].points[0].dataGroup.start,
+        1,
+        'When the groupAll: false, and after changing extremes, the group start should be increased.'
+    );
+    assert.strictEqual(
+        secondGroupStart,
+        chart.series[1].points[1].dataGroup.start,
+        'When the groupAll: false, and new extremes don\t influence the group, the start should not be changed.'
     );
 });

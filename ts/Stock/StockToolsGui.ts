@@ -294,7 +294,33 @@ setOptions({
                 crosshairX: 'Crosshair X',
                 crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
-                background: 'Background'
+                background: 'Background',
+
+                // Indicators' params (#15170):
+                index: 'Index',
+                period: 'Period',
+                standardDeviation: 'Standard deviation',
+                periodTenkan: 'Tenkan period',
+                periodSenkouSpanB: 'Senkou Span B period',
+                periodATR: 'ATR period',
+                multiplierATR: 'ATR multiplier',
+                shortPeriod: 'Short period',
+                longPeriod: 'Long period',
+                signalPeriod: 'Signal period',
+                decimals: 'Decimals',
+                algorithm: 'Algorithm',
+                topBand: 'Top band',
+                bottomBand: 'Bottom band',
+                initialAccelerationFactor: 'Initial acceleration factor',
+                maxAccelerationFactor: 'Max acceleration factor',
+                increment: 'Increment',
+                multiplier: 'Multiplier',
+                ranges: 'Ranges',
+                highIndex: 'High index',
+                lowIndex: 'Low index',
+                deviation: 'Deviation',
+                xAxisUnit: 'x-axis unit',
+                factor: 'Factor'
             }
         }
     },
@@ -1266,7 +1292,6 @@ class Toolbar {
             className: PREFIX + 'menu-item-btn'
         }, null as any, buttonWrapper);
 
-
         // submenu
         if (items && items.length) {
 
@@ -1699,6 +1724,26 @@ addEvent(NavigationBindings, 'deselectButton', function (
             button = (button.parentNode as any).parentNode;
         }
         gui.selectButton(button);
+    }
+});
+
+// Check if the correct price indicator button is displayed, #15029.
+addEvent(H.Chart, 'render', function (): void {
+    const chart = this,
+        stockTools = chart.stockTools,
+        button = stockTools &&
+            stockTools.toolbar &&
+            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
+
+    // Change the initial button background.
+    if (stockTools && chart.navigationBindings && chart.options.series && button) {
+        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+        } else {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+        }
     }
 });
 

@@ -716,7 +716,7 @@ extend(NetworkgraphSeries.prototype, {
     drawTracker: seriesTypes.column.prototype.drawTracker,
     // Animation is run in `series.simulation`.
     animate: null as any,
-    buildKDTree: H.noop as any,
+    buildKDTree: H.noop,
     /**
      * Create a single node that holds information on incoming and outgoing
      * links.
@@ -746,10 +746,18 @@ extend(NetworkgraphSeries.prototype, {
 
         Series.prototype.init.apply(this, arguments as any);
 
-        addEvent<NetworkgraphSeries>(this, 'updatedData', function (): void {
+        addEvent(this, 'updatedData', (): void => {
             if (this.layout) {
                 this.layout.stop();
             }
+        });
+
+        addEvent(this, 'afterUpdate', (): void => {
+            this.nodes.forEach((node): void => {
+                if (node && node.series) {
+                    node.resolveColor();
+                }
+            });
         });
 
         return this;
@@ -850,7 +858,7 @@ extend(NetworkgraphSeries.prototype, {
             attribs.y = 0;
         }
 
-        attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
+        attribs.x = (point.plotX || 0) - (attribs.width || 0) / 2;
 
         return attribs;
     },
@@ -1234,6 +1242,7 @@ extend(NetworkgraphPoint.prototype, {
                 .path(
                     this.getLinkPath()
                 )
+                .addClass(this.getClassName(), true)
                 .add(this.series.group);
 
             if (!this.series.chart.styledMode) {

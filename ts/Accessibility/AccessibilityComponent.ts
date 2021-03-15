@@ -342,8 +342,8 @@ AccessibilityComponent.prototype = {
             }, attributes);
 
         Object.keys(attrs).forEach(function (prop: string): void {
-            if (attrs[prop] !== null) {
-                proxy.setAttribute(prop, attrs[prop]);
+            if ((attrs as any)[prop] !== null) {
+                proxy.setAttribute(prop, (attrs as any)[prop]);
             }
         });
 

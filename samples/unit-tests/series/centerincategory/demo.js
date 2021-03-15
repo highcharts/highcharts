@@ -93,6 +93,38 @@ QUnit.test('series.centerInCategory', function (assert) {
 
     chart.update({
         chart: {
+            inverted: true
+        }
+    });
+
+    let point = chart.series[0].points[0];
+
+    const tooltipY = chart.plotHeight - point.tooltipPos[1];
+    assert.ok(
+        tooltipY > point.shapeArgs.x &&
+            tooltipY < point.shapeArgs.x + point.shapeArgs.width,
+        '#15217: Tooltip should be positioned on top of the bar'
+    );
+
+    chart.update({
+        chart: {
+            inverted: false
+        },
+        series: chart.series.map((s, i) => ({
+            stacking: 'normal',
+            stack: i <= 1 ? 'stack1' : 'stack2',
+            data: s.data
+        }))
+    });
+
+    assert.ok(
+        chart.series[3].points[0].shapeArgs.x + chart.plotLeft >
+            chart.xAxis[0].ticks[0].mark.element.getBBox().x,
+        '#14980: Toggling stacking with centerInCategory enabled should work'
+    );
+
+    chart.update({
+        chart: {
             type: 'columnrange'
         },
         series: [
@@ -119,7 +151,7 @@ QUnit.test('series.centerInCategory', function (assert) {
         ]
     });
 
-    const point = chart.series[3].points[3];
+    point = chart.series[3].points[3];
     const tickX = chart.xAxis[0].ticks[3].mark.element.getBBox().x;
     assert.ok(
         chart.plotLeft + point.shapeArgs.x < tickX &&

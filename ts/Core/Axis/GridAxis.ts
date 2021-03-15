@@ -72,6 +72,9 @@ declare global {
  * @private
  */
 declare module './Types' {
+    interface AxisLike {
+        rightWall?: SVGElement;
+    }
     interface AxisComposition {
         grid?: GridAxis['grid'];
     }
@@ -1241,7 +1244,7 @@ class GridAxis {
      */
     public static onInit(
         this: Axis,
-        e: { userOptions?: Highcharts.AxisOptions }
+        e: { userOptions?: DeepPartial<Highcharts.AxisOptions> }
     ): void {
         const axis = this;
         const userOptions = e.userOptions || {};

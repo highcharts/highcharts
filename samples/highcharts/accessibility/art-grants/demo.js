@@ -1,14 +1,8 @@
 function dollarFormat(x) {
-    return '$' + Highcharts.numberFormat(x, 0);
+    return '$' + Highcharts.numberFormat(x, 0, '.', ',');
 }
 
 var colors = Highcharts.getOptions().colors;
-
-Highcharts.setOptions({
-    lang: {
-        thousandsSep: ','
-    }
-});
 
 Highcharts.chart('container', {
     chart: {
@@ -20,8 +14,12 @@ Highcharts.chart('container', {
             descriptionFormatter: function (series) {
                 return series.type === 'line' ?
                     series.name + ', ' + dollarFormat(series.points[0].y) :
-                    series.name + ' grant amounts, bar series with ' + series.points.length + ' bars.';
+                    series.name + ' grant amounts, bar series with ' +
+                    series.points.length + ' bars.';
             }
+        },
+        point: {
+            valuePrefix: '$'
         },
         keyboardNavigation: {
             seriesNavigation: {
@@ -69,9 +67,7 @@ Highcharts.chart('container', {
         max: 2400000,
         gridLineWidth: 0,
         labels: {
-            formatter: function () {
-                return '$' + (this.value / 1000) + (this.value ? 'k' : '');
-            },
+            formatter: ctx => '$' + ctx.axis.defaultLabelFormatter.call(ctx),
             style: {
                 color: '#8F6666'
             }
@@ -84,6 +80,10 @@ Highcharts.chart('container', {
         }
     }],
 
+    credits: {
+        enabled: false
+    },
+
     plotOptions: {
         column: {
             keys: ['name', 'y'],
@@ -91,16 +91,10 @@ Highcharts.chart('container', {
             pointPadding: 0.1,
             groupPadding: 0,
             tooltip: {
-                headerFormat: '<span style="font-size: 10px"><span style="color:{point.color}">\u25CF</span> {series.name}</span><br/>',
-                pointFormatter: function () {
-                    return this.name + ': <b>' + dollarFormat(this.y) + '</b><br/>';
-                }
-            },
-            accessibility: {
-                pointDescriptionFormatter: function (point) {
-                    return (point.index + 1) + '. ' + point.name + ' ' +
-                        dollarFormat(point.y) + '.';
-                }
+                headerFormat: '<span style="font-size: 10px">' +
+                    '<span style="color:{point.color}">\u25CF</span> ' +
+                    '{series.name}</span><br/>',
+                pointFormat: '{point.name}: <b>${point.y:,.0f}</b><br/>'
             }
         },
         line: {
@@ -130,6 +124,23 @@ Highcharts.chart('container', {
                 }
             }
         }
+    },
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 400
+            },
+            chartOptions: {
+                chart: {
+                    spacingLeft: 3,
+                    spacingRight: 5
+                },
+                yAxis: [{}, {
+                    visible: false
+                }]
+            }
+        }]
     },
 
     series: [{

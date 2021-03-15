@@ -166,30 +166,6 @@ const darkTheme = {
         }
     },
 
-    legend: {
-        backgroundColor: 'transparent',
-        itemStyle: {
-            color: textBright
-        },
-        itemHoverStyle: {
-            color: '#FFF'
-        },
-        itemHiddenStyle: {
-            color: '#606063'
-        },
-        title: {
-            style: {
-                color: '#D0D0D0'
-            }
-        }
-    },
-
-    credits: {
-        style: {
-            color: textBright
-        }
-    },
-
     labels: {
         style: {
             color: '#707073'
@@ -279,6 +255,9 @@ const chartOptions = {
     chart: {
         type: 'column'
     },
+    legend: {
+        enabled: false
+    },
     exporting: {
         enabled: false
     },
@@ -288,10 +267,16 @@ const chartOptions = {
     accessibility: {
         screenReaderSection: {
             beforeChartFormat: 'Column chart showing a selected high contrast theme'
-        }
+        },
+        landmarkVerbosity: 'one'
+    },
+    credits: {
+        enabled: false
     },
     series: [{
         colorByPoint: true,
+        data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
+    }, {
         data: [1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]
     }]
 };

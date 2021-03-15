@@ -133,15 +133,16 @@ const initCanvasBoost = function (): void {
                 // draw the columns
                 this.points.forEach(function (point): void {
                     var plotY = point.plotY,
-                        shapeArgs: SVGAttributes,
                         pointAttr: SVGAttributes;
 
                     if (
                         typeof plotY !== 'undefined' &&
                         !isNaN(plotY) &&
-                        point.y !== null
+                        point.y !== null &&
+                        ctx
                     ) {
-                        shapeArgs = point.shapeArgs as any;
+                        const { x = 0, y = 0, width = 0, height = 0 } =
+                            point.shapeArgs || {};
 
                         if (!chart.styledMode) {
                             pointAttr = point.series.pointAttribs(point);
@@ -149,21 +150,21 @@ const initCanvasBoost = function (): void {
                             pointAttr = point.series.colorAttribs(point);
                         }
 
-                        (ctx as any).fillStyle = pointAttr.fill as any;
+                        ctx.fillStyle = pointAttr.fill as any;
 
                         if (inverted) {
-                            (ctx as any).fillRect(
-                                yAxis.len - shapeArgs.y + xAxis.left,
-                                xAxis.len - shapeArgs.x + yAxis.top,
-                                -shapeArgs.height,
-                                -shapeArgs.width
+                            ctx.fillRect(
+                                yAxis.len - y + xAxis.left,
+                                xAxis.len - x + yAxis.top,
+                                -height,
+                                -width
                             );
                         } else {
-                            (ctx as any).fillRect(
-                                shapeArgs.x + xAxis.left,
-                                shapeArgs.y + yAxis.top,
-                                shapeArgs.width,
-                                shapeArgs.height
+                            ctx.fillRect(
+                                x + xAxis.left,
+                                y + yAxis.top,
+                                width,
+                                height
                             );
                         }
                     }

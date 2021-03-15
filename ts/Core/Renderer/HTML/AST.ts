@@ -8,6 +8,7 @@
  *
  * */
 
+import type HTMLAttributes from '../HTML/HTMLAttributes';
 import type SVGAttributes from '../SVG/SVGAttributes';
 
 import H from '../../Globals.js';
@@ -52,7 +53,7 @@ const {
 declare global {
     namespace Highcharts {
         interface ASTNode {
-            attributes?: SVGAttributes;
+            attributes?: HTMLAttributes&SVGAttributes;
             children?: Array<ASTNode>;
             tagName?: string;
             textContent?: string;
@@ -163,7 +164,7 @@ class AST {
      * // Allow a custom, trusted attribute
      * Highcharts.AST.allowedAttributes.push('data-value');
      *
-     * @name Highcharts.AST.allowedTags
+     * @name Highcharts.AST.allowedAttributes
      * @static
      */
     public static allowedAttributes = [
@@ -228,7 +229,7 @@ class AST {
         'width',
         'x',
         'x1',
-        'xy',
+        'x2',
         'y',
         'y1',
         'y2',
@@ -386,7 +387,7 @@ class AST {
                                 key !== 'children' &&
                                 key !== 'textContent'
                             ) {
-                                attributes[key] = val;
+                                (attributes as any)[key] = val;
                             }
                         });
                         attr(
@@ -437,7 +438,7 @@ class AST {
      */
     private parseMarkup(markup: string): Highcharts.ASTNode[] {
         interface Attribute {
-            name: string;
+            name: keyof SVGAttributes|keyof HTMLAttributes;
             value: string;
         }
 
@@ -477,7 +478,7 @@ class AST {
 
             // Add attributes
             if (parsedAttributes) {
-                const attributes: SVGAttributes = {};
+                const attributes: HTMLAttributes&SVGAttributes = {};
                 [].forEach.call(parsedAttributes, (attrib: Attribute): void => {
                     attributes[attrib.name] = attrib.value;
                 });

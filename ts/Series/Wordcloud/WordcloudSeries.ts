@@ -403,8 +403,8 @@ class WordcloudSeries extends ColumnSeries {
             // Check if point was placed, if so delete it, otherwise place it
             // on the correct positions.
             if (isObject(delta)) {
-                attr.x += delta.x;
-                attr.y += delta.y;
+                attr.x = (attr.x || 0) + delta.x;
+                attr.y = (attr.y || 0) + delta.y;
                 rectangle.left += delta.x;
                 rectangle.right += delta.x;
                 rectangle.top += delta.y;
@@ -502,10 +502,10 @@ interface WordcloudSeries {
 
 extend(WordcloudSeries.prototype, {
     animate: Series.prototype.animate,
-    animateDrilldown: noop as any,
-    animateDrillupFrom: noop as any,
+    animateDrilldown: noop,
+    animateDrillupFrom: noop,
     pointClass: WordcloudPoint,
-    setClip: noop as any,
+    setClip: noop,
 
     // Strategies used for deciding rotation and initial position of a word. To
     // implement a custom strategy, have a look at the function random for

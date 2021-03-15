@@ -816,15 +816,14 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || series.color,
                 'stroke-width': nodeMarker.lineWidth
-            },
-            visibility = series.visible ? 'inherit' : 'hidden';
+            };
 
         // create the group for parent Nodes if doesn't exist
         if (!this.parentNodesGroup) {
             series.parentNodesGroup = series.plotGroup(
                 'parentNodesGroup',
                 'parentNode',
-                visibility,
+                series.visible ? 'inherit' : 'hidden',
                 0.1, chart.seriesGroup
             );
             (series.group as any).attr({
@@ -843,7 +842,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         }, parentOptions);
         if (!(series.parentNode as any).graphic) {
             series.graph = (series.parentNode as any).graphic =
-                chart.renderer.symbol(parentOptions.symbol)
+                chart.renderer.symbol((parentOptions as any).symbol)
                     .add(series.parentNodesGroup);
         }
         (series.parentNode as any).graphic.attr(parentAttribs);
@@ -1540,7 +1539,7 @@ extend(PackedBubbleSeries.prototype, {
     requireSorting: false,
 
     // solving #12287
-    searchPoint: H.noop as any,
+    searchPoint: H.noop,
 
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
 

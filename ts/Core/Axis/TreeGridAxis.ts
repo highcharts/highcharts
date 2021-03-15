@@ -13,6 +13,7 @@
 
 import type AxisTypes from './Types';
 import type Chart from '../Chart/Chart';
+import type ColorType from '../Color/ColorType';
 import type GanttPoint from '../../Series/Gantt/GanttPoint';
 import type GanttPointOptions from '../../Series/Gantt/GanttPointOptions';
 import type GanttSeries from '../../Series/Gantt/GanttSeries';
@@ -124,13 +125,25 @@ namespace TreeGridAxis {
         tickmarkOffset?: number;
     }
 
+
+    export interface LabelIconOptionsObject {
+        height?: number;
+        lineColor?: ColorType;
+        lineWidth?: number;
+        padding?: number;
+        type?: number;
+        width?: number;
+        x?: number;
+        y?: number;
+    }
+
     export interface LabelsOptions extends Highcharts.XAxisLabelsOptions {
         levels?: number;
-        symbol?: SVGAttributes;
+        symbol?: LabelIconOptionsObject;
     }
 
     export interface Options extends Highcharts.XAxisOptions {
-        labels?: LabelsOptions;
+        labels: LabelsOptions;
     }
 
     export interface TreeGridNode extends Highcharts.TreeNode {

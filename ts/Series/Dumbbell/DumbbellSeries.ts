@@ -439,8 +439,8 @@ class DumbbellSeries extends AreaRangeSeries {
     public markerAttribs(): SVGAttributes {
         var ret = areaRangeProto.markerAttribs.apply(this, arguments as any);
 
-        ret.x = Math.floor(ret.x);
-        ret.y = Math.floor(ret.y);
+        ret.x = Math.floor(ret.x || 0);
+        ret.y = Math.floor(ret.y || 0);
 
         return ret;
     }
