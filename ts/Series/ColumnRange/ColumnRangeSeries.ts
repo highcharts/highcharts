@@ -271,8 +271,8 @@ interface ColumnRangeSeries {
 extend(ColumnRangeSeries.prototype, {
     directTouch: true,
     trackerGroups: ['group', 'dataLabelsGroup'],
-    drawGraph: noop as any,
-    getSymbol: noop as any,
+    drawGraph: noop,
+    getSymbol: noop,
     polarArc: function (this: ColumnRangeSeries): void {
         return (columnProto as any).polarArc.apply(this, arguments);
     },

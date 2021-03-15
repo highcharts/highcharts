@@ -2144,7 +2144,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (onclick) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Record<string, any>)
+                e: (Event|AnyRecord)
             ): void {
                 if (e) {
                     e.stopPropagation();
@@ -2155,7 +2155,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else if (menuItems) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Record<string, any>)
+                e: (Event|AnyRecord)
             ): void {
                 // consistent with onclick call (#3495)
                 if (e) {

@@ -488,8 +488,7 @@ class HeatmapSeries extends ScatterSeries {
 
         // Bind new symbol names
         extend(symbols, {
-            ellipse: symbols.circle,
-            rect: symbols.square
+            ellipse: symbols.circle
         });
     }
 
@@ -735,7 +734,7 @@ extend(HeatmapSeries.prototype, {
      * @ignore
      * @deprecated
      */
-    getBox: noop as any,
+    getBox: noop,
 
     getExtremesFromAll: true,
 

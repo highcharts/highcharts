@@ -170,8 +170,8 @@ class StackingAxisAdditions {
         const chart = axis.chart;
         const renderer = chart.renderer;
         const stacks = stacking.stacks;
-        const stackLabelsAnim = axis.options.stackLabels.animation;
-        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim);
+        const stackLabelsAnim = axis.options.stackLabels && axis.options.stackLabels.animation;
+        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim || false);
         const stackTotalGroup = stacking.stackTotalGroup = (
             stacking.stackTotalGroup ||
             renderer

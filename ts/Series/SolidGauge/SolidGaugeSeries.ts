@@ -243,9 +243,7 @@ class SolidGaugeSeries extends GaugeSeries {
         );
 
 
-        series.points.forEach(function (
-            point: SolidGaugePoint
-        ): void {
+        series.points.forEach(function (point): void {
             // #10630 null point should not be draw
             if (!point.isNull) { // condition like in pie chart
                 var graphic = point.graphic,

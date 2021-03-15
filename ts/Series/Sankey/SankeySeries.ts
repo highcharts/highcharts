@@ -691,12 +691,12 @@ class SankeySeries extends ColumnSeries {
             stateOptions = (
                 levelOptions.states && levelOptions.states[state || '']
             ) || {},
-            values: Record<string, any> = [
+            values: AnyRecord = [
                 'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
             ].reduce(function (
-                obj: Record<string, any>,
+                obj: AnyRecord,
                 key: string
-            ): Record<string, any> {
+            ): AnyRecord {
                 obj[key] = pick(
                     stateOptions[key],
                     (options as any)[key],
@@ -1166,7 +1166,7 @@ extend(SankeySeries.prototype, {
     orderNodes: true,
     pointArrayMap: ['from', 'to'],
     pointClass: SankeyPoint,
-    searchPoint: H.noop as any,
+    searchPoint: H.noop,
     setData: NodesMixin.setData
 });
 

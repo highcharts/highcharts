@@ -92,9 +92,6 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface PlotLineOrBandLabelFormatterCallbackFunction {
-            (this: PlotLineOrBand, value?: number, format?: string): string;
-        }
         interface AxisPlotLinesOptions {
             acrossPanes?: boolean;
             className?: string;

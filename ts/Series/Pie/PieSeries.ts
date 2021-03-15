@@ -1207,7 +1207,7 @@ extend(PieSeries.prototype, {
 
     getCenter: CenteredSeriesMixin.getCenter,
 
-    getSymbol: noop as any,
+    getSymbol: noop,
 
     isCartesian: false,
 
@@ -1219,7 +1219,7 @@ extend(PieSeries.prototype, {
 
     requireSorting: false,
 
-    searchPoint: noop as any,
+    searchPoint: noop,
 
     trackerGroups: ['group', 'dataLabelsGroup']
 });

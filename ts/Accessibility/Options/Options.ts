@@ -79,10 +79,10 @@ declare global {
         }
         interface AccessibilityOptions {
             announceNewData: AccessibilityAnnounceNewDataOptions;
-            customComponents?: Record<string, any>;
+            customComponents?: AnyRecord;
             description?: string;
             enabled: boolean;
-            highContrastTheme: Record<string, any>;
+            highContrastTheme: AnyRecord;
             keyboardNavigation: AccessibilityKeyboardNavigationOptions;
             landmarkVerbosity: string;
             linkedDescription: (string|HTMLDOMElement);
