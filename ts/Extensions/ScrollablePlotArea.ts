@@ -415,12 +415,6 @@ Chart.prototype.applyFixed = function (): void {
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
         addEvent(this, 'afterDrilldown', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
-        addEvent(Axis, 'afterInit', (): void => {
-            this.scrollableDirty = true;
-        });
-        addEvent(Series, 'show', (): void => {
-            this.scrollableDirty = true;
-        });
 
     } else {
 
@@ -522,3 +516,11 @@ Chart.prototype.applyFixed = function (): void {
         (this.scrollableMask as any).attr({ d });
     }
 };
+
+addEvent(Axis, 'afterInit', function (): void {
+    this.chart.scrollableDirty = true;
+});
+
+addEvent(Series, 'show', function (): void {
+    this.chart.scrollableDirty = true;
+});

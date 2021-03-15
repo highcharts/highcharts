@@ -576,7 +576,10 @@ class FlagsSeries extends ColumnSeries {
             var graphic = point.graphic;
 
             if (graphic) {
-                addEvent(graphic.element, 'mouseover', function (): void {
+                if (point.unbindMouseOver) {
+                    point.unbindMouseOver();
+                }
+                point.unbindMouseOver = addEvent(graphic.element, 'mouseover', function (): void {
 
                     // Raise this point
                     if ((point.stackIndex as any) > 0 &&

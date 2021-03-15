@@ -1533,6 +1533,19 @@ class Axis {
              */
 
             /**
+             * Whether to allow the axis labels to overlap.
+             * When false, overlapping labels are hidden.
+             *
+             * @sample {highcharts} highcharts/xaxis/labels-allowoverlap-true/
+             *         X axis labels overlap enabled
+             *
+             * @type {boolean}
+             * @default false
+             * @apioption xAxis.labels.allowOverlap
+             *
+             */
+
+            /**
              * For horizontal axes, the allowed degrees of label rotation
              * to prevent overlapping labels. If there is enough space,
              * labels are not rotated. As the chart gets narrower, it
@@ -4343,7 +4356,9 @@ class Axis {
      * @return {string}
      * The formatted label content.
      */
-    public defaultLabelFormatter(this: Highcharts.AxisLabelsFormatterContextObject<number>): string {
+    public defaultLabelFormatter(
+        this: Highcharts.AxisLabelsFormatterContextObject<number>
+    ): string {
         var axis = this.axis,
             value = isNumber(this.value) ? this.value : NaN,
             time = axis.chart.time,

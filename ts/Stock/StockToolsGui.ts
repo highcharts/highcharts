@@ -294,7 +294,33 @@ setOptions({
                 crosshairX: 'Crosshair X',
                 crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
-                background: 'Background'
+                background: 'Background',
+
+                // Indicators' params (#15170):
+                index: 'Index',
+                period: 'Period',
+                standardDeviation: 'Standard deviation',
+                periodTenkan: 'Tenkan period',
+                periodSenkouSpanB: 'Senkou Span B period',
+                periodATR: 'ATR period',
+                multiplierATR: 'ATR multiplier',
+                shortPeriod: 'Short period',
+                longPeriod: 'Long period',
+                signalPeriod: 'Signal period',
+                decimals: 'Decimals',
+                algorithm: 'Algorithm',
+                topBand: 'Top band',
+                bottomBand: 'Bottom band',
+                initialAccelerationFactor: 'Initial acceleration factor',
+                maxAccelerationFactor: 'Max acceleration factor',
+                increment: 'Increment',
+                multiplier: 'Multiplier',
+                ranges: 'Ranges',
+                highIndex: 'High index',
+                lowIndex: 'Low index',
+                deviation: 'Deviation',
+                xAxisUnit: 'x-axis unit',
+                factor: 'Factor'
             }
         }
     },

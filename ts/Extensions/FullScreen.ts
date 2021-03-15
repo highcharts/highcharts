@@ -203,7 +203,7 @@ class Fullscreen {
 
         // Unbind event as it's necessary only before exiting from fullscreen.
         if (fullscreen.unbindFullscreenEvent) {
-            fullscreen.unbindFullscreenEvent();
+            fullscreen.unbindFullscreenEvent = fullscreen.unbindFullscreenEvent();
         }
 
         chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
@@ -247,7 +247,7 @@ class Fullscreen {
 
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
-            fullscreen.unbindFullscreenEvent = addEvent(
+            const unbindChange = addEvent(
                 chart.container.ownerDocument, // chart's document
                 fullscreen.browserProps.fullscreenChange,
                 function (): void {
@@ -263,6 +263,13 @@ class Fullscreen {
                 }
             );
 
+            const unbindDestroy = addEvent(chart, 'destroy', unbindChange);
+
+            fullscreen.unbindFullscreenEvent = (): void => {
+                unbindChange();
+                unbindDestroy();
+            };
+
             const promise = chart.renderTo[
                 fullscreen.browserProps.requestFullscreen
             ]();
@@ -275,8 +282,6 @@ class Fullscreen {
                     );
                 });
             }
-
-            addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
         }
     }
     /**
