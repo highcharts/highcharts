@@ -50,9 +50,7 @@ Highcharts.chart('container', {
         min: 0,
         max: 800000,
         labels: {
-            formatter: function () {
-                return '$' + (this.value / 1000) + (this.value ? 'k' : '');
-            }
+            format: '${text}'
         },
         title: {
             text: 'Grant amount'
@@ -67,7 +65,7 @@ Highcharts.chart('container', {
         max: 2400000,
         gridLineWidth: 0,
         labels: {
-            formatter: ctx => '$' + ctx.axis.defaultLabelFormatter.call(ctx),
+            format: '${text}',
             style: {
                 color: '#8F6666'
             }
