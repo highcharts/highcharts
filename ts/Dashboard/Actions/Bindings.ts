@@ -60,27 +60,21 @@ class Bindings {
         options: Bindings.ComponentOptions
     ): HTMLComponent|ChartComponent|GroupComponent|undefined {
         const compontentContainer = document.getElementById(options.column);
-        const bindings = this;
         const events = options.events;
 
         let component: HTMLComponent|ChartComponent|GroupComponent|undefined;
-
-        const column = fireEvent(
-            compontentContainer,
-            'click'
-        );
 
         // add elements to containers
         if (compontentContainer) {
             switch (options.type) {
                 case 'chart':
-                    component = bindings.chartComponent(
+                    component = Bindings.chartComponent(
                         compontentContainer,
                         options
                     );
                     break;
                 case 'html':
-                    component = bindings.htmlComponent(
+                    component = Bindings.htmlComponent(
                         compontentContainer,
                         options
                     );
@@ -110,6 +104,30 @@ class Bindings {
         }
 
         fireEvent(component, 'mount');
+
+        return component;
+    }
+
+    public static componentFromJSON(
+        json: HTMLComponent.ClassJSON|ChartComponent.ClassJSON
+    ): HTMLComponent|ChartComponent|GroupComponent|undefined {
+
+        let component: HTMLComponent|ChartComponent|GroupComponent|undefined;
+
+        switch (json.$class) {
+            case 'Chart':
+                component = ChartComponent.fromJSON(json as ChartComponent.ClassJSON);
+                break;
+            case 'HTML':
+                component = HTMLComponent.fromJSON(json as HTMLComponent.ClassJSON); 
+                break;
+            default:
+                component = void 0;
+        }
+
+        component?.render();
+
+        // TODO - events
 
         return component;
     }

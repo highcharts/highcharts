@@ -44,7 +44,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         const options = json.options;
         const chartOptions = JSON.parse(json.options.chartOptions || '');
         const store = json.store ? DataJSON.fromJSON(json.store) : void 0;
-
+console.log('fromJSON method');
         const component = new ChartComponent(
             merge(
                 options,
@@ -125,6 +125,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 }
             });
         }
+        
     }
 
     /* *
