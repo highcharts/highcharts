@@ -5,6 +5,7 @@ import type DataJSON from '../../Data/DataJSON';
 import type Row from './Row.js';
 import type Component from './../Component/Component.js';
 import GUIElement from './GUIElement.js';
+import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -66,6 +67,32 @@ class Column extends GUIElement {
                     options.style
                 )
             });
+
+            // bind component
+            if (
+                this.mountedComponent ||
+                this.id === 'dashboard-col-add-component' // only for temporary test
+            ) {
+                // temporary component options
+                const jsonFromLocalStorage = {
+                    $class: 'Chart',
+                    options: {
+                        chartOptions: '{"title": {"text": "from JSON"}, "series":' +
+                            '[{"name":"Series from options","data":[1,2,3,4]}],"type":' +
+                            '"pie","chart":{"animation":false, "type": "pie"}}',
+                        dimensions: {
+                            width: 0,
+                            height: 0
+                        },
+                        id: 'dashboard-component-highcharts-wq32s1w-1',
+                        parentElement: 'dashboard-col-add-component',
+                        type: 'chart'
+                    }
+                };
+
+                // bind component
+                Bindings.componentFromJSON(jsonFromLocalStorage);
+            }
         }
     }
 
@@ -120,7 +147,7 @@ class Column extends GUIElement {
         const column = this;
 
         return {
-            $class: 'Row',
+            $class: 'Column',
             options: {
                 containerId: (column.container as HTMLElement).id,
                 mountedComponentJSON: column.mountedComponent?.toJSON()

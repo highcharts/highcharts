@@ -38,6 +38,11 @@ const dashboard = new Dashboard('container', {
                 columns: [{
                     id: 'dashboard-col-2'
                 }]
+            }, {
+                id: 'dashboard-row-3',
+                columns: [{
+                    id: 'dashboard-col-add-component'
+                }]
             }]
         }, {
             id: 'layout-2', // mandatory
