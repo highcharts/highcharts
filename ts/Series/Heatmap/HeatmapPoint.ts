@@ -32,6 +32,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
+import BBoxObject from '../../Core/Renderer/BBoxObject';
 const {
     clamp,
     extend,

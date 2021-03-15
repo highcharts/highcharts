@@ -38,7 +38,7 @@ declare global {
             defs?: Record<string, ASTNode>;
         }
         interface SVGRenderer {
-            addMarker(id: string, markerOptions: SVGAttributes): SVGElement;
+            addMarker(id: string, markerOptions: ASTNode): SVGElement;
         }
     }
 }
@@ -84,7 +84,6 @@ var defaultMarkers: Record<string, Highcharts.ASTNode> = {
     arrow: {
         tagName: 'marker',
         attributes: {
-            display: 'none',
             id: 'arrow',
             refY: 5,
             refX: 9,
@@ -108,7 +107,6 @@ var defaultMarkers: Record<string, Highcharts.ASTNode> = {
     'reverse-arrow': {
         tagName: 'marker',
         attributes: {
-            display: 'none',
             id: 'reverse-arrow',
             refY: 5,
             refX: 1,
@@ -128,16 +126,16 @@ var defaultMarkers: Record<string, Highcharts.ASTNode> = {
 
 SVGRenderer.prototype.addMarker = function (
     id: string,
-    markerOptions: SVGAttributes
+    markerOptions: Highcharts.ASTNode
 ): SVGElement {
     var options: Highcharts.ASTNode = { attributes: { id } };
 
     var attrs: SVGAttributes = {
-        stroke: markerOptions.color || 'none',
-        fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
+        stroke: (markerOptions as any).color || 'none',
+        fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
     };
 
-    options.children = markerOptions.children.map(function (
+    options.children = markerOptions.children?.map(function (
         child: Highcharts.ASTNode
     ): Highcharts.ASTNode {
         return merge(attrs, child);
@@ -239,16 +237,17 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
 addEvent(Chart, 'afterGetContainer', function (): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    objectEach(this.options.defs, function (def): void {
-        const attributes = def.attributes;
-        if (
-            def.tagName === 'marker' &&
-            attributes &&
-            attributes.display !== 'none'
-        ) {
-            this.renderer.addMarker(attributes.id, def);
-        }
-    }, this);
+    // objectEach(this.options.defs, function (def): void {
+    //     const attributes = def.attributes;
+    //     if (
+    //         def.tagName === 'marker' &&
+    //         attributes &&
+    //         attributes.id &&
+    //         attributes.display !== 'none'
+    //     ) {
+    //         this.renderer.addMarker(attributes.id, def);
+    //     }
+    // }, this);
 });
 
 export default markerMixin;

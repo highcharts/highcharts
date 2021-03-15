@@ -222,7 +222,7 @@ if (!Object.getPrototypeOf) {
 
 if (!Object.keys) {
     Object.keys = function (
-        this: Record<string, any>,
+        this: AnyRecord,
         obj: object
     ): Array<string> {
         var result = [] as Array<string>,

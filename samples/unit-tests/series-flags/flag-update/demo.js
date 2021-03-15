@@ -56,6 +56,23 @@ QUnit.test('Update flag (#4222)', function (assert) {
         flag.text,
         'Updated text'
     );
+
+    const eventCount = el => {
+        let count = 0;
+        //eslint-disable-next-line
+        for (const t in el.hcEvents) {
+            count += el.hcEvents[t].length;
+        }
+        return count;
+    };
+
+    const before = eventCount(point.graphic.element);
+    chart.series[1].redraw();
+    assert.strictEqual(
+        eventCount(point.graphic.element),
+        before,
+        'Event handlers should not leak into point graphic on series redraw'
+    );
 });
 
 QUnit.test('#14649: Dynamically updated visual attributes', assert => {

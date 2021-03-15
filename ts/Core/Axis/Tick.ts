@@ -46,7 +46,7 @@ declare global {
         }
         interface TickParametersObject {
             category?: string;
-            options?: Record<string, any>;
+            options?: AnyRecord;
             tickmarkOffset?: number;
         }
         interface TickPositionObject extends PositionObject {
@@ -277,7 +277,7 @@ class Tick {
 
     public movedLabel?: SVGElement;
 
-    public options?: Highcharts.AxisOptions;
+    public options?: DeepPartial<Highcharts.AxisOptions>;
 
     public parameters: Highcharts.TickParametersObject;
 
@@ -335,7 +335,7 @@ class Tick {
             dateTimeLabelFormat,
             dateTimeLabelFormats,
             i,
-            list: Record<string, any>;
+            list: AnyRecord;
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.

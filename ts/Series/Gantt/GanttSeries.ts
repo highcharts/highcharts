@@ -198,10 +198,10 @@ class GanttSeries extends XRangeSeries {
         if (point.options.milestone) {
             if (isNumber(plotY) && point.y !== null && point.visible !== false) {
                 diamondShape = renderer.symbols.diamond(
-                    shapeArgs.x,
-                    shapeArgs.y,
-                    shapeArgs.width,
-                    shapeArgs.height
+                    shapeArgs.x || 0,
+                    shapeArgs.y || 0,
+                    shapeArgs.width || 0,
+                    shapeArgs.height || 0
                 );
 
                 if (graphic) {
@@ -241,9 +241,9 @@ class GanttSeries extends XRangeSeries {
 
         if (point.options.milestone) {
             shapeArgs = point.shapeArgs as any;
-            size = shapeArgs.height;
+            size = shapeArgs.height || 0;
             point.shapeArgs = {
-                x: shapeArgs.x - (size / 2),
+                x: (shapeArgs.x || 0) - (size / 2),
                 y: shapeArgs.y,
                 width: size,
                 height: size

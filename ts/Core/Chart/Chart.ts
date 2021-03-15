@@ -128,6 +128,7 @@ declare global {
             index?: number;
         }
         interface ChartOptions {
+            forExport?: boolean;
             renderer?: string;
             skipClone?: boolean;
         }
@@ -363,7 +364,7 @@ class Chart {
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (
-                typeOptions: Record<string, any>,
+                typeOptions: AnyRecord,
                 type: string
             ): void {
                 if (isObject(typeOptions)) { // #8766
@@ -1387,7 +1388,7 @@ class Chart {
             oldChartIndex,
             Ren,
             containerId = uniqueKey(),
-            containerStyle,
+            containerStyle: CSSObject|undefined,
             key;
 
         if (!renderTo) {
@@ -1445,7 +1446,7 @@ class Chart {
 
         // Create the inner container
         if (!chart.styledMode) {
-            containerStyle = extend({
+            containerStyle = extend<CSSObject>({
                 position: 'relative',
                 // needed for context menu (avoidscrollbars) and content
                 // overflow in IE
@@ -1457,7 +1458,7 @@ class Chart {
                 zIndex: 0, // #1072
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
                 userSelect: 'none' // #13503
-            }, optionsChart.style as any);
+            }, optionsChart.style || {});
         }
 
         /**
@@ -1922,6 +1923,7 @@ class Chart {
                 axis.setAxisSize();
                 axis.setAxisTranslation();
             });
+            renderer.alignElements();
         }
 
         fireEvent(chart, 'afterSetChartSize', { skipAxes: skipAxes });
@@ -2322,7 +2324,7 @@ class Chart {
             if (
                 axis.horiz &&
                 axis.visible &&
-                (axis.options.labels as any).enabled &&
+                axis.options.labels.enabled &&
                 axis.series.length
             ) {
                 // 21 is the most common correction for X axis labels
@@ -2836,10 +2838,6 @@ class Chart {
             axis = new Axis(this, userOptions);
         }
 
-        // Push the new axis options to the chart options
-        (chartOptions as any)[type] = splat((chartOptions as any)[type] || {});
-        (chartOptions as any)[type].push(userOptions);
-
         if (isColorAxis) {
             this.isDirtyLegend = true;
 
@@ -3165,10 +3163,7 @@ class Chart {
         // options.mapNavigation => chart.mapNavigation
         // options.navigator => chart.navigator
         // options.scrollbar => chart.scrollbar
-        objectEach(options, function (
-            val: Record<string, any>,
-            key: string
-        ): void {
+        objectEach(options, function (val, key): void {
             if ((chart as any)[key] &&
                 typeof (chart as any)[key].update === 'function'
             ) {
@@ -3181,7 +3176,7 @@ class Chart {
             // Else, just merge the options. For nodes like loading, noData,
             // plotOptions
             } else if (
-                key !== 'color' &&
+                key !== 'colors' &&
                 chart.collectionsWithUpdate.indexOf(key) === -1
             ) {
                 merge(true, (chart.options as any)[key], (options as any)[key]);
@@ -3388,7 +3383,7 @@ class Chart {
                 btnOptions.relativeTo === 'chart' ||
                 btnOptions.relativeTo === 'spacingBox' ?
                     null :
-                    this.scrollablePlotBox || 'plotBox'
+                    'scrollablePlotBox'
             );
 
         /**

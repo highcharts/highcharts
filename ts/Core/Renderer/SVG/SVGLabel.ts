@@ -125,7 +125,7 @@ class SVGLabel extends SVGElement {
      * @name Highcharts.SVGLabel#textProps
      * @type {Array<string>}
      */
-    public static textProps: Array<string> = [
+    public static textProps: Array<keyof CSSObject> = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
         'textOutline', 'textOverflow', 'width'
@@ -142,7 +142,7 @@ class SVGLabel extends SVGElement {
             left: 0,
             center: 0.5,
             right: 1
-        } as SVGAttributes)[value];
+        })[value];
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
@@ -189,9 +189,9 @@ class SVGLabel extends SVGElement {
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
-            SVGLabel.textProps.forEach((prop: string): void => {
+            SVGLabel.textProps.forEach((prop): void => {
                 if (typeof styles[prop] !== 'undefined') {
-                    textStyles[prop] = styles[prop];
+                    (textStyles as any)[prop] = styles[prop];
                     delete styles[prop];
                 }
             });

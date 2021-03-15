@@ -619,8 +619,8 @@ extend(BoxPlotSeries.prototype, {
     // defines the top of the tracker
     pointValKey: 'high',
     // Disable data labels for box plot
-    drawDataLabels: noop as any,
-    setStackedPoints: noop as any // #3890
+    drawDataLabels: noop,
+    setStackedPoints: noop // #3890
 });
 
 /* *

@@ -850,7 +850,7 @@ class RadialAxis {
                     axis.isRadial &&
                     axis.tickPositions &&
                     // undocumented option for now, but working
-                    (axis.options.labels as any).allowOverlap !== true
+                    axis.options.labels.allowOverlap !== true
                 ) {
                     return axis.tickPositions
                         .map(function (

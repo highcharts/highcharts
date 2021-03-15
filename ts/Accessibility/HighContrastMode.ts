@@ -89,7 +89,7 @@ var whcm = {
         chart.highContrastModeActive = true;
 
         // Apply theme to chart
-        var theme: Record<string, any> = (
+        var theme: AnyRecord = (
             chart.options.accessibility.highContrastTheme
         );
         chart.update(theme, false);
