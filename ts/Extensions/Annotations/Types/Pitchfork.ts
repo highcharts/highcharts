@@ -125,8 +125,8 @@ class Pitchfork extends InfinityLine {
         return {
             x: ((points[1].x as any) + (points[2].x as any)) / 2,
             y: ((points[1].y as any) + (points[2].y as any)) / 2,
-            xAxis: points[0].series.xAxis as AxisType,
-            yAxis: points[0].series.yAxis as AxisType
+            xAxis: points[0].series.xAxis,
+            yAxis: points[0].series.yAxis
         };
     }
 
