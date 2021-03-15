@@ -237,7 +237,7 @@ QUnit.test('DataTable Column Retrieve', function (assert) {
         ]
     });
 
-    const columns = table.getAllColumns();
+    const columns = table.getColumns();
 
     assert.deepEqual(
         Object.keys(columns),
@@ -478,7 +478,7 @@ QUnit.test('DataTable.setRows', function (assert) {
         'Clone is empty and has no rows.'
     );
 
-    tableClone.setRows(table.getAllRows());
+    tableClone.setRows(table.getRows());
 
     assert.deepEqual(
         tableClone.getRow(0),

@@ -17,10 +17,9 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type OldTownTableRow from '../OldTownTableRow';
 
 import DataModifier from './DataModifier.js';
-import OldTownTable from '../OldTownTable.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
 
@@ -57,8 +56,8 @@ class SortModifier extends DataModifier {
      * */
 
     private static ascending(
-        a: OldTownTableRow.CellType,
-        b: OldTownTableRow.CellType
+        a: DataTable.CellType,
+        b: DataTable.CellType
     ): number {
         return (
             !a || !b ? 0 :
@@ -69,8 +68,8 @@ class SortModifier extends DataModifier {
     }
 
     private static descending(
-        a: OldTownTableRow.CellType,
-        b: OldTownTableRow.CellType
+        a: DataTable.CellType,
+        b: DataTable.CellType
     ): number {
         return (
             !a || !b ? 0 :
@@ -112,10 +111,10 @@ class SortModifier extends DataModifier {
      *
      * */
 
-    public execute<T extends DataEventEmitter.EventDetail>(
-        table: OldTownTable,
-        eventDetail?: T
-    ): OldTownTable {
+    public execute(
+        table: DataTable,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): DataTable {
         const modifier = this,
             {
                 direction,
@@ -134,21 +133,23 @@ class SortModifier extends DataModifier {
             table
         });
 
-        const tableRows = table.getAllRows().sort((
-            a: OldTownTableRow,
-            b: OldTownTableRow
+        const tableRows = table.getRowObjects().sort((
+            a: DataTable.RowObject,
+            b: DataTable.RowObject
         ): number => compare(
-            a.getCell(orderByColumn),
-            b.getCell(orderByColumn)
+            a[orderByColumn],
+            b[orderByColumn]
         ));
 
         if (orderInColumn) {
             for (let i = 0, iEnd = tableRows.length; i < iEnd; ++i) {
-                tableRows[i].setCell(orderInColumn, i);
+                tableRows[i][orderInColumn] = i;
             }
         } else {
-            table = new OldTownTable(tableRows);
+            table = new DataTable();
         }
+
+        table.setRowObjects(tableRows);
 
         modifier.emit({
             type: 'afterExecute',

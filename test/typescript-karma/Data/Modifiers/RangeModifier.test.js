@@ -1,38 +1,36 @@
-import OldTownTable from '/base/js/Data/OldTownTable.js';
-import OldTownTableRow from '/base/js/Data/OldTownTableRow.js';
+import DataTable from '/base/js/Data/DataTable.js';
 import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
 
 QUnit.test('RangeModifier.execute', function (assert) {
 
-    const table = new OldTownTable([
-            new OldTownTableRow({
-                x: -2,
-                y: 'a'
-            }),
-            new OldTownTableRow({
-                x: -1,
-                y: 'b'
-            }),
-            new OldTownTableRow({
-                x: 0,
-                y: 'c'
-            }),
-            new OldTownTableRow({
-                x: 1,
-                y: 'd'
-            }),
-            new OldTownTableRow({
-                x: 2,
-                y: 'e'
-            })
-        ]),
-        modifier = new RangeModifier({}),
-        modifiedTable = modifier.execute(table);
+    const table = new DataTable({
+        x: [ -2, -1, 0, 1, 2 ],
+        y: [ 'a', 'b', 'c', 'd', 'e' ]
+    });
 
-    assert.ok(
-        modifiedTable !== table &&
-        modifiedTable.getRow(0) === table.getRow(0),
+    let modifier = new RangeModifier({});
+
+    assert.deepEqual(
+        modifier.execute(table).getRow(0),
+        table.getRow(0),
         'Filtered table should contain same rows.'
+    );
+
+    modifier = new RangeModifier({
+        ranges: [{
+            column: 'y',
+            minValue: 'A',
+            maxValue: 'b'
+        }]
+    });
+
+    assert.deepEqual(
+        modifier.execute(table).getColumns(),
+        {
+            x: [ -2, -1 ],
+            y: [ 'a', 'b' ]
+        },
+        'Filtered table should contain reduced number of rows.'
     );
 
 });

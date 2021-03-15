@@ -1,37 +1,14 @@
-import OldTownTable from '/base/js/Data/OldTownTable.js';
-import OldTownTableRow from '/base/js/Data/OldTownTableRow.js';
+import DataTable from '/base/js/Data/DataTable.js';
 import ChainModifier from '/base/js/Data/Modifiers/ChainModifier.js';
 import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
 import RangeModifier from '/base/js/Data/Modifiers/RangeModifier.js';
 
 QUnit.test('ChainModifier.execute', function (assert) {
 
-    const table = new OldTownTable([
-            new OldTownTableRow({
-                x: 1,
-                y: 'a'
-            }),
-            new OldTownTableRow({
-                x: 2,
-                y: 'a'
-            }),
-            new OldTownTableRow({
-                x: 3,
-                y: 'b'
-            }),
-            new OldTownTableRow({
-                x: 4,
-                y: 'b'
-            }),
-            new OldTownTableRow({
-                x: 5,
-                y: 'c'
-            }),
-            new OldTownTableRow({
-                x: 6,
-                y: 'c'
-            }),
-        ]),
+    const table = new DataTable({
+            x: [1, 2, 3, 4, 5, 6],
+            y: ['a', 'a', 'b', 'b', 'c', 'c']
+        }),
         modifier = new ChainModifier(
             {},
             new GroupModifier({
@@ -57,42 +34,24 @@ QUnit.test('ChainModifier.execute', function (assert) {
     assert.deepEqual(
         modifiedTable.toJSON(),
         {
-            $class: 'OldTownTable',
-            rows: [{
-                $class: 'OldTownTableRow',
-                groupBy: 'y',
-                id: '0',
-                table: {
-                    $class: 'OldTownTable',
-                    rows: [{
-                        $class: 'OldTownTableRow',
-                        x: 1,
-                        y: 'a'
-                    }, {
-                        $class: 'OldTownTableRow',
-                        x: 2,
-                        y: 'a'
-                    }]
-                },
-                value: 'a'
-            }, {
-                $class: 'OldTownTableRow',
-                groupBy: 'y',
-                id: '1',
-                table: {
-                    $class: 'OldTownTable',
-                    rows: [{
-                        $class: 'OldTownTableRow',
-                        x: 3,
-                        y: 'b'
-                    }, {
-                        $class: 'OldTownTableRow',
-                        x: 4,
-                        y: 'b'
-                    }]
-                },
-                value: 'b'
-            }]
+            $class: 'DataTable',
+            columns: {
+                groupBy: ['y', 'y'],
+                table: [{
+                    $class: 'DataTable',
+                    columns: {
+                        x: [1, 2],
+                        y: ['a', 'a']
+                    }
+                }, {
+                    $class: 'DataTable',
+                    columns: {
+                        x: [3, 4],
+                        y: ['b', 'b']
+                    }
+                }],
+                value: ['a', 'b']
+            }
         },
         'Modified table should have expected structure of two rows with sub tables.'
     );
@@ -114,34 +73,27 @@ QUnit.test('benchmark', function (assert) {
             }]
         })
     );
-    const table = OldTownTable.fromJSON({
-        $class: 'OldTownTable',
-        rows: [{
-            $class: 'OldTownTableRow',
-            x: 1,
-            y: 'a'
-        }, {
-            $class: 'OldTownTableRow',
-            x: 2,
-            y: 'a'
-        }, {
-            $class: 'OldTownTableRow',
-            x: 3,
-            y: 'b'
-        }, {
-            $class: 'OldTownTableRow',
-            x: 4,
-            y: 'b'
-        }, {
-            $class: 'OldTownTableRow',
-            x: 5,
-            y: 'c'
-        }, {
-            $class: 'OldTownTableRow',
-            x: 6,
-            y: 'c'
-        }]
-    });
+    const table = new DataTable();
+    
+    table.setRowObjects([{
+        x: 1,
+        y: 'a'
+    }, {
+        x: 2,
+        y: 'a'
+    }, {
+        x: 3,
+        y: 'b'
+    }, {
+        x: 4,
+        y: 'b'
+    }, {
+        x: 5,
+        y: 'c'
+    }, {
+        x: 6,
+        y: 'c'
+    }]);
 
     const options = {
         iterations: 10

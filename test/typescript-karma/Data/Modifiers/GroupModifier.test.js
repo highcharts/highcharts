@@ -1,27 +1,12 @@
-import OldTownTable from '/base/js/Data/OldTownTable.js';
-import OldTownTableRow from '/base/js/Data/OldTownTableRow.js';
+import DataTable from '/base/js/Data/DataTable.js';
 import GroupModifier from '/base/js/Data/Modifiers/GroupModifier.js';
 
 QUnit.test('GroupModifier.execute', function (assert) {
 
-    const table = new OldTownTable([
-            new OldTownTableRow({
-                x: 0,
-                y: 'a'
-            }),
-            new OldTownTableRow({
-                x: 0,
-                y: 'b'
-            }),
-            new OldTownTableRow({
-                x: 1,
-                y: 'b'
-            }),
-            new OldTownTableRow({
-                x: 1,
-                y: 'a'
-            })
-        ]),
+    const table = new DataTable({
+            x: [ 0, 0, 1, 1 ],
+            y: [ 'a', 'b', 'b', 'a']
+        }),
         modifier = new GroupModifier({
             groupColumn: 'y'
         }),
@@ -29,12 +14,12 @@ QUnit.test('GroupModifier.execute', function (assert) {
 
     assert.ok(
         modifiedTable !== table &&
-        modifiedTable.getRow(0).getCell('table') instanceof OldTownTable,
+        modifiedTable.getCell(0, 'table') instanceof DataTable,
         'Filtered table should contain subtables.'
     );
 
     assert.deepEqual(
-        modifiedTable.getRow(0).getCellAsTable('table').getColumns(['x', 'y']),
+        modifiedTable.getCell(0, 'table').getColumns(['x', 'y']),
         {
             x: [0, 1],
             y: ['a', 'a']
@@ -43,7 +28,7 @@ QUnit.test('GroupModifier.execute', function (assert) {
     );
 
     assert.deepEqual(
-        modifiedTable.getRow(1).getCellAsTable('table').getColumns(['x', 'y']),
+        modifiedTable.getCell(1, 'table').getColumns(['x', 'y']),
         {
             x: [0, 1],
             y: ['b', 'b']

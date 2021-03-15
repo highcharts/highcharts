@@ -21,7 +21,7 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
-import OldTownTable from '../OldTownTable.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -184,22 +184,22 @@ class ChainModifier extends DataModifier<ChainModifier.EventObject> {
      * Applies modifications to the table rows and returns a new table with the
      * modified rows.
      *
-     * @param {OldTownTable} table
+     * @param {DataTable} table
      * Table to modify.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {OldTownTable}
+     * @return {DataTable}
      * New modified table.
      *
      * @emits ChainDataModifier#execute
      * @emits ChainDataModifier#afterExecute
      */
     public execute(
-        table: OldTownTable,
+        table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
-    ): OldTownTable {
+    ): DataTable {
         const modifiers = (
             this.options.reverse ?
                 this.modifiers.reverse() :
@@ -315,7 +315,7 @@ namespace ChainModifier {
             'clearChain'|'afterClearChain'|
             DataModifier.EventObject['type']
         );
-        readonly table?: OldTownTable;
+        readonly table?: DataTable;
     }
 
     /**

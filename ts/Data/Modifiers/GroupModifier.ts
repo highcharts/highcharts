@@ -21,8 +21,7 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
-import OldTownTable from '../OldTownTable.js';
-import OldTownTableRow from '../OldTownTableRow.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -115,19 +114,19 @@ class GroupModifier extends DataModifier {
      * - `table`: Subtable containing the grouped rows.
      * - `value`: containing the common value of the group
      *
-     * @param {OldTownTable} table
+     * @param {DataTable} table
      * Table to modify.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {OldTownTable}
+     * @return {DataTable}
      * New modified table.
      */
     public execute(
-        table: OldTownTable,
+        table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
-    ): OldTownTable {
+    ): DataTable {
 
         this.emit({ type: 'execute', detail: eventDetail, table });
 
@@ -136,27 +135,27 @@ class GroupModifier extends DataModifier {
                 invalidValues,
                 validValues
             } = modifier.options,
-            columnGroups: Array<string> = [],
-            tableGroups: Array<OldTownTable> = [],
-            valueGroups: Array<DataJSON.JSONPrimitive> = [];
+            byGroups: Array<string> = [],
+            tableGroups: Array<DataTable> = [],
+            valueGroups: Array<DataJSON.JSONPrimitive> = [],
+            groupColumn = (
+                modifier.options.groupColumn ||
+                table.getColumnNames()[0]
+            ),
+            valueColumn = (
+                table.getColumn(groupColumn) ||
+                []
+            );
 
-        let groupColumn = modifier.options.groupColumn,
-            row: (OldTownTableRow|undefined),
-            value: OldTownTableRow.CellType,
+        let row: (DataTable.Row|undefined),
+            value: DataTable.CellType,
             valueIndex: number;
 
-        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
-            row = table.getRow(i);
-            if (row) {
-                if (!groupColumn) {
-                    groupColumn = row.getCellNames()[0];
-                }
-
-                value = row.getCell(groupColumn);
-
+        for (let i = 0, iEnd = valueColumn.length; i < iEnd; ++i) {
+            value = valueColumn[i];
+            if (typeof value !== 'undefined') {
                 if (
-                    value instanceof OldTownTable ||
-                    value instanceof Date ||
+                    value instanceof DataTable ||
                     (
                         invalidValues &&
                         invalidValues.indexOf(value) >= 0
@@ -171,25 +170,24 @@ class GroupModifier extends DataModifier {
                 valueIndex = valueGroups.indexOf(value);
 
                 if (valueIndex === -1) {
-                    columnGroups.push(groupColumn);
-                    tableGroups.push(new OldTownTable([row]));
+                    const newTable = new DataTable();
+
+                    newTable.setRowObject(table.getRowObject(i) || {});
+
+                    byGroups.push(groupColumn);
+                    tableGroups.push(newTable);
                     valueGroups.push(value);
                 } else {
-                    tableGroups[valueIndex].insertRow(row);
+                    tableGroups[valueIndex].setRow(table.getRow(i) || []);
                 }
             }
         }
 
-        table = new OldTownTable();
-
-        for (let i = 0, iEnd = tableGroups.length; i < iEnd; ++i) {
-            table.insertRow(new OldTownTableRow({
-                id: `${i}`,
-                groupBy: columnGroups[i],
-                table: tableGroups[i],
-                value: valueGroups[i]
-            }));
-        }
+        table = new DataTable({
+            groupBy: byGroups,
+            table: tableGroups,
+            value: valueGroups
+        });
 
         this.emit({ type: 'afterExecute', detail: eventDetail, table });
 

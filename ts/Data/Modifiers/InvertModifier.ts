@@ -22,13 +22,9 @@ import type DataEventEmitter from '../DataEventEmitter';
 
 import DataModifier from './DataModifier.js';
 import DataJSON from '../DataJSON.js';
-import OldTownTable from '../OldTownTable.js';
-import OldTownTableRow from '../OldTownTableRow.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    defined
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -109,52 +105,58 @@ class InvertModifier extends DataModifier {
      * */
 
     /**
-     * Create new OldTownTable with inverted rows and columns.
+     * Creates a new table with inverted rows and columns.
      *
-     * @param {OldTownTable} table
+     * @param {DataTable} table
      * Table to modify.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {OldTownTable}
+     * @return {DataTable}
      * New modified table.
      */
     public execute(
-        table: OldTownTable,
+        table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
-    ): OldTownTable {
+    ): DataTable {
         const modifier = this,
-            newTable = new OldTownTable(),
             columns = table.getColumns(),
-            newRowIds = Object.keys(columns),
-            oldRowsLength = table.getRowCount();
+            newTable = table.clone(true);
 
-        let oldRow: (OldTownTableRow|undefined),
-            newCells: Record<string, OldTownTableRow.CellType>,
-            newRow: (OldTownTableRow|undefined),
-            rowCell: (OldTownTableRow.CellType|undefined);
+        if (columns.column) { // inverted table
+            const column = columns.column;
 
-        modifier.emit({ type: 'execute', detail: eventDetail, table });
-
-        for (let i = 0, iEnd = newRowIds.length; i < iEnd; i++) {
-            if (newRowIds[i] !== 'id') {
-                newCells = {
-                    id: newRowIds[i]
-                };
-
-                for (let j = 0; j < oldRowsLength; j++) {
-                    oldRow = table.getRow(j);
-                    rowCell = oldRow && oldRow.getCell(newRowIds[i]);
-
-                    if (defined(rowCell) && oldRow && oldRow.id) {
-                        newCells[oldRow.id] = rowCell;
-                    }
-                }
-
-                newRow = new OldTownTableRow(newCells);
-                newTable.insertRow(newRow);
+            for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+                newTable.setColumn(`${column[i]}`);
             }
+
+            delete columns.column;
+            const columnNames = Object.keys(columns);
+
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                newTable.setRow(columns[columnNames[i]]);
+            }
+
+        } else { // regular table
+            for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
+                newTable.setColumn(`${i}`);
+            }
+            newTable.setColumn('column');
+
+            const columnNames = Object.keys(columns);
+
+            for (
+                let i = 0,
+                    iEnd = columnNames.length,
+                    columnName: string;
+                i < iEnd;
+                ++i
+            ) {
+                columnName = columnNames[i];
+                newTable.setRow([...columns[columnName], columnName]);
+            }
+
         }
 
         modifier.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });

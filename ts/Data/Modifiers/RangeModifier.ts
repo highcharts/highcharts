@@ -19,10 +19,10 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type OldTownTableRow from '../OldTownTableRow';
+
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
-import OldTownTable from '../OldTownTable.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -51,13 +51,7 @@ class RangeModifier extends DataModifier {
     public static readonly defaultOptions: RangeModifier.Options = {
         modifier: 'Range',
         strict: false,
-        ranges: [
-            {
-                column: '',
-                maxValue: (Number.POSITIVE_INFINITY - 1),
-                minValue: (Number.NEGATIVE_INFINITY + 1)
-            }
-        ]
+        ranges: []
     };
 
     /* *
@@ -106,7 +100,7 @@ class RangeModifier extends DataModifier {
     /**
      * Options of the range modifier.
      */
-    public options: RangeModifier.Options;
+    public readonly options: Readonly<RangeModifier.Options>;
 
     /* *
      *
@@ -118,85 +112,95 @@ class RangeModifier extends DataModifier {
      * Applies modifications to the table rows and returns a new table with
      * subtable, containing only the filtered rows.
      *
-     * @param {OldTownTable} table
+     * @param {DataTable} table
      * Table to modify.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {OldTownTable}
+     * @return {DataTable}
      * New modified table.
      */
     public execute(
-        table: OldTownTable,
+        table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
-    ): OldTownTable {
+    ): DataTable {
         const modifier = this,
             {
                 ranges,
                 strict
             } = modifier.options,
-            rows = table.getAllRows(),
-            result = new OldTownTable();
+            columns = table.getColumns(),
+            newTable = table.clone(true);
 
-        let column: OldTownTableRow.CellType,
+        let cell: DataTable.CellType,
             range: RangeModifier.RangeOptions,
-            rangeColumn: string,
-            row: OldTownTableRow;
+            rangeColumn: DataTable.Column,
+            row: (DataTable.Row|undefined);
 
         this.emit({ type: 'execute', detail: eventDetail, table });
 
-        for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
-            range = ranges[i];
-
-            if (
-                strict &&
-                typeof range.minValue !== typeof range.maxValue
-            ) {
-                continue;
+        if (ranges.length) {
+            const columnNames = Object.keys(columns);
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                newTable.setColumn(columnNames[i]);
             }
-
-            rangeColumn = range.column;
-
-            for (let j = 0, jEnd = rows.length; j < jEnd; ++j) {
-                row = rows[j];
-
-                if (!rangeColumn) {
-                    rangeColumn = row.getCellNames()[0];
-                }
-
-                column = row.getCell(rangeColumn);
-
-                /* eslint-disable @typescript-eslint/indent */
-                switch (typeof column) {
-                    default:
-                        continue;
-                    case 'boolean':
-                    case 'number':
-                    case 'string':
-                        break;
-                }
-                /* eslint-enable @typescript-eslint/indent */
+            for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
+                range = ranges[i];
 
                 if (
                     strict &&
-                    typeof column !== typeof range.minValue
+                    typeof range.minValue !== typeof range.maxValue
                 ) {
                     continue;
                 }
 
-                if (
-                    column >= range.minValue &&
-                    column <= range.maxValue
-                ) {
-                    result.insertRow(row);
+                rangeColumn = (columns[range.column] || []);
+
+                for (let j = 0, jEnd = rangeColumn.length; j < jEnd; ++j) {
+                    cell = rangeColumn[j];
+
+                    /* eslint-disable @typescript-eslint/indent */
+                    switch (typeof cell) {
+                        default:
+                            continue;
+                        case 'boolean':
+                        case 'number':
+                        case 'string':
+                            break;
+                    }
+                    /* eslint-enable @typescript-eslint/indent */
+
+                    if (
+                        strict &&
+                        typeof cell !== typeof range.minValue
+                    ) {
+                        continue;
+                    }
+
+                    if (
+                        cell >= range.minValue &&
+                        cell <= range.maxValue
+                    ) {
+                        row = table.getRow(j);
+
+                        if (row) {
+                            newTable.setRow(row);
+                        }
+                    }
                 }
             }
+        } else {
+            newTable.setColumns(columns);
         }
 
-        this.emit({ type: 'afterExecute', detail: eventDetail, table: result });
+        this.emit({
+            type: 'afterExecute',
+            detail: eventDetail,
+            table: newTable
+        });
 
-        return result;
+        return newTable;
     }
 
     /**

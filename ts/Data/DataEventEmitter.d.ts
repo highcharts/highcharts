@@ -38,7 +38,7 @@ declare interface DataEventEmitter<TEventObject extends DataEventEmitter.EventOb
     /**
      * Registered events managed by Highcharts utility functions.
      */
-    hcEvents?: Record<TEventObject['type'], Array<DataEventEmitter.EventCallback<this, TEventObject>>>;
+    hcEvents?: DataEventEmitter.HCEventsCollection<TEventObject>;
 
     /* *
      *
@@ -123,6 +123,20 @@ declare namespace DataEventEmitter {
          */
         readonly type: ('test'|string);
     }
+
+    export interface HCEventObject<TEventObject extends EventObject> {
+        fn: DataEventEmitter.EventCallback<unknown, TEventObject>;
+        order?: number;
+    }
+
+    export type HCEvents<TEventObject extends EventObject> = (
+        Array<HCEventObject<TEventObject>>
+    );
+
+    export type HCEventsCollection<TEventObject extends EventObject> = (
+        Record<TEventObject['type'], HCEvents<TEventObject>>
+    );
+
 }
 
 /* *
