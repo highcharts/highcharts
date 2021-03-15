@@ -29,36 +29,44 @@ class Column extends GUIElement {
      * The container of the column HTML element.
      */
     public constructor(
-        row: Row,
+        row: Row|null,
         options: Column.Options,
         columnElement?: HTMLElement
     ) {
         super();
 
-        const columnClassName = row.layout.options.columnClassName;
-
         this.id = options.id;
         this.options = options;
+        this.row = row;
 
         const column = this;
 
-        this.row = row;
-        this.setElementContainer({
-            render: row.layout.dashboard.guiEnabled,
-            parentContainer: row.container,
-            attribs: {
-                id: options.id,
-                className: columnClassName ?
-                    columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
-            },
-            element: columnElement,
-            elementId: options.id,
-            style: merge(
-                row.layout.options.style,
-                row.options.style,
-                options.style
-            )
-        });
+        // Get parent container
+        const parentContainer = row?.container ||
+            document.getElementById(options.parentContainerId || '');
+
+        if (parentContainer) {
+            const layoutOptions = ((row || {}).layout || {}).options || {},
+                rowOptions = (row || {}).options || {},
+                columnClassName = layoutOptions.columnClassName || '';
+
+            this.setElementContainer({
+                render: (((row || {}).layout || {}).dashboard || {}).guiEnabled,
+                parentContainer: parentContainer,
+                attribs: {
+                    id: options.id,
+                    className: columnClassName ?
+                        columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
+                },
+                element: columnElement,
+                elementId: options.id,
+                style: merge(
+                    layoutOptions.style,
+                    rowOptions.style,
+                    options.style
+                )
+            });
+        }
     }
 
     /* *
@@ -75,7 +83,7 @@ class Column extends GUIElement {
     /**
      * Reference to the row instance.
      */
-    public row: Row;
+    public row?: Row|null;
 
     /**
      * The column options.
@@ -126,6 +134,7 @@ namespace Column {
         id: string;
         width?: number;
         style?: CSSObject;
+        parentContainerId?: string;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {

@@ -145,7 +145,12 @@ console.log('row: ', Bindings.getRow(dashboard.layouts[0].rows[0].container));
 console.log('layout: ', Bindings.getLayout('layout-1'));
 console.groupEnd();
 
+debugger;
+var dashboardJSON = dashboard.toJSON();
 console.log('dashboard JSON: ', dashboard.toJSON());
+
+var dashboardFromJSON = Dashboard.fromJSON(dashboardJSON);
+console.log('dashboard from a JSON: ', dashboardFromJSON);
 
 /*
   Bind import layouts btn

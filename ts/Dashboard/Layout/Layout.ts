@@ -15,6 +15,29 @@ const {
 class Layout extends GUIElement {
     /* *
     *
+    *  Static Properties
+    *
+    * */
+
+    public static fromJSON(
+        json: Layout.ClassJSON,
+        dashboard?: Dashboard
+    ): Layout {
+        const options = json.options,
+            layout = new Layout(
+                dashboard || null,
+                {
+                    id: options.containerId,
+                    parentContainerId: options.parentContainerId,
+                    rowsJSON: options.rows
+                }
+            );
+
+        return layout;
+    }
+
+    /* *
+    *
     *  Constructor
     *
     * */
@@ -29,7 +52,7 @@ class Layout extends GUIElement {
      * Options for the layout.
      */
     public constructor(
-        dashboard: Dashboard,
+        dashboard: Dashboard|null,
         options: Layout.Options
     ) {
         super();
@@ -38,18 +61,35 @@ class Layout extends GUIElement {
         this.rows = [];
         this.options = options;
 
+        // Get parent container
+        const parentContainer = dashboard?.container ||
+            document.getElementById(options.parentContainerId || '');
+
         // GUI structure
-        this.setElementContainer({
-            render: dashboard.guiEnabled,
-            parentContainer: dashboard.container,
-            attribs: {
-                id: options.id,
-                className: GUIElement.prefix + 'layout'
-            },
-            elementId: options.id,
-            style: this.options.style
-        });
-        this.setRows();
+        if (parentContainer) {
+            this.setElementContainer({
+                render: (dashboard || {}).guiEnabled,
+                parentContainer: parentContainer,
+                attribs: {
+                    id: options.id,
+                    className: GUIElement.prefix + 'layout'
+                },
+                elementId: options.id,
+                style: this.options.style
+            });
+
+            // Init rows from options.
+            if (this.options.rows) {
+                this.setRows();
+            }
+
+            // Init rows from JSON.
+            if (options.rowsJSON && !this.rows.length) {
+                this.setRowsFromJSON(options.rowsJSON);
+            }
+        } else {
+            // Error
+        }
     }
 
     /* *
@@ -61,7 +101,7 @@ class Layout extends GUIElement {
     /**
      * Reference to the dashboard instance.
      */
-    public dashboard: Dashboard;
+    public dashboard?: Dashboard|null;
 
     /**
      * Array of the layout rows.
@@ -87,7 +127,7 @@ class Layout extends GUIElement {
             rowsElements = pick(
                 layout.options.rows,
                 layout.container?.getElementsByClassName(
-                    layout.options.rowClassName
+                    layout.options.rowClassName || ''
                 )
             ) || [];
 
@@ -97,8 +137,20 @@ class Layout extends GUIElement {
         for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
             rowElement = rowsElements[i];
             layout.addRow(
-                layout.dashboard.guiEnabled ? rowElement : {},
+                (layout.dashboard || {}).guiEnabled ? rowElement : {},
                 rowElement instanceof HTMLElement ? rowElement : void 0
+            );
+        }
+    }
+
+    public setRowsFromJSON(
+        json: Array<Row.ClassJSON>
+    ): void {
+        const layout = this;
+
+        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
+            layout.rows.push(
+                Row.fromJSON(json[i], layout)
             );
         }
     }
@@ -169,6 +221,7 @@ class Layout extends GUIElement {
      */
     public toJSON(): Layout.ClassJSON {
         const layout = this,
+            dashboardContainerId = ((layout.dashboard || {}).container || {}).id || '',
             rows = [];
 
         // Get rows JSON.
@@ -180,6 +233,7 @@ class Layout extends GUIElement {
             $class: 'Layout',
             options: {
                 containerId: (layout.container as HTMLElement).id,
+                parentContainerId: dashboardContainerId,
                 rows: rows
             }
         };
@@ -198,10 +252,12 @@ interface Layout {
 namespace Layout {
     export interface Options {
         id?: string;
-        rowClassName: string;
-        columnClassName: string;
-        rows: Array<Row.Options>;
+        parentContainerId?: string;
+        rowClassName?: string;
+        columnClassName?: string;
+        rows?: Array<Row.Options>;
         style?: CSSObject;
+        rowsJSON?: Array<Row.ClassJSON>;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {
@@ -210,6 +266,7 @@ namespace Layout {
 
     export interface LayoutJSONOptions extends DataJSON.JSONObject {
         containerId: string;
+        parentContainerId: string;
         rows: Array<Row.ClassJSON>;
     }
 }

@@ -13,6 +13,28 @@ const {
 class Row extends GUIElement {
     /* *
     *
+    *  Static Properties
+    *
+    * */
+
+    public static fromJSON(
+        json: Row.ClassJSON,
+        layout?: Layout
+    ): Row {
+        const options = json.options,
+            row = new Row(
+                layout || null,
+                {
+                    id: options.containerId,
+                    parentContainerId: options.parentContainerId,
+                    columnsJSON: options.columns
+                }
+            );
+
+        return row;
+    }
+    /* *
+    *
     *  Constructor
     *
     * */
@@ -30,31 +52,49 @@ class Row extends GUIElement {
      * The container of the row HTML element.
      */
     public constructor(
-        layout: Layout,
+        layout: Layout|null,
         options: Row.Options,
         rowElement?: HTMLElement
     ) {
-        const rowClassName = layout.options.rowClassName;
-
         super();
 
         this.layout = layout;
         this.columns = [];
         this.options = options;
 
-        this.setElementContainer({
-            render: layout.dashboard.guiEnabled,
-            parentContainer: layout.container,
-            attribs: {
-                id: options.id,
-                className: rowClassName ?
-                    rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
-            },
-            element: rowElement,
-            elementId: options.id,
-            style: merge(layout.options.style, options.style)
-        });
-        this.setColumns();
+        // Get parent container
+        const parentContainer = layout?.container ||
+            document.getElementById(options.parentContainerId || '');
+
+        if (parentContainer) {
+            const layoutOptions = ((layout || {}).options || {}),
+                rowClassName = layoutOptions.rowClassName || '';
+
+            this.setElementContainer({
+                render: ((layout || {}).dashboard || {}).guiEnabled,
+                parentContainer: parentContainer,
+                attribs: {
+                    id: options.id,
+                    className: rowClassName ?
+                        rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
+                },
+                element: rowElement,
+                elementId: options.id,
+                style: merge(layoutOptions.style, options.style)
+            });
+
+            // Init rows from options.
+            if (this.options.columns) {
+                this.setColumns();
+            }
+
+            // Init rows from JSON.
+            if (options.columnsJSON && !this.columns.length) {
+                this.setColumnsFromJSON(options.columnsJSON);
+            }
+        } else {
+            // Error
+        }
     }
 
     /* *
@@ -66,7 +106,7 @@ class Row extends GUIElement {
     /**
      * Reference to the layout instance.
      */
-    public layout: Layout;
+    public layout?: Layout|null;
 
     /**
      * Array of the row columns.
@@ -89,11 +129,10 @@ class Row extends GUIElement {
      */
     public setColumns(): void {
         const row = this,
+            columnClassName = ((row.layout || {}).options || {}).columnClassName || '',
             columnsElements = pick(
                 row.options.columns,
-                row.container?.getElementsByClassName(
-                    row.layout.options.columnClassName
-                )
+                row.container?.getElementsByClassName(columnClassName)
             ) || [];
 
         let columnElement,
@@ -102,10 +141,22 @@ class Row extends GUIElement {
         for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
             columnElement = columnsElements[i];
             row.addColumn(
-                row.layout.dashboard.guiEnabled ? columnElement : { id: '' },
+                ((row.layout || {}).dashboard || {}).guiEnabled ? columnElement : { id: '' },
                 columnElement instanceof HTMLElement ? columnElement : void 0
             );
         }
+    }
+
+    public setColumnsFromJSON(
+        json: Array<Column.ClassJSON>
+    ): void {
+        const row = this;
+
+        // for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
+        //     row.columns.push(
+        //         Column.fromJSON(json[i])
+        //     );
+        // }
     }
 
     /**
@@ -153,6 +204,7 @@ class Row extends GUIElement {
      */
     public toJSON(): Row.ClassJSON {
         const row = this,
+            layoutContainerId = ((row.layout || {}).container || {}).id || '',
             columns = [];
 
         // Get columns JSON.
@@ -164,6 +216,7 @@ class Row extends GUIElement {
             $class: 'Row',
             options: {
                 containerId: (row.container as HTMLElement).id,
+                parentContainerId: layoutContainerId,
                 columns: columns
             }
         };
@@ -173,8 +226,10 @@ class Row extends GUIElement {
 namespace Row {
     export interface Options {
         id?: string;
+        parentContainerId?: string;
         columns?: Array<Column.Options>;
         style?: CSSObject;
+        columnsJSON?: Array<Column.ClassJSON>;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {
@@ -183,6 +238,7 @@ namespace Row {
 
     export interface JSONOptions extends DataJSON.JSONObject {
         containerId: string;
+        parentContainerId: string;
         columns: Array<Column.ClassJSON>;
     }
 }

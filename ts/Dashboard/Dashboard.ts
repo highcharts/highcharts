@@ -39,6 +39,19 @@ class Dashboard {
         components: []
     };
 
+    public static fromJSON(json: Dashboard.ClassJSON): Dashboard {
+        const options = json.options,
+            dashboard = new Dashboard(
+                options.containerId,
+                {
+                    layoutsJSON: options.layouts,
+                    componentOptions: options.componentOptions
+                }
+            );
+
+        return dashboard;
+    }
+
     /* *
     *
     *  Constructors
@@ -50,23 +63,25 @@ class Dashboard {
     ) {
         this.options = merge(Dashboard.defaultOptions, options);
         this.layouts = [];
-        this.guiEnabled = this.options.gui.enabled;
+        this.guiEnabled = (this.options.gui || {}).enabled;
         this.mountedComponents = [];
-
-        /*
-        * TODO
-        *
-        * 2. Bindings elements
-        *
-        */
 
         this.initContainer(renderTo);
 
-        // Init layouts
-        this.setLayouts();
+        // Init layouts from options.
+        if (options.gui && this.options.gui) {
+            this.setLayouts(this.options.gui);
+        }
 
-        // Init Bindings
-        this.setComponents();
+        // Init layouts from JSON.
+        if (options.layoutsJSON && !this.layouts.length) {
+            this.setLayoutsFromJSON(options.layoutsJSON);
+        }
+
+        // Init components from options.
+        if (options.components) {
+            this.setComponents(options.components);
+        }
     }
 
     /* *
@@ -107,27 +122,35 @@ class Dashboard {
             error(13, true);
         }
     }
-    /**
-     * setLayouts
-     */
-    public setLayouts(): void {
+
+    public setLayouts(guiOptions: Dashboard.GUIOptions): void {
         const dashboard = this,
-            options = dashboard.options,
-            layoutsOptions = options.gui.layouts;
+            layoutsOptions = guiOptions.layouts;
 
         for (let i = 0, iEnd = layoutsOptions.length; i < iEnd; ++i) {
             dashboard.layouts.push(
                 new Layout(
                     dashboard,
-                    merge({}, options.gui.layoutOptions, layoutsOptions[i])
+                    merge({}, guiOptions.layoutOptions, layoutsOptions[i])
                 )
             );
         }
     }
 
-    public setComponents(): void {
-        const dashboard = this,
-            components = dashboard.options.components;
+    public setLayoutsFromJSON(json: Array<Layout.ClassJSON>): void {
+        const dashboard = this;
+
+        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
+            dashboard.layouts.push(
+                Layout.fromJSON(json[i], dashboard)
+            );
+        }
+    }
+
+    public setComponents(
+        components: Array<Bindings.ComponentOptions>
+    ): void {
+        const dashboard = this;
 
         let component,
             column;
@@ -222,9 +245,10 @@ class Dashboard {
 
 namespace Dashboard {
     export interface Options {
-        gui: GUIOptions;
-        components: Array<Bindings.ComponentOptions>;
-        componentOptions: Partial<Bindings.ComponentOptions>;
+        gui?: GUIOptions;
+        components?: Array<Bindings.ComponentOptions>;
+        componentOptions?: Partial<Bindings.ComponentOptions>;
+        layoutsJSON?: Array<Layout.ClassJSON>;
     }
 
     export interface GUIOptions {
@@ -239,9 +263,9 @@ namespace Dashboard {
 
     export interface DashboardJSONOptions extends DataJSON.JSONObject {
         containerId: string;
-        guiEnabled: boolean|undefined;
         layouts: Array<Layout.ClassJSON>;
-        componentOptions: Partial<Bindings.ComponentOptions>;
+        guiEnabled?: boolean;
+        componentOptions?: Partial<Bindings.ComponentOptions>;
     }
 }
 
