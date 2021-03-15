@@ -1268,11 +1268,6 @@ class Pointer {
         ) {
             this.reset();
         }
-
-        // #15160
-        if (H.hasTouch) {
-            this.chart.series.forEach((series: Series): void => series.setState());
-        }
     }
 
     /**
@@ -1838,6 +1833,11 @@ class Pointer {
             });
 
             pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null as any;
+        }
+
+        // #15160
+        if (H.hasTouch) {
+            this.chart.series.forEach((series: Series): void => series.setState());
         }
     }
 
