@@ -154,6 +154,8 @@ debugger;
 var dashboardJSON = dashboard.toJSON();
 console.log('dashboard JSON: ', dashboard.toJSON());
 
+dashboard.destroy();
+
 var dashboardFromJSON = Dashboard.fromJSON(dashboardJSON);
 console.log('dashboard from a JSON: ', dashboardFromJSON);
 

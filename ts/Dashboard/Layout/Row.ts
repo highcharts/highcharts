@@ -152,11 +152,11 @@ class Row extends GUIElement {
     ): void {
         const row = this;
 
-        // for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-        //     row.columns.push(
-        //         Column.fromJSON(json[i])
-        //     );
-        // }
+        for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
+            row.columns.push(
+                Column.fromJSON(json[i], row)
+            );
+        }
     }
 
     /**

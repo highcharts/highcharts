@@ -13,6 +13,29 @@ const {
 class Column extends GUIElement {
     /* *
     *
+    *  Static Properties
+    *
+    * */
+
+    public static fromJSON(
+        json: Column.ClassJSON,
+        row?: Row
+    ): Column {
+        const options = json.options,
+            column = new Column(
+                row || null,
+                {
+                    id: options.containerId,
+                    parentContainerId: options.parentContainerId,
+                    mountedComponentJSON: options.mountedComponentJSON
+                }
+            );
+
+        return column;
+    }
+
+    /* *
+    *
     *  Constructor
     *
     * */
@@ -68,31 +91,12 @@ class Column extends GUIElement {
                 )
             });
 
-            // bind component
-            if (
-                this.mountedComponent ||
-                this.id === 'dashboard-col-add-component' // only for temporary test
-            ) {
-                // temporary component options
-                const jsonFromLocalStorage = {
-                    $class: 'Chart',
-                    options: {
-                        chartOptions: '{"title": {"text": "from JSON"}, "series":' +
-                            '[{"name":"Series from options","data":[1,2,3,4]}],"type":' +
-                            '"pie","chart":{"animation":false, "type": "pie"}}',
-                        dimensions: {
-                            width: 0,
-                            height: 0
-                        },
-                        id: 'dashboard-component-highcharts-wq32s1w-1',
-                        parentElement: 'dashboard-col-add-component',
-                        type: 'chart'
-                    }
-                };
-
-                // bind component
-                Bindings.componentFromJSON(jsonFromLocalStorage);
+            // Mount component from JSON.
+            if (this.options.mountedComponentJSON) {
+                this.mountedComponent = Bindings.componentFromJSON(this.options.mountedComponentJSON);
             }
+        } else {
+            // Error
         }
     }
 
@@ -144,12 +148,14 @@ class Column extends GUIElement {
      * Class JSON of this Column instance.
      */
     public toJSON(): Column.ClassJSON {
-        const column = this;
+        const column = this,
+            rowContainerId = ((column.row || {}).container || {}).id || '';
 
         return {
             $class: 'Column',
             options: {
                 containerId: (column.container as HTMLElement).id,
+                parentContainerId: rowContainerId,
                 mountedComponentJSON: column.mountedComponent?.toJSON()
             }
         };
@@ -162,6 +168,7 @@ namespace Column {
         width?: number;
         style?: CSSObject;
         parentContainerId?: string;
+        mountedComponentJSON?: Component.ClassJSON;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {
@@ -170,6 +177,7 @@ namespace Column {
 
     export interface JSONOptions extends DataJSON.JSONObject {
         containerId: string;
+        parentContainerId: string;
         mountedComponentJSON: Component.ClassJSON|undefined;
     }
 }
