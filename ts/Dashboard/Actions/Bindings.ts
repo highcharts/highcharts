@@ -39,7 +39,7 @@ class Bindings {
     *
     * */
 
-    private getGUIElement(idOrElement: string): GUIElement|undefined {
+    private static getGUIElement(idOrElement: string): GUIElement|undefined {
         const container = typeof idOrElement === 'string' ?
             document.getElementById(idOrElement) : idOrElement;
 
@@ -56,9 +56,9 @@ class Bindings {
         return guiElement;
     }
 
-    public addComponent(
+    public static addComponent(
         options: Bindings.ComponentOptions
-    ): HTMLComponent|ChartComponent|GroupComponent|undefined { //
+    ): HTMLComponent|ChartComponent|GroupComponent|undefined {
         const compontentContainer = document.getElementById(options.column);
         const bindings = this;
         const events = options.events;
@@ -114,22 +114,22 @@ class Bindings {
         return component;
     }
 
-    public getColumn(idOrElement: string): Column|undefined {
-        const column = this.getGUIElement(idOrElement);
+    public static getColumn(idOrElement: string): Column|undefined {
+        const column = Bindings.getGUIElement(idOrElement);
         return column instanceof Column ? column : void 0;
     }
 
-    public getRow(idOrElement: string): Row|undefined {
-        const row = this.getGUIElement(idOrElement);
+    public static getRow(idOrElement: string): Row|undefined {
+        const row = Bindings.getGUIElement(idOrElement);
         return row instanceof Row ? row : void 0;
     }
 
-    public getLayout(idOrElement: string): Layout|undefined {
-        const layout = this.getGUIElement(idOrElement);
+    public static getLayout(idOrElement: string): Layout|undefined {
+        const layout = Bindings.getGUIElement(idOrElement);
         return layout instanceof Layout ? layout : void 0;
     }
 
-    public chartComponent(
+    public static chartComponent(
         compontentContainer: HTMLDOMElement,
         options: Bindings.ComponentOptions
     ): ChartComponent {
@@ -140,7 +140,7 @@ class Bindings {
         });
     }
 
-    public htmlComponent(
+    public static htmlComponent(
         compontentContainer: HTMLDOMElement,
         options: Bindings.ComponentOptions
     ): HTMLComponent {
@@ -150,7 +150,7 @@ class Bindings {
         });
     }
 
-    public groupComponent(
+    public static groupComponent(
         compontentContainer: HTMLDOMElement
     ): GroupComponent {
         return new GroupComponent({

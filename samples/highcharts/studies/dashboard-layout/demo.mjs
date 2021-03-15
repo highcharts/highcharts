@@ -1,4 +1,5 @@
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
+import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js';
 
 // Bring in other forms of Highcharts
 import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/highcharts.src.js';
@@ -139,9 +140,9 @@ const dashboard = new Dashboard('container', {
 console.log(dashboard);
 
 console.group('Bindings get GUI element by ID or HTML element (getColumn, getRow, getLayout)');
-console.log('column: ', dashboard.bindings.getColumn('dashboard-col-0'));
-console.log('row: ', dashboard.bindings.getRow(dashboard.layouts[0].rows[0].container));
-console.log('layout: ', dashboard.bindings.getLayout('layout-1'));
+console.log('column: ', Bindings.getColumn('dashboard-col-0'));
+console.log('row: ', Bindings.getRow(dashboard.layouts[0].rows[0].container));
+console.log('layout: ', Bindings.getLayout('layout-1'));
 console.groupEnd();
 
 console.log('dashboard JSON: ', dashboard.toJSON());

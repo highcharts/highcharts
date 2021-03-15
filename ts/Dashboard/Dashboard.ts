@@ -66,7 +66,6 @@ class Dashboard {
         this.setLayouts();
 
         // Init Bindings
-        this.bindings = new Bindings();
         this.setComponents();
     }
 
@@ -80,7 +79,6 @@ class Dashboard {
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
     public container: globalThis.HTMLElement = void 0 as any;
     public guiEnabled: (boolean|undefined);
-    public bindings: Bindings;
     /* *
      *
      *  Functions
@@ -135,8 +133,8 @@ class Dashboard {
             column;
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
-            component = this.bindings.addComponent(components[i]);
-            column = dashboard.bindings.getColumn(components[i].column);
+            component = Bindings.addComponent(components[i]);
+            column = Bindings.getColumn(components[i].column);
 
             if (column && component) {
                 column.mountedComponent = component; // @ToDo column.addComponent() perhaps? - checks if column is free
