@@ -229,7 +229,7 @@ class AST {
         'width',
         'x',
         'x1',
-        'xy',
+        'x2',
         'y',
         'y1',
         'y2',
