@@ -158,10 +158,10 @@ var dashboardFromJSON = Dashboard.fromJSON(dashboardJSON);
 console.log('dashboard from a JSON: ', dashboardFromJSON);
 
 /*
-  Bind import layouts btn
+  Bind export layouts btn
 */
 Highcharts.addEvent(
-    document.getElementById('export'),
+    document.getElementById('export-layouts'),
     'click',
     function () {
         console.log('Export');
@@ -173,7 +173,23 @@ Highcharts.addEvent(
   Bind export layouts btn
 */
 Highcharts.addEvent(
-    document.getElementById('import'),
+    document.getElementById('delete-layouts'),
+    'click',
+    function () {
+        console.log('Delete');
+        dashboard.layouts.forEach((layout) => {
+            layout.destroy();
+        });
+
+        console.log(dashboard.layouts);
+    }
+);
+
+/*
+  Bind import layouts btn
+*/
+Highcharts.addEvent(
+    document.getElementById('import-layouts'),
     'click',
     function () {
         console.log('Import');
