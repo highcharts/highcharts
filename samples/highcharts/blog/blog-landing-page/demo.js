@@ -206,10 +206,10 @@ const network = Highcharts.chart('network', {
                 info = 'is an airport <b>more than 50</b> direct distinations';
                 break;
             case dirDist10:
-                info = 'is an aiport <b>more than 10</b> direct distinations';
+                info = 'is an airport <b>more than 10</b> direct distinations';
                 break;
             case dirDistLess10:
-                info = 'is an aiport <b>less than 10</b> direct distinations';
+                info = 'is an airport <b>less than 10</b> direct distinations';
                 break;
             default:
              //
