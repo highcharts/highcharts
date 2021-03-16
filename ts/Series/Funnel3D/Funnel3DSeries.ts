@@ -258,14 +258,14 @@ class Funnel3DSeries extends ColumnSeries {
             lineWidth: 0,
             title: void 0,
             tickPositions: []
-        } as DeepPartial<Highcharts.AxisOptions>);
+        });
         merge(true, this.yAxis.options, {
             gridLineWidth: 0,
             title: void 0,
             labels: {
                 enabled: false
             }
-        } as DeepPartial<Highcharts.AxisOptions>);
+        });
     }
 
     /**
