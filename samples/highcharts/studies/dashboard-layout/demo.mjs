@@ -6,7 +6,6 @@ import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js
 import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/highcharts.src.js';
 
 let dashboard = new Dashboard('container', {
-    id: 'dashboard-1', // mandatory
     gui: {
         enabled: true,
         layouts: [{
@@ -286,3 +285,77 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
 });
 
 console.log(dashboardBootstrap);
+
+console.log('========= Layout in layout =========');
+
+let dashboardLayout = new Dashboard('container-nested-layout', {
+    gui: {
+        enabled: true,
+        layouts: [{
+            id: 'layout-in-1', // mandatory
+            rows: [{
+                columns: [{
+                    id: 'dashboard-col-nolayout-0',
+                }, {
+                    id: 'dashboard-col-layout-0',
+                    layout: {
+                        rows: [{
+                            columns: [{
+                                id: 'dashboard-col-layout-1',
+                            }, {
+                                id: 'dashboard-col-layout-2',
+                            }]
+                        }, {
+                            columns: [{
+                                id: 'dashboard-col-layout-3',
+                            }]
+                        }]
+                    }
+                }]
+            }]
+        }]
+    },
+    components: [{
+        column: 'dashboard-col-nolayout-0',
+        type: 'chart',
+        chartOptions: {
+            type: 'pie',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }]
+        },
+    }, {
+        column: 'dashboard-col-layout-1',
+        type: 'chart',
+        chartOptions: {
+            type: 'column',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }]
+        }
+    }, {
+        column: 'dashboard-col-layout-2',
+        type: 'chart',
+        chartOptions: {
+            type: 'column',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }]
+        }
+    }, {
+        column: 'dashboard-col-layout-3',
+        type: 'chart',
+        chartOptions: {
+            type: 'line',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }]
+        }
+    }]
+});
+
+console.log(dashboardLayout);

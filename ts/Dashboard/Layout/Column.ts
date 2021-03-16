@@ -8,6 +8,7 @@ import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
 import Dashboard from '../Dashboard.js';
+import Layout from './Layout.js';
 const {
     merge
 } = U;
@@ -81,7 +82,8 @@ class Column extends GUIElement {
                 attribs: {
                     id: options.id,
                     className: columnClassName ?
-                        columnClassName + ' ' + Dashboard.prefix + 'column' : Dashboard.prefix + 'column'
+                        columnClassName + ' ' + Dashboard.prefix + 'column' :
+                        Dashboard.prefix + 'column'
                 },
                 element: columnElement,
                 elementId: options.id,
@@ -94,10 +96,30 @@ class Column extends GUIElement {
 
             // Mount component from JSON.
             if (this.options.mountedComponentJSON) {
-                this.mountedComponent = Bindings.componentFromJSON(this.options.mountedComponentJSON);
+                this.mountedComponent = Bindings.componentFromJSON(
+                    this.options.mountedComponentJSON
+                );
             }
         } else {
             // Error
+        }
+
+        // nested layout
+        if (this.options.layout) {
+            console.log('1column, container', this.container);
+            const dashboard = this.row?.layout?.dashboard || null;
+    
+            this.layout = new Layout(
+                dashboard,
+                merge(
+                    {},
+                    dashboard?.options.gui?.layoutOptions,
+                    this.options.layout,
+                    {
+                        parentContainerId: options.id
+                    }
+                )
+            );
         }
     }
 
@@ -163,6 +185,10 @@ class Column extends GUIElement {
     }
 }
 
+interface Column {
+    layout: Layout;
+}
+
 namespace Column {
     export interface Options {
         id: string;
@@ -170,6 +196,7 @@ namespace Column {
         style?: CSSObject;
         parentContainerId?: string;
         mountedComponentJSON?: Component.ClassJSON;
+        layout?: Layout
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {

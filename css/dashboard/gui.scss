@@ -9,7 +9,6 @@ body {
 .highcharts-dashboard-row {
     display: flex;
     position: relative;
-    flex-wrap: wrap;
 }
 
 .highcharts-dashboard-column {
@@ -206,11 +205,11 @@ ul.elem-menu li:first-child {
     .w-1-5 {
         width: 100%;
     }
-
+/*
     .highcharts-dashboard-row {
         flex-direction: column;
     }
-
+*/
     .highcharts-dashboard-column {
         flex: 1;
     }
