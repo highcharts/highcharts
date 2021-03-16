@@ -709,47 +709,6 @@ class GridAxis {
 
         if (gridOptions.enabled) {
             applyGridOptions(axis);
-
-            /*
-            axis.defaultLabelFormatter = function (
-                this: Highcharts.AxisLabelsFormatterContextObject
-            ): string {
-                const {
-                    axis,
-                    value
-                } = this;
-                const tickPos = axis.tickPositions;
-                const series = (
-                    axis.linkedParent || axis
-                ).series[0];
-                const isFirst = value === tickPos[0];
-                const isLast = value === tickPos[tickPos.length - 1];
-                const point: (Point|undefined) =
-                    series && find(series.options.data as any, function (
-                        p: (PointOptions|PointShortOptions)
-                    ): boolean {
-                        return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
-                    });
-                let pointCopy;
-
-                if (point && series.is('gantt')) {
-                    // For the Gantt set point aliases to the pointCopy
-                    // to do not change the original point
-                    pointCopy = merge(point);
-                    H.seriesTypes.gantt.prototype.pointClass
-                        .setGanttPointAliases(pointCopy as any);
-                }
-                // Make additional properties available for the
-                // formatter
-                this.isFirst = isFirst;
-                this.isLast = isLast;
-                this.point = pointCopy;
-
-                // Call original labelFormatter
-                return Axis.prototype.defaultLabelFormatter.call(this);
-            };
-            */
-
         }
 
         if (gridOptions.columns) {
