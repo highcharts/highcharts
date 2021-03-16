@@ -179,6 +179,10 @@ class Dashboard {
         }
     }
 
+    public addLayoutFromJSON(json: Layout.ClassJSON): Layout|undefined {
+        return Layout.fromJSON(json, this);
+    }
+
     public setComponents(
         components: Array<Bindings.ComponentOptions>
     ): void {
@@ -261,6 +265,10 @@ class Dashboard {
             Dashboard.prefix + '1', // temporary for demo test
             JSON.stringify(this.toJSON())
         );
+    }
+
+    public importLayoutLocal(id: string): Layout|undefined {
+        return Layout.importLocal(id, this);
     }
 }
 

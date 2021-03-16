@@ -222,7 +222,9 @@ Highcharts.addEvent(
     document.getElementById('import-layout'),
     'click',
     function () {
-        const layout = Layout.importLocal(exportedLayoutId, dashboard);
+        // const layout = Layout.importLocal(exportedLayoutId, dashboard);
+        debugger;
+        const layout = dashboard.importLayoutLocal(exportedLayoutId);
         console.log('Imported layout: ', layout);
     }
 );

@@ -33,6 +33,11 @@ class Layout extends GUIElement {
                 }
             );
 
+        // Save layout in the dashboard.
+        if (layout && dashboard) {
+            dashboard.layouts.push(layout);
+        }
+
         return layout;
     }
 
