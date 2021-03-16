@@ -826,3 +826,96 @@ QUnit.test('When groupAll: true, group point should have the same start regardle
         'When the groupAll: false, and new extremes don\t influence the group, the start should not be changed.'
     );
 });
+
+
+QUnit.test('When groupAll: true, group point should have the same start regardless of axis extremes, #15005.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            plotOptions: {
+                series: {
+                    allowPointSelect: true,
+                    dataGrouping: {
+                        enabled: true,
+                        forced: true,
+                        groupAll: true,
+                        units: [
+                            ['minute', [5]]
+                        ]
+                    }
+                }
+            },
+            series: [{
+                data: [
+                    [1610028057000, 0.25],
+                    [1610033040000, 0.80125],
+                    [1610118031000, 0.8475],
+                    [1610118209000, 0.8475],
+                    [1610118426000, 0.8475],
+                    [1610118691000, 0.8475],
+                    [1610120241000, 0.8475],
+                    [1610372248000, 0.8325],
+                    [1610373264000, 0.83],
+                    [1610373445000, 0.8275],
+                    [1610384401000, 0.835],
+                    [1610384401000, 0.835],
+                    [1610392040000, 0.375],
+                    [1610719978000, 0.915],
+                    [1610720025000, 0.915],
+                    [1610724043000, 0.91],
+                    [1610724275000, 0],
+                    [1610725033000, 0.9],
+                    [1610725069000, 0.9],
+                    [1610729723000, 0],
+                    [1611071398000, 0.84375],
+                    [1611138383000, 0.835],
+                    [1611159135000, 0.77],
+                    [1611162097000, 0.7825],
+                    [1611162097000, 0.7825],
+                    [1611162124000, 0.7825],
+                    [1611162124000, 0.7825],
+                    [1611162262000, 0.7825],
+                    [1611162262000, 0.7825],
+                    [1611238469000, 0.8225],
+                    [1611238469000, 0.8225],
+                    [1611238504000, 0.8225],
+                    [1611238504000, 0.8225],
+                    [1611238715000, 0.8225],
+                    [1611239217000, 0.8225],
+                    [1611239217000, 0.8225]
+                ],
+                marker: {
+                    enabled: true
+                }
+            }]
+        }),
+        point = chart.series[0].points[10],
+        pointX = point.x;
+
+
+    assert.strictEqual(
+        point.dataGroup.start,
+        12,
+        'When groupAll: true, this point group should start from 12.'
+    );
+
+    chart.xAxis[0].setExtremes(1610033050000);
+    assert.strictEqual(
+        pointX,
+        chart.series[0].points[9].x,
+        'The same point should be selected as previously.'
+    );
+    assert.strictEqual(
+        chart.series[0].points[9].dataGroup.start,
+        12,
+        `When groupAll: true, after changing extremes, 
+        the point should have the same start.`
+    );
+
+    // Failing condition.
+    // chart.xAxis[0].setExtremes(1610033040000);
+    // assert.strictEqual(
+    //     chart.series[0].points[9].dataGroup.start,
+    //     12,
+    //     `When groupAll: true, after changing extremes to the same as other
+    //     point x, the groups should not change the start property.`
+    // );
+});

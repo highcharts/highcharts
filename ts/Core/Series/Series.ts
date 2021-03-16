@@ -4209,7 +4209,9 @@ class Series {
             keys = options.keys,
             point,
             points = [],
-            i;
+            i,
+            j: number = 0,
+            groupCropStartIndex: number = 0;
 
         if (!data && !hasGroupedData) {
             var arr = [] as Array<Point>;
@@ -4264,7 +4266,16 @@ class Series {
                  * @name Highcharts.Point#dataGroup
                  * @type {Highcharts.DataGroupingInfoObject|undefined}
                  */
-                point.dataGroup = (series.groupMap as any)[i];
+                if (series && series.groupMap) {
+                    for (j; j < series.groupMap.length; j++) {
+                        if ((series.groupMap[j].start as number) + (series.groupMap[j].length as number) > cropStart) {
+                            groupCropStartIndex = j;
+                            j = series.groupMap?.length;
+                        }
+                    }
+                }
+
+                point.dataGroup = (series.groupMap as any)[groupCropStartIndex + i];
                 if ((point.dataGroup as any).options) {
                     point.options = (point.dataGroup as any).options;
                     extend(point, (point.dataGroup as any).options);
@@ -4280,7 +4291,8 @@ class Series {
                  * @type {number}
                  * @readonly
                  */
-                point.index = cursor; // For faster access in Point.update
+                // For faster access in Point.update
+                point.index = hasGroupedData ? (groupCropStartIndex + i) : cursor;
                 points[i] = point;
             }
         }
