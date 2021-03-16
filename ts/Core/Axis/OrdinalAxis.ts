@@ -83,6 +83,7 @@ import '../Navigator.js';
  * @private
  */
 interface OrdinalAxis extends Axis {
+    forceOrdinal?: boolean;
     isInternal?: boolean;
     ordinal: OrdinalAxis.Composition;
     ordinal2lin: OrdinalAxis['val2lin'];
@@ -303,7 +304,7 @@ namespace OrdinalAxis {
                 // the array index. Since the ordinal positions may exceed the
                 // current range, get the start and end positions within it
                 // (#719, #665b)
-                if (useOrdinal) {
+                if (useOrdinal || axis.forceOrdinal) {
 
                     if (axis.options.overscroll) {
                         ordinal.overscrollPointsRange = overscrollPointsRange;
@@ -392,6 +393,7 @@ namespace OrdinalAxis {
                 fakeAxis = {
                     series: [],
                     chart: chart,
+                    forceOrdinal: false,
                     getExtremes: function (): Highcharts.ExtremesObject {
                         return {
                             min: extremes.dataMin,
@@ -443,6 +445,12 @@ namespace OrdinalAxis {
                     fakeAxis.series.push(fakeSeries);
 
                     series.processData.apply(fakeSeries);
+
+                    // Force to use the ordinal when points are evenly spaced
+                    // (e.g. weeks), #3825.
+                    if (fakeSeries.closestPointRange !== fakeSeries.basePointRange && fakeSeries.currentDataGrouping) {
+                        fakeAxis.forceOrdinal = true;
+                    }
                 });
 
                 // Run beforeSetTickPositions to compute the ordinalPositions

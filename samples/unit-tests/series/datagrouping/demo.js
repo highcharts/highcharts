@@ -864,4 +864,17 @@ QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (asser
         Thus each element in the currently visible array of data,
         should equal the corresponding element in the fake series array. `
     );
+
+    chart.series[0].update({
+        dataGrouping: {
+            units: [['week', [1]]]
+        }
+    });
+    chart.xAxis[0].ordinal.getExtendedPositions();
+    assert.ok(
+        chart.xAxis[0].ordinal.index[
+            Object.keys(chart.xAxis[0].ordinal.index)[1]],
+        `After updating data grouping units to an equally spaced (like weeks),
+        the ordinal positions should be recalculated- allows panning.`
+    );
 });
