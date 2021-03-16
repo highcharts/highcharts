@@ -125,7 +125,6 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 }
             });
         }
-        
     }
 
     /* *

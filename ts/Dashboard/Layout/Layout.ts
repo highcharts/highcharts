@@ -84,9 +84,10 @@ class Layout extends GUIElement {
         this.options = options;
 
         // Get parent container
-        const parentContainer = document.getElementById(options.parentContainerId || '') || dashboard?.container;
+        const parentContainer = document.getElementById(
+            options.parentContainerId || ''
+        ) || dashboard?.container;
 
-console.log('parentContianer', options, parentContainer);
         // GUI structure
         if (parentContainer) {
             this.setElementContainer({

@@ -106,9 +106,8 @@ class Column extends GUIElement {
 
         // nested layout
         if (this.options.layout) {
-            console.log('1column, container', this.container);
             const dashboard = this.row?.layout?.dashboard || null;
-    
+
             this.layout = new Layout(
                 dashboard,
                 merge(
@@ -196,7 +195,7 @@ namespace Column {
         style?: CSSObject;
         parentContainerId?: string;
         mountedComponentJSON?: Component.ClassJSON;
-        layout?: Layout
+        layout?: Layout;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {
