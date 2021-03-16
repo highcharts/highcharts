@@ -7,6 +7,7 @@ import type Component from './../Component/Component.js';
 import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
+import Dashboard from '../Dashboard.js';
 const {
     merge
 } = U;
@@ -80,7 +81,7 @@ class Column extends GUIElement {
                 attribs: {
                     id: options.id,
                     className: columnClassName ?
-                        columnClassName + ' ' + GUIElement.prefix + 'column' : GUIElement.prefix + 'column'
+                        columnClassName + ' ' + Dashboard.prefix + 'column' : Dashboard.prefix + 'column'
                 },
                 element: columnElement,
                 elementId: options.id,

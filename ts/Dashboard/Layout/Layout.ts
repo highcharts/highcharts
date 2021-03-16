@@ -72,7 +72,7 @@ class Layout extends GUIElement {
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
-                    className: GUIElement.prefix + 'layout'
+                    className: Dashboard.prefix + 'layout'
                 },
                 elementId: options.id,
                 style: this.options.style
@@ -197,7 +197,7 @@ class Layout extends GUIElement {
      */
     public exportLocal(): void {
         localStorage.setItem(
-            GUIElement.prefix + this.options.id,
+            Dashboard.prefix + this.options.id,
             JSON.stringify(this.toJSON())
         );
     }
@@ -207,7 +207,7 @@ class Layout extends GUIElement {
      */
     public importLocal(): void {
         const layoutOptions = localStorage.getItem(
-            GUIElement.prefix + this.options.id
+            Dashboard.prefix + this.options.id
         );
 
         this.fromJSON(layoutOptions);

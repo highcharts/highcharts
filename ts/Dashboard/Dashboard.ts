@@ -19,6 +19,13 @@ const {
 } = U;
 
 class Dashboard {
+    /**
+     *
+     * Prefix of a GUIElement HTML class name.
+     *
+     */
+    public static readonly prefix: string = 'highcharts-dashboard-';
+
     /* *
     *
     *  Static Properties
@@ -228,9 +235,8 @@ class Dashboard {
      */
     public exportLocal(): void {
         localStorage.setItem(
-            // GUIElement.prefix + this.id,
-            // 'highcharts-dashboard-' + this.id,
-            'highcharts-dashboard-1',
+            // Dashboard.prefix + this.id,
+            Dashboard.prefix + '1', // temporary for demo test
             JSON.stringify(this.toJSON())
         );
     }
@@ -240,9 +246,8 @@ class Dashboard {
      */
     public importLocal(): void {
         const dashboardJSON = localStorage.getItem(
-            // GUIElement.prefix + this.id,
-            // 'highcharts-dashboard-' + this.id
-            'highcharts-dashboard-1'
+            // Dashboard.prefix + this.id,
+            Dashboard.prefix + '1' // temporary for demo test
         );
 
         if (dashboardJSON) {

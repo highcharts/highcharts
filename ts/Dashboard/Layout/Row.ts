@@ -5,6 +5,7 @@ import type DataJSON from '../../Data/DataJSON';
 import Layout from './Layout.js';
 import Column from './Column.js';
 import GUIElement from './GUIElement.js';
+import Dashboard from '../Dashboard.js';
 import U from '../../Core/Utilities.js';
 const {
     pick,
@@ -76,7 +77,7 @@ class Row extends GUIElement {
                 attribs: {
                     id: options.id,
                     className: rowClassName ?
-                        rowClassName + ' ' + GUIElement.prefix + 'row' : GUIElement.prefix + 'row'
+                        rowClassName + ' ' + Dashboard.prefix + 'row' : Dashboard.prefix + 'row'
                 },
                 element: rowElement,
                 elementId: options.id,
