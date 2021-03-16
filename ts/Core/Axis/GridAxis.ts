@@ -422,6 +422,45 @@ addEvent(
     }
 );
 
+addEvent(
+    Tick,
+    'labelFormat',
+    (ctx: Highcharts.AxisLabelsFormatterContextObject): void => {
+        const {
+            axis,
+            value
+        } = ctx;
+        if (axis.options.grid?.enabled) {
+            const tickPos = axis.tickPositions;
+            const series = (
+                axis.linkedParent || axis
+            ).series[0];
+            const isFirst = value === tickPos[0];
+            const isLast = value === tickPos[tickPos.length - 1];
+            const point: (Point|undefined) =
+                series && find(series.options.data as any, function (
+                    p: (PointOptions|PointShortOptions)
+                ): boolean {
+                    return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
+                });
+            let pointCopy;
+
+            if (point && series.is('gantt')) {
+                // For the Gantt set point aliases to the pointCopy
+                // to do not change the original point
+                pointCopy = merge(point);
+                H.seriesTypes.gantt.prototype.pointClass
+                    .setGanttPointAliases(pointCopy as any);
+            }
+            // Make additional properties available for the
+            // formatter
+            ctx.isFirst = isFirst;
+            ctx.isLast = isLast;
+            ctx.point = pointCopy;
+        }
+    }
+);
+
 /* eslint-enable no-invalid-this */
 
 /**
@@ -671,6 +710,7 @@ class GridAxis {
         if (gridOptions.enabled) {
             applyGridOptions(axis);
 
+            /*
             axis.defaultLabelFormatter = function (
                 this: Highcharts.AxisLabelsFormatterContextObject
             ): string {
@@ -708,6 +748,7 @@ class GridAxis {
                 // Call original labelFormatter
                 return Axis.prototype.defaultLabelFormatter.call(this);
             };
+            */
 
         }
 

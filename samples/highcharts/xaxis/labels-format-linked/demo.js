@@ -5,11 +5,11 @@ const categoryLinks = {
 };
 
 // Decorate the tick item with the link
-Highcharts.addEvent(Highcharts.Tick, 'init', e => {
-    const axis = e.target.axis;
+Highcharts.addEvent(Highcharts.Tick, 'labelFormat', ctx => {
+    const axis = ctx.axis;
     if (axis.categories) {
-        const category = axis.categories[e.target.pos];
-        e.target.link = categoryLinks[category];
+        const category = axis.categories[ctx.pos];
+        ctx.link = categoryLinks[category];
     }
 });
 
@@ -23,7 +23,7 @@ Highcharts.chart('container', {
         categories: ['Foo', 'Bar', 'Foobar'],
 
         labels: {
-            format: '<a href="{tick.link}">{text}</a>'
+            format: '<a href="{link}">{text}</a>'
         }
     },
 

@@ -62,7 +62,6 @@ declare global {
                 parameters?: TickParametersObject
             );
             public axis: Axis;
-            public formatCtx: AxisLabelsFormatterContextObject;
             public gridLine?: SVGElement;
             public isActive?: boolean;
             public isFirst?: boolean;
@@ -255,8 +254,6 @@ class Tick {
 
     public axis: Highcharts.Axis;
 
-    public formatCtx!: Highcharts.AxisLabelsFormatterContextObject;
-
     public gridLine?: SVGElement;
 
     public isActive?: boolean;
@@ -375,7 +372,7 @@ class Tick {
         tick.isLast = isLast;
 
         // Get the string
-        tick.formatCtx = {
+        const ctx: Highcharts.AxisLabelsFormatterContextObject = {
             axis,
             chart,
             dateTimeLabelFormat: dateTimeLabelFormat as any,
@@ -386,6 +383,10 @@ class Tick {
             tickPositionInfo,
             value
         };
+
+        // Fire an event that allows modifying the context for use in
+        // `labels.format` and `labels.formatter`.
+        fireEvent(this, 'labelFormat', ctx);
 
         // Label formatting. When `labels.format` is given, we first run the
         // defaultFormatter and append the result to the context as `text`.
@@ -401,15 +402,15 @@ class Tick {
             return (labelOptions.formatter || axis.defaultLabelFormatter)
                 .call(ctx, ctx);
         };
-        str = labelFormatter.call(this.formatCtx, this.formatCtx);
+        str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
         list = dateTimeLabelFormats && dateTimeLabelFormats.list as any;
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
-                    const ctx = extend(
-                        tick.formatCtx,
+                    extend(
+                        ctx,
                         { dateTimeLabelFormat: list[i] }
                     );
                     (label as any).attr({
