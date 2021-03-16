@@ -14,7 +14,8 @@ const {
     merge,
     error,
     isString,
-    objectEach
+    objectEach,
+    uniqueKey
 } = U;
 
 class Dashboard {
@@ -65,6 +66,7 @@ class Dashboard {
         this.layouts = [];
         this.guiEnabled = (this.options.gui || {}).enabled;
         this.mountedComponents = [];
+        this.id = uniqueKey();
 
         this.initContainer(renderTo);
 
@@ -94,6 +96,7 @@ class Dashboard {
     public mountedComponents: Array<Bindings.MountedComponentsOptions>;
     public container: globalThis.HTMLElement = void 0 as any;
     public guiEnabled: (boolean|undefined);
+    public id: string;
     /* *
      *
      *  Functions
@@ -224,21 +227,28 @@ class Dashboard {
      * Export layouts from the local storage
      */
     public exportLocal(): void {
-        const layouts = this.layouts;
-
-        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
-            layouts[i].exportLayout();
-        }
+        localStorage.setItem(
+            // GUIElement.prefix + this.id,
+            // 'highcharts-dashboard-' + this.id,
+            'highcharts-dashboard-1',
+            JSON.stringify(this.toJSON())
+        );
     }
 
     /**
      * Import layouts from the local storage
      */
     public importLocal(): void {
-        const layouts = this.layouts;
+        const dashboardJSON = localStorage.getItem(
+            // GUIElement.prefix + this.id,
+            // 'highcharts-dashboard-' + this.id
+            'highcharts-dashboard-1'
+        );
 
-        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
-            layouts[i].importLayout();
+        if (dashboardJSON) {
+            Dashboard.fromJSON(
+                JSON.parse(dashboardJSON)
+            );
         }
     }
 }

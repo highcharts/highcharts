@@ -5,6 +5,7 @@ import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js
 import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/highcharts.src.js';
 
 const dashboard = new Dashboard('container', {
+    id: 'dashboard-1', // mandatory
     gui: {
         enabled: true,
         layouts: [{
@@ -150,52 +151,74 @@ console.log('row: ', Bindings.getRow(dashboard.layouts[0].rows[0].container));
 console.log('layout: ', Bindings.getLayout('layout-1'));
 console.groupEnd();
 
-debugger;
-var dashboardJSON = dashboard.toJSON();
-console.log('dashboard JSON: ', dashboard.toJSON());
-
-dashboard.destroy();
-
-var dashboardFromJSON = Dashboard.fromJSON(dashboardJSON);
-console.log('dashboard from a JSON: ', dashboardFromJSON);
-
+/* ==== DASHBOARD BUTTONS ==== */
 /*
-  Bind export layouts btn
+  Bind export dashboard btn
 */
 Highcharts.addEvent(
-    document.getElementById('export-layouts'),
+    document.getElementById('export-dashboard'),
     'click',
     function () {
-        console.log('Export');
         dashboard.exportLocal();
     }
 );
 
 /*
-  Bind export layouts btn
+  Bind delete dashboard btn
 */
 Highcharts.addEvent(
-    document.getElementById('delete-layouts'),
+    document.getElementById('delete-dashboard'),
     'click',
     function () {
-        console.log('Delete');
-        dashboard.layouts.forEach((layout) => {
-            layout.destroy();
-        });
-
-        console.log(dashboard.layouts);
+        dashboard.delete();
     }
 );
 
 /*
-  Bind import layouts btn
+  Bind import dashboard btn
 */
 Highcharts.addEvent(
-    document.getElementById('import-layouts'),
+    document.getElementById('import-dashboard'),
     'click',
     function () {
-        console.log('Import');
         dashboard.importLocal();
+    }
+);
+
+/* ==== LAYOUTS BUTTONS ==== */
+/*
+  Bind export layout btn
+*/
+Highcharts.addEvent(
+    document.getElementById('export-layout'),
+    'click',
+    function () {
+        console.log('Export layout');
+        dashboard.layouts[0].exportLocal();
+    }
+);
+
+/*
+  Bind delete layout btn
+*/
+Highcharts.addEvent(
+    document.getElementById('delete-layout'),
+    'click',
+    function () {
+        console.log('Delete layout');
+        dashboard.layouts[0].destroy();
+    }
+);
+
+/*
+  Bind import layout btn
+*/
+Highcharts.addEvent(
+    document.getElementById('import-layout'),
+    'click',
+    function () {
+        console.log('Import layout');
+        dashboard.layouts[0].importLocal();
     }
 );
 

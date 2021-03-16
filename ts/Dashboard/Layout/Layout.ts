@@ -195,7 +195,7 @@ class Layout extends GUIElement {
     /**
      * Export layout's options and save in the local storage
      */
-    public exportLayout(): void {
+    public exportLocal(): void {
         localStorage.setItem(
             GUIElement.prefix + this.options.id,
             JSON.stringify(this.toJSON())
@@ -205,7 +205,7 @@ class Layout extends GUIElement {
     /**
      * Import layout's options from the local storage
      */
-    public importLayout(): void {
+    public importLocal(): void {
         const layoutOptions = localStorage.getItem(
             GUIElement.prefix + this.options.id
         );
