@@ -1,10 +1,11 @@
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
+import Layout from  '../../../../code/es-modules/Dashboard/Layout/Layout.js';
 import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js';
 
 // Bring in other forms of Highcharts
 import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/highcharts.src.js';
 
-const dashboard = new Dashboard('container', {
+let dashboard = new Dashboard('container', {
     id: 'dashboard-1', // mandatory
     gui: {
         enabled: true,
@@ -170,7 +171,7 @@ Highcharts.addEvent(
     document.getElementById('delete-dashboard'),
     'click',
     function () {
-        dashboard.delete();
+        dashboard.destroy();
     }
 );
 
@@ -181,7 +182,8 @@ Highcharts.addEvent(
     document.getElementById('import-dashboard'),
     'click',
     function () {
-        dashboard.importLocal();
+        dashboard = Dashboard.importLocal();
+        console.log('Imported dashboard: ', dashboard);
     }
 );
 
@@ -189,11 +191,14 @@ Highcharts.addEvent(
 /*
   Bind export layout btn
 */
+let exportedLayoutId;
+
 Highcharts.addEvent(
     document.getElementById('export-layout'),
     'click',
     function () {
         console.log('Export layout');
+        exportedLayoutId = dashboard.layouts[0].options.id;
         dashboard.layouts[0].exportLocal();
     }
 );
@@ -217,8 +222,8 @@ Highcharts.addEvent(
     document.getElementById('import-layout'),
     'click',
     function () {
-        console.log('Import layout');
-        dashboard.layouts[0].importLocal();
+        const layout = Layout.importLocal(exportedLayoutId, dashboard);
+        console.log('Imported layout: ', layout);
     }
 );
 

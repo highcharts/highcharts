@@ -36,6 +36,23 @@ class Layout extends GUIElement {
         return layout;
     }
 
+    public static importLocal(
+        id: string,
+        dashboard: Dashboard
+    ): Layout|undefined {
+        const layoutOptions = localStorage.getItem(
+            Dashboard.prefix + id
+        );
+
+        let layout;
+
+        if (layoutOptions) {
+            layout = Layout.fromJSON(JSON.parse(layoutOptions), dashboard);
+        }
+
+        return layout;
+    }
+
     /* *
     *
     *  Constructor
@@ -203,17 +220,6 @@ class Layout extends GUIElement {
     }
 
     /**
-     * Import layout's options from the local storage
-     */
-    public importLocal(): void {
-        const layoutOptions = localStorage.getItem(
-            Dashboard.prefix + this.options.id
-        );
-
-        this.fromJSON(layoutOptions);
-    }
-
-    /**
      * Converts the class instance to a class JSON.
      *
      * @return {Layout.ClassJSON}
@@ -237,12 +243,6 @@ class Layout extends GUIElement {
                 rows: rows
             }
         };
-    }
-
-    public fromJSON(
-        options: any
-    ): void {
-        console.log('init layout from local storage, options:', JSON.parse(options));
     }
 }
 

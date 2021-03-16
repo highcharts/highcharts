@@ -60,6 +60,28 @@ class Dashboard {
         return dashboard;
     }
 
+    /**
+     * Import layouts from the local storage
+     *
+     * @return {Dashboard|undefined}
+     */
+    public static importLocal(): Dashboard|undefined {
+        const dashboardJSON = localStorage.getItem(
+            // Dashboard.prefix + this.id,
+            Dashboard.prefix + '1' // temporary for demo test
+        );
+
+        let dashboard;
+
+        if (dashboardJSON) {
+            dashboard = Dashboard.fromJSON(
+                JSON.parse(dashboardJSON)
+            );
+        }
+
+        return dashboard;
+    }
+
     /* *
     *
     *  Constructors
@@ -239,22 +261,6 @@ class Dashboard {
             Dashboard.prefix + '1', // temporary for demo test
             JSON.stringify(this.toJSON())
         );
-    }
-
-    /**
-     * Import layouts from the local storage
-     */
-    public importLocal(): void {
-        const dashboardJSON = localStorage.getItem(
-            // Dashboard.prefix + this.id,
-            Dashboard.prefix + '1' // temporary for demo test
-        );
-
-        if (dashboardJSON) {
-            Dashboard.fromJSON(
-                JSON.parse(dashboardJSON)
-            );
-        }
     }
 }
 
