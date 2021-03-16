@@ -1,5 +1,5 @@
-import Dashboard from  'http://code.highcharts.local/es-modules/Dashboard/Dashboard.js';
-import CSVStore from 'http://code.highcharts.local/es-modules/Data/Stores/CSVStore.js'
+import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
+import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
 
 // A shared store
 const store = new CSVStore(undefined, {
@@ -71,7 +71,8 @@ const dashboard = new Dashboard('container', {
             }],
             chart: {
                 animation: false,
-                type: 'bar',
+                type: 'column',
+                zoomType: 'x'
             }
         },
         events: {},
@@ -87,7 +88,9 @@ const dashboard = new Dashboard('container', {
                 data: [1, 2, 3, 4]
             }],
             chart: {
-                animation: false
+                animation: false,
+                zoomType: 'x',
+                zoomBySingleTouch: true
             }
         },
         events: {},
@@ -96,8 +99,8 @@ const dashboard = new Dashboard('container', {
     }]
 });
 
-window.addEventListener('resize', (e) => {
+window.addEventListener('resize', e => {
     dashboard.mountedComponents.forEach(({ component }) => {
-        component.resize()
-    })
-})
+        component.resize();
+    });
+});

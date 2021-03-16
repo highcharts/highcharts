@@ -1,6 +1,6 @@
 describe('Components in layout', () => {
     it('is able to visit', () => {
-        cy.visit('/Dashboard/chart-interaction/');
+        cy.visit('/dashboard/chart-interaction/');
     });
 
     it('should resize properly ', () => {
@@ -15,11 +15,19 @@ describe('Components in layout', () => {
         cy.get('.highcharts-dashboard-component > .chart-container').each((element, i) => {
             assert.strictEqual(element.width(), element.parent().width());
         });
-
-        cy.viewport('ipad-2');
     });
 
-    it.skip('Should synchronize visible series', () => {
+});
+
+describe('Chart synchronized events', () => {
+
+    // reset before each of these
+    beforeEach(() => {
+        cy.reload()
+        cy.wait(250)
+    })
+
+    it('Should synchronize visible series between two charts sharing the same store', () => {
         // There should be no hidden legend items
         cy.get('.highcharts-legend-item-hidden')
             .should('not.exist');
@@ -39,16 +47,36 @@ describe('Components in layout', () => {
 
     });
 
-    it.skip('Should sync toolip', () => {
-        cy.reload();
-        cy.get('.chart-container').first()
+    it('Should sync tooltip between two charts sharing the same store', () => {
+        cy.get('.chart-container')
             .get('.highcharts-point').first()
-            .trigger('mouseover');
+            .as('firstPoint')
+
+        cy.get('@firstPoint').trigger('mouseover', { scrollBehavior: false });
 
         // Second chart should now have a tooltip
         cy.get('.chart-container').last().within((chart => {
             cy.get('.highcharts-tooltip-box')
-                .should('exist');
+                .should('exist')
+        }));
+
+        // Move mouse away from the chart area
+        cy.get('.chart-container').first().trigger('mouseleave', { scrollBehavior: false });
+
+        // Second chart should now not have a tooltip
+        cy.get('.chart-container').last().within((chart => {
+            cy.get('.highcharts-tooltip-box')
+                .should('not.be.visible') // the container is there, but not visible
         }));
     });
+
+    it.skip('Should sync selection', () => {
+        cy.visit('/dashboard/chart-interaction-selection/')
+        cy.wait(1000)
+
+        cy.get('.chart-container > .highcharts-container').first().as('firstchart')
+
+        cy.get('@firstchart').log()
+
+    })
 });
