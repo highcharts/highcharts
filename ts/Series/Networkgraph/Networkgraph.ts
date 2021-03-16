@@ -920,9 +920,9 @@ extend(NetworkgraphSeries.prototype, {
 
         if (!layout) {
             (layoutOptions as any).enableSimulation =
-                !defined((chartOptions as any).forExport) ?
+                !defined(chartOptions.forExport) ?
                     (layoutOptions as any).enableSimulation :
-                    !(chartOptions as any).forExport;
+                    !chartOptions.forExport;
 
             graphLayoutsStorage[(layoutOptions as any).type] = layout =
                 new H.layouts[(layoutOptions as any).type]();

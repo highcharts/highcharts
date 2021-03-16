@@ -393,7 +393,7 @@ function getDefaultAxisOptions(
  */
 function getForcedAxisOptions(
     type: string,
-    chartOptions: Highcharts.Options
+    chartOptions: Partial<Highcharts.Options>
 ): DeepPartial<Highcharts.AxisOptions> {
     if (type === 'xAxis') {
         const defaultOptions = getOptions(),

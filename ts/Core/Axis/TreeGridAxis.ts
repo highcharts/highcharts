@@ -701,7 +701,11 @@ namespace TreeGridAxis {
             // and chart height is set, set axis.isDirty
             // to ensure collapsing works (#12012)
             addEvent(axis, 'afterBreaks', function (): void {
-                if (axis.coll === 'yAxis' && !axis.staticScale && axis.chart.options.chart?.height) {
+                if (
+                    axis.coll === 'yAxis' &&
+                    !axis.staticScale &&
+                    axis.chart.options.chart.height
+                ) {
                     axis.isDirty = true;
                 }
             });

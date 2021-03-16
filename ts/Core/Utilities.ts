@@ -2565,7 +2565,7 @@ const getOptions = H.getOptions = function (): Highcharts.Options {
  *         Updated options.
  */
 const setOptions = H.setOptions = function (
-    options: Highcharts.Options
+    options: Partial<Highcharts.Options>
 ): Highcharts.Options {
 
     // Copy in the default options

@@ -172,7 +172,7 @@ namespace OrdinalAxis {
                 isOrdinal = axis.options.ordinal,
                 overscrollPointsRange = Number.MAX_VALUE,
                 ignoreHiddenSeries =
-                    (axis.chart.options.chart as any).ignoreHiddenSeries,
+                    axis.chart.options.chart.ignoreHiddenSeries,
                 i,
                 hasBoostedSeries;
 
@@ -1055,8 +1055,7 @@ namespace OrdinalAxis {
                 xAxis = chart.xAxis[0] as OrdinalAxis,
                 overscroll = xAxis.options.overscroll,
                 chartX = (e as any).originalEvent.chartX,
-                panning = chart.options.chart &&
-                        chart.options.chart.panning,
+                panning = chart.options.chart.panning,
                 runBase = false;
 
             if (

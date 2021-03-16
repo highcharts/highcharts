@@ -6592,7 +6592,7 @@ class Series {
             newType = (
                 options.type ||
                 oldOptions.type ||
-                (chart.options.chart as any).type
+                chart.options.chart.type
             ),
             keepPoints = !(
                 // Indicators, histograms etc recalculate the data. It should be
@@ -6957,7 +6957,7 @@ class Series {
                     (stateOptions as any)[state || 'normal'] &&
                     (stateOptions as any)[state || 'normal'].animation
                 ),
-                (series.chart.options.chart as any).animation
+                series.chart.options.chart.animation
             ),
             attribs,
             i = 0;
@@ -7103,8 +7103,7 @@ class Series {
             chart = series.chart,
             legendItem = series.legendItem,
             showOrHide: ('hide'|'show'),
-            ignoreHiddenSeries =
-                (chart.options.chart as any).ignoreHiddenSeries,
+            ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
             oldVisibility = series.visible;
 
         // if called without an argument, toggle visibility

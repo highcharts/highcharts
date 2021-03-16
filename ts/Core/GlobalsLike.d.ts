@@ -116,7 +116,7 @@ export interface GlobalsLike extends InternalNamespace {
     readonly supportsPassiveEvents: boolean;
     readonly svg: boolean;
     readonly symbolSizes: Record<string, SizeObject>;
-    theme?: Highcharts.Options;
+    theme?: Partial<Highcharts.Options>;
     readonly userAgent: string;
     readonly version: string;
     // eslint-disable-next-line node/no-unsupported-features/es-builtins

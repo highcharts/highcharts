@@ -411,7 +411,7 @@ class Pointer {
     public drag(e: PointerEvent): void {
 
         var chart = this.chart,
-            chartOptions = chart.options.chart as Highcharts.ChartOptions,
+            chartOptions = chart.options.chart,
             chartX = e.chartX,
             chartY = e.chartY,
             zoomHor = this.zoomHor,
@@ -1086,9 +1086,9 @@ class Pointer {
         this.chart = chart;
 
         // Do we need to handle click on a touch device?
-        this.runChartClick =
-            (options.chart as any).events &&
-            !!(options.chart as any).events.click;
+        this.runChartClick = Boolean(
+            options.chart.events && options.chart.events.click
+        );
 
         this.pinchDown = [];
         this.lastValidTouch = {};
@@ -2205,7 +2205,7 @@ class Pointer {
      */
     private touchSelect(e: PointerEvent): boolean {
         return Boolean(
-            (this.chart.options.chart as any).zoomBySingleTouch &&
+            this.chart.options.chart.zoomBySingleTouch &&
             e.touches &&
             e.touches.length === 1
         );
@@ -2225,7 +2225,7 @@ class Pointer {
      */
     public zoomOption(e: Event): void {
         var chart = this.chart,
-            options = chart.options.chart as Highcharts.ChartOptions,
+            options = chart.options.chart,
             zoomType = options.zoomType || '',
             inverted = chart.inverted,
             zoomX,
