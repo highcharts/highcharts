@@ -633,10 +633,9 @@ class ColumnSeries extends Series {
                     columnIndex;
 
                 if (otherSeries.type === series.type &&
-                    (otherSeries.visible ||
-                    !(
-                        series.chart.options.chart as any)
-                        .ignoreHiddenSeries
+                    (
+                        otherSeries.visible ||
+                        !series.chart.options.chart.ignoreHiddenSeries
                     ) &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos

@@ -593,8 +593,7 @@ class Connection {
             chart = this.chart,
             styledMode = chart.styledMode,
             pathfinder = chart.pathfinder,
-            animate =
-                !(chart.options.chart as any).forExport && animation !== false,
+            animate = !chart.options.chart.forExport && animation !== false,
             pathGraphic = connection.graphics && connection.graphics.path,
             anim: SVGAttributes;
 

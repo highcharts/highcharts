@@ -429,7 +429,7 @@ extend(H.Renderer.prototype, {
             // adjust angles for visible edges
             // based on alpha, selected through visual tests
             alphaCorrection = shapeArgs.alphaCorrection = 90 -
-                Math.abs(((chart.options.chart as any).options3d.alpha % 180) - 90),
+                Math.abs(((chart.options.chart.options3d as any).alpha % 180) - 90),
 
             // set zIndexes of parts based on cubiod logic, for consistency
             cuboidData = cuboidPath.call(renderer, merge(shapeArgs, {

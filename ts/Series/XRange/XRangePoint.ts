@@ -81,7 +81,7 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
         var colors = series.options.colors || series.chart.options.colors,
             colorCount = colors ?
                 colors.length :
-                (series.chart.options.chart as any).colorCount,
+                series.chart.options.chart.colorCount as any,
             colorIndex = (point.y as any) % colorCount,
             color = colors && colors[colorIndex];
 

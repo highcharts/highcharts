@@ -128,7 +128,7 @@ declare global {
             public draw: Function;
             public escapes: Record<string, string>;
             public forExport?: boolean;
-            public globalAnimation: Partial<AnimationOptions>;
+            public globalAnimation: boolean|Partial<AnimationOptions>;
             public gradients: Record<string, SVGElement>;
             public height: number;
             public imgCount: number;

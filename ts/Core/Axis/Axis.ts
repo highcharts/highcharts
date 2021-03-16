@@ -4468,8 +4468,9 @@ class Axis {
             // loop through this axis' series
             axis.series.forEach(function (series): void {
 
-                if (series.visible ||
-                    !(chart.options.chart as any).ignoreHiddenSeries
+                if (
+                    series.visible ||
+                    !chart.options.chart.ignoreHiddenSeries
                 ) {
 
                     var seriesOptions = series.options,
@@ -5117,7 +5118,7 @@ class Axis {
             this.series.forEach(function (series): void {
                 var seriesClosest = series.closestPointRange,
                     visible = series.visible ||
-                        !(series.chart.options.chart as any).ignoreHiddenSeries;
+                        !series.chart.options.chart.ignoreHiddenSeries;
 
                 if (
                     !series.noSharedTooltip &&
@@ -5914,7 +5915,7 @@ class Axis {
 
         if (
             // Only if alignTicks is true
-            (this.chart.options.chart as any).alignTicks !== false &&
+            this.chart.options.chart.alignTicks !== false &&
             options.alignTicks !== false &&
 
             // Disabled when startOnTick or endOnTick are false (#7604)
@@ -7862,7 +7863,7 @@ class Axis {
     *
     */
     public hasVerticalPanning(): boolean {
-        const panningOptions = this.chart.options.chart?.panning;
+        const panningOptions = this.chart.options.chart.panning;
         return Boolean(
             panningOptions &&
             panningOptions.enabled && // #14624

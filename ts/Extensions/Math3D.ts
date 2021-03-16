@@ -186,7 +186,7 @@ function perspective(
     insidePlotArea?: boolean,
     useInvertedPersp?: boolean
 ): Array<Position3DObject> {
-    var options3d = (chart.options.chart as any).options3d,
+    var options3d = chart.options.chart.options3d as any,
         /* The useInvertedPersp argument is used for
          * inverted charts with already inverted elements,
          * such as dataLabels or tooltip positions.
@@ -261,7 +261,7 @@ function pointCameraDistance(
     coordinates: Record<string, number>,
     chart: Chart
 ): number {
-    var options3d = (chart.options.chart as any).options3d,
+    var options3d = chart.options.chart.options3d as any,
         cameraPosition = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,

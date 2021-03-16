@@ -748,7 +748,7 @@ class Tooltip {
         if (!this.label) {
 
             if (this.outside) {
-                const chartStyle = this.chart.options.chart?.style;
+                const chartStyle = this.chart.options.chart.style;
 
                 /**
                  * Reference to the tooltip's container, when

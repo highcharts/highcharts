@@ -1092,7 +1092,7 @@ class MapSeries extends ScatterSeries {
 
         // Pick up transform definitions for chart
         this.chart.mapTransforms = mapTransforms =
-            chartOptions && chartOptions.mapTransforms ||
+            chartOptions.mapTransforms ||
             mapData && mapData['hc-transform'] ||
             mapTransforms;
 
