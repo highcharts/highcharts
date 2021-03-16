@@ -948,6 +948,8 @@ addEvent(Chart, 'getMargins', function (): void {
         this.plotLeft += offsetWidth;
         this.spacing[3] += offsetWidth;
     }
+}, {
+    order: 0
 });
 
 ['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
