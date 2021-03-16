@@ -50,7 +50,10 @@ function test_seriesArea() {
             },
             labels: {
                 formatter: function () {
-                    return this.value / 1000 + 'k';
+                    if (typeof this.value === 'number') {
+                        return this.value / 1000 + 'k';
+                    }
+                    return '';
                 }
             }
         },
@@ -59,7 +62,7 @@ function test_seriesArea() {
         },
         plotOptions: {
             area: {
-                threshold: null,
+                threshold: null as any,
                 pointStart: 1940,
                 marker: {
                     enabled: false,
@@ -224,8 +227,7 @@ function test_seriesColumn() {
         plotOptions: {
             column: {
                 pointPadding: 0.2,
-                borderWidth: 0,
-                dashStyle: 'Dash'
+                borderWidth: 0
             }
         },
         series: [{

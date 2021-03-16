@@ -100,18 +100,20 @@ declare global {
         }
         interface AxisLabelsFormatterCallbackFunction {
             (
-                this: AxisLabelsFormatterContextObject<number>,
-                that?: AxisLabelsFormatterContextObject<string>
+                this: AxisLabelsFormatterContextObject,
+                ctx?: AxisLabelsFormatterContextObject
             ): string;
         }
-        interface AxisLabelsFormatterContextObject<T = number> {
+        interface AxisLabelsFormatterContextObject {
             axis: Axis;
             chart: Chart;
             dateTimeLabelFormat: string;
             isFirst: boolean;
             isLast: boolean;
             pos: number;
-            value: T;
+            text?: string;
+            tick: Tick;
+            value: number|string;
         }
         interface AxisPlotLinePathOptionsObject {
             acrossPanes?: boolean;
@@ -384,7 +386,6 @@ declare global {
             public keepProps?: Array<string>;
             public labelAlign?: AlignValue;
             public labelEdge: Array<null>;
-            public labelFormatter: AxisLabelsFormatterCallbackFunction;
             public labelGroup?: SVGElement;
             public labelOffset?: number;
             public labelRotation?: number;
@@ -458,7 +459,7 @@ declare global {
             public adjustTickAmount(): void;
             public alignToOthers(): (boolean|undefined);
             public autoLabelAlign(rotation: number): AlignValue;
-            public defaultLabelFormatter(): void;
+            public defaultLabelFormatter: AxisLabelsFormatterCallbackFunction;
             public destroy(keepEvents?: boolean): void;
             public drawCrosshair(e?: PointerEvent, point?: Point): void;
             public generateTick(pos: number, i?: number): void;
@@ -600,34 +601,51 @@ declare global {
 /**
  * @callback Highcharts.AxisLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.AxisLabelsFormatterContextObject<number>} this
+ * @param {Highcharts.AxisLabelsFormatterContextObject} this
  *
- * @param {Highcharts.AxisLabelsFormatterContextObject<string>} that
+ * @param {Highcharts.AxisLabelsFormatterContextObject} ctx
  *
  * @return {string}
  */
 
 /**
- * @interface Highcharts.AxisLabelsFormatterContextObject<T>
+ * @interface Highcharts.AxisLabelsFormatterContextObject
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#axis
+ * The axis item of the label
+ * @name Highcharts.AxisLabelsFormatterContextObject#axis
  * @type {Highcharts.Axis}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#chart
+ * The chart instance.
+ * @name Highcharts.AxisLabelsFormatterContextObject#chart
  * @type {Highcharts.Chart}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#isFirst
+ * Whether the label belongs to the first tick on the axis.
+ * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
  * @type {boolean}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#isLast
+ * Whether the label belongs to the last tick on the axis.
+ * @name Highcharts.AxisLabelsFormatterContextObject#isLast
  * @type {boolean}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#pos
+ * The position on the axis in terms of axis values. For category axes, a
+ * zero-based index. For datetime axes, the JavaScript time in milliseconds
+ * since 1970.
+ * @name Highcharts.AxisLabelsFormatterContextObject#pos
  * @type {number}
  *//**
+ * The preformatted text as the result of the default formatting. For example
+ * dates will be formatted as strings, and numbers with language-specific comma
+ * separators, thousands separators and numeric symbols like `k` or `M`.
+ * @name Highcharts.AxisLabelsFormatterContextObject#text
+ * @type {string}
+ *//**
+ * The Tick instance.
+ * @name Highcharts.AxisLabelsFormatterContextObject#tick
+ * @type {Highcharts.Tick}
+ *//**
  * This can be either a numeric value or a category string.
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#value
- * @type {T}
+ * @name Highcharts.AxisLabelsFormatterContextObject#value
+ * @type {number|string}
  */
 
 /**
@@ -1529,6 +1547,19 @@ class Axis {
              */
 
             /**
+             * Whether to allow the axis labels to overlap.
+             * When false, overlapping labels are hidden.
+             *
+             * @sample {highcharts} highcharts/xaxis/labels-allowoverlap-true/
+             *         X axis labels overlap enabled
+             *
+             * @type {boolean}
+             * @default false
+             * @apioption xAxis.labels.allowOverlap
+             *
+             */
+
+            /**
              * For horizontal axes, the allowed degrees of label rotation
              * to prevent overlapping labels. If there is enough space,
              * labels are not rotated. As the chart gets narrower, it
@@ -1590,15 +1621,27 @@ class Axis {
             enabled: true,
 
             /**
-             * A format string for the axis label. See
-             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-             * for example usage.
+             * A format string for the axis label. The context is available as
+             * format string variables. For example, you can use `{text}` to
+             * insert the default formatted text. The recommended way of adding
+             * units for the label is using `text`, for example `{text} km`.
              *
-             * Note: The default value is not specified due to the dynamic
+             * To add custom numeric or datetime formatting, use `{value}` with
+             * formatting, for example `{value:.1f}` or `{value:%Y-%m-%d}`.
+             *
+             * See
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for more examples of formatting.
+             *
+             * The default value is not specified due to the dynamic
              * nature of the default implementation.
              *
              * @sample {highcharts|highstock} highcharts/yaxis/labels-format/
              *         Add units to Y axis label
+             * @sample {highcharts} highcharts/xaxis/labels-format-linked/
+             *         Linked category names
+             * @sample {highcharts} highcharts/xaxis/labels-format-custom/
+             *         Custom number format
              *
              * @type      {string}
              * @since     3.0
@@ -1608,16 +1651,12 @@ class Axis {
             /**
              * Callback JavaScript function to format the label. The value
              * is given by `this.value`. Additional properties for `this` are
-             * `axis`, `chart`, `isFirst` and `isLast`. The value of the default
-             * label formatter can be retrieved by calling
-             * `this.axis.defaultLabelFormatter.call(this)` within the function.
+             * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
+             * value of the default formatter.
              *
-             * Defaults to:
-             * ```js
-             * function() {
-             *     return this.value;
-             * }
-             * ```
+             * Defaults to a built in function returning a formatted string
+             * depending on whether the axis is `category`, `datetime`,
+             * `numeric` or other.
              *
              * @sample {highcharts} highcharts/xaxis/labels-formatter-linked/
              *         Linked category names
@@ -4092,13 +4131,6 @@ class Axis {
             labelsOptions = options.labels,
             type = options.type;
 
-        axis.labelFormatter = (
-            (labelsOptions as any).formatter ||
-            // can be overwritten by dynamic format
-            axis.defaultLabelFormatter
-        );
-
-
         /**
          * User's options for this axis without defaults.
          *
@@ -4305,13 +4337,15 @@ class Axis {
      *
      * @function Highcharts.Axis#defaultLabelFormatter
      *
-     * @param {Highcharts.AxisLabelsFormatterContextObject<number>|Highcharts.AxisLabelsFormatterContextObject<string>} this
+     * @param {Highcharts.AxisLabelsFormatterContextObject} this
      * Formatter context of axis label.
      *
      * @return {string}
      * The formatted label content.
      */
-    public defaultLabelFormatter(this: Highcharts.AxisLabelsFormatterContextObject<number>): string {
+    public defaultLabelFormatter(
+        this: Highcharts.AxisLabelsFormatterContextObject
+    ): string {
         var axis = this.axis,
             value = isNumber(this.value) ? this.value : NaN,
             time = axis.chart.time,
@@ -4323,7 +4357,6 @@ class Axis {
             i = numericSymbols && numericSymbols.length,
             multi,
             ret: (string|undefined),
-            formatOption = axis.options.labels.format,
 
             // make sure the same symbol is added for all labels on a linear
             // axis
@@ -4333,10 +4366,7 @@ class Axis {
         const chart = this.chart;
         const { numberFormatter } = chart;
 
-        if (formatOption) {
-            ret = format(formatOption, this, chart);
-
-        } else if (categories) {
+        if (categories) {
             ret = `${this.value}`;
 
         } else if (dateTimeLabelFormat) { // datetime axis
