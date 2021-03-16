@@ -473,9 +473,8 @@ AccessibilityComponent.prototype = {
                 e.stopPropagation();
 
                 // #9682, #15318: Touch scrolling didnt work when touching a
-                // component, the touchend after dragging will have
-                // cancelable=false
-                if (evtType !== 'touchstart' && evtType !== 'touchmove' && e.cancelable !== false) {
+                // component
+                if (evtType !== 'touchstart' && evtType !== 'touchmove' && evtType !== 'touchend') {
                     e.preventDefault();
                 }
             }, { passive: false });
