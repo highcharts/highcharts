@@ -63,6 +63,10 @@ body {
     border-radius: .25rem;
 }
 
+.highcharts-dashboard-component img {
+    width: 100%;
+}
+
 .highcharts-dashboard-column > .highcharts-dashboard-component .title-wrapper {
     margin: 0px;
     padding-bottom: 15px;
