@@ -436,7 +436,17 @@
             date: Date.UTC(2012, 0, 1),
             deep: {
                 deeper: 123
-            }
+            },
+            dom: {
+                string: 'Hello',
+                container: document.getElementById('container'),
+                doc: document,
+                win: window
+            },
+            fn: function () {
+                return 'Hello';
+            },
+            proto: new Date()
         };
 
         assertEquals(
@@ -537,6 +547,48 @@
             Highcharts.format('{point.y}', {}),
             '',
             'Do not choke on undefined objects (node-export-server#31)'
+        );
+
+        assert.strictEqual(
+            format('{point.dom.string}', { point }),
+            'Hello',
+            'Primitive type verified'
+        );
+
+        assert.strictEqual(
+            format('{point.dom.container}', { point }),
+            '',
+            'DOM nodes should not be accessible through format strings'
+        );
+
+        assert.strictEqual(
+            format('{point.dom.container.ownerDocument.referrer}', { point }),
+            '',
+            'DOM properties should not be accessible through format strings'
+        );
+
+        assert.strictEqual(
+            format('{point.dom.doc}', { point }),
+            '',
+            'The document should not be accessible through format strings'
+        );
+
+        assert.strictEqual(
+            format('{point.dom.win}', { point }),
+            '',
+            'The window/global should not be accessible through format strings'
+        );
+
+        assert.strictEqual(
+            format('{point.fn}', { point }),
+            '',
+            'Functions should not be accessible through format strings'
+        );
+
+        assert.strictEqual(
+            format('{point.proto.__proto__}', { point }),
+            '',
+            'Prototypes should not be accessible through format strings'
         );
 
         // Reset

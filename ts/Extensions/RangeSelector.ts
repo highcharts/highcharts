@@ -1876,6 +1876,7 @@ class RangeSelector {
         // the buttons
         const width = buttonTheme.width || 28;
         delete buttonTheme.width;
+        delete buttonTheme.states;
 
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
 

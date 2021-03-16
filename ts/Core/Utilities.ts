@@ -1798,32 +1798,39 @@ Math.easeInOutSine = function (pos: number): number {
  * @return {unknown}
  * The unknown property value.
  */
-function getNestedProperty(path: string, obj: unknown): unknown {
+function getNestedProperty(path: string, parent: unknown): unknown {
 
-    if (!path) {
-        return obj;
+    const pathElements = path.split('.');
+
+    while (pathElements.length && defined(parent)) {
+        const pathElement = pathElements.shift();
+
+        // Filter on the key
+        if (
+            typeof pathElement === 'undefined' ||
+            pathElement === '__proto__'
+        ) {
+            return; // undefined
+        }
+
+        const child = (parent as Record<string, unknown>)[
+            pathElement
+        ] as Record<string, unknown>;
+
+        // Filter on the child
+        if (
+            !defined(child) ||
+            typeof child === 'function' ||
+            typeof child.nodeType === 'number' ||
+            child as unknown === win
+        ) {
+            return; // undefined
+        }
+
+        // Else, proceed
+        parent = child;
     }
-
-    const pathElements = path.split('.').reverse();
-
-    let subProperty = obj as Record<string, unknown>;
-
-    if (pathElements.length === 1) {
-        return subProperty[path];
-    }
-
-    let pathElement = pathElements.pop();
-
-    while (
-        typeof pathElement !== 'undefined' &&
-        typeof subProperty !== 'undefined' &&
-        subProperty !== null
-    ) {
-        subProperty = subProperty[pathElement] as Record<string, unknown>;
-        pathElement = pathElements.pop();
-    }
-
-    return subProperty;
+    return parent;
 }
 
 /**
