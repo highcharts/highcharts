@@ -61,6 +61,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-compile',
     'scripts-css',
     'scripts-js',
+    'scripts-messages',
     'scripts-ts',
     'scripts-vendor',
     'scripts-watch',
