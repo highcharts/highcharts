@@ -1,0 +1,70 @@
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+<script src="https://code.highcharts.com/modules/item-series.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+
+<div id="container3" class="Ccontainer"></div>
+
+<div class="container border-top pt-3" style="height:auto">
+	<div class="row pb-1 ">
+		<div class="col-12 series-types text-center">
+			<button id="item" type="button" class="btn btn-primary active">item</button>
+			<button type="button" class="btn btn-primary">pie</button>
+			<button type="button" class="btn btn-primary">column</button>
+			<button type="button" class="btn btn-primary">line</button>
+		</div>
+	</div>
+</div>
+<div class="container circular pt-3 controls">
+	<div class="row">
+		<div class="col-12 flex-no-wrap text-center">
+			<div class="form-check form-check-inline">
+			  <input class="form-check-input" type="radio" checked id="controlType1" name="controlType" value="0">
+			  <label class="form-check-label" for="controlType1">start angle</label>
+			</div>
+			<div class="form-check form-check-inline">
+			  <input class="form-check-input" type="radio" id="controlType2" name="controlType" value="1">
+			  <label class="form-check-label" for="controlType2">end angle</label>
+			</div>
+			<div class="form-check form-check-inline">
+			  <input class="form-check-input" type="radio" id="controlType3" name="controlType" value="2">
+			  <label class="form-check-label" for="controlType3">inner size</label>
+			</div>
+
+			<div class="form-check form-check-inline">
+			  <input class="form-check-input" type="radio" id="controlType4" name="controlType" value="3">
+			  <label class="form-check-label" for="controlType4">size</label>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-12 text-center">
+			<input type="range" id="control" class="form-control" value="-100" min="-100" max="100" step="1">
+		</div>
+	</div>
+	<div class="row">
+		<div class="min col-3">
+			-100
+		</div>
+		<div class="values col-6 text-center">
+			<div class="d-flex mb-2 align-items-start">
+				<div id="val0" class="d-none val active p-1">-100</div>
+				<div id="val1" class="d-none val p-1 font-weight-lighter">100</div>
+				<div id="val2" class="d-none val p-1 font-weight-lighter">30%</div>
+				<div id="val3" class="d-none val p-1 font-weight-lighter">3</div>
+			</div>
+		</div>
+
+		<div class="max col-3 text-right">
+			100
+		</div>
+	</div>
+</div>
+	

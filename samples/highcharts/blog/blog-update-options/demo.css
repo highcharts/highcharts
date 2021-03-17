@@ -1,0 +1,57 @@
+.container {
+  margin: 0 auto;
+}
+.highcharts-spline-series{
+  transition:all 100ms;
+}
+.circular, .linear, .axis{
+  border: 1px solid #007bff;
+  border-radius:4px;
+}
+.circular,
+.axis{
+  width:340px;
+}
+h5{
+  font-size: 16px;
+  font-weight: bold;
+  display: block;
+  color:#333;
+  margin-bottom: 5px;
+}
+.cContainer{
+  height:300px;
+}
+.form-group{
+  margin-bottom:0px;
+}
+label{
+  text-align: left;
+  line-height: 14px;
+  width:40px;
+  font-size: 14px;
+  display: block;
+}
+input[type="range"]{
+  margin-right:2px;
+  padding:0px;
+}
+.btn-primary:not(:disabled):not(.disabled).active, 
+.btn-primary:not(:disabled):not(.disabled):active,
+.show>.btn-primary.dropdown-toggle{
+  color:#007bff;
+  border-color:#007bff;
+  background-color: #fff;
+}
+.val{
+  font-size: 12px;
+  width:50px;
+  border:1px solid #ebebeb;
+  border-radius:4px;
+}
+.val.active{
+  border-color:#007bff;
+}
+.max,.min{
+  font-size: 12px;
+}
