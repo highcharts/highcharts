@@ -533,8 +533,8 @@ namespace error {
 function merge<T1, T2 = object>(
     extend: boolean,
     a?: T1,
-    ...n: Array<T2|undefined>
-): (T1&T2);
+    ...n: Array<DeepPartial<T1>|undefined>
+): (T1);
 function merge<
     T1 extends object = object,
     T2 = unknown,

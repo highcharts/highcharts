@@ -1631,8 +1631,8 @@ H.extendAnnotation = function <T extends typeof Annotation> (
     merge(
         true,
         Constructor.prototype,
-        BaseConstructor.prototype,
-        prototype
+        BaseConstructor.prototype as any,
+        prototype as any
     );
 
     Constructor.prototype.defaultOptions = merge(

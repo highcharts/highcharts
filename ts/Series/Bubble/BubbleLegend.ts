@@ -34,6 +34,7 @@ const {
     addEvent,
     arrayMax,
     arrayMin,
+    extend,
     isNumber,
     merge,
     objectEach,
@@ -670,13 +671,13 @@ class BubbleLegend {
             }
         });
 
-        return merge(false, additionalLabelsStyle, {
-            'font-size': (options.labels as any).style.fontSize,
+        return extend(additionalLabelsStyle, {
+            fontSize: (options.labels as any).style.fontSize,
             fill: pick(
                 (options.labels as any).style.color,
                 palette.neutralColor100
             ),
-            'z-index': options.zIndex,
+            zIndex: options.zIndex,
             align: rtl || labelsOnLeft ? 'right' : 'left'
         });
     }

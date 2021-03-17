@@ -1034,7 +1034,7 @@ class GridAxis {
                     'year',
                     null
                 ]]
-            }, userOptions);
+            } as Highcharts.AxisOptions, userOptions);
 
             // X-axis specific options
             if (this.coll === 'xAxis') {
