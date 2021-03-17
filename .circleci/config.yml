@@ -566,7 +566,6 @@ workflows:
           filters:
             branches:
               only: [master]
-          context: highcharts-prod
 
   reset_visual_test_references:
     when: << pipeline.parameters.run_reset_tests >>
