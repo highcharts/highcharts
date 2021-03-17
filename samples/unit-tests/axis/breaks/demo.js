@@ -794,3 +794,30 @@ QUnit.test('#14833: Column series axis break regression', assert => {
         'Points in break should not render'
     );
 });
+
+QUnit.test('connectNulls and stacking', assert => {
+    const chart = Highcharts.chart('container', {
+        yAxis: [{}, {}],
+        plotOptions: {
+            series: {
+                connectNulls: false
+            }
+        },
+        series: [{
+            type: 'line',
+            stacking: false,
+            data: [4, 4, null, null, 4, 4, 4]
+        }, {
+            type: 'area',
+            stacking: 'normal',
+            yAxis: 1,
+            data: [1, 1, null, null, 1, 1, 1]
+        }]
+    });
+
+    assert.notStrictEqual(
+        chart.series[1].graph.element.getAttribute('d').indexOf('M', 1),
+        -1,
+        '#14882: Area graph should have a gap'
+    );
+});
