@@ -44,8 +44,8 @@ if [[ -z $TOKEN ]]; then
 fi
 
 # latest commit where samples were changed, limited to 24 hours
-SAMPLES_COMMIT=$(git log -1 --since="24 hours ago" --format=format:%H --full-diff --name-status samples/)
-DEMOS_COMMIT=$(git log -1 --since="24 hours ago" --format=format:%H --full-diff --name-status samples/\*/demo/\*)
+SAMPLES_COMMIT=$(git log --since=\""24 hours ago\"" --format=format:%H --full-diff --name-status samples/)
+DEMOS_COMMIT=$(git log --since=\""24 hours ago\"" --format=format:%H --full-diff --name-status samples/\*/demo/\*)
 
 if [[ ! -z "$SAMPLES_COMMIT" ]] || [ "$FORCE_DEPLOY" = true ]; then
     echo "Force deployed: ${FORCE_DEPLOY}"
@@ -63,11 +63,11 @@ else
 fi
 
 # Handle demos
-if [[! -z "$SAMPLES_COMMIT"]] || [ "$FORCE_DEPLOY" = true  ]; then
+if [[ ! -z "$DEMOS_COMMIT" ]] || [ "$FORCE_DEPLOY" = true  ]; then
     echo "Force deployed: ${FORCE_DEPLOY}"
     echo "Found changes in demos"
     # Check if there are any [A]dded demo files, build thumbnails if that is the case
-	  NEW_FILES=$(echo $DEMOS_COMMIT | egrep -c "^A\s+samples\/.+\/demo\/*\.details")
+	  NEW_FILES=$(echo $DEMOS_COMMIT | egrep -c "A\s+samples\/.+\/demo\/*\.details")
     if [[ $NEW_FILES -ge 1 ]]; then
       THUMBNAILS=true
     fi
@@ -84,5 +84,3 @@ if [[! -z "$SAMPLES_COMMIT"]] || [ "$FORCE_DEPLOY" = true  ]; then
 else
      echo "No change in samples/*/demo/ folder found."
 fi
-
-exit $status
