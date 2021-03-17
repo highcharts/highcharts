@@ -26,7 +26,9 @@ const {
 declare module './Chart/ChartLike' {
     interface ChartLike {
         currentResponsive?: Highcharts.ResponsiveCurrentObject;
-        currentOptions(options: Highcharts.Options): Highcharts.Options;
+        currentOptions(
+            options: Partial<Highcharts.Options>
+        ): Partial<Highcharts.Options>;
         matchResponsiveRule(
             rule: Highcharts.ResponsiveRulesOptions,
             matches: Array<string>
@@ -64,9 +66,9 @@ declare global {
             condition?: ResponsiveRulesConditionOptions;
         }
         interface ResponsiveCurrentObject {
-            mergedOptions: Options;
+            mergedOptions: Partial<Options>;
             ruleIds: string;
-            undoOptions: Options;
+            undoOptions: Partial<Options>;
         }
     }
 }
@@ -245,7 +247,7 @@ Chart.prototype.setResponsive = function (
                 return rule._id === ruleId;
             }
         ) as any).chartOptions;
-    }) as any) as Highcharts.Options;
+    }) as any) as Partial<Highcharts.Options>;
 
     mergedOptions.isResponsiveOptions = true;
 
@@ -325,7 +327,7 @@ Chart.prototype.matchResponsiveRule = function (
  */
 Chart.prototype.currentOptions = function (
     options: Highcharts.Options
-): Highcharts.Options {
+): Partial<Highcharts.Options> {
 
     var chart = this,
         ret = {};

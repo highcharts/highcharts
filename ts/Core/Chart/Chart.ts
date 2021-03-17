@@ -212,7 +212,7 @@ class Chart {
     );
     public constructor(
         a: (string|globalThis.HTMLElement|Partial<Highcharts.Options>),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        b?: (Chart.CallbackFunction|Partial<Highcharts.Options>),
         c?: Chart.CallbackFunction
     ) {
         this.getArgs(a, b, c);
@@ -310,7 +310,7 @@ class Chart {
      */
     public getArgs(
         a: (string|globalThis.HTMLElement|Partial<Highcharts.Options>),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        b?: (Chart.CallbackFunction|Partial<Highcharts.Options>),
         c?: Chart.CallbackFunction
     ): void {
         // Remove the optional first argument, renderTo, and
@@ -359,7 +359,7 @@ class Chart {
             userOptions.series = null as any;
             options = merge(defaultOptions, userOptions); // do the merge
 
-            const optionsChart: Highcharts.ChartOptions = options.chart || {};
+            const optionsChart = options.chart;
 
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
@@ -534,7 +534,7 @@ class Chart {
      */
     public initSeries(options: SeriesOptions): Series {
         var chart = this,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             type = (
                 options.type ||
                 optionsChart.type ||
@@ -1239,7 +1239,7 @@ class Chart {
      */
     public getChartSize(): void {
         var chart = this,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
             renderTo = chart.renderTo;
@@ -1380,7 +1380,7 @@ class Chart {
         var chart = this,
             container,
             options = chart.options,
-            optionsChart = options.chart as Highcharts.ChartOptions,
+            optionsChart = options.chart,
             chartWidth,
             chartHeight,
             renderTo = chart.renderTo,
@@ -1621,7 +1621,7 @@ class Chart {
      */
     public reflow(e?: Event): void {
         var chart = this,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             renderTo = chart.renderTo,
             hasUserSize = (
                 defined(optionsChart.width) &&
@@ -1755,10 +1755,10 @@ class Chart {
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
         if (typeof width !== 'undefined') {
-            (chart.options.chart as any).width = width;
+            chart.options.chart.width = width;
         }
         if (typeof height !== 'undefined') {
-            (chart.options.chart as any).height = height;
+            chart.options.chart.height = height;
         }
         chart.getChartSize();
 
@@ -1821,7 +1821,7 @@ class Chart {
             renderer = chart.renderer,
             chartWidth = chart.chartWidth,
             chartHeight = chart.chartHeight,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             spacing = chart.spacing,
             clipOffset = chart.clipOffset,
             clipX,
@@ -1940,7 +1940,7 @@ class Chart {
         fireEvent(this, 'resetMargins');
 
         var chart = this,
-            chartOptions = chart.options.chart as Highcharts.ChartOptions;
+            chartOptions = chart.options.chart;
 
         // Create margin and spacing array
         ['margin', 'spacing'].forEach(function splashArrays(
@@ -1981,7 +1981,7 @@ class Chart {
      */
     public drawChartBox(): void {
         var chart = this,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             renderer = chart.renderer,
             chartWidth = chart.chartWidth,
             chartHeight = chart.chartHeight,
@@ -2135,7 +2135,7 @@ class Chart {
      */
     public propFromSeries(): void {
         var chart = this,
-            optionsChart: Highcharts.ChartOptions = chart.options.chart as any,
+            optionsChart = chart.options.chart,
             klass,
             seriesOptions: Array<SeriesOptions> = chart.options.series as any,
             i,
@@ -2652,7 +2652,7 @@ class Chart {
 
         // Set up auto resize, check for not destroyed (#6068)
         if (defined(this.index)) {
-            this.setReflow((this.options.chart as any).reflow);
+            this.setReflow(this.options.chart.reflow);
         }
 
         // Don't run again
@@ -3037,7 +3037,7 @@ class Chart {
      * @fires Highcharts.Chart#event:afterUpdate
      */
     public update(
-        options: Highcharts.Options,
+        options: Partial<Highcharts.Options>,
         redraw?: boolean,
         oneToOne?: boolean,
         animation?: (boolean|Partial<AnimationOptions>)
@@ -3300,8 +3300,8 @@ class Chart {
         newHeight = optionsChart && optionsChart.height;
         if (isString(newHeight)) {
             newHeight = relativeLength(
-                newHeight as string,
-                (newWidth as string) || (chart.chartWidth as any)
+                newHeight,
+                newWidth || chart.chartWidth
             );
         }
 
@@ -3376,7 +3376,7 @@ class Chart {
     public showResetZoom(): void {
         var chart = this,
             lang = defaultOptions.lang,
-            btnOptions = (chart.options.chart as any).resetZoomButton,
+            btnOptions = chart.options.chart.resetZoomButton as any,
             theme = btnOptions.theme,
             states = theme.states,
             alignTo = (
@@ -3490,7 +3490,7 @@ class Chart {
         if (displayButton && !resetZoomButton) {
             chart.showResetZoom();
         } else if (!displayButton && isObject(resetZoomButton)) {
-            chart.resetZoomButton = (resetZoomButton as any).destroy();
+            chart.resetZoomButton = resetZoomButton.destroy();
         }
 
 
@@ -3498,7 +3498,7 @@ class Chart {
         if (hasZoomed) {
             chart.redraw(
                 pick(
-                    (chart.options.chart as any).animation,
+                    chart.options.chart.animation,
                     event && (event as any).animation,
                     chart.pointCount < 100
                 )

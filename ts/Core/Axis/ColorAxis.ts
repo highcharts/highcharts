@@ -707,7 +707,7 @@ class ColorAxis extends Axis implements AxisLike {
         var chart = axis.chart,
             dataClasses,
             colorCounter = 0,
-            colorCount = (chart.options.chart as any).colorCount,
+            colorCount = chart.options.chart.colorCount,
             options = axis.options,
             len = (userOptions.dataClasses as any).length;
 

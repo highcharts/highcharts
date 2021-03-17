@@ -1022,8 +1022,7 @@ class Point {
     public resolveColor(): void {
         var series = this.series,
             colors,
-            optionsChart =
-                series.chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = series.chart.options.chart,
             colorCount = optionsChart.colorCount,
             styledMode = series.chart.styledMode,
             colorIndex: number,
@@ -1577,7 +1576,7 @@ class Point {
             if (!chart.styledMode) {
                 pointAttribs = series.pointAttribs(point, state);
                 pointAttribsAnimation = pick(
-                    (chart.options.chart as any).animation,
+                    chart.options.chart.animation,
                     stateOptions.animation
                 );
 
@@ -1618,7 +1617,7 @@ class Point {
                     markerAttribs,
                     pick(
                         // Turn off globally:
-                        (chart.options.chart as any).animation,
+                        chart.options.chart.animation,
                         (markerStateOptions as any).animation,
                         (markerOptions as any).animation
                     )

@@ -178,10 +178,7 @@ class ZAxis extends Axis implements AxisLike {
 
             if (
                 series.visible ||
-                !(
-                    chart.options.chart &&
-                    chart.options.chart.ignoreHiddenSeries
-                )
+                !chart.options.chart.ignoreHiddenSeries
             ) {
 
                 var seriesOptions = series.options,
@@ -220,7 +217,6 @@ class ZAxis extends Axis implements AxisLike {
         super.setAxisSize();
 
         axis.width = axis.len = (
-            chart.options.chart &&
             chart.options.chart.options3d &&
             chart.options.chart.options3d.depth
         ) || 0;

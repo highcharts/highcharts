@@ -141,7 +141,7 @@ declare global {
             style?: CSSObject;
             styledMode?: boolean;
             type?: string;
-            width?: (null|number|string);
+            width?: (null|number);
             zoomBySingleTouch?: boolean;
             zoomType?: ('x'|'xy'|'y');
         }
@@ -300,7 +300,7 @@ declare global {
             ): string;
         }
         interface Options {
-            chart?: ChartOptions;
+            chart: ChartOptions;
             credits?: CreditsOptions;
             colors?: Array<ColorString>;
             caption?: CaptionOptions;

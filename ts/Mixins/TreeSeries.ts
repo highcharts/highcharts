@@ -186,8 +186,7 @@ const getColor = function getColor(
         siblings = options.siblings,
         points = series.points,
         getColorByPoint,
-        chartOptionsChart: Highcharts.ChartOptions =
-            series.chart.options.chart as any,
+        chartOptionsChart = series.chart.options.chart,
         point,
         level: AnyRecord,
         colorByPoint,
