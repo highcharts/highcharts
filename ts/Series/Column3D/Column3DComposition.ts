@@ -408,7 +408,7 @@ addEvent(ColumnSeries, 'afterInit', function (): void {
             seriesOptions: ColumnSeriesOptions = this.options,
             grouping = seriesOptions.grouping,
             stacking = seriesOptions.stacking,
-            reversedStacks = pick(this.yAxis.options.reversedStacks, true),
+            reversedStacks = this.yAxis.options.reversedStacks,
             z = 0;
 
         // @todo grouping === true ?

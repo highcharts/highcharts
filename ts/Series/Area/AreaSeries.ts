@@ -478,7 +478,7 @@ class AreaSeries extends LineSeries {
             pointMap: Record<string, AreaPoint> = {},
             yAxisSeries = yAxis.series,
             seriesLength = yAxisSeries.length,
-            upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1,
+            upOrDown = yAxis.options.reversedStacks ? 1 : -1,
             seriesIndex = upOrDown === 1 ? 0 : yAxisSeries.length - 1;
 
 

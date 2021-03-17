@@ -7,6 +7,7 @@ BUCKET=""
 TOKEN=""
 FORCE_DEPLOY=false
 THUMBNAILS=false
+DEPLOYARGS=""
 
 for i in "$@"
 do
@@ -22,6 +23,9 @@ case $i in
     ;;
       --thumbnails)
     THUMBNAILS=true
+    ;;
+      --deployargs=*)
+    DEPLOYARGS="${i#*=}"
     ;;
     *)
      # unknown option
@@ -40,13 +44,13 @@ if [[ -z $TOKEN ]]; then
 fi
 
 # latest commit where samples were changed, limited to 24 hours
-SAMPLES_COMMIT=$(git log -1 --since=\"24 hours ago\" --format=format:%H --full-diff --name-status samples/)
-DEMOS_COMMIT=$(git log -1 --since=\"24 hours ago\" --format=format:%H --full-diff --name-status samples/\*/demo/\*)q
+SAMPLES_COMMIT=$(git log --since=\""24 hours ago\"" --format=format:%H --full-diff --name-status samples/)
+DEMOS_COMMIT=$(git log --since=\""24 hours ago\"" --format=format:%H --full-diff --name-status samples/\*/demo/\*)
 
-if [ [ $(echo $SAMPLES_COMMIT | wc -l) -ge 2 ]] || [ "$FORCE_DEPLOY" = true  ]; then
+if [[ ! -z "$SAMPLES_COMMIT" ]] || [ "$FORCE_DEPLOY" = true ]; then
     echo "Force deployed: ${FORCE_DEPLOY}"
     echo "Files in samples/ has changed or forcing deploy. Triggering deploy of samples via highcharts-demo-manager to bucket ${BUCKET}"
-    payload="{ \"branch\":\"master\", \"parameters\": { \"deploy_samples\": true, \"target_bucket\": \"${BUCKET}\" }}"
+    payload="{ \"branch\":\"master\", \"parameters\": { \"deploy_samples\": true, \"target_bucket\": \"${BUCKET}\", \"deploy_args\": \"${DEPLOYARGS}\" }}"
     echo "$payload"
 
     # Circle API v2
@@ -54,25 +58,22 @@ if [ [ $(echo $SAMPLES_COMMIT | wc -l) -ge 2 ]] || [ "$FORCE_DEPLOY" = true  ]; 
     rep=$(curl -f -X POST -H "Content-Type: application/json" -d "$payload" "$httpUrl")
     status="$?"
     echo "$rep"
-    exit "$status"
-
 else
      echo "No change in samples/ folder found."
-     exit 0;
 fi
 
 # Handle demos
-if [[ $(echo $DEMOS_COMMIT | wc -l) -ge 2 ]] || [ "$FORCE_DEPLOY" = true  ]; then
+if [[ ! -z "$DEMOS_COMMIT" ]] || [ "$FORCE_DEPLOY" = true  ]; then
     echo "Force deployed: ${FORCE_DEPLOY}"
     echo "Found changes in demos"
     # Check if there are any [A]dded demo files, build thumbnails if that is the case
-	  NEW_FILES=$(echo $DEMOS_COMMIT | egrep -c "^A\s+samples\/.+\/demo\/*\.details")
+	  NEW_FILES=$(echo $DEMOS_COMMIT | egrep -c "A\s+samples\/.+\/demo\/*\.details")
     if [[ $NEW_FILES -ge 1 ]]; then
       THUMBNAILS=true
     fi
 
     echo "Files in samples/ has changed or forcing deploy. Triggering deploy of demos via highcharts-demo-manager to bucket ${BUCKET}"
-    payload="{ \"branch\":\"master\", \"parameters\": { \"deploy_demos\": true, \"deploy_thumbnails\": ${THUMBNAILS}, \"target_bucket\": \"${BUCKET}\" }}"
+    payload="{ \"branch\":\"master\", \"parameters\": { \"deploy_demos\": true, \"deploy_thumbnails\": ${THUMBNAILS}, \"target_bucket\": \"${BUCKET}\", \"deploy_args\": \"${DEPLOYARGS}\" }}"
     echo "$payload"
 
     # Circle API v2
@@ -80,9 +81,6 @@ if [[ $(echo $DEMOS_COMMIT | wc -l) -ge 2 ]] || [ "$FORCE_DEPLOY" = true  ]; the
     rep=$(curl -f -X POST -H "Content-Type: application/json" -d "$payload" "$httpUrl")
     status="$?"
     echo "$rep"
-    exit "$status"
-
 else
      echo "No change in samples/*/demo/ folder found."
-     exit 0;
 fi
