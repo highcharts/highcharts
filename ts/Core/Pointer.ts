@@ -1886,7 +1886,9 @@ class Pointer {
         hoverPoint = hoverData.hoverPoint;
         points = hoverData.hoverPoints;
         hoverSeries = hoverData.hoverSeries;
-        followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+        followPointer = hoverSeries &&
+            hoverSeries.tooltipOptions.followPointer &&
+            !hoverSeries.tooltipOptions.split;
         useSharedTooltip = (
             shared &&
             hoverSeries &&
