@@ -535,7 +535,7 @@ extend(defaultOptions, {
             /**
              * @ignore-option
              */
-            compare: void 0,
+            compare: null as any,
 
             /**
              * Unless data is explicitly defined, the data is borrowed from the
@@ -597,7 +597,7 @@ extend(defaultOptions, {
              *
              * @type {Highcharts.ColorString|null}
              */
-            lineColor: void 0, // #4602
+            lineColor: null as any, // #4602
 
             marker: {
                 enabled: false
