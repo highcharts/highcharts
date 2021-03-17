@@ -17,7 +17,7 @@ const {
 } = AjaxMixin;
 import DataJSON from './../DataJSON.js';
 import DataStore from './DataStore.js';
-import OldTownTable from '../OldTownTable.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 import GoogleSheetsParser from '../Parsers/GoogleSheetsParser.js';
 const {
@@ -53,7 +53,7 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
 
     public static fromJSON(json: GoogleSheetsStore.ClassJSON): GoogleSheetsStore {
         const options = json.options,
-            table = OldTownTable.fromJSON(json.table),
+            table = DataTable.fromJSON(json.table),
             store = new GoogleSheetsStore(table, options);
 
         store.metadata = merge(json.metadata);
@@ -70,17 +70,17 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
     /**
      * Constructs an instance of GoogleSheetsStore
      *
-     * @param {OldTownTable} table
-     * Optional OldTownTable to create the store from
+     * @param {DataTable} table
+     * Optional table to create the store from.
      *
      * @param {CSVStore.OptionsType} options
-     * Options for the store and parser
+     * Options for the store and parser.
      *
      * @param {DataParser} parser
      * Optional parser to replace the default parser
      */
     public constructor(
-        table: OldTownTable,
+        table: DataTable,
         options: (
             Partial<GoogleSheetsStore.Options>&
             { googleSpreadsheetKey: string }
@@ -145,7 +145,8 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
             dataType: 'json',
             success: function (json: Highcharts.JSONType): void {
                 store.parser.parse(json);
-                store.table.insertRows(store.parser.getTable().getAllRows());
+                store.table.setColumns(store.parser.getTable().getColumns());
+
                 // Polling
                 if (enablePolling) {
                     setTimeout(

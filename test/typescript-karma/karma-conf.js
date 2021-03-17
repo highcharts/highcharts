@@ -135,7 +135,11 @@ module.exports = function (config) {
                 .map(path => ({
                     pattern: `test/typescript-karma/${path}.test.js`,
                     type: 'module'
-                })) :
+                }))
+                .concat([{
+                    pattern: 'test/typescript-karma/**/!(*.test).js',
+                    type: 'module'
+                }]) :
             // all tests
             [{
                 pattern: 'test/typescript-karma/**/!(demo).js',

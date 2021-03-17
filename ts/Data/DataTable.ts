@@ -892,7 +892,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             row: DataTable.RowObject = {};
 
         if (!columnNamesOrAliases) {
-            columnNamesOrAliases = table.getColumnNames();
+            columnNamesOrAliases = Object.keys(tableColumns);
         }
 
         for (

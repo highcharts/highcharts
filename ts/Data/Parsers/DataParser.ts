@@ -19,8 +19,7 @@
 import type DataEventEmitter from '../DataEventEmitter';
 import type DataJSON from '../DataJSON';
 
-import OldTownTable from '../OldTownTable.js';
-import OldTownTableRow from '../OldTownTableRow.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -65,124 +64,61 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Converts the OldTownTable instance to a record of columns.
+     * Converts the table instance to a array of columns.
      *
-     * @param {OldTownTable} table
+     * @param {DataTable} table
      * Table to convert.
      *
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state.
      *
-     * @return {Array<Array<OldTownTableRow.CellType>>}
-     * A record of columns, where the key is the name of the column,
-     * and the values are the content of the column.
+     * @return {Array<DataTable.Column>}
+     * An array of columns, with the second dimension as row cells.
      */
     public static getColumnsFromTable(
-        table: OldTownTable,
+        table: DataTable,
         usePresentationOrder?: boolean
-    ): Array<Array<OldTownTableRow.CellType>> {
-        const columnsObject: OldTownTable.ColumnCollection = {
-                id: []
-            },
-            rows = table.getAllRows();
+    ): Array<DataTable.Column> {
+        const columns = table.getColumns(),
+            columnNames = table.getColumnNames(usePresentationOrder),
+            columnArray = [];
 
-        for (let rowIndex = 0, rowCount = rows.length; rowIndex < rowCount; rowIndex++) {
-            const row = rows[rowIndex],
-                cellNames = row.getCellNames(),
-                cellCount = cellNames.length;
-
-            columnsObject.id.push(row.id); // Push the ID column
-
-            for (let j = 0; j < cellCount; j++) {
-                const cellName = cellNames[j],
-                    cell = row.getCell(cellName);
-
-                if (!columnsObject[cellName]) {
-                    columnsObject[cellName] = [];
-                    // If row number is greater than 0
-                    // add the previous rows as undefined
-                    if (rowIndex > 0) {
-                        for (let rowNumber = 0; rowNumber < rowIndex; rowNumber++) {
-                            columnsObject[cellName][rowNumber] = void 0;
-                        }
-                    }
-                }
-                columnsObject[cellName][rowIndex] = cell;
-            }
-
-            // If the object has columns that were not in the row
-            // add them as undefined
-            const columnsInObject = Object.keys(columnsObject);
-
-            for (
-                let columnIndex = 0;
-                columnIndex < columnsInObject.length;
-                columnIndex++
-            ) {
-                const columnName = columnsInObject[columnIndex];
-
-                while (columnsObject[columnName].length - 1 < rowIndex) {
-                    columnsObject[columnName].push(void 0);
-                }
-            }
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            columnArray.push(columns[columnNames[i]]);
         }
 
-        const columnNames = Object.keys(columnsObject);
-
-        if (usePresentationOrder) {
-            columnNames.sort(table.presentationState.getColumnSorter());
-        }
-
-        return columnNames.map(
-            (columnName: string): Array<OldTownTableRow.CellType> => columnsObject[columnName]
-        );
+        return columnArray;
     }
 
     /**
-     * Converts a simple two dimensional array to a OldTownTable instance. The
-     * array needs to be structured like a DataFrame, so that the first
-     * dimension becomes the columns and the second dimension the rows.
+     * Converts an array of columns to a table instance. Second dimension of the
+     * array are the row cells.
      *
-     * @param {Array<Array<OldTownTableRow.CellType>>} [columns]
+     * @param {Array<DataTable.Column>} [columns]
      * Array to convert.
      *
      * @param {Array<string>} [headers]
      * Column names to use.
      *
-     * @return {OldTownTable}
-     * OldTownTable instance from the arrays.
+     * @return {DataTable}
+     * Table instance from the arrays.
      */
     public static getTableFromColumns(
-        columns: Array<Array<OldTownTableRow.CellType>> = [],
+        columns: Array<DataTable.Column> = [],
         headers: Array<string> = []
-    ): OldTownTable {
-        const columnsLength = columns.length,
-            table = new OldTownTable();
+    ): DataTable {
+        const table = new DataTable();
 
-        // Assign an unique id for every column
-        // without a provided name
-        while (headers.length < columnsLength) {
-            headers.push(uniqueKey());
-        }
-
-        table.presentationState.setColumnOrder(headers);
-
-        if (columnsLength) {
-            const idIndex = headers.indexOf('id');
-
-            if (idIndex >= 0) {
-                const idColumn = columns.splice(idIndex, 1)[0];
-
-                for (let i = 0, iEnd = idColumn.length; i < iEnd; ++i) {
-                    table.insertRow(new OldTownTableRow({ id: idColumn[i] }));
-                }
-
-                headers.splice(idIndex, 1);
-            }
-
-            for (let i = 0, iEnd = headers.length; i < iEnd; ++i) {
-                table.setColumn(headers[i], columns[i]);
-            }
+        for (
+            let i = 0,
+                iEnd = Math.max(headers.length, columns.length);
+            i < iEnd;
+            ++i
+        ) {
+            table.setColumn(
+                headers[i] || uniqueKey(),
+                columns[i]
+            );
         }
 
         return table;
@@ -195,10 +131,11 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Getter for the data table
-     * @return {OldTownTable}
+     * Getter for the data table.
+     *
+     * @return {DataTable}
      */
-    public abstract getTable(): OldTownTable;
+    public abstract getTable(): DataTable;
 
     /**
      * Emits an event on the DataParser instance.
@@ -267,7 +204,7 @@ namespace DataParser {
      */
     export interface EventObject extends DataEventEmitter.EventObject {
         readonly type: ('parse' | 'afterParse' | 'parseError');
-        readonly columns: OldTownTableRow.CellType[][];
+        readonly columns: Array<DataTable.Column>;
         readonly error?: (string | Error);
         readonly headers: string[];
     }

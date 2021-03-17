@@ -22,8 +22,8 @@ export function registerStoreEvents(datastore, eventArray, assertObj = {}) {
  *
  * @todo deeper comparisons?
  *
- * @param {OldTownTable} originalTable
- * @param {OldTownTable} exportedTable
+ * @param {DataTable} originalTable
+ * @param {DataTable} exportedTable
  * @param {*} assert QUnit assert object
  */
 export function testExportedDataTable(originalTable, exportedTable, assert) {
@@ -33,8 +33,8 @@ export function testExportedDataTable(originalTable, exportedTable, assert) {
         'Exported ClassJSON should have the same amount of rows.'
     )
     assert.strictEqual(
-        exportedTable.getRow(0).getCellCount(),
-        originalTable.getRow(0).getCellCount(),
+        exportedTable.getColumnNames().length,
+        originalTable.getColumnNames().length,
         'Exported ClassJSON should have the same amount of cells.'
     )
 }

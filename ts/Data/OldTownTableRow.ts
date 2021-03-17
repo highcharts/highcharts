@@ -18,7 +18,7 @@
 
 import type DataEventEmitter from './DataEventEmitter';
 import type OldTownTable from './OldTownTable';
-import DataConverter from './DataConverter.js';
+
 import DataJSON from './DataJSON.js';
 import U from '../Core/Utilities.js';
 const {
@@ -115,19 +115,14 @@ implements DataEventEmitter<OldTownTableRow.EventObject>, DataJSON.Class {
      *
      * @param {OldTownTableRow.Cells} [cells]
      * Cell values in a record object.
-     *
-     * @param {DataConverter} [converter]
-     * Converter for value conversions.
      */
     constructor(
-        cells: OldTownTableRow.Cells = {},
-        converter: DataConverter = new DataConverter()
+        cells: OldTownTableRow.Cells = {}
     ) {
         cells = merge(cells);
 
         this.autoId = false;
         this.cells = cells;
-        this.converter = converter;
 
         if (typeof cells.id === 'string') {
             this.id = cells.id;
@@ -160,11 +155,6 @@ implements DataEventEmitter<OldTownTableRow.EventObject>, DataJSON.Class {
      * @private
      */
     private cells: OldTownTableRow.Cells;
-
-    /**
-     * Converter for value conversions.
-     */
-    public converter: DataConverter;
 
     /**
      * ID to distinguish the row in a table from other rows.
@@ -303,82 +293,6 @@ implements DataEventEmitter<OldTownTableRow.EventObject>, DataJSON.Class {
         }
 
         return row.cells[cellName];
-    }
-
-    /**
-     * Converts the value of the given cell name to a boolean and returns it.
-     *
-     * @param {string} cellName
-     * Cell name to fetch.
-     *
-     * @return {boolean}
-     * Converted cell value of the cell in this row.
-     */
-    public getCellAsBoolean(cellName: string): boolean {
-        return this.converter.asBoolean(this.getCell(cellName));
-    }
-
-    /**
-     * Converts the value of the given cell name to a Date and returns it.
-     *
-     * @param {string} cellName
-     * Cell name to fetch.
-     *
-     * @return {Date}
-     * Converted cell value of the cell in this row.
-     */
-    public getCellAsDate(cellName: string): Date {
-        return this.converter.asDate(this.getCell(cellName));
-    }
-
-    /**
-     * Converts the value of the given cell name to a number and returns it.
-     *
-     * @param {string} cellName
-     * Cell name to fetch.
-     *
-     * @return {number}
-     * Converted cell value of the cell in this row.
-     */
-    public getCellAsNumber(cellName: string): number {
-        return this.converter.asNumber(this.getCell(cellName));
-    }
-
-    /**
-     * Converts the value of the given cell name to a string and returns it.
-     *
-     * @param {string} cellName
-     * Cell name to fetch.
-     *
-     * @return {string}
-     * Converted cell value of the cell in this row.
-     */
-    public getCellAsString(cellName: string): string {
-        return this.converter.asString(this.getCell(cellName));
-    }
-
-    /**
-     * Tests if the value of the given cell name is a OldTownTable and returns
-     * it.
-     *
-     * @param {string} cellName
-     * Cell name to fetch.
-     *
-     * @return {OldTownTable|undefined}
-     * Cell value of the cell in this row, if it is a OldTownTable.
-     */
-    public getCellAsTable(cellName: string): (OldTownTable|undefined) {
-        const value = this.getCell(cellName);
-
-        if (
-            !value ||
-            typeof value !== 'object' ||
-            value instanceof Date
-        ) {
-            return;
-        }
-
-        return value;
     }
 
     /**

@@ -20,8 +20,8 @@ import type DataEventEmitter from './DataEventEmitter';
 import type LineSeries from '../Series/Line/LineSeries';
 import type PointOptions from '../Core/Series/PointOptions';
 import type SeriesOptions from '../Core/Series/SeriesOptions';
-import OldTownTable from './OldTownTable.js';
-import OldTownTableRow from './OldTownTableRow.js';
+
+import DataTable from './DataTable.js';
 import U from '../Core/Utilities.js';
 const {
     defined,
@@ -35,8 +35,8 @@ const {
  * */
 
 /**
- * Class to convert Highcharts series data to OldTownTable
- * and get series data from the OldTownTable.
+ * Class to convert Highcharts series data to table and get series data from the
+ * table.
  */
 class DataSeriesConverter {
 
@@ -49,13 +49,16 @@ class DataSeriesConverter {
     /**
      * Constructs an instance of the DataSeriesConverter class.
      *
-     * @param {OldTownTable} [table]
+     * @param {DataTable} [table]
      * DataSeriesConverter table to store series data.
      *
      * @param {DataSeriesConverter.Options} [options]
      * DataSeriesConverter options.
      */
-    public constructor(table: OldTownTable = new OldTownTable(), options: DataSeriesConverter.Options = {}) {
+    public constructor(
+        table: DataTable = new DataTable(),
+        options: DataSeriesConverter.Options = {}
+    ) {
         this.table = table;
         this.options = options;
         this.seriesIdMap = {};
@@ -68,7 +71,7 @@ class DataSeriesConverter {
      *
      * */
 
-    public table: OldTownTable;
+    public table: DataTable;
     public options: DataSeriesConverter.Options;
 
     /**
@@ -89,7 +92,7 @@ class DataSeriesConverter {
      * */
 
     /**
-     * Get the specific series data stored in the converter OldTownTable.
+     * Get the specific series data stored in the converter.
      *
      * @param {string} seriesId
      * The id of the series.
@@ -113,27 +116,23 @@ class DataSeriesConverter {
             pointArrayMap = converter.seriesIdMap[seriesId].pointArrayMap || ['y'];
 
             for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
-                row = table.getRow(i);
+                isCellFound = false;
+                pointOptions = {
+                    x: table.getCellAsNumber(i, 'x')
+                };
 
-                if (row) {
-                    isCellFound = false;
-                    pointOptions = {
-                        x: table.converter.asNumber(row.getCell('x'))
-                    };
+                for (let j = 0, jEnd = pointArrayMap.length; j < jEnd; j++) {
+                    cellName = pointArrayMap[j] + '_' + seriesId;
+                    cell = table.getCell(i, cellName);
 
-                    for (let j = 0, jEnd = pointArrayMap.length; j < jEnd; j++) {
-                        cellName = pointArrayMap[j] + '_' + seriesId;
-                        cell = row.getCell(cellName);
-
-                        if (cell) {
-                            isCellFound = true;
-                            pointOptions[pointArrayMap[j]] = table.converter.asNumber(cell);
-                        }
+                    if (typeof cell !== 'undefined') {
+                        isCellFound = true;
+                        pointOptions[pointArrayMap[j]] = table.converter.asNumber(cell);
                     }
+                }
 
-                    if (isCellFound) {
-                        seriesData.push(pointOptions);
-                    }
+                if (isCellFound) {
+                    seriesData.push(pointOptions);
                 }
             }
         }
@@ -142,7 +141,7 @@ class DataSeriesConverter {
     }
 
     /**
-     * Get all series data stored in the converter OldTownTable.
+     * Get all series data stored in the converter.
      *
      * @return {Array<SeriesOptions>}
      * Returns an array of series opitons.
@@ -166,21 +165,21 @@ class DataSeriesConverter {
     }
 
     /**
-     * Update the converter OldTownTable with passed series options.
+     * Update the converter with passed series options.
      *
      * @param {Array<LineSeries>} allSeries
-     * Array of series options to store in the converter OldTownTable.
+     * Array of series options to store in the converter.
      *
      * @param {DataEventEmitter.EventDetail} eventDetail
      * Custom information for pending events.
      */
-    updateOldTownTable(
+    updateTable(
         allSeries: Array<LineSeries>,
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const table = this.table;
 
-        let columns: Record<string, OldTownTableRow.CellType>,
+        let columns: DataTable.RowObject,
             series,
             seriesMeta,
             pointArrayMap,
@@ -189,7 +188,7 @@ class DataSeriesConverter {
             keys,
             data,
             elem,
-            row,
+            rowIndex,
             y,
             needsArrayMap,
             xIndex,
@@ -255,7 +254,7 @@ class DataSeriesConverter {
 
                     } else if (elem instanceof Object) {
                         if (needsArrayMap) {
-                            const elemSet = elem as Record<string, OldTownTableRow.CellType>;
+                            const elemSet = elem as Record<string, DataTable.CellType>;
 
                             for (let k = 0; k < pointArrayMapLength; k++) {
                                 yValueName = pointArrayMap[k];
@@ -269,14 +268,13 @@ class DataSeriesConverter {
                     }
 
                     id = '' + columns.x;
-                    row = table.getRow(id);
+                    rowIndex = table.getRowIndexBy('id', id);
 
-                    if (!row) {
+                    if (!rowIndex) {
                         columns.id = id;
-                        row = new OldTownTableRow(columns);
-                        table.insertRow(row, eventDetail);
+                        table.setRowObject(columns, void 0, eventDetail);
                     } else if (columns[y]) {
-                        row.setCell(y, columns[y], eventDetail);
+                        table.setCell(rowIndex, y, columns[y], eventDetail);
                     }
                 }
             }

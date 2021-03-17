@@ -17,12 +17,11 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type OldTownTableRow from '../OldTownTableRow';
 import type DataValueType from '../DataValueType';
 
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
-import OldTownTable from '../OldTownTable.js';
+import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -39,7 +38,7 @@ const {
  * */
 
 /**
- * Handles parsing and transformation of an Google Sheets to a OldTownTable
+ * Handles parsing and transformation of an Google Sheets to a table.
  */
 class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
 
@@ -110,7 +109,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private columns: OldTownTableRow.CellType[][];
+    private columns: DataTable.CellType[][];
     private headers: string[];
     public converter: DataConverter;
     public options: GoogleSheetsParser.ClassJSONOptions;
@@ -257,7 +256,11 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
             column = parser.columns[i];
             for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                 if (column[j] && typeof column[j] === 'string') {
-                    parser.columns[i][j] = converter.asGuessedType(column[j] as string);
+                    let cellValue = converter.asGuessedType(column[j] as string);
+                    if (cellValue instanceof Date) {
+                        cellValue = cellValue.getTime();
+                    }
+                    parser.columns[i][j] = cellValue;
                 }
             }
         }
@@ -271,12 +274,12 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
     }
 
     /**
-     * Handles converting the parsed data to a OldTownTable
+     * Handles converting the parsed data to a table.
      *
-     * @return {OldTownTable}
-     * A OldTownTable from the parsed Google Sheet
+     * @return {DataTable}
+     * Table from the parsed Google Sheet
      */
-    public getTable(): OldTownTable {
+    public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 

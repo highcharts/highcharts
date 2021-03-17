@@ -10,11 +10,17 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataEventEmitter from '../DataEventEmitter';
-import type OldTownTableRow from '../OldTownTableRow';
+
 import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
-import OldTownTable from '../OldTownTable.js';
+import DataTable from '../DataTable.js';
 import H from '../../Core/Globals.js';
 const { win } = H;
 import HTMLTableParser from '../Parsers/HTMLTableParser.js';
@@ -62,7 +68,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
     public static fromJSON(json: HTMLTableStore.ClassJSON): HTMLTableStore {
         const options = json.options,
             parser = HTMLTableParser.fromJSON(json.parser),
-            table = OldTownTable.fromJSON(json.table),
+            table = DataTable.fromJSON(json.table),
             store = new HTMLTableStore(table, options, parser);
 
         store.metadata = merge(json.metadata);
@@ -79,8 +85,8 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
     /**
      * Constructs an instance of HTMLTableDataStore
      *
-     * @param {OldTownTable} table
-     * Optional OldTownTable to create the store from
+     * @param {DataTable} table
+     * Optional table to create the store from
      *
      * @param {HTMLTableStore.OptionsType} options
      * Options for the store and parser
@@ -89,7 +95,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * Optional parser to replace the default parser
      */
     public constructor(
-        table: OldTownTable = new OldTownTable(),
+        table: DataTable = new DataTable(),
         options: HTMLTableStore.OptionsType = {},
         parser?: HTMLTableParser
     ) {
@@ -193,7 +199,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             eventDetail
         );
 
-        store.table.insertRows(store.parser.getTable().getAllRows());
+        store.table.setColumns(store.parser.getTable().getColumns());
 
         store.emit({
             type: 'afterLoad',
@@ -350,13 +356,12 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         };
 
         const { columnNames, columnValues } = this.getColumnsForExport(
-                options.exportIDColumn,
                 options.usePresentationOrder
             ),
             htmlRows: Array<string> = [],
             columnsCount = columnNames.length;
 
-        const rowArray: Array<Array<OldTownTableRow.CellType>> = [];
+        const rowArray: Array<DataTable.Row> = [];
 
         let tableHead = '';
 

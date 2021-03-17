@@ -18,7 +18,6 @@
 
 import type DataEventEmitter from './DataEventEmitter';
 
-import DataConverter from './DataConverter.js';
 import DataJSON from './DataJSON.js';
 import DataPresentationState from './DataPresentationState.js';
 import OldTownTableRow from './OldTownTableRow.js';
@@ -93,15 +92,11 @@ class OldTownTable implements DataEventEmitter<OldTownTable.EventObject>, DataJS
      *
      * @param {DataPresentationState} [presentationState]
      * Presentation state for the OldTownTable.
-     *
-     * @param {DataConverter} [converter]
-     * Converter for value conversions in table rows.
      */
     public constructor(
         rows: Array<OldTownTableRow> = [],
         id?: string,
-        presentationState: DataPresentationState = new DataPresentationState(),
-        converter: DataConverter = new DataConverter()
+        presentationState: DataPresentationState = new DataPresentationState()
     ) {
         const rowsIdMap: Record<string, OldTownTableRow> = {};
 
@@ -109,7 +104,6 @@ class OldTownTable implements DataEventEmitter<OldTownTable.EventObject>, DataJS
 
         rows = rows.slice();
 
-        this.converter = converter;
         this.id = id || uniqueKey();
         this.presentationState = presentationState;
         this.rows = rows;
@@ -119,7 +113,6 @@ class OldTownTable implements DataEventEmitter<OldTownTable.EventObject>, DataJS
 
         for (let i = 0, iEnd = rows.length; i < iEnd; ++i) {
             row = rows[i];
-            row.converter = converter;
             rowsIdMap[row.id] = row;
             this.watchRow(row);
         }
@@ -130,11 +123,6 @@ class OldTownTable implements DataEventEmitter<OldTownTable.EventObject>, DataJS
      *  Properties
      *
      * */
-
-    /**
-     * Converter for value conversions in table rows.
-     */
-    public readonly converter: DataConverter;
 
     /**
      * ID of the table. As an inner table the ID links to the column ID in the
@@ -215,7 +203,7 @@ class OldTownTable implements DataEventEmitter<OldTownTable.EventObject>, DataJS
      */
     public clone(): OldTownTable {
         const table = this,
-            newTable = new OldTownTable([], table.id, table.presentationState, table.converter),
+            newTable = new OldTownTable([], table.id, table.presentationState),
             aliasMapNames = Object.keys(table.aliasMap);
 
         let eventNames,

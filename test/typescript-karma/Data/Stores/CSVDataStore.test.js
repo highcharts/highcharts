@@ -1,6 +1,6 @@
 import CSVStore from '/base/js/Data/Stores/CSVStore.js'
 import { registerStoreEvents, testExportedDataTable } from './utils.js'
-import OldTownTable from '/base/js/Data/OldTownTable.js';
+import DataTable from '/base/js/Data/DataTable.js';
 
 const { test, only } = QUnit;
 
@@ -41,7 +41,8 @@ test('CSVStore from string', function (assert) {
         'Datastore has correct amount of rows'
     );
     assert.strictEqual(
-        datastore.table.getRow(0).getCellCount(), csv.split('\n')[0].split(',').length,
+        datastore.table.getColumnNames().length,
+        csv.split('\n')[0].split(',').length,
         'Datastore has correct amount of columns'
     );
 
@@ -50,9 +51,11 @@ test('CSVStore from string', function (assert) {
 
     testExportedDataTable(datastore.table, dataStoreFromJSON.table, assert);
 
-    const foundComment = Object.values(datastore.table.getRow(1).getAllCells()).some((col) => { ('' + col).includes('#this is a comment') });
+    const foundComment = datastore.table
+        .getRow(1)
+        .some((col) => ('' + col).includes('#this is a comment'));
     assert.ok(!foundComment, 'Comment is not added to the dataTable');
-})
+});
 
 test('CSVStore from string, with decimalpoint option', function(assert){
     const csv = 'Date;Value\n2016-01-01;1,100\n2016-01-02;2,000\n2016-01-03;3,000';
@@ -66,7 +69,7 @@ test('CSVStore from string, with decimalpoint option', function(assert){
         3
     );
     assert.strictEqual(
-        typeof store.table.getRow(2).getCell('Value'),
+        typeof store.table.getCell(2, 'Value'),
         'number',
         'The parser should be able to guess this decimalpoint'
     )
@@ -79,7 +82,7 @@ test('CSVStore from string, with decimalpoint option', function(assert){
     );
     store.load()
     assert.strictEqual(
-        typeof store.table.getRow(2).getCell('Value'),
+        typeof store.table.getCell(2, 'Value'),
         'string',
         'respects the given decimal point in options (result not a number because of the decimal point)'
     );
@@ -116,8 +119,8 @@ test('CSV with ""s', (assert) => {
     datastore.load();
 
     assert.deepEqual(
-        Object.keys(datastore.table.getColumns()),
-        ['id', 'test', 'test2'],
+        datastore.table.getColumnNames(),
+        ['test', 'test2'],
         'Headers should not contain ""s'
     )
 
@@ -160,7 +163,7 @@ test('CSVStore from URL', function (assert) {
 
         // Check that the store is updated
         // with the new dataset when polling
-        states[pollNumber] = new OldTownTable(e.table.getAllRows())
+        states[pollNumber] = e.table.clone();
 
         if (pollNumber > 0 && states[pollNumber]) {
             assert.strictEqual(
@@ -169,8 +172,8 @@ test('CSVStore from URL', function (assert) {
                 'Should have the same amount of rows'
             )
 
-            const currentValue = states[pollNumber].getRow(2).getCellAsNumber('X');
-            const previousValue = states[pollNumber - 1].getRow(2).getCellAsNumber('X')
+            const currentValue = states[pollNumber].getCellAsNumber(2, 'X');
+            const previousValue = states[pollNumber - 1].getCellAsNumber(2, 'X')
             assert.notStrictEqual(
                 currentValue,
                 previousValue,

@@ -1,48 +1,7 @@
-const {test, only} = QUnit;
-
 import DataConverter from '/base/js/Data/DataConverter.js';
-import OldTownTable from '/base/js/Data/OldTownTable.js';
+import DataTable from '/base/js/Data/DataTable.js';
 
-const sampleTable = OldTownTable.fromJSON({
-    $class: 'OldTownTable',
-    rows: [{
-        $class: 'OldTownTableRow',
-        id: 'a',
-        column1: 'value1',
-        column2: 0.0002,
-        column3: false
-    }, {
-        $class: 'OldTownTableRow',
-        id: 'b',
-        column1: 'value1',
-        column2: 'value2',
-        column3: {
-            $class: 'OldTownTable',
-            rows: [{
-                $class: 'OldTownTableRow',
-                id: 'ba',
-                column1: 'value1'
-            }, {
-                $class: 'OldTownTableRow',
-                id: 'bb',
-                column1: 'value1'
-            }, {
-                $class: 'OldTownTableRow',
-                id: 'bc',
-                column1: 'value1'
-            }]
-        }
-    }, {
-        $class: 'OldTownTableRow',
-        id: 'c',
-        column1: 'value1',
-        column2: 'value2',
-        column3: 'value3'
-    }]
-});
-
-let converter = new DataConverter(),
-    timestamp;
+const {test, only} = QUnit;
 
 test('guessType', function (assert) {
     const testCases = [
@@ -50,20 +9,16 @@ test('guessType', function (assert) {
         '1',
         '1.1',
         'this.should.be.string',
-        `${(new Date()).toISOString()}`,
-        new Date('1980-01-01').getTime(),
-        100,
-        '2020-01-01'
+        100
     ], expectations = [
         'string',
         'number',
         'number',
         'string',
-        'Date',
-        'Date',
-        'number',
-        'Date'
+        'number'
     ];
+
+    let converter = new DataConverter();
 
     assert.deepEqual(
         testCases.map(value => converter.guessType(value)),
@@ -88,6 +43,16 @@ test('guessType', function (assert) {
 });
 
 test('asBoolean', function (assert) {
+    const sampleTable = new DataTable({
+        id: ['a', 'b', 'c'],
+        column1: ['value1', 'value1', 'value1'],
+        column2: [0.0002, 'value2', 'value2'],
+        column3: [false, new DataTable({
+            id: ['ba', 'bb', 'bc'],
+            column1: ['value1', 'value1', 'value1']
+        }), 'value3']
+    });
+
     const testCases = [
         '',
         'string',
@@ -97,9 +62,11 @@ test('asBoolean', function (assert) {
         true,
         null,
         undefined,
-        new OldTownTable(),
+        new DataTable(),
         sampleTable
     ];
+
+    let converter = new DataConverter();
 
     assert.deepEqual(
         testCases.map(value => converter.asBoolean(value)),
@@ -109,6 +76,8 @@ test('asBoolean', function (assert) {
 });
 
 test('asNumber', function (assert) {
+    let converter = new DataConverter();
+
     assert.strictEqual(
         converter.asNumber('-3.1'),
         -3.1,
@@ -129,7 +98,7 @@ test('asNumber', function (assert) {
 });
 
 test('asDate', function (assert) {
-    converter = new DataConverter({}, function (value) {
+    let converter = new DataConverter({}, function (value) {
         return new Date('2009-01-01').getTime();
     });
 
@@ -140,7 +109,7 @@ test('asDate', function (assert) {
     );
 
     converter = new DataConverter({ dateFormat: 'mm/dd/YYYY' });
-    timestamp = converter.asDate('1/9/2020').getTime();
+    let timestamp = converter.asDate('1/9/2020').getTime();
     assert.strictEqual(
         timestamp,
         new Date('2020-01-09').getTime(),

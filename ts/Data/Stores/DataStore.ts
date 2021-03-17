@@ -23,8 +23,7 @@ import type DataJSON from '../DataJSON';
 import type StoreType from './StoreType';
 
 import DataParser from '../Parsers/DataParser.js';
-import OldTownTableRow from '../OldTownTableRow.js';
-import OldTownTable from '../OldTownTable.js';
+import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -67,11 +66,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      *
      * */
 
-
     /**
-     * Adds a dataStore class to the registry. The store has to provide the
+     * Adds a store class to the registry. The store has to provide the
      * `DataStore.options` property and the `DataStore.load` method to
-     * modify the OldTownTable.
+     * modify the table.
      *
      * @param {DataStore} dataStore
      * Store class (aka class constructor) to register.
@@ -155,16 +153,16 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     * */
 
     /**
-     * Constructor for the DataStore class.
+     * Constructor for the store class.
      *
-     * @param {OldTownTable} table
-     * Optional OldTownTable to use in the DataStore.
+     * @param {DataTable} table
+     * Optional table to use in the store.
      *
      * @param {DataStore.Metadata} metadata
-     * Optional metadata to use in the DataStore.
+     * Optional metadata to use in the store.
      */
     public constructor(
-        table: OldTownTable = new OldTownTable(),
+        table: DataTable = new DataTable(),
         metadata: DataStore.Metadata = { columns: {} }
     ) {
         this.table = table;
@@ -189,9 +187,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     public metadata: DataStore.Metadata;
 
     /**
-     * OldTownTable managed by this DataStore instance.
+     * Table managed by this DataStore instance.
      */
-    public table: OldTownTable;
+    public table: DataTable;
 
     /* *
      *
@@ -275,9 +273,6 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Retrieves the columns of the the dataTable,
      * applies column order from meta.
      *
-     * @param {boolean} [includeIdColumn]
-     * Whether to include the `id` column in the returned array.
-     *
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state of the table.
      *
@@ -285,16 +280,11 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * An object with the properties `columnNames` and `columnValues`
      */
     protected getColumnsForExport(
-        includeIdColumn?: boolean,
         usePresentationOrder?: boolean
     ): DataStore.ColumnsForExportObject {
         const table = this.table,
             columnsRecord = table.getColumns(),
-            columnNames = (
-                includeIdColumn ?
-                    Object.keys(columnsRecord) :
-                    Object.keys(columnsRecord).slice(1)
-            );
+            columnNames = table.getColumnNames();
 
         const columnOrder = this.getColumnOrder(usePresentationOrder);
 
@@ -313,7 +303,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         return ({
             columnNames,
             columnValues: columnNames.map(
-                (name: string): OldTownTableRow.CellType[] => columnsRecord[name]
+                (name: string): DataTable.Column => columnsRecord[name]
             )
         });
     }
@@ -400,7 +390,7 @@ namespace DataStore {
      * Interface of the class JSON to convert to class instances.
      */
     export interface ClassJSON extends DataJSON.ClassJSON {
-        table: OldTownTable.ClassJSON;
+        table: DataTable.ClassJSON;
         metadata: DataStore.Metadata;
     }
 
@@ -408,7 +398,7 @@ namespace DataStore {
      * The default event object for a datastore
      */
     export interface EventObject extends DataEventEmitter.EventObject {
-        readonly table: OldTownTable;
+        readonly table: DataTable;
     }
 
     /**
@@ -416,7 +406,7 @@ namespace DataStore {
      */
     export interface ColumnsForExportObject {
         columnNames: Array<string>;
-        columnValues: Array<Array<OldTownTableRow.CellType>>;
+        columnValues: Array<DataTable.Column>;
         columnHeaderFormatter?: Function;
     }
 

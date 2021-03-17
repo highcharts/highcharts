@@ -17,11 +17,10 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type OldTownTableRow from '../OldTownTableRow';
 
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
-import OldTownTable from '../OldTownTable.js';
+import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -29,7 +28,7 @@ const { merge } = U;
 /* eslint-disable no-invalid-this, require-jsdoc, valid-jsdoc */
 
 /**
- * Handles parsing and transforming CSV to a OldTownTable
+ * Handles parsing and transforming CSV to a table.
  */
 class CSVParser extends DataParser<DataParser.EventObject> {
 
@@ -96,7 +95,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
      *  Properties
      *
      * */
-    private columns: Array<Array<OldTownTableRow.CellType>> = [];
+    private columns: Array<DataTable.Column> = [];
     private headers: Array<string> = [];
     private dataTypes: Array<Array<string>> = [];
     private guessedItemDelimiter?: string;
@@ -125,7 +124,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         const parser = this,
             dataTypes = parser.dataTypes,
             converter = parser.converter,
-            parserOptions = merge(true, this.options, options),
+            parserOptions = merge(this.options, options),
             {
                 beforeParse,
                 lineDelimiter,
@@ -140,9 +139,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 startRow,
                 endRow
             } = parserOptions,
-            column,
-            i: number,
-            colsCount: number;
+            column;
 
         parser.columns = [];
 
@@ -207,7 +204,8 @@ class CSVParser extends DataParser<DataParser.EventObject> {
                 !parser.converter.getDateFormat()
             ) {
                 parser.converter.deduceDateFormat(
-                    parser.columns[0] as Array<string>, null, true);
+                    parser.columns[0] as Array<string>, null, true
+                );
             }
 
             // Guess types.
@@ -216,7 +214,11 @@ class CSVParser extends DataParser<DataParser.EventObject> {
 
                 for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                     if (column[j] && typeof column[j] === 'string') {
-                        parser.columns[i][j] = converter.asGuessedType(column[j] as string);
+                        let cellValue = converter.asGuessedType(column[j] as string);
+                        if (cellValue instanceof Date) {
+                            cellValue = cellValue.getTime();
+                        }
+                        parser.columns[i][j] = cellValue;
                     }
                 }
             }
@@ -502,12 +504,12 @@ class CSVParser extends DataParser<DataParser.EventObject> {
         return guessed;
     }
     /**
-     * Handles converting the parsed data to a OldTownTable
+     * Handles converting the parsed data to a table.
      *
-     * @returns {OldTownTable}
-     * A OldTownTable from the parsed CSV
+     * @returns {DataTable}
+     * Table from the parsed CSV.
      */
-    public getTable(): OldTownTable {
+    public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 

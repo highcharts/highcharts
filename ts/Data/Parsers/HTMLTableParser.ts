@@ -17,11 +17,10 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type OldTownTableRow from '../OldTownTableRow';
 
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
-import OldTownTable from '../OldTownTable.js';
+import DataTable from '../DataTable.js';
 import DataConverter from '../DataConverter.js';
 import U from '../../Core/Utilities.js';
 const { merge } = U;
@@ -33,7 +32,7 @@ const { merge } = U;
  * */
 
 /**
- * Handles parsing and transformation of an HTML table to a OldTownTable
+ * Handles parsing and transformation of an HTML table to a table.
  */
 class HTMLTableParser extends DataParser<DataParser.EventObject> {
 
@@ -117,7 +116,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private columns: OldTownTableRow.CellType[][];
+    private columns: DataTable.CellType[][];
     private headers: string[];
     public converter: DataConverter;
     public options: HTMLTableParser.ClassJSONOptions;
@@ -149,7 +148,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     ): void {
         const parser = this,
             converter = this.converter,
-            columns: OldTownTableRow.CellType[][] = [],
+            columns: Array<DataTable.Column> = [],
             headers: string[] = [],
             parseOptions = merge(parser.options, options),
             {
@@ -236,7 +235,10 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
                             columns[relativeColumnIndex] = [];
                         }
 
-                        const cellValue = converter.asGuessedType(item.innerHTML);
+                        let cellValue = converter.asGuessedType(item.innerHTML);
+                        if (cellValue instanceof Date) {
+                            cellValue = cellValue.getTime();
+                        }
                         columns[relativeColumnIndex][
                             rowIndex - startRow
                         ] = cellValue;
@@ -271,12 +273,12 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     }
 
     /**
-     * Handles converting the parsed data to a OldTownTable
+     * Handles converting the parsed data to a table.
      *
-     * @return {OldTownTable}
-     * A OldTownTable from the parsed HTML table
+     * @return {DataTable}
+     * Table from the parsed HTML table
      */
-    public getTable(): OldTownTable {
+    public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);
     }
 
