@@ -1,5 +1,4 @@
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
-import Layout from  '../../../../code/es-modules/Dashboard/Layout/Layout.js';
 import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js';
 
 // Bring in other forms of Highcharts
@@ -8,6 +7,12 @@ import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/hig
 let dashboard = new Dashboard('container', {
     gui: {
         enabled: true,
+        layoutOptions: {
+            resize: {
+                columns: true,
+                rows: true
+            }
+        },
         layouts: [{
             id: 'layout-1', // mandatory
             rowClassName: 'custom-row', // optional
@@ -231,21 +236,19 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         enabled: false,
         layoutOptions: {
             rowClassName: 'row', // optional
-            columnClassName: 'col', // optional
-            cardClassName: 'card' // optional
+            columnClassName: 'col' // optional
+
         },
         layouts: [{
             id: 'layout-bt-1' // mandatory
         }, {
             id: 'layout-bt-2', // mandatory
             rowClassName: 'row-test', // optional
-            columnClassName: 'col-test', // optional
-            cardClassName: 'card-test' // optional
+            columnClassName: 'col-test' // optional
         }]
     },
     components: [{
         column: 'chart-1',
-        isResizable: true,
         type: 'chart',
         chartOptions: {
             type: 'column',
@@ -291,6 +294,12 @@ console.log('========= Layout in layout =========');
 let dashboardLayout = new Dashboard('container-nested-layout', {
     gui: {
         enabled: true,
+        layoutOptions: {
+            resize: {
+                columns: true,
+                rows: true
+            }
+        },
         layouts: [{
             id: 'layout-in-1', // mandatory
             rows: [{
@@ -301,13 +310,13 @@ let dashboardLayout = new Dashboard('container-nested-layout', {
                     layout: {
                         rows: [{
                             columns: [{
-                                id: 'dashboard-col-layout-1',
+                                id: 'dashboard-col-layout-1'
                             }, {
-                                id: 'dashboard-col-layout-2',
+                                id: 'dashboard-col-layout-2'
                             }]
                         }, {
                             columns: [{
-                                id: 'dashboard-col-layout-3',
+                                id: 'dashboard-col-layout-3'
                             }]
                         }]
                     }

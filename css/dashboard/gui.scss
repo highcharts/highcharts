@@ -67,6 +67,23 @@ body {
     width: 100%;
 }
 
+.highcharts-dashboard-resize-handler {
+    cursor: col-resize;
+    position: absolute;
+    width: 20px;
+    height: 100%;
+    background: red;
+    opacity: 0.5;
+    right: 0px;
+    z-index: 10;
+}
+
+.highcharts-dashboard-resize-handler-left {
+    right: auto;
+    left: 0px;
+}
+
+
 .highcharts-dashboard-column > .highcharts-dashboard-component .title-wrapper {
     margin: 0px;
     padding-bottom: 15px;
