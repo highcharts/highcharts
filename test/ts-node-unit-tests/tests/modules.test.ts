@@ -236,6 +236,7 @@ export function testStockIndicators() {
         'apo',
         'ikh',
         'keltnerchannels',
+        'klinger',
         'macd',
         'mfi',
         'momentum',
