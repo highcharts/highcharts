@@ -40,13 +40,13 @@ if [[ -z $TOKEN ]]; then
 fi
 
 # latest commit where samples were changed, limited to 24 hours
-SAMPLES_COMMIT=$(git log -1 --since=\"24 hours ago\" --format=format:%H --full-diff --name-status samples/)
-DEMOS_COMMIT=$(git log -1 --since=\"24 hours ago\" --format=format:%H --full-diff --name-status samples/\*/demo/\*)q
+SAMPLES_COMMIT=$(git log -1 -- --since=\"24 hours ago\" --format=format:%H --full-diff --name-status samples/)
+DEMOS_COMMIT=$(git log -1 -- --since=\"24 hours ago\" --format=format:%H --full-diff --name-status samples/\*/demo/\*)q
 
-if [ [ $(echo $SAMPLES_COMMIT | wc -l) -ge 2 ]] || [ "$FORCE_DEPLOY" = true  ]; then
+if [[ $(echo $SAMPLES_COMMIT | wc -l) -ge 2 ]] || [ "$FORCE_DEPLOY" = true ]; then
     echo "Force deployed: ${FORCE_DEPLOY}"
     echo "Files in samples/ has changed or forcing deploy. Triggering deploy of samples via highcharts-demo-manager to bucket ${BUCKET}"
-    payload="{ \"branch\":\"master\", \"parameters\": { \"deploy_samples\": true, \"target_bucket\": \"${BUCKET}\" }}"
+    payload="{ \"branch\":\"master\", \"parameters\": { \"deploy_samples\": true, \"target_bucket\": \"${BUCKET}\", \"deploy_args\": \"-dryrun\" }}"
     echo "$payload"
 
     # Circle API v2
@@ -72,7 +72,7 @@ if [[ $(echo $DEMOS_COMMIT | wc -l) -ge 2 ]] || [ "$FORCE_DEPLOY" = true  ]; the
     fi
 
     echo "Files in samples/ has changed or forcing deploy. Triggering deploy of demos via highcharts-demo-manager to bucket ${BUCKET}"
-    payload="{ \"branch\":\"master\", \"parameters\": { \"deploy_demos\": true, \"deploy_thumbnails\": ${THUMBNAILS}, \"target_bucket\": \"${BUCKET}\" }}"
+    payload="{ \"branch\":\"master\", \"parameters\": { \"deploy_demos\": true, \"deploy_thumbnails\": ${THUMBNAILS}, \"target_bucket\": \"${BUCKET}\", \"deploy_args\": \"-dryrun\" }}"
     echo "$payload"
 
     # Circle API v2
