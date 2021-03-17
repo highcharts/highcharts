@@ -1530,10 +1530,12 @@ class Pointer {
 
             // Set the marker
             if (!selectionMarker) {
+                // @todo It's a mock object, so maybe we need a separate
+                // interface
                 self.selectionMarker = selectionMarker = extend({
                     destroy: noop,
                     touch: true
-                }, chart.plotBox) as any;
+                }, chart.plotBox as any) as any;
             }
 
             self.pinchTranslate(

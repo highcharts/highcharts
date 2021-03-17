@@ -7680,7 +7680,7 @@ class Axis {
             pos,
             categorized,
             graphic = this.cross,
-            crossOptions,
+            crossOptions: Highcharts.AxisPlotLinesOptions,
             chart = this.chart;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });

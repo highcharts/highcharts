@@ -108,8 +108,8 @@ type ColorAxisClass = typeof ColorAxis;
 
 ''; // detach doclet above
 
-extend(Series.prototype, colorSeriesMixin);
-extend(Point.prototype, colorPointMixin);
+extend(Series.prototype, colorSeriesMixin as any);
+extend(Point.prototype, colorPointMixin as any);
 
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
 Chart.prototype.collectionsWithInit.colorAxis = [Chart.prototype.addColorAxis];

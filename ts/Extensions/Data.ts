@@ -2596,7 +2596,7 @@ addEvent(
         }
     ): void {
         var chart = this, // eslint-disable-line no-invalid-this
-            userOptions = (e.args[0] || {}),
+            userOptions: Partial<Highcharts.Options> = (e.args[0] || {}),
             callback = e.args[1];
 
         if (userOptions && userOptions.data && !chart.hasDataDef) {
@@ -2610,7 +2610,7 @@ addEvent(
             chart.data = new H.Data(extend(userOptions.data, {
 
                 afterComplete: function (
-                    dataOptions: Highcharts.Options
+                    dataOptions?: Highcharts.Options
                 ): void {
                     var i, series;
 

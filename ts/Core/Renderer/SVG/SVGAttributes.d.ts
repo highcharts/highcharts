@@ -31,6 +31,7 @@ import type SVGPath from './SVGPath';
 export interface SVGAttributes {
     // [key: string]: any;
     align?: 'left'|'center'|'right';
+    'alignment-baseline'?: string;
     alphaCorrection?: number;
     anchorX?: number;
     anchorY?: number;

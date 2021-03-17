@@ -460,7 +460,7 @@ function addFormattedValue(
                 labelFormat,
                 extend(
                     this,
-                    { value: this.y }
+                    { value: this.y } as any
                 ),
                 chart
             );

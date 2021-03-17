@@ -730,17 +730,9 @@ extend(HeatmapSeries.prototype, {
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
-    /**
-     * @ignore
-     * @deprecated
-     */
-    getBox: noop,
-
     getExtremesFromAll: true,
 
     getSymbol: Series.prototype.getSymbol,
-
-    hasPointSpecificOptions: true,
 
     parallelArrays: colorMapSeriesMixin.parallelArrays,
 

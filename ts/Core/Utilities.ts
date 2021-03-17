@@ -1008,13 +1008,13 @@ function internalClearTimeout(id: number): void {
  * @param {T|undefined} a
  *        The object to be extended.
  *
- * @param {object} b
+ * @param {Partial<T>} b
  *        The object to add to the first one.
  *
  * @return {T}
  *         Object a, the original object.
  */
-function extend<T extends object>(a: (T|undefined), b: object): T {
+function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1094,7 +1094,7 @@ function css(
                 'alpha(opacity=' + (styles.opacity as any * 100) + ')';
         }
     }
-    extend(el.style, styles);
+    extend(el.style, styles as any);
 }
 
 /**

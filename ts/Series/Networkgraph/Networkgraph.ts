@@ -663,6 +663,7 @@ interface NetworkgraphSeries {
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
+    drawGraph: void;
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;
@@ -706,7 +707,7 @@ extend(NetworkgraphSeries.prototype, {
      */
     forces: ['barycenter', 'repulsive', 'attractive'],
     hasDraggableNodes: true,
-    drawGraph: null as any,
+    drawGraph: void 0,
     isCartesian: false,
     requireSorting: false,
     directTouch: true,
@@ -715,7 +716,7 @@ extend(NetworkgraphSeries.prototype, {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     drawTracker: seriesTypes.column.prototype.drawTracker,
     // Animation is run in `series.simulation`.
-    animate: null as any,
+    animate: void 0,
     buildKDTree: H.noop,
     /**
      * Create a single node that holds information on incoming and outgoing

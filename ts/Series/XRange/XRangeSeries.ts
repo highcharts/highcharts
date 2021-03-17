@@ -718,7 +718,7 @@ extend(XRangeSeries.prototype, {
     animate: Series.prototype.animate,
     cropShoulder: 1,
     getExtremesFromAll: true,
-    autoIncrement: H.noop,
+    autoIncrement: H.noop as any,
     buildKDTree: H.noop,
     pointClass: XRangePoint
 });

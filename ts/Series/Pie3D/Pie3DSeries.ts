@@ -265,7 +265,7 @@ class Pie3DSeries extends PieSeries {
 interface Pie3DSeries {
     pointClass: typeof Pie3DPoint;
 }
-extend(Pie3DSeries, {
+extend(Pie3DSeries.prototype, {
     pointClass: Pie3DPoint
 });
 

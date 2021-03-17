@@ -105,6 +105,7 @@ declare global {
             [key: string]: any;
             public element: DOMElementType;
             public hasBoxWidthChanged: boolean;
+            // public height?: number;
             public parentGroup?: SVGElement;
             public pathArray?: SVGPath;
             public r?: number;
@@ -114,6 +115,7 @@ declare global {
             public oldShadowOptions?: ShadowOptionsObject;
             public styles?: CSSObject;
             public textStr?: string;
+            // public width?: number;
             public x?: number;
             public y?: number;
             public add(parent?: SVGElement): SVGElement;

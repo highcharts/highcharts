@@ -15,7 +15,7 @@
  * */
 
 export interface TimeTicksInfoObject extends Highcharts.TimeNormalizedObject {
-    higherRanks: Array<string>;
+    higherRanks: Record<string, string>;
     totalRange: number;
 }
 

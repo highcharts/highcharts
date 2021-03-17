@@ -1084,7 +1084,10 @@ class TreemapSeries extends ScatterSeries {
                 // the fill attribute.
                 if (series.colorAttribs && styledMode) {
                     // Heatmap is loaded
-                    extend(css, series.colorAttribs(point as any));
+                    extend<CSSObject|SVGAttributes>(
+                        css,
+                        series.colorAttribs(point as any)
+                    );
                 }
 
                 if (!(series as any)[groupKey]) {

@@ -1190,6 +1190,7 @@ class PieSeries extends Series {
  * */
 
 interface PieSeries {
+    drawGraph: undefined;
     getCenter: typeof CenteredSeriesMixin['getCenter'];
     pointClass: typeof PiePoint;
 }
@@ -1199,7 +1200,7 @@ extend(PieSeries.prototype, {
 
     directTouch: true,
 
-    drawGraph: null as any,
+    drawGraph: void 0,
 
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
@@ -1219,7 +1220,7 @@ extend(PieSeries.prototype, {
 
     requireSorting: false,
 
-    searchPoint: noop,
+    searchPoint: noop as any,
 
     trackerGroups: ['group', 'dataLabelsGroup']
 });
