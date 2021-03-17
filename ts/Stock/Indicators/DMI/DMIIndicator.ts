@@ -21,6 +21,7 @@ import type {
 import type DMIPoint from './DMIPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -29,8 +30,9 @@ const {
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
-    merge,
-    isArray
+    extend,
+    isArray,
+    merge
 } = U;
 
 /* *
@@ -40,7 +42,7 @@ const {
  * */
 
 /**
- * The DMI series type.
+ * The Directional Movement Index (DMI) series type.
  *
  * @private
  * @class
@@ -49,10 +51,85 @@ const {
  * @augments Highcharts.Series
  */
 class DMIIndicator extends SMAIndicator {
+    /**
+     * Directional Movement Index (DMI).
+     * This series requires the `linkedTo` option to be set and should
+     * be loaded after the `stock/indicators/indicators.js` file.
+     *
+     * @sample stock/indicators/dmi
+     *         DMI indicator
+     *
+     * @extends      plotOptions.sma
+     * @since        next
+     * @product      highstock
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
+     * @requires     stock/indicators/indicators
+     * @requires     stock/indicators/dmi
+     * @optionparent plotOptions.dmi
+     */
     public static defaultOptions: DMIOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
         params: {
-            // check index
-            period: 9
+            /**
+             * Periods for DMI indicator.
+             *
+             * @type    {number}
+             * @default 14
+             */
+            period: 14
+        },
+        marker: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>DX: {point.y}<br/>+DI: {point.plusDI}<br/>-DI: {point.minusDI}<br/>'
+        },
+        /**
+         * +DI line options.
+         */
+        plusDILine: {
+            /**
+             * Styles for the +DI line.
+             */
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1,
+                /**
+                 * Color of the line.
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                lineColor: '#ff0000'
+            }
+        },
+        /**
+         * -DI line options.
+         */
+        minusDILine: {
+            /**
+             * Styles for the -DI line.
+             */
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1,
+                /**
+                 * Color of the line.
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                lineColor: '#00ff00'
+            }
+        },
+        dataGrouping: {
+            approximation: 'averages'
         }
     } as DMIOptions);
 
@@ -98,7 +175,7 @@ class DMIIndicator extends SMAIndicator {
         return smoothedDM / tr * 100;
     }
 
-    public calculateDMI(
+    public calculateDX(
         plusDI: number,
         minusDI: number
     ): number {
@@ -115,11 +192,11 @@ class DMIIndicator extends SMAIndicator {
 
     public getTR(
         currentPoint: Array<number>,
-        prevPoint: Array<number>
+        prevPoint?: Array<number>
     ): number {
         const HL = currentPoint[1] - currentPoint[2],
-            HCp = prevPoint ? 0 : Math.abs(currentPoint[1] - prevPoint[3]),
-            LCp = prevPoint ? 0 : Math.abs(currentPoint[2] - prevPoint[3]),
+            HCp = !prevPoint ? 0 : Math.abs(currentPoint[1] - prevPoint[3]),
+            LCp = !prevPoint ? 0 : Math.abs(currentPoint[2] - prevPoint[3]),
             TR = Math.max(HL, HCp, LCp);
 
         return TR;
@@ -133,11 +210,9 @@ class DMIIndicator extends SMAIndicator {
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
-            plusDIValues: Array<number> = [],
-            minusDIValues: Array<number> = [],
-            DXPoints: Array<Array<number>> = [],
+            DMI: Array<Array<number>> = [],
             xData: Array<number> = [],
-            DXValues: Array<number> = [];
+            yData: Array<Array<number>> = [];
 
         if (
             // Check period, if bigger than points length, skip
@@ -161,6 +236,8 @@ class DMIIndicator extends SMAIndicator {
                 currentPlusDM: number, // +DM
                 currentMinusDM: number, // -DM
                 currentTR: number,
+                plusDI: number,
+                minusDI: number,
                 DX: number;
 
             if (i <= period) {
@@ -174,23 +251,22 @@ class DMIIndicator extends SMAIndicator {
 
                 // Get all values for the first point
                 if (i === period) {
-                    // +DI
-                    plusDIValues.push(
-                        this.calculateDI(prevSmoothedPlusDM, prevSmoothedTR)
+                    plusDI = this.calculateDI(
+                        prevSmoothedPlusDM,
+                        prevSmoothedTR
                     );
-                    // -DI
-                    minusDIValues.push(
-                        this.calculateDI(prevSmoothedMinusDM, prevSmoothedTR)
+                    minusDI = this.calculateDI(
+                        prevSmoothedMinusDM,
+                        prevSmoothedTR
                     );
-                    // DX
-                    DX = this.calculateDMI(
+                    DX = this.calculateDX(
                         prevSmoothedPlusDM,
                         prevSmoothedMinusDM
                     );
-                    DXValues.push(DX);
 
+                    DMI.push([xVal[i], DX, plusDI, minusDI]);
                     xData.push(xVal[i]);
-                    DXPoints.push([xVal[i], DX]);
+                    yData.push([DX, plusDI, minusDI]);
                 }
             } else {
                 // Calculate current values
@@ -219,44 +295,59 @@ class DMIIndicator extends SMAIndicator {
                 prevSmoothedTR = smoothedTR;
 
                 // Get all next points (except the first one calculated above)
-                // +DI
-                plusDIValues.push(
-                    this.calculateDI(prevSmoothedPlusDM, prevSmoothedTR)
+                plusDI = this.calculateDI(
+                    prevSmoothedPlusDM,
+                    prevSmoothedTR
                 );
-                // -DI
-                minusDIValues.push(
-                    this.calculateDI(prevSmoothedMinusDM, prevSmoothedTR)
+                minusDI = this.calculateDI(
+                    prevSmoothedMinusDM,
+                    prevSmoothedTR
                 );
-                // DX
-                DX = this.calculateDMI(
+                DX = this.calculateDX(
                     prevSmoothedPlusDM,
                     prevSmoothedMinusDM
                 );
-                DXValues.push(DX);
 
+                DMI.push([xVal[i], DX, plusDI, minusDI]);
                 xData.push(xVal[i]);
-                DXPoints.push([xVal[i], DX]);
+                yData.push([DX, plusDI, minusDI]);
             }
         }
 
         return {
-            values: DXPoints,
+            values: DMI,
             xData: xData,
-            yData: DXValues
+            yData: yData
         } as IndicatorValuesObject<TLinkedSeries>;
     }
 
 }
 
-/* *
- *
- *  Prototype Properties
- *
- * */
-
 interface DMIIndicator {
+    nameBase: string;
+    pointArrayMap: Array<string>;
+    parallelArrays: Array<string>;
+    pointValKey: string;
+    linesApiNames: Array<string>;
     pointClass: typeof DMIPoint;
+
+    drawGraph: typeof MultipleLinesMixin.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
+    translate: typeof MultipleLinesMixin.translate;
+    toYData: typeof MultipleLinesMixin.toYData;
 }
+extend(DMIIndicator.prototype, {
+    nameBase: 'DMI',
+    pointArrayMap: ['y', 'plusDI', 'minusDI'],
+    parallelArrays: ['x', 'y', 'plusDI', 'minusDI'],
+    pointValKey: 'y',
+    linesApiNames: ['plusDILine', 'minusDILine'],
+
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData
+});
 
 /* *
  *
@@ -279,4 +370,20 @@ SeriesRegistry.registerSeriesType('dmi', DMIIndicator);
 
 export default DMIIndicator;
 
-''; // adds doclet above to the transpiled file
+/**
+ * The Directional Movement Index (DMI) indicator series.
+ * If the [type](#series.dmi.type) option is not
+ * specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.dmi
+ * @since     next
+ * @product   highstock
+ * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
+ *            navigatorOptions, pointInterval, pointIntervalUnit,
+ *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/dmi
+ * @apioption series.dmi
+ */
+
+''; // to include the above in the js output
