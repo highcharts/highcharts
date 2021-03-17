@@ -10,7 +10,7 @@ Highcharts.chart('container', {
 
     yAxis: {
         title: {
-            text: 'Number of Employees'
+            text: 'Number of Employeeeeeees'
         }
     },
 
@@ -22,8 +22,8 @@ Highcharts.chart('container', {
 
     legend: {
         layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
+        align: 'left',
+        verticalAlign: 'top'
     },
 
     plotOptions: {
