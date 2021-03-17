@@ -60,7 +60,7 @@ declare global {
             (csv: string): string;
         }
         interface DataCompleteCallbackFunction {
-            (chartOptions: Options): void;
+            (chartOptions: Partial<Options>): void;
         }
         interface DataDateFormatCallbackFunction {
             (match: ReturnType<string['match']>): number;
@@ -126,7 +126,7 @@ declare global {
         class Data {
             public constructor(
                 dataOptions: DataOptions,
-                chartOptions?: Options,
+                chartOptions?: Partial<Options>,
                 chart?: Chart
             );
             public alternativeFormat?: string;
@@ -2361,7 +2361,7 @@ class Data {
             j: number,
             r: number,
             seriesIndex,
-            chartOptions: Highcharts.Options,
+            chartOptions: Partial<Highcharts.Options>,
             allSeriesBuilders = [],
             builder,
             freeIndexes,
@@ -2596,7 +2596,7 @@ addEvent(
         }
     ): void {
         var chart = this, // eslint-disable-line no-invalid-this
-            userOptions = (e.args[0] || {}),
+            userOptions: Partial<Highcharts.Options> = (e.args[0] || {}),
             callback = e.args[1];
 
         if (userOptions && userOptions.data && !chart.hasDataDef) {
@@ -2610,7 +2610,7 @@ addEvent(
             chart.data = new H.Data(extend(userOptions.data, {
 
                 afterComplete: function (
-                    dataOptions: Highcharts.Options
+                    dataOptions?: Highcharts.Options
                 ): void {
                     var i, series;
 

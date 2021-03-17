@@ -622,6 +622,7 @@ class GaugeSeries extends Series {
 interface GaugeSeries {
     angular: boolean;
     directTouch: boolean;
+    drawGraph(): void;
     fixedBox: boolean;
     forceDL: boolean;
     noSharedTooltip: boolean;

@@ -392,7 +392,7 @@ class RadialAxis {
 
                 // In case when the innerSize is set in a polar chart, the axis'
                 // center cannot be a reference to pane's center
-                center = this.center = extend([], this.pane.center);
+                center = this.center = this.pane.center.slice();
 
                 // The sector is used in Axis.translate to compute the
                 // translation of reversed axis points (#2570)

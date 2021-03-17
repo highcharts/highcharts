@@ -48,7 +48,7 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 // Extend the Pointer
-extend(Pointer.prototype, {
+extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
 
     // The event handler for the doubleclick event
     onContainerDblClick: function (

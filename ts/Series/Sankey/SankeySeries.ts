@@ -1158,7 +1158,7 @@ extend(SankeySeries.prototype, {
     animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
-    createNode: NodesMixin.createNode,
+    createNode: NodesMixin.createNode as any,
     destroy: NodesMixin.destroy,
     forceDL: true,
     invertible: true,
@@ -1166,7 +1166,7 @@ extend(SankeySeries.prototype, {
     orderNodes: true,
     pointArrayMap: ['from', 'to'],
     pointClass: SankeyPoint,
-    searchPoint: H.noop,
+    searchPoint: H.noop as any,
     setData: NodesMixin.setData
 });
 

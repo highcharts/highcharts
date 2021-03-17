@@ -540,7 +540,7 @@ bindingsUtils.updateNthPoint = function (
 };
 
 // Extends NavigationBindigs to support indicators and resizers:
-extend(NavigationBindings.prototype, {
+extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBindings.prototype, {
     /* eslint-disable valid-jsdoc */
     /**
      * Get current positions for all yAxes. If new axis does not have position,

@@ -257,12 +257,12 @@ class Funnel3DSeries extends ColumnSeries {
         extend(this.xAxis.options, {
             gridLineWidth: 0,
             lineWidth: 0,
-            title: null,
+            title: void 0,
             tickPositions: []
         });
         extend(this.yAxis.options, {
             gridLineWidth: 0,
-            title: null,
+            title: void 0,
             labels: {
                 enabled: false
             }

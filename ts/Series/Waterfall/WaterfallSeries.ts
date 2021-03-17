@@ -938,7 +938,7 @@ class WaterfallSeries extends ColumnSeries {
 }
 
 interface WaterfallSeries {
-    getZonesGraph: typeof LineSeries.prototype.getZonesGraphs;
+    getZonesGraphs: typeof LineSeries.prototype.getZonesGraphs;
     pointClass: typeof WaterfallPoint;
     pointValKey: string;
     showLine: boolean;

@@ -79,7 +79,7 @@ class DumbbellPoint extends AreaRangePoint {
             ),
             verb = 'attr',
             upperGraphicColor,
-            origProps;
+            origProps: Partial<DumbbellPoint>;
 
         this.pointSetState.apply(this, arguments);
 

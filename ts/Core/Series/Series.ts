@@ -2770,10 +2770,10 @@ class Series {
 
     public init(
         chart: Chart,
-        options: DeepPartial<SeriesTypeOptions>
+        userOptions: DeepPartial<SeriesTypeOptions>
     ): void {
 
-        fireEvent(this, 'init', { options: options });
+        fireEvent(this, 'init', { options: userOptions });
 
         var series = this,
             events,
@@ -2814,13 +2814,14 @@ class Series {
          * @name Highcharts.Series#options
          * @type {Highcharts.SeriesOptionsType}
          */
-        series.options = options = series.setOptions(options);
+        series.options = series.setOptions(userOptions);
+        const options = series.options;
+
         series.linkedSeries = [];
         // bind the axes
         series.bindAxes();
 
-        // set some variables
-        extend(series, {
+        extend<Series>(series, {
             /**
              * The series name as given in the options. Defaults to
              * "Series {n}".
@@ -3191,7 +3192,7 @@ class Series {
     public setDataSortingOptions(): void {
         var options = this.options;
 
-        extend(this, {
+        extend<Series>(this, {
             requireSorting: false,
             sorted: false,
             enabledDataSorting: true,
@@ -6730,7 +6731,10 @@ class Series {
 
                     // Reinsert all methods and properties from the new type
                     // prototype (#2270, #3719).
-                    extend(series, seriesTypes[newType || initialType].prototype);
+                    extend<Series>(
+                        series,
+                        seriesTypes[newType || initialType].prototype
+                    );
 
                     // The events are tied to the prototype chain, don't copy if
                     // they're not the series' own

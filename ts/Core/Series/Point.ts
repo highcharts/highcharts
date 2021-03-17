@@ -499,7 +499,7 @@ class Point {
         graphicalProps.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
                 if (item.element) {
-                    item.animate(extend(
+                    item.animate(extend<SVGAttributes>(
                         { x: point.startXPos },
                         (item.startYPos ? {
                             x: item.startXPos,

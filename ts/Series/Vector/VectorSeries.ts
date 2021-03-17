@@ -347,7 +347,7 @@ extend(VectorSeries.prototype, {
      * @ignore
      * @deprecated
      */
-    markerAttribs: H.noop,
+    markerAttribs: H.noop as any,
 
     parallelArrays: ['x', 'y', 'length', 'direction'],
 

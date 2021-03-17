@@ -61,11 +61,15 @@ declare module '../Core/Chart/ChartLike'{
 declare global {
     namespace Highcharts {
         interface MapCoordinateObject {
+            name?: string;
+            properties?: object;
             x: number;
             y: (number|null);
         }
         interface MapPathObject {
+            name?: string;
             path: SVGPath;
+            properties?: object;
         }
         interface MapLatLonObject {
             lat: number;
@@ -631,7 +635,7 @@ H.geojson = function (
                  * @name Highcharts.Point#properties
                  * @type {*}
                  */
-                properties: properties
+                properties
             }));
         }
 

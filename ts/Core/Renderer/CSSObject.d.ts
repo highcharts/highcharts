@@ -96,6 +96,7 @@ export interface CSSObject {
     'touch-action'?: string;
     transform?: string;
     transformOrigin?: string;
+    transition?: string;
     userSelect?: string;
     visibility?: 'hidden'|'inherit'|'visible';
     whiteSpace?: string;

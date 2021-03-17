@@ -1368,7 +1368,7 @@ extend(MapSeries.prototype, {
     // X axis and Y axis must have same translation slope
     preserveAspectRatio: true,
 
-    searchPoint: noop,
+    searchPoint: noop as any,
 
     trackerGroups: colorMapSeriesMixin.trackerGroups,
 

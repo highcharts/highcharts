@@ -81,7 +81,7 @@ interface HTMLElement extends SVGElement {
     element: HTMLDOMElement;
     parentGroup?: HTMLElement;
     renderer: HTMLRenderer;
-    style: CSSObject & CSSStyleDeclaration;
+    style: CSSObject;
     xCorr: number;
     yCorr: number;
     afterSetters(): void;
