@@ -337,7 +337,7 @@ namespace StockChart {
  */
 function getDefaultAxisOptions(
     type: string,
-    options: Highcharts.AxisOptions
+    options: DeepPartial<Highcharts.AxisOptions>
 ): DeepPartial<Highcharts.AxisOptions> {
     if (type === 'xAxis') {
         return {
@@ -405,12 +405,16 @@ function getForcedAxisOptions(
                 true
             );
 
-        return {
+        const axisOptions: DeepPartial<Highcharts.AxisOptions> = {
             type: 'datetime',
-            categories: void 0,
-            startOnTick: navigatorEnabled ? false : void 0,
-            endOnTick: navigatorEnabled ? false : void 0
+            categories: void 0
         };
+        if (navigatorEnabled) {
+            axisOptions.startOnTick = false;
+            axisOptions.endOnTick = false;
+        }
+
+        return axisOptions;
     }
     return {};
 }
@@ -468,12 +472,12 @@ addEvent(Axis, 'autoLabelAlign', function (
     if (this.chart.options.isStock && this.coll === 'yAxis') {
         key = options.top + ',' + options.height;
         // do it only for the first Y axis of each pane
-        if (!panes[key] && (labelOptions as any).enabled) {
-            if ((labelOptions as any).x === 15) { // default
-                (labelOptions as any).x = 0;
+        if (!panes[key] && labelOptions.enabled) {
+            if (labelOptions.x === 15) { // default
+                labelOptions.x = 0;
             }
-            if (typeof (labelOptions as any).align === 'undefined') {
-                (labelOptions as any).align = 'right';
+            if (typeof labelOptions.align === 'undefined') {
+                labelOptions.align = 'right';
             }
             panes[key] = this;
             (e as any).align = 'right';
@@ -717,8 +721,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     // Check if the label has to be drawn
     if (
-        !defined((this.crosshair as any).label) ||
-        !(this.crosshair as any).label.enabled ||
+        !this.crosshair ||
+        !this.crosshair.label ||
+        !this.crosshair.label.enabled ||
         !this.cross ||
         !isNumber(this.min) ||
         !isNumber(this.max)
@@ -728,7 +733,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     var chart = this.chart,
         log = this.logarithmic,
-        options = (this.options.crosshair as any).label, // the label's options
+        options = this.crosshair.label, // the label's options
         horiz = this.horiz, // axis orientation
         opposite = this.opposite, // axis position
         left = this.left, // left position
@@ -775,7 +780,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 )
             )
             .attr({
-                align: options.align || align,
+                align: options.align || align as any,
                 padding: pick(options.padding, 8),
                 r: pick(options.borderRadius, 3),
                 zIndex: 2
@@ -797,7 +802,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                     fontWeight: 'normal',
                     fontSize: '11px',
                     textAlign: 'center'
-                }, options.style));
+                }, options.style || {}));
         }
     }
 
@@ -828,10 +833,15 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         point.series.isPointInside(point) :
         (isNumber(value) && value > min && value < max);
 
+    let text = '';
+    if (formatOption) {
+        text = format(formatOption, { value }, chart);
+    } else if (options.formatter && isNumber(value)) {
+        text = options.formatter.call(this, value);
+    }
+
     crossLabel.attr({
-        text: formatOption ?
-            format(formatOption, { value }, chart) :
-            options.formatter.call(this, value),
+        text,
         x: posx,
         y: posy,
         visibility: isInside ? 'visible' : 'hidden'

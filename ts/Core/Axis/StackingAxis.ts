@@ -84,7 +84,7 @@ class StackingAxisAdditions {
         const stacking = this;
         const axis = stacking.axis;
         const axisSeries = axis.series;
-        const reversedStacks = pick(axis.options.reversedStacks, true);
+        const reversedStacks = axis.options.reversedStacks;
         const len = axisSeries.length;
 
         let actualSeries: Series,

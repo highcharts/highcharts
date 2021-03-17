@@ -2755,7 +2755,7 @@ class Chart {
      *         The newly generated Axis object.
      */
     public addAxis(
-        options: Highcharts.AxisOptions,
+        options: DeepPartial<Highcharts.AxisOptions>,
         isX?: boolean,
         redraw?: boolean,
         animation?: boolean
@@ -3834,7 +3834,7 @@ namespace Chart {
 
     export interface CreateAxisOptionsObject {
         animation: undefined | boolean | Partial<AnimationOptions>;
-        axis: Highcharts.AxisOptions | ColorAxis.Options;
+        axis: DeepPartial<Highcharts.AxisOptions> | DeepPartial<ColorAxis.Options>;
         redraw: undefined | boolean;
     }
 
