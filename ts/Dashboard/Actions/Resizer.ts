@@ -13,6 +13,11 @@ const {
     createElement
 } = U;
 
+import H from '../../Core/Globals.js';
+const {
+    hasTouch
+} = H;
+
 class Resizer {
     /* *
     *
@@ -41,6 +46,8 @@ class Resizer {
         );
 
         this.layout = layout;
+        this.isGrabbed = false;
+        this.eventsToUnbind = [];
 
         this.init();
     }
@@ -52,6 +59,8 @@ class Resizer {
     * */
     public resizeOptions: Resizer.Options;
     public layout: Layout;
+    public isGrabbed: boolean;
+    public eventsToUnbind?: Array<Function>
     /* *
      *
      *  Functions
@@ -77,11 +86,12 @@ class Resizer {
             }
         }
     }
-
+    /**
+     * Add Snap - create handlers and add events.
+     */
     public addSnap(
         column: Resizer.ResizedColumn,
         snapParams: Resizer.SnapParams
-        // snapOptions: Resizer.SnapOptions
     ): void {
 
         column.resizer = this.createHandlers(
@@ -89,11 +99,18 @@ class Resizer {
             snapParams
         );
 
-        // add mouse down event
-        
-        // add mouse move event
+        // left handler
+        /*this.addResizeEvents(
+            column.resizer.leftHandler,
+            column
+        );*/
 
-        // add mouse up event
+        // right handler
+        this.addResizeEvents(
+            column.resizer.rightHandler,
+            column
+        );
+
     }
     /**
      * Create HTML snap elements
@@ -102,7 +119,7 @@ class Resizer {
         column: Resizer.ResizedColumn,
         snapParams: Resizer.SnapParams
     ): Resizer.Snap {
-        let resizerHandlers = {} as Resizer.Snap;
+        const resizerHandlers = {} as Resizer.Snap;
 
         // generate HTML snap element
         // left handler
@@ -131,9 +148,120 @@ class Resizer {
 
         return resizerHandlers;
     }
+    /**
+     * Add events
+     */
+    public addResizeEvents(
+        handler: HTMLDOMElement|undefined,
+        column: Resizer.ResizedColumn
+    ): void {
+        const resizer = this;
 
+        let mouseDownHandler,
+            mouseMoveHandler,
+            mouseUpHandler;
+
+        resizer.mouseDownHandler = mouseDownHandler = function (
+            e: PointerEvent
+        ): void {
+            resizer.isGrabbed = true;
+        };
+
+        resizer.mouseMoveHandler = mouseMoveHandler = function (
+            e: PointerEvent
+        ): void {
+            resizer.onMouseMove(
+                resizer.isGrabbed,
+                e as PointerEvent,
+                column
+            );
+        };
+
+        resizer.mouseUpHandler = mouseUpHandler = function (
+            e: PointerEvent
+        ): void {
+            resizer.isGrabbed = false;
+        };
+
+        if (handler) {
+            // Add mouse events
+            resizer.eventsToUnbind?.push(
+                addEvent(handler, 'mousedown', mouseDownHandler),
+                addEvent(
+                    column.row?.container,
+                    'mousemove',
+                    mouseMoveHandler
+                ),
+                addEvent(handler, 'mouseup', mouseUpHandler)
+            );
+
+            // Touch events
+            if (hasTouch) {
+                resizer.eventsToUnbind?.push(
+                    addEvent(handler, 'touchstart', mouseDownHandler),
+                    addEvent(
+                        column.row?.container,
+                        'touchmove',
+                        mouseMoveHandler
+                    ),
+                    addEvent(handler, 'touchend', mouseUpHandler)
+                );
+            }
+        }
+    }
+    /**
+     * Mouse move function
+     */
+    public onMouseMove(
+        isGrabbed: boolean,
+        e: PointerEvent,
+        column: Resizer.ResizedColumn
+    ): void {
+
+        if (isGrabbed && column.container) {
+            // update size
+            const parentContainerWidth =
+                (column.container.parentNode as HTMLDOMElement).offsetWidth;
+
+            column.container.style.width =
+                (
+                    (
+                        (e.clientX - column.container.offsetLeft) /
+                        parentContainerWidth
+                    ) * 100
+                ) + '%';
+            column.container.style.flex = 'none';
+
+            // call component redraw
+            column.mountedComponent?.redraw();
+        }
+    }
+
+    /**
+     * Destroy Resizer
+     */
+    public destroy(): void {
+        // @TODO destroy HTML elements
+        /*
+        for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
+
+        }
+        */
+
+        // unbind events
+        if (this.eventsToUnbind) {
+            // @TODO replace forEach with more efficient way
+            this.eventsToUnbind.forEach(function (unbind: Function): void {
+                unbind();
+            });
+        }
+    }
 }
-
+interface Resizer {
+    mouseDownHandler?: Function;
+    mouseMoveHandler?: Function;
+    mouseUpHandler?: Function;
+}
 namespace Resizer {
     export interface Options {
         resize: ResizeOptions;
@@ -145,7 +273,7 @@ namespace Resizer {
     }
 
     export interface ResizedColumn extends Column {
-        resizer?: Resizer.Snap
+        resizer?: Resizer.Snap;
     }
 
     export interface Snap {
@@ -160,4 +288,3 @@ namespace Resizer {
 }
 
 export default Resizer;
-
