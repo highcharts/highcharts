@@ -104,7 +104,8 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         controller.click(10, 10);
         assert.equal(wasInitCalled,
             false,
-            'Init function should not be executed, when there is no series.');
+            'Init function should not be executed, when there is no series.'
+        );
 
         wasInitCalled = false;
         chart.addSeries({
@@ -114,28 +115,32 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
         controller.click(10, 10);
         assert.equal(wasInitCalled,
             true,
-            'Init function should be executed, after series was added.');
+            'Init function should be executed, after series was added.'
+        );
 
         chart.series[0].setVisible(false);
         wasInitCalled = false;
         controller.click(10, 10);
         assert.equal(wasInitCalled,
             false,
-            'Init function should not be called, when series are invisible.');
+            'Init function should not be called, when series are invisible.'
+        );
 
         chart.series[0].setVisible(true);
         wasInitCalled = false;
         controller.click(10, 10);
         assert.equal(wasInitCalled,
             true,
-            'Init function should not be called, when series are visible.');
+            'Init function should not be called, when series are visible.'
+        );
 
         chart.series[0].remove();
         wasInitCalled = false;
         controller.click(10, 10);
         assert.equal(wasInitCalled,
             false,
-            'Init function should not be called, after deleting the series.');
+            'Init function should not be called, after deleting the series.'
+        );
 
         chart.addSeries({
             data: [1, 2, 3, 2, 3, 2]
@@ -155,7 +160,7 @@ QUnit.test('Disabling and enabling stock tools buttons, when series are invisibl
             }
         }, false);
 
-        chart.series[0].setVisible(false);
+        chart.series[0].setVisible(false, false);
         chart.redraw();
         wasInitCalled = false;
         controller.click(10, 10);
