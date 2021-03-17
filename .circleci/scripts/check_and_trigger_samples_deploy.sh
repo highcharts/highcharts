@@ -58,7 +58,6 @@ if [[ $(echo $SAMPLES_COMMIT | wc -l) -ge 2 ]] || [ "$FORCE_DEPLOY" = true ]; th
 
 else
      echo "No change in samples/ folder found."
-     exit 0;
 fi
 
 # Handle demos
