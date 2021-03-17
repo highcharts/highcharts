@@ -426,7 +426,9 @@ SVGRenderer.prototype.addPattern = function (
 
     // Use an SVG path for the pattern
     if (options.path) {
-        path = options.path as any;
+        path = U.isObject(options.path) ?
+            options.path :
+            { d: options.path };
 
         // The background
         if (options.backgroundColor) {
@@ -435,7 +437,7 @@ SVGRenderer.prototype.addPattern = function (
 
         // The pattern
         attribs = {
-            'd': (path.d as any) || path
+            'd': path.d
         };
         if (!this.styledMode) {
             attribs.stroke = path.stroke || color;
@@ -785,7 +787,7 @@ namespace PatternFill {
         image?: string;
         opacity?: number;
         path: (string|SVGAttributes);
-        patternContentUnits?: 'string';
+        patternContentUnits?: 'userSpaceOnUse'|'objectBoundingBox';
         patternTransform?: string;
         width: number;
         x?: number;

@@ -402,7 +402,7 @@ extend(H.Renderer.prototype, {
             lowerElem.add(funnel3d.lowerGroup);
         });
 
-        funnel3d.gradientForSides = shapeArgs.gradientForSides;
+        funnel3d.gradientForSides = (shapeArgs as any).gradientForSides;
 
         return funnel3d;
     },
@@ -412,7 +412,7 @@ extend(H.Renderer.prototype, {
      */
     funnel3dPath: function (
         this: SVGRenderer,
-        shapeArgs: SVGAttributes
+        shapeArgs: any // @todo: Type it. It's an extended SVGAttributes.
     ): Highcharts.Funnel3dPathsObject {
         // Check getCylinderEnd for better error message if
         // the cylinder module is missing

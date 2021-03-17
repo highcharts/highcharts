@@ -105,8 +105,8 @@ declare global {
             outlineWidth?: number;
             series?: SeriesTypeOptions;
             top?: number;
-            xAxis?: XAxisOptions;
-            yAxis?: YAxisOptions;
+            xAxis?: DeepPartial<XAxisOptions>;
+            yAxis?: DeepPartial<YAxisOptions>;
         }
         interface Options {
             navigator?: NavigatorOptions;
@@ -1884,7 +1884,7 @@ class Navigator {
 
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
-            navigator.xAxis = new Axis(chart, merge<Highcharts.XAxisOptions>({
+            navigator.xAxis = new Axis(chart, merge<DeepPartial<Highcharts.XAxisOptions>>({
                 // inherit base xAxis' break and ordinal options
                 breaks: baseXaxis.options.breaks,
                 ordinal: baseXaxis.options.ordinal
@@ -2030,10 +2030,7 @@ class Navigator {
                 navigator.hasDragged = (navigator.scrollbar as any).hasDragged;
                 navigator.render(0, 0, from, to);
 
-                if ((chart.options.scrollbar as any).liveRedraw ||
-                    ((e as any).DOMType !== 'mousemove' &&
-                    (e as any).DOMType !== 'touchmove')
-                ) {
+                if (this.shouldUpdateExtremes((e as any).DOMType)) {
                     setTimeout(function (): void {
                         navigator.onMouseUp(e);
                     });
@@ -2187,7 +2184,7 @@ class Navigator {
                         opacity: 1
                     }
                 }
-            } as Record<string, any>,
+            } as AnyRecord,
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series =
                 (navigator.series || []).filter(function (navSeries): boolean {
@@ -2224,7 +2221,7 @@ class Navigator {
                         {
                             color: base.color,
                             visible: base.visible
-                        } as Record<string, any>,
+                        } as AnyRecord,
                         !isArray(chartNavigatorSeriesOptions) ?
                             chartNavigatorSeriesOptions :
                             (defaultOptions.navigator as any).series

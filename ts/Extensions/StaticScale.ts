@@ -102,7 +102,7 @@ Chart.prototype.adjustHeight = function (): void {
 
                 diff = height - chart.plotHeight;
 
-                if (Math.abs(diff) >= 1) {
+                if (!chart.scrollablePixelsY && Math.abs(diff) >= 1) {
                     chart.plotHeight = height;
                     chart.redrawTrigger = 'adjustHeight';
                     chart.setSize(void 0, chart.chartHeight + diff, animate);
@@ -115,7 +115,9 @@ Chart.prototype.adjustHeight = function (): void {
                         (chart as any)[series.sharedClipKey];
 
                     if (clipRect) {
-                        clipRect.attr({
+                        clipRect.attr(chart.inverted ? {
+                            width: chart.plotHeight
+                        } : {
                             height: chart.plotHeight
                         });
                     }

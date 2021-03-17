@@ -570,16 +570,17 @@ function GLRenderer(
 
             points.forEach(function (point: Point): void {
                 var plotY = point.plotY,
-                    shapeArgs: SVGAttributes,
                     swidth,
                     pointAttr;
 
                 if (
                     typeof plotY !== 'undefined' &&
                     !isNaN(plotY) &&
-                    point.y !== null
+                    point.y !== null &&
+                    point.shapeArgs
                 ) {
-                    shapeArgs = point.shapeArgs as any;
+                    let { x = 0, y = 0, width = 0, height = 0 } =
+                        point.shapeArgs;
 
                     pointAttr = chart.styledMode ?
                         (point.series as Highcharts.ColorMapSeries)
@@ -610,13 +611,7 @@ function GLRenderer(
                         scolor[1] /= 255.0;
                         scolor[2] /= 255.0;
 
-                        pushRect(
-                            shapeArgs.x,
-                            shapeArgs.y,
-                            shapeArgs.width,
-                            shapeArgs.height,
-                            scolor
-                        );
+                        pushRect(x, y, width, height, scolor);
 
                         swidth /= 2;
                     }
@@ -630,17 +625,17 @@ function GLRenderer(
                     // bottom-right. This causes a vertical and horizontal flip
                     // in the resulting image, making it rotated 180 degrees.
                     if (series.type === 'heatmap' && chart.inverted) {
-                        shapeArgs.x = xAxis.len - shapeArgs.x;
-                        shapeArgs.y = yAxis.len - shapeArgs.y;
-                        shapeArgs.width = -shapeArgs.width;
-                        shapeArgs.height = -shapeArgs.height;
+                        x = xAxis.len - x;
+                        y = yAxis.len - y;
+                        width = -width;
+                        height = -height;
                     }
 
                     pushRect(
-                        shapeArgs.x + swidth,
-                        shapeArgs.y + swidth,
-                        shapeArgs.width - (swidth * 2),
-                        shapeArgs.height - (swidth * 2),
+                        x + swidth,
+                        y + swidth,
+                        width - (swidth * 2),
+                        height - (swidth * 2),
                         pcolor
                     );
                 }

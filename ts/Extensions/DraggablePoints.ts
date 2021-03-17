@@ -405,13 +405,21 @@ const columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         },
         // Position handle at bottom if column is below threshold
         handlePositioner: function (point: ColumnPoint): PositionObject {
-            var bBox: BBoxObject =
-                (point.shapeArgs as any) || (point.graphic as any).getBBox();
+            var bBox = (
+                    point.shapeArgs ||
+                    (point.graphic && point.graphic.getBBox()) ||
+                    {}
+                ),
+                reversed = point.series.yAxis.reversed,
+                threshold = point.series.options.threshold || 0,
+                y = point.y || 0,
+                bottom =
+                    (!reversed && y >= threshold) ||
+                    (reversed && y < threshold);
 
             return {
-                x: bBox.x,
-                y: (point.y as any) >= (point.series.options.threshold || 0) ?
-                    bBox.y : bBox.y + bBox.height
+                x: bBox.x || 0,
+                y: bottom ? (bBox.y || 0) : (bBox.y || 0) + (bBox.height || 0)
             };
         },
         // Horizontal handle
@@ -498,8 +506,8 @@ if (seriesTypes.columnrange) {
                 var bBox = point.shapeArgs || (point.graphic as any).getBBox();
 
                 return {
-                    x: bBox.x,
-                    y: bBox.y + bBox.height
+                    x: bBox.x || 0,
+                    y: (bBox.y || 0) + (bBox.height || 0)
                 };
             },
             handleFormatter: columnDragDropProps.y.handleFormatter,
@@ -530,8 +538,8 @@ if (seriesTypes.columnrange) {
                 var bBox = point.shapeArgs || (point.graphic as any).getBBox();
 
                 return {
-                    x: bBox.x,
-                    y: bBox.y
+                    x: bBox.x || 0,
+                    y: bBox.y || 0
                 };
             },
             handleFormatter: columnDragDropProps.y.handleFormatter,
@@ -567,7 +575,7 @@ if (seriesTypes.boxplot) {
                 point: BoxPlotPoint
             ): PositionObject {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.lowPlot
                 };
             },
@@ -597,7 +605,7 @@ if (seriesTypes.boxplot) {
                 point: BoxPlotPoint
             ): PositionObject {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.q1Plot
                 };
             },
@@ -633,7 +641,7 @@ if (seriesTypes.boxplot) {
                 point: BoxPlotPoint
             ): PositionObject {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.q3Plot
                 };
             },
@@ -663,7 +671,7 @@ if (seriesTypes.boxplot) {
                 point: BoxPlotPoint
             ): PositionObject {
                 return {
-                    x: point.shapeArgs.x,
+                    x: point.shapeArgs.x || 0,
                     y: point.highPlot
                 };
             },
@@ -2273,10 +2281,10 @@ Series.prototype.getGuideBox = function (
 
         if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
             changed = true;
-            minX = Math.min(bBox.x, minX);
-            maxX = Math.max(bBox.x + bBox.width, maxX);
-            minY = Math.min(bBox.y, minY);
-            maxY = Math.max(bBox.y + bBox.height, maxY);
+            minX = Math.min(bBox.x || 0, minX);
+            maxX = Math.max((bBox.x || 0) + (bBox.width || 0), maxX);
+            minY = Math.min(bBox.y || 0, minY);
+            maxY = Math.max((bBox.y || 0) + (bBox.height || 0), maxY);
         }
     });
 
@@ -2407,7 +2415,7 @@ Point.prototype.showDragHandles = function (): void {
                 options.dragHandle
             ),
             handleAttrs: SVGAttributes = {
-                className: handleOptions.className,
+                'class': handleOptions.className,
                 'stroke-width': handleOptions.lineWidth,
                 fill: handleOptions.color,
                 stroke: handleOptions.lineColor

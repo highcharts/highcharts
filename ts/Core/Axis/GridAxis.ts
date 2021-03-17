@@ -72,6 +72,9 @@ declare global {
  * @private
  */
 declare module './Types' {
+    interface AxisLike {
+        rightWall?: SVGElement;
+    }
     interface AxisComposition {
         grid?: GridAxis['grid'];
     }
@@ -419,6 +422,45 @@ addEvent(
     }
 );
 
+addEvent(
+    Tick,
+    'labelFormat',
+    (ctx: Highcharts.AxisLabelsFormatterContextObject): void => {
+        const {
+            axis,
+            value
+        } = ctx;
+        if (axis.options.grid?.enabled) {
+            const tickPos = axis.tickPositions;
+            const series = (
+                axis.linkedParent || axis
+            ).series[0];
+            const isFirst = value === tickPos[0];
+            const isLast = value === tickPos[tickPos.length - 1];
+            const point: (Point|undefined) =
+                series && find(series.options.data as any, function (
+                    p: (PointOptions|PointShortOptions)
+                ): boolean {
+                    return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
+                });
+            let pointCopy;
+
+            if (point && series.is('gantt')) {
+                // For the Gantt set point aliases to the pointCopy
+                // to do not change the original point
+                pointCopy = merge(point);
+                H.seriesTypes.gantt.prototype.pointClass
+                    .setGanttPointAliases(pointCopy as any);
+            }
+            // Make additional properties available for the
+            // formatter
+            ctx.isFirst = isFirst;
+            ctx.isLast = isLast;
+            ctx.point = pointCopy;
+        }
+    }
+);
+
 /* eslint-enable no-invalid-this */
 
 /**
@@ -667,51 +709,6 @@ class GridAxis {
 
         if (gridOptions.enabled) {
             applyGridOptions(axis);
-
-            /* eslint-disable no-invalid-this */
-
-            // TODO: wrap the axis instead
-            wrap(axis, 'labelFormatter', function (
-                this: Highcharts.AxisLabelsFormatterContextObject,
-                proceed: Function
-            ): void {
-                const {
-                    axis,
-                    value
-                } = this;
-                const tickPos = axis.tickPositions;
-                const series: Series = (
-                    axis.isLinked ?
-                        (axis.linkedParent as any) :
-                        axis
-                ).series[0];
-                const isFirst = value === tickPos[0];
-                const isLast = value === tickPos[tickPos.length - 1];
-                const point: (Point|undefined) =
-                    series && find(series.options.data as any, function (
-                        p: (PointOptions|PointShortOptions)
-                    ): boolean {
-                        return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
-                    });
-                let pointCopy;
-
-                if (point && series.is('gantt')) {
-                    // For the Gantt set point aliases to the pointCopy
-                    // to do not change the original point
-                    pointCopy = merge(point);
-                    H.seriesTypes.gantt.prototype.pointClass.setGanttPointAliases(pointCopy as any);
-                }
-                // Make additional properties available for the
-                // formatter
-                this.isFirst = isFirst;
-                this.isLast = isLast;
-                this.point = pointCopy;
-                // Call original labelFormatter
-                return proceed.call(this);
-            });
-
-            /* eslint-enable no-invalid-this */
-
         }
 
         if (gridOptions.columns) {
@@ -1241,7 +1238,7 @@ class GridAxis {
      */
     public static onInit(
         this: Axis,
-        e: { userOptions?: Highcharts.AxisOptions }
+        e: { userOptions?: DeepPartial<Highcharts.AxisOptions> }
     ): void {
         const axis = this;
         const userOptions = e.userOptions || {};

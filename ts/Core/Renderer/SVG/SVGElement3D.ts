@@ -109,13 +109,13 @@ namespace SVGElement3D {
             this: SVGElement,
             prop: string,
             val: any,
-            values?: Record<string, any>,
+            values?: AnyRecord,
             verb?: string,
             duration?: any,
             complete?: any
         ): SVGElement {
             var elem3d = this,
-                newAttr = {} as Record<string, any>,
+                newAttr = {} as AnyRecord,
                 optionsToApply = [null, null, (verb || 'attr'), duration, complete],
                 hasZIndexes = values && values.zIndexes;
 
@@ -152,7 +152,7 @@ namespace SVGElement3D {
         processParts: function (
             this: SVGElement,
             props: any,
-            partsProps: Record<string, any>,
+            partsProps: AnyRecord,
             verb: string,
             duration?: any,
             complete?: any
@@ -199,7 +199,7 @@ namespace SVGElement3D {
                 var key = args;
 
                 args = {} as SVGAttributes;
-                args[key] = val;
+                (args as any)[key] = val;
             }
 
             if ((args as any).shapeArgs || defined((args as any).x)) {

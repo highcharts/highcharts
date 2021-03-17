@@ -86,6 +86,11 @@ declare module '../CSSObject' {
  * @private
  */
 declare global {
+    /**
+     * @internal
+     * @deprecated
+     */
+    type GlobalSVGElement = SVGElement;
     interface Element {
         gradient?: string;
         parentNode: (Node&ParentNode);
@@ -232,6 +237,16 @@ declare global {
         }
     }
 }
+
+/**
+ * Reference to the global SVGElement class as a workaround for a name conflict
+ * in the Highcharts namespace.
+ *
+ * @global
+ * @typedef {global.SVGElement} GlobalSVGElement
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
+ */
 
 /**
  * The horizontal alignment of an element.
@@ -441,7 +456,7 @@ class SVGElement {
     public oldShadowOptions?: ShadowOptionsObject;
     public onAdd?: Function;
     public opacity = 1; // Default base for animation
-    public options?: Record<string, any>;
+    public options?: AnyRecord;
     public parentInverted?: boolean;
     public parentGroup?: SVGElement;
     public pathArray?: SVGPath;
@@ -513,8 +528,8 @@ class SVGElement {
      */
     private _defaultGetter(key: string): (number|string) {
         var ret = pick(
-            (this as Record<string, any>)[key + 'Value'], // align getter
-            (this as Record<string, any>)[key],
+            (this as AnyRecord)[key + 'Value'], // align getter
+            (this as AnyRecord)[key],
             this.element ? this.element.getAttribute(key) : null,
             0
         );
@@ -724,7 +739,12 @@ class SVGElement {
             alignTo = this.alignTo;
         }
 
-        box = pick(box, (renderer as any)[alignTo as any], renderer as any);
+        box = pick(
+            box,
+            (renderer as any)[alignTo as any],
+            alignTo === 'scrollablePlotBox' ? (renderer as any).plotBox : void 0,
+            renderer as any
+        );
 
         // Assign variables
         align = (alignOptions as any).align;
@@ -911,7 +931,7 @@ class SVGElement {
                 'class': 'highcharts-text-outline',
                 fill: color,
                 stroke: color,
-                'stroke-width': strokeWidth,
+                'stroke-width': strokeWidth as any,
                 'stroke-linejoin': 'round'
             });
 
@@ -934,9 +954,13 @@ class SVGElement {
             // to keep it in place
             const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
             br.textContent = '\u200B';
-            attr(br, {
-                x: elem.getAttribute('x'),
-                y: elem.getAttribute('y')
+
+            // Copy x and y if not null
+            (['x', 'y'] as Array<'x'|'y'>).forEach((key): void => {
+                const value = elem.getAttribute(key);
+                if (value) {
+                    br.setAttribute(key, value);
+                }
             });
 
             // Insert the outline
@@ -1036,14 +1060,14 @@ class SVGElement {
         if (typeof hash === 'string' && typeof val !== 'undefined') {
             key = hash;
             hash = {};
-            hash[key] = val;
+            (hash as any)[key] = val;
         }
 
         // used as a getter: first argument is a string, second is undefined
         if (typeof hash === 'string') {
             ret = (
-                (this as Record<string, any>)[hash + 'Getter'] ||
-                (this as Record<string, any>)._defaultGetter
+                (this as AnyRecord)[hash + 'Getter'] ||
+                (this as AnyRecord)._defaultGetter
             ).call(
                 this,
                 hash,
@@ -1083,8 +1107,8 @@ class SVGElement {
 
                 if (!skipAttr) {
                     setter = (
-                        (this as Record<string, any>)[key + 'Setter'] ||
-                        (this as Record<string, any>)._defaultSetter
+                        (this as AnyRecord)[key + 'Setter'] ||
+                        (this as AnyRecord)._defaultSetter
                     );
                     setter.call(this, val, key, element);
 
@@ -1228,10 +1252,10 @@ class SVGElement {
                 // Keep < 2.2 kompatibility
                 if (isArray(gradAttr)) {
                     (colorOptions as any)[gradName] = gradAttr = {
-                        x1: gradAttr[0],
-                        y1: gradAttr[1],
-                        x2: gradAttr[2],
-                        y2: gradAttr[3],
+                        x1: gradAttr[0] as number,
+                        y1: gradAttr[1] as number,
+                        x2: gradAttr[2] as number,
+                        y2: gradAttr[3] as number,
                         gradientUnits: 'userSpaceOnUse'
                     };
                 }
@@ -1253,9 +1277,9 @@ class SVGElement {
 
                 // Build the unique key to detect whether we need to create a
                 // new element (#1282)
-                objectEach(gradAttr, function (val: string, n: string): void {
+                objectEach(gradAttr, function (value, n): void {
                     if (n !== 'id') {
-                        (key as any).push(n, val);
+                        (key as any).push(n, value);
                     }
                 });
                 objectEach(stops, function (val): void {
@@ -1290,7 +1314,7 @@ class SVGElement {
                         if (stop[1].indexOf('rgba') === 0) {
                             colorObject = Color.parse(stop[1]);
                             stopColor = colorObject.get('rgb') as any;
-                            stopOpacity = colorObject.get('a');
+                            stopOpacity = colorObject.get('a') as any;
                         } else {
                             stopColor = stop[1];
                             stopOpacity = 1;
@@ -1360,7 +1384,7 @@ class SVGElement {
         if (oldStyles) {
             objectEach(styles, function (style, n): void {
                 if (oldStyles && oldStyles[n] !== style) {
-                    newStyles[n] = style;
+                    (newStyles as any)[n] = style;
                     hasNew = true;
                 }
             });
@@ -1553,15 +1577,15 @@ class SVGElement {
 
             // Destroy child elements of a group
             if (
-                (wrapper as Record<string, any>)[key] &&
-                (wrapper as Record<string, any>)[key].parentGroup === wrapper &&
-                (wrapper as Record<string, any>)[key].destroy
+                (wrapper as AnyRecord)[key] &&
+                (wrapper as AnyRecord)[key].parentGroup === wrapper &&
+                (wrapper as AnyRecord)[key].destroy
             ) {
-                (wrapper as Record<string, any>)[key].destroy();
+                (wrapper as AnyRecord)[key].destroy();
             }
 
             // Delete all properties
-            delete (wrapper as Record<string, any>)[key];
+            delete (wrapper as AnyRecord)[key];
         });
 
         return;
@@ -1663,9 +1687,9 @@ class SVGElement {
         // Check for cache before resetting. Resetting causes disturbance in the
         // DOM, causing flickering in some cases in Edge/IE (#6747). Also
         // possible performance gain.
-        if ((this as Record<string, any>)[key] !== value) {
+        if ((this as AnyRecord)[key] !== value) {
             element.setAttribute(key, value);
-            (this as Record<string, any>)[key] = value;
+            (this as AnyRecord)[key] = value;
         }
 
     }
@@ -2099,10 +2123,6 @@ class SVGElement {
                 }
 
                 touchEventFired = true;
-                if (e.cancelable !== false) {
-                    // prevent other events from being fired. #9682
-                    e.preventDefault();
-                }
             };
 
             element.onclick = function (e: Event): void {
@@ -2113,7 +2133,7 @@ class SVGElement {
             };
         } else {
             // simplest possible event model for internal use
-            (element as Record<string, any>)['on' + eventType] = handler;
+            (element as AnyRecord)['on' + eventType] = handler;
         }
         return this;
     }
@@ -2242,7 +2262,7 @@ class SVGElement {
      */
     public setTextPath(
         path: SVGElement,
-        textPathOptions: Record<string, any>
+        textPathOptions: AnyRecord
     ): SVGElement {
         var elem = this.element,
             textNode = this.text ? this.text.element : elem,
@@ -2356,10 +2376,10 @@ class SVGElement {
             }
 
             // Additional attributes
-            objectEach(attrs, function (val: string, key: string): void {
+            objectEach(attrs, function (val, key): void {
                 textPathElement.setAttribute(
                     (attribsMap as any)[key] || key,
-                    val
+                    val as any
                 );
             });
 
@@ -2380,8 +2400,8 @@ class SVGElement {
             }
 
             // Disable some functions
-            this.updateTransform = noop as any;
-            this.applyTextOutline = noop as any;
+            this.updateTransform = noop;
+            this.applyTextOutline = noop;
 
         } else if (textPathWrapper) {
             // Reset to prototype
@@ -2566,7 +2586,7 @@ class SVGElement {
         key: string,
         element: SVGDOMElement
     ): void {
-        (this as Record<string, any>)[key] = value;
+        (this as AnyRecord)[key] = value;
         // Only apply the stroke attribute if the stroke width is defined and
         // larger than 0
         if (this.stroke && this['stroke-width']) {
@@ -2630,7 +2650,7 @@ class SVGElement {
         } else if (val !== '') {
             dummy = doc.createElementNS(SVG_NS, 'rect') as SVGDOMElement;
             attr(dummy, {
-                width: val,
+                width: val as any,
                 'stroke-width': 0
             });
             (this.element.parentNode as any).appendChild(dummy);
@@ -2652,7 +2672,7 @@ class SVGElement {
      * The attributes to set.
      */
     public symbolAttr(hash: SVGAttributes): void {
-        var wrapper = this as Record<string, any>;
+        var wrapper = this as AnyRecord;
 
         [
             'x',
@@ -2667,7 +2687,7 @@ class SVGElement {
             'anchorY',
             'clockwise'
         ].forEach(function (key: string): void {
-            wrapper[key] = pick(hash[key], wrapper[key]);
+            wrapper[key] = pick((hash as any)[key], wrapper[key]);
         });
 
         wrapper.attr({
@@ -2891,10 +2911,10 @@ class SVGElement {
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);
-        } else if ((this as Record<string, any>)[key] !== value) { // #6747
+        } else if ((this as AnyRecord)[key] !== value) { // #6747
             element.setAttribute(key, value);
         }
-        (this as Record<string, any>)[key] = value;
+        (this as AnyRecord)[key] = value;
     }
 
     /**
@@ -3050,7 +3070,7 @@ SVGElement.prototype.verticalAlignSetter = function (
     value: (number|string|null),
     key: string
 ): void {
-    (this as Record<string, any>)[key] = value;
+    (this as AnyRecord)[key] = value;
     this.doTransform = true;
 };
 

@@ -72,7 +72,7 @@
             clock = TestUtilities.lolexInstall();
 
         try {
-            oldValue = cdi.options.value.getTime();
+            oldValue = cdi.options.value;
 
             // Run lolex ticker
             setTimeout(function () {}, wait);
@@ -81,7 +81,7 @@
 
             axis.redraw();
 
-            newValue = cdi.options.value.getTime();
+            newValue = cdi.options.value;
 
             assert.ok(
                 newValue > oldValue,

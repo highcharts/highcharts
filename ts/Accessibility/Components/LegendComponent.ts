@@ -216,7 +216,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 this.chart.highlightLegendItem(component.highlightedLegendItemIx);
             }
         });
-        this.addEvent(Legend, 'afterPositionItem', function (e: Record<string, any>): void {
+        this.addEvent(Legend, 'afterPositionItem', function (e: AnyRecord): void {
             if (this.chart === component.chart && this.chart.renderer) {
                 component.updateProxyPositionForItem(e.item);
             }

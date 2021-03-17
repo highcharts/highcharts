@@ -342,8 +342,8 @@ AccessibilityComponent.prototype = {
             }, attributes);
 
         Object.keys(attrs).forEach(function (prop: string): void {
-            if (attrs[prop] !== null) {
-                proxy.setAttribute(prop, attrs[prop]);
+            if ((attrs as any)[prop] !== null) {
+                proxy.setAttribute(prop, (attrs as any)[prop]);
             }
         });
 
@@ -471,7 +471,12 @@ AccessibilityComponent.prototype = {
                 }
 
                 e.stopPropagation();
-                e.preventDefault();
+
+                // #9682, #15318: Touch scrolling didnt work when touching a
+                // component
+                if (evtType !== 'touchstart' && evtType !== 'touchmove' && evtType !== 'touchend') {
+                    e.preventDefault();
+                }
             }, { passive: false });
         });
     },

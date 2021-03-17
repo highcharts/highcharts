@@ -46,7 +46,7 @@ declare global {
         }
         interface TickParametersObject {
             category?: string;
-            options?: Record<string, any>;
+            options?: AnyRecord;
             tickmarkOffset?: number;
         }
         interface TickPositionObject extends PositionObject {
@@ -62,7 +62,6 @@ declare global {
                 parameters?: TickParametersObject
             );
             public axis: Axis;
-            public formatCtx: AxisLabelsFormatterContextObject;
             public gridLine?: SVGElement;
             public isActive?: boolean;
             public isFirst?: boolean;
@@ -255,8 +254,6 @@ class Tick {
 
     public axis: Highcharts.Axis;
 
-    public formatCtx!: Highcharts.AxisLabelsFormatterContextObject;
-
     public gridLine?: SVGElement;
 
     public isActive?: boolean;
@@ -277,7 +274,7 @@ class Tick {
 
     public movedLabel?: SVGElement;
 
-    public options?: Highcharts.AxisOptions;
+    public options?: DeepPartial<Highcharts.AxisOptions>;
 
     public parameters: Highcharts.TickParametersObject;
 
@@ -323,11 +320,6 @@ class Tick {
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
             isLast = pos === tickPositions[tickPositions.length - 1],
-            value = this.parameters.category || (
-                categories ?
-                    pick((categories as any)[pos], names[pos], pos) :
-                    pos
-            ),
             label = tick.label,
             animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
                 axis.tickInterval === 1,
@@ -335,7 +327,18 @@ class Tick {
             dateTimeLabelFormat,
             dateTimeLabelFormats,
             i,
-            list: Record<string, any>;
+            list: AnyRecord;
+
+        // The context value
+        let value = this.parameters.category || (
+            categories ?
+                pick(categories[pos], names[pos], pos) :
+                pos
+        );
+        if (log && isNumber(value)) {
+            value = correctFloat(log.lin2log(value));
+        }
+
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
@@ -369,28 +372,49 @@ class Tick {
         tick.isLast = isLast;
 
         // Get the string
-        tick.formatCtx = {
-            axis: axis,
-            chart: chart,
-            isFirst: isFirst,
-            isLast: isLast,
+        const ctx: Highcharts.AxisLabelsFormatterContextObject = {
+            axis,
+            chart,
             dateTimeLabelFormat: dateTimeLabelFormat as any,
-            tickPositionInfo: tickPositionInfo,
-            value: log ? correctFloat(log.lin2log(value)) : value,
-            pos: pos
+            isFirst,
+            isLast,
+            pos,
+            tick: tick as any,
+            tickPositionInfo,
+            value
         };
-        str = (axis.labelFormatter as any).call(tick.formatCtx, this.formatCtx);
+
+        // Fire an event that allows modifying the context for use in
+        // `labels.format` and `labels.formatter`.
+        fireEvent(this, 'labelFormat', ctx);
+
+        // Label formatting. When `labels.format` is given, we first run the
+        // defaultFormatter and append the result to the context as `text`.
+        // Handy for adding prefix or suffix while keeping default number
+        // formatting.
+        const labelFormatter = (
+            ctx: Highcharts.AxisLabelsFormatterContextObject
+        ): string => {
+            if (labelOptions.format) {
+                ctx.text = axis.defaultLabelFormatter.call(ctx);
+                return U.format(labelOptions.format, ctx, chart);
+            }
+            return (labelOptions.formatter || axis.defaultLabelFormatter)
+                .call(ctx, ctx);
+        };
+        str = labelFormatter.call(ctx, ctx);
 
         // Set up conditional formatting based on the format list if existing.
         list = dateTimeLabelFormats && dateTimeLabelFormats.list as any;
         if (list) {
             tick.shortenLabel = function (): void {
                 for (i = 0; i < list.length; i++) {
+                    extend(
+                        ctx,
+                        { dateTimeLabelFormat: list[i] }
+                    );
                     (label as any).attr({
-                        text: axis.labelFormatter.call(extend(
-                            tick.formatCtx,
-                            { dateTimeLabelFormat: list[i] }
-                        ))
+                        text: labelFormatter.call(ctx, ctx)
                     });
                     if (
                         (label as any).getBBox().width <
