@@ -236,8 +236,8 @@ class DMIIndicator extends SMAIndicator {
                 currentPlusDM: number, // +DM
                 currentMinusDM: number, // -DM
                 currentTR: number,
-                plusDI: number,
-                minusDI: number,
+                plusDI: number, // +DI
+                minusDI: number, // -DI
                 DX: number;
 
             if (i <= period) {
