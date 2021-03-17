@@ -253,8 +253,6 @@ class Pointer {
         this.chart = chart;
         this.hasDragged = false;
         this.options = options;
-        this.unbindContainerMouseLeave = function (): void {};
-        this.unbindContainerMouseEnter = function (): void {};
         this.init(chart, options);
     }
 
@@ -300,9 +298,7 @@ class Pointer {
 
     public tooltipTimeout?: number;
 
-    public unbindContainerMouseLeave: Function;
-
-    public unbindContainerMouseEnter: Function;
+    public eventsToUnbind: Array<Function> = [];
 
     public unDocMouseMove?: Function;
 
@@ -378,11 +374,8 @@ class Pointer {
     public destroy(): void {
         var pointer = this;
 
-        if (typeof pointer.unDocMouseMove !== 'undefined') {
-            pointer.unDocMouseMove();
-        }
-
-        this.unbindContainerMouseLeave();
+        this.eventsToUnbind.forEach((unbind): void => unbind());
+        this.eventsToUnbind = [];
 
         if (!H.chartCount) {
             if (H.unbindDocumentMouseUp) {
@@ -1986,6 +1979,7 @@ class Pointer {
                     }
                 }
             );
+            pointer.eventsToUnbind.push(pointer.unDocMouseMove);
         }
 
         // Issues related to crosshair #4927, #5269 #5066, #5658
@@ -2062,16 +2056,16 @@ class Pointer {
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
         container.onclick = this.onContainerClick.bind(this);
-        this.unbindContainerMouseEnter = addEvent(
+        this.eventsToUnbind.push(addEvent(
             container,
             'mouseenter',
             this.onContainerMouseEnter.bind(this)
-        );
-        this.unbindContainerMouseLeave = addEvent(
+        ));
+        this.eventsToUnbind.push(addEvent(
             container,
             'mouseleave',
             this.onContainerMouseLeave.bind(this)
-        );
+        ));
         if (!H.unbindDocumentMouseUp) {
             H.unbindDocumentMouseUp = addEvent(
                 ownerDoc,
@@ -2084,25 +2078,25 @@ class Pointer {
         // scrolling parent elements
         let parent = this.chart.renderTo.parentElement;
         while (parent && parent.tagName !== 'BODY') {
-            addEvent(parent, 'scroll', (): void => {
+            this.eventsToUnbind.push(addEvent(parent, 'scroll', (): void => {
                 delete this.chartPosition;
-            });
+            }));
             parent = parent.parentElement;
         }
 
         if (H.hasTouch) {
-            addEvent(
+            this.eventsToUnbind.push(addEvent(
                 container,
                 'touchstart',
                 this.onContainerTouchStart.bind(this),
                 { passive: false }
-            );
-            addEvent(
+            ));
+            this.eventsToUnbind.push(addEvent(
                 container,
                 'touchmove',
                 this.onContainerTouchMove.bind(this),
                 { passive: false }
-            );
+            ));
             if (!H.unbindDocumentTouchEnd) {
                 H.unbindDocumentTouchEnd = addEvent(
                     ownerDoc,

@@ -202,7 +202,9 @@ MapNavigation.prototype.update = function (
                 states = attr.states;
                 hoverStates = states && states.hover;
                 selectStates = states && states.select;
+                delete attr.states;
             }
+
 
             button = chart.renderer
                 .button(

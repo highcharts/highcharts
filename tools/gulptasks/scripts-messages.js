@@ -1,17 +1,12 @@
-/* eslint-disable */
-/* eslint-env node,es6 */
-/**
- * (c) 2010-2021 Torstein Honsi
- *
- * License: www.highcharts.com/license
- *
- * @module tools/errorsinfo.js
- * @author Sophie Bremer
+/* eslint-disable no-use-before-define */
+/*
+ * Copyright (C) Highsoft AS
  */
 
-const fs = require('fs');
-const path = require('path').posix;
 const EOL = require('os').EOL;
+const fs = require('fs');
+const gulp = require('gulp');
+const path = require('path').posix;
 
 /* *
  *
@@ -59,46 +54,118 @@ const rootPath = process.cwd();
  * */
 
 /**
- * @function escapeHTML
- * @param {string} str 
+ * @param {string} str
+ * String to escape.
+ *
+ * @return {string}
+ * Escaped string.
  */
 function escapeHTML(str) {
     Object
         .keys(htmlEscapeTable)
         .filter(key => str.indexOf(key) > -1)
-        .forEach(key => str = str.replace(
+        .forEach(key => (str = str.replace(
             new RegExp(htmlEscapeTable[key].regExp, 'g'),
-            htmlEscapeTable[key].replacement)
-        )
+            htmlEscapeTable[key].replacement
+        )));
     return str;
 }
 
 /**
- * @function matchAll
- * @param {string} str 
- * @param {RegExp} regexp 
+ * @param {string} directoryPath
+ * Directory of error.
+ *
+ * @return {Record<string, string>}
+ * Parsed paragraphs of error text.
  */
-function matchAll(str, regexp) {
-    const matches = [];
-    str.replace(regexp, function () {
-        matches.push(([]).slice.call(arguments, 0, -2));
-    });
-    return matches;
+function parseErrorDirectory(directoryPath) {
+    const files = [path.relative(
+            rootPath, path.join(directoryPath, 'readme.md')
+        )],
+        readme = parseMarkdown(
+            fs
+                .readFileSync(
+                    path.join(directoryPath, 'readme.md'),
+                    { encoding: '' }
+                )
+                .toString(),
+            true
+        );
+
+    try {
+        const enduser = parseMarkdown(
+            fs
+                .readFileSync(
+                    path.join(directoryPath, 'enduser.md'),
+                    { encoding: '' }
+                )
+                .toString()
+        );
+        files.push(path.relative(
+            rootPath, path.join(directoryPath, 'enduser.md')
+        ));
+        readme.enduser = enduser.text;
+    } catch (err) {
+        return readme;
+    }
+
+    return readme;
 }
 
 /**
- * @function parseMarkdown
- * @param {string} text
- * @param {boolean} [extractTitle=false]
+ * @param {string} directoryPath
+ * Directory of markdown files.
+ *
+ * @return {Promise}
+ * Promise to keep.
  */
-function parseMarkdown (text, extractTitle) {
+function parseErrorsDirectory(directoryPath) {
+
+    return new Promise((resolve, reject) => fs.readdir(
+        directoryPath,
+        (err, directories) => {
+
+            if (err) {
+                reject(err);
+                return;
+            }
+
+            const parsedErrors = {};
+
+            directories
+                .map(directory => path.join(directoryPath, directory))
+                .filter(directory => fs.statSync(directory).isDirectory())
+                .forEach(directory => {
+                    const errorCode = parseInt(path.basename(directory), 10);
+                    if (isNaN(errorCode)) {
+                        return;
+                    }
+                    parsedErrors[errorCode] = parseErrorDirectory(directory);
+                });
+
+            resolve(parsedErrors);
+        }
+    ));
+}
+
+/**
+ * @param {string} text
+ * Markdown text to parse.
+ *
+ * @param {boolean} [extractTitle=false]
+ * Whether to extract title or not.
+ *
+ * @return {Record<string, string>}
+ * Parsed paragraphs of text.
+ */
+function parseMarkdown(text, extractTitle) {
 
     const codeBlocks = [];
 
     let title = '';
 
     if (extractTitle) {
-        let titleMatch = text.match(new RegExp(parseMarkdownHeadline));
+        const titleMatch = text.match(new RegExp(parseMarkdownHeadline));
         if (titleMatch) {
             title = (titleMatch[2] || '').trim();
         }
@@ -114,15 +181,13 @@ function parseMarkdown (text, extractTitle) {
             }
         )
         .replace(new RegExp(parseMarkdownCode, 'g'), '<code>$1</code>')
-        .replace(new RegExp(parseMarkdownLink, 'g'), (match, text, url) => {
-            return (
-                '<a href="' +
-                url.replace(new RegExp(parseSpaces, 'g'), '') +
-                '">' +
-                text.replace(new RegExp(parseSpaces, 'g'), ' ') +
-                '</a>'
-            );
-        })
+        .replace(new RegExp(parseMarkdownLink, 'g'), (match, urlText, url) => (
+            '<a href="' +
+            url.replace(new RegExp(parseSpaces, 'g'), '') +
+            '">' +
+            urlText.replace(new RegExp(parseSpaces, 'g'), ' ') +
+            '</a>'
+        ))
         .replace(
             new RegExp(parseMarkdownList, 'g'),
             '</p><ul><li>$1</li></ul><p>'
@@ -138,6 +203,8 @@ function parseMarkdown (text, extractTitle) {
                         return ('<b>' + content + '</b>');
                     case '***':
                         return ('<b><i>' + content + '</i></b>');
+                    default:
+                        return match;
                 }
             }
         )
@@ -153,7 +220,7 @@ function parseMarkdown (text, extractTitle) {
         .replace(new RegExp(parseSpaces, 'g'), ' ')
         .replace(
             new RegExp(parseBlockCodePlaceholder, 'g'),
-            (match) => (
+            () => (
                 '</p><pre>' +
                 escapeHTML((codeBlocks.shift() || '').trim()) +
                 '</pre><p>'
@@ -161,148 +228,88 @@ function parseMarkdown (text, extractTitle) {
         ) + '</p>')
         .replace(new RegExp(parseParagraphSpaces, 'g'), '');
 
-    return {
-        title: title,
-        text: text
-    };
+    return { title, text };
 }
 
 /**
- * @function parseErrorDirectory
- * @param {number} errorCode 
- * @param {string} directoryPath 
- */
-function parseErrorDirectory (directoryPath) {
-
-    let files = [ path.relative(
-            rootPath, path.join(directoryPath, 'readme.md')
-        ) ],
-        readme = parseMarkdown(fs
-            .readFileSync(
-                path.join(directoryPath, 'readme.md'),
-                { encoding: '' }
-            )
-            .toString(),
-            true
-        );
-
-    try {
-        let enduser = parseMarkdown(fs
-            .readFileSync(
-                path.join(directoryPath, 'enduser.md'),
-                { encoding: '' }
-            )
-            .toString()
-        );
-        files.push(path.relative(
-            rootPath, path.join(directoryPath, 'enduser.md')
-        ));
-        readme.enduser = enduser.text;
-    } catch (err) {}
-
-    return readme;
-}
-
-/**
- * @function parseErrorsDirectory
- * @param {string} directoryPath 
- */
-function parseErrorsDirectory (directoryPath) {
-
-    return new Promise((resolve, reject) => fs.readdir(
-        directoryPath,
-        (err, directories) => {
-
-            if (err) {
-                reject(err);
-                return;
-            }
-
-            let parsedErrors = {};
-
-            directories
-                .map(directory => path.join(directoryPath, directory))
-                .filter(directory => fs.statSync(directory).isDirectory())
-                .forEach(directory => {
-                    let errorCode = parseInt(path.basename(directory));
-                    if (errorCode === NaN) {
-                        return;
-                    }
-                    parsedErrors[errorCode] = parseErrorDirectory(directory);
-                });
-
-            resolve(parsedErrors);
-        }
-    ));
-}
-
-/**
- * @function processingComplete
  * @param {*} parsedErrors
+ * Errors object.
+ *
  * @param {string} jsonPath
+ * JSON path to write.
+ *
  * @param {string} modulePath
+ * Module path to write.
+ *
+ * @return {Promise}
+ * Promise to keep.
  */
-function writeErrorsJson (parsedErrors, jsonPath, modulePath) {
-
-    if (1 == 0 && fs.existsSync(jsonPath)) {
-        const oldErrorsJson = require(jsonPath);
-        const same = Object
-            .keys(oldErrorsJson)
-            .every(error => (
-                oldErrorsJson[error].title === parsedErrors[error].title &&
-                oldErrorsJson[error].text === parsedErrors[error].text &&
-                oldErrorsJson[error].enduser === parsedErrors[error].enduser
-            ));
-        const version = require(rootPath  + '/package.json').version;
-    }
-
+function writeErrorsJson(parsedErrors, jsonPath, modulePath) {
     return Promise.all([
-        new Promise((resolve, reject) => fs.writeFile(jsonPath,
+        new Promise((resolve, reject) => fs.writeFile(
+            jsonPath,
             JSON.stringify(
                 parsedErrors,
-                undefined,
+                void 0,
                 '\t'
             ).replace(/\n/g, EOL),
             err => (err ? reject(err) : resolve())
         )),
-        new Promise((resolve, reject) => fs.writeFile(modulePath, [
+        new Promise((resolve, reject) => fs.writeFile(
+            modulePath,
+            [
                 '/* eslint-disable */',
                 '/* *',
                 ' * Error information for the debugger module',
                 ' * (c) 2010-2021 Torstein Honsi',
                 ' * License: www.highcharts.com/license',
                 ' */',
-                ,
+                '',
                 '// DO NOT EDIT!',
                 '// Automatically generated by ./tools/error-messages.js',
                 '// Sources can be found in ./errors/*/*.md',
-                ,
+                '',
                 '\'use strict\';',
-                ,
+                '',
                 'const errorMessages: Record<string, Record<string, string>> = ' +
                 JSON.stringify(
                     parsedErrors,
-                    undefined,
+                    void 0,
                     '    '
                 ).replace(/\n/g, EOL) +
                 ';',
-                ,
+                '',
                 'export default errorMessages;'
-        ].join(EOL),
+            ].join(EOL),
             err => (err ? reject(err) : resolve())
         ))
     ]);
 }
 
-module.exports = function () {
+/* *
+ *
+ *  Tasks
+ *
+ * */
+
+/**
+ * @return {Promise}
+ * Promise to keep
+ */
+function scriptsMessages() {
+    const logLib = require('./lib/log.js');
+
     return parseErrorsDirectory(path.join(rootPath, 'errors'))
         .then(parsedErrors => writeErrorsJson(
             parsedErrors,
             path.join(rootPath, 'errors', 'errors.json'),
             path.join(rootPath, 'ts', 'Extensions', 'Debugger', 'ErrorMessages.ts')
         ))
-        .catch(err => {
-            console.error(err);
+        .catch(error => {
+            logLib.failure(error);
+            // eslint-disable-next-line no-process-exit
             process.exit(1);
         });
-};
+}
+
+gulp.task('scripts-messages', scriptsMessages);

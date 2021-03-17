@@ -55,9 +55,10 @@ declare global {
             new(...args: Array<any>): T;
         }
         interface ErrorMessageEventObject {
+            chart?: Chart;
             code: number;
-            message: string;
-            params: Record<string, string>;
+            message?: string;
+            params?: Record<string, string>;
         }
         interface EventCallbackFunction<T> {
             (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
@@ -466,7 +467,8 @@ declare global {
  *        Reference to the chart that causes the error. Used in 'debugger'
  *        module to display errors directly on the chart.
  *        Important note: This argument is undefined for errors that lack
- *        access to the Chart instance.
+ *        access to the Chart instance. In such case, the error will be
+ *        displayed on the last created chart.
  *
  * @param {Highcharts.Dictionary<string>} [params]
  *        Additional parameters for the generated message.
@@ -515,16 +517,12 @@ function error(
         message += additionalMessages;
     }
 
-    if (chart) {
-        fireEvent(
-            chart,
-            'displayError',
-            { code, message, params } as Highcharts.ErrorMessageEventObject,
-            defaultHandler
-        );
-    } else {
-        defaultHandler();
-    }
+    fireEvent(
+        Highcharts,
+        'displayError',
+        { chart, code, message, params },
+        defaultHandler
+    );
 
     error.messages.push(message);
 }
@@ -1832,32 +1830,39 @@ Math.easeInOutSine = function (pos: number): number {
  * @return {unknown}
  * The unknown property value.
  */
-function getNestedProperty(path: string, obj: unknown): unknown {
+function getNestedProperty(path: string, parent: unknown): unknown {
 
-    if (!path) {
-        return obj;
+    const pathElements = path.split('.');
+
+    while (pathElements.length && defined(parent)) {
+        const pathElement = pathElements.shift();
+
+        // Filter on the key
+        if (
+            typeof pathElement === 'undefined' ||
+            pathElement === '__proto__'
+        ) {
+            return; // undefined
+        }
+
+        const child = (parent as Record<string, unknown>)[
+            pathElement
+        ] as Record<string, unknown>;
+
+        // Filter on the child
+        if (
+            !defined(child) ||
+            typeof child === 'function' ||
+            typeof child.nodeType === 'number' ||
+            child as unknown === win
+        ) {
+            return; // undefined
+        }
+
+        // Else, proceed
+        parent = child;
     }
-
-    const pathElements = path.split('.').reverse();
-
-    let subProperty = obj as Record<string, unknown>;
-
-    if (pathElements.length === 1) {
-        return subProperty[path];
-    }
-
-    let pathElement = pathElements.pop();
-
-    while (
-        typeof pathElement !== 'undefined' &&
-        typeof subProperty !== 'undefined' &&
-        subProperty !== null
-    ) {
-        subProperty = subProperty[pathElement] as Record<string, unknown>;
-        pathElement = pathElements.pop();
-    }
-
-    return subProperty;
+    return parent;
 }
 
 /**
@@ -2417,7 +2422,14 @@ function fireEvent<T>(
     eventArguments = eventArguments || {};
 
     if (doc.createEvent &&
-        ((el as any).dispatchEvent || (el as any).fireEvent)
+        (
+            (el as any).dispatchEvent ||
+            (
+                (el as any).fireEvent &&
+                // Enable firing events on Highcharts instance.
+                (el as any) !== H
+            )
+        )
     ) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
