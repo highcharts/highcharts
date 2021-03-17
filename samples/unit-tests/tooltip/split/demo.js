@@ -184,7 +184,8 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
         tooltip: {
             split: true,
             useHTML: true,
-            outside: true
+            outside: true,
+            followPointer: true
         }
     });
 
@@ -194,6 +195,11 @@ QUnit.test('Split tooltip with useHTML and outside', function (assert) {
         chart.tooltip.tt.renderer,
         chart.tooltip.renderer,
         '#15018: Split tooltip should use outside renderer'
+    );
+
+    assert.notOk(
+        chart.tooltip.followPointer,
+        '#14906: followPointer should be false with split tooltip'
     );
 
     assert.strictEqual(
