@@ -1,4 +1,5 @@
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
+import Column from  '../../../../code/es-modules/Dashboard/Layout/Column.js';
 import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js';
 
 // Bring in other forms of Highcharts
@@ -155,6 +156,17 @@ console.log('column: ', Bindings.getColumn('dashboard-col-0'));
 console.log('row: ', Bindings.getRow(dashboard.layouts[0].rows[0].container));
 console.log('layout: ', Bindings.getLayout('layout-1'));
 console.groupEnd();
+
+const column = Bindings.getColumn('dashboard-col-0');
+const columnJSON = column.toJSON();
+
+console.log('columnJSON: ', columnJSON);
+column.destroy();
+debugger;
+const columnFromJSON =
+    Column.fromJSON(columnJSON, dashboard.layouts[0].rows[0]);
+console.log('rowFromJSON: ', columnFromJSON);
+
 
 /* ==== DASHBOARD BUTTONS ==== */
 /*

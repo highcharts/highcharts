@@ -172,10 +172,14 @@ class Dashboard {
     public setLayoutsFromJSON(json: Array<Layout.ClassJSON>): void {
         const dashboard = this;
 
+        let layout;
+
         for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            dashboard.layouts.push(
-                Layout.fromJSON(json[i], dashboard)
-            );
+            layout = Layout.fromJSON(json[i], dashboard);
+
+            if (layout) {
+                dashboard.layouts.push(layout);
+            }
         }
     }
 

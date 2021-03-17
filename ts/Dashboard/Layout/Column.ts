@@ -2,8 +2,8 @@ import type {
     CSSObject
 } from '../../Core/Renderer/CSSObject';
 import type DataJSON from '../../Data/DataJSON';
-import type Row from './Row.js';
 import type Component from './../Component/Component.js';
+import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
@@ -22,19 +22,23 @@ class Column extends GUIElement {
 
     public static fromJSON(
         json: Column.ClassJSON,
-        row?: Row
-    ): Column {
-        const options = json.options,
-            column = new Column(
-                row || null,
-                {
-                    id: options.containerId,
-                    parentContainerId: options.parentContainerId,
-                    mountedComponentJSON: options.mountedComponentJSON
-                }
-            );
+        row: Row
+    ): Column|undefined {
+        if (row && row instanceof Row) {
+            const options = json.options,
+                column = new Column(
+                    row,
+                    {
+                        id: options.containerId,
+                        parentContainerId: options.parentContainerId,
+                        mountedComponentJSON: options.mountedComponentJSON
+                    }
+                );
 
-        return column;
+            return column;
+        }
+
+        return void 0;
     }
 
     /* *
@@ -56,7 +60,7 @@ class Column extends GUIElement {
      * The container of the column HTML element.
      */
     public constructor(
-        row: Row|null,
+        row: Row,
         options: Column.Options,
         columnElement?: HTMLElement
     ) {
@@ -69,16 +73,17 @@ class Column extends GUIElement {
         const column = this;
 
         // Get parent container
-        const parentContainer = row?.container ||
-            document.getElementById(options.parentContainerId || '');
+        const parentContainer =
+            document.getElementById(options.parentContainerId || '') ||
+            row.container;
 
         if (parentContainer) {
-            const layoutOptions = ((row || {}).layout || {}).options || {},
-                rowOptions = (row || {}).options || {},
+            const layoutOptions = row.layout.options || {},
+                rowOptions = row.options || {},
                 columnClassName = layoutOptions.columnClassName || '';
 
             this.setElementContainer({
-                render: (((row || {}).layout || {}).dashboard || {}).guiEnabled,
+                render: row.layout.dashboard.guiEnabled,
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
@@ -107,13 +112,13 @@ class Column extends GUIElement {
 
         // nested layout
         if (this.options.layout) {
-            const dashboard = this.row?.layout?.dashboard || null;
+            const dashboard = this.row.layout.dashboard;
 
             this.layout = new Layout(
                 dashboard,
                 merge(
                     {},
-                    dashboard?.options.gui?.layoutOptions,
+                    dashboard.options.gui?.layoutOptions,
                     this.options.layout,
                     {
                         parentContainerId: options.id
@@ -137,7 +142,7 @@ class Column extends GUIElement {
     /**
      * Reference to the row instance.
      */
-    public row?: Row|null;
+    public row: Row;
 
     /**
      * The column options.
@@ -172,7 +177,7 @@ class Column extends GUIElement {
      */
     public toJSON(): Column.ClassJSON {
         const column = this,
-            rowContainerId = ((column.row || {}).container || {}).id || '';
+            rowContainerId = (column.row.container || {}).id || '';
 
         return {
             $class: 'Column',

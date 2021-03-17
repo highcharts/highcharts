@@ -10,7 +10,9 @@ import U from '../../Core/Utilities.js';
 import Resizer from '../Actions/Resizer.js';
 
 const {
-    pick
+    pick,
+    error,
+    fireEvent
 } = U;
 
 class Layout extends GUIElement {
@@ -22,24 +24,47 @@ class Layout extends GUIElement {
 
     public static fromJSON(
         json: Layout.ClassJSON,
-        dashboard?: Dashboard
-    ): Layout {
-        const options = json.options,
-            layout = new Layout(
-                dashboard || null,
-                {
-                    id: options.containerId,
-                    parentContainerId: options.parentContainerId,
-                    rowsJSON: options.rows
-                }
-            );
+        dashboard: Dashboard
+    ): Layout|undefined {
+        // Check if layout exists.
+        const container = document.getElementById(json.options.containerId);
 
-        // Save layout in the dashboard.
-        if (layout && dashboard) {
-            dashboard.layouts.push(layout);
+        let existingLayout;
+
+        if (container) {
+            fireEvent(container, 'bindedGUIElement', {}, function (
+                e: GUIElement.BindedGUIElementEvent
+            ): void {
+                existingLayout = e.guiElement;
+            });
         }
 
-        return layout;
+        if (
+            dashboard &&
+            dashboard instanceof Dashboard &&
+            !existingLayout
+        ) {
+            const options = json.options,
+                layout = new Layout(
+                    dashboard,
+                    {
+                        id: options.containerId,
+                        parentContainerId: options.parentContainerId,
+                        rowsJSON: options.rows
+                    }
+                );
+
+            // Save layout in the dashboard.
+            if (layout) {
+                dashboard.layouts.push(layout);
+            }
+
+            return layout;
+        }
+
+        // Error
+
+        return void 0;
     }
 
     public static importLocal(
@@ -75,7 +100,7 @@ class Layout extends GUIElement {
      * Options for the layout.
      */
     public constructor(
-        dashboard: Dashboard|null,
+        dashboard: Dashboard,
         options: Layout.Options
     ) {
         super();
@@ -87,12 +112,12 @@ class Layout extends GUIElement {
         // Get parent container
         const parentContainer = document.getElementById(
             options.parentContainerId || ''
-        ) || dashboard?.container;
+        ) || dashboard.container;
 
         // GUI structure
         if (parentContainer) {
             this.setElementContainer({
-                render: (dashboard || {}).guiEnabled,
+                render: dashboard.guiEnabled,
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
@@ -129,7 +154,7 @@ class Layout extends GUIElement {
     /**
      * Reference to the dashboard instance.
      */
-    public dashboard?: Dashboard|null;
+    public dashboard: Dashboard;
 
     /**
      * Array of the layout rows.
@@ -167,7 +192,7 @@ class Layout extends GUIElement {
         for (i = 0, iEnd = rowsElements.length; i < iEnd; ++i) {
             rowElement = rowsElements[i];
             layout.addRow(
-                (layout.dashboard || {}).guiEnabled ? rowElement : {},
+                layout.dashboard.guiEnabled ? rowElement : {},
                 rowElement instanceof HTMLElement ? rowElement : void 0
             );
         }
@@ -178,10 +203,14 @@ class Layout extends GUIElement {
     ): void {
         const layout = this;
 
+        let row;
+
         for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            layout.rows.push(
-                Row.fromJSON(json[i], layout)
-            );
+            row = Row.fromJSON(json[i], layout);
+
+            if (row) {
+                layout.rows.push(row);
+            }
         }
     }
 
@@ -240,7 +269,7 @@ class Layout extends GUIElement {
      */
     public toJSON(): Layout.ClassJSON {
         const layout = this,
-            dashboardContainerId = ((layout.dashboard || {}).container || {}).id || '',
+            dashboardContainerId = (layout.dashboard.container || {}).id || '',
             rows = [];
 
         // Get rows JSON.
@@ -271,7 +300,7 @@ namespace Layout {
         rows?: Array<Row.Options>;
         style?: CSSObject;
         rowsJSON?: Array<Row.ClassJSON>;
-        resize?: Resizer.Options
+        resize?: Resizer.Options;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {
