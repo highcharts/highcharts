@@ -7,6 +7,7 @@ import type {
 } from '../../Core/Renderer/CSSObject';
 
 import U from '../../Core/Utilities.js';
+import Resizer from '../Actions/Resizer.js';
 
 const {
     pick
@@ -113,6 +114,10 @@ class Layout extends GUIElement {
         } else {
             // Error
         }
+
+        if (options.resize) {
+            this.resizer = new Resizer(this);
+        }
     }
 
     /* *
@@ -135,6 +140,8 @@ class Layout extends GUIElement {
      * The layout options.
      */
     public options: Layout.Options;
+
+    public resizer?: Resizer;
 
     /* *
     *
@@ -264,6 +271,7 @@ namespace Layout {
         rows?: Array<Row.Options>;
         style?: CSSObject;
         rowsJSON?: Array<Row.ClassJSON>;
+        resize?: Resizer.Options
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {

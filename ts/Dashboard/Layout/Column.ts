@@ -9,6 +9,7 @@ import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
 import Dashboard from '../Dashboard.js';
 import Layout from './Layout.js';
+import Resizer from '../Actions/Resizer';
 const {
     merge
 } = U;
