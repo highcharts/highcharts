@@ -530,11 +530,11 @@ namespace error {
     export const messages: Array<string> = [];
 }
 
-function merge<T1, T2 = object>(
-    extend: boolean,
-    a?: T1,
-    ...n: Array<DeepPartial<T1>|undefined>
-): (T1);
+function merge<T = object>(
+    extend: true,
+    a?: T,
+    ...n: Array<DeepPartial<T>|undefined>
+): (T);
 function merge<
     T1 extends object = object,
     T2 = unknown,
@@ -556,6 +556,7 @@ function merge<
     h?: T8,
     i?: T9,
 ): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
+
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.

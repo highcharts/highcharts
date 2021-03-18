@@ -636,8 +636,8 @@ class BubbleLegend {
 
             if (!styledMode) {
                 merge(true, ranges[i], {
-                    bubbleStyle: merge(false, bubbleStyle),
-                    connectorStyle: merge(false, connectorStyle),
+                    bubbleStyle: merge(bubbleStyle),
+                    connectorStyle: merge(connectorStyle),
                     labelStyle: labelStyle
                 });
             }
@@ -1028,7 +1028,7 @@ class BubbleLegend {
             i: number
         ): void {
             if (rangesOptions && rangesOptions[i]) {
-                ranges[i] = merge(false, rangesOptions[i], range);
+                ranges[i] = merge(rangesOptions[i], range);
             }
         });
 
