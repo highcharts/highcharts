@@ -479,7 +479,7 @@ class AreaSeries extends LineSeries {
             yAxisSeries = yAxis.series,
             seriesLength = yAxisSeries.length,
             upOrDown = yAxis.options.reversedStacks ? 1 : -1,
-            seriesIndex = upOrDown === 1 ? 0 : yAxisSeries.length - 1;
+            seriesIndex = yAxisSeries.indexOf(series);
 
 
         points = points || this.points;
