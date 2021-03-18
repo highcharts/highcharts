@@ -30,6 +30,7 @@ const {
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
+    correctFloat,
     extend,
     isArray,
     merge
@@ -74,19 +75,19 @@ class DMIIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            /**
-             * Periods for DMI indicator.
-             *
-             * @type    {number}
-             * @default 14
-             */
+            index: void 0, // DMI has unchangeable index
             period: 14
         },
         marker: {
             enabled: false
         },
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>DX: {point.y}<br/>+DI: {point.plusDI}<br/>-DI: {point.minusDI}<br/>'
+            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>' +
+                '<span style="color:{point.color}">DX</span>: {point.y}<br/>' +
+                '<span style="color:{point.series.options.plusDILine.styles.lineColor}">+DI</span>' +
+                    ': {point.plusDI}<br/>' +
+                '<span style="color:{point.series.options.minusDILine.styles.lineColor}">-DI</span>' +
+                    ': {point.minusDI}<br/>'
         },
         /**
          * +DI line options.
@@ -105,7 +106,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: '#ff0000'
+                lineColor: '#00ff00'
             }
         },
         /**
@@ -125,19 +126,13 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: '#00ff00'
+                lineColor: '#ff0000'
             }
         },
         dataGrouping: {
             approximation: 'averages'
         }
     } as DMIOptions);
-
-    /* *
-     *
-     *  Properties
-     *
-     * */
 
     /* *
      *
@@ -155,6 +150,11 @@ class DMIIndicator extends SMAIndicator {
             previousHigh = yVal[i - 1][1],
             previousLow = yVal[i - 1][2];
 
+        // If any value is null, return 0.
+        if (!currentHigh || !currentLow || !previousHigh || !previousLow) {
+            return 0;
+        }
+
         let DM: number = 0;
 
         if (currentHigh - previousHigh > previousLow - currentLow) {
@@ -165,21 +165,23 @@ class DMIIndicator extends SMAIndicator {
             DM = !isPositiveDM ? Math.max(previousLow - currentLow, 0) : 0;
         }
 
-        return DM;
+        return correctFloat(DM);
     }
 
     public calculateDI(
         smoothedDM: number,
         tr: number
     ): number {
-        return smoothedDM / tr * 100;
+        return smoothedDM / (tr || 1) * 100;
     }
 
     public calculateDX(
         plusDI: number,
         minusDI: number
     ): number {
-        return Math.abs(plusDI - minusDI) / Math.abs(plusDI + minusDI) * 100;
+        return correctFloat(
+            Math.abs(plusDI - minusDI) / (Math.abs(plusDI + minusDI) || 1) * 100
+        );
     }
 
     public smoothValues(
@@ -187,19 +189,26 @@ class DMIIndicator extends SMAIndicator {
         currentValue: number,
         period: number
     ): number {
-        return accumulatedValues - accumulatedValues / period + currentValue;
+        return correctFloat(
+            accumulatedValues - accumulatedValues / period + currentValue
+        );
     }
 
     public getTR(
         currentPoint: Array<number>,
         prevPoint?: Array<number>
     ): number {
+        // If any value is null, return 0.
+        if (!currentPoint[1] || !currentPoint[2] || !currentPoint[3]) {
+            return 0;
+        }
+
         const HL = currentPoint[1] - currentPoint[2],
             HCp = !prevPoint ? 0 : Math.abs(currentPoint[1] - prevPoint[3]),
             LCp = !prevPoint ? 0 : Math.abs(currentPoint[2] - prevPoint[3]),
             TR = Math.max(HL, HCp, LCp);
 
-        return TR;
+        return correctFloat(TR);
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
