@@ -437,8 +437,8 @@ bindingsUtils.attractToPoint = function (
     y = coordsY.value;
 
     // Search by 'x' but only in yAxis' series.
-    coordsY.axis.series?.forEach(function (series): void {
-        series.points.forEach(function (point): void {
+    coordsY.axis.series.forEach(function (series): void {
+        series.points?.forEach(function (point): void {
             if (point && distX > Math.abs((point.x as any) - x)) {
                 distX = Math.abs((point.x as any) - x);
                 closestPoint = point;
