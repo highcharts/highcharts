@@ -240,6 +240,7 @@ export function testStockIndicators() {
         'mfi',
         'momentum',
         'natr',
+        'obv',
         'pivotpoints',
         'ppo',
         'pc',
