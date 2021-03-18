@@ -399,4 +399,17 @@ SeriesRegistry.registerSeriesType('klinger', KlingerIndicator);
 
 export default KlingerIndicator;
 
+/**
+ * A Klinger indicator. If the [type](#series.klinger.type)
+ * option is not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.klinger
+ * @since     next
+ * @product   highstock
+ * @requires  stock/indicators/indicators
+ * @requires  stock/indicators/ema
+ * @requires  stock/indicators/klinger
+ * @apioption series.klinger
+ */
+
 ''; // to include the above in the js output
