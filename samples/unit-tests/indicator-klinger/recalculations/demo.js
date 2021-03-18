@@ -1,4 +1,4 @@
-QUnit.test('Test Klinger calculations on data updates.', function (assert) {
+QUnit.skip('Test Klinger calculations on data updates.', function (assert) {
     const chart = Highcharts.stockChart('container', {
         chart: {
             height: 700

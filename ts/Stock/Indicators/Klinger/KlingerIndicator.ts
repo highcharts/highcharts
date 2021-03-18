@@ -8,15 +8,15 @@
 
 'use strict';
 
-import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     KlingerOptions,
     KlingerParamsOptions
 } from './KlingerOptions';
 import type KlingerPoint from './KlingerPoint';
+import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
-
+import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -26,6 +26,7 @@ const {
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
+    extend,
     merge
 } = U;
 
@@ -59,6 +60,25 @@ class KlingerIndicator extends SMAIndicator {
             slowAvgPeriod: 55,
             signal: 13,
             volumeSeriesID: 'volume'
+        },
+        signal: {
+            /**
+             * Styles for a smoothed line.
+             */
+            styles: {
+                /**
+                 * Pixel width of the line.
+                 */
+                lineWidth: 1,
+                /**
+                 * Color of the line. If not set, it's inherited from
+                 * [plotOptions.klinger.color
+                 * ](#plotOptions.sma.color).
+                 *
+                 * @type {Highcharts.ColorString}
+                 */
+                lineColor: '#ff0000'
+            }
         }
     } as KlingerOptions);
 
@@ -207,9 +227,10 @@ class KlingerIndicator extends SMAIndicator {
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             xData: Array<number> = [],
-            yData: Array<number> = [],
+            yData: Array<Array<number>> = [],
             slowEMAvalues: Array<number> = [],
-            fastEMAvalues: Array<number> = [];
+            fastEMAvalues: Array<number> = [],
+            signalValues: Array<number> = [];
 
         let klingerPoint: Array<number> = [],
             i: number = 0,
@@ -279,9 +300,40 @@ class KlingerIndicator extends SMAIndicator {
 
                 Klinger.push(klingerPoint);
                 xData.push(xVal[k]);
-                yData.push(KO);
+                yData.push([KO]);
             }
         }
+
+        // Calculate signal
+        this.EMApercent = 2 / (params.signal + 1);
+        const SMASignal = this.getSMA(params.signal, 0, volumeForce);
+
+        for (var l = 0; l < yData.length; l++) {
+            if (l < params.signal) {
+                signalValues.push(0);
+                Klinger[l].push(0);
+                yData[l].push(0);
+            } else {
+                const EMAcalc = this.getEMA(
+                    yData,
+                    prevEMA,
+                    SMASignal,
+                    0,
+                    l,
+                    xVal
+                )[1];
+
+                signalValues.push(EMAcalc);
+                prevEMA = EMAcalc;
+                Klinger[l].push(EMAcalc);
+                yData[l].push(EMAcalc);
+            }
+        }
+
+        // console.log(Klinger)
+        // console.log(xData)
+        // console.log(yData)
+
 
         return {
             values: Klinger,
@@ -298,14 +350,39 @@ class KlingerIndicator extends SMAIndicator {
  * */
 
 interface KlingerIndicator {
+    nameBase: string;
+    pointArrayMap: Array<string>;
+    parallelArrays: Array<string>;
+    pointValKey: string;
+    linesApiNames: Array<string>;
+
     pointClass: typeof KlingerPoint;
+
+    drawGraph: typeof MultipleLinesMixin.drawGraph;
+    getTranslatedLinesNames: typeof MultipleLinesMixin.getTranslatedLinesNames;
+    translate: typeof MultipleLinesMixin.translate;
+    toYData: typeof MultipleLinesMixin.toYData;
 }
+
+extend(KlingerIndicator.prototype, {
+    nameBase: 'Klinger',
+    pointArrayMap: ['y', 'signal'],
+    parallelArrays: ['x', 'y', 'signal'],
+    pointValKey: 'y',
+    linesApiNames: ['signal'],
+
+    drawGraph: MultipleLinesMixin.drawGraph,
+    getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
+    translate: MultipleLinesMixin.translate,
+    toYData: MultipleLinesMixin.toYData
+});
 
 /* *
  *
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         klinger: typeof KlingerIndicator;
