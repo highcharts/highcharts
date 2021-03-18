@@ -86,6 +86,7 @@ declare global {
             events: NavigationBindingsOptionsObject;
         }
         interface NavigationBindingsOptionsObject {
+            noDataState?: 'normal' | 'disabled';
             className: string;
             end?: Function;
             init?: Function;
@@ -419,7 +420,7 @@ class NavigationBindings {
                         event
                     );
 
-                    if (bindings) {
+                    if (bindings && bindings.button.className.indexOf('highcharts-disabled-btn') === -1) {
                         navigation.bindingsButtonClick(
                             bindings.button,
                             bindings.events,
@@ -1550,6 +1551,66 @@ setOptions({
                 defer: 0
             }
         }
+    }
+});
+addEvent(H.Chart, 'render', function (): void {
+    const chart = this,
+        navigationBindings = chart.navigationBindings,
+        disabledClassName = 'highcharts-disabled-btn';
+
+    if (chart && navigationBindings) {
+        // Check if the buttons should be enabled/disabled based on
+        // visible series.
+
+        let buttonsEnabled = false;
+        chart.series.forEach(function (series): void {
+            if (!series.options.isInternal && series.visible) {
+                buttonsEnabled = true;
+            }
+        });
+
+        objectEach(
+            navigationBindings.boundClassNames,
+            function (value: Highcharts.NavigationBindingsOptionsObject, key: string): void {
+
+                if (
+                    chart.navigationBindings &&
+                    chart.navigationBindings.container &&
+                    chart.navigationBindings.container[0]
+                ) {
+
+                    // Get the HTML element coresponding to the
+                    // className taken from StockToolsBindings.
+                    const buttonNode = chart.navigationBindings.container[0].querySelectorAll('.' + key);
+
+                    if (buttonNode) {
+                        if (value.noDataState === 'normal') {
+                            buttonNode.forEach(function (button): void {
+                                // If button has noDataState: 'normal',
+                                // and has disabledClassName,
+                                // remove this className.
+                                if (button.className.indexOf(disabledClassName) !== -1) {
+                                    button.classList.remove(disabledClassName);
+                                }
+                            });
+                        } else if (!buttonsEnabled) {
+                            buttonNode.forEach(function (button): void {
+                                if (button.className.indexOf(disabledClassName) === -1) {
+                                    button.className += ' ' + disabledClassName;
+                                }
+                            });
+                        } else {
+                            buttonNode.forEach(function (button): void {
+                                // Enable all buttons by deleting the className.
+                                if (button.className.indexOf(disabledClassName) !== -1) {
+                                    button.classList.remove(disabledClassName);
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        );
     }
 });
 

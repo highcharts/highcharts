@@ -1524,6 +1524,10 @@ class Toolbar {
             // main button in first level og GUI
             mainNavButton = (buttonWrapper as any).parentNode.parentNode;
 
+        // if the button is disabled, don't do anything
+        if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
+            return;
+        }
         // set class
         mainNavButton.className = '';
         if (buttonWrapperClass) {
