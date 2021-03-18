@@ -2610,7 +2610,7 @@ addEvent(
             chart.data = new H.Data(extend(userOptions.data, {
 
                 afterComplete: function (
-                    dataOptions?: Highcharts.Options
+                    dataOptions?: Partial<Highcharts.Options>
                 ): void {
                     var i, series;
 

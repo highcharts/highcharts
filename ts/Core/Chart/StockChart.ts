@@ -17,6 +17,7 @@
  * */
 
 import type BBoxObject from '../Renderer/BBoxObject';
+import type CSSObject from '../Renderer/CSSObject';
 import type DataExtremesObject from '../Series/DataExtremesObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type PointerEvent from '../PointerEvent';
@@ -797,7 +798,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                     stroke: options.borderColor || '',
                     'stroke-width': options.borderWidth || 0
                 })
-                .css(extend({
+                .css(extend<CSSObject>({
                     color: palette.backgroundColor,
                     fontWeight: 'normal',
                     fontSize: '11px',
