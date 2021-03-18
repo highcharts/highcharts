@@ -3558,6 +3558,8 @@ H.defaultOptions = {
          * and wordcloud series by override in the `plotOptions`
          * for those series types.
          *
+         * Does not apply if [split](#tooltip.split) is `true`.
+         *
          * For touch moves to behave the same way, [followTouchMove](
          * #tooltip.followTouchMove) must be `true` also.
          *
