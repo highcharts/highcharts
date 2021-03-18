@@ -166,9 +166,10 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         this.rowCount = 0;
         this.versionTag = uniqueKey();
 
-        const hasOwnProperty = {}.hasOwnProperty,
-            columnNames = Object.keys(columns),
+        const columnNames = Object.keys(columns),
             thisColumns = this.columns;
+
+        let rowCount = 0;
 
         for (
             let i = 0,
@@ -179,13 +180,16 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             ++i
         ) {
             columnName = columnNames[i];
-
-            if (hasOwnProperty.call(columns, columnName)) {
-                column = columns[columnName].slice();
-                thisColumns[columnName] = column;
-                this.rowCount = Math.max(this.rowCount, column.length);
-            }
+            column = columns[columnName].slice();
+            thisColumns[columnName] = column;
+            rowCount = Math.max(rowCount, column.length);
         }
+
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            thisColumns[columnNames[i]].length = rowCount;
+        }
+
+        this.rowCount = rowCount;
     }
 
     /* *
@@ -320,8 +324,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Returns a clone of this data table.
      *
-     * @param {boolean} [skipCells]
-     * Whether to clone cells or not.
+     * @param {boolean} [skipColumns]
+     * Whether to clone columns or not.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
@@ -333,7 +337,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @emits DataTable#afterCloneTable
      */
     public clone(
-        skipCells?: boolean,
+        skipColumns?: boolean,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const table = this,
@@ -344,7 +348,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         table.emit({ type: 'cloneTable', detail: eventDetail });
 
         const clone = new DataTable(
-            skipCells ? {} : table.columns,
+            skipColumns ? {} : table.columns,
             table.id,
             table.presentationState,
             table.converter
@@ -1200,6 +1204,9 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {DataTable.Column} [column]
      * Values to set in the column.
      *
+     * @param {number} [rowIndex]
+     * Index of the first row to change. Leave `undefind` to set as new column.
+     *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
@@ -1212,6 +1219,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     public setColumn(
         columnNameOrAlias: string,
         column: DataTable.Column = [],
+        rowIndex?: number,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const table = this,
@@ -1231,8 +1239,35 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             detail: eventDetail
         });
 
-        columns[columnName] = column;
-        table.rowCount = Math.max(table.rowCount, column.length);
+        if (rowIndex) {
+            if (!columns[columnName]) {
+                columns[columnName] = [];
+            }
+
+            const tableColumn = columns[columnName];
+
+            let rowCount = tableColumn.length;
+
+            if (rowIndex > rowCount) {
+                tableColumn.length = rowIndex;
+                tableColumn.push(...column);
+
+                rowCount = Math.max(table.rowCount, tableColumn.length);
+
+                const columnNames = Object.keys(columns);
+
+                for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                    columns[columnNames[i]].length = rowCount;
+                }
+
+                table.rowCount = rowCount;
+            } else {
+                tableColumn.splice(rowIndex, (rowCount - rowIndex), ...column);
+            }
+        } else {
+            columns[columnName] = column.slice();
+            table.rowCount = Math.max(table.rowCount, column.length);
+        }
 
         table.emit({
             type: 'afterSetColumn',
@@ -1277,6 +1312,9 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {DataTable.ColumnCollection} columns
      * Columns as a collection, where the keys are the column names or aliases.
      *
+     * @param {number} [rowIndex]
+     * Index of the first row to change. Leave `undefind` to set as new columns.
+     *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
@@ -1288,6 +1326,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public setColumns(
         columns: DataTable.ColumnCollection,
+        rowIndex?: number,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
         const table = this,
@@ -1307,6 +1346,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 !table.setColumn(
                     columnName,
                     columns[columnName],
+                    rowIndex,
                     eventDetail
                 ) ||
                 failed
@@ -1456,7 +1496,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Row values to insert.
      *
      * @param {number} [rowIndex]
-     * Index of the row to change. Leave `undefind` to add as new rows.
+     * Index of the first row to change. Leave `undefind` to add as new rows.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
@@ -1501,7 +1541,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Row values to insert.
      *
      * @param {number} [rowIndex]
-     * Index of the row to change. Leave `undefind` to add as new rows.
+     * Index of the first row to change. Leave `undefind` to add as new rows.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
@@ -1545,6 +1585,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public toJSON(): DataTable.ClassJSON {
         const table = this,
+            aliasMap = table.aliasMap,
+            aliases = Object.keys(aliasMap),
             columns = table.columns,
             columnNames = Object.keys(columns),
             json: DataTable.ClassJSON = {
@@ -1560,6 +1602,21 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
         if (table.presentationState.isSet()) {
             json.presentationState = table.presentationState.toJSON();
+        }
+
+        if (aliases.length) {
+            const jsonAliasMap: Record<string, string> = json.aliasMap = {};
+
+            for (
+                let i = 0,
+                    iEnd = aliases.length,
+                    alias: string;
+                i < iEnd;
+                ++i
+            ) {
+                alias = aliases[i];
+                jsonAliasMap[alias] = aliasMap[alias];
+            }
         }
 
         for (

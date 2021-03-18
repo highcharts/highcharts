@@ -15,18 +15,18 @@ QUnit.test('SortModifier.execute', (assert) => {
             direction: 'desc',
             orderByColumn: 'y'
         }),
-        tableDescY = descYModifier.execute(table),
-        tableAscX = ascXModifier.execute(tableDescY);
+        tableDescY = descYModifier.execute(table.clone()),
+        tableAscX = ascXModifier.execute(tableDescY.clone());
 
     assert.deepEqual(
-        tableDescY.getColumns(['x']).x,
+        tableDescY.getColumn('x'),
         [0, 2, 1],
         'Sorted table should be in descending order of Y values.'
     );
 
     assert.deepEqual(
-        table.getColumns(['x', 'y']),
         tableAscX.getColumns(['x', 'y']),
+        table.getColumns(['x', 'y']),
         'Resorted table should be ordered the same as original.'
     );
 

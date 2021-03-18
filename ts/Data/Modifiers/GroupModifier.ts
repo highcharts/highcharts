@@ -147,8 +147,7 @@ class GroupModifier extends DataModifier {
                 []
             );
 
-        let row: (DataTable.Row|undefined),
-            value: DataTable.CellType,
+        let value: DataTable.CellType,
             valueIndex: number;
 
         for (let i = 0, iEnd = valueColumn.length; i < iEnd; ++i) {

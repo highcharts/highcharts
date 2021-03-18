@@ -111,6 +111,18 @@ class SortModifier extends DataModifier {
      *
      * */
 
+    /**
+     * Sorts rows in the table.
+     *
+     * @param {DataTable} table
+     * Table to sort in.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataTable}
+     * Sorted table as a reference.
+     */
     public execute(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
@@ -121,11 +133,13 @@ class SortModifier extends DataModifier {
                 orderByColumn,
                 orderInColumn
             } = modifier.options,
+            columnNames = table.getColumnNames(),
             compare = (
                 direction === 'asc' ?
                     SortModifier.ascending :
                     SortModifier.descending
-            );
+            ),
+            orderByIndex = columnNames.indexOf(orderByColumn);
 
         modifier.emit({
             type: 'execute',
@@ -133,23 +147,33 @@ class SortModifier extends DataModifier {
             table
         });
 
-        const tableRows = table.getRowObjects().sort((
-            a: DataTable.RowObject,
-            b: DataTable.RowObject
-        ): number => compare(
-            a[orderByColumn],
-            b[orderByColumn]
-        ));
+        const tableRows = table.getRows();
 
-        if (orderInColumn) {
-            for (let i = 0, iEnd = tableRows.length; i < iEnd; ++i) {
-                tableRows[i][orderInColumn] = i;
-            }
-        } else {
-            table = new DataTable();
+        if (orderByIndex !== -1) {
+            tableRows.sort((
+                a: DataTable.Row,
+                b: DataTable.Row
+            ): number => compare(
+                a[orderByIndex],
+                b[orderByIndex]
+            ));
         }
 
-        table.setRowObjects(tableRows);
+        if (orderInColumn) {
+            table = table.clone();
+            if (!table.hasColumn(orderInColumn)) {
+                table.setColumn(orderInColumn);
+            }
+            for (let i = 0, iEnd = tableRows.length; i < iEnd; ++i) {
+                table.setCell(i, orderInColumn, i);
+            }
+        } else {
+            table = table.clone(true);
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                table.setColumn(columnNames[i]);
+            }
+            table.setRows(tableRows, 0);
+        }
 
         modifier.emit({
             type: 'afterExecute',

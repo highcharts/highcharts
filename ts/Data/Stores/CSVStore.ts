@@ -230,24 +230,29 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
      */
     public load(eventDetail?: DataEventEmitter.EventDetail): void {
         const store = this,
-            { csv, csvURL } = store.options;
+            parser = store.parser,
+            table = store.table,
+            {
+                csv,
+                csvURL
+            } = store.options;
 
         if (csv) {
             // If already loaded, clear the current rows
-            store.table.clearRows();
+            table.clearRows();
             store.emit({
                 type: 'load',
                 csv,
                 detail: eventDetail,
-                table: store.table
+                table
             });
-            store.parser.parse({ csv });
-            store.table.setRowObjects(store.parser.getTable().getRowObjects());
+            parser.parse({ csv });
+            table.setColumns(parser.getTable().getColumns());
             store.emit({
                 type: 'afterLoad',
                 csv,
                 detail: eventDetail,
-                table: store.table
+                table
             });
         } else if (csvURL) {
             store.fetchCSV(true, eventDetail);
@@ -255,9 +260,9 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             store.emit(
                 {
                     type: 'loadError',
-                    table: store.table,
+                    detail: eventDetail,
                     error: 'Unable to load: no CSV string or URL was provided',
-                    detail: eventDetail
+                    table
                 }
             );
         }
