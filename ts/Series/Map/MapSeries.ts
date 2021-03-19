@@ -1220,7 +1220,7 @@ class MapSeries extends ScatterSeries {
                 point.plotY = midPoint[0][2];
             }
 
-            if (doFullTranslate && isArray(point.path)) {
+            if (doFullTranslate) {
 
                 point.shapeType = 'path';
                 point.shapeArgs = {

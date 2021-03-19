@@ -24,6 +24,10 @@ import type ScatterPoint from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapPointMixin } = ColorMapMixin;
+import MapChart from '../../Core/Chart/MapChart.js';
+const {
+    splitPath
+} = MapChart;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -81,6 +85,10 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
             ),
             joinBy = series.joinBy,
             mapPoint;
+
+        if (typeof point.path === 'string') {
+            point.path = splitPath(point.path);
+        }
 
         if (series.mapData && series.mapMap) {
             const joinKey = joinBy[1];
