@@ -1965,9 +1965,14 @@ class Pointer {
         // Update positions (regardless of kdpoint or hoverPoint)
         } else if (followPointer && tooltip && !tooltip.isHidden) {
             anchor = tooltip.getAnchor([{} as any], e);
-            tooltip.updatePosition(
-                { plotX: anchor[0], plotY: anchor[1] } as any
-            );
+            if (
+                tooltip.isInsideX(anchor[0]) &&
+                tooltip.isInsideY(anchor[1])
+            ) {
+                tooltip.updatePosition(
+                    { plotX: anchor[0], plotY: anchor[1] } as any
+                );
+            }
         }
 
         // Start the event listener to pick up the tooltip and crosshairs

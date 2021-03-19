@@ -34,6 +34,7 @@ const {
     extend,
     fireEvent,
     format,
+    isArray,
     isNumber,
     isString,
     merge,
@@ -120,6 +121,8 @@ declare global {
             ): string;
             public hide(delay?: number): void;
             public init(chart: Chart, options: TooltipOptions): void;
+            public isInsideX(plotX: number, series?: Series, paneCoordinates?: boolean): boolean;
+            public isInsideY(plotY: number, series?: Series, paneCoordinates?: boolean): boolean;
             public isStickyOnContact(): boolean;
             public move(
                 x: number,
@@ -1311,14 +1314,14 @@ class Tooltip {
             options = tooltip.options,
             x,
             y,
-            point = pointOrPoints,
+            points: Array<Point> = splat(pointOrPoints),
+            point = points[0],
             anchor,
             textConfig = {} as Highcharts.TooltipFormatterContextObject,
             text: (boolean|string),
             pointConfig = [] as Array<Point.PointLabelObject>,
             formatter = options.formatter || tooltip.defaultFormatter,
             shared = tooltip.shared,
-            currentSeries,
             styledMode = chart.styledMode;
 
         if (!options.enabled) {
@@ -1328,40 +1331,43 @@ class Tooltip {
         U.clearTimeout(this.hideTimer as any);
 
         // get the reference point coordinates (pie charts use tooltipPos)
-        tooltip.followPointer = !tooltip.split && splat(point)[0].series.tooltipOptions.followPointer;
-        anchor = tooltip.getAnchor(point as any, mouseEvent);
+        tooltip.followPointer = !tooltip.split && point.series.tooltipOptions.followPointer;
+        anchor = tooltip.getAnchor(pointOrPoints, mouseEvent);
         x = anchor[0];
         y = anchor[1];
 
         // shared tooltip, array is sent over
-        if (shared &&
-            !((point as any).series &&
-            (point as any).series.noSharedTooltip)
+        if (
+            shared &&
+            !(
+                !isArray(pointOrPoints) &&
+                pointOrPoints.series &&
+                pointOrPoints.series.noSharedTooltip
+            )
         ) {
-            chart.pointer.applyInactiveState(point as any);
+            chart.pointer.applyInactiveState(points);
 
             // Now set hover state for the choosen ones:
-            (point as any).forEach(function (item: Point): void {
+            points.forEach(function (item: Point): void {
                 item.setState('hover');
                 pointConfig.push(item.getLabelConfig());
             });
 
             textConfig = {
-                x: (point as any)[0].category,
-                y: (point as any)[0].y
+                x: point.category,
+                y: point.y
             } as any;
             textConfig.points = pointConfig as any;
-            point = (point as any)[0];
 
         // single point tooltip
         } else {
-            textConfig = (point as any).getLabelConfig();
+            textConfig = point.getLabelConfig() as any;
         }
         this.len = pointConfig.length; // #6128
         text = (formatter as any).call(textConfig, tooltip);
 
         // register the current series
-        currentSeries = (point as any).series;
+        const currentSeries = point.series;
         this.distance = pick(currentSeries.tooltipOptions.distance, 16);
 
         // update the inner HTML
@@ -1370,8 +1376,14 @@ class Tooltip {
         } else {
             // update text
             if (tooltip.split) {
-                this.renderSplit(text as any, splat(pointOrPoints));
-            } else {
+                this.renderSplit(text as any, points);
+            } else if (
+                chart.polar ||
+                (
+                    this.isInsideX(x, currentSeries, !point.tooltipPos) &&
+                    this.isInsideY(y, currentSeries, !point.tooltipPos)
+                )
+            ) {
                 const label = tooltip.getLabel();
 
                 // Prevent the tooltip from flowing over the chart box (#6659)
@@ -1392,7 +1404,7 @@ class Tooltip {
                     .addClass(
                         'highcharts-color-' +
                         pick(
-                            (point as any).colorIndex,
+                            point.colorIndex,
                             currentSeries.colorIndex
                         )
                     );
@@ -1401,7 +1413,7 @@ class Tooltip {
                     label.attr({
                         stroke: (
                             options.borderColor ||
-                            (point as any).color ||
+                            point.color ||
                             currentSeries.color ||
                             palette.neutralColor60
                         )
@@ -1411,10 +1423,13 @@ class Tooltip {
                 tooltip.updatePosition({
                     plotX: x,
                     plotY: y,
-                    negative: (point as any).negative,
-                    ttBelow: (point as any).ttBelow,
+                    negative: point.negative,
+                    ttBelow: point.ttBelow,
                     h: anchor[2] || 0
                 } as any);
+            } else {
+                tooltip.hide();
+                return;
             }
 
             // show it
@@ -1508,10 +1523,7 @@ class Tooltip {
                 anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
 
                 // Set anchorY, limit to the scrollable plot area
-                if (
-                    yAxis.pos + plotY >= scrollTop + plotTop &&
-                    yAxis.pos + plotY <= scrollTop + plotTop + plotHeight - scrollablePixelsY
-                ) {
+                if (tooltip.isInsideY(plotY, series)) {
                     anchorY = yAxis.pos + plotY;
                 }
             }
@@ -1786,6 +1798,92 @@ class Tooltip {
             container.style.left = chartPosition.left + 'px';
             container.style.top = chartPosition.top + 'px';
         }
+    }
+
+    /**
+     * Checks if a point is within horizontal visible plot and axis bounds.
+     *
+     * @private
+     * @param {number} plotX
+     * @param {Highcharts.Series} series
+     * @param {boolean} paneCoordinates
+     * @return {boolean}
+     */
+    public isInsideX(plotX: number, series?: Series, paneCoordinates?: boolean): boolean {
+        const {
+            inverted,
+            plotBox,
+            plotLeft,
+            scrollablePlotBox,
+            scrollingContainer: {
+                scrollLeft
+            } = { scrollLeft: 0 }
+        } = this.chart;
+
+        const axis = (series && (inverted ? series.yAxis : series.xAxis)) || {
+            pos: plotLeft,
+            len: Infinity
+        };
+
+        if (this.followPointer) {
+            paneCoordinates = false;
+        }
+
+        const x = pick(paneCoordinates, true) ? axis.pos + plotX : plotLeft + plotX;
+
+        return (
+            x >= Math.max(
+                scrollLeft + plotLeft,
+                axis.pos
+            ) &&
+            x <= Math.min(
+                scrollLeft + plotLeft + (scrollablePlotBox || plotBox).width,
+                axis.pos + axis.len
+            )
+        );
+    }
+
+    /**
+     * Checks if a point is within vertical visible plot and axis bounds.
+     *
+     * @private
+     * @param {number} plotY
+     * @param {Highcharts.Series} series
+     * @param {boolean} paneCoordinates
+     * @return {boolean}
+     */
+    public isInsideY(plotY: number, series?: Series, paneCoordinates?: boolean): boolean {
+        const {
+            inverted,
+            plotBox,
+            plotTop,
+            scrollablePlotBox,
+            scrollingContainer: {
+                scrollTop
+            } = { scrollTop: 0 }
+        } = this.chart;
+
+        const axis = (series && (inverted ? series.xAxis : series.yAxis)) || {
+            pos: plotTop,
+            len: Infinity
+        };
+
+        if (this.followPointer) {
+            paneCoordinates = false;
+        }
+
+        const y = pick(paneCoordinates, true) ? axis.pos + plotY : plotTop + plotY;
+
+        return (
+            y >= Math.max(
+                scrollTop + plotTop,
+                axis.pos
+            ) &&
+            y <= Math.min(
+                scrollTop + plotTop + (scrollablePlotBox || plotBox).height,
+                axis.pos + axis.len
+            )
+        );
     }
 
     /**
