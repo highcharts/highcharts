@@ -2,7 +2,7 @@ Highcharts.theme = {
     colors: ['#058DC7', '#50B432', '#ED561B', '#DDDF00', '#24CBE5', '#64E572',
         '#FF9655', '#FFF263', '#6AF9C4'],
     chart: {
-
+        backgroundColor: 'transparent'
     },
     title: {
         style: {
@@ -33,34 +33,77 @@ Math.easeOutQuint = function (pos) {
     return (Math.pow((pos - 1), 5) + 1);
 };
 
-let demoChart;
+let chartMargin = 0;
+let chartSpacing = 0;
+const chartData = [10, 20, 40, 5, 10, 15];
+let axisVisible = false;
+
+///options for each series
+const itemOptions = {
+    marker: {
+        radius: 8
+    },
+    startAngle: -100,
+    endAngle: 100,
+    innerSize: '30%',
+    center: ['50%', '70%'],
+    size: '100%',
+    dataLabels: {
+        enabled: false
+    }
+
+};
+const pieOptions = {
+    startAngle: 100,
+    endAngle: 100,
+    innerSize: '30%',
+    center: ['50%', '60%'],
+    size: '80%',
+    dataLabels: {
+        enabled: false
+    }
+
+};
+const lineOptions = {
+    lineWidth: 10,
+    marker: {
+        radius: 16
+    }
+};
+const columnOptions = {
+    pointWidth: 30,
+    borderRadius: 20,
+    borderWidth: 0
+};
 
 $('document').ready(function () {
-    demoChart = Highcharts.chart('container3', {
+
+    const demoChart = Highcharts.chart('container3', {
+        chart: {
+            margin: chartMargin,
+            spacing: chartSpacing
+        },
         title: {
             text: ''
         },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                colorByPoint: true
+            },
+            item: itemOptions,
+            pie: pieOptions,
+            line: lineOptions,
+            column: columnOptions
+        },
+        yAxis: {
+            title: ''
+        },
         series: [{
             type: 'item',
-            borderColor: 'transparent',
-            marker: {
-                radius: 6
-            },
-            borderRadius: 3,
-            colorByPoint: true,
-            borderWidth: 1,
-            data: [
-                10, 20, 40, 5, 10, 15
-            ],
-            dataLabels: {
-                enabled: false
-            },
-            // Circular options
-            startAngle: -100,
-            endAngle: 100,
-            innerSize: '30%',
-            center: ['50%', '64%'],
-            size: '55%'
+            data: chartData
         }
         ]
     });
@@ -69,18 +112,10 @@ $('document').ready(function () {
     let seriesType = 'item';
     const controls = [
         ['start angle', 'end angle', 'inner size', 'size'],
-        ['inner size', 'size', 'add/remove slices'],
-        ['x axis', 'y axis', 'point width', 'border radius'],
-        ['x axis', 'y axis', 'line width', 'marker size']
+        ['inner size', 'size', '+/- slices', 'slice'],
+        ['x axis', 'y axis', 'width', 'border'],
+        ['x axis', 'y axis', 'line width', 'marker']
     ];
-    const initialValues = [
-        [-100, 100, '30%', '55%'],
-        ['30%', '50%', 6],
-        [6, 50, 30, 3],
-        [6, 50, 2, 5]
-
-    ];
-
 
     let controlIndex = 0; //the value of the selected radio button
     let seriesIndex = 0;
@@ -88,245 +123,374 @@ $('document').ready(function () {
     let thingToChange = 'start angle';
     let thingToChangeValue = -100;
 
-    const initControls = function () {
+    //for the pie
+    let pieSlices = 6;
+    let sliced = 0;
 
-        ///globals: controlsToUse, thingToChange, thingToChangeValue,
-        //controlIndex set by radio button click
+    ///for the range
+    let rmin, rmax;
+    let element;
+    const itemRanges = [[-100, 100], [-100, 100], [0, 100], [0, 200]];
+    const pieRanges = [[0, 100], [0, 200], [0, 10], [0, 6]];
+    const columnRanges = [[0, 20], [0, 100], [1, 50], [0, 30]];
+    const lineRanges = [[0, 20], [0, 100], [1, 20], [1, 20]];
+    const initialValues = [
+        [-100, 100, '30%', '100%'],
+        ['30%', '100%', 6, 0],
+        [6, 50, 30, 20],
+        [6, 50, 10, 16]
+    ];
+    const ranges = [
+        itemRanges,
+        pieRanges,
+        columnRanges,
+        lineRanges
+    ];
+
+    ///change the chart scale on larger screens
+    const resizeChart = () => {
+        if (demoChart.chartWidth > 490 && seriesIndex === 0) {
+            $('.highcharts-container svg').css({
+                transform: 'scale(1.3, 1.3)'
+            });
+        } else {
+            $('.highcharts-container svg').css({
+                transform: 'scale(1, 1)'
+            });
+        }
+        demoChart.reflow();
+    };
+    resizeChart();
+    window.addEventListener("resize", resizeChart, false);
+
+    ///reset the series/chart options
+    const resetCharts = function () {
+        demoChart.xAxis[0].setExtremes(0, 6);
+        demoChart.yAxis[0].setExtremes(0, 50);
+        if (seriesType === 'item' || seriesType === 'pie') {
+            chartMargin = 0;
+            chartSpacing = 0;
+            axisVisible = false;
+        } else {
+            chartMargin = 40;
+            chartSpacing = 40;
+            axisVisible = true;
+        }
+        demoChart.update({
+            chart: {
+                margin: chartMargin,
+                spacing: chartSpacing
+            },
+            plotOptions: {
+                item: itemOptions,
+                pie: pieOptions,
+                line: lineOptions,
+                column: columnOptions
+            }
+        });
+        demoChart.series[0].update({
+            data: chartData
+        });
+        for (let ii = 0; ii < chartData.length; ++ii) {
+            demoChart.series[0].points[ii].update({
+                selected: false,
+                sliced: false
+            });
+        }
+        demoChart.xAxis[0].update({
+            visible: axisVisible
+        });
+        demoChart.yAxis[0].update({
+            visible: axisVisible
+        });
+
+        //resize the chart after reset
+        resizeChart();
+    };
+
+    ///initialize series controls
+    const initControls = function () {
 
         ///single option to change
         thingToChange = controlsToUse[controlIndex];
 
-        ///for the range
-        let min, max;
-
+        //hide the radios, clear out the labels
         $('.form-check').each(function () {
-            $(this).addClass('d-none');
+            $(this).parent().addClass('d-none');
+            $(this).removeClass('active');
         });
-
-        ///populate the radio button text and show right amount of radios
+        $('.form-check-label').each(function () {
+            $(this).html('');
+        });
+        //build the radios
         for (let ii = 0; ii < controlsToUse.length; ++ii) {
-            const element = '.controls #controlType' + (ii + 1);
+            //the radio
+            element = '.controls #controlType' + (ii + 1);
+            //populate labels
             $(element + ' ~ .form-check-label').html(controlsToUse[ii]);
-            $(element).parent().removeClass('d-none');
+            //show the radios
+            $(element).parent().parent().removeClass('d-none');
+            //active the chosen radio label
+            if (ii === controlIndex) {
+                $(element).parent().addClass('active');
+            }
         }
 
         //show the right amount of values under the slider
+        ///these are hidden in the HTML right now
         $('.val').each(function () {
             $(this).addClass('d-none');
             $(this).removeClass('active');
         });
-
         $('#val' + controlIndex).addClass('active');
 
+        //set the min, max, values to be used with the slider
+        const optionPath = demoChart.userOptions.plotOptions;
         for (let ii = 0; ii < controlsToUse.length; ++ii) {
             $('#val' + ii).removeClass('d-none');
-            //set the min, max, value to be used with the slider
             switch (thingToChange) {
             case 'start angle':
-                min = -100;
-                max = 100;
-                thingToChangeValue = demoChart.series[0].options.startAngle;
+                thingToChangeValue = optionPath.item.startAngle;
                 break;
 
             case 'end angle':
-                min = -100;
-                max = 100;
-                thingToChangeValue = demoChart.series[0].options.endAngle;
+                thingToChangeValue = optionPath.item.endAngle;
                 break;
 
             case 'inner size':
-                min = 0;
-                max = 100;
-                thingToChangeValue = demoChart.series[0].options.innerSize;
+                if (seriesType === 'pie') {
+                    thingToChangeValue = optionPath.pie.innerSize;
+                } else {
+                    thingToChangeValue = optionPath.item.innerSize;
+                }
                 break;
 
             case 'size':
-                min = 0;
-                max = 100;
-                thingToChangeValue = demoChart.series[0].options.size;
+                if (seriesType === 'pie') {
+                    thingToChangeValue = optionPath.pie.size;
+                } else {
+                    thingToChangeValue = optionPath.item.size;
+                }
                 break;
 
-            case 'point width':
-                min = 0;
-                max = 100;
-                thingToChangeValue = demoChart.series[0].options.pointWidth;
+            case 'width':
+                thingToChangeValue = optionPath.column.pointWidth;
                 break;
 
-            case 'border radius':
-                min = 0;
-                max = 100;
-                thingToChangeValue = demoChart.series[0].options.borderRadius;
+            case 'border':
+                thingToChangeValue = optionPath.column.borderRadius;
                 break;
 
             case 'x axis':
-                min = 0;
-                max = 20;
                 thingToChangeValue = 0;
                 break;
 
             case 'y axis':
-                min = 0;
-                max = 100;
                 thingToChangeValue = 0;
                 break;
 
-            case 'add/remove slices':
-                min = 0;
-                max = 10;
+            case '+/- slices':
                 thingToChangeValue = 6;
                 break;
 
-            case 'marker size':
-                min = 0;
-                max = 20;
+            case 'marker':
                 thingToChangeValue = 6;
+                break;
+
+            case 'slice':
+                thingToChangeValue = 0;
                 break;
 
             default:
             }
         }
         ///highlight the proper value box (under the slider)
+        ///these are hidden right now
         $('.val').each(function () {
             $(this).addClass('font-weight-lighter');
         });
         $('#val' + controlIndex).removeClass('font-weight-lighter');
-
         $('.val').each(function (index) {
             $('#val' + index).html(initialValues[seriesIndex][index]);
         });
 
-
         ///apply the min, max to the range, set the range value
         //show the proper min/max labels
+        rmin = ranges[seriesIndex][controlIndex][0];
+        rmax = ranges[seriesIndex][controlIndex][1];
+        $('#control').attr('min', rmin);
+        $('#control').attr('max', rmax);
 
-        $('#control').attr('min', min);
-        $('#control').attr('max', max);
-        $('.min').html(min);
-        $('.max').html(max);
-
-        $('#control').val(thingToChangeValue);
-
-
+        ///set the slider value
+        $('#control').val(parseInt(thingToChangeValue, 10));
     };
-
 
     ///the radio buttons
     $('input[name="controlType"]').change(function () {
-
-        $('.form-check-label').each(function () {
-            $(this).html('');
-        });
-
         ///value of the clicked radio button
         //tells what option to manipulate
         //0,1,2,or 3
-        controlIndex = $(this).val();
+        controlIndex = parseInt($(this).val(), 10);
+        //set up the controls
         initControls();
-
     });
 
     ///slider
     $('#control').change(function () {
-        const value = $(this).val();
-        let suffix = '';
-
         const data = [10, 20, 40, 5, 10, 15, 33, 41, 21, 13, 48];
-        const tempData = data.slice(0, value);
+        const tempData = data.slice(0, pieSlices);
+        const value = parseInt($(this).val(), 10);
 
+        ///for the pie
+        let slice;
+
+        ///change the series/chart option
         switch (thingToChange) {
         case 'start angle':
-            demoChart.series[0].update({
-                startAngle: value
+            demoChart.update({
+                plotOptions: {
+                    item: {
+                        startAngle: value
+                    }
+                }
             });
-            suffix = '';
             break;
 
         case 'end angle':
-            demoChart.series[0].update({
-                endAngle: value
+            demoChart.update({
+                plotOptions: {
+                    item: {
+                        endAngle: value
+                    }
+                }
             });
-            suffix = '';
             break;
 
         case 'inner size':
-            demoChart.series[0].update({
-                innerSize: value + '%'
+            demoChart.update({
+                plotOptions: {
+                    item: {
+                        innerSize: value + '%'
+                    },
+                    pie: {
+                        innerSize: value + '%'
+                    }
+                }
             });
-            suffix = '%';
             break;
 
         case 'size':
-            demoChart.series[0].update({
-                size: value + '%'
+            demoChart.update({
+                plotOptions: {
+                    item: {
+                        size: value + '%'
+                    },
+                    pie: {
+                        size: value + '%'
+                    }
+                }
             });
-            suffix = '%';
             break;
 
-        case 'border radius':
-            demoChart.series[0].update({
-                borderRadius: value
+        case 'border':
+            demoChart.update({
+                plotOptions: {
+                    column: {
+                        borderRadius: value
+                    }
+                }
             });
-            suffix = '';
             break;
 
-        case 'point width':
-            demoChart.series[0].update({
-                pointWidth: value
+        case 'width':
+            demoChart.update({
+                plotOptions: {
+                    column: {
+                        pointWidth: value
+                    }
+                }
             });
-            suffix = '';
             break;
 
         case 'line width':
-            demoChart.series[0].update({
-                lineWidth: value
-            });
-            suffix = '';
-            break;
-
-        case 'marker size':
-            demoChart.series[0].update({
-                marker: {
-                    radius: value
+            demoChart.update({
+                plotOptions: {
+                    line: {
+                        lineWidth: value
+                    }
                 }
             });
-            suffix = '';
+            break;
+
+        case 'marker':
+            demoChart.update({
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: true,
+                            radius: value
+                        }
+                    }
+                }
+            });
             break;
 
         case 'x axis':
             demoChart.xAxis[0].setExtremes(0, value);
-            suffix = '';
             break;
 
         case 'y axis':
             demoChart.yAxis[0].setExtremes(0, value);
-            suffix = '';
             break;
 
-        case 'add/remove slices':
+        case '+/- slices':
             demoChart.series[0].update({
                 data: tempData
             });
+            pieRanges[3][1] = tempData.length;
+            $('#control').val(pieRanges[3][1]);
+            pieSlices = value;
+            break;
 
-            suffix = '';
+        case 'slice':
+            if (value < sliced) {
+                ///going down
+                for (let dd = sliced; dd > value; --dd) {
+                    slice = demoChart.series[0].points[dd - 1];
+                    slice.update({
+                        selected: false,
+                        sliced: false
+                    });
+                }
+                sliced = value;
+            } else {
+                //going up
+                sliced = value;
+                for (let uu = 0;  uu < sliced; ++uu) {
+                    slice = demoChart.series[0].points[uu];
+                    slice.update({
+                        selected: true,
+                        sliced: true
+                    });
+                }
+            }
             break;
 
         default:
-            suffix = '';
 
         }
-        $('#val' + controlIndex).html($(this).val() + suffix);
+        ///set the right value in the value box (hidden right now)
+        $('#val' + controlIndex).html($(this).val());
     });
-
 
     ///series buttons
     $('.series-types button').click(function () {
 
+        //highlight the right button
         $('.series-types button').each(function () {
             $(this).removeClass('active');
         });
-
         $(this).addClass('active');
-
 
         //set the series type based on the button text
         seriesType = $(this).html();
@@ -334,83 +498,115 @@ $('document').ready(function () {
 
         //find the right items to manipulate
         seriesIndex = seriesTypes.findIndex(element => element === seriesType);
+
         controlsToUse = controls[seriesIndex];
         controlIndex = 0;
 
         //reset charts
-
-        demoChart.xAxis[0].update({
-            visible: false
-        });
-        demoChart.yAxis[0].update({
-            visible: false
-        });
-
-        if (seriesType === 'item') {
-            demoChart.series[0].update({
-                data: [
-                    10, 20, 40, 5, 10, 15
-                ],
-                marker: {
-                    radius: 6
-                },
-                startAngle: -100,
-                endAngle: 100,
-                innerSize: '30%',
-                center: ['50%', '64%'],
-                size: '55%'
-            });
-        }
-        if (seriesType === 'pie') {
-            demoChart.series[0].update({
-                data: [
-                    10, 20, 40, 5, 10, 15
-                ],
-                startAngle: 100,
-                endAngle: 100,
-                innerSize: '30%',
-                center: ['50%', '64%'],
-                size: '55%'
-            });
-        }
-        if (seriesType === 'line') {
-            demoChart.series[0].update({
-                data: [
-                    10, 20, 40, 5, 10, 15
-                ],
-                lineWidth: 2,
-                marker: {
-                    radius: 6
-                }
-            });
-            demoChart.xAxis[0].update({
-                visible: true
-            });
-            demoChart.yAxis[0].update({
-                visible: true
-            });
-        }
-        if (seriesType === 'column') {
-            demoChart.series[0].update({
-                data: [
-                    10, 20, 40, 5, 10, 15
-                ],
-                pointWidth: 30,
-                borderRadius: 3
-            });
-            demoChart.xAxis[0].update({
-                visible: true
-            });
-            demoChart.yAxis[0].update({
-                visible: true
-            });
-        }
+        resetCharts();
+        resizeChart();
 
         ///first radio checked by default.
         $('#controlType1').trigger('click');
         initControls();
 
 
+    });
+
+    ///PLUS MINUS CONTROLS FOR THE SLIDER
+
+    // The plus or minus button
+    const minBtn = document.querySelector('#min');
+    const maxBtn = document.querySelector('#max');
+
+    let timerID;
+    let counter = 0;
+    let direction = 'max';
+
+    const pressHoldEvent = new CustomEvent("pressHold");
+
+    // Increase or decreae value to adjust how long
+    // one should keep pressing down before the pressHold
+    // event fires
+    let pressHoldDuration = 15;
+
+    //the plus and minus buttons
+    const elementsArray = document.querySelectorAll(".fas");
+
+    function move(dir) {
+        //current min/max of the range slider
+        const min = parseInt($('#control').attr('min'), 10);
+        const max = parseInt($('#control').attr('max'), 10);
+
+        let increment = 5;
+        if (seriesIndex === 1 && controlIndex === 3) {
+            increment = 1;
+        }
+
+        //current value of the range slider
+        let value = parseInt($('#control').val(), 10);
+
+        if (value > min && dir === 'min') {
+            value = value - increment;
+            $('#control').val(value);
+            $('#control').trigger('change');
+        } else if (value < max && dir === 'max') {
+            value = value + increment;
+            $('#control').val(value);
+            $('#control').trigger('change');
+        } else {
+            $(this).addClass('disabled');
+        }
+    }
+
+    function timer() {
+        if (seriesIndex === 1) {
+            pressHoldDuration = 100;
+        } else {
+            pressHoldDuration = 15;
+        }
+        if (counter < pressHoldDuration) {
+            timerID = requestAnimationFrame(timer);
+            counter++;
+            move(direction);
+
+        } else {
+            for (let ii = 0; ii < elementsArray.length; ++ii) {
+                elementsArray[ii].dispatchEvent(pressHoldEvent);
+            }
+        }
+    }
+    function doSomething() {
+        move(direction);
+    }
+
+    // Listening for our custom pressHold event
+    minBtn.addEventListener("pressHold", doSomething, false);
+    maxBtn.addEventListener("pressHold", doSomething, false);
+
+    function pressingDown(e) {
+        e.preventDefault();
+        ///plus or minus button
+        const button = e.target;
+        direction = 'max';
+        if ($(button).hasClass('fa-minus')) {
+            direction = 'min';
+        }
+        ///start the timer
+        requestAnimationFrame(timer);
+    }
+
+    function notPressingDown() {
+        // Stop the timer
+        cancelAnimationFrame(timerID);
+        counter = 0;
+    }
+
+    //attach events to plus/minus buttons
+    elementsArray.forEach(function (elem) {
+        elem.addEventListener("mousedown", pressingDown, false);
+        elem.addEventListener("mouseup", notPressingDown, false);
+        elem.addEventListener("mouseleave", notPressingDown, false);
     });
 
 });
