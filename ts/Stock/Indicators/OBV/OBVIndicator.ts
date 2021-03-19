@@ -25,6 +25,7 @@ const {
 import U from '../../../Core/Utilities.js';
 const {
     isNumber,
+    extend,
     merge
 } = U;
 
@@ -51,11 +52,23 @@ class OBVIndicator extends SMAIndicator {
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/obv
+     * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
+     *               pointInterval, pointIntervalUnit, pointPlacement,
+     *               pointRange, pointStart, showInNavigator, stacking
      * @optionparent plotOptions.obv
      */
     public static defaultOptions: OBVOptions = merge(SMAIndicator.defaultOptions, {
+        marker: {
+            enabled: false
+        },
+        /**
+         * @excluding index, period
+         */
         params: {
             volumeSeriesID: 'volume'
+        },
+        tooltip: {
+            valueDecimals: 0
         }
     } as OBVOptions);
 
@@ -187,9 +200,13 @@ class OBVIndicator extends SMAIndicator {
  * */
 
 interface OBVIndicator {
+    nameComponents: Array<string>;
     pointClass: typeof OBVPoint;
 }
 
+extend(OBVIndicator.prototype, {
+    nameComponents: void 0 as any
+});
 /* *
  *
  *  Registry
