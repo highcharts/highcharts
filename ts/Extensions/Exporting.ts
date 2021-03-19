@@ -562,14 +562,16 @@ merge(true, defaultOptions.navigation, {
 });
 
 // Presentational attributes
-merge(true, defaultOptions.navigation
+merge(
+    true,
+    defaultOptions.navigation,
     /**
      * A collection of options for buttons and menus appearing in the exporting
      * module.
      *
      * @optionparent navigation
      */
-    , {
+    {
 
         /**
          * CSS styles for the popup menu appearing by default when the export

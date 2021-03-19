@@ -34,6 +34,7 @@ const {
     addEvent,
     arrayMax,
     arrayMin,
+    extend,
     isNumber,
     merge,
     objectEach,
@@ -114,9 +115,9 @@ declare global {
             borderColor?: ColorType;
             color?: ColorType;
             connectorColor?: ColorType;
-            bubbleStyle?: CSSObject;
-            connectorStyle?: CSSObject;
-            labelStyle?: CSSObject;
+            bubbleAttribs?: SVGAttributes;
+            connectorAttribs?: SVGAttributes;
+            labelAttribs?: SVGAttributes;
             value?: any;
         }
         interface Legend {
@@ -152,7 +153,6 @@ declare global {
             public correctSizes(): void;
             public drawLegendSymbol(legend: Legend): void;
             public formatLabel(range: BubbleLegendRangesOptions): string;
-            public getLabelStyles(): CSSObject;
             public getMaxLabelSize(): BBoxObject;
             public getRangeRadius(value: number): (number|null);
             public getRanges(): Array<BubbleLegendRangesOptions>;
@@ -339,7 +339,7 @@ setOptions({ // Set default bubble legend options
                     /** @ignore-option */
                     fontSize: 10,
                     /** @ignore-option */
-                    color: void 0
+                    color: palette.neutralColor100
                 },
                 /**
                  * The x position offset of the label relative to the
@@ -586,15 +586,21 @@ class BubbleLegend {
             options = this.options,
             series = this.chart.series[options.seriesIndex as any],
             baseline = this.legend.baseline,
-            bubbleStyle = {
-                'z-index': options.zIndex,
+            bubbleAttribs: SVGAttributes = {
+                zIndex: options.zIndex,
                 'stroke-width': options.borderWidth
             },
-            connectorStyle = {
-                'z-index': options.zIndex,
+            connectorAttribs: SVGAttributes = {
+                zIndex: options.zIndex,
                 'stroke-width': options.connectorWidth
             },
-            labelStyle = this.getLabelStyles(),
+            labelAttribs: SVGAttributes = {
+                align: (
+                    this.legend.options.rtl ||
+                    (options.labels as any).align === 'left'
+                ) ? 'right' : 'left',
+                zIndex: options.zIndex
+            },
             fillOpacity = (series.options.marker as any).fillOpacity,
             styledMode = this.chart.styledMode;
 
@@ -604,12 +610,12 @@ class BubbleLegend {
             i: number
         ): void {
             if (!styledMode) {
-                (bubbleStyle as any).stroke = pick(
+                bubbleAttribs.stroke = pick(
                     range.borderColor,
                     options.borderColor,
                     series.color
                 );
-                (bubbleStyle as any).fill = pick(
+                bubbleAttribs.fill = pick(
                     range.color,
                     options.color,
                     fillOpacity !== 1 ?
@@ -617,7 +623,7 @@ class BubbleLegend {
                             .get('rgba') :
                         series.color
                 );
-                (connectorStyle as any).stroke = pick(
+                connectorAttribs.stroke = pick(
                     range.connectorColor,
                     options.connectorColor,
                     series.color
@@ -635,52 +641,13 @@ class BubbleLegend {
 
             if (!styledMode) {
                 merge(true, ranges[i], {
-                    bubbleStyle: merge(false, bubbleStyle),
-                    connectorStyle: merge(false, connectorStyle),
-                    labelStyle: labelStyle
+                    bubbleAttribs: merge(bubbleAttribs),
+                    connectorAttribs: merge(connectorAttribs),
+                    labelAttribs: labelAttribs
                 });
             }
         }, this);
     }
-
-    /**
-     * Merge options for bubbleLegend labels.
-     *
-     * @private
-     * @function Highcharts.BubbleLegend#getLabelStyles
-     * @return {Highcharts.CSSObject}
-     */
-    public getLabelStyles(): CSSObject {
-        var options = this.options,
-            additionalLabelsStyle: CSSObject = {},
-            labelsOnLeft = (options.labels as any).align === 'left',
-            rtl = this.legend.options.rtl;
-
-        // To separate additional style options
-        objectEach((options.labels as any).style, function (
-            value: string,
-            key: string
-        ): void {
-            if (
-                key !== 'color' &&
-                key !== 'fontSize' &&
-                key !== 'z-index'
-            ) {
-                (additionalLabelsStyle as any)[key] = value;
-            }
-        });
-
-        return merge(false, additionalLabelsStyle, {
-            'font-size': (options.labels as any).style.fontSize,
-            fill: pick(
-                (options.labels as any).style.color,
-                palette.neutralColor100
-            ),
-            'z-index': options.zIndex,
-            align: rtl || labelsOnLeft ? 'right' : 'left'
-        });
-    }
-
 
     /**
      * Calculate radius for each bubble range,
@@ -768,7 +735,7 @@ class BubbleLegend {
         var mainRange = this.ranges[0],
             legend = this.legend,
             options = this.options,
-            labelsOptions = options.labels,
+            labelsOptions = options.labels as any,
             chart = this.chart,
             renderer = chart.renderer,
             symbols = this.symbols,
@@ -799,7 +766,7 @@ class BubbleLegend {
         if (labelsAlign === 'center') {
             connectorLength = 0; // do not use connector
             options.connectorDistance = 0;
-            (range.labelStyle as any).align = 'center';
+            (range.labelAttribs as any).align = 'center';
         }
 
         labelY = posY + (options.labels as any).y;
@@ -814,9 +781,7 @@ class BubbleLegend {
                     absoluteRadius
                 )
                 .attr(
-                    // @todo: Resolve bad typing of bubbleStyle. CSSObject can't
-                    // be passed to .attr.
-                    (styledMode ? {} : range.bubbleStyle) as SVGAttributes
+                    styledMode ? {} : range.bubbleAttribs
                 )
                 .addClass(
                     (
@@ -843,9 +808,7 @@ class BubbleLegend {
                     options.connectorWidth as any
                 ))
                 .attr(
-                    // @todo: Resolve bad typing of connectorStyle. CSSObject
-                    // can't be passed to .attr.
-                    (styledMode ? {} : range.connectorStyle) as SVGAttributes
+                    (styledMode ? {} : range.connectorAttribs)
                 )
                 .addClass(
                     (
@@ -868,10 +831,9 @@ class BubbleLegend {
                 labelY + labelMovement
             )
             .attr(
-                // @todo: Resolve bad typing of labelStyle. CSSObject can't
-                // be passed to .attr.
-                (styledMode ? {} : range.labelStyle) as SVGAttributes
+                (styledMode ? {} : range.labelAttribs)
             )
+            .css(styledMode ? {} : (labelsOptions as any).style)
             .addClass(
                 'highcharts-bubble-legend-labels ' +
                 ((options.labels as any).className || '')
@@ -1027,7 +989,7 @@ class BubbleLegend {
             i: number
         ): void {
             if (rangesOptions && rangesOptions[i]) {
-                ranges[i] = merge(false, rangesOptions[i], range);
+                ranges[i] = merge(rangesOptions[i], range);
             }
         });
 

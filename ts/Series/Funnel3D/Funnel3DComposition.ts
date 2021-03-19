@@ -78,8 +78,11 @@ declare global {
             funnel3dPath(shapeArgs: SVGAttributes): Funnel3dPathsObject;
         }
         interface Funnel3dPathsObject extends SVGPath3D {
-            frontUpper: SVGPath;
+            backLower: SVGPath;
             backUpper: SVGPath;
+            frontLower: SVGPath;
+            frontUpper: SVGPath;
+            rightLower: SVGPath;
             rightUpper: SVGPath;
         }
     }
@@ -241,13 +244,13 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
             });
         } else {
             merge(true, partsWithColor, {
-                frontUpper: fillColor,
-                backUpper: fillColor,
-                rightUpper: fillColor,
+                frontUpper: fillColor as any,
+                backUpper: fillColor as any,
+                rightUpper: fillColor as any,
 
-                frontLower: fillColor,
-                backLower: fillColor,
-                rightLower: fillColor
+                frontLower: fillColor as any,
+                backLower: fillColor as any,
+                rightLower: fillColor as any
             });
 
             if ((fillColor as any).radialGradient) {

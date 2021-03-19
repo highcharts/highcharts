@@ -55,7 +55,7 @@ QUnit.test('Bubble legend ranges', function (assert) {
 
     assert.strictEqual(
         chart.legend.bubbleLegend.ranges.length === 4 &&
-            chart.legend.bubbleLegend.ranges[0].bubbleStyle.fill === 'red',
+            chart.legend.bubbleLegend.ranges[0].bubbleAttribs.fill === 'red',
         true,
         'Correct options and number of ranges after legend update'
     );
