@@ -11,7 +11,6 @@
  */
 'use strict';
 import Highcharts from '../../Core/Globals.js';
-import '../../Core/Axis/MapAxis.js';
 import '../../Core/Axis/ColorAxis.js';
 import '../../Mixins/ColorMapSeries.js';
 import '../../Maps/MapNavigation.js';
