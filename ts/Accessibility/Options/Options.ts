@@ -13,11 +13,11 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import palette from '../../Core/Color/Palette.js';
+import ColorType from '../../Core/Color/ColorType';
 
 declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
@@ -60,7 +60,7 @@ declare global {
             enabled: boolean;
             hideBrowserFocusOutline: boolean;
             margin: number;
-            style: CSSObject;
+            style: FocusBorderStyleObject;
         }
         interface AccessibilityKeyboardNavigationOptions {
             enabled: boolean;
@@ -78,10 +78,10 @@ declare global {
         }
         interface AccessibilityOptions {
             announceNewData: AccessibilityAnnounceNewDataOptions;
-            customComponents?: Record<string, any>;
+            customComponents?: AnyRecord;
             description?: string;
             enabled: boolean;
-            highContrastTheme: Record<string, any>;
+            highContrastTheme: AnyRecord;
             keyboardNavigation: AccessibilityKeyboardNavigationOptions;
             landmarkVerbosity: string;
             linkedDescription: (string|HTMLDOMElement);
@@ -120,6 +120,11 @@ declare global {
         }
         interface ExportingOptions {
             accessibility?: ExportingAccessibilityOptions;
+        }
+        interface FocusBorderStyleObject {
+            borderRadius?: number;
+            color?: ColorType;
+            lineWidth?: number;
         }
         interface LegendAccessibilityKeyboardNavigationOptions {
             enabled: boolean;

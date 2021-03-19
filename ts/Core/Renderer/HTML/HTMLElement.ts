@@ -16,6 +16,12 @@ import type {
 } from '../DOMElementType';
 import type HTMLRenderer from './HTMLRenderer';
 import H from '../../Globals.js';
+const {
+    isFirefox,
+    isMS,
+    isWebKit,
+    win
+} = H;
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
 import U from '../../Utilities.js';
@@ -75,7 +81,7 @@ interface HTMLElement extends SVGElement {
     element: HTMLDOMElement;
     parentGroup?: HTMLElement;
     renderer: HTMLRenderer;
-    style: CSSObject & CSSStyleDeclaration;
+    style: CSSObject;
     xCorr: number;
     yCorr: number;
     afterSetters(): void;
@@ -97,7 +103,12 @@ interface HTMLElement extends SVGElement {
     translateYSetter(value: any, key: string): void;
 }
 
-var isFirefox = H.isFirefox;
+type TransformKeyType = (
+    '-ms-transform'|
+    '-webkit-transform'|
+    'MozTransform'|
+    '-o-transform'
+)
 
 /* eslint-disable valid-jsdoc */
 
@@ -355,15 +366,29 @@ extend(HTMLElement.prototype, /** @lends SVGElement.prototype */ {
         alignCorrection: number,
         baseline: number
     ): void {
-        var rotationStyle: CSSObject = {},
-            cssTransformKey = this.renderer.getTransformKey();
+        const getTransformKey = (): TransformKeyType|undefined => (isMS &&
+            !/Edge/.test(win.navigator.userAgent) ?
+            '-ms-transform' :
+            isWebKit ?
+                '-webkit-transform' :
+                isFirefox ?
+                    'MozTransform' :
+                    win.opera ?
+                        '-o-transform' :
+                        void 0);
 
-        rotationStyle[cssTransformKey] = rotationStyle.transform =
-            'rotate(' + rotation + 'deg)';
-        rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] =
-        rotationStyle.transformOrigin =
-            (alignCorrection * 100) + '% ' + baseline + 'px';
-        css(this.element, rotationStyle);
+        var rotationStyle: CSSObject = {},
+            cssTransformKey = getTransformKey();
+
+        if (cssTransformKey) {
+            rotationStyle[cssTransformKey] = rotationStyle.transform =
+                'rotate(' + rotation + 'deg)';
+            (rotationStyle as any)[
+                cssTransformKey + (isFirefox ? 'Origin' : '-origin')
+            ] = rotationStyle.transformOrigin =
+                (alignCorrection * 100) + '% ' + baseline + 'px';
+            css(this.element, rotationStyle);
+        }
     },
 
     /**

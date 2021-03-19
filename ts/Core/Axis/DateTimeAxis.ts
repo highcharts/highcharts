@@ -37,6 +37,7 @@ declare global {
             unitName: DateTimeLabelFormatsKey;
         }
         interface DateTimeLabelFormatOptionsObject {
+            list?: Array<string>;
             main?: string;
             range?: boolean;
         }

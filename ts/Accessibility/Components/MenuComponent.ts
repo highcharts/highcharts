@@ -333,7 +333,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                         'accessibility.exporting.menuButtonLabel',
                         { chart: chart }
                     ),
-                    'aria-expanded': 'false'
+                    'aria-expanded': false
                 }
             );
         }
@@ -384,7 +384,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      */
     getKeyboardNavigation: function (
         this: Highcharts.MenuComponent
-    ): Highcharts.KeyboardNavigation {
+    ): Highcharts.KeyboardNavigationHandler {
         var keys = this.keyCodes,
             chart = this.chart,
             component = this;

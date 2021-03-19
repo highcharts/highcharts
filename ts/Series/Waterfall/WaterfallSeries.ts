@@ -707,8 +707,14 @@ class WaterfallSeries extends ColumnSeries {
                     (prevPoint.y > 0 && reversedYAxis)
                 )
             ) {
-                path[path.length - 2][2] += prevArgs.height;
-                path[path.length - 1][2] += prevArgs.height;
+                const nextLast = path[path.length - 2];
+                if (nextLast && typeof nextLast[2] === 'number') {
+                    nextLast[2] += prevArgs.height || 0;
+                }
+                const last = path[path.length - 1];
+                if (last && typeof last[2] === 'number') {
+                    last[2] += prevArgs.height || 0;
+                }
             }
 
         }
@@ -780,8 +786,9 @@ class WaterfallSeries extends ColumnSeries {
         totalYVal = actualSum = prevSum = stackThreshold;
 
         // code responsible for creating stacks for waterfall series
-        if (series.visible ||
-            !(series.chart.options.chart as any).ignoreHiddenSeries
+        if (
+            series.visible ||
+            !series.chart.options.chart.ignoreHiddenSeries
         ) {
             changed = waterfallStacks.changed;
             alreadyChanged = waterfallStacks.alreadyChanged;
@@ -932,7 +939,7 @@ class WaterfallSeries extends ColumnSeries {
 }
 
 interface WaterfallSeries {
-    getZonesGraph: typeof LineSeries.prototype.getZonesGraphs;
+    getZonesGraphs: typeof LineSeries.prototype.getZonesGraphs;
     pointClass: typeof WaterfallPoint;
     pointValKey: string;
     showLine: boolean;

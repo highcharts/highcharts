@@ -294,7 +294,33 @@ setOptions({
                 crosshairX: 'Crosshair X',
                 crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
-                background: 'Background'
+                background: 'Background',
+
+                // Indicators' params (#15170):
+                index: 'Index',
+                period: 'Period',
+                standardDeviation: 'Standard deviation',
+                periodTenkan: 'Tenkan period',
+                periodSenkouSpanB: 'Senkou Span B period',
+                periodATR: 'ATR period',
+                multiplierATR: 'ATR multiplier',
+                shortPeriod: 'Short period',
+                longPeriod: 'Long period',
+                signalPeriod: 'Signal period',
+                decimals: 'Decimals',
+                algorithm: 'Algorithm',
+                topBand: 'Top band',
+                bottomBand: 'Bottom band',
+                initialAccelerationFactor: 'Initial acceleration factor',
+                maxAccelerationFactor: 'Max acceleration factor',
+                increment: 'Increment',
+                multiplier: 'Multiplier',
+                ranges: 'Ranges',
+                highIndex: 'High index',
+                lowIndex: 'Low index',
+                deviation: 'Deviation',
+                xAxisUnit: 'x-axis unit',
+                factor: 'Factor'
             }
         }
     },
@@ -922,11 +948,14 @@ addEvent(Chart, 'getMargins', function (): void {
         this.plotLeft += offsetWidth;
         this.spacing[3] += offsetWidth;
     }
+}, {
+    order: 0
 });
 
 ['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
     addEvent(Chart, event, function (): void {
         if (this.stockTools) {
+            const optionsChart = this.options.chart as Highcharts.ChartOptions;
             const listWrapper = this.stockTools.listWrapper,
                 offsetWidth = listWrapper && (
                     (
@@ -939,7 +968,14 @@ addEvent(Chart, 'getMargins', function (): void {
             let dirty = false;
 
             if (offsetWidth && offsetWidth < this.plotWidth) {
-                this.spacingBox.x += offsetWidth;
+                const nextX = pick(
+                    optionsChart.spacingLeft,
+                    optionsChart.spacing && optionsChart.spacing[3],
+                    0
+                ) + offsetWidth;
+                const diff = nextX - this.spacingBox.x;
+                this.spacingBox.x = nextX;
+                this.spacingBox.width -= diff;
                 dirty = true;
             } else if (offsetWidth === 0) {
                 dirty = true;
@@ -1266,7 +1302,6 @@ class Toolbar {
             className: PREFIX + 'menu-item-btn'
         }, null as any, buttonWrapper);
 
-
         // submenu
         if (items && items.length) {
 
@@ -1489,6 +1524,10 @@ class Toolbar {
             // main button in first level og GUI
             mainNavButton = (buttonWrapper as any).parentNode.parentNode;
 
+        // if the button is disabled, don't do anything
+        if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
+            return;
+        }
         // set class
         mainNavButton.className = '';
         if (buttonWrapperClass) {
@@ -1699,6 +1738,26 @@ addEvent(NavigationBindings, 'deselectButton', function (
             button = (button.parentNode as any).parentNode;
         }
         gui.selectButton(button);
+    }
+});
+
+// Check if the correct price indicator button is displayed, #15029.
+addEvent(H.Chart, 'render', function (): void {
+    const chart = this,
+        stockTools = chart.stockTools,
+        button = stockTools &&
+            stockTools.toolbar &&
+            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
+
+    // Change the initial button background.
+    if (stockTools && chart.navigationBindings && chart.options.series && button) {
+        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+        } else {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+        }
     }
 });
 

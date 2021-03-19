@@ -727,9 +727,8 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
                     ): number {
                         const point = chart.highlightedPoint;
                         if (point) {
-                            fireEvent(point.series, 'click', extend(event, {
-                                point
-                            }));
+                            (event as any).point = point;
+                            fireEvent(point.series, 'click', event);
                             point.firePointEvent('click');
                         }
                         return this.response.success;

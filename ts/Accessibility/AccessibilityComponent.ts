@@ -342,8 +342,8 @@ AccessibilityComponent.prototype = {
             }, attributes);
 
         Object.keys(attrs).forEach(function (prop: string): void {
-            if (attrs[prop] !== null) {
-                proxy.setAttribute(prop, attrs[prop]);
+            if ((attrs as any)[prop] !== null) {
+                proxy.setAttribute(prop, (attrs as any)[prop]);
             }
         });
 
@@ -404,20 +404,21 @@ AccessibilityComponent.prototype = {
      */
     setProxyButtonStyle: function (button: HTMLDOMElement): void {
         merge(true, button.style, {
-            'border-width': 0,
-            'background-color': 'transparent',
+            borderWidth: '0',
+            backgroundColor: 'transparent',
             cursor: 'pointer',
             outline: 'none',
-            opacity: 0.001,
+            opacity: '0.001',
             filter: 'alpha(opacity=1)',
-            '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
-            zIndex: 999,
+            zIndex: '999',
             overflow: 'hidden',
-            padding: 0,
-            margin: 0,
+            padding: '0',
+            margin: '0',
             display: 'block',
             position: 'absolute'
         });
+        (button.style as any)['-ms-filter'] =
+            'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)';
     },
 
 
@@ -471,7 +472,12 @@ AccessibilityComponent.prototype = {
                 }
 
                 e.stopPropagation();
-                e.preventDefault();
+
+                // #9682, #15318: Touch scrolling didnt work when touching a
+                // component
+                if (evtType !== 'touchstart' && evtType !== 'touchmove' && evtType !== 'touchend') {
+                    e.preventDefault();
+                }
             }, { passive: false });
         });
     },

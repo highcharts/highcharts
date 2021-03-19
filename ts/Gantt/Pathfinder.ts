@@ -18,6 +18,7 @@ import type {
 import type Axis from '../Core/Axis/Axis';
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type { GanttDependencyOptions } from '../Series/Gantt/GanttSeriesOptions';
 import type GanttPointOptions from '../Series/Gantt/GanttPointOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
@@ -109,7 +110,7 @@ declare global {
         }
         interface ConnectorsOptions {
             algorithmMargin?: number;
-            dashStyle?: string;
+            dashStyle?: DashStyleValue;
             enabled?: boolean;
             endMarker?: ConnectorsEndMarkerOptions;
             lineColor?: ColorString;
@@ -505,10 +506,10 @@ function getPointBB(point: Point): (Record<string, number>|null) {
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
         return {
-            xMin: shapeArgs.x,
-            xMax: shapeArgs.x + shapeArgs.width,
-            yMin: shapeArgs.y,
-            yMax: shapeArgs.y + shapeArgs.height
+            xMin: shapeArgs.x || 0,
+            xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+            yMin: shapeArgs.y || 0,
+            yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
         };
     }
 
@@ -931,7 +932,9 @@ class Pathfinder {
      * @return {boolean}
      *         Returns true for X, false for Y, and undefined for autocalculate.
      */
-    public getAlgorithmStartDirection(markerOptions: Highcharts.ConnectorsMarkerOptions): (boolean|undefined) {
+    public getAlgorithmStartDirection(
+        markerOptions: Highcharts.ConnectorsMarkerOptions
+    ): (boolean|undefined) {
         var xCenter = markerOptions.align !== 'left' &&
                         markerOptions.align !== 'right',
             yCenter = markerOptions.verticalAlign !== 'top' &&

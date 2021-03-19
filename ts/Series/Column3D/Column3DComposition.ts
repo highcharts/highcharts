@@ -221,7 +221,7 @@ columnProto.translate3dShapes = function (): void {
                 ) {
                     // Set args to 0 if column is outside the chart.
                     for (var key in shapeArgs) { // eslint-disable-line guard-for-in
-                        shapeArgs[key] = 0;
+                        (shapeArgs as any)[key] = 0;
                     }
                     // #7103 outside3dPlot flag is set on Points which are
                     // currently outside of plot.
@@ -382,20 +382,18 @@ wrap(
         proceed: Function,
         vis?: boolean
     ): void {
-        var series = this,
-            pointVis: string;
+        var series = this;
 
         if (series.chart.is3d()) {
             series.data.forEach(function (point): void {
                 point.visible = point.options.visible = vis =
                     typeof vis === 'undefined' ?
                         !pick(series.visible, point.visible) : vis;
-                pointVis = vis ? 'visible' : 'hidden';
                 (series.options.data as any)[series.data.indexOf(point)] =
                     point.options;
                 if (point.graphic) {
                     point.graphic.attr({
-                        visibility: pointVis
+                        visibility: vis ? 'visible' : 'hidden'
                     });
                 }
             });
@@ -410,7 +408,7 @@ addEvent(ColumnSeries, 'afterInit', function (): void {
             seriesOptions: ColumnSeriesOptions = this.options,
             grouping = seriesOptions.grouping,
             stacking = seriesOptions.stacking,
-            reversedStacks = pick(this.yAxis.options.reversedStacks, true),
+            reversedStacks = this.yAxis.options.reversedStacks,
             z = 0;
 
         // @todo grouping === true ?
@@ -541,7 +539,7 @@ wrap(Series.prototype, 'alignDataLabel', function (
         const series = this as ColumnSeries,
             seriesOptions: ColumnSeriesOptions = series.options,
             inside = pick(options.inside, !!series.options.stacking),
-            options3d = (chart.options.chart as any).options3d,
+            options3d = chart.options.chart.options3d as any,
             xOffset = point.pointWidth / 2 || 0;
 
         let dLPosition = {
@@ -593,7 +591,7 @@ wrap(StackItem.prototype, 'getStackBox', function (
         // First element of stackItem.base is an index of base series.
         const baseSeriesInd = +(stackItem.base).split(',')[0];
         const columnSeries = chart.series[baseSeriesInd];
-        const options3d = (chart.options.chart as any).options3d;
+        const options3d = chart.options.chart.options3d as any;
 
 
         // Only do this if base series is a column or inherited type,

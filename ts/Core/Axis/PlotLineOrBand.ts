@@ -19,7 +19,7 @@ import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
-import type SVGElement from '../Renderer/SVG/SVGAttributes';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from './Axis.js';
 import H from '../Globals.js';
@@ -92,9 +92,6 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface PlotLineOrBandLabelFormatterCallbackFunction {
-            (this: PlotLineOrBand, value?: number, format?: string): string;
-        }
         interface AxisPlotLinesOptions {
             acrossPanes?: boolean;
             className?: string;
@@ -103,6 +100,7 @@ declare global {
             events?: any;
             id?: string;
             label?: AxisPlotLinesLabelOptions;
+            translatedValue?: number;
             value?: number;
             width?: number;
             zIndex?: number;
@@ -210,7 +208,10 @@ class PlotLineOrBand {
     public isActive?: boolean;
     public eventsAdded?: boolean;
     public label?: SVGElement;
-    public options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions);
+    public options?: (
+        Highcharts.AxisPlotLinesOptions|
+        Highcharts.AxisPlotBandsOptions
+    );
     public svgElem?: SVGElement;
 
     /**

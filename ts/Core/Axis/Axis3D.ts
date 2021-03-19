@@ -143,15 +143,16 @@ class Axis3DAdditions {
             return pos;
         }
 
-        var alpha = deg2rad * (chart.options.chart as any).options3d.alpha,
-            beta = deg2rad * (chart.options.chart as any).options3d.beta,
+        var
+            alpha = deg2rad * (chart.options.chart.options3d as any).alpha,
+            beta = deg2rad * (chart.options.chart.options3d as any).beta,
             positionMode = pick(
                 isTitle && (axis.options.title as any).position3d,
-                (axis.options.labels as any).position3d
+                axis.options.labels.position3d
             ),
             skew = pick(
                 isTitle && (axis.options.title as any).skew3d,
-                (axis.options.labels as any).skew3d
+                axis.options.labels.skew3d
             ),
             frame = chart.chart3d.frame3d,
             plotLeft = chart.plotLeft,
@@ -368,7 +369,7 @@ class Axis3D {
     /**
      * @optionparent xAxis
      */
-    public static defaultOptions: Highcharts.AxisOptions = {
+    public static defaultOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             /**
              * Defines how the labels are be repositioned according to the 3D
@@ -661,7 +662,7 @@ class Axis3D {
             return path;
         }
 
-        var options3d = (chart.options.chart as any).options3d,
+        var options3d = chart.options.chart.options3d as any,
             d = axis.isZAxis ? chart.plotWidth : options3d.depth,
             frame = chart.chart3d.frame3d,
             startSegment = path[0],
@@ -749,7 +750,7 @@ class Axis3D {
         ) {
             var firstGridLine = (gridGroup.element.childNodes[0] as any).getBBox(),
                 frame3DLeft = chart.frameShapes.left.getBBox(),
-                options3d = (chart.options.chart as any).options3d,
+                options3d = chart.options.chart.options3d as any,
                 origin = {
                     x: chart.plotWidth / 2,
                     y: chart.plotHeight / 2,

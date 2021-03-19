@@ -405,10 +405,10 @@ function getPointBB(point: Point): (Record<string, number>|null) {
     // Prefer using shapeArgs (columns)
     if (shapeArgs) {
         return {
-            xMin: shapeArgs.x,
-            xMax: shapeArgs.x + shapeArgs.width,
-            yMin: shapeArgs.y,
-            yMax: shapeArgs.y + shapeArgs.height
+            xMin: shapeArgs.x || 0,
+            xMax: (shapeArgs.x || 0) + (shapeArgs.width || 0),
+            yMin: shapeArgs.y || 0,
+            yMax: (shapeArgs.y || 0) + (shapeArgs.height || 0)
         };
     }
 
@@ -593,8 +593,7 @@ class Connection {
             chart = this.chart,
             styledMode = chart.styledMode,
             pathfinder = chart.pathfinder,
-            animate =
-                !(chart.options.chart as any).forExport && animation !== false,
+            animate = !chart.options.chart.forExport && animation !== false,
             pathGraphic = connection.graphics && connection.graphics.path,
             anim: SVGAttributes;
 

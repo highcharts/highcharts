@@ -31,6 +31,8 @@ export interface PointerEvent extends globalThis.PointerEvent {
     chartY: number;
     point?: Point;
     touches?: Array<Touch>;
+    xAxis?: Array<Highcharts.PointerAxisCoordinateObject>;
+    yAxis?: Array<Highcharts.PointerAxisCoordinateObject>;
 }
 
 /* *

@@ -691,12 +691,12 @@ class SankeySeries extends ColumnSeries {
             stateOptions = (
                 levelOptions.states && levelOptions.states[state || '']
             ) || {},
-            values: Record<string, any> = [
+            values: AnyRecord = [
                 'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
             ].reduce(function (
-                obj: Record<string, any>,
+                obj: AnyRecord,
                 key: string
-            ): Record<string, any> {
+            ): AnyRecord {
                 obj[key] = pick(
                     stateOptions[key],
                     (options as any)[key],
@@ -891,7 +891,7 @@ class SankeySeries extends ColumnSeries {
             const y = Math.min(
                 node.nodeY + linkTop,
                 // Prevent links from spilling below the node (#12014)
-                node.nodeY + node.shapeArgs?.height - linkHeight
+                node.nodeY + (node.shapeArgs?.height || 0) - linkHeight
             );
             return y;
         };
@@ -1055,7 +1055,7 @@ class SankeySeries extends ColumnSeries {
             chart = this.chart,
             options = this.options,
             sum = node.getSum(),
-            height = Math.max(
+            nodeHeight = Math.max(
                 Math.round(sum * translationFactor),
                 this.options.minLinkWidth as any
             ),
@@ -1085,23 +1085,18 @@ class SankeySeries extends ColumnSeries {
 
             node.nodeX = nodeLeft;
             node.nodeY = fromNodeTop;
-            if (!chart.inverted) {
-                node.shapeArgs = {
-                    x: nodeLeft,
-                    y: fromNodeTop,
-                    width: node.options.width || options.width || nodeWidth,
-                    height: node.options.height || options.height || height
-                };
-            } else {
-                node.shapeArgs = {
-                    x: nodeLeft - nodeWidth,
-                    y: (chart.plotSizeY as any) - fromNodeTop - height,
-                    width: node.options.height || options.height || nodeWidth,
-                    height: node.options.width || options.width || height
-                };
-            }
 
-            node.shapeArgs.display = node.hasShape() ? '' : 'none';
+            let x = nodeLeft,
+                y = fromNodeTop,
+                width = node.options.width || options.width || nodeWidth,
+                height = node.options.height || options.height || nodeHeight;
+
+            if (chart.inverted) {
+                x = nodeLeft - nodeWidth;
+                y = (chart.plotSizeY as any) - fromNodeTop - nodeHeight;
+                width = node.options.height || options.height || nodeWidth;
+                height = node.options.width || options.width || nodeHeight;
+            }
 
             // Calculate data label options for the point
             node.dlOptions = SankeySeries.getDLOptions({
@@ -1114,12 +1109,20 @@ class SankeySeries extends ColumnSeries {
 
             // Set the anchor position for tooltips
             node.tooltipPos = chart.inverted ? [
-                (chart.plotSizeY as any) - node.shapeArgs.y - node.shapeArgs.height / 2,
-                (chart.plotSizeX as any) - node.shapeArgs.x - node.shapeArgs.width / 2
+                (chart.plotSizeY as any) - y - height / 2,
+                (chart.plotSizeX as any) - x - width / 2
             ] : [
-                node.shapeArgs.x + node.shapeArgs.width / 2,
-                node.shapeArgs.y + node.shapeArgs.height / 2
+                x + width / 2,
+                y + height / 2
             ];
+
+            node.shapeArgs = {
+                x,
+                y,
+                width,
+                height,
+                display: node.hasShape() ? '' : 'none'
+            };
         } else {
             node.dlOptions = {
                 enabled: false
@@ -1155,7 +1158,7 @@ extend(SankeySeries.prototype, {
     animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
-    createNode: NodesMixin.createNode,
+    createNode: NodesMixin.createNode as any,
     destroy: NodesMixin.destroy,
     forceDL: true,
     invertible: true,
