@@ -10,9 +10,7 @@ import U from '../../Core/Utilities.js';
 import Resizer from '../Actions/Resizer.js';
 
 const {
-    pick,
-    error,
-    fireEvent
+    pick
 } = U;
 
 class Layout extends GUIElement {
@@ -26,30 +24,17 @@ class Layout extends GUIElement {
         json: Layout.ClassJSON,
         dashboard: Dashboard
     ): Layout|undefined {
-        // Check if layout exists.
-        const container = document.getElementById(json.options.containerId);
-
-        let existingLayout;
-
-        if (container) {
-            fireEvent(container, 'bindedGUIElement', {}, function (
-                e: GUIElement.BindedGUIElementEvent
-            ): void {
-                existingLayout = e.guiElement;
-            });
-        }
-
-        if (
-            dashboard &&
-            dashboard instanceof Dashboard &&
-            !existingLayout
-        ) {
+        if (dashboard instanceof Dashboard) {
             const options = json.options,
+                // Check if layout container exists.
+                container = document.getElementById(json.options.containerId),
                 layout = new Layout(
                     dashboard,
                     {
                         id: options.containerId,
-                        parentContainerId: options.parentContainerId,
+                        copyId: container ? Dashboard.getCopyId() : '',
+                        parentContainerId: dashboard.container.id ||
+                            options.parentContainerId,
                         rowsJSON: options.rows
                     }
                 );
@@ -62,7 +47,7 @@ class Layout extends GUIElement {
             return layout;
         }
 
-        // Error
+        // Error - dashboard not found
 
         return void 0;
     }
@@ -116,11 +101,15 @@ class Layout extends GUIElement {
 
         // GUI structure
         if (parentContainer) {
+            if (options.copyId) {
+                this.copyId = options.copyId;
+            }
+
             this.setElementContainer({
                 render: dashboard.guiEnabled,
                 parentContainer: parentContainer,
                 attribs: {
-                    id: options.id,
+                    id: options.id + (options.copyId ? '_' + options.copyId : ''),
                     className: Dashboard.prefix + 'layout'
                 },
                 elementId: options.id,
@@ -167,6 +156,8 @@ class Layout extends GUIElement {
     public options: Layout.Options;
 
     public resizer?: Resizer;
+
+    public copyId?: string;
 
     /* *
     *
@@ -295,6 +286,7 @@ namespace Layout {
     export interface Options {
         id?: string;
         parentContainerId?: string;
+        copyId?: string;
         rowClassName?: string;
         columnClassName?: string;
         rows?: Array<Row.Options>;

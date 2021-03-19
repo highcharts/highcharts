@@ -24,18 +24,28 @@ class Column extends GUIElement {
         json: Column.ClassJSON,
         row: Row
     ): Column|undefined {
-        if (row && row instanceof Row) {
-            const options = json.options,
-                column = new Column(
-                    row,
-                    {
-                        id: options.containerId,
-                        parentContainerId: options.parentContainerId,
-                        mountedComponentJSON: options.mountedComponentJSON
-                    }
-                );
+        if (row instanceof Row) {
+            const options = json.options;
 
-            return column;
+            let id = options.containerId;
+
+            if (row.layout.copyId) {
+                id = id + '_' + row.layout.copyId;
+
+                if (options.mountedComponentJSON) {
+                    options.mountedComponentJSON.options.parentElement = id;
+                }
+            }
+
+            return new Column(
+                row,
+                {
+                    id: id,
+                    parentContainerId: row.container?.id ||
+                        options.parentContainerId,
+                    mountedComponentJSON: options.mountedComponentJSON
+                }
+            );
         }
 
         return void 0;

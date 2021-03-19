@@ -22,18 +22,24 @@ class Row extends GUIElement {
         json: Row.ClassJSON,
         layout: Layout
     ): Row|undefined {
-        if (layout && layout instanceof Layout) {
-            const options = json.options,
-                row = new Row(
-                    layout,
-                    {
-                        id: options.containerId,
-                        parentContainerId: options.parentContainerId,
-                        columnsJSON: options.columns
-                    }
-                );
+        if (layout instanceof Layout) {
+            const options = json.options;
 
-            return row;
+            let id = options.containerId || '';
+
+            if (id && layout.copyId) {
+                id = id + '_' + layout.copyId;
+            }
+
+            return new Row(
+                layout,
+                {
+                    id: id,
+                    parentContainerId: layout.container?.id ||
+                        options.parentContainerId,
+                    columnsJSON: options.columns
+                }
+            );
         }
 
         return void 0;

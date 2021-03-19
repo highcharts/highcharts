@@ -1,5 +1,4 @@
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
-import Column from  '../../../../code/es-modules/Dashboard/Layout/Column.js';
 import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js';
 
 // Bring in other forms of Highcharts
@@ -157,16 +156,6 @@ console.log('row: ', Bindings.getRow(dashboard.layouts[0].rows[0].container));
 console.log('layout: ', Bindings.getLayout('layout-1'));
 console.groupEnd();
 
-const column = Bindings.getColumn('dashboard-col-0');
-const columnJSON = column.toJSON();
-
-console.log('columnJSON: ', columnJSON);
-column.destroy();
-debugger;
-const columnFromJSON =
-    Column.fromJSON(columnJSON, dashboard.layouts[0].rows[0]);
-console.log('rowFromJSON: ', columnFromJSON);
-
 
 /* ==== DASHBOARD BUTTONS ==== */
 /*
@@ -303,7 +292,7 @@ console.log(dashboardBootstrap);
 
 console.log('========= Layout in layout =========');
 
-let dashboardLayout = new Dashboard('container-nested-layout', {
+const dashboardLayout = new Dashboard('container-nested-layout', {
     gui: {
         enabled: true,
         layoutOptions: {
@@ -316,7 +305,7 @@ let dashboardLayout = new Dashboard('container-nested-layout', {
             id: 'layout-in-1', // mandatory
             rows: [{
                 columns: [{
-                    id: 'dashboard-col-nolayout-0',
+                    id: 'dashboard-col-nolayout-0'
                 }, {
                     id: 'dashboard-col-layout-0',
                     layout: {
@@ -345,7 +334,7 @@ let dashboardLayout = new Dashboard('container-nested-layout', {
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
             }]
-        },
+        }
     }, {
         column: 'dashboard-col-layout-1',
         type: 'chart',

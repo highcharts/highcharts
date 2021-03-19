@@ -82,6 +82,11 @@ class Dashboard {
         return dashboard;
     }
 
+    public static getCopyId(): string {
+        // Remove highcharts- prefix - temporary solution.
+        return uniqueKey().substring(11);
+    }
+
     /* *
     *
     *  Constructors
