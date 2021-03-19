@@ -10,7 +10,10 @@ let dashboard = new Dashboard('container', {
         layoutOptions: {
             resize: {
                 columns: true,
-                rows: true
+                rows: true,
+                snap: {
+                    width: 20
+                }
             }
         },
         layouts: [{
@@ -156,7 +159,6 @@ console.log('row: ', Bindings.getRow(dashboard.layouts[0].rows[0].container));
 console.log('layout: ', Bindings.getLayout('layout-1'));
 console.groupEnd();
 
-
 /* ==== DASHBOARD BUTTONS ==== */
 /*
   Bind export dashboard btn
@@ -231,6 +233,7 @@ Highcharts.addEvent(
         console.log('Imported layout: ', layout);
     }
 );
+
 
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
     gui: {
@@ -369,3 +372,17 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
 });
 
 console.log(dashboardLayout);
+
+/*
+ * Destroy resizer
+ */
+Highcharts.addEvent(
+    document.getElementById('destroy-resizer'),
+    'click',
+    function () {
+        dashboardLayout.layouts.forEach(layout => {
+            layout.resizer.destroy();
+            console.log(layout.resizer);
+        });
+    }
+);
