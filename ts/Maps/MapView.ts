@@ -28,11 +28,6 @@ declare global {
 
     }
 }
-declare module '../Core/Chart/ChartLike'{
-    interface ChartLike {
-        mapView?: MapView;
-    }
-}
 
 class MapView {
 

@@ -28,6 +28,7 @@ import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+import CenteredSeriesMixin from '../../Mixins/CenteredSeries.js';
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
@@ -106,12 +107,6 @@ declare global {
             public onMouseOver(e?: PointerEvent): void;
             public zoomTo(): void;
         }
-        interface MapBaseTransObject {
-            originX: number;
-            originY: number;
-            transAX: number;
-            transAY: number;
-        }
     }
 }
 
@@ -151,6 +146,8 @@ class MapSeries extends ScatterSeries {
     public static defaultOptions: MapSeriesOptions = merge(ScatterSeries.defaultOptions, {
 
         animation: false, // makes the complex shapes slow
+
+        center: [null, null],
 
         dataLabels: {
             crop: false,
@@ -408,7 +405,7 @@ class MapSeries extends ScatterSeries {
      *
      * */
 
-    public baseTrans: Highcharts.MapBaseTransObject = void 0 as any;
+    public baseView?: { center: Highcharts.LatLng; zoom: number };
 
     public chart: MapChart = void 0 as any;
 
@@ -463,11 +460,7 @@ class MapSeries extends ScatterSeries {
     public animate(init?: boolean): void {
         var chart = this.chart,
             animation = this.options.animation,
-            group = this.group,
-            xAxis = this.xAxis,
-            yAxis = this.yAxis,
-            left = xAxis.pos,
-            top = yAxis.pos;
+            group = this.group;
 
         if (chart.renderer.isSVG) {
 
@@ -482,8 +475,8 @@ class MapSeries extends ScatterSeries {
 
                 // Scale down the group and place it in the center
                 group.attr({
-                    translateX: (left as any) + xAxis.len / 2,
-                    translateY: (top as any) + yAxis.len / 2,
+                    translateX: chart.plotLeft + chart.plotWidth / 2,
+                    translateY: chart.plotTop + chart.plotHeight / 2,
                     scaleX: 0.001, // #1499
                     scaleY: 0.001
                 });
@@ -491,8 +484,8 @@ class MapSeries extends ScatterSeries {
             // Run the animation
             } else {
                 group.animate({
-                    translateX: left,
-                    translateY: top,
+                    translateX: chart.plotLeft,
+                    translateY: chart.plotTop,
                     scaleX: 1,
                     scaleY: 1
                 }, animation);
@@ -575,7 +568,7 @@ class MapSeries extends ScatterSeries {
             this.isDirtyData ||
             (this.chart.isResizing as any) ||
             this.chart.renderer.isVML ||
-            !this.baseTrans
+            !this.baseView
         );
     }
 
@@ -599,21 +592,21 @@ class MapSeries extends ScatterSeries {
      */
     public drawPoints(): void {
         var series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
+            // xAxis = series.xAxis,
+            // yAxis = series.yAxis,
             group = series.group,
             chart = series.chart,
             renderer = chart.renderer,
-            scaleX: (number|undefined),
-            scaleY: number,
+            scale = 1,
             translateX: number,
             translateY: number,
-            baseTrans = this.baseTrans,
+            // baseTrans = this.baseTrans,
+            mapView = chart.mapView,
+            baseView = this.baseView,
             transformGroup: SVGElement,
             startTranslateX: number,
             startTranslateY: number,
-            startScaleX: number,
-            startScaleY: number;
+            startScale: number;
 
         // Set a group that handles transform during zooming and panning in
         // order to preserve clipping on series.group
@@ -690,19 +683,12 @@ class MapSeries extends ScatterSeries {
             // Set the base for later scale-zooming. The originX and originY
             // properties are the axis values in the plot area's upper left
             // corner.
-            this.baseTrans = {
-                originX: (
-                    (xAxis.min as any) -
-                    xAxis.minPixelPadding / xAxis.transA
-                ),
-                originY: (
-                    (yAxis.min as any) -
-                    yAxis.minPixelPadding / yAxis.transA +
-                    (yAxis.reversed ? 0 : yAxis.len / yAxis.transA)
-                ),
-                transAX: xAxis.transA,
-                transAY: yAxis.transA
-            };
+            if (mapView) {
+                this.baseView = {
+                    center: [mapView.center[0], mapView.center[1]],
+                    zoom: mapView.zoom
+                };
+            }
 
             // Reset transformation in case we're doing a full translate
             // (#3789)
@@ -714,21 +700,27 @@ class MapSeries extends ScatterSeries {
             });
 
         // Just update the scale and transform for better performance
-        } else {
-            scaleX = xAxis.transA / baseTrans.transAX;
-            scaleY = yAxis.transA / baseTrans.transAY;
-            translateX = xAxis.toPixels(baseTrans.originX, true);
-            translateY = yAxis.toPixels(baseTrans.originY, true);
+        } else if (mapView && baseView) {
+            scale = Math.pow(2, mapView.zoom) / Math.pow(2, baseView.zoom);
+
+            const oldTransA = (256 / 360) * Math.pow(2, baseView.zoom);
+            const newTransA = (256 / 360) * Math.pow(2, mapView.zoom);
+
+            const oldLeftLat = baseView.center[1] - (chart.plotWidth / 2) /
+                oldTransA;
+            const newLeftLat = mapView.center[1] - (chart.plotWidth / 2) /
+                newTransA;
+            translateX = (oldLeftLat - newLeftLat) * newTransA;
+
+            const oldTopLng = baseView.center[0] - (chart.plotHeight / 2) /
+                oldTransA;
+            const newTopLng = mapView.center[0] - (chart.plotHeight / 2) /
+                newTransA;
+            translateY = (oldTopLng - newTopLng) * newTransA;
 
             // Handle rounding errors in normal view (#3789)
-            if (
-                scaleX > 0.99 &&
-                scaleX < 1.01 &&
-                scaleY > 0.99 &&
-                scaleY < 1.01
-            ) {
-                scaleX = 1;
-                scaleY = 1;
+            if (scale > 0.99 && scale < 1.01) {
+                scale = 1;
                 translateX = Math.round(translateX);
                 translateY = Math.round(translateY);
             }
@@ -748,14 +740,16 @@ class MapSeries extends ScatterSeries {
             if (chart.renderer.globalAnimation) {
                 startTranslateX = transformGroup.attr('translateX') as any;
                 startTranslateY = transformGroup.attr('translateY') as any;
-                startScaleX = transformGroup.attr('scaleX') as any;
-                startScaleY = transformGroup.attr('scaleY') as any;
+                startScale = transformGroup.attr('scaleX') as any;
+
                 transformGroup
                     .attr({ animator: 0 })
                     .animate({
                         animator: 1
                     }, {
                         step: function (now: any, fx: any): void {
+                            const scaleStep = startScale +
+                                (scale - startScale) * fx.pos;
                             transformGroup.attr({
                                 translateX: (
                                     startTranslateX +
@@ -765,15 +759,8 @@ class MapSeries extends ScatterSeries {
                                     startTranslateY +
                                     (translateY - startTranslateY) * fx.pos
                                 ),
-                                scaleX: (
-                                    startScaleX +
-                                    ((scaleX as any) - startScaleX) *
-                                    fx.pos
-                                ),
-                                scaleY: (
-                                    startScaleY +
-                                    (scaleY - startScaleY) * fx.pos
-                                )
+                                scaleX: scaleStep,
+                                scaleY: scaleStep
                             });
 
                         }
@@ -784,8 +771,8 @@ class MapSeries extends ScatterSeries {
                 transformGroup.attr({
                     translateX: translateX,
                     translateY: translateY,
-                    scaleX: scaleX,
-                    scaleY: scaleY
+                    scaleX: scale,
+                    scaleY: scale
                 });
             }
 
@@ -804,7 +791,7 @@ class MapSeries extends ScatterSeries {
                         (series.pointAttrToOptions as any)['stroke-width']
                     ) || 'borderWidth'],
                     1 // Styled mode
-                ) / (scaleX || 1)) as any
+                ) / scale)
             );
         }
 
@@ -843,7 +830,7 @@ class MapSeries extends ScatterSeries {
                     );
                 }
 
-                var path: SVGPath = point.path || [],
+                var path = point.path || [],
                     pointMaxX = -MAX_VALUE,
                     pointMinX = MAX_VALUE,
                     pointMaxY = -MAX_VALUE,
@@ -929,6 +916,7 @@ class MapSeries extends ScatterSeries {
         }
     }
 
+    /*
     public getExtremes(): DataExtremesObject {
         // Get the actual value extremes for colors
         const { dataMin, dataMax } = Series.prototype.getExtremes
@@ -949,6 +937,7 @@ class MapSeries extends ScatterSeries {
         // Extremes for the mock Y axis
         return { dataMin: this.minY, dataMax: this.maxY };
     }
+    */
 
     /**
      * Define hasData function for non-cartesian series. Returns true if the
@@ -1212,10 +1201,9 @@ class MapSeries extends ScatterSeries {
      */
     public translate(): void {
         var series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
             doFullTranslate = series.doFullTranslate();
 
+        series.processData();
         series.generatePoints();
 
         series.data.forEach(function (
@@ -1225,11 +1213,14 @@ class MapSeries extends ScatterSeries {
             // Record the middle point (loosely based on centroid),
             // determined by the middleX and middleY options.
             if (isNumber(point._midX) && isNumber(point._midY)) {
-                point.plotX = xAxis.toPixels(point._midX, true);
-                point.plotY = yAxis.toPixels(point._midY, true);
+                const midPoint = series.translatePath([
+                    ['M', point._midX, point._midY]
+                ]);
+                point.plotX = midPoint[0][1];
+                point.plotY = midPoint[0][2];
             }
 
-            if (doFullTranslate) {
+            if (doFullTranslate && isArray(point.path)) {
 
                 point.shapeType = 'path';
                 point.shapeArgs = {
@@ -1246,50 +1237,47 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public translatePath(path: SVGPath): SVGPath {
-
-        var series = this,
-            xAxis = series.xAxis,
-            yAxis = series.yAxis,
-            xMin = xAxis.min,
-            xTransA = xAxis.transA,
-            xMinPixelPadding = xAxis.minPixelPadding,
-            yMin = yAxis.min,
-            yTransA = yAxis.transA,
-            yMinPixelPadding = yAxis.minPixelPadding,
-            ret: SVGPath = []; // Preserve the original
+        const ret: SVGPath = []; // Preserve the original
+        const mapView = this.chart.mapView;
 
         // Do the translation
-        if (path) {
+        if (path && mapView) {
+            // A zoom of 0 means the world (360x360 degrees) fits in a
+            // 256x256 px tile
+            const transA = (256 / 360) * Math.pow(2, mapView.zoom);
+            const [lat, lng] = mapView.center;
+            const xOffset = this.chart.plotWidth / 2;
+            const yOffset = this.chart.plotHeight / 2;
             path.forEach((seg): void => {
                 if (seg[0] === 'M') {
                     ret.push([
                         'M',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - lng) * transA + xOffset,
+                        (seg[2] - lat) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'L') {
                     ret.push([
                         'L',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - lng) * transA + xOffset,
+                        (seg[2] - lat) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'C') {
                     ret.push([
                         'C',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                        (seg[5] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - lng) * transA + xOffset,
+                        (seg[2] - lat) * transA + yOffset,
+                        (seg[3] - lng) * transA + xOffset,
+                        (seg[4] - lat) * transA + yOffset,
+                        (seg[5] - lng) * transA + xOffset,
+                        (seg[6] - lat) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'Q') {
                     ret.push([
                         'Q',
-                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
-                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
-                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        (seg[1] - lng) * transA + xOffset,
+                        (seg[2] - lat) * transA + yOffset,
+                        (seg[3] - lng) * transA + xOffset,
+                        (seg[4] - lat) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'Z') {
                     ret.push(['Z']);
@@ -1312,6 +1300,7 @@ class MapSeries extends ScatterSeries {
 interface MapSeries extends Highcharts.ColorMapSeries {
     colorAttribs: typeof colorMapSeriesMixin['colorAttribs'];
     drawLegendSymbol: Highcharts.LegendSymbolMixin['drawRectangle'];
+    getCenter: typeof CenteredSeriesMixin['getCenter'];
     pointArrayMap: typeof colorMapSeriesMixin['pointArrayMap'];
     pointClass: typeof MapPoint;
     preserveAspectRatio: boolean;
@@ -1334,7 +1323,7 @@ interface MapSeries extends Highcharts.ColorMapSeries {
 extend(MapSeries.prototype, {
     type: 'map',
 
-    axisTypes: colorMapSeriesMixin.axisTypes,
+    axisTypes: ['colorAxis'],
 
     colorAttribs: colorMapSeriesMixin.colorAttribs,
 
@@ -1355,9 +1344,13 @@ extend(MapSeries.prototype, {
 
     forceDL: true,
 
+    getCenter: CenteredSeriesMixin.getCenter,
+
     getExtremesFromAll: true,
 
     getSymbol: colorMapSeriesMixin.getSymbol,
+
+    isCartesian: false,
 
     parallelArrays: colorMapSeriesMixin.parallelArrays,
 

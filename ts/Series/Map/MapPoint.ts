@@ -127,20 +127,20 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * @function Highcharts.Point#zoomTo
      */
     public zoomTo(): void {
-        const point: (MapPoint&MapPoint.CacheObject) = this,
-            series = point.series;
+        const point = this as (MapPoint&MapPoint.CacheObject);
+        const chart = point.series.chart;
 
-        series.xAxis.setExtremes(
-            point._minX,
-            point._maxX,
-            false
-        );
-        series.yAxis.setExtremes(
-            point._minY,
-            point._maxY,
-            false
-        );
-        series.chart.redraw();
+        if (chart.mapView) {
+            chart.mapView.fitToBounds({
+                n: point._minY || 0,
+                e: point._maxX || 0,
+                s: point._maxY || 0,
+                w: point._minX || 0
+            });
+
+            point.series.isDirty = true;
+            chart.redraw();
+        }
     }
 
     /* eslint-enable valid-jsdoc */

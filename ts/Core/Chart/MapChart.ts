@@ -19,14 +19,23 @@
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Chart from './Chart.js';
+import MapView from '../../Maps/MapView.js';
 import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
+    addEvent,
     getOptions,
     merge,
     pick
 } = U;
 import '../../Maps/MapSymbols.js';
+
+
+declare module './ChartLike'{
+    interface ChartLike {
+        mapView?: MapView;
+    }
+}
 
 /**
  * Map-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
@@ -212,6 +221,92 @@ namespace MapChart {
         return SVGRenderer.prototype.pathToSegments(arr);
     }
 }
+
+/* eslint-disable no-invalid-this */
+addEvent(Chart, 'afterSetChartSize', function (): void {
+    if (!this.mapView) {
+        const mapView = new MapView(this);
+
+        // Apply the bounds inferred from the maps
+        const bounds = mapView.getDataBounds();
+
+        if (bounds) {
+            mapView.fitToBounds(bounds, false);
+            mapView.minZoom = mapView.zoom;
+            this.mapView = mapView;
+        }
+    }
+});
+
+let mouseDownCenter: Highcharts.LatLng;
+let mouseDownKey: string;
+addEvent(Chart, 'pan', function (e: PointerEvent): void {
+    const {
+        mapView,
+        mouseDownX,
+        mouseDownY
+    } = this;
+    if (
+        mapView &&
+        typeof mouseDownX === 'number' &&
+        typeof mouseDownY === 'number'
+    ) {
+        const key = `${mouseDownX},${mouseDownY}`;
+        const { chartX, chartY } = (e as any).originalEvent;
+        const scale = (256 / 360) * Math.pow(2, mapView.zoom);
+
+        // Reset starting position
+        if (key !== mouseDownKey) {
+            mouseDownCenter = [...mapView.center];
+            mouseDownKey = key;
+        }
+
+        const center: Highcharts.LatLng = [
+            mouseDownCenter[0] + (mouseDownY - chartY) / scale,
+            mouseDownCenter[1] + (mouseDownX - chartX) / scale
+        ];
+
+        mapView.setView(center, void 0, true, false);
+
+        e.preventDefault();
+    }
+});
+
+// Perform the map zoom by selection
+addEvent(Chart, 'selection', function (evt: PointerEvent): void {
+    const mapView = this.mapView;
+    if (mapView) {
+
+        // Zoom in
+        if (!(evt as any).resetSelection) {
+            const x = evt.x - this.plotLeft;
+            const y = evt.y - this.plotTop;
+            const [n, w] = mapView.toValues({ x, y });
+            const [s, e] = mapView.toValues(
+                { x: x + evt.width, y: y + evt.height }
+            );
+            mapView.fitToBounds(
+                { n, e, s, w },
+                true,
+                (evt as any).originalEvent.touches ?
+                    // On touch zoom, don't animate, since we're already in
+                    // transformed zoom preview
+                    false :
+                    // On mouse zoom, obey the chart-level animation
+                    void 0
+            );
+
+            this.showResetZoom();
+
+            evt.preventDefault();
+
+        // Reset zoom
+        } else {
+            mapView.zoomBy();
+        }
+
+    }
+});
 
 /* *
  *
