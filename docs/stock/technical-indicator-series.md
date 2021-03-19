@@ -27,7 +27,8 @@ A full list of supported technical indicators could be divided into two main gro
 | [VbP (Volume by Price)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/volume-by-price/) | [MFI (Money Flow Index)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/mfi/) |
 | [VWAP (Volume Weighted Average Price)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/vwap/) | [Momentum](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/momentum/) |
 | [WMA (Weighted Moving Average)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/wma/) | [NATR (Normalized Average True Range)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/natr/)  |
-| [Zig Zag](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/zigzag/) | [Percentage Price oscillator](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/ppo/) |
+| [Zig Zag](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/zigzag/) | [OBV (On Balance Volume)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/obv/)  |
+| | [Percentage Price oscillator](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/ppo/) |
 | | [RoC (Rate of Change)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/roc/) |
 | | [RSI (Relative Strength Index)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/rsi/) |
 | | [Slow Stochastic](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/slow-stochastic/) |
@@ -111,6 +112,7 @@ Some of the technical indicators require two series for calculations. Here is a 
 *   Chaikin Oscillator
 *   CMF
 *   MFI
+*   OBV (On Balance Volume)
 *   Volume by Price
 *   Volume Weighted Average Price
 
