@@ -64,7 +64,12 @@ input[type="range"]{
   color:#424bcd !important;
 }
 
-.fas.diabled, .fa.disabled{
+.fas.disabled, .fa.disabled{
+  font-size:18px !important;
+  color:#ccc !important;
+}
+
+.fas.disabled:hover, .fa.disabled:hover{
   font-size:18px !important;
   color:#ccc !important;
 }

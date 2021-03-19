@@ -208,6 +208,20 @@ $('document').ready(function () {
         resizeChart();
     };
 
+    const sliderButtons = function (val, min, max) {
+        ///remove the disabled states
+        if (val > min) {
+            $('#min i').removeClass('disabled');
+        } else {
+            $('#min i').addClass('disabled');
+        }
+        if (val < max) {
+            $('#max i').removeClass('disabled');
+        } else {
+            $('#max i').addClass('disabled');
+        }
+    };
+
     ///initialize series controls
     const initControls = function () {
 
@@ -244,7 +258,7 @@ $('document').ready(function () {
         });
         $('#val' + controlIndex).addClass('active');
 
-        //set the min, max, values to be used with the slider
+        //options to change for each control type
         const optionPath = demoChart.userOptions.plotOptions;
         for (let ii = 0; ii < controlsToUse.length; ++ii) {
             $('#val' + ii).removeClass('d-none');
@@ -321,6 +335,9 @@ $('document').ready(function () {
         $('#control').attr('min', rmin);
         $('#control').attr('max', rmax);
 
+        ///configure the plus/minus button states
+        sliderButtons(parseInt(thingToChangeValue, 10), rmin, rmax);
+
         ///set the slider value
         $('#control').val(parseInt(thingToChangeValue, 10));
     };
@@ -340,6 +357,8 @@ $('document').ready(function () {
         const data = [10, 20, 40, 5, 10, 15, 33, 41, 21, 13, 48];
         const tempData = data.slice(0, pieSlices);
         const value = parseInt($(this).val(), 10);
+        const min = parseInt($(this).attr('min'), 10);
+        const max = parseInt($(this).attr('max'), 10);
 
         ///for the pie
         let slice;
@@ -479,8 +498,11 @@ $('document').ready(function () {
         default:
 
         }
+        ///configure the plus/minus button states
+        sliderButtons(value, min, max);
         ///set the right value in the value box (hidden right now)
         $('#val' + controlIndex).html($(this).val());
+
     });
 
     ///series buttons
@@ -504,7 +526,6 @@ $('document').ready(function () {
 
         //reset charts
         resetCharts();
-        resizeChart();
 
         ///first radio checked by default.
         $('#controlType1').trigger('click');
@@ -522,7 +543,7 @@ $('document').ready(function () {
     let timerID;
     let counter = 0;
     let direction = 'max';
-
+    let pushed;
     const pressHoldEvent = new CustomEvent("pressHold");
 
     // Increase or decreae value to adjust how long
@@ -546,16 +567,19 @@ $('document').ready(function () {
         //current value of the range slider
         let value = parseInt($('#control').val(), 10);
 
+        $('.fas').each(function () {
+            $(this).removeClass('disabled');
+        });
         if (value > min && dir === 'min') {
             value = value - increment;
-            $('#control').val(value);
-            $('#control').trigger('change');
         } else if (value < max && dir === 'max') {
             value = value + increment;
-            $('#control').val(value);
-            $('#control').trigger('change');
-        } else {
-            $(this).addClass('disabled');
+        }
+
+        $('#control').val(value);
+        $('#control').trigger('change');
+        if (value === min || value === max) {
+            $(pushed).addClass('disabled');
         }
     }
 
@@ -589,8 +613,10 @@ $('document').ready(function () {
         ///plus or minus button
         const button = e.target;
         direction = 'max';
+        pushed = elementsArray[1];
         if ($(button).hasClass('fa-minus')) {
             direction = 'min';
+            pushed = elementsArray[0];
         }
         ///start the timer
         requestAnimationFrame(timer);
