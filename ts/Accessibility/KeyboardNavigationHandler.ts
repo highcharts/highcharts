@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Keyboard navigation handler base class definition
  *
@@ -32,7 +32,7 @@ declare global {
             public chart: Chart;
             public init: Function;
             public keyCodeMap: Array<[Array<number>, Function]>;
-            public response: Dictionary<number>;
+            public response: Record<string, number>;
             public terminate?: Function;
             public validate?: Function;
             public run(e: KeyboardEvent): number;

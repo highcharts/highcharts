@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Handling for Windows High Contrast Mode.
  *
@@ -89,7 +89,7 @@ var whcm = {
         chart.highContrastModeActive = true;
 
         // Apply theme to chart
-        var theme: Highcharts.Dictionary<any> = (
+        var theme: AnyRecord = (
             chart.options.accessibility.highContrastTheme
         );
         chart.update(theme, false);

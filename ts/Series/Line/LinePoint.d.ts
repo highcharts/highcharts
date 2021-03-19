@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,7 +26,7 @@ import type { SeriesZonesOptions } from '../../Core/Series/SeriesOptions';
  *
  * */
 
-export class LinePoint extends Point {
+declare class LinePoint extends Point {
     options: LinePointOptions;
     series: LineSeries;
 }

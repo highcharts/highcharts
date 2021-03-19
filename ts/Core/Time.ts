@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,36 @@
 
 'use strict';
 
-import Highcharts from './Globals.js';
+/* *
+ *
+ *  Imports
+ *
+ * */
+
+import type TimeTicksInfoObject from './Axis/TimeTicksInfoObject';
+import H from './Globals.js';
+const {
+    win
+} = H;
+import U from './Utilities.js';
+const {
+    defined,
+    error,
+    extend,
+    isObject,
+    merge,
+    objectEach,
+    pad,
+    pick,
+    splat,
+    timeUnits
+} = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 /**
  * Internal types
@@ -50,10 +79,6 @@ declare global {
         interface TimeFormatCallbackFunction {
             (timestamp: number): string;
         }
-        interface TimeTicksInfoObject extends TimeNormalizedObject {
-            higherRanks: Array<string>;
-            totalRange: number;
-        }
         class Time {
             public constructor(options: TimeOptions);
             public Date: DateConstructor;
@@ -63,7 +88,7 @@ declare global {
             public variableTimezone: boolean;
             public dateFormat(
                 format: string,
-                timestamp: number,
+                timestamp?: number,
                 capitalize?: boolean
             ): string;
             public get(unit: TimeUnitValue, date: Date): number;
@@ -83,8 +108,8 @@ declare global {
                 seconds?: number
             ): number;
             public resolveDTLFormat<T>(
-                f: (string|Array<T>|Dictionary<T>)
-            ): Dictionary<T>;
+                f: (string|Array<T>|Record<string, T>)
+            ): Record<string, T>;
             public set(unit: TimeUnitValue, date: Date, value: number): (number|undefined);
             public timezoneOffsetFunction(): Time['getTimezoneOffset']
             public update(options: TimeOptions): void;
@@ -118,19 +143,6 @@ declare global {
  *
  * @return {string}
  *         The formatted portion of the date.
- */
-
-/**
- * Additonal time tick information.
- *
- * @interface Highcharts.TimeTicksInfoObject
- * @extends Highcharts.TimeNormalizedObject
- *//**
- * @name Highcharts.TimeTicksInfoObject#higherRanks
- * @type {Array<string>}
- *//**
- * @name Highcharts.TimeTicksInfoObject#totalRange
- * @type {number}
  */
 
 /**
@@ -170,22 +182,7 @@ declare global {
  * @apioption time.moment
  */
 
-import U from './Utilities.js';
-const {
-    defined,
-    error,
-    extend,
-    isObject,
-    merge,
-    objectEach,
-    pad,
-    pick,
-    splat,
-    timeUnits
-} = U;
-
-var H = Highcharts,
-    win = H.win;
+''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -347,7 +344,7 @@ class Time {
             if (
                 unit === 'Milliseconds' ||
                 unit === 'Seconds' ||
-                unit === 'Minutes'
+                (unit === 'Minutes' && this.getTimezoneOffset(date) % 3600000 === 0) // #13961
             ) {
                 return (date as any)['setUTC' + unit](value);
             }
@@ -406,8 +403,7 @@ class Time {
          * The time object has options allowing for variable time zones, meaning
          * the axis ticks or series data needs to consider this.
          */
-        this.variableTimezone = !!(
-            !useUTC ||
+        this.variableTimezone = useUTC && !!(
             options.getTimezoneOffset ||
             options.timezone
         );
@@ -575,7 +571,7 @@ class Time {
      *        The desired format where various time representations are
      *        prefixed with %.
      *
-     * @param {number} timestamp
+     * @param {number} [timestamp]
      *        The JavaScript timestamp.
      *
      * @param {boolean} [capitalize=false]
@@ -586,7 +582,7 @@ class Time {
      */
     public dateFormat(
         format: string,
-        timestamp: number,
+        timestamp?: number,
         capitalize?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
@@ -700,8 +696,8 @@ class Time {
      * @return {Highcharts.Dictionary<T>} - The object definition
      */
     public resolveDTLFormat<T>(
-        f: (string|Array<T>|Highcharts.Dictionary<T>)
-    ): Highcharts.Dictionary<T> {
+        f: (string|Array<T>|Record<string, T>)
+    ): Record<string, T> {
         if (!isObject(f, true)) { // check for string or array
             f = splat(f);
             return {
@@ -743,7 +739,7 @@ class Time {
             Date = time.Date,
             tickPositions = [] as Highcharts.AxisTickPositionsArray,
             i,
-            higherRanks = {} as Highcharts.Dictionary<string>,
+            higherRanks = {} as Record<string, string>,
             minYear: any, // used in months and years as a basis for Date.UTC()
             // When crossing DST, use the max. Resolves #6278.
             minDate = new Date(min as any),
@@ -836,10 +832,10 @@ class Time {
                     minDate,
                     (
                         time.get('Date', minDate) -
-                        minDay + (startOfWeek as any) +
+                        minDay + startOfWeek +
                         // We don't want to skip days that are before
                         // startOfWeek (#7051)
-                        (minDay < (startOfWeek as any) ? -7 : 0)
+                        (minDay < startOfWeek ? -7 : 0)
                     )
                 );
             }
@@ -855,8 +851,7 @@ class Time {
             min = minDate.getTime();
 
             // Handle local timezone offset
-            if (time.variableTimezone) {
-
+            if ((time.variableTimezone || !time.useUTC) && defined(max)) {
                 // Detect whether we need to take the DST crossover into
                 // consideration. If we're crossing over DST, the day length may
                 // be 23h or 25h and we need to compute the exact clock time for
@@ -864,11 +859,11 @@ class Time {
                 // so first we find out if it is needed (#4951).
                 variableDayLength = (
                     // Long range, assume we're crossing over.
-                    (max as any) - min > 4 * timeUnits.month ||
+                    max - min > 4 * timeUnits.month ||
                     // Short range, check if min and max are in different time
                     // zones.
                     time.getTimezoneOffset(min) !==
-                    time.getTimezoneOffset(max as any)
+                    time.getTimezoneOffset(max)
                 );
             }
 
@@ -946,10 +941,13 @@ class Time {
 
 
         // record information on the chosen unit - for dynamic label formatter
-        tickPositions.info = extend(normalizedInterval, {
-            higherRanks: higherRanks,
-            totalRange: interval * count
-        }) as Highcharts.TimeTicksInfoObject;
+        tickPositions.info = extend<Highcharts.TimeNormalizedObject|TimeTicksInfoObject>(
+            normalizedInterval,
+            {
+                higherRanks,
+                totalRange: interval * count
+            }
+        ) as TimeTicksInfoObject;
 
         return tickPositions;
     }

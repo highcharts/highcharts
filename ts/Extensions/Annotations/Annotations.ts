@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2017 Highsoft, Black Label
+ *  (c) 2009-2021 Highsoft, Black Label
  *
  *  License: www.highcharts.com/license
  *
@@ -14,15 +14,16 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../../Core/Renderer/AlignObject';
-import type AnimationOptionsObject from '../../Core/Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type { AxisType } from '../../Core/Axis/Types';
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
+import type Series from '../../Core/Series/Series';
 import type ShadowOptionsObject from '../../Core/Renderer/ShadowOptionsObject';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -74,7 +75,7 @@ declare global {
         }
         interface AnnotationChartOptionsObject extends Options {
             annotations: Array<AnnotationsOptions>;
-            defs: Dictionary<SVGDefinitionObject>;
+            defs: Record<string, ASTNode>;
             navigation: NavigationOptions;
         }
         interface AnnotationControlPointEventsOptionsObject {
@@ -99,14 +100,14 @@ declare global {
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
-            xAxis?: (number|string|AxisType|null);
+            xAxis?: (number|AxisType|null);
             y: number;
-            yAxis?: (number|string|AxisType|null);
+            yAxis?: (number|AxisType|null);
         }
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
         }
-        interface AnnotationSeries extends LineSeries {
+        interface AnnotationSeries extends Series {
             chart: AnnotationChart;
             points: Array<AnnotationPoint>;
         }
@@ -142,11 +143,15 @@ declare global {
             y: number;
         }
         interface AnnotationsLabelsOptions extends AnnotationsLabelOptions {
+            color?: ColorType;
+            dashStyle?: DashStyleValue;
+            // formatter: FormatterCallbackFunction<T>;
             point?: (string|AnnotationMockPointOptionsObject);
             itemType?: string;
+            vertical?: VerticalAlignValue;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
-            animation: Partial<AnimationOptionsObject>;
+            animation: Partial<AnimationOptions>;
             controlPointOptions: AnnotationControlPointOptionsObject;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
@@ -420,7 +425,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public coll: 'annotations' = 'annotations';
     public collection: ControllableMixin.Type['collection'] = void 0 as any;
     public controlPoints: Array<ControlPoint>;
-    public animationConfig: Partial<AnimationOptionsObject> = void 0 as any;
+    public animationConfig: Partial<AnimationOptions> = void 0 as any;
     public graphic: SVGElement = void 0 as any;
     public group: SVGElement = void 0 as any;
     public isUpdating?: boolean;
@@ -1729,15 +1734,24 @@ chartProto.collectionsWithUpdate.push('annotations');
 // Let chart.update() create annoations on demand
 chartProto.collectionsWithInit.annotations = [chartProto.addAnnotation];
 
+// Create lookups initially
+addEvent(
+    Chart as unknown as Highcharts.AnnotationChart,
+    'afterInit',
+    function (this): void {
+        this.annotations = [];
+
+        if (!this.options.annotations) {
+            this.options.annotations = [];
+        }
+
+    }
+);
+
 chartProto.callbacks.push(function (
     this: Highcharts.AnnotationChart,
     chart: Highcharts.AnnotationChart
 ): void {
-    chart.annotations = [];
-
-    if (!chart.options.annotations) {
-        chart.options.annotations = [];
-    }
 
     chart.plotBoxClip = this.renderer.clipRect(this.plotBox);
 
@@ -1747,13 +1761,17 @@ chartProto.callbacks.push(function (
         .clip(chart.plotBoxClip)
         .add();
 
-    chart.options.annotations.forEach(function (
-        annotationOptions: Highcharts.AnnotationsOptions,
-        i: number
-    ): void {
-        var annotation = chart.initAnnotation(annotationOptions);
+    chart.options.annotations.forEach(function (annotationOptions, i): void {
+        if (
+            // Verify that it has not been previously added in a responsive rule
+            !chart.annotations.some((annotation): boolean =>
+                annotation.options === annotationOptions
+            )
+        ) {
+            const annotation = chart.initAnnotation(annotationOptions);
 
-        chart.options.annotations[i] = annotation.options;
+            chart.options.annotations[i] = annotation.options;
+        }
     });
 
     chart.drawAnnotations();
@@ -1762,7 +1780,7 @@ chartProto.callbacks.push(function (
         chart.plotBoxClip.destroy();
         chart.controlPointsGroup.destroy();
     });
-    addEvent(chart, 'exportData', function (this: Highcharts.AnnotationChart, event: any): void {
+    addEvent(chart, 'exportData', function (this, event: any): void {
         const annotations = chart.annotations,
             csvColumnHeaderFormatter = ((
                 this.options.exporting &&

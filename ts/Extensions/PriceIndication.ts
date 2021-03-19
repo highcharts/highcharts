@@ -1,5 +1,5 @@
 /**
- * (c) 2009-2020 Sebastian Bochann
+ * (c) 2009-2021 Sebastian Bochann
  *
  * Price indicator for Highcharts
  *
@@ -11,8 +11,9 @@
 'use strict';
 
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
+import ColorType from '../Core/Color/ColorType';
 const {
     addEvent,
     isArray,
@@ -25,7 +26,6 @@ declare module '../Core/Series/SeriesLike' {
         lastVisiblePrice?: SVGElement;
         crossLabel?: SVGElement;
     }
-
 }
 
 declare module '../Core/Series/SeriesOptions' {
@@ -46,6 +46,7 @@ declare global {
         }
         interface LastVisiblePriceLabelOptions {
             enabled: true;
+            color?: ColorType;
         }
     }
 }
@@ -67,7 +68,7 @@ declare global {
  *
  * @type      {boolean}
  * @product   highstock
- * @default   true
+ * @default   false
  * @apioption plotOptions.series.lastVisiblePrice.enabled
  */
 
@@ -81,7 +82,7 @@ declare global {
  *
  * @type      {boolean}
  * @product   highstock
- * @default   true
+ * @default   false
  * @apioption plotOptions.series.lastVisiblePrice.label.enabled
  *
  */
@@ -103,51 +104,60 @@ declare global {
  *
  * @type      {boolean}
  * @product   highstock
- * @default   true
+ * @default   false
  * @apioption plotOptions.series.lastPrice.enabled
  */
 
 /**
  * The color of the line of last price.
+ * By default, the line has the same color as the series.
  *
  * @type      {string}
  * @product   highstock
- * @default   red
  * @apioption plotOptions.series.lastPrice.color
  *
  */
 
 /* eslint-disable no-invalid-this */
 
-addEvent(LineSeries, 'afterRender', function (): void {
-    var serie = this,
-        seriesOptions = serie.options,
+addEvent(Series, 'afterRender', function (): void {
+    var series = this,
+        seriesOptions = series.options,
         pointRange = seriesOptions.pointRange,
         lastVisiblePrice = seriesOptions.lastVisiblePrice,
         lastPrice = seriesOptions.lastPrice;
 
-    if ((lastVisiblePrice || lastPrice) &&
-            seriesOptions.id !== 'highcharts-navigator-series') {
-
-        var xAxis = serie.xAxis,
-            yAxis = serie.yAxis,
+    if (
+        (lastVisiblePrice || lastPrice) &&
+         seriesOptions.id !== 'highcharts-navigator-series'
+    ) {
+        var xAxis = series.xAxis,
+            yAxis = series.yAxis,
             origOptions = yAxis.crosshair,
             origGraphic = yAxis.cross,
             origLabel = yAxis.crossLabel,
-            points = serie.points,
-            yLength = (serie.yData as any).length,
+            points = series.points,
+            yLength = (series.yData as any).length,
             pLength = points.length,
-            x = (serie.xData as any)[(serie.xData as any).length - 1],
-            y = (serie.yData as any)[yLength - 1],
+            x = (series.xData as any)[(series.xData as any).length - 1],
+            y = (series.yData as any)[yLength - 1],
             lastPoint,
             yValue,
             crop;
 
         if (lastPrice && lastPrice.enabled) {
-
             yAxis.crosshair = yAxis.options.crosshair = seriesOptions.lastPrice;
 
-            yAxis.cross = serie.lastPrice;
+            if (!series.chart.styledMode &&
+                    yAxis.crosshair &&
+                    yAxis.options.crosshair &&
+                    seriesOptions.lastPrice
+            ) {
+                // Set the default color from the series, #14888.
+                yAxis.crosshair.color = yAxis.options.crosshair.color = seriesOptions.lastPrice.color || series.color;
+            }
+
+            yAxis.cross = series.lastPrice;
             yValue = isArray(y) ? y[3] : y;
 
             yAxis.drawCrosshair((null as any), ({
@@ -158,49 +168,45 @@ addEvent(LineSeries, 'afterRender', function (): void {
             }) as any);
 
             // Save price
-            if (serie.yAxis.cross) {
-                serie.lastPrice = serie.yAxis.cross;
-                serie.lastPrice.y = yValue;
+            if (series.yAxis.cross) {
+                series.lastPrice = series.yAxis.cross;
+                series.lastPrice.y = yValue;
             }
         }
 
-        if (lastVisiblePrice &&
-            lastVisiblePrice.enabled &&
-            pLength > 0
-        ) {
-
+        if (lastVisiblePrice && lastVisiblePrice.enabled && pLength > 0) {
             crop = (points[pLength - 1].x === x) || pointRange === null ? 1 : 2;
 
             yAxis.crosshair = yAxis.options.crosshair = merge({
-                color: 'transparent'
+                color: 'transparent' // line invisible by default
             }, seriesOptions.lastVisiblePrice);
 
-            yAxis.cross = serie.lastVisiblePrice;
+            yAxis.cross = series.lastVisiblePrice;
             lastPoint = points[pLength - crop];
 
-            if (serie.crossLabel) {
-                serie.crossLabel.destroy();
-                // Set to undefined to avoid collision with
-                // the yAxis crosshair #11480
-                delete yAxis.crossLabel;
+            if (series.crossLabel) {
+                series.crossLabel.destroy();
             }
+            // Set to undefined to avoid collision with
+            // the yAxis crosshair #11480
+            // Delete the crossLabel each time the code is invoked, #13876.
+            delete yAxis.crossLabel;
 
             // Save price
             yAxis.drawCrosshair((null as any), lastPoint);
 
             if (yAxis.cross) {
-                serie.lastVisiblePrice = yAxis.cross;
+                series.lastVisiblePrice = yAxis.cross;
                 if (typeof lastPoint.y === 'number') {
-                    serie.lastVisiblePrice.y = lastPoint.y;
+                    series.lastVisiblePrice.y = lastPoint.y;
                 }
             }
 
-            serie.crossLabel = yAxis.crossLabel;
-
+            series.crossLabel = yAxis.crossLabel;
         }
 
         // Restore crosshair:
-        yAxis.crosshair = origOptions;
+        yAxis.crosshair = yAxis.options.crosshair = origOptions;
         yAxis.cross = origGraphic;
         yAxis.crossLabel = origLabel;
 

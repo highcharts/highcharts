@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -35,6 +35,7 @@ const {
     svg,
     win
 } = H;
+import palette from '../../Core/Color/Palette.js';
 import Pointer from '../../Core/Pointer.js';
 import SVGElement from '../../Core/Renderer/SVG/SVGElement.js';
 import SVGRenderer from '../../Core/Renderer/SVG/SVGRenderer3D.js';
@@ -98,7 +99,7 @@ declare global {
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLAttributes extends Dictionary<any> {
+        interface VMLAttributes extends AnyRecord {
             d?: VMLPathArray;
             end?: number;
             innerR?: number;
@@ -264,7 +265,7 @@ declare global {
             public isVML: true;
             public setSize: SVGRenderer['setSize'];
             public symbols: SVGRenderer['symbols'];
-            public circle(obj: Dictionary<number>): VMLElement;
+            public circle(obj: Record<string, number>): VMLElement;
             public circle(x: number, y: number, r: number): VMLElement;
             public clipRect(size: SizeObject): VMLClipRectObject;
             public clipRect(
@@ -376,7 +377,7 @@ let VMLRenderer: typeof Highcharts.VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = U.getStyle = function (
+    (H as any).getStyle = U.getStyle = function (
         el: HTMLDOMElement,
         prop: string
     ): number {
@@ -384,7 +385,7 @@ if (doc && !doc.defaultView) {
             alias = ({
                 width: 'clientWidth',
                 height: 'clientHeight'
-            } as Highcharts.Dictionary<string>)[prop];
+            } as Record<string, string>)[prop];
 
         if (el.style[prop as any]) {
             return pInt(el.style[prop as any]);
@@ -451,7 +452,7 @@ if (!svg) {
      */
     Pointer.prototype.normalize = function<T extends PointerEvent> (
         e: (T|MouseEvent|PointerEvent|TouchEvent),
-        chartPosition?: Highcharts.OffsetObject
+        chartPosition?: Highcharts.ChartPositionObject
     ): T {
 
         e = e || win.event;
@@ -461,7 +462,7 @@ if (!svg) {
 
         // Get mouse position
         if (!chartPosition) {
-            this.chartPosition = chartPosition = offset(this.chart.container);
+            this.chartPosition = chartPosition = this.getChartPosition();
         }
 
         return extend(e, {
@@ -1033,10 +1034,10 @@ if (!svg) {
                         renderer.prepVML(markup as any),
                         null as any,
                         {
-                            left: pInt(elemStyle.left) +
-                                pick(shadowOptions.offsetX, 1),
-                            top: pInt(elemStyle.top) +
-                                pick(shadowOptions.offsetY, 1)
+                            left: (pInt(elemStyle.left) +
+                                pick(shadowOptions.offsetX, 1)) + 'px',
+                            top: (pInt(elemStyle.top) +
+                                pick(shadowOptions.offsetY, 1)) + 'px'
                         }
                     );
                     if (cutOff) {
@@ -1046,7 +1047,7 @@ if (!svg) {
                     // apply the opacity
                     markup = [
                         '<stroke color="',
-                        shadowOptions.color || '${palette.neutralColor100}',
+                        shadowOptions.color || palette.neutralColor100,
                         '" opacity="', shadowElementOpacity * i, '"/>'];
                     createElement(
                         renderer.prepVML(markup),
@@ -1465,7 +1466,7 @@ if (!svg) {
                         left = rect.left,
                         right = left + rect.width,
                         bottom = top + rect.height,
-                        ret = {
+                        ret: CSSObject = {
                             clip: 'rect(' +
                                 Math.round(inverted ? left : top) + 'px,' +
                                 Math.round(inverted ? bottom : right) + 'px,' +
@@ -1944,10 +1945,10 @@ if (!svg) {
 
             css(element, {
                 flip: 'x',
-                left: pInt(parentStyle.width) -
-                    (imgStyle ? pInt(imgStyle.top) : 1),
-                top: pInt(parentStyle.height) -
-                    (imgStyle ? pInt(imgStyle.left) : 1),
+                left: (pInt(parentStyle.width) -
+                    (imgStyle ? pInt(imgStyle.top) : 1)) + 'px',
+                top: (pInt(parentStyle.height) -
+                    (imgStyle ? pInt(imgStyle.left) : 1)) + 'px',
                 rotation: -90
             });
 
@@ -2086,8 +2087,8 @@ if (!svg) {
     ): void {
         this.init.apply(this, arguments as any);
     } as any;
-    extend(VMLRenderer.prototype, SVGRenderer.prototype);
-    extend(VMLRenderer.prototype, VMLRendererExtension);
+    extend(VMLRenderer.prototype, SVGRenderer.prototype as any);
+    extend(VMLRenderer.prototype, VMLRendererExtension as any);
 
     // general renderer
     H.Renderer = VMLRenderer as any;

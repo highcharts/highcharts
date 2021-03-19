@@ -2,7 +2,7 @@
  *
  *  Data module
  *
- *  (c) 2012-2020 Torstein Honsi
+ *  (c) 2012-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,13 +17,14 @@ import Ajax from '../Extensions/Ajax.js';
 const {
     ajax
 } = Ajax;
-import BaseSeries from '../Core/Series/Series.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
     doc
 } = H;
 import Point from '../Core/Series/Point.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -53,13 +54,13 @@ declare global {
     namespace Highcharts {
         type DataValueType = (number|string|null);
         interface DataAfterCompleteCallbackFunction {
-            (dataOptions?: Options): void;
+            (dataOptions?: Partial<Options>): void;
         }
         interface DataBeforeParseCallbackFunction {
             (csv: string): string;
         }
         interface DataCompleteCallbackFunction {
-            (chartOptions: Options): void;
+            (chartOptions: Partial<Options>): void;
         }
         interface DataDateFormatCallbackFunction {
             (match: ReturnType<string['match']>): number;
@@ -95,12 +96,12 @@ declare global {
             parseDate?: DataParseDateCallbackFunction;
             rows?: Array<Array<DataValueType>>;
             rowsURL?: string;
-            seriesMapping?: Array<Dictionary<number>>;
+            seriesMapping?: Array<Record<string, number>>;
             sort?: boolean;
             startColumn?: number;
             startRow?: number;
             switchRowsAndColumns?: boolean;
-            table?: (string|GlobalHTMLElement);
+            table?: (string|HTMLElement);
         }
         interface DataParseDateCallbackFunction {
             (dateValue: string): number;
@@ -125,7 +126,7 @@ declare global {
         class Data {
             public constructor(
                 dataOptions: DataOptions,
-                chartOptions?: Options,
+                chartOptions?: Partial<Options>,
                 chart?: Chart
             );
             public alternativeFormat?: string;
@@ -133,7 +134,7 @@ declare global {
             public chartOptions: Options;
             public columns?: Array<Array<DataValueType>>;
             public dateFormat?: string;
-            public dateFormats: Dictionary<Highcharts.DataDateFormatObject>;
+            public dateFormats: Record<string, Highcharts.DataDateFormatObject>;
             public decimalRegex?: RegExp;
             public firstRowAsNames: boolean;
             public liveDataTimeout?: number;
@@ -183,7 +184,7 @@ declare global {
             public read<DataItemType>(
                 columns: Array<Array<DataItemType>>,
                 rowIndex: number
-            ): (Array<DataItemType>|Dictionary<DataItemType>);
+            ): (Array<DataItemType>|Record<string, DataItemType>);
         }
         function data(
             dataOptions: DataOptions,
@@ -192,8 +193,6 @@ declare global {
         ): Data;
     }
 }
-
-const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
 
 /**
  * Callback function to modify the CSV before parsing it by the data module.
@@ -682,6 +681,13 @@ const seriesTypes = BaseSeries.seriesTypes as Record<string, any>;
  * @param {Highcharts.Chart} [chart]
  */
 class Data {
+
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
     public constructor(
         dataOptions: Highcharts.DataOptions,
         chartOptions?: Highcharts.Options,
@@ -689,6 +695,12 @@ class Data {
     ) {
         this.init(dataOptions, chartOptions, chart);
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public alternativeFormat?: string;
     public chart: Chart = void 0 as any;
@@ -701,6 +713,12 @@ class Data {
     public rawColumns: Array<Array<string>> = void 0 as any;
     public options: Highcharts.DataOptions= void 0 as any;
     public valueCount?: Highcharts.DataValueCountObject;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Initialize the Data object with the given options
@@ -837,7 +855,7 @@ class Data {
                     chartOptions &&
                     chartOptions.series &&
                     chartOptions.series.map(function (
-                    ): Highcharts.Dictionary<number> {
+                    ): Record<string, number> {
                         return { x: 0 };
                     })
                 ) ||
@@ -853,7 +871,7 @@ class Data {
 
         // Collect the x-column indexes from seriesMapping
         seriesMapping.forEach(function (
-            mapping: Highcharts.Dictionary<number>
+            mapping: Record<string, number>
         ): void {
             xColumns.push(mapping.x || 0);
         });
@@ -867,7 +885,7 @@ class Data {
         // Loop all seriesMappings and constructs SeriesBuilders from
         // the mapping options.
         seriesMapping.forEach(function (
-            mapping: Highcharts.Dictionary<number>
+            mapping: Record<string, number>
         ): void {
             var builder = new SeriesBuilder(),
                 numberOfValueColumnsNeeded = individualCounts[seriesIndex] ||
@@ -987,7 +1005,7 @@ class Data {
             dataTypes: Array<Array<string>> = [],
             // We count potential delimiters in the prepass, and use the
             // result as the basis of half-intelligent guesses.
-            potDelimiters: Highcharts.Dictionary<number> = {
+            potDelimiters: Record<string, number> = {
                 ',': 0,
                 ';': 0,
                 '\t': 0
@@ -1041,7 +1059,7 @@ class Data {
             columnStr: string,
             rowNumber: number,
             noAdd?: boolean,
-            callbacks?: Highcharts.Dictionary<Function>
+            callbacks?: Record<string, Function>
         ): void {
             var i = 0,
                 c = '',
@@ -1118,13 +1136,6 @@ class Data {
 
             for (; i < columnStr.length; i++) {
                 read(i);
-
-                // Quoted string
-                if (c === '#') {
-                    // The rest of the row is a comment
-                    push();
-                    return;
-                }
 
                 if (c === '"') {
                     read(++i);
@@ -2083,7 +2094,7 @@ class Data {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    public dateFormats: Highcharts.Dictionary<Highcharts.DataDateFormatObject> = {
+    public dateFormats: Record<string, Highcharts.DataDateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
             parser: function (match: (RegExpMatchArray|null)): number {
@@ -2157,8 +2168,9 @@ class Data {
      * @return {number}
      */
     public parseDate(val: string): number {
-        var parseDate = this.options.parseDate,
-            ret,
+        const parseDate = this.options.parseDate;
+
+        let ret,
             key,
             format,
             dateFormat = this.options.dateFormat || this.dateFormat,
@@ -2198,17 +2210,23 @@ class Data {
             }
             // Fall back to Date.parse
             if (!match) {
+                if (val.match(/:.+(GMT|UTC|[Z+-])/)) {
+                    val = val
+                        .replace(/\s*(?:GMT|UTC)?([+-])(\d\d)(\d\d)$/, '$1$2:$3')
+                        .replace(/(?:\s+|GMT|UTC)([+-])/, '$1')
+                        .replace(/(\d)\s*(?:GMT|UTC|Z)$/, '$1+00:00');
+                }
                 match = Date.parse(val);
                 // External tools like Date.js and MooTools extend Date object
-                // and returns a date.
+                // and return a date.
                 if (
                     typeof match === 'object' &&
                     match !== null &&
-                    (match as any).getTime
+                    (match as Date).getTime
                 ) {
                     ret = (
-                        (match as any).getTime() -
-                        (match as any).getTimezoneOffset() *
+                        (match as Date).getTime() -
+                        (match as Date).getTimezoneOffset() *
                         60000
                     );
 
@@ -2343,7 +2361,7 @@ class Data {
             j: number,
             r: number,
             seriesIndex,
-            chartOptions: Highcharts.Options,
+            chartOptions: Partial<Highcharts.Options>,
             allSeriesBuilders = [],
             builder,
             freeIndexes,
@@ -2490,7 +2508,7 @@ class Data {
             // The afterComplete hook is used internally to avoid conflict with
             // the externally available complete option.
             if (options.afterComplete) {
-                options.afterComplete(chartOptions as any);
+                options.afterComplete(chartOptions);
             }
         }
 
@@ -2514,7 +2532,7 @@ class Data {
         if (options) {
             // Set the complete handler
             options.afterComplete = function (
-                dataOptions?: Highcharts.Options
+                dataOptions?: Partial<Highcharts.Options>
             ): void {
                 // Avoid setting axis options unless the type changes. Running
                 // Axis.update will cause the whole structure to be destroyed
@@ -2572,13 +2590,13 @@ addEvent(
     function (
         e: Event & {
             args: [
-                (Highcharts.Options|undefined),
+                (Partial<Highcharts.Options>|undefined),
                 (Chart.CallbackFunction|undefined)
             ];
         }
     ): void {
         var chart = this, // eslint-disable-line no-invalid-this
-            userOptions = (e.args[0] || {}),
+            userOptions: Partial<Highcharts.Options> = (e.args[0] || {}),
             callback = e.args[1];
 
         if (userOptions && userOptions.data && !chart.hasDataDef) {
@@ -2592,7 +2610,7 @@ addEvent(
             chart.data = new H.Data(extend(userOptions.data, {
 
                 afterComplete: function (
-                    dataOptions: Highcharts.Options
+                    dataOptions?: Partial<Highcharts.Options>
                 ): void {
                     var i, series;
 
@@ -2714,11 +2732,11 @@ class SeriesBuilder {
     public read <T>(
         columns: Array<Array<T>>,
         rowIndex: number
-    ): (Array<T>|Highcharts.Dictionary<T>) {
+    ): (Array<T>|Record<string, T>) {
         var builder = this,
             pointIsArray = builder.pointIsArray,
             point =
-                pointIsArray ? [] as Array<T> : {} as Highcharts.Dictionary<T>,
+                pointIsArray ? [] as Array<T> : {} as Record<string, T>,
             columnIndexes;
 
         // Loop each reader and ask it to read its value.

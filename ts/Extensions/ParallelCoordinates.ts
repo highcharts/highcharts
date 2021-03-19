@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2020 Pawel Fus
+ *  (c) 2010-2021 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -19,7 +19,7 @@ import type SeriesOptions from '../Core/Series/SeriesOptions';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -41,7 +41,7 @@ declare module '../Core/Chart/ChartLike'{
         hasParallelCoordinates?: Highcharts.ParallelChart['hasParallelCoordinates'];
         parallelInfo?: Highcharts.ParallelChart['parallelInfo'];
         /** @requires modules/parallel-coordinates */
-        setParallelInfo(options: Highcharts.Options): void;
+        setParallelInfo(options: Partial<Highcharts.Options>): void;
     }
 }
 
@@ -53,7 +53,7 @@ declare global {
     namespace Highcharts {
 
         interface ChartOptions {
-            parallelAxes?: XAxisOptions;
+            parallelAxes?: DeepPartial<XAxisOptions>;
             parallelCoordinates?: boolean;
         }
         interface ParallelChart extends Chart {
@@ -81,8 +81,6 @@ declare module '../Core/Axis/Types' {
         ParallelAxis: ParallelAxis;
     }
 }
-
-import '../Series/Line/LineSeries.js';
 
 // Extensions for parallel coordinates plot.
 var ChartProto = Chart.prototype;
@@ -186,7 +184,7 @@ setOptions({
 // Initialize parallelCoordinates
 addEvent(Chart, 'init', function (
     e: {
-        args: { 0: Highcharts.Options };
+        args: { 0: Partial<Highcharts.Options> };
     }
 ): void {
     const options = e.args[0],
@@ -250,7 +248,7 @@ addEvent(Chart, 'init', function (
 });
 
 // Initialize parallelCoordinates
-addEvent(Chart, 'update', function (e: { options: Highcharts.Options }): void {
+addEvent(Chart, 'update', function (e: { options: Partial<Highcharts.Options> }): void {
     const options = e.options;
 
     if (options.chart) {
@@ -258,8 +256,8 @@ addEvent(Chart, 'update', function (e: { options: Highcharts.Options }): void {
             this.hasParallelCoordinates = options.chart.parallelCoordinates;
         }
 
-        (this.options.chart as any).parallelAxes = merge(
-            (this.options.chart as any).parallelAxes,
+        this.options.chart.parallelAxes = merge(
+            this.options.chart.parallelAxes,
             options.chart.parallelAxes
         );
     }
@@ -299,7 +297,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
      */
     setParallelInfo: function (
         this: Highcharts.ParallelChart,
-        options: Highcharts.Options
+        options: Partial<Highcharts.Options>
     ): void {
         var chart = this,
             seriesOptions: Array<SeriesOptions> =
@@ -323,7 +321,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 
 // Bind each series to each yAxis. yAxis needs a reference to all series to
 // calculate extremes.
-addEvent(LineSeries, 'bindAxes', function (e: Event): void {
+addEvent(Series, 'bindAxes', function (e: Event): void {
     if (this.chart.hasParallelCoordinates) {
         var series = this;
 
@@ -340,7 +338,7 @@ addEvent(LineSeries, 'bindAxes', function (e: Event): void {
 
 
 // Translate each point using corresponding yAxis.
-addEvent(LineSeries, 'afterTranslate', function (): void {
+addEvent(Series, 'afterTranslate', function (): void {
     var series = this,
         chart = this.chart,
         points = series.points,
@@ -391,7 +389,7 @@ addEvent(LineSeries, 'afterTranslate', function (): void {
 }, { order: 1 });
 
 // On destroy, we need to remove series from each axis.series
-addEvent(LineSeries, 'destroy', function (): void {
+addEvent(Series, 'destroy', function (): void {
     if (this.chart.hasParallelCoordinates) {
         (this.chart.axes || []).forEach(function (axis): void {
             if (axis && axis.series) {
@@ -454,7 +452,7 @@ function addFormattedValue(
              * @apioption yAxis.tooltipValueFormat
              */
             yAxisOptions.tooltipValueFormat,
-            (yAxisOptions.labels as any).format
+            yAxisOptions.labels.format
         );
 
         if (labelFormat) {
@@ -462,7 +460,7 @@ function addFormattedValue(
                 labelFormat,
                 extend(
                     this,
-                    { value: this.y }
+                    { value: this.y } as any
                 ),
                 chart
             );
@@ -614,7 +612,7 @@ namespace ParallelAxis {
                 const axisIndex = chart.yAxis.indexOf(axis); // #13608
                 axis.options = merge(
                     axis.options,
-                    (axis.chart.options.chart as any).parallelAxes,
+                    axis.chart.options.chart.parallelAxes,
                     e.userOptions
                 );
                 parallelCoordinates.position = pick(

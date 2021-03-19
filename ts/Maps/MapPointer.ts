@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -49,7 +49,7 @@ declare global {
 /* eslint-disable no-invalid-this */
 
 // Extend the Pointer
-extend(Pointer.prototype, {
+extend<Pointer|Highcharts.MapPointer>(Pointer.prototype, {
 
     // The event handler for the doubleclick event
     onContainerDblClick: function (
@@ -124,7 +124,7 @@ wrap(Pointer.prototype, 'zoomOption', function (
         (mapNavigation as any).enableTouchZoom,
         (mapNavigation as any).enabled)
     ) {
-        (this.chart.options.chart as any).pinchType = 'xy';
+        this.chart.options.chart.pinchType = 'xy';
     }
 
     proceed.apply(this, [].slice.call(arguments, 1));
@@ -158,7 +158,7 @@ wrap(
         );
 
         // Keep ratio
-        if ((this.chart.options.chart as any).type === 'map' && this.hasZoom) {
+        if (this.chart.options.chart.type === 'map' && this.hasZoom) {
             xBigger = transform.scaleX > transform.scaleY;
             this.pinchTranslateDirection(
                 !xBigger,

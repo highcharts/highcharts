@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for exporting menu.
  *
@@ -333,7 +333,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                         'accessibility.exporting.menuButtonLabel',
                         { chart: chart }
                     ),
-                    'aria-expanded': 'false'
+                    'aria-expanded': false
                 }
             );
         }
@@ -384,7 +384,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      */
     getKeyboardNavigation: function (
         this: Highcharts.MenuComponent
-    ): Highcharts.KeyboardNavigation {
+    ): Highcharts.KeyboardNavigationHandler {
         var keys = this.keyCodes,
             chart = this.chart,
             component = this;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  Extension for 3D charts
  *
@@ -15,12 +15,12 @@
 import type ColorType from '../Color/ColorType';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import Axis from '../Axis/Axis.js';
 import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
 import Fx from '../Animation/Fx.js';
 import H from '../Globals.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import Math3D from '../../Extensions/Math3D.js';
 const {
     perspective,
@@ -30,6 +30,7 @@ import O from '../Options.js';
 const {
     defaultOptions: genericDefaultOptions
 } = O;
+import Series from '../Series/Series.js';
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -48,6 +49,7 @@ declare module '../Animation/FxLike' {
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         chart3d?: Chart3D['chart3d'];
+        frameShapes?: Record<string, SVGElement>;
         is3d(): boolean;
     }
 }
@@ -70,7 +72,7 @@ declare global {
         }
         interface Stack3DDictionaryObject {
             position: number;
-            series: Array<LineSeries>;
+            series: Array<Series>;
         }
     }
 }
@@ -170,7 +172,7 @@ namespace Chart3D {
 
         public get3dFrame(): Chart3D.FrameObject {
             var chart = this.chart,
-                options3d = (chart.options.chart as any).options3d,
+                options3d = chart.options.chart.options3d as any,
                 frameOptions = options3d.frame,
                 xm = chart.plotLeft,
                 xp = chart.plotLeft + chart.plotWidth,
@@ -897,9 +899,9 @@ namespace Chart3D {
          * Whether it is a 3D chart.
          */
         chartProto.is3d = function (): boolean {
-            return (
-                (this.options.chart as any).options3d &&
-                (this.options.chart as any).options3d.enabled
+            return Boolean(
+                this.options.chart.options3d &&
+                this.options.chart.options3d.enabled
             ); // #4280
         };
 
@@ -981,7 +983,7 @@ namespace Chart3D {
         ) {
             var chart = this,
                 renderer = chart.renderer,
-                options3d = (this.options.chart as any).options3d,
+                options3d = this.options.chart.options3d as any,
                 frame = this.chart3d.get3dFrame(),
                 xm = this.plotLeft,
                 xp = this.plotLeft + this.plotWidth,
@@ -1820,21 +1822,29 @@ namespace Chart3D {
             }].forEach(function (cfg): void {
                 this.renderer.definition({
                     tagName: 'filter',
-                    id: 'highcharts-' + cfg.name,
+                    attributes: {
+                        id: 'highcharts-' + cfg.name
+                    },
                     children: [{
                         tagName: 'feComponentTransfer',
                         children: [{
                             tagName: 'feFuncR',
-                            type: 'linear',
-                            slope: cfg.slope
+                            attributes: {
+                                type: 'linear',
+                                slope: cfg.slope
+                            }
                         }, {
                             tagName: 'feFuncG',
-                            type: 'linear',
-                            slope: cfg.slope
+                            attributes: {
+                                type: 'linear',
+                                slope: cfg.slope
+                            }
                         }, {
                             tagName: 'feFuncB',
-                            type: 'linear',
-                            slope: cfg.slope
+                            attributes: {
+                                type: 'linear',
+                                slope: cfg.slope
+                            }
                         }]
                     }]
                 });
@@ -1853,8 +1863,8 @@ namespace Chart3D {
         if (this.is3d()) {
             (options.series || []).forEach(function (s): void {
                 var type = s.type ||
-                    (options.chart as any).type ||
-                    (options.chart as any).defaultSeriesType;
+                    options.chart.type ||
+                    options.chart.defaultSeriesType;
 
                 if (type === 'scatter') {
                     s.type = 'scatter3d';
@@ -1868,7 +1878,7 @@ namespace Chart3D {
      */
     function onAfterSetChartSize(this: Chart): void {
         var chart = this,
-            options3d = (chart.options.chart as any).options3d;
+            options3d = chart.options.chart.options3d as any;
 
         if (
             chart.chart3d &&

@@ -2,7 +2,7 @@
  *
  *  GUI generator for Stock tools
  *
- *  (c) 2009-2017 Sebastian Bochan
+ *  (c) 2009-2021 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -48,7 +48,7 @@ declare global {
             stockTools?: LangStockToolsOptions;
         }
         interface LangStockToolsOptions {
-            gui?: Dictionary<string>;
+            gui?: Record<string, string>;
         }
         interface Options {
             stockTools?: StockToolsOptions;
@@ -97,21 +97,22 @@ declare global {
         class Toolbar {
             public constructor(
                 options: StockToolsGuiOptions,
-                langOptions: (Dictionary<string>|undefined),
+                langOptions: (Record<string, string>|undefined),
                 chart: Chart
             );
             public arrowDown: HTMLDOMElement;
             public arrowUp: HTMLDOMElement;
             public arrowWrapper: HTMLDOMElement;
             public chart: Chart;
-            public classMapping: Dictionary<string>;
+            public classMapping: Record<string, string>;
             public eventsToUnbind: Array<Function>;
             public guiEnabled: (boolean|undefined);
             public iconsURL: string;
-            public lang: (Dictionary<string>|undefined);
+            public lang: (Record<string, string>|undefined);
             public listWrapper: HTMLDOMElement;
             public options: StockToolsGuiOptions;
             public placed: boolean;
+            public prevOffsetWidth: (number|undefined);
             public showhideBtn: HTMLDOMElement;
             public submenu: HTMLDOMElement;
             public toolbar: HTMLDOMElement;
@@ -124,11 +125,11 @@ declare global {
                     StockToolsGuiDefinitionsOptions
                 ),
                 btnName: string,
-                lang: Dictionary<string>
-            ): Dictionary<HTMLDOMElement>;
+                lang: Record<string, string>
+            ): Record<string, HTMLDOMElement>;
             public addNavigation(): void;
             public addSubmenu(
-                parentBtn: Dictionary<HTMLDOMElement>,
+                parentBtn: Record<string, HTMLDOMElement>,
                 button: StockToolsGuiDefinitionsButtonsOptions
             ): void;
             public addSubmenuItems(
@@ -293,7 +294,33 @@ setOptions({
                 crosshairX: 'Crosshair X',
                 crosshairY: 'Crosshair Y',
                 tunnel: 'Tunnel',
-                background: 'Background'
+                background: 'Background',
+
+                // Indicators' params (#15170):
+                index: 'Index',
+                period: 'Period',
+                standardDeviation: 'Standard deviation',
+                periodTenkan: 'Tenkan period',
+                periodSenkouSpanB: 'Senkou Span B period',
+                periodATR: 'ATR period',
+                multiplierATR: 'ATR multiplier',
+                shortPeriod: 'Short period',
+                longPeriod: 'Long period',
+                signalPeriod: 'Signal period',
+                decimals: 'Decimals',
+                algorithm: 'Algorithm',
+                topBand: 'Top band',
+                bottomBand: 'Bottom band',
+                initialAccelerationFactor: 'Initial acceleration factor',
+                maxAccelerationFactor: 'Max acceleration factor',
+                increment: 'Increment',
+                multiplier: 'Multiplier',
+                ranges: 'Ranges',
+                highIndex: 'High index',
+                lowIndex: 'Low index',
+                deviation: 'Deviation',
+                xAxisUnit: 'x-axis unit',
+                factor: 'Factor'
             }
         }
     },
@@ -919,7 +946,49 @@ addEvent(Chart, 'getMargins', function (): void {
 
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
+        this.spacing[3] += offsetWidth;
     }
+}, {
+    order: 0
+});
+
+['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
+    addEvent(Chart, event, function (): void {
+        if (this.stockTools) {
+            const optionsChart = this.options.chart as Highcharts.ChartOptions;
+            const listWrapper = this.stockTools.listWrapper,
+                offsetWidth = listWrapper && (
+                    (
+                        (listWrapper as any).startWidth +
+                        getStyle(listWrapper, 'padding-left') +
+                        getStyle(listWrapper, 'padding-right')
+                    ) || listWrapper.offsetWidth
+                );
+
+            let dirty = false;
+
+            if (offsetWidth && offsetWidth < this.plotWidth) {
+                const nextX = pick(
+                    optionsChart.spacingLeft,
+                    optionsChart.spacing && optionsChart.spacing[3],
+                    0
+                ) + offsetWidth;
+                const diff = nextX - this.spacingBox.x;
+                this.spacingBox.x = nextX;
+                this.spacingBox.width -= diff;
+                dirty = true;
+            } else if (offsetWidth === 0) {
+                dirty = true;
+            }
+
+            if (offsetWidth !== this.stockTools.prevOffsetWidth) {
+                this.stockTools.prevOffsetWidth = offsetWidth;
+                if (dirty) {
+                    this.isDirtyLegend = true;
+                }
+            }
+        }
+    });
 });
 
 addEvent(Chart, 'destroy', function (): void {
@@ -983,6 +1052,7 @@ class Toolbar {
     public listWrapper: HTMLDOMElement = void 0 as any;
     public options: Highcharts.StockToolsGuiOptions;
     public placed: boolean;
+    public prevOffsetWidth: (number|undefined);
     public showhideBtn: HTMLDOMElement = void 0 as any;
     public submenu: HTMLDOMElement = void 0 as any;
     public toolbar: HTMLDOMElement = void 0 as any;
@@ -1210,7 +1280,7 @@ class Toolbar {
             Highcharts.StockToolsGuiDefinitionsOptions
         ),
         btnName: string,
-        lang: Highcharts.Dictionary<string> = {}
+        lang: Record<string, string> = {}
     ): Record<string, HTMLDOMElement> {
         var btnOptions: Highcharts.StockToolsGuiDefinitionsButtonsOptions =
                 options[btnName] as any,
@@ -1231,7 +1301,6 @@ class Toolbar {
         mainButton = createElement(SPAN, {
             className: PREFIX + 'menu-item-btn'
         }, null as any, buttonWrapper);
-
 
         // submenu
         if (items && items.length) {
@@ -1455,6 +1524,10 @@ class Toolbar {
             // main button in first level og GUI
             mainNavButton = (buttonWrapper as any).parentNode.parentNode;
 
+        // if the button is disabled, don't do anything
+        if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
+            return;
+        }
         // set class
         mainNavButton.className = '';
         if (buttonWrapperClass) {
@@ -1665,6 +1738,26 @@ addEvent(NavigationBindings, 'deselectButton', function (
             button = (button.parentNode as any).parentNode;
         }
         gui.selectButton(button);
+    }
+});
+
+// Check if the correct price indicator button is displayed, #15029.
+addEvent(H.Chart, 'render', function (): void {
+    const chart = this,
+        stockTools = chart.stockTools,
+        button = stockTools &&
+            stockTools.toolbar &&
+            stockTools.toolbar.querySelector('.highcharts-current-price-indicator') as any;
+
+    // Change the initial button background.
+    if (stockTools && chart.navigationBindings && chart.options.series && button) {
+        if (chart.navigationBindings.constructor.prototype.utils.isPriceIndicatorEnabled(chart.series)) {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-hide.svg")';
+        } else {
+            button.firstChild.style['background-image'] =
+            'url("' + stockTools.getIconsURL() + 'current-price-show.svg")';
+        }
     }
 });
 

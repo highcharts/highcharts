@@ -35,10 +35,10 @@ declare global {
             setItemMarkers(this: ControllablePath, item: ControllablePath): void;
         }
         interface Options {
-            defs?: Dictionary<SVGDefinitionObject>;
+            defs?: Record<string, ASTNode>;
         }
         interface SVGRenderer {
-            addMarker(id: string, markerOptions: SVGAttributes): SVGElement;
+            addMarker(id: string, markerOptions: ASTNode): SVGElement;
         }
     }
 }
@@ -60,7 +60,7 @@ declare global {
  *       tagName: 'path',
  *       attrs: {
  *         d: 'M 0 0 L 10 5 L 0 10 Z',
- *         strokeWidth: 0
+ *         'stroke-width': 0
  *       }
  *     }]
  *   }
@@ -73,75 +73,85 @@ declare global {
  * @sample highcharts/css/annotations-markers/
  *         Define markers in a styled mode
  *
- * @type         {Highcharts.Dictionary<Highcharts.SVGDefinitionObject>}
+ * @type         {Highcharts.Dictionary<Highcharts.ASTNode>}
  * @since        6.0.0
  * @optionparent defs
  */
-var defaultMarkers: Record<string, Highcharts.SVGDefinitionObject> = {
+var defaultMarkers: Record<string, Highcharts.ASTNode> = {
     /**
-     * @type {Highcharts.SVGDefinitionObject}
+     * @type {Highcharts.ASTNode}
      */
     arrow: {
         tagName: 'marker',
-        render: false,
-        id: 'arrow',
-        refY: 5,
-        refX: 9,
-        markerWidth: 10,
-        markerHeight: 10,
+        attributes: {
+            id: 'arrow',
+            refY: 5,
+            refX: 9,
+            markerWidth: 10,
+            markerHeight: 10
+        },
         /**
          * @type {Array<Highcharts.DefsOptions>}
          */
         children: [{
             tagName: 'path',
-            d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
-            strokeWidth: 0
+            attributes: {
+                d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
+                'stroke-width': 0
+            }
         }]
     },
     /**
-     * @type {Highcharts.SVGDefinitionObject}
+     * @type {Highcharts.ASTNode}
      */
     'reverse-arrow': {
         tagName: 'marker',
-        render: false,
-        id: 'reverse-arrow',
-        refY: 5,
-        refX: 1,
-        markerWidth: 10,
-        markerHeight: 10,
+        attributes: {
+            id: 'reverse-arrow',
+            refY: 5,
+            refX: 1,
+            markerWidth: 10,
+            markerHeight: 10
+        },
         children: [{
             tagName: 'path',
-            // reverse triangle (used as an arrow)
-            d: 'M 0 5 L 10 0 L 10 10 Z',
-            strokeWidth: 0
+            attributes: {
+                // reverse triangle (used as an arrow)
+                d: 'M 0 5 L 10 0 L 10 10 Z',
+                'stroke-width': 0
+            }
         }]
     }
 };
 
 SVGRenderer.prototype.addMarker = function (
     id: string,
-    markerOptions: SVGAttributes
+    markerOptions: Highcharts.ASTNode
 ): SVGElement {
-    var options: Highcharts.SVGDefinitionObject = { id: id } as any;
+    var options: Highcharts.ASTNode = { attributes: { id } };
 
     var attrs: SVGAttributes = {
-        stroke: markerOptions.color || 'none',
-        fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
+        stroke: (markerOptions as any).color || 'none',
+        fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
     };
 
-    options.children = markerOptions.children.map(function (
-        child: Highcharts.SVGDefinitionObject
-    ): Highcharts.SVGDefinitionObject {
+    options.children = markerOptions.children?.map(function (
+        child: Highcharts.ASTNode
+    ): Highcharts.ASTNode {
         return merge(attrs, child);
     });
 
-    var marker = this.definition(merge(true, {
-        markerWidth: 20,
-        markerHeight: 20,
-        refX: 0,
-        refY: 0,
-        orient: 'auto'
-    }, markerOptions, options));
+    const ast = merge(true, {
+        attributes: {
+            markerWidth: 20,
+            markerHeight: 20,
+            refX: 0,
+            refY: 0,
+            orient: 'auto'
+        }
+    }, markerOptions, options);
+
+    var marker = this.definition(ast);
 
     marker.id = id;
 
@@ -194,7 +204,12 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                         def = defs[key];
 
                         if (
-                            markerId === def.id &&
+                            (
+                                markerId === def.attributes?.id ||
+                                // Legacy, for
+                                // unit-tests/annotations/annotations-shapes
+                                markerId === (def as any).id
+                            ) &&
                             def.tagName === 'marker'
                         ) {
                             predefinedMarker = def;
@@ -206,11 +221,11 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                         marker = item[markerType] = chart.renderer
                             .addMarker(
                                 (itemOptions.id || uniqueKey()) + '-' +
-                                predefinedMarker.id,
+                                markerId,
                                 merge(predefinedMarker, { color: color })
                             );
 
-                        item.attr(markerType, marker.attr('id'));
+                        item.attr(markerType, marker.getAttribute('id'));
                     }
                 }
             };
@@ -222,11 +237,17 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
 addEvent(Chart, 'afterGetContainer', function (): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    objectEach(this.options.defs, function (def): void {
-        if (def.tagName === 'marker' && def.render !== false) {
-            this.renderer.addMarker(def.id as any, def);
-        }
-    }, this);
+    // objectEach(this.options.defs, function (def): void {
+    //     const attributes = def.attributes;
+    //     if (
+    //         def.tagName === 'marker' &&
+    //         attributes &&
+    //         attributes.id &&
+    //         attributes.display !== 'none'
+    //     ) {
+    //         this.renderer.addMarker(attributes.id, def);
+    //     }
+    // }, this);
 });
 
 export default markerMixin;

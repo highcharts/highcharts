@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -14,7 +14,7 @@
  *
  * */
 
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from './Series';
 
 /* *
  *
@@ -47,11 +47,11 @@ export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype
 /**
  * Helper interface to add series types to `SeriesOptionsType` and `SeriesType`.
  *
- * Use the `declare module 'Types'` pattern to overload the interface in this
- * definition file.
+ * Use the `declare module 'SeriesType'` pattern to overload the interface in
+ * this definition file.
  */
 export interface SeriesTypeRegistry {
-    [key: string]: typeof LineSeries;
+    [key: string]: typeof Series;
 }
 
 export default SeriesType;

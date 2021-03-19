@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Place desriptions on a series and its points.
  *
@@ -13,9 +13,9 @@
 'use strict';
 
 import type { DOMElementType } from '../../../Core/Renderer/DOMElementType';
-import type LineSeries from '../../../Series/Line/LineSeries';
 import type Point from '../../../Core/Series/Point';
 import type PositionObject from '../../../Core/Renderer/PositionObject';
+import type Series from '../../../Core/Series/Series';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import AnnotationsA11y from '../AnnotationsA11y.js';
 const {
@@ -30,7 +30,6 @@ const {
 } = ChartUtilities;
 import HTMLUtilities from '../../Utils/HTMLUtilities.js';
 const {
-    escapeStringForHTML,
     reverseChildNodes,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
@@ -60,6 +59,7 @@ declare global {
     namespace Highcharts {
         interface AccessibilityPoint {
             accessibility?: AccessibilityPointStateObject;
+            value?: (number|null);
         }
         interface AccessibilityPointStateObject {
             valueDescription?: string;
@@ -234,7 +234,7 @@ function shouldDescribeSeriesElement(
     series: Highcharts.AccessibilitySeries
 ): boolean {
     var chart = series.chart,
-        chartOptions = chart.options.chart || {},
+        chartOptions = chart.options.chart,
         chartHas3d = chartOptions.options3d && chartOptions.options3d.enabled,
         hasMultipleSeries = chart.series.length > 1,
         describeSingleSeriesOption =
@@ -307,7 +307,7 @@ function getSeriesDescriptionText(
  * @return {string}
  */
 function getSeriesAxisDescriptionText(
-    series: LineSeries,
+    series: Series,
     axisCollection: string
 ): string {
     var axis: Highcharts.Axis = (series as any)[axisCollection];
@@ -424,7 +424,7 @@ function getPointValue(
         valueSuffix = a11yPointOpts.valueSuffix ||
             tooltipOptions.valueSuffix || '',
         fallbackKey: ('value'|'y') = (
-            typeof (point as Highcharts.PackedBubblePoint).value !==
+            typeof point.value !==
             'undefined' ?
                 'value' : 'y'
         ),
@@ -532,14 +532,12 @@ function setPointScreenReaderAttribs(
     var series = point.series,
         a11yPointOptions = series.chart.options.accessibility.point || {},
         seriesA11yOptions = series.options.accessibility || {},
-        label = escapeStringForHTML(
-            stripHTMLTags(
-                seriesA11yOptions.pointDescriptionFormatter &&
-                seriesA11yOptions.pointDescriptionFormatter(point) ||
-                a11yPointOptions.descriptionFormatter &&
-                a11yPointOptions.descriptionFormatter(point) ||
-                defaultPointDescriptionFormatter(point)
-            )
+        label = stripHTMLTags(
+            seriesA11yOptions.pointDescriptionFormatter &&
+            seriesA11yOptions.pointDescriptionFormatter(point) ||
+            a11yPointOptions.descriptionFormatter &&
+            a11yPointOptions.descriptionFormatter(point) ||
+            defaultPointDescriptionFormatter(point)
         );
 
     pointElement.setAttribute('role', 'img');
@@ -560,8 +558,9 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
         series.points.forEach(function (
             point: Highcharts.AccessibilityPoint
         ): void {
-            var pointEl = point.graphic && point.graphic.element ||
+            const pointEl = point.graphic && point.graphic.element ||
                     shouldAddDummyPoint(point) && addDummyPointElement(point);
+            const pointA11yDisabled = point.options?.accessibility?.enabled === false;
 
             if (pointEl) {
                 // We always set tabindex, as long as we are setting props.
@@ -570,7 +569,7 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
                 pointEl.setAttribute('tabindex', '-1');
                 pointEl.style.outline = '0';
 
-                if (setScreenReaderProps) {
+                if (setScreenReaderProps && !pointA11yDisabled) {
                     setPointScreenReaderAttribs(point, pointEl);
                 } else {
                     pointEl.setAttribute('aria-hidden', true);
@@ -648,12 +647,10 @@ function describeSeriesElement(
     seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
     seriesElement.setAttribute(
         'aria-label',
-        escapeStringForHTML(
-            stripHTMLTags(
-                (a11yOptions.series as any).descriptionFormatter &&
-                (a11yOptions.series as any).descriptionFormatter(series) ||
-                defaultSeriesDescriptionFormatter(series)
-            )
+        stripHTMLTags(
+            (a11yOptions.series as any).descriptionFormatter &&
+            (a11yOptions.series as any).descriptionFormatter(series) ||
+            defaultSeriesDescriptionFormatter(series)
         )
     );
 }

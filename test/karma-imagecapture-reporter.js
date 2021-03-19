@@ -28,25 +28,6 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
     } = config;
 
     /**
-     * Basic pretty-print SVG, each tag on a new line.
-     * @param  {String} svg The SVG
-     * @return {String}     Pretty SVG
-     */
-    function prettyXML(svg) {
-        svg = svg
-            .replace(/>/g, '>\n')
-
-            // Don't introduce newlines inside tspans or links, it will make the text
-            // render differently
-            .replace(/<tspan([^>]*)>\n/g, '<tspan$1>')
-            .replace(/<\/tspan>\n/g, '</tspan>')
-            .replace(/<a([^>]*)>\n/g, '<a$1>')
-            .replace(/<\/a>\n/g, '</a>');
-
-        return svg;
-    }
-
-    /**
      * Create an animated gif of the reference and the candidata image, in order to
      * see the differences.
      * @param  {String} filename
@@ -158,7 +139,7 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         try {
             if (/\.svg$/.test(filename)) {
                 pendingFileWritings++;
-                fs.writeFile(filename, prettyXML(data), err => {
+                fs.writeFile(filename, data, err => {
                     if (err) {
                         throw err;
                     }

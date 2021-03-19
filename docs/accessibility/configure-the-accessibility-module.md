@@ -1,9 +1,10 @@
-Configuring the accessibility module
+Advanced accessibility configuration
 ===
 
 The Accessibility module is highly configurable. While the goal of the module is to provide the most accessible charts possible out of the box, it can sometimes be advantageous or necessary to make changes to the configuration.
 
 The most important configuration for the module is the text description. Read more about [configuring the chart description](https://www.highcharts.com/docs/accessibility/accessibility-module#describing-your-chart) here. 
+
 
 Configuration of screen reader behavior
 ---------------------------------------

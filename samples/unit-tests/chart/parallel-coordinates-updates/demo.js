@@ -6,22 +6,31 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
                     tickAmount: 2
                 }
             },
-            yAxis: [{
-                reversed: true
-            }, {
-                reversed: false
-            }, {
-                type: 'category'
-            }, {
-                type: 'datetime'
-            }, {
-                type: 'logarithmic'
-            }],
-            series: [{
-                data: [1, 2, 3, 1, 10000, 3, 1, 2, 3, 1000]
-            }, {
-                data: [5, 10, 12, 3, 0.5, 5, -20, 1000, 9, 10]
-            }]
+            yAxis: [
+                {
+                    reversed: true
+                },
+                {
+                    reversed: false
+                },
+                {
+                    type: 'category'
+                },
+                {
+                    type: 'datetime'
+                },
+                {
+                    type: 'logarithmic'
+                }
+            ],
+            series: [
+                {
+                    data: [1, 2, 3, 1, 10000, 3, 1, 2, 3, 1000]
+                },
+                {
+                    data: [5, 10, 12, 3, 0.5, 5, -20, 1000, 9, 10]
+                }
+            ]
         }),
         yAxisMax;
 
@@ -38,7 +47,6 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
         'Number of tick positions changed properly.'
     );
 
-
     chart.series[0].update({
         color: 'red'
     });
@@ -47,7 +55,6 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
         'red',
         'Series updated without issues.'
     );
-
 
     chart.yAxis[3].update({
         title: {
@@ -111,19 +118,25 @@ QUnit.test('Update parallel coordinates plot', function (assert) {
         chart: {
             parallelCoordinates: true
         },
-        series: [{
-            data: [1012518000000, 5, 2311020, 0, 462180, 1, 0]
-        }, {
-            data: [1012690800000, 5, 2464980, 0, 493020.00000000006, 1, 0]
-        }]
+        series: [
+            {
+                data: [1012518000000, 5, 2311020, 0, 462180, 1, 0]
+            },
+            {
+                data: [1012690800000, 5, 2464980, 0, 493020.00000000006, 1, 0]
+            }
+        ]
     });
 
     chart.update({
-        series: [{
-            data: [1012518000000, 5, 2311020, 0]
-        }, {
-            data: [1012690800000, 5, 2464980, 0]
-        }]
+        series: [
+            {
+                data: [1012518000000, 5, 2311020, 0]
+            },
+            {
+                data: [1012690800000, 5, 2464980, 0]
+            }
+        ]
     });
 
     assert.strictEqual(

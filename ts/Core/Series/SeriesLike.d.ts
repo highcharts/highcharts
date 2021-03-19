@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,6 +16,7 @@
 
 import type PointLike from './PointLike';
 import type SeriesOptions from './SeriesOptions';
+import type { StatesOptionsKey } from './StatesOptions';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 
 /* *
@@ -40,11 +41,14 @@ export interface SeriesLike {
     linkedParent?: SeriesLike;
     linkedSeries: Array<SeriesLike>;
     markerGroup?: SVGElement;
+    name: string;
     opacity?: number;
     options: SeriesOptions;
     points: Array<PointLike>;
+    state?: StatesOptionsKey;
+    type: string;
     userOptions: DeepPartial<SeriesOptions>;
-    drawGraph(): void;
+    visible: boolean;
     render(): void;
     translate(): void;
     update(options: DeepPartial<SeriesOptions>): void;

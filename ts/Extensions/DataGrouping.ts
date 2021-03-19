@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,13 +19,14 @@ import type {
     SeriesTypeOptions,
     SeriesTypePlotOptions
 } from '../Core/Series/SeriesType';
+import type TimeTicksInfoObject from '../Core/Axis/TimeTicksInfoObject';
 import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
-const { prototype: seriesProto } = LineSeries;
 import O from '../Core/Options.js';
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
+const { prototype: seriesProto } = Series;
 import Tooltip from '../Core/Tooltip.js';
 import U from '../Core/Utilities.js';
 const {
@@ -42,11 +43,16 @@ const {
     pick
 } = U;
 
+declare module '../Core/Axis/TimeTicksInfoObject' {
+    interface TimeTicksInfoObject {
+        gapSize?: number;
+    }
+}
 
 declare module '../Core/Series/SeriesLike' {
     interface SeriesLike {
         cropStart?: number;
-        currentDataGrouping?: Highcharts.TimeTicksInfoObject;
+        currentDataGrouping?: TimeTicksInfoObject;
         dataGroupInfo?: Highcharts.DataGroupingInfoObject;
         forceCrop?: boolean;
         groupedData?: (Array<Point>|null);
@@ -90,7 +96,7 @@ declare global {
             hasNulls?: boolean;
         }
         interface DataGroupingApproximationsDictionary
-            extends Dictionary<(Function|undefined)>
+            extends Record<string, (Function|undefined)>
         {
             average: (
                 arr: DataGroupingApproximationsArray
@@ -126,7 +132,7 @@ declare global {
         }
         interface DataGroupingFunctionsObject {
             approximations: DataGroupingApproximationsDictionary;
-            groupData: LineSeries['groupData'];
+            groupData: Series['groupData'];
         }
         interface DataGroupingInfoObject {
             length?: number;
@@ -135,7 +141,7 @@ declare global {
         }
         interface DataGroupingOptionsObject {
             approximation?: (DataGroupingApproximationValue|Function);
-            dateTimeLabelFormats?: Dictionary<Array<string>>;
+            dateTimeLabelFormats?: Record<string, Array<string>>;
             enabled?: boolean;
             forced?: boolean;
             groupAll?: boolean;
@@ -150,9 +156,6 @@ declare global {
                 Array<Array<(number|null|undefined)>>
             );
             groupMap: Array<DataGroupingInfoObject>;
-        }
-        interface TimeTicksInfoObject {
-            gapSize?: number;
         }
         let approximations: DataGroupingApproximationsDictionary;
         let dataGrouping: DataGroupingFunctionsObject;
@@ -323,7 +326,7 @@ H.approximations = {
 };
 
 const groupData = function (
-    this: LineSeries,
+    this: Series,
     xData: Array<number>,
     yData: (
         Array<(number|null|undefined)>|
@@ -350,6 +353,7 @@ const groupData = function (
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
         extendedPointArrayMap = ['x'].concat(pointArrayMap || ['y']),
+        groupAll = this.options.dataGrouping && this.options.dataGrouping.groupAll,
         pos = 0,
         start = 0,
         valuesLen,
@@ -405,7 +409,7 @@ const groupData = function (
             // get group x and y
             pointX = groupPositions[pos];
             series.dataGroupInfo = {
-                start: (series.cropStart as any) + start,
+                start: groupAll ? start : ((series.cropStart as any) + start),
                 length: values[0].length
             };
             groupedY = approximationFn.apply(series, values);
@@ -466,7 +470,7 @@ const groupData = function (
         // for this specific group
         if (pointArrayMap) {
 
-            var index = (series.cropStart as any) + i,
+            var index = series.options.dataGrouping?.groupAll ? i : (series.cropStart as any) + i,
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
@@ -658,7 +662,7 @@ seriesProto.processData = function (): any {
         groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
             pick(dataGroupingOptions.enabled, chart.options.isStock),
         visible = (
-            series.visible || !(chart.options.chart as any).ignoreHiddenSeries
+            series.visible || !chart.options.chart.ignoreHiddenSeries
         ),
         hasGroupedData,
         skip,
@@ -707,7 +711,11 @@ seriesProto.processData = function (): any {
 
         // Execute grouping if the amount of points is greater than the limit
         // defined in groupPixelWidth
-        if (groupPixelWidth) {
+        if (
+            groupPixelWidth &&
+            processedXData &&
+            processedXData.length
+        ) {
             hasGroupedData = true;
 
             // Force recreation of point instances in series.translate, #5699
@@ -732,21 +740,19 @@ seriesProto.processData = function (): any {
                         defaultDataGroupingUnits
                     ),
                     // Processed data may extend beyond axis (#4907)
-                    Math.min(xMin, (processedXData as any)[0]),
+                    Math.min(xMin, processedXData[0]),
                     Math.max(
                         xMax,
-                        (processedXData as any)[
-                            (processedXData as any).length - 1
-                        ]
+                        processedXData[processedXData.length - 1]
                     ),
-                    xAxis.options.startOfWeek as any,
-                    processedXData as any,
-                    series.closestPointRange as any
+                    xAxis.options.startOfWeek,
+                    processedXData,
+                    series.closestPointRange
                 ),
                 groupedData = seriesProto.groupData.apply(
                     series,
                     [
-                        processedXData as any,
+                        processedXData,
                         processedYData as any,
                         groupPositions,
                         (dataGroupingOptions as any).approximation
@@ -884,20 +890,20 @@ addEvent(Point, 'update', function (): (boolean|undefined) {
 // range.
 addEvent(Tooltip, 'headerFormatter', function (
     this: Highcharts.Tooltip,
-    e: Record<string, any>
+    e: AnyRecord
 ): void {
     var tooltip = this,
         chart = this.chart,
         time = chart.time,
         labelConfig = e.labelConfig,
-        series = labelConfig.series as LineSeries,
+        series = labelConfig.series as Series,
         options = series.options,
         tooltipOptions = series.tooltipOptions,
         dataGroupingOptions = options.dataGrouping,
         xDateFormat = tooltipOptions.xDateFormat,
         xDateFormatEnd,
         xAxis = series.xAxis,
-        currentDataGrouping: (Highcharts.TimeTicksInfoObject|undefined),
+        currentDataGrouping: (TimeTicksInfoObject|undefined),
         dateTimeLabelFormats,
         labelFormats,
         formattedKey,
@@ -970,12 +976,12 @@ addEvent(Tooltip, 'headerFormatter', function (
 });
 
 // Destroy grouped data on series destroy
-addEvent(LineSeries, 'destroy', seriesProto.destroyGroupedData);
+addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 
 
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
-addEvent(LineSeries, 'afterSetOptions', function (
+addEvent(Series, 'afterSetOptions', function (
     e: { options: SeriesTypeOptions }
 ): void {
 
@@ -1185,6 +1191,8 @@ export default dataGrouping;
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-approximation
  *         Approximation callback with custom data
+ * @sample {highstock} stock/plotoptions/series-datagrouping-simple-approximation
+ *         Simple approximation demo
  *
  * @type       {Highcharts.DataGroupingApproximationValue|Function}
  * @apioption  plotOptions.series.dataGrouping.approximation

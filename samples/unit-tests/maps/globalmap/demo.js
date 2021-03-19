@@ -1,5 +1,5 @@
 QUnit.test('Set basemap on chart object', function (assert) {
-    var chart = new Highcharts.Map('container', {
+    var chart = new Highcharts.MapChart('container', {
         chart: {
             map: 'countries/ad/ad-all'
         },
@@ -11,7 +11,7 @@ QUnit.test('Set basemap on chart object', function (assert) {
         'Set map on chart object by string'
     );
 
-    chart = new Highcharts.Map('container', {
+    chart = new Highcharts.MapChart('container', {
         chart: {
             map: Highcharts.maps['countries/ad/ad-all']
         },
@@ -23,13 +23,15 @@ QUnit.test('Set basemap on chart object', function (assert) {
         'Set map on chart object by GeoJSON object'
     );
 
-    chart = new Highcharts.Map('container', {
+    chart = new Highcharts.MapChart('container', {
         chart: {
             map: 'invalid-map'
         },
-        series: [{
-            mapData: Highcharts.maps['countries/ad/ad-all']
-        }]
+        series: [
+            {
+                mapData: Highcharts.maps['countries/ad/ad-all']
+            }
+        ]
     });
     assert.strictEqual(
         chart.series[0].mapData.length,

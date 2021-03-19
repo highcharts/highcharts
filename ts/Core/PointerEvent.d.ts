@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -31,6 +31,8 @@ export interface PointerEvent extends globalThis.PointerEvent {
     chartY: number;
     point?: Point;
     touches?: Array<Touch>;
+    xAxis?: Array<Highcharts.PointerAxisCoordinateObject>;
+    yAxis?: Array<Highcharts.PointerAxisCoordinateObject>;
 }
 
 /* *

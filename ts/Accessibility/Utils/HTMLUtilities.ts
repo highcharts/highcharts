@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Utility functions for accessibility module.
  *
@@ -118,6 +118,62 @@ function getFakeMouseEvent(type: string): MouseEvent {
 
 
 /**
+ * Get an appropriate heading level for an element. Corresponds to the
+ * heading level below the previous heading in the DOM.
+ *
+ * Note: Only detects previous headings in the DOM that are siblings,
+ * ancestors, or previous siblings of ancestors. Headings that are nested below
+ * siblings of ancestors (cousins et.al) are not picked up. This is because it
+ * is ambiguous whether or not the nesting is for layout purposes or indicates a
+ * separate section.
+ *
+ * @private
+ * @param {Highcharts.HTMLDOMElement} [element]
+ * @return {string} The heading tag name (h1, h2 etc).
+ * If no nearest heading is found, "p" is returned.
+ */
+function getHeadingTagNameForElement(element: HTMLDOMElement): string {
+    const getIncreasedHeadingLevel = (tagName: string): string => {
+        const headingLevel = parseInt(tagName.slice(1), 10);
+        const newLevel = Math.min(6, headingLevel + 1);
+        return 'h' + newLevel;
+    };
+
+    const isHeading = (tagName: string): boolean => /H[1-6]/.test(tagName);
+
+    const getPreviousSiblingsHeading = (el: HTMLDOMElement): string => {
+        let sibling: ChildNode|null = el;
+        while (sibling = sibling.previousSibling) { // eslint-disable-line
+            const tagName = (sibling as HTMLDOMElement).tagName || '';
+            if (isHeading(tagName)) {
+                return tagName;
+            }
+        }
+        return '';
+    };
+
+    const getHeadingRecursive = (el: HTMLDOMElement): string => {
+        const prevSiblingsHeading = getPreviousSiblingsHeading(el);
+        if (prevSiblingsHeading) {
+            return getIncreasedHeadingLevel(prevSiblingsHeading);
+        }
+        // No previous siblings are headings, try parent node
+        const parent = el.parentElement;
+        if (!parent) {
+            return 'p';
+        }
+        const parentTagName = parent.tagName;
+        if (isHeading(parentTagName)) {
+            return getIncreasedHeadingLevel(parentTagName);
+        }
+        return getHeadingRecursive(parent);
+    };
+
+    return getHeadingRecursive(element);
+}
+
+
+/**
  * Remove an element from the DOM.
  * @private
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} [element]
@@ -156,12 +212,11 @@ function setElAttrs(
     attrs: (HTMLAttributes|SVGAttributes)
 ): void {
     Object.keys(attrs).forEach(function (attr: string): void {
-        var val = attrs[attr];
+        var val = (attrs as any)[attr];
         if (val === null) {
             el.removeAttribute(attr);
         } else {
-            var cleanedVal = escapeStringForHTML('' + val);
-            el.setAttribute(attr, cleanedVal);
+            el.setAttribute(attr, val);
         }
     });
 }
@@ -205,15 +260,16 @@ function visuallyHideElement(element: HTMLDOMElement): void {
 
 
 var HTMLUtilities = {
-    addClass: addClass,
-    escapeStringForHTML: escapeStringForHTML,
-    getElement: getElement,
-    getFakeMouseEvent: getFakeMouseEvent,
-    removeElement: removeElement,
-    reverseChildNodes: reverseChildNodes,
-    setElAttrs: setElAttrs,
-    stripHTMLTagsFromString: stripHTMLTagsFromString,
-    visuallyHideElement: visuallyHideElement
+    addClass,
+    escapeStringForHTML,
+    getElement,
+    getFakeMouseEvent,
+    getHeadingTagNameForElement,
+    removeElement,
+    reverseChildNodes,
+    setElAttrs,
+    stripHTMLTagsFromString,
+    visuallyHideElement
 };
 
 export default HTMLUtilities;

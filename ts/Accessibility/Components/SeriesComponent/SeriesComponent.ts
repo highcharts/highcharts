@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component for series and points.
  *
@@ -12,7 +12,7 @@
 
 'use strict';
 
-import type LineSeries from '../../../Series/Line/LineSeries';
+import type Series from '../../../Core/Series/Series';
 import H from '../../../Core/Globals.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend;
@@ -118,7 +118,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
             this.chart as any,
             'afterDrawSeriesLabels',
             function (): void {
-                this.series.forEach(function (series: LineSeries): void {
+                this.series.forEach(function (series: Series): void {
                     if (series.labelBySeries) {
                         series.labelBySeries.attr('aria-hidden', true as any);
                     }

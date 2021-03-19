@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility module for Highcharts
  *
@@ -20,12 +20,12 @@ const {
     doc
 } = H;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import O from '../Core/Options.js';
 const {
     defaultOptions
 } = O;
 import Point from '../Core/Series/Point.js';
+import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -79,12 +79,13 @@ declare global {
         interface AccessibilityPoint extends Point {
             series: AccessibilitySeries;
         }
-        interface AccessibilitySeries extends LineSeries {
+        interface AccessibilitySeries extends Series {
             chart: AccessibilityChart;
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
         }
         let A11yChartUtilities: A11yChartUtilities;
+        let A11yHTMLUtilities: typeof HTMLUtilities;
     }
 }
 
@@ -102,6 +103,7 @@ import highContrastTheme from './HighContrastTheme.js';
 import defaultOptionsA11Y from './Options/Options.js';
 import defaultLangOptions from './Options/LangOptions.js';
 import copyDeprecatedOptions from './Options/DeprecatedOptions.js';
+import HTMLUtilities from './Utils/HTMLUtilities.js';
 import './A11yI18n.js';
 import './FocusBorder.js';
 
@@ -122,9 +124,9 @@ merge(
 
 // Expose functionality on Highcharts namespace
 H.A11yChartUtilities = ChartUtilities;
+H.A11yHTMLUtilities = HTMLUtilities;
 H.KeyboardNavigationHandler = KeyboardNavigationHandler as any;
 H.AccessibilityComponent = AccessibilityComponent as any;
-
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -307,7 +309,7 @@ Accessibility.prototype = {
      * @private
      */
     getChartTypes: function (this: Highcharts.Accessibility): Array<string> {
-        var types: Highcharts.Dictionary<number> = {};
+        var types: Record<string, number> = {};
         this.chart.series.forEach(function (series): void {
             types[series.type] = 1;
         });
@@ -396,7 +398,7 @@ addEvent(Point, 'update', function (): void {
     });
 });
 ['update', 'updatedData', 'remove'].forEach(function (event: string): void {
-    addEvent(LineSeries, event, function (): void {
+    addEvent(Series, event, function (): void {
         if (this.chart.accessibility) {
             this.chart.a11yDirty = true;
         }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Accessibility component class definition
  *
@@ -53,7 +53,7 @@ declare global {
             public chart: AccessibilityChart;
             public domElementProvider: DOMElementProvider;
             public eventProvider: EventProvider;
-            public keyCodes: Dictionary<number>;
+            public keyCodes: Record<string, number>;
             public addEvent: EventProvider['addEvent'];
             public createElement: DOMElementProvider['createElement'];
             public addProxyGroup(attrs?: HTMLAttributes): HTMLDOMElement;
@@ -342,8 +342,8 @@ AccessibilityComponent.prototype = {
             }, attributes);
 
         Object.keys(attrs).forEach(function (prop: string): void {
-            if (attrs[prop] !== null) {
-                proxy.setAttribute(prop, attrs[prop]);
+            if ((attrs as any)[prop] !== null) {
+                proxy.setAttribute(prop, (attrs as any)[prop]);
             }
         });
 
@@ -471,8 +471,13 @@ AccessibilityComponent.prototype = {
                 }
 
                 e.stopPropagation();
-                e.preventDefault();
-            });
+
+                // #9682, #15318: Touch scrolling didnt work when touching a
+                // component
+                if (evtType !== 'touchstart' && evtType !== 'touchmove' && evtType !== 'touchend') {
+                    e.preventDefault();
+                }
+            }, { passive: false });
         });
     },
 

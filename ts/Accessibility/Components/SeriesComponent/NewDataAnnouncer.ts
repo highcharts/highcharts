@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Handle announcing new data for a chart.
  *
@@ -15,7 +15,7 @@
 import type Chart from '../../../Core/Chart/Chart';
 import type Point from '../../../Core/Series/Point';
 import H from '../../../Core/Globals.js';
-import LineSeries from '../../../Series/Line/LineSeries.js';
+import Series from '../../../Core/Series/Series.js';
 import U from '../../../Core/Utilities.js';
 var extend = U.extend,
     defined = U.defined;
@@ -53,30 +53,30 @@ declare global {
             public addEventListeners(): void;
             public announceDirtyData(): void;
             public buildAnnouncementMessage(
-                dirtySeries: Array<LineSeries>,
-                newSeries?: LineSeries,
+                dirtySeries: Array<Series>,
+                newSeries?: Series,
                 newPoint?: Point
-            ): string;
+            ): string|null;
             public destroy(): void;
             public init(): void;
             public onPointAdded(point: Point): void;
-            public onSeriesAdded(series: LineSeries): void;
-            public onSeriesUpdatedData(series: LineSeries): void;
+            public onSeriesAdded(series: Series): void;
+            public onSeriesUpdatedData(series: Series): void;
             public queueAnnouncement(
-                dirtySeries: Array<LineSeries>,
-                newSeries?: LineSeries,
+                dirtySeries: Array<Series>,
+                newSeries?: Series,
                 newPoint?: Point
             ): void;
         }
         interface NewDataAnnouncerDirtyObject {
-            allSeries: Dictionary<LineSeries>;
+            allSeries: Record<string, Series>;
             hasDirty?: boolean;
             newPoint?: Point;
-            newSeries?: LineSeries;
+            newSeries?: Series;
         }
         interface NewDataAnnouncerQueuedAnnouncementObject {
             message: string;
-            series: Array<LineSeries>;
+            series: Array<Series>;
             time: number;
         }
     }
@@ -114,21 +114,21 @@ function findPointInDataArray(
  * @private
  */
 function getUniqueSeries(
-    arrayA?: Array<LineSeries>,
-    arrayB?: Array<LineSeries>
-): Array<LineSeries> {
+    arrayA?: Array<Series>,
+    arrayB?: Array<Series>
+): Array<Series> {
     var uniqueSeries = (arrayA || []).concat(arrayB || [])
         .reduce(function (
-            acc: Highcharts.Dictionary<LineSeries>,
-            cur: LineSeries
-        ): Highcharts.Dictionary<LineSeries> {
+            acc: Record<string, Series>,
+            cur: Series
+        ): Record<string, Series> {
             acc[cur.name + cur.index] = cur;
             return acc;
         }, {});
 
     return Object.keys(uniqueSeries).map(function (
         ix: string
-    ): LineSeries {
+    ): Series {
         return uniqueSeries[ix];
     });
 }
@@ -189,17 +189,17 @@ extend(NewDataAnnouncer.prototype, {
             announcer.lastAnnouncementTime = 0;
         });
 
-        e.addEvent(LineSeries, 'updatedData', function (): void {
+        e.addEvent(Series, 'updatedData', function (): void {
             announcer.onSeriesUpdatedData(this);
         });
 
         e.addEvent(chart, 'afterAddSeries', function (
-            e: { series: LineSeries }
+            e: { series: Series }
         ): void {
             announcer.onSeriesAdded(e.series);
         });
 
-        e.addEvent(LineSeries, 'addPoint', function (
+        e.addEvent(Series, 'addPoint', function (
             e: { point: Point }
         ): void {
             announcer.onPointAdded(e.point);
@@ -218,7 +218,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     onSeriesUpdatedData: function (
         this: Highcharts.NewDataAnnouncer,
-        series: LineSeries
+        series: Series
     ): void {
         var chart = this.chart;
 
@@ -236,7 +236,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     onSeriesAdded: function (
         this: Highcharts.NewDataAnnouncer,
-        series: LineSeries
+        series: Series
     ): void {
         if (chartHasAnnounceEnabled(this.chart)) {
             this.dirty.hasDirty = true;
@@ -291,7 +291,7 @@ extend(NewDataAnnouncer.prototype, {
             this.queueAnnouncement(
                 Object.keys(this.dirty.allSeries).map(function (
                     ix: string
-                ): LineSeries {
+                ): Series {
                     return announcer.dirty.allSeries[ix];
                 }),
                 this.dirty.newSeries,
@@ -318,8 +318,8 @@ extend(NewDataAnnouncer.prototype, {
      */
     queueAnnouncement: function (
         this: Highcharts.NewDataAnnouncer,
-        dirtySeries: Array<LineSeries>,
-        newSeries?: LineSeries,
+        dirtySeries: Array<Series>,
+        newSeries?: Series,
         newPoint?: Point
     ): void {
         const chart = this.chart;
@@ -388,7 +388,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     buildAnnouncementMessage: function (
         this: Highcharts.NewDataAnnouncer,
-        dirtySeries: Array<LineSeries>,
+        dirtySeries: Array<Series>,
         newSeries?: Highcharts.AccessibilitySeries,
         newPoint?: Highcharts.AccessibilityPoint
     ): (string|null) {

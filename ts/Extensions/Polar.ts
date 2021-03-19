@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,13 +26,13 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
-import BaseSeries from '../Core/Series/Series.js';
-const { seriesTypes } = BaseSeries;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
-import LineSeries from '../Series/Line/LineSeries.js';
 import Pane from './Pane.js';
 import Pointer from '../Core/Pointer.js';
+import Series from '../Core/Series/Series.js';
+import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -100,7 +100,7 @@ declare global {
             rectPlotY: number;
             series: PolarSeries;
         }
-        interface PolarSeries extends LineSeries {
+        interface PolarSeries extends Series {
             startAngleRad: number;
             clipCircle: SVGElement;
             connectEnds?: boolean;
@@ -116,7 +116,7 @@ declare global {
             searchPoint: (
                 PolarSeries['kdByAngle'] extends true ?
                     PolarSeries['searchPointByAngle'] :
-                    LineSeries['searchPoint']
+                    Series['searchPoint']
             );
             xAxis: RadialAxis;
             yAxis: RadialAxis;
@@ -154,7 +154,7 @@ declare global {
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-var seriesProto = LineSeries.prototype as Highcharts.PolarSeries,
+var seriesProto = Series.prototype as Highcharts.PolarSeries,
     pointerProto = Pointer.prototype,
     columnProto: Highcharts.PolarSeries,
     arearangeProto: Highcharts.AreaRangeSeries;
@@ -357,7 +357,7 @@ if (seriesTypes.spline) {
      * @private
      */
     wrap(
-        seriesTypes.spline.prototype as Highcharts.SplineSeries,
+        seriesTypes.spline.prototype,
         'getPointSpline',
         function (
             this: Highcharts.PolarSeries,
@@ -400,12 +400,7 @@ if (seriesTypes.spline) {
     // #6430 Areasplinerange series use unwrapped getPointSpline method, so
     // we need to set this method again.
     if (seriesTypes.areasplinerange) {
-        (
-            seriesTypes.areasplinerange.prototype as Highcharts.AreaSplineSeries
-        ).getPointSpline =
-        (
-            seriesTypes.spline.prototype as Highcharts.SplineSeries
-        ).getPointSpline;
+        seriesTypes.areasplinerange.prototype.getPointSpline = seriesTypes.spline.prototype.getPointSpline;
     }
 }
 
@@ -415,7 +410,7 @@ if (seriesTypes.spline) {
  * and (yAxis.len - plotY) is the pixel distance from center.
  * @private
  */
-addEvent(LineSeries, 'afterTranslate', function (): void {
+addEvent(Series, 'afterTranslate', function (): void {
     const series = this as Highcharts.PolarSeries;
     const chart = series.chart;
 
@@ -483,7 +478,7 @@ addEvent(LineSeries, 'afterTranslate', function (): void {
                         }
 
                         this.group.clip(this.clipCircle);
-                        this.setClip = H.noop as any;
+                        this.setClip = H.noop;
                     }
                 })
             );
@@ -496,7 +491,7 @@ addEvent(LineSeries, 'afterTranslate', function (): void {
  * closed circle in line-like series.
  * @private
  */
-wrap(seriesProto, 'getGraphPath', function (
+wrap(seriesTypes.line.prototype, 'getGraphPath', function (
     this: Highcharts.PolarSeries,
     proceed: Function,
     points: Array<Highcharts.PolarPoint>
@@ -1003,7 +998,7 @@ if (seriesTypes.column) {
                     labelPos =
                         (this as Highcharts.PolarSeries).yAxis.postTranslate(
                         // angle
-                            (shapeArgs.start + shapeArgs.end) / 2 -
+                            ((shapeArgs.start || 0) + (shapeArgs.end || 0)) / 2 -
                             (this as Highcharts.PolarSeries)
                                 .xAxis.startAngleRad,
                             // radius
@@ -1143,7 +1138,7 @@ addEvent(Chart, 'afterDrawChartBox', function (): void {
     });
 });
 
-addEvent(LineSeries, 'afterInit', function (): void {
+addEvent(Series, 'afterInit', function (): void {
     var chart = this.chart;
 
     // Add flags that identifies radial inverted series
@@ -1165,7 +1160,7 @@ wrap(Chart.prototype, 'get', function (
     proceed: Function,
     id: string
 ): boolean {
-    return find(this.pane as any, function (pane: Highcharts.Pane): boolean {
+    return find(this.pane || [], function (pane: Highcharts.Pane): boolean {
         return (pane.options as any).id === id;
     }) || proceed.call(this, id);
 });

@@ -243,7 +243,7 @@ function straight(
  *         renderer, as well as an array of new obstacles making up this
  *         path.
  */
-const simpleConnect = extend(function (
+const simpleConnect = function (
     start: PositionObject,
     end: PositionObject,
     options: any
@@ -277,8 +277,8 @@ const simpleConnect = extend(function (
         to: any,
         toKey?: string,
         offset?: number
-    ): Highcharts.Dictionary<number> {
-        var point: Highcharts.Dictionary<number> = {
+    ): Record<string, number> {
+        var point: Record<string, number> = {
             x: from.x as any,
             y: from.y as any
         };
@@ -296,7 +296,7 @@ const simpleConnect = extend(function (
         obstacle: any,
         point: any,
         direction: string
-    ): Highcharts.Dictionary<number> {
+    ): Record<string, number> {
         var useMax = abs(point[direction] - obstacle[direction + 'Min']) >
                     abs(point[direction] - obstacle[direction + 'Max']);
 
@@ -384,9 +384,8 @@ const simpleConnect = extend(function (
         path: pathFromSegments(segments),
         obstacles: segments
     };
-}, {
-    requiresObstacles: true
-});
+};
+simpleConnect.requiresObstacles = true;
 
 /**
  * Find a path from a starting coordinate to an ending coordinate, taking
@@ -418,7 +417,7 @@ const simpleConnect = extend(function (
  *         renderer, as well as an array of new obstacles making up this
  *         path.
  */
-const fastAvoid = extend(function (
+const fastAvoid = function (
     start: PositionObject,
     end: PositionObject,
     options: any
@@ -588,9 +587,9 @@ const fastAvoid = extend(function (
         var softBounds = bounds.soft,
             hardBounds = bounds.hard,
             dir = dirIsX ? 'x' : 'y',
-            toPointMax: Highcharts.Dictionary<number> =
+            toPointMax: Record<string, number> =
                 { x: fromPoint.x, y: fromPoint.y },
-            toPointMin: Highcharts.Dictionary<number> =
+            toPointMin: Record<string, number> =
                 { x: fromPoint.x, y: fromPoint.y },
             minPivot,
             maxPivot,
@@ -663,7 +662,7 @@ const fastAvoid = extend(function (
             waypointUseMax,
             envelopingObstacle,
             secondEnvelopingObstacle,
-            envelopWaypoint: Highcharts.Dictionary<number>,
+            envelopWaypoint: Record<string, number>,
             obstacleMargin = options.obstacleOptions.margin,
             bounds = {
                 soft: {
@@ -898,9 +897,8 @@ const fastAvoid = extend(function (
         path: pathFromSegments(segments),
         obstacles: segments
     };
-}, {
-    requiresObstacles: true
-});
+};
+fastAvoid.requiresObstacles = true;
 
 // Define the available pathfinding algorithms.
 // Algorithms take up to 3 arguments: starting point, ending point, and an

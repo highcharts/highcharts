@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,11 +10,11 @@
 
 'use strict';
 
-import type AnimationOptionsObject from './AnimationOptionsObject';
+import type AnimationOptions from './AnimationOptions';
 import type Chart from '../Chart/Chart';
 import type CSSObject from '../Renderer/CSSObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import Fx from './Fx.js';
@@ -40,18 +40,18 @@ declare global {
         function animate(
             el: (HTMLDOMElement|SVGElement),
             params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptionsObject>
+            opt?: Partial<AnimationOptions>
         ): void;
         function animObject(
-            animation?: (boolean|AnimationOptionsObject)
-        ): AnimationOptionsObject;
+            animation?: (boolean|AnimationOptions)
+        ): AnimationOptions;
         function getDeferredAnimation(
             chart: Chart,
-            animation: Partial<AnimationOptionsObject>,
-            series?: LineSeries
-        ): Partial<AnimationOptionsObject>;
+            animation: Partial<AnimationOptions>,
+            series?: Series
+        ): Partial<AnimationOptions>;
         function setAnimation(
-            animation: (boolean|Partial<AnimationOptionsObject>|undefined),
+            animation: (boolean|Partial<AnimationOptions>|undefined),
             chart: Chart
         ): void
         function stop(el: SVGElement, prop?: string): void;
@@ -75,12 +75,12 @@ declare global {
  * so it should be moved to the SVGRenderer.
  */
 const setAnimation = H.setAnimation = function setAnimation(
-    animation: (boolean|Partial<AnimationOptionsObject>|undefined),
+    animation: (boolean|Partial<AnimationOptions>|undefined),
     chart: Chart
 ): void {
     chart.renderer.globalAnimation = pick(
         animation,
-        (chart.options.chart as any).animation,
+        chart.options.chart.animation,
         true
     );
 };
@@ -99,12 +99,12 @@ const setAnimation = H.setAnimation = function setAnimation(
  *         An object with at least a duration property.
  */
 const animObject = H.animObject = function animObject(
-    animation?: (boolean|DeepPartial<AnimationOptionsObject>)
-): AnimationOptionsObject {
+    animation?: (boolean|DeepPartial<AnimationOptions>)
+): AnimationOptions {
     return isObject(animation) ?
-        H.merge(
+        merge(
             { duration: 500, defer: 0 },
-            animation as AnimationOptionsObject
+            animation as AnimationOptions
         ) as any :
         { duration: animation as boolean ? 500 : 0, defer: 0 };
 };
@@ -129,9 +129,9 @@ const animObject = H.animObject = function animObject(
  */
 const getDeferredAnimation = H.getDeferredAnimation = function (
     chart: Chart,
-    animation: (false|DeepPartial<AnimationOptionsObject>),
-    series?: LineSeries
-): Partial<AnimationOptionsObject> {
+    animation: (false|Partial<AnimationOptions>),
+    series?: Series
+): Partial<AnimationOptions> {
 
     const labelAnimation = animObject(animation);
     const s = series ? [series] : chart.series;
@@ -180,10 +180,10 @@ const getDeferredAnimation = H.getDeferredAnimation = function (
  *
  * @return {void}
  */
-const animate = H.animate = function (
+const animate = function (
     el: (HTMLDOMElement|SVGElement),
     params: (CSSObject|SVGAttributes),
-    opt?: Partial<AnimationOptionsObject>
+    opt?: boolean|Partial<AnimationOptions>
 ): void {
     var start,
         unit = '',
@@ -212,15 +212,15 @@ const animate = H.animate = function (
         stop(el as any, prop);
 
         fx = new Fx(el as any, opt as any, prop);
-        end = null;
+        end = void 0;
 
-        if (prop === 'd' && isArray(params.d)) {
+        if ((prop as any) === 'd' && isArray((params as any).d)) {
             fx.paths = fx.initPath(
                 el as any,
                 (el as any).pathArray,
-                params.d
+                (params as any).d
             );
-            fx.toD = params.d as any;
+            fx.toD = (params as any).d;
             start = 0;
             end = 1;
         } else if ((el as any).attr) {
@@ -235,10 +235,10 @@ const animate = H.animate = function (
         if (!end) {
             end = val;
         }
-        if (end && end.match && end.match('px')) {
+        if (typeof end === 'string' && end.match('px')) {
             end = end.replace(/px/g, ''); // #4351
         }
-        fx.run(start as any, end, unit);
+        fx.run(start as any, end as any, unit);
     });
 };
 
@@ -265,12 +265,12 @@ const animate = H.animate = function (
  */
 const stop = H.stop = function (el: SVGElement, prop?: string): void {
 
-    var i = H.timers.length;
+    var i = Fx.timers.length;
 
     // Remove timers related to this element (#4519)
     while (i--) {
-        if (H.timers[i].elem === el && (!prop || prop === H.timers[i].prop)) {
-            H.timers[i].stopped = true; // #4667
+        if (Fx.timers[i].elem === el && (!prop || prop === Fx.timers[i].prop)) {
+            Fx.timers[i].stopped = true; // #4667
         }
     }
 };

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,8 +16,9 @@
 
 import type ColumnSeries from './ColumnSeries';
 import type ColumnPointOptions from './ColumnPointOptions';
-import type LinePoint from '../Line/LinePoint.js';
+import type Point from '../../Core/Series/Point.js';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
+import BBoxObject from '../../Core/Renderer/BBoxObject';
 
 /* *
  *
@@ -25,7 +26,7 @@ import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
  *
  * */
 
-export class ColumnPoint extends LinePoint {
+export class ColumnPoint extends Point {
     allowShadow?: boolean;
     barX: number;
     group?: SVGElement;
@@ -33,7 +34,6 @@ export class ColumnPoint extends LinePoint {
     options: ColumnPointOptions;
     pointWidth: number;
     series: ColumnSeries;
-    shapeType: string;
 }
 
 declare module '../../Core/Series/PointLike' {

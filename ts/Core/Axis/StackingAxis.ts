@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type LineSeries from '../../Series/Line/LineSeries';
+import type Series from '../Series/Series';
 import type StackItem from '../../Extensions/Stacking';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
@@ -21,6 +21,7 @@ const {
     addEvent,
     destroyObjectProperties,
     fireEvent,
+    isNumber,
     objectEach,
     pick
 } = U;
@@ -83,10 +84,10 @@ class StackingAxisAdditions {
         const stacking = this;
         const axis = stacking.axis;
         const axisSeries = axis.series;
-        const reversedStacks = pick(axis.options.reversedStacks, true);
+        const reversedStacks = axis.options.reversedStacks;
         const len = axisSeries.length;
 
-        let actualSeries: LineSeries,
+        let actualSeries: Series,
             i: number;
 
         if (!axis.isXAxis) {
@@ -136,22 +137,19 @@ class StackingAxisAdditions {
      * @private
      */
     public resetStacks(): void {
-        const stacking = this;
-        const axis = stacking.axis;
-        const stacks = stacking.stacks;
+        const { axis, stacks } = this;
 
         if (!axis.isXAxis) {
-            objectEach(stacks, function (
-                type: Highcharts.Dictionary<Highcharts.StackItem>
-            ): void {
-                objectEach(type, function (
-                    stack: Highcharts.StackItem,
-                    key: string
-                ): void {
+
+            objectEach(stacks, (type): void => {
+                objectEach(type, (stack, x): void => {
                     // Clean up memory after point deletion (#1044, #4320)
-                    if ((stack.touched as any) < stacking.stacksTouched) {
+                    if (
+                        isNumber(stack.touched) &&
+                        stack.touched < this.stacksTouched
+                    ) {
                         stack.destroy();
-                        delete type[key];
+                        delete type[x];
 
                     // Reset stacks
                     } else {
@@ -172,8 +170,8 @@ class StackingAxisAdditions {
         const chart = axis.chart;
         const renderer = chart.renderer;
         const stacks = stacking.stacks;
-        const stackLabelsAnim = axis.options.stackLabels.animation;
-        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim);
+        const stackLabelsAnim = axis.options.stackLabels && axis.options.stackLabels.animation;
+        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim || false);
         const stackTotalGroup = stacking.stackTotalGroup = (
             stacking.stackTotalGroup ||
             renderer
@@ -193,7 +191,7 @@ class StackingAxisAdditions {
 
         // Render each stack total
         objectEach(stacks, function (
-            type: Highcharts.Dictionary<Highcharts.StackItem>
+            type: Record<string, Highcharts.StackItem>
         ): void {
             objectEach(type, function (stack: Highcharts.StackItem): void {
                 stack.render(stackTotalGroup);

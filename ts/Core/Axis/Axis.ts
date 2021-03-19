@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type { AxisComposition, AxisLike } from './Types';
 import type { AlignValue } from '../Renderer/AlignObject';
 import type Chart from '../Chart/Chart';
@@ -18,11 +18,11 @@ import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type DashStyleValue from '../Renderer/DashStyleValue';
 import type GradientColor from '../Color/GradientColor';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type Point from '../Series/Point';
 import type PointerEvent from '../PointerEvent';
 import type PositionObject from '../Renderer/PositionObject';
+import type Series from '../Series/Series';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
@@ -33,6 +33,7 @@ const {
 } = A;
 import Color from '../Color/Color.js';
 import H from '../Globals.js';
+import palette from '../Color/Palette.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
 import Tick from './Tick.js';
@@ -45,6 +46,7 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
+    erase,
     error,
     extend,
     fireEvent,
@@ -68,7 +70,7 @@ declare module '../Series/SeriesOptions' {
     interface SeriesOptions {
         softThreshold?: boolean;
         startFromThreshold?: boolean;
-        threshold?: number;
+        threshold?: number|null;
     }
 }
 
@@ -98,18 +100,20 @@ declare global {
         }
         interface AxisLabelsFormatterCallbackFunction {
             (
-                this: AxisLabelsFormatterContextObject<number>,
-                that?: AxisLabelsFormatterContextObject<string>
+                this: AxisLabelsFormatterContextObject,
+                ctx?: AxisLabelsFormatterContextObject
             ): string;
         }
-        interface AxisLabelsFormatterContextObject<T = number> {
+        interface AxisLabelsFormatterContextObject {
             axis: Axis;
             chart: Chart;
             dateTimeLabelFormat: string;
             isFirst: boolean;
             isLast: boolean;
             pos: number;
-            value: T;
+            text?: string;
+            tick: Tick;
+            value: number|string;
         }
         interface AxisPlotLinePathOptionsObject {
             acrossPanes?: boolean;
@@ -124,7 +128,7 @@ declare global {
             (this: Axis, evt: AxisPointBreakEventObject): void;
         }
         interface AxisPointBreakEventObject {
-            brk: Dictionary<number>;
+            brk: Record<string, number>;
             point: Point;
             preventDefault: Function;
             target: SVGElement;
@@ -157,8 +161,8 @@ declare global {
             userMin: number;
         }
         interface Options {
-            xAxis?: (XAxisOptions|Array<XAxisOptions>);
-            yAxis?: (YAxisOptions|Array<YAxisOptions>);
+            xAxis?: (DeepPartial<XAxisOptions>|Array<DeepPartial<XAxisOptions>>);
+            yAxis?: (DeepPartial<YAxisOptions>|Array<DeepPartial<YAxisOptions>>);
         }
         interface XAxisAccessibilityOptions {
             description?: string;
@@ -178,7 +182,7 @@ declare global {
             format?: string;
             formatter?: XAxisCrosshairLabelFormatterCallbackFunction;
             padding?: number;
-            shape?: string;
+            shape?: SymbolKeyValue;
             style?: CSSObject;
         }
         interface XAxisCrosshairOptions {
@@ -192,9 +196,9 @@ declare global {
         }
         interface XAxisBreaksOptions {
             breakSize?: number;
-            from?: number;
+            from: number;
             repeat?: number;
-            to?: number;
+            to: number;
         }
         interface XAxisEventsOptions {
             afterBreaks?: AxisEventCallbackFunction;
@@ -205,29 +209,29 @@ declare global {
         }
         interface XAxisLabelsOptions {
             align?: AlignValue;
-            autoRotation?: (false|Array<number>);
-            autoRotationLimit?: number;
+            allowOverlap?: boolean;
+            autoRotation?: Array<number>;
+            autoRotationLimit: number;
             distance?: number;
-            enabled?: boolean;
+            enabled: boolean;
             format?: string;
             formatter?: AxisLabelsFormatterCallbackFunction;
-            indentation?: number;
-            maxStaggerLines?: number;
-            overflow?: OptionsOverflowValue;
-            padding?: number;
+            indentation: number;
+            overflow: OptionsOverflowValue;
+            padding: number;
             reserveSpace?: boolean;
-            rotation?: number;
-            staggerLines?: number;
-            step?: number;
-            style?: CSSObject;
-            useHTML?: boolean;
-            x?: number;
+            rotation?: number|'auto';
+            staggerLines: number;
+            step: number;
+            style: CSSObject;
+            useHTML: boolean;
+            x: number;
             y?: number;
-            zIndex?: number;
+            zIndex: number;
         }
         interface XAxisOptions {
             accessibility?: XAxisAccessibilityOptions;
-            alignTicks?: boolean;
+            alignTicks: boolean;
             allowDecimals?: boolean;
             alternateGridColor?: ColorType;
             breaks?: Array<XAxisBreaksOptions>;
@@ -235,88 +239,88 @@ declare global {
             ceiling?: number;
             className?: string;
             crosshair?: (boolean|XAxisCrosshairOptions);
-            endOnTick?: boolean;
+            endOnTick: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
-            gridLineColor?: ColorType;
-            gridLineDashStyle?: DashStyleValue;
+            gridLineColor: ColorType;
+            gridLineDashStyle: DashStyleValue;
             gridLineWidth?: number;
-            gridZIndex?: number;
+            gridZIndex: number;
             height?: (number|string);
             id?: string;
             isX?: boolean;
-            labels?: XAxisLabelsOptions;
+            labels: XAxisLabelsOptions;
             left?: (number|string);
-            lineColor?: ColorType;
-            lineWidth?: number;
+            lineColor: ColorType;
+            lineWidth: number;
             linkedTo?: number;
             margin?: number;
             max?: (null|number);
-            maxPadding?: number;
+            maxPadding: number;
             maxRange?: number;
             maxZoom?: number;
             min?: (null|number);
-            minorGridLineColor?: ColorType;
-            minorGridLineDashStyle?: DashStyleValue;
-            minorGridLineWidth?: number;
-            minorTickColor?: ColorType;
+            minorGridLineColor: ColorType;
+            minorGridLineDashStyle: DashStyleValue;
+            minorGridLineWidth: number;
+            minorTickColor: ColorType;
             minorTickInterval?: ('auto'|null|number);
-            minorTickLength?: number;
-            minorTickPosition?: AxisMinorTickPositionValue;
+            minorTickLength: number;
+            minorTickPosition: AxisMinorTickPositionValue;
             minorTicks?: boolean;
             minorTickWidth?: number;
-            minPadding?: number;
+            minPadding: number;
             minRange?: number;
             minTickInterval?: number;
             offset?: number;
             offsets?: [number, number, number, number];
-            opposite?: boolean;
+            opposite: boolean;
             ordinal?: boolean;
             overscroll?: number;
             pane?: number;
             range?: number;
             reversed?: boolean;
-            reversedStacks?: boolean;
-            showEmpty?: boolean;
-            showFirstLabel?: boolean;
-            showLastLabel?: boolean;
+            reversedStacks: boolean;
+            showEmpty: boolean;
+            showFirstLabel: boolean;
+            showLastLabel: boolean;
             side?: number;
             softMax?: number;
             softMin?: number;
-            startOfWeek?: number;
-            startOnTick?: boolean;
+            startOfWeek: number;
+            startOnTick: boolean;
             tickAmount?: number;
-            tickColor?: ColorType;
+            tickColor: ColorType;
             tickInterval?: number;
-            tickLength?: number;
-            tickmarkPlacement?: AxisTickmarkPlacementValue;
-            tickPixelInterval?: number;
-            tickPosition?: AxisTickPositionValue;
+            tickLength: number;
+            tickmarkPlacement: AxisTickmarkPlacementValue;
+            tickPixelInterval: number;
+            tickPosition: AxisTickPositionValue;
             tickPositioner?: AxisTickPositionerCallbackFunction;
             tickPositions?: AxisTickPositionsArray;
-            tickWidth?: (number|undefined);
-            title?: XAxisTitleOptions;
+            tickWidth?: number;
+            title: XAxisTitleOptions;
             top?: (number|string);
-            type?: AxisTypeValue;
-            uniqueNames?: boolean;
-            visible?: boolean;
+            type: AxisTypeValue;
+            uniqueNames: boolean;
+            visible: boolean;
             width?: (number|string);
-            zIndex?: number;
-            zoomEnabled?: boolean;
+            zIndex: number;
+            zoomEnabled: boolean;
         }
         interface XAxisTitleOptions {
-            align?: AxisTitleAlignValue;
+            align: AxisTitleAlignValue;
             enabled?: boolean;
             margin?: number;
             offset?: number;
             reserveSpace?: boolean;
-            rotation?: number;
-            style?: CSSObject;
+            rotation: number;
+            style: CSSObject;
             text?: (string|null);
             textAlign?: AlignValue;
-            useHTML?: boolean;
-            x?: number;
-            y?: number;
+            useHTML: boolean;
+            x: number;
+            y: number;
         }
         interface YAxisOptions extends XAxisOptions {
             maxColor?: ColorType;
@@ -324,6 +328,13 @@ declare global {
             staticScale?: number;
             stops?: GradientColor['stops'];
             tooltipValueFormat?: string;
+        }
+        interface Axis {
+        }
+        interface AxisPanningState {
+            startMin: (number);
+            startMax: (number);
+            isDirty?: boolean;
         }
         class Axis implements AxisLike {
             public static defaultBottomAxisOptions: AxisOptions;
@@ -333,10 +344,13 @@ declare global {
             public static defaultTopAxisOptions: AxisOptions;
             public static defaultYAxisOptions: YAxisOptions;
             public static keepProps: Array<string>;
-            public constructor(chart: Chart, userOptions: AxisOptions);
+            public constructor(
+                chart: Chart,
+                userOptions: DeepPartial<AxisOptions>
+            );
             public _addedPlotLB?: boolean;
             public allowZoomOutside?: boolean;
-            public alternateBands: Dictionary<PlotLineOrBand>;
+            public alternateBands: Record<string, PlotLineOrBand>;
             public autoRotation?: Array<number>;
             public axisGroup?: SVGElement;
             public axisLine?: SVGElement;
@@ -372,7 +386,6 @@ declare global {
             public keepProps?: Array<string>;
             public labelAlign?: AlignValue;
             public labelEdge: Array<null>;
-            public labelFormatter: AxisLabelsFormatterCallbackFunction;
             public labelGroup?: SVGElement;
             public labelOffset?: number;
             public labelRotation?: number;
@@ -384,7 +397,7 @@ declare global {
             public maxLabelLength: number;
             public min: (null|number);
             public minorTickInterval: number;
-            public minorTicks: Dictionary<Tick>;
+            public minorTicks: Record<string, Tick>;
             public minPixelPadding: number;
             public minPointOffset?: number;
             public minRange?: (null|number);
@@ -402,8 +415,9 @@ declare global {
             public options: AxisOptions;
             public overlap: boolean;
             public paddedTicks: Array<number>;
+            public panningState?: AxisPanningState;
             public plotLinesAndBands: Array<PlotLineOrBand>;
-            public plotLinesAndBandsGroups: Dictionary<SVGElement>;
+            public plotLinesAndBandsGroups: Record<string, SVGElement>;
             public pointRange: number;
             public pointRangePadding: number;
             public pos: number;
@@ -413,7 +427,7 @@ declare global {
             public reversed?: boolean;
             public right: number;
             public sector?: number;
-            public series: Array<LineSeries>;
+            public series: Array<Series>;
             public showAxis?: boolean;
             public side: number;
             public single?: boolean;
@@ -426,9 +440,10 @@ declare global {
             public tickmarkOffset: number;
             public tickPositions: AxisTickPositionsArray;
             public tickRotCorr: PositionObject;
-            public ticks: Dictionary<Tick>;
+            public ticks: Record<string, Tick>;
             public titleOffset?: number;
             public top: number;
+            public touched?: boolean;
             public transA: number;
             public transB: number;
             public translationSlope: number;
@@ -444,7 +459,7 @@ declare global {
             public adjustTickAmount(): void;
             public alignToOthers(): (boolean|undefined);
             public autoLabelAlign(rotation: number): AlignValue;
-            public defaultLabelFormatter(): void;
+            public defaultLabelFormatter: AxisLabelsFormatterCallbackFunction;
             public destroy(keepEvents?: boolean): void;
             public drawCrosshair(e?: PointerEvent, point?: Point): void;
             public generateTick(pos: number, i?: number): void;
@@ -471,11 +486,15 @@ declare global {
             public hasData(): boolean;
             public hasVerticalPanning(): boolean;
             public hideCrosshair(): void;
-            public init(chart: Chart, userOptions: AxisOptions): void;
+            public init(
+                chart: Chart,
+                userOptions: DeepPartial<AxisOptions>
+            ): void;
             public labelMetrics(): FontMetricsObject;
             public minFromRange(): (number|undefined);
             public nameToX(point: Point): number;
             public redraw(): void;
+            public remove(redraw?: boolean): void;
             public render(): void;
             public renderLine(): void;
             public renderMinorTick(pos: number): void;
@@ -483,17 +502,19 @@ declare global {
             public renderUnsquish(): void;
             public setAxisSize(): void;
             public setAxisTranslation(): void;
+            public setCategories(categories: Array<string>, redraw?: boolean): void;
             public setExtremes(
                 newMin?: number,
                 newMax?: number,
                 redraw?: boolean,
-                animation?: (boolean|Partial<AnimationOptionsObject>),
+                animation?: (boolean|Partial<AnimationOptions>),
                 eventArguments?: any
             ): void;
             public setOptions(userOptions: DeepPartial<AxisOptions>): void;
             public setScale(): void;
             public setTickInterval(secondPass?: boolean): void;
             public setTickPositions(): void;
+            public setTitle(titleOptions: AxisTitleOptions, redraw?: boolean): void;
             public tickSize(prefix?: string): [number, number]|undefined;
             public toPixels(value: number, paneCoordinates?: boolean): number;
             public toValue(pixel: number, paneCoordinates?: boolean): number;
@@ -511,6 +532,7 @@ declare global {
                 endOnTick?: boolean
             ): void;
             public unsquish(): number;
+            public update(options: DeepPartial<AxisOptions>, redraw?: boolean): void;
             public updateNames(): void;
             public validatePositiveValue(value: unknown): boolean;
             public zoom(newMin: number, newMax: number): boolean;
@@ -579,34 +601,51 @@ declare global {
 /**
  * @callback Highcharts.AxisLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.AxisLabelsFormatterContextObject<number>} this
+ * @param {Highcharts.AxisLabelsFormatterContextObject} this
  *
- * @param {Highcharts.AxisLabelsFormatterContextObject<string>} that
+ * @param {Highcharts.AxisLabelsFormatterContextObject} ctx
  *
  * @return {string}
  */
 
 /**
- * @interface Highcharts.AxisLabelsFormatterContextObject<T>
+ * @interface Highcharts.AxisLabelsFormatterContextObject
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#axis
+ * The axis item of the label
+ * @name Highcharts.AxisLabelsFormatterContextObject#axis
  * @type {Highcharts.Axis}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#chart
+ * The chart instance.
+ * @name Highcharts.AxisLabelsFormatterContextObject#chart
  * @type {Highcharts.Chart}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#isFirst
+ * Whether the label belongs to the first tick on the axis.
+ * @name Highcharts.AxisLabelsFormatterContextObject#isFirst
  * @type {boolean}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#isLast
+ * Whether the label belongs to the last tick on the axis.
+ * @name Highcharts.AxisLabelsFormatterContextObject#isLast
  * @type {boolean}
  *//**
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#pos
+ * The position on the axis in terms of axis values. For category axes, a
+ * zero-based index. For datetime axes, the JavaScript time in milliseconds
+ * since 1970.
+ * @name Highcharts.AxisLabelsFormatterContextObject#pos
  * @type {number}
  *//**
+ * The preformatted text as the result of the default formatting. For example
+ * dates will be formatted as strings, and numbers with language-specific comma
+ * separators, thousands separators and numeric symbols like `k` or `M`.
+ * @name Highcharts.AxisLabelsFormatterContextObject#text
+ * @type {string}
+ *//**
+ * The Tick instance.
+ * @name Highcharts.AxisLabelsFormatterContextObject#tick
+ * @type {Highcharts.Tick}
+ *//**
  * This can be either a numeric value or a category string.
- * @name Highcharts.AxisLabelsFormatterContextObject<T>#value
- * @type {T}
+ * @name Highcharts.AxisLabelsFormatterContextObject#value
+ * @type {number|string}
  */
 
 /**
@@ -822,16 +861,15 @@ class Axis {
          *
          * Disabled for logarithmic axes.
          *
-         * @type      {boolean}
-         * @default   true
          * @product   highcharts highstock gantt
-         * @apioption xAxis.alignTicks
          */
+        alignTicks: true,
 
         /**
          * Whether to allow decimals in this axis' ticks. When counting
          * integers, like persons or hits on a web page, decimals should
-         * be avoided in the labels.
+         * be avoided in the labels. By default, decimals are allowed on small
+         * scale axes.
          *
          * @see [minTickInterval](#xAxis.minTickInterval)
          *
@@ -840,11 +878,11 @@ class Axis {
          * @sample {highcharts|highstock} highcharts/yaxis/allowdecimals-false/
          *         False
          *
-         * @type      {boolean}
-         * @default   true
+         * @type      {boolean|undefined}
+         * @default   undefined
          * @since     2.0
-         * @apioption xAxis.allowDecimals
          */
+        allowDecimals: void 0,
 
         /**
          * When using an alternate grid color, a band is painted across the
@@ -1205,17 +1243,18 @@ class Axis {
          */
 
         /**
+         * The Z index for the axis group.
+         */
+        zIndex: 2,
+
+        /**
          * Whether to zoom axis. If `chart.zoomType` is set, the option allows
          * to disable zooming on an individual axis.
          *
          * @sample {highcharts} highcharts/xaxis/zoomenabled/
          *         Zoom enabled is false
-         *
-         *
-         * @type      {boolean}
-         * @default   enabled
-         * @apioption xAxis.zoomEnabled
          */
+        zoomEnabled: true,
 
         /**
          * For a datetime axis, the scale will automatically adjust to the
@@ -1446,10 +1485,9 @@ class Axis {
          *         Long dashes
          *
          * @type      {Highcharts.DashStyleValue}
-         * @default   Solid
          * @since     1.2
-         * @apioption xAxis.gridLineDashStyle
          */
+        gridLineDashStyle: 'Solid',
 
         /**
          * The Z index of the grid lines.
@@ -1457,11 +1495,9 @@ class Axis {
          * @sample {highcharts|highstock} highcharts/xaxis/gridzindex/
          *         A Z index of 4 renders the grid above the graph
          *
-         * @type      {number}
-         * @default   1
          * @product   highcharts highstock gantt
-         * @apioption xAxis.gridZIndex
          */
+        gridZIndex: 1,
 
         /**
          * An id for the axis. This can be used after render time to get
@@ -1511,25 +1547,40 @@ class Axis {
              */
 
             /**
+             * Whether to allow the axis labels to overlap.
+             * When false, overlapping labels are hidden.
+             *
+             * @sample {highcharts} highcharts/xaxis/labels-allowoverlap-true/
+             *         X axis labels overlap enabled
+             *
+             * @type {boolean}
+             * @default false
+             * @apioption xAxis.labels.allowOverlap
+             *
+             */
+
+            /**
              * For horizontal axes, the allowed degrees of label rotation
              * to prevent overlapping labels. If there is enough space,
              * labels are not rotated. As the chart gets narrower, it
              * will start rotating the labels -45 degrees, then remove
              * every second label and try again with rotations 0 and -45 etc.
-             * Set it to `false` to disable rotation, which will
-             * cause the labels to word-wrap if possible.
+             * Set it to `undefined` to disable rotation, which will
+             * cause the labels to word-wrap if possible. Defaults to `[-45]``
+             * on bottom and top axes, `undefined` on left and right axes.
              *
              * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-default/
              *         Default auto rotation of 0 or -45
              * @sample {highcharts|highstock} highcharts/xaxis/labels-autorotation-0-90/
              *         Custom graded auto rotation
              *
-             * @type      {Array<number>|false}
-             * @default   [-45]
+             * @type      {Array<number>}
+             * @default   undefined
              * @since     4.1.0
              * @product   highcharts highstock gantt
              * @apioption xAxis.labels.autoRotation
              */
+            autoRotation: void 0,
 
             /**
              * When each category width is more than this many pixels, we don't
@@ -1541,22 +1592,20 @@ class Axis {
              * @sample {highcharts} highcharts/xaxis/labels-autorotationlimit/
              *         Lower limit
              *
-             * @type      {number}
-             * @default   80
              * @since     4.1.5
              * @product   highcharts gantt
-             * @apioption xAxis.labels.autoRotationLimit
              */
+            autoRotationLimit: 80,
 
             /**
              * Polar charts only. The label's pixel distance from the perimeter
              * of the plot area.
              *
              * @type      {number}
-             * @default   15
+             * @default   undefined
              * @product   highcharts gantt
-             * @apioption xAxis.labels.distance
              */
+            distance: void 0,
 
             /**
              * Enable or disable the axis labels.
@@ -1572,14 +1621,29 @@ class Axis {
             enabled: true,
 
             /**
-             * A [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
-             * for the axis label.
+             * A format string for the axis label. The context is available as
+             * format string variables. For example, you can use `{text}` to
+             * insert the default formatted text. The recommended way of adding
+             * units for the label is using `text`, for example `{text} km`.
+             *
+             * To add custom numeric or datetime formatting, use `{value}` with
+             * formatting, for example `{value:.1f}` or `{value:%Y-%m-%d}`.
+             *
+             * See
+             * [format string](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting)
+             * for more examples of formatting.
+             *
+             * The default value is not specified due to the dynamic
+             * nature of the default implementation.
              *
              * @sample {highcharts|highstock} highcharts/yaxis/labels-format/
              *         Add units to Y axis label
+             * @sample {highcharts} highcharts/xaxis/labels-format-linked/
+             *         Linked category names
+             * @sample {highcharts} highcharts/xaxis/labels-format-custom/
+             *         Custom number format
              *
              * @type      {string}
-             * @default   {value}
              * @since     3.0
              * @apioption xAxis.labels.format
              */
@@ -1587,16 +1651,12 @@ class Axis {
             /**
              * Callback JavaScript function to format the label. The value
              * is given by `this.value`. Additional properties for `this` are
-             * `axis`, `chart`, `isFirst` and `isLast`. The value of the default
-             * label formatter can be retrieved by calling
-             * `this.axis.defaultLabelFormatter.call(this)` within the function.
+             * `axis`, `chart`, `isFirst`, `isLast` and `text` which holds the
+             * value of the default formatter.
              *
-             * Defaults to:
-             * ```js
-             * function() {
-             *     return this.value;
-             * }
-             * ```
+             * Defaults to a built in function returning a formatted string
+             * depending on whether the axis is `category`, `datetime`,
+             * `numeric` or other.
              *
              * @sample {highcharts} highcharts/xaxis/labels-formatter-linked/
              *         Linked category names
@@ -1641,22 +1701,18 @@ class Axis {
              * `"justify"` labels inside the chart area. If there is room to
              * move it, it will be aligned to the edge, else it will be removed.
              *
-             * @type       {string}
-             * @default    justify
              * @since      2.2.5
              * @validvalue ["allow", "justify"]
-             * @apioption  xAxis.labels.overflow
              */
+            overflow: 'justify',
 
             /**
              * The pixel padding for axis labels, to ensure white space between
              * them.
              *
-             * @type      {number}
-             * @default   5
              * @product   highcharts gantt
-             * @apioption xAxis.labels.padding
              */
+            padding: 5,
 
             /**
              * Whether to reserve space for the labels. By default, space is
@@ -1682,9 +1738,11 @@ class Axis {
              * @product   highcharts gantt
              * @apioption xAxis.labels.reserveSpace
              */
+            reserveSpace: void 0,
 
             /**
-             * Rotation of the labels in degrees.
+             * Rotation of the labels in degrees. When `undefined`, the
+             * `autoRotation` option takes precedence.
              *
              * @sample {highcharts} highcharts/xaxis/labels-rotation/
              *         X axis labels rotated 90°
@@ -1693,26 +1751,27 @@ class Axis {
              * @default   0
              * @apioption xAxis.labels.rotation
              */
+            rotation: void 0,
 
             /**
              * Horizontal axes only. The number of lines to spread the labels
-             * over to make room or tighter labels.
+             * over to make room or tighter labels. 0 disables staggering.
              *
              * @sample {highcharts} highcharts/xaxis/labels-staggerlines/
              *         Show labels over two lines
              * @sample {highstock} stock/xaxis/labels-staggerlines/
              *         Show labels over two lines
              *
-             * @type      {number}
              * @since     2.1
              * @apioption xAxis.labels.staggerLines
              */
+            staggerLines: 0,
 
             /**
              * To show only every _n_'th label on the axis, set the step to _n_.
              * Setting the step to 2 shows every other label.
              *
-             * By default, the step is calculated automatically to avoid
+             * By default, when 0, the step is calculated automatically to avoid
              * overlap. To prevent this, set it to 1\. This usually only
              * happens on a category axis, and is often a sign that you have
              * chosen the wrong axis type.
@@ -1727,19 +1786,15 @@ class Axis {
              * @sample {highcharts} highcharts/xaxis/labels-step-auto/
              *         Auto steps on a category axis
              *
-             * @type      {number}
              * @since     2.1
-             * @apioption xAxis.labels.step
              */
+            step: 0,
 
             /**
              * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
              * to render the labels.
-             *
-             * @type      {boolean}
-             * @default   false
-             * @apioption xAxis.labels.useHTML
              */
+            useHTML: false,
 
             /**
              * The x position offset of all labels relative to the tick
@@ -1764,11 +1819,8 @@ class Axis {
 
             /**
              * The Z index for the axis labels.
-             *
-             * @type      {number}
-             * @default   7
-             * @apioption xAxis.labels.zIndex
              */
+            zIndex: 7,
 
             /**
              * CSS styles for the label. Use `whiteSpace: 'nowrap'` to prevent
@@ -1785,7 +1837,7 @@ class Axis {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor60}',
+                color: palette.neutralColor60,
                 /** @internal */
                 cursor: 'default',
                 /** @internal */
@@ -1926,10 +1978,9 @@ class Axis {
          *         Long dashes on minor grid lines
          *
          * @type      {Highcharts.DashStyleValue}
-         * @default   Solid
          * @since     1.2
-         * @apioption xAxis.minorGridLineDashStyle
          */
+        minorGridLineDashStyle: 'Solid',
 
         /**
          * Specific tick interval in axis units for the minor ticks. On a linear
@@ -2100,10 +2151,8 @@ class Axis {
          * @sample {highstock} stock/xaxis/offset/
          *         Y axis offset by 70 px
          *
-         * @type      {number}
-         * @default   0
-         * @apioption xAxis.offset
          */
+        offset: void 0,
 
         /**
          * Whether to display the axis on the opposite side of the normal. The
@@ -2116,11 +2165,10 @@ class Axis {
          * @sample {highstock} stock/xaxis/opposite/
          *         Y axis on left side
          *
-         * @type      {boolean}
          * @default   {highcharts|highstock|highmaps} false
          * @default   {gantt} true
-         * @apioption xAxis.opposite
          */
+        opposite: false,
 
         /**
          * In an ordinal axis, the points are equally spaced in the chart
@@ -2199,10 +2247,10 @@ class Axis {
          *         Reversed Y axis
          *
          * @type      {boolean}
-         * @default   false
+         * @default   undefined
          * @apioption xAxis.reversed
          */
-        // reversed: false,
+        reversed: void 0,
 
         /**
          * This option determines how stacks should be ordered within a group.
@@ -2215,12 +2263,10 @@ class Axis {
          * @sample {highstock} highcharts/xaxis/reversedstacks/
          *         Reversed stacks comparison
          *
-         * @type      {boolean}
-         * @default   false
          * @since     6.1.1
          * @product   highcharts highstock
-         * @apioption xAxis.reversedStacks
          */
+        reversedStacks: false,
 
         /**
          * An optional scrollbar to display on the X axis in response to
@@ -2261,11 +2307,8 @@ class Axis {
          *         Set to false on X axis
          * @sample {highstock} stock/xaxis/showfirstlabel/
          *         Labels below plot lines on Y axis
-         *
-         * @type      {boolean}
-         * @default   true
-         * @apioption xAxis.showFirstLabel
          */
+        showFirstLabel: true,
 
         /**
          * Whether to show the last tick label. Defaults to `true` on cartesian
@@ -2276,11 +2319,9 @@ class Axis {
          * @sample {highstock} stock/xaxis/showfirstlabel/
          *         Labels below plot lines on Y axis
          *
-         * @type      {boolean}
-         * @default   true
          * @product   highcharts highstock gantt
-         * @apioption xAxis.showLastLabel
          */
+        showLastLabel: true,
 
         /**
          * A soft maximum for the axis. If the series data maximum is less than
@@ -2527,7 +2568,26 @@ class Axis {
         title: {
 
             /**
-             * Deprecated. Set the `text` to `null` to disable the title.
+             * Alignment of the title relative to the axis values. Possible
+             * values are "low", "middle" or "high".
+             *
+             * @sample {highcharts} highcharts/xaxis/title-align-low/
+             *         "low"
+             * @sample {highcharts} highcharts/xaxis/title-align-center/
+             *         "middle" by default
+             * @sample {highcharts} highcharts/xaxis/title-align-high/
+             *         "high"
+             * @sample {highcharts} highcharts/yaxis/title-offset/
+             *         Place the Y axis title on top of the axis
+             * @sample {highstock} stock/xaxis/title-align/
+             *         Aligned to "high" value
+             *
+             * @type {Highcharts.AxisTitleAlignValue}
+             */
+            align: 'middle',
+
+            /**
+             * Deprecated. Set the `text` to `undefined` to disable the title.
              *
              * @deprecated
              * @type      {boolean}
@@ -2578,11 +2638,8 @@ class Axis {
              *
              * @sample {highcharts} highcharts/yaxis/title-offset/
              *         Horizontal
-             *
-             * @type      {number}
-             * @default   0
-             * @apioption xAxis.title.rotation
              */
+            rotation: 0,
 
             /**
              * The actual text of the axis title. It can contain basic HTML tags
@@ -2626,48 +2683,24 @@ class Axis {
              * Whether to [use HTML](https://www.highcharts.com/docs/chart-concepts/labels-and-string-formatting#html)
              * to render the axis title.
              *
-             * @type      {boolean}
-             * @default   false
              * @product   highcharts highstock gantt
-             * @apioption xAxis.title.useHTML
              */
+            useHTML: false,
 
             /**
              * Horizontal pixel offset of the title position.
              *
-             * @type      {number}
-             * @default   0
              * @since     4.1.6
              * @product   highcharts highstock gantt
-             * @apioption xAxis.title.x
              */
+            x: 0,
 
             /**
              * Vertical pixel offset of the title position.
              *
-             * @type      {number}
              * @product   highcharts highstock gantt
-             * @apioption xAxis.title.y
              */
-
-            /**
-             * Alignment of the title relative to the axis values. Possible
-             * values are "low", "middle" or "high".
-             *
-             * @sample {highcharts} highcharts/xaxis/title-align-low/
-             *         "low"
-             * @sample {highcharts} highcharts/xaxis/title-align-center/
-             *         "middle" by default
-             * @sample {highcharts} highcharts/xaxis/title-align-high/
-             *         "high"
-             * @sample {highcharts} highcharts/yaxis/title-offset/
-             *         Place the Y axis title on top of the axis
-             * @sample {highstock} stock/xaxis/title-align/
-             *         Aligned to "high" value
-             *
-             * @type {Highcharts.AxisTitleAlignValue}
-             */
-            align: 'middle',
+            y: 0,
 
             /**
              * CSS styles for the title. If the title text is longer than the
@@ -2687,7 +2720,7 @@ class Axis {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor60}'
+                color: palette.neutralColor60
             }
         },
 
@@ -2740,12 +2773,10 @@ class Axis {
          * @sample {highcharts} highcharts/xaxis/uniquenames-false/
          *         False
          *
-         * @type      {boolean}
-         * @default   true
          * @since     4.2.7
          * @product   highcharts gantt
-         * @apioption xAxis.uniqueNames
          */
+        uniqueNames: true,
 
         /**
          * Datetime axis only. An array determining what time intervals the
@@ -2769,13 +2800,13 @@ class Axis {
          *     [1, 2, 3, 4, 6, 8, 12]
          * ], [
          *     'day',
-         *     [1]
+         *     [1, 2]
          * ], [
          *     'week',
-         *     [1]
+         *     [1, 2]
          * ], [
          *     'month',
-         *     [1, 3, 6]
+         *     [1, 2, 3, 4, 6]
          * ], [
          *     'year',
          *     null
@@ -2791,12 +2822,10 @@ class Axis {
          * Whether axis, including axis title, line, ticks and labels, should
          * be visible.
          *
-         * @type      {boolean}
-         * @default   true
          * @since     4.1.9
          * @product   highcharts highstock gantt
-         * @apioption xAxis.visible
          */
+        visible: true,
 
         /**
          * Color of the minor, secondary grid lines.
@@ -2814,7 +2843,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #f2f2f2
          */
-        minorGridLineColor: '${palette.neutralColor5}',
+        minorGridLineColor: palette.neutralColor5,
 
         /**
          * Width of the minor, secondary grid lines.
@@ -2842,7 +2871,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #999999
          */
-        minorTickColor: '${palette.neutralColor40}',
+        minorTickColor: palette.neutralColor40,
 
         /**
          * The color of the line marking the axis itself.
@@ -2864,7 +2893,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        lineColor: '${palette.highlightColor20}',
+        lineColor: palette.highlightColor20,
 
         /**
          * The width of the line marking the axis itself.
@@ -2903,12 +2932,12 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #e6e6e6
          */
-        gridLineColor: '${palette.neutralColor10}',
-
-        // gridLineDashStyle: 'solid',
+        gridLineColor: palette.neutralColor10,
 
         /**
          * The width of the grid lines extending the ticks across the plot area.
+         * Defaults to 1 on the Y axis and 0 on the X axis, except for 3d
+         * charts.
          *
          * In styled mode, the stroke width is given in the
          * `.highcharts-grid-line` class.
@@ -2921,10 +2950,9 @@ class Axis {
          *         2px lines
          *
          * @type      {number}
-         * @default   0
          * @apioption xAxis.gridLineWidth
          */
-        // gridLineWidth: 0,
+        gridLineWidth: void 0,
 
         /**
          * The height as the vertical axis. If it's a number, it is
@@ -2966,7 +2994,7 @@ class Axis {
          * @type    {Highcharts.ColorType}
          * @default #ccd6eb
          */
-        tickColor: '${palette.highlightColor20}'
+        tickColor: palette.highlightColor20
 
         // tickWidth: 1
     };
@@ -2987,7 +3015,7 @@ class Axis {
      *
      * @private
      */
-    public static defaultYAxisOptions: Highcharts.YAxisOptions = {
+    public static defaultYAxisOptions: DeepPartial<Highcharts.YAxisOptions> = {
 
         /**
          * The type of axis. Can be one of `linear`, `logarithmic`, `datetime`,
@@ -3092,6 +3120,7 @@ class Axis {
          * @product   highcharts highstock
          * @apioption yAxis.reversedStacks
          */
+        reversedStacks: true,
 
         /**
          * Solid gauge series only. Color stops for the solid gauge. Use this
@@ -3795,7 +3824,7 @@ class Axis {
              */
             style: {
                 /** @internal */
-                color: '${palette.neutralColor100}',
+                color: palette.neutralColor100,
                 /** @internal */
                 fontSize: '11px',
                 /** @internal */
@@ -3834,7 +3863,7 @@ class Axis {
      */
 
     // This variable extends the defaultOptions for left axes.
-    public static defaultLeftAxisOptions: Highcharts.AxisOptions = {
+    public static defaultLeftAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             x: -15
         },
@@ -3844,7 +3873,7 @@ class Axis {
     };
 
     // This variable extends the defaultOptions for right axes.
-    public static defaultRightAxisOptions: Highcharts.AxisOptions = {
+    public static defaultRightAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             x: 15
         },
@@ -3854,7 +3883,7 @@ class Axis {
     };
 
     // This variable extends the defaultOptions for bottom axes.
-    public static defaultBottomAxisOptions: Highcharts.AxisOptions = {
+    public static defaultBottomAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             autoRotation: [-45],
             x: 0
@@ -3868,7 +3897,7 @@ class Axis {
     };
 
     // This variable extends the defaultOptions for top axes.
-    public static defaultTopAxisOptions: Highcharts.AxisOptions = {
+    public static defaultTopAxisOptions: DeepPartial<Highcharts.AxisOptions> = {
         labels: {
             autoRotation: [-45],
             x: 0
@@ -3891,7 +3920,10 @@ class Axis {
      *
      * */
 
-    public constructor(chart: Chart, userOptions: DeepPartial<Highcharts.AxisOptions>) {
+    public constructor(
+        chart: Chart,
+        userOptions: DeepPartial<Highcharts.AxisOptions>
+    ) {
         this.init(chart, userOptions);
     }
 
@@ -3956,12 +3988,14 @@ class Axis {
     public minRange?: (null|number);
     public names: Array<string> = void 0 as any;
     public offset: number = void 0 as any;
-    public oldAxisLength?: number;
-    public oldMax: (null|number) = void 0 as any;
-    public oldMin: (null|number) = void 0 as any;
-    public oldTransA?: number;
-    public oldUserMax?: number;
-    public oldUserMin?: number;
+    public old?: { // @todo create a type
+        len: number;
+        max: number|null;
+        min: number|null;
+        transA: number;
+        userMax?: number;
+        userMin?: number;
+    };
     public opposite?: boolean;
     public options: Highcharts.AxisOptions = void 0 as any;
     public ordinal?: AxisComposition['ordinal'];
@@ -3976,7 +4010,7 @@ class Axis {
     public reserveSpaceDefault?: boolean;
     public reversed?: boolean;
     public right: number = void 0 as any;
-    public series: Array<LineSeries> = void 0 as any;
+    public series: Array<Series> = void 0 as any;
     public showAxis?: boolean;
     public side: number = void 0 as any;
     public single?: boolean;
@@ -4066,7 +4100,7 @@ class Axis {
 
         fireEvent(this, 'init', { userOptions: userOptions });
 
-        axis.opposite = userOptions.opposite; // needed in setOptions
+        axis.opposite = pick(userOptions.opposite, axis.opposite); // needed in setOptions
 
         /**
          * The side on which the axis is rendered. 0 is top, 1 is right, 2
@@ -4075,9 +4109,13 @@ class Axis {
          * @name Highcharts.Axis#side
          * @type {number}
          */
-        axis.side = userOptions.side || (axis.horiz ?
-            (axis.opposite ? 0 : 2) : // top : bottom
-            (axis.opposite ? 1 : 3)); // right : left
+        axis.side = pick(
+            userOptions.side,
+            axis.side,
+            (axis.horiz ?
+                (axis.opposite ? 0 : 2) : // top : bottom
+                (axis.opposite ? 1 : 3)) // right : left
+        );
 
         /**
          * Current options for the axis after merge of defaults and user's
@@ -4090,14 +4128,8 @@ class Axis {
 
 
         var options = this.options,
+            labelsOptions = options.labels,
             type = options.type;
-
-        axis.labelFormatter = (
-            (options.labels as any).formatter ||
-            // can be overwritten by dynamic format
-            axis.defaultLabelFormatter
-        );
-
 
         /**
          * User's options for this axis without defaults.
@@ -4117,9 +4149,9 @@ class Axis {
          * @name Highcharts.Axis#reversed
          * @type {boolean}
          */
-        axis.reversed = options.reversed;
-        axis.visible = options.visible !== false;
-        axis.zoomEnabled = options.zoomEnabled !== false;
+        axis.reversed = pick(options.reversed, axis.reversed);
+        axis.visible = options.visible;
+        axis.zoomEnabled = options.zoomEnabled;
 
         // Initial categories
         axis.hasNames =
@@ -4215,11 +4247,11 @@ class Axis {
          * @name Highcharts.Axis#crosshair
          * @type {boolean|Highcharts.AxisCrosshairOptions}
          */
-        axis.crosshair = pick(
+        const crosshair = pick(
             options.crosshair,
-            splat((chart.options.tooltip as any).crosshairs)[isXAxis ? 0 : 1],
-            false
+            splat((chart.options.tooltip as any).crosshairs)[isXAxis ? 0 : 1]
         );
+        axis.crosshair = crosshair === true ? {} : crosshair;
 
         var events = axis.options.events;
 
@@ -4252,7 +4284,9 @@ class Axis {
             axis.reversed = true;
         }
 
-        axis.labelRotation = (axis.options as any).labels.rotation;
+        axis.labelRotation = isNumber(labelsOptions.rotation) ?
+            labelsOptions.rotation :
+            void 0;
 
         // register event listeners
         objectEach(events, function (event: any, eventType: string): void {
@@ -4278,7 +4312,7 @@ class Axis {
     public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
         this.options = merge(
             Axis.defaultOptions,
-            ((this.coll === 'yAxis') as any) && Axis.defaultYAxisOptions,
+            (this.coll === 'yAxis') && Axis.defaultYAxisOptions,
             [
                 Axis.defaultTopAxisOptions,
                 Axis.defaultRightAxisOptions,
@@ -4303,13 +4337,15 @@ class Axis {
      *
      * @function Highcharts.Axis#defaultLabelFormatter
      *
-     * @param {Highcharts.AxisLabelsFormatterContextObject<number>|Highcharts.AxisLabelsFormatterContextObject<string>} this
+     * @param {Highcharts.AxisLabelsFormatterContextObject} this
      * Formatter context of axis label.
      *
      * @return {string}
      * The formatted label content.
      */
-    public defaultLabelFormatter(this: Highcharts.AxisLabelsFormatterContextObject<number>): string {
+    public defaultLabelFormatter(
+        this: Highcharts.AxisLabelsFormatterContextObject
+    ): string {
         var axis = this.axis,
             value = isNumber(this.value) ? this.value : NaN,
             time = axis.chart.time,
@@ -4321,7 +4357,6 @@ class Axis {
             i = numericSymbols && numericSymbols.length,
             multi,
             ret: (string|undefined),
-            formatOption = (axis.options.labels as any).format,
 
             // make sure the same symbol is added for all labels on a linear
             // axis
@@ -4331,10 +4366,7 @@ class Axis {
         const chart = this.chart;
         const { numberFormatter } = chart;
 
-        if (formatOption) {
-            ret = format(formatOption, this, chart);
-
-        } else if (categories) {
+        if (categories) {
             ret = `${this.value}`;
 
         } else if (dateTimeLabelFormat) { // datetime axis
@@ -4404,8 +4436,9 @@ class Axis {
             // loop through this axis' series
             axis.series.forEach(function (series): void {
 
-                if (series.visible ||
-                    !(chart.options.chart as any).ignoreHiddenSeries
+                if (
+                    series.visible ||
+                    !chart.options.chart.ignoreHiddenSeries
                 ) {
 
                     var seriesOptions = series.options,
@@ -4903,7 +4936,7 @@ class Axis {
                         axis.dateTime.normalizeTimeTickInterval(minorTickInterval),
                         min,
                         max,
-                        options.startOfWeek as any
+                        options.startOfWeek
                     )
                 );
             } else {
@@ -4945,7 +4978,7 @@ class Axis {
             log = axis.logarithmic,
             zoomOffset,
             spaceAvailable: boolean,
-            closestDataRange: (number|undefined),
+            closestDataRange = 0,
             i,
             distance,
             xData,
@@ -4972,18 +5005,18 @@ class Axis {
                 axis.series.forEach(function (series): void {
                     xData = series.xData as any;
                     loopLength = series.xIncrement ? 1 : xData.length - 1;
-                    for (i = loopLength; i > 0; i--) {
-                        distance = xData[i] - xData[i - 1];
-                        if (
-                            typeof closestDataRange === 'undefined' ||
-                            distance < closestDataRange
-                        ) {
-                            closestDataRange = distance;
+
+                    if (xData.length > 1) {
+                        for (i = loopLength; i > 0; i--) {
+                            distance = xData[i] - xData[i - 1];
+                            if (!closestDataRange || distance < closestDataRange) {
+                                closestDataRange = distance;
+                            }
                         }
                     }
                 });
                 axis.minRange = Math.min(
-                    (closestDataRange as any) * 5,
+                    closestDataRange * 5,
                     (axis.dataMax as any) - (axis.dataMin as any)
                 );
             }
@@ -5053,7 +5086,7 @@ class Axis {
             this.series.forEach(function (series): void {
                 var seriesClosest = series.closestPointRange,
                     visible = series.visible ||
-                        !(series.chart.options.chart as any).ignoreHiddenSeries;
+                        !series.chart.options.chart.ignoreHiddenSeries;
 
                 if (
                     !series.noSharedTooltip &&
@@ -5091,14 +5124,14 @@ class Axis {
         point.series.requireSorting = false;
 
         if (!defined(nameX)) {
-            nameX = this.options.uniqueNames === false ?
-                point.series.autoIncrement() :
+            nameX = this.options.uniqueNames ?
                 (
                     explicitCategories ?
-                        (names as any).indexOf(point.name) :
-                        pick((names as any).keys[point.name as any], -1)
+                        names.indexOf(point.name) :
+                        pick((names as any).keys[point.name], -1)
 
-                );
+                ) :
+                point.series.autoIncrement();
         }
         if (nameX === -1) { // Not found in currenct categories
             if (!explicitCategories) {
@@ -5436,13 +5469,13 @@ class Axis {
             defined(axis.min) &&
             defined(axis.max)
         ) {
-            length = (axis.max as any) - (axis.min as any);
+            length = axis.max - axis.min;
             if (length) {
                 if (!defined(hardMin) && minPadding) {
-                    (axis.min as any) -= length * minPadding;
+                    axis.min -= length * minPadding;
                 }
                 if (!defined(hardMax) && maxPadding) {
-                    (axis.max as any) += length * maxPadding;
+                    axis.max += length * maxPadding;
                 }
             }
         }
@@ -5498,6 +5531,20 @@ class Axis {
             }
         }
 
+        // If min is bigger than highest, or if max less than lowest value, the
+        // chart should not render points. (#14417)
+        if (
+            isNumber(axis.min) &&
+            isNumber(axis.max) &&
+            !this.chart.polar &&
+            (axis.min > axis.max)
+        ) {
+            if (defined(axis.options.min)) {
+                axis.max = axis.min;
+            } else if (defined(axis.options.max)) {
+                axis.min = axis.max;
+            }
+        }
 
         // get tickInterval
         if (
@@ -5509,12 +5556,13 @@ class Axis {
 
         } else if (
             isLinked &&
+            axis.linkedParent &&
             !tickIntervalOption &&
             tickPixelIntervalOption ===
-                (axis.linkedParent as any).options.tickPixelInterval
+                axis.linkedParent.options.tickPixelInterval
         ) {
             axis.tickInterval = tickIntervalOption =
-                (axis.linkedParent as any).tickInterval;
+                axis.linkedParent.tickInterval;
 
         } else {
             axis.tickInterval = pick(
@@ -5529,8 +5577,8 @@ class Axis {
                     1 :
                     // don't let it be more than the data range
                     ((axis.max as any) - (axis.min as any)) *
-                    (tickPixelIntervalOption as any) /
-                    Math.max(axis.len, tickPixelIntervalOption as any)
+                    tickPixelIntervalOption /
+                    Math.max(axis.len, tickPixelIntervalOption)
             );
         }
 
@@ -5836,8 +5884,8 @@ class Axis {
 
         if (
             // Only if alignTicks is true
-            (this.chart.options.chart as any).alignTicks !== false &&
-            options.alignTicks !== false &&
+            this.chart.options.chart.alignTicks !== false &&
+            options.alignTicks &&
 
             // Disabled when startOnTick or endOnTick are false (#7604)
             options.startOnTick !== false &&
@@ -5887,7 +5935,8 @@ class Axis {
 
         if (
             !defined(options.tickInterval) &&
-            !tickAmount && this.len < tickPixelInterval &&
+            !tickAmount &&
+            this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
@@ -5929,21 +5978,18 @@ class Axis {
             finalTickAmt = axis.finalTickAmt,
             currentTickAmount = tickPositions && tickPositions.length,
             threshold = pick(axis.threshold, axis.softThreshold ? 0 : null),
-            min,
             len,
             i;
 
-        if (axis.hasData()) {
+        if (axis.hasData() && isNumber(axis.min) && isNumber(axis.max)) { // #14769
             if (currentTickAmount < tickAmount) {
-                min = axis.min;
-
                 while (tickPositions.length < tickAmount) {
 
                     // Extend evenly for both sides unless we're on the
                     // threshold (#3965)
                     if (
                         tickPositions.length % 2 ||
-                        min === threshold
+                        axis.min === threshold
                     ) {
                         // to the end
                         tickPositions.push(correctFloat(
@@ -5962,11 +6008,11 @@ class Axis {
                 // Do not crop when ticks are not extremes (#9841)
                 axis.min = axisOptions.startOnTick ?
                     tickPositions[0] :
-                    Math.min((axis.min as any), tickPositions[0]);
+                    Math.min(axis.min, tickPositions[0]);
                 axis.max = axisOptions.endOnTick ?
                     tickPositions[tickPositions.length - 1] :
                     Math.max(
-                        (axis.max as any),
+                        axis.max,
                         tickPositions[tickPositions.length - 1]
                     );
 
@@ -6005,7 +6051,7 @@ class Axis {
     public setScale(): void {
         var axis: Highcharts.Axis = this as any,
             isDirtyAxisLength,
-            isDirtyData = false,
+            isDirtyData: (boolean|undefined) = false,
             isXAxisDirty = false;
 
         axis.series.forEach(function (series): void {
@@ -6108,7 +6154,7 @@ class Axis {
         newMin?: number,
         newMax?: number,
         redraw?: boolean,
-        animation?: (boolean|Partial<AnimationOptionsObject>),
+        animation?: (boolean|Partial<AnimationOptions>),
         eventArguments?: any
     ): void {
         var axis = this,
@@ -6163,9 +6209,9 @@ class Axis {
             evt = {
                 newMin: newMin,
                 newMax: newMax
-            } as Highcharts.Dictionary<any>;
+            } as AnyRecord;
 
-        fireEvent(this, 'zoom', evt, function (e: Record<string, any>): void {
+        fireEvent(this, 'zoom', evt, function (e: AnyRecord): void {
 
             // Use e.newMin and e.newMax - event handlers may have altered them
             var newMin = e.newMin,
@@ -6351,7 +6397,7 @@ class Axis {
             evt = { align: 'center' as AlignValue };
 
         fireEvent(this, 'autoLabelAlign', evt, function (
-            e: Highcharts.Dictionary<any>
+            e: AnyRecord
         ): void {
 
             if (angle > 15 && angle < 165) {
@@ -6415,8 +6461,7 @@ class Axis {
         var index = this.tickPositions && this.tickPositions[0] || 0;
 
         return this.chart.renderer.fontMetrics(
-            (this.options.labels as any).style &&
-            (this.options.labels as any).style.fontSize,
+            this.options.labels.style.fontSize,
             this.ticks[index] && this.ticks[index].label
         );
     }
@@ -6444,12 +6489,12 @@ class Axis {
                 ) /
                 tickInterval
             ),
-            rotation: any,
-            rotationOption = (labelOptions as any).rotation,
+            rotation: number|undefined,
+            rotationOption = labelOptions.rotation,
             labelMetrics = this.labelMetrics(),
             step,
             bestScore = Number.MAX_VALUE,
-            autoRotation: any,
+            autoRotation: Array<number>|undefined,
             range = Math.max((this.max as any) - (this.min as any), 0),
             // Return the multiple of tickInterval that is needed to avoid
             // collision
@@ -6472,15 +6517,13 @@ class Axis {
             };
 
         if (horiz) {
-            autoRotation = !(labelOptions as any).staggerLines &&
-                !(labelOptions as any).step &&
-                ( // #3971
-                    defined(rotationOption) ?
-                        [rotationOption] :
-                        slotSize < pick(
-                            (labelOptions as any).autoRotationLimit, 80
-                        ) && (labelOptions as any).autoRotation
-                );
+            if (!labelOptions.staggerLines && !labelOptions.step) {
+                if (isNumber(rotationOption)) {
+                    autoRotation = [rotationOption];
+                } else if (slotSize < labelOptions.autoRotationLimit) {
+                    autoRotation = labelOptions.autoRotation;
+                }
+            }
 
             if (autoRotation) {
 
@@ -6511,12 +6554,15 @@ class Axis {
                 });
             }
 
-        } else if (!(labelOptions as any).step) { // #4411
+        } else if (!labelOptions.step) { // #4411
             newTickInterval = getStep(labelMetrics.h);
         }
 
         this.autoRotation = autoRotation;
-        this.labelRotation = pick(rotation, rotationOption);
+        this.labelRotation = pick(
+            rotation,
+            isNumber(rotationOption) ? rotationOption : 0
+        );
 
         return newTickInterval;
     }
@@ -6552,11 +6598,7 @@ class Axis {
             return tick.slotWidth;
         }
 
-        if (
-            horiz &&
-            labelOptions &&
-            (labelOptions.step || 0) < 2
-        ) {
+        if (horiz && labelOptions.step < 2) {
             if (labelOptions.rotation) { // #4415
                 return 0;
             }
@@ -6565,9 +6607,9 @@ class Axis {
 
         if (!horiz) {
             // #7028
-            const cssWidth = labelOptions?.style?.width;
+            const cssWidth = labelOptions.style.width;
             if (cssWidth !== void 0) {
-                return parseInt(cssWidth, 10);
+                return parseInt(String(cssWidth), 10);
             }
 
             if (marginLeft) {
@@ -6593,17 +6635,16 @@ class Axis {
             tickPositions = this.tickPositions,
             ticks = this.ticks,
             labelOptions = this.options.labels,
-            labelStyleOptions = (labelOptions && labelOptions.style || {}),
+            labelStyleOptions = labelOptions.style,
             horiz = this.horiz,
             slotWidth = this.getSlotWidth(),
             innerWidth = Math.max(
                 1,
-                Math.round(slotWidth - 2 * ((labelOptions as any).padding || 5))
+                Math.round(slotWidth - 2 * labelOptions.padding)
             ),
             attr: SVGAttributes = {},
             labelMetrics = this.labelMetrics(),
-            textOverflowOption = ((labelOptions as any).style &&
-                (labelOptions as any).style.textOverflow),
+            textOverflowOption = labelStyleOptions.textOverflow,
             commonWidth: number,
             commonTextOverflow: string,
             maxLabelLength = 0,
@@ -6612,14 +6653,14 @@ class Axis {
             pos;
 
         // Set rotation option unless it is "auto", like in gauges
-        if (!isString((labelOptions as any).rotation)) {
-            // #4443:
-            attr.rotation = (labelOptions as any).rotation || 0;
+        if (!isString(labelOptions.rotation)) {
+            // #4443
+            attr.rotation = labelOptions.rotation || 0;
         }
 
         // Get the longest label length
-        tickPositions.forEach(function (tick: (number|Highcharts.Tick)): void {
-            tick = ticks[tick as any];
+        tickPositions.forEach(function (tickPosition): void {
+            const tick = ticks[tickPosition];
 
             // Replace label - sorting animation
             if (tick.movedLabel) {
@@ -6628,10 +6669,10 @@ class Axis {
 
             if (
                 tick &&
-                (tick as any).label &&
-                (tick as any).label.textPxLength > maxLabelLength
+                tick.label &&
+                tick.label.textPxLength > maxLabelLength
             ) {
-                maxLabelLength = (tick as any).label.textPxLength;
+                maxLabelLength = tick.label.textPxLength;
             }
         });
         this.maxLabelLength = maxLabelLength;
@@ -6707,7 +6748,7 @@ class Axis {
         }
 
         // Set the explicit or automatic label alignment
-        this.labelAlign = (labelOptions as any).align ||
+        this.labelAlign = labelOptions.align ||
             this.autoLabelAlign(this.labelRotation as any);
         if (this.labelAlign) {
             attr.align = this.labelAlign;
@@ -6784,9 +6825,11 @@ class Axis {
         return this.series.some(function (s): boolean {
             return s.hasData();
         }) ||
-        ((this.options.showEmpty as any) &&
-        defined(this.min) &&
-        defined(this.max));
+        (
+            this.options.showEmpty &&
+            defined(this.min) &&
+            defined(this.max)
+        );
     }
 
     /**
@@ -6804,11 +6847,11 @@ class Axis {
             opposite = axis.opposite,
             options = axis.options,
             axisTitleOptions = options.title,
-            textAlign,
+            textAlign: AlignValue|undefined,
             styledMode = axis.chart.styledMode;
 
         if (!axis.axisTitle) {
-            textAlign = (axisTitleOptions as any).textAlign;
+            textAlign = axisTitleOptions.textAlign;
             if (!textAlign) {
                 textAlign = ((horiz ? {
                     low: 'left',
@@ -6818,27 +6861,27 @@ class Axis {
                     low: opposite ? 'right' : 'left',
                     middle: 'center',
                     high: opposite ? 'left' : 'right'
-                }) as Highcharts.Dictionary<AlignValue>)[
-                    (axisTitleOptions as any).align
+                }) as Record<string, AlignValue>)[
+                    axisTitleOptions.align as any
                 ];
             }
             axis.axisTitle = renderer
                 .text(
-                    (axisTitleOptions as any).text,
+                    axisTitleOptions.text || '',
                     0,
                     0,
-                    (axisTitleOptions as any).useHTML
+                    axisTitleOptions.useHTML
                 )
                 .attr({
                     zIndex: 7,
-                    rotation: (axisTitleOptions as any).rotation || 0,
+                    rotation: axisTitleOptions.rotation,
                     align: textAlign
                 })
                 .addClass('highcharts-axis-title');
 
             // #7814, don't mutate style option
             if (!styledMode) {
-                axis.axisTitle.css(merge((axisTitleOptions as any).style));
+                axis.axisTitle.css(merge(axisTitleOptions.style));
             }
 
             axis.axisTitle.add(axis.axisGroup);
@@ -6847,7 +6890,7 @@ class Axis {
 
         // Max width defaults to the length of the axis
         if (!styledMode &&
-            !(axisTitleOptions as any).style.width &&
+            !axisTitleOptions.style.width &&
             !axis.isRadial
         ) {
             axis.axisTitle.css({
@@ -6920,10 +6963,10 @@ class Axis {
 
         // For reuse in Axis.render
         hasData = axis.hasData();
-        axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
+        axis.showAxis = showAxis = hasData || options.showEmpty;
 
         // Set/reset staggerLines
-        axis.staggerLines = axis.horiz && (labelOptions as any).staggerLines;
+        axis.staggerLines = (axis.horiz && labelOptions.staggerLines) || void 0;
 
         // Create the axisGroup and gridGroup elements on first iteration
         if (!axis.axisGroup) {
@@ -6943,17 +6986,17 @@ class Axis {
             axis.gridGroup = createGroup(
                 'grid',
                 '-grid',
-                options.gridZIndex || 1
+                options.gridZIndex
             );
             axis.axisGroup = createGroup(
                 'axis',
                 '',
-                options.zIndex || 2
+                options.zIndex
             );
             axis.labelGroup = createGroup(
                 'axis-labels',
                 '-labels',
-                (labelOptions as any).zIndex || 7
+                labelOptions.zIndex
             );
         }
 
@@ -6976,7 +7019,7 @@ class Axis {
                 ({ 1: 'left', 3: 'right' } as any)[side] === axis.labelAlign
             );
             if (pick(
-                (labelOptions as any).reserveSpace,
+                labelOptions.reserveSpace,
                 axis.labelAlign === 'center' ? true : null,
                 axis.reserveSpaceDefault
             )) {
@@ -7048,10 +7091,10 @@ class Axis {
             labelOffsetPadded += directionFactor * (
                 horiz ?
                     pick(
-                        (labelOptions as any).y,
+                        labelOptions.y,
                         axis.tickRotCorr.y + directionFactor * 8
                     ) :
-                    (labelOptions as any).x
+                    labelOptions.x
             );
         }
 
@@ -7070,7 +7113,7 @@ class Axis {
 
         axisOffset[side] = Math.max(
             axisOffset[side],
-            (axis.axisTitleMargin as any) + titleOffset +
+            (axis.axisTitleMargin || 0) + titleOffset +
             directionFactor * axis.offset,
             labelOffsetPadded, // #3027
             tickPositions && tickPositions.length && tickSize ?
@@ -7179,12 +7222,11 @@ class Axis {
             margin = horiz ? axisLeft : axisTop,
             opposite = this.opposite,
             offset = this.offset,
-            xOption = (axisTitleOptions as any).x || 0,
-            yOption = (axisTitleOptions as any).y || 0,
+            xOption = axisTitleOptions.x,
+            yOption = axisTitleOptions.y,
             axisTitle = this.axisTitle,
             fontMetrics = this.chart.renderer.fontMetrics(
-                (axisTitleOptions as any).style &&
-                (axisTitleOptions as any).style.fontSize,
+                axisTitleOptions.style.fontSize,
                 axisTitle
             ),
             // The part of a multiline text that is below the baseline of the
@@ -7200,7 +7242,7 @@ class Axis {
                 low: margin + (horiz ? 0 : axisLength),
                 middle: margin + axisLength / 2,
                 high: margin + (horiz ? axisLength : 0)
-            } as any)[(axisTitleOptions as any).align],
+            } as any)[axisTitleOptions.align as any],
 
             // the position in the perpendicular direction of the axis
             offAxis = (horiz ? axisTop + this.height : axisLeft) +
@@ -7334,8 +7376,8 @@ class Axis {
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (
-                Highcharts.Dictionary<Tick>|
-                Highcharts.Dictionary<PlotLineOrBand>
+                Record<string, Tick>|
+                Record<string, PlotLineOrBand>
             )
         ): void {
             objectEach(coll, function (tick): void {
@@ -7409,6 +7451,7 @@ class Axis {
 
             // custom plot lines and bands
             if (!axis._addedPlotLB) { // only first time
+                axis._addedPlotLB = true;
                 (options.plotLines || [])
                     .concat((options.plotBands as any) || [])
                     .forEach(
@@ -7416,7 +7459,6 @@ class Axis {
                             axis.addPlotBandOrLine(plotLineOptions);
                         }
                     );
-                axis._addedPlotLB = true;
             }
 
         } // end if hasData
@@ -7424,8 +7466,8 @@ class Axis {
         // Remove inactive ticks
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (
-                Highcharts.Dictionary<Highcharts.Tick>|
-                Highcharts.Dictionary<Highcharts.PlotLineOrBand>
+                Record<string, Highcharts.Tick>|
+                Record<string, Highcharts.PlotLineOrBand>
             )
         ): void {
             var i,
@@ -7577,8 +7619,8 @@ class Axis {
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
             function (
                 coll: (
-                    Highcharts.Dictionary<Highcharts.PlotLineOrBand>|
-                    Highcharts.Dictionary<Highcharts.Tick>
+                    Record<string, Highcharts.PlotLineOrBand>|
+                    Record<string, Highcharts.Tick>
                 )
             ): void {
                 destroyObjectProperties(coll);
@@ -7634,11 +7676,11 @@ class Axis {
 
         var path,
             options = this.crosshair,
-            snap = pick((options as any).snap, true),
+            snap = pick(options && options.snap, true),
             pos,
             categorized,
             graphic = this.cross,
-            crossOptions,
+            crossOptions: Highcharts.AxisPlotLinesOptions,
             chart = this.chart;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
@@ -7651,7 +7693,7 @@ class Axis {
 
         if (
             // Disabled in options
-            !this.crosshair ||
+            !options ||
             // Snap
             ((defined(point) || !snap) === false)
         ) {
@@ -7716,32 +7758,32 @@ class Axis {
                     .addClass(
                         'highcharts-crosshair highcharts-crosshair-' +
                         (categorized ? 'category ' : 'thin ') +
-                        (options as any).className
+                        (options.className || '')
                     )
                     .attr({
-                        zIndex: pick((options as any).zIndex, 2)
+                        zIndex: pick(options.zIndex, 2)
                     })
                     .add();
 
                 // Presentational attributes
                 if (!chart.styledMode) {
                     graphic.attr({
-                        stroke: (options as any).color ||
+                        stroke: options.color ||
                             (
                                 categorized ?
                                     Color
-                                        .parse('${palette.highlightColor20}')
+                                        .parse(palette.highlightColor20)
                                         .setOpacity(0.25)
                                         .get() :
-                                    '${palette.neutralColor20}'
+                                    palette.neutralColor20
                             ),
-                        'stroke-width': pick((options as any).width, 1)
+                        'stroke-width': pick(options.width, 1)
                     }).css({
                         'pointer-events': 'none'
                     });
-                    if ((options as any).dashStyle) {
+                    if (options.dashStyle) {
                         graphic.attr({
-                            dashstyle: (options as any).dashStyle
+                            dashstyle: options.dashStyle
                         });
                     }
                 }
@@ -7783,7 +7825,12 @@ class Axis {
     *
     */
     public hasVerticalPanning(): boolean {
-        return /y/.test(this.chart.options.chart?.panning?.type || '');
+        const panningOptions = this.chart.options.chart.panning;
+        return Boolean(
+            panningOptions &&
+            panningOptions.enabled && // #14624
+            /y/.test(panningOptions.type)
+        );
     }
 
     /**
@@ -7794,12 +7841,147 @@ class Axis {
     *
     * @param {unknown} value
     * The axis value
-    * @return {boolean}
     *
+    * @return {boolean}
     */
     public validatePositiveValue(value: unknown): boolean {
         return isNumber(value) && value > 0;
     }
+
+    /**
+     * Update an axis object with a new set of options. The options are merged
+     * with the existing options, so only new or altered options need to be
+     * specified.
+     *
+     * @sample highcharts/members/axis-update/
+     *         Axis update demo
+     *
+     * @function Highcharts.Axis#update
+     *
+     * @param {Highcharts.AxisOptions} options
+     *        The new options that will be merged in with existing options on
+     *        the axis.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after the axis is altered. If doing
+     *        more operations on the chart, it is a good idea to set redraw to
+     *        false and call {@link Chart#redraw} after.
+     */
+    public update(
+        options: DeepPartial<Highcharts.AxisOptions>,
+        redraw?: boolean
+    ): void {
+        var chart = this.chart,
+            newEvents = ((options && options.events) || {});
+
+        options = merge(this.userOptions, options);
+
+        // Remove old events, if no new exist (#8161)
+        objectEach(
+            (chart.options as any)[this.coll].events,
+            function (fn: Function, ev: string): void {
+                if (typeof (newEvents as any)[ev] === 'undefined') {
+                    (newEvents as any)[ev] = void 0;
+                }
+            }
+        );
+
+        this.destroy(true);
+        this.init(chart, extend(options, { events: newEvents }));
+
+        chart.isDirtyBox = true;
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
+    }
+
+    /**
+     * Remove the axis from the chart.
+     *
+     * @sample highcharts/members/chart-addaxis/
+     *         Add and remove axes
+     *
+     * @function Highcharts.Axis#remove
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart following the remove.
+     */
+    public remove(redraw?: boolean): void {
+        var chart = this.chart,
+            key = this.coll, // xAxis or yAxis
+            axisSeries = this.series,
+            i = axisSeries.length;
+
+        // Remove associated series (#2687)
+        while (i--) {
+            if (axisSeries[i]) {
+                axisSeries[i].remove(false);
+            }
+        }
+
+        // Remove the axis
+        erase(chart.axes, this);
+        erase((chart as any)[key], this);
+
+        (chart as any)[key].forEach(function (
+            axis: Highcharts.Axis,
+            i: number
+        ): void {
+            // Re-index, #1706, #8075
+            axis.options.index = axis.userOptions.index = i;
+        });
+        this.destroy();
+        chart.isDirtyBox = true;
+
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
+    }
+
+    /**
+     * Update the axis title by options after render time.
+     *
+     * @sample highcharts/members/axis-settitle/
+     *         Set a new Y axis title
+     *
+     * @function Highcharts.Axis#setTitle
+     *
+     * @param {Highcharts.AxisTitleOptions} titleOptions
+     *        The additional title options.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart after setting the title.
+     *
+     * @return {void}
+     */
+    public setTitle(
+        titleOptions: Highcharts.AxisTitleOptions,
+        redraw?: boolean
+    ): void {
+        this.update({ title: titleOptions }, redraw);
+    }
+
+    /**
+     * Set new axis categories and optionally redraw.
+     *
+     * @sample highcharts/members/axis-setcategories/
+     *         Set categories by click on a button
+     *
+     * @function Highcharts.Axis#setCategories
+     *
+     * @param {Array<string>} categories
+     *        The new categories.
+     *
+     * @param {boolean} [redraw=true]
+     *        Whether to redraw the chart.
+     */
+    public setCategories(
+        categories: Array<string>,
+        redraw?: boolean
+    ): void {
+        this.update({ categories: categories }, redraw);
+    }
+
 }
 
 interface Axis extends AxisComposition, AxisLike {

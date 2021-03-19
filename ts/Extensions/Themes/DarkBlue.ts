@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -89,11 +89,6 @@ Highcharts.theme = {
         backgroundColor: 'rgba(0, 0, 0, 0.75)',
         style: {
             color: '#F0F0F0'
-        }
-    },
-    toolbar: {
-        itemStyle: {
-            color: 'silver'
         }
     },
     plotOptions: {

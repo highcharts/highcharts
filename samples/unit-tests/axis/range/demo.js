@@ -1,6 +1,5 @@
 QUnit.test('Reversed axis range(#1457)', function (assert) {
     var chart = new Highcharts.Chart({
-
         chart: {
             renderTo: 'container',
             type: 'columnrange',
@@ -11,19 +10,20 @@ QUnit.test('Reversed axis range(#1457)', function (assert) {
             reversed: true
         },
 
-        series: [{
-            animation: false,
-            name: 'Temperatures',
-            data: [
-                [1, 2],
-                [2, 3],
-                [3, 4]
-            ],
-            dataLabels: {
-                enabled: true
+        series: [
+            {
+                animation: false,
+                name: 'Temperatures',
+                data: [
+                    [1, 2],
+                    [2, 3],
+                    [3, 4]
+                ],
+                dataLabels: {
+                    enabled: true
+                }
             }
-        }]
-
+        ]
     });
 
     var point = chart.series[0].points[0];
@@ -45,11 +45,8 @@ QUnit.test('Reversed axis range(#1457)', function (assert) {
     );
 });
 
-
 QUnit.test('Reversed axis range - inverted', function (assert) {
-
     var chart = new Highcharts.Chart({
-
         chart: {
             renderTo: 'container',
             type: 'columnrange',
@@ -60,19 +57,20 @@ QUnit.test('Reversed axis range - inverted', function (assert) {
             reversed: true
         },
 
-        series: [{
-            animation: false,
-            name: 'Temperatures',
-            data: [
-                [1, 2],
-                [2, 3],
-                [3, 4]
-            ],
-            dataLabels: {
-                enabled: true
+        series: [
+            {
+                animation: false,
+                name: 'Temperatures',
+                data: [
+                    [1, 2],
+                    [2, 3],
+                    [3, 4]
+                ],
+                dataLabels: {
+                    enabled: true
+                }
             }
-        }]
-
+        ]
     });
 
     var point = chart.series[0].points[0];
@@ -88,18 +86,37 @@ QUnit.test('#6773 - cannot update xAxis range dynamically', function (assert) {
         xAxis: {
             range: 5
         },
-        series: [{
-            data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        }]
+        series: [
+            {
+                data: [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6,
+                    7,
+                    8,
+                    9,
+                    10
+                ]
+            }
+        ]
     });
 
     chart.xAxis[0].update({
         range: 10
     });
 
-    assert.strictEqual(
-        chart.xAxis[0].min,
-        9,
-        'range updated'
-    );
+    assert.strictEqual(chart.xAxis[0].min, 9, 'range updated');
 });

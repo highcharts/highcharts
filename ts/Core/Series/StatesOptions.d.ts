@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -25,7 +25,7 @@ import type DashStyleValue from '../Renderer/DashStyleValue';
 
 export interface StateClassWithOptions {}
 
-export type StateGenericOptions<T extends { options: Record<string, any> }> = (
+export type StateGenericOptions<T extends { options: AnyRecord }> = (
     DeepPartial<Omit<T['options'], ('states'|'data')>>
 );
 

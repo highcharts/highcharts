@@ -9,9 +9,8 @@
  * */
 import type PositionObject from '../Core/Renderer/PositionObject';
 
-import AnimationOptionsObject from '../Core/Animation/AnimationOptionsObject.js';
+import AnimationOptionsObject from '../Core/Animation/AnimationOptions';
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
     isNumber
@@ -29,6 +28,12 @@ declare global {
 
     }
 }
+declare module '../Core/Chart/ChartLike'{
+    interface ChartLike {
+        mapView?: MapView;
+    }
+}
+
 class MapView {
 
     public constructor(

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,7 +13,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../AlignObject';
-import type AnimationOptionsObject from '../../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../../Animation/AnimationOptions';
 import type BBoxObject from '../BBoxObject';
 import type ColorString from '../../Color/ColorString';
 import type ColorType from '../../Color/ColorType';
@@ -31,6 +31,8 @@ import type SVGElementLike from './SVGElementLike';
 import type SVGPath from './SVGPath';
 import type SVGRenderer from './SVGRenderer';
 import A from '../../Animation/AnimationUtilities.js';
+import AST from '../HTML/AST.js';
+
 const {
     animate,
     animObject,
@@ -42,12 +44,12 @@ const {
     deg2rad,
     doc,
     hasTouch,
-    isFirefox,
     noop,
     svg,
     SVG_NS,
     win
 } = H;
+import palette from '../../Color/Palette.js';
 import U from '../../Utilities.js';
 const {
     attr,
@@ -84,6 +86,11 @@ declare module '../CSSObject' {
  * @private
  */
 declare global {
+    /**
+     * @internal
+     * @deprecated
+     */
+    type GlobalSVGElement = SVGElement;
     interface Element {
         gradient?: string;
         parentNode: (Node&ParentNode);
@@ -98,6 +105,7 @@ declare global {
             [key: string]: any;
             public element: DOMElementType;
             public hasBoxWidthChanged: boolean;
+            // public height?: number;
             public parentGroup?: SVGElement;
             public pathArray?: SVGPath;
             public r?: number;
@@ -107,6 +115,7 @@ declare global {
             public oldShadowOptions?: ShadowOptionsObject;
             public styles?: CSSObject;
             public textStr?: string;
+            // public width?: number;
             public x?: number;
             public y?: number;
             public add(parent?: SVGElement): SVGElement;
@@ -120,7 +129,7 @@ declare global {
             public alignSetter(value: ('left'|'center'|'right')): void;
             public animate(
                 params: SVGAttributes,
-                options?: (boolean|DeepPartial<AnimationOptionsObject>),
+                options?: (boolean|DeepPartial<AnimationOptions>),
                 complete?: Function
             ): SVGElement;
             public applyTextOutline(textOutline: string): void;
@@ -178,7 +187,7 @@ declare global {
             public removeClass(
                 className: (string|RegExp)
             ): SVGElement;
-            public removeTextOutline(tspans: Array<SVGDOMElement>): void;
+            public removeTextOutline(): void;
             public rotationOriginXSetter(value: any, key: string): void;
             public rotationOriginYSetter(value: any, key: string): void;
             public rotationSetter(value: any, key: string): void;
@@ -230,6 +239,16 @@ declare global {
         }
     }
 }
+
+/**
+ * Reference to the global SVGElement class as a workaround for a name conflict
+ * in the Highcharts namespace.
+ *
+ * @global
+ * @typedef {global.SVGElement} GlobalSVGElement
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
+ */
 
 /**
  * The horizontal alignment of an element.
@@ -439,7 +458,7 @@ class SVGElement {
     public oldShadowOptions?: ShadowOptionsObject;
     public onAdd?: Function;
     public opacity = 1; // Default base for animation
-    public options?: Record<string, any>;
+    public options?: AnyRecord;
     public parentInverted?: boolean;
     public parentGroup?: SVGElement;
     public pathArray?: SVGPath;
@@ -511,8 +530,8 @@ class SVGElement {
      */
     private _defaultGetter(key: string): (number|string) {
         var ret = pick(
-            (this as Record<string, any>)[key + 'Value'], // align getter
-            (this as Record<string, any>)[key],
+            (this as AnyRecord)[key + 'Value'], // align getter
+            (this as AnyRecord)[key],
             this.element ? this.element.getAttribute(key) : null,
             0
         );
@@ -722,7 +741,12 @@ class SVGElement {
             alignTo = this.alignTo;
         }
 
-        box = pick(box, (renderer as any)[alignTo as any], renderer as any);
+        box = pick(
+            box,
+            (renderer as any)[alignTo as any],
+            alignTo === 'scrollablePlotBox' ? (renderer as any).plotBox : void 0,
+            renderer as any
+        );
 
         // Assign variables
         align = (alignOptions as any).align;
@@ -804,7 +828,7 @@ class SVGElement {
      */
     public animate(
         params: SVGAttributes,
-        options?: (boolean|Partial<AnimationOptionsObject>),
+        options?: (boolean|Partial<AnimationOptions>),
         complete?: Function
     ): SVGElement {
         var animOptions = animObject(
@@ -835,7 +859,7 @@ class SVGElement {
             // Call the end step synchronously
             objectEach(params, function (val: any, prop: string): void {
                 if (animOptions.step) {
-                    animOptions.step.call(this as any, val, { prop: prop, pos: 1 });
+                    animOptions.step.call(this, val, { prop: prop, pos: 1, elem: this });
                 }
             }, this);
         }
@@ -866,32 +890,26 @@ class SVGElement {
      */
     public applyTextOutline(textOutline: string): void {
         var elem = this.element,
-            tspans: Array<SVGDOMElement>,
             hasContrast = textOutline.indexOf('contrast') !== -1,
-            styles: CSSObject = {},
-            color: ColorString,
-            strokeWidth: string,
-            firstRealChild: SVGDOMElement;
+            styles: CSSObject = {};
 
         // When the text shadow is set to contrast, use dark stroke for light
         // text and vice versa.
         if (hasContrast) {
             styles.textOutline = textOutline = textOutline.replace(
                 /contrast/g,
-                this.renderer.getContrast(elem.style.fill as any)
+                this.renderer.getContrast(elem.style.fill)
             );
         }
 
         // Extract the stroke width and color
-        textOutline = textOutline.split(' ') as any;
-        color = textOutline[textOutline.length - 1];
-        strokeWidth = textOutline[0];
+        const parts = textOutline.split(' ');
+        const color: ColorString = parts[parts.length - 1];
+        let strokeWidth = parts[0];
 
         if (strokeWidth && strokeWidth !== 'none' && H.svg) {
 
             this.fakeTS = true; // Fake text shadow
-
-            tspans = [].slice.call(elem.getElementsByTagName('tspan'));
 
             // In order to get the right y position of the clone,
             // copy over the y setter
@@ -903,60 +921,54 @@ class SVGElement {
             strokeWidth = strokeWidth.replace(
                 /(^[\d\.]+)(.*?)$/g,
                 function (match: string, digit: string, unit: string): string {
-                    return (2 * (digit as any)) + unit;
+                    return (2 * Number(digit)) + unit;
                 }
             );
 
             // Remove shadows from previous runs.
-            this.removeTextOutline(tspans);
+            this.removeTextOutline();
 
-            // Check if the element contains RTL characters.
-            // Comparing against Hebrew and Arabic characters,
-            // excluding Arabic digits. Source:
-            // https://www.unicode.org/Public/UNIDATA/extracted/DerivedBidiClass.txt
-            const isRTL = elem.textContent ?
-                /^[\u0591-\u065F\u066A-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
-                    .test(elem.textContent) : false;
-            // For each of the tspans, create a stroked copy behind it.
-            firstRealChild = elem.firstChild as any;
-            tspans.forEach(function (
-                tspan: SVGDOMElement,
-                y: number
-            ): void {
-                var clone: any;
-
-                // Let the first line start at the correct X position
-                if (y === 0) {
-                    tspan.setAttribute('x', elem.getAttribute('x') as any);
-                    y = elem.getAttribute('y') as any;
-                    tspan.setAttribute('y', y || 0);
-                    if (y === null) {
-                        elem.setAttribute('y', 0);
-                    }
-                }
-
-                // Create the clone and apply outline properties.
-                // For RTL elements apply outline properties for orginal element
-                // to prevent outline from overlapping the text.
-                // For RTL in Firefox keep the orginal order (#10162).
-                clone = tspan.cloneNode(true);
-                attr((isRTL && !isFirefox) ? tspan : clone, {
-                    'class': 'highcharts-text-outline',
-                    fill: color,
-                    stroke: color,
-                    'stroke-width': strokeWidth,
-                    'stroke-linejoin': 'round'
-                });
-                elem.insertBefore(clone, firstRealChild);
+            const outline = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            attr(outline, {
+                'class': 'highcharts-text-outline',
+                fill: color,
+                stroke: color,
+                'stroke-width': strokeWidth as any,
+                'stroke-linejoin': 'round'
             });
 
-            // Create a whitespace between tspan and clone,
-            // to fix the display of Arabic characters in Firefox.
-            if (isRTL && isFirefox && tspans[0]) {
-                const whitespace = tspans[0].cloneNode(true);
-                whitespace.textContent = ' ';
-                elem.insertBefore(whitespace, firstRealChild);
-            }
+            // For each of the tspans and text nodes, create a copy in the
+            // outline.
+            [].forEach.call(
+                elem.childNodes,
+                (childNode: ChildNode): void => {
+                    const clone = childNode.cloneNode(true);
+                    if ((clone as any).removeAttribute) {
+                        ['fill', 'stroke', 'stroke-width', 'stroke'].forEach(
+                            (prop): void => (clone as any).removeAttribute(prop)
+                        );
+                    }
+                    outline.appendChild(clone);
+                }
+            );
+
+            // Insert an absolutely positioned break before the original text
+            // to keep it in place
+            const br = doc.createElementNS(SVG_NS, 'tspan') as DOMElementType;
+            br.textContent = '\u200B';
+
+            // Copy x and y if not null
+            (['x', 'y'] as Array<'x'|'y'>).forEach((key): void => {
+                const value = elem.getAttribute(key);
+                if (value) {
+                    br.setAttribute(key, value);
+                }
+            });
+
+            // Insert the outline
+            outline.appendChild(br);
+            elem.insertBefore(outline, elem.firstChild);
+
         }
     }
 
@@ -1050,14 +1062,14 @@ class SVGElement {
         if (typeof hash === 'string' && typeof val !== 'undefined') {
             key = hash;
             hash = {};
-            hash[key] = val;
+            (hash as any)[key] = val;
         }
 
         // used as a getter: first argument is a string, second is undefined
         if (typeof hash === 'string') {
             ret = (
-                (this as Record<string, any>)[hash + 'Getter'] ||
-                (this as Record<string, any>)._defaultGetter
+                (this as AnyRecord)[hash + 'Getter'] ||
+                (this as AnyRecord)._defaultGetter
             ).call(
                 this,
                 hash,
@@ -1097,8 +1109,8 @@ class SVGElement {
 
                 if (!skipAttr) {
                     setter = (
-                        (this as Record<string, any>)[key + 'Setter'] ||
-                        (this as Record<string, any>)._defaultSetter
+                        (this as AnyRecord)[key + 'Setter'] ||
+                        (this as AnyRecord)._defaultSetter
                     );
                     setter.call(this, val, key, element);
 
@@ -1242,10 +1254,10 @@ class SVGElement {
                 // Keep < 2.2 kompatibility
                 if (isArray(gradAttr)) {
                     (colorOptions as any)[gradName] = gradAttr = {
-                        x1: gradAttr[0],
-                        y1: gradAttr[1],
-                        x2: gradAttr[2],
-                        y2: gradAttr[3],
+                        x1: gradAttr[0] as number,
+                        y1: gradAttr[1] as number,
+                        x2: gradAttr[2] as number,
+                        y2: gradAttr[3] as number,
                         gradientUnits: 'userSpaceOnUse'
                     };
                 }
@@ -1267,9 +1279,9 @@ class SVGElement {
 
                 // Build the unique key to detect whether we need to create a
                 // new element (#1282)
-                objectEach(gradAttr, function (val: string, n: string): void {
+                objectEach(gradAttr, function (value, n): void {
                     if (n !== 'id') {
-                        (key as any).push(n, val);
+                        (key as any).push(n, value);
                     }
                 });
                 objectEach(stops, function (val): void {
@@ -1304,7 +1316,7 @@ class SVGElement {
                         if (stop[1].indexOf('rgba') === 0) {
                             colorObject = Color.parse(stop[1]);
                             stopColor = colorObject.get('rgb') as any;
-                            stopOpacity = colorObject.get('a');
+                            stopOpacity = colorObject.get('a') as any;
                         } else {
                             stopColor = stop[1];
                             stopOpacity = 1;
@@ -1374,7 +1386,7 @@ class SVGElement {
         if (oldStyles) {
             objectEach(styles, function (style, n): void {
                 if (oldStyles && oldStyles[n] !== style) {
-                    newStyles[n] = style;
+                    (newStyles as any)[n] = style;
                     hasNew = true;
                 }
             });
@@ -1567,15 +1579,15 @@ class SVGElement {
 
             // Destroy child elements of a group
             if (
-                (wrapper as Record<string, any>)[key] &&
-                (wrapper as Record<string, any>)[key].parentGroup === wrapper &&
-                (wrapper as Record<string, any>)[key].destroy
+                (wrapper as AnyRecord)[key] &&
+                (wrapper as AnyRecord)[key].parentGroup === wrapper &&
+                (wrapper as AnyRecord)[key].destroy
             ) {
-                (wrapper as Record<string, any>)[key].destroy();
+                (wrapper as AnyRecord)[key].destroy();
             }
 
             // Delete all properties
-            delete (wrapper as Record<string, any>)[key];
+            delete (wrapper as AnyRecord)[key];
         });
 
         return;
@@ -1606,7 +1618,7 @@ class SVGElement {
         path: SVGElement
     ): void {
         const textElement = elem.getElementsByTagName('text')[0];
-        let tspans: NodeListOf<ChildNode>;
+        let childNodes: NodeListOf<ChildNode>;
 
         if (textElement) {
             // Remove textPath attributes
@@ -1621,10 +1633,10 @@ class SVGElement {
                 textElement.getElementsByTagName('textPath').length
             ) {
                 // Move nodes to <text>
-                tspans = this.textPathWrapper.element.childNodes;
-                // Now move all <tspan>'s to the <textPath> node
-                while (tspans.length) {
-                    textElement.appendChild(tspans[0]);
+                childNodes = this.textPathWrapper.element.childNodes;
+                // Now move all <tspan>'s and text nodes to the <textPath> node
+                while (childNodes.length) {
+                    textElement.appendChild(childNodes[0]);
                 }
                 // Remove <textPath> from the DOM
                 textElement.removeChild(this.textPathWrapper.element);
@@ -1677,9 +1689,9 @@ class SVGElement {
         // Check for cache before resetting. Resetting causes disturbance in the
         // DOM, causing flickering in some cases in Edge/IE (#6747). Also
         // possible performance gain.
-        if ((this as Record<string, any>)[key] !== value) {
+        if ((this as AnyRecord)[key] !== value) {
             element.setAttribute(key, value);
-            (this as Record<string, any>)[key] = value;
+            (this as AnyRecord)[key] = value;
         }
 
     }
@@ -1817,14 +1829,13 @@ class SVGElement {
                     toggleTextShadowShim = this.fakeTS && function (
                         display: string
                     ): void {
-                        [].forEach.call(
-                            element.querySelectorAll(
-                                '.highcharts-text-outline'
-                            ),
-                            function (tspan: SVGDOMElement): void {
-                                tspan.style.display = display;
-                            }
-                        );
+                        const outline = element.querySelector(
+                            '.highcharts-text-outline'
+                        ) as DOMElementType|undefined;
+
+                        if (outline) {
+                            css(outline, { display });
+                        }
                     };
 
                     // Workaround for #3842, Firefox reporting wrong bounding
@@ -2114,10 +2125,6 @@ class SVGElement {
                 }
 
                 touchEventFired = true;
-                if (e.cancelable !== false) {
-                    // prevent other events from being fired. #9682
-                    e.preventDefault();
-                }
             };
 
             element.onclick = function (e: Event): void {
@@ -2128,7 +2135,7 @@ class SVGElement {
             };
         } else {
             // simplest possible event model for internal use
-            (element as Record<string, any>)['on' + eventType] = handler;
+            (element as AnyRecord)['on' + eventType] = handler;
         }
         return this;
     }
@@ -2178,21 +2185,15 @@ class SVGElement {
     }
 
     /**
+     *
      * @private
-     * @param {Array<Highcharts.SVGDOMElement>} tspans
-     * Text spans.
      */
-    public removeTextOutline(tspans: Array<SVGDOMElement>): void {
-        // Iterate from the end to
-        // support removing items inside the cycle (#6472).
-        var i = tspans.length,
-            tspan;
-        while (i--) {
-            tspan = tspans[i];
-            if (tspan.getAttribute('class') === 'highcharts-text-outline') {
-                // Remove then erase
-                erase(tspans, this.element.removeChild(tspan));
-            }
+    public removeTextOutline(): void {
+        const outline = this.element
+            .querySelector('tspan.highcharts-text-outline') as SVGDOMElement;
+
+        if (outline) {
+            this.safeRemoveChild(outline);
         }
     }
 
@@ -2263,9 +2264,10 @@ class SVGElement {
      */
     public setTextPath(
         path: SVGElement,
-        textPathOptions: Record<string, any>
+        textPathOptions: AnyRecord
     ): SVGElement {
         var elem = this.element,
+            textNode = this.text ? this.text.element : elem,
             attribsMap = {
                 textAnchor: 'text-anchor'
             },
@@ -2274,7 +2276,6 @@ class SVGElement {
             textPathElement: DOMElementType,
             textPathId,
             textPathWrapper: SVGElement = this.textPathWrapper as any,
-            tspans,
             firstTime = !textPathWrapper;
 
         // Defaults
@@ -2287,7 +2288,7 @@ class SVGElement {
             }
         }, textPathOptions);
 
-        attrs = textPathOptions.attributes;
+        attrs = AST.filterUserAttributes(textPathOptions.attributes);
 
         if (path && textPathOptions && textPathOptions.enabled) {
             // In case of fixed width for a text, string is rebuilt
@@ -2303,10 +2304,7 @@ class SVGElement {
             } else if (textPathWrapper) {
                 // Case after drillup when spans were added into
                 // the DOM outside the textPathWrapper parentGroup
-                this.removeTextOutline.call(
-                    textPathWrapper.parentGroup,
-                    [].slice.call(elem.getElementsByTagName('tspan'))
-                );
+                this.removeTextOutline.call(textPathWrapper.parentGroup);
             }
             // label() has padding, text() doesn't
             if (this.options && this.options.padding) {
@@ -2330,29 +2328,30 @@ class SVGElement {
 
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
-                tspans = elem.getElementsByTagName('tspan');
 
-                // Now move all <tspan>'s to the <textPath> node
-                while (tspans.length) {
-                    // Remove "y" from tspans, as Firefox translates them
-                    tspans[0].setAttribute('y', 0);
-                    // Remove "x" from tspans
-                    if (isNumber(attrs.dx)) {
-                        tspans[0].setAttribute('x', -attrs.dx);
+                // Adjust the position
+                textNode.setAttribute('y', 0); // Firefox
+                if (isNumber(attrs.dx)) {
+                    textNode.setAttribute('x', -attrs.dx);
+                }
+
+                // Move all <tspan>'s and text nodes to the <textPath> node. Do
+                // not move other elements like <title> or <path>
+                const childNodes = [].slice.call(textNode.childNodes);
+                for (let i = 0; i < childNodes.length; i++) {
+                    const childNode: any = childNodes[i];
+                    if (
+                        childNode.nodeType === Node.TEXT_NODE ||
+                        childNode.nodeName === 'tspan'
+                    ) {
+                        textPathElement.appendChild(childNode);
                     }
-                    textPathElement.appendChild(tspans[0]);
                 }
             }
 
             // Add <textPath> to the DOM
-            if (
-                adder &&
-                textPathWrapper
-            ) {
-                textPathWrapper.add({
-                    // label() is placed in a group, text() is standalone
-                    element: this.text ? this.text.element : elem
-                } as any);
+            if (adder && textPathWrapper) {
+                textPathWrapper.add({ element: textNode } as any);
             }
 
             // Set basic options:
@@ -2379,10 +2378,10 @@ class SVGElement {
             }
 
             // Additional attributes
-            objectEach(attrs, function (val: string, key: string): void {
+            objectEach(attrs, function (val, key): void {
                 textPathElement.setAttribute(
                     (attribsMap as any)[key] || key,
-                    val
+                    val as any
                 );
             });
 
@@ -2390,10 +2389,7 @@ class SVGElement {
             elem.removeAttribute('transform');
 
             // Remove shadows and text outlines
-            this.removeTextOutline.call(
-                textPathWrapper,
-                [].slice.call(elem.getElementsByTagName('tspan'))
-            );
+            this.removeTextOutline.call(textPathWrapper);
 
             // Remove background and border for label(), see #10545
             // Alternatively, we can disable setting background rects in
@@ -2406,8 +2402,8 @@ class SVGElement {
             }
 
             // Disable some functions
-            this.updateTransform = noop as any;
-            this.applyTextOutline = noop as any;
+            this.updateTransform = noop;
+            this.applyTextOutline = noop;
 
         } else if (textPathWrapper) {
             // Reset to prototype
@@ -2474,7 +2470,7 @@ class SVGElement {
             transform;
 
         const defaultShadowOptions: ShadowOptionsObject = {
-            color: '${palette.neutralColor100}',
+            color: palette.neutralColor100,
             offsetX: 1,
             offsetY: 1,
             opacity: 0.15,
@@ -2519,7 +2515,7 @@ class SVGElement {
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
-                        '${palette.neutralColor100}'
+                        palette.neutralColor100
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
@@ -2592,7 +2588,7 @@ class SVGElement {
         key: string,
         element: SVGDOMElement
     ): void {
-        (this as Record<string, any>)[key] = value;
+        (this as AnyRecord)[key] = value;
         // Only apply the stroke attribute if the stroke width is defined and
         // larger than 0
         if (this.stroke && this['stroke-width']) {
@@ -2656,7 +2652,7 @@ class SVGElement {
         } else if (val !== '') {
             dummy = doc.createElementNS(SVG_NS, 'rect') as SVGDOMElement;
             attr(dummy, {
-                width: val,
+                width: val as any,
                 'stroke-width': 0
             });
             (this.element.parentNode as any).appendChild(dummy);
@@ -2678,7 +2674,7 @@ class SVGElement {
      * The attributes to set.
      */
     public symbolAttr(hash: SVGAttributes): void {
-        var wrapper = this as Record<string, any>;
+        var wrapper = this as AnyRecord;
 
         [
             'x',
@@ -2693,7 +2689,7 @@ class SVGElement {
             'anchorY',
             'clockwise'
         ].forEach(function (key: string): void {
-            wrapper[key] = pick(hash[key], wrapper[key]);
+            wrapper[key] = pick((hash as any)[key], wrapper[key]);
         });
 
         wrapper.attr({
@@ -2731,29 +2727,24 @@ class SVGElement {
      * @param {string} value
      */
     public titleSetter(value: string): void {
-        var titleNode: SVGDOMElement = (
-            this.element.getElementsByTagName('title')[0] as any
-        );
+        const el = this.element;
+        const titleNode = el.getElementsByTagName('title')[0] ||
+            doc.createElementNS(this.SVG_NS, 'title');
 
-        if (!titleNode) {
-            titleNode = doc.createElementNS(this.SVG_NS, 'title') as any;
-            this.element.appendChild(titleNode);
+        // Move to first child
+        if (el.insertBefore) {
+            el.insertBefore(titleNode, el.firstChild);
+        } else {
+            el.appendChild(titleNode);
         }
 
-        // Remove text content if it exists
-        if (titleNode.firstChild) {
-            titleNode.removeChild(titleNode.firstChild);
-        }
-
-        titleNode.appendChild(
-            doc.createTextNode(
+        // Replace text content and escape markup
+        titleNode.textContent =
                 // #3276, #3895
                 String(pick(value, ''))
                     .replace(/<[^>]*>/g, '')
                     .replace(/&lt;/g, '<')
-                    .replace(/&gt;/g, '>')
-            )
-        );
+                    .replace(/&gt;/g, '>');
     }
 
     /**
@@ -2922,10 +2913,10 @@ class SVGElement {
         // attribute instead (#2881, #3909)
         if (value === 'inherit') {
             element.removeAttribute(key);
-        } else if ((this as Record<string, any>)[key] !== value) { // #6747
+        } else if ((this as AnyRecord)[key] !== value) { // #6747
             element.setAttribute(key, value);
         }
-        (this as Record<string, any>)[key] = value;
+        (this as AnyRecord)[key] = value;
     }
 
     /**
@@ -3081,7 +3072,7 @@ SVGElement.prototype.verticalAlignSetter = function (
     value: (number|string|null),
     key: string
 ): void {
-    (this as Record<string, any>)[key] = value;
+    (this as AnyRecord)[key] = value;
     this.doTransform = true;
 };
 

@@ -1,5 +1,5 @@
 QUnit.test('utils.calculateLevelSizes', function (assert) {
-    var sunburstPrototype =  Highcharts.seriesTypes.sunburst.prototype,
+    var sunburstPrototype = Highcharts.seriesTypes.sunburst.prototype,
         calculateLevelSizes = sunburstPrototype.utils.calculateLevelSizes,
         mapOptionsToLevel = {
             0: {

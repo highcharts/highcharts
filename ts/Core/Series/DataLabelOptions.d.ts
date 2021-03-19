@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -18,7 +18,7 @@ import type {
     AlignValue,
     VerticalAlignValue
 } from '../Renderer/AlignObject';
-import type AnimationOptionsObject from '../Animation/AnimationOptionsObject';
+import type AnimationOptions from '../Animation/AnimationOptions';
 import type ColorType from '../Color/ColorType';
 import type CSSObject from '../Renderer/CSSObject';
 import type Point from './Point';
@@ -44,7 +44,7 @@ export interface DataLabelFormatterCallback {
 }
 
 export interface DataLabelOptions {
-    animation?: (boolean|Partial<AnimationOptionsObject>);
+    animation?: (boolean|Partial<AnimationOptions>);
     align?: AlignValue;
     allowOverlap?: boolean;
     backgroundColor?: ColorType;

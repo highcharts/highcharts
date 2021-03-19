@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.
  *
@@ -12,10 +12,10 @@
 
 'use strict';
 
-import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     DOMElementType
 } from '../Core/Renderer/DOMElementType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
@@ -44,7 +44,7 @@ declare global {
         interface SVGElement {
             focusBorder?: SVGElement;
             /** @requires modules/accessibility */
-            addFocusBorder(margin: number, style: CSSObject): void;
+            addFocusBorder(margin: number, attribs: SVGAttributes): void;
             /** @requires modules/accessibility */
             removeFocusBorder(): void;
         }
@@ -172,12 +172,12 @@ extend(SVGElement.prototype, {
      *
      * @param {number} margin
      *
-     * @param {Highcharts.CSSObject} style
+     * @param {SVGAttributes} attribs
      */
     addFocusBorder: function (
         this: SVGElement,
         margin: number,
-        style: CSSObject
+        attribs: SVGAttributes
     ): void {
         // Allow updating by just adding new border
         if (this.focusBorder) {
@@ -225,22 +225,32 @@ extend(SVGElement.prototype, {
 
         const isLabel = this instanceof SVGLabel;
         if (this.element.nodeName === 'text' || isLabel) {
-            const isRotated = !!this.rotation,
-                correction = !isLabel ? getTextAnchorCorrection(this) :
-                    {
-                        x: isRotated ? 1 : 0,
-                        y: 0
-                    };
+            const isRotated = !!this.rotation;
+            const correction = !isLabel ? getTextAnchorCorrection(this) :
+                {
+                    x: isRotated ? 1 : 0,
+                    y: 0
+                };
+            const attrX = +this.attr('x');
+            const attrY = +this.attr('y');
 
-            borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
-            borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
+            if (!isNaN(attrX)) {
+                borderPosX = attrX - (bb.width * correction.x) - pad;
+            }
+            if (!isNaN(attrY)) {
+                borderPosY = attrY - (bb.height * correction.y) - pad;
+            }
 
             if (isLabel && isRotated) {
                 const temp = borderWidth;
                 borderWidth = borderHeight;
                 borderHeight = temp;
-                borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
-                borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
+                if (!isNaN(attrX)) {
+                    borderPosX = attrX - (bb.height * correction.x) - pad;
+                }
+                if (!isNaN(attrY)) {
+                    borderPosY = attrY - (bb.width * correction.y) - pad;
+                }
             }
         }
 
@@ -249,7 +259,7 @@ extend(SVGElement.prototype, {
             borderPosY,
             borderWidth,
             borderHeight,
-            parseInt((style && style.borderRadius || 0).toString(), 10)
+            parseInt((attribs && attribs.r || 0).toString(), 10)
         )
             .addClass('highcharts-focus-border')
             .attr({
@@ -259,12 +269,12 @@ extend(SVGElement.prototype, {
 
         if (!this.renderer.styledMode) {
             this.focusBorder.attr({
-                stroke: style && style.stroke,
-                'stroke-width': style && style.strokeWidth
+                stroke: attribs && attribs.stroke,
+                'stroke-width': attribs && attribs.strokeWidth
             });
         }
 
-        addUpdateFocusBorderHooks(this, margin, style);
+        addUpdateFocusBorderHooks(this, margin, attribs);
         addDestroyFocusBorderHook(this);
     },
 
@@ -302,8 +312,8 @@ H.Chart.prototype.renderFocusBorder = function (this: Highcharts.AccessibilityCh
         if (focusBorderOptions.enabled) {
             focusElement.addFocusBorder(focusBorderOptions.margin, {
                 stroke: focusBorderOptions.style.color,
-                strokeWidth: focusBorderOptions.style.lineWidth,
-                borderRadius: focusBorderOptions.style.borderRadius
+                'stroke-width': focusBorderOptions.style.lineWidth,
+                r: focusBorderOptions.style.borderRadius
             });
         }
     }

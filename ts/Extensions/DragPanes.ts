@@ -2,7 +2,7 @@
  *
  *  Plugin for resizing axes / panes in a chart.
  *
- *  (c) 2010-2017 Highsoft AS
+ *  (c) 2010-2021 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -18,6 +18,7 @@ import type ColorType from '../Core/Color/ColorType';
 import type {
     CursorValue
 } from '../Core/Renderer/CSSObject';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
@@ -25,6 +26,7 @@ const {
     hasTouch
 } = H;
 import Axis from '../Core/Axis/Axis.js';
+import palette from '../Core/Color/Palette.js';
 import Pointer from '../Core/Pointer.js';
 import U from '../Core/Utilities.js';
 const {
@@ -66,7 +68,7 @@ declare global {
             cursor?: CursorValue;
             enabled?: boolean;
             lineColor?: ColorType;
-            lineDashStyle?: string;
+            lineDashStyle?: DashStyleValue;
             lineWidth?: number;
             x?: number;
             y?: number;
@@ -110,7 +112,7 @@ declare global {
 class AxisResizer {
 
     // Default options for AxisResizer.
-    public static resizerOptions: Highcharts.YAxisOptions = {
+    public static resizerOptions: DeepPartial<Highcharts.YAxisOptions> = {
         /**
          * Minimal size of a resizable axis. Could be set as a percent
          * of plot area or pixel size.
@@ -222,7 +224,7 @@ class AxisResizer {
              * @type     {Highcharts.ColorString}
              * @requires modules/drag-panes
              */
-            lineColor: '${palette.neutralColor20}',
+            lineColor: palette.neutralColor20,
 
             /**
              * Dash style of the control line.
@@ -500,7 +502,7 @@ class AxisResizer {
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
             // prev and next configs
-            axesConfigs: Array<Highcharts.Dictionary<any>> = [],
+            axesConfigs: Array<AnyRecord> = [],
             stopDrag = false,
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
@@ -549,7 +551,7 @@ class AxisResizer {
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,
-                    optionsToUpdate: Highcharts.YAxisOptions = {},
+                    optionsToUpdate: DeepPartial<Highcharts.YAxisOptions> = {},
                     hDelta = 0,
                     height, top,
                     minLength, maxLength;
@@ -642,7 +644,7 @@ class AxisResizer {
         if (!stopDrag) {
             // Now update axes:
             axesConfigs.forEach(function (
-                config: Highcharts.Dictionary<any>
+                config: AnyRecord
             ): void {
                 config.axis.update(config.options, false);
             });

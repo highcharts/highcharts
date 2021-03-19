@@ -12,13 +12,13 @@
 'use strict';
 
 import type ColorType from '../Color/ColorType';
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../Series/Point';
 import type {
     PointOptions,
     PointShortOptions
 } from '../Series/PointOptions';
 import type PositionObject from '../Renderer/PositionObject';
+import type Series from '../Series/Series';
 import type SizeObject from '../Renderer/SizeObject';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
@@ -48,7 +48,7 @@ declare global {
         interface Axis {
             axisBorder?: SVGElement;
             getMaxLabelDimensions(
-                ticks: Dictionary<Tick>,
+                ticks: Record<string, Tick>,
                 tickPositions: Array<(number|string)>
             ): SizeObject;
             addExtraBorder(
@@ -72,6 +72,9 @@ declare global {
  * @private
  */
 declare module './Types' {
+    interface AxisLike {
+        rightWall?: SVGElement;
+    }
     interface AxisComposition {
         grid?: GridAxis['grid'];
     }
@@ -93,9 +96,11 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
     var options = axis.options;
 
     // Center-align by default
+    /*
     if (!options.labels) {
         options.labels = {};
     }
+    */
     options.labels.align = pick(options.labels.align, 'center');
 
     // @todo: Check against tickLabelPlacement between/on etc
@@ -212,7 +217,7 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
  * @todo Move this to the generic axis implementation, as it is used there.
  */
 Axis.prototype.getMaxLabelDimensions = function (
-    ticks: Highcharts.Dictionary<Highcharts.Tick>,
+    ticks: Record<string, Highcharts.Tick>,
     tickPositions: Array<(number|string)>
 ): SizeObject {
     var dimensions: SizeObject = {
@@ -419,6 +424,45 @@ addEvent(
     }
 );
 
+addEvent(
+    Tick,
+    'labelFormat',
+    (ctx: Highcharts.AxisLabelsFormatterContextObject): void => {
+        const {
+            axis,
+            value
+        } = ctx;
+        if (axis.options.grid?.enabled) {
+            const tickPos = axis.tickPositions;
+            const series = (
+                axis.linkedParent || axis
+            ).series[0];
+            const isFirst = value === tickPos[0];
+            const isLast = value === tickPos[tickPos.length - 1];
+            const point: (Point|undefined) =
+                series && find(series.options.data as any, function (
+                    p: (PointOptions|PointShortOptions)
+                ): boolean {
+                    return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
+                });
+            let pointCopy;
+
+            if (point && series.is('gantt')) {
+                // For the Gantt set point aliases to the pointCopy
+                // to do not change the original point
+                pointCopy = merge(point);
+                H.seriesTypes.gantt.prototype.pointClass
+                    .setGanttPointAliases(pointCopy as any);
+            }
+            // Make additional properties available for the
+            // formatter
+            ctx.isFirst = isFirst;
+            ctx.isLast = isLast;
+            ctx.point = pointCopy;
+        }
+    }
+);
+
 /* eslint-enable no-invalid-this */
 
 /**
@@ -603,27 +647,24 @@ class GridAxis {
         if (gridOptions.enabled === true) {
             // compute anchor points for each of the title align options
             const {
-                axisTitle: title,
+                axisTitle,
                 height: axisHeight,
                 horiz,
                 left: axisLeft,
                 offset,
                 opposite,
-                options: {
-                    title: axisTitleOptions = {}
-                },
+                options,
                 top: axisTop,
                 width: axisWidth
             } = axis;
             const tickSize = axis.tickSize();
-            const titleWidth = title && title.getBBox().width;
-            const xOption = axisTitleOptions.x || 0;
-            const yOption = axisTitleOptions.y || 0;
-            const titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
+            const titleWidth = axisTitle && axisTitle.getBBox().width;
+            const xOption = options.title.x;
+            const yOption = options.title.y;
+            const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
             const titleFontSize = axis.chart.renderer.fontMetrics(
-                axisTitleOptions.style &&
-                axisTitleOptions.style.fontSize,
-                title
+                options.title.style.fontSize,
+                axisTitle
             ).f;
             const crispCorr = tickSize ? tickSize[0] / 2 : 0;
 
@@ -638,7 +679,7 @@ class GridAxis {
             );
 
             e.titlePosition.x = horiz ?
-                axisLeft - (titleWidth as any) / 2 - titleMargin + xOption :
+                axisLeft - (titleWidth || 0) / 2 - titleMargin + xOption :
                 offAxis + (opposite ? axisWidth : 0) + offset + xOption;
             e.titlePosition.y = horiz ?
                 (
@@ -667,51 +708,6 @@ class GridAxis {
 
         if (gridOptions.enabled) {
             applyGridOptions(axis);
-
-            /* eslint-disable no-invalid-this */
-
-            // TODO: wrap the axis instead
-            wrap(axis, 'labelFormatter', function (
-                this: Highcharts.AxisLabelsFormatterContextObject,
-                proceed: Function
-            ): void {
-                const {
-                    axis,
-                    value
-                } = this;
-                const tickPos = axis.tickPositions;
-                const series: LineSeries = (
-                    axis.isLinked ?
-                        (axis.linkedParent as any) :
-                        axis
-                ).series[0];
-                const isFirst = value === tickPos[0];
-                const isLast = value === tickPos[tickPos.length - 1];
-                const point: (Point|undefined) =
-                    series && find(series.options.data as any, function (
-                        p: (PointOptions|PointShortOptions)
-                    ): boolean {
-                        return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
-                    });
-                let pointCopy;
-
-                if (point && series.is('gantt')) {
-                    // For the Gantt set point aliases to the pointCopy
-                    // to do not change the original point
-                    pointCopy = merge(point);
-                    H.seriesTypes.gantt.prototype.setGanttPointAliases(pointCopy as any);
-                }
-                // Make additional properties available for the
-                // formatter
-                this.isFirst = isFirst;
-                this.isLast = isLast;
-                this.point = pointCopy;
-                // Call original labelFormatter
-                return proceed.call(this);
-            });
-
-            /* eslint-enable no-invalid-this */
-
         }
 
         if (gridOptions.columns) {
@@ -893,7 +889,7 @@ class GridAxis {
 
                 if (lastTick - max < tickmarkOffset && lastTick - max > 0 && axis.ticks[lastTick].isLast) {
                     (axis.ticks[lastTick].mark as any).hide();
-                } else {
+                } else if (axis.ticks[lastTick - 1]) {
                     (axis.ticks[lastTick - 1].mark as any).show();
                 }
             }
@@ -910,38 +906,39 @@ class GridAxis {
         const gridOptions = options.grid || {};
         const userLabels = axis.userOptions.labels || {};
 
-        if (axis.horiz) {
-            if (gridOptions.enabled === true) {
+        // Fire this only for the Gantt type chart, #14868.
+        if (gridOptions.enabled) {
+            if (axis.horiz) {
                 axis.series.forEach(function (series): void {
                     series.options.pointRange = 0;
                 });
-            }
 
-            // Lower level time ticks, like hours or minutes, represent
-            // points in time and not ranges. These should be aligned
-            // left in the grid cell by default. The same applies to
-            // years of higher order.
-            if (
-                tickInfo &&
-                options.dateTimeLabelFormats &&
-                options.labels &&
-                !defined(userLabels.align) &&
-                (
-                    (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
-                    tickInfo.count > 1 // years
-                )
-            ) {
-                options.labels.align = 'left';
+                // Lower level time ticks, like hours or minutes, represent
+                // points in time and not ranges. These should be aligned
+                // left in the grid cell by default. The same applies to
+                // years of higher order.
+                if (
+                    tickInfo &&
+                    options.dateTimeLabelFormats &&
+                    options.labels &&
+                    !defined(userLabels.align) &&
+                    (
+                        (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
+                        tickInfo.count > 1 // years
+                    )
+                ) {
+                    options.labels.align = 'left';
 
-                if (!defined(userLabels.x)) {
-                    options.labels.x = 3;
+                    if (!defined(userLabels.x)) {
+                        options.labels.x = 3;
+                    }
                 }
-            }
-        } else {
-            // Don't trim ticks which not in min/max range but
-            // they are still in the min/max plus tickInterval.
-            if (this.options.type !== 'treegrid' && axis.grid?.columns) {
-                this.minPointOffset = this.tickInterval;
+            } else {
+                // Don't trim ticks which not in min/max range but
+                // they are still in the min/max plus tickInterval.
+                if (this.options.type !== 'treegrid' && axis.grid?.columns) {
+                    this.minPointOffset = this.tickInterval;
+                }
             }
         }
     }
@@ -1149,7 +1146,8 @@ class GridAxis {
             // If borderWidth is set, then use its value for tick and
             // line width.
             if (isNumber((options.grid as any).borderWidth)) {
-                options.tickWidth = options.lineWidth = gridOptions.borderWidth;
+                options.tickWidth = options.lineWidth =
+                    gridOptions.borderWidth as any;
             }
 
         }
@@ -1240,7 +1238,7 @@ class GridAxis {
      */
     public static onInit(
         this: Axis,
-        e: { userOptions?: Highcharts.AxisOptions }
+        e: { userOptions?: DeepPartial<Highcharts.AxisOptions> }
     ): void {
         const axis = this;
         const userOptions = e.userOptions || {};

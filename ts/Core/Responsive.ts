@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -26,7 +26,9 @@ const {
 declare module './Chart/ChartLike' {
     interface ChartLike {
         currentResponsive?: Highcharts.ResponsiveCurrentObject;
-        currentOptions(options: Highcharts.Options): Highcharts.Options;
+        currentOptions(
+            options: Partial<Highcharts.Options>
+        ): Partial<Highcharts.Options>;
         matchResponsiveRule(
             rule: Highcharts.ResponsiveRulesOptions,
             matches: Array<string>
@@ -64,9 +66,9 @@ declare global {
             condition?: ResponsiveRulesConditionOptions;
         }
         interface ResponsiveCurrentObject {
-            mergedOptions: Options;
+            mergedOptions: Partial<Options>;
             ruleIds: string;
-            undoOptions: Options;
+            undoOptions: Partial<Options>;
         }
     }
 }
@@ -245,7 +247,7 @@ Chart.prototype.setResponsive = function (
                 return rule._id === ruleId;
             }
         ) as any).chartOptions;
-    }) as any) as Highcharts.Options;
+    }) as any) as Partial<Highcharts.Options>;
 
     mergedOptions.isResponsiveOptions = true;
 
@@ -325,30 +327,28 @@ Chart.prototype.matchResponsiveRule = function (
  */
 Chart.prototype.currentOptions = function (
     options: Highcharts.Options
-): Highcharts.Options {
+): Partial<Highcharts.Options> {
 
     var chart = this,
-        ret = {} as Highcharts.Dictionary<any>;
+        ret = {};
 
     /**
      * Recurse over a set of options and its current values,
      * and store the current values in the ret object.
      */
     function getCurrent(
-        options: Highcharts.Options,
-        curr: Highcharts.Dictionary<any>,
-        ret: Highcharts.Dictionary<any>,
+        options: AnyRecord,
+        curr: AnyRecord,
+        ret: AnyRecord,
         depth: number
     ): void {
         var i;
 
-        objectEach(options, function (
-            val: Highcharts.Dictionary<any>,
-            key: string
-        ): void {
+        objectEach(options, function (val, key): void {
             if (
                 !depth &&
-                chart.collectionsWithUpdate.indexOf(key) > -1
+                chart.collectionsWithUpdate.indexOf(key) > -1 &&
+                curr[key]
             ) {
                 val = splat(val);
 

@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -12,9 +12,9 @@
 
 'use strict';
 
-import type LineSeries from '../../Series/Line/LineSeries';
 import type Point from '../../Core/Series/Point';
 import type PointerEvent from '../../Core/PointerEvent';
+import type Series from '../../Core/Series/Series';
 import type SeriesOptions from '../../Core/Series/SeriesOptions';
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
@@ -51,12 +51,12 @@ declare global {
             hoverPoint: DragNodesPoint;
         }
         interface DragNodesPoint extends Point {
-            fixedPosition?: Dictionary<number>;
+            fixedPosition?: Record<string, number>;
             hasDragged?: boolean;
             inDragMode?: boolean;
             series: DragNodesSeries;
         }
-        interface DragNodesSeries extends LineSeries {
+        interface DragNodesSeries extends Series {
             chart: DragNodesChart;
             data: Array<DragNodesPoint>;
             hasDraggableNodes?: boolean;
@@ -99,7 +99,7 @@ H.dragNodesMixin = {
             chartY: normalizedEvent.chartY,
             plotX: point.plotX,
             plotY: point.plotY
-        } as Highcharts.Dictionary<number>;
+        } as Record<string, number>;
 
         point.inDragMode = true;
     },

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,8 +22,19 @@ const {
     extend,
     isNumber,
     merge,
+    pick,
     removeEvent
 } = U;
+
+/* eslint require-jsdoc: 0, no-invalid-this: 0 */
+function paddingSetter(this: SVGLabel, value: (number|string), key: string): void {
+    if (!isNumber(value)) {
+        this[key] = void 0;
+    } else if (value !== this[key]) {
+        this[key] = value;
+        this.updateTextPadding();
+    }
+}
 
 /**
  * SVG label to render text.
@@ -94,7 +105,6 @@ class SVGLabel extends SVGElement {
 
         this.bBox = SVGLabel.emptyBBox;
         this.padding = 3;
-        this.paddingLeft = 0;
         this.baselineOffset = 0;
         this.needsBox = renderer.styledMode || hasBGImage;
         this.deferredAttr = {};
@@ -115,8 +125,8 @@ class SVGLabel extends SVGElement {
      * @name Highcharts.SVGLabel#textProps
      * @type {Array<string>}
      */
-    public static textProps: Array<string> = [
-        'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
+    public static textProps: Array<keyof CSSObject> = [
+        'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
         'textOutline', 'textOverflow', 'width'
     ]
@@ -132,7 +142,7 @@ class SVGLabel extends SVGElement {
             left: 0,
             center: 0.5,
             right: 1
-        } as SVGAttributes)[value];
+        })[value];
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
@@ -179,11 +189,9 @@ class SVGLabel extends SVGElement {
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
-            SVGLabel.textProps.forEach(function (
-                prop: string
-            ): void {
+            SVGLabel.textProps.forEach((prop): void => {
                 if (typeof styles[prop] !== 'undefined') {
-                    textStyles[prop] = styles[prop];
+                    (textStyles as any)[prop] = styles[prop];
                     delete styles[prop];
                 }
             });
@@ -194,13 +202,10 @@ class SVGLabel extends SVGElement {
                 'fontWeight' in textStyles;
 
             // Update existing text, box (#9400, #12163)
-            if (isWidth || isFontStyle) {
+            if (isFontStyle) {
+                this.updateTextPadding();
+            } else if (isWidth) {
                 this.updateBoxSize();
-
-                // Keep updated (#9400, #12163)
-                if (isFontStyle) {
-                    this.updateTextPadding();
-                }
             }
 
         }
@@ -241,13 +246,19 @@ class SVGLabel extends SVGElement {
      * Return the bounding box of the box, not the group.
      */
     public getBBox(): BBoxObject {
-        const bBox = this.bBox;
+        // If we have a text string and the DOM bBox was 0, it typically means
+        // that the label was first rendered hidden, so we need to update the
+        // bBox (#15246)
+        if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
+            this.updateBoxSize();
+        }
         const padding = this.padding;
+        const paddingLeft = pick(this.paddingLeft, padding);
         return {
-            width: bBox.width + 2 * padding,
-            height: bBox.height + 2 * padding,
-            x: bBox.x - padding,
-            y: bBox.y - padding
+            width: this.width,
+            height: this.height,
+            x: this.bBox.x - paddingLeft,
+            y: this.bBox.y - padding
         };
     }
 
@@ -285,8 +296,9 @@ class SVGLabel extends SVGElement {
                     ) &&
                     e.relatedTarget instanceof Element &&
                     (
-                        label.element.contains(e.relatedTarget) ||
-                        span.element.contains(e.relatedTarget)
+                        // #14110
+                        label.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY ||
+                        span.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY
                     )
                 ) {
                     return;
@@ -327,19 +339,11 @@ class SVGLabel extends SVGElement {
         }
     }
 
-    public paddingSetter(value: number): void {
-        if (defined(value) && value !== this.padding) {
-            this.padding = value;
-            this.updateTextPadding();
-        }
-    }
+    public paddingSetter = paddingSetter;
 
-    public paddingLeftSetter(value: number): void {
-        if (defined(value) && value !== this.paddingLeft) {
-            this.paddingLeft = value;
-            this.updateTextPadding();
-        }
-    }
+    public paddingLeftSetter = paddingSetter;
+
+    public paddingRightSetter = paddingSetter;
 
     public rSetter(
         value: any,
@@ -389,7 +393,6 @@ class SVGLabel extends SVGElement {
             // Must use .attr to ensure transforms are done (#10009)
             this.text.attr({ text });
         }
-        this.updateBoxSize();
         this.updateTextPadding();
     }
 
@@ -404,22 +407,17 @@ class SVGLabel extends SVGElement {
             attribs: SVGAttributes = {};
 
         const padding = this.padding;
-        const paddingLeft = this.paddingLeft;
 
         // #12165 error when width is null (auto)
         // #12163 when fontweight: bold, recalculate bBox withot cache
         // #3295 && 3514 box failure when string equals 0
-        const bBox = (
+        const bBox = this.bBox = (
             (!isNumber(this.widthSetting) || !isNumber(this.heightSetting) || this.textAlign) &&
             defined(this.text.textStr)
         ) ?
             this.text.getBBox() : SVGLabel.emptyBBox;
 
-        this.width = (
-            (this.widthSetting || bBox.width || 0) +
-            2 * padding +
-            paddingLeft
-        );
+        this.width = this.getPaddedWidth();
         this.height = (this.heightSetting || bBox.height || 0) + 2 * padding;
 
         // Update the label-scoped y offset. Math.min because of inline
@@ -449,12 +447,11 @@ class SVGLabel extends SVGElement {
                 );
 
                 box.add(this);
-
-                crispAdjust = this.getCrispAdjust();
-                attribs.x = crispAdjust;
-                attribs.y = (this.baseline ? -this.baselineOffset : 0) + crispAdjust;
-
             }
+
+            crispAdjust = this.getCrispAdjust();
+            attribs.x = crispAdjust;
+            attribs.y = (this.baseline ? -this.baselineOffset : 0) + crispAdjust;
 
             // Apply the box attributes
             attribs.width = Math.round(this.width);
@@ -463,20 +460,21 @@ class SVGLabel extends SVGElement {
             this.box.attr(extend(attribs, this.deferredAttr));
             this.deferredAttr = {};
         }
-        this.bBox = bBox;
     }
 
     /*
      * This function runs after setting text or padding, but only if padding
      * is changed.
      */
-    private updateTextPadding(): void {
+    public updateTextPadding(): void {
         const text = this.text;
+
+        this.updateBoxSize();
 
         // Determine y based on the baseline
         const textY = this.baseline ? 0 : this.baselineOffset;
 
-        let textX = this.paddingLeft + this.padding;
+        let textX = pick(this.paddingLeft, this.padding);
 
         // compensate for alignment
         if (
@@ -495,7 +493,6 @@ class SVGLabel extends SVGElement {
             // (useHTML: true)
             if (text.hasBoxWidthChanged) {
                 this.bBox = text.getBBox(true);
-                this.updateBoxSize();
             }
             if (typeof textY !== 'undefined') {
                 text.attr('y', textY);
@@ -512,11 +509,17 @@ class SVGLabel extends SVGElement {
         this.widthSetting = isNumber(value) ? value : void 0;
     }
 
+    public getPaddedWidth(): number {
+        const padding = this.padding;
+        const paddingLeft = pick(this.paddingLeft, padding);
+        const paddingRight = pick(this.paddingRight, padding);
+        return (this.widthSetting || this.bBox.width || 0) + paddingLeft + paddingRight;
+    }
+
     public xSetter(value: number): void {
         this.x = value; // for animation getter
         if (this.alignFactor) {
-            value -= this.alignFactor * ((this.widthSetting || this.bBox.width) +
-                2 * this.padding);
+            value -= this.alignFactor * this.getPaddedWidth();
 
             // Force animation even when setting to the same value (#7898)
             this['forceAnimate:x'] = true;

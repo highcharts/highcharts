@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -41,7 +41,7 @@ declare global {
             distance: number
         ): PositionObject;
         function pointCameraDistance(
-            coordinates: Dictionary<number>,
+            coordinates: Record<string, number>,
             chart: Chart
         ): number;
         function shapeArea(vertexes: Array<PositionObject>): number;
@@ -170,7 +170,7 @@ H.perspective3D = perspective3D;
  * The chart
  *
  * @param {boolean} [insidePlotArea]
- * Whether to verifiy that the points are inside the plotArea
+ * Whether to verify that the points are inside the plotArea
  *
  * @param {boolean} [useInvertedPersp]
  * Whether to use inverted perspective in calculations
@@ -186,7 +186,7 @@ function perspective(
     insidePlotArea?: boolean,
     useInvertedPersp?: boolean
 ): Array<Position3DObject> {
-    var options3d = (chart.options.chart as any).options3d,
+    var options3d = chart.options.chart.options3d as any,
         /* The useInvertedPersp argument is used for
          * inverted charts with already inverted elements,
          * such as dataLabels or tooltip positions.
@@ -258,10 +258,10 @@ H.perspective = perspective;
  * @requires highcharts-3d
  */
 function pointCameraDistance(
-    coordinates: Highcharts.Dictionary<number>,
+    coordinates: Record<string, number>,
     chart: Chart
 ): number {
-    var options3d = (chart.options.chart as any).options3d,
+    var options3d = chart.options.chart.options3d as any,
         cameraPosition = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,
@@ -320,7 +320,7 @@ H.shapeArea = shapeArea;
  * Related chart
  *
  * @param {boolean} [insidePlotArea]
- * Whether to verifiy that the points are inside the plotArea
+ * Whether to verify that the points are inside the plotArea
  *
  * @return {number}
  * Calculated area

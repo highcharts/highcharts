@@ -8,9 +8,11 @@
 
 import type ColorString from '../Core/Color/ColorString';
 import type ColorType from '../Core/Color/ColorType';
-import type LineSeries from '../Series/Line/LineSeries';
 import type Point from '../Core/Series/Point';
 import type PointOptions from '../Core/Series/PointOptions';
+import type Series from '../Core/Series/Series';
+import type TreemapSeries from '../Series/Treemap/TreemapSeries';
+import type TreemapSeriesOptions from '../Series/Treemap/TreemapSeriesOptions';
 import Color from '../Core/Color/Color.js';
 import U from '../Core/Utilities.js';
 const {
@@ -34,9 +36,13 @@ declare global {
         }
         interface TreeNodeObject {
             children: Array<TreeNodeObject>;
+            childrenTotal?: number;
             i: number;
             id: string;
+            isLeaf?: boolean;
+            levelDynamic?: number;
             level: number;
+            name?: string;
             val: number;
             visible: boolean;
         }
@@ -46,7 +52,7 @@ declare global {
         interface TreePointOptions extends PointOptions {
             value?: (number|null);
         }
-        interface TreeSeries extends LineSeries {
+        interface TreeSeries extends Series {
             mapOptionsToLevel: any;
             points: Array<TreePoint>;
             tree: TreeNodeObject;
@@ -73,10 +79,12 @@ declare global {
         interface TreeValuesOptionsObject<T extends TreeSeries = TreeSeries> {
             before?: TreeValuesBeforeCallbackFunction<T>;
             idRoot: string;
+            index?: number;
             levelIsConstant?: boolean;
-            mapIdToNode: Dictionary<TreeNodeObject>;
+            mapIdToNode: Record<string, TreeNodeObject>;
             points: T['points'];
             series: T;
+            siblings?: number;
             visible?: boolean;
         }
     }
@@ -116,14 +124,13 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
         children: Array<Highcharts.TreeNodeObject> = [],
         value;
 
-    extend(tree, {
-        levelDynamic: tree.level - (levelIsConstant ? 0 : nodeRoot.level),
-        name: pick(point && point.name, ''),
-        visible: (
-            idRoot === tree.id ||
-            (isBoolean(options.visible) ? options.visible : false)
-        )
-    });
+    tree.levelDynamic = tree.level - (levelIsConstant ? 0 : nodeRoot.level);
+    tree.name = pick(point && point.name, '');
+    tree.visible = (
+        idRoot === tree.id ||
+        (isBoolean(options.visible) ? options.visible : false)
+    );
+
     if (isFn(before)) {
         tree = before(tree, options);
     }
@@ -132,7 +139,7 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
         child: Highcharts.TreeNodeObject,
         i: number
     ): void {
-        var newOptions = extend<Highcharts.TreeValuesOptionsObject>(
+        var newOptions = extend<Highcharts.TreeValuesOptionsObject<T>>(
             {} as any, options
         );
 
@@ -150,12 +157,11 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
     tree.visible = childrenTotal > 0 || tree.visible;
     // Set the values
     value = pick(optionsPoint.value, childrenTotal);
-    extend(tree, {
-        children: children,
-        childrenTotal: childrenTotal,
-        isLeaf: tree.visible && !childrenTotal,
-        val: value
-    });
+    tree.children = children;
+    tree.childrenTotal = childrenTotal;
+    tree.isLeaf = tree.visible && !childrenTotal;
+    tree.val = value;
+
     return tree;
 };
 
@@ -163,15 +169,15 @@ const setTreeValues = function setTreeValues<T extends Highcharts.TreeSeries>(
  * @private
  */
 const getColor = function getColor(
-    node: Highcharts.TreemapNodeObject,
+    node: TreemapSeries.NodeObject,
     options: {
         colorIndex?: number;
         colors: Array<ColorString>;
         index: number;
-        mapOptionsToLevel: Array<Highcharts.TreemapSeriesOptions>;
+        mapOptionsToLevel: Array<TreemapSeriesOptions>;
         parentColor: ColorString;
         parentColorIndex: number;
-        series: LineSeries;
+        series: Series;
         siblings: number;
     }
 ): Highcharts.TreeColorObject {
@@ -184,10 +190,9 @@ const getColor = function getColor(
         siblings = options.siblings,
         points = series.points,
         getColorByPoint,
-        chartOptionsChart: Highcharts.ChartOptions =
-            series.chart.options.chart as any,
+        chartOptionsChart = series.chart.options.chart,
         point,
-        level: Highcharts.Dictionary<any>,
+        level: AnyRecord,
         colorByPoint,
         colorIndexByPoint,
         color,

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2020 Øystein Moseng
+ *  (c) 2009-2021 Øystein Moseng
  *
  *  Sonification module for Highcharts
  *
@@ -14,10 +14,10 @@
 
 import Chart from '../../Core/Chart/Chart.js';
 import H from '../../Core/Globals.js';
-import LineSeries from '../../Series/Line/LineSeries.js';
 import O from '../../Core/Options.js';
 const { defaultOptions } = O;
 import Point from '../../Core/Series/Point.js';
+import Series from '../../Core/Series/Series.js';
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
@@ -58,7 +58,7 @@ declare global {
         }
         interface PointSonificationStateObject {
             currentlyPlayingPoint?: SonifyablePoint;
-            instrumentsPlaying?: Dictionary<Instrument>;
+            instrumentsPlaying?: Record<string, Instrument>;
             signalHandler?: SignalHandler;
         }
         interface SonificationObject {
@@ -68,7 +68,7 @@ declare global {
             TimelineEvent: typeof TimelineEvent;
             TimelinePath: typeof TimelinePath;
             fadeOutDuration: number;
-            instruments: Dictionary<Instrument>;
+            instruments: Record<string, Instrument>;
             utilities: SonificationUtilitiesObject;
         }
         interface SonifyableChart extends Chart {
@@ -92,7 +92,7 @@ declare global {
             sonification: PointSonificationStateObject;
             sonify: PointSonifyFunctions['pointSonify'];
         }
-        interface SonifyableSeries extends LineSeries {
+        interface SonifyableSeries extends Series {
             chart: SonifyableChart;
             points: Array<SonifyablePoint>;
             sonify: SonifyChartFunctionsObject['seriesSonify'];
@@ -109,8 +109,6 @@ import chartSonifyFunctions from './ChartSonify.js';
 import utilities from './Utilities.js';
 import TimelineClasses from './Timeline.js';
 import sonificationOptions from './Options.js';
-
-import '../../Series/Line/LineSeries.js';
 
 // Expose on the Highcharts object
 
@@ -192,8 +190,8 @@ merge(
 // Chart specific
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
-LineSeries.prototype.sonify = chartSonifyFunctions.seriesSonify;
-extend(Chart.prototype, {
+Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
+extend<Chart|Highcharts.SonifyableChart>(Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,
     resumeSonify: chartSonifyFunctions.resume,

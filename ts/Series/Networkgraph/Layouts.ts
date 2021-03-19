@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2021 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -12,7 +12,8 @@
 
 'use strict';
 
-import type LineSeries from '../Line/LineSeries';
+import type NetworkgraphSeries from './Networkgraph';
+import type PackedBubbleChart from '../PackedBubble/PackedBubbleChart';
 import type Point from '../../Core/Series/Point';
 import Chart from '../../Core/Chart/Chart.js';
 import A from '../../Core/Animation/AnimationUtilities.js';
@@ -83,8 +84,8 @@ declare global {
             public constructor();
             public approximation?: string;
             public attractiveForce: Function;
-            public barycenter?: Dictionary<number>;
-            public box: Dictionary<number>;
+            public barycenter?: Record<string, number>;
+            public box: Record<string, number>;
             public currentStep?: number;
             public diffTemperature?: number;
             public enableSimulation?: boolean;
@@ -111,7 +112,7 @@ declare global {
                 elements: Array<C>,
                 collection: Array<T>
             ): void;
-            public applyLimitBox(node: Point, box: Dictionary<number>): void;
+            public applyLimitBox(node: Point, box: Record<string, number>): void;
             public applyLimits(): void;
             public attractiveForces(): void;
             public barnesHutApproximation(
@@ -127,7 +128,7 @@ declare global {
             ): number;
             public createQuadTree(): void;
             public force(name: string, ...args: Array<unknown>): void;
-            public getBarycenter(): Dictionary<number>;
+            public getBarycenter(): Record<string, number>;
             public getDistR(
                 nodeA: NetworkgraphPoint,
                 nodeB: (NetworkgraphPoint|QuadTreeNode)
@@ -135,7 +136,7 @@ declare global {
             public getDistXY(
                 nodeA: Point,
                 nodeB: (Point|QuadTreeNode)
-            ): Dictionary<number>;
+            ): Record<string, number>;
             public getSystemTemperature(): number;
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
             public initPositions(): void;
@@ -158,9 +159,9 @@ declare global {
             public step(): void;
             public stop(): void;
             public setTemperature(): void;
-            public vectorLength(vector: Dictionary<number>): number;
+            public vectorLength(vector: Record<string, number>): number;
         }
-        let layouts: Dictionary<(typeof NetworkgraphLayout)>;
+        let layouts: Record<string, (typeof NetworkgraphLayout)>;
     }
 }
 
@@ -279,6 +280,7 @@ extend(
 
             layout.prevSystemTemperature = layout.systemTemperature;
             layout.systemTemperature = layout.getSystemTemperature();
+
             if (layout.enableSimulation) {
                 series.forEach(function (s): void {
                     // Chart could be destroyed during the simulation
@@ -465,7 +467,7 @@ extend(
                     return (node.linksTo as any).length === 0;
                 }),
                 sortedNodes = [] as Array<Point>,
-                visitedNodes = {} as Highcharts.Dictionary<boolean>,
+                visitedNodes = {} as Record<string, boolean>,
                 radius = this.options.initialPositionRadius;
 
             /**
@@ -575,7 +577,7 @@ extend(
         },
         getBarycenter: function (
             this: Highcharts.NetworkgraphLayout
-        ): Highcharts.Dictionary<number> {
+        ): Record<string, number> {
             var systemMass = 0,
                 cx = 0,
                 cy = 0;
@@ -753,7 +755,7 @@ extend(
         applyLimitBox: function (
             this: Highcharts.NetworkgraphLayout,
             node: Highcharts.NetworkgraphPoint,
-            box: Highcharts.Dictionary<number>
+            box: Record<string, number>
         ): void {
             var radius = node.radius;
             /*
@@ -844,7 +846,7 @@ extend(
         },
         vectorLength: function (
             this: Highcharts.NetworkgraphLayout,
-            vector: Highcharts.Dictionary<number>
+            vector: Record<string, number>
         ): number {
             return Math.sqrt(vector.x * vector.x + vector.y * vector.y);
         },
@@ -861,7 +863,7 @@ extend(
             this: Highcharts.NetworkgraphLayout,
             nodeA: Point,
             nodeB: (Point|Highcharts.QuadTreeNode)
-        ): Highcharts.Dictionary<number> {
+        ): Record<string, number> {
             var xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
                 yDist = (nodeA.plotY as any) - (nodeB.plotY as any);
 
@@ -949,7 +951,7 @@ addEvent(Chart as any, 'render', function (
 
 // disable simulation before print if enabled
 addEvent(Chart as any, 'beforePrint', function (
-    this: Highcharts.PackedBubbleChart
+    this: PackedBubbleChart
 ): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach(function (layout): void {
@@ -961,7 +963,7 @@ addEvent(Chart as any, 'beforePrint', function (
 
 // re-enable simulation after print
 addEvent(Chart as any, 'afterPrint', function (
-    this: Highcharts.PackedBubbleChart
+    this: PackedBubbleChart
 ): void {
     if (this.graphLayoutsLookup) {
         this.graphLayoutsLookup.forEach(function (layout): void {

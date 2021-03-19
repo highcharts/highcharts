@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -8,12 +8,19 @@
  *
  * */
 
-import type {
-    AlignValue,
-    VerticalAlignValue
-} from '../Core/Renderer/AlignObject';
+'use strict';
+
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type BBoxObject from '../Core/Renderer/BBoxObject';
-import type CSSObject from '../Core/Renderer/CSSObject';
+import type {
+    MapNavigationButtonOptions,
+    MapNavigationOptions
+} from './MapNavigationOptions';
 import type PointerEvent from '../Core/PointerEvent';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
@@ -30,6 +37,14 @@ const {
     objectEach,
     pick
 } = U;
+import './MapNavigationOptionsDefault.js';
+import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module '../Core/Chart/ChartLike'{
     interface ChartLike {
@@ -44,22 +59,7 @@ declare module '../Core/Chart/ChartLike'{
  */
 declare global {
     namespace Highcharts {
-        type ButtonRelativeToValue = ('plotBox'|'spacingBox');
 
-        interface MapNavigationButtonOptions {
-            align?: AlignValue;
-            alignTo?: ButtonRelativeToValue;
-            height?: number;
-            onclick?: Function;
-            padding?: number;
-            style?: CSSObject;
-            text?: string;
-            theme?: SVGAttributes;
-            verticalAlign?: VerticalAlignValue;
-            width?: number;
-            x?: number;
-            y?: number;
-        }
         interface MapNavigationChart extends Chart {
             mapNavButtons: Array<SVGElement>;
             mapNavigation: MapNavigation;
@@ -72,20 +72,6 @@ declare global {
                 chartX?: number,
                 chartY?: number
             ): void;
-        }
-        interface MapNavigationOptions {
-            buttonOptions?: MapNavigationButtonOptions;
-            buttons?: Dictionary<MapNavigationButtonOptions>;
-            enableButtons?: boolean;
-            enabled?: boolean;
-            enableDoubleClickZoom?: boolean;
-            enableDoubleClickZoomTo?: boolean;
-            enableMouseWheelZoom?: boolean;
-            enableTouchZoom?: boolean;
-            mouseWheelSensitivity?: number;
-        }
-        interface Options {
-            mapNavigation?: MapNavigationOptions;
         }
         class MapNavigation {
             public constructor(chart: Chart);
@@ -168,18 +154,18 @@ MapNavigation.prototype.init = function (
  */
 MapNavigation.prototype.update = function (
     this: Highcharts.MapNavigation,
-    options?: Highcharts.MapNavigationOptions
+    options?: MapNavigationOptions
 ): void {
     var chart = this.chart,
-        o: Highcharts.MapNavigationOptions = chart.options.mapNavigation as any,
+        o: MapNavigationOptions = chart.options.mapNavigation as any,
         buttonOptions,
-        attr: SVGAttributes,
-        states: SVGAttributes,
-        hoverStates: SVGAttributes,
-        selectStates: SVGAttributes,
+        attr: ButtonThemeObject,
+        states: ButtonThemeStatesObject|undefined,
+        hoverStates: SVGAttributes|undefined,
+        selectStates: SVGAttributes|undefined,
         outerHandler = function (
             this: SVGElement,
-            e: (Event|Highcharts.Dictionary<any>)
+            e: (Event|AnyRecord)
         ): void {
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)
@@ -201,39 +187,41 @@ MapNavigation.prototype.update = function (
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
 
         objectEach(o.buttons, function (
-            button: Highcharts.MapNavigationButtonOptions,
+            button: MapNavigationButtonOptions,
             n: string
         ): void {
             buttonOptions = merge(o.buttonOptions, button);
 
             // Presentational
-            if (!chart.styledMode) {
-                attr = buttonOptions.theme as any;
+            if (!chart.styledMode && buttonOptions.theme) {
+                attr = buttonOptions.theme;
                 attr.style = merge(
-                    (buttonOptions.theme as any).style,
+                    buttonOptions.theme.style,
                     buttonOptions.style // #3203
                 );
                 states = attr.states;
                 hoverStates = states && states.hover;
                 selectStates = states && states.select;
+                delete attr.states;
             }
+
 
             button = chart.renderer
                 .button(
-                    buttonOptions.text as any,
+                    buttonOptions.text || '',
                     0,
                     0,
                     outerHandler,
                     attr,
                     hoverStates,
                     selectStates,
-                    0 as any,
+                    void 0,
                     n === 'zoomIn' ? 'topbutton' : 'bottombutton'
                 )
                 .addClass('highcharts-map-navigation highcharts-' + ({
                     zoomIn: 'zoom-in',
                     zoomOut: 'zoom-out'
-                } as Highcharts.Dictionary<string>)[n])
+                } as Record<string, string>)[n])
                 .attr({
                     width: buttonOptions.width,
                     height: buttonOptions.height,
@@ -282,7 +270,7 @@ MapNavigation.prototype.update = function (
  */
 MapNavigation.prototype.updateEvents = function (
     this: Highcharts.MapNavigation,
-    options: Highcharts.MapNavigationOptions
+    options: MapNavigationOptions
 ): void {
     var chart = this.chart;
 
@@ -310,10 +298,14 @@ MapNavigation.prototype.updateEvents = function (
             typeof doc.onmousewheel === 'undefined' ?
                 'DOMMouseScroll' : 'mousewheel',
             function (e: PointerEvent): boolean {
-                chart.pointer.onContainerMouseWheel(e);
-                // Issue #5011, returning false from non-jQuery event does
-                // not prevent default
-                stopEvent(e as Event);
+                // Prevent scrolling when the pointer is over the element
+                // with that class, for example anotation popup #12100.
+                if (!chart.pointer.inClass(e.target as any, 'highcharts-no-mousewheel')) {
+                    chart.pointer.onContainerMouseWheel(e);
+                    // Issue #5011, returning false from non-jQuery event does
+                    // not prevent default
+                    stopEvent(e as Event);
+                }
                 return false;
             }
         );
@@ -325,7 +317,7 @@ MapNavigation.prototype.updateEvents = function (
 };
 
 // Add events to the Chart object itself
-extend(Chart.prototype, /** @lends Chart.prototype */ {
+extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,

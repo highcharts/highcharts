@@ -10,69 +10,86 @@ QUnit.test('Indentation', function (assert) {
             title: {
                 text: 'Highcharts GridAxis'
             },
-            xAxis: [{
-                type: 'datetime'
-            }],
-            yAxis: [{
-                title: '',
-                grid: {
-                    enabled: true
-                },
-                type: 'treegrid'
-            }],
-            series: [{
-                name: 'Project 1',
-                data: [{
-                    name: 'Node 1',
-                    id: '1',
-                    x: Date.UTC(2014, 10, 18)
-                }, {
-                    name: 'Node 2',
-                    id: '2',
-                    parent: '1',
-                    x: Date.UTC(2014, 10, 20)
-                }, {
-                    name: 'Node 3',
-                    id: '3',
-                    parent: '2',
-                    x: Date.UTC(2014, 10, 22)
-                }, {
-                    name: 'Node 4',
-                    id: '4',
-                    parent: '3',
-                    x: Date.UTC(2014, 10, 24)
-                }, {
-                    name: 'Node 5',
-                    id: '5',
-                    parent: '4',
-                    x: Date.UTC(2014, 10, 26)
-                }, {
-                    name: 'Node 6',
-                    id: '6',
-                    parent: '5',
-                    x: Date.UTC(2014, 10, 28)
-                }, {
-                    name: 'Node 7',
-                    id: '7',
-                    parent: '6',
-                    x: Date.UTC(2014, 10, 30)
-                }, {
-                    name: 'Node 8',
-                    id: '8',
-                    parent: '7',
-                    x: Date.UTC(2014, 11, 2)
-                }, {
-                    name: 'Node 9',
-                    id: '9',
-                    parent: '8',
-                    x: Date.UTC(2014, 11, 4)
-                }, {
-                    name: 'Node 10',
-                    id: '10',
-                    parent: '9',
-                    x: Date.UTC(2014, 11, 6)
-                }]
-            }]
+            xAxis: [
+                {
+                    type: 'datetime'
+                }
+            ],
+            yAxis: [
+                {
+                    title: '',
+                    grid: {
+                        enabled: true
+                    },
+                    type: 'treegrid'
+                }
+            ],
+            series: [
+                {
+                    name: 'Project 1',
+                    data: [
+                        {
+                            name: 'Node 1',
+                            id: '1',
+                            x: Date.UTC(2014, 10, 18)
+                        },
+                        {
+                            name: 'Node 2',
+                            id: '2',
+                            parent: '1',
+                            x: Date.UTC(2014, 10, 20)
+                        },
+                        {
+                            name: 'Node 3',
+                            id: '3',
+                            parent: '2',
+                            x: Date.UTC(2014, 10, 22)
+                        },
+                        {
+                            name: 'Node 4',
+                            id: '4',
+                            parent: '3',
+                            x: Date.UTC(2014, 10, 24)
+                        },
+                        {
+                            name: 'Node 5',
+                            id: '5',
+                            parent: '4',
+                            x: Date.UTC(2014, 10, 26)
+                        },
+                        {
+                            name: 'Node 6',
+                            id: '6',
+                            parent: '5',
+                            x: Date.UTC(2014, 10, 28)
+                        },
+                        {
+                            name: 'Node 7',
+                            id: '7',
+                            parent: '6',
+                            x: Date.UTC(2014, 10, 30)
+                        },
+                        {
+                            name: 'Node 8',
+                            id: '8',
+                            parent: '7',
+                            x: Date.UTC(2014, 11, 2)
+                        },
+                        {
+                            name: 'Node 9',
+                            id: '9',
+                            parent: '8',
+                            x: Date.UTC(2014, 11, 4)
+                        },
+                        {
+                            name: 'Node 10',
+                            id: '10',
+                            parent: '9',
+                            x: Date.UTC(2014, 11, 6)
+                        }
+                    ]
+                }
+            ]
         }),
         treeGrid = chart.yAxis[0],
         ticks = treeGrid.ticks,
@@ -90,18 +107,37 @@ QUnit.test('Indentation', function (assert) {
         tick3.x > tick2.x,
         'Child point level 2 (Node 3) farther right than parent (Node 1)'
     );
+
+    // #14904
+    const { fireEvent } = Highcharts;
+    var parentTick = ticks[tickPositions[0]].label.element,
+        childTickIconY = ticks[tickPositions[1]].treeGrid.labelIcon.attr('y');
+
+    // Click the parent node quickly twice (toggle drop-down)
+    fireEvent(parentTick, 'click');
+    fireEvent(parentTick, 'click');
+
+    assert.strictEqual(
+        childTickIconY,
+        0,
+        'Label icon should be shown after double clicking ' +
+        'parent in drop-down. (#14904)'
+    );
 });
 
 QUnit.test('Tree.getNode', function (assert) {
     var getNode = Highcharts.Axis.prototype.utils.getNode,
         mapOfIdToChildren = {
-            test: [{
-                start: 5,
-                end: 10
-            }, {
-                start: 8,
-                end: 16
-            }]
+            test: [
+                {
+                    start: 5,
+                    end: 10
+                },
+                {
+                    start: 8,
+                    end: 16
+                }
+            ]
         },
         node,
         data;
@@ -129,19 +165,17 @@ QUnit.test('Tree.getNode', function (assert) {
         1,
         'should use data.start it is defined.'
     );
-    assert.strictEqual(
-        node.data.end,
-        2,
-        'should use data.end it is defined.'
-    );
+    assert.strictEqual(node.data.end, 2, 'should use data.end it is defined.');
 
     // Test aggregation of data from milestones.
     data = {};
     mapOfIdToChildren = {
-        test: [{
-            start: 1,
-            milestone: true
-        }]
+        test: [
+            {
+                start: 1,
+                milestone: true
+            }
+        ]
     };
     node = getNode('test', null, 1, data, mapOfIdToChildren);
     assert.strictEqual(
@@ -158,13 +192,19 @@ QUnit.test('Tree.getNode', function (assert) {
 
 QUnit.test('Axis.update', assert => {
     const { getStyle } = Highcharts;
-    const { yAxis: [axis] } = Highcharts.chart('container', {
-        series: [{
-            data: [{
-                name: 'Point 1',
-                y: 1
-            }]
-        }],
+    const {
+        yAxis: [axis]
+    } = Highcharts.chart('container', {
+        series: [
+            {
+                data: [
+                    {
+                        name: 'Point 1',
+                        y: 1
+                    }
+                ]
+            }
+        ],
         yAxis: {
             type: 'treegrid',
             labels: {
@@ -174,8 +214,13 @@ QUnit.test('Axis.update', assert => {
             }
         }
     });
-    let { ticks: { 0: { label: { element } } } } = axis;
-
+    let {
+        ticks: {
+            0: {
+                label: { element }
+            }
+        }
+    } = axis;
 
     assert.deepEqual(
         axis.tickPositions,
@@ -188,7 +233,6 @@ QUnit.test('Axis.update', assert => {
         'Should have color equal rgb(0, 0, 0) after render.'
     );
 
-
     // Update the axis
     axis.update({
         labels: {
@@ -199,8 +243,13 @@ QUnit.test('Axis.update', assert => {
     });
 
     // Update reference to label element
-    ({ ticks: { 0: { label: { element } } } } = axis);
-
+    ({
+        ticks: {
+            0: {
+                label: { element }
+            }
+        }
+    } = axis);
 
     assert.deepEqual(
         axis.tickPositions,
@@ -216,28 +265,36 @@ QUnit.test('Axis.update', assert => {
 
 QUnit.test('Chart.addSeries', assert => {
     const chart = Highcharts.chart('container', {
-        yAxis: [{
-            type: 'treegrid'
-        }]
+        yAxis: [
+            {
+                type: 'treegrid'
+            }
+        ]
     });
     const series = {
-        data: [{
-            start: 1,
-            end: 2,
-            name: 'Category 1'
-        }, {
-            start: 0,
-            end: 3,
-            name: 'Category 2'
-        }, {
-            start: 2,
-            end: 3,
-            name: 'Category 3'
-        }]
+        data: [
+            {
+                start: 1,
+                end: 2,
+                name: 'Category 1'
+            },
+            {
+                start: 0,
+                end: 3,
+                name: 'Category 2'
+            },
+            {
+                start: 2,
+                end: 3,
+                name: 'Category 3'
+            }
+        ]
     };
-    const getYValues = ({ series }) => series.reduce(
-        (arr, series) => arr.concat(series.points.map(point => point.y)), []
-    );
+    const getYValues = ({ series }) =>
+        series.reduce(
+            (arr, series) => arr.concat(series.points.map(point => point.y)),
+            []
+        );
 
     assert.deepEqual(
         getYValues(chart),
@@ -275,28 +332,34 @@ QUnit.test('Chart.addSeries', assert => {
 
 QUnit.test('Chart.addSeries collapsed', assert => {
     const chart = Highcharts.chart('container', {
-        yAxis: [{
-            type: 'treegrid'
-        }]
+        yAxis: [
+            {
+                type: 'treegrid'
+            }
+        ]
     });
     const series = {
-        data: [{
-            start: 0,
-            end: 3,
-            name: 'Category 1',
-            id: 'cat1',
-            collapsed: true
-        }, {
-            parent: 'cat1',
-            start: 2,
-            end: 3,
-            name: 'Category 2'
-        }]
+        data: [
+            {
+                start: 0,
+                end: 3,
+                name: 'Category 1',
+                id: 'cat1',
+                collapsed: true
+            },
+            {
+                parent: 'cat1',
+                start: 2,
+                end: 3,
+                name: 'Category 2'
+            }
+        ]
     };
     chart.addSeries(series);
 
     assert.strictEqual(
-        chart.renderTo.querySelectorAll('.highcharts-treegrid-node-collapsed').length,
+        chart.renderTo.querySelectorAll('.highcharts-treegrid-node-collapsed')
+            .length,
         1,
         'should have one collapsed node'
     );
@@ -383,28 +446,36 @@ QUnit.test('Series.setVisible', assert => {
 QUnit.test('series.data[].collapsed', assert => {
     const { fireEvent } = Highcharts;
     const chart = Highcharts.chart('container', {
-        yAxis: [{
-            type: 'treegrid'
-        }],
-        series: [{
-            type: 'scatter',
-            data: [{
-                collapsed: true,
-                id: '1',
-                name: 'Node 1',
-                x: 1
-            }, {
-                id: '2',
-                parent: '1',
-                name: 'Node 2',
-                x: 2
-            }, {
-                id: '3',
-                parent: '2',
-                name: 'Node 3',
-                x: 3
-            }]
-        }]
+        yAxis: [
+            {
+                type: 'treegrid'
+            }
+        ],
+        series: [
+            {
+                type: 'scatter',
+                data: [
+                    {
+                        collapsed: true,
+                        id: '1',
+                        name: 'Node 1',
+                        x: 1
+                    },
+                    {
+                        id: '2',
+                        parent: '1',
+                        name: 'Node 2',
+                        x: 2
+                    },
+                    {
+                        id: '3',
+                        parent: '2',
+                        name: 'Node 3',
+                        x: 3
+                    }
+                ]
+            }
+        ]
     });
     const {
         yAxis: [axis]

@@ -1,36 +1,8 @@
-// Function to run on series show/hide to update the pointStart settings of
-// all series. We do this to avoid gaps on the xAxis when hiding series.
-function updatePointStart() {
-    var allSeries = this.chart.series;
-    Highcharts.each(allSeries, function (series) {
-        var i = series.index,
-            pointStart = 0;
-        if (series.type === 'column') {
-            while (i--) {
-                if (allSeries[i].visible && allSeries[i].type === 'column') {
-                    pointStart += allSeries[i].points.length + 1;
-                }
-            }
-        } else {
-            pointStart = allSeries[i - 1].options.pointStart;
-        }
-        series.update({
-            pointStart: pointStart
-        });
-    });
-}
-
 function dollarFormat(x) {
-    return '$' + Highcharts.numberFormat(x, 0);
+    return '$' + Highcharts.numberFormat(x, 0, '.', ',');
 }
 
 var colors = Highcharts.getOptions().colors;
-
-Highcharts.setOptions({
-    lang: {
-        thousandsSep: ','
-    }
-});
 
 Highcharts.chart('container', {
     chart: {
@@ -42,14 +14,19 @@ Highcharts.chart('container', {
             descriptionFormatter: function (series) {
                 return series.type === 'line' ?
                     series.name + ', ' + dollarFormat(series.points[0].y) :
-                    series.name + ' grant amounts, bar series with ' + series.points.length + ' bars.';
+                    series.name + ' grant amounts, bar series with ' +
+                    series.points.length + ' bars.';
             }
+        },
+        point: {
+            valuePrefix: '$'
         },
         keyboardNavigation: {
             seriesNavigation: {
                 mode: 'serialize'
             }
-        }
+        },
+        landmarkVerbosity: 'one'
     },
 
     title: {
@@ -73,9 +50,7 @@ Highcharts.chart('container', {
         min: 0,
         max: 800000,
         labels: {
-            formatter: function () {
-                return '$' + (this.value / 1000) + (this.value ? 'k' : '');
-            }
+            format: '${text}'
         },
         title: {
             text: 'Grant amount'
@@ -90,20 +65,22 @@ Highcharts.chart('container', {
         max: 2400000,
         gridLineWidth: 0,
         labels: {
-            formatter: function () {
-                return '$' + (this.value / 1000) + (this.value ? 'k' : '');
-            },
+            format: '${text}',
             style: {
-                color: '#a88'
+                color: '#8F6666'
             }
         },
         title: {
             text: 'Category total',
             style: {
-                color: '#a88'
+                color: '#8F6666'
             }
         }
     }],
+
+    credits: {
+        enabled: false
+    },
 
     plotOptions: {
         column: {
@@ -111,21 +88,11 @@ Highcharts.chart('container', {
             grouping: false,
             pointPadding: 0.1,
             groupPadding: 0,
-            events: {
-                hide: updatePointStart,
-                show: updatePointStart
-            },
             tooltip: {
-                headerFormat: '<span style="font-size: 10px"><span style="color:{point.color}">\u25CF</span> {series.name}</span><br/>',
-                pointFormatter: function () {
-                    return this.name + ': <b>' + dollarFormat(this.y) + '</b><br/>';
-                }
-            },
-            accessibility: {
-                pointDescriptionFormatter: function (point) {
-                    return (point.index + 1) + '. ' + point.name + ' ' +
-                        dollarFormat(point.y) + '.';
-                }
+                headerFormat: '<span style="font-size: 10px">' +
+                    '<span style="color:{point.color}">\u25CF</span> ' +
+                    '{series.name}</span><br/>',
+                pointFormat: '{point.name}: <b>${point.y:,.0f}</b><br/>'
             }
         },
         line: {
@@ -143,7 +110,7 @@ Highcharts.chart('container', {
                 enabled: true,
                 verticalAlign: 'bottom',
                 style: {
-                    color: '#777',
+                    color: '#757575',
                     fontWeight: 'normal'
                 },
                 formatter: function () {
@@ -155,6 +122,23 @@ Highcharts.chart('container', {
                 }
             }
         }
+    },
+
+    responsive: {
+        rules: [{
+            condition: {
+                maxWidth: 400
+            },
+            chartOptions: {
+                chart: {
+                    spacingLeft: 3,
+                    spacingRight: 5
+                },
+                yAxis: [{}, {
+                    visible: false
+                }]
+            }
+        }]
     },
 
     series: [{
@@ -177,7 +161,8 @@ Highcharts.chart('container', {
         type: 'line',
         name: 'Creative Space (CRSP) grant totals',
         data: [
-            550000, 550000, 550000, 550000, 550000, 550000, 550000, 550000, 550000
+            550000, 550000, 550000, 550000, 550000, 550000, 550000,
+            550000, 550000
         ],
         color: colors[0]
     }, {

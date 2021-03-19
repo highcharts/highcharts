@@ -3,7 +3,7 @@ Spline chart
 
 The spline chart draws a curved line between the points in a data series.
 
-![spline.png](spline.png)
+<iframe style="width: 100%; height: 480px; border: none;" src="https://www.highcharts.com/samples/embed/highcharts/demo/spline-inverted" allow="fullscreen"></iframe>
 
 Spline chart features
 ---------------------

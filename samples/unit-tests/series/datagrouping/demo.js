@@ -1,4 +1,6 @@
 QUnit.test('General dataGrouping options', function (assert) {
+    let calledWithNaN = false;
+
     var chart = Highcharts.stockChart('container', {
         chart: {
             type: 'column'
@@ -8,9 +10,7 @@ QUnit.test('General dataGrouping options', function (assert) {
                 dataGrouping: {
                     enabled: true,
                     forced: true,
-                    units: [
-                        ['millisecond', [5]]
-                    ]
+                    units: [['millisecond', [5]]]
                 }
             }
         },
@@ -19,29 +19,76 @@ QUnit.test('General dataGrouping options', function (assert) {
             min: 1
         },
 
-        series: [{
-            dataGrouping: {
-                groupAll: true
+        series: [
+            {
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             },
-            data: [
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            ]
-        }, {
-            dataGrouping: {
-                groupAll: false
+            {
+                dataGrouping: {
+                    groupAll: false
+                },
+                data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             },
-            data: [
-                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-            ]
-        }, {
-            type: 'scatter',
-            data: [[1, 1]]
-        }]
+            {
+                type: 'scatter',
+                data: [[1, 1]]
+            },
+            {
+                type: 'ohlc',
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: [
+                    [1, 2, 1, 2],
+                    [2, 4, 2, 4],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2]
+                ]
+            },
+            {
+                type: 'ohlc',
+                dataGrouping: {
+                    groupAll: false
+                },
+                data: [
+                    [1, 2, 1, 2],
+                    [2, 4, 2, 4],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2],
+                    [1, 2, 1, 2]
+                ]
+            },
+            {
+                data: []
+            }
+        ],
+        time: {
+            getTimezoneOffset: timestamp => {
+                if (Number.isNaN(timestamp)) {
+                    calledWithNaN = true;
+                }
+                return new Date().getTimezoneOffset();
+            }
+        }
     });
 
     assert.ok(
         chart.series[0].points[0].y > 1,
-        'Scatter doesn\'t prevent dataGrouping when `plotOptions.series.dataGrouping` is set (#9693)'
+        "Scatter doesn't prevent dataGrouping when `plotOptions.series.dataGrouping` is set (#9693)"
     );
 
     assert.strictEqual(
@@ -55,6 +102,22 @@ QUnit.test('General dataGrouping options', function (assert) {
         4,
         'Only visible points are used to calculate gorups (#5344)'
     );
+
+    assert.strictEqual(
+        chart.series[3].points[0].open,
+        1,
+        'All OHLC points are used (#9738)'
+    );
+    assert.strictEqual(
+        chart.series[4].points[0].open,
+        2,
+        'Only visible OHLC points are used (#9738)'
+    );
+
+    assert.notOk(
+        calledWithNaN,
+        'Empty series should not cause getTimezoneOffset to get called with NaN timestamp (#13247)'
+    );
 });
 
 QUnit.test('dataGrouping and keys', function (assert) {
@@ -62,22 +125,29 @@ QUnit.test('dataGrouping and keys', function (assert) {
         chart: {
             width: 400
         },
-        series: [{
-            type: 'arearange',
-            keys: ['colorIndex', 'x', 'something', 'low', 'y', 'high'],
-            data: (function () {
-                var arr = [];
-                for (var i = 0; i < 999; i++) {
-                    arr.push([i % 8, i, 'Something' + i, 100 - i, i % 420, 100 + i]);
+        series: [
+            {
+                type: 'arearange',
+                keys: ['colorIndex', 'x', 'something', 'low', 'y', 'high'],
+                data: (function () {
+                    var arr = [];
+                    for (var i = 0; i < 999; i++) {
+                        arr.push([
+                            i % 8,
+                            i,
+                            'Something' + i,
+                            100 - i,
+                            i % 420,
+                            100 + i
+                        ]);
+                    }
+                    return arr;
+                }()),
+                dataGrouping: {
+                    units: [['millisecond', [10]]]
                 }
-                return arr;
-            }()),
-            dataGrouping: {
-                units: [
-                    ['millisecond', [10]]
-                ]
             }
-        }]
+        ]
     });
 
     assert.strictEqual(
@@ -127,39 +197,44 @@ QUnit.test('dataGrouping approximations', function (assert) {
                 series: {
                     dataGrouping: {
                         forced: true,
-                        units: [
-                            ['millisecond', [10]]
-                        ],
+                        units: [['millisecond', [10]]],
                         approximation: 'wrong'
                     }
                 }
             },
-            series: [{
-                data: [0, 5, 40]
-            }, {
-                type: 'column',
-                data: [2, 2, 2]
-            }, {
-                type: 'ohlc',
-                data: [[1, 3, 0, 2], [1, 5, 1, 2], [2, 2, 2, 2]]
-            }, {
-                type: 'arearange',
-                dataGrouping: {
-                    forced: true,
-                    approximation: 'range',
-                    units: [
-                        ['millisecond', [2]]
+            series: [
+                {
+                    data: [0, 5, 40]
+                },
+                {
+                    type: 'column',
+                    data: [2, 2, 2]
+                },
+                {
+                    type: 'ohlc',
+                    data: [
+                        [1, 3, 0, 2],
+                        [1, 5, 1, 2],
+                        [2, 2, 2, 2]
                     ]
                 },
-                data: [
-                    [0, 1, 2],
-                    [1, 2, 3],
-                    [2, null, null],
-                    [3, null, null],
-                    [4, 2, 3],
-                    [5, 1, 2]
-                ]
-            }]
+                {
+                    type: 'arearange',
+                    dataGrouping: {
+                        forced: true,
+                        approximation: 'range',
+                        units: [['millisecond', [2]]]
+                    },
+                    data: [
+                        [0, 1, 2],
+                        [1, 2, 3],
+                        [2, null, null],
+                        [3, null, null],
+                        [4, 2, 3],
+                        [5, 1, 2]
+                    ]
+                }
+            ]
         }),
         newSeries;
 
@@ -191,9 +266,7 @@ QUnit.test('dataGrouping approximations', function (assert) {
         }()),
         dataGrouping: {
             approximation: 'average',
-            units: [
-                ['second', [30]]
-            ]
+            units: [['second', [30]]]
         }
     });
 
@@ -207,59 +280,59 @@ QUnit.test('dataGrouping approximations', function (assert) {
 QUnit.test('dataGrouping and multiple series', function (assert) {
     var realError,
         hadError = false,
-        chart = Highcharts.stockChart('container', {
-            chart: {
-                width: 400,
-                type: 'column',
-                events: {
-                    beforeRender: function () {
-                        realError = Highcharts.error;
-                        Highcharts.error = function () {
-                            hadError = true;
-                        };
+        chart = Highcharts.stockChart(
+            'container',
+            {
+                chart: {
+                    width: 400,
+                    type: 'column',
+                    events: {
+                        beforeRender: function () {
+                            realError = Highcharts.error;
+                            Highcharts.error = function () {
+                                hadError = true;
+                            };
+                        }
                     }
-                }
-            },
-            plotOptions: {
-                column: {
-                    dataGrouping: {
-                        forced: true,
-                        units: [
-                            ['millisecond', [10]]
+                },
+                plotOptions: {
+                    column: {
+                        dataGrouping: {
+                            forced: true,
+                            units: [['millisecond', [10]]]
+                        }
+                    }
+                },
+                series: [
+                    {
+                        data: [0, 5, 40]
+                    },
+                    {
+                        data: [2, 2, 2]
+                    },
+                    {
+                        type: 'scatter',
+                        data: [
+                            [2, 7],
+                            [0, 7]
                         ]
                     }
-                }
-            },
-            series: [{
-                data: [0, 5, 40]
-            }, {
-                data: [2, 2, 2]
-            }, {
-                type: 'scatter',
-                data: [
-                    [2, 7],
-                    [0, 7]
                 ]
-            }]
-        }, function () {
-            // clean up
-            Highcharts.error = realError;
-        });
+            },
+            function () {
+                // clean up
+                Highcharts.error = realError;
+            }
+        );
 
-    assert.ok(
-        !hadError,
-        'No Highcharts error (#6989)'
-    );
+    assert.ok(!hadError, 'No Highcharts error (#6989)');
 
     chart.series[1].hide();
     assert.ok(
         chart.series[1].points === null,
-        'Points array is nullified for a hidden series. Hidden series shouldn\'t have `undefined`-points in a series.points array (#6709).'
+        "Points array is nullified for a hidden series. Hidden series shouldn't have `undefined`-points in a series.points array (#6709)."
     );
-
-
 });
-
 
 QUnit.test('Data grouping and shoulder values (#4907)', function (assert) {
     var chart = Highcharts.stockChart('container', {
@@ -272,31 +345,31 @@ QUnit.test('Data grouping and shoulder values (#4907)', function (assert) {
         navigator: {
             enabled: false
         },
-        series: [{
-            dataGrouping: {
-                enabled: true,
-                forced: true,
-                units: [
-                    ['millisecond', [1]]
+        series: [
+            {
+                dataGrouping: {
+                    enabled: true,
+                    forced: true,
+                    units: [['millisecond', [1]]]
+                },
+                marker: {
+                    enabled: true
+                },
+                data: [
+                    [1, 1],
+                    [2, 2],
+                    [80, 3],
+                    [85, 4],
+                    [90, 5]
                 ]
-            },
-            marker: {
-                enabled: true
-            },
-            data: [
-                [1, 1],
-                [2, 2],
-                [80, 3],
-                [85, 4],
-                [90, 5]
-            ]
-        }]
+            }
+        ]
     });
 
     assert.strictEqual(
         chart.series[0].processedXData.join(','),
         '80,85,90',
-        'Preserve X positions for shoulder points'  // keyword: cropShoulder
+        'Preserve X positions for shoulder points' // keyword: cropShoulder
     );
 });
 
@@ -308,44 +381,46 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
         },
         rangeSelector: {
             allButtonsEnabled: true,
-            buttons: [{
-                type: 'month',
-                count: 1,
-                text: 'Dayly',
-                dataGrouping: {
-                    forced: true,
-                    units: [
-                        ['day', [1]]
-                    ]
+            buttons: [
+                {
+                    type: 'month',
+                    count: 1,
+                    text: 'Dayly',
+                    dataGrouping: {
+                        forced: true,
+                        units: [['day', [1]]]
+                    }
+                },
+                {
+                    text: 'Monthly',
+                    type: 'month',
+                    count: 12,
+                    dataGrouping: {
+                        forced: true,
+                        units: [['month', [1]]]
+                    }
                 }
-            }, {
-                text: 'Monthly',
-                type: 'month',
-                count: 12,
-                dataGrouping: {
-                    forced: true,
-                    units: [
-                        ['month', [1]]
-                    ]
-                }
-            }],
+            ],
             selected: 1
         },
-        series: [{
-            name: 'AAPL',
-            data: (function () {
-                var arr = [];
-                var y = 0;
-                for (var x = Date.UTC(2017, 0, 1); x < Date.UTC(2018, 0, 1); x += 24 * 36e5) {
-                    arr.push([
-                        x,
-                        y++ % 14
-                    ]);
-                }
-                return arr;
-            }()),
-            type: 'column'
-        }],
+        series: [
+            {
+                name: 'AAPL',
+                data: (function () {
+                    var arr = [];
+                    var y = 0;
+                    for (
+                        var x = Date.UTC(2017, 0, 1);
+                        x < Date.UTC(2018, 0, 1);
+                        x += 24 * 36e5
+                    ) {
+                        arr.push([x, y++ % 14]);
+                    }
+                    return arr;
+                }()),
+                type: 'column'
+            }
+        ],
         navigator: {
             enabled: false
         },
@@ -365,11 +440,10 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
         chart.container.querySelectorAll('.highcharts-series-0 rect').length,
         32,
         'Daily columns, monthlies should be removed (#7547) (Timezone: UTC ' +
-        Math.round((new Date()).getTimezoneOffset() / -60) + ')'
+            Math.round(new Date().getTimezoneOffset() / -60) +
+            ')'
     );
-
 });
-
 
 QUnit.test('Switch from non-grouped to grouped', function (assert) {
     var chart = Highcharts.chart('container', {
@@ -378,30 +452,32 @@ QUnit.test('Switch from non-grouped to grouped', function (assert) {
             marginLeft: 0,
             marginRight: 0
         },
-        series: [{
-            dataGrouping: {
-                enabled: true
-            },
-            data: [
-                [1556578800000, 0.006],
-                [1556665200000, 0.002],
-                [1556751600000, 0.003],
-                [1556838000000, 0.001],
-                [1556924400000, 0.002],
-                [1557010800000, 0.002],
-                [1557097200000, 0.002],
-                [1557183600000, 0.002],
-                [1557270000000, 0.002],
-                [1557356400000, 0.003],
-                [1557442800000, 0.002],
-                [1557529200000, 0.002],
-                [1557615600000, 0.001],
-                [1557702000000, 0],
-                [1557788400000, 0],
-                [1557874800000, 0],
-                [1557961200000, 0]
-            ]
-        }]
+        series: [
+            {
+                dataGrouping: {
+                    enabled: true
+                },
+                data: [
+                    [1556578800000, 0.006],
+                    [1556665200000, 0.002],
+                    [1556751600000, 0.003],
+                    [1556838000000, 0.001],
+                    [1556924400000, 0.002],
+                    [1557010800000, 0.002],
+                    [1557097200000, 0.002],
+                    [1557183600000, 0.002],
+                    [1557270000000, 0.002],
+                    [1557356400000, 0.003],
+                    [1557442800000, 0.002],
+                    [1557529200000, 0.002],
+                    [1557615600000, 0.001],
+                    [1557702000000, 0],
+                    [1557788400000, 0],
+                    [1557874800000, 0],
+                    [1557961200000, 0]
+                ]
+            }
+        ]
     });
 
     assert.notOk(
@@ -430,7 +506,6 @@ QUnit.test('Switch from non-grouped to grouped', function (assert) {
         0,
         'After series update no old markers should be left on the chart (#10745)'
     );
-
 });
 
 QUnit.test('Data grouping and extremes change', function (assert) {
@@ -440,14 +515,16 @@ QUnit.test('Data grouping and extremes change', function (assert) {
                 min: min,
                 ordinal: false
             },
-            series: [{
-                pointStart: 12 * 3600 * 1000 + 15,
-                dataGrouping: {
-                    forced: true
-                },
-                pointInterval: 12 * 3600 * 1000,
-                data: [73, 0, 0, 1, 2, 0, 0, 0, 12]
-            }]
+            series: [
+                {
+                    pointStart: 12 * 3600 * 1000 + 15,
+                    dataGrouping: {
+                        forced: true
+                    },
+                    pointInterval: 12 * 3600 * 1000,
+                    data: [73, 0, 0, 1, 2, 0, 0, 0, 12]
+                }
+            ]
         }),
         series = chart.series[0],
         controller = new TestController(chart),
@@ -474,19 +551,10 @@ QUnit.test('Data grouping and extremes change', function (assert) {
     });
 
     series.setData([
-        [
-            26179200000,
-            0
-        ], [
-            28771200000,
-            1
-        ], [
-            1285804800000,
-            479
-        ], [
-            1288483200000,
-            480
-        ]
+        [26179200000, 0],
+        [28771200000, 1],
+        [1285804800000, 479],
+        [1288483200000, 480]
     ]);
 
     assert.strictEqual(
@@ -526,15 +594,14 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         xAxis: {
             ordinal: true
         },
-        series: [{
-            data: usdeur // dataset must have gaps and datagrouping
-        }]
+        series: [
+            {
+                data: usdeur // dataset must have gaps and datagrouping
+            }
+        ]
     });
 
-    chart.xAxis[0].setExtremes(
-        chart.xAxis[0].toValue(100, true),
-        null
-    );
+    chart.xAxis[0].setExtremes(chart.xAxis[0].toValue(100, true), null);
 
     expectedMax = chart.xAxis[0].max;
     panTo('left', series.points[150].plotX, series.points[7].plotY, 30);
@@ -556,24 +623,24 @@ QUnit.test('Data grouping and extremes change', function (assert) {
 
 QUnit.test('Data grouping, keys and turboThreshold', function (assert) {
     var chart = Highcharts.stockChart('container', {
-        series: [{
-            keys: ['x', 'a', 'y'],
-            turboThreshold: 1,
-            dataGrouping: {
-                forced: true
-            },
-            data: (function () {
-                var d = [];
+        series: [
+            {
+                keys: ['x', 'a', 'y'],
+                turboThreshold: 1,
+                dataGrouping: {
+                    forced: true
+                },
+                data: (function () {
+                    var d = [];
 
-                for (var i = 0; i < 10; i++) {
-                    d.push([
-                        i, 10, 1000
-                    ]);
-                }
+                    for (var i = 0; i < 10; i++) {
+                        d.push([i, 10, 1000]);
+                    }
 
-                return d;
-            }())
-        }]
+                    return d;
+                }())
+            }
+        ]
     });
 
     assert.strictEqual(
@@ -583,25 +650,30 @@ QUnit.test('Data grouping, keys and turboThreshold', function (assert) {
     );
 });
 
-QUnit.test('Data grouping and adding points with data labels', function (assert) {
-    var chart = Highcharts.stockChart('container', {
-        series: [{
-            dataGrouping: {
-                forced: true
-            },
-            data: [1, 2]
-        }]
-    });
+QUnit.test(
+    'Data grouping and adding points with data labels',
+    function (assert) {
+        var chart = Highcharts.stockChart('container', {
+            series: [
+                {
+                    dataGrouping: {
+                        forced: true
+                    },
+                    data: [1, 2]
+                }
+            ]
+        });
 
-    chart.series[0].addPoint({ y: 4, dataLabels: { enabled: true } });
-    chart.series[0].addPoint({ y: 5, dataLabels: { enabled: true } });
+        chart.series[0].addPoint({ y: 4, dataLabels: { enabled: true } });
+        chart.series[0].addPoint({ y: 5, dataLabels: { enabled: true } });
 
-    assert.strictEqual(
-        chart.series[0].points.length,
-        4,
-        'Correct number of points and no errors (#9770).'
-    );
-});
+        assert.strictEqual(
+            chart.series[0].points.length,
+            4,
+            'Correct number of points and no errors (#9770).'
+        );
+    }
+);
 
 QUnit.test('Data grouping, custom name in tooltip', function (assert) {
     var chart = Highcharts.stockChart('container', {
@@ -612,34 +684,33 @@ QUnit.test('Data grouping, custom name in tooltip', function (assert) {
             min: 120,
             max: 125
         },
-        series: [{
-            name: 'AAPL',
-            data: (function () {
-                var data = [];
+        series: [
+            {
+                name: 'AAPL',
+                data: (function () {
+                    var data = [];
 
-                for (var i = 0; i < 255; i++) {
-                    data.push({
-                        x: i,
-                        y: i,
-                        name: 'a' + i
-                    });
+                    for (var i = 0; i < 255; i++) {
+                        data.push({
+                            x: i,
+                            y: i,
+                            name: 'a' + i
+                        });
+                    }
+                    return data;
+                }()),
+                tooltip: {
+                    pointFormat:
+                        'name: {point.name} <br>' +
+                        'myName: {point.myName} <br>' +
+                        'x: {point.x}'
+                },
+                dataGrouping: {
+                    forced: true,
+                    units: [['millisecond', [1]]]
                 }
-                return data;
-            }()),
-            tooltip: {
-                pointFormat: 'name: {point.name} <br>' +
-                'myName: {point.myName} <br>' +
-                'x: {point.x}'
-            },
-            dataGrouping: {
-                forced: true,
-                units: [
-                    [
-                        'millisecond', [1]
-                    ]
-                ]
             }
-        }]
+        ]
     });
 
     chart.tooltip.refresh([chart.series[0].points[2]]);
@@ -659,24 +730,33 @@ QUnit.test('Data grouping, custom name in tooltip', function (assert) {
 
 QUnit.test('DataGrouping and update', function (assert) {
     const chart = Highcharts.stockChart('container', {
-        series: [{
-            id: 'usdeur',
-            dataGrouping: {
-                forced: true
-            },
-            data: [1, 2, 3]
-        }]
+        series: [
+            {
+                id: 'usdeur',
+                dataGrouping: {
+                    forced: true
+                },
+                data: [1, 2, 3]
+            }
+        ]
     });
 
-    chart.update({
-        series: [{
-            id: 'usdeur',
-            data: [3, 2, 1]
-        }, {
-            id: 'eurusd',
-            data: [1, 2, 3]
-        }]
-    }, true, true);
+    chart.update(
+        {
+            series: [
+                {
+                    id: 'usdeur',
+                    data: [3, 2, 1]
+                },
+                {
+                    id: 'eurusd',
+                    data: [1, 2, 3]
+                }
+            ]
+        },
+        true,
+        true
+    );
 
     assert.ok(
         true,
@@ -684,5 +764,117 @@ QUnit.test('DataGrouping and update', function (assert) {
             - updating one-to-one with IDs
             - DG enabled
         (#11471)`
+    );
+});
+
+QUnit.test('When groupAll: true, group point should have the same start regardless of axis extremes, #15005.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+            chart: {
+                type: 'column'
+            },
+            plotOptions: {
+                series: {
+                    dataGrouping: {
+                        enabled: true,
+                        forced: true,
+                        units: [
+                            ['millisecond', [5]]
+                        ]
+                    }
+                }
+            },
+            series: [{
+                dataGrouping: {
+                    groupAll: true
+                },
+                data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            }, {
+                data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+            }]
+        }),
+        groupAllFirstGroupStart = chart.series[0].points[0].dataGroup.start,
+        groupAllSecondGroupStart = chart.series[0].points[1].dataGroup.start,
+        firstGroupStart = chart.series[1].points[0].dataGroup.start,
+        secondGroupStart = chart.series[1].points[1].dataGroup.start;
+
+    assert.strictEqual(
+        firstGroupStart,
+        0,
+        'When the groupAll: false, and all points visible, the first group should start from the beginning (0).'
+    );
+
+    chart.xAxis[0].setExtremes(1);
+
+    assert.strictEqual(
+        groupAllFirstGroupStart,
+        chart.series[0].points[0].dataGroup.start,
+        'When the groupAll: true, the start of the group should not be changed after changing extremes.'
+    );
+    assert.strictEqual(
+        groupAllSecondGroupStart,
+        chart.series[0].points[1].dataGroup.start,
+        'When the groupAll: true, the start of the group should not be changed after changing extremes.'
+    );
+    assert.strictEqual(
+        chart.series[1].points[0].dataGroup.start,
+        1,
+        'When the groupAll: false, and after changing extremes, the group start should be increased.'
+    );
+    assert.strictEqual(
+        secondGroupStart,
+        chart.series[1].points[1].dataGroup.start,
+        'When the groupAll: false, and new extremes don\t influence the group, the start should not be changed.'
+    );
+});
+
+QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        xAxis: {
+            ordinal: true
+        },
+        rangeSelector: {
+            selected: 0
+        },
+        series: [{
+            data: usdeur,
+            dataGrouping: {
+                forced: true,
+                groupAll: true,
+                units: [['day', [1]]]
+            }
+        }]
+    });
+    // Call function responsible for calculating positions of invisible points while panning.
+    chart.xAxis[0].ordinal.getExtendedPositions();
+
+    const positions = chart.xAxis[0].ordinal.positions,
+        positionsLength = positions.length,
+        index = chart.xAxis[0].ordinal.index,
+        indexArray = index[Object.keys(index)[0]],
+        indexLength = indexArray.length,
+        splicedIndex = // get data for current extremes
+            indexArray.splice(indexLength - positionsLength, positionsLength);
+
+    assert.deepEqual(
+        positions,
+        splicedIndex,
+        `When the ordinal axis and data grouping enabled,
+        getExtendedPositions should return fake series where
+        the data is grouped the same as in the original series. 
+        Thus each element in the currently visible array of data,
+        should equal the corresponding element in the fake series array. `
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            units: [['week', [1]]]
+        }
+    });
+    chart.xAxis[0].ordinal.getExtendedPositions();
+    assert.ok(
+        chart.xAxis[0].ordinal.index[
+            Object.keys(chart.xAxis[0].ordinal.index)[1]],
+        `After updating data grouping units to an equally spaced (like weeks),
+        the ordinal positions should be recalculated- allows panning.`
     );
 });

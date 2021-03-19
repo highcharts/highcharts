@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -17,6 +17,7 @@ import type SVGElement from './Renderer/SVG/SVGElement';
 import type SVGPath from './Renderer/SVG/SVGPath';
 import Axis from './Axis/Axis.js';
 import H from './Globals.js';
+import palette from './Color/Palette.js';
 import ScrollbarAxis from './Axis/ScrollbarAxis.js';
 import U from './Utilities.js';
 const {
@@ -120,7 +121,7 @@ declare global {
             public addEvents(): void;
             public cursorToScrollbarPosition(
                 normalizedEvent: PointerEvent
-            ): Dictionary<number>;
+            ): Record<string, number>;
             public destroy(): void;
             public drawScrollbarButton(index: number): void;
             public init(
@@ -137,6 +138,7 @@ declare global {
             public removeEvents(): void;
             public render(): void;
             public setRange(from: number, to: number): void;
+            public shouldUpdateExtremes(eventType: string): boolean;
             public update(options: Highcharts.ScrollbarOptions): void;
             public updatePosition(from: number, to: number): void;
         }
@@ -151,8 +153,7 @@ interface ScrollbarEventCallbackFunction {
 import O from './Options.js';
 const { defaultOptions } = O;
 
-var hasTouch = H.hasTouch,
-    isTouchDevice = H.isTouchDevice;
+const isTouchDevice = H.isTouchDevice;
 
 /**
  * When we have vertical scrollbar, rifles and arrow in buttons should be
@@ -327,7 +328,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        barBackgroundColor: '${palette.neutralColor20}',
+        barBackgroundColor: palette.neutralColor20,
 
         /**
          * The width of the bar's border.
@@ -342,7 +343,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        barBorderColor: '${palette.neutralColor20}',
+        barBorderColor: palette.neutralColor20,
 
         /**
          * The color of the small arrow inside the scrollbar buttons.
@@ -352,7 +353,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        buttonArrowColor: '${palette.neutralColor80}',
+        buttonArrowColor: palette.neutralColor80,
 
         /**
          * The color of scrollbar buttons.
@@ -362,7 +363,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        buttonBackgroundColor: '${palette.neutralColor10}',
+        buttonBackgroundColor: palette.neutralColor10,
 
         /**
          * The color of the border of the scrollbar buttons.
@@ -372,7 +373,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        buttonBorderColor: '${palette.neutralColor20}',
+        buttonBorderColor: palette.neutralColor20,
 
         /**
          * The border width of the scrollbar buttons.
@@ -387,7 +388,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        rifleColor: '${palette.neutralColor80}',
+        rifleColor: palette.neutralColor80,
 
         /**
          * The color of the track background.
@@ -397,7 +398,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        trackBackgroundColor: '${palette.neutralColor5}',
+        trackBackgroundColor: palette.neutralColor5,
 
         /**
          * The color of the border of the scrollbar track.
@@ -407,7 +408,7 @@ class Scrollbar {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        trackBorderColor: '${palette.neutralColor5}',
+        trackBorderColor: palette.neutralColor5,
 
         /**
          * The corner radius of the border of the scrollbar track.
@@ -558,7 +559,7 @@ class Scrollbar {
         ];
 
         // Touch events
-        if (hasTouch) {
+        if (H.hasTouch) {
             _events.push(
                 [bar, 'touchstart', mouseDownHandler],
                 [bar.ownerDocument, 'touchmove', mouseMoveHandler],
@@ -615,7 +616,7 @@ class Scrollbar {
      * @return {Highcharts.Dictionary<number>}
      *         Local position {chartX, chartY}
      */
-    public cursorToScrollbarPosition(normalizedEvent: PointerEvent): Highcharts.Dictionary<number> {
+    public cursorToScrollbarPosition(normalizedEvent: PointerEvent): Record<string, number> {
         var scroller = this,
             options = scroller.options,
             minWidthDifference =
@@ -1117,6 +1118,29 @@ class Scrollbar {
         }
 
         scroller.rendered = true;
+    }
+
+    /**
+     * Checks if the extremes should be updated in response to a scrollbar
+     * change event.
+     *
+     * @private
+     * @function Highcharts.Scrollbar#shouldUpdateExtremes
+     * @param  {string} eventType
+     * @return {boolean}
+     */
+    public shouldUpdateExtremes(eventType: string): boolean {
+        return (
+            pick(
+                this.options.liveRedraw,
+                H.svg && !H.isTouchDevice && !this.chart.isBoosting
+            ) ||
+            // Mouseup always should change extremes
+            eventType === 'mouseup' ||
+            eventType === 'touchend' ||
+            // Internal events
+            !defined(eventType)
+        );
     }
 
     public trackClick(e: PointerEvent): void {

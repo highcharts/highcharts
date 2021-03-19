@@ -1,20 +1,14 @@
-QUnit.test("defaultOptions", assert => {
+QUnit.test('defaultOptions', assert => {
     const {
         noData: {
-            attr: {
-                zIndex
-            }
+            attr: { zIndex }
         }
     } = Highcharts.getOptions();
 
-    assert.equal(
-        zIndex,
-        1,
-        "Default z index should be 1 (#12343)"
-    );
+    assert.equal(zIndex, 1, 'Default z index should be 1 (#12343)');
 });
 
-QUnit.test("Updating no-data element.", assert => {
+QUnit.test('Updating no-data element.', assert => {
     const chart = Highcharts.chart('container', {});
 
     chart.update({
@@ -28,6 +22,6 @@ QUnit.test("Updating no-data element.", assert => {
     assert.equal(
         chart.noDataLabel.text.styles.color,
         '#ff0000',
-        "Updated color should be red (#13982)"
+        'Updated color should be red (#13982)'
     );
 });

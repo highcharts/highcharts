@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2020 Torstein Honsi
+ *  (c) 2010-2021 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,20 +11,24 @@
 'use strict';
 
 import type AlignObject from '../Renderer/AlignObject';
+import type AreaRangePoint from '../../Series/AreaRange/AreaRangePoint';
 import type BBoxObject from '../Renderer/BBoxObject';
 import type ColorString from '../Color/ColorString';
 import type ColumnPoint from '../../Series/Column/ColumnPoint';
 import type DataLabelOptions from './DataLabelOptions';
+import type PiePoint from '../../Series/Pie/PiePoint';
+import type PieSeries from '../../Series/Pie/PieSeries';
 import type Point from './Point';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
-import BaseSeries from './Series.js';
-const { seriesTypes } = BaseSeries;
 import H from '../Globals.js';
 const { noop } = H;
-import LineSeries from '../../Series/Line/LineSeries.js';
+import palette from '../Color/Palette.js';
+import Series from '../Series/Series.js';
+import SeriesRegistry from './SeriesRegistry.js';
+const { seriesTypes } = SeriesRegistry;
 import U from '../Utilities.js';
 const {
     arrayMax,
@@ -146,7 +150,7 @@ declare global {
                 seriesCenter: Array<number>
             ): number;
             radialDistributionX(
-                series: LineSeries,
+                series: Series,
                 point: Point,
                 y: number,
                 naturalY: number
@@ -373,7 +377,7 @@ H.distribute = function (
  * @return {void}
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
-LineSeries.prototype.drawDataLabels = function (): void {
+Series.prototype.drawDataLabels = function (): void {
     var series = this,
         chart = series.chart,
         seriesOptions = series.options,
@@ -540,7 +544,7 @@ LineSeries.prototype.drawDataLabels = function (): void {
                         point.connector,
                     labelDistance = pick(
                         (labelOptions as any).distance,
-                        (point as Highcharts.PiePoint).labelDistance
+                        point.labelDistance
                     ),
                     isNew = !dataLabel;
 
@@ -572,7 +576,7 @@ LineSeries.prototype.drawDataLabels = function (): void {
                             labelOptions.color,
                             (style as any).color,
                             series.color,
-                            '${palette.neutralColor100}'
+                            palette.neutralColor100
                         );
                         // Get automated contrast color
                         if ((style as any).color === 'contrast') {
@@ -586,7 +590,7 @@ LineSeries.prototype.drawDataLabels = function (): void {
                                 labelDistance < 0 ||
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
-                                '${palette.neutralColor100}';
+                                palette.neutralColor100;
                         } else {
                             delete point.contrastColor;
                         }
@@ -750,7 +754,7 @@ LineSeries.prototype.drawDataLabels = function (): void {
  * @param {boolean} [isNew]
  * @return {void}
  */
-LineSeries.prototype.alignDataLabel = function (
+Series.prototype.alignDataLabel = function (
     point: Point,
     dataLabel: SVGElement,
     options: DataLabelOptions,
@@ -792,8 +796,11 @@ LineSeries.prototype.alignDataLabel = function (
                 (
                     // If the data label is inside the align box, it is enough
                     // that parts of the align box is inside the plot area
-                    // (#12370)
-                    options.inside && alignTo && chart.isInsidePlot(
+                    // (#12370). When stacking, it is always inside regardless
+                    // of the option (#15148).
+                    pick(options.inside, !!this.options.stacking) &&
+                    alignTo &&
+                    chart.isInsidePlot(
                         plotX,
                         inverted ?
                             alignTo.x + 1 :
@@ -830,7 +837,7 @@ LineSeries.prototype.alignDataLabel = function (
         }, alignTo);
 
         // Add the text size for alignment calculation
-        extend(options, {
+        extend<DataLabelOptions|BBoxObject>(options, {
             width: bBox.width,
             height: bBox.height
         });
@@ -880,7 +887,7 @@ LineSeries.prototype.alignDataLabel = function (
 
         } else {
             setStartPos(alignTo); // data sorting
-            dataLabel.align(options as any, null as any, alignTo);
+            dataLabel.align(options, void 0, alignTo);
             alignAttr = dataLabel.alignAttr;
         }
 
@@ -945,7 +952,7 @@ LineSeries.prototype.alignDataLabel = function (
  *
  * @return {void}
  */
-LineSeries.prototype.setDataLabelStartPos = function (
+Series.prototype.setDataLabelStartPos = function (
     point: ColumnPoint,
     dataLabel: SVGElement,
     isNew: boolean,
@@ -1020,7 +1027,7 @@ LineSeries.prototype.setDataLabelStartPos = function (
  * @param {boolean} [isNew]
  * @return {boolean|undefined}
  */
-LineSeries.prototype.justifyDataLabel = function (
+Series.prototype.justifyDataLabel = function (
     dataLabel: SVGElement,
     options: DataLabelOptions,
     alignAttr: SVGAttributes,
@@ -1038,7 +1045,7 @@ LineSeries.prototype.justifyDataLabel = function (
     let { x = 0, y = 0 } = options;
 
     // Off left
-    off = alignAttr.x + padding;
+    off = (alignAttr.x || 0) + padding;
     if (off < 0) {
         if (align === 'right' && x >= 0) {
             options.align = 'left';
@@ -1050,7 +1057,7 @@ LineSeries.prototype.justifyDataLabel = function (
     }
 
     // Off right
-    off = alignAttr.x + bBox.width - padding;
+    off = (alignAttr.x || 0) + bBox.width - padding;
     if (off > chart.plotWidth) {
         if (align === 'left' && x <= 0) {
             options.align = 'right';
@@ -1074,7 +1081,7 @@ LineSeries.prototype.justifyDataLabel = function (
     }
 
     // Off bottom
-    off = alignAttr.y + bBox.height - padding;
+    off = (alignAttr.y || 0) + bBox.height - padding;
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top' && y <= 0) {
             options.verticalAlign = 'bottom';
@@ -1099,7 +1106,7 @@ if (seriesTypes.pie) {
     seriesTypes.pie.prototype.dataLabelPositioners = {
 
         // Based on the value computed in Highcharts' distribute algorithm.
-        radialDistributionY: function (point: Highcharts.PiePoint): number {
+        radialDistributionY: function (point: PiePoint): number {
             return point.top + (point.distributeBox as any).pos;
         },
         // get the x - use the natural x position for labels near the
@@ -1108,8 +1115,8 @@ if (seriesTypes.pie) {
 
         // Based on the value computed in Highcharts' distribute algorithm.
         radialDistributionX: function (
-            series: Highcharts.PieSeries,
-            point: Highcharts.PiePoint,
+            series: PieSeries,
+            point: PiePoint,
             y: number,
             naturalY: number
         ): number {
@@ -1124,7 +1131,7 @@ if (seriesTypes.pie) {
 
         // dataLabels.distance determines the x position of the label
         justify: function (
-            point: Highcharts.PiePoint,
+            point: PiePoint,
             radius: number,
             seriesCenter: Array<number>
         ): number {
@@ -1152,7 +1159,7 @@ if (seriesTypes.pie) {
         // left edge of the plot area. Right edge of the widest right-half label
         // touches the right edge of the plot area.
         alignToConnectors: function (
-            points: Array<Highcharts.PiePoint>,
+            points: Array<PiePoint>,
             half: boolean,
             plotWidth: number,
             plotLeft: number
@@ -1161,7 +1168,7 @@ if (seriesTypes.pie) {
                 dataLabelWidth;
 
             // find widest data label
-            points.forEach(function (point: Highcharts.PiePoint): void {
+            points.forEach(function (point): void {
                 dataLabelWidth = (point.dataLabel as any).getBBox().width;
                 if (dataLabelWidth > maxDataLabelWidth) {
                     maxDataLabelWidth = dataLabelWidth;
@@ -1204,7 +1211,7 @@ if (seriesTypes.pie) {
             halves = [
                 [], // right
                 [] // left
-            ] as [Array<Highcharts.PiePoint>, Array<Highcharts.PiePoint>],
+            ] as [Array<PiePoint>, Array<PiePoint>],
             x,
             y,
             visibility,
@@ -1222,12 +1229,12 @@ if (seriesTypes.pie) {
         }
 
         // Reset all labels that have been shortened
-        data.forEach(function (point: Highcharts.PiePoint): void {
+        data.forEach(function (point): void {
             if (point.dataLabel && point.visible && point.dataLabel.shortened) {
                 point.dataLabel
                     .attr({
                         width: 'auto'
-                    }).css({
+                    } as unknown as SVGAttributes).css({
                         width: 'auto',
                         textOverflow: 'clip'
                     });
@@ -1237,9 +1244,9 @@ if (seriesTypes.pie) {
 
 
         // run parent method
-        LineSeries.prototype.drawDataLabels.apply(series);
+        Series.prototype.drawDataLabels.apply(series);
 
-        data.forEach(function (point: Highcharts.PiePoint): void {
+        data.forEach(function (point): void {
             if (point.dataLabel) {
 
                 if (point.visible) { // #407, #2510
@@ -1282,10 +1289,7 @@ if (seriesTypes.pie) {
         /* Loop over the points in each half, starting from the top and bottom
          * of the pie to detect overlapping labels.
          */
-        halves.forEach(function (
-            points: Array<Highcharts.PiePoint>,
-            i: number
-        ): void {
+        halves.forEach(function (points, i): void {
 
             var top,
                 bottom,
@@ -1314,7 +1318,7 @@ if (seriesTypes.pie) {
                     centerY + radius + series.maxLabelDistance,
                     chart.plotHeight
                 );
-                points.forEach(function (point: Highcharts.PiePoint): void {
+                points.forEach(function (point): void {
                     // check if specific points' label is outside the pie
                     if ((point.labelDistance as any) > 0 && point.dataLabel) {
                         // point.top depends on point.labelDistance value
@@ -1499,7 +1503,7 @@ if (seriesTypes.pie) {
             (this.placeDataLabels as any)();
 
 
-            this.points.forEach(function (point: Highcharts.PiePoint): void {
+            this.points.forEach(function (point): void {
                 // #8864: every connector can have individual options
                 pointDataLabelsOptions =
                     merge(options, point.options.dataLabels);
@@ -1545,7 +1549,7 @@ if (seriesTypes.pie) {
                                             pointDataLabelsOptions as any
                                         ).connectorColor ||
                                         point.color ||
-                                        '${palette.neutralColor60}'
+                                        palette.neutralColor60
                                     )
                                 });
                             }
@@ -1649,7 +1653,7 @@ if (seriesTypes.pie) {
         }, this);
     };
 
-    seriesTypes.pie.prototype.alignDataLabel = noop as any;
+    seriesTypes.pie.prototype.alignDataLabel = noop;
 
     /**
      * Verify whether the data labels are allowed to draw, or we should run more
@@ -1758,7 +1762,7 @@ if (seriesTypes.column) {
             // data label box for alignment
             dlBox = point.dlBox || point.shapeArgs,
             below = pick(
-                (point as Highcharts.AreaRangePoint).below, // range series
+                (point as AreaRangePoint).below, // range series
                 (point.plotY as any) >
                     pick(this.translatedThreshold, series.yAxis.len)
             ),
@@ -1815,7 +1819,7 @@ if (seriesTypes.column) {
         );
 
         // Call the parent method
-        LineSeries.prototype.alignDataLabel.call(
+        Series.prototype.alignDataLabel.call(
             this,
             point,
             dataLabel,

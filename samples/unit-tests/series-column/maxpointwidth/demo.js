@@ -1,5 +1,4 @@
 QUnit.test('Max point width', function (assert) {
-
     Highcharts.chart('container', {
         chart: {
             type: 'column'
@@ -10,14 +9,15 @@ QUnit.test('Max point width', function (assert) {
         xAxis: {
             categories: ['One', 'Two', 'Three']
         },
-        series: [{
-            data: [1, 2, 3],
-            maxPointWidth: 50
-        }]
+        series: [
+            {
+                data: [1, 2, 3],
+                maxPointWidth: 50
+            }
+        ]
     });
 
-    var chart,
-        point;
+    var chart, point;
 
     chart = $('#container').highcharts();
     point = chart.series[0].points[0];
@@ -30,7 +30,6 @@ QUnit.test('Max point width', function (assert) {
 
     // Now try a bar chart
     Highcharts.chart('container', {
-
         chart: {
             type: 'bar'
         },
@@ -43,11 +42,12 @@ QUnit.test('Max point width', function (assert) {
             categories: ['One', 'Two', 'Three']
         },
 
-        series: [{
-            data: [1, 2, 3],
-            maxPointWidth: 50
-        }]
-
+        series: [
+            {
+                data: [1, 2, 3],
+                maxPointWidth: 50
+            }
+        ]
     });
     chart = $('#container').highcharts();
     point = chart.series[0].points[0];
@@ -59,5 +59,4 @@ QUnit.test('Max point width', function (assert) {
         true,
         'Bar width (flipped) less than 50'
     );
-
 });
