@@ -11,7 +11,10 @@ let dashboard = new Dashboard('container', {
         layoutOptions: {
             resize: {
                 columns: true,
-                rows: true
+                rows: true,
+                snap: {
+                    width: 20
+                }
             }
         },
         layouts: [{
@@ -162,7 +165,7 @@ const columnJSON = column.toJSON();
 
 console.log('columnJSON: ', columnJSON);
 column.destroy();
-debugger;
+
 const columnFromJSON =
     Column.fromJSON(columnJSON, dashboard.layouts[0].rows[0]);
 console.log('rowFromJSON: ', columnFromJSON);
@@ -242,6 +245,7 @@ Highcharts.addEvent(
         console.log('Imported layout: ', layout);
     }
 );
+
 
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
     gui: {
@@ -380,3 +384,17 @@ let dashboardLayout = new Dashboard('container-nested-layout', {
 });
 
 console.log(dashboardLayout);
+
+/*
+ * Destroy resizer
+ */
+Highcharts.addEvent(
+    document.getElementById('destroy-resizer'),
+    'click',
+    function () {
+        dashboardLayout.layouts.forEach(layout => {
+            layout.resizer.destroy();
+            console.log(layout.resizer);
+        });
+    }
+);

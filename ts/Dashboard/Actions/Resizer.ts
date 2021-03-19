@@ -2,6 +2,7 @@ import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type Column from '../Layout/Column.js';
+import type Row from '../Layout/Row.js';
 import type Layout from '../Layout/Layout.js';
 import Dashboard from '../Dashboard.js';
 
@@ -14,6 +15,7 @@ const {
 } = U;
 
 import H from '../../Core/Globals.js';
+
 const {
     hasTouch
 } = H;
@@ -27,7 +29,10 @@ class Resizer {
     protected static readonly defaultOptions: Resizer.Options = {
         resize: {
             columns: true,
-            rows: true
+            rows: true,
+            snap: {
+                width: 20
+            }
         }
     };
 
@@ -88,6 +93,13 @@ class Resizer {
     }
     /**
      * Add Snap - create handlers and add events.
+     *
+     * @param {Resizer.ResizedColumn} column
+     * Reference to column
+     *
+     * @param {Resizer.SnapParams} snapParams
+     * Parameters of the snap i.e. width
+     *
      */
     public addSnap(
         column: Resizer.ResizedColumn,
@@ -100,10 +112,12 @@ class Resizer {
         );
 
         // left handler
-        /*this.addResizeEvents(
+        /*
+        this.addResizeEvents(
             column.resizer.leftHandler,
             column
-        );*/
+        );
+        */
 
         // right handler
         this.addResizeEvents(
@@ -114,6 +128,16 @@ class Resizer {
     }
     /**
      * Create HTML snap elements
+     *
+     * @param {Resizer.ResizedColumn} column
+     * Reference to column
+     *
+     * @param {Resizer.SnapParams} snapParams
+     * Parameters of the snap i.e. width
+     *
+     * @return {Resizer.Snap}
+     * References to HTML handlers
+     *
      */
     public createHandlers(
         column: Resizer.ResizedColumn,
@@ -130,7 +154,9 @@ class Resizer {
                     className: Dashboard.prefix + 'resize-handler ' +
                     Dashboard.prefix + 'resize-handler-left'
                 },
-                {},
+                {
+                    width: this.resizeOptions.resize.snap.width + 'px'
+                },
                 column.container
             );
         }
@@ -141,7 +167,9 @@ class Resizer {
                 {
                     className: Dashboard.prefix + 'resize-handler'
                 },
-                {},
+                {
+                    width: this.resizeOptions.resize.snap.width + 'px'
+                },
                 column.container
             );
         }
@@ -150,6 +178,13 @@ class Resizer {
     }
     /**
      * Add events
+     *
+     * @param {HTMLDOMElement} handler
+     * HTML snap element
+     *
+     * @param {Resizer.ResizedColumn} column
+     * Reference to column
+     *
      */
     public addResizeEvents(
         handler: HTMLDOMElement|undefined,
@@ -192,7 +227,7 @@ class Resizer {
                     'mousemove',
                     mouseMoveHandler
                 ),
-                addEvent(handler, 'mouseup', mouseUpHandler)
+                addEvent(column.row?.container, 'mouseup', mouseUpHandler)
             );
 
             // Touch events
@@ -204,13 +239,23 @@ class Resizer {
                         'touchmove',
                         mouseMoveHandler
                     ),
-                    addEvent(handler, 'touchend', mouseUpHandler)
+                    addEvent(column.row?.container, 'touchend', mouseUpHandler)
                 );
             }
         }
     }
     /**
      * Mouse move function
+     *
+     * @param {boolean} isGrabbed
+     * Flag determinates allowance to grab or not
+     *
+     * @param {global.Event} e
+     * A mouse event.
+     *
+     * @param {Resizer.ResizedColumn} column
+     * Reference to column
+     *
      */
     public onMouseMove(
         isGrabbed: boolean,
@@ -241,19 +286,50 @@ class Resizer {
      * Destroy Resizer
      */
     public destroy(): void {
-        // @TODO destroy HTML elements
-        /*
-        for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
 
-        }
-        */
+        this.destroyHandlers(this.layout.rows);
 
         // unbind events
         if (this.eventsToUnbind) {
             // @TODO replace forEach with more efficient way
-            this.eventsToUnbind.forEach(function (unbind: Function): void {
-                unbind();
-            });
+            for (let i = 0, iEnd = this.eventsToUnbind.length; i < iEnd; ++i) {
+                this.eventsToUnbind[i](); // unbind
+                delete this.eventsToUnbind[i];
+            }
+        }
+    }
+
+    /**
+     * Destroy HTML handlers elements
+     *
+     * @param {Array<Row>} rows
+     * Reference to rows in the layout
+     *
+     */
+    public destroyHandlers(
+        rows: Array<Row>
+    ): void {
+        const resizer = this;
+        let currentColumn: Resizer.ResizedColumn;
+
+        // loop over rows
+        for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
+
+            // loop over columns
+            for (let j = 0, jEnd = rows[i].columns.length; j < jEnd; ++j) {
+
+                currentColumn = rows[i].columns[j];
+
+                // run reccurent if nested layouts
+                if (currentColumn.layout) {
+                    resizer.destroyHandlers(
+                        currentColumn.layout.rows
+                    );
+                } else {
+                    currentColumn.resizer?.leftHandler?.remove();
+                    currentColumn.resizer?.rightHandler?.remove();
+                }
+            }
         }
     }
 }
@@ -264,21 +340,26 @@ interface Resizer {
 }
 namespace Resizer {
     export interface Options {
-        resize: ResizeOptions;
+        resize: Resizer.ResizeOptions;
     }
 
     export interface ResizeOptions {
         columns: boolean;
         rows: boolean;
+        snap: SnapOptions;
     }
 
     export interface ResizedColumn extends Column {
-        resizer?: Resizer.Snap;
+        resizer?: Snap;
     }
 
     export interface Snap {
         leftHandler: HTMLDOMElement|undefined;
         rightHandler: HTMLDOMElement|undefined;
+    }
+
+    export interface SnapOptions {
+        width: number;
     }
 
     export interface SnapParams {
