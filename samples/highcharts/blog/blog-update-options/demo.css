@@ -110,11 +110,3 @@ input[type="range"]{
 .max,.min{
   font-size: 12px;
 }
-
-@media screen  and (max-width: 768px) {
-  
-  label{
-      white-space: normal;
-  }
-}
-

@@ -537,22 +537,21 @@ $('document').ready(function () {
     ///PLUS MINUS CONTROLS FOR THE SLIDER
 
     // The plus or minus button
-    const minBtn = document.querySelector('#min');
-    const maxBtn = document.querySelector('#max');
+    // const minBtn = document.querySelector('#min');
+    // const maxBtn = document.querySelector('#max');
 
-    let timerID;
-    let counter = 0;
-    let direction = 'max';
+    // let timerID;
+    // let counter = 0;
     let pushed;
-    const pressHoldEvent = new CustomEvent("pressHold");
+    // const pressHoldEvent = new CustomEvent("pressHold");
 
     // Increase or decreae value to adjust how long
     // one should keep pressing down before the pressHold
     // event fires
-    let pressHoldDuration = 15;
+    //let pressHoldDuration = 15;
 
     //the plus and minus buttons
-    const elementsArray = document.querySelectorAll(".fas");
+    //const elementsArray = document.querySelectorAll(".fas");
 
     function move(dir) {
         //current min/max of the range slider
@@ -583,56 +582,63 @@ $('document').ready(function () {
         }
     }
 
-    function timer() {
-        if (seriesIndex === 1) {
-            pressHoldDuration = 100;
-        } else {
-            pressHoldDuration = 15;
-        }
-        if (counter < pressHoldDuration) {
-            timerID = requestAnimationFrame(timer);
-            counter++;
-            move(direction);
+    $('#min i').click(function () {
+        move('min');
+    });
+    $('#max i').click(function () {
+        move('max');
+    });
 
-        } else {
-            for (let ii = 0; ii < elementsArray.length; ++ii) {
-                elementsArray[ii].dispatchEvent(pressHoldEvent);
-            }
-        }
-    }
-    function doSomething() {
-        move(direction);
-    }
+    // function timer() {
+    //     if (seriesIndex === 1) {
+    //         pressHoldDuration = 100;
+    //     } else {
+    //         pressHoldDuration = 15;
+    //     }
+    //     if (counter < pressHoldDuration) {
+    //         timerID = requestAnimationFrame(timer);
+    //         counter++;
+    //         move(direction);
+
+    //     } else {
+    //         for (let ii = 0; ii < elementsArray.length; ++ii) {
+    //             elementsArray[ii].dispatchEvent(pressHoldEvent);
+    //         }
+    //     }
+    // }
+    // function doSomething() {
+    //     move(direction);
+    // }
 
     // Listening for our custom pressHold event
-    minBtn.addEventListener("pressHold", doSomething, false);
-    maxBtn.addEventListener("pressHold", doSomething, false);
+    // minBtn.addEventListener("click", move('min'), false);
+    // maxBtn.addEventListener("click", move('max'), false);
 
-    function pressingDown(e) {
-        e.preventDefault();
-        ///plus or minus button
-        const button = e.target;
-        direction = 'max';
-        pushed = elementsArray[1];
-        if ($(button).hasClass('fa-minus')) {
-            direction = 'min';
-            pushed = elementsArray[0];
-        }
-        ///start the timer
-        requestAnimationFrame(timer);
-    }
+    // function pressingDown(e) {
+    //     e.preventDefault();
+    //     ///plus or minus button
+    //     const button = e.target;
+    //     direction = 'max';
+    //     pushed = elementsArray[1];
+    //     if ($(button).hasClass('fa-minus')) {
+    //         direction = 'min';
+    //         pushed = elementsArray[0];
+    //     }
+    //     ///start the timer
+    //     requestAnimationFrame(timer);
+    // }
 
-    function notPressingDown() {
-        // Stop the timer
-        cancelAnimationFrame(timerID);
-        counter = 0;
-    }
+    // function notPressingDown() {
+    //     // Stop the timer
+    //     cancelAnimationFrame(timerID);
+    //     counter = 0;
+    // }
 
-    //attach events to plus/minus buttons
-    elementsArray.forEach(function (elem) {
-        elem.addEventListener("mousedown", pressingDown, false);
-        elem.addEventListener("mouseup", notPressingDown, false);
-        elem.addEventListener("mouseleave", notPressingDown, false);
-    });
+    // //attach events to plus/minus buttons
+    // elementsArray.forEach(function (elem) {
+    //     elem.addEventListener("mousedown", pressingDown, false);
+    //     elem.addEventListener("mouseup", notPressingDown, false);
+    //     elem.addEventListener("mouseleave", notPressingDown, false);
+    // });
 
 });
