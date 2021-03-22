@@ -75,9 +75,7 @@ describe('Chart synchronized events', () => {
         cy.wait(1000)
         cy.get('.highcharts-container').first().as('firstchart')
 
-        cy.get('@firstchart').trigger('mousedown', 50)
-            .trigger('mousemove', { x: 50, y: 50 })
-            .trigger('mouseup')
+        cy.zoom('@firstchart')
 
         // There should now be two reset-zoom buttons
         cy.get('.highcharts-reset-zoom').should('have.length', 2)
@@ -90,6 +88,15 @@ describe('Chart synchronized events', () => {
         // Now there should be none
         cy.get('.highcharts-reset-zoom').should('have.length', 0)
 
+    })
+
+    it('Should sync panning', () => {
+        cy.wait(1000)
+        cy.get('.highcharts-container').first().as('firstchart')
+        // Do a zoom to make it "pannable"
+        cy.zoom('@firstchart')
+        // Do the pan
+        cy.pan('@firstchart')
     })
 
 });

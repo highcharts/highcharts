@@ -3,5 +3,5 @@
   "fixturesFolder": "test/cypress/fixtures",
   "integrationFolder": "test/cypress/integration",
   "pluginsFile": false,
-  "supportFile": false
+  "supportFile": "test/cypress/support/index.js"
 }
