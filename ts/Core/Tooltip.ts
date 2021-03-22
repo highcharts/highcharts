@@ -1377,59 +1377,73 @@ class Tooltip {
             // update text
             if (tooltip.split) {
                 this.renderSplit(text as any, points);
-            } else if (
-                chart.polar ||
-                (
-                    this.isInsideX(x, currentSeries, !point.tooltipPos) &&
-                    this.isInsideY(y, currentSeries, !point.tooltipPos)
-                )
-            ) {
-                const label = tooltip.getLabel();
-
-                // Prevent the tooltip from flowing over the chart box (#6659)
-                if (!(options.style as any).width || styledMode) {
-                    label.css({
-                        width: this.chart.spacingBox.width + 'px'
-                    });
-                }
-
-                label.attr({
-                    text: text && (text as any).join ?
-                        (text as any).join('') :
-                        text
-                });
-
-                // Set the stroke color of the box to reflect the point
-                label.removeClass(/highcharts-color-[\d]+/g)
-                    .addClass(
-                        'highcharts-color-' +
-                        pick(
-                            point.colorIndex,
-                            currentSeries.colorIndex
-                        )
-                    );
-
-                if (!styledMode) {
-                    label.attr({
-                        stroke: (
-                            options.borderColor ||
-                            point.color ||
-                            currentSeries.color ||
-                            palette.neutralColor60
-                        )
-                    });
-                }
-
-                tooltip.updatePosition({
-                    plotX: x,
-                    plotY: y,
-                    negative: point.negative,
-                    ttBelow: point.ttBelow,
-                    h: anchor[2] || 0
-                } as any);
             } else {
-                tooltip.hide();
-                return;
+                let checkX = x;
+                let checkY = y;
+                let paneCoordinates = !point.tooltipPos;
+
+                if (mouseEvent && currentSeries.is('xrange')) {
+                    checkX = mouseEvent.chartX - chart.plotLeft;
+                    checkY = mouseEvent.chartY - chart.plotTop;
+                    paneCoordinates = false;
+                }
+
+                if (
+                    chart.polar ||
+                    (
+                        this.isInsideX(checkX, currentSeries, paneCoordinates) &&
+                        this.isInsideY(checkY, currentSeries, paneCoordinates)
+                    ) ||
+                    currentSeries.is('windbarb') // Windbarb is outside plot
+                ) {
+                    const label = tooltip.getLabel();
+
+                    // Prevent the tooltip from flowing over the chart box
+                    // (#6659)
+                    if (!(options.style as any).width || styledMode) {
+                        label.css({
+                            width: this.chart.spacingBox.width + 'px'
+                        });
+                    }
+
+                    label.attr({
+                        text: text && (text as any).join ?
+                            (text as any).join('') :
+                            text
+                    });
+
+                    // Set the stroke color of the box to reflect the point
+                    label.removeClass(/highcharts-color-[\d]+/g)
+                        .addClass(
+                            'highcharts-color-' +
+                            pick(
+                                point.colorIndex,
+                                currentSeries.colorIndex
+                            )
+                        );
+
+                    if (!styledMode) {
+                        label.attr({
+                            stroke: (
+                                options.borderColor ||
+                                point.color ||
+                                currentSeries.color ||
+                                palette.neutralColor60
+                            )
+                        });
+                    }
+
+                    tooltip.updatePosition({
+                        plotX: x,
+                        plotY: y,
+                        negative: point.negative,
+                        ttBelow: point.ttBelow,
+                        h: anchor[2] || 0
+                    } as any);
+                } else {
+                    tooltip.hide();
+                    return;
+                }
             }
 
             // show it
