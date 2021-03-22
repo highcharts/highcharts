@@ -735,6 +735,8 @@ class BubbleLegend {
         var mainRange = this.ranges[0],
             legend = this.legend,
             options = this.options,
+            seriesIndex = this.options.seriesIndex,
+            bubbleSeries: BubbleSeries = this.chart.series[seriesIndex as any] as any,
             labelsOptions = options.labels as any,
             chart = this.chart,
             renderer = chart.renderer,
@@ -787,7 +789,7 @@ class BubbleLegend {
                     (
                         styledMode ?
                             'highcharts-color-' +
-                                this.options.seriesIndex + ' ' :
+                                bubbleSeries.colorIndex + ' ' :
                             ''
                     ) +
                     'highcharts-bubble-legend-symbol ' +
