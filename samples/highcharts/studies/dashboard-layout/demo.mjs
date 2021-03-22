@@ -317,6 +317,10 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                                 id: 'dashboard-col-layout-1'
                             }, {
                                 id: 'dashboard-col-layout-2'
+                            }, {
+                                id: 'dashboard-col-layout-4'
+                            }, {
+                                id: 'dashboard-col-layout-5'
                             }]
                         }, {
                             columns: [{
@@ -338,36 +342,116 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                 data: [1, 2, 3, 4]
             }]
         }
+        /*type: 'html',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }, {
+            textContent: 'Loreum ipsum'
+        }]*/
     }, {
         column: 'dashboard-col-layout-1',
-        type: 'chart',
+        /*type: 'chart',
         chartOptions: {
             type: 'column',
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
             }]
-        }
+        }*/
+        type: 'html',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }, {
+            textContent: 'Loreum ipsum'
+        }]
     }, {
         column: 'dashboard-col-layout-2',
-        type: 'chart',
+        /*type: 'chart',
         chartOptions: {
             type: 'column',
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
             }]
-        }
+        }*/
+        type: 'html',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }, {
+            textContent: 'Loreum ipsum'
+        }]
     }, {
         column: 'dashboard-col-layout-3',
-        type: 'chart',
+        type: 'html',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }, {
+            textContent: 'Loreum ipsum'
+        }]
+        /*type: 'chart',
         chartOptions: {
             type: 'line',
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
             }]
-        }
+        }*/
+    }, {
+        column: 'dashboard-col-layout-4',
+        type: 'html',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }, {
+            textContent: 'Loreum ipsum'
+        }]
+        /*type: 'chart',
+        chartOptions: {
+            type: 'line',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }]
+        }*/
+    }, {
+        column: 'dashboard-col-layout-5',
+        type: 'html',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }, {
+            textContent: 'Loreum ipsum'
+        }]
+        /*type: 'chart',
+        chartOptions: {
+            type: 'line',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }]
+        }*/
     }]
 });
 

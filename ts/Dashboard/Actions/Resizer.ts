@@ -11,7 +11,9 @@ import U from '../../Core/Utilities.js';
 const {
     merge,
     addEvent,
-    createElement
+    createElement,
+    getStyle,
+    pick
 } = U;
 
 import H from '../../Core/Globals.js';
@@ -51,7 +53,7 @@ class Resizer {
         );
 
         this.layout = layout;
-        this.isGrabbed = false;
+        this.parentColumn = void 0;
         this.eventsToUnbind = [];
 
         this.init();
@@ -64,7 +66,7 @@ class Resizer {
     * */
     public resizeOptions: Resizer.Options;
     public layout: Layout;
-    public isGrabbed: boolean;
+    public parentColumn: Column|undefined;
     public eventsToUnbind?: Array<Function>
     /* *
      *
@@ -80,13 +82,11 @@ class Resizer {
 
             if (columns) {
                 for (let j = 0, jEnd = columns.length; j < jEnd; ++j) {
-                    this.addSnap(
-                        columns[j],
-                        {
-                            isFirst: j === 0, // is first
-                            isLast: j === columns.length - 1 // is last
-                        }
-                    );
+                    if (j < columns.length - 1) {
+                        this.addSnap(
+                            columns[j]
+                        );
+                    }
                 }
             }
         }
@@ -97,100 +97,58 @@ class Resizer {
      * @param {Resizer.ResizedColumn} column
      * Reference to column
      *
-     * @param {Resizer.SnapParams} snapParams
-     * Parameters of the snap i.e. width
-     *
      */
     public addSnap(
-        column: Resizer.ResizedColumn,
-        snapParams: Resizer.SnapParams
+        column: Resizer.ResizedColumn
     ): void {
 
-        column.resizer = this.createHandlers(
-            column,
-            snapParams
-        );
+        const snapWidth = this.resizeOptions.resize.snap.width;
 
-        // left handler
-        /*
-        this.addResizeEvents(
-            column.resizer.leftHandler,
-            column
-        );
-        */
+        column.resizer = {} as Resizer.Snap;
 
-        // right handler
-        this.addResizeEvents(
-            column.resizer.rightHandler,
-            column
-        );
-
-    }
-    /**
-     * Create HTML snap elements
-     *
-     * @param {Resizer.ResizedColumn} column
-     * Reference to column
-     *
-     * @param {Resizer.SnapParams} snapParams
-     * Parameters of the snap i.e. width
-     *
-     * @return {Resizer.Snap}
-     * References to HTML handlers
-     *
-     */
-    public createHandlers(
-        column: Resizer.ResizedColumn,
-        snapParams: Resizer.SnapParams
-    ): Resizer.Snap {
-        const resizerHandlers = {} as Resizer.Snap;
-
-        // generate HTML snap element
-        // left handler
-        if (!snapParams.isFirst) {
-            resizerHandlers.leftHandler = createElement(
-                'div',
-                {
-                    className: Dashboard.prefix + 'resize-handler ' +
-                    Dashboard.prefix + 'resize-handler-left'
-                },
-                {
-                    width: this.resizeOptions.resize.snap.width + 'px'
-                },
-                column.container
-            );
-        }
-        // right handler
-        if (!snapParams.isLast) {
-            resizerHandlers.rightHandler = createElement(
+        // create HTML handler
+        if (column.container) {
+            column.resizer.handler = createElement(
                 'div',
                 {
                     className: Dashboard.prefix + 'resize-handler'
                 },
                 {
-                    width: this.resizeOptions.resize.snap.width + 'px'
+                    width: snapWidth + 'px',
+                    right: (
+                        -(snapWidth / 2) +
+                        (
+                            getStyle(
+                                column.container,
+                                'border',
+                                true
+                            ) as number
+                        )
+                    ) + 'px'
                 },
                 column.container
             );
-        }
 
-        return resizerHandlers;
+            // attach events
+            this.addResizeEvents(
+                column
+            );
+        }
     }
     /**
      * Add events
-     *
-     * @param {HTMLDOMElement} handler
-     * HTML snap element
      *
      * @param {Resizer.ResizedColumn} column
      * Reference to column
      *
      */
     public addResizeEvents(
-        handler: HTMLDOMElement|undefined,
         column: Resizer.ResizedColumn
     ): void {
         const resizer = this;
+        const handler = column.resizer?.handler;
+        const rowContainer =
+            column.row?.container as Resizer.HTMLDOMElementEvents;
 
         let mouseDownHandler,
             mouseMoveHandler,
@@ -199,47 +157,46 @@ class Resizer {
         resizer.mouseDownHandler = mouseDownHandler = function (
             e: PointerEvent
         ): void {
-            resizer.isGrabbed = true;
+            resizer.parentColumn = column;
         };
 
         resizer.mouseMoveHandler = mouseMoveHandler = function (
             e: PointerEvent
         ): void {
             resizer.onMouseMove(
-                resizer.isGrabbed,
-                e as PointerEvent,
-                column
+                resizer.parentColumn,
+                e as PointerEvent
             );
         };
 
         resizer.mouseUpHandler = mouseUpHandler = function (
             e: PointerEvent
         ): void {
-            resizer.isGrabbed = false;
+            resizer.parentColumn = void 0;
         };
 
-        if (handler) {
-            // Add mouse events
+        // Add mouse events
+        resizer.eventsToUnbind?.push(
+            addEvent(handler, 'mousedown', mouseDownHandler),
+        );
+
+        if (!rowContainer.hcEvents.mousemove) {
             resizer.eventsToUnbind?.push(
-                addEvent(handler, 'mousedown', mouseDownHandler),
-                addEvent(
-                    column.row?.container,
-                    'mousemove',
-                    mouseMoveHandler
-                ),
-                addEvent(column.row?.container, 'mouseup', mouseUpHandler)
+                addEvent(rowContainer, 'mousemove', mouseMoveHandler),
+                addEvent(rowContainer, 'mouseup', mouseUpHandler)
+            );
+        }
+
+        // Touch events
+        if (hasTouch) {
+            resizer.eventsToUnbind?.push(
+                addEvent(handler, 'touchstart', mouseDownHandler)
             );
 
-            // Touch events
-            if (hasTouch) {
+            if (!rowContainer.hcEvents.mousemove) {
                 resizer.eventsToUnbind?.push(
-                    addEvent(handler, 'touchstart', mouseDownHandler),
-                    addEvent(
-                        column.row?.container,
-                        'touchmove',
-                        mouseMoveHandler
-                    ),
-                    addEvent(column.row?.container, 'touchend', mouseUpHandler)
+                    addEvent(rowContainer, 'touchmove', mouseMoveHandler),
+                    addEvent(rowContainer, 'touchend', mouseUpHandler)
                 );
             }
         }
@@ -247,7 +204,7 @@ class Resizer {
     /**
      * Mouse move function
      *
-     * @param {boolean} isGrabbed
+     * @param {boolean} parentColumn
      * Flag determinates allowance to grab or not
      *
      * @param {global.Event} e
@@ -258,27 +215,43 @@ class Resizer {
      *
      */
     public onMouseMove(
-        isGrabbed: boolean,
-        e: PointerEvent,
-        column: Resizer.ResizedColumn
+        parentColumn: Column|undefined,
+        e: PointerEvent
     ): void {
 
-        if (isGrabbed && column.container) {
-            // update size
-            const parentContainerWidth =
-                (column.container.parentNode as HTMLDOMElement).offsetWidth;
+        const colDiv = parentColumn && parentColumn.container;
 
-            column.container.style.width =
-                (
+        if (parentColumn && colDiv) {
+            const parentRow = (colDiv.parentNode as HTMLDOMElement);
+            const parentRowWidth = parentRow.offsetWidth;
+
+            colDiv.style.width =
+                Math.min(
                     (
-                        (e.clientX - column.container.offsetLeft) /
-                        parentContainerWidth
-                    ) * 100
+                        (
+                            e.clientX -
+                            colDiv.getBoundingClientRect().left
+                        ) / parentRowWidth
+                    ) * 100,
+                    // 100% - (xcolumns * min-width) 
+                    100 - (
+                        parentRow.childNodes.length *
+                        (
+                            (getStyle(colDiv, 'min-width', true) as number)
+                            /*
+                            (getStyle(colDiv, 'padding-left', true) as number) +
+                            (getStyle(colDiv, 'padding-right', true) as number) +
+                            (getStyle(colDiv, 'margin-right', true) as number) +
+                            (getStyle(colDiv, 'margin-left', true) as number)
+                            */
+                        )
+                    )
                 ) + '%';
-            column.container.style.flex = 'none';
+
+            colDiv.style.flex = 'none';
 
             // call component redraw
-            column.mountedComponent?.redraw();
+            parentColumn.mountedComponent?.redraw();
         }
     }
 
@@ -287,11 +260,11 @@ class Resizer {
      */
     public destroy(): void {
 
-        this.destroyHandlers(this.layout.rows);
+        this.destroyHandler(this.layout.rows);
 
         // unbind events
         if (this.eventsToUnbind) {
-            // @TODO replace forEach with more efficient way
+
             for (let i = 0, iEnd = this.eventsToUnbind.length; i < iEnd; ++i) {
                 this.eventsToUnbind[i](); // unbind
                 delete this.eventsToUnbind[i];
@@ -306,7 +279,7 @@ class Resizer {
      * Reference to rows in the layout
      *
      */
-    public destroyHandlers(
+    public destroyHandler(
         rows: Array<Row>
     ): void {
         const resizer = this;
@@ -322,12 +295,11 @@ class Resizer {
 
                 // run reccurent if nested layouts
                 if (currentColumn.layout) {
-                    resizer.destroyHandlers(
+                    resizer.destroyHandler(
                         currentColumn.layout.rows
                     );
                 } else {
-                    currentColumn.resizer?.leftHandler?.remove();
-                    currentColumn.resizer?.rightHandler?.remove();
+                    currentColumn.resizer?.handler?.remove();
                 }
             }
         }
@@ -354,17 +326,15 @@ namespace Resizer {
     }
 
     export interface Snap {
-        leftHandler: HTMLDOMElement|undefined;
-        rightHandler: HTMLDOMElement|undefined;
+        handler: HTMLDOMElement|undefined;
     }
 
     export interface SnapOptions {
         width: number;
     }
 
-    export interface SnapParams {
-        isFirst: boolean;
-        isLast: boolean;
+    export interface HTMLDOMElementEvents extends HTMLDOMElement {
+        hcEvents: Record<string, Array<Highcharts.EventWrapperObject<HTMLDOMElement>>>;
     }
 }
 
