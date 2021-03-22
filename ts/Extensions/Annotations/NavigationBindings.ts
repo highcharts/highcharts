@@ -1069,13 +1069,16 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
     /**
      * @private
      */
-    function selectAndshowPopup(this: Annotation, event: PointerEvent): void {
+    function selectAndShowPopup(
+        this: Annotation,
+        eventArguments: AnyRecord
+    ): void {
         var annotation = this,
             navigation = annotation.chart.navigationBindings,
             prevAnnotation = navigation.activeAnnotation;
 
         if (originalClick) {
-            originalClick.call(annotation, event);
+            originalClick.call(annotation, eventArguments);
         }
 
         if (prevAnnotation !== annotation) {
@@ -1125,14 +1128,14 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
             fireEvent(navigation, 'closePopup');
         }
         // Let bubble event to chart.click:
-        event.activeAnnotation = true;
+        eventArguments.activeAnnotation = true;
     }
 
     merge(
         true,
         annotationType.prototype.defaultOptions.events,
         {
-            click: selectAndshowPopup
+            click: selectAndShowPopup
         }
     );
 }

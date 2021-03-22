@@ -953,11 +953,11 @@ class GridAxis {
      */
     public static onAfterSetOptions(
         this: Axis,
-        e: { userOptions: Highcharts.AxisOptions }
+        e: { userOptions: DeepPartial<Highcharts.AxisOptions> }
     ): void {
         var options = this.options,
             userOptions = e.userOptions,
-            gridAxisOptions: Highcharts.AxisOptions,
+            gridAxisOptions: DeepPartial<Highcharts.AxisOptions>,
             gridOptions: GridAxis.Options = (
                 (options && isObject(options.grid)) ? (options.grid as any) : {}
             );
@@ -966,7 +966,7 @@ class GridAxis {
 
             // Merge the user options into default grid axis options so
             // that when a user option is set, it takes presedence.
-            gridAxisOptions = merge(true, {
+            gridAxisOptions = merge<DeepPartial<Highcharts.AxisOptions>>(true, {
 
                 className: (
                     'highcharts-grid-axis ' + (userOptions.className || '')

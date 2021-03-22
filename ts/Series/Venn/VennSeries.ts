@@ -22,7 +22,7 @@
  *  Imports
  *
  * */
-
+import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type PositionObject from '../../Core/Renderer/PositionObject';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
@@ -775,8 +775,8 @@ class VennSeries extends ScatterSeries {
                         style: {
                             width: dataLabelWidth
                         }
-                    },
-                    isObject(dlOptions) && dlOptions as any
+                    } as DataLabelOptions,
+                    isObject(dlOptions, true) ? dlOptions : void 0
                 );
             }
 
