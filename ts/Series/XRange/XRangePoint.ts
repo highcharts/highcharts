@@ -31,12 +31,27 @@ const {
     }
 } = SeriesRegistry;
 import XRangeSeries from './XRangeSeries.js';
+import U from '../../Core/Utilities.js';
+const { extend } = U;
 
 /* *
  *
  *  Declarations
  *
  * */
+
+declare module '../../Core/Series/PointLike' {
+    interface PointLike {
+        tooltipDateKeys?: Array<string>;
+    }
+}
+
+/* *
+ *
+ *  Class
+ *
+ * */
+
 class XRangePoint extends ColumnSeries.prototype.pointClass {
 
     /* *
@@ -62,11 +77,11 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
     public static getColorByCategory(
         series: Series,
         point: Point
-    ): Record<string, any> {
+    ): AnyRecord {
         var colors = series.options.colors || series.chart.options.colors,
             colorCount = colors ?
                 colors.length :
-                (series.chart.options.chart as any).colorCount,
+                series.chart.options.chart.colorCount as any,
             colorIndex = (point.y as any) % colorCount,
             color = colors && colors[colorIndex];
 
@@ -176,8 +191,6 @@ class XRangePoint extends ColumnSeries.prototype.pointClass {
         return cfg;
     }
 
-    public tooltipDateKeys = ['x', 'x2']
-
     /**
      * @private
      * @function Highcharts.Point#isValid
@@ -208,6 +221,7 @@ declare namespace XRangePoint {
  * Prototype Properties
  *
  * */
+
 interface XRangePoint {
     clipRectArgs?: RectangleObject;
     len?: number;
@@ -219,6 +233,10 @@ interface XRangePoint {
     yCategory?: string;
 
 }
+extend(XRangePoint.prototype, {
+    tooltipDateKeys: ['x', 'x2']
+});
+
 
 /* *
  *

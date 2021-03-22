@@ -1599,7 +1599,11 @@ QUnit.test('defaultOptions.borderWidth', function (assert) {
     // Set side to top
     axis.side = 0;
     // Several cases where there is no check if chart exists
-    axis.chart = {};
+    axis.chart = {
+        options: {
+            chart: {}
+        }
+    };
 
     /**
      * grid.borderWidth should default to 1

@@ -1876,6 +1876,7 @@ class RangeSelector {
         // the buttons
         const width = buttonTheme.width || 28;
         delete buttonTheme.width;
+        delete buttonTheme.states;
 
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
 
@@ -1941,7 +1942,7 @@ class RangeSelector {
                     rangeOptions.text,
                     0,
                     0,
-                    (e: (Event|Record<string, any>)): void => {
+                    (e: (Event|AnyRecord)): void => {
 
                         // extract events from button object and call
                         var buttonEvents = (

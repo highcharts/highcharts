@@ -106,7 +106,7 @@ declare module '../Core/Chart/ChartLike' {
         /** @requires modules/exporting */
         getSVGForExport(
             options: Highcharts.ExportingOptions,
-            chartOptions: Highcharts.Options
+            chartOptions: Partial<Highcharts.Options>
         ): string;
         /** @requires modules/exporting */
         inlineStyles(): void;
@@ -562,14 +562,16 @@ merge(true, defaultOptions.navigation, {
 });
 
 // Presentational attributes
-merge(true, defaultOptions.navigation
+merge(
+    true,
+    defaultOptions.navigation,
     /**
      * A collection of options for buttons and menus appearing in the exporting
      * module.
      *
      * @optionparent navigation
      */
-    , {
+    {
 
         /**
          * CSS styles for the popup menu appearing by default when the export
@@ -1331,8 +1333,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (options && options.exporting && options.exporting.allowHTML) {
             if (html) {
                 html = '<foreignObject x="0" y="0" ' +
-                            'width="' + (options.chart as any).width + '" ' +
-                            'height="' + (options.chart as any).height + '">' +
+                            'width="' + options.chart.width + '" ' +
+                            'height="' + options.chart.height + '">' +
                     '<body xmlns="http://www.w3.org/1999/xhtml">' +
                     // Some tags needs to be closed in xhtml (#13726)
                     html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
@@ -1455,11 +1457,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         cssWidth = chart.renderTo.style.width as any;
         cssHeight = chart.renderTo.style.height as any;
         sourceWidth = (options.exporting as any).sourceWidth ||
-            (options.chart as any).width ||
+            options.chart.width ||
             (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
             (options.isGantt ? 800 : 600);
         sourceHeight = (options.exporting as any).sourceHeight ||
-            (options.chart as any).height ||
+            options.chart.height ||
             (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
             400;
 
@@ -1516,7 +1518,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
             ['xAxis', 'yAxis', 'series'].forEach(function (coll: string): void {
-                var collOptions: Highcharts.Options = {};
+                var collOptions: Partial<Highcharts.Options> = {};
 
                 if ((chartOptions as any)[coll]) {
                     (collOptions as any)[coll] = (chartOptions as any)[coll];
@@ -1575,7 +1577,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     getSVGForExport: function (
         this: Chart,
         options: Highcharts.ExportingOptions,
-        chartOptions: Highcharts.Options
+        chartOptions: Partial<Highcharts.Options>
     ): string {
         var chartExportingOptions: Highcharts.ExportingOptions =
             this.options.exporting as any;
@@ -1742,7 +1744,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
         if (handleMaxWidth) {
             printReverseInfo.resetParams = [
-                (chart.options.chart as any).width,
+                chart.options.chart.width,
                 void 0,
                 false
             ];
@@ -2144,7 +2146,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (onclick) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Record<string, any>)
+                e: (Event|AnyRecord)
             ): void {
                 if (e) {
                     e.stopPropagation();
@@ -2155,7 +2157,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else if (menuItems) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Record<string, any>)
+                e: (Event|AnyRecord)
             ): void {
                 // consistent with onclick call (#3495)
                 if (e) {

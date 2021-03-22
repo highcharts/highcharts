@@ -99,7 +99,7 @@ declare global {
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLAttributes extends Record<string, any> {
+        interface VMLAttributes extends AnyRecord {
             d?: VMLPathArray;
             end?: number;
             innerR?: number;
@@ -1466,7 +1466,7 @@ if (!svg) {
                         left = rect.left,
                         right = left + rect.width,
                         bottom = top + rect.height,
-                        ret = {
+                        ret: CSSObject = {
                             clip: 'rect(' +
                                 Math.round(inverted ? left : top) + 'px,' +
                                 Math.round(inverted ? bottom : right) + 'px,' +
@@ -2087,8 +2087,8 @@ if (!svg) {
     ): void {
         this.init.apply(this, arguments as any);
     } as any;
-    extend(VMLRenderer.prototype, SVGRenderer.prototype);
-    extend(VMLRenderer.prototype, VMLRendererExtension);
+    extend(VMLRenderer.prototype, SVGRenderer.prototype as any);
+    extend(VMLRenderer.prototype, VMLRendererExtension as any);
 
     // general renderer
     H.Renderer = VMLRenderer as any;

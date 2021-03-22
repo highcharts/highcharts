@@ -167,6 +167,14 @@ QUnit.test('Default options for stock chart', function (assert) {
     assert.strictEqual(
         chart.yAxis[1].options.title.text,
         null,
-        'Axis should have stock defaults applied'
+        '#8603: Axis should have stock defaults applied'
+    );
+
+    chart.addAxis({}, true);
+
+    assert.strictEqual(
+        chart.xAxis[1].options.type,
+        'datetime',
+        '#8603: Axis should have stock forced options applied'
     );
 });

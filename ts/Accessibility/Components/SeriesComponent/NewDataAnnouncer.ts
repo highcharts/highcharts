@@ -56,7 +56,7 @@ declare global {
                 dirtySeries: Array<Series>,
                 newSeries?: Series,
                 newPoint?: Point
-            ): string;
+            ): string|null;
             public destroy(): void;
             public init(): void;
             public onPointAdded(point: Point): void;

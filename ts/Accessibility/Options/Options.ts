@@ -13,7 +13,6 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -79,10 +78,10 @@ declare global {
         }
         interface AccessibilityOptions {
             announceNewData: AccessibilityAnnounceNewDataOptions;
-            customComponents?: Record<string, any>;
+            customComponents?: AnyRecord;
             description?: string;
             enabled: boolean;
-            highContrastTheme: Record<string, any>;
+            highContrastTheme: AnyRecord;
             keyboardNavigation: AccessibilityKeyboardNavigationOptions;
             landmarkVerbosity: string;
             linkedDescription: (string|HTMLDOMElement);

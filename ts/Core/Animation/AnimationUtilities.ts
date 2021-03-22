@@ -80,7 +80,7 @@ const setAnimation = H.setAnimation = function setAnimation(
 ): void {
     chart.renderer.globalAnimation = pick(
         animation,
-        (chart.options.chart as any).animation,
+        chart.options.chart.animation,
         true
     );
 };
@@ -129,7 +129,7 @@ const animObject = H.animObject = function animObject(
  */
 const getDeferredAnimation = H.getDeferredAnimation = function (
     chart: Chart,
-    animation: (false|DeepPartial<AnimationOptions>),
+    animation: (false|Partial<AnimationOptions>),
     series?: Series
 ): Partial<AnimationOptions> {
 
@@ -183,7 +183,7 @@ const getDeferredAnimation = H.getDeferredAnimation = function (
 const animate = function (
     el: (HTMLDOMElement|SVGElement),
     params: (CSSObject|SVGAttributes),
-    opt?: Partial<AnimationOptions>
+    opt?: boolean|Partial<AnimationOptions>
 ): void {
     var start,
         unit = '',

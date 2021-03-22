@@ -1084,7 +1084,10 @@ class TreemapSeries extends ScatterSeries {
                 // the fill attribute.
                 if (series.colorAttribs && styledMode) {
                     // Heatmap is loaded
-                    extend(css, series.colorAttribs(point as any));
+                    extend<CSSObject|SVGAttributes>(
+                        css,
+                        series.colorAttribs(point as any)
+                    );
                 }
 
                 if (!(series as any)[groupKey]) {
@@ -1881,12 +1884,12 @@ interface TreemapSeries extends Highcharts.TreeSeries {
     };
 }
 extend(TreemapSeries.prototype, {
-    buildKDTree: noop as any,
+    buildKDTree: noop,
     colorKey: 'colorValue', // Point color option key
     directTouch: true,
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     getExtremesFromAll: true,
-    getSymbol: noop as any,
+    getSymbol: noop,
     optionalAxis: 'colorAxis',
     parallelArrays: ['x', 'y', 'value', 'colorValue'],
     pointArrayMap: ['value'],

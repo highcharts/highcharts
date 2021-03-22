@@ -17,6 +17,7 @@
  * */
 
 import type BBoxObject from '../Renderer/BBoxObject';
+import type CSSObject from '../Renderer/CSSObject';
 import type DataExtremesObject from '../Series/DataExtremesObject';
 import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type PointerEvent from '../PointerEvent';
@@ -25,7 +26,6 @@ import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
-import H from '../Globals.js';
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
@@ -131,6 +131,15 @@ declare global {
     }
 }
 
+/**
+ * Stock-optimized chart. Use {@link Highcharts.Chart|Chart} for common charts.
+ *
+ * @requires modules/stock
+ *
+ * @class
+ * @name Highcharts.StockChart
+ * @extends Highcharts.Chart
+ */
 class StockChart extends Chart {
     /**
      * Initializes the chart. The constructor's arguments are passed on
@@ -175,14 +184,7 @@ class StockChart extends Chart {
                 defaultOptions.xAxis, // #3802
                 defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
                 xAxisOptions, // user options
-                { // forced options
-                    type: 'datetime',
-                    categories: null
-                },
-                (navigatorEnabled ? {
-                    startOnTick: false,
-                    endOnTick: false
-                } : null) as any
+                getForcedAxisOptions('xAxis', userOptions)
             );
         });
 
@@ -270,7 +272,8 @@ class StockChart extends Chart {
     ): Highcharts.Axis {
         options.axis = merge(
             getDefaultAxisOptions(type, options.axis),
-            options.axis
+            options.axis,
+            getForcedAxisOptions(type, this.userOptions)
         );
         return super.createAxis(type, options);
     }
@@ -278,54 +281,143 @@ class StockChart extends Chart {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-/* *
- *
- *  Factory
- *
- * */
+namespace StockChart {
+    /**
+     * Factory function for creating new stock charts. Creates a new
+     * {@link Highcharts.StockChart|StockChart} object with different default
+     * options than the basic Chart.
+     *
+     * @example
+     * var chart = Highcharts.stockChart('container', {
+     *     series: [{
+     *         data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+     *         pointInterval: 24 * 60 * 60 * 1000
+     *     }]
+     * });
+     *
+     * @function Highcharts.stockChart
+     *
+     * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+     *        The DOM element to render to, or its id.
+     *
+     * @param {Highcharts.Options} options
+     *        The chart options structure as described in the
+     *        [options reference](https://api.highcharts.com/highstock).
+     *
+     * @param {Highcharts.ChartCallbackFunction} [callback]
+     *        A function to execute when the chart object is finished loading
+     *        and rendering. In most cases the chart is built in one thread,
+     *        but in Internet Explorer version 8 or less the chart is sometimes
+     *        initialized before the document is ready, and in these cases the
+     *        chart object will not be finished synchronously. As a
+     *        consequence, code that relies on the newly built Chart object
+     *        should always run in the callback. Defining a
+     *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
+     *        handler is equivalent.
+     *
+     * @return {Highcharts.StockChart}
+     *         The chart object.
+     */
+    export function stockChart(
+        a: (string|HTMLDOMElement|Highcharts.Options),
+        b?: (Chart.CallbackFunction|Highcharts.Options),
+        c?: Chart.CallbackFunction
+    ): StockChart {
+        return new StockChart(a as any, b as any, c);
+    }
+}
 
 /**
- * Factory function for creating new stock charts. Creates a new
- * {@link Highcharts.Chart|Chart} object with different default options than the
- * basic Chart.
+ * Get stock-specific default axis options.
  *
- * @example
- * var chart = Highcharts.stockChart('container', {
- *     series: [{
- *         data: [1, 2, 3, 4, 5, 6, 7, 8, 9],
- *         pointInterval: 24 * 60 * 60 * 1000
- *     }]
- * });
- *
- * @function Highcharts.stockChart
- *
- * @param {string|Highcharts.HTMLDOMElement} [renderTo]
- *        The DOM element to render to, or its id.
- *
- * @param {Highcharts.Options} options
- *        The chart options structure as described in the
- *        [options reference](https://api.highcharts.com/highstock).
- *
- * @param {Highcharts.ChartCallbackFunction} [callback]
- *        A function to execute when the chart object is finished loading and
- *        rendering. In most cases the chart is built in one thread, but in
- *        Internet Explorer version 8 or less the chart is sometimes
- *        initialized before the document is ready, and in these cases the
- *        chart object will not be finished synchronously. As a consequence,
- *        code that relies on the newly built Chart object should always run in
- *        the callback. Defining a
- *        [chart.events.load](https://api.highcharts.com/highstock/chart.events.load)
- *        handler is equivalent.
- *
- * @return {Highcharts.Chart}
- *         The chart object.
+ * @private
+ * @function getDefaultAxisOptions
+ * @param {string} type
+ * @param {Highcharts.AxisOptions} options
+ * @return {Highcharts.AxisOptions}
  */
-function stockChart(
-    a: (string|HTMLDOMElement|Highcharts.Options),
-    b?: (Chart.CallbackFunction|Highcharts.Options),
-    c?: Chart.CallbackFunction
-): StockChart {
-    return new StockChart(a as any, b as any, c);
+function getDefaultAxisOptions(
+    type: string,
+    options: DeepPartial<Highcharts.AxisOptions>
+): DeepPartial<Highcharts.AxisOptions> {
+    if (type === 'xAxis') {
+        return {
+            minPadding: 0,
+            maxPadding: 0,
+            overscroll: 0,
+            ordinal: true,
+            title: {
+                text: null
+            },
+            labels: {
+                overflow: 'justify'
+            },
+            showLastLabel: true
+        };
+    }
+    if (type === 'yAxis') {
+        return {
+            labels: {
+                y: -2
+            },
+            opposite: pick(options.opposite, true),
+
+            /**
+             * @default {highcharts} true
+             * @default {highstock} false
+             * @apioption yAxis.showLastLabel
+             *
+             * @private
+             */
+            showLastLabel: !!(
+                // #6104, show last label by default for category axes
+                options.categories ||
+                options.type === 'category'
+            ),
+
+            title: {
+                text: null
+            }
+        };
+    }
+    return {};
+}
+
+/**
+ * Get stock-specific forced axis options.
+ *
+ * @private
+ * @function getForcedAxisOptions
+ * @param {string} type
+ * @param {Highcharts.Options} chartOptions
+ * @return {Highcharts.AxisOptions}
+ */
+function getForcedAxisOptions(
+    type: string,
+    chartOptions: Partial<Highcharts.Options>
+): DeepPartial<Highcharts.AxisOptions> {
+    if (type === 'xAxis') {
+        const defaultOptions = getOptions(),
+            // Always disable startOnTick:true on the main axis when the
+            // navigator is enabled (#1090)
+            navigatorEnabled = pick(
+                chartOptions.navigator && chartOptions.navigator.enabled,
+                (defaultOptions.navigator as any).enabled,
+                true
+            );
+
+        const axisOptions: DeepPartial<Highcharts.AxisOptions> = {
+            type: 'datetime',
+            categories: void 0
+        };
+        if (navigatorEnabled) {
+            axisOptions.startOnTick = false;
+            axisOptions.endOnTick = false;
+        }
+
+        return axisOptions;
+    }
+    return {};
 }
 
 /* *
@@ -381,12 +473,12 @@ addEvent(Axis, 'autoLabelAlign', function (
     if (this.chart.options.isStock && this.coll === 'yAxis') {
         key = options.top + ',' + options.height;
         // do it only for the first Y axis of each pane
-        if (!panes[key] && (labelOptions as any).enabled) {
-            if ((labelOptions as any).x === 15) { // default
-                (labelOptions as any).x = 0;
+        if (!panes[key] && labelOptions.enabled) {
+            if (labelOptions.x === 15) { // default
+                labelOptions.x = 0;
             }
-            if (typeof (labelOptions as any).align === 'undefined') {
-                (labelOptions as any).align = 'right';
+            if (typeof labelOptions.align === 'undefined') {
+                labelOptions.align = 'right';
             }
             panes[key] = this;
             (e as any).align = 'right';
@@ -630,8 +722,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     // Check if the label has to be drawn
     if (
-        !defined((this.crosshair as any).label) ||
-        !(this.crosshair as any).label.enabled ||
+        !this.crosshair ||
+        !this.crosshair.label ||
+        !this.crosshair.label.enabled ||
         !this.cross ||
         !isNumber(this.min) ||
         !isNumber(this.max)
@@ -641,7 +734,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
 
     var chart = this.chart,
         log = this.logarithmic,
-        options = (this.options.crosshair as any).label, // the label's options
+        options = this.crosshair.label, // the label's options
         horiz = this.horiz, // axis orientation
         opposite = this.opposite, // axis position
         left = this.left, // left position
@@ -688,7 +781,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                 )
             )
             .attr({
-                align: options.align || align,
+                align: options.align || align as any,
                 padding: pick(options.padding, 8),
                 r: pick(options.borderRadius, 3),
                 zIndex: 2
@@ -705,12 +798,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (
                     stroke: options.borderColor || '',
                     'stroke-width': options.borderWidth || 0
                 })
-                .css(extend({
+                .css(extend<CSSObject>({
                     color: palette.backgroundColor,
                     fontWeight: 'normal',
                     fontSize: '11px',
                     textAlign: 'center'
-                }, options.style));
+                }, options.style || {}));
         }
     }
 
@@ -741,10 +834,15 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         point.series.isPointInside(point) :
         (isNumber(value) && value > min && value < max);
 
+    let text = '';
+    if (formatOption) {
+        text = format(formatOption, { value }, chart);
+    } else if (options.formatter && isNumber(value)) {
+        text = options.formatter.call(this, value);
+    }
+
     crossLabel.attr({
-        text: formatOption ?
-            format(formatOption, { value }, chart) :
-            options.formatter.call(this, value),
+        text,
         x: posx,
         y: posy,
         visibility: isInside ? 'visible' : 'hidden'
@@ -1101,78 +1199,19 @@ addEvent(Chart, 'update', function (
     }
 });
 
-/**
- * Get stock-specific default axis options.
- *
- * @private
- * @function getDefaultAxisOptions
- * @param {string} type
- * @param {Highcharts.AxisOptions} options
- * @return {Highcharts.AxisOptions}
- */
-function getDefaultAxisOptions(type: string, options: Highcharts.AxisOptions): Highcharts.AxisOptions {
-    if (type === 'xAxis') {
-        return {
-            minPadding: 0,
-            maxPadding: 0,
-            overscroll: 0,
-            ordinal: true,
-            title: {
-                text: null
-            },
-            labels: {
-                overflow: 'justify'
-            },
-            showLastLabel: true
-        };
-    }
-    if (type === 'yAxis') {
-        return {
-            labels: {
-                y: -2
-            },
-            opposite: pick(options.opposite, true),
-
-            /**
-             * @default {highcharts} true
-             * @default {highstock} false
-             * @apioption yAxis.showLastLabel
-             *
-             * @private
-             */
-            showLastLabel: !!(
-                // #6104, show last label by default for category axes
-                options.categories ||
-                options.type === 'category'
-            ),
-
-            title: {
-                text: null
-            }
-        };
-    }
-    return {};
-}
-
-const stockModule = {
-    stockChart,
-    StockChart
-};
-
 /* *
  *
  *  Default Export
  *
  * */
 
-export default stockModule;
+export default StockChart;
 
 /* *
  *
  *  API Options
  *
  * */
-
 
 /**
  * Compare the values of the series against the first non-null, non-

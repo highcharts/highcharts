@@ -2,12 +2,17 @@ Highcharts.chart('container', {
 
     yAxis: {
         labels: {
-            format: '{value} km'
+            format: '${text}' // The $ is literally a dollar unit
+        },
+        title: {
+            text: 'Cost'
         }
     },
 
     series: [{
-        data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        data: [299000, 715000, 1064000, 1292000, 1440000, 1760000, 1356000,
+            1485000, 2164000, 1941000, 956000, 544000],
+        type: 'column'
     }]
 
 });

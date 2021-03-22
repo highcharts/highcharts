@@ -826,3 +826,55 @@ QUnit.test('When groupAll: true, group point should have the same start regardle
         'When the groupAll: false, and new extremes don\t influence the group, the start should not be changed.'
     );
 });
+
+QUnit.test('Panning with dataGrouping and ordinal axis, #3825.', function (assert) {
+    const chart = Highcharts.stockChart('container', {
+        xAxis: {
+            ordinal: true
+        },
+        rangeSelector: {
+            selected: 0
+        },
+        series: [{
+            data: usdeur,
+            dataGrouping: {
+                forced: true,
+                groupAll: true,
+                units: [['day', [1]]]
+            }
+        }]
+    });
+    // Call function responsible for calculating positions of invisible points while panning.
+    chart.xAxis[0].ordinal.getExtendedPositions();
+
+    const positions = chart.xAxis[0].ordinal.positions,
+        positionsLength = positions.length,
+        index = chart.xAxis[0].ordinal.index,
+        indexArray = index[Object.keys(index)[0]],
+        indexLength = indexArray.length,
+        splicedIndex = // get data for current extremes
+            indexArray.splice(indexLength - positionsLength, positionsLength);
+
+    assert.deepEqual(
+        positions,
+        splicedIndex,
+        `When the ordinal axis and data grouping enabled,
+        getExtendedPositions should return fake series where
+        the data is grouped the same as in the original series. 
+        Thus each element in the currently visible array of data,
+        should equal the corresponding element in the fake series array. `
+    );
+
+    chart.series[0].update({
+        dataGrouping: {
+            units: [['week', [1]]]
+        }
+    });
+    chart.xAxis[0].ordinal.getExtendedPositions();
+    assert.ok(
+        chart.xAxis[0].ordinal.index[
+            Object.keys(chart.xAxis[0].ordinal.index)[1]],
+        `After updating data grouping units to an equally spaced (like weeks),
+        the ordinal positions should be recalculated- allows panning.`
+    );
+});

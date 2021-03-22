@@ -488,8 +488,7 @@ class HeatmapSeries extends ScatterSeries {
 
         // Bind new symbol names
         extend(symbols, {
-            ellipse: symbols.circle,
-            rect: symbols.square
+            ellipse: symbols.circle
         });
     }
 
@@ -639,12 +638,12 @@ class HeatmapSeries extends ScatterSeries {
                 sizeDiff,
                 hasImage,
                 cellAttr = point.getCellAttributes(),
-                shapeArgs = {
-                    x: Math.min(cellAttr.x1, cellAttr.x2),
-                    y: Math.min(cellAttr.y1, cellAttr.y2),
-                    width: Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0),
-                    height: Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0)
-                };
+                shapeArgs: SVGAttributes = {};
+
+            shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2);
+            shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2);
+            shapeArgs.width = Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0);
+            shapeArgs.height = Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0);
 
             hasImage = point.hasImage =
                 (point.marker && point.marker.symbol || symbol || '')
@@ -731,17 +730,9 @@ extend(HeatmapSeries.prototype, {
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
-    /**
-     * @ignore
-     * @deprecated
-     */
-    getBox: noop as any,
-
     getExtremesFromAll: true,
 
     getSymbol: Series.prototype.getSymbol,
-
-    hasPointSpecificOptions: true,
 
     parallelArrays: colorMapSeriesMixin.parallelArrays,
 

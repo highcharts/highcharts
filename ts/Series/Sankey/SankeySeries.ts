@@ -691,12 +691,12 @@ class SankeySeries extends ColumnSeries {
             stateOptions = (
                 levelOptions.states && levelOptions.states[state || '']
             ) || {},
-            values: Record<string, any> = [
+            values: AnyRecord = [
                 'colorByPoint', 'borderColor', 'borderWidth', 'linkOpacity'
             ].reduce(function (
-                obj: Record<string, any>,
+                obj: AnyRecord,
                 key: string
-            ): Record<string, any> {
+            ): AnyRecord {
                 obj[key] = pick(
                     stateOptions[key],
                     (options as any)[key],
@@ -1158,7 +1158,7 @@ extend(SankeySeries.prototype, {
     animate: Series.prototype.animate,
     // Create a single node that holds information on incoming and outgoing
     // links.
-    createNode: NodesMixin.createNode,
+    createNode: NodesMixin.createNode as any,
     destroy: NodesMixin.destroy,
     forceDL: true,
     invertible: true,

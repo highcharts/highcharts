@@ -389,7 +389,7 @@ interface PSARIndicator {
 }
 
 extend(PSARIndicator.prototype, {
-    nameComponents: false
+    nameComponents: void 0
 });
 
 /* *

@@ -89,7 +89,7 @@ declare global {
         }
         interface StockToolsNavigationBindingsUtilsObject extends NavigationBindingUtils {
             addFlagFromForm(this: NavigationBindings, type: string): Function;
-            attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject;
+            attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject|void;
             isNotNavigatorYAxis(axis: AxisType): boolean;
             isPriceIndicatorEnabled(series: Series[]): boolean;
             manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
@@ -137,63 +137,73 @@ bindingsUtils.addFlagFromForm = function (
             toolbar = chart.stockTools,
             getFieldType = bindingsUtils.getFieldType,
             point = bindingsUtils.attractToPoint(e, chart),
-            pointConfig = {
-                x: point.x,
-                y: point.y
-            },
-            seriesOptions: FlagsSeriesOptions = {
-                type: 'flags',
-                onSeries: point.series.id,
-                shape: type,
-                data: [pointConfig],
-                point: {
-                    events: {
-                        click: function (this: FlagsPoint): void {
-                            var point = this,
-                                options = point.options;
+            pointConfig,
+            seriesOptions: FlagsSeriesOptions;
 
-                            fireEvent(
-                                navigation,
-                                'showPopup',
-                                {
-                                    point: point,
-                                    formType: 'annotation-toolbar',
-                                    options: {
-                                        langKey: 'flags',
-                                        type: 'flags',
-                                        title: [
-                                            options.title,
-                                            getFieldType(
-                                                options.title as any
+        if (!point) {
+            return;
+        }
+
+        pointConfig = {
+            x: point.x,
+            y: point.y
+        };
+
+        seriesOptions = {
+            type: 'flags',
+            onSeries: point.series.id,
+            shape: type,
+            data: [pointConfig],
+            xAxis: point.xAxis,
+            yAxis: point.yAxis,
+            point: {
+                events: {
+                    click: function (this: FlagsPoint): void {
+                        var point = this,
+                            options = point.options;
+
+                        fireEvent(
+                            navigation,
+                            'showPopup',
+                            {
+                                point: point,
+                                formType: 'annotation-toolbar',
+                                options: {
+                                    langKey: 'flags',
+                                    type: 'flags',
+                                    title: [
+                                        options.title,
+                                        getFieldType(
+                                            options.title as any
+                                        )
+                                    ],
+                                    name: [
+                                        options.name,
+                                        getFieldType(
+                                            options.name as any
+                                        )
+                                    ]
+                                },
+                                onSubmit: function (
+                                    updated: Highcharts.StockToolsFieldsObject
+                                ): void {
+                                    if (updated.actionType === 'remove') {
+                                        point.remove();
+                                    } else {
+                                        point.update(
+                                            navigation.fieldsToOptions(
+                                                updated.fields,
+                                                {}
                                             )
-                                        ],
-                                        name: [
-                                            options.name,
-                                            getFieldType(
-                                                options.name as any
-                                            )
-                                        ]
-                                    },
-                                    onSubmit: function (
-                                        updated: Highcharts.StockToolsFieldsObject
-                                    ): void {
-                                        if (updated.actionType === 'remove') {
-                                            point.remove();
-                                        } else {
-                                            point.update(
-                                                navigation.fieldsToOptions(
-                                                    updated.fields,
-                                                    {}
-                                                )
-                                            );
-                                        }
+                                        );
                                     }
                                 }
-                            );
-                        } as any
-                    }
+                            }
+                        );
+                    } as any
                 }
-            };
+            }
+        };
 
         if (!toolbar || !toolbar.guiEnabled) {
             chart.addSeries(seriesOptions);
@@ -387,12 +397,17 @@ bindingsUtils.updateHeight = function (
     e: PointerEvent,
     annotation: Annotation
 ): void {
-    annotation.update({
-        typeOptions: {
-            height: this.chart.pointer.getCoordinates(e).yAxis[0].value -
-                (annotation.options.typeOptions.points as any)[1].y
-        }
-    });
+    const coordsY =
+        this.utils.getAssignedAxis(this.chart.pointer.getCoordinates(e).yAxis);
+
+    if (coordsY) {
+        annotation.update({
+            typeOptions: {
+                height: coordsY.value -
+                    (annotation.options.typeOptions.points as any)[1].y
+            }
+        });
+    }
 };
 
 // @todo
@@ -400,15 +415,31 @@ bindingsUtils.updateHeight = function (
 bindingsUtils.attractToPoint = function (
     e: PointerEvent,
     chart: Chart
-): Highcharts.NavigationBindingsAttractionObject {
+): Highcharts.NavigationBindingsAttractionObject | void {
     var coords = chart.pointer.getCoordinates(e),
-        x = coords.xAxis[0].value,
-        y = coords.yAxis[0].value,
+        coordsX,
+        coordsY,
         distX = Number.MAX_VALUE,
-        closestPoint: (Point|undefined);
+        closestPoint: (Point|undefined),
+        x: number,
+        y: number;
 
-    chart.series.forEach(function (series): void {
-        series.points.forEach(function (point): void {
+    if (chart.navigationBindings) {
+        coordsX = chart.navigationBindings.utils.getAssignedAxis(coords.xAxis);
+        coordsY = chart.navigationBindings.utils.getAssignedAxis(coords.yAxis);
+    }
+
+    // Exit if clicked out of axes area.
+    if (!coordsX || !coordsY) {
+        return;
+    }
+
+    x = coordsX.value;
+    y = coordsY.value;
+
+    // Search by 'x' but only in yAxis' series.
+    coordsY.axis.series.forEach(function (series): void {
+        series.points?.forEach(function (point): void {
             if (point && distX > Math.abs((point.x as any) - x)) {
                 distX = Math.abs((point.x as any) - x);
                 closestPoint = point;
@@ -416,14 +447,16 @@ bindingsUtils.attractToPoint = function (
         });
     });
 
-    return {
-        x: (closestPoint as any).x,
-        y: (closestPoint as any).y,
-        below: y < (closestPoint as any).y,
-        series: (closestPoint as any).series,
-        xAxis: (closestPoint as any).series.xAxis.index || 0,
-        yAxis: (closestPoint as any).series.yAxis.index || 0
-    };
+    if (closestPoint && closestPoint.x && closestPoint.y) {
+        return {
+            x: closestPoint.x,
+            y: closestPoint.y,
+            below: y < closestPoint.y,
+            series: closestPoint.series,
+            xAxis: closestPoint.series.xAxis.options.index || 0,
+            yAxis: closestPoint.series.yAxis.options.index || 0
+        };
+    }
 };
 
 /**
@@ -485,29 +518,30 @@ bindingsUtils.updateNthPoint = function (
     ): void {
         var options = annotation.options.typeOptions,
             coords = this.chart.pointer.getCoordinates(e),
-            x = coords.xAxis[0].value,
-            y = coords.yAxis[0].value;
+            coordsX = this.utils.getAssignedAxis(coords.xAxis),
+            coordsY = this.utils.getAssignedAxis(coords.yAxis);
 
-        (options.points as any).forEach(function (
-            point: Point,
-            index: number
-        ): void {
-            if (index >= startIndex) {
-                point.x = x;
-                point.y = y;
-            }
-        });
-
-        annotation.update({
-            typeOptions: {
-                points: options.points
-            }
-        });
+        if (coordsX && coordsY) {
+            (options.points as any).forEach(function (
+                point: Point,
+                index: number
+            ): void {
+                if (index >= startIndex) {
+                    point.x = coordsX.value;
+                    point.y = coordsY.value;
+                }
+            });
+            annotation.update({
+                typeOptions: {
+                    points: options.points
+                }
+            });
+        }
     };
 };
 
 // Extends NavigationBindigs to support indicators and resizers:
-extend(NavigationBindings.prototype, {
+extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBindings.prototype, {
     /* eslint-disable valid-jsdoc */
     /**
      * Get current positions for all yAxes. If new axis does not have position,
@@ -769,26 +803,40 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-segment',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'segment',
-                        type: 'crookedLine',
-                        typeOptions: {
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
-                        }
-                    },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).segment.annotationsOptions
-                );
+                options;
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'segment',
+                    type: 'crookedLine',
+                    typeOptions: {
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }, {
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }]
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).segment.annotationsOptions
+            );
 
             return this.chart.addAnnotation(options);
         },
@@ -810,29 +858,43 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-arrow-segment',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'arrowSegment',
-                        type: 'crookedLine',
-                        typeOptions: {
-                            line: {
-                                markerEnd: 'arrow'
-                            },
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
-                        }
-                    },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).arrowSegment.annotationsOptions
-                );
+                options;
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'arrowSegment',
+                    type: 'crookedLine',
+                    typeOptions: {
+                        line: {
+                            markerEnd: 'arrow'
+                        },
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }, {
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }]
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).arrowSegment.annotationsOptions
+            );
 
             return this.chart.addAnnotation(options);
         },
@@ -854,27 +916,41 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-ray',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'ray',
-                        type: 'infinityLine',
-                        typeOptions: {
-                            type: 'ray',
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
-                        }
-                    },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).ray.annotationsOptions
-                );
+                options;
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'ray',
+                    type: 'infinityLine',
+                    typeOptions: {
+                        type: 'ray',
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }, {
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }]
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).ray.annotationsOptions
+            );
 
             return this.chart.addAnnotation(options);
         },
@@ -896,30 +972,44 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-arrow-ray',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'arrowRay',
-                        type: 'infinityLine',
-                        typeOptions: {
-                            type: 'ray',
-                            line: {
-                                markerEnd: 'arrow'
-                            },
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
-                        }
-                    },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).arrowRay.annotationsOptions
-                );
+                options;
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'arrowRay',
+                    type: 'infinityLine',
+                    typeOptions: {
+                        type: 'ray',
+                        line: {
+                            markerEnd: 'arrow'
+                        },
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }, {
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }]
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).arrowRay.annotationsOptions
+            );
 
             return this.chart.addAnnotation(options);
         },
@@ -940,27 +1030,41 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-infinity-line',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'infinityLine',
-                        type: 'infinityLine',
-                        typeOptions: {
-                            type: 'line',
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
-                        }
-                    },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).infinityLine.annotationsOptions
-                );
+                options;
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'infinityLine',
+                    type: 'infinityLine',
+                    typeOptions: {
+                        type: 'line',
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }, {
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }]
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).infinityLine.annotationsOptions
+            );
 
             return this.chart.addAnnotation(options);
         },
@@ -982,30 +1086,44 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-arrow-infinity-line',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
             var coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'arrowInfinityLine',
-                        type: 'infinityLine',
-                        typeOptions: {
-                            type: 'line',
-                            line: {
-                                markerEnd: 'arrow'
-                            },
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
-                        }
-                    },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).arrowInfinityLine.annotationsOptions
-                );
+                options;
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'arrowInfinityLine',
+                    type: 'infinityLine',
+                    typeOptions: {
+                        type: 'line',
+                        line: {
+                            markerEnd: 'arrow'
+                        },
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }, {
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }]
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).arrowInfinityLine.annotationsOptions
+            );
 
             return this.chart.addAnnotation(options);
         },
@@ -1028,23 +1146,34 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
             var coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'horizontalLine',
-                        type: 'infinityLine',
-                        draggable: 'y',
-                        typeOptions: {
-                            type: 'horizontalLine',
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
-                        }
-                    },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).horizontalLine.annotationsOptions
-                );
+                options;
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'horizontalLine',
+                    type: 'infinityLine',
+                    draggable: 'y',
+                    typeOptions: {
+                        type: 'horizontalLine',
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }]
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).horizontalLine.annotationsOptions
+            );
 
             this.chart.addAnnotation(options);
         }
@@ -1063,23 +1192,34 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         /** @ignore-option */
         start: function (this: NavigationBindings, e: PointerEvent): void {
             var coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'verticalLine',
-                        type: 'infinityLine',
-                        draggable: 'x',
-                        typeOptions: {
-                            type: 'verticalLine',
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
-                        }
-                    },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).verticalLine.annotationsOptions
-                );
+                options;
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'verticalLine',
+                    type: 'infinityLine',
+                    draggable: 'x',
+                    typeOptions: {
+                        type: 'verticalLine',
+                        xAxis: coordsX.axis.options.index,
+                        yAxis: coordsY.axis.options.index,
+                        points: [{
+                            x: coordsX.value,
+                            y: coordsY.value
+                        }]
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).verticalLine.annotationsOptions
+            );
 
             this.chart.addAnnotation(options);
         }
@@ -1098,24 +1238,34 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-crooked3',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
                         langKey: 'crooked3',
                         type: 'crookedLine',
                         typeOptions: {
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y },
+                                { x, y }
+                            ]
                         }
                     },
                     navigation.annotationsOptions,
@@ -1143,30 +1293,36 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-crooked5',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
                         langKey: 'crookedLine',
                         type: 'crookedLine',
                         typeOptions: {
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y }
+                            ]
                         }
                     },
                     navigation.annotationsOptions,
@@ -1196,27 +1352,35 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-elliott3',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
                         langKey: 'elliott3',
                         type: 'elliottWave',
                         typeOptions: {
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y }
+                            ]
                         },
                         labelOptions: {
                             style: {
@@ -1250,33 +1414,37 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-elliott5',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
                         langKey: 'elliott5',
                         type: 'elliottWave',
                         typeOptions: {
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y },
+                                { x, y }
+                            ]
                         },
                         labelOptions: {
                             style: {
@@ -1312,8 +1480,21 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-measure-x',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
@@ -1321,12 +1502,9 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         type: 'measure',
                         typeOptions: {
                             selectType: 'x',
-                            point: {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value,
-                                xAxis: 0,
-                                yAxis: 0
-                            },
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            point: { x, y },
                             crosshairX: {
                                 strokeWidth: 1,
                                 stroke: '#000000'
@@ -1373,8 +1551,21 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-measure-y',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
@@ -1382,12 +1573,9 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         type: 'measure',
                         typeOptions: {
                             selectType: 'y',
-                            point: {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value,
-                                xAxis: 0,
-                                yAxis: 0
-                            },
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            point: { x, y },
                             crosshairX: {
                                 enabled: false,
                                 strokeWidth: 0,
@@ -1434,8 +1622,21 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-measure-xy',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
@@ -1443,12 +1644,9 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         type: 'measure',
                         typeOptions: {
                             selectType: 'xy',
-                            point: {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value,
-                                xAxis: 0,
-                                yAxis: 0
-                            },
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            point: { x, y },
                             background: {
                                 width: 0,
                                 height: 0,
@@ -1494,21 +1692,33 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-fibonacci',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
                         langKey: 'fibonacci',
                         type: 'fibonacci',
                         typeOptions: {
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y }
+                            ]
                         },
                         labelOptions: {
                             style: {
@@ -1541,21 +1751,33 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-parallel-channel',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
                         langKey: 'parallelChannel',
                         type: 'tunnel',
                         typeOptions: {
-                            points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }]
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
+                            points: [
+                                { x, y },
+                                { x, y }
+                            ]
                         }
                     },
                     navigation.annotationsOptions,
@@ -1583,29 +1805,40 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-pitchfork',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): Annotation {
-            var coords = this.chart.pointer.getCoordinates(e),
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): Annotation|void {
+            const coords = this.chart.pointer.getCoordinates(e),
+                coordsX = this.utils.getAssignedAxis(coords.xAxis),
+                coordsY = this.utils.getAssignedAxis(coords.yAxis);
+
+            // Exit if clicked out of axes area
+            if (!coordsX || !coordsY) {
+                return;
+            }
+
+            const x = coordsX.value,
+                y = coordsY.value,
                 navigation = this.chart.options.navigation,
                 options = merge(
                     {
                         langKey: 'pitchfork',
                         type: 'pitchfork',
                         typeOptions: {
+                            xAxis: coordsX.axis.options.index,
+                            yAxis: coordsY.axis.options.index,
                             points: [{
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value,
+                                x: coordsX.value,
+                                y: coordsY.value,
                                 controlPoint: {
                                     style: {
                                         fill: 'red'
                                     }
                                 }
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }, {
-                                x: coords.xAxis[0].value,
-                                y: coords.yAxis[0].value
-                            }],
+                            },
+                            { x, y },
+                            { x, y }],
                             innerBackground: {
                                 fill: 'rgba(100, 170, 255, 0.8)'
                             }
@@ -1641,42 +1874,52 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-vertical-counter',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): void {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 verticalCounter = !defined((this as any).verticalCounter) ? 0 :
                     (this as any).verticalCounter,
-                options = merge(
-                    {
-                        langKey: 'verticalCounter',
-                        type: 'verticalLine',
-                        typeOptions: {
-                            point: {
-                                x: closestPoint.x,
-                                y: closestPoint.y,
-                                xAxis: closestPoint.xAxis,
-                                yAxis: closestPoint.yAxis
-                            },
-                            label: {
-                                offset: closestPoint.below ? 40 : -40,
-                                text: verticalCounter.toString()
-                            }
+                options,
+                annotation;
+
+            // Exit if clicked out of axes area
+            if (!closestPoint) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'verticalCounter',
+                    type: 'verticalLine',
+                    typeOptions: {
+                        point: {
+                            x: closestPoint.x,
+                            y: closestPoint.y,
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis
                         },
-                        labelOptions: {
-                            style: {
-                                color: '#666666',
-                                fontSize: '11px'
-                            }
-                        },
-                        shapeOptions: {
-                            stroke: 'rgba(0, 0, 0, 0.75)',
-                            strokeWidth: 1
+                        label: {
+                            offset: closestPoint.below ? 40 : -40,
+                            text: verticalCounter.toString()
                         }
                     },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).verticalCounter.annotationsOptions
-                ),
-                annotation;
+                    labelOptions: {
+                        style: {
+                            color: '#666666',
+                            fontSize: '11px'
+                        }
+                    },
+                    shapeOptions: {
+                        stroke: 'rgba(0, 0, 0, 0.75)',
+                        strokeWidth: 1
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).verticalCounter.annotationsOptions
+            );
 
             annotation = this.chart.addAnnotation(options);
 
@@ -1699,39 +1942,49 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-vertical-label',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): void {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'verticalLabel',
-                        type: 'verticalLine',
-                        typeOptions: {
-                            point: {
-                                x: closestPoint.x,
-                                y: closestPoint.y,
-                                xAxis: closestPoint.xAxis,
-                                yAxis: closestPoint.yAxis
-                            },
-                            label: {
-                                offset: closestPoint.below ? 40 : -40
-                            }
+                options,
+                annotation;
+
+            // Exit if clicked out of axes area
+            if (!closestPoint) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'verticalLabel',
+                    type: 'verticalLine',
+                    typeOptions: {
+                        point: {
+                            x: closestPoint.x,
+                            y: closestPoint.y,
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis
                         },
-                        labelOptions: {
-                            style: {
-                                color: '#666666',
-                                fontSize: '11px'
-                            }
-                        },
-                        shapeOptions: {
-                            stroke: 'rgba(0, 0, 0, 0.75)',
-                            strokeWidth: 1
+                        label: {
+                            offset: closestPoint.below ? 40 : -40
                         }
                     },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).verticalLabel.annotationsOptions
-                ),
-                annotation;
+                    labelOptions: {
+                        style: {
+                            color: '#666666',
+                            fontSize: '11px'
+                        }
+                    },
+                    shapeOptions: {
+                        stroke: 'rgba(0, 0, 0, 0.75)',
+                        strokeWidth: 1
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).verticalLabel.annotationsOptions
+            );
 
             annotation = this.chart.addAnnotation(options);
 
@@ -1752,38 +2005,48 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         className: 'highcharts-vertical-arrow',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
-        start: function (this: NavigationBindings, e: PointerEvent): void {
+        start: function (
+            this: NavigationBindings,
+            e: PointerEvent
+        ): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
-                options = merge(
-                    {
-                        langKey: 'verticalArrow',
-                        type: 'verticalLine',
-                        typeOptions: {
-                            point: {
-                                x: closestPoint.x,
-                                y: closestPoint.y,
-                                xAxis: closestPoint.xAxis,
-                                yAxis: closestPoint.yAxis
-                            },
-                            label: {
-                                offset: closestPoint.below ? 40 : -40,
-                                format: ' '
-                            },
-                            connector: {
-                                fill: 'none',
-                                stroke: closestPoint.below ? 'red' : 'green'
-                            }
+                options,
+                annotation;
+
+            // Exit if clicked out of axes area
+            if (!closestPoint) {
+                return;
+            }
+
+            options = merge(
+                {
+                    langKey: 'verticalArrow',
+                    type: 'verticalLine',
+                    typeOptions: {
+                        point: {
+                            x: closestPoint.x,
+                            y: closestPoint.y,
+                            xAxis: closestPoint.xAxis,
+                            yAxis: closestPoint.yAxis
                         },
-                        shapeOptions: {
-                            stroke: 'rgba(0, 0, 0, 0.75)',
-                            strokeWidth: 1
+                        label: {
+                            offset: closestPoint.below ? 40 : -40,
+                            format: ' '
+                        },
+                        connector: {
+                            fill: 'none',
+                            stroke: closestPoint.below ? 'red' : 'green'
                         }
                     },
-                    navigation.annotationsOptions,
-                    (navigation.bindings as any).verticalArrow.annotationsOptions
-                ),
-                annotation;
+                    shapeOptions: {
+                        stroke: 'rgba(0, 0, 0, 0.75)',
+                        strokeWidth: 1
+                    }
+                },
+                navigation.annotationsOptions,
+                (navigation.bindings as any).verticalArrow.annotationsOptions
+            );
 
             annotation = this.chart.addAnnotation(options);
 
@@ -2028,11 +2291,12 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-full-screen", "init": function() {}}
+     * @default {"className": "noDataState": "normal", "highcharts-full-screen", "init": function() {}}
      */
     fullScreen: {
         /** @ignore-option */
         className: 'highcharts-full-screen',
+        noDataState: 'normal',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (
@@ -2181,11 +2445,12 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-save-chart", "init": function() {}}
+     * @default {"className": "highcharts-save-chart", "noDataState": "normal", "init": function() {}}
      */
     saveChart: {
         /** @ignore-option */
         className: 'highcharts-save-chart',
+        noDataState: 'normal',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (
