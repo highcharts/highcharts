@@ -248,6 +248,7 @@ bindingsUtils.manageIndicators = function (
             'atr',
             'cci',
             'cmf',
+            'cmo',
             'macd',
             'mfi',
             'roc',

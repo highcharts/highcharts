@@ -55,7 +55,7 @@ class CMOIndicator extends SMAIndicator {
      *         CMO indicator
      *
      * @extends      plotOptions.sma
-     * @since        9.0.0
+     * @since        next
      * @product      highstock
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/cmo
@@ -135,7 +135,7 @@ class CMOIndicator extends SMAIndicator {
 
         for (i = period; i < yValLen; i++) {
             const { sumOfLowerValues, sumOfHigherValues } = this.calculateSums(period, i, values),
-                x = xData[i],
+                x = xVal[i],
                 y = 100 * (sumOfHigherValues - sumOfLowerValues) / (sumOfHigherValues + sumOfLowerValues);
 
             xData.push(x);
