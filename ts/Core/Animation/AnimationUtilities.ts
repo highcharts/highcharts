@@ -80,7 +80,7 @@ const setAnimation = H.setAnimation = function setAnimation(
 ): void {
     chart.renderer.globalAnimation = pick(
         animation,
-        (chart.options.chart as any).animation,
+        chart.options.chart.animation,
         true
     );
 };
@@ -129,7 +129,7 @@ const animObject = H.animObject = function animObject(
  */
 const getDeferredAnimation = H.getDeferredAnimation = function (
     chart: Chart,
-    animation: (false|DeepPartial<AnimationOptions>),
+    animation: (false|Partial<AnimationOptions>),
     series?: Series
 ): Partial<AnimationOptions> {
 
@@ -183,7 +183,7 @@ const getDeferredAnimation = H.getDeferredAnimation = function (
 const animate = function (
     el: (HTMLDOMElement|SVGElement),
     params: (CSSObject|SVGAttributes),
-    opt?: Partial<AnimationOptions>
+    opt?: boolean|Partial<AnimationOptions>
 ): void {
     var start,
         unit = '',
@@ -212,15 +212,15 @@ const animate = function (
         stop(el as any, prop);
 
         fx = new Fx(el as any, opt as any, prop);
-        end = null;
+        end = void 0;
 
-        if (prop === 'd' && isArray(params.d)) {
+        if ((prop as any) === 'd' && isArray((params as any).d)) {
             fx.paths = fx.initPath(
                 el as any,
                 (el as any).pathArray,
-                params.d
+                (params as any).d
             );
-            fx.toD = params.d as any;
+            fx.toD = (params as any).d;
             start = 0;
             end = 1;
         } else if ((el as any).attr) {
@@ -235,10 +235,10 @@ const animate = function (
         if (!end) {
             end = val;
         }
-        if (end && end.match && end.match('px')) {
+        if (typeof end === 'string' && end.match('px')) {
             end = end.replace(/px/g, ''); // #4351
         }
-        fx.run(start as any, end, unit);
+        fx.run(start as any, end as any, unit);
     });
 };
 

@@ -99,7 +99,7 @@ declare global {
             measureSpanWidth(text: string, style: CSSObject): number;
         }
         /** @requires highcharts/modules/oldies */
-        interface VMLAttributes extends Record<string, any> {
+        interface VMLAttributes extends AnyRecord {
             d?: VMLPathArray;
             end?: number;
             innerR?: number;
@@ -1034,10 +1034,10 @@ if (!svg) {
                         renderer.prepVML(markup as any),
                         null as any,
                         {
-                            left: pInt(elemStyle.left) +
-                                pick(shadowOptions.offsetX, 1),
-                            top: pInt(elemStyle.top) +
-                                pick(shadowOptions.offsetY, 1)
+                            left: (pInt(elemStyle.left) +
+                                pick(shadowOptions.offsetX, 1)) + 'px',
+                            top: (pInt(elemStyle.top) +
+                                pick(shadowOptions.offsetY, 1)) + 'px'
                         }
                     );
                     if (cutOff) {
@@ -1466,7 +1466,7 @@ if (!svg) {
                         left = rect.left,
                         right = left + rect.width,
                         bottom = top + rect.height,
-                        ret = {
+                        ret: CSSObject = {
                             clip: 'rect(' +
                                 Math.round(inverted ? left : top) + 'px,' +
                                 Math.round(inverted ? bottom : right) + 'px,' +
@@ -1945,10 +1945,10 @@ if (!svg) {
 
             css(element, {
                 flip: 'x',
-                left: pInt(parentStyle.width) -
-                    (imgStyle ? pInt(imgStyle.top) : 1),
-                top: pInt(parentStyle.height) -
-                    (imgStyle ? pInt(imgStyle.left) : 1),
+                left: (pInt(parentStyle.width) -
+                    (imgStyle ? pInt(imgStyle.top) : 1)) + 'px',
+                top: (pInt(parentStyle.height) -
+                    (imgStyle ? pInt(imgStyle.left) : 1)) + 'px',
                 rotation: -90
             });
 
@@ -2087,8 +2087,8 @@ if (!svg) {
     ): void {
         this.init.apply(this, arguments as any);
     } as any;
-    extend(VMLRenderer.prototype, SVGRenderer.prototype);
-    extend(VMLRenderer.prototype, VMLRendererExtension);
+    extend(VMLRenderer.prototype, SVGRenderer.prototype as any);
+    extend(VMLRenderer.prototype, VMLRendererExtension as any);
 
     // general renderer
     H.Renderer = VMLRenderer as any;

@@ -141,7 +141,7 @@ declare global {
             style?: CSSObject;
             styledMode?: boolean;
             type?: string;
-            width?: (null|number|string);
+            width?: (null|number);
             zoomBySingleTouch?: boolean;
             zoomType?: ('x'|'xy'|'y');
         }
@@ -300,7 +300,7 @@ declare global {
             ): string;
         }
         interface Options {
-            chart?: ChartOptions;
+            chart: ChartOptions;
             credits?: CreditsOptions;
             colors?: Array<ColorString>;
             caption?: CaptionOptions;
@@ -3557,6 +3557,8 @@ H.defaultOptions = {
          * By default it behaves this way for pie, polygon, map, sankey
          * and wordcloud series by override in the `plotOptions`
          * for those series types.
+         *
+         * Does not apply if [split](#tooltip.split) is `true`.
          *
          * For touch moves to behave the same way, [followTouchMove](
          * #tooltip.followTouchMove) must be `true` also.

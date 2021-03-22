@@ -177,6 +177,7 @@ declare global {
 
 
 import DownloadURL from '../Extensions/DownloadURL.js';
+import HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
 const { downloadURL } = DownloadURL;
 
 
@@ -470,7 +471,7 @@ addEvent(Chart, 'render', function (): void {
         this.options &&
         this.options.exporting &&
         this.options.exporting.showTable &&
-        !(this.options.chart as any).forExport &&
+        !this.options.chart.forExport &&
         !this.dataTableDiv
     ) {
         this.viewData();
@@ -529,7 +530,7 @@ Chart.prototype.getDataRows = function (
         ),
         xAxis: Highcharts.Axis,
         xAxes = this.xAxis,
-        rows: Record<string, (Array<any>&Record<string, any>)> =
+        rows: Record<string, (Array<any>&AnyRecord)> =
             {},
         rowArr = [],
         dataRows,
@@ -807,8 +808,8 @@ Chart.prototype.getDataRows = function (
 
         // Sort it by X values
         rowArr.sort(function ( // eslint-disable-line no-loop-func
-            a: Record<string, any>,
-            b: Record<string, any>
+            a: AnyRecord,
+            b: AnyRecord
         ): number {
             return a.xValues[xAxisIndex] - b.xValues[xAxisIndex];
         });
@@ -824,7 +825,7 @@ Chart.prototype.getDataRows = function (
 
         // Add the category column
         rowArr.forEach(function ( // eslint-disable-line no-loop-func
-            row: Record<string, any>
+            row: AnyRecord
         ): void {
             var category = row.name;
 
@@ -954,7 +955,8 @@ Chart.prototype.getTable = function (
 
         if (attributes) {
             Object.keys(attributes).forEach((key): void => {
-                html += ` ${key}="${attributes[key]}"`;
+                const value = (attributes as any)[key];
+                html += ` ${key}="${value}"`;
             });
         }
         html += '>';
@@ -1023,7 +1025,7 @@ Chart.prototype.getTableAST = function (
         getCellHTMLFromValue = function (
             tagName: string,
             classes: (string|null),
-            attributes: SVGAttributes,
+            attributes: HTMLAttributes,
             value: (number|string)
         ): Highcharts.ASTNode {
             var textContent = pick(value, ''),

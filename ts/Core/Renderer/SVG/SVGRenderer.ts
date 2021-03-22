@@ -128,7 +128,7 @@ declare global {
             public draw: Function;
             public escapes: Record<string, string>;
             public forExport?: boolean;
-            public globalAnimation: Partial<AnimationOptions>;
+            public globalAnimation: boolean|Partial<AnimationOptions>;
             public gradients: Record<string, SVGElement>;
             public height: number;
             public imgCount: number;
@@ -139,6 +139,7 @@ declare global {
             public unSubPixelFix?: Function;
             public url: string;
             public width: number;
+            public alignElements(): void;
             public arc(attribs: SVGAttributes): SVGElement;
             public arc(
                 x?: number,
@@ -865,7 +866,7 @@ class SVGRenderer {
      * The style settings mixed with defaults.
      */
     public getStyle(style: CSSObject): CSSObject {
-        this.style = extend({
+        this.style = extend<CSSObject>({
 
             fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
                 'Arial, Helvetica, sans-serif',
@@ -971,10 +972,10 @@ class SVGRenderer {
     ): SVGAttributes {
         return {
             cx: (radialReference[0] - radialReference[2] / 2) +
-                gradAttr.cx * radialReference[2],
+                (gradAttr.cx || 0) * radialReference[2],
             cy: (radialReference[1] - radialReference[2] / 2) +
-                gradAttr.cy * radialReference[2],
-            r: gradAttr.r * radialReference[2]
+                (gradAttr.cy || 0) * radialReference[2],
+            r: (gradAttr.r || 0) * radialReference[2]
         };
     }
 
@@ -1508,7 +1509,7 @@ class SVGRenderer {
 
         if (!this.styledMode) {
             if (typeof strokeWidth !== 'undefined') {
-                attribs.strokeWidth = strokeWidth;
+                attribs['stroke-width'] = strokeWidth;
                 attribs = wrapper.crisp(attribs as any);
             }
             attribs.fill = 'none';
@@ -1530,10 +1531,10 @@ class SVGRenderer {
             });
         };
         wrapper.rGetter = function (): number {
-            return wrapper.r as any;
+            return wrapper.r || 0;
         };
 
-        return wrapper.attr(attribs as any) as any;
+        return wrapper.attr(attribs);
     }
 
     /**
@@ -1559,9 +1560,7 @@ class SVGRenderer {
         height: number,
         animate?: (boolean|Partial<AnimationOptions>)
     ): void {
-        var renderer = this,
-            alignedObjects = renderer.alignedObjects,
-            i = alignedObjects.length;
+        var renderer = this;
 
         renderer.width = width;
         renderer.height = height;
@@ -1579,9 +1578,7 @@ class SVGRenderer {
             duration: pick(animate, true) ? void 0 : 0
         });
 
-        while (i--) {
-            alignedObjects[i].align();
-        }
+        renderer.alignElements();
     }
 
     /**
@@ -1821,9 +1818,7 @@ class SVGRenderer {
              */
             ['width', 'height'].forEach(function (key: string): void {
                 obj[key + 'Setter'] = function (value: any, key: string): void {
-                    var attribs: SVGAttributes = {},
-                        imgSize = this['img' + key],
-                        trans = key === 'width' ? 'translateX' : 'translateY';
+                    var imgSize = this['img' + key];
 
                     this[key] = value;
                     if (defined(imgSize)) {
@@ -1849,7 +1844,10 @@ class SVGRenderer {
                             this.element.setAttribute(key, imgSize);
                         }
                         if (!this.alignByTranslate) {
-                            attribs[trans] = ((this[key] || 0) - imgSize) / 2;
+                            const translate = ((this[key] || 0) - imgSize) / 2;
+                            const attribs = key === 'width' ?
+                                { translateX: translate } :
+                                { translateY: translate };
                             this.attr(attribs);
                         }
                     }
@@ -2474,6 +2472,17 @@ class SVGRenderer {
         );
 
     }
+
+    /**
+     * Re-align all aligned elements.
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#alignElements
+     * @return {void}
+     */
+    public alignElements(): void {
+        this.alignedObjects.forEach((el): SVGElement => el.align());
+    }
 }
 
 /**
@@ -2531,6 +2540,19 @@ SVGRenderer.prototype.escapes = {
     '"': '&quot;'
 };
 
+// #15291
+const rect = (
+    x: number,
+    y: number,
+    w: number,
+    h: number): SVGPath => [
+    ['M', x, y],
+    ['L', x + w, y],
+    ['L', x + w, y + h],
+    ['L', x, y + h],
+    ['Z']
+];
+
 /**
  * An extendable collection of functions for defining symbol paths.
  *
@@ -2552,20 +2574,9 @@ SVGRenderer.prototype.symbols = {
         });
     },
 
-    square: function (
-        x: number,
-        y: number,
-        w: number,
-        h: number
-    ): SVGPath {
-        return [
-            ['M', x, y],
-            ['L', x + w, y],
-            ['L', x + w, y + h],
-            ['L', x, y + h],
-            ['Z']
-        ];
-    },
+    rect,
+
+    square: rect, // #15291
 
     triangle: function (
         x: number,

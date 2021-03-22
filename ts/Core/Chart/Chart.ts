@@ -128,6 +128,7 @@ declare global {
             index?: number;
         }
         interface ChartOptions {
+            forExport?: boolean;
             renderer?: string;
             skipClone?: boolean;
         }
@@ -211,7 +212,7 @@ class Chart {
     );
     public constructor(
         a: (string|globalThis.HTMLElement|Partial<Highcharts.Options>),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        b?: (Chart.CallbackFunction|Partial<Highcharts.Options>),
         c?: Chart.CallbackFunction
     ) {
         this.getArgs(a, b, c);
@@ -309,7 +310,7 @@ class Chart {
      */
     public getArgs(
         a: (string|globalThis.HTMLElement|Partial<Highcharts.Options>),
-        b?: (Chart.CallbackFunction|Highcharts.Options),
+        b?: (Chart.CallbackFunction|Partial<Highcharts.Options>),
         c?: Chart.CallbackFunction
     ): void {
         // Remove the optional first argument, renderTo, and
@@ -358,12 +359,12 @@ class Chart {
             userOptions.series = null as any;
             options = merge(defaultOptions, userOptions); // do the merge
 
-            const optionsChart: Highcharts.ChartOptions = options.chart || {};
+            const optionsChart = options.chart;
 
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (
-                typeOptions: Record<string, any>,
+                typeOptions: AnyRecord,
                 type: string
             ): void {
                 if (isObject(typeOptions)) { // #8766
@@ -533,7 +534,7 @@ class Chart {
      */
     public initSeries(options: SeriesOptions): Series {
         var chart = this,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             type = (
                 options.type ||
                 optionsChart.type ||
@@ -1238,7 +1239,7 @@ class Chart {
      */
     public getChartSize(): void {
         var chart = this,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             widthOption = optionsChart.width,
             heightOption = optionsChart.height,
             renderTo = chart.renderTo;
@@ -1379,7 +1380,7 @@ class Chart {
         var chart = this,
             container,
             options = chart.options,
-            optionsChart = options.chart as Highcharts.ChartOptions,
+            optionsChart = options.chart,
             chartWidth,
             chartHeight,
             renderTo = chart.renderTo,
@@ -1387,7 +1388,7 @@ class Chart {
             oldChartIndex,
             Ren,
             containerId = uniqueKey(),
-            containerStyle,
+            containerStyle: CSSObject|undefined,
             key;
 
         if (!renderTo) {
@@ -1445,7 +1446,7 @@ class Chart {
 
         // Create the inner container
         if (!chart.styledMode) {
-            containerStyle = extend({
+            containerStyle = extend<CSSObject>({
                 position: 'relative',
                 // needed for context menu (avoidscrollbars) and content
                 // overflow in IE
@@ -1457,7 +1458,7 @@ class Chart {
                 zIndex: 0, // #1072
                 '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
                 userSelect: 'none' // #13503
-            }, optionsChart.style as any);
+            }, optionsChart.style || {});
         }
 
         /**
@@ -1620,7 +1621,7 @@ class Chart {
      */
     public reflow(e?: Event): void {
         var chart = this,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             renderTo = chart.renderTo,
             hasUserSize = (
                 defined(optionsChart.width) &&
@@ -1754,10 +1755,10 @@ class Chart {
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
         if (typeof width !== 'undefined') {
-            (chart.options.chart as any).width = width;
+            chart.options.chart.width = width;
         }
         if (typeof height !== 'undefined') {
-            (chart.options.chart as any).height = height;
+            chart.options.chart.height = height;
         }
         chart.getChartSize();
 
@@ -1820,7 +1821,7 @@ class Chart {
             renderer = chart.renderer,
             chartWidth = chart.chartWidth,
             chartHeight = chart.chartHeight,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             spacing = chart.spacing,
             clipOffset = chart.clipOffset,
             clipX,
@@ -1922,6 +1923,7 @@ class Chart {
                 axis.setAxisSize();
                 axis.setAxisTranslation();
             });
+            renderer.alignElements();
         }
 
         fireEvent(chart, 'afterSetChartSize', { skipAxes: skipAxes });
@@ -1938,7 +1940,7 @@ class Chart {
         fireEvent(this, 'resetMargins');
 
         var chart = this,
-            chartOptions = chart.options.chart as Highcharts.ChartOptions;
+            chartOptions = chart.options.chart;
 
         // Create margin and spacing array
         ['margin', 'spacing'].forEach(function splashArrays(
@@ -1979,7 +1981,7 @@ class Chart {
      */
     public drawChartBox(): void {
         var chart = this,
-            optionsChart = chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = chart.options.chart,
             renderer = chart.renderer,
             chartWidth = chart.chartWidth,
             chartHeight = chart.chartHeight,
@@ -2133,7 +2135,7 @@ class Chart {
      */
     public propFromSeries(): void {
         var chart = this,
-            optionsChart: Highcharts.ChartOptions = chart.options.chart as any,
+            optionsChart = chart.options.chart,
             klass,
             seriesOptions: Array<SeriesOptions> = chart.options.series as any,
             i,
@@ -2322,7 +2324,7 @@ class Chart {
             if (
                 axis.horiz &&
                 axis.visible &&
-                (axis.options.labels as any).enabled &&
+                axis.options.labels.enabled &&
                 axis.series.length
             ) {
                 // 21 is the most common correction for X axis labels
@@ -2650,7 +2652,7 @@ class Chart {
 
         // Set up auto resize, check for not destroyed (#6068)
         if (defined(this.index)) {
-            this.setReflow((this.options.chart as any).reflow);
+            this.setReflow(this.options.chart.reflow);
         }
 
         // Don't run again
@@ -2753,7 +2755,7 @@ class Chart {
      *         The newly generated Axis object.
      */
     public addAxis(
-        options: Highcharts.AxisOptions,
+        options: DeepPartial<Highcharts.AxisOptions>,
         isX?: boolean,
         redraw?: boolean,
         animation?: boolean
@@ -2835,10 +2837,6 @@ class Chart {
         } else {
             axis = new Axis(this, userOptions);
         }
-
-        // Push the new axis options to the chart options
-        (chartOptions as any)[type] = splat((chartOptions as any)[type] || {});
-        (chartOptions as any)[type].push(userOptions);
 
         if (isColorAxis) {
             this.isDirtyLegend = true;
@@ -3039,7 +3037,7 @@ class Chart {
      * @fires Highcharts.Chart#event:afterUpdate
      */
     public update(
-        options: Highcharts.Options,
+        options: Partial<Highcharts.Options>,
         redraw?: boolean,
         oneToOne?: boolean,
         animation?: (boolean|Partial<AnimationOptions>)
@@ -3165,10 +3163,7 @@ class Chart {
         // options.mapNavigation => chart.mapNavigation
         // options.navigator => chart.navigator
         // options.scrollbar => chart.scrollbar
-        objectEach(options, function (
-            val: Record<string, any>,
-            key: string
-        ): void {
+        objectEach(options, function (val, key): void {
             if ((chart as any)[key] &&
                 typeof (chart as any)[key].update === 'function'
             ) {
@@ -3181,7 +3176,7 @@ class Chart {
             // Else, just merge the options. For nodes like loading, noData,
             // plotOptions
             } else if (
-                key !== 'color' &&
+                key !== 'colors' &&
                 chart.collectionsWithUpdate.indexOf(key) === -1
             ) {
                 merge(true, (chart.options as any)[key], (options as any)[key]);
@@ -3305,8 +3300,8 @@ class Chart {
         newHeight = optionsChart && optionsChart.height;
         if (isString(newHeight)) {
             newHeight = relativeLength(
-                newHeight as string,
-                (newWidth as string) || (chart.chartWidth as any)
+                newHeight,
+                newWidth || chart.chartWidth
             );
         }
 
@@ -3381,14 +3376,14 @@ class Chart {
     public showResetZoom(): void {
         var chart = this,
             lang = defaultOptions.lang,
-            btnOptions = (chart.options.chart as any).resetZoomButton,
+            btnOptions = chart.options.chart.resetZoomButton as any,
             theme = btnOptions.theme,
             states = theme.states,
             alignTo = (
                 btnOptions.relativeTo === 'chart' ||
-                btnOptions.relativeTo === 'spaceBox' ?
+                btnOptions.relativeTo === 'spacingBox' ?
                     null :
-                    this.scrollablePlotBox || 'plotBox'
+                    'scrollablePlotBox'
             );
 
         /**
@@ -3495,7 +3490,7 @@ class Chart {
         if (displayButton && !resetZoomButton) {
             chart.showResetZoom();
         } else if (!displayButton && isObject(resetZoomButton)) {
-            chart.resetZoomButton = (resetZoomButton as any).destroy();
+            chart.resetZoomButton = resetZoomButton.destroy();
         }
 
 
@@ -3503,7 +3498,7 @@ class Chart {
         if (hasZoomed) {
             chart.redraw(
                 pick(
-                    (chart.options.chart as any).animation,
+                    chart.options.chart.animation,
                     event && (event as any).animation,
                     chart.pointCount < 100
                 )
@@ -3839,7 +3834,7 @@ namespace Chart {
 
     export interface CreateAxisOptionsObject {
         animation: undefined | boolean | Partial<AnimationOptions>;
-        axis: Highcharts.AxisOptions | ColorAxis.Options;
+        axis: DeepPartial<Highcharts.AxisOptions> | DeepPartial<ColorAxis.Options>;
         redraw: undefined | boolean;
     }
 

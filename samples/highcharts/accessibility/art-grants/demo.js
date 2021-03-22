@@ -1,14 +1,8 @@
 function dollarFormat(x) {
-    return '$' + Highcharts.numberFormat(x, 0);
+    return '$' + Highcharts.numberFormat(x, 0, '.', ',');
 }
 
 var colors = Highcharts.getOptions().colors;
-
-Highcharts.setOptions({
-    lang: {
-        thousandsSep: ','
-    }
-});
 
 Highcharts.chart('container', {
     chart: {
@@ -20,8 +14,12 @@ Highcharts.chart('container', {
             descriptionFormatter: function (series) {
                 return series.type === 'line' ?
                     series.name + ', ' + dollarFormat(series.points[0].y) :
-                    series.name + ' grant amounts, bar series with ' + series.points.length + ' bars.';
+                    series.name + ' grant amounts, bar series with ' +
+                    series.points.length + ' bars.';
             }
+        },
+        point: {
+            valuePrefix: '$'
         },
         keyboardNavigation: {
             seriesNavigation: {
@@ -52,9 +50,7 @@ Highcharts.chart('container', {
         min: 0,
         max: 800000,
         labels: {
-            formatter: function () {
-                return '$' + (this.value / 1000) + (this.value ? 'k' : '');
-            }
+            format: '${text}'
         },
         title: {
             text: 'Grant amount'
@@ -69,13 +65,7 @@ Highcharts.chart('container', {
         max: 2400000,
         gridLineWidth: 0,
         labels: {
-            formatter: function () {
-                var isM = this.value / 1000000 > 1;
-                return '$' + (isM ?
-                    (this.value / 1000000) + (this.value ? 'M' : '') :
-                    (this.value / 1000) + (this.value ? 'k' : '')
-                );
-            },
+            format: '${text}',
             style: {
                 color: '#8F6666'
             }
@@ -99,16 +89,10 @@ Highcharts.chart('container', {
             pointPadding: 0.1,
             groupPadding: 0,
             tooltip: {
-                headerFormat: '<span style="font-size: 10px"><span style="color:{point.color}">\u25CF</span> {series.name}</span><br/>',
-                pointFormatter: function () {
-                    return this.name + ': <b>' + dollarFormat(this.y) + '</b><br/>';
-                }
-            },
-            accessibility: {
-                pointDescriptionFormatter: function (point) {
-                    return (point.index + 1) + '. ' + point.name + ' ' +
-                        dollarFormat(point.y) + '.';
-                }
+                headerFormat: '<span style="font-size: 10px">' +
+                    '<span style="color:{point.color}">\u25CF</span> ' +
+                    '{series.name}</span><br/>',
+                pointFormat: '{point.name}: <b>${point.y:,.0f}</b><br/>'
             }
         },
         line: {

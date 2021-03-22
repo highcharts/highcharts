@@ -90,7 +90,10 @@ declare global {
             labelRight?: number;
         }
         interface Options {
-            colorAxis?: (ColorAxis.Options|Array<ColorAxis.Options>);
+            colorAxis?: (
+                DeepPartial<ColorAxis.Options>|
+                Array<DeepPartial<ColorAxis.Options>>
+            );
         }
         let ColorAxis: ColorAxisClass;
     }
@@ -105,8 +108,8 @@ type ColorAxisClass = typeof ColorAxis;
 
 ''; // detach doclet above
 
-extend(Series.prototype, colorSeriesMixin);
-extend(Point.prototype, colorPointMixin);
+extend(Series.prototype, colorSeriesMixin as any);
+extend(Point.prototype, colorPointMixin as any);
 
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
 Chart.prototype.collectionsWithInit.colorAxis = [Chart.prototype.addColorAxis];
@@ -189,7 +192,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @optionparent colorAxis
      * @ignore
      */
-    public static defaultOptions: ColorAxis.Options = {
+    public static defaultColorAxisOptions: DeepPartial<ColorAxis.Options> = {
 
         /**
          * Whether to allow decimals on the color axis.
@@ -606,7 +609,10 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public constructor(chart: Chart, userOptions: ColorAxis.Options) {
+    public constructor(
+        chart: Chart,
+        userOptions: DeepPartial<ColorAxis.Options>
+    ) {
         super(chart, userOptions);
         this.init(chart, userOptions);
     }
@@ -653,7 +659,7 @@ class ColorAxis extends Axis implements AxisLike {
      */
     public init(
         chart: Chart,
-        userOptions: ColorAxis.Options
+        userOptions: DeepPartial<ColorAxis.Options>
     ): void {
         const axis = this;
         const legend = chart.options.legend || {},
@@ -661,8 +667,8 @@ class ColorAxis extends Axis implements AxisLike {
                 userOptions.layout !== 'vertical' :
                 legend.layout !== 'vertical';
 
-        const options = merge<ColorAxis.Options>(
-            ColorAxis.defaultOptions,
+        const options = merge<DeepPartial<ColorAxis.Options>>(
+            ColorAxis.defaultColorAxisOptions,
             userOptions,
             {
                 showEmpty: false,
@@ -676,10 +682,6 @@ class ColorAxis extends Axis implements AxisLike {
         axis.side = userOptions.side || horiz ? 2 : 1;
         axis.reversed = userOptions.reversed || !horiz;
         axis.opposite = !horiz;
-
-        // Keep the options structure updated for export. Unlike xAxis and
-        // yAxis, the colorAxis is not an array. (#3207)
-        chart.options[axis.coll] = options;
 
         super.init(chart, options);
 
@@ -700,12 +702,12 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public initDataClasses(userOptions: ColorAxis.Options): void {
+    public initDataClasses(userOptions: DeepPartial<ColorAxis.Options>): void {
         const axis = this;
         var chart = axis.chart,
             dataClasses,
             colorCounter = 0,
-            colorCount = (chart.options.chart as any).colorCount,
+            colorCount = chart.options.chart.colorCount,
             options = axis.options,
             len = (userOptions.dataClasses as any).length;
 
@@ -1166,7 +1168,7 @@ class ColorAxis extends Axis implements AxisLike {
 
                 if (
                     !axis.chart.styledMode &&
-                    axis.crosshair
+                    typeof axis.crosshair === 'object'
                 ) {
                     axis.cross.attr({
                         fill: axis.crosshair.color
@@ -1221,7 +1223,7 @@ class ColorAxis extends Axis implements AxisLike {
      * and call {@link Highcharts.Chart#redraw} after.
      */
     public update(
-        newOptions: ColorAxis.Options,
+        newOptions: DeepPartial<ColorAxis.Options>,
         redraw?: boolean
     ): void {
         const axis = this,

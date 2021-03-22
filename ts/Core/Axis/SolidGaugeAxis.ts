@@ -203,7 +203,7 @@ namespace SolidGaugeAxis {
      * @private
      */
     export function init(axis: RadialAxis): void {
-        extend(axis, methods);
+        extend<SolidGaugeAxis|RadialAxis>(axis, methods);
     }
 
 }

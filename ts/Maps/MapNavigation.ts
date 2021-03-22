@@ -38,6 +38,7 @@ const {
     pick
 } = U;
 import './MapNavigationOptionsDefault.js';
+import ButtonThemeObject, { ButtonThemeStatesObject } from '../Core/Renderer/SVG/ButtonThemeObject';
 
 /* *
  *
@@ -158,13 +159,13 @@ MapNavigation.prototype.update = function (
     var chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
         buttonOptions,
-        attr: SVGAttributes,
-        states: SVGAttributes,
-        hoverStates: SVGAttributes,
-        selectStates: SVGAttributes,
+        attr: ButtonThemeObject,
+        states: ButtonThemeStatesObject|undefined,
+        hoverStates: SVGAttributes|undefined,
+        selectStates: SVGAttributes|undefined,
         outerHandler = function (
             this: SVGElement,
-            e: (Event|Record<string, any>)
+            e: (Event|AnyRecord)
         ): void {
             this.handler.call(chart, e);
             stopEvent(e as any); // Stop default click event (#4444)
@@ -192,27 +193,29 @@ MapNavigation.prototype.update = function (
             buttonOptions = merge(o.buttonOptions, button);
 
             // Presentational
-            if (!chart.styledMode) {
-                attr = buttonOptions.theme as any;
+            if (!chart.styledMode && buttonOptions.theme) {
+                attr = buttonOptions.theme;
                 attr.style = merge(
-                    (buttonOptions.theme as any).style,
+                    buttonOptions.theme.style,
                     buttonOptions.style // #3203
                 );
                 states = attr.states;
                 hoverStates = states && states.hover;
                 selectStates = states && states.select;
+                delete attr.states;
             }
+
 
             button = chart.renderer
                 .button(
-                    buttonOptions.text as any,
+                    buttonOptions.text || '',
                     0,
                     0,
                     outerHandler,
                     attr,
                     hoverStates,
                     selectStates,
-                    0 as any,
+                    void 0,
                     n === 'zoomIn' ? 'topbutton' : 'bottombutton'
                 )
                 .addClass('highcharts-map-navigation highcharts-' + ({
@@ -295,10 +298,14 @@ MapNavigation.prototype.updateEvents = function (
             typeof doc.onmousewheel === 'undefined' ?
                 'DOMMouseScroll' : 'mousewheel',
             function (e: PointerEvent): boolean {
-                chart.pointer.onContainerMouseWheel(e);
-                // Issue #5011, returning false from non-jQuery event does
-                // not prevent default
-                stopEvent(e as Event);
+                // Prevent scrolling when the pointer is over the element
+                // with that class, for example anotation popup #12100.
+                if (!chart.pointer.inClass(e.target as any, 'highcharts-no-mousewheel')) {
+                    chart.pointer.onContainerMouseWheel(e);
+                    // Issue #5011, returning false from non-jQuery event does
+                    // not prevent default
+                    stopEvent(e as Event);
+                }
                 return false;
             }
         );
@@ -310,7 +317,7 @@ MapNavigation.prototype.updateEvents = function (
 };
 
 // Add events to the Chart object itself
-extend(Chart.prototype, /** @lends Chart.prototype */ {
+extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,

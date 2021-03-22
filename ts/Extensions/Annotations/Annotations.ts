@@ -20,6 +20,7 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -99,9 +100,9 @@ declare global {
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
-            xAxis?: (number|string|AxisType|null);
+            xAxis?: (number|AxisType|null);
             y: number;
-            yAxis?: (number|string|AxisType|null);
+            yAxis?: (number|AxisType|null);
         }
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
@@ -142,8 +143,12 @@ declare global {
             y: number;
         }
         interface AnnotationsLabelsOptions extends AnnotationsLabelOptions {
+            color?: ColorType;
+            dashStyle?: DashStyleValue;
+            // formatter: FormatterCallbackFunction<T>;
             point?: (string|AnnotationMockPointOptionsObject);
             itemType?: string;
+            vertical?: VerticalAlignValue;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
             animation: Partial<AnimationOptions>;
@@ -1623,11 +1628,12 @@ H.extendAnnotation = function <T extends typeof Annotation> (
 ): void {
     BaseConstructor = BaseConstructor || Annotation;
 
-    merge(
-        true,
+    extend(
         Constructor.prototype,
-        BaseConstructor.prototype,
-        prototype
+        merge(
+            BaseConstructor.prototype,
+            prototype
+        )
     );
 
     Constructor.prototype.defaultOptions = merge(

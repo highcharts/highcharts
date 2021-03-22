@@ -264,25 +264,28 @@ RendererProto.getCylinderEnd = function (
     shapeArgs: SVGAttributes,
     isBottom?: boolean
 ): SVGPath {
+
+    const { width = 0, height = 0, alphaCorrection = 0 } =
+        shapeArgs;
     // A half of the smaller one out of width or depth (optional, because
     // there's no depth for a funnel that reuses the code)
-    var depth = pick(shapeArgs.depth, shapeArgs.width),
-        radius = Math.min(shapeArgs.width, depth) / 2,
+    var depth = pick(shapeArgs.depth, width, 0),
+        radius = Math.min(width, depth) / 2,
 
         // Approximated longest diameter
         angleOffset = deg2rad * (
-            (chart.options.chart as any).options3d.beta - 90 +
-            (shapeArgs.alphaCorrection || 0)
+            (chart.options.chart.options3d as any).beta - 90 +
+            alphaCorrection
         ),
 
         // Could be top or bottom of the cylinder
-        y = shapeArgs.y + (isBottom ? shapeArgs.height : 0),
+        y = (shapeArgs.y || 0) + (isBottom ? height : 0),
 
         // Use cubic Bezier curve to draw a cricle in x,z (y is constant).
         // More math. at spencermortensen.com/articles/bezier-circle/
         c = 0.5519 * radius,
-        centerX = shapeArgs.width / 2 + shapeArgs.x,
-        centerZ = depth / 2 + shapeArgs.z,
+        centerX = width / 2 + (shapeArgs.x || 0),
+        centerZ = depth / 2 + (shapeArgs.z || 0),
 
         // points could be generated in a loop, but readability will plummet
         points: Array<Position3DObject> = [{ // M - starting point

@@ -203,7 +203,7 @@ class VBPIndicator extends SMAIndicator {
     public rangeStep: number = void 0 as any;
     public volumeDataArray: Array<number> = void 0 as any;
     public zoneStarts: Array<number> = void 0 as any;
-    public zoneLinesSVG: SVGElement = void 0 as any;
+    public zoneLinesSVG?: SVGElement = void 0 as any;
 
     public init(
         chart: Chart
@@ -239,8 +239,7 @@ class VBPIndicator extends SMAIndicator {
             indicator.zoneStarts = [];
 
             if (indicator.zoneLinesSVG) {
-                indicator.zoneLinesSVG.destroy();
-                delete indicator.zoneLinesSVG;
+                indicator.zoneLinesSVG = indicator.zoneLinesSVG.destroy();
             }
         }
         /* eslint-enable require-jsdoc */
@@ -274,14 +273,17 @@ class VBPIndicator extends SMAIndicator {
             inverted = series.chart.inverted,
             group = series.group,
             attr: SVGAttributes = {},
-            translate,
             position;
 
         if (!init && group) {
-            translate = inverted ? 'translateY' : 'translateX';
             position = inverted ? series.yAxis.top : series.xAxis.left;
-            group['forceAnimate:' + translate] = true;
-            attr[translate] = position;
+            if (inverted) {
+                group['forceAnimate:translateY'] = true;
+                attr.translateY = position;
+            } else {
+                group['forceAnimate:translateX'] = true;
+                attr.translateX = position;
+            }
             group.animate(
                 attr,
                 extend(animObject(series.options.animation), {
@@ -577,7 +579,9 @@ class VBPIndicator extends SMAIndicator {
             if (this.points.length) {
                 this.setData([]);
                 this.zoneStarts = [];
-                this.zoneLinesSVG.destroy();
+                if (this.zoneLinesSVG) {
+                    this.zoneLinesSVG = this.zoneLinesSVG.destroy();
+                }
             }
             return [];
         }
@@ -713,7 +717,7 @@ class VBPIndicator extends SMAIndicator {
     ): void {
         var indicator = this,
             renderer: Highcharts.Renderer = chart.renderer,
-            zoneLinesSVG: SVGElement = indicator.zoneLinesSVG,
+            zoneLinesSVG = indicator.zoneLinesSVG,
             zoneLinesPath: SVGPath = [],
             leftLinePos = 0,
             rightLinePos: number = chart.plotWidth,
@@ -741,9 +745,9 @@ class VBPIndicator extends SMAIndicator {
         } else {
             zoneLinesSVG = indicator.zoneLinesSVG =
                 renderer.path(zoneLinesPath).attr({
-                    'stroke-width': zonesStyles.lineWidth,
+                    'stroke-width': (zonesStyles as any).lineWidth,
                     'stroke': zonesStyles.color,
-                    'dashstyle': zonesStyles.dashStyle,
+                    'dashstyle': (zonesStyles as any).dashStyle,
                     'zIndex': (indicator.group as any).zIndex + 0.1
                 })
                     .add(indicator.group);
@@ -789,8 +793,8 @@ extend(VBPIndicator.prototype, {
         eventName: 'afterSetExtremes'
     },
     calculateOn: 'render',
-    markerAttribs: (noop as any),
-    drawGraph: (noop as any),
+    markerAttribs: noop as any,
+    drawGraph: noop,
     getColumnMetrics: columnPrototype.getColumnMetrics,
     crispCol: columnPrototype.crispCol
 });

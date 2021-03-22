@@ -450,6 +450,7 @@ class AreaSeries extends LineSeries {
         }
 
         areaPath = topPath.concat(bottomPath);
+        areaPath.push(['Z']);
         // TODO: don't set leftCliff and rightCliff when connectNulls?
         graphPath = getGraphPath
             .call(this, graphPoints, false, connectNulls);
@@ -475,19 +476,17 @@ class AreaSeries extends LineSeries {
             yAxis: StackingAxis = this.yAxis as any,
             stack = yAxis.stacking.stacks[this.stackKey as any],
             pointMap: Record<string, AreaPoint> = {},
-            seriesIndex = series.index,
             yAxisSeries = yAxis.series,
             seriesLength = yAxisSeries.length,
-            visibleSeries: (Array<boolean>|undefined),
-            upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1,
-            i: number;
+            upOrDown = yAxis.options.reversedStacks ? 1 : -1,
+            seriesIndex = yAxisSeries.indexOf(series);
 
 
         points = points || this.points;
 
         if (this.options.stacking) {
 
-            for (i = 0; i < points.length; i++) {
+            for (let i = 0; i < points.length; i++) {
                 // Reset after point update (#7326)
                 points[i].leftNull = points[i].rightNull = void 0;
 
@@ -511,9 +510,7 @@ class AreaSeries extends LineSeries {
                 return (a as any) - (b as any);
             });
 
-            visibleSeries = yAxisSeries.map(function (s): boolean {
-                return s.visible;
-            });
+            const visibleSeries = yAxisSeries.map((s): boolean => s.visible);
 
             keys.forEach(function (x: string, idx: number): void {
                 var y = 0,
@@ -538,19 +535,19 @@ class AreaSeries extends LineSeries {
                         // If there is a stack next to this one,
                         // to the left or to the right...
                         if (otherStack) {
-                            i = seriesIndex as any;
+                            let i = seriesIndex;
                             // Can go either up or down,
                             // depending on reversedStacks
                             while (i >= 0 && i < seriesLength) {
-                                stackPoint = otherStack.points[i];
+                                const si = yAxisSeries[i].index;
+                                stackPoint = otherStack.points[si];
                                 if (!stackPoint) {
                                     // If the next point in this series
                                     // is missing, mark the point
                                     // with point.leftNull or
                                     // point.rightNull = true.
-                                    if (i === seriesIndex) {
-                                        (pointMap[x] as any)[nullName] =
-                                            true;
+                                    if (si === series.index) {
+                                        (pointMap[x] as any)[nullName] = true;
 
                                         // If there are missing points in
                                         // the next stack in any of the
@@ -559,14 +556,12 @@ class AreaSeries extends LineSeries {
                                         // and add a hiatus to the left or
                                         // right.
                                     } else if (
-                                        (visibleSeries as any)[i as any]
+                                        visibleSeries[i]
                                     ) {
                                         stackedValues =
-                                            stack[x].points[i as any];
+                                            stack[x].points[si];
                                         if (stackedValues) {
-                                            cliff -=
-                                                (stackedValues as any)[1] -
-                                                (stackedValues as any)[0];
+                                            cliff -= stackedValues[1] - stackedValues[0];
                                         }
                                     }
                                 }
@@ -586,17 +581,19 @@ class AreaSeries extends LineSeries {
 
                     // Loop down the stack to find the series below this
                     // one that has a value (#1991)
-                    i = seriesIndex as any;
+                    let i = seriesIndex;
                     while (i >= 0 && i < seriesLength) {
-                        stackPoint = stack[x].points[i];
+                        const si = yAxisSeries[i].index;
+                        stackPoint = stack[x].points[si];
                         if (stackPoint) {
-                            y = (stackPoint as any)[1];
+                            y = stackPoint[1];
                             break;
                         }
                         // When reversedStacks is true, loop up, else loop
                         // down
                         i += upOrDown;
                     }
+                    y = pick(y, 0);
                     y = yAxis.translate(// #6272
                         y, 0 as any, 1 as any, 0 as any, 1 as any
                     ) as any;

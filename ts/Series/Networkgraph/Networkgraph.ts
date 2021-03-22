@@ -663,6 +663,7 @@ interface NetworkgraphSeries {
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
+    drawGraph: void;
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;
@@ -706,7 +707,7 @@ extend(NetworkgraphSeries.prototype, {
      */
     forces: ['barycenter', 'repulsive', 'attractive'],
     hasDraggableNodes: true,
-    drawGraph: null as any,
+    drawGraph: void 0,
     isCartesian: false,
     requireSorting: false,
     directTouch: true,
@@ -715,8 +716,8 @@ extend(NetworkgraphSeries.prototype, {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     drawTracker: seriesTypes.column.prototype.drawTracker,
     // Animation is run in `series.simulation`.
-    animate: null as any,
-    buildKDTree: H.noop as any,
+    animate: void 0,
+    buildKDTree: H.noop,
     /**
      * Create a single node that holds information on incoming and outgoing
      * links.
@@ -746,10 +747,18 @@ extend(NetworkgraphSeries.prototype, {
 
         Series.prototype.init.apply(this, arguments as any);
 
-        addEvent<NetworkgraphSeries>(this, 'updatedData', function (): void {
+        addEvent(this, 'updatedData', (): void => {
             if (this.layout) {
                 this.layout.stop();
             }
+        });
+
+        addEvent(this, 'afterUpdate', (): void => {
+            this.nodes.forEach((node): void => {
+                if (node && node.series) {
+                    node.resolveColor();
+                }
+            });
         });
 
         return this;
@@ -850,7 +859,7 @@ extend(NetworkgraphSeries.prototype, {
             attribs.y = 0;
         }
 
-        attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
+        attribs.x = (point.plotX || 0) - (attribs.width || 0) / 2;
 
         return attribs;
     },
@@ -912,9 +921,9 @@ extend(NetworkgraphSeries.prototype, {
 
         if (!layout) {
             (layoutOptions as any).enableSimulation =
-                !defined((chartOptions as any).forExport) ?
+                !defined(chartOptions.forExport) ?
                     (layoutOptions as any).enableSimulation :
-                    !(chartOptions as any).forExport;
+                    !chartOptions.forExport;
 
             graphLayoutsStorage[(layoutOptions as any).type] = layout =
                 new H.layouts[(layoutOptions as any).type]();
@@ -1234,6 +1243,7 @@ extend(NetworkgraphPoint.prototype, {
                 .path(
                     this.getLinkPath()
                 )
+                .addClass(this.getClassName(), true)
                 .add(this.series.group);
 
             if (!this.series.chart.styledMode) {

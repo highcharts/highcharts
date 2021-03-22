@@ -20,7 +20,7 @@ var chart = Highcharts.chart('container', {
         zoomType: 'x',
         events: {
             load: function () {
-                Highcharts.each(this.annotations, function (annotation) {
+                this.annotations.forEach(function (annotation) {
                     // showControlPoints/hide
                     annotation.setControlPointsVisibility(true);
                 });
@@ -151,7 +151,8 @@ var chart = Highcharts.chart('container', {
                 }
             }, {
                 positioner: function (target) {
-                    var toPixels = Highcharts.Annotation.MockPoint.pointToPixels,
+                    var toPixels = Highcharts.Annotation.MockPoint
+                            .pointToPixels,
                         xy1 = toPixels(target.points[0]),
                         xy2 = toPixels(target.points[1]);
 

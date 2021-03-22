@@ -263,3 +263,7 @@ $button-hover-color: #e6ebf5;
   height: 20px;
   float: left;
 }
+
+li.highcharts-disabled-btn:hover, .highcharts-disabled-btn .highcharts-submenu-item-arrow:hover {
+  background-color: $button-background-color;
+}

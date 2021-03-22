@@ -499,7 +499,7 @@ class Point {
         graphicalProps.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
                 if (item.element) {
-                    item.animate(extend(
+                    item.animate(extend<SVGAttributes>(
                         { x: point.startXPos },
                         (item.startYPos ? {
                             x: item.startXPos,
@@ -704,7 +704,7 @@ class Point {
      *
      * @fires Highcharts.Point#event:*
      */
-    public firePointEvent<T extends Record<string, any>|Event>(
+    public firePointEvent<T extends AnyRecord|Event>(
         eventType: string,
         eventArgs?: T,
         defaultFunction?: (
@@ -957,7 +957,7 @@ class Point {
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
     ): this['options'] {
-        var ret = {} as Record<string, any>,
+        var ret = {} as AnyRecord,
             series = this.series,
             keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
@@ -1022,29 +1022,19 @@ class Point {
     public resolveColor(): void {
         var series = this.series,
             colors,
-            optionsChart =
-                series.chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = series.chart.options.chart,
             colorCount = optionsChart.colorCount,
             styledMode = series.chart.styledMode,
-            colorIndex: number;
+            colorIndex: number,
+            color;
 
         // remove points nonZonedColor for later recalculation
         delete (this as any).nonZonedColor;
 
-        /**
-         * The point's current color.
-         *
-         * @name Highcharts.Point#color
-         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
-         */
-        if (!styledMode && !(this.options as any).color) {
-            this.color = series.color; // #3445
-        }
-
         if (series.options.colorByPoint) {
             if (!styledMode) {
                 colors = series.options.colors || series.chart.options.colors;
-                this.color = this.color || (colors as any)[series.colorCounter];
+                color = (colors as any)[series.colorCounter];
                 colorCount = (colors as any).length;
             }
             colorIndex = series.colorCounter;
@@ -1054,10 +1044,21 @@ class Point {
                 series.colorCounter = 0;
             }
         } else {
+            if (!styledMode) {
+                color = series.color;
+            }
             colorIndex = series.colorIndex as any;
         }
 
         this.colorIndex = pick(this.options.colorIndex, colorIndex);
+
+        /**
+         * The point's current color.
+         *
+         * @name Highcharts.Point#color
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+         */
+        this.color = pick(this.options.color, color);
     }
 
     /**
@@ -1562,7 +1563,8 @@ class Point {
         }
 
         // Apply hover styles to the existing point
-        if (point.graphic) {
+        // Prevent from dummy null points (#14966)
+        if (point.graphic && !point.hasDummyGraphic) {
 
             if (previousState) {
                 point.graphic.removeClass('highcharts-point-' + previousState);
@@ -1574,7 +1576,7 @@ class Point {
             if (!chart.styledMode) {
                 pointAttribs = series.pointAttribs(point, state);
                 pointAttribsAnimation = pick(
-                    (chart.options.chart as any).animation,
+                    chart.options.chart.animation,
                     stateOptions.animation
                 );
 
@@ -1615,7 +1617,7 @@ class Point {
                     markerAttribs,
                     pick(
                         // Turn off globally:
-                        (chart.options.chart as any).animation,
+                        chart.options.chart.animation,
                         (markerStateOptions as any).animation,
                         (markerOptions as any).animation
                     )

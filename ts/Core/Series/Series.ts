@@ -2770,10 +2770,10 @@ class Series {
 
     public init(
         chart: Chart,
-        options: DeepPartial<SeriesTypeOptions>
+        userOptions: DeepPartial<SeriesTypeOptions>
     ): void {
 
-        fireEvent(this, 'init', { options: options });
+        fireEvent(this, 'init', { options: userOptions });
 
         var series = this,
             events,
@@ -2814,13 +2814,14 @@ class Series {
          * @name Highcharts.Series#options
          * @type {Highcharts.SeriesOptionsType}
          */
-        series.options = options = series.setOptions(options);
+        series.options = series.setOptions(userOptions);
+        const options = series.options;
+
         series.linkedSeries = [];
         // bind the axes
         series.bindAxes();
 
-        // set some variables
-        extend(series, {
+        extend<Series>(series, {
             /**
              * The series name as given in the options. Defaults to
              * "Series {n}".
@@ -3191,7 +3192,7 @@ class Series {
     public setDataSortingOptions(): void {
         var options = this.options;
 
-        extend(this, {
+        extend<Series>(this, {
             requireSorting: false,
             sorted: false,
             enabledDataSorting: true,
@@ -3355,7 +3356,7 @@ class Series {
     public getCyclic(
         prop: string,
         value?: any,
-        defaults?: Record<string, any>
+        defaults?: AnyRecord
     ): void {
         var i,
             chart = this.chart,
@@ -3409,9 +3410,8 @@ class Series {
             this.getCyclic('color');
 
         } else if (this.options.colorByPoint) {
-            // #4359, selected slice got series.color even when colorByPoint
-            // was set.
-            this.options.color = null as any;
+            this.color = palette.neutralColor20;
+
         } else {
             this.getCyclic(
                 'color',
@@ -5076,7 +5076,7 @@ class Series {
                     // Set starting position for point sliding animation.
                     if (series.enabledDataSorting) {
                         point.startXPos = xAxis.reversed ?
-                            -markerAttribs.width :
+                            -(markerAttribs.width || 0) :
                             xAxis.width;
                     }
 
@@ -5089,7 +5089,7 @@ class Series {
 
                     } else if (
                         isInside &&
-                        (markerAttribs.width > 0 || point.hasImage)
+                        ((markerAttribs.width || 0) > 0 || point.hasImage)
                     ) {
 
                         /**
@@ -5219,7 +5219,7 @@ class Series {
         attribs = {
             // Math.floor for #1843:
             x: seriesOptions.crisp ?
-                Math.floor(point.plotX as any) - radius :
+                Math.floor(point.plotX as any - radius) :
                 (point.plotX as any) - radius,
             y: (point.plotY as any) - radius
         };
@@ -5650,7 +5650,7 @@ class Series {
     public plotGroup(
         prop: string,
         name: string,
-        visibility: string,
+        visibility: 'hidden'|'inherit'|'visible',
         zIndex?: number,
         parent?: SVGElement
     ): SVGElement {
@@ -5779,7 +5779,8 @@ class Series {
                 chart.renderer.isSVG &&
                 animOptions.duration
             ),
-            visibility = series.visible ? 'inherit' : 'hidden', // #2597
+            visibility: 'hidden'|'inherit'|'visible' = series.visible ?
+                'inherit' : 'hidden', // #2597
             zIndex = options.zIndex,
             hasRendered = series.hasRendered,
             chartSeriesGroup = chart.seriesGroup,
@@ -6592,7 +6593,7 @@ class Series {
             newType = (
                 options.type ||
                 oldOptions.type ||
-                (chart.options.chart as any).type
+                chart.options.chart.type
             ),
             keepPoints = !(
                 // Indicators, histograms etc recalculate the data. It should be
@@ -6711,6 +6712,8 @@ class Series {
 
             if (casting) {
                 // Modern browsers including IE11
+                // @todo slow, consider alternatives mentioned:
+                // https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,
@@ -6728,7 +6731,10 @@ class Series {
 
                     // Reinsert all methods and properties from the new type
                     // prototype (#2270, #3719).
-                    extend(series, seriesTypes[newType || initialType].prototype);
+                    extend<Series>(
+                        series,
+                        seriesTypes[newType || initialType].prototype
+                    );
 
                     // The events are tied to the prototype chain, don't copy if
                     // they're not the series' own
@@ -6955,7 +6961,7 @@ class Series {
                     (stateOptions as any)[state || 'normal'] &&
                     (stateOptions as any)[state || 'normal'].animation
                 ),
-                (series.chart.options.chart as any).animation
+                series.chart.options.chart.animation
             ),
             attribs,
             i = 0;
@@ -7101,8 +7107,7 @@ class Series {
             chart = series.chart,
             legendItem = series.legendItem,
             showOrHide: ('hide'|'show'),
-            ignoreHiddenSeries =
-                (chart.options.chart as any).ignoreHiddenSeries,
+            ignoreHiddenSeries = chart.options.chart.ignoreHiddenSeries,
             oldVisibility = series.visible;
 
         // if called without an argument, toggle visibility

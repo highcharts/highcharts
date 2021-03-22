@@ -335,7 +335,7 @@ extend(TilemapSeries.prototype, { // Prototype functions
     // TODO: Consider standarizing heatmap and tilemap into more
     // consistent form.
     markerAttribs: ScatterSeries.prototype.markerAttribs,
-    pointAttribs: ColumnSeries.prototype.pointAttribs,
+    pointAttribs: ColumnSeries.prototype.pointAttribs as any,
     pointClass: TilemapPoint
 });
 
