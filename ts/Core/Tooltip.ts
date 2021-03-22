@@ -1380,19 +1380,17 @@ class Tooltip {
             } else {
                 let checkX = x;
                 let checkY = y;
-                let paneCoordinates = !point.tooltipPos;
 
                 if (mouseEvent && currentSeries.is('xrange')) {
                     checkX = mouseEvent.chartX - chart.plotLeft;
                     checkY = mouseEvent.chartY - chart.plotTop;
-                    paneCoordinates = false;
                 }
 
                 if (
                     chart.polar ||
                     (
-                        this.isInsideX(checkX, currentSeries, paneCoordinates) &&
-                        this.isInsideY(checkY, currentSeries, paneCoordinates)
+                        this.isInsideX(checkX, currentSeries, !point.tooltipPos) &&
+                        this.isInsideY(checkY, currentSeries, !point.tooltipPos)
                     ) ||
                     currentSeries.is('windbarb') // Windbarb is outside plot
                 ) {
