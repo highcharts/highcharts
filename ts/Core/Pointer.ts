@@ -770,8 +770,8 @@ class Pointer {
 
         if (xAxis && yAxis) {
             return inverted ? {
-                chartX: xAxis.len + xAxis.pos - plotX,
-                chartY: yAxis.len + yAxis.pos - (point.plotY as any)
+                chartX: yAxis.len + yAxis.pos - (point.plotY as any),
+                chartY: xAxis.len + xAxis.pos - plotX
             } : {
                 chartX: plotX + xAxis.pos,
                 chartY: (point.plotY as any) + yAxis.pos
