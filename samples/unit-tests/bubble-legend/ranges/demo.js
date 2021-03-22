@@ -81,7 +81,8 @@ QUnit.test('Bubble legend ranges sizes', function (assert) {
             }
         },
         chart: {
-            type: 'bubble'
+            type: 'bubble',
+            styledMode: true
         },
         series: [
             {
@@ -152,5 +153,19 @@ QUnit.test('Bubble legend ranges sizes', function (assert) {
         chart.legend.bubbleLegend.ranges[2].value === -100,
         true,
         'Correct bubble legend ranges with zThreshold'
+    );
+
+    // #15359
+    chart.series[0].update({
+        colorIndex: 2
+    });
+
+    var bubbleLegendClass = chart.legend.bubbleLegend.symbols.bubbleItems[0]
+        .element.classList[0];
+
+    assert.strictEqual(
+        bubbleLegendClass,
+        'highcharts-color-2',
+        'The colorIndex should be set. (#15359)'
     );
 });
