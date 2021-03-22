@@ -86,10 +86,6 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
             joinBy = series.joinBy,
             mapPoint;
 
-        if (typeof point.path === 'string') {
-            point.path = splitPath(point.path);
-        }
-
         if (series.mapData && series.mapMap) {
             const joinKey = joinBy[1];
             const mapKey = super.getNestedProperty.call(point, joinKey) as string;

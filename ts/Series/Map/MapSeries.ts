@@ -18,7 +18,6 @@
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
 import type ColorType from '../../Core/Color/ColorType';
-import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type MapPointOptions from './MapPointOptions';
 import type MapSeriesOptions from './MapSeriesOptions';
 import type PointerEvent from '../../Core/PointerEvent';
@@ -564,9 +563,9 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public doFullTranslate(): boolean {
-        return (
+        return Boolean(
             this.isDirtyData ||
-            (this.chart.isResizing as any) ||
+            this.chart.isResizing ||
             this.chart.renderer.isVML ||
             !this.baseView
         );
@@ -916,29 +915,6 @@ class MapSeries extends ScatterSeries {
         }
     }
 
-    /*
-    public getExtremes(): DataExtremesObject {
-        // Get the actual value extremes for colors
-        const { dataMin, dataMax } = Series.prototype.getExtremes
-            .call(this, this.valueData);
-
-        // Recalculate box on updated data
-        if (this.chart.hasRendered && this.isDirtyData) {
-            this.getBox(this.options.data as any);
-        }
-
-        if (isNumber(dataMin)) {
-            this.valueMin = dataMin;
-        }
-        if (isNumber(dataMax)) {
-            this.valueMax = dataMax;
-        }
-
-        // Extremes for the mock Y axis
-        return { dataMin: this.minY, dataMax: this.maxY };
-    }
-    */
-
     /**
      * Define hasData function for non-cartesian series. Returns true if the
      * series has points at all.
@@ -1202,6 +1178,11 @@ class MapSeries extends ScatterSeries {
     public translate(): void {
         var series = this,
             doFullTranslate = series.doFullTranslate();
+
+        // Recalculate box on updated data
+        if (this.chart.hasRendered && this.isDirtyData) {
+            this.getBox(this.options.data as any);
+        }
 
         series.processData();
         series.generatePoints();
