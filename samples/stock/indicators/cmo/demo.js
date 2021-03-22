@@ -15,10 +15,10 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlc.json', funct
             text: 'AAPL Stock Price'
         },
         yAxis: [{
-            height: '60%'
+            height: '70%'
         }, {
-            height: '40%',
-            top: '60%'
+            height: '30%',
+            top: '70%'
         }],
         series: [{
             type: 'candlestick',
