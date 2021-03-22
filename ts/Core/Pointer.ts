@@ -763,18 +763,30 @@ class Pointer {
         var series = point.series,
             xAxis = series.xAxis,
             yAxis = series.yAxis,
-            plotX = pick<number|undefined, number>(
-                point.clientX, point.plotX as any
-            ),
             shapeArgs = point.shapeArgs;
 
         if (xAxis && yAxis) {
+            let x = pick<number|undefined, number>(
+                point.clientX, point.plotX as any
+            );
+            let y = point.plotY || 0;
+
+            if (
+                (point as Highcharts.NodesPoint).isNode &&
+                shapeArgs &&
+                isNumber(shapeArgs.x) &&
+                isNumber(shapeArgs.y)
+            ) {
+                x = shapeArgs.x;
+                y = shapeArgs.y;
+            }
+
             return inverted ? {
-                chartX: yAxis.len + yAxis.pos - (point.plotY as any),
-                chartY: xAxis.len + xAxis.pos - plotX
+                chartX: yAxis.len + yAxis.pos - y,
+                chartY: xAxis.len + xAxis.pos - x
             } : {
-                chartX: plotX + xAxis.pos,
-                chartY: (point.plotY as any) + yAxis.pos
+                chartX: x + xAxis.pos,
+                chartY: y + yAxis.pos
             };
         }
 
