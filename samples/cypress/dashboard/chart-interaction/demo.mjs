@@ -1,6 +1,5 @@
 import Dashboard from  '../../../../code/es-modules/Dashboard/Dashboard.js';
 import CSVStore from '../../../../code/es-modules/Data/Stores/CSVStore.js';
-
 // A shared store
 const store = new CSVStore(undefined, {
     csv: `$GME,$AMC,$NOK

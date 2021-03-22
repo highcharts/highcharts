@@ -7,13 +7,22 @@ import DataJSON from '../../Data/DataJSON.js';
 import DataParser from '../../Data/Parsers/DataParser.js';
 
 import Highcharts from '../../masters/highcharts.src.js';
+import {
+    selectionEmitter,
+    selectionHandler,
+    seriesVisibilityEmitter,
+    seriesVisibilityHandler,
+    tooltipEmitter,
+    tooltipHandler
+} from './ChartSyncHandlers.js';
 
 import U from '../../Core/Utilities.js';
 const {
     createElement,
     merge,
     uniqueKey,
-    getStyle
+    getStyle,
+    addEvent
 } = U;
 
 /* *
@@ -37,7 +46,13 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 series: []
             },
             Highcharts,
-            chartConstructor: ''
+            chartConstructor: '',
+            syncEvents: [],
+            syncHandlers: [
+                { id: 'visibility', emitter: seriesVisibilityEmitter, handler: seriesVisibilityHandler },
+                { id: 'tooltip', emitter: tooltipEmitter, handler: tooltipHandler },
+                { id: 'selection', emitter: selectionEmitter, handler: selectionHandler }
+            ]
         });
 
     public static fromJSON(json: ChartComponent.ClassJSON): ChartComponent {
@@ -71,7 +86,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
     public options: ChartComponent.ComponentOptions;
     public charter: typeof Highcharts;
     public chartConstructor: ChartComponent.constructorType;
-
+    public syncEvents: ChartComponent.syncEventsType[];
+    public syncHandlers: ChartComponent.syncHandlerType[];
     /* *
      *
      *  Constructor
@@ -104,6 +120,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
             this.chartContainer.id = this.options.chartID;
         }
 
+        this.syncEvents = this.options.syncEvents;
+        this.syncHandlers = this.options.syncHandlers;
         this.chartOptions = this.options.chartOptions || {};
 
         // Extend via event.
@@ -180,9 +198,16 @@ class ChartComponent extends Component<ChartComponent.Event> {
         const series: any = [];
         if (this.store?.table) {
             const data = DataParser.getColumnsFromTable(this.store?.table, false).slice(1);
-            data.forEach((datum): void => {
-                series.push({ data: datum });
+            const keys = this.store.table.getFirstNonNullRow()?.getCellNames();
+            data.forEach((datum, i): void => {
+                let id, name;
+                if (keys && keys[i]) {
+                    id = keys[i];
+                    name = id;
+                }
+                series.push({ id, name, data: datum });
             });
+
         }
         this.chartOptions.series = this.chartOptions.series ?
             [...series, ...this.chartOptions.series] :
@@ -192,6 +217,16 @@ class ChartComponent extends Component<ChartComponent.Event> {
         if (this.chart) {
             const { width, height } = this.dimensions;
             this.chart.setSize(width, height);
+
+            if (this.store?.table.presentationState) {
+                this.syncHandlers.forEach((handlerObject): void => {
+                    const { id, emitter, handler } = handlerObject;
+                    if (this.syncEvents.indexOf(id) > -1) {
+                        emitter(this);
+                        handler(this);
+                    }
+                });
+            }
         }
     }
 
@@ -218,6 +253,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         }
 
         this.chart = this.charter.chart(this.chartContainer, this.chartOptions);
+
         return this.chart;
     }
 
@@ -249,6 +285,10 @@ namespace ChartComponent {
     export type ComponentType = ChartComponent;
 
     export type constructorType = 'chart' | 'stock' | 'map' | 'gantt';
+
+    export type syncEventsType = 'visibility'| 'selection' | 'tooltip';
+    export type syncHandlerType = { id: ChartComponent.syncEventsType; emitter: Function; handler: Function };
+
     export interface Event extends Component.Event {
     }
     export interface UpdateEvent extends Component.UpdateEvent {
@@ -261,6 +301,8 @@ namespace ChartComponent {
         style?: CSSObject;
         Highcharts: typeof Highcharts;
         chartConstructor: ChartComponent.constructorType;
+        syncEvents: syncEventsType[];
+        syncHandlers: syncHandlerType[];
     }
 
 

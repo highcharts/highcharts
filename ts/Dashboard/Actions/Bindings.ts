@@ -151,9 +151,8 @@ class Bindings {
         options: Bindings.ComponentOptions
     ): ChartComponent {
         return new ChartComponent({
-            parentElement: compontentContainer as HTMLDOMElement,
-            chartOptions: options.chartOptions,
-            dimensions: options.dimensions
+            ...options,
+            parentElement: compontentContainer as HTMLDOMElement
         });
     }
 
