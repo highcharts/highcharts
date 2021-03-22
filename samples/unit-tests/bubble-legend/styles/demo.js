@@ -65,3 +65,38 @@ QUnit.test('Bubble legend ranges', function (assert) {
         'Bubble legend was properly disabled with the legend'
     );
 });
+
+QUnit.test('Bubble legend styled mode', function (assert) {
+    var chart = Highcharts.chart('container', {
+
+        chart: {
+            type: 'bubble',
+            styledMode: true
+        },
+
+        legend: {
+            enabled: true,
+            bubbleLegend: {
+                enabled: true
+            }
+        },
+
+        series: [{
+            colorIndex: 2,
+            showInLegend: false,
+            data: [
+                { x: 95, y: 95, z: 20 }
+            ]
+        }]
+
+    });
+
+    var bubbleLegendClass = chart.legend.bubbleLegend.symbols.bubbleItems[0]
+        .element.classList[0];
+
+    assert.strictEqual(
+        bubbleLegendClass,
+        'highcharts-color-2',
+        'The colorIndex should be set. (#15359)'
+    );
+});
