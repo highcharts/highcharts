@@ -910,12 +910,11 @@ QUnit.test('When groupAll: true, group point should have the same start regardle
         the point should have the same start.`
     );
 
-    // Failing condition.
-    // chart.xAxis[0].setExtremes(1610033040000);
-    // assert.strictEqual(
-    //     chart.series[0].points[9].dataGroup.start,
-    //     12,
-    //     `When groupAll: true, after changing extremes to the same as other
-    //     point x, the groups should not change the start property.`
-    // );
+    chart.xAxis[0].setExtremes(1610033040000);
+    assert.strictEqual(
+        chart.series[0].points[9].dataGroup.start,
+        12,
+        `When groupAll: true, after changing extremes to the same as other
+        point x, the groups should not change the start property.`
+    );
 });

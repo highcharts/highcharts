@@ -828,6 +828,7 @@ seriesProto.processData = function (): any {
                 );
                 groupedXData = croppedData.xData;
                 groupedYData = croppedData.yData;
+                series.cropStart = croppedData.start; // #15005
             }
             // Set series props
             series.processedXData = groupedXData;
