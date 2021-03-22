@@ -45,9 +45,7 @@ QUnit.test(
             ]
         });
 
-        var xExtremes = chart.xAxis[0].getExtremes(),
-            yExtremes,
-            plotLeft = chart.plotLeft,
+        var plotLeft = chart.plotLeft,
             plotTop = chart.plotTop,
             controller = new TestController(chart);
 
@@ -61,25 +59,26 @@ QUnit.test(
             'Reset zoom button should not appear while panning and chart is not zoomed.'
         );
 
+        const zoomBefore = chart.mapView.zoom;
         chart.mapZoom(0.5);
 
         assert.notEqual(
-            chart.xAxis[0].getExtremes().min,
-            xExtremes.min,
-            'Zoomed in'
+            chart.mapView.zoom,
+            zoomBefore,
+            'The chart should have zoomed in'
         );
 
-        chart.mapZoom(2);
+        chart.mapZoom(-0.5);
         assert.strictEqual(
-            chart.xAxis[0].getExtremes().min,
-            xExtremes.min,
-            'Zoomed out including padding'
+            chart.mapView.zoom,
+            zoomBefore,
+            'The chart should be zoomed out to original state'
         );
 
         chart.mapZoom(0.2);
 
-        xExtremes = chart.xAxis[0].getExtremes();
-        yExtremes = chart.yAxis[0].getExtremes();
+
+        const [centerXBefore, centerYBefore] = chart.mapView.center;
 
         controller.pan(
             [plotLeft + 50, plotTop + 50],
@@ -87,15 +86,15 @@ QUnit.test(
         );
 
         assert.notEqual(
-            chart.xAxis[0].getExtremes().min,
-            xExtremes.min,
-            'Correctly panned in horizontal direction'
+            chart.mapView.center[0],
+            centerXBefore,
+            'The chart should pan horizontally'
         );
 
         assert.notEqual(
-            chart.yAxis[0].getExtremes().min,
-            yExtremes.min,
-            'Correctly panned in vertical direction'
+            chart.mapView.center[1],
+            centerYBefore,
+            'The chart should pan vertically'
         );
     }
 );
