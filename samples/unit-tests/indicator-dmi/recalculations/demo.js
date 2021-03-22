@@ -55,8 +55,8 @@ QUnit.test(
             };
 
         testNumberOfPoints(
-            'The number of the initial DMI points should be equal to the ' +
-            'number of the main series\' points plus period.'
+            `The number of the initial DMI points should be equal to the
+            number of the main series' points plus period.`
         );
 
         assert.deepEqual(
@@ -80,8 +80,8 @@ QUnit.test(
         chart.series[0].addPoint([1555335000000, 49.65, 49.96, 49.5, 49.81]);
 
         testNumberOfPoints(
-            'After addPoint: the number of DMI points should be equal to the' +
-            ' number of the main series\' points plus period.'
+            `After addPoint: the number of DMI points should be equal to the
+            number of the main series' points plus period.`
         );
 
         assert.deepEqual(
@@ -127,8 +127,8 @@ QUnit.test(
         ]);
 
         testNumberOfPoints(
-            'After setData: the number of DMI points should be equal to the ' +
-            'number of the main series\' points plus period.'
+            `After setData: the number of DMI points should be equal to the
+            number of the main series' points plus period.`
         );
 
         assert.deepEqual(
@@ -152,14 +152,14 @@ QUnit.test(
 
         assert.strictEqual(
             DMIIndicator.graphplusDILine.element.getAttribute('stroke'),
-            '#00ff00',
-            'The +DI line color should be green by default.'
+            Highcharts.defaultOptions.colors[2],
+            'The +DI line color should be green-ish by default.'
         );
 
         assert.strictEqual(
             DMIIndicator.graphminusDILine.element.getAttribute('stroke'),
-            '#ff0000',
-            'The -DI line color should be red by default.'
+            Highcharts.defaultOptions.colors[5],
+            'The -DI line color should be red-ish by default.'
         );
 
         DMIIndicator.update({
@@ -218,8 +218,8 @@ QUnit.test(
         );
 
         testNumberOfPoints(
-            'After period update: the number of DMI points should be equal' +
-            'to the number of the main series\' points plus period.'
+            `After period update: the number of DMI points should be equal
+            to the number of the main series' points plus period.`
         );
 
         assert.deepEqual(
@@ -243,8 +243,8 @@ QUnit.test(
         chart.series[0].points[chart.series[0].points.length - 1].remove();
 
         testNumberOfPoints(
-            'After point remove: the number of DMI points should be equal to' +
-            ' the number of the main series\' points plus period.'
+            `After point remove: the number of DMI points should be equal to
+            the number of the main series' points plus period.`
         );
 
         assert.deepEqual(

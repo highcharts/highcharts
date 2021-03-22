@@ -1,4 +1,7 @@
 /* *
+ *  (c) 2010-2021 Rafal Sebestjanski
+ *
+ *  Directional Movement Index (DMI) indicator for Highstock
  *
  *  License: www.highcharts.com/license
  *
@@ -22,6 +25,7 @@ import type DMIPoint from './DMIPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import MultipleLinesMixin from '../../../Mixins/MultipleLines.js';
+import palette from '../../../Core/Color/Palette.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
@@ -82,11 +86,11 @@ class DMIIndicator extends SMAIndicator {
             enabled: false
         },
         tooltip: {
-            pointFormat: '<span style="color:{point.color}">\u25CF</span><b> {series.name}</b><br/>' +
-                '<span style="color:{point.color}">DX</span>: {point.y}<br/>' +
-                '<span style="color:{point.series.options.plusDILine.styles.lineColor}">+DI</span>' +
+            pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
+                '<span style="color: {point.color}">DX</span>: {point.y}<br/>' +
+                '<span style="color: {point.series.options.plusDILine.styles.lineColor}">+DI</span>' +
                     ': {point.plusDI}<br/>' +
-                '<span style="color:{point.series.options.minusDILine.styles.lineColor}">-DI</span>' +
+                '<span style="color: {point.series.options.minusDILine.styles.lineColor}">-DI</span>' +
                     ': {point.minusDI}<br/>'
         },
         /**
@@ -106,7 +110,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: '#00ff00'
+                lineColor: palette.colors[2] // green-ish
             }
         },
         /**
@@ -126,7 +130,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: '#ff0000'
+                lineColor: palette.colors[5] // red-ish
             }
         },
         dataGrouping: {
@@ -150,12 +154,7 @@ class DMIIndicator extends SMAIndicator {
             previousHigh = yVal[i - 1][1],
             previousLow = yVal[i - 1][2];
 
-        // If any value is null, return 0.
-        if (!currentHigh || !currentLow || !previousHigh || !previousLow) {
-            return 0;
-        }
-
-        let DM: number = 0;
+        let DM: number;
 
         if (currentHigh - previousHigh > previousLow - currentLow) {
             // for +DM
@@ -172,7 +171,7 @@ class DMIIndicator extends SMAIndicator {
         smoothedDM: number,
         tr: number
     ): number {
-        return smoothedDM / (tr || 1) * 100;
+        return smoothedDM / tr * 100;
     }
 
     public calculateDX(
@@ -180,7 +179,7 @@ class DMIIndicator extends SMAIndicator {
         minusDI: number
     ): number {
         return correctFloat(
-            Math.abs(plusDI - minusDI) / (Math.abs(plusDI + minusDI) || 1) * 100
+            Math.abs(plusDI - minusDI) / Math.abs(plusDI + minusDI) * 100
         );
     }
 
@@ -198,17 +197,16 @@ class DMIIndicator extends SMAIndicator {
         currentPoint: Array<number>,
         prevPoint?: Array<number>
     ): number {
-        // If any value is null, return 0.
-        if (!currentPoint[1] || !currentPoint[2] || !currentPoint[3]) {
-            return 0;
-        }
-
-        const HL = currentPoint[1] - currentPoint[2],
-            HCp = !prevPoint ? 0 : Math.abs(currentPoint[1] - prevPoint[3]),
-            LCp = !prevPoint ? 0 : Math.abs(currentPoint[2] - prevPoint[3]),
-            TR = Math.max(HL, HCp, LCp);
-
-        return correctFloat(TR);
+        return correctFloat(
+            Math.max(
+                // currentHigh - currentLow
+                currentPoint[1] - currentPoint[2],
+                // currentHigh - previousClose
+                !prevPoint ? 0 : Math.abs(currentPoint[1] - prevPoint[3]),
+                // currentLow - previousClose
+                !prevPoint ? 0 : Math.abs(currentPoint[2] - prevPoint[3])
+            )
+        );
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
@@ -242,21 +240,21 @@ class DMIIndicator extends SMAIndicator {
             let smoothedPlusDM: number,
                 smoothedMinusDM: number,
                 smoothedTR: number,
-                currentPlusDM: number, // +DM
-                currentMinusDM: number, // -DM
-                currentTR: number,
+                plusDM: number, // +DM
+                minusDM: number, // -DM
+                TR: number,
                 plusDI: number, // +DI
                 minusDI: number, // -DI
                 DX: number;
 
             if (i <= period) {
-                currentPlusDM = this.calculateDM(yVal, i, true);
-                currentMinusDM = this.calculateDM(yVal, i);
-                currentTR = this.getTR(yVal[i], yVal[i - 1]);
+                plusDM = this.calculateDM(yVal, i, true);
+                minusDM = this.calculateDM(yVal, i);
+                TR = this.getTR(yVal[i], yVal[i - 1]);
                 // Accumulate first period values to smooth them later
-                prevSmoothedPlusDM += currentPlusDM;
-                prevSmoothedMinusDM += currentMinusDM;
-                prevSmoothedTR += currentTR;
+                prevSmoothedPlusDM += plusDM;
+                prevSmoothedMinusDM += minusDM;
+                prevSmoothedTR += TR;
 
                 // Get all values for the first point
                 if (i === period) {
@@ -279,23 +277,23 @@ class DMIIndicator extends SMAIndicator {
                 }
             } else {
                 // Calculate current values
-                currentPlusDM = this.calculateDM(yVal, i, true);
-                currentMinusDM = this.calculateDM(yVal, i);
-                currentTR = this.getTR(yVal[i], yVal[i - 1]);
+                plusDM = this.calculateDM(yVal, i, true);
+                minusDM = this.calculateDM(yVal, i);
+                TR = this.getTR(yVal[i], yVal[i - 1]);
                 // Smooth +DM, -DM and TR
                 smoothedPlusDM = this.smoothValues(
                     prevSmoothedPlusDM,
-                    currentPlusDM,
+                    plusDM,
                     period
                 );
                 smoothedMinusDM = this.smoothValues(
                     prevSmoothedMinusDM,
-                    currentMinusDM,
+                    minusDM,
                     period
                 );
                 smoothedTR = this.smoothValues(
                     prevSmoothedTR,
-                    currentTR,
+                    TR,
                     period
                 );
                 // Save current smoothed values for the next step

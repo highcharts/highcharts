@@ -12,6 +12,7 @@
  *
  * */
 
+import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -25,6 +26,17 @@ import type {
 
 export interface DMIOptions extends SMAOptions {
     params?: DMIParamsOptions;
+    tooltip?: Highcharts.TooltipOptions;
+    plusDILine?: DMILineOptions;
+    minusDILine?: DMILineOptions;
+}
+
+export interface DMILineOptions {
+    styles?: CSSObject;
+}
+
+export interface DMIZonesOptions {
+    startIndex?: number;
 }
 
 export interface DMIParamsOptions extends SMAParamsOptions {
