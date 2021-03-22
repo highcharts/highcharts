@@ -229,6 +229,7 @@ export function testStockIndicators() {
         'cmf',
         'dpo',
         'ema',
+        'chaikin',
         'cmo',
         'dema',
         'tema',
