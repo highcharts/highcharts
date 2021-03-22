@@ -461,7 +461,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             if (
                 series.is('packedbubble') && // #13574
                 series.visible ||
-                !(chart.options.chart as any).ignoreHiddenSeries
+                !chart.options.chart.ignoreHiddenSeries
             ) {
 
                 // add data to array only if series is visible
@@ -506,9 +506,9 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
 
         if (!layout) {
             (layoutOptions as any).enableSimulation =
-                !defined((chartOptions as any).forExport) ?
+                !defined(chartOptions.forExport) ?
                     (layoutOptions as any).enableSimulation :
-                    !(chartOptions as any).forExport;
+                    !chartOptions.forExport;
 
             graphLayoutsStorage[(layoutOptions as any).type] = layout =
                 new (H.layouts[(layoutOptions as any).type] as any)();
@@ -1399,7 +1399,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             data = series.data,
             index = series.index,
             point,
-            radius,
+            radius: number|undefined,
             positions,
             i,
             useSimulation = series.options.useSimulation;
@@ -1431,7 +1431,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 // update the series points with the val from positions
                 // array
                 point = data[positions[i][4] as any];
-                radius = positions[i][2];
+                radius = pick(positions[i][2], void 0);
 
                 if (!useSimulation) {
                     point.plotX = (
@@ -1443,12 +1443,14 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                         chart.diffY
                     );
                 }
-                point.marker = extend(point.marker, {
-                    radius: radius,
-                    width: 2 * (radius as any),
-                    height: 2 * (radius as any)
-                });
-                point.radius = radius as any;
+                if (isNumber(radius)) {
+                    point.marker = extend(point.marker, {
+                        radius,
+                        width: 2 * radius,
+                        height: 2 * radius
+                    });
+                    point.radius = radius;
+                }
             }
         }
 
@@ -1539,7 +1541,7 @@ extend(PackedBubbleSeries.prototype, {
     requireSorting: false,
 
     // solving #12287
-    searchPoint: H.noop,
+    searchPoint: H.noop as any,
 
     trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup']
 

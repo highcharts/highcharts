@@ -191,7 +191,7 @@ merge(
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
 Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
-extend(Chart.prototype, {
+extend<Chart|Highcharts.SonifyableChart>(Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,
     pauseSonify: chartSonifyFunctions.pause,
     resumeSonify: chartSonifyFunctions.resume,

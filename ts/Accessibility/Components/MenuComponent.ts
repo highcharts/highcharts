@@ -384,7 +384,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      */
     getKeyboardNavigation: function (
         this: Highcharts.MenuComponent
-    ): Highcharts.KeyboardNavigation {
+    ): Highcharts.KeyboardNavigationHandler {
         var keys = this.keyCodes,
             chart = this.chart,
             component = this;

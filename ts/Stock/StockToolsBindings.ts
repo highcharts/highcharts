@@ -438,7 +438,7 @@ bindingsUtils.attractToPoint = function (
 
     // Search by 'x' but only in yAxis' series.
     coordsY.axis.series.forEach(function (series): void {
-        series.points.forEach(function (point): void {
+        series.points?.forEach(function (point): void {
             if (point && distX > Math.abs((point.x as any) - x)) {
                 distX = Math.abs((point.x as any) - x);
                 closestPoint = point;
@@ -540,7 +540,7 @@ bindingsUtils.updateNthPoint = function (
 };
 
 // Extends NavigationBindigs to support indicators and resizers:
-extend(NavigationBindings.prototype, {
+extend<NavigationBindings|Highcharts.StockToolsNavigationBindings>(NavigationBindings.prototype, {
     /* eslint-disable valid-jsdoc */
     /**
      * Get current positions for all yAxes. If new axis does not have position,
@@ -2290,11 +2290,12 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-full-screen", "init": function() {}}
+     * @default {"className": "noDataState": "normal", "highcharts-full-screen", "init": function() {}}
      */
     fullScreen: {
         /** @ignore-option */
         className: 'highcharts-full-screen',
+        noDataState: 'normal',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (
@@ -2443,11 +2444,12 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
-     * @default {"className": "highcharts-save-chart", "init": function() {}}
+     * @default {"className": "highcharts-save-chart", "noDataState": "normal", "init": function() {}}
      */
     saveChart: {
         /** @ignore-option */
         className: 'highcharts-save-chart',
+        noDataState: 'normal',
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (

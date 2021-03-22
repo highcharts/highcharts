@@ -793,7 +793,7 @@ extend(VBPIndicator.prototype, {
         eventName: 'afterSetExtremes'
     },
     calculateOn: 'render',
-    markerAttribs: noop,
+    markerAttribs: noop as any,
     drawGraph: noop,
     getColumnMetrics: columnPrototype.getColumnMetrics,
     crispCol: columnPrototype.crispCol

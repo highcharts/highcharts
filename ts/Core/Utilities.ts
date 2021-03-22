@@ -55,9 +55,10 @@ declare global {
             new(...args: Array<any>): T;
         }
         interface ErrorMessageEventObject {
+            chart?: Chart;
             code: number;
-            message: string;
-            params: Record<string, string>;
+            message?: string;
+            params?: Record<string, string>;
         }
         interface EventCallbackFunction<T> {
             (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
@@ -466,7 +467,8 @@ declare global {
  *        Reference to the chart that causes the error. Used in 'debugger'
  *        module to display errors directly on the chart.
  *        Important note: This argument is undefined for errors that lack
- *        access to the Chart instance.
+ *        access to the Chart instance. In such case, the error will be
+ *        displayed on the last created chart.
  *
  * @param {Highcharts.Dictionary<string>} [params]
  *        Additional parameters for the generated message.
@@ -515,16 +517,12 @@ function error(
         message += additionalMessages;
     }
 
-    if (chart) {
-        fireEvent(
-            chart,
-            'displayError',
-            { code, message, params } as Highcharts.ErrorMessageEventObject,
-            defaultHandler
-        );
-    } else {
-        defaultHandler();
-    }
+    fireEvent(
+        Highcharts,
+        'displayError',
+        { chart, code, message, params },
+        defaultHandler
+    );
 
     error.messages.push(message);
 }
@@ -532,11 +530,11 @@ namespace error {
     export const messages: Array<string> = [];
 }
 
-function merge<T1, T2 = object>(
-    extend: boolean,
-    a?: T1,
-    ...n: Array<T2|undefined>
-): (T1&T2);
+function merge<T = object>(
+    extend: true,
+    a?: T,
+    ...n: Array<DeepPartial<T>|undefined>
+): (T);
 function merge<
     T1 extends object = object,
     T2 = unknown,
@@ -558,6 +556,7 @@ function merge<
     h?: T8,
     i?: T9,
 ): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
+
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
@@ -1010,13 +1009,13 @@ function internalClearTimeout(id: number): void {
  * @param {T|undefined} a
  *        The object to be extended.
  *
- * @param {object} b
+ * @param {Partial<T>} b
  *        The object to add to the first one.
  *
  * @return {T}
  *         Object a, the original object.
  */
-function extend<T extends object>(a: (T|undefined), b: object): T {
+function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1096,7 +1095,7 @@ function css(
                 'alpha(opacity=' + (styles.opacity as any * 100) + ')';
         }
     }
-    extend(el.style, styles);
+    extend(el.style, styles as any);
 }
 
 /**
@@ -2392,7 +2391,14 @@ function fireEvent<T>(
     eventArguments = eventArguments || {};
 
     if (doc.createEvent &&
-        ((el as any).dispatchEvent || (el as any).fireEvent)
+        (
+            (el as any).dispatchEvent ||
+            (
+                (el as any).fireEvent &&
+                // Enable firing events on Highcharts instance.
+                (el as any) !== H
+            )
+        )
     ) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
@@ -2560,7 +2566,7 @@ const getOptions = H.getOptions = function (): Highcharts.Options {
  *         Updated options.
  */
 const setOptions = H.setOptions = function (
-    options: Highcharts.Options
+    options: Partial<Highcharts.Options>
 ): Highcharts.Options {
 
     // Copy in the default options

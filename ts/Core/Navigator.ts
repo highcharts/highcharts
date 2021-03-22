@@ -70,6 +70,7 @@ declare module './Series/SeriesLike' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
+        fillOpacity?: number;
         navigatorOptions?: SeriesOptions;
         showInNavigator?: boolean;
     }
@@ -534,7 +535,7 @@ extend(defaultOptions, {
             /**
              * @ignore-option
              */
-            compare: null,
+            compare: null as any,
 
             /**
              * Unless data is explicitly defined, the data is borrowed from the
@@ -596,7 +597,7 @@ extend(defaultOptions, {
              *
              * @type {Highcharts.ColorString|null}
              */
-            lineColor: null, // #4602
+            lineColor: null as any, // #4602
 
             marker: {
                 enabled: false

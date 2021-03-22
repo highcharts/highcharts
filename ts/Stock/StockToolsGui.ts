@@ -948,11 +948,14 @@ addEvent(Chart, 'getMargins', function (): void {
         this.plotLeft += offsetWidth;
         this.spacing[3] += offsetWidth;
     }
+}, {
+    order: 0
 });
 
 ['beforeRender', 'beforeRedraw'].forEach((event: string): void => {
     addEvent(Chart, event, function (): void {
         if (this.stockTools) {
+            const optionsChart = this.options.chart as Highcharts.ChartOptions;
             const listWrapper = this.stockTools.listWrapper,
                 offsetWidth = listWrapper && (
                     (
@@ -965,7 +968,14 @@ addEvent(Chart, 'getMargins', function (): void {
             let dirty = false;
 
             if (offsetWidth && offsetWidth < this.plotWidth) {
-                this.spacingBox.x += offsetWidth;
+                const nextX = pick(
+                    optionsChart.spacingLeft,
+                    optionsChart.spacing && optionsChart.spacing[3],
+                    0
+                ) + offsetWidth;
+                const diff = nextX - this.spacingBox.x;
+                this.spacingBox.x = nextX;
+                this.spacingBox.width -= diff;
                 dirty = true;
             } else if (offsetWidth === 0) {
                 dirty = true;
@@ -1514,6 +1524,10 @@ class Toolbar {
             // main button in first level og GUI
             mainNavButton = (buttonWrapper as any).parentNode.parentNode;
 
+        // if the button is disabled, don't do anything
+        if (buttonWrapperClass.indexOf('highcharts-disabled-btn') > -1) {
+            return;
+        }
         // set class
         mainNavButton.className = '';
         if (buttonWrapperClass) {

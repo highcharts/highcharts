@@ -207,7 +207,7 @@ class WordcloudSeries extends ColumnSeries {
             lineWidth: 0,
             maxPadding: 0,
             startOnTick: false,
-            title: null,
+            title: void 0,
             tickPositions: []
         };
 
@@ -364,7 +364,9 @@ class WordcloudSeries extends ColumnSeries {
                         x: placement.x,
                         y: placement.y,
                         text: point.name,
-                        rotation: placement.rotation
+                        rotation: isNumber(placement.rotation) ?
+                            placement.rotation :
+                            void 0
                     }
                 ),
                 polygon = getPolygon(
@@ -552,7 +554,7 @@ extend(WordcloudSeries.prototype, {
         isPolygonsColliding: isPolygonsColliding,
         rotate2DToOrigin: rotate2DToOrigin,
         rotate2DToPoint: rotate2DToPoint
-    }
+    } as any
 });
 
 /* *

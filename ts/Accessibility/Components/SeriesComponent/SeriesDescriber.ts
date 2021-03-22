@@ -234,7 +234,7 @@ function shouldDescribeSeriesElement(
     series: Highcharts.AccessibilitySeries
 ): boolean {
     var chart = series.chart,
-        chartOptions = chart.options.chart || {},
+        chartOptions = chart.options.chart,
         chartHas3d = chartOptions.options3d && chartOptions.options3d.enabled,
         hasMultipleSeries = chart.series.length > 1,
         describeSingleSeriesOption =

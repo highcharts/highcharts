@@ -438,6 +438,8 @@ class ControllableLabel implements ControllableMixin.Type {
                 point.series.visible &&
                 MockPoint.prototype.isInsidePlot.call(point);
 
+        const { width = 0, height = 0 } = item;
+
         if (showItem) {
 
             if (itemOptions.distance) {
@@ -446,8 +448,8 @@ class ControllableLabel implements ControllableMixin.Type {
                         chart: chart,
                         distance: pick(itemOptions.distance, 16)
                     },
-                    item.width,
-                    item.height,
+                    width,
+                    height,
                     {
                         plotX: anchorRelativePosition.x,
                         plotY: anchorRelativePosition.y,
@@ -467,10 +469,12 @@ class ControllableLabel implements ControllableMixin.Type {
                 };
 
                 itemPosition = ControllableLabel.alignedPosition(
-                    extend(itemOptions, {
-                        width: item.width,
-                        height: item.height
-                    }),
+                    extend<Highcharts.AnnotationsLabelOptions|BBoxObject>(
+                        itemOptions, {
+                            width,
+                            height
+                        }
+                    ),
                     alignTo
                 );
 
@@ -498,8 +502,8 @@ class ControllableLabel implements ControllableMixin.Type {
                         itemPosRelativeY
                     ) &&
                     chart.isInsidePlot(
-                        itemPosRelativeX + item.width,
-                        itemPosRelativeY + item.height
+                        itemPosRelativeX + width,
+                        itemPosRelativeY + height
                     );
             }
         }

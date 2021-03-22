@@ -253,8 +253,6 @@ class Pointer {
         this.chart = chart;
         this.hasDragged = false;
         this.options = options;
-        this.unbindContainerMouseLeave = function (): void {};
-        this.unbindContainerMouseEnter = function (): void {};
         this.init(chart, options);
     }
 
@@ -300,9 +298,7 @@ class Pointer {
 
     public tooltipTimeout?: number;
 
-    public unbindContainerMouseLeave: Function;
-
-    public unbindContainerMouseEnter: Function;
+    public eventsToUnbind: Array<Function> = [];
 
     public unDocMouseMove?: Function;
 
@@ -378,11 +374,8 @@ class Pointer {
     public destroy(): void {
         var pointer = this;
 
-        if (typeof pointer.unDocMouseMove !== 'undefined') {
-            pointer.unDocMouseMove();
-        }
-
-        this.unbindContainerMouseLeave();
+        this.eventsToUnbind.forEach((unbind): void => unbind());
+        this.eventsToUnbind = [];
 
         if (!H.chartCount) {
             if (H.unbindDocumentMouseUp) {
@@ -411,7 +404,7 @@ class Pointer {
     public drag(e: PointerEvent): void {
 
         var chart = this.chart,
-            chartOptions = chart.options.chart as Highcharts.ChartOptions,
+            chartOptions = chart.options.chart,
             chartX = e.chartX,
             chartY = e.chartY,
             zoomHor = this.zoomHor,
@@ -1086,9 +1079,9 @@ class Pointer {
         this.chart = chart;
 
         // Do we need to handle click on a touch device?
-        this.runChartClick =
-            (options.chart as any).events &&
-            !!(options.chart as any).events.click;
+        this.runChartClick = Boolean(
+            options.chart.events && options.chart.events.click
+        );
 
         this.pinchDown = [];
         this.lastValidTouch = {};
@@ -1537,10 +1530,12 @@ class Pointer {
 
             // Set the marker
             if (!selectionMarker) {
+                // @todo It's a mock object, so maybe we need a separate
+                // interface
                 self.selectionMarker = selectionMarker = extend({
                     destroy: noop,
                     touch: true
-                }, chart.plotBox) as any;
+                }, chart.plotBox as any) as any;
             }
 
             self.pinchTranslate(
@@ -1893,7 +1888,9 @@ class Pointer {
         hoverPoint = hoverData.hoverPoint;
         points = hoverData.hoverPoints;
         hoverSeries = hoverData.hoverSeries;
-        followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+        followPointer = hoverSeries &&
+            hoverSeries.tooltipOptions.followPointer &&
+            !hoverSeries.tooltipOptions.split;
         useSharedTooltip = (
             shared &&
             hoverSeries &&
@@ -1986,6 +1983,7 @@ class Pointer {
                     }
                 }
             );
+            pointer.eventsToUnbind.push(pointer.unDocMouseMove);
         }
 
         // Issues related to crosshair #4927, #5269 #5066, #5658
@@ -2062,16 +2060,16 @@ class Pointer {
         container.onmousedown = this.onContainerMouseDown.bind(this);
         container.onmousemove = this.onContainerMouseMove.bind(this);
         container.onclick = this.onContainerClick.bind(this);
-        this.unbindContainerMouseEnter = addEvent(
+        this.eventsToUnbind.push(addEvent(
             container,
             'mouseenter',
             this.onContainerMouseEnter.bind(this)
-        );
-        this.unbindContainerMouseLeave = addEvent(
+        ));
+        this.eventsToUnbind.push(addEvent(
             container,
             'mouseleave',
             this.onContainerMouseLeave.bind(this)
-        );
+        ));
         if (!H.unbindDocumentMouseUp) {
             H.unbindDocumentMouseUp = addEvent(
                 ownerDoc,
@@ -2084,25 +2082,25 @@ class Pointer {
         // scrolling parent elements
         let parent = this.chart.renderTo.parentElement;
         while (parent && parent.tagName !== 'BODY') {
-            addEvent(parent, 'scroll', (): void => {
+            this.eventsToUnbind.push(addEvent(parent, 'scroll', (): void => {
                 delete this.chartPosition;
-            });
+            }));
             parent = parent.parentElement;
         }
 
         if (H.hasTouch) {
-            addEvent(
+            this.eventsToUnbind.push(addEvent(
                 container,
                 'touchstart',
                 this.onContainerTouchStart.bind(this),
                 { passive: false }
-            );
-            addEvent(
+            ));
+            this.eventsToUnbind.push(addEvent(
                 container,
                 'touchmove',
                 this.onContainerTouchMove.bind(this),
                 { passive: false }
-            );
+            ));
             if (!H.unbindDocumentTouchEnd) {
                 H.unbindDocumentTouchEnd = addEvent(
                     ownerDoc,
@@ -2205,7 +2203,7 @@ class Pointer {
      */
     private touchSelect(e: PointerEvent): boolean {
         return Boolean(
-            (this.chart.options.chart as any).zoomBySingleTouch &&
+            this.chart.options.chart.zoomBySingleTouch &&
             e.touches &&
             e.touches.length === 1
         );
@@ -2225,7 +2223,7 @@ class Pointer {
      */
     public zoomOption(e: Event): void {
         var chart = this.chart,
-            options = chart.options.chart as Highcharts.ChartOptions,
+            options = chart.options.chart,
             zoomType = options.zoomType || '',
             inverted = chart.inverted,
             zoomX,

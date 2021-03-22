@@ -50,7 +50,7 @@ addEvent(Series, 'init', function (
     ) {
         extend(series, {
             pointValKey: ohlcProto.pointValKey,
-            keys: (ohlcProto as any).keys, // @todo potentially nonsense
+            // keys: ohlcProto.keys, // @todo potentially nonsense
             pointArrayMap: ohlcProto.pointArrayMap,
             toYData: ohlcProto.toYData
         });

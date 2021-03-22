@@ -748,7 +748,7 @@ class Tooltip {
         if (!this.label) {
 
             if (this.outside) {
-                const chartStyle = this.chart.options.chart?.style;
+                const chartStyle = this.chart.options.chart.style;
 
                 /**
                  * Reference to the tooltip's container, when
@@ -1328,8 +1328,7 @@ class Tooltip {
         U.clearTimeout(this.hideTimer as any);
 
         // get the reference point coordinates (pie charts use tooltipPos)
-        tooltip.followPointer = splat(point)[0].series.tooltipOptions
-            .followPointer;
+        tooltip.followPointer = !tooltip.split && splat(point)[0].series.tooltipOptions.followPointer;
         anchor = tooltip.getAnchor(point as any, mouseEvent);
         x = anchor[0];
         y = anchor[1];

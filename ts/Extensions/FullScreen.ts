@@ -164,7 +164,7 @@ class Fullscreen {
     /** @private */
     public origWidth?: number;
     /** @private */
-    public origWidthOption?: (number|string|null);
+    public origWidthOption?: (number|null);
 
     /** @private */
     public unbindFullscreenEvent?: Function;
@@ -210,10 +210,9 @@ class Fullscreen {
         fullscreen.origWidth = void 0;
         fullscreen.origHeight = void 0;
 
-        if (optionsChart) {
-            optionsChart.width = fullscreen.origWidthOption;
-            optionsChart.height = fullscreen.origHeightOption;
-        }
+        optionsChart.width = fullscreen.origWidthOption;
+        optionsChart.height = fullscreen.origHeightOption;
+
         fullscreen.origWidthOption = void 0;
         fullscreen.origHeightOption = void 0;
 

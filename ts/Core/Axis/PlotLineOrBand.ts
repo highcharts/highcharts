@@ -100,6 +100,7 @@ declare global {
             events?: any;
             id?: string;
             label?: AxisPlotLinesLabelOptions;
+            translatedValue?: number;
             value?: number;
             width?: number;
             zIndex?: number;

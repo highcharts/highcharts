@@ -1092,7 +1092,7 @@ class MapSeries extends ScatterSeries {
 
         // Pick up transform definitions for chart
         this.chart.mapTransforms = mapTransforms =
-            chartOptions && chartOptions.mapTransforms ||
+            chartOptions.mapTransforms ||
             mapData && mapData['hc-transform'] ||
             mapTransforms;
 
@@ -1368,7 +1368,7 @@ extend(MapSeries.prototype, {
     // X axis and Y axis must have same translation slope
     preserveAspectRatio: true,
 
-    searchPoint: noop,
+    searchPoint: noop as any,
 
     trackerGroups: colorMapSeriesMixin.trackerGroups,
 

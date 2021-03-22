@@ -941,10 +941,13 @@ class Time {
 
 
         // record information on the chosen unit - for dynamic label formatter
-        tickPositions.info = extend(normalizedInterval, {
-            higherRanks: higherRanks,
-            totalRange: interval * count
-        }) as TimeTicksInfoObject;
+        tickPositions.info = extend<Highcharts.TimeNormalizedObject|TimeTicksInfoObject>(
+            normalizedInterval,
+            {
+                higherRanks,
+                totalRange: interval * count
+            }
+        ) as TimeTicksInfoObject;
 
         return tickPositions;
     }
