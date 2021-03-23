@@ -209,11 +209,8 @@ class MapBubbleSeries extends BubbleSeries {
 
     translate(): void {
         MapPointSeries.prototype.translate.call(this);
-        var zExtremes = this.getZExtremes();
-        if (zExtremes) {
-            this.getRadii(zExtremes.zMin, zExtremes.zMax, this);
-            this.translateBubble();
-        }
+        this.getRadii();
+        this.translateBubble();
     }
 }
 

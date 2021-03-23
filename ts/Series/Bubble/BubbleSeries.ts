@@ -36,14 +36,13 @@ const {
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
-    clamp,
     extend,
     isNumber,
     merge,
-    pick,
-    pInt
+    pick
 } = U;
 
 import '../Column/ColumnSeries.js';
@@ -55,6 +54,11 @@ import './BubbleLegend.js';
  *  Declarations
  *
  * */
+declare module '../../Core/Chart/ChartLike'{
+    interface ChartLike {
+        bubbleZExtremes?: BubbleZExtremes;
+    }
+}
 
 declare module '../../Core/Axis/Types' {
     interface AxisLike {
@@ -386,6 +390,7 @@ class BubbleSeries extends ScatterSeries {
 
     /* eslint-disable valid-jsdoc */
 
+
     /**
      * Perform animation on the bubbles
      * @private
@@ -426,27 +431,54 @@ class BubbleSeries extends ScatterSeries {
      * the axis needs to add padding in accordance with the point sizes.
      * @private
      */
-    public getRadii(
-        zMin: number,
-        zMax: number,
-        series: BubbleSeries
-    ): void {
+    public getRadii(): void {
         var len: number,
             i: number,
             zData = this.zData,
             yData = this.yData,
             radii = [] as Array<(number|null)>,
-            value;
+            value,
+            zExtremes = this.chart.bubbleZExtremes;
 
         const { minPxSize, maxPxSize } = this.getPxExtremes();
+
+        // Get the collective Z extremes of all bubblish series. The chart-level
+        // `bubbleZExtremes` are only computed once, and reset on `updatedData`
+        // in any member series.
+        if (!zExtremes) {
+            let zMin = Number.MAX_VALUE;
+            let zMax = -Number.MAX_VALUE;
+            let valid;
+            this.chart.series.forEach((otherSeries): void => {
+                if (
+                    otherSeries.bubblePadding && (
+                        otherSeries.visible ||
+                        !this.chart.options.chart.ignoreHiddenSeries
+                    )
+                ) {
+                    const zExtremes = (otherSeries as any).getZExtremes();
+                    if (zExtremes) {
+                        zMin = Math.min(zMin || zExtremes.zMin, zExtremes.zMin);
+                        zMax = Math.max(zMax || zExtremes.zMax, zExtremes.zMax);
+                        valid = true;
+                    }
+                }
+            });
+            if (valid) {
+                zExtremes = { zMin, zMax };
+                this.chart.bubbleZExtremes = zExtremes;
+            } else {
+                zExtremes = { zMin: 0, zMax: 0 };
+            }
+        }
 
         // Set the shape type and arguments to be picked up in drawPoints
         for (i = 0, len = zData.length; i < len; i++) {
             value = zData[i];
             // Separate method to get individual radius for bubbleLegend
             radii.push(this.getRadius(
-                zMin,
-                zMax,
+                zExtremes.zMin,
+                zExtremes.zMax,
                 minPxSize,
                 maxPxSize,
                 value,
@@ -547,6 +579,7 @@ class BubbleSeries extends ScatterSeries {
         // Run the parent method
         ScatterSeries.prototype.translate.call(this);
 
+        this.getRadii();
         this.translateBubble();
     }
 
@@ -676,6 +709,11 @@ extend(BubbleSeries.prototype, {
 
 });
 
+// On updated data in any series, delete the chart-level Z extremes cache
+addEvent(BubbleSeries, 'updatedData', (e): void => {
+    delete e.target.chart.bubbleZExtremes;
+});
+
 /* *
  *
  *  Axis ?
@@ -693,108 +731,54 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
         isXAxis = this.isXAxis,
         dataKey = isXAxis ? 'xData' : 'yData',
         min = this.min,
-        extremes: Record<string, number> = {},
-        smallestSize = Math.min(chart.plotWidth, chart.plotHeight),
-        zMin = Number.MAX_VALUE,
-        zMax = -Number.MAX_VALUE,
         range = (this.max as any) - (min as any),
         transA = axisLength / range,
-        activeSeries = [] as Array<BubbleSeries>;
+        hasActiveSeries;
 
     // Handle padding on the second pass, or on redraw
     this.series.forEach(function (series): void {
 
-        var seriesOptions = series.options as BubbleSeriesOptions,
-            zData;
-
-        if (series.bubblePadding &&
+        if (
+            series.bubblePadding &&
             (series.visible || !chart.options.chart.ignoreHiddenSeries)
         ) {
             // Correction for #1673
             axis.allowZoomOutside = true;
 
-            // Cache it
-            activeSeries.push(series as any);
+            hasActiveSeries = true;
 
-            if (isXAxis) { // because X axis is evaluated first
+            var data = (series as any)[dataKey],
+                i = data.length,
+                radius;
 
-                /*
-                // For each series, translate the size extremes to pixel values
-                ['minSize', 'maxSize'].forEach(function (prop: string): void {
-                    var length = (seriesOptions as any)[prop],
-                        isPercent = /%$/.test(length);
-
-                    length = pInt(length);
-                    extremes[prop] = isPercent ?
-                        smallestSize * length / 100 :
-                        length;
-
-                });
-                series.minPxSize = extremes.minSize;
-                // Prioritize min size if conflict to make sure bubbles are
-                // always visible. #5873
-                series.maxPxSize = Math.max(extremes.maxSize, extremes.minSize);
-                */
-
-                // Find the min and max Z
-                /*
-                zData = (series.zData as any).filter(isNumber);
-                if (zData.length) { // #1735
-                    zMin = pick(seriesOptions.zMin, clamp(
-                        arrayMin(zData),
-                        seriesOptions.displayNegative === false ?
-                            (seriesOptions.zThreshold as any) :
-                            -Number.MAX_VALUE,
-                        zMin
-                    ));
-                    zMax = pick(
-                        seriesOptions.zMax,
-                        Math.max(zMax, arrayMax(zData))
-                    );
-                }
-                */
-                const zExtremes = (series as any).getZExtremes();
-                if (zExtremes) {
-                    zMin = Math.min(zMin || zExtremes.zMin, zExtremes.zMin);
-                    zMax = Math.max(zMax || zExtremes.zMax, zExtremes.zMax);
-                }
+            if (isXAxis) {
+                (series as any).getRadii(0, 0, series);
             }
-        }
-    });
 
-    activeSeries.forEach(function (series): void {
-
-        var data = (series as any)[dataKey],
-            i = data.length,
-            radius;
-
-        if (isXAxis) {
-            series.getRadii(zMin, zMax, series);
-        }
-
-        if (range > 0) {
-            while (i--) {
-                if (
-                    isNumber(data[i]) &&
-                    (axis.dataMin as any) <= data[i] &&
-                    data[i] <= (axis.max as any)
-                ) {
-                    radius = series.radii ? series.radii[i] : 0;
-                    pxMin = Math.min(
-                        ((data[i] - (min as any)) * transA) - (radius as any),
-                        pxMin
-                    );
-                    pxMax = Math.max(
-                        ((data[i] - (min as any)) * transA) + (radius as any),
-                        pxMax
-                    );
+            if (range > 0) {
+                while (i--) {
+                    if (
+                        isNumber(data[i]) &&
+                        (axis.dataMin as any) <= data[i] &&
+                        data[i] <= (axis.max as any)
+                    ) {
+                        radius = series.radii ? series.radii[i] : 0;
+                        pxMin = Math.min(
+                            ((data[i] - (min as any)) * transA) - (radius as any),
+                            pxMin
+                        );
+                        pxMax = Math.max(
+                            ((data[i] - (min as any)) * transA) + (radius as any),
+                            pxMax
+                        );
+                    }
                 }
             }
         }
     });
 
     // Apply the padding to the min and max properties
-    if (activeSeries.length && range > 0 && !this.logarithmic) {
+    if (hasActiveSeries && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
         transA *= (
             axisLength +
