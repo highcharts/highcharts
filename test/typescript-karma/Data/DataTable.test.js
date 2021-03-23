@@ -2,7 +2,7 @@ import DataTable from '/base/js/Data/DataTable.js';
 
 QUnit.test('DataTable Clone', function (assert) {
 
-    const table = new DataTable({});
+    const table = new DataTable({}, 'table');
 
     table.setRow([ 'row1', 1 ]);
     table.setCell(0, '1', 100);

@@ -536,9 +536,9 @@ namespace error {
  * @private
  */
 function flat(
-    obj: Record<string, any>
-): Record<string, any> {
-    const flatObject: Record<string, any> = {};
+    obj: AnyRecord
+): AnyRecord {
+    const flatObject: AnyRecord = {};
     Object
         .getOwnPropertyNames(obj)
         .forEach(function (name: string): void {

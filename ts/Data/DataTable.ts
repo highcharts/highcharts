@@ -206,7 +206,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Whether id was generated in constructor or not.
      */
-    public autoId: boolean;
+    public readonly autoId: boolean;
 
     /**
      * Converter for type conversions of cell values.
@@ -342,14 +342,13 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     ): DataTable {
         const table = this,
             aliasMap = table.aliasMap,
-            aliases = Object.keys(table.aliasMap),
-            events = table.hcEvents;
+            aliases = Object.keys(table.aliasMap);
 
         table.emit({ type: 'cloneTable', detail: eventDetail });
 
         const clone = new DataTable(
             skipColumns ? {} : table.columns,
-            table.id,
+            table.autoId ? void 0 : table.id,
             table.presentationState,
             table.converter
         );
@@ -362,23 +361,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             }
         }
 
-        if (events) {
-            const eventNames = Object.keys(events) as Array<DataTable.EventObject['type']>,
-                cloneEvents = clone.hcEvents = {} as DataEventEmitter.HCEventsCollection<DataTable.EventObject>;
-
-            for (
-                let i = 0,
-                    iEnd = eventNames.length,
-                    eventName: DataTable.EventObject['type'];
-                i < iEnd;
-                ++i
-            ) {
-                eventName = eventNames[i];
-                cloneEvents[eventName] = events[eventName].slice();
-            }
-        }
-
-        clone.autoId = table.autoId;
         clone.versionTag = table.versionTag;
 
         table.emit({
@@ -899,19 +881,25 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             columnNamesOrAliases = Object.keys(tableColumns);
         }
 
+        let allNull = true;
+
         for (
             let i = 0,
                 iEnd = columnNamesOrAliases.length,
+                cell: DataTable.CellType,
                 columnName: string;
             i < iEnd;
             ++i
         ) {
             columnName = columnNamesOrAliases[i];
-            columnName = (
-                tableAliases[columnName] ||
-                columnName
-            );
-            row[columnName] = tableColumns[columnName][rowIndex];
+            columnName = (tableAliases[columnName] || columnName);
+            cell = tableColumns[columnName][rowIndex];
+            allNull = (allNull && cell === null);
+            row[columnName] = cell;
+        }
+
+        if (allNull) {
+            return DataTable.NULL;
         }
 
         return row;
@@ -1130,7 +1118,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Sets a cell value based on the row index and column name or alias.
+     * Sets a cell value based on the row index and column name or alias.  Will
+     * insert a new column, if not found.
      *
      * @param {number|undefined} rowIndex
      * Row index to set.
@@ -1145,7 +1134,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Custom information for pending events.
      *
      * @return {boolean}
-     * `true` if successful, `false` if not
+     * Returns `true` if successful, `false` if not.
      *
      * @emits DataTable#setCell
      * @emits DataTable#afterSetCell
@@ -1164,35 +1153,35 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             columnNameOrAlias
         );
 
-        const column = columns[columnNameOrAlias];
+        let column = columns[columnNameOrAlias];
 
-        if (column) {
-            table.emit({
-                type: 'setCell',
-                cellValue,
-                columnName: columnNameOrAlias,
-                detail: eventDetail,
-                rowIndex
-            });
-
-            if (rowIndex >= table.rowCount) {
-                table.rowCount = (rowIndex + 1);
-            }
-
-            column[rowIndex] = cellValue;
-
-            table.emit({
-                type: 'afterSetCell',
-                cellValue,
-                columnName: columnNameOrAlias,
-                detail: eventDetail,
-                rowIndex
-            });
-
-            return true;
+        if (!column) {
+            column = columns[columnNameOrAlias] = new Array(table.rowCount);
         }
 
-        return false;
+        table.emit({
+            type: 'setCell',
+            cellValue,
+            columnName: columnNameOrAlias,
+            detail: eventDetail,
+            rowIndex
+        });
+
+        if (rowIndex >= table.rowCount) {
+            table.rowCount = (rowIndex + 1);
+        }
+
+        column[rowIndex] = cellValue;
+
+        table.emit({
+            type: 'afterSetCell',
+            cellValue,
+            columnName: columnNameOrAlias,
+            detail: eventDetail,
+            rowIndex
+        });
+
+        return true;
     }
 
     /**

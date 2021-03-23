@@ -334,6 +334,88 @@ class Point {
 
     /* *
      *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Implementation of Point.optionsToObject.
+     *
+     * @private
+     * @function Highcharts.Point.optionsToObject
+     *
+     * @param {Highcharts.PointOptionsType} options
+     * Series data options.
+     *
+     * @param {Highcharts.Series} series
+     * Series to synchronize flags on.
+     *
+     * @return {Highcharts.Dictionary<*>}
+     * Transformed point options.
+     */
+    public static optionsToObject(
+        options: (PointOptions|PointShortOptions),
+        series: Series
+    ): PointOptions {
+        const keys = series.options.keys,
+            pointArrayMap = keys || series.pointArrayMap || ['y'],
+            valueCount = pointArrayMap.length;
+
+        let firstItemType,
+            i = 0,
+            j = 0,
+            ret = {} as AnyRecord;
+
+        if (isNumber(options) || options === null) {
+            ret[pointArrayMap[0]] = options;
+
+        } else if (isArray(options)) {
+            // with leading x value
+            if (!keys && options.length > valueCount) {
+                firstItemType = typeof options[0];
+                if (firstItemType === 'string') {
+                    ret.name = options[0];
+                } else if (firstItemType === 'number') {
+                    ret.x = options[0];
+                }
+                i++;
+            }
+            while (j < valueCount) {
+                // Skip undefined positions for keys
+                if (!keys || typeof options[i] !== 'undefined') {
+                    if (pointArrayMap[j].indexOf('.') > 0) {
+                        // Handle nested keys, e.g. ['color.pattern.image']
+                        // Avoid function call unless necessary.
+                        Point.prototype.setNestedProperty(
+                            ret, options[i], pointArrayMap[j]
+                        );
+                    } else {
+                        ret[pointArrayMap[j]] = options[i];
+                    }
+                }
+                i++;
+                j++;
+            }
+        } else if (typeof options === 'object') {
+            ret = options;
+
+            // This is the fastest way to detect if there are individual point
+            // dataLabels that need to be considered in drawDataLabels. These
+            // can only occur in object configs.
+            if (options.dataLabels) {
+                series._hasPointLabels = true;
+            }
+
+            // Same approach as above for markers
+            if (options.marker) {
+                series._hasPointMarkers = true;
+            }
+        }
+        return ret;
+    }
+
+    /* *
+     *
      *  Properties
      *
      * */
@@ -946,72 +1028,19 @@ class Point {
      * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
      * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
+     * @deprecated
      * @function Highcharts.Point#optionsToObject
      *
      * @param {Highcharts.PointOptionsType} options
-     *        The input option.
+     * Series data options.
      *
      * @return {Highcharts.Dictionary<*>}
-     *         Transformed options.
+     * Transformed point options.
      */
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
     ): this['options'] {
-        var ret = {} as AnyRecord,
-            series = this.series,
-            keys = series.options.keys,
-            pointArrayMap = keys || series.pointArrayMap || ['y'],
-            valueCount = pointArrayMap.length,
-            firstItemType,
-            i = 0,
-            j = 0;
-
-        if (isNumber(options) || options === null) {
-            ret[pointArrayMap[0]] = options;
-
-        } else if (isArray(options)) {
-            // with leading x value
-            if (!keys && (options as any).length > valueCount) {
-                firstItemType = typeof (options as any)[0];
-                if (firstItemType === 'string') {
-                    ret.name = (options as any)[0];
-                } else if (firstItemType === 'number') {
-                    ret.x = (options as any)[0];
-                }
-                i++;
-            }
-            while (j < valueCount) {
-                // Skip undefined positions for keys
-                if (!keys || typeof (options as any)[i] !== 'undefined') {
-                    if (pointArrayMap[j].indexOf('.') > 0) {
-                        // Handle nested keys, e.g. ['color.pattern.image']
-                        // Avoid function call unless necessary.
-                        Point.prototype.setNestedProperty(
-                            ret, (options as any)[i], pointArrayMap[j]
-                        );
-                    } else {
-                        ret[pointArrayMap[j]] = (options as any)[i];
-                    }
-                }
-                i++;
-                j++;
-            }
-        } else if (typeof options === 'object') {
-            ret = options;
-
-            // This is the fastest way to detect if there are individual point
-            // dataLabels that need to be considered in drawDataLabels. These
-            // can only occur in object configs.
-            if ((options as any).dataLabels) {
-                series._hasPointLabels = true;
-            }
-
-            // Same approach as above for markers
-            if ((options as any).marker) {
-                series._hasPointMarkers = true;
-            }
-        }
-        return ret;
+        return Point.optionsToObject(options, this.series);
     }
 
     /**
