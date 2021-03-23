@@ -35,10 +35,6 @@ export interface DMILineOptions {
     styles?: CSSObject;
 }
 
-export interface DMIZonesOptions {
-    startIndex?: number;
-}
-
 export interface DMIParamsOptions extends SMAParamsOptions {
     // for inheritance
 }
