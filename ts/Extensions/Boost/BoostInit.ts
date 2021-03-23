@@ -476,6 +476,9 @@ function init(): void {
                     (xAxis && xAxis.pos !== prevX) ||
                     (yAxis && yAxis.pos !== prevY)
                 ) {
+                    // #10464: Keep the marker group position in sync with the
+                    // position of the hovered series axes since there is only
+                    // one shared marker group when boosting.
                     chart.markerGroup.translate(xAxis.pos, yAxis.pos);
 
                     prevX = xAxis.pos;
