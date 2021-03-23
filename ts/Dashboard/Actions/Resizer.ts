@@ -292,21 +292,15 @@ class Resizer {
      */
     public sumColumnOuterWidth(
         row: Row,
-        column?: Column
+        column?: Column,
+        ignoreComponentWidth?: boolean
     ): number {
 
         const convertToPercent = this.convertToPercent;
         const columnContainer = column?.container;
         const parentRowWidth = row.container?.offsetWidth;
         const columns = row.columns;
-        /*
-        const params = [
-            'padding-left',
-            'padding-right',
-            'margin-left',
-            'margin-right'
-        ];
-        */
+
         let sum = 0;
         let rowColumn;
 
@@ -332,29 +326,31 @@ class Resizer {
                     }
 
                     if (maxRow) {
-                        sum += this.sumColumnOuterWidth(maxRow);
+                        sum += this.sumColumnOuterWidth(
+                            maxRow,
+                            void 0,
+                            true
+                        );
                     }
-
                 } else {
-
                     // get min-size if "resized" width does not exist
                     sum += (
-                        parseFloat(rowColumn.style.getPropertyValue('width')) ||
-                        convertToPercent(rowColumn, 'min-width', parentRowWidth)
+                        (
+                            !ignoreComponentWidth &&
+                            parseFloat(
+                                rowColumn.style.getPropertyValue('width')
+                            )
+                        ) || (
+                            Math.round(
+                                convertToPercent(
+                                    rowColumn,
+                                    'min-width',
+                                    parentRowWidth
+                                )
+                            )
+                        )
                     );
                 }
-
-                // go over all params like margins / paddings
-
-                /*
-                for (let j = 0, jEnd = params.length; j < jEnd; ++j) {
-                    sum += convertToPercent(
-                        currentColumn.childNodes[1] as HTMLElement,
-                        params[j],
-                        parentRowWidth
-                    );
-                }
-                */
             }
         }
 
