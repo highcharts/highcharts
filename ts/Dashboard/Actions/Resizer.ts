@@ -321,16 +321,19 @@ class Resizer {
                 // min-width/width each of them
                 if (columns[i].layout) {
                     let maxColumns = 0;
-                    let maxRow = columns[i].layout.rows[0];
+                    let columnRows = columns[i].layout.rows;
+                    let maxRow;
 
-                    columns[i].layout.rows.forEach((currentRow) => {
-                        if (currentRow.columns.length > maxColumns) {
-                            maxColumns = currentRow.columns.length;
-                            maxRow = currentRow;
+                    for (let j = 0, jEnd = columnRows.length; j < jEnd; ++j) {
+                        if (columnRows[j].columns.length > maxColumns) {
+                            maxColumns = columnRows[j].columns.length;
+                            maxRow = columnRows[j];
                         }
-                    });
+                    }
 
-                    sum += this.sumColumnOuterWidth(maxRow);
+                    if (maxRow) {
+                        sum += this.sumColumnOuterWidth(maxRow);
+                    }
 
                 } else {
 
