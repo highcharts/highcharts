@@ -232,6 +232,8 @@ interface MapBubbleSeries {
 extend(MapBubbleSeries.prototype, {
     type: 'mapbubble',
 
+    axisTypes: ['colorAxis'],
+
     getBox: MapSeries.prototype.getBox,
 
     // If one single value is passed, it is interpreted as z

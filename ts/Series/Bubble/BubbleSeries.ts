@@ -577,35 +577,27 @@ class BubbleSeries extends ScatterSeries {
     public translate(): void {
 
         // Run the parent method
-        ScatterSeries.prototype.translate.call(this);
+        super.translate.call(this);
 
         this.getRadii();
         this.translateBubble();
     }
 
     public translateBubble(): void {
-        var i,
-            data = this.data,
-            point,
-            radius,
-            radii = this.radii;
-
-
-        // Run the parent method
-        super.translate.call(this);
+        const { data, radii } = this;
         const { minPxSize } = this.getPxExtremes();
 
         // Set the shape type and arguments to be picked up in drawPoints
-        i = data.length;
+        let i = data.length;
 
         while (i--) {
-            point = data[i];
-            radius = radii ? radii[i] : 0; // #1737
+            const point = data[i];
+            const radius = radii ? radii[i] : 0; // #1737
 
             if (isNumber(radius) && radius >= minPxSize / 2) {
                 // Shape arguments
                 point.marker = extend(point.marker, {
-                    radius: radius,
+                    radius,
                     width: 2 * radius,
                     height: 2 * radius
                 });

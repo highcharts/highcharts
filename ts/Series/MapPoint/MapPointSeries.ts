@@ -116,12 +116,13 @@ class MapPointSeries extends ScatterSeries {
     public translate(): void {
         const mapView = this.chart.mapView;
 
+        if (!this.processedXData) {
+            this.processData();
+        }
+        this.generatePoints();
+
         // Create map based translation
         if (mapView) {
-            if (!this.processedXData) {
-                this.processData();
-            }
-            this.generatePoints();
             this.points.forEach((p): void => {
                 if (p && isNumber(p.x) && isNumber(p.y)) {
                     const { x, y } = mapView.toPixels([p.y, p.x]);
@@ -129,10 +130,6 @@ class MapPointSeries extends ScatterSeries {
                     p.plotY = y;
                 }
             });
-
-        // If not map view, fall back to standard scatter translation
-        } else {
-            super.translate.call(this);
         }
     }
 
@@ -151,6 +148,7 @@ interface MapPointSeries {
 }
 extend(MapPointSeries.prototype, {
     type: 'mappoint',
+    axisTypes: ['colorAxis'],
     forceDL: true,
     pointClass: MapPointPoint
 });
