@@ -105,63 +105,73 @@ class InvertModifier extends DataModifier {
      * */
 
     /**
-     * Creates a new table with inverted rows and columns.
+     * Inverts rows and columns in the table.
      *
      * @param {DataTable} table
-     * Table to modify.
+     * Table to invert.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Inverted table as a reference.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
-        const modifier = this,
-            columns = table.getColumns(),
-            newTable = table.clone(true);
+        const modifier = this;
 
-        if (columns.column) { // inverted table
-            const column = columns.column;
+        modifier.emit({ type: 'execute', detail: eventDetail, table });
 
-            for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
-                newTable.setColumn(`${column[i]}`);
-            }
-
-            delete columns.column;
-            const columnNames = Object.keys(columns);
-
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                newTable.setRow(columns[columnNames[i]]);
-            }
-
-        } else { // regular table
-            for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
-                newTable.setColumn(`${i}`);
-            }
-            newTable.setColumn('column');
-
-            const columnNames = Object.keys(columns);
+        if (table.hasColumn('columnNames')) { // inverted table
+            const columnNames: Array<string> = (
+                    table.deleteColumn('columnNames') || []
+                ).map(
+                    (column): string => `${column}`
+                ),
+                columns: DataTable.ColumnCollection = {};
 
             for (
                 let i = 0,
-                    iEnd = columnNames.length,
-                    columnName: string;
+                    iEnd = table.getRowCount(),
+                    row: (DataTable.Row|undefined);
                 i < iEnd;
                 ++i
             ) {
-                columnName = columnNames[i];
-                newTable.setRow([...columns[columnName], columnName]);
+                row = table.getRow(i);
+                if (row) {
+                    columns[columnNames[i]] = row;
+                }
             }
 
+            table.clear();
+            table.setColumns(columns);
+
+        } else { // regular table
+            const columns: DataTable.ColumnCollection = {};
+
+            for (
+                let i = 0,
+                    iEnd = table.getRowCount(),
+                    row: (DataTable.Row|undefined);
+                i < iEnd;
+                ++i
+            ) {
+                row = table.getRow(i);
+                if (row) {
+                    columns[`${i}`] = row;
+                }
+            }
+            columns.columnNames = table.getColumnNames();
+
+            table.clear();
+            table.setColumns(columns);
         }
 
-        modifier.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });
+        modifier.emit({ type: 'afterExecute', detail: eventDetail, table });
 
-        return newTable;
+        return table;
     }
 
     /**

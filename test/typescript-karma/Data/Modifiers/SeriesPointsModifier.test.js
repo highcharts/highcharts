@@ -16,7 +16,7 @@ QUnit.test('SeriesPointsModifier.execute', function (assert) {
         });
 
     assert.strictEqual(
-        modifier.execute(table).getCell(0, 'y'),
+        modifier.modify(table.clone()).getCell(0, 'y'),
         table.getCell(0, 'gdp'),
         'Modified table should contain copy of rows with alternative column names.'
     );

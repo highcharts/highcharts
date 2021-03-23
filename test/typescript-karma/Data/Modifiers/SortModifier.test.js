@@ -15,8 +15,8 @@ QUnit.test('SortModifier.execute', (assert) => {
             direction: 'desc',
             orderByColumn: 'y'
         }),
-        tableDescY = descYModifier.execute(table.clone()),
-        tableAscX = ascXModifier.execute(tableDescY.clone());
+        tableDescY = descYModifier.modify(table.clone()),
+        tableAscX = ascXModifier.modify(tableDescY.clone());
 
     assert.deepEqual(
         tableDescY.getColumn('x'),

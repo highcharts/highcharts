@@ -9,8 +9,7 @@ QUnit.test('InvertModifier.execute', function (assert) {
             y: [ 'a', 'b', 'c', 'd', 'e' ]
         }),
         tableColumnNames = table.getColumnNames(),
-        invertedTable = modifier.execute(table),
-        invertedTableColumnNames = invertedTable.getColumnNames();
+        invertedTable = modifier.modify(table.clone());
 
     assert.notStrictEqual(
         invertedTable,
@@ -25,13 +24,13 @@ QUnit.test('InvertModifier.execute', function (assert) {
     );
 
     assert.deepEqual(
-        invertedTable.getColumn('column'),
+        invertedTable.getColumn('columnNames'),
         tableColumnNames,
         'Row names of inverted table should be the same as column names of original table.'
     );
 
     assert.deepEqual(
-        modifier.execute(invertedTable).toJSON(),
+        modifier.modify(invertedTable.clone()).toJSON(),
         table.toJSON(),
         'Double inverted table should be the same as original table.'
     );

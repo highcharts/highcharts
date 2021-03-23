@@ -9,17 +9,17 @@ QUnit.test('GroupModifier.execute', function (assert) {
         }),
         modifier = new GroupModifier({
             groupColumn: 'y'
-        }),
-        modifiedTable = modifier.execute(table);
+        });
+
+    modifier.modify(table);
 
     assert.ok(
-        modifiedTable !== table &&
-        modifiedTable.getCell(0, 'table') instanceof DataTable,
+        table.getCell(0, 'table') instanceof DataTable,
         'Filtered table should contain subtables.'
     );
 
     assert.deepEqual(
-        modifiedTable.getCell(0, 'table').getColumns(['x', 'y']),
+        table.getCell(0, 'table').getColumns(['x', 'y']),
         {
             x: [0, 1],
             y: ['a', 'a']
@@ -28,7 +28,7 @@ QUnit.test('GroupModifier.execute', function (assert) {
     );
 
     assert.deepEqual(
-        modifiedTable.getCell(1, 'table').getColumns(['x', 'y']),
+        table.getCell(1, 'table').getColumns(['x', 'y']),
         {
             x: [0, 1],
             y: ['b', 'b']

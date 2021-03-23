@@ -123,7 +123,7 @@ class GroupModifier extends DataModifier {
      * @return {DataTable}
      * New modified table.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
@@ -182,7 +182,8 @@ class GroupModifier extends DataModifier {
             }
         }
 
-        table = new DataTable({
+        table.clear();
+        table.setColumns({
             groupBy: byGroups,
             table: tableGroups,
             value: valueGroups

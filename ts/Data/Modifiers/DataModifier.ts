@@ -164,16 +164,15 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Applies modifications to the table rows and returns a new table with the
-     * modified rows.
+     * Applies modifications to the given table.
      *
      * @param {DataTable} table
      * Table to modify.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table as a reference.
      */
-    public abstract execute(table: DataTable): DataTable;
+    public abstract modify(table: DataTable): DataTable;
 
     /**
      * Runs a timed execution of the modifier on the given datatable.
@@ -196,7 +195,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         const results: Array<number> = [];
         const modifier = this as DataModifier<DataModifier.BenchmarkEventObject|DataModifier.EventObject>;
         const execute = (): void => {
-            modifier.execute(dataTable);
+            modifier.modify(dataTable);
             modifier.emit({ type: 'afterBenchmarkIteration' });
         };
 

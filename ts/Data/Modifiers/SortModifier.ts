@@ -123,7 +123,7 @@ class SortModifier extends DataModifier {
      * @return {DataTable}
      * Sorted table as a reference.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
@@ -133,13 +133,11 @@ class SortModifier extends DataModifier {
                 orderByColumn,
                 orderInColumn
             } = modifier.options,
-            columnNames = table.getColumnNames(),
             compare = (
                 direction === 'asc' ?
                     SortModifier.ascending :
                     SortModifier.descending
-            ),
-            orderByIndex = columnNames.indexOf(orderByColumn);
+            );
 
         modifier.emit({
             type: 'execute',
@@ -147,32 +145,31 @@ class SortModifier extends DataModifier {
             table
         });
 
-        const tableRows = table.getRows();
+        const columnNames = table.getColumnNames(),
+            orderByColumnIndex = columnNames.indexOf(orderByColumn),
+            rowReferences = table
+                .getRows()
+                .map((row, index): SortModifier.RowReference => ({
+                    index,
+                    row
+                })),
+            rowsLength = rowReferences.length;
 
-        if (orderByIndex !== -1) {
-            tableRows.sort((
-                a: DataTable.Row,
-                b: DataTable.Row
-            ): number => compare(
-                a[orderByIndex],
-                b[orderByIndex]
+        if (orderByColumnIndex !== -1) {
+            rowReferences.sort((a, b): number => compare(
+                a.row[orderByColumnIndex],
+                b.row[orderByColumnIndex]
             ));
         }
 
         if (orderInColumn) {
-            table = table.clone();
-            if (!table.hasColumn(orderInColumn)) {
-                table.setColumn(orderInColumn);
-            }
-            for (let i = 0, iEnd = tableRows.length; i < iEnd; ++i) {
-                table.setCell(i, orderInColumn, i);
+            for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
+                table.setCell(rowReferences[i].index, orderInColumn, i);
             }
         } else {
-            table = table.clone(true);
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                table.setColumn(columnNames[i]);
+            for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
+                table.setRow(rowReferences[i].row, i);
             }
-            table.setRows(tableRows, 0);
         }
 
         modifier.emit({
@@ -238,11 +235,16 @@ namespace SortModifier {
         orderByColumn: string;
 
         /**
-         * If set, the order of rows in the table will not change, just the
-         * index values of the given column.
+         * Column to update with order index instead of change order of rows.
          */
         orderInColumn?: string;
 
+    }
+
+    /** @private */
+    export interface RowReference {
+        index: number;
+        row: DataTable.Row;
     }
 
 }

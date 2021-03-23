@@ -11,7 +11,7 @@ QUnit.test('RangeModifier.execute', function (assert) {
     let modifier = new RangeModifier({});
 
     assert.deepEqual(
-        modifier.execute(table).getRow(0),
+        modifier.modify(table).getRow(0),
         table.getRow(0),
         'Filtered table should contain same rows.'
     );
@@ -25,7 +25,7 @@ QUnit.test('RangeModifier.execute', function (assert) {
     });
 
     assert.deepEqual(
-        modifier.execute(table).getColumns(),
+        modifier.modify(table).getColumns(),
         {
             x: [ -2, -1 ],
             y: [ 'a', 'b' ]

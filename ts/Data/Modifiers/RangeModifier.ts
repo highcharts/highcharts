@@ -109,8 +109,7 @@ class RangeModifier extends DataModifier {
      * */
 
     /**
-     * Applies modifications to the table rows and returns a new table with
-     * subtable, containing only the filtered rows.
+     * Replaces table rows with filtered rows.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -119,9 +118,9 @@ class RangeModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table as a reference.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
@@ -129,23 +128,22 @@ class RangeModifier extends DataModifier {
             {
                 ranges,
                 strict
-            } = modifier.options,
-            columns = table.getColumns(),
-            newTable = table.clone(true);
-
-        let cell: DataTable.CellType,
-            range: RangeModifier.RangeOptions,
-            rangeColumn: DataTable.Column,
-            row: (DataTable.Row|undefined);
+            } = modifier.options;
 
         this.emit({ type: 'execute', detail: eventDetail, table });
 
         if (ranges.length) {
-            const columnNames = Object.keys(columns);
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                newTable.setColumn(columnNames[i]);
-            }
-            for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
+            const columns = table.getColumns(),
+                rows: Array<DataTable.Row> = [];
+
+            for (
+                let i = 0,
+                    iEnd = ranges.length,
+                    range: RangeModifier.RangeOptions,
+                    rangeColumn: DataTable.Column;
+                i < iEnd;
+                ++i
+            ) {
                 range = ranges[i];
 
                 if (
@@ -157,10 +155,16 @@ class RangeModifier extends DataModifier {
 
                 rangeColumn = (columns[range.column] || []);
 
-                for (let j = 0, jEnd = rangeColumn.length; j < jEnd; ++j) {
+                for (
+                    let j = 0,
+                        jEnd = rangeColumn.length,
+                        cell: DataTable.CellType,
+                        row: (DataTable.Row|undefined);
+                    j < jEnd;
+                    ++j
+                ) {
                     cell = rangeColumn[j];
 
-                    /* eslint-disable @typescript-eslint/indent */
                     switch (typeof cell) {
                         default:
                             continue;
@@ -169,7 +173,6 @@ class RangeModifier extends DataModifier {
                         case 'string':
                             break;
                     }
-                    /* eslint-enable @typescript-eslint/indent */
 
                     if (
                         strict &&
@@ -185,22 +188,23 @@ class RangeModifier extends DataModifier {
                         row = table.getRow(j);
 
                         if (row) {
-                            newTable.setRow(row);
+                            rows.push(row);
                         }
                     }
                 }
             }
-        } else {
-            newTable.setColumns(columns);
+
+            table.clearRows();
+            table.setRows(rows);
         }
 
         this.emit({
             type: 'afterExecute',
             detail: eventDetail,
-            table: newTable
+            table
         });
 
-        return newTable;
+        return table;
     }
 
     /**

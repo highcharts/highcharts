@@ -22,17 +22,18 @@ QUnit.test('ChainModifier.execute', function (assert) {
                     maxValue: 'b'
                 }]
             })
-        ),
-        modifiedTable = modifier.execute(table);
+        );
+
+    modifier.modify(table);
 
     assert.equal(
-        modifiedTable.getRowCount(),
+        table.getRowCount(),
         2,
         'Modified table should contain two rows, one for each group.'
     );
 
     assert.deepEqual(
-        modifiedTable.toJSON(),
+        table.toJSON(),
         {
             $class: 'DataTable',
             columns: {
@@ -59,21 +60,21 @@ QUnit.test('ChainModifier.execute', function (assert) {
 });
 
 QUnit.test('benchmark', function (assert) {
-    const modifier = new ChainModifier(
-        {},
-        new GroupModifier({
-            groupColumn: 'y'
-        }),
-        new RangeModifier({
-            modifier: 'Range',
-            ranges: [{
-                column: 'value',
-                minValue: 'A',
-                maxValue: 'b'
-            }]
-        })
-    );
-    const table = new DataTable();
+    const table = new DataTable(),
+        modifier = new ChainModifier(
+            {},
+            new GroupModifier({
+                groupColumn: 'y'
+            }),
+            new RangeModifier({
+                modifier: 'Range',
+                ranges: [{
+                    column: 'value',
+                    minValue: 'A',
+                    maxValue: 'b'
+                }]
+            })
+        );
     
     table.setRowObjects([{
         x: 1,

@@ -102,8 +102,8 @@ class SeriesPointsModifier extends DataModifier {
      * */
 
     /**
-     * Creates a new table with the same rows and add alternative
-     * column names (alias) depending on mapping option.
+     * Renames columns to alternative column names (alias) depending on mapping
+     * option.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -112,26 +112,26 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table as a reference.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const modifier = this,
             aliasMap = modifier.options.aliasMap || {},
-            aliases = Object.keys(aliasMap),
-            newTable = new DataTable();
+            aliases = Object.keys(aliasMap);
 
-        // eslint-disable-next-line guard-for-in
+        this.emit({ type: 'execute', detail: eventDetail, table });
+
         for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
             alias = aliases[i];
-            newTable.setColumn(alias, table.getColumn(aliasMap[alias]));
+            table.renameColumn(aliasMap[alias], alias);
         }
 
-        this.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });
+        this.emit({ type: 'afterExecute', detail: eventDetail, table });
 
-        return newTable;
+        return table;
     }
 
     /**

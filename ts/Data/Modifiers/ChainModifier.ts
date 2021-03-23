@@ -181,8 +181,7 @@ class ChainModifier extends DataModifier<ChainModifier.EventObject> {
     }
 
     /**
-     * Applies modifications to the table rows and returns a new table with the
-     * modified rows.
+     * Applies several modifications to the table.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -191,12 +190,12 @@ class ChainModifier extends DataModifier<ChainModifier.EventObject> {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table as a reference.
      *
      * @emits ChainDataModifier#execute
      * @emits ChainDataModifier#afterExecute
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
@@ -223,7 +222,7 @@ class ChainModifier extends DataModifier<ChainModifier.EventObject> {
                 modifier
             });
 
-            table = modifier.execute(table);
+            table = modifier.modify(table);
 
             this.emit({
                 type: 'afterExecuteModifier',
