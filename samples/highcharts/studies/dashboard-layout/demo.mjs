@@ -336,7 +336,9 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         column: 'dashboard-col-nolayout-0',
         type: 'chart',
         chartOptions: {
-            type: 'pie',
+            chart: {
+                animation: false
+            },
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]

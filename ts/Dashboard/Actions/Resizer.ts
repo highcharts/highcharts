@@ -116,7 +116,7 @@ class Resizer {
                 {
                     width: snapWidth + 'px',
                     right: (
-                        -(snapWidth / 2) +
+                        -(snapWidth / 2) -
                         (
                             getStyle(
                                 column.container,
@@ -218,43 +218,109 @@ class Resizer {
         parentColumn: Column|undefined,
         e: PointerEvent
     ): void {
+        const columnContainer = parentColumn && parentColumn.container;
 
-        const colDiv = parentColumn && parentColumn.container;
-
-        if (parentColumn && colDiv) {
-            const parentRow = (colDiv.parentNode as HTMLDOMElement);
+        if (parentColumn && columnContainer) {
+            const parentRow = (columnContainer.parentNode as HTMLDOMElement);
             const parentRowWidth = parentRow.offsetWidth;
 
-            colDiv.style.width =
+            columnContainer.style.width =
                 Math.min(
                     (
                         (
                             e.clientX -
-                            colDiv.getBoundingClientRect().left
+                            columnContainer.getBoundingClientRect().left
                         ) / parentRowWidth
                     ) * 100,
-                    // 100% - (xcolumns * min-width) 
-                    100 - (
-                        parentRow.childNodes.length *
-                        (
-                            (getStyle(colDiv, 'min-width', true) as number)
-                            /*
-                            (getStyle(colDiv, 'padding-left', true) as number) +
-                            (getStyle(colDiv, 'padding-right', true) as number) +
-                            (getStyle(colDiv, 'margin-right', true) as number) +
-                            (getStyle(colDiv, 'margin-left', true) as number)
-                            */
-                        )
-                    )
+                    100 - this.sumColumnOuterWidth(columnContainer)
                 ) + '%';
 
-            colDiv.style.flex = 'none';
+            columnContainer.style.flex = 'none';
 
-            // call component redraw
-            parentColumn.mountedComponent?.redraw();
+            // call component resize
+            // parentColumn.mountedComponent?.resize();
         }
     }
+    /**
+     * Extract param and convert to percent if its in pixels.
+     *
+     * @param {HTMLDOMElement} element
+     * Element for extract a style
+     *
+     * @param {string} param
+     * Name of style param
+     *
+     * @param {number} parentNodeWidth
+     * Optional parent node width to calculate value from pixels to percent
+     *
+     * @return {number}
+     * Number in percents.
+     */
+    public convertToPercent(
+        element: HTMLDOMElement,
+        param: string,
+        parentNodeWidth?: number
+    ): number {
+        const paramValue = getStyle(element, param, false) as string;
 
+        if (
+            paramValue &&
+            paramValue.match(/px/i) &&
+            parentNodeWidth
+        ) {
+            // convert to percent
+            return (parseFloat(paramValue) / parentNodeWidth) * 100;
+        }
+
+        return parseFloat(paramValue) || 0;
+    }
+
+    public sumColumnOuterWidth(
+        currentColumn: HTMLDOMElement
+    ): number {
+        const convertToPercent = this.convertToPercent;
+        const row = currentColumn.parentNode as HTMLElement;
+        const parentRowWidth = row.offsetWidth;
+        const columns =
+            (row as HTMLDOMElement).childNodes;
+
+        const params = [
+            'padding-left',
+            'padding-right',
+            'margin-left',
+            'margin-right'
+        ];
+
+        let sum = 0;
+        let column;
+
+
+        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+
+            column = columns[i] as HTMLElement;
+
+            if (column !== currentColumn) {
+                // get min-size if resized width does not exist
+                sum += (
+                    parseFloat(column.style.getPropertyValue('width')) ||
+                    convertToPercent(column, 'min-width', parentRowWidth)
+                );
+
+                // go over all params like margins / paddings
+                /*
+                for (let j = 0, jEnd = params.length; j < jEnd; ++j) {
+                    sum += convertToPercent(
+                        currentColumn.childNodes[1] as HTMLElement,
+                        params[j],
+                        parentRowWidth
+                    );
+                }
+                */
+            }
+        }
+
+        return sum;
+    }
     /**
      * Destroy Resizer
      */
