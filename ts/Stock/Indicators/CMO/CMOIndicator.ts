@@ -10,23 +10,15 @@
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
-import type {
-    CMOOptions,
-    CMOParamsOptions
-} from './CMOOptions';
+import type { CMOOptions, CMOParamsOptions } from './CMOOptions';
 import type CMOPoint from './CMOPoint';
 
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
-    seriesTypes: {
-        sma: SMAIndicator
-    }
+    seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const {
-    isNumber,
-    merge
-} = U;
+const { isNumber, merge } = U;
 
 /* eslint-enable require-jsdoc */
 
@@ -55,12 +47,15 @@ class CMOIndicator extends SMAIndicator {
      * @requires     stock/indicators/cmo
      * @optionparent plotOptions.cmo
      */
-    public static defaultOptions: CMOOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            period: 20,
-            index: 3
-        }
-    } as CMOOptions);
+    public static defaultOptions: CMOOptions = merge(
+        SMAIndicator.defaultOptions,
+        {
+            params: {
+                period: 20,
+                index: 3
+            }
+        } as CMOOptions
+    );
 
     /* *
      *
@@ -77,26 +72,6 @@ class CMOIndicator extends SMAIndicator {
      *  Functions
      *
      * */
-
-    public calculateSums(
-        period: number,
-        i: number,
-        values: Array<number>
-    ): { sumOfLowerValues: number; sumOfHigherValues: number } {
-        let sumOfLowerValues = 0,
-            sumOfHigherValues = 0;
-
-
-        for (let j = i; j > i - period; j--) {
-            if (values[j] > values[j - 1]) {
-                sumOfHigherValues += values[j] - values[j - 1];
-            } else if (values[j] < values[j - 1]) {
-                sumOfLowerValues += values[j - 1] - values[j];
-            }
-        }
-
-        return { sumOfLowerValues, sumOfHigherValues };
-    }
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
@@ -124,17 +99,64 @@ class CMOIndicator extends SMAIndicator {
             // shorter then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
             index = Math.min(index, yVal[0].length - 1);
-            values = (yVal as Array<Array<number>>).map((value: Array<number>): number => value[index]);
+            values = (yVal as Array<Array<number>>).map(
+                (value: Array<number>): number => value[index]
+            );
         }
 
-        for (i = period; i < yValLen; i++) {
-            const { sumOfLowerValues, sumOfHigherValues } = this.calculateSums(period, i, values),
-                x = xVal[i],
-                y = 100 * (sumOfHigherValues - sumOfLowerValues) / (sumOfHigherValues + sumOfLowerValues);
+        let firstAddedSum = 0,
+            sumOfHigherValues = 0,
+            sumOfLowerValues = 0,
+            y;
+        // calculate first point, check if the first value
+        // was added to sum of higher/lower values, and what was the value.
 
-            xData.push(x);
+        for (let j = period; j > 0; j--) {
+            if (values[j] > values[j - 1]) {
+                sumOfHigherValues += values[j] - values[j - 1];
+            } else if (values[j] < values[j - 1]) {
+                sumOfLowerValues += values[j - 1] - values[j];
+            }
+        }
+        // you might devide by 0 if all values are equal,
+        // so return 0 in this case.
+        y =
+            sumOfHigherValues + sumOfLowerValues > 0 ?
+                (100 * (sumOfHigherValues - sumOfLowerValues)) /
+                (sumOfHigherValues + sumOfLowerValues) :
+                0;
+
+        xData.push(xVal[period]);
+        yData.push(y);
+        CMO.push([xVal[period], y]);
+
+        for (i = period + 1; i < yValLen; i++) {
+            firstAddedSum = Math.abs(
+                values[i - period - 1] - values[i - period]
+            );
+            if (values[i] > values[i - 1]) {
+                sumOfHigherValues += values[i] - values[i - 1];
+            } else if (values[i] < values[i - 1]) {
+                sumOfLowerValues += values[i - 1] - values[i];
+            }
+
+            // Check, to which sum was the first value added to,
+            // and substract this value from given sum.
+            if (values[i - period] > values[i - period - 1]) {
+                sumOfHigherValues -= firstAddedSum;
+            } else {
+                sumOfLowerValues -= firstAddedSum;
+            }
+            // Same as above.
+            y =
+                sumOfHigherValues + sumOfLowerValues > 0 ?
+                    (100 * (sumOfHigherValues - sumOfLowerValues)) /
+                    (sumOfHigherValues + sumOfLowerValues) :
+                    0;
+
+            xData.push(xVal[i]);
             yData.push(y);
-            CMO.push([x, y]);
+            CMO.push([xVal[i], y]);
         }
 
         return {
@@ -189,4 +211,4 @@ export default CMOIndicator;
  * @apioption series.cmo
  */
 
-''; // to include the above in the js output
+(''); // to include the above in the js output
