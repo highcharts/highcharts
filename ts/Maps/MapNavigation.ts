@@ -400,15 +400,15 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
     mapZoom: function (
         this: Highcharts.MapNavigationChart,
         howMuch?: number,
-        lat?: number,
-        lng?: number,
+        xProjected?: number,
+        yProjected?: number,
         chartX?: number,
         chartY?: number
     ): void {
         this.mapView?.zoomBy(
             howMuch,
-            typeof lat === 'number' && typeof lng === 'number' ?
-                [lat, lng] :
+            typeof xProjected === 'number' && typeof yProjected === 'number' ?
+                { x: xProjected, y: yProjected } :
                 void 0,
             typeof chartX === 'number' && typeof chartY === 'number' ?
                 [chartX, chartY] :

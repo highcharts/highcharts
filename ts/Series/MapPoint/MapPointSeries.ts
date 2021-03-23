@@ -125,7 +125,7 @@ class MapPointSeries extends ScatterSeries {
         if (mapView) {
             this.points.forEach((p): void => {
                 if (p && isNumber(p.x) && isNumber(p.y)) {
-                    const { x, y } = mapView.toPixels([p.y, p.x]);
+                    const { x, y } = mapView.toPixels({ x: p.x, y: p.y });
                     p.plotX = x;
                     p.plotY = y;
                 }

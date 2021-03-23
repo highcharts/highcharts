@@ -404,7 +404,7 @@ class MapSeries extends ScatterSeries {
      *
      * */
 
-    public baseView?: { center: Highcharts.LatLng; zoom: number };
+    public baseView?: { center: Highcharts.ProjectedXY; zoom: number };
 
     public chart: MapChart = void 0 as any;
 
@@ -684,7 +684,7 @@ class MapSeries extends ScatterSeries {
             // corner.
             if (mapView) {
                 this.baseView = {
-                    center: [mapView.center[0], mapView.center[1]],
+                    center: { x: mapView.center.x, y: mapView.center.y },
                     zoom: mapView.zoom
                 };
             }
@@ -705,17 +705,17 @@ class MapSeries extends ScatterSeries {
             const oldTransA = (256 / 360) * Math.pow(2, baseView.zoom);
             const newTransA = (256 / 360) * Math.pow(2, mapView.zoom);
 
-            const oldLeftLat = baseView.center[1] - (chart.plotWidth / 2) /
+            const oldLeft = baseView.center.x - (chart.plotWidth / 2) /
                 oldTransA;
-            const newLeftLat = mapView.center[1] - (chart.plotWidth / 2) /
+            const newLeft = mapView.center.x - (chart.plotWidth / 2) /
                 newTransA;
-            translateX = (oldLeftLat - newLeftLat) * newTransA;
+            translateX = (oldLeft - newLeft) * newTransA;
 
-            const oldTopLng = baseView.center[0] - (chart.plotHeight / 2) /
+            const oldTop = baseView.center.y - (chart.plotHeight / 2) /
                 oldTransA;
-            const newTopLng = mapView.center[0] - (chart.plotHeight / 2) /
+            const newTop = mapView.center.y - (chart.plotHeight / 2) /
                 newTransA;
-            translateY = (oldTopLng - newTopLng) * newTransA;
+            translateY = (oldTop - newTop) * newTransA;
 
             // Handle rounding errors in normal view (#3789)
             if (scale > 0.99 && scale < 1.01) {
@@ -1226,39 +1226,39 @@ class MapSeries extends ScatterSeries {
             // A zoom of 0 means the world (360x360 degrees) fits in a
             // 256x256 px tile
             const transA = (256 / 360) * Math.pow(2, mapView.zoom);
-            const [lat, lng] = mapView.center;
+            const { x, y } = mapView.center;
             const xOffset = this.chart.plotWidth / 2;
             const yOffset = this.chart.plotHeight / 2;
             path.forEach((seg): void => {
                 if (seg[0] === 'M') {
                     ret.push([
                         'M',
-                        (seg[1] - lng) * transA + xOffset,
-                        (seg[2] - lat) * transA + yOffset
+                        (seg[1] - x) * transA + xOffset,
+                        (seg[2] - y) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'L') {
                     ret.push([
                         'L',
-                        (seg[1] - lng) * transA + xOffset,
-                        (seg[2] - lat) * transA + yOffset
+                        (seg[1] - x) * transA + xOffset,
+                        (seg[2] - y) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'C') {
                     ret.push([
                         'C',
-                        (seg[1] - lng) * transA + xOffset,
-                        (seg[2] - lat) * transA + yOffset,
-                        (seg[3] - lng) * transA + xOffset,
-                        (seg[4] - lat) * transA + yOffset,
-                        (seg[5] - lng) * transA + xOffset,
-                        (seg[6] - lat) * transA + yOffset
+                        (seg[1] - x) * transA + xOffset,
+                        (seg[2] - y) * transA + yOffset,
+                        (seg[3] - x) * transA + xOffset,
+                        (seg[4] - y) * transA + yOffset,
+                        (seg[5] - x) * transA + xOffset,
+                        (seg[6] - y) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'Q') {
                     ret.push([
                         'Q',
-                        (seg[1] - lng) * transA + xOffset,
-                        (seg[2] - lat) * transA + yOffset,
-                        (seg[3] - lng) * transA + xOffset,
-                        (seg[4] - lat) * transA + yOffset
+                        (seg[1] - x) * transA + xOffset,
+                        (seg[2] - y) * transA + yOffset,
+                        (seg[3] - x) * transA + xOffset,
+                        (seg[4] - y) * transA + yOffset
                     ]);
                 } else if (seg[0] === 'Z') {
                     ret.push(['Z']);

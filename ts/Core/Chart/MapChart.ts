@@ -238,7 +238,7 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
     }
 });
 
-let mouseDownCenter: Highcharts.LatLng;
+let mouseDownCenter: Highcharts.ProjectedXY;
 let mouseDownKey: string;
 addEvent(Chart, 'pan', function (e: PointerEvent): void {
     const {
@@ -257,14 +257,14 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
 
         // Reset starting position
         if (key !== mouseDownKey) {
-            mouseDownCenter = [...mapView.center];
+            mouseDownCenter = merge(mapView.center);
             mouseDownKey = key;
         }
 
-        const center: Highcharts.LatLng = [
-            mouseDownCenter[0] + (mouseDownY - chartY) / scale,
-            mouseDownCenter[1] + (mouseDownX - chartX) / scale
-        ];
+        const center: Highcharts.ProjectedXY = {
+            y: mouseDownCenter.y + (mouseDownY - chartY) / scale,
+            x: mouseDownCenter.x + (mouseDownX - chartX) / scale
+        };
 
         mapView.setView(center, void 0, true, false);
 
@@ -281,8 +281,8 @@ addEvent(Chart, 'selection', function (evt: PointerEvent): void {
         if (!(evt as any).resetSelection) {
             const x = evt.x - this.plotLeft;
             const y = evt.y - this.plotTop;
-            const [n, w] = mapView.toValues({ x, y });
-            const [s, e] = mapView.toValues(
+            const { y: n, x: w } = mapView.toValues({ x, y });
+            const { y: s, x: e } = mapView.toValues(
                 { x: x + evt.width, y: y + evt.height }
             );
             mapView.fitToBounds(
