@@ -328,7 +328,7 @@ Chart.prototype.transformFromLatLon = function (
      * @apioption  chart.proj4
      */
 
-    const proj4 = (this.userOptions.chart?.proj4 || win.proj4);
+    const proj4 = this.options.chart.proj4 || win.proj4;
     if (!proj4) {
         error(21, false, this);
         return {
@@ -336,6 +336,17 @@ Chart.prototype.transformFromLatLon = function (
             y: null
         };
     }
+
+    const {
+        jsonmarginX = 0,
+        jsonmarginY = 0,
+        jsonres = 1,
+        scale = 1,
+        xoffset = 0,
+        xpan = 0,
+        yoffset = 0,
+        ypan = 0
+    } = transform;
 
     var projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
@@ -348,16 +359,8 @@ Chart.prototype.transformFromLatLon = function (
         ] : projected;
 
     return {
-        x: (
-            (rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) +
-            (transform.xpan || 0)
-        ) * (transform.jsonres || 1) +
-        (transform.jsonmarginX || 0),
-        y: (
-            ((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) +
-            (transform.ypan || 0)
-        ) * (transform.jsonres || 1) -
-        (transform.jsonmarginY || 0)
+        x: ((rotated[0] - xoffset) * scale + xpan) * jsonres + jsonmarginX,
+        y: ((yoffset - rotated[1]) * scale + ypan) * jsonres - jsonmarginY
     };
 };
 
@@ -387,27 +390,31 @@ Chart.prototype.transformToLatLon = function (
     point: Highcharts.MapCoordinateObject,
     transform: any
 ): (Highcharts.MapLatLonObject|undefined) {
-    if (typeof win.proj4 === 'undefined') {
+
+    const proj4 = this.options.chart.proj4 || win.proj4;
+    if (!proj4) {
         error(21, false, this);
         return;
     }
 
+    if (point.y === null) {
+        return;
+    }
+
+    const {
+        jsonmarginX = 0,
+        jsonmarginY = 0,
+        jsonres = 1,
+        scale = 1,
+        xoffset = 0,
+        xpan = 0,
+        yoffset = 0,
+        ypan = 0
+    } = transform;
+
     var normalized = {
-            x: (
-                (
-                    point.x -
-                    (transform.jsonmarginX || 0)
-                ) / (transform.jsonres || 1) -
-                (transform.xpan || 0)
-            ) / (transform.scale || 1) +
-            (transform.xoffset || 0),
-            y: (
-                (
-                    -(point.y as any) - (transform.jsonmarginY || 0)
-                ) / (transform.jsonres || 1) +
-                (transform.ypan || 0)
-            ) / (transform.scale || 1) +
-            (transform.yoffset || 0)
+            x: ((point.x - jsonmarginX) / jsonres - xpan) / scale + xoffset,
+            y: ((-point.y - jsonmarginY) / jsonres + ypan) / scale + yoffset
         },
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
