@@ -28,12 +28,6 @@ const {
     merge
 } = U;
 
-/* eslint-disable require-jsdoc */
-
-// Utils:
-function toFixed(a: number, n: number): number {
-    return parseFloat(a.toFixed(n));
-}
 /* eslint-enable require-jsdoc */
 
 /**
@@ -75,8 +69,8 @@ class CMOIndicator extends SMAIndicator {
      * */
 
     public data: Array<CMOPoint> = void 0 as any;
-    public points: Array<CMOPoint> = void 0 as any;
     public options: CMOOptions = void 0 as any;
+    public points: Array<CMOPoint> = void 0 as any;
 
     /* *
      *
@@ -108,15 +102,15 @@ class CMOIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: CMOParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {
-        var period = params.period as any,
+        const period = params.period as any,
             xVal: Array<number> = series.xData as any,
             yVal: Array<number> | Array<Array<number>> = series.yData as any,
             yValLen: number = yVal ? yVal.length : 0,
             CMO: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [],
+            yData: Array<number> = [];
+        let i: number,
             index = params.index as number,
-            i: number,
             values: Array<number>;
 
         if (xVal.length < period) {

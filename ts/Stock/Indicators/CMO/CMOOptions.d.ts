@@ -29,7 +29,6 @@ export interface CMOOptions extends SMAOptions {
 
 export interface CMOParamsOptions extends SMAParamsOptions {
     // for inheritance
-    decimals?: number;
 }
 
 export default CMOOptions;
