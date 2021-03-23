@@ -1893,7 +1893,6 @@ class Pointer {
             ),
             useSharedTooltip: (boolean|undefined),
             followPointer: (boolean|undefined),
-            anchor: Array<number>,
             points: Array<Point>;
 
         // Update variables from hoverData.
@@ -1976,11 +1975,8 @@ class Pointer {
             }
         // Update positions (regardless of kdpoint or hoverPoint)
         } else if (followPointer && tooltip && !tooltip.isHidden) {
-            anchor = tooltip.getAnchor([{} as any], e);
-            if (
-                tooltip.isInsideX(anchor[0]) &&
-                tooltip.isInsideY(anchor[1])
-            ) {
+            const anchor = tooltip.getAnchor([{} as any], e);
+            if (tooltip.isInside(anchor[0], anchor[1])) {
                 tooltip.updatePosition(
                     { plotX: anchor[0], plotY: anchor[1] } as any
                 );

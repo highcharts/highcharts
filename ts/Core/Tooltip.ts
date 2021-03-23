@@ -121,8 +121,12 @@ declare global {
             ): string;
             public hide(delay?: number): void;
             public init(chart: Chart, options: TooltipOptions): void;
-            public isInsideX(plotX: number, series?: Series, paneCoordinates?: boolean): boolean;
-            public isInsideY(plotY: number, series?: Series, paneCoordinates?: boolean): boolean;
+            public isInside(
+                plotX: (number|boolean),
+                plotY: number,
+                series?: Series,
+                paneCoordinates?: boolean
+            ): boolean;
             public isStickyOnContact(): boolean;
             public move(
                 x: number,
@@ -1388,10 +1392,7 @@ class Tooltip {
 
                 if (
                     chart.polar ||
-                    (
-                        this.isInsideX(checkX, currentSeries, !point.tooltipPos) &&
-                        this.isInsideY(checkY, currentSeries, !point.tooltipPos)
-                    ) ||
+                    this.isInside(checkX, checkY, currentSeries, !point.tooltipPos) ||
                     currentSeries.is('windbarb') // Windbarb is outside plot
                 ) {
                     const label = tooltip.getLabel();
@@ -1535,7 +1536,7 @@ class Tooltip {
                 anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
 
                 // Set anchorY, limit to the scrollable plot area
-                if (tooltip.isInsideY(plotY, series)) {
+                if (tooltip.isInside(true, plotY, series)) {
                     anchorY = yAxis.pos + plotY;
                 }
             }
@@ -1813,87 +1814,74 @@ class Tooltip {
     }
 
     /**
-     * Checks if a point is within horizontal visible plot and axis bounds.
+     * Checks if a point is within visible plot and axis bounds.
      *
      * @private
-     * @param {number} plotX
-     * @param {Highcharts.Series} series
-     * @param {boolean} paneCoordinates
-     * @return {boolean}
-     */
-    public isInsideX(plotX: number, series?: Series, paneCoordinates?: boolean): boolean {
-        const {
-            inverted,
-            plotBox,
-            plotLeft,
-            scrollablePlotBox,
-            scrollingContainer: {
-                scrollLeft
-            } = { scrollLeft: 0 }
-        } = this.chart;
-
-        const axis = (series && (inverted ? series.yAxis : series.xAxis)) || {
-            pos: plotLeft,
-            len: Infinity
-        };
-
-        if (this.followPointer) {
-            paneCoordinates = false;
-        }
-
-        const x = pick(paneCoordinates, true) ? axis.pos + plotX : plotLeft + plotX;
-
-        return (
-            x >= Math.max(
-                scrollLeft + plotLeft,
-                axis.pos
-            ) &&
-            x <= Math.min(
-                scrollLeft + plotLeft + (scrollablePlotBox || plotBox).width,
-                axis.pos + axis.len
-            )
-        );
-    }
-
-    /**
-     * Checks if a point is within vertical visible plot and axis bounds.
-     *
-     * @private
+     * @param {number|boolean} plotX
      * @param {number} plotY
      * @param {Highcharts.Series} series
      * @param {boolean} paneCoordinates
      * @return {boolean}
      */
-    public isInsideY(plotY: number, series?: Series, paneCoordinates?: boolean): boolean {
+    public isInside(plotX: (number|boolean), plotY: number, series?: Series, paneCoordinates?: boolean): boolean {
         const {
             inverted,
             plotBox,
+            plotLeft,
             plotTop,
             scrollablePlotBox,
             scrollingContainer: {
+                scrollLeft,
                 scrollTop
-            } = { scrollTop: 0 }
+            } = {
+                scrollLeft: 0,
+                scrollTop: 0
+            }
         } = this.chart;
-
-        const axis = (series && (inverted ? series.xAxis : series.yAxis)) || {
-            pos: plotTop,
-            len: Infinity
-        };
 
         if (this.followPointer) {
             paneCoordinates = false;
         }
+        paneCoordinates = pick(paneCoordinates, true);
 
-        const y = pick(paneCoordinates, true) ? axis.pos + plotY : plotTop + plotY;
+        let isXInside = plotX === true;
+
+        if (isNumber(plotX)) {
+            const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
+                pos: plotLeft,
+                len: Infinity
+            };
+
+            const x = paneCoordinates ? xAxis.pos + plotX : plotLeft + plotX;
+
+            isXInside = (
+                x >= Math.max(
+                    scrollLeft + plotLeft,
+                    xAxis.pos
+                ) &&
+                x <= Math.min(
+                    scrollLeft + plotLeft + (scrollablePlotBox || plotBox).width,
+                    xAxis.pos + xAxis.len
+                )
+            );
+        }
+
+        const yAxis = (series && (inverted ? series.xAxis : series.yAxis)) || {
+            pos: plotTop,
+            len: Infinity
+        };
+
+        const y = paneCoordinates ? yAxis.pos + plotY : plotTop + plotY;
 
         return (
+            isXInside &&
             y >= Math.max(
                 scrollTop + plotTop,
-                axis.pos
+                yAxis.pos
             ) &&
             y <= Math.min(
                 scrollTop + plotTop + (scrollablePlotBox || plotBox).height,
-                axis.pos + axis.len
+                yAxis.pos + yAxis.len
             )
         );
     }
