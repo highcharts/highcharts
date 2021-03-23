@@ -538,10 +538,12 @@ namespace error {
 function flat(
     obj: AnyRecord
 ): AnyRecord {
-    const flatObject: AnyRecord = {};
-    Object
-        .getOwnPropertyNames(obj)
-        .forEach(function (name: string): void {
+    const flatObject: AnyRecord = {},
+        hasOwnProperty = {}.hasOwnProperty,
+        keys = Object.keys(obj);
+    for (let i = 0, iEnd = keys.length, name: string; i < iEnd; ++i) {
+        name = keys[i];
+        if (hasOwnProperty.call(obj, name)) {
             if (obj[name] instanceof Array) {
                 flatObject[name] = obj[name].map(flat);
             } else if (
@@ -558,7 +560,8 @@ function flat(
             } else {
                 flatObject[name] = obj[name];
             }
-        });
+        }
+    }
     return flatObject;
 }
 
