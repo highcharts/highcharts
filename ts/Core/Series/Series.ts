@@ -3864,15 +3864,17 @@ class Series {
             keys = options.keys,
             indexOfX = 0,
             indexOfY = 1,
-            updatedData;
+            updatedData,
+            table = Series.getTableFromSeriesOptions({ data }, series);
 
         data = (data || []);
         dataLength = data.length;
         redraw = pick(redraw, true);
-        series.table = Series.getTableFromSeriesOptions({ data }, series);
 
         if (dataSorting && dataSorting.enabled) {
-            data = this.sortData(data);
+            series.sortData(table);
+            series.table = table;
+            data = (Series.getSeriesOptionsFromTable(table).data || data);
         }
 
         // First try to run Point.update which is cheaper, allows animation,
@@ -3888,7 +3890,7 @@ class Series {
             // (#8355)
             !series.isSeriesBoosting
         ) {
-            updatedData = this.updateData(data, animation);
+            updatedData = series.updateData(data, animation);
         }
 
         if (!updatedData) {
@@ -4007,20 +4009,21 @@ class Series {
      * @private
      * @function Highcharts.Series#sortData
      *
-     * @param {Array<Highcharts.PointOptionsType>} data
-     * Data to sort.
+     * @param {Highcharts.DataTable} table
+     * Table to sort.
      *
-     * @return {Array<Highcharts.PointOptionsObject>}
-     * Returns sorted data.
+     * @return {Highcharts.DataTable}
+     * Sorted table a reference.
      */
-    public sortData(
-        data: Array<(PointOptions|PointShortOptions)>
-    ): Array<PointOptions> {
+    public sortData(table: DataTable): DataTable {
         var series = this,
             options = series.options,
             dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
-            sortKey = dataSorting.sortKey || 'y',
-            sortedData: Array<Point>,
+            sortModify = (new SortModifier({
+                orderByColumn: (dataSorting.sortKey || 'y'),
+                orderInColumn: 'x'
+            })),
+            rowCount = table.getRowCount(),
             getPointOptionsObject = function (
                 series: Series,
                 pointOptions: (PointOptions|PointShortOptions)
@@ -4032,43 +4035,53 @@ class Series {
             };
 
         // Save original index
-        data.forEach(function (pointOptions, i): void {
-            data[i] = getPointOptionsObject(series, pointOptions);
-            (data[i] as any).index = i;
-        }, this);
+        if (!table.hasColumn('index')) {
+            const indexColumn: DataTable.Column = [];
+            for (let i = 0, iEnd = rowCount; i < iEnd; ++i) {
+                indexColumn[i] = i;
+            }
+            table.setColumn('index', indexColumn);
+        }
 
         // Sorting
-        sortedData = data.concat().sort((a, b): number => {
-            const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
-            const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
-            return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
-        }) as Array<Point>;
-        // Set x value depending on the position in the array
-        sortedData.forEach(function (point, i): void {
-            point.x = i;
-        }, this);
+        sortModify.modify(table);
 
         // Set the same x for linked series points if they don't have their
         // own sorting
         if (series.linkedSeries) {
             series.linkedSeries.forEach(function (linkedSeries): void {
-                var options = linkedSeries.options,
-                    seriesData = options.data as Array<PointOptions>;
+                const seriesOptions = linkedSeries.options,
+                    seriesData = seriesOptions.data as Array<PointOptions>;
 
                 if (
-                    (!options.dataSorting ||
-                    !options.dataSorting.enabled) &&
+                    (!seriesOptions.dataSorting ||
+                    !seriesOptions.dataSorting.enabled) &&
                     seriesData
                 ) {
+                    let seriesTable = linkedSeries.table,
+                        x: number;
+
+                    if (!seriesTable) {
+                        seriesTable = linkedSeries.table = (
+                            Series.getTableFromSeriesOptions(
+                                seriesOptions,
+                                linkedSeries
+                            )
+                        );
+                    }
+
                     seriesData.forEach(function (pointOptions, i): void {
                         seriesData[i] = getPointOptionsObject(
                             linkedSeries,
                             pointOptions
                         );
 
-                        if (data[i]) {
-                            seriesData[i].x = (data[i] as any).x;
+                        if (i < rowCount) {
+                            x = table.getCellAsNumber(i, 'x');
+                            seriesData[i].x = x;
                             seriesData[i].index = i;
+                            seriesTable.setCell(i, 'x', x);
+                            seriesTable.setCell(i, 'index', i);
                         }
                     });
 
@@ -4077,7 +4090,7 @@ class Series {
             });
         }
 
-        return data as any;
+        return table;
     }
 
     /**
