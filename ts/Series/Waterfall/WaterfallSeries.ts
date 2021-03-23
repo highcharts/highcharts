@@ -786,8 +786,9 @@ class WaterfallSeries extends ColumnSeries {
         totalYVal = actualSum = prevSum = stackThreshold;
 
         // code responsible for creating stacks for waterfall series
-        if (series.visible ||
-            !(series.chart.options.chart as any).ignoreHiddenSeries
+        if (
+            series.visible ||
+            !series.chart.options.chart.ignoreHiddenSeries
         ) {
             changed = waterfallStacks.changed;
             alreadyChanged = waterfallStacks.alreadyChanged;
@@ -938,7 +939,7 @@ class WaterfallSeries extends ColumnSeries {
 }
 
 interface WaterfallSeries {
-    getZonesGraph: typeof LineSeries.prototype.getZonesGraphs;
+    getZonesGraphs: typeof LineSeries.prototype.getZonesGraphs;
     pointClass: typeof WaterfallPoint;
     pointValKey: string;
     showLine: boolean;

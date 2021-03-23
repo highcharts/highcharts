@@ -837,7 +837,7 @@ Series.prototype.alignDataLabel = function (
         }, alignTo);
 
         // Add the text size for alignment calculation
-        extend(options, {
+        extend<DataLabelOptions|BBoxObject>(options, {
             width: bBox.width,
             height: bBox.height
         });
@@ -887,7 +887,7 @@ Series.prototype.alignDataLabel = function (
 
         } else {
             setStartPos(alignTo); // data sorting
-            dataLabel.align(options as any, null as any, alignTo);
+            dataLabel.align(options, void 0, alignTo);
             alignAttr = dataLabel.alignAttr;
         }
 

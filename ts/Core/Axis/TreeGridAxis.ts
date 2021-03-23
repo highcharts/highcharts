@@ -106,7 +106,7 @@ namespace TreeGridAxis {
      *
      * */
 
-    export interface AxisBreakObject extends AxisTypes.AxisBreakObject {
+    export interface AxisBreakObject extends Highcharts.XAxisBreaksOptions {
         showPoints: boolean;
     }
 
@@ -198,7 +198,7 @@ namespace TreeGridAxis {
     function getBreakFromNode(
         node: GridNode,
         max: number
-    ): Partial<AxisBreakObject> {
+    ): AxisBreakObject {
         var from = node.collapseStart || 0,
             to = node.collapseEnd || 0;
 
@@ -574,7 +574,7 @@ namespace TreeGridAxis {
             ticks = axis.ticks;
         let tick = ticks[pos],
             levelOptions,
-            options: (TreeGridAxis.Options | undefined),
+            options: (DeepPartial<TreeGridAxis.Options> | undefined),
             gridNode;
 
         if (
@@ -623,19 +623,13 @@ namespace TreeGridAxis {
     ): SizeObject {
         const axis = this,
             options = axis.options,
-            labelOptions = options && options.labels,
-            indentation = (
-                labelOptions && isNumber(labelOptions.indentation) ?
-                    labelOptions.indentation :
-                    0
-            ),
             retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
-            isTreeGrid = axis.options.type === 'treegrid';
+            isTreeGrid = options.type === 'treegrid';
         let treeDepth: number;
 
         if (isTreeGrid && axis.treeGrid.mapOfPosToGridNode) {
             treeDepth = axis.treeGrid.mapOfPosToGridNode[-1].height || 0;
-            retVal.width += indentation * (treeDepth - 1);
+            retVal.width += options.labels.indentation * (treeDepth - 1);
         }
 
         return retVal;
@@ -701,7 +695,11 @@ namespace TreeGridAxis {
             // and chart height is set, set axis.isDirty
             // to ensure collapsing works (#12012)
             addEvent(axis, 'afterBreaks', function (): void {
-                if (axis.coll === 'yAxis' && !axis.staticScale && axis.chart.options.chart?.height) {
+                if (
+                    axis.coll === 'yAxis' &&
+                    !axis.staticScale &&
+                    axis.chart.options.chart.height
+                ) {
                     axis.isDirty = true;
                 }
             });

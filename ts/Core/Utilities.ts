@@ -565,11 +565,11 @@ function flat(
     return flatObject;
 }
 
-function merge<T1, T2 = object>(
-    extend: boolean,
-    a?: T1,
-    ...n: Array<T2|undefined>
-): (T1&T2);
+function merge<T = object>(
+    extend: true,
+    a?: T,
+    ...n: Array<DeepPartial<T>|undefined>
+): (T);
 function merge<
     T1 extends object = object,
     T2 = unknown,
@@ -591,6 +591,7 @@ function merge<
     h?: T8,
     i?: T9,
 ): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
+
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
@@ -1043,13 +1044,13 @@ function internalClearTimeout(id: number): void {
  * @param {T|undefined} a
  *        The object to be extended.
  *
- * @param {object} b
+ * @param {Partial<T>} b
  *        The object to add to the first one.
  *
  * @return {T}
  *         Object a, the original object.
  */
-function extend<T extends object>(a: (T|undefined), b: object): T {
+function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1129,7 +1130,7 @@ function css(
                 'alpha(opacity=' + (styles.opacity as any * 100) + ')';
         }
     }
-    extend(el.style, styles);
+    extend(el.style, styles as any);
 }
 
 /**
@@ -2600,7 +2601,7 @@ const getOptions = H.getOptions = function (): Highcharts.Options {
  *         Updated options.
  */
 const setOptions = H.setOptions = function (
-    options: Highcharts.Options
+    options: Partial<Highcharts.Options>
 ): Highcharts.Options {
 
     // Copy in the default options

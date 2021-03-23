@@ -36,11 +36,13 @@ export type CursorValue = (
 
 export interface CSSObject {
     // [key: string]: (boolean|number|string|undefined);
+    align?: string;
     'align-items'?: string;
     '-ms-touch-action'?: string;
     '-ms-transform'?: string;
     '-o-transform'?: string;
     '-webkit-transform'?: string;
+    background?: string;
     backgroundColor?: ColorString;
     borderRadius?: number|string;
     border?: string|0;
@@ -96,6 +98,7 @@ export interface CSSObject {
     'touch-action'?: string;
     transform?: string;
     transformOrigin?: string;
+    transition?: string;
     userSelect?: string;
     visibility?: 'hidden'|'inherit'|'visible';
     whiteSpace?: string;

@@ -656,6 +656,10 @@ function GLRenderer(
         while (i < sdata.length - 1) {
             d = sdata[++i];
 
+            if (typeof d === 'undefined') {
+                continue;
+            }
+
             // px = x = y = z = nx = low = false;
             // chartDestroyed = typeof chart.index === 'undefined';
             // nextInside = prevInside = pcolor = isXInside = isYInside = false;

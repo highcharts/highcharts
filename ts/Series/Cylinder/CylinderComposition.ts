@@ -274,7 +274,7 @@ RendererProto.getCylinderEnd = function (
 
         // Approximated longest diameter
         angleOffset = deg2rad * (
-            (chart.options.chart as any).options3d.beta - 90 +
+            (chart.options.chart.options3d as any).beta - 90 +
             alphaCorrection
         ),
 

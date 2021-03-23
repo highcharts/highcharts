@@ -97,7 +97,7 @@ namespace SeriesRegistry {
         chart: Chart,
         options: DeepPartial<SeriesTypeOptions> = {}
     ): Series {
-        const optionsChart = chart.options.chart as Highcharts.ChartOptions,
+        const optionsChart = chart.options.chart,
             type = (
                 options.type ||
                 optionsChart.type ||

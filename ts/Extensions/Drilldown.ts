@@ -169,7 +169,7 @@ declare global {
             target: Chart;
             type: 'drilldown';
         }
-        interface DrilldownOptions extends Options {
+        interface DrilldownOptions {
             activeAxisLabelStyle?: CSSObject;
             activeDataLabelStyle?: (
                 CSSObject|DrilldownActiveDataLabelStyleOptions

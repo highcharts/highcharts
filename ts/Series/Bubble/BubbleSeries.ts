@@ -647,7 +647,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
             zData;
 
         if (series.bubblePadding &&
-            (series.visible || !(chart.options.chart as any).ignoreHiddenSeries)
+            (series.visible || !chart.options.chart.ignoreHiddenSeries)
         ) {
             // Correction for #1673
             axis.allowZoomOutside = true;

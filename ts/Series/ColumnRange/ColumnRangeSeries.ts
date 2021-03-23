@@ -273,8 +273,8 @@ extend(ColumnRangeSeries.prototype, {
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop,
     getSymbol: noop,
-    polarArc: function (this: ColumnRangeSeries): void {
-        return (columnProto as any).polarArc.apply(this, arguments);
+    polarArc: function (this: ColumnRangeSeries): SVGAttributes {
+        return columnProto.polarArc.apply(this, arguments);
     },
     pointClass: ColumnRangePoint
 });

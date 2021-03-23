@@ -45,7 +45,7 @@ interface HTMLRenderer extends SVGRenderer {
 /* eslint-disable valid-jsdoc */
 
 // Extend SvgRenderer for useHTML option.
-extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
+extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
     /**
      * Create HTML text node. This is used by the VML renderer as well as the

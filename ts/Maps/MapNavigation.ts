@@ -317,7 +317,7 @@ MapNavigation.prototype.updateEvents = function (
 };
 
 // Add events to the Chart object itself
-extend(Chart.prototype, /** @lends Chart.prototype */ {
+extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
      * Fit an inner box to an outer. If the inner box overflows left or right,

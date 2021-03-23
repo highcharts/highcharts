@@ -96,9 +96,11 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
     var options = axis.options;
 
     // Center-align by default
+    /*
     if (!options.labels) {
         options.labels = {};
     }
+    */
     options.labels.align = pick(options.labels.align, 'center');
 
     // @todo: Check against tickLabelPlacement between/on etc
@@ -645,27 +647,24 @@ class GridAxis {
         if (gridOptions.enabled === true) {
             // compute anchor points for each of the title align options
             const {
-                axisTitle: title,
+                axisTitle,
                 height: axisHeight,
                 horiz,
                 left: axisLeft,
                 offset,
                 opposite,
-                options: {
-                    title: axisTitleOptions = {}
-                },
+                options,
                 top: axisTop,
                 width: axisWidth
             } = axis;
             const tickSize = axis.tickSize();
-            const titleWidth = title && title.getBBox().width;
-            const xOption = axisTitleOptions.x || 0;
-            const yOption = axisTitleOptions.y || 0;
-            const titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
+            const titleWidth = axisTitle && axisTitle.getBBox().width;
+            const xOption = options.title.x;
+            const yOption = options.title.y;
+            const titleMargin = pick(options.title.margin, horiz ? 5 : 10);
             const titleFontSize = axis.chart.renderer.fontMetrics(
-                axisTitleOptions.style &&
-                axisTitleOptions.style.fontSize,
-                title
+                options.title.style.fontSize,
+                axisTitle
             ).f;
             const crispCorr = tickSize ? tickSize[0] / 2 : 0;
 
@@ -680,7 +679,7 @@ class GridAxis {
             );
 
             e.titlePosition.x = horiz ?
-                axisLeft - (titleWidth as any) / 2 - titleMargin + xOption :
+                axisLeft - (titleWidth || 0) / 2 - titleMargin + xOption :
                 offAxis + (opposite ? axisWidth : 0) + offset + xOption;
             e.titlePosition.y = horiz ?
                 (
@@ -954,11 +953,11 @@ class GridAxis {
      */
     public static onAfterSetOptions(
         this: Axis,
-        e: { userOptions: Highcharts.AxisOptions }
+        e: { userOptions: DeepPartial<Highcharts.AxisOptions> }
     ): void {
         var options = this.options,
             userOptions = e.userOptions,
-            gridAxisOptions: Highcharts.AxisOptions,
+            gridAxisOptions: DeepPartial<Highcharts.AxisOptions>,
             gridOptions: GridAxis.Options = (
                 (options && isObject(options.grid)) ? (options.grid as any) : {}
             );
@@ -967,7 +966,7 @@ class GridAxis {
 
             // Merge the user options into default grid axis options so
             // that when a user option is set, it takes presedence.
-            gridAxisOptions = merge(true, {
+            gridAxisOptions = merge<DeepPartial<Highcharts.AxisOptions>>(true, {
 
                 className: (
                     'highcharts-grid-axis ' + (userOptions.className || '')
@@ -1147,7 +1146,8 @@ class GridAxis {
             // If borderWidth is set, then use its value for tick and
             // line width.
             if (isNumber((options.grid as any).borderWidth)) {
-                options.tickWidth = options.lineWidth = gridOptions.borderWidth;
+                options.tickWidth = options.lineWidth =
+                    gridOptions.borderWidth as any;
             }
 
         }

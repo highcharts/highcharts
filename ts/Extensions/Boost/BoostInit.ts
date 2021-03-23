@@ -225,6 +225,10 @@ function init(): void {
                     chartDestroyed = typeof chart.index === 'undefined',
                     isYInside = true;
 
+                if (typeof d === 'undefined') {
+                    return true;
+                }
+
                 if (!chartDestroyed) {
                     if (useRaw) {
                         x = (d as any)[0];

@@ -244,7 +244,7 @@ extend(AOIndicator.prototype, {
     nameComponents: (false as any),
 
     // Columns support:
-    markerAttribs: noop,
+    markerAttribs: noop as any,
     getColumnMetrics: ColumnSeries.prototype.getColumnMetrics,
     crispCol: ColumnSeries.prototype.crispCol,
     translate: ColumnSeries.prototype.translate,

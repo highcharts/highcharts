@@ -932,7 +932,9 @@ class Pathfinder {
      * @return {boolean}
      *         Returns true for X, false for Y, and undefined for autocalculate.
      */
-    public getAlgorithmStartDirection(markerOptions: Highcharts.ConnectorsMarkerOptions): (boolean|undefined) {
+    public getAlgorithmStartDirection(
+        markerOptions: Highcharts.ConnectorsMarkerOptions
+    ): (boolean|undefined) {
         var xCenter = markerOptions.align !== 'left' &&
                         markerOptions.align !== 'right',
             yCenter = markerOptions.verticalAlign !== 'top' &&

@@ -23,7 +23,6 @@
 import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type DataLabelOptions from '../../Core/Series/DataLabelOptions';
 import type Funnel3DSeriesOptions from './Funnel3DSeriesOptions';
-import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import Funnel3DPoint from './Funnel3DPoint.js';
 import H from '../../Core/Globals.js';
@@ -257,12 +256,12 @@ class Funnel3DSeries extends ColumnSeries {
         extend(this.xAxis.options, {
             gridLineWidth: 0,
             lineWidth: 0,
-            title: null,
+            title: void 0,
             tickPositions: []
         });
-        extend(this.yAxis.options, {
+        merge(true, this.yAxis.options, {
             gridLineWidth: 0,
-            title: null,
+            title: void 0,
             labels: {
                 enabled: false
             }

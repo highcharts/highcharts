@@ -72,7 +72,7 @@ declare global {
             public labelPos?: PositionObject;
             public mark?: SVGElement;
             public movedLabel?: SVGElement;
-            public options?: AxisOptions;
+            public options?: DeepPartial<AxisOptions>;
             public parameters: TickParametersObject;
             public prevLabel?: SVGElement;
             public pos: number;
@@ -419,7 +419,7 @@ class Tick {
                     if (
                         (label as any).getBBox().width <
                         axis.getSlotWidth(tick as any) - 2 *
-                            pick(labelOptions.padding, 5)
+                            labelOptions.padding
                     ) {
                         return;
                     }
@@ -456,7 +456,7 @@ class Tick {
             // (#8809)
             if (
                 label.textWidth &&
-                !(labelOptions.style && labelOptions.style.width) &&
+                !labelOptions.style.width &&
                 !(label.styles as any).width
             ) {
                 label.css({ width: null as any });
@@ -774,9 +774,7 @@ class Tick {
 
         // Check if the label overshoots the chart spacing box. If it does, move
         // it. If it now overshoots the slotWidth, add ellipsis.
-        if (!rotation &&
-            pick((labelOptions as any).overflow, 'justify') === 'justify'
-        ) {
+        if (!rotation && labelOptions.overflow === 'justify') {
             leftPos = pxPos - factor * labelWidth;
             rightPos = pxPos + (1 - factor) * labelWidth;
 
@@ -837,7 +835,7 @@ class Tick {
                 tick.shortenLabel();
             } else {
                 css.width = Math.floor(textWidth) + 'px';
-                if (!((labelOptions as any).style || {}).textOverflow) {
+                if (!(labelOptions.style || {}).textOverflow) {
                     css.textOverflow = 'ellipsis';
                 }
                 (label as any).css(css);
@@ -975,18 +973,21 @@ class Tick {
             type = tick.type,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             renderer = axis.chart.renderer,
-            gridPrefix = type ? type + 'Grid' : 'grid',
-            gridLineWidth = (options as any)[gridPrefix + 'LineWidth'],
-            gridLineColor = (options as any)[gridPrefix + 'LineColor'],
-            dashStyle = (options as any)[gridPrefix + 'LineDashStyle'];
+            gridLineWidth = options.gridLineWidth,
+            gridLineColor = options.gridLineColor,
+            dashStyle = options.gridLineDashStyle;
+
+        if (tick.type === 'minor') {
+            gridLineWidth = options.minorGridLineWidth;
+            gridLineColor = options.minorGridLineColor;
+            dashStyle = options.minorGridLineDashStyle;
+        }
 
         if (!gridLine) {
             if (!axis.chart.styledMode) {
                 attribs.stroke = gridLineColor;
-                attribs['stroke-width'] = gridLineWidth;
-                if (dashStyle) {
-                    attribs.dashstyle = dashStyle;
-                }
+                attribs['stroke-width'] = gridLineWidth || 0;
+                attribs.dashstyle = dashStyle;
             }
             if (!type) {
                 attribs.zIndex = 1;
@@ -1048,17 +1049,18 @@ class Tick {
             options = axis.options,
             renderer = axis.chart.renderer,
             type = tick.type,
-            tickPrefix = type ? type + 'Tick' : 'tick',
-            tickSize = axis.tickSize(tickPrefix),
+            tickSize = axis.tickSize(type ? type + 'Tick' : 'tick'),
             mark = tick.mark,
             isNewMark = !mark,
             x = xy.x,
             y = xy.y,
             tickWidth = pick(
-                (options as any)[tickPrefix + 'Width'],
+                options[type !== 'minor' ? 'tickWidth' : 'minorTickWidth'],
                 !type && axis.isXAxis ? 1 : 0
             ), // X axis defaults to 1
-            tickColor = (options as any)[tickPrefix + 'Color'];
+            tickColor = options[
+                type !== 'minor' ? 'tickColor' : 'minorTickColor'
+            ];
 
         if (tickSize) {
 
@@ -1124,7 +1126,7 @@ class Tick {
             options = axis.options,
             label = tick.label,
             labelOptions = options.labels,
-            step = (labelOptions as any).step,
+            step = labelOptions.step,
             tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
             show = true,
             x = xy.x,
@@ -1148,12 +1150,12 @@ class Tick {
                 (
                     tick.isFirst &&
                     !tick.isLast &&
-                    !pick(options.showFirstLabel, 1 as any)
+                    !options.showFirstLabel
                 ) ||
                 (
                     tick.isLast &&
                     !tick.isFirst &&
-                    !pick(options.showLastLabel, 1 as any)
+                    !options.showLastLabel
                 )
             ) {
                 show = false;
@@ -1161,8 +1163,8 @@ class Tick {
             // Handle label overflow and show or hide accordingly
             } else if (
                 horiz &&
-                !(labelOptions as any).step &&
-                !(labelOptions as any).rotation &&
+                !labelOptions.step &&
+                !labelOptions.rotation &&
                 !old &&
                 opacity !== 0
             ) {
