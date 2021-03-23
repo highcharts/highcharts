@@ -462,6 +462,27 @@ function init(): void {
         //         shouldForceChartSeriesBoosting(chart);
         // });
 
+        let prevX = -1;
+        let prevY = -1;
+
+        addEvent(chart.pointer, 'afterGetHoverData', (): void => {
+            const series = chart.hoverSeries;
+
+            if (chart.markerGroup && series) {
+                const xAxis = chart.inverted ? series.yAxis : series.xAxis;
+                const yAxis = chart.inverted ? series.xAxis : series.yAxis;
+
+                if (
+                    (xAxis && xAxis.pos !== prevX) ||
+                    (yAxis && yAxis.pos !== prevY)
+                ) {
+                    chart.markerGroup.translate(xAxis.pos, yAxis.pos);
+
+                    prevX = xAxis.pos;
+                    prevY = yAxis.pos;
+                }
+            }
+        });
     });
 
     /* eslint-enable no-invalid-this */
