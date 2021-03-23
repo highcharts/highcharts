@@ -232,7 +232,10 @@ class Resizer {
                             columnContainer.getBoundingClientRect().left
                         ) / parentRowWidth
                     ) * 100,
-                    100 - this.sumColumnOuterWidth(columnContainer)
+                    100 - this.sumColumnOuterWidth(
+                        parentColumn.row,
+                        parentColumn
+                    )
                 ) + '%';
 
             columnContainer.style.flex = 'none';
@@ -274,39 +277,72 @@ class Resizer {
 
         return parseFloat(paramValue) || 0;
     }
-
+    /**
+     * Sum min width and current width of columns in the row.
+     *
+     * @param {Row} row
+     * Row contains columns
+     *
+     * @param {column} column
+     * Optional parameter, the column which is resized and should be excluded
+     * in calculations. In case of nested layouts, we calculate all columns.
+     *
+     * @return {number}
+     * Sum
+     */
     public sumColumnOuterWidth(
-        currentColumn: HTMLDOMElement
+        row: Row,
+        column?: Column
     ): number {
-        const convertToPercent = this.convertToPercent;
-        const row = currentColumn.parentNode as HTMLElement;
-        const parentRowWidth = row.offsetWidth;
-        const columns =
-            (row as HTMLDOMElement).childNodes;
 
+        const convertToPercent = this.convertToPercent;
+        const columnContainer = column?.container;
+        const parentRowWidth = row.container?.offsetWidth;
+        const columns = row.columns;
+        /*
         const params = [
             'padding-left',
             'padding-right',
             'margin-left',
             'margin-right'
         ];
-
+        */
         let sum = 0;
-        let column;
+        let rowColumn;
 
 
         for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
 
-            column = columns[i] as HTMLElement;
+            rowColumn = columns[i].container as HTMLDOMElement;
 
-            if (column !== currentColumn) {
-                // get min-size if resized width does not exist
-                sum += (
-                    parseFloat(column.style.getPropertyValue('width')) ||
-                    convertToPercent(column, 'min-width', parentRowWidth)
-                );
+            if (rowColumn !== columnContainer) {
+
+                // find all columns in nested layout to calculate
+                // min-width/width each of them
+                if (columns[i].layout) {
+                    let maxColumns = 0;
+                    let maxRow = columns[i].layout.rows[0];
+
+                    columns[i].layout.rows.forEach((currentRow) => {
+                        if (currentRow.columns.length > maxColumns) {
+                            maxColumns = currentRow.columns.length;
+                            maxRow = currentRow;
+                        }
+                    });
+
+                    sum += this.sumColumnOuterWidth(maxRow);
+
+                } else {
+
+                    // get min-size if "resized" width does not exist
+                    sum += (
+                        parseFloat(rowColumn.style.getPropertyValue('width')) ||
+                        convertToPercent(rowColumn, 'min-width', parentRowWidth)
+                    );
+                }
 
                 // go over all params like margins / paddings
+
                 /*
                 for (let j = 0, jEnd = params.length; j < jEnd; ++j) {
                     sum += convertToPercent(
