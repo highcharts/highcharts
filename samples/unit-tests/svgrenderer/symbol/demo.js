@@ -153,3 +153,26 @@ QUnit.test('Symbol tests', function (assert) {
         }
     });
 });
+
+QUnit.test('Arc', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        400,
+        400
+    );
+
+    const path = ren.symbols.arc(0, 0, 10, 10, {
+        r: 0
+    });
+
+    assert.strictEqual(
+        path[1][1],
+        0,
+        '#15382: X radius should be 0'
+    );
+    assert.strictEqual(
+        path[1][2],
+        0,
+        '#15382: Y radius should be 0'
+    );
+});
