@@ -420,7 +420,7 @@ class FlagsSeries extends ColumnSeries {
                 !outsideRight
             ) {
                 // #15384
-                if (graphic && shape && shape !== graphic.symbolKey) {
+                if (graphic && point.hasNewShapeType()) {
                     graphic = graphic.destroy();
                 }
 
