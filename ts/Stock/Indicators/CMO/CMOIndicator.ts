@@ -95,7 +95,7 @@ class CMOIndicator extends SMAIndicator {
         if (isNumber(yVal[0])) {
             values = yVal as Array<number>;
         } else {
-            // in case of the situation, where the series type has data length
+            // In case of the situation, where the series type has data length
             // shorter then 4 (HLC, range), this ensures that we are not trying
             // to reach the index out of bounds
             index = Math.min(index, yVal[0].length - 1);
@@ -108,7 +108,7 @@ class CMOIndicator extends SMAIndicator {
             sumOfHigherValues = 0,
             sumOfLowerValues = 0,
             y;
-        // calculate first point, check if the first value
+        // Calculate first point, check if the first value
         // was added to sum of higher/lower values, and what was the value.
 
         for (let j = period; j > 0; j--) {
@@ -118,7 +118,7 @@ class CMOIndicator extends SMAIndicator {
                 sumOfLowerValues += values[j - 1] - values[j];
             }
         }
-        // you might devide by 0 if all values are equal,
+        // You might devide by 0 if all values are equal,
         // so return 0 in this case.
         y =
             sumOfHigherValues + sumOfLowerValues > 0 ?
