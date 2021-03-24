@@ -42,7 +42,9 @@ test('GoogleDataStore', function (assert) {
         doneLoading();
     });
 
-    datastore.load()
+    datastore.load();
+
+    window.setTimeout(() => assert.done(), 5000);
 })
 
 test('GoogleDataStore, bad spreadsheetkey', function (assert) {
@@ -65,4 +67,6 @@ test('GoogleDataStore, bad spreadsheetkey', function (assert) {
     });
 
     datastore.load()
+
+    window.setTimeout(() => assert.done(), 5000);
 })
