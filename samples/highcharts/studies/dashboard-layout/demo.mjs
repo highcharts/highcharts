@@ -306,8 +306,14 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         enabled: true,
         layoutOptions: {
             resize: {
-                columns: true,
-                rows: true
+                columns: {
+                    enabled: true,
+                    minSize: 70
+                },
+                rows: {
+                    enabled: true,
+                    minSize: 70
+                }
             }
         },
         layouts: [{

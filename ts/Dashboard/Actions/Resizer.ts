@@ -13,7 +13,8 @@ const {
     addEvent,
     createElement,
     getStyle,
-    pick
+    pick,
+    fireEvent
 } = U;
 
 import H from '../../Core/Globals.js';
@@ -30,8 +31,14 @@ class Resizer {
     * */
     protected static readonly defaultOptions: Resizer.Options = {
         resize: {
-            columns: true,
-            rows: true,
+            columns: {
+                enabled: true,
+                minSize: 50
+            },
+            rows: {
+                enabled: true,
+                minSize: 50
+            },
             snap: {
                 width: 20
             }
@@ -87,6 +94,10 @@ class Resizer {
                             columns[j]
                         );
                     }
+
+                    // set min-size
+                    (columns[j].container as HTMLElement).style.minWidth =
+                        this.resizeOptions.resize.columns.minSize + 'px';
                 }
             }
         }
@@ -101,13 +112,13 @@ class Resizer {
     public addSnap(
         column: Resizer.ResizedColumn
     ): void {
-
         const snapWidth = this.resizeOptions.resize.snap.width;
 
         column.resizer = {} as Resizer.Snap;
 
-        // create HTML handler
         if (column.container) {
+
+            // create HTML handler
             column.resizer.handler = createElement(
                 'div',
                 {
@@ -215,7 +226,7 @@ class Resizer {
      *
      */
     public onMouseMove(
-        parentColumn: Column|undefined,
+        parentColumn: Resizer.ResizedColumn|undefined,
         e: PointerEvent
     ): void {
         const columnContainer = parentColumn && parentColumn.container;
@@ -225,57 +236,25 @@ class Resizer {
             const parentRowWidth = parentRow.offsetWidth;
 
             columnContainer.style.width =
-                Math.min(
-                    (
-                        (
-                            e.clientX -
-                            columnContainer.getBoundingClientRect().left
-                        ) / parentRowWidth
-                    ) * 100,
-                    100 - this.sumColumnOuterWidth(
-                        parentColumn.row,
-                        parentColumn
-                    )
-                ) + '%';
+                (
+                    Math.min(
+                        // diff
+                        e.clientX - columnContainer.getBoundingClientRect().left,
+                        // maxSize
+                        parentRowWidth - (
+                            this.sumColumnOuterWidth(
+                                parentColumn.row,
+                                parentColumn
+                            ) || 0
+                        )
+                    ) / parentRowWidth
+                ) * 100 + '%';
 
             columnContainer.style.flex = 'none';
 
             // call component resize
-            // parentColumn.mountedComponent?.resize();
+            parentColumn.mountedComponent?.resize(null);
         }
-    }
-    /**
-     * Extract param and convert to percent if its in pixels.
-     *
-     * @param {HTMLDOMElement} element
-     * Element for extract a style
-     *
-     * @param {string} param
-     * Name of style param
-     *
-     * @param {number} parentNodeWidth
-     * Optional parent node width to calculate value from pixels to percent
-     *
-     * @return {number}
-     * Number in percents.
-     */
-    public convertToPercent(
-        element: HTMLDOMElement,
-        param: string,
-        parentNodeWidth?: number
-    ): number {
-        const paramValue = getStyle(element, param, false) as string;
-
-        if (
-            paramValue &&
-            paramValue.match(/px/i) &&
-            parentNodeWidth
-        ) {
-            // convert to percent
-            return (parseFloat(paramValue) / parentNodeWidth) * 100;
-        }
-
-        return parseFloat(paramValue) || 0;
     }
     /**
      * Sum min width and current width of columns in the row.
@@ -292,18 +271,16 @@ class Resizer {
      */
     public sumColumnOuterWidth(
         row: Row,
-        column?: Column,
-        ignoreComponentWidth?: boolean
+        column?: Column
     ): number {
 
-        const convertToPercent = this.convertToPercent;
-        const columnContainer = column?.container;
+        // const convertToPercent = this.convertToPercent;
+        const columnContainer = column?.container as HTMLElement;
         const parentRowWidth = row.container?.offsetWidth;
         const columns = row.columns;
 
         let sum = 0;
         let rowColumn;
-
 
         for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
 
@@ -312,12 +289,14 @@ class Resizer {
             if (rowColumn !== columnContainer) {
 
                 // find all columns in nested layout to calculate
-                // min-width/width each of them
+                // min-width / width each of them
                 if (columns[i].layout) {
+
+                    let maxRow = row;
                     let maxColumns = 0;
                     let columnRows = columns[i].layout.rows;
-                    let maxRow;
 
+                    // find a row with maximum columns
                     for (let j = 0, jEnd = columnRows.length; j < jEnd; ++j) {
                         if (columnRows[j].columns.length > maxColumns) {
                             maxColumns = columnRows[j].columns.length;
@@ -325,30 +304,36 @@ class Resizer {
                         }
                     }
 
+                    // call reccurent calculation of columns (nested layouts)
                     if (maxRow) {
-                        sum += this.sumColumnOuterWidth(
+                        sum = this.sumColumnOuterWidth(
                             maxRow,
-                            void 0,
-                            true
+                            void 0
                         );
                     }
                 } else {
-                    // get min-size if "resized" width does not exist
+                    const columnStylesWidth = (
+                        // convert % to px
+                        parseFloat(
+                            rowColumn.style.getPropertyValue('width')
+                        ) / 100
+                    ) * (parentRowWidth || 1);
+
+                    // add min-size if "resized" width does not exist or is 
+                    // bigger then width
+                    const minSize = (
+                        getStyle(rowColumn, 'min-width', true) as number
+                    );
+
                     sum += (
-                        (
-                            !ignoreComponentWidth &&
-                            parseFloat(
-                                rowColumn.style.getPropertyValue('width')
-                            )
-                        ) || (
-                            Math.round(
-                                convertToPercent(
-                                    rowColumn,
-                                    'min-width',
-                                    parentRowWidth
-                                )
-                            )
-                        )
+                        columnStylesWidth && columnStylesWidth > minSize ? 
+                            columnStylesWidth : minSize
+                    );
+
+                    // add borders width
+                    sum += (
+                        (getStyle(rowColumn, 'border-left', true) as number) +
+                        (getStyle(rowColumn, 'border-right', true) as number)
                     );
                 }
             }
@@ -417,9 +402,14 @@ namespace Resizer {
     }
 
     export interface ResizeOptions {
-        columns: boolean;
-        rows: boolean;
+        columns: ColumnsRowsOptions;
+        rows: ColumnsRowsOptions;
         snap: SnapOptions;
+    }
+
+    export interface ColumnsRowsOptions {
+        enabled: boolean;
+        minSize: number;
     }
 
     export interface ResizedColumn extends Column {

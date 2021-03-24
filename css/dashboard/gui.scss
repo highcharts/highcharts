@@ -17,8 +17,8 @@ body {
 
 .highcharts-dashboard-column {
     position: relative;
-    /*min-width: 30px;*/
-    min-width: 10%;
+    flex-shrink: 1;
+    flex-basis: auto;
     flex: 1;
 }
 
@@ -71,14 +71,14 @@ body {
 
 .highcharts-dashboard-column > .highcharts-dashboard-component {
     position: relative;
-    /*margin: 15px;
-    padding: 15px;*/
+    margin: 5px;
+    padding: 5px;
 
     background-color: #fff;
     box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
     background-clip: border-box;
-    border: 1px solid rgba(26, 54, 126, 0.125);
-    border-radius: .25rem;
+    /*border: 1px solid rgba(26, 54, 126, 0.125);
+    border-radius: .25rem;*/
 }
 
 .highcharts-dashboard-component img {
