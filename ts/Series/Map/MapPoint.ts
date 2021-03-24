@@ -136,10 +136,10 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
         if (chart.mapView) {
             chart.mapView.fitToBounds({
-                n: point._minY || 0,
-                e: point._maxX || 0,
-                s: point._maxY || 0,
-                w: point._minX || 0
+                y1: point._minY || 0,
+                x2: point._maxX || 0,
+                y2: point._maxY || 0,
+                x1: point._minX || 0
             });
 
             point.series.isDirty = true;

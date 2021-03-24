@@ -24,7 +24,7 @@ const {
 declare global {
     namespace Highcharts {
         type ProjectedXY = { x: number; y: number };
-        type MapBounds = { n: number; e: number; s: number; w: number };
+        type MapBounds = { x1: number; y1: number; x2: number; y2: number };
 
     }
 }
@@ -54,12 +54,12 @@ class MapView {
         // 256 is the magic number where a world tile is rendered to a 256/256
         // px square.
         const scaleToPlotArea = Math.max(
-            (bounds.e - bounds.w) / (plotWidth / 256),
-            (bounds.s - bounds.n) / (plotHeight / 256)
+            (bounds.x2 - bounds.x1) / (plotWidth / 256),
+            (bounds.y2 - bounds.y1) / (plotHeight / 256)
         );
 
         this.setView(
-            { y: (bounds.s + bounds.n) / 2, x: (bounds.e + bounds.w) / 2 },
+            { y: (bounds.y2 + bounds.y1) / 2, x: (bounds.x2 + bounds.x1) / 2 },
             (Math.log(360 / scaleToPlotArea) / Math.log(2)),
             redraw,
             animation
@@ -68,10 +68,10 @@ class MapView {
 
     public getDataBounds(): Highcharts.MapBounds|undefined {
         const bounds: Highcharts.MapBounds = {
-            n: Number.MAX_VALUE,
-            e: -Number.MAX_VALUE,
-            s: -Number.MAX_VALUE,
-            w: Number.MAX_VALUE
+            y1: Number.MAX_VALUE,
+            x2: -Number.MAX_VALUE,
+            y2: -Number.MAX_VALUE,
+            x1: Number.MAX_VALUE
         };
         let hasBounds = false;
         this.chart.series.forEach((s): void => {
@@ -82,10 +82,10 @@ class MapView {
                 isNumber((s as any).maxY) &&
                 isNumber((s as any).minX)
             ) {
-                bounds.n = Math.min(bounds.n, (s as any).minY);
-                bounds.e = Math.max(bounds.e, (s as any).maxX);
-                bounds.s = Math.max(bounds.s, (s as any).maxY);
-                bounds.w = Math.min(bounds.w, (s as any).minX);
+                bounds.y1 = Math.min(bounds.y1, (s as any).minY);
+                bounds.x2 = Math.max(bounds.x2, (s as any).maxX);
+                bounds.y2 = Math.max(bounds.y2, (s as any).maxY);
+                bounds.x1 = Math.min(bounds.x1, (s as any).minX);
                 hasBounds = true;
             }
         });
@@ -124,28 +124,28 @@ class MapView {
             const cntr = this.center;
             const { plotWidth, plotHeight } = this.chart;
             const scale = (256 / 360) * Math.pow(2, this.zoom);
-            const nw = this.toPixels({ y: bounds.n, x: bounds.w });
-            const se = this.toPixels({ y: bounds.s, x: bounds.e });
+            const topLeft = this.toPixels({ y: bounds.y1, x: bounds.x1 });
+            const bottomRight = this.toPixels({ y: bounds.y2, x: bounds.x2 });
 
             // Off west
-            if (nw.x < 0 && se.x < plotWidth) {
+            if (topLeft.x < 0 && bottomRight.x < plotWidth) {
                 // Adjust eastwards
-                cntr.x += Math.max(nw.x, se.x - plotWidth) / scale;
+                cntr.x += Math.max(topLeft.x, bottomRight.x - plotWidth) / scale;
             }
             // Off east
-            if (se.x > plotWidth && nw.x > 0) {
+            if (bottomRight.x > plotWidth && topLeft.x > 0) {
                 // Adjust westwards
-                cntr.x += Math.min(se.x - plotWidth, nw.x) / scale;
+                cntr.x += Math.min(bottomRight.x - plotWidth, topLeft.x) / scale;
             }
             // Off north
-            if (nw.y < 0 && se.y < plotHeight) {
+            if (topLeft.y < 0 && bottomRight.y < plotHeight) {
                 // Adjust southwards
-                cntr.y += Math.max(nw.y, se.y - plotHeight) / scale;
+                cntr.y += Math.max(topLeft.y, bottomRight.y - plotHeight) / scale;
             }
             // Off south
-            if (se.y > plotHeight && nw.y > 0) {
+            if (bottomRight.y > plotHeight && topLeft.y > 0) {
                 // Adjust northwards
-                cntr.y += Math.min(se.y - plotHeight, nw.y) / scale;
+                cntr.y += Math.min(bottomRight.y - plotHeight, topLeft.y) / scale;
             }
         }
 

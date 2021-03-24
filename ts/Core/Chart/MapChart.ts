@@ -281,12 +281,12 @@ addEvent(Chart, 'selection', function (evt: PointerEvent): void {
         if (!(evt as any).resetSelection) {
             const x = evt.x - this.plotLeft;
             const y = evt.y - this.plotTop;
-            const { y: n, x: w } = mapView.toValues({ x, y });
-            const { y: s, x: e } = mapView.toValues(
+            const { y: y1, x: x1 } = mapView.toValues({ x, y });
+            const { y: y2, x: x2 } = mapView.toValues(
                 { x: x + evt.width, y: y + evt.height }
             );
             mapView.fitToBounds(
-                { n, e, s, w },
+                { x1, y1, x2, y2 },
                 true,
                 (evt as any).originalEvent.touches ?
                     // On touch zoom, don't animate, since we're already in
