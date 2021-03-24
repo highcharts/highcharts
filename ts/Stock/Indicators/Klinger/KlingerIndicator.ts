@@ -79,6 +79,9 @@ class KlingerIndicator extends SMAIndicator {
                  */
                 lineColor: '#ff0000'
             }
+        },
+        dataGrouping: {
+            approximation: 'averages'
         }
     } as KlingerOptions);
 
@@ -269,6 +272,7 @@ class KlingerIndicator extends SMAIndicator {
                 prevEMA = EMAcalc;
             }
         }
+        prevEMA = void 0 as any
 
         // SLOW EMA
         this.EMApercent = 2 / (params.slowAvgPeriod + 1);
@@ -289,6 +293,7 @@ class KlingerIndicator extends SMAIndicator {
                 prevEMA = EMAcalc;
             }
         }
+        prevEMA = void 0 as any
 
         // Calculate KO
         for (var k = 0; k < xVal.length; k++) {
@@ -303,6 +308,7 @@ class KlingerIndicator extends SMAIndicator {
                 yData.push([KO]);
             }
         }
+        prevEMA = void 0 as any
 
         // Calculate signal
         this.EMApercent = 2 / (params.signal + 1);
@@ -329,6 +335,7 @@ class KlingerIndicator extends SMAIndicator {
                 yData[l].push(EMAcalc);
             }
         }
+        prevEMA = void 0 as any
 
         // console.log(Klinger)
         // console.log(xData)
