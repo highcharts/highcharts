@@ -421,7 +421,7 @@ class FlagsSeries extends ColumnSeries {
             ) {
                 // #15384
                 if (graphic && shape && shape !== graphic.symbolKey) {
-                    graphic = point.graphic = graphic.destroy();
+                    graphic = graphic.destroy();
                 }
 
                 // Create the flag
