@@ -2871,7 +2871,7 @@ class Series {
 
     public symbol?: string;
 
-    public table: DataTable = new DataTable();
+    public readonly table: DataTable = new DataTable();
 
     public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
 
@@ -3793,6 +3793,84 @@ class Series {
     }
 
     /**
+     * Adds and/or replaces rows in the series table.
+     *
+     * @param {DataTable} table
+     * Table rows to add and/or replace.
+     */
+    private updateTable(table: DataTable): void {
+        const series = this,
+            seriesTable = series.table,
+            seriesTableRowCount = seriesTable.getRowCount(),
+            presentationState = table.getPresentationState(),
+            tableRowCount = table.getRowCount();
+
+        if (seriesTable.getPresentationState() !== presentationState) {
+            seriesTable.setPresentationState(presentationState);
+        }
+
+        if (seriesTableRowCount) {
+            const matchBy = (
+                    seriesTable.hasColumn('id') && table.hasColumn('id') ?
+                        'id' :
+                        'x'
+                ),
+                rowIndexMap: Record<string, number> = {},
+                seriesColumn = (seriesTable.getColumn(matchBy) || []),
+                tableColumn = (table.getColumn(matchBy) || []);
+
+            let matchByIndex = false;
+
+            for (let i = 0, iEnd = seriesColumn.length; i < iEnd; ++i) {
+                if (typeof rowIndexMap[`${seriesColumn[i]}`] === 'undefined') {
+                    rowIndexMap[`${seriesColumn[i]}`] = i;
+                } else {
+                    matchByIndex = true;
+                    break;
+                }
+            }
+
+            if (matchByIndex) {
+                seriesTable.setColumns(table.getColumns());
+            } else {
+                for (
+                    let i = 0,
+                        iEnd = tableColumn.length,
+                        rowIndex: number,
+                        rowObject: (DataTable.RowObject|undefined);
+                    i < iEnd;
+                    ++i
+                ) {
+                    rowObject = table.getRowObject(i);
+                    if (rowObject) {
+                        rowIndex = rowIndexMap[`${tableColumn[i]}`];
+                        if (rowIndex === -1) {
+                            seriesTable.setRowObject(rowObject);
+                        } else {
+                            seriesTable.setRowObject(rowObject, rowIndex);
+                            delete rowIndexMap[`${tableColumn[i]}`];
+                        }
+                        series.addPoint(rowObject, false, void 0, void 0, false);
+                    }
+                }
+
+                const rowKeys = Object.keys(rowIndexMap).reverse();
+
+                for (let i = 0, iEnd = rowKeys.length; i < iEnd; ++i) {
+                    seriesTable.deleteRow(rowIndexMap[rowKeys[i]]);
+                }
+            }
+        } else {
+            seriesTable.setColumns(
+                table.getColumns(),
+                tableRowCount === seriesTableRowCount ?
+                    0 :
+                    seriesTableRowCount
+            );
+        }
+    }
+
+    /**
      * Apply a new set of data to the series and optionally redraw it. The
      * new data array is passed by reference (except in case of
      * `updatePoints`), and may later be mutated when updating the chart
@@ -3840,7 +3918,7 @@ class Series {
      *        `false` to prevent.
      */
     public setData(
-        data: Array<(PointOptions|PointShortOptions)>,
+        data: (DataTable|Array<(PointOptions|PointShortOptions)>),
         redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
@@ -3852,6 +3930,7 @@ class Series {
             options = series.options,
             chart = series.chart,
             dataSorting = options.dataSorting,
+            dataTable: DataTable,
             firstPoint = null,
             xAxis = series.xAxis,
             i,
@@ -3864,18 +3943,27 @@ class Series {
             keys = options.keys,
             indexOfX = 0,
             indexOfY = 1,
-            updatedData,
-            table = Series.getTableFromSeriesOptions({ data }, series);
+            updatedData;
 
         data = (data || []);
-        dataLength = data.length;
         redraw = pick(redraw, true);
 
-        if (dataSorting && dataSorting.enabled) {
-            series.sortData(table);
-            series.table = table;
-            data = (Series.getSeriesOptionsFromTable(table).data || data);
+        if (data instanceof DataTable) {
+            dataTable = data.clone();
+        } else {
+            dataTable = Series.getTableFromSeriesOptions({ data }, series);
         }
+
+        if (dataSorting && dataSorting.enabled) {
+            series.sortData(dataTable);
+            data = dataTable;
+        }
+
+        if (data instanceof DataTable) {
+            data = (Series.getSeriesOptionsFromTable(data).data || []);
+        }
+
+        dataLength = data.length;
 
         // First try to run Point.update which is cheaper, allows animation,
         // and keeps references to points.
@@ -3894,7 +3982,6 @@ class Series {
         }
 
         if (!updatedData) {
-
             // Reset properties
             series.xIncrement = null;
 
@@ -4061,8 +4148,8 @@ class Series {
                     let seriesTable = linkedSeries.table,
                         x: number;
 
-                    if (!seriesTable) {
-                        seriesTable = linkedSeries.table = (
+                    if (!seriesTable) { // @todo should always be set
+                        seriesTable = (linkedSeries as any).table = (
                             Series.getTableFromSeriesOptions(
                                 seriesOptions,
                                 linkedSeries
