@@ -13,7 +13,7 @@ import AnimationOptionsObject from '../Core/Animation/AnimationOptions';
 import Chart from '../Core/Chart/Chart.js';
 import U from '../Core/Utilities.js';
 const {
-    isNumber
+    merge
 } = U;
 
 
@@ -24,12 +24,37 @@ const {
 declare global {
     namespace Highcharts {
         type ProjectedXY = { x: number; y: number };
-        type MapBounds = { x1: number; y1: number; x2: number; y2: number };
+        type MapBounds = {
+            midX?: number;
+            midY?: number;
+            x1: number;
+            y1: number;
+            x2: number;
+            y2: number;
+        };
 
     }
 }
 
 class MapView {
+
+    /* *
+     * Return the composite bounding box of a collection of bounding boxes
+     */
+    public static compositeBounds = (
+        arrayOfBounds: Highcharts.MapBounds[]
+    ): Highcharts.MapBounds|undefined => {
+        if (arrayOfBounds.length) {
+            return arrayOfBounds.slice(1).reduce((acc, cur): Highcharts.MapBounds => {
+                acc.x1 = Math.min(acc.x1, cur.x1);
+                acc.y1 = Math.min(acc.y1, cur.y1);
+                acc.x2 = Math.max(acc.x2, cur.x2);
+                acc.y2 = Math.max(acc.y2, cur.y2);
+                return acc;
+            }, merge(arrayOfBounds[0]));
+        }
+        return;
+    };
 
     public constructor(
         chart: Chart
@@ -67,29 +92,17 @@ class MapView {
     }
 
     public getDataBounds(): Highcharts.MapBounds|undefined {
-        const bounds: Highcharts.MapBounds = {
-            y1: Number.MAX_VALUE,
-            x2: -Number.MAX_VALUE,
-            y2: -Number.MAX_VALUE,
-            x1: Number.MAX_VALUE
-        };
-        let hasBounds = false;
+        const allBounds: Highcharts.MapBounds[] = [];
+
         this.chart.series.forEach((s): void => {
             if (
                 (s as any).useMapGeometry &&
-                isNumber((s as any).minY) &&
-                isNumber((s as any).maxX) &&
-                isNumber((s as any).maxY) &&
-                isNumber((s as any).minX)
+                (s as any).bounds
             ) {
-                bounds.y1 = Math.min(bounds.y1, (s as any).minY);
-                bounds.x2 = Math.max(bounds.x2, (s as any).maxX);
-                bounds.y2 = Math.max(bounds.y2, (s as any).maxY);
-                bounds.x1 = Math.min(bounds.x1, (s as any).minX);
-                hasBounds = true;
+                allBounds.push((s as any).bounds);
             }
         });
-        return hasBounds ? bounds : void 0;
+        return MapView.compositeBounds(allBounds);
     }
 
     public redraw(animation?: boolean|Partial<AnimationOptionsObject>): void {

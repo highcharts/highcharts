@@ -134,13 +134,8 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
         const point = this as (MapPoint&MapPoint.CacheObject);
         const chart = point.series.chart;
 
-        if (chart.mapView) {
-            chart.mapView.fitToBounds({
-                y1: point._minY || 0,
-                x2: point._maxX || 0,
-                y2: point._maxY || 0,
-                x1: point._minX || 0
-            });
+        if (chart.mapView && point.bounds) {
+            chart.mapView.fitToBounds(point.bounds, false);
 
             point.series.isDirty = true;
             chart.redraw();
@@ -176,14 +171,7 @@ extend(MapPoint.prototype, {
 
 namespace MapPoint {
     export interface CacheObject {
-        _foundBox?: boolean;
-        _i?: number;
-        _maxX?: number;
-        _maxY?: number;
-        _midX?: number;
-        _midY?: number;
-        _minX?: number;
-        _minY?: number;
+        bounds?: Highcharts.MapBounds;
     }
 }
 

@@ -39,6 +39,7 @@ const {
     splitPath
 } = MapChart;
 import MapPoint from './MapPoint.js';
+import MapView from '../../Maps/MapView.js';
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -406,6 +407,8 @@ class MapSeries extends ScatterSeries {
 
     public baseView?: { center: Highcharts.ProjectedXY; zoom: number };
 
+    public bounds?: Highcharts.MapBounds;
+
     public chart: MapChart = void 0 as any;
 
     public data: Array<MapPoint> = void 0 as any;
@@ -419,14 +422,6 @@ class MapSeries extends ScatterSeries {
     public mapMap?: AnyRecord;
 
     public mapTitle?: string;
-
-    public maxX?: number;
-
-    public maxY?: number;
-
-    public minX?: number;
-
-    public minY?: number;
 
     public options: MapSeriesOptions = void 0 as any;
 
@@ -803,15 +798,9 @@ class MapSeries extends ScatterSeries {
      * @private
      */
     public getBox(paths: Array<MapPointOptions>): void {
-        var MAX_VALUE = Number.MAX_VALUE,
-            maxX = -MAX_VALUE,
-            minX = MAX_VALUE,
-            maxY = -MAX_VALUE,
-            minY = MAX_VALUE,
-            minRange = MAX_VALUE,
-            xAxis = this.xAxis,
-            yAxis = this.yAxis,
-            hasBox;
+
+        const MAX_VALUE = Number.MAX_VALUE;
+        const allBounds = [];
 
         // Find the bounding box
         (paths || []).forEach(function (
@@ -829,67 +818,72 @@ class MapSeries extends ScatterSeries {
                     );
                 }
 
-                var path = point.path || [],
-                    pointMaxX = -MAX_VALUE,
-                    pointMinX = MAX_VALUE,
-                    pointMaxY = -MAX_VALUE,
-                    pointMinY = MAX_VALUE,
-                    properties = (point as any).properties;
-
                 // The first time a map point is used, analyze its box
-                if (!point._foundBox) {
+                if (!point.bounds) {
+
+                    const path = point.path || [],
+                        properties = (point as any).properties;
+
+                    let x2 = -MAX_VALUE,
+                        x1 = MAX_VALUE,
+                        y2 = -MAX_VALUE,
+                        y1 = MAX_VALUE,
+                        validBounds;
+
                     path.forEach((seg): void => {
                         const x = seg[seg.length - 2];
                         const y = seg[seg.length - 1];
                         if (typeof x === 'number' && typeof y === 'number') {
-                            pointMinX = Math.min(pointMinX, x);
-                            pointMaxX = Math.max(pointMaxX, x);
-                            pointMinY = Math.min(pointMinY, y);
-                            pointMaxY = Math.max(pointMaxY, y);
+                            x1 = Math.min(x1, x);
+                            x2 = Math.max(x2, x);
+                            y1 = Math.min(y1, y);
+                            y2 = Math.max(y2, y);
+                            validBounds = true;
                         }
                     });
                     // Cache point bounding box for use to position data
                     // labels, bubbles etc
-                    point._midX = (
-                        pointMinX + (pointMaxX - pointMinX) * pick(
+                    const midX = (
+                        x1 + (x2 - x1) * pick(
                             point.middleX,
                             properties &&
                             (properties as any)['hc-middle-x'],
                             0.5
                         )
                     );
-                    point._midY = (
-                        pointMinY + (pointMaxY - pointMinY) * pick(
+                    const midY = (
+                        y1 + (y2 - y1) * pick(
                             point.middleY,
                             properties &&
                             (properties as any)['hc-middle-y'],
                             0.5
                         )
                     );
-                    point._maxX = pointMaxX;
-                    point._minX = pointMinX;
-                    point._maxY = pointMaxY;
-                    point._minY = pointMinY;
-                    point.labelrank = pick(
-                        point.labelrank,
-                        (pointMaxX - pointMinX) * (pointMaxY - pointMinY)
-                    );
-                    point._foundBox = true;
+
+                    if (validBounds) {
+                        point.bounds = { midX, midY, x1, y1, x2, y2 };
+
+                        point.labelrank = pick(
+                            point.labelrank,
+                            (x2 - x1) * (y2 - y1)
+                        );
+                    }
                 }
 
-                maxX = Math.max(maxX, point._maxX as any);
-                minX = Math.min(minX, point._minX as any);
-                maxY = Math.max(maxY, point._maxY as any);
-                minY = Math.min(minY, point._minY as any);
-                minRange = Math.min(
-                    (point._maxX as any) - (point._minX as any),
-                    (point._maxY as any) - (point._minY as any), minRange
-                );
-                hasBox = true;
+                if (point.bounds) {
+                    allBounds.push(point.bounds);
+                }
+
             }
         });
 
+        if (this.bounds) {
+            allBounds.push(this.bounds);
+        }
+        this.bounds = MapView.compositeBounds(allBounds);
+
         // Set the box for the whole series
+        /*
         if (hasBox) {
             this.minY = Math.min(minY, pick(this.minY, MAX_VALUE));
             this.maxY = Math.max(maxY, pick(this.maxY, -MAX_VALUE));
@@ -898,6 +892,7 @@ class MapSeries extends ScatterSeries {
 
             // If no minRange option is set, set the default minimum zooming
             // range to 5 times the size of the smallest element
+            /*
             if (xAxis && typeof xAxis.options.minRange === 'undefined') {
                 xAxis.minRange = Math.min(
                     5 * minRange,
@@ -912,7 +907,10 @@ class MapSeries extends ScatterSeries {
                     yAxis.minRange || MAX_VALUE
                 );
             }
+            * /
         }
+
+        */
     }
 
     /**
@@ -1193,9 +1191,13 @@ class MapSeries extends ScatterSeries {
 
             // Record the middle point (loosely based on centroid),
             // determined by the middleX and middleY options.
-            if (isNumber(point._midX) && isNumber(point._midY)) {
+            if (
+                point.bounds &&
+                isNumber(point.bounds.midX) &&
+                isNumber(point.bounds.midY)
+            ) {
                 const midPoint = series.translatePath([
-                    ['M', point._midX, point._midY]
+                    ['M', point.bounds.midX, point.bounds.midY]
                 ]);
                 point.plotX = midPoint[0][1];
                 point.plotY = midPoint[0][2];
