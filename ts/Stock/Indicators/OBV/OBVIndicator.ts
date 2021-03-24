@@ -25,9 +25,16 @@ const {
 import U from '../../../Core/Utilities.js';
 const {
     isNumber,
+    error,
     extend,
     merge
 } = U;
+
+/* *
+ *
+ *  Class
+ *
+ * */
 
 /**
  * The OBV series type.
@@ -42,7 +49,8 @@ class OBVIndicator extends SMAIndicator {
     /**
      * On-Balance Volume (OBV) technical indicator. This series
      * requires the `linkedTo` option to be set and should be loaded after
-     * the `stock/indicators/indicators.js` file.
+     * the `stock/indicators/indicators.js` file. Through the `volumeSeriesID`
+     * there also should be linked the volume series.
      *
      * @sample stock/indicators/obv
      *         OBV indicator
@@ -65,6 +73,12 @@ class OBVIndicator extends SMAIndicator {
          * @excluding index, period
          */
         params: {
+            index: void 0 as any,
+            period: void 0 as any,
+            /**
+             * The id of another series to use its data as volume data for the
+             * indiator calculation.
+             */
             volumeSeriesID: 'volume'
         },
         tooltip: {
@@ -88,42 +102,6 @@ class OBVIndicator extends SMAIndicator {
      *
      * */
 
-    public getCloseValues(
-        yVal: Array<number> | Array<Array<number>>
-    ): Array<number> {
-        const index: number = 3; // take close value
-        let values: Array<number>;
-
-        if (isNumber(yVal[0])) {
-            // For line series.
-            values = yVal as Array<number>;
-        } else {
-            // For OHLC series.
-            values = (yVal as Array<Array<number>>).map((value: Array<number>): number => value[index]);
-        }
-
-        return values;
-    }
-
-    public getTrend(
-        curentClose: number,
-        previousClose: number
-    ): number {
-        let trend: number = void 0 as any;
-
-        if (curentClose > previousClose) {
-            trend = 1; // up
-        }
-        if (curentClose === previousClose) {
-            trend = 0; // constant
-        }
-        if (curentClose < previousClose) {
-            trend = -1; // down
-        }
-
-        return trend;
-    }
-
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: OBVParamsOptions
@@ -133,7 +111,8 @@ class OBVIndicator extends SMAIndicator {
             yVal: Array<number> | Array<Array<number>> = (series.yData as any),
             OBV: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [];
+            yData: Array<number> = [],
+            hasOHLC = !isNumber(yVal[0]);
 
         let OBVPoint: Array<number> = [],
             i: number = 0,
@@ -142,37 +121,34 @@ class OBVIndicator extends SMAIndicator {
             previousClose: number = 0,
             curentClose: number = 0,
             volume: Array<number>,
-            closeValues: Array<number>,
-            trend: number;
+            closeValues: Array<number>;
 
         // Checks if volume series exists.
         if (volumeSeries) {
-            closeValues = this.getCloseValues(yVal);
             volume = ((volumeSeries as Series).yData as any);
 
-            for (i; i < closeValues.length; i++) {
-                // Add first point and qet close value.
+            for (i; i < yVal.length; i++) {
+                // Add first point and get close value.
                 if (i === 0) {
                     OBVPoint = [xVal[i], previousOBV];
-                    previousClose = closeValues[i];
+                    previousClose = hasOHLC ?
+                        (yVal as Array<Array<number>>)[i][3] : (yVal as Array<number>)[i];
                 } else {
-                    curentClose = closeValues[i];
-                    trend = this.getTrend(curentClose, previousClose);
+                    curentClose = hasOHLC ?
+                        (yVal as Array<Array<number>>)[i][3] : (yVal as Array<number>)[i];
 
-                    if (trend === 1) {
+                    if (curentClose > previousClose) { // up
                         curentOBV = previousOBV + volume[i];
-                    }
-                    if (trend === 0) {
+                    } else if (curentClose === previousClose) { // constant
                         curentOBV = previousOBV;
-                    }
-                    if (trend === -1) {
+                    } else { // down
                         curentOBV = previousOBV - volume[i];
                     }
 
                     // Add point.
                     OBVPoint = [xVal[i], curentOBV];
 
-                    // Asing currend as previous for next iteration
+                    // Assign current as previous for next iteration.
                     previousOBV = curentOBV;
                     previousClose = curentClose;
                 }
@@ -182,6 +158,13 @@ class OBVIndicator extends SMAIndicator {
                 yData.push(OBVPoint[1]);
             }
         } else {
+            error(
+                'Series ' +
+                params.volumeSeriesID +
+                ' not found! Check `volumeSeriesID`.',
+                true,
+                series.chart
+            );
             return;
         }
 
@@ -207,11 +190,13 @@ interface OBVIndicator {
 extend(OBVIndicator.prototype, {
     nameComponents: void 0 as any
 });
+
 /* *
  *
  *  Registry
  *
  * */
+
 declare module '../../../Core/Series/SeriesType' {
     interface SeriesTypeRegistry {
         obv: typeof OBVIndicator;
