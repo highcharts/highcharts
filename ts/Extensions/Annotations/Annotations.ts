@@ -1628,11 +1628,12 @@ H.extendAnnotation = function <T extends typeof Annotation> (
 ): void {
     BaseConstructor = BaseConstructor || Annotation;
 
-    merge(
-        true,
+    extend(
         Constructor.prototype,
-        BaseConstructor.prototype,
-        prototype
+        merge(
+            BaseConstructor.prototype,
+            prototype
+        )
     );
 
     Constructor.prototype.defaultOptions = merge(

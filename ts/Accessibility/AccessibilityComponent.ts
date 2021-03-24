@@ -404,20 +404,21 @@ AccessibilityComponent.prototype = {
      */
     setProxyButtonStyle: function (button: HTMLDOMElement): void {
         merge(true, button.style, {
-            'border-width': 0,
-            'background-color': 'transparent',
+            borderWidth: '0',
+            backgroundColor: 'transparent',
             cursor: 'pointer',
             outline: 'none',
-            opacity: 0.001,
+            opacity: '0.001',
             filter: 'alpha(opacity=1)',
-            '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
-            zIndex: 999,
+            zIndex: '999',
             overflow: 'hidden',
-            padding: 0,
-            margin: 0,
+            padding: '0',
+            margin: '0',
             display: 'block',
             position: 'absolute'
         });
+        (button.style as any)['-ms-filter'] =
+            'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)';
     },
 
 
