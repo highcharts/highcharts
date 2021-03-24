@@ -217,7 +217,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
     public readonly id: string;
 
-    public readonly presentationState: DataPresentationState;
+    private presentationState: DataPresentationState;
 
     private rowCount: number;
 
@@ -774,6 +774,16 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         return columns;
+    }
+
+    /**
+     * Returns the presentation state of the table.
+     *
+     * @return {DataPresentationState}
+     * Returns the presentation state.
+     */
+    public getPresentationState(): DataPresentationState {
+        return this.presentationState;
     }
 
     /**
@@ -1343,6 +1353,18 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         return !failed;
+    }
+
+    /**
+     * Sets a new presentation state for the table.
+     *
+     * @param {DataPresentationState} presentationState
+     * The new presentation state to use.
+     */
+    public setPresentationState(
+        presentationState: DataPresentationState
+    ): void {
+        this.presentationState = presentationState;
     }
 
     /**
