@@ -1385,7 +1385,7 @@ class Tooltip {
                 let checkX = x;
                 let checkY = y;
 
-                if (mouseEvent && currentSeries.is('xrange')) {
+                if (mouseEvent && currentSeries.directTouch) {
                     checkX = mouseEvent.chartX - chart.plotLeft;
                     checkY = mouseEvent.chartY - chart.plotTop;
                 }
@@ -1823,7 +1823,12 @@ class Tooltip {
      * @param {boolean} paneCoordinates
      * @return {boolean}
      */
-    public isInside(plotX: (number|boolean), plotY: number, series?: Series, paneCoordinates?: boolean): boolean {
+    public isInside(
+        plotX: (number|boolean),
+        plotY: number,
+        series?: Series,
+        paneCoordinates?: boolean
+    ): boolean {
         const {
             inverted,
             plotBox,
