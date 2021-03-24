@@ -56,14 +56,27 @@ class KlingerIndicator extends SMAIndicator {
      */
     public static defaultOptions: KlingerOptions = merge(SMAIndicator.defaultOptions, {
         params: {
+            /**
+             * The fast period for indicator calculations.
+             */
             fastAvgPeriod: 34,
+            /**
+             * The slow period for indicator calculations.
+             */
             slowAvgPeriod: 55,
+            /**
+             * The base period for signal calculations.
+             */
             signal: 13,
+            /**
+             * The id of another series to use its data as volume data for the
+             * indiator calculation.
+             */
             volumeSeriesID: 'volume'
         },
         signal: {
             /**
-             * Styles for a smoothed line.
+             * Styles for a signal line.
              */
             styles: {
                 /**
@@ -272,7 +285,7 @@ class KlingerIndicator extends SMAIndicator {
                 prevEMA = EMAcalc;
             }
         }
-        prevEMA = void 0 as any
+        prevEMA = void 0 as any;
 
         // SLOW EMA
         this.EMApercent = 2 / (params.slowAvgPeriod + 1);
@@ -293,7 +306,7 @@ class KlingerIndicator extends SMAIndicator {
                 prevEMA = EMAcalc;
             }
         }
-        prevEMA = void 0 as any
+        prevEMA = void 0 as any;
 
         // Calculate KO
         for (var k = 0; k < xVal.length; k++) {
@@ -308,7 +321,7 @@ class KlingerIndicator extends SMAIndicator {
                 yData.push([KO]);
             }
         }
-        prevEMA = void 0 as any
+        prevEMA = void 0 as any;
 
         // Calculate signal
         this.EMApercent = 2 / (params.signal + 1);
@@ -335,7 +348,7 @@ class KlingerIndicator extends SMAIndicator {
                 yData[l].push(EMAcalc);
             }
         }
-        prevEMA = void 0 as any
+        prevEMA = void 0 as any;
 
         // console.log(Klinger)
         // console.log(xData)
