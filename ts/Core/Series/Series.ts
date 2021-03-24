@@ -6641,6 +6641,8 @@ class Series {
             animation = series.finishedAnimating && { animation: false },
             kinds = {} as Record<string, number>;
 
+        newType = newType || initialType;
+
         if (keepPoints) {
             preserve.push(
                 'data',
@@ -6711,9 +6713,11 @@ class Series {
             delete (series as any)[prop];
         });
 
-        if (seriesTypes[newType || initialType]) {
+        let casting = false;
 
-            const casting = newType !== series.type;
+        if (seriesTypes[newType]) {
+
+            casting = newType !== series.type;
 
             // Destroy the series and delete all properties, it will be
             // reinserted within the `init` call below
@@ -6726,7 +6730,7 @@ class Series {
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,
-                        seriesTypes[newType || initialType].prototype
+                        seriesTypes[newType].prototype
                     );
 
                 // Legacy (IE < 11)
@@ -6742,7 +6746,7 @@ class Series {
                     // prototype (#2270, #3719).
                     extend<Series>(
                         series,
-                        seriesTypes[newType || initialType].prototype
+                        seriesTypes[newType].prototype
                     );
 
                     // The events are tied to the prototype chain, don't copy if
@@ -6759,7 +6763,7 @@ class Series {
                 17,
                 true,
                 chart,
-                { missingModuleFor: (newType || initialType) }
+                { missingModuleFor: newType }
             );
         }
 
@@ -6770,6 +6774,9 @@ class Series {
 
         series.init(chart, options);
 
+        if (casting) {
+            series.isDirtyData = true;
+        }
 
         // Remove particular elements of the points. Check `series.options`
         // because we need to consider the options being set on plotOptions as
