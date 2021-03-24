@@ -419,6 +419,10 @@ class FlagsSeries extends ColumnSeries {
                 (plotX as any) >= 0 &&
                 !outsideRight
             ) {
+                // #15384
+                if (graphic && shape && shape !== graphic.symbolKey) {
+                    graphic = point.graphic = graphic.destroy();
+                }
 
                 // Create the flag
                 if (!graphic) {

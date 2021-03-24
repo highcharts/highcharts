@@ -37,7 +37,8 @@ QUnit.test('Update flag (#4222)', function (assert) {
     var flag = {
             x: Date.UTC(2015, 5, 1),
             title: 'Name2',
-            text: 'new'
+            text: 'new',
+            shape: 'squarepin'
         },
         point = chart.series[1].points[0];
 
@@ -46,6 +47,11 @@ QUnit.test('Update flag (#4222)', function (assert) {
         point.graphic.element.querySelector('text').textContent,
         flag.title,
         'Updated title'
+    );
+    assert.strictEqual(
+        point.graphic.box.symbolName,
+        'squarepin',
+        '#15384: Shape should have updated'
     );
 
     chart.tooltip.refresh([point]);
