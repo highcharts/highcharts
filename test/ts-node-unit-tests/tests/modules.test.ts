@@ -227,6 +227,7 @@ export function testStockIndicators() {
         'bb',
         'cci',
         'cmf',
+        'disparityindex',
         'dmi',
         'dpo',
         'ema',

@@ -21,6 +21,7 @@ import '../../Stock/Indicators/ATR/ATRIndicator.js';
 import '../../Stock/Indicators/BB/BBIndicator.js';
 import '../../Stock/Indicators/CCI/CCIIndicator.js';
 import '../../Stock/Indicators/CMF/CMFIndicator.js';
+import '../../Stock/Indicators/DisparityIndex/DisparityIndexIndicator.js';
 import '../../Stock/Indicators/DMI/DMIIndicator.js';
 import '../../Stock/Indicators/DPO/DPOIndicator.js';
 import '../../Stock/Indicators/EMA/EMAIndicator.js';
