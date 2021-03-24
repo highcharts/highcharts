@@ -227,6 +227,7 @@ export function testStockIndicators() {
         'bb',
         'cci',
         'cmf',
+        'dmi',
         'dpo',
         'ema',
         'chaikin',

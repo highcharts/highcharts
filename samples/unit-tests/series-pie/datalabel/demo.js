@@ -7,6 +7,11 @@ QUnit.test('Pie data labels general tests', function (assert) {
                 {
                     animation: false,
                     type: 'pie',
+                    states: {
+                        inactive: {
+                            opacity: 0
+                        }
+                    },
                     data: [
                         {
                             name: 'Firefox',
@@ -49,6 +54,14 @@ QUnit.test('Pie data labels general tests', function (assert) {
         point.dataLabel.translateY - dataLabelOldY,
         offsetY,
         'A point dataLabel y option should be used in calculations (#12985).'
+    );
+
+    chart.series[0].points[0].onMouseOver();
+
+    assert.strictEqual(
+        chart.series[0].points[1].dataLabel.opacity,
+        0,
+        '#15377: Inactive point should have 0 opacity'
     );
 });
 

@@ -1240,6 +1240,8 @@ class Series {
              *         Bigger markers
              *
              * @default {highstock} 2
+             * @default {highcharts} 4
+             *
              */
             radius: 4,
 
