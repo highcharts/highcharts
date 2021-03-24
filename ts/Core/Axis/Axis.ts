@@ -7756,7 +7756,7 @@ class Axis {
                 this.cross = graphic = chart.renderer
                     .path()
                     .addClass(
-                        ' highcharts-crosshair highcharts-crosshair-' +
+                        'highcharts-crosshair highcharts-crosshair-' +
                         (categorized ? 'category ' : 'thin ') +
                         (options.className || '')
                     )
