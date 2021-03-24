@@ -5,6 +5,12 @@ import Bindings from  '../../../../code/es-modules/Dashboard/Actions/Bindings.js
 import Highcharts from 'https://code.highcharts.com/stock/es-modules/masters/highcharts.src.js';
 
 let dashboard = new Dashboard('container', {
+    editMode: {
+        enabled: true,
+        contextMenu: {
+            enabled: true
+        }
+    },
     gui: {
         enabled: true,
         layoutOptions: {

@@ -22,15 +22,27 @@ body {
     border: 1px dashed rgba(0, 0, 0, 0);
 }
 
-.highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row :hover .highcharts-dashboard-column  {
-    border: 1px dashed #bdbdbd;
-    cursor: pointer;
+.highcharts-dashboard-edit-mode-active {
+    .highcharts-dashboard-row {
+        border: 1px dashed #000;
+        box-sizing: border-box;
+
+        .highcharts-dashboard-column {
+            border: 1px dashed #000;
+            box-sizing: border-box;
+        }
+    }
 }
 
-.highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row:hover .highcharts-dashboard-column .toolbar,
-.highcharts-dashboard-layout.edit-mode .add-item {
-    display: block;
-}
+// .highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row :hover .highcharts-dashboard-column  {
+//     border: 1px dashed #bdbdbd;
+//     cursor: pointer;
+// }
+
+// .highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row:hover .highcharts-dashboard-column .toolbar,
+// .highcharts-dashboard-layout.edit-mode .add-item {
+//     display: block;
+// }
 
 .w-1-5 {
     width: 20%;

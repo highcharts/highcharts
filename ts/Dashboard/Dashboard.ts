@@ -5,6 +5,7 @@ import Bindings from './Actions/Bindings.js';
 
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
+import EditMode from './EditMode/EditMode.js';
 
 const {
     doc
@@ -40,6 +41,13 @@ class Dashboard {
                 columnClassName: void 0
             },
             layouts: []
+        },
+        editMode: {
+            enabled: true,
+            contextMenu: {
+                enabled: true,
+                menuItems: ['saveLocal', 'separator', 'editMode']
+            }
         },
         componentOptions: {
             isResizable: true
@@ -104,6 +112,14 @@ class Dashboard {
 
         this.initContainer(renderTo);
 
+        // Init edit mode.
+        if (
+            this.options.editMode &&
+            this.options.editMode.enabled
+        ) {
+            this.editMode = new EditMode(this, this.options.editMode);
+        }
+
         // Init layouts from options.
         if (options.gui && this.options.gui) {
             this.setLayouts(this.options.gui);
@@ -131,6 +147,7 @@ class Dashboard {
     public container: globalThis.HTMLElement = void 0 as any;
     public guiEnabled: (boolean|undefined);
     public id: string;
+    public editMode?: EditMode;
     /* *
      *
      *  Functions
@@ -284,6 +301,7 @@ class Dashboard {
 namespace Dashboard {
     export interface Options {
         gui?: GUIOptions;
+        editMode?: EditMode.Options;
         components?: Array<Bindings.ComponentOptions>;
         componentOptions?: Partial<Bindings.ComponentOptions>;
         layoutsJSON?: Array<Layout.ClassJSON>;
