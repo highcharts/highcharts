@@ -256,6 +256,9 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {string} columnNameOrAlias
      * Column name or alias to clear.
      *
+     * @param {number} [rowIndex=0]
+     * Row index to start removing.
+     *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
@@ -264,6 +267,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      */
     public clearColumn(
         columnNameOrAlias: string,
+        rowIndex: number = 0,
         eventDetail?: DataEventEmitter.EventDetail
     ): void {
         const table = this;
@@ -282,16 +286,18 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 type: 'clearColumn',
                 column: columnClone,
                 columnName: columnNameOrAlias,
-                detail: eventDetail
+                detail: eventDetail,
+                rowIndex
             });
 
-            column.length = 0;
+            column.length = rowIndex;
 
             table.emit({
                 type: 'afterClearColumn',
                 column: columnClone,
                 columnName: columnNameOrAlias,
-                detail: eventDetail
+                detail: eventDetail,
+                rowIndex
             });
         }
     }
@@ -299,26 +305,32 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Removes all rows from this data table.
      *
+     * @param {number} [rowIndex=0]
+     * Row index to start removing.
+     *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits DataTable#clearRows
      * @emits DataTable#afterClearRows
      */
-    public clearRows(eventDetail?: DataEventEmitter.EventDetail): void {
+    public clearRows(
+        rowIndex: number = 0,
+        eventDetail?: DataEventEmitter.EventDetail
+    ): void {
         const table = this,
             columns = table.columns,
             columnNames = Object.keys(columns);
 
-        table.emit({ type: 'clearRows', detail: eventDetail });
+        table.emit({ type: 'clearRows', detail: eventDetail, rowIndex });
 
         for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columns[columnNames[i]].length = 0;
+            columns[columnNames[i]].length = rowIndex;
         }
 
-        table.rowCount = 0;
+        table.rowCount = rowIndex;
 
-        table.emit({ type: 'afterClearRows', detail: eventDetail });
+        table.emit({ type: 'afterClearRows', detail: eventDetail, rowIndex });
     }
 
     /**
@@ -1762,6 +1774,7 @@ namespace DataTable {
         );
         readonly column: Readonly<Column>;
         readonly columnName: string;
+        readonly rowIndex?: number;
     }
 
     /**
@@ -1770,7 +1783,6 @@ namespace DataTable {
     export interface TableEventObject extends DataEventEmitter.EventObject {
         readonly type: (
             'clearTable'|'afterClearTable'|
-            'clearRows'|'afterClearRows'|
             'cloneTable'|'afterCloneTable'
         );
         readonly tableClone?: DataTable;
@@ -1788,6 +1800,7 @@ namespace DataTable {
      */
     export interface RowEventObject extends DataEventEmitter.EventObject {
         readonly type: (
+            'clearRows'|'afterClearRows'|
             'deleteRow'|'afterDeleteRow'|
             'setRow'|'afterSetRow'
         );
