@@ -71,11 +71,10 @@ const dashboard = new Dashboard('container', {
                 animation: false,
                 type: 'column',
                 zoomType: 'x',
-                events: {
-                    selection: e => {
-                        console.log(e);
-                    }
-                }
+                panning: {
+                    enabled: true
+                },
+                panKey: 'shift'
             },
             xAxis: [{
                 minRange: 1,
@@ -92,7 +91,7 @@ const dashboard = new Dashboard('container', {
         },
         events: {},
         store,
-        syncEvents: ['selection']
+        syncEvents: ['selection', 'panning']
     }, {
         column: 'dashboard-col-1',
         type: 'chart',
@@ -113,7 +112,7 @@ const dashboard = new Dashboard('container', {
         },
         events: {},
         store,
-        syncEvents: ['selection']
+        syncEvents: ['selection', 'panning']
     }]
 });
 

@@ -232,12 +232,18 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         return this.hoverPoint;
     }
 
-    public setSelection(axisID: string, minMax: { min?: number; max?: number }, eventDetail: {}): void {
+    public setSelection(
+        axisID: string,
+        minMax: { min?: number; max?: number },
+        eventDetail: {},
+        reset = false
+    ): void {
         this.selection[axisID] = minMax;
 
         this.emit({
             type: 'afterSelectionChange',
             selection: this.selection,
+            reset,
             detail: eventDetail
         });
     }
@@ -343,7 +349,8 @@ namespace DataPresentationState {
 
     export interface SelectionEventObject extends DataEventEmitter.EventObject {
         type: selectionEventType;
-        selection: {};
+        selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
+        reset: boolean;
     }
 
 }

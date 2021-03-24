@@ -13,7 +13,9 @@ import {
     seriesVisibilityEmitter,
     seriesVisibilityHandler,
     tooltipEmitter,
-    tooltipHandler
+    tooltipHandler,
+    panEmitter,
+    ChartSyncHandler
 } from './ChartSyncHandlers.js';
 
 import U from '../../Core/Utilities.js';
@@ -21,8 +23,7 @@ const {
     createElement,
     merge,
     uniqueKey,
-    getStyle,
-    addEvent
+    getStyle
 } = U;
 
 /* *
@@ -51,7 +52,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
             syncHandlers: [
                 { id: 'visibility', emitter: seriesVisibilityEmitter, handler: seriesVisibilityHandler },
                 { id: 'tooltip', emitter: tooltipEmitter, handler: tooltipHandler },
-                { id: 'selection', emitter: selectionEmitter, handler: selectionHandler }
+                { id: 'selection', emitter: selectionEmitter, handler: selectionHandler },
+                { id: 'panning', emitter: panEmitter, handler: selectionHandler }
             ]
         });
 
@@ -88,6 +90,8 @@ class ChartComponent extends Component<ChartComponent.Event> {
     public chartConstructor: ChartComponent.constructorType;
     public syncEvents: ChartComponent.syncEventsType[];
     public syncHandlers: ChartComponent.syncHandlerType[];
+
+    private syncHandlerRegistry: Record<string, ChartSyncHandler>
     /* *
      *
      *  Constructor
@@ -122,6 +126,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
 
         this.syncEvents = this.options.syncEvents;
         this.syncHandlers = this.options.syncHandlers;
+        this.syncHandlerRegistry = {};
         this.chartOptions = this.options.chartOptions || {};
 
         // Extend via event.
@@ -193,6 +198,15 @@ class ChartComponent extends Component<ChartComponent.Event> {
         }
     }
 
+    public registerSyncHandler(handler: ChartSyncHandler): void {
+        const { id } = handler;
+        this.syncHandlerRegistry[id] = handler;
+    }
+
+    public getSyncHandler(handlerID: string): ChartSyncHandler | undefined {
+        return this.syncHandlerRegistry[handlerID];
+    }
+
     private initChart(): void {
         // @todo: This should be replaced when series understand dataTable
         const series: any = [];
@@ -222,8 +236,18 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 this.syncHandlers.forEach((handlerObject): void => {
                     const { id, emitter, handler } = handlerObject;
                     if (this.syncEvents.indexOf(id) > -1) {
+                        if (handler instanceof ChartSyncHandler) {
+                            // Avoid registering the same handler multiple times
+                            // i.e. panning and selection uses the same handler
+                            const existingHandler = this.getSyncHandler(handler.id);
+                            if (!existingHandler) {
+                                this.registerSyncHandler(handler);
+                                handler.createEmitter(this)();
+                            }
+                        } else if (typeof handler === 'function') {
+                            handler(this);
+                        }
                         emitter(this);
-                        handler(this);
                     }
                 });
             }

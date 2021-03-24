@@ -2,10 +2,38 @@ import type ChartComponent from './ChartComponent';
 import type Chart from '../../Core/Chart/Chart';
 import type PointType from '../../Core/Series/PointType';
 import type Point from '../../Core/Series/Point';
+import type DataPresentationState from '../../Data/DataPresentationState';
 import U from '../../Core/Utilities.js';
 const {
     addEvent
 } = U;
+
+/* eslint-disable no-invalid-this, require-jsdoc */
+export class ChartSyncHandler {
+
+    public id: string;
+    public presentationStateTrigger: DataPresentationState.eventTypes;
+    public func: Function;
+
+    constructor(id: string, trigger: DataPresentationState.eventTypes, func: Function) {
+        this.id = id;
+        this.presentationStateTrigger = trigger;
+        this.func = func;
+    }
+
+    public createEmitter(component: ChartComponent): Function {
+        return (): void => {
+            const { store, chart, id } = component;
+            if (store && chart) {
+                store.table.presentationState.on(this.presentationStateTrigger, (e): void => {
+                    if (id !== e.detail?.sender) {
+                        this.func.bind(chart)(e);
+                    }
+                });
+            }
+        };
+    }
+}
 
 /**
  * Sets dataPresentationState on chart hover events
@@ -86,26 +114,21 @@ export function seriesVisibilityEmitter(component: ChartComponent): void {
 
 /**
  * Handles updating chart on series visibily changing in dataPresentationState
- * @param {ChartComponent} component
- * The component to work on
  */
-export function seriesVisibilityHandler(component: ChartComponent): void {
-    const { store, chart, id } = component;
-
-    if (store && chart) {
-        store.table.presentationState.on('afterColumnVisibilityChange', (e): void => {
-            if (e.detail?.sender !== id) {
-                const { visibilityMap } = e as any;
-                chart.series.forEach((series): void => {
-                    const seriesID = series.options.id;
-                    if (seriesID && typeof visibilityMap[seriesID] === 'boolean') {
-                        series.setVisible(visibilityMap[seriesID], false);
-                    }
-                });
-            }
-        });
-    }
-}
+export const seriesVisibilityHandler =
+    new ChartSyncHandler(
+        'seriesVisibilityHandler',
+        'afterColumnVisibilityChange',
+        function (this: Chart, e: DataPresentationState.ColumnVisibilityEventObject): void {
+            const { visibilityMap } = e;
+            this.series.forEach((series): void => {
+                const seriesID = series.options.id;
+                if (seriesID && typeof visibilityMap[seriesID] === 'boolean') {
+                    series.setVisible(visibilityMap[seriesID], false);
+                }
+            });
+        }
+    );
 
 /**
  * Finds a matching point in the chart
@@ -125,7 +148,8 @@ function findMatchingPoint(chart: Chart, hoverPoint: Point): PointType | undefin
             const { points } = chart.series[i];
             for (let j = 0; j < points.length; j++) {
                 const point = points[j];
-                if (point.x === x && point.y === y) {
+
+                if (point.visible && point.series.visible && point.x === x && point.y === y) {
                     return point;
                 }
             }
@@ -138,24 +162,22 @@ function findMatchingPoint(chart: Chart, hoverPoint: Point): PointType | undefin
  * @param {chartcomponent} component
  * the component to attach to
  */
-export function tooltipHandler(component: ChartComponent): void {
-    const { store, chart, id } = component;
-    if (store && chart) {
-        store.table.presentationState.on('afterHoverPointChange', (e): void => {
-            if (e.detail?.sender !== id) {
-                if (store.table.presentationState.getHoverPoint() === void 0 && !chart.hoverPoint) {
-                    chart.tooltip?.hide();
-                }
-                if ((e as any).hoverPoint && chart) {
-                    const match = findMatchingPoint(chart, (e as any).hoverPoint);
-                    if (match) {
-                        chart.tooltip?.refresh(match);
-                    }
+export const tooltipHandler =
+    new ChartSyncHandler(
+        'tooltipHandler',
+        'afterHoverPointChange',
+        function (this: Chart, e: DataPresentationState.PointHoverEventObject): void {
+            if (e.hoverPoint === void 0 && !this.hoverPoint) {
+                this.tooltip?.hide();
+            }
+            if ((e as any).hoverPoint && this.tooltip) {
+                const match = findMatchingPoint(this, (e as any).hoverPoint);
+                if (match) {
+                    this.tooltip?.refresh(match);
                 }
             }
-        });
-    }
-}
+        }
+    );
 
 /**
  * Handles updating dataPresentationState on selection changing in chart
@@ -166,21 +188,36 @@ export function selectionEmitter(component: ChartComponent): void {
     const { chart, store, id } = component;
 
     if (store && chart) {
-        addEvent(chart, 'selection', (e: any): void => {
-            if (!e.resetSelection) {
-                if (e.xAxis.length) {
-                    store.table.presentationState.setSelection('xAxis', { min: e.xAxis[0].min, max: e.xAxis[0].max }, {
+        addEvent(chart, 'selection', (e): void => {
+            if ((e as any).resetSelection) {
+                chart.axes.forEach((axis): void => {
+                    store.table.presentationState.setSelection(axis.coll, { min: void 0, max: void 0 }, {
                         sender: id
-                    });
+                    },
+                    true
+                    );
+                });
+
+                if (chart.resetZoomButton) {
+                    chart.resetZoomButton = chart.resetZoomButton.destroy();
                 }
                 return;
             }
 
-            if (e.resetSelection) {
-                store.table.presentationState.setSelection('xAxis', { min: void 0, max: void 0 }, {
-                    sender: id
+            // Smooth it out a bit
+            requestAnimationFrame((): void => {
+                const minMaxes = getAxisMinMaxMap(chart);
+                minMaxes.forEach((minMax): void => {
+                    const { coll, extremes } = minMax;
+                    store.table.presentationState.setSelection(
+                        coll,
+                        extremes,
+                        {
+                            sender: id
+                        }
+                    );
                 });
-            }
+            });
 
         });
     }
@@ -188,33 +225,79 @@ export function selectionEmitter(component: ChartComponent): void {
 
 /**
  * Handles changes in datapresentationstate selection
- * @param {chartcomponent} component
- * the component to attach to
  */
-export function selectionHandler(component: ChartComponent): void {
+export const selectionHandler =
+    new ChartSyncHandler(
+        'selectionHandler',
+        'afterSelectionChange',
+        function (this: Chart, e: DataPresentationState.SelectionEventObject): void {
+            // Reset the zoom if the source is the reset button
+            if (e.reset) {
+                this.zoom({ resetSelection: true } as any); // Not allowed by TS, but works
+                return;
+            }
+
+            const selectionAxes = e.selection;
+            Object.keys(selectionAxes).forEach((axisName: string): void => {
+                const selectionAxis = selectionAxes[axisName];
+                if (selectionAxis) {
+                    const { min, max } = selectionAxis;
+                    this.axes.forEach((axis): void => {
+                        if (axis.coll === axisName && axis.zoomEnabled) {
+                            if (typeof min === 'number' && typeof max === 'number') {
+                                axis.zoom(min, max);
+
+                                if (!this.resetZoomButton) {
+                                    this.showResetZoom();
+                                }
+                            }
+                        }
+                    });
+                }
+
+                this.redraw();
+            });
+        }
+    );
+
+function getAxisMinMaxMap(chart: Chart): Array<{
+    coll: string;
+    extremes: { min: number | undefined; max: number | undefined };
+}> {
+    return chart.axes
+        .filter((axis): boolean => (chart.options.chart?.zoomType || '')
+            .indexOf(axis.coll.slice(0, 1)) > -1 // A bit silly
+        )
+        .map((axis): { coll: string; extremes: { min: number | undefined; max: number | undefined } } => {
+            const { min, max, coll } = axis;
+            return {
+                coll,
+                extremes: {
+                    min: typeof min === 'number' ? min : void 0,
+                    max: typeof max === 'number' ? max : void 0
+                }
+            };
+        }
+        );
+}
+
+export function panEmitter(component: ChartComponent): void {
     const { store, chart, id } = component;
     if (store && chart) {
-        store.table.presentationState.on('afterSelectionChange', (e: any): void => {
-            if (e.detail?.sender !== id) {
-                if (e.selection.xAxis) {
-                    const { min, max } = e.selection.xAxis;
-                    if (min || max) {
-                        chart.xAxis.forEach((axis): void => {
-                            axis.zoom(min, max);
-                        });
-                        chart.showResetZoom();
-                    }
-                    // Reset the zoom if both are undefined
-                    if (!min && !max) {
-                        chart.zoom({ resetSelection: true } as any); // Not allowed by TS, but works
-                        if (chart.resetZoomButton) {
-                            chart.resetZoomButton = chart.resetZoomButton.destroy();
+        addEvent(chart, 'pan', (): void => {
+            requestAnimationFrame((): void => {
+                const minMaxes = getAxisMinMaxMap(chart);
+                minMaxes.forEach((minMax): void => {
+                    const { coll, extremes } = minMax;
+                    store.table.presentationState.setSelection(
+                        coll,
+                        extremes,
+                        {
+                            sender: id
                         }
-                    }
-
-                    chart.redraw();
-                }
-            }
+                    );
+                });
+            });
         });
     }
 }
