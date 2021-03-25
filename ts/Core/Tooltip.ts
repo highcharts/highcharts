@@ -122,10 +122,9 @@ declare global {
             public hide(delay?: number): void;
             public init(chart: Chart, options: TooltipOptions): void;
             public isInside(
-                plotX: (number|boolean),
+                plotX: (number|true),
                 plotY: number,
-                series?: Series,
-                paneCoordinates?: boolean
+                series?: Series
             ): boolean;
             public isStickyOnContact(): boolean;
             public move(
@@ -1392,7 +1391,7 @@ class Tooltip {
 
                 if (
                     chart.polar ||
-                    this.isInside(checkX, checkY, currentSeries, !point.tooltipPos) ||
+                    this.isInside(checkX, checkY, currentSeries) ||
                     currentSeries.is('windbarb') // Windbarb is outside plot
                 ) {
                     const label = tooltip.getLabel();
@@ -1536,7 +1535,7 @@ class Tooltip {
                 anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
 
                 // Set anchorY, limit to the scrollable plot area
-                if (tooltip.isInside(true, plotY, series)) {
+                if (tooltip.isInside(true, yAxis.pos - plotLeft + plotY, series)) {
                     anchorY = yAxis.pos + plotY;
                 }
             }
@@ -1817,17 +1816,15 @@ class Tooltip {
      * Checks if a point is within visible plot and axis bounds.
      *
      * @private
-     * @param {number|boolean} plotX
+     * @param {number|true} plotX
      * @param {number} plotY
      * @param {Highcharts.Series} series
-     * @param {boolean} paneCoordinates
      * @return {boolean}
      */
     public isInside(
-        plotX: (number|boolean),
+        plotX: (number|true),
         plotY: number,
-        series?: Series,
-        paneCoordinates?: boolean
+        series?: Series
     ): boolean {
         const {
             inverted,
@@ -1844,20 +1841,17 @@ class Tooltip {
             }
         } = this.chart;
 
-        if (this.followPointer) {
-            paneCoordinates = false;
-        }
-        paneCoordinates = pick(paneCoordinates, true);
+        let isXInside = false;
 
-        let isXInside = plotX === true;
-
-        if (isNumber(plotX)) {
+        if (plotX === true) {
+            isXInside = true;
+        } else {
             const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
                 pos: plotLeft,
                 len: Infinity
             };
 
-            const x = paneCoordinates ? xAxis.pos + plotX : plotLeft + plotX;
+            const x = plotLeft + plotX;
 
             isXInside = (
                 x >= Math.max(
@@ -1876,7 +1870,7 @@ class Tooltip {
             len: Infinity
         };
 
-        const y = paneCoordinates ? yAxis.pos + plotY : plotTop + plotY;
+        const y = plotTop + plotY;
 
         return (
             isXInside &&
