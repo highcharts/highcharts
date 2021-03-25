@@ -26,7 +26,9 @@ const {
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
+    correctFloat,
     extend,
+    isArray,
     merge
 } = U;
 
@@ -55,6 +57,11 @@ class KlingerIndicator extends SMAIndicator {
      * @optionparent plotOptions.klinger
      */
     public static defaultOptions: KlingerOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * Paramters used in calculation of Klinger Oscillator.
+         *
+         * @excluding index, period
+         */
         params: {
             /**
              * The fast period for indicator calculations.
@@ -105,7 +112,6 @@ class KlingerIndicator extends SMAIndicator {
      * */
 
     public data: Array<KlingerPoint> = void 0 as any;
-    public EMApercent: number = void 0 as any;
     public points: Array<KlingerPoint> = void 0 as any;
     public options: KlingerOptions = void 0 as any;
     public volumeSeries: LineSeries = void 0 as any;
@@ -132,24 +138,27 @@ class KlingerIndicator extends SMAIndicator {
         );
     }
 
-
     public calculateTrend(
         this: KlingerIndicator,
         yVal: (Array<Array<number>>),
         i: number
     ): number {
-        const isUpward = yVal[i][1] + yVal[i][2] + yVal[i][3] > yVal[i - 1][1] + yVal[i - 1][2] + yVal[i - 1][3];
+        const isUpward = yVal[i][1] + yVal[i][2] + yVal[i][3] >
+            yVal[i - 1][1] + yVal[i - 1][2] + yVal[i - 1][3];
 
         return isUpward ? 1 : -1;
     }
 
     // Checks if the series and volumeSeries are accessible, number of
     // points.x is longer than period, is series has OHLC data
-    public isValidData(this: KlingerIndicator): boolean {
+    public isValidData(
+        this: KlingerIndicator,
+        firstYVal: Array<number>
+    ): boolean {
         const chart = this.chart,
             options: KlingerOptions = this.options,
             series = this.linkedParent,
-            isSeriesOHLC: (boolean|undefined) = series && series.yData && (series.yData as any)[0].length === 4,
+            isSeriesOHLC: boolean = isArray(firstYVal) && firstYVal.length === 4,
             volumeSeries = (this.volumeSeries ||
                     (
                         this.volumeSeries =
@@ -163,10 +172,34 @@ class KlingerIndicator extends SMAIndicator {
          * @return {boolean|undefined} true if length is valid.
          */
         function isLengthValid(series: LineSeries): (boolean|undefined) {
-            return series && series.xData && series.xData.length >= (options.params as any).slowAvgPeriod;
+            return series && series.xData && series.xData.length >=
+                (options.params as any).slowAvgPeriod;
         }
 
         return !!(isLengthValid(series) && isLengthValid(volumeSeries) && isSeriesOHLC);
+    }
+
+    public getCM(
+        previousCM: number,
+        DM: number,
+        trend: number,
+        previousTrend: number,
+        prevoiusDM: number
+    ): number {
+        let CM;
+        if (trend === previousTrend) {
+            CM = previousCM + DM;
+        } else {
+            CM = prevoiusDM + DM;
+        }
+        return correctFloat(CM);
+    }
+
+    public getDM(
+        high: number,
+        low: number
+    ): number {
+        return correctFloat(high - low);
     }
 
     public getVolumeForce(yVal: Array<Array<number>>): Array<Array<number>> {
@@ -177,29 +210,26 @@ class KlingerIndicator extends SMAIndicator {
             force: number,
             i: number = 1, // start from second point
             previousCM: number = 0,
-            prevoiusDM: number = yVal[0][1] - yVal[0][2], // initial DM
+            previousDM: number = yVal[0][1] - yVal[0][2], // initial DM
             previousTrend: number = 0,
             trend: number;
 
         for (i; i < yVal.length; i++) {
             trend = this.calculateTrend(yVal, i);
+            DM = this.getDM(yVal[i][1], yVal[i][2]);
+            // For the first iteration when the previousTrend doesn't exist,
+            // previousCM doesn't exist either, but it doesn't matter becouse
+            // it's filltered out in the getCM method in else statement,
+            // (in this iteration, previousCM can be raplaced with the DM).
+            CM = this.getCM(previousCM, DM, trend, previousTrend, previousDM);
 
-            // DM = high - low
-            DM = yVal[i][1] - yVal[i][2];
-
-            if (trend === previousTrend) {
-                CM = previousCM + DM;
-            } else {
-                CM = prevoiusDM + DM;
-            }
-
-            force = ((this.volumeSeries.yData as any)[i] as number) * trend * Math.abs(2 * ((DM / CM) - 1));
+            force = (this.volumeSeries.yData as any)[i] * trend * Math.abs(2 * ((DM / CM) - 1)) * 100;
             volumeForce.push([force]);
 
             // Before next iteration, assign the current as the previous.
             previousTrend = trend;
             previousCM = CM;
-            prevoiusDM = DM;
+            previousDM = DM;
         }
         return volumeForce;
     }
@@ -208,6 +238,7 @@ class KlingerIndicator extends SMAIndicator {
         yVal: (Array<number>|Array<Array<number>>),
         prevEMA: (number|undefined),
         SMA: number,
+        EMApercent: number,
         index?: number,
         i?: number,
         xVal?: Array<number>
@@ -217,7 +248,7 @@ class KlingerIndicator extends SMAIndicator {
             xVal || [],
             yVal,
             typeof i === 'undefined' ? 1 : i,
-            this.EMApercent,
+            EMApercent,
             prevEMA,
             typeof index === 'undefined' ? -1 : index,
             SMA
@@ -229,10 +260,8 @@ class KlingerIndicator extends SMAIndicator {
         index: number,
         values: Array<Array<number>>
     ): number {
-        const accumulatePeriodPointsSlow =
-            EMAIndicator.prototype.accumulatePeriodPoints(period, index, values);
 
-        return accumulatePeriodPointsSlow / period;
+        return EMAIndicator.prototype.accumulatePeriodPoints(period, index, values) / period;
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
@@ -243,18 +272,20 @@ class KlingerIndicator extends SMAIndicator {
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             xData: Array<number> = [],
-            yData: Array<Array<number>> = [],
-            slowEMAvalues: Array<number> = [],
-            fastEMAvalues: Array<number> = [],
-            signalValues: Array<number> = [];
+            yData: Array<Array<number>> = [];
 
         let klingerPoint: Array<number> = [],
+            KO: number,
             i: number = 0,
-            j: number = 0,
-            prevEMA: (number|undefined);
+            fastEMA: number = 0,
+            slowEMA: number,
+            // signalEMA: number|undefined = void 0,
+            previousFastEMA: number | undefined = void 0,
+            previousSlowEMA: number | undefined = void 0;
+        // prevoiusSignalEMA: number | undefined = void 0;
 
         // If the necessary conditions are not fulfilled, don't proceed.
-        if (!this.isValidData()) {
+        if (!this.isValidData(yVal[0])) {
             return;
         }
 
@@ -265,95 +296,48 @@ class KlingerIndicator extends SMAIndicator {
         const SMAFast = this.getSMA(params.fastAvgPeriod, 0, volumeForce),
             SMASlow = this.getSMA(params.slowAvgPeriod, 0, volumeForce);
 
-        // FAST EMA
-        this.EMApercent = 2 / (params.fastAvgPeriod + 1);
-        for (i; i < volumeForce.length; i++) {
+        // Calculate EMApercent for the first points.
+        const fastEMApercent = 2 / (params.fastAvgPeriod + 1),
+            slowEMApercent = 2 / (params.slowAvgPeriod + 1);
 
-            if (i < params.fastAvgPeriod) {
-                fastEMAvalues.push(0);
-            } else {
-                const EMAcalc = this.getEMA(
+        // Calculate KO
+        for (i; i < yVal.length; i++) {
+
+            // Get EMA for fast period.
+            if (i >= params.fastAvgPeriod) {
+                fastEMA = this.getEMA(
                     volumeForce,
-                    prevEMA,
+                    previousFastEMA,
                     SMAFast,
+                    fastEMApercent,
                     0,
                     i,
                     xVal
                 )[1];
-
-                fastEMAvalues.push(EMAcalc);
-                prevEMA = EMAcalc;
+                previousFastEMA = fastEMA;
             }
-        }
-        prevEMA = void 0 as any;
 
-        // SLOW EMA
-        this.EMApercent = 2 / (params.slowAvgPeriod + 1);
-        for (j; j < volumeForce.length; j++) {
-            if (j < params.slowAvgPeriod) {
-                slowEMAvalues.push(0);
-            } else {
-                const EMAcalc = this.getEMA(
+            // Get EMA for slow period.
+            if (i >= params.slowAvgPeriod) {
+                slowEMA = this.getEMA(
                     volumeForce,
-                    prevEMA,
+                    previousSlowEMA,
                     SMASlow,
+                    slowEMApercent,
                     0,
-                    j,
+                    i,
                     xVal
                 )[1];
+                previousSlowEMA = slowEMA;
+                KO = correctFloat(fastEMA - slowEMA);
 
-                slowEMAvalues.push(EMAcalc);
-                prevEMA = EMAcalc;
-            }
-        }
-        prevEMA = void 0 as any;
-
-        // Calculate KO
-        for (var k = 0; k < xVal.length; k++) {
-            let KO;
-            if (k >= params.slowAvgPeriod) {
-                KO = fastEMAvalues[k - 1] - slowEMAvalues[k - 1];
-
-                klingerPoint = [xVal[k], KO];
+                klingerPoint = [xVal[i], KO];
 
                 Klinger.push(klingerPoint);
-                xData.push(xVal[k]);
+                xData.push(xVal[i]);
                 yData.push([KO]);
             }
         }
-        prevEMA = void 0 as any;
-
-        // Calculate signal
-        this.EMApercent = 2 / (params.signal + 1);
-        const SMASignal = this.getSMA(params.signal, 0, volumeForce);
-
-        for (var l = 0; l < yData.length; l++) {
-            if (l < params.signal) {
-                signalValues.push(0);
-                Klinger[l].push(0);
-                yData[l].push(0);
-            } else {
-                const EMAcalc = this.getEMA(
-                    yData,
-                    prevEMA,
-                    SMASignal,
-                    0,
-                    l,
-                    xVal
-                )[1];
-
-                signalValues.push(EMAcalc);
-                prevEMA = EMAcalc;
-                Klinger[l].push(EMAcalc);
-                yData[l].push(EMAcalc);
-            }
-        }
-        prevEMA = void 0 as any;
-
-        // console.log(Klinger)
-        // console.log(xData)
-        // console.log(yData)
-
 
         return {
             values: Klinger,
@@ -386,7 +370,7 @@ interface KlingerIndicator {
 
 extend(KlingerIndicator.prototype, {
     nameBase: 'Klinger',
-    pointArrayMap: ['y', 'signal'],
+    pointArrayMap: ['y'],
     parallelArrays: ['x', 'y', 'signal'],
     pointValKey: 'y',
     linesApiNames: ['signal'],
