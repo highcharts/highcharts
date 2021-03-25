@@ -1535,7 +1535,7 @@ class Tooltip {
                 anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
 
                 // Set anchorY, limit to the scrollable plot area
-                if (tooltip.isInside(true, yAxis.pos - plotLeft + plotY, series)) {
+                if (tooltip.isInside(true, yAxis.pos - plotTop + plotY, series)) {
                     anchorY = yAxis.pos + plotY;
                 }
             }
@@ -1841,11 +1841,9 @@ class Tooltip {
             }
         } = this.chart;
 
-        let isXInside = false;
+        const box = scrollablePlotBox || plotBox;
 
-        if (plotX === true) {
-            isXInside = true;
-        } else {
+        if (plotX !== true) {
             const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
                 pos: plotLeft,
                 len: Infinity
@@ -1853,16 +1851,18 @@ class Tooltip {
 
             const x = plotLeft + plotX;
 
-            isXInside = (
+            if (!(
                 x >= Math.max(
                     scrollLeft + plotLeft,
                     xAxis.pos
                 ) &&
                 x <= Math.min(
-                    scrollLeft + plotLeft + (scrollablePlotBox || plotBox).width,
+                    scrollLeft + plotLeft + box.width,
                     xAxis.pos + xAxis.len
                 )
-            );
+            )) {
+                return false;
+            }
         }
 
         const yAxis = (series && (inverted ? series.xAxis : series.yAxis)) || {
@@ -1873,13 +1873,12 @@ class Tooltip {
         const y = plotTop + plotY;
 
         return (
-            isXInside &&
             y >= Math.max(
                 scrollTop + plotTop,
                 yAxis.pos
             ) &&
             y <= Math.min(
-                scrollTop + plotTop + (scrollablePlotBox || plotBox).height,
+                scrollTop + plotTop + box.height,
                 yAxis.pos + yAxis.len
             )
         );
