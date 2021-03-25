@@ -7,6 +7,16 @@ import DataJSON from '../../Data/DataJSON.js';
 import DataParser from '../../Data/Parsers/DataParser.js';
 
 import Highcharts from '../../masters/highcharts.src.js';
+import {
+    selectionEmitter,
+    selectionHandler,
+    seriesVisibilityEmitter,
+    seriesVisibilityHandler,
+    tooltipEmitter,
+    tooltipHandler,
+    panEmitter,
+    ChartSyncHandler
+} from './ChartSyncHandlers.js';
 
 import U from '../../Core/Utilities.js';
 const {
@@ -37,7 +47,14 @@ class ChartComponent extends Component<ChartComponent.Event> {
                 series: []
             },
             Highcharts,
-            chartConstructor: ''
+            chartConstructor: '',
+            syncEvents: [],
+            syncHandlers: [
+                { id: 'visibility', emitter: seriesVisibilityEmitter, handler: seriesVisibilityHandler },
+                { id: 'tooltip', emitter: tooltipEmitter, handler: tooltipHandler },
+                { id: 'selection', emitter: selectionEmitter, handler: selectionHandler },
+                { id: 'panning', emitter: panEmitter, handler: selectionHandler }
+            ]
         });
 
     public static fromJSON(json: ChartComponent.ClassJSON): ChartComponent {
@@ -71,7 +88,10 @@ class ChartComponent extends Component<ChartComponent.Event> {
     public options: ChartComponent.ComponentOptions;
     public charter: typeof Highcharts;
     public chartConstructor: ChartComponent.constructorType;
+    public syncEvents: ChartComponent.syncEventsType[];
+    public syncHandlers: ChartComponent.syncHandlerType[];
 
+    private syncHandlerRegistry: Record<string, ChartSyncHandler>
     /* *
      *
      *  Constructor
@@ -104,6 +124,9 @@ class ChartComponent extends Component<ChartComponent.Event> {
             this.chartContainer.id = this.options.chartID;
         }
 
+        this.syncEvents = this.options.syncEvents;
+        this.syncHandlers = this.options.syncHandlers;
+        this.syncHandlerRegistry = {};
         this.chartOptions = this.options.chartOptions || {};
 
         // Extend via event.
@@ -175,14 +198,30 @@ class ChartComponent extends Component<ChartComponent.Event> {
         }
     }
 
+    public registerSyncHandler(handler: ChartSyncHandler): void {
+        const { id } = handler;
+        this.syncHandlerRegistry[id] = handler;
+    }
+
+    public getSyncHandler(handlerID: string): ChartSyncHandler | undefined {
+        return this.syncHandlerRegistry[handlerID];
+    }
+
     private initChart(): void {
         // @todo: This should be replaced when series understand dataTable
         const series: any = [];
         if (this.store?.table) {
             const data = DataParser.getColumnsFromTable(this.store?.table, false).slice(1);
-            data.forEach((datum): void => {
-                series.push({ data: datum });
+            const keys = this.store.table.getFirstNonNullRow()?.getCellNames();
+            data.forEach((datum, i): void => {
+                let id, name;
+                if (keys && keys[i]) {
+                    id = keys[i];
+                    name = id;
+                }
+                series.push({ id, name, data: datum });
             });
+
         }
         this.chartOptions.series = this.chartOptions.series ?
             [...series, ...this.chartOptions.series] :
@@ -192,6 +231,26 @@ class ChartComponent extends Component<ChartComponent.Event> {
         if (this.chart) {
             const { width, height } = this.dimensions;
             this.chart.setSize(width, height);
+
+            if (this.store?.table.presentationState) {
+                this.syncHandlers.forEach((handlerObject): void => {
+                    const { id, emitter, handler } = handlerObject;
+                    if (this.syncEvents.indexOf(id) > -1) {
+                        if (handler instanceof ChartSyncHandler) {
+                            // Avoid registering the same handler multiple times
+                            // i.e. panning and selection uses the same handler
+                            const existingHandler = this.getSyncHandler(handler.id);
+                            if (!existingHandler) {
+                                this.registerSyncHandler(handler);
+                                handler.createEmitter(this)();
+                            }
+                        } else if (typeof handler === 'function') {
+                            handler(this);
+                        }
+                        emitter(this);
+                    }
+                });
+            }
         }
     }
 
@@ -218,6 +277,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         }
 
         this.chart = this.charter.chart(this.chartContainer, this.chartOptions);
+
         return this.chart;
     }
 
@@ -249,6 +309,10 @@ namespace ChartComponent {
     export type ComponentType = ChartComponent;
 
     export type constructorType = 'chart' | 'stock' | 'map' | 'gantt';
+
+    export type syncEventsType = 'visibility'| 'selection' | 'tooltip';
+    export type syncHandlerType = { id: ChartComponent.syncEventsType; emitter: Function; handler: Function };
+
     export interface Event extends Component.Event {
     }
     export interface UpdateEvent extends Component.UpdateEvent {
@@ -261,6 +325,8 @@ namespace ChartComponent {
         style?: CSSObject;
         Highcharts: typeof Highcharts;
         chartConstructor: ChartComponent.constructorType;
+        syncEvents: syncEventsType[];
+        syncHandlers: syncHandlerType[];
     }
 
 

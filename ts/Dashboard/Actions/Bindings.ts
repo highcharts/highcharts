@@ -7,15 +7,15 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 import type GUIElement from '../Layout/GUIElement';
 
-import U from '../../Core/Utilities.js';
 import Column from '../Layout/Column.js';
 import Row from '../Layout/Row.js';
 import Layout from '../Layout/Layout.js';
-
+import U from '../../Core/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    objectEach
+    objectEach,
+    merge
 } = U;
 class Bindings {
     /* *
@@ -150,11 +150,16 @@ class Bindings {
         compontentContainer: HTMLDOMElement,
         options: Bindings.ComponentOptions
     ): ChartComponent {
-        return new ChartComponent({
-            parentElement: compontentContainer as HTMLDOMElement,
-            chartOptions: options.chartOptions,
-            dimensions: options.dimensions
-        });
+        return new ChartComponent(
+            merge(
+                options,
+                {
+                    parentElement: compontentContainer as HTMLDOMElement,
+                    chartOptions: options.chartOptions,
+                    dimensions: options.dimensions
+                }
+            )
+        );
     }
 
     public static htmlComponent(

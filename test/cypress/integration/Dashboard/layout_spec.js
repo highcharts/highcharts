@@ -70,13 +70,35 @@ describe('Chart synchronized events', () => {
         }));
     });
 
-    it.skip('Should sync selection', () => {
+    it('Should sync selection', () => {
         cy.visit('/dashboard/chart-interaction-selection/')
         cy.wait(1000)
+        cy.get('.highcharts-container').first().as('firstchart')
 
-        cy.get('.chart-container > .highcharts-container').first().as('firstchart')
+        cy.zoom('@firstchart')
 
-        cy.get('@firstchart').log()
+        // There should now be two reset-zoom buttons
+        cy.get('.highcharts-reset-zoom').should('have.length', 2)
+
+
+        // Click on reset in the first chart
+        cy.get('@firstchart').within(()=>{
+            cy.get('.highcharts-reset-zoom').click()
+        })
+
+        // Now there should be none
+        cy.get('.highcharts-reset-zoom').should('have.length', 0)
 
     })
+
+    // Todo: find a way to assert this
+    it('Should sync panning', () => {
+        cy.wait(1000)
+        cy.get('.highcharts-container').first().as('firstchart')
+        // Do a zoom to make it "pannable"
+        cy.zoom('@firstchart')
+        // Do the pan
+        cy.pan('@firstchart')
+    })
+
 });

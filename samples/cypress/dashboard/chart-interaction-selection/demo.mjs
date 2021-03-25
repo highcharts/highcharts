@@ -11,8 +11,6 @@ const store = new CSVStore(undefined, {
 });
 store.load();
 
-console.log(store);
-
 const dashboard = new Dashboard('container', {
     gui: {
         enabled: true,
@@ -72,12 +70,28 @@ const dashboard = new Dashboard('container', {
             chart: {
                 animation: false,
                 type: 'column',
-                zoomType: 'x'
+                zoomType: 'x',
+                panning: {
+                    enabled: true
+                },
+                panKey: 'shift'
+            },
+            xAxis: [{
+                minRange: 1,
+                startOnTick: false,
+                endOnTick: false
+            }],
+            accessibility: {
+                keyboardNavigation: {
+                    seriesNavigation: {
+                        mode: 'serialize'
+                    }
+                }
             }
         },
         events: {},
         store,
-        syncEvents: ['visibility', 'tooltip']
+        syncEvents: ['selection', 'panning']
     }, {
         column: 'dashboard-col-1',
         type: 'chart',
@@ -91,11 +105,14 @@ const dashboard = new Dashboard('container', {
                 animation: false,
                 zoomType: 'x',
                 zoomBySingleTouch: true
-            }
+            },
+            xAxis: [{
+                minRange: 2
+            }]
         },
         events: {},
         store,
-        syncEvents: ['visibility', 'tooltip']
+        syncEvents: ['selection', 'panning']
     }]
 });
 

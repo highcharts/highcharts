@@ -17,6 +17,7 @@
  * */
 
 import type DataEventEmitter from './DataEventEmitter';
+import type Point from '../Core/Series/Point';
 import DataJSON from './DataJSON.js';
 import U from '../Core/Utilities.js';
 const {
@@ -68,6 +69,12 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      */
     private columnOrder?: Array<string>;
 
+    private columnVisibilityMap: Record<string, boolean> = {};
+
+    private hoverPoint?: Point;
+
+    private selection: Record<string, { min?: number; max?: number }> = {};
+
     /**
      * Whether the state has been changed since initialization.
      */
@@ -98,6 +105,10 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      */
     public getColumnOrder(): Array<string> {
         return (this.columnOrder || []).slice();
+    }
+
+    public getColumnVisibility(columnName: string): boolean | undefined {
+        return this.columnVisibilityMap[columnName];
     }
 
     /**
@@ -196,6 +207,47 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         });
     }
 
+    public setColumnVisibility(columnVisibility: Array<[string, boolean]>, eventDetail: {}): void {
+        columnVisibility.forEach((entry): void => {
+            const [columnName, visibility] = entry;
+            this.columnVisibilityMap[columnName] = visibility;
+        });
+        this.emit({
+            type: 'afterColumnVisibilityChange',
+            visibilityMap: this.columnVisibilityMap,
+            detail: eventDetail
+        });
+    }
+
+    public setHoverPoint(point: Point | undefined, eventDetail: {}): void {
+        this.hoverPoint = point;
+        this.emit({
+            type: 'afterHoverPointChange',
+            hoverPoint: this.hoverPoint,
+            detail: eventDetail
+        });
+    }
+
+    public getHoverPoint(): Point | undefined {
+        return this.hoverPoint;
+    }
+
+    public setSelection(
+        axisID: string,
+        minMax: { min?: number; max?: number },
+        eventDetail: {},
+        reset = false
+    ): void {
+        this.selection[axisID] = minMax;
+
+        this.emit({
+            type: 'afterSelectionChange',
+            selection: this.selection,
+            reset,
+            detail: eventDetail
+        });
+    }
+
     /**
      * Converts the presentation state to a class JSON.
      *
@@ -246,6 +298,19 @@ namespace DataPresentationState {
     export type ColumnOrderEventType = (
         'columnOrderChange'|'afterColumnOrderChange'
     );
+    export type ColumnVisibilityEventType = (
+        'columnVisibilityChange' | 'afterColumnVisibilityChange'
+    )
+
+    export type HoverPointEventType = (
+        'hoverPointChange' | 'afterHoverPointChange'
+    )
+
+    export type selectionEventType = (
+        'selectionChange' | 'afterSelectionChange'
+    )
+
+    export type eventTypes = (selectionEventType | HoverPointEventType | ColumnVisibilityEventType)
 
     /**
      * Function to sort an array of column names.
@@ -257,7 +322,10 @@ namespace DataPresentationState {
     /**
      * All information objects of DataPrsentationState events.
      */
-    export type EventObject = (ColumnOrderEventObject);
+    export type EventObject = (
+        ColumnOrderEventObject | ColumnVisibilityEventObject |
+        PointHoverEventObject | SelectionEventObject
+    );
 
     /**
      * Describes the information object for order-related events.
@@ -266,6 +334,23 @@ namespace DataPresentationState {
         type: ColumnOrderEventType;
         newColumnOrder: Array<string>;
         oldColumnOrder: Array<string>;
+    }
+    export interface ColumnVisibilityEventObject extends DataEventEmitter.EventObject {
+        type: ColumnVisibilityEventType;
+        visibilityMap: Record<string, boolean>;
+    }
+
+    export interface PointHoverEventObject extends DataEventEmitter.EventObject {
+        type: HoverPointEventType;
+        hoverPoint: Point | undefined;
+    }
+
+    export type selectionObjectType = Record<string, { min?: number; max?: number }>
+
+    export interface SelectionEventObject extends DataEventEmitter.EventObject {
+        type: selectionEventType;
+        selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
+        reset: boolean;
     }
 
 }
