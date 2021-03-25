@@ -53,11 +53,8 @@ const {
     isArray,
     isNumber,
     isObject,
-    merge,
-    offset,
     pick,
     pInt,
-    setOptions,
     uniqueKey
 } = U;
 import VMLRenderer3D from './VMLRenderer3D.js';
@@ -377,7 +374,7 @@ let VMLRenderer: typeof Highcharts.VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    (H as any).getStyle = U.getStyle = function (
+    (H as any).getStyle = U.getStyle = function getStyle(
         el: HTMLDOMElement,
         prop: string
     ): number {
@@ -398,7 +395,7 @@ if (doc && !doc.defaultView) {
         if (alias) {
             el.style.zoom = 1 as any;
             return Math.max(
-                (el as any)[alias] - 2 * (U.getStyle(el, 'padding') as number),
+                (el as any)[alias] - 2 * getStyle(el, 'padding'),
                 0
             );
         }

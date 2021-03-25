@@ -1868,6 +1868,7 @@ function getStyle(
     prop: string,
     toInt?: boolean
 ): (number|string|undefined) {
+    const customGetStyle: typeof getStyle = ((H as any).getStyle || getStyle);
 
     let style: (number|string|undefined) = (toInt ? NaN : void 0);
 
@@ -1894,8 +1895,8 @@ function getStyle(
             0, // #8377
             (
                 offsetWidth -
-                getStyle(el, 'padding-left', true) -
-                getStyle(el, 'padding-right', true)
+                customGetStyle(el, 'padding-left', true) -
+                customGetStyle(el, 'padding-right', true)
             )
         );
     }
@@ -1905,8 +1906,8 @@ function getStyle(
             0, // #8377
             (
                 Math.min(el.offsetHeight, el.scrollHeight) -
-                getStyle(el, 'padding-top', true) -
-                getStyle(el, 'padding-bottom', true)
+                customGetStyle(el, 'padding-top', true) -
+                customGetStyle(el, 'padding-bottom', true)
             )
         );
     }
