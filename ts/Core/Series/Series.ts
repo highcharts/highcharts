@@ -6774,10 +6774,6 @@ class Series {
 
         series.init(chart, options);
 
-        if (casting) {
-            series.isDirtyData = true;
-        }
-
         // Remove particular elements of the points. Check `series.options`
         // because we need to consider the options being set on plotOptions as
         // well.
@@ -6824,6 +6820,10 @@ class Series {
 
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
+
+        if (casting && series.linkedSeries.length) {
+            series.isDirtyData = true;
+        }
 
         fireEvent(this, 'afterUpdate');
 
