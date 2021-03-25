@@ -1834,6 +1834,16 @@ function getNestedProperty(path: string, parent: unknown): unknown {
     return parent;
 }
 
+function getStyle(
+    el: HTMLDOMElement,
+    prop: string,
+    toInt: true
+): number;
+function getStyle(
+    el: HTMLDOMElement,
+    prop: string,
+    toInt?: false
+): (number|string|undefined);
 /**
  * Get the computed CSS value for given element and property, only for numerical
  * properties. For width and height, the dimension of the inner box (excluding
@@ -1850,16 +1860,16 @@ function getNestedProperty(path: string, parent: unknown): unknown {
  * @param {boolean} [toInt=true]
  *        Parse to integer.
  *
- * @return {number|string}
- *         The numeric value.
+ * @return {number|string|undefined}
+ *         The style value.
  */
 function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt?: boolean
-): (number|string) {
+): (number|string|undefined) {
 
-    var style;
+    let style: (number|string|undefined) = (toInt ? NaN : void 0);
 
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -1884,8 +1894,8 @@ function getStyle(
             0, // #8377
             (
                 offsetWidth -
-                (H as any).getStyle(el, 'padding-left') -
-                (H as any).getStyle(el, 'padding-right')
+                getStyle(el, 'padding-left', true) -
+                getStyle(el, 'padding-right', true)
             )
         );
     }
@@ -1893,9 +1903,11 @@ function getStyle(
     if (prop === 'height') {
         return Math.max(
             0, // #8377
-            Math.min(el.offsetHeight, el.scrollHeight) -
-                (H as any).getStyle(el, 'padding-top') -
-                (H as any).getStyle(el, 'padding-bottom')
+            (
+                Math.min(el.offsetHeight, el.scrollHeight) -
+                getStyle(el, 'padding-top', true) -
+                getStyle(el, 'padding-bottom', true)
+            )
         );
     }
 
@@ -1905,13 +1917,14 @@ function getStyle(
     }
 
     // Otherwise, get the computed style
-    style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
-    if (style) {
-        style = style.getPropertyValue(prop);
+    const css = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
+    if (css) {
+        style = css.getPropertyValue(prop);
         if (pick(toInt, prop !== 'opacity')) {
             style = pInt(style);
         }
     }
+
     return style;
 }
 
