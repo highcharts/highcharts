@@ -581,7 +581,7 @@ H.geojson = function (
 
     geojson.features.forEach(function (feature: any): void {
 
-        var geometry = feature.geometry,
+        var geometry = feature.geometry || {},
             type = geometry.type,
             coordinates = geometry.coordinates,
             properties = feature.properties,
