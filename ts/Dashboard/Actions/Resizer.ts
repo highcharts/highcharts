@@ -1,6 +1,7 @@
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import type DataJSON from '../../Data/DataJSON';
 import type Column from '../Layout/Column.js';
 import type Row from '../Layout/Row.js';
 import type Layout from '../Layout/Layout.js';
@@ -29,19 +30,24 @@ class Resizer {
     *  Static Properties
     *
     * */
+    public static fromJSON(
+        layout: Layout,
+        json: Resizer.ClassJSON
+    ): Resizer|undefined {
+        return new Resizer(layout, json.options);
+    }
+
     protected static readonly defaultOptions: Resizer.Options = {
-        resize: {
-            columns: {
-                enabled: true,
-                minSize: 50
-            },
-            rows: {
-                enabled: true,
-                minSize: 50
-            },
-            snap: {
-                width: 20
-            }
+        columns: {
+            enabled: true,
+            minSize: 50
+        },
+        rows: {
+            enabled: true,
+            minSize: 50
+        },
+        snap: {
+            width: 20
         }
     };
 
@@ -51,16 +57,18 @@ class Resizer {
     *
     * */
     public constructor(
-        layout: Layout
+        layout: Layout,
+        options?: Resizer.Options
     ) {
         this.resizeOptions = merge(
             {},
             Resizer.defaultOptions,
-            layout.options.resize
+            layout.options.resize,
+            options
         );
 
         this.layout = layout;
-        this.parentColumn = void 0;
+        this.parentColumn = void 0; // consider naming for example currentColumn
         this.eventsToUnbind = [];
 
         this.init();
@@ -89,15 +97,15 @@ class Resizer {
 
             if (columns) {
                 for (let j = 0, jEnd = columns.length; j < jEnd; ++j) {
-                    if (j < columns.length - 1) {
+                    // if (j < columns.length - 1) {
                         this.addSnap(
                             columns[j]
                         );
-                    }
+                    // }
 
                     // set min-size
                     (columns[j].container as HTMLElement).style.minWidth =
-                        this.resizeOptions.resize.columns.minSize + 'px';
+                        this.resizeOptions.columns.minSize + 'px';
                 }
             }
         }
@@ -112,7 +120,7 @@ class Resizer {
     public addSnap(
         column: Resizer.ResizedColumn
     ): void {
-        const snapWidth = this.resizeOptions.resize.snap.width;
+        const snapWidth = this.resizeOptions.snap.width;
 
         column.resizer = {} as Resizer.Snap;
 
@@ -226,7 +234,7 @@ class Resizer {
      *
      */
     public onMouseMove(
-        parentColumn: Resizer.ResizedColumn|undefined,
+        parentColumn: Resizer.ResizedColumn|undefined, // replace parentColumn with currentColumn
         e: PointerEvent
     ): void {
         const columnContainer = parentColumn && parentColumn.container;
@@ -390,6 +398,27 @@ class Resizer {
             }
         }
     }
+
+    public toJSON(): Resizer.ClassJSON  {
+        const resizeOptions = this.resizeOptions;
+
+        return {
+            $class: 'Resizer',
+            options: {
+                columns: {
+                    enabled: resizeOptions.columns.enabled,
+                    minSize: resizeOptions.columns.minSize
+                },
+                rows: {
+                    enabled: resizeOptions.rows.enabled,
+                    minSize: resizeOptions.rows.minSize
+                },
+                snap: {
+                    width: resizeOptions.snap.width
+                }
+            }
+        }
+    }
 }
 interface Resizer {
     mouseDownHandler?: Function;
@@ -398,15 +427,10 @@ interface Resizer {
 }
 namespace Resizer {
     export interface Options {
-        resize: Resizer.ResizeOptions;
-    }
-
-    export interface ResizeOptions {
         columns: ColumnsRowsOptions;
         rows: ColumnsRowsOptions;
         snap: SnapOptions;
     }
-
     export interface ColumnsRowsOptions {
         enabled: boolean;
         minSize: number;
@@ -426,6 +450,25 @@ namespace Resizer {
 
     export interface HTMLDOMElementEvents extends HTMLDOMElement {
         hcEvents: Record<string, Array<Highcharts.EventWrapperObject<HTMLDOMElement>>>;
+    }
+
+    export interface ClassJSON extends DataJSON.ClassJSON {
+        options: JSONOptions;
+    }
+
+    export interface JSONOptions extends DataJSON.JSONObject {
+        columns: ColumnsRowsOptionsJSON;
+        rows: ColumnsRowsOptionsJSON;
+        snap: SnapJSON
+    }
+
+    export interface ColumnsRowsOptionsJSON extends DataJSON.JSONObject {
+        enabled: boolean;
+        minSize: number;
+    }
+
+    export interface SnapJSON extends DataJSON.JSONObject {
+        width: number;
     }
 }
 

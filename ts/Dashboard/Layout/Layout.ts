@@ -35,7 +35,8 @@ class Layout extends GUIElement {
                         copyId: container ? Dashboard.getCopyId() : '',
                         parentContainerId: dashboard.container.id ||
                             options.parentContainerId,
-                        rowsJSON: options.rows
+                        rowsJSON: options.rows,
+                        resizerJSON: options.resizer
                     }
                 );
 
@@ -131,6 +132,10 @@ class Layout extends GUIElement {
 
         if (options.resize) {
             this.resizer = new Resizer(this);
+        }
+
+        if (options.resizerJSON) {
+            this.resizer = Resizer.fromJSON(this, options.resizerJSON);
         }
     }
 
@@ -273,7 +278,8 @@ class Layout extends GUIElement {
             options: {
                 containerId: (layout.container as HTMLElement).id,
                 parentContainerId: dashboardContainerId,
-                rows: rows
+                rows: rows,
+                resizer: this.resizer?.toJSON()
             }
         };
     }
@@ -293,6 +299,7 @@ namespace Layout {
         style?: CSSObject;
         rowsJSON?: Array<Row.ClassJSON>;
         resize?: Resizer.Options;
+        resizerJSON?: Resizer.ClassJSON;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {
@@ -303,6 +310,7 @@ namespace Layout {
         containerId: string;
         parentContainerId: string;
         rows: Array<Row.ClassJSON>;
+        resizer?: Resizer.ClassJSON;
     }
 }
 
