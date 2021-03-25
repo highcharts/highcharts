@@ -350,11 +350,6 @@ class KlingerIndicator extends SMAIndicator {
         }
         prevEMA = void 0 as any;
 
-        // console.log(Klinger)
-        // console.log(xData)
-        // console.log(yData)
-
-
         return {
             values: Klinger,
             xData: xData,
