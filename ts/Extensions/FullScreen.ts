@@ -298,12 +298,18 @@ class Fullscreen {
         const chart = this.chart,
             exportDivElements = chart.exportDivElements,
             exportingOptions = chart.options.exporting,
-            menuItems = exportingOptions?.buttons?.contextButton.menuItems,
+            menuItems = (
+                exportingOptions &&
+                exportingOptions.buttons &&
+                exportingOptions.buttons.contextButton.menuItems
+            ),
             lang = chart.options.lang;
 
         if (
-            exportingOptions?.menuItemDefinitions &&
-            lang?.exitFullscreen &&
+            exportingOptions &&
+            exportingOptions.menuItemDefinitions &&
+            lang &&
+            lang.exitFullscreen &&
             lang.viewFullscreen &&
             menuItems &&
             exportDivElements &&

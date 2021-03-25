@@ -470,7 +470,11 @@ const groupData = function (
         // for this specific group
         if (pointArrayMap) {
 
-            var index = series.options.dataGrouping?.groupAll ? i : (series.cropStart as any) + i,
+            var index = (
+                    series.options.dataGrouping &&
+                    series.options.dataGrouping.groupAll ?
+                        i : (series.cropStart as any) + i
+                ),
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series

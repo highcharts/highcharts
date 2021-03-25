@@ -3635,7 +3635,7 @@ class Chart {
                 }
 
                 paddedMin = Math.min(
-                    pick(panningState?.startMin, extremes.dataMin),
+                    pick(panningState && panningState.startMin, extremes.dataMin),
                     halfPointRange ?
                         extremes.min :
                         axis.toValue(
@@ -3644,7 +3644,7 @@ class Chart {
                         )
                 );
                 paddedMax = Math.max(
-                    pick(panningState?.startMax, extremes.dataMax),
+                    pick(panningState && panningState.startMax, extremes.dataMax),
                     halfPointRange ?
                         extremes.max :
                         axis.toValue(

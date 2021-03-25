@@ -79,7 +79,9 @@ function addDestroyFocusBorderHook(el: SVGElement): void {
     const origDestroy = el.destroy;
 
     el.destroy = function (): undefined {
-        el.focusBorder?.destroy?.();
+        if (el.focusBorder && el.focusBorder.destroy) {
+            el.focusBorder.destroy();
+        }
         return origDestroy.apply(el, arguments);
     };
 

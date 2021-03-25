@@ -283,7 +283,11 @@ function pointSonify(
 ): void {
     var point = this,
         chart = point.series.chart,
-        masterVolume = pick(options.masterVolume, chart.options.sonification?.masterVolume),
+        masterVolume = pick(
+            options.masterVolume,
+            chart.options.sonification &&
+            chart.options.sonification.masterVolume
+        ),
         dataExtremes = options.dataExtremes || {},
         // Get the value to pass to instrument.play from the mapping value
         // passed in.
