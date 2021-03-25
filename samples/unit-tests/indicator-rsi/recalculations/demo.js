@@ -188,7 +188,6 @@ QUnit.test('Test RSI calculations on data updates.', function (assert) {
             426628,
             431314
         ],
-        id: 'line-series',
         type: 'line'
     });
 
