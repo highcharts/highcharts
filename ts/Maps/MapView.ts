@@ -37,6 +37,16 @@ declare global {
             y2: number;
         };
 
+        interface MapViewOptions {
+            center: ProjectedXY; // @todo: LatLon object
+            zoom: number;
+            projection?: string; // @todo: configuration object
+        }
+
+        interface Options {
+            mapView?: DeepPartial<MapViewOptions>;
+        }
+
     }
 }
 
@@ -61,11 +71,18 @@ class MapView {
     };
 
     public constructor(
-        chart: Chart
+        chart: Chart,
+        userOptions?: DeepPartial<Highcharts.MapViewOptions>
     ) {
+        const options = merge(true, {
+            center: { x: 0, y: 0 },
+            zoom: 0
+        }, userOptions);
+
         this.chart = chart;
-        this.center = { x: 0, y: 0 };
-        this.zoom = 0;
+        this.center = options.center;
+        this.userOptions = userOptions || {};
+        this.zoom = options.zoom;
 
         /*
         const proj = this.chart.options.chart.proj4 || win.proj4;
@@ -81,6 +98,7 @@ class MapView {
     public center: Highcharts.ProjectedXY;
     public minZoom?: number;
     public projection?: any;
+    public userOptions: DeepPartial<Highcharts.MapViewOptions>;
     public zoom: number;
 
     private chart: Chart;

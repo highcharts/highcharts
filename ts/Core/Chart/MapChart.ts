@@ -25,6 +25,7 @@ import U from '../Utilities.js';
 const {
     addEvent,
     getOptions,
+    isNumber,
     merge,
     pick
 } = U;
@@ -225,14 +226,23 @@ namespace MapChart {
 /* eslint-disable no-invalid-this */
 addEvent(Chart, 'afterSetChartSize', function (): void {
     if (!this.mapView) {
-        const mapView = new MapView(this);
+        const mapView = new MapView(this, this.options.mapView);
 
         // Apply the bounds inferred from the maps
         const bounds = mapView.getDataBounds();
 
         if (bounds) {
             mapView.fitToBounds(bounds, false);
+
             mapView.minZoom = mapView.zoom;
+
+            if (isNumber(mapView.userOptions.zoom)) {
+                mapView.zoom = mapView.userOptions.zoom;
+            }
+            if (mapView.userOptions.center) {
+                merge(true, mapView.center, mapView.userOptions.center);
+            }
+
             this.mapView = mapView;
         }
     }
