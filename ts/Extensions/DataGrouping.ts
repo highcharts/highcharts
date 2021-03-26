@@ -470,7 +470,11 @@ const groupData = function (
         // for this specific group
         if (pointArrayMap) {
 
-            var index = series.options.dataGrouping?.groupAll ? i : (series.cropStart as any) + i,
+            var index = (
+                    series.options.dataGrouping &&
+                    series.options.dataGrouping.groupAll ?
+                        i : (series.cropStart as any) + i
+                ),
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
@@ -828,6 +832,7 @@ seriesProto.processData = function (): any {
                 );
                 groupedXData = croppedData.xData;
                 groupedYData = croppedData.yData;
+                series.cropStart = croppedData.start; // #15005
             }
             // Set series props
             series.processedXData = groupedXData;

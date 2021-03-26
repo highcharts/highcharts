@@ -135,11 +135,14 @@ SVGRenderer.prototype.addMarker = function (
         fill: (markerOptions as any).color || 'rgba(0, 0, 0, 0.75)'
     };
 
-    options.children = markerOptions.children?.map(function (
-        child: Highcharts.ASTNode
-    ): Highcharts.ASTNode {
-        return merge(attrs, child);
-    });
+    options.children = (
+        markerOptions.children &&
+        markerOptions.children.map(function (
+            child: Highcharts.ASTNode
+        ): Highcharts.ASTNode {
+            return merge(attrs, child);
+        })
+    );
 
     const ast = merge(true, {
         attributes: {
@@ -205,7 +208,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
 
                         if (
                             (
-                                markerId === def.attributes?.id ||
+                                markerId === (def.attributes && def.attributes.id) ||
                                 // Legacy, for
                                 // unit-tests/annotations/annotations-shapes
                                 markerId === (def as any).id

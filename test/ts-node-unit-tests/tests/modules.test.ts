@@ -231,6 +231,7 @@ export function testStockIndicators() {
         'dpo',
         'ema',
         'chaikin',
+        'cmo',
         'dema',
         'tema',
         'trix',

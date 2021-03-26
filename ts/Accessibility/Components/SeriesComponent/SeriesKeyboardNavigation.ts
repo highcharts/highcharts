@@ -200,7 +200,10 @@ function isSkipPoint(
     point: Highcharts.AccessibilityPoint
 ): (boolean|number|undefined) {
     const a11yOptions = point.series.chart.options.accessibility;
-    const pointA11yDisabled = point.options.accessibility?.enabled === false;
+    const pointA11yDisabled = (
+        point.options.accessibility &&
+        point.options.accessibility.enabled === false
+    );
 
     return point.isNull &&
         a11yOptions.keyboardNavigation.seriesNavigation.skipNullPoints ||
@@ -843,9 +846,14 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         const chart = this.chart;
         const curPoint = chart.highlightedPoint;
 
-        chart.tooltip?.hide(0);
+        if (chart.tooltip) {
+            chart.tooltip.hide(0);
+        }
 
-        curPoint?.onMouseOut?.();
+        if (chart.highlightedPoint && chart.highlightedPoint.onMouseOut) {
+            chart.highlightedPoint.onMouseOut();
+        }
+
         delete chart.highlightedPoint;
     },
 

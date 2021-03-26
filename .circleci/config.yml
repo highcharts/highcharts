@@ -179,7 +179,7 @@ jobs:
         default: false
     steps:
       - <<: *load_workspace
-      - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >> <<# parameters.always_deploy >>--thumbnails<</ parameters.always_deploy >>
+      - run: ./.circleci/scripts/check_and_trigger_samples_deploy.sh  --bucket=${SAMPLES_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >> <<# parameters.include_thumbnails >>--thumbnails<</ parameters.include_thumbnails >>
 
   generate_release_reference_images:
     <<: *defaults

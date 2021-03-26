@@ -258,6 +258,7 @@ bindingsUtils.manageIndicators = function (
             'atr',
             'cci',
             'cmf',
+            'cmo',
             'dmi',
             'macd',
             'mfi',
@@ -325,7 +326,8 @@ bindingsUtils.manageIndicators = function (
             // If indicator has defined approx type, use it (e.g. "ranges")
             !defined(
                 defaultOptions && defaultOptions[seriesConfig.type] &&
-                defaultOptions.dataGrouping?.approximation
+                defaultOptions.dataGrouping &&
+                defaultOptions.dataGrouping.approximation
             )
         ) {
             seriesConfig.dataGrouping = {
@@ -439,12 +441,14 @@ bindingsUtils.attractToPoint = function (
 
     // Search by 'x' but only in yAxis' series.
     coordsY.axis.series.forEach(function (series): void {
-        series.points?.forEach(function (point): void {
-            if (point && distX > Math.abs((point.x as any) - x)) {
-                distX = Math.abs((point.x as any) - x);
-                closestPoint = point;
-            }
-        });
+        if (series.points) {
+            series.points.forEach(function (point): void {
+                if (point && distX > Math.abs((point.x as any) - x)) {
+                    distX = Math.abs((point.x as any) - x);
+                    closestPoint = point;
+                }
+            });
+        }
     });
 
     if (closestPoint && closestPoint.x && closestPoint.y) {

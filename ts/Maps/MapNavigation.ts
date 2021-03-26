@@ -158,7 +158,6 @@ MapNavigation.prototype.update = function (
 ): void {
     var chart = this.chart,
         o: MapNavigationOptions = chart.options.mapNavigation as any,
-        buttonOptions,
         attr: ButtonThemeObject,
         states: ButtonThemeStatesObject|undefined,
         hoverStates: SVGAttributes|undefined,
@@ -187,10 +186,10 @@ MapNavigation.prototype.update = function (
     if (pick(o.enableButtons, o.enabled) && !chart.renderer.forExport) {
 
         objectEach(o.buttons, function (
-            button: MapNavigationButtonOptions,
+            buttonOptions: MapNavigationButtonOptions,
             n: string
         ): void {
-            buttonOptions = merge(o.buttonOptions, button);
+            buttonOptions = merge(o.buttonOptions, buttonOptions);
 
             // Presentational
             if (!chart.styledMode && buttonOptions.theme) {
@@ -205,8 +204,7 @@ MapNavigation.prototype.update = function (
                 delete attr.states;
             }
 
-
-            button = chart.renderer
+            const button = chart.renderer
                 .button(
                     buttonOptions.text || '',
                     0,
@@ -229,27 +227,31 @@ MapNavigation.prototype.update = function (
                     padding: buttonOptions.padding,
                     zIndex: 5
                 })
-                .add() as any;
-            (button as any).handler = buttonOptions.onclick;
+                .add();
+            button.handler = buttonOptions.onclick;
 
             // Stop double click event (#4444)
-            addEvent((button as any).element, 'dblclick', stopEvent);
+            addEvent(button.element, 'dblclick', stopEvent);
 
-            mapNavButtons.push(button as any);
+            mapNavButtons.push(button);
 
-            // Align it after the plotBox is known (#12776)
-            const bo = buttonOptions;
-            const un = addEvent(chart, 'load', (): void => {
-                (button as any).align(
-                    extend(bo, {
-                        width: button.width,
-                        height: 2 * (button.height as any)
-                    }),
-                    null,
-                    bo.alignTo
-                );
-                un();
+            extend(buttonOptions, {
+                width: button.width,
+                height: 2 * button.height
             });
+
+            if (!chart.hasLoaded) {
+                // Align it after the plotBox is known (#12776)
+                const unbind = addEvent(chart, 'load', (): void => {
+                    // #15406: Make sure button hasnt been destroyed
+                    if (button.element) {
+                        button.align(buttonOptions, false, buttonOptions.alignTo);
+                    }
+                    unbind();
+                });
+            } else {
+                button.align(buttonOptions, false, buttonOptions.alignTo);
+            }
 
         });
     }
@@ -405,91 +407,17 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
         chartX?: number,
         chartY?: number
     ): void {
-        this.mapView?.zoomBy(
-            howMuch,
-            typeof xProjected === 'number' && typeof yProjected === 'number' ?
-                { x: xProjected, y: yProjected } :
-                void 0,
-            typeof chartX === 'number' && typeof chartY === 'number' ?
-                [chartX, chartY] :
-                void 0
-        );
-        /*
-        var chart = this,
-            xAxis = chart.xAxis[0],
-            xRange = (xAxis.max as any) - (xAxis.min as any),
-            centerX = pick(centerXArg, (xAxis.min as any) + xRange / 2),
-            newXRange = xRange * (howMuch as any),
-            yAxis = chart.yAxis[0],
-            yRange = (yAxis.max as any) - (yAxis.min as any),
-            centerY = pick(centerYArg, (yAxis.min as any) + yRange / 2),
-            newYRange = yRange * (howMuch as any),
-            fixToX = mouseX ? ((mouseX - (xAxis.pos as any)) / xAxis.len) : 0.5,
-            fixToY = mouseY ? ((mouseY - (yAxis.pos as any)) / yAxis.len) : 0.5,
-            newXMin = centerX - newXRange * fixToX,
-            newYMin = centerY - newYRange * fixToY,
-            newExt = chart.fitToBox({
-                x: newXMin,
-                y: newYMin,
-                width: newXRange,
-                height: newYRange
-            }, {
-                x: xAxis.dataMin,
-                y: yAxis.dataMin,
-                width: (xAxis.dataMax as any) - (xAxis.dataMin as any),
-                height: (yAxis.dataMax as any) - (yAxis.dataMin as any)
-            } as any),
-            zoomOut = (
-                newExt.x <= (xAxis.dataMin as any) &&
-                newExt.width >=
-                    (xAxis.dataMax as any) - (xAxis.dataMin as any) &&
-                newExt.y <= (yAxis.dataMin as any) &&
-                newExt.height >= (yAxis.dataMax as any) - (yAxis.dataMin as any)
+        if (this.mapView) {
+            this.mapView.zoomBy(
+                howMuch,
+                typeof xProjected === 'number' && typeof yProjected === 'number' ?
+                    { x: xProjected, y: yProjected } :
+                    void 0,
+                typeof chartX === 'number' && typeof chartY === 'number' ?
+                    [chartX, chartY] :
+                    void 0
             );
-
-        // When mousewheel zooming, fix the point under the mouse
-        if (mouseX && xAxis.mapAxis) {
-            xAxis.mapAxis.fixTo = [mouseX - (xAxis.pos as any),
-                (centerXArg as any)];
         }
-        if (mouseY && yAxis.mapAxis) {
-            yAxis.mapAxis.fixTo = [mouseY - (yAxis.pos as any),
-                (centerYArg as any)];
-        }
-
-        // Zoom
-        if (typeof howMuch !== 'undefined' && !zoomOut) {
-            xAxis.setExtremes(newExt.x, newExt.x + newExt.width, false);
-            yAxis.setExtremes(newExt.y, newExt.y + newExt.height, false);
-
-        // Reset zoom
-        } else {
-            xAxis.setExtremes(void 0, void 0, false);
-            yAxis.setExtremes(void 0, void 0, false);
-        }
-
-        // Prevent zooming until this one is finished animating
-        /*
-        chart.holdMapZoom = true;
-        setTimeout(function () {
-            chart.holdMapZoom = false;
-        }, 200);
-        */
-        /*
-        delay = animation ? animation.duration || 500 : 0;
-        if (delay) {
-            chart.isMapZooming = true;
-            setTimeout(function () {
-                chart.isMapZooming = false;
-                if (chart.mapZoomQueue) {
-                    chart.mapZoom.apply(chart, chart.mapZoomQueue);
-                }
-                chart.mapZoomQueue = null;
-            }, delay);
-        }
-
-        chart.redraw();
-        */
     }
 });
 

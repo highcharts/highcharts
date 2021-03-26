@@ -586,7 +586,11 @@ class Time {
         capitalize?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp)) {
-            return H.defaultOptions.lang?.invalidDate || '';
+            return (
+                H.defaultOptions.lang &&
+                H.defaultOptions.lang.invalidDate ||
+                ''
+            );
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
 
@@ -599,8 +603,8 @@ class Time {
             month = this.get('Month', date),
             fullYear = this.get('FullYear', date),
             lang = H.defaultOptions.lang,
-            langWeekdays = (lang?.weekdays as any),
-            shortWeekdays = lang?.shortWeekdays,
+            langWeekdays = (lang && lang.weekdays as any),
+            shortWeekdays = (lang && lang.shortWeekdays),
 
             // List all format keys. Custom formats can be added from the
             // outside.

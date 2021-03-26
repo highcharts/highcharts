@@ -560,7 +560,11 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
         ): void {
             const pointEl = point.graphic && point.graphic.element ||
                     shouldAddDummyPoint(point) && addDummyPointElement(point);
-            const pointA11yDisabled = point.options?.accessibility?.enabled === false;
+            const pointA11yDisabled = (
+                point.options &&
+                point.options.accessibility &&
+                point.options.accessibility.enabled === false
+            );
 
             if (pointEl) {
                 // We always set tabindex, as long as we are setting props.
