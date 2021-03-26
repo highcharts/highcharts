@@ -24,10 +24,6 @@ import type ScatterPoint from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
 const { colorMapPointMixin } = ColorMapMixin;
-import MapChart from '../../Core/Chart/MapChart.js';
-const {
-    splitPath
-} = MapChart;
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 const {
     // indirect dependency to keep product size low
@@ -36,7 +32,10 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { extend } = U;
+const {
+    extend,
+    isArray
+} = U;
 
 /* *
  *
@@ -58,6 +57,8 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     public path: SVGPath = void 0 as any;
 
+    public projectedPath: SVGPath|undefined;
+
     public properties?: object;
 
     public series: MapSeries = void 0 as any;
@@ -69,6 +70,26 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
      * */
 
     /* eslint-disable valid-jsdoc */
+
+    public static getProjectedPath(
+        point: MapPointOptions&MapPoint.CacheObject,
+        projection: any
+    ): SVGPath {
+        if (!point.projectedPath && isArray(point.path)) {
+            if (projection) {
+                point.projectedPath = point.path.map((seg): SVGPath.Segment => {
+                    if (seg[0] === 'M' || seg[0] === 'L') {
+                        const p = projection.forward({ x: seg[1], y: seg[2] });
+                        return [seg[0], p.x, p.y];
+                    }
+                    return seg;
+                });
+            } else {
+                point.projectedPath = point.path;
+            }
+        }
+        return point.projectedPath || [];
+    }
 
     /**
      * Extend the Point object to split paths.

@@ -35,6 +35,7 @@ export interface MapPointOptions extends ScatterPointOptions {
     middleY?: number;
     name?: string;
     path?: (string|SVGPath);
+    projectedPath?: SVGPath;
     value?: (number|null);
 }
 

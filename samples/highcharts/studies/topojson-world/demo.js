@@ -32,6 +32,13 @@ const static = {
 const drawMap = projection => {
 
     const geojson = JSON.parse(static.geojson);
+    if (projection.indexOf('ortho') !== 0) {
+        geojson.features.splice(
+            geojson.features.findIndex(f => f.properties.name === 'Antarctica'),
+            1
+        );
+    }
+
 
     // Apply projection using Proj4
     const crs = {
@@ -50,7 +57,8 @@ const drawMap = projection => {
     }
 
     // Initialize the chart
-    Highcharts.mapChart('container', {
+    console.time('@mapChart');
+    const chart = Highcharts.mapChart('container', {
         chart: {
             map: geojson
         },
@@ -73,7 +81,7 @@ const drawMap = projection => {
         },
 
         tooltip: {
-            pointFormat: '{point.properties.name}: {point.value}'
+            pointFormat: '{point.name}: {point.value}'
         },
 
         series: [{
@@ -87,10 +95,47 @@ const drawMap = projection => {
             },
             dataLabels: {
                 enabled: false,
-                format: '{point.properties.name}'
+                format: '{point.name}'
             }
         }]
     });
+    console.timeEnd('@mapChart');
+
+    const updateProjection = crs =>  {
+        console.log('---- change projection ----');
+        chart.mapView.projection = window.proj4(crs);
+        chart.series.forEach(series => {
+            series.mapData.forEach(mapPoint => {
+                delete mapPoint.bounds;
+                delete mapPoint.projectedPath;
+            });
+            series.points.forEach(point => {
+                delete point.bounds;
+                delete point.options.bounds;
+                delete point.projectedPath;
+                delete point.options.projectedPath;
+            });
+            delete series.bounds;
+            series.isDirty = true;
+            series.isDirtyData = true;
+        });
+        chart.redraw();
+    };
+
+    //'+proj=ortho +lat_0=40 +lon_0=50 +x_0=0 +y_0=0'
+    // '+proj=robin +lon_0=0 +x_0=0 +y_0=0'
+    setTimeout(
+        () => updateProjection('+proj=mill +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +over'),
+        1500
+    );
+    setTimeout(
+        () => updateProjection('+proj=ortho +lat_0=40 +lon_0=10 +x_0=0 +y_0=0'),
+        3000
+    );
+    setTimeout(
+        () => updateProjection('+proj=robin +lon_0=0 +x_0=0 +y_0=0'),
+        5000
+    );
 };
 
 const enableButtons = () => {

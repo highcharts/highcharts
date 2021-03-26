@@ -802,6 +802,8 @@ class MapSeries extends ScatterSeries {
         const MAX_VALUE = Number.MAX_VALUE;
         const allBounds = [];
 
+        const projection = this.chart.mapView && this.chart.mapView.projection;
+
         // Find the bounding box
         (paths || []).forEach(function (
             point: (MapPointOptions&MapPoint.CacheObject)
@@ -820,8 +822,8 @@ class MapSeries extends ScatterSeries {
 
                 // The first time a map point is used, analyze its box
                 if (!point.bounds) {
-
-                    const path = point.path || [],
+                    // const path = point.path || [],
+                    const path = MapPoint.getProjectedPath(point, projection),
                         properties = (point as any).properties;
 
                     let x2 = -MAX_VALUE,
@@ -1175,7 +1177,8 @@ class MapSeries extends ScatterSeries {
      */
     public translate(): void {
         var series = this,
-            doFullTranslate = series.doFullTranslate();
+            doFullTranslate = series.doFullTranslate(),
+            projection = this.chart.mapView && this.chart.mapView.projection;
 
         // Recalculate box on updated data
         if (this.chart.hasRendered && this.isDirtyData) {
@@ -1207,7 +1210,9 @@ class MapSeries extends ScatterSeries {
 
                 point.shapeType = 'path';
                 point.shapeArgs = {
-                    d: series.translatePath(point.path)
+                    d: series.translatePath(
+                        MapPoint.getProjectedPath(point as any, projection)
+                    )
                 };
             }
         });

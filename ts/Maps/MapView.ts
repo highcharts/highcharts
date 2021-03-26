@@ -11,6 +11,10 @@ import type PositionObject from '../Core/Renderer/PositionObject';
 
 import AnimationOptionsObject from '../Core/Animation/AnimationOptions';
 import Chart from '../Core/Chart/Chart.js';
+import H from '../Core/Globals.js';
+const {
+    win
+} = H;
 import U from '../Core/Utilities.js';
 const {
     merge
@@ -62,9 +66,21 @@ class MapView {
         this.chart = chart;
         this.center = { x: 0, y: 0 };
         this.zoom = 0;
+
+        /*
+        const proj = this.chart.options.chart.proj4 || win.proj4;
+        if (proj) {
+            this.projection = proj(
+                // '+proj=mill +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +over'
+                '+proj=robin +lon_0=0 +x_0=0 +y_0=0'
+                // '+proj=ortho +lat_0=40 +lon_0=10 +x_0=0 +y_0=0'
+            );
+        }
+        */
     }
     public center: Highcharts.ProjectedXY;
     public minZoom?: number;
+    public projection?: any;
     public zoom: number;
 
     private chart: Chart;
