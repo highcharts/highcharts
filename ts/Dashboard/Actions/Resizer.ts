@@ -82,7 +82,8 @@ class Resizer {
     public resizeOptions: Resizer.Options;
     public layout: Layout;
     public parentColumn: Column|undefined;
-    public eventsToUnbind?: Array<Function>
+    public eventsToUnbind: Array<Function>
+
     /* *
      *
      *  Functions
@@ -97,11 +98,9 @@ class Resizer {
 
             if (columns) {
                 for (let j = 0, jEnd = columns.length; j < jEnd; ++j) {
-                    // if (j < columns.length - 1) {
-                        this.addSnap(
-                            columns[j]
-                        );
-                    // }
+                    this.addSnap(
+                        columns[j]
+                    );
 
                     // set min-size
                     (columns[j].container as HTMLElement).style.minWidth =
@@ -165,9 +164,9 @@ class Resizer {
         column: Resizer.ResizedColumn
     ): void {
         const resizer = this;
-        const handler = column.resizer?.handler;
-        const rowContainer =
-            column.row?.container as Resizer.HTMLDOMElementEvents;
+        const handler = column.resizer && column.resizer.handler;
+        const rowContainer = column.row &&
+            column.row.container as Resizer.HTMLDOMElementEvents;
 
         let mouseDownHandler,
             mouseMoveHandler,
@@ -195,12 +194,12 @@ class Resizer {
         };
 
         // Add mouse events
-        resizer.eventsToUnbind?.push(
+        resizer.eventsToUnbind.push(
             addEvent(handler, 'mousedown', mouseDownHandler),
         );
 
         if (!rowContainer.hcEvents.mousemove) {
-            resizer.eventsToUnbind?.push(
+            resizer.eventsToUnbind.push(
                 addEvent(rowContainer, 'mousemove', mouseMoveHandler),
                 addEvent(rowContainer, 'mouseup', mouseUpHandler)
             );
@@ -208,12 +207,12 @@ class Resizer {
 
         // Touch events
         if (hasTouch) {
-            resizer.eventsToUnbind?.push(
+            resizer.eventsToUnbind.push(
                 addEvent(handler, 'touchstart', mouseDownHandler)
             );
 
             if (!rowContainer.hcEvents.mousemove) {
-                resizer.eventsToUnbind?.push(
+                resizer.eventsToUnbind.push(
                     addEvent(rowContainer, 'touchmove', mouseMoveHandler),
                     addEvent(rowContainer, 'touchend', mouseUpHandler)
                 );
@@ -261,7 +260,9 @@ class Resizer {
             columnContainer.style.flex = 'none';
 
             // call component resize
-            parentColumn.mountedComponent?.resize(null);
+            if (parentColumn.mountedComponent) {
+                parentColumn.mountedComponent.resize(null);
+            }
         }
     }
     /**
@@ -283,8 +284,8 @@ class Resizer {
     ): number {
 
         // const convertToPercent = this.convertToPercent;
-        const columnContainer = column?.container as HTMLElement;
-        const parentRowWidth = row.container?.offsetWidth;
+        const columnContainer = column && column.container as HTMLElement;
+        const parentRowWidth = row.container && row.container.offsetWidth;
         const columns = row.columns;
 
         let sum = 0;
@@ -300,9 +301,10 @@ class Resizer {
                 // min-width / width each of them
                 if (columns[i].layout) {
 
+                    const columnRows = columns[i].layout.rows;
+
                     let maxRow = row;
                     let maxColumns = 0;
-                    let columnRows = columns[i].layout.rows;
 
                     // find a row with maximum columns
                     for (let j = 0, jEnd = columnRows.length; j < jEnd; ++j) {
@@ -334,7 +336,7 @@ class Resizer {
                     );
 
                     sum += (
-                        columnStylesWidth && columnStylesWidth > minSize ? 
+                        columnStylesWidth && columnStylesWidth > minSize ?
                             columnStylesWidth : minSize
                     );
 
@@ -392,14 +394,17 @@ class Resizer {
                     resizer.destroyHandler(
                         currentColumn.layout.rows
                     );
-                } else {
-                    currentColumn.resizer?.handler?.remove();
+                } else if (
+                    currentColumn.resizer &&
+                    currentColumn.resizer.handler
+                ) {
+                    currentColumn.resizer.handler.remove();
                 }
             }
         }
     }
 
-    public toJSON(): Resizer.ClassJSON  {
+    public toJSON(): Resizer.ClassJSON {
         const resizeOptions = this.resizeOptions;
 
         return {
@@ -459,7 +464,7 @@ namespace Resizer {
     export interface JSONOptions extends DataJSON.JSONObject {
         columns: ColumnsRowsOptionsJSON;
         rows: ColumnsRowsOptionsJSON;
-        snap: SnapJSON
+        snap: SnapJSON;
     }
 
     export interface ColumnsRowsOptionsJSON extends DataJSON.JSONObject {
