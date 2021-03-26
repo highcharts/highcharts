@@ -1,6 +1,7 @@
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type DataJSON from '../../Data/DataJSON';
 import type Component from './../Component/Component.js';
+import DashboardGlobals from './../DashboardGlobals.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
@@ -90,9 +91,7 @@ class Column extends GUIElement {
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
-                    className: columnClassName ?
-                        columnClassName + ' ' + Dashboard.prefix + 'column' :
-                        Dashboard.prefix + 'column'
+                    className: DashboardGlobals.column + ' ' + columnClassName
                 },
                 element: columnElement,
                 elementId: options.id,

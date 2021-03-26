@@ -6,6 +6,7 @@ import type Column from '../Layout/Column.js';
 import type Row from '../Layout/Row.js';
 import type Layout from '../Layout/Layout.js';
 import Dashboard from '../Dashboard.js';
+import EditGlobals from '../EditMode/EditGlobals.js';
 
 import U from '../../Core/Utilities.js';
 
@@ -134,7 +135,7 @@ class Resizer {
             column.resizer.handler = createElement(
                 'div',
                 {
-                    className: Dashboard.prefix + 'resize-handler'
+                    className: EditGlobals.resizeHandler
                 },
                 {
                     width: snapWidth + 'px',
