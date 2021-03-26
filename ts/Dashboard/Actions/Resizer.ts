@@ -70,7 +70,6 @@ class Resizer {
 
         this.layout = layout;
         this.currentColumn = void 0; // consider naming for example currentColumn
-        this.eventsToUnbind = [];
 
         this.init();
     }
@@ -83,7 +82,6 @@ class Resizer {
     public resizeOptions: Resizer.Options;
     public layout: Layout;
     public currentColumn: Column|undefined;
-    public eventsToUnbind: Array<Function>
 
     /* *
      *
@@ -180,8 +178,6 @@ class Resizer {
         const handler = column.resizer && column.resizer.handler;
         const rowContainer = column.row &&
             column.row.container as Resizer.HTMLDOMElementEvents;
-
-        column.eventsToUnbind = [];
 
         let mouseDownHandler,
             mouseMoveHandler,
@@ -466,7 +462,6 @@ namespace Resizer {
     export interface ResizedColumn extends Column {
         resizer?: Snap;
         styles?: ColumnStyles;
-        eventsToUnbind?: Array<Function>;
     }
 
     export interface ColumnStyles {
