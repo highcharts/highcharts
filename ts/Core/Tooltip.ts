@@ -1391,6 +1391,7 @@ class Tooltip {
 
                 if (
                     chart.polar ||
+                    currentSeries.options.clip === false ||
                     this.isInside(checkX, checkY, currentSeries) ||
                     currentSeries.is('windbarb') // Windbarb is outside plot
                 ) {
