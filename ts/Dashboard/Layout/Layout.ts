@@ -133,13 +133,13 @@ class Layout extends GUIElement {
             // Error
         }
 
-        // if (options.resize) {
-        //     this.resizer = new Resizer(this);
-        // }
+        if (options.resize) {
+            this.resizer = new Resizer(this);
+        }
 
-        // if (options.resizerJSON) {
-        //     this.resizer = Resizer.fromJSON(this, options.resizerJSON);
-        // }
+        if (options.resizerJSON) {
+            this.resizer = Resizer.fromJSON(this, options.resizerJSON);
+        }
     }
 
     /* *
