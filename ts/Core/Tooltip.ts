@@ -1384,7 +1384,7 @@ class Tooltip {
                 let checkX = x;
                 let checkY = y;
 
-                if (mouseEvent && currentSeries.directTouch) {
+                if (mouseEvent && chart.pointer.isDirectTouch) {
                     checkX = mouseEvent.chartX - chart.plotLeft;
                     checkY = mouseEvent.chartY - chart.plotTop;
                 }
