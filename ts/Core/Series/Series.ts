@@ -4213,7 +4213,12 @@ class Series {
             point,
             points = [],
             i,
-            groupCropStartIndex: number = options.dataGrouping?.groupAll ? cropStart : 0;
+            groupCropStartIndex: number = (
+                options.dataGrouping &&
+                options.dataGrouping.groupAll ?
+                    cropStart :
+                    0
+            );
 
         if (!data && !hasGroupedData) {
             var arr = [] as Array<Point>;
