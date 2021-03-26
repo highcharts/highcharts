@@ -195,7 +195,7 @@ class Resizer {
 
         // Add mouse events
         resizer.eventsToUnbind.push(
-            addEvent(handler, 'mousedown', mouseDownHandler),
+            addEvent(handler, 'mousedown', mouseDownHandler)
         );
 
         if (!rowContainer.hcEvents.mousemove) {
@@ -329,7 +329,7 @@ class Resizer {
                         ) / 100
                     ) * (parentRowWidth || 1);
 
-                    // add min-size if "resized" width does not exist or is 
+                    // add min-size if "resized" width does not exist or is
                     // bigger then width
                     const minSize = (
                         getStyle(rowColumn, 'min-width', true) as number
@@ -422,7 +422,7 @@ class Resizer {
                     width: resizeOptions.snap.width
                 }
             }
-        }
+        };
     }
 }
 interface Resizer {
