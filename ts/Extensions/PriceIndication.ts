@@ -88,15 +88,54 @@ declare global {
  */
 
 /**
- * The line marks the last price from all points.
+ * Alignment of the label compared to the axis. Defaults to `"left"` for
+ * right-side axes, `"right"` for left-side axes and `"center"` for
+ * horizontal axes.
  *
- * @sample {highstock} stock/indicators/last-price
- *         Last price
- *
- * @declare   Highcharts.SeriesLastPriceOptionsObject
+ * @type      {Highcharts.AlignValue}
+ * @since     2.1
  * @product   highstock
- * @requires  modules/price-indicator
- * @apioption plotOptions.series.lastPrice
+ * @apioption plotOptions.series.lastVisiblePrice.label.align
+ *
+ */
+
+/**
+ * The background color for the label. Defaults to the related series
+ * color, or `#666666` if that is not available.
+ *
+ * @type      {Highcharts.ColorType}
+ * @since     2.1
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.backgroundColor
+ */
+
+/**
+ * The border color for the crosshair label
+ *
+ * @type      {Highcharts.ColorType}
+ * @since     2.1
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.borderColor
+ */
+
+/**
+ * The border corner radius of the crosshair label.
+ *
+ * @type      {number}
+ * @default   3
+ * @since     2.1.10
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.borderRadius
+ */
+
+/**
+ * The border width for the crosshair label.
+ *
+ * @type      {number}
+ * @default   0
+ * @since     2.1
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.borderWidth
  */
 
 /**
@@ -106,6 +145,67 @@ declare global {
  * @product   highstock
  * @default   false
  * @apioption plotOptions.series.lastPrice.enabled
+ */
+
+/**
+ * A format string for the crosshair label. Defaults to `{value}` for
+ * numeric axes and `{value:%b %d, %Y}` for datetime axes.
+ *
+ * @type      {string}
+ * @since     2.1
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.format
+ */
+
+/**
+ * Formatter function for the label text.
+ *
+ * @type      {Highcharts.XAxisCrosshairLabelFormatterCallbackFunction}
+ * @since     2.1
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.formatter
+ */
+
+/**
+ * Padding inside the crosshair label.
+ *
+ * @type      {number}
+ * @default   8
+ * @since     2.1
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.padding
+ */
+
+/**
+ * The shape to use for the label box.
+ *
+ * @type      {string}
+ * @default   callout
+ * @since     2.1
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.shape
+ */
+
+/**
+ * Text styles for the crosshair label.
+ *
+ * @type      {Highcharts.CSSObject}
+ * @default   {"color": "white", "fontWeight": "normal", "fontSize": "11px", "textAlign": "center"}
+ * @since     2.1
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.style
+ */
+
+/**
+ * The line marks the last price from all points.
+ *
+ * @sample {highstock} stock/indicators/last-price
+ *         Last price
+ *
+ * @declare   Highcharts.SeriesLastPriceOptionsObject
+ * @product   highstock
+ * @requires  modules/price-indicator
+ * @apioption plotOptions.series.lastPrice
  */
 
 /**
