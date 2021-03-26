@@ -1838,7 +1838,7 @@ function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt: true
-): number;
+): (number|undefined);
 function getStyle(
     el: HTMLDOMElement,
     prop: string,
@@ -1852,25 +1852,28 @@ function getStyle(
  * @function Highcharts.getStyle
  *
  * @param {Highcharts.HTMLDOMElement} el
- *        An HTML element.
+ * An HTML element.
  *
  * @param {string} prop
- *        The property name.
+ * The property name.
  *
  * @param {boolean} [toInt=true]
- *        Parse to integer.
+ * Parse to integer.
  *
  * @return {number|string|undefined}
- *         The style value.
+ * The style value.
  */
 function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt?: boolean
 ): (number|string|undefined) {
-    const customGetStyle: typeof getStyle = ((H as any).getStyle || getStyle);
+    const customGetStyle: typeof getStyle = (
+        (H as any).getStyle || // oldie getStyle
+        getStyle
+    );
 
-    let style: (number|string|undefined) = (toInt ? NaN : void 0);
+    let style: (number|string|undefined);
 
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -1895,8 +1898,8 @@ function getStyle(
             0, // #8377
             (
                 offsetWidth -
-                customGetStyle(el, 'padding-left', true) -
-                customGetStyle(el, 'padding-right', true)
+                (customGetStyle(el, 'padding-left', true) || 0) -
+                (customGetStyle(el, 'padding-right', true) || 0)
             )
         );
     }
@@ -1906,8 +1909,8 @@ function getStyle(
             0, // #8377
             (
                 Math.min(el.offsetHeight, el.scrollHeight) -
-                customGetStyle(el, 'padding-top', true) -
-                customGetStyle(el, 'padding-bottom', true)
+                (customGetStyle(el, 'padding-top', true) || 0) -
+                (customGetStyle(el, 'padding-bottom', true) || 0)
             )
         );
     }
