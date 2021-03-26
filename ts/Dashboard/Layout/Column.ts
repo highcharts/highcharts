@@ -1,6 +1,4 @@
-import type {
-    CSSObject
-} from '../../Core/Renderer/CSSObject';
+import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type DataJSON from '../../Data/DataJSON';
 import type Component from './../Component/Component.js';
 import Row from './Row.js';
@@ -39,7 +37,8 @@ class Column extends GUIElement {
                     id: id,
                     parentContainerId: row.container?.id ||
                         options.parentContainerId,
-                    mountedComponentJSON: options.mountedComponentJSON
+                    mountedComponentJSON: options.mountedComponentJSON,
+                    style: options.style
                 }
             );
         }
@@ -213,7 +212,8 @@ class Column extends GUIElement {
             options: {
                 containerId: (column.container as HTMLElement).id,
                 parentContainerId: rowContainerId,
-                mountedComponentJSON: column.mountedComponent?.toJSON()
+                mountedComponentJSON: column.mountedComponent?.toJSON(),
+                style: column.options.style
             }
         };
     }
@@ -227,7 +227,7 @@ namespace Column {
     export interface Options {
         id: string;
         width?: number;
-        style?: CSSObject;
+        style?: CSSJSONObject;
         parentContainerId?: string;
         mountedComponentJSON?: Component.ClassJSON;
         layout?: Layout;
@@ -241,6 +241,7 @@ namespace Column {
         containerId: string;
         parentContainerId: string;
         mountedComponentJSON: Component.ClassJSON|undefined;
+        style?: CSSJSONObject;
     }
 }
 

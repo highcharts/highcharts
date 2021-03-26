@@ -1,6 +1,4 @@
-import type {
-    CSSObject
-} from '../../Core/Renderer/CSSObject';
+import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type DataJSON from '../../Data/DataJSON';
 import Layout from './Layout.js';
 import Column from './Column.js';
@@ -37,7 +35,8 @@ class Row extends GUIElement {
                     id: id,
                     parentContainerId: layout.container?.id ||
                         options.parentContainerId,
-                    columnsJSON: options.columns
+                    columnsJSON: options.columns,
+                    style: options.style
                 }
             );
         }
@@ -176,6 +175,7 @@ class Row extends GUIElement {
                 options: {
                     containerId: columnJSON.options.containerId,
                     parentContainerId: columnJSON.options.parentContainerId,
+                    style: columnJSON.options.style,
                     mountedComponentJSON: void 0 // Will be mounted later.
                 }
             }, row);
@@ -258,7 +258,8 @@ class Row extends GUIElement {
             options: {
                 containerId: (row.container as HTMLElement).id,
                 parentContainerId: layoutContainerId,
-                columns: columns
+                columns: columns,
+                style: row.options.style
             }
         };
     }
@@ -269,7 +270,7 @@ namespace Row {
         id?: string;
         parentContainerId?: string;
         columns?: Array<Column.Options>;
-        style?: CSSObject;
+        style?: CSSJSONObject;
         columnsJSON?: Array<Column.ClassJSON>;
     }
 
@@ -281,6 +282,7 @@ namespace Row {
         containerId: string;
         parentContainerId: string;
         columns: Array<Column.ClassJSON>;
+        style?: CSSJSONObject;
     }
 }
 

@@ -2,9 +2,7 @@ import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
 import GUIElement from './GUIElement.js';
 import type DataJSON from '../../Data/DataJSON';
-import type {
-    CSSObject
-} from '../../Core/Renderer/CSSObject';
+import type { CSSJSONObject } from './../../Data/DataCSSObject';
 
 import U from '../../Core/Utilities.js';
 import Resizer from '../Actions/Resizer.js';
@@ -36,7 +34,8 @@ class Layout extends GUIElement {
                         parentContainerId: dashboard.container.id ||
                             options.parentContainerId,
                         rowsJSON: options.rows,
-                        resizerJSON: options.resizer
+                        resizerJSON: options.resizer,
+                        style: options.style
                     }
                 );
 
@@ -130,13 +129,13 @@ class Layout extends GUIElement {
             // Error
         }
 
-        if (options.resize) {
-            this.resizer = new Resizer(this);
-        }
+        // if (options.resize) {
+        //     this.resizer = new Resizer(this);
+        // }
 
-        if (options.resizerJSON) {
-            this.resizer = Resizer.fromJSON(this, options.resizerJSON);
-        }
+        // if (options.resizerJSON) {
+        //     this.resizer = Resizer.fromJSON(this, options.resizerJSON);
+        // }
     }
 
     /* *
@@ -279,7 +278,8 @@ class Layout extends GUIElement {
                 containerId: (layout.container as HTMLElement).id,
                 parentContainerId: dashboardContainerId,
                 rows: rows,
-                resizer: this.resizer?.toJSON()
+                resizer: layout.resizer?.toJSON(),
+                style: layout.options.style
             }
         };
     }
@@ -296,7 +296,7 @@ namespace Layout {
         rowClassName?: string;
         columnClassName?: string;
         rows?: Array<Row.Options>;
-        style?: CSSObject;
+        style?: CSSJSONObject;
         rowsJSON?: Array<Row.ClassJSON>;
         resize?: Resizer.Options;
         resizerJSON?: Resizer.ClassJSON;
@@ -311,6 +311,7 @@ namespace Layout {
         parentContainerId: string;
         rows: Array<Row.ClassJSON>;
         resizer?: Resizer.ClassJSON;
+        style?: CSSJSONObject;
     }
 }
 
