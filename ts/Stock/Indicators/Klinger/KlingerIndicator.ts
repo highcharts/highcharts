@@ -25,6 +25,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
+import { param } from 'jquery';
 const {
     correctFloat,
     extend,
@@ -102,6 +103,12 @@ class KlingerIndicator extends SMAIndicator {
         },
         dataGrouping: {
             approximation: 'averages'
+        },
+        tooltip: {
+            pointFormat: '<span style="color: {point.color}">\u25CF</span><b> {series.name}</b><br/>' +
+                '<span style="color: {point.color}">Klinger</span>: {point.y}<br/>' +
+                '<span style="color: {point.series.options.signal.styles.lineColor}">Signal</span>' +
+                    ': {point.signal}<br/>'
         }
     } as KlingerOptions);
 
@@ -272,7 +279,8 @@ class KlingerIndicator extends SMAIndicator {
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             xData: Array<number> = [],
-            yData: Array<Array<number>> = [];
+            yData: Array<Array<number>> = [],
+            calcSingal: Array<number> = [];
 
         let klingerPoint: Array<number> = [],
             KO: number,
@@ -281,8 +289,8 @@ class KlingerIndicator extends SMAIndicator {
             slowEMA: number,
             // signalEMA: number|undefined = void 0,
             previousFastEMA: number | undefined = void 0,
-            previousSlowEMA: number | undefined = void 0;
-        // prevoiusSignalEMA: number | undefined = void 0;
+            previousSlowEMA: number | undefined = void 0,
+            signal: any = null;
 
         // If the necessary conditions are not fulfilled, don't proceed.
         if (!this.isValidData(yVal[0])) {
@@ -330,12 +338,18 @@ class KlingerIndicator extends SMAIndicator {
                 )[1];
                 previousSlowEMA = slowEMA;
                 KO = correctFloat(fastEMA - slowEMA);
+                calcSingal.push(KO);
 
-                klingerPoint = [xVal[i], KO];
+                // Calculate signal SMA
+                if (i >= params.signal + params.slowAvgPeriod) {
+                    signal = calcSingal.slice(-params.signal)
+                        .reduceRight((prev, curr): number => prev + curr) / params.signal;
+                }
+                klingerPoint = [xVal[i], KO, signal];
 
                 Klinger.push(klingerPoint);
                 xData.push(xVal[i]);
-                yData.push([KO]);
+                yData.push([KO, signal]);
             }
         }
 
@@ -370,7 +384,7 @@ interface KlingerIndicator {
 
 extend(KlingerIndicator.prototype, {
     nameBase: 'Klinger',
-    pointArrayMap: ['y'],
+    pointArrayMap: ['y', 'signal'],
     parallelArrays: ['x', 'y', 'signal'],
     pointValKey: 'y',
     linesApiNames: ['signal'],
