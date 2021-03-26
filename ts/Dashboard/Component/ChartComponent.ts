@@ -15,7 +15,8 @@ import {
     tooltipEmitter,
     tooltipHandler,
     panEmitter,
-    ChartSyncHandler
+    ChartSyncHandler,
+    ChartSyncEmitter
 } from './ChartSyncHandlers.js';
 
 import U from '../../Core/Utilities.js';
@@ -83,7 +84,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
      * */
 
     public chartOptions: Highcharts.Options;
-    public chart?: Chart;
+    public chart: Chart;
     public chartContainer: HTMLElement;
     public options: ChartComponent.ComponentOptions;
     public charter: typeof Highcharts;
@@ -128,7 +129,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         this.syncHandlers = this.options.syncHandlers;
         this.syncHandlerRegistry = {};
         this.chartOptions = this.options.chartOptions || {};
-
+        this.chart = this.constructChart();
         // Extend via event.
         this.on('resize', (e: Component.ResizeEvent): void => {
             if (this.chart) {
@@ -226,31 +227,40 @@ class ChartComponent extends Component<ChartComponent.Event> {
         this.chartOptions.series = this.chartOptions.series ?
             [...series, ...this.chartOptions.series] :
             series;
-        this.constructChart();
 
-        if (this.chart) {
-            const { width, height } = this.dimensions;
-            this.chart.setSize(width, height);
+        this.chart = this.constructChart();
 
-            if (this.store?.table.presentationState) {
-                this.syncHandlers.forEach((handlerObject): void => {
-                    const { id, emitter, handler } = handlerObject;
-                    if (this.syncEvents.indexOf(id) > -1) {
-                        if (handler instanceof ChartSyncHandler) {
-                            // Avoid registering the same handler multiple times
-                            // i.e. panning and selection uses the same handler
-                            const existingHandler = this.getSyncHandler(handler.id);
-                            if (!existingHandler) {
-                                this.registerSyncHandler(handler);
-                                handler.createEmitter(this)();
-                            }
-                        } else if (typeof handler === 'function') {
-                            handler(this);
+        const { width, height } = this.dimensions;
+        this.chart.setSize(width, height);
+
+        this.setupSync();
+    }
+
+    private setupSync(): void {
+        if (this.store?.table.presentationState) {
+            this.syncHandlers.forEach((handlerObject): void => {
+                const { id, emitter, handler } = handlerObject;
+                if (this.syncEvents.indexOf(id) > -1) {
+                    if (handler instanceof ChartSyncHandler) {
+                        // Avoid registering the same handler multiple times
+                        // i.e. panning and selection uses the same handler
+                        const existingHandler = this.getSyncHandler(handler.id);
+                        if (!existingHandler) {
+                            this.registerSyncHandler(handler);
+                            handler.createHandler(this)();
                         }
+                    } else if (typeof handler === 'function') {
+                        handler(this);
+                    }
+
+                    // Probably should register this also
+                    if (emitter instanceof ChartSyncEmitter) {
+                        emitter.createEmitter(this)();
+                    } else {
                         emitter(this);
                     }
-                });
-            }
+                }
+            });
         }
     }
 
@@ -276,7 +286,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
             throw new Error('Chart constructor not found');
         }
 
-        this.chart = this.charter.chart(this.chartContainer, this.chartOptions);
+        this.charter.chart(this.chartContainer, this.chartOptions);
 
         return this.chart;
     }
