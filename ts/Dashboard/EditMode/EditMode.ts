@@ -29,6 +29,7 @@ class EditMode {
     ) {
         this.options = options;
         this.dashboard = dashboard;
+        this.lang = merge({}, EditGlobals.lang, options.lang);
 
         if (this.options.contextMenu.enabled) {
             this.renderContextButton();
@@ -46,12 +47,13 @@ class EditMode {
     public dashboard: Dashboard;
     public contextButtonElement?: HTMLDOMElement;
     public contextMenu?: EditMode.ContextMenu;
+    public lang: EditGlobals.LangOptions;
 
-    public menuItems: Record<string, EditMode.MenuItem> = {
+    public menuItems: Record<EditGlobals.TLangKeys, EditMode.MenuItem> = {
         separator: {
             element: 'div',
             attribs: {
-                className: EditGlobals.separator,
+                className: EditGlobals.classNames.separator,
                 textContent: ''
             },
             styles: {
@@ -65,7 +67,7 @@ class EditMode {
         editMode: {
             element: 'div',
             attribs: {
-                className: EditGlobals.editModeEnabled,
+                className: EditGlobals.classNames.editModeEnabled,
                 textContent: 'Edit mode',
                 onclick: function (this: EditMode, e: any): void {
                     this.onEditModeToggle(e.target);
@@ -75,7 +77,7 @@ class EditMode {
         saveLocal: {
             element: 'div',
             attribs: {
-                className: EditGlobals.saveLocalItem,
+                className: EditGlobals.classNames.saveLocalItem,
                 textContent: 'Save locally',
                 onclick: function (): void {}
             }
@@ -92,7 +94,7 @@ class EditMode {
 
         editMode.contextButtonElement = createElement(
             'div', {
-                className: EditGlobals.contextMenuBtn,
+                className: EditGlobals.classNames.contextMenuBtn,
                 onclick: function (): void {
                     editMode.onContextBtnClick(editMode);
                 }
@@ -148,7 +150,7 @@ class EditMode {
             // Render menu container.
             const element = createElement(
                 'div', {
-                    className: EditGlobals.contextMenu
+                    className: EditGlobals.classNames.contextMenu
                 }, {
                     width: width + 'px',
                     border: '1px solid #555',
@@ -169,7 +171,10 @@ class EditMode {
             // Render menu items.
             for (let i = 0, iEnd = menuItemsOptions.length; i < iEnd; ++i) {
                 menuItems.push(
-                    editMode.renderMenuItem(menuItemsOptions[i], element)
+                    editMode.renderMenuItem(
+                        menuItemsOptions[i] as EditGlobals.TLangKeys,
+                        element
+                    )
                 );
             }
 
@@ -182,11 +187,15 @@ class EditMode {
     }
 
     public renderMenuItem(
-        item: string,
+        item: EditGlobals.TLangKeys,
         container: HTMLDOMElement
     ): HTMLDOMElement {
         const editMode = this,
             itemSchema = editMode.menuItems[item];
+
+        const langItem = item === 'separator' ? {} : {
+            textContent: this.lang[item]
+        };
 
         return createElement(
             itemSchema.element,
@@ -196,9 +205,9 @@ class EditMode {
                         itemSchema.attribs.onclick.apply(editMode, arguments);
                     }
                 },
-                className: EditGlobals.contextMenuItem +
+                className: EditGlobals.classNames.contextMenuItem +
                     (itemSchema.attribs || {}).className || ''
-            }),
+            }, langItem),
             merge({
                 height: '30px',
                 padding: '5px',
@@ -256,7 +265,8 @@ class EditMode {
         }
 
         // Set edit mode active class to dashboard.
-        editMode.dashboard.container.className += EditGlobals.editModeEnabled;
+        editMode.dashboard.container.className +=
+            EditGlobals.classNames.editModeEnabled;
     }
 
     public disactivateEditMode(
@@ -283,7 +293,7 @@ class EditMode {
         for (let i = 0, iEnd = dashboardCntClasses.length; i < iEnd; ++i) {
             oneClass = dashboardCntClasses[i];
 
-            if (oneClass !== EditGlobals.editModeEnabled) {
+            if (oneClass !== EditGlobals.classNames.editModeEnabled) {
                 newClasses.push(oneClass);
             }
         }
@@ -295,6 +305,7 @@ namespace EditMode {
     export interface Options {
         enabled: boolean;
         contextMenu: ContextMenuOptions;
+        lang?: EditGlobals.LangOptions|string;
     }
 
     export interface ContextMenuOptions {

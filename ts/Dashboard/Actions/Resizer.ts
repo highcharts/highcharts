@@ -135,7 +135,7 @@ class Resizer {
             column.resizer.handler = createElement(
                 'div',
                 {
-                    className: EditGlobals.resizeHandler
+                    className: EditGlobals.classNames.resizeHandler
                 },
                 {
                     width: snapWidth + 'px',

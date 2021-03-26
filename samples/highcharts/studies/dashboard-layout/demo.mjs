@@ -9,6 +9,10 @@ let dashboard = new Dashboard('container', {
         enabled: true,
         contextMenu: {
             enabled: true
+        },
+        lang: {
+            editMode: 'Edit mode 1',
+            saveLocal: 'Save locally 1'
         }
     },
     gui: {
