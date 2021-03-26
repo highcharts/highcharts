@@ -478,6 +478,11 @@ Highcharts.addEvent(
     document.getElementById('destroy-resizer'),
     'click',
     function () {
+        dashboard.layouts.forEach(layout => {
+            layout.resizer.destroy();
+            console.log(layout.resizer);
+        });
+
         dashboardLayout.layouts.forEach(layout => {
             layout.resizer.destroy();
             console.log(layout.resizer);
