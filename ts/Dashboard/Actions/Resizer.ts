@@ -68,7 +68,7 @@ class Resizer {
         );
 
         this.layout = layout;
-        this.parentColumn = void 0; // consider naming for example currentColumn
+        this.currentColumn = void 0; // consider naming for example currentColumn
         this.eventsToUnbind = [];
 
         this.init();
@@ -81,8 +81,9 @@ class Resizer {
     * */
     public resizeOptions: Resizer.Options;
     public layout: Layout;
-    public parentColumn: Column|undefined;
-    public eventsToUnbind?: Array<Function>
+    public currentColumn: Column|undefined;
+    public eventsToUnbind: Array<Function>
+
     /* *
      *
      *  Functions
@@ -97,15 +98,14 @@ class Resizer {
 
             if (columns) {
                 for (let j = 0, jEnd = columns.length; j < jEnd; ++j) {
-                    // if (j < columns.length - 1) {
-                        this.addSnap(
-                            columns[j]
-                        );
-                    // }
-
                     // set min-size
                     (columns[j].container as HTMLElement).style.minWidth =
                         this.resizeOptions.columns.minSize + 'px';
+
+                    this.addSnap(
+                        columns[j],
+                        this.resizeOptions.columns.minSize
+                    );
                 }
             }
         }
@@ -116,13 +116,18 @@ class Resizer {
      * @param {Resizer.ResizedColumn} column
      * Reference to column
      *
+     * @param {number} minSize
+     * Minimum width of column
+     *
      */
     public addSnap(
-        column: Resizer.ResizedColumn
+        column: Resizer.ResizedColumn,
+        minSize: number
     ): void {
         const snapWidth = this.resizeOptions.snap.width;
 
         column.resizer = {} as Resizer.Snap;
+        column.styles = {} as Resizer.ColumnStyles;
 
         if (column.container) {
 
@@ -148,6 +153,12 @@ class Resizer {
                 column.container
             );
 
+            column.styles.borderLeft =
+                (getStyle(column.container, 'border-left', true) as number);
+            column.styles.borderRight =
+                (getStyle(column.container, 'border-right', true) as number);
+            column.styles.minSize = minSize;
+
             // attach events
             this.addResizeEvents(
                 column
@@ -165,9 +176,9 @@ class Resizer {
         column: Resizer.ResizedColumn
     ): void {
         const resizer = this;
-        const handler = column.resizer?.handler;
-        const rowContainer =
-            column.row?.container as Resizer.HTMLDOMElementEvents;
+        const handler = column.resizer && column.resizer.handler;
+        const rowContainer = column.row &&
+            column.row.container as Resizer.HTMLDOMElementEvents;
 
         let mouseDownHandler,
             mouseMoveHandler,
@@ -176,14 +187,14 @@ class Resizer {
         resizer.mouseDownHandler = mouseDownHandler = function (
             e: PointerEvent
         ): void {
-            resizer.parentColumn = column;
+            resizer.currentColumn = column;
         };
 
         resizer.mouseMoveHandler = mouseMoveHandler = function (
             e: PointerEvent
         ): void {
             resizer.onMouseMove(
-                resizer.parentColumn,
+                resizer.currentColumn,
                 e as PointerEvent
             );
         };
@@ -191,16 +202,16 @@ class Resizer {
         resizer.mouseUpHandler = mouseUpHandler = function (
             e: PointerEvent
         ): void {
-            resizer.parentColumn = void 0;
+            resizer.currentColumn = void 0;
         };
 
         // Add mouse events
-        resizer.eventsToUnbind?.push(
-            addEvent(handler, 'mousedown', mouseDownHandler),
+        resizer.eventsToUnbind.push(
+            addEvent(handler, 'mousedown', mouseDownHandler)
         );
 
         if (!rowContainer.hcEvents.mousemove) {
-            resizer.eventsToUnbind?.push(
+            resizer.eventsToUnbind.push(
                 addEvent(rowContainer, 'mousemove', mouseMoveHandler),
                 addEvent(rowContainer, 'mouseup', mouseUpHandler)
             );
@@ -208,12 +219,12 @@ class Resizer {
 
         // Touch events
         if (hasTouch) {
-            resizer.eventsToUnbind?.push(
+            resizer.eventsToUnbind.push(
                 addEvent(handler, 'touchstart', mouseDownHandler)
             );
 
             if (!rowContainer.hcEvents.mousemove) {
-                resizer.eventsToUnbind?.push(
+                resizer.eventsToUnbind.push(
                     addEvent(rowContainer, 'touchmove', mouseMoveHandler),
                     addEvent(rowContainer, 'touchend', mouseUpHandler)
                 );
@@ -223,7 +234,7 @@ class Resizer {
     /**
      * Mouse move function
      *
-     * @param {boolean} parentColumn
+     * @param {boolean} currentColumn
      * Flag determinates allowance to grab or not
      *
      * @param {global.Event} e
@@ -234,12 +245,12 @@ class Resizer {
      *
      */
     public onMouseMove(
-        parentColumn: Resizer.ResizedColumn|undefined, // replace parentColumn with currentColumn
+        currentColumn: Resizer.ResizedColumn|undefined,
         e: PointerEvent
     ): void {
-        const columnContainer = parentColumn && parentColumn.container;
+        const columnContainer = currentColumn && currentColumn.container;
 
-        if (parentColumn && columnContainer) {
+        if (currentColumn && columnContainer) {
             const parentRow = (columnContainer.parentNode as HTMLDOMElement);
             const parentRowWidth = parentRow.offsetWidth;
 
@@ -251,8 +262,8 @@ class Resizer {
                         // maxSize
                         parentRowWidth - (
                             this.sumColumnOuterWidth(
-                                parentColumn.row,
-                                parentColumn
+                                currentColumn.row,
+                                currentColumn
                             ) || 0
                         )
                     ) / parentRowWidth
@@ -261,7 +272,9 @@ class Resizer {
             columnContainer.style.flex = 'none';
 
             // call component resize
-            parentColumn.mountedComponent?.resize(null);
+            if (currentColumn.mountedComponent) {
+                currentColumn.mountedComponent.resize(null);
+            }
         }
     }
     /**
@@ -283,26 +296,29 @@ class Resizer {
     ): number {
 
         // const convertToPercent = this.convertToPercent;
-        const columnContainer = column?.container as HTMLElement;
-        const parentRowWidth = row.container?.offsetWidth;
+        const columnContainer = column && column.container as HTMLElement;
+        const parentRowWidth = row.container && row.container.offsetWidth;
         const columns = row.columns;
 
         let sum = 0;
         let rowColumn;
+        let rowColumnContainer;
 
         for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
 
-            rowColumn = columns[i].container as HTMLDOMElement;
+            rowColumn = columns[i] as Resizer.ResizedColumn;
+            rowColumnContainer = rowColumn.container as HTMLDOMElement;
 
-            if (rowColumn !== columnContainer) {
+            if (rowColumnContainer !== columnContainer) {
 
                 // find all columns in nested layout to calculate
                 // min-width / width each of them
                 if (columns[i].layout) {
 
+                    const columnRows = columns[i].layout.rows;
+
                     let maxRow = row;
                     let maxColumns = 0;
-                    let columnRows = columns[i].layout.rows;
 
                     // find a row with maximum columns
                     for (let j = 0, jEnd = columnRows.length; j < jEnd; ++j) {
@@ -323,26 +339,26 @@ class Resizer {
                     const columnStylesWidth = (
                         // convert % to px
                         parseFloat(
-                            rowColumn.style.getPropertyValue('width')
+                            rowColumnContainer.style.getPropertyValue('width')
                         ) / 100
                     ) * (parentRowWidth || 1);
 
-                    // add min-size if "resized" width does not exist or is 
-                    // bigger then width
-                    const minSize = (
-                        getStyle(rowColumn, 'min-width', true) as number
-                    );
-
-                    sum += (
-                        columnStylesWidth && columnStylesWidth > minSize ? 
-                            columnStylesWidth : minSize
-                    );
-
                     // add borders width
-                    sum += (
-                        (getStyle(rowColumn, 'border-left', true) as number) +
-                        (getStyle(rowColumn, 'border-right', true) as number)
-                    );
+                    if (rowColumn.styles) {
+                        sum += (
+                            (rowColumn.styles.borderLeft || 0) +
+                            (rowColumn.styles.borderRight || 0)
+                        );
+
+                        // add min-size if "resized" width does not exist or is
+                        // bigger then width
+                        const minSize = rowColumn.styles.minSize || 0;
+
+                        sum += (
+                            columnStylesWidth && columnStylesWidth > minSize ?
+                                columnStylesWidth : minSize
+                        );
+                    }
                 }
             }
         }
@@ -392,14 +408,17 @@ class Resizer {
                     resizer.destroyHandler(
                         currentColumn.layout.rows
                     );
-                } else {
-                    currentColumn.resizer?.handler?.remove();
+                } else if (
+                    currentColumn.resizer &&
+                    currentColumn.resizer.handler
+                ) {
+                    currentColumn.resizer.handler.remove();
                 }
             }
         }
     }
 
-    public toJSON(): Resizer.ClassJSON  {
+    public toJSON(): Resizer.ClassJSON {
         const resizeOptions = this.resizeOptions;
 
         return {
@@ -438,8 +457,14 @@ namespace Resizer {
 
     export interface ResizedColumn extends Column {
         resizer?: Snap;
+        styles?: ColumnStyles;
     }
 
+    export interface ColumnStyles {
+        borderLeft?: number;
+        borderRight?: number;
+        minSize?: number;
+    }
     export interface Snap {
         handler: HTMLDOMElement|undefined;
     }
@@ -459,7 +484,7 @@ namespace Resizer {
     export interface JSONOptions extends DataJSON.JSONObject {
         columns: ColumnsRowsOptionsJSON;
         rows: ColumnsRowsOptionsJSON;
-        snap: SnapJSON
+        snap: SnapJSON;
     }
 
     export interface ColumnsRowsOptionsJSON extends DataJSON.JSONObject {

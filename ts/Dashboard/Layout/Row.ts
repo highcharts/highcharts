@@ -162,16 +162,41 @@ class Row extends GUIElement {
     public setColumnsFromJSON(
         json: Array<Column.ClassJSON>
     ): void {
-        const row = this;
+        const row = this,
+            componentsToMount = [];
 
-        let column;
+        let column,
+            columnJSON;
 
+        // Set columns.
         for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            column = Column.fromJSON(json[i], row);
+            columnJSON = json[i];
+            column = Column.fromJSON({
+                $class: columnJSON.$class,
+                options: {
+                    containerId: columnJSON.options.containerId,
+                    parentContainerId: columnJSON.options.parentContainerId,
+                    mountedComponentJSON: void 0 // Will be mounted later.
+                }
+            }, row);
 
             if (column) {
                 row.columns.push(column);
+
+                if (columnJSON.options.mountedComponentJSON) {
+                    componentsToMount.push({
+                        column: column,
+                        mountedComponentJSON: columnJSON.options.mountedComponentJSON
+                    });
+                }
             }
+        }
+
+        // Mount components.
+        for (let i = 0, iEnd = componentsToMount.length; i < iEnd; ++i) {
+            componentsToMount[i].column.mountComponentFromJSON(
+                componentsToMount[i].mountedComponentJSON
+            );
         }
     }
 
