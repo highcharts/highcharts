@@ -31,10 +31,6 @@ class Column extends GUIElement {
 
             if (row.layout.copyId) {
                 id = id + '_' + row.layout.copyId;
-
-                if (options.mountedComponentJSON) {
-                    options.mountedComponentJSON.options.parentElement = id;
-                }
             }
 
             return new Column(
@@ -80,8 +76,6 @@ class Column extends GUIElement {
         this.options = options;
         this.row = row;
 
-        const column = this;
-
         // Get parent container
         const parentContainer =
             document.getElementById(options.parentContainerId || '') ||
@@ -112,9 +106,7 @@ class Column extends GUIElement {
 
             // Mount component from JSON.
             if (this.options.mountedComponentJSON) {
-                this.mountedComponent = Bindings.componentFromJSON(
-                    this.options.mountedComponentJSON
-                );
+                this.mountComponentFromJSON(this.options.mountedComponentJSON);
             }
         } else {
             // Error
@@ -163,6 +155,33 @@ class Column extends GUIElement {
      * Component mounted in the column.
      */
     public mountedComponent?: Component;
+
+    /**
+     * Mount component from JSON.
+     *
+     * @param {Component.ClassJSON} [json]
+     * Component JSON.
+     *
+     * @return {boolean}
+     */
+    public mountComponentFromJSON(
+        json: Component.ClassJSON
+    ): boolean {
+        const column = this;
+
+        if (column.id !== json.options.parentElement) {
+            json.options.parentElement = column.id;
+        }
+
+        const component = Bindings.componentFromJSON(json);
+
+        if (component) {
+            column.mountedComponent = component;
+            return true;
+        }
+
+        return false;
+    }
 
     /**
      * Destroy the element, its container, event hooks
