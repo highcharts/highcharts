@@ -314,7 +314,7 @@ H.Chart.prototype.renderFocusBorder = function (this: Highcharts.AccessibilityCh
         if (focusBorderOptions.enabled) {
             focusElement.addFocusBorder(focusBorderOptions.margin, {
                 stroke: focusBorderOptions.style.color,
-                'stroke-width': focusBorderOptions.style.lineWidth,
+                strokeWidth: focusBorderOptions.style.lineWidth,
                 r: focusBorderOptions.style.borderRadius
             });
         }
