@@ -230,7 +230,7 @@ var historyChart = Highcharts.chart('history-container', Highcharts.merge(detail
         data: populationHistory.se.slice(0)
     }],
     xAxis: {
-        categories: ['1984', '1989', '1994', '1994', '2004', '2009', '2014', '2019'],
+        categories: ['1984', '1989', '1994', '1999', '2004', '2009', '2014', '2019'],
         accessibility: {
             description: 'Time',
             rangeDescription: 'Range: 1984 to 2019'
