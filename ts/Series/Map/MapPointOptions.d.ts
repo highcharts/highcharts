@@ -26,6 +26,7 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
  * */
 
 export interface MapPointOptions extends ScatterPointOptions {
+    bounds?: Highcharts.MapBounds;
     color?: ColorType;
     dataLabels?: DataLabelOptions;
     drilldown?: string;

@@ -224,14 +224,21 @@ namespace MapChart {
 }
 
 /* eslint-disable no-invalid-this */
-addEvent(Chart, 'afterSetChartSize', function (): void {
-    if (!this.mapView) {
-        const mapView = new MapView(this, this.options.mapView);
+addEvent(Chart, 'afterInit', function (): void {
+    this.mapView = new MapView(this, this.options.mapView);
+});
 
+addEvent(Chart, 'afterSetChartSize', function (): void {
+    const mapView = this.mapView;
+
+    if (mapView && mapView.enabled === void 0) {
         // Apply the bounds inferred from the maps
         const bounds = mapView.getDataBounds();
 
         if (bounds) {
+
+            mapView.enabled = true;
+
             mapView.fitToBounds(bounds, false);
 
             mapView.minZoom = mapView.zoom;
@@ -242,8 +249,6 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
             if (mapView.userOptions.center) {
                 merge(true, mapView.center, mapView.userOptions.center);
             }
-
-            this.mapView = mapView;
         }
     }
 });
@@ -256,14 +261,17 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
         mouseDownX,
         mouseDownY
     } = this;
+
     if (
         mapView &&
+        mapView.enabled &&
         typeof mouseDownX === 'number' &&
         typeof mouseDownY === 'number'
     ) {
         const key = `${mouseDownX},${mouseDownY}`;
         const { chartX, chartY } = (e as any).originalEvent;
-        const scale = (256 / 360) * Math.pow(2, mapView.zoom);
+        const scale = (MapView.tileSize / MapView.worldSize) *
+            Math.pow(2, mapView.zoom);
 
         // Reset starting position
         if (key !== mouseDownKey) {
@@ -285,7 +293,7 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
 // Perform the map zoom by selection
 addEvent(Chart, 'selection', function (evt: PointerEvent): void {
     const mapView = this.mapView;
-    if (mapView) {
+    if (mapView && mapView.enabled) {
 
         // Zoom in
         if (!(evt as any).resetSelection) {

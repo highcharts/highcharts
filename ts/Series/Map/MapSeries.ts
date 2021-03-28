@@ -72,9 +72,12 @@ const {
 
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
+        clearBounds?(): void;
+        bounds?: Highcharts.MapBounds;
         mapTitle?: string;
         valueMax?: number;
         valueMin?: number;
+        useMapGeometry?: boolean;
     }
 }
 
@@ -552,6 +555,20 @@ class MapSeries extends ScatterSeries {
         ColumnSeries.prototype.animateDrillupTo.call(this, init);
     }
 
+    public clearBounds(): void {
+        (this.mapData as any).forEach((mapPoint: any): void => {
+            delete mapPoint.bounds;
+            delete mapPoint.projectedPath;
+        });
+        this.points.forEach((point): void => {
+            delete point.bounds;
+            delete point.options.bounds;
+            delete point.projectedPath;
+            delete point.options.projectedPath;
+        });
+        delete this.bounds;
+    }
+
     /**
      * Allow a quick redraw by just translating the area group. Used for zooming
      * and panning in capable browsers.
@@ -697,8 +714,10 @@ class MapSeries extends ScatterSeries {
         } else if (mapView && baseView) {
             scale = Math.pow(2, mapView.zoom) / Math.pow(2, baseView.zoom);
 
-            const oldTransA = (256 / 360) * Math.pow(2, baseView.zoom);
-            const newTransA = (256 / 360) * Math.pow(2, mapView.zoom);
+            const oldTransA = (MapView.tileSize / MapView.worldSize) *
+                Math.pow(2, baseView.zoom);
+            const newTransA = (MapView.tileSize / MapView.worldSize) *
+                Math.pow(2, mapView.zoom);
 
             const oldLeft = baseView.center.x - (chart.plotWidth / 2) /
                 oldTransA;
@@ -1232,7 +1251,8 @@ class MapSeries extends ScatterSeries {
         if (path && mapView) {
             // A zoom of 0 means the world (360x360 degrees) fits in a
             // 256x256 px tile
-            const transA = (256 / 360) * Math.pow(2, mapView.zoom);
+            const transA = (MapView.tileSize / MapView.worldSize) *
+                Math.pow(2, mapView.zoom);
             const { x, y } = mapView.center;
             const xOffset = this.chart.plotWidth / 2;
             const yOffset = this.chart.plotHeight / 2;

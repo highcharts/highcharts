@@ -174,6 +174,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
  * */
 
 interface MapPoint extends ScatterPoint, Highcharts.ColorMapPoint {
+    bounds?: Highcharts.MapBounds;
     dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
     isValid: typeof colorMapPointMixin.isValid;
     setState: typeof colorMapPointMixin.setState;

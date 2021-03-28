@@ -1,24 +1,3 @@
-// Project the data using Proj4
-function project(geojson, projection) {
-    const p = window.proj4(projection);
-    const projectPolygon = coordinate => {
-        coordinate.forEach((lonLat, i) => {
-            coordinate[i] = p.forward(lonLat);
-        });
-    };
-    geojson.features.forEach(function (feature) {
-        if (feature.geometry) {
-            if (feature.geometry.type === 'Polygon') {
-                feature.geometry.coordinates.forEach(projectPolygon);
-            } else if (feature.geometry.type === 'MultiPolygon') {
-                feature.geometry.coordinates.forEach(items => {
-                    items.forEach(projectPolygon);
-                });
-            }
-        }
-    });
-}
-
 // Get random data for this sample
 function getRandomData(geojson) {
     return geojson.features.map(() => Math.round(Math.random() * 100));
@@ -29,16 +8,19 @@ const static = {
     data: undefined
 };
 
+let chart;
+
 const drawMap = projection => {
 
     const geojson = JSON.parse(static.geojson);
-    if (projection.indexOf('ortho') !== 0) {
+
+    // Remove Antarctica for some projections
+    if (projection.indexOf('ortho') !== 0 && projection !== 'webmerc') {
         geojson.features.splice(
             geojson.features.findIndex(f => f.properties.name === 'Antarctica'),
             1
         );
     }
-
 
     // Apply projection using Proj4
     const crs = {
@@ -50,92 +32,73 @@ const drawMap = projection => {
         'ortho-europe': '+proj=ortho +lat_0=40 +lon_0=10 +x_0=0 +y_0=0',
         'ortho-north-america': '+proj=ortho +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0',
         'ortho-south-america': '+proj=ortho +lat_0=-10 +lon_0=-60 +x_0=0 +y_0=0',
-        robin: '+proj=robin +lon_0=0 +x_0=0 +y_0=0'
+        robin: '+proj=robin +lon_0=0 +x_0=0 +y_0=0',
+        webmerc: 'EPSG:3857'
     }[projection];
-    if (crs) {
-        project(geojson, crs);
-    }
 
     // Initialize the chart
-    console.time('@mapChart');
-    const chart = Highcharts.mapChart('container', {
-        chart: {
-            map: geojson
-        },
+    if (!chart) {
+        console.time('@mapChart');
 
-        title: {
-            text: 'Projected TopoJSON'
-        },
+        chart = Highcharts.mapChart('container', {
+            chart: {
+                map: geojson
+            },
 
-        mapNavigation: {
-            enabled: true,
-            buttonOptions: {
-                verticalAlign: 'bottom'
-            }
-        },
+            title: {
+                text: 'Projected TopoJSON'
+            },
 
-        colorAxis: {
-            tickPixelInterval: 100,
-            minColor: '#F1EEF6',
-            maxColor: '#900037'
-        },
-
-        tooltip: {
-            pointFormat: '{point.name}: {point.value}'
-        },
-
-        series: [{
-            data: static.data,
-            joinBy: null,
-            name: 'Random data',
-            states: {
-                hover: {
-                    color: '#a4edba'
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
                 }
             },
-            dataLabels: {
-                enabled: false,
-                format: '{point.name}'
-            }
-        }]
-    });
-    console.timeEnd('@mapChart');
 
-    const updateProjection = crs =>  {
-        console.log('---- change projection ----');
-        chart.mapView.projection = window.proj4(crs);
-        chart.series.forEach(series => {
-            series.mapData.forEach(mapPoint => {
-                delete mapPoint.bounds;
-                delete mapPoint.projectedPath;
-            });
-            series.points.forEach(point => {
-                delete point.bounds;
-                delete point.options.bounds;
-                delete point.projectedPath;
-                delete point.options.projectedPath;
-            });
-            delete series.bounds;
-            series.isDirty = true;
-            series.isDirtyData = true;
+            mapView: {
+                projection: {
+                    crs
+                }
+            },
+
+            colorAxis: {
+                tickPixelInterval: 100,
+                minColor: '#F1EEF6',
+                maxColor: '#900037'
+            },
+
+            tooltip: {
+                pointFormat: '{point.name}: {point.value}'
+            },
+
+            series: [{
+                data: static.data,
+                joinBy: null,
+                name: 'Random data',
+                states: {
+                    hover: {
+                        color: '#a4edba'
+                    }
+                },
+                dataLabels: {
+                    enabled: false,
+                    format: '{point.name}'
+                }
+            }]
         });
-        chart.redraw();
-    };
+        console.timeEnd('@mapChart');
 
-    //'+proj=ortho +lat_0=40 +lon_0=50 +x_0=0 +y_0=0'
-    // '+proj=robin +lon_0=0 +x_0=0 +y_0=0'
-    setTimeout(
-        () => updateProjection('+proj=mill +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +over'),
-        1500
-    );
-    setTimeout(
-        () => updateProjection('+proj=ortho +lat_0=40 +lon_0=10 +x_0=0 +y_0=0'),
-        3000
-    );
-    setTimeout(
-        () => updateProjection('+proj=robin +lon_0=0 +x_0=0 +y_0=0'),
-        5000
-    );
+
+    } else {
+        chart.update({
+            mapView: {
+                projection: {
+                    crs
+                }
+            }
+        });
+    }
 };
 
 const enableButtons = () => {
@@ -162,7 +125,7 @@ Highcharts.getJSON(
         static.geojson = JSON.stringify(geojson);
         static.data = data;
 
-        drawMap('robin');
+        drawMap('webmerc');
 
         enableButtons();
 

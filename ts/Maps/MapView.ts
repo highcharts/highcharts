@@ -17,9 +17,9 @@ const {
 } = H;
 import U from '../Core/Utilities.js';
 const {
+    isNumber,
     merge
 } = U;
-
 
 /**
  * Internal types
@@ -40,7 +40,11 @@ declare global {
         interface MapViewOptions {
             center: ProjectedXY; // @todo: LatLon object
             zoom: number;
-            projection?: string; // @todo: configuration object
+            projection?: MapViewProjectionOptions;
+        }
+
+        interface MapViewProjectionOptions {
+            crs?: string;
         }
 
         interface Options {
@@ -59,16 +63,26 @@ class MapView {
         arrayOfBounds: Highcharts.MapBounds[]
     ): Highcharts.MapBounds|undefined => {
         if (arrayOfBounds.length) {
-            return arrayOfBounds.slice(1).reduce((acc, cur): Highcharts.MapBounds => {
-                acc.x1 = Math.min(acc.x1, cur.x1);
-                acc.y1 = Math.min(acc.y1, cur.y1);
-                acc.x2 = Math.max(acc.x2, cur.x2);
-                acc.y2 = Math.max(acc.y2, cur.y2);
-                return acc;
-            }, merge(arrayOfBounds[0]));
+            return arrayOfBounds
+                .slice(1)
+                .reduce((acc, cur): Highcharts.MapBounds => {
+                    acc.x1 = Math.min(acc.x1, cur.x1);
+                    acc.y1 = Math.min(acc.y1, cur.y1);
+                    acc.x2 = Math.max(acc.x2, cur.x2);
+                    acc.y2 = Math.max(acc.y2, cur.y2);
+                    return acc;
+                }, merge(arrayOfBounds[0]));
         }
         return;
     };
+
+    /**
+     * The world size equals meters in the Web Mercator projection, to match a
+     * 256 square tile to zoom level 0
+     */
+    public static worldSize = 40097932.2;
+
+    public static tileSize = 256;
 
     public constructor(
         chart: Chart,
@@ -81,22 +95,20 @@ class MapView {
 
         this.chart = chart;
         this.center = options.center;
+        this.options = options;
         this.userOptions = userOptions || {};
         this.zoom = options.zoom;
 
-        /*
         const proj = this.chart.options.chart.proj4 || win.proj4;
-        if (proj) {
-            this.projection = proj(
-                // '+proj=mill +lat_0=0 +lon_0=0 +x_0=0 +y_0=0 +over'
-                '+proj=robin +lon_0=0 +x_0=0 +y_0=0'
-                // '+proj=ortho +lat_0=40 +lon_0=10 +x_0=0 +y_0=0'
-            );
+        if (proj && options.projection && options.projection.crs) {
+            this.projection = proj(options.projection.crs);
         }
-        */
     }
+
     public center: Highcharts.ProjectedXY;
+    public enabled?: boolean;
     public minZoom?: number;
+    public options: Highcharts.MapViewOptions;
     public projection?: any;
     public userOptions: DeepPartial<Highcharts.MapViewOptions>;
     public zoom: number;
@@ -109,39 +121,38 @@ class MapView {
         animation?: boolean|Partial<AnimationOptionsObject>
     ): void {
 
+        const { tileSize, worldSize } = MapView;
         const { plotWidth, plotHeight } = this.chart;
-        // 256 is the magic number where a world tile is rendered to a 256/256
-        // px square.
+
         const scaleToPlotArea = Math.max(
-            (bounds.x2 - bounds.x1) / (plotWidth / 256),
-            (bounds.y2 - bounds.y1) / (plotHeight / 256)
+            (bounds.x2 - bounds.x1) / (plotWidth / tileSize),
+            (bounds.y2 - bounds.y1) / (plotHeight / tileSize)
         );
 
         this.setView(
             { y: (bounds.y2 + bounds.y1) / 2, x: (bounds.x2 + bounds.x1) / 2 },
-            (Math.log(360 / scaleToPlotArea) / Math.log(2)),
+            (Math.log(worldSize / scaleToPlotArea) / Math.log(2)),
             redraw,
             animation
         );
     }
 
     public getDataBounds(): Highcharts.MapBounds|undefined {
-        const allBounds: Highcharts.MapBounds[] = [];
-
-        this.chart.series.forEach((s): void => {
-            if (
-                (s as any).useMapGeometry &&
-                (s as any).bounds
-            ) {
-                allBounds.push((s as any).bounds);
-            }
-        });
+        const allBounds = this.chart.series.reduce(
+            (acc, s): Highcharts.MapBounds[] => {
+                if (s.useMapGeometry && s.bounds) {
+                    acc.push(s.bounds);
+                }
+                return acc;
+            },
+            [] as Highcharts.MapBounds[]
+        );
         return MapView.compositeBounds(allBounds);
     }
 
     public redraw(animation?: boolean|Partial<AnimationOptionsObject>): void {
         this.chart.series.forEach((s): void => {
-            if ((s as any).useMapGeometry) {
+            if (s.useMapGeometry) {
                 s.isDirty = true;
             }
         });
@@ -170,7 +181,8 @@ class MapView {
         if (bounds) {
             const cntr = this.center;
             const { plotWidth, plotHeight } = this.chart;
-            const scale = (256 / 360) * Math.pow(2, this.zoom);
+            const scale = (MapView.tileSize / MapView.worldSize) *
+                Math.pow(2, this.zoom);
             const topLeft = this.toPixels({ y: bounds.y1, x: bounds.x1 });
             const bottomRight = this.toPixels({ y: bounds.y2, x: bounds.x2 });
 
@@ -202,7 +214,8 @@ class MapView {
     }
 
     public toPixels(pos: Highcharts.ProjectedXY): PositionObject {
-        const scale = (256 / 360) * Math.pow(2, this.zoom);
+        const scale = (MapView.tileSize / MapView.worldSize) *
+            Math.pow(2, this.zoom);
         const centerPxX = this.chart.plotWidth / 2;
         const centerPxY = this.chart.plotHeight / 2;
         const x = centerPxX - scale * (this.center.x - pos.x);
@@ -212,13 +225,60 @@ class MapView {
 
     public toValues(pos: PositionObject): Highcharts.ProjectedXY {
         const { x, y } = pos;
-        const scale = (256 / 360) * Math.pow(2, this.zoom);
+        const scale = (MapView.tileSize / MapView.worldSize) *
+            Math.pow(2, this.zoom);
         const centerPxX = this.chart.plotWidth / 2;
         const centerPxY = this.chart.plotHeight / 2;
 
         const projectedY = this.center.x - ((centerPxX - x) / scale);
         const projectedX = this.center.y - ((centerPxY - y) / scale);
         return { y: projectedY, x: projectedX };
+    }
+
+    public update(
+        userOptions: DeepPartial<Highcharts.MapViewOptions>,
+        redraw: boolean = true
+    ): void {
+        const isDirtyProjection =
+            (userOptions.projection && userOptions.projection.crs) !==
+            (this.options.projection && this.options.projection.crs);
+        merge(true, this.userOptions, userOptions);
+        merge(true, this.options, userOptions);
+
+        if (isDirtyProjection) {
+            this.chart.series.forEach((series): void => {
+                if (series.clearBounds) {
+                    series.clearBounds();
+                }
+                series.isDirty = true;
+                series.isDirtyData = true;
+            });
+
+            // @todo: This is repetetive, also happens in constructor
+            const proj = this.chart.options.chart.proj4 || win.proj4;
+            if (proj) {
+                if (this.options.projection && this.options.projection.crs) {
+                    this.projection = proj(this.options.projection.crs);
+                } else {
+                    this.projection = void 0;
+                }
+            }
+
+            // Fit to bounds if center/zoom are not explicitly given
+            /* Not working, bounds not calculated
+            if (!userOptions.center && !isNumber(userOptions.zoom)) {
+                const bounds = this.getDataBounds();
+                if (bounds) {
+                    this.fitToBounds(bounds);
+                }
+            }
+            */
+        }
+
+        if (redraw) {
+            this.chart.redraw();
+        }
+
     }
 
     public zoomBy(
@@ -237,7 +297,8 @@ class MapView {
             // Keep chartX and chartY stationary - convert to lat and lng
             if (chartCoords) {
                 const [chartX, chartY] = chartCoords;
-                const transA = (256 / 360) * Math.pow(2, this.zoom);
+                const transA = (MapView.tileSize / MapView.worldSize) *
+                    Math.pow(2, this.zoom);
 
                 const offsetX = chartX - chart.plotLeft - chart.plotWidth / 2;
                 const offsetY = chartY - chart.plotTop - chart.plotHeight / 2;
