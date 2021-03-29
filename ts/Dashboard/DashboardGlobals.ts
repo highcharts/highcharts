@@ -8,14 +8,14 @@ const PREFIX = 'highcharts-dashboard-';
 const DashboardGlobals: DashboardGlobals = {
     prefix: PREFIX,
     layout: PREFIX + 'layout',
-    column: PREFIX + 'column',
+    cell: PREFIX + 'cell',
     row: PREFIX + 'row'
 };
 
 interface DashboardGlobals {
     prefix: string;
     layout: string;
-    column: string;
+    cell: string;
     row: string;
 }
 

@@ -19,7 +19,7 @@ let dashboard = new Dashboard('container', {
         enabled: true,
         layoutOptions: {
             resize: {
-                columns: true,
+                cells: true,
                 rows: true,
                 snap: {
                     width: 20
@@ -29,14 +29,14 @@ let dashboard = new Dashboard('container', {
         layouts: [{
             id: 'layout-1', // mandatory
             rowClassName: 'custom-row', // optional
-            columnClassName: 'custom-column', // optional
+            cellClassName: 'custom-cell', // optional
             style: {
                 fontSize: '1.5em',
                 color: 'blue'
             },
             rows: [{
                 // id: 'dashboard-row-0',
-                columns: [{
+                cells: [{
                     width: 0.7,
                     id: 'dashboard-col-0',
                     style: {
@@ -54,12 +54,12 @@ let dashboard = new Dashboard('container', {
                 style: {
                     color: 'red'
                 },
-                columns: [{
+                cellcells: [{
                     id: 'dashboard-col-2'
                 }]
             }, {
                 id: 'dashboard-row-3',
-                columns: [{
+                cells: [{
                     id: 'dashboard-col-add-component'
                 }]
             }]
@@ -67,14 +67,14 @@ let dashboard = new Dashboard('container', {
             id: 'layout-2', // mandatory
             rows: [{
                 id: 'dashboard-row-2',
-                columns: [{
+                cells: [{
                     id: 'dashboard-col-3'
                 }]
             }]
         }]
     },
     components: [{
-        column: 'dashboard-col-0',
+        cell: 'dashboard-col-0',
         isResizable: true,
         type: 'chart',
         chartOptions: {
@@ -101,7 +101,7 @@ let dashboard = new Dashboard('container', {
             }
         }
     }, {
-        column: 'dashboard-col-1',
+        cell: 'dashboard-col-1',
         type: 'html',
         elements: [{
             tagName: 'img',
@@ -113,10 +113,10 @@ let dashboard = new Dashboard('container', {
             textContent: 'Loreum ipsum'
         }]
     }, {
-        column: 'dashboard-col-2',
+        cell: 'dashboard-col-2',
         type: 'chart',
         chartOptions: {
-            type: 'column',
+            type: 'cell',
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
@@ -136,7 +136,7 @@ let dashboard = new Dashboard('container', {
             }
         }
     }, {
-        column: 'dashboard-col-3',
+        cell: 'dashboard-col-3',
         type: 'chart',
         chartOptions: {
             type: 'line',
@@ -163,8 +163,8 @@ let dashboard = new Dashboard('container', {
 
 console.log(dashboard);
 
-console.group('Bindings get GUI element by ID or HTML element (getColumn, getRow, getLayout)');
-console.log('column: ', Bindings.getColumn('dashboard-col-0'));
+console.group('Bindings get GUI element by ID or HTML element (getcell, getRow, getLayout)');
+console.log('cell: ', Bindings.getCell('dashboard-col-0'));
 console.log('row: ', Bindings.getRow(dashboard.layouts[0].rows[0].container));
 console.log('layout: ', Bindings.getLayout('layout-1'));
 console.groupEnd();
@@ -250,7 +250,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         enabled: false,
         layoutOptions: {
             rowClassName: 'row', // optional
-            columnClassName: 'col' // optional
+            cellClassName: 'col' // optional
 
         },
         layouts: [{
@@ -258,14 +258,14 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
         }, {
             id: 'layout-bt-2', // mandatory
             rowClassName: 'row-test', // optional
-            columnClassName: 'col-test' // optional
+            cellClassName: 'col-test' // optional
         }]
     },
     components: [{
-        column: 'chart-1',
+        cell: 'chart-1',
         type: 'chart',
         chartOptions: {
-            type: 'column',
+            type: 'cell',
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
@@ -285,7 +285,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
             }
         }
     }, {
-        column: 'chart-2',
+        cell: 'chart-2',
         type: 'html',
         /*config: {
             title: 'Sample layout 1',
@@ -310,7 +310,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         enabled: true,
         layoutOptions: {
             resize: {
-                columns: {
+                cells: {
                     enabled: true,
                     minSize: 70
                 },
@@ -323,13 +323,13 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         layouts: [{
             id: 'layout-in-1', // mandatory
             rows: [{
-                columns: [{
+                cells: [{
                     id: 'dashboard-col-nolayout-0'
                 }, {
                     id: 'dashboard-col-layout-0',
                     layout: {
                         rows: [{
-                            columns: [{
+                            cells: [{
                                 id: 'dashboard-col-layout-1'
                             }, {
                                 id: 'dashboard-col-layout-2'
@@ -339,7 +339,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                                 id: 'dashboard-col-layout-5'
                             }]
                         }, {
-                            columns: [{
+                            cells: [{
                                 id: 'dashboard-col-layout-3'
                             }]
                         }]
@@ -349,7 +349,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
         }]
     },
     components: [{
-        column: 'dashboard-col-nolayout-0',
+        cell: 'dashboard-col-nolayout-0',
         type: 'chart',
         chartOptions: {
             chart: {
@@ -371,10 +371,10 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
             textContent: 'Loreum ipsum'
         }]*/
     }, {
-        column: 'dashboard-col-layout-1',
+        cell: 'dashboard-col-layout-1',
         /*type: 'chart',
         chartOptions: {
-            type: 'column',
+            type: 'cell',
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
@@ -391,10 +391,10 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
             textContent: 'Loreum ipsum'
         }]
     }, {
-        column: 'dashboard-col-layout-2',
+        cell: 'dashboard-col-layout-2',
         /*type: 'chart',
         chartOptions: {
-            type: 'column',
+            type: 'cell',
             series: [{
                 name: 'Series from options',
                 data: [1, 2, 3, 4]
@@ -411,27 +411,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
             textContent: 'Loreum ipsum'
         }]
     }, {
-        column: 'dashboard-col-layout-3',
-        type: 'html',
-        elements: [{
-            tagName: 'img',
-            attributes: {
-                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-                title: 'I heard you like components'
-            }
-        }, {
-            textContent: 'Loreum ipsum'
-        }]
-        /*type: 'chart',
-        chartOptions: {
-            type: 'line',
-            series: [{
-                name: 'Series from options',
-                data: [1, 2, 3, 4]
-            }]
-        }*/
-    }, {
-        column: 'dashboard-col-layout-4',
+        cell: 'dashboard-col-layout-3',
         type: 'html',
         elements: [{
             tagName: 'img',
@@ -451,7 +431,27 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
             }]
         }*/
     }, {
-        column: 'dashboard-col-layout-5',
+        cell: 'dashboard-col-layout-4',
+        type: 'html',
+        elements: [{
+            tagName: 'img',
+            attributes: {
+                src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
+                title: 'I heard you like components'
+            }
+        }, {
+            textContent: 'Loreum ipsum'
+        }]
+        /*type: 'chart',
+        chartOptions: {
+            type: 'line',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }]
+        }*/
+    }, {
+        cell: 'dashboard-col-layout-5',
         type: 'html',
         elements: [{
             tagName: 'img',

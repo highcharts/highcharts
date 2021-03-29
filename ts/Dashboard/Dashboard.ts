@@ -33,7 +33,7 @@ class Dashboard {
             enabled: true,
             layoutOptions: {
                 rowClassName: void 0,
-                columnClassName: void 0
+                cellClassName: void 0
             },
             layouts: []
         },
@@ -210,19 +210,19 @@ class Dashboard {
         const dashboard = this;
 
         let component,
-            column;
+            cell;
 
         for (let i = 0, iEnd = components.length; i < iEnd; ++i) {
             component = Bindings.addComponent(components[i]);
-            column = Bindings.getColumn(components[i].column);
+            cell = Bindings.getCell(components[i].cell);
 
-            if (column && component) {
-                column.mountedComponent = component; // @ToDo column.addComponent() perhaps? - checks if column is free
+            if (cell && component) {
+                cell.mountedComponent = component; // @ToDo cell.addComponent() perhaps? - checks if cell is free
 
                 dashboard.mountedComponents.push({
                     options: components[i],
                     component: component,
-                    column: column
+                    cell: cell
                 });
             } else {
                 // Error

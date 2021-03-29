@@ -299,7 +299,7 @@ namespace Layout {
         copyId?: string;
         layoutClassName?: string;
         rowClassName?: string;
-        columnClassName?: string;
+        cellClassName?: string;
         rows?: Array<Row.Options>;
         style?: CSSJSONObject;
         rowsJSON?: Array<Row.ClassJSON>;

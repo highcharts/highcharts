@@ -7,7 +7,7 @@ import type {
 } from '../../Core/Renderer/DOMElementType';
 import type GUIElement from '../Layout/GUIElement';
 
-import Column from '../Layout/Column.js';
+import Cell from '../Layout/Cell.js';
 import Row from '../Layout/Row.js';
 import Layout from '../Layout/Layout.js';
 import U from '../../Core/Utilities.js';
@@ -58,7 +58,7 @@ class Bindings {
     public static addComponent(
         options: Bindings.ComponentOptions
     ): HTMLComponent|ChartComponent|GroupComponent|undefined {
-        const compontentContainer = document.getElementById(options.column);
+        const compontentContainer = document.getElementById(options.cell);
         const events = options.events;
 
         let component: HTMLComponent|ChartComponent|GroupComponent|undefined;
@@ -131,9 +131,9 @@ class Bindings {
         return component;
     }
 
-    public static getColumn(idOrElement: string): Column|undefined {
-        const column = Bindings.getGUIElement(idOrElement);
-        return column instanceof Column ? column : void 0;
+    public static getCell(idOrElement: string): Cell|undefined {
+        const cell = Bindings.getGUIElement(idOrElement);
+        return cell instanceof Cell ? cell : void 0;
     }
 
     public static getRow(idOrElement: string): Row|undefined {
@@ -207,7 +207,7 @@ namespace Bindings {
     }
 
     export interface ComponentOptions {
-        column: string;
+        cell: string;
         type: string;
         chartOptions?: any;
         isResizable?: boolean;
@@ -218,7 +218,7 @@ namespace Bindings {
     export interface MountedComponentsOptions {
         options: any;
         component: ChartComponent|HTMLComponent|GroupComponent|undefined;
-        column: Column;
+        cell: Cell;
     }
 }
 

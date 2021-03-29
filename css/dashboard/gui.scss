@@ -15,14 +15,14 @@ body {
     position: relative;
 }
 
-.highcharts-dashboard-column {
+.highcharts-dashboard-cell {
     position: relative;
     flex-shrink: 1;
     flex-basis: auto;
     flex: 1;
 }
 
-.highcharts-dashboard-layout .highcharts-dashboard-row .highcharts-dashboard-column  {
+.highcharts-dashboard-layout .highcharts-dashboard-row .highcharts-dashboard-cell  {
     box-sizing: border-box;
     border: 1px dashed rgba(0, 0, 0, 0);
 }
@@ -32,19 +32,19 @@ body {
         border: 1px dashed #000;
         box-sizing: border-box;
 
-        .highcharts-dashboard-column {
+        .highcharts-dashboard-cell {
             border: 1px dashed #000;
             box-sizing: border-box;
         }
     }
 }
 
-// .highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row :hover .highcharts-dashboard-column  {
+// .highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row :hover .highcharts-dashboard-cell  {
 //     border: 1px dashed #bdbdbd;
 //     cursor: pointer;
 // }
 
-// .highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row:hover .highcharts-dashboard-column .toolbar,
+// .highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row:hover .highcharts-dashboard-cell .toolbar,
 // .highcharts-dashboard-layout.edit-mode .add-item {
 //     display: block;
 // }
@@ -69,7 +69,7 @@ body {
     width: 100%;
 }
 
-.highcharts-dashboard-column > .highcharts-dashboard-component {
+.highcharts-dashboard-cell > .highcharts-dashboard-component {
     position: relative;
     margin: 5px;
     padding: 5px;
@@ -97,7 +97,7 @@ body {
     z-index: 10;
 }
 
-.highcharts-dashboard-column > .highcharts-dashboard-component .title-wrapper {
+.highcharts-dashboard-cell > .highcharts-dashboard-component .title-wrapper {
     margin: 0px;
     padding-bottom: 15px;
     border-bottom: 1px solid rgba(26, 54, 126, 0.125);
@@ -119,7 +119,7 @@ body {
     padding: 0px 10px;
 }
 
-.highcharts-dashboard-toolbar .tools-column {
+.highcharts-dashboard-toolbar .tools-cell {
     display: inline-block;
     background-color: #c3cad8;
     padding: 0px 10px;
@@ -241,10 +241,10 @@ ul.elem-menu li:first-child {
     }
 
     .highcharts-dashboard-row {
-        flex-direction: column;
+        flex-direction: cell;
     }
 
-    .highcharts-dashboard-column {
+    .highcharts-dashboard-cell {
         flex: 1;
     }
 

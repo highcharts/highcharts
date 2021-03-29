@@ -2,9 +2,8 @@ import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type DataJSON from '../../Data/DataJSON';
 import DashboardGlobals from './../DashboardGlobals.js';
 import Layout from './Layout.js';
-import Column from './Column.js';
+import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
-import Dashboard from '../Dashboard.js';
 import U from '../../Core/Utilities.js';
 const {
     pick,
@@ -36,7 +35,7 @@ class Row extends GUIElement {
                     id: id,
                     parentContainerId: layout.container?.id ||
                         options.parentContainerId,
-                    columnsJSON: options.columns,
+                    cellsJSON: options.cells,
                     style: options.style
                 }
             );
@@ -70,7 +69,7 @@ class Row extends GUIElement {
         super();
 
         this.layout = layout;
-        this.columns = [];
+        this.cells = [];
         this.options = options;
 
         // Get parent container
@@ -95,13 +94,13 @@ class Row extends GUIElement {
             });
 
             // Init rows from options.
-            if (this.options.columns) {
-                this.setColumns();
+            if (this.options.cells) {
+                this.setCells();
             }
 
             // Init rows from JSON.
-            if (options.columnsJSON && !this.columns.length) {
-                this.setColumnsFromJSON(options.columnsJSON);
+            if (options.cellsJSON && !this.cells.length) {
+                this.setCellsFromJSON(options.cellsJSON);
             }
         } else {
             // Error
@@ -120,9 +119,9 @@ class Row extends GUIElement {
     public layout: Layout;
 
     /**
-     * Array of the row columns.
+     * Array of the row cells.
      */
-    public columns: Array<Column>;
+    public cells: Array<Cell>;
 
     /**
      * The row options.
@@ -136,57 +135,57 @@ class Row extends GUIElement {
     * */
 
     /**
-     * Set the row columns using column options or columnClassName.
+     * Set the row cells using cell options or cellClassName.
      */
-    public setColumns(): void {
+    public setCells(): void {
         const row = this,
-            columnClassName = (row.layout.options || {}).columnClassName || '',
-            columnsElements = pick(
-                row.options.columns,
-                row.container?.getElementsByClassName(columnClassName)
+            cellClassName = (row.layout.options || {}).cellClassName || '',
+            cellsElements = pick(
+                row.options.cells,
+                row.container?.getElementsByClassName(cellClassName)
             ) || [];
 
-        let columnElement,
+        let cellElement,
             i, iEnd;
 
-        for (i = 0, iEnd = columnsElements.length; i < iEnd; ++i) {
-            columnElement = columnsElements[i];
-            row.addColumn(
-                row.layout.dashboard.guiEnabled ? columnElement : { id: '' },
-                columnElement instanceof HTMLElement ? columnElement : void 0
+        for (i = 0, iEnd = cellsElements.length; i < iEnd; ++i) {
+            cellElement = cellsElements[i];
+            row.addCell(
+                row.layout.dashboard.guiEnabled ? cellElement : { id: '' },
+                cellElement instanceof HTMLElement ? cellElement : void 0
             );
         }
     }
 
-    public setColumnsFromJSON(
-        json: Array<Column.ClassJSON>
+    public setCellsFromJSON(
+        json: Array<Cell.ClassJSON>
     ): void {
         const row = this,
             componentsToMount = [];
 
-        let column,
-            columnJSON;
+        let cell,
+            cellJSON;
 
-        // Set columns.
+        // Set cells.
         for (let i = 0, iEnd = json.length; i < iEnd; ++i) {
-            columnJSON = json[i];
-            column = Column.fromJSON({
-                $class: columnJSON.$class,
+            cellJSON = json[i];
+            cell = Cell.fromJSON({
+                $class: cellJSON.$class,
                 options: {
-                    containerId: columnJSON.options.containerId,
-                    parentContainerId: columnJSON.options.parentContainerId,
-                    style: columnJSON.options.style,
+                    containerId: cellJSON.options.containerId,
+                    parentContainerId: cellJSON.options.parentContainerId,
+                    style: cellJSON.options.style,
                     mountedComponentJSON: void 0 // Will be mounted later.
                 }
             }, row);
 
-            if (column) {
-                row.columns.push(column);
+            if (cell) {
+                row.cells.push(cell);
 
-                if (columnJSON.options.mountedComponentJSON) {
+                if (cellJSON.options.mountedComponentJSON) {
                     componentsToMount.push({
-                        column: column,
-                        mountedComponentJSON: columnJSON.options.mountedComponentJSON
+                        cell: cell,
+                        mountedComponentJSON: cellJSON.options.mountedComponentJSON
                     });
                 }
             }
@@ -194,44 +193,44 @@ class Row extends GUIElement {
 
         // Mount components.
         for (let i = 0, iEnd = componentsToMount.length; i < iEnd; ++i) {
-            componentsToMount[i].column.mountComponentFromJSON(
+            componentsToMount[i].cell.mountComponentFromJSON(
                 componentsToMount[i].mountedComponentJSON
             );
         }
     }
 
     /**
-     * Add a new Column instance to the row columns array.
+     * Add a new Cell instance to the row cells array.
      *
-     * @param {Column.Options} [options]
-     * Options for the row column.
+     * @param {Cell.Options} [options]
+     * Options for the row cell.
      *
-     * @param {HTMLElement} [columnElement]
-     * The container for a new column HTML element.
+     * @param {HTMLElement} [cellElement]
+     * The container for a new cell HTML element.
      *
-     * @return {Column}
+     * @return {Cell}
      */
-    public addColumn(
-        options: Column.Options,
-        columnElement?: HTMLElement
-    ): Column {
+    public addCell(
+        options: Cell.Options,
+        cellElement?: HTMLElement
+    ): Cell {
         const row = this,
-            column = new Column(row, options, columnElement);
+            cell = new Cell(row, options, cellElement);
 
-        row.columns.push(column);
-        return column;
+        row.cells.push(cell);
+        return cell;
     }
 
     /**
      * Destroy the element, its container, event hooks
-     * and inner columns.
+     * and inner cells.
      */
     public destroy(): void {
         const row = this;
 
-        // Destroy columns.
-        for (let i = 0, iEnd = row.columns.length; i < iEnd; ++i) {
-            row.columns[i].destroy();
+        // Destroy cells.
+        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
+            row.cells[i].destroy();
         }
 
         super.destroy();
@@ -246,11 +245,11 @@ class Row extends GUIElement {
     public toJSON(): Row.ClassJSON {
         const row = this,
             layoutContainerId = (row.layout.container || {}).id || '',
-            columns = [];
+            cells = [];
 
-        // Get columns JSON.
-        for (let i = 0, iEnd = row.columns.length; i < iEnd; ++i) {
-            columns.push(row.columns[i].toJSON());
+        // Get cells JSON.
+        for (let i = 0, iEnd = row.cells.length; i < iEnd; ++i) {
+            cells.push(row.cells[i].toJSON());
         }
 
         return {
@@ -258,7 +257,7 @@ class Row extends GUIElement {
             options: {
                 containerId: (row.container as HTMLElement).id,
                 parentContainerId: layoutContainerId,
-                columns: columns,
+                cells: cells,
                 style: row.options.style
             }
         };
@@ -269,9 +268,9 @@ namespace Row {
     export interface Options {
         id?: string;
         parentContainerId?: string;
-        columns?: Array<Column.Options>;
+        cells?: Array<Cell.Options>;
         style?: CSSJSONObject;
-        columnsJSON?: Array<Column.ClassJSON>;
+        cellsJSON?: Array<Cell.ClassJSON>;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {
@@ -281,7 +280,7 @@ namespace Row {
     export interface JSONOptions extends DataJSON.JSONObject {
         containerId: string;
         parentContainerId: string;
-        columns: Array<Column.ClassJSON>;
+        cells: Array<Cell.ClassJSON>;
         style?: CSSJSONObject;
     }
 }

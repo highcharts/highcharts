@@ -2,10 +2,9 @@ import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import type DataJSON from '../../Data/DataJSON';
-import type Column from '../Layout/Column.js';
+import type Cell from '../Layout/Cell.js';
 import type Row from '../Layout/Row.js';
 import type Layout from '../Layout/Layout.js';
-import Dashboard from '../Dashboard.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 
 import U from '../../Core/Utilities.js';
@@ -40,7 +39,7 @@ class Resizer {
     }
 
     protected static readonly defaultOptions: Resizer.Options = {
-        columns: {
+        cells: {
             enabled: true,
             minSize: 50
         },
@@ -70,7 +69,7 @@ class Resizer {
         );
 
         this.layout = layout;
-        this.currentColumn = void 0; // consider naming for example currentColumn
+        this.currentCell = void 0; // consider naming for example currentCell
 
         this.init();
     }
@@ -82,7 +81,7 @@ class Resizer {
     * */
     public resizeOptions: Resizer.Options;
     public layout: Layout;
-    public currentColumn: Column|undefined;
+    public currentCell: Cell|undefined;
 
     /* *
      *
@@ -94,17 +93,17 @@ class Resizer {
 
         for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
 
-            const columns = rows && rows[i].columns;
+            const cells = rows && rows[i].cells;
 
-            if (columns) {
-                for (let j = 0, jEnd = columns.length; j < jEnd; ++j) {
+            if (cells) {
+                for (let j = 0, jEnd = cells.length; j < jEnd; ++j) {
                     // set min-size
-                    (columns[j].container as HTMLElement).style.minWidth =
-                        this.resizeOptions.columns.minSize + 'px';
+                    (cells[j].container as HTMLElement).style.minWidth =
+                        this.resizeOptions.cells.minSize + 'px';
 
                     this.addSnap(
-                        columns[j],
-                        this.resizeOptions.columns.minSize
+                        cells[j],
+                        this.resizeOptions.cells.minSize
                     );
                 }
             }
@@ -113,26 +112,26 @@ class Resizer {
     /**
      * Add Snap - create handlers and add events.
      *
-     * @param {Resizer.ResizedColumn} column
-     * Reference to column
+     * @param {Resizer.ResizedCell} cell
+     * Reference to cell
      *
      * @param {number} minSize
-     * Minimum width of column
+     * Minimum width of cell
      *
      */
     public addSnap(
-        column: Resizer.ResizedColumn,
+        cell: Resizer.ResizedCell,
         minSize: number
     ): void {
         const snapWidth = this.resizeOptions.snap.width;
 
-        column.resizer = {} as Resizer.Snap;
-        column.styles = {} as Resizer.ColumnStyles;
+        cell.resizer = {} as Resizer.Snap;
+        cell.styles = {} as Resizer.CellStyles;
 
-        if (column.container) {
+        if (cell.container) {
 
             // create HTML handler
-            column.resizer.handler = createElement(
+            cell.resizer.handler = createElement(
                 'div',
                 {
                     className: EditGlobals.classNames.resizeHandler
@@ -143,42 +142,42 @@ class Resizer {
                         -(snapWidth / 2) -
                         (
                             getStyle(
-                                column.container,
+                                cell.container,
                                 'border',
                                 true
                             ) as number
                         )
                     ) + 'px'
                 },
-                column.container
+                cell.container
             );
 
-            column.styles.borderLeft =
-                (getStyle(column.container, 'border-left', true) as number);
-            column.styles.borderRight =
-                (getStyle(column.container, 'border-right', true) as number);
-            column.styles.minSize = minSize;
+            cell.styles.borderLeft =
+                (getStyle(cell.container, 'border-left', true) as number);
+            cell.styles.borderRight =
+                (getStyle(cell.container, 'border-right', true) as number);
+            cell.styles.minSize = minSize;
 
             // attach events
             this.addResizeEvents(
-                column
+                cell
             );
         }
     }
     /**
      * Add events
      *
-     * @param {Resizer.ResizedColumn} column
-     * Reference to column
+     * @param {Resizer.ResizedCell} cell
+     * Reference to cell
      *
      */
     public addResizeEvents(
-        column: Resizer.ResizedColumn
+        cell: Resizer.ResizedCell
     ): void {
         const resizer = this;
-        const handler = column.resizer && column.resizer.handler;
-        const rowContainer = column.row &&
-            column.row.container as Resizer.HTMLDOMElementEvents;
+        const handler = cell.resizer && cell.resizer.handler;
+        const rowContainer = cell.row &&
+            cell.row.container as Resizer.HTMLDOMElementEvents;
 
         let mouseDownHandler,
             mouseMoveHandler,
@@ -187,14 +186,14 @@ class Resizer {
         resizer.mouseDownHandler = mouseDownHandler = function (
             e: PointerEvent
         ): void {
-            resizer.currentColumn = column;
+            resizer.currentCell = cell;
         };
 
         resizer.mouseMoveHandler = mouseMoveHandler = function (
             e: PointerEvent
         ): void {
             resizer.onMouseMove(
-                resizer.currentColumn,
+                resizer.currentCell,
                 e as PointerEvent
             );
         };
@@ -202,7 +201,7 @@ class Resizer {
         resizer.mouseUpHandler = mouseUpHandler = function (
             e: PointerEvent
         ): void {
-            resizer.currentColumn = void 0;
+            resizer.currentCell = void 0;
         };
 
         // Add mouse events
@@ -226,129 +225,129 @@ class Resizer {
     /**
      * Mouse move function
      *
-     * @param {boolean} currentColumn
+     * @param {boolean} currentCell
      * Flag determinates allowance to grab or not
      *
      * @param {global.Event} e
      * A mouse event.
      *
-     * @param {Resizer.ResizedColumn} column
-     * Reference to column
+     * @param {Resizer.ResizedCell} cell
+     * Reference to cell
      *
      */
     public onMouseMove(
-        currentColumn: Resizer.ResizedColumn|undefined,
+        currentCell: Resizer.ResizedCell|undefined,
         e: PointerEvent
     ): void {
-        const columnContainer = currentColumn && currentColumn.container;
+        const cellContainer = currentCell && currentCell.container;
 
-        if (currentColumn && columnContainer) {
-            const parentRow = (columnContainer.parentNode as HTMLDOMElement);
+        if (currentCell && cellContainer) {
+            const parentRow = (cellContainer.parentNode as HTMLDOMElement);
             const parentRowWidth = parentRow.offsetWidth;
 
-            columnContainer.style.width =
+            cellContainer.style.width =
                 (
                     Math.min(
                         // diff
-                        e.clientX - columnContainer.getBoundingClientRect().left,
+                        e.clientX - cellContainer.getBoundingClientRect().left,
                         // maxSize
                         parentRowWidth - (
-                            this.sumColumnOuterWidth(
-                                currentColumn.row,
-                                currentColumn
+                            this.sumCellOuterWidth(
+                                currentCell.row,
+                                currentCell
                             ) || 0
                         )
                     ) / parentRowWidth
                 ) * 100 + '%';
 
-            columnContainer.style.flex = 'none';
+            cellContainer.style.flex = 'none';
 
             // call component resize
-            if (currentColumn.mountedComponent) {
-                currentColumn.mountedComponent.resize(null);
+            if (currentCell.mountedComponent) {
+                currentCell.mountedComponent.resize(null);
             }
         }
     }
     /**
-     * Sum min width and current width of columns in the row.
+     * Sum min width and current width of cells in the row.
      *
      * @param {Row} row
-     * Row contains columns
+     * Row contains cells
      *
-     * @param {column} column
-     * Optional parameter, the column which is resized and should be excluded
-     * in calculations. In case of nested layouts, we calculate all columns.
+     * @param {cell} cell
+     * Optional parameter, the cell which is resized and should be excluded
+     * in calculations. In case of nested layouts, we calculate all cells.
      *
      * @return {number}
      * Sum
      */
-    public sumColumnOuterWidth(
+    public sumCellOuterWidth(
         row: Row,
-        column?: Column
+        cell?: Cell
     ): number {
 
         // const convertToPercent = this.convertToPercent;
-        const columnContainer = column && column.container as HTMLElement;
+        const cellContainer = cell && cell.container as HTMLElement;
         const parentRowWidth = row.container && row.container.offsetWidth;
-        const columns = row.columns;
+        const cells = row.cells;
 
         let sum = 0;
-        let rowColumn;
-        let rowColumnContainer;
+        let rowCell;
+        let rowCellContainer;
 
-        for (let i = 0, iEnd = columns.length; i < iEnd; ++i) {
+        for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
 
-            rowColumn = columns[i] as Resizer.ResizedColumn;
-            rowColumnContainer = rowColumn.container as HTMLDOMElement;
+            rowCell = cells[i] as Resizer.ResizedCell;
+            rowCellContainer = rowCell.container as HTMLDOMElement;
 
-            if (rowColumnContainer !== columnContainer) {
+            if (rowCellContainer !== cellContainer) {
 
-                // find all columns in nested layout to calculate
+                // find all cells in nested layout to calculate
                 // min-width / width each of them
-                if (columns[i].layout) {
+                if (cells[i].layout) {
 
-                    const columnRows = columns[i].layout.rows;
+                    const cellRows = cells[i].layout.rows;
 
                     let maxRow = row;
-                    let maxColumns = 0;
+                    let maxCells = 0;
 
-                    // find a row with maximum columns
-                    for (let j = 0, jEnd = columnRows.length; j < jEnd; ++j) {
-                        if (columnRows[j].columns.length > maxColumns) {
-                            maxColumns = columnRows[j].columns.length;
-                            maxRow = columnRows[j];
+                    // find a row with maximum cells
+                    for (let j = 0, jEnd = cellRows.length; j < jEnd; ++j) {
+                        if (cellRows[j].cells.length > maxCells) {
+                            maxCells = cellRows[j].cells.length;
+                            maxRow = cellRows[j];
                         }
                     }
 
-                    // call reccurent calculation of columns (nested layouts)
+                    // call reccurent calculation of cells (nested layouts)
                     if (maxRow) {
-                        sum = this.sumColumnOuterWidth(
+                        sum = this.sumCellOuterWidth(
                             maxRow,
                             void 0
                         );
                     }
                 } else {
-                    const columnStylesWidth = (
+                    const cellStylesWidth = (
                         // convert % to px
                         parseFloat(
-                            rowColumnContainer.style.getPropertyValue('width')
+                            rowCellContainer.style.getPropertyValue('width')
                         ) / 100
                     ) * (parentRowWidth || 1);
 
                     // add borders width
-                    if (rowColumn.styles) {
+                    if (rowCell.styles) {
                         sum += (
-                            (rowColumn.styles.borderLeft || 0) +
-                            (rowColumn.styles.borderRight || 0)
+                            (rowCell.styles.borderLeft || 0) +
+                            (rowCell.styles.borderRight || 0)
                         );
 
                         // add min-size if "resized" width does not exist or is
                         // bigger then width
-                        const minSize = rowColumn.styles.minSize || 0;
+                        const minSize = rowCell.styles.minSize || 0;
 
                         sum += (
-                            columnStylesWidth && columnStylesWidth > minSize ?
-                                columnStylesWidth : minSize
+                            cellStylesWidth && cellStylesWidth > minSize ?
+                                cellStylesWidth : minSize
                         );
                     }
                 }
@@ -369,27 +368,27 @@ class Resizer {
     ): void {
         const rows = nestedRows || this.layout.rows;
         const resizer = this;
-        let currentColumn: Resizer.ResizedColumn;
+        let currentCell: Resizer.ResizedCell;
 
         // loop over rows
         for (let i = 0, iEnd = (rows || []).length; i < iEnd; ++i) {
 
-            // loop over columns
-            for (let j = 0, jEnd = rows[i].columns.length; j < jEnd; ++j) {
+            // loop over cells
+            for (let j = 0, jEnd = rows[i].cells.length; j < jEnd; ++j) {
 
-                currentColumn = rows[i].columns[j];
+                currentCell = rows[i].cells[j];
 
                 // run reccurent if nested layouts
-                if (currentColumn.layout) {
+                if (currentCell.layout) {
                     resizer.destroy(
-                        currentColumn.layout.rows
+                        currentCell.layout.rows
                     );
                 } else if (
-                    currentColumn.resizer &&
-                    currentColumn.resizer.handler
+                    currentCell.resizer &&
+                    currentCell.resizer.handler
                 ) {
-                    this.destroyColumnHandler(currentColumn);
-                    // currentColumn.resizer.handler.remove();
+                    this.destroyCellHandler(currentCell);
+                    // currentCell.resizer.handler.remove();
                 }
             }
 
@@ -401,10 +400,10 @@ class Resizer {
         }
     }
 
-    public destroyColumnHandler(
-        column: Resizer.ResizedColumn
+    public destroyCellHandler(
+        cell: Resizer.ResizedCell
     ): void {
-        const handler = column.resizer && column.resizer.handler;
+        const handler = cell.resizer && cell.resizer.handler;
 
         if (!handler) {
             return;
@@ -429,9 +428,9 @@ class Resizer {
         return {
             $class: 'Resizer',
             options: {
-                columns: {
-                    enabled: resizeOptions.columns.enabled,
-                    minSize: resizeOptions.columns.minSize
+                cells: {
+                    enabled: resizeOptions.cells.enabled,
+                    minSize: resizeOptions.cells.minSize
                 },
                 rows: {
                     enabled: resizeOptions.rows.enabled,
@@ -451,21 +450,21 @@ interface Resizer {
 }
 namespace Resizer {
     export interface Options {
-        columns: ColumnsRowsOptions;
-        rows: ColumnsRowsOptions;
+        cells: CellsRowsOptions;
+        rows: CellsRowsOptions;
         snap: SnapOptions;
     }
-    export interface ColumnsRowsOptions {
+    export interface CellsRowsOptions {
         enabled: boolean;
         minSize: number;
     }
 
-    export interface ResizedColumn extends Column {
+    export interface ResizedCell extends Cell {
         resizer?: Snap;
-        styles?: ColumnStyles;
+        styles?: CellStyles;
     }
 
-    export interface ColumnStyles {
+    export interface CellStyles {
         borderLeft?: number;
         borderRight?: number;
         minSize?: number;
@@ -487,12 +486,12 @@ namespace Resizer {
     }
 
     export interface JSONOptions extends DataJSON.JSONObject {
-        columns: ColumnsRowsOptionsJSON;
-        rows: ColumnsRowsOptionsJSON;
+        cells: CellsRowsOptionsJSON;
+        rows: CellsRowsOptionsJSON;
         snap: SnapJSON;
     }
 
-    export interface ColumnsRowsOptionsJSON extends DataJSON.JSONObject {
+    export interface CellsRowsOptionsJSON extends DataJSON.JSONObject {
         enabled: boolean;
         minSize: number;
     }

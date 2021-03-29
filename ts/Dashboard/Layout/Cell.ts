@@ -6,13 +6,12 @@ import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
-import Dashboard from '../Dashboard.js';
 import Layout from './Layout.js';
 
 const {
     merge
 } = U;
-class Column extends GUIElement {
+class Cell extends GUIElement {
     /* *
     *
     *  Static Properties
@@ -20,9 +19,9 @@ class Column extends GUIElement {
     * */
 
     public static fromJSON(
-        json: Column.ClassJSON,
+        json: Cell.ClassJSON,
         row: Row
-    ): Column|undefined {
+    ): Cell|undefined {
         if (row instanceof Row) {
             const options = json.options;
 
@@ -32,7 +31,7 @@ class Column extends GUIElement {
                 id = id + '_' + row.layout.copyId;
             }
 
-            return new Column(
+            return new Cell(
                 row,
                 {
                     id: id,
@@ -54,21 +53,21 @@ class Column extends GUIElement {
     * */
 
     /**
-     * Constructs an instance of the Column class.
+     * Constructs an instance of the Cell class.
      *
      * @param {Row} row
      * Reference to the row instance.
      *
-     * @param {Column.Options} options
-     * Options for the column.
+     * @param {Cell.Options} options
+     * Options for the cell.
      *
-     * @param {HTMLElement} columnElement
-     * The container of the column HTML element.
+     * @param {HTMLElement} cellElement
+     * The container of the cell HTML element.
      */
     public constructor(
         row: Row,
-        options: Column.Options,
-        columnElement?: HTMLElement
+        options: Cell.Options,
+        cellElement?: HTMLElement
     ) {
         super();
 
@@ -84,16 +83,16 @@ class Column extends GUIElement {
         if (parentContainer) {
             const layoutOptions = row.layout.options || {},
                 rowOptions = row.options || {},
-                columnClassName = layoutOptions.columnClassName || '';
+                cellClassName = layoutOptions.cellClassName || '';
 
             this.setElementContainer({
                 render: row.layout.dashboard.guiEnabled,
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
-                    className: DashboardGlobals.column + ' ' + columnClassName
+                    className: DashboardGlobals.cell + ' ' + cellClassName
                 },
-                element: columnElement,
+                element: cellElement,
                 elementId: options.id,
                 style: merge(
                     layoutOptions.style,
@@ -135,7 +134,7 @@ class Column extends GUIElement {
     * */
 
     /**
-     * Column id.
+     * Cell id.
      */
     public id: string;
 
@@ -145,12 +144,12 @@ class Column extends GUIElement {
     public row: Row;
 
     /**
-     * The column options.
+     * The cell options.
      */
-    public options: Column.Options;
+    public options: Cell.Options;
 
     /**
-     * Component mounted in the column.
+     * Component mounted in the cell.
      */
     public mountedComponent?: Component;
 
@@ -165,16 +164,16 @@ class Column extends GUIElement {
     public mountComponentFromJSON(
         json: Component.ClassJSON
     ): boolean {
-        const column = this;
+        const cell = this;
 
-        if (column.id !== json.options.parentElement) {
-            json.options.parentElement = column.id;
+        if (cell.id !== json.options.parentElement) {
+            json.options.parentElement = cell.id;
         }
 
         const component = Bindings.componentFromJSON(json);
 
         if (component) {
-            column.mountedComponent = component;
+            cell.mountedComponent = component;
             return true;
         }
 
@@ -186,11 +185,11 @@ class Column extends GUIElement {
      * and mounted component.
      */
     public destroy(): void {
-        const column = this;
+        const cell = this;
 
         // Destroy mounted component.
-        if (column.mountedComponent) {
-            column.mountedComponent.destroy();
+        if (cell.mountedComponent) {
+            cell.mountedComponent.destroy();
         }
 
         super.destroy();
@@ -199,30 +198,30 @@ class Column extends GUIElement {
     /**
      * Converts the class instance to a class JSON.
      *
-     * @return {Column.ClassJSON}
-     * Class JSON of this Column instance.
+     * @return {Cell.ClassJSON}
+     * Class JSON of this Cell instance.
      */
-    public toJSON(): Column.ClassJSON {
-        const column = this,
-            rowContainerId = (column.row.container || {}).id || '';
+    public toJSON(): Cell.ClassJSON {
+        const cell = this,
+            rowContainerId = (cell.row.container || {}).id || '';
 
         return {
-            $class: 'Column',
+            $class: 'Cell',
             options: {
-                containerId: (column.container as HTMLElement).id,
+                containerId: (cell.container as HTMLElement).id,
                 parentContainerId: rowContainerId,
-                mountedComponentJSON: column.mountedComponent?.toJSON(),
-                style: column.options.style
+                mountedComponentJSON: cell.mountedComponent?.toJSON(),
+                style: cell.options.style
             }
         };
     }
 }
 
-interface Column {
+interface Cell {
     layout: Layout;
 }
 
-namespace Column {
+namespace Cell {
     export interface Options {
         id: string;
         width?: number;
@@ -244,4 +243,4 @@ namespace Column {
     }
 }
 
-export default Column;
+export default Cell;
