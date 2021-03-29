@@ -222,7 +222,7 @@ class MapBubbleSeries extends BubbleSeries {
 
 interface MapBubbleSeries {
     type: string;
-    getBox: typeof MapSeries.prototype['getBox'];
+    getProjectedBounds: typeof MapSeries.prototype['getProjectedBounds'];
     pointArrayMap: Array<string>;
     pointClass: typeof MapBubblePoint;
     setData: typeof MapSeries.prototype['setData'];
@@ -234,7 +234,7 @@ extend(MapBubbleSeries.prototype, {
 
     axisTypes: ['colorAxis'],
 
-    getBox: MapSeries.prototype.getBox,
+    getProjectedBounds: MapSeries.prototype.getProjectedBounds,
 
     // If one single value is passed, it is interpreted as z
     pointArrayMap: ['z'],

@@ -233,7 +233,7 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
 
     if (mapView && mapView.enabled === void 0) {
         // Apply the bounds inferred from the maps
-        const bounds = mapView.getDataBounds();
+        const bounds = mapView.getProjectedBounds();
 
         if (bounds) {
 

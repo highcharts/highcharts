@@ -137,10 +137,10 @@ class MapView {
         );
     }
 
-    public getDataBounds(): Highcharts.MapBounds|undefined {
+    public getProjectedBounds(): Highcharts.MapBounds|undefined {
         const allBounds = this.chart.series.reduce(
             (acc, s): Highcharts.MapBounds[] => {
-                const bounds = s.getBox && s.getBox();
+                const bounds = s.getProjectedBounds && s.getProjectedBounds();
                 if (bounds) {
                     acc.push(bounds);
                 }
@@ -178,7 +178,7 @@ class MapView {
         }
 
         // Stay within the data bounds
-        const bounds = this.getDataBounds();
+        const bounds = this.getProjectedBounds();
         if (bounds) {
             const cntr = this.center;
             const { plotWidth, plotHeight } = this.chart;
@@ -267,7 +267,7 @@ class MapView {
 
             // Fit to bounds if center/zoom are not explicitly given
             if (!userOptions.center && !isNumber(userOptions.zoom)) {
-                const bounds = this.getDataBounds();
+                const bounds = this.getProjectedBounds();
                 if (bounds) {
                     this.fitToBounds(bounds);
                 }
@@ -321,7 +321,7 @@ class MapView {
 
         // Undefined howMuch => reset zoom
         } else {
-            const bounds = this.getDataBounds();
+            const bounds = this.getProjectedBounds();
             if (bounds) {
                 this.fitToBounds(bounds);
             }

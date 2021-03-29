@@ -73,7 +73,7 @@ const {
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         clearBounds?(): void;
-        getBox?(): Highcharts.MapBounds|undefined;
+        getProjectedBounds?(): Highcharts.MapBounds|undefined;
         mapTitle?: string;
         valueMax?: number;
         valueMin?: number;
@@ -813,7 +813,7 @@ class MapSeries extends ScatterSeries {
      * Point.getProjectedPath.
      *
      */
-    public getBox(): Highcharts.MapBounds|undefined {
+    public getProjectedBounds(): Highcharts.MapBounds|undefined {
 
         if (!this.bounds) {
 
@@ -1180,7 +1180,7 @@ class MapSeries extends ScatterSeries {
             this.processData();
             this.generatePoints();
             delete this.bounds;
-            this.getBox();
+            this.getProjectedBounds();
         }
 
         series.points.forEach(function (
