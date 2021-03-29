@@ -118,7 +118,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        risingTrendColor: palette.indicatorPositiveLine,
+        risingTrendColor: palette.positiveColor,
         /**
          * Color of the Supertrend series line that is above the main series.
          *
@@ -127,7 +127,7 @@ class SupertrendIndicator extends SMAIndicator {
          *
          * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
-        fallingTrendColor: palette.indicatorNegativeLine,
+        fallingTrendColor: palette.negativeColor,
         /**
          * The styles for the Supertrend line that intersect main series.
          *
