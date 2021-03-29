@@ -368,11 +368,12 @@ class KlingerIndicator extends SMAIndicator {
  * */
 
 interface KlingerIndicator {
-    nameBase: string;
-    pointArrayMap: Array<string>;
-    parallelArrays: Array<string>;
-    pointValKey: string;
     linesApiNames: Array<string>;
+    nameBase: string;
+    nameComponents: Array<string>;
+    parallelArrays: Array<string>;
+    pointArrayMap: Array<string>;
+    pointValKey: string;
 
     pointClass: typeof KlingerPoint;
 
@@ -383,11 +384,12 @@ interface KlingerIndicator {
 }
 
 extend(KlingerIndicator.prototype, {
+    linesApiNames: ['signal'],
     nameBase: 'Klinger',
+    nameComponents: ['fastAvgPeriod', 'slowAvgPeriod'],
     pointArrayMap: ['y', 'signal'],
     parallelArrays: ['x', 'y', 'signal'],
     pointValKey: 'y',
-    linesApiNames: ['signal'],
 
     drawGraph: MultipleLinesMixin.drawGraph,
     getTranslatedLinesNames: MultipleLinesMixin.getTranslatedLinesNames,
