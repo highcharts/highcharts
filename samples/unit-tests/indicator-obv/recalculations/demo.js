@@ -38,7 +38,6 @@ QUnit.test('Test OBV calculations on data updates.', function (assert) {
                 [1553175000000, 23000]
             ]
         }, {
-            volumeSeriesID: 'volume',
             type: 'obv',
             linkedTo: 'main',
             yAxis: 2
