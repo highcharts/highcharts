@@ -140,8 +140,9 @@ class MapView {
     public getDataBounds(): Highcharts.MapBounds|undefined {
         const allBounds = this.chart.series.reduce(
             (acc, s): Highcharts.MapBounds[] => {
-                if (s.useMapGeometry && s.bounds) {
-                    acc.push(s.bounds);
+                const bounds = s.getBox && s.getBox();
+                if (bounds) {
+                    acc.push(bounds);
                 }
                 return acc;
             },
@@ -265,14 +266,12 @@ class MapView {
             }
 
             // Fit to bounds if center/zoom are not explicitly given
-            /* Not working, bounds not calculated
             if (!userOptions.center && !isNumber(userOptions.zoom)) {
                 const bounds = this.getDataBounds();
                 if (bounds) {
                     this.fitToBounds(bounds);
                 }
             }
-            */
         }
 
         if (redraw) {

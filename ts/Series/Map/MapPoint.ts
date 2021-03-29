@@ -53,6 +53,8 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     public colorInterval?: unknown;
 
+    public labelrank?: number;
+
     public options: MapPointOptions = void 0 as any;
 
     public path: SVGPath = void 0 as any;
@@ -72,7 +74,7 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     /* eslint-disable valid-jsdoc */
 
     public static getProjectedPath(
-        point: MapPointOptions&MapPoint.CacheObject,
+        point: MapPoint,
         projection: any
     ): SVGPath {
         if (!point.projectedPath && isArray(point.path)) {

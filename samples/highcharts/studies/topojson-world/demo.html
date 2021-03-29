@@ -7,21 +7,27 @@
 <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet">
+
 <div id="container"></div>
 
 <div class="buttons">
     <h4>Flat projections</h4>
-    <button id="robin">Robinson</button>
-    <button id="miller">Miller</button>
-    <button id="webmerc">Web Mercator</button>
-    <button id="none">None (Equirectangular)</button>
+    <div class="btn-group">
+        <button id="robin" class="btn btn-outline-secondary">Robinson</button>
+        <button id="miller" class="btn btn-outline-secondary">Miller</button>
+        <button id="webmerc" class="btn btn-outline-secondary">Web Mercator</button>
+        <button id="none" class="btn btn-outline-secondary">None (Equirectangular)</button>
+    </div>
 
-    <h4>Ortographic projections</h4>
-    <button id="ortho-africa">Africa</button>
-    <button id="ortho-antarctica">Antarctica</button>
-    <button id="ortho-asia">Asia</button>
-    <button id="ortho-australia">Australia</button>
-    <button id="ortho-europe">Europe</button>
-    <button id="ortho-north-america">North America</button>
-    <button id="ortho-south-america">South America</button>
+    <h4 class="mt-4">Ortographic projections</h4>
+    <div class="btn-group">
+        <button id="ortho-africa" class="btn btn-outline-secondary">Africa</button>
+        <button id="ortho-antarctica" class="btn btn-outline-secondary">Antarctica</button>
+        <button id="ortho-asia" class="btn btn-outline-secondary">Asia</button>
+        <button id="ortho-australia" class="btn btn-outline-secondary">Australia</button>
+        <button id="ortho-europe" class="btn btn-outline-secondary">Europe</button>
+        <button id="ortho-north-america" class="btn btn-outline-secondary">North America</button>
+        <button id="ortho-south-america" class="btn btn-outline-secondary">South America</button>
+    </div>
 </div>

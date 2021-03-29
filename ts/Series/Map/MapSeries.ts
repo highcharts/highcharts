@@ -73,7 +73,7 @@ const {
 declare module '../../Core/Series/SeriesLike' {
     interface SeriesLike {
         clearBounds?(): void;
-        bounds?: Highcharts.MapBounds;
+        getBox?(): Highcharts.MapBounds|undefined;
         mapTitle?: string;
         valueMax?: number;
         valueMin?: number;
@@ -556,15 +556,9 @@ class MapSeries extends ScatterSeries {
     }
 
     public clearBounds(): void {
-        (this.mapData as any).forEach((mapPoint: any): void => {
-            delete mapPoint.bounds;
-            delete mapPoint.projectedPath;
-        });
         this.points.forEach((point): void => {
             delete point.bounds;
-            delete point.options.bounds;
             delete point.projectedPath;
-            delete point.options.projectedPath;
         });
         delete this.bounds;
     }
@@ -814,124 +808,102 @@ class MapSeries extends ScatterSeries {
 
     /**
      * Get the bounding box of all paths in the map combined.
-     * @private
+     *
+     * @todo Consistent naming of MapView.getDataBounds and Series.getBox and
+     * Point.getProjectedPath.
+     *
      */
-    public getBox(paths: Array<MapPointOptions>): void {
+    public getBox(): Highcharts.MapBounds|undefined {
 
-        const MAX_VALUE = Number.MAX_VALUE;
-        const allBounds = [];
+        if (!this.bounds) {
 
-        const projection = this.chart.mapView && this.chart.mapView.projection;
+            const MAX_VALUE = Number.MAX_VALUE;
+            const projection = this.chart.mapView &&
+                this.chart.mapView.projection;
+            const allBounds: Highcharts.MapBounds[] = [];
 
-        // Find the bounding box
-        (paths || []).forEach(function (
-            point: (MapPointOptions&MapPoint.CacheObject)
-        ): void {
+            // Find the bounding box of each point
+            (this.points || []).forEach(function (point): void {
 
-            if (point.path) {
-                if (typeof point.path === 'string') {
-                    point.path = splitPath(point.path);
+                if (point.path) {
 
-                // Legacy one-dimensional array
-                } else if (point.path[0] as any === 'M') {
-                    point.path = SVGRenderer.prototype.pathToSegments(
-                        point.path as any
-                    );
-                }
+                    // @todo Try to puth these two conversions in
+                    // MapPoint.applyOptions
+                    if (typeof point.path === 'string') {
+                        point.path = splitPath(point.path);
 
-                // The first time a map point is used, analyze its box
-                if (!point.bounds) {
-                    // const path = point.path || [],
-                    const path = MapPoint.getProjectedPath(point, projection),
-                        properties = (point as any).properties;
-
-                    let x2 = -MAX_VALUE,
-                        x1 = MAX_VALUE,
-                        y2 = -MAX_VALUE,
-                        y1 = MAX_VALUE,
-                        validBounds;
-
-                    path.forEach((seg): void => {
-                        const x = seg[seg.length - 2];
-                        const y = seg[seg.length - 1];
-                        if (typeof x === 'number' && typeof y === 'number') {
-                            x1 = Math.min(x1, x);
-                            x2 = Math.max(x2, x);
-                            y1 = Math.min(y1, y);
-                            y2 = Math.max(y2, y);
-                            validBounds = true;
-                        }
-                    });
-                    // Cache point bounding box for use to position data
-                    // labels, bubbles etc
-                    const midX = (
-                        x1 + (x2 - x1) * pick(
-                            point.middleX,
-                            properties &&
-                            (properties as any)['hc-middle-x'],
-                            0.5
-                        )
-                    );
-                    const midY = (
-                        y1 + (y2 - y1) * pick(
-                            point.middleY,
-                            properties &&
-                            (properties as any)['hc-middle-y'],
-                            0.5
-                        )
-                    );
-
-                    if (validBounds) {
-                        point.bounds = { midX, midY, x1, y1, x2, y2 };
-
-                        point.labelrank = pick(
-                            point.labelrank,
-                            (x2 - x1) * (y2 - y1)
+                    // Legacy one-dimensional array
+                    } else if (point.path[0] as any === 'M') {
+                        point.path = SVGRenderer.prototype.pathToSegments(
+                            point.path as any
                         );
                     }
+
+                    // The first time a map point is used, analyze its box
+                    if (!point.bounds) {
+                        // const path = point.path || [],
+                        const path = MapPoint.getProjectedPath(
+                                point, projection
+                            ),
+                            properties = (point as any).properties;
+
+                        let x2 = -MAX_VALUE,
+                            x1 = MAX_VALUE,
+                            y2 = -MAX_VALUE,
+                            y1 = MAX_VALUE,
+                            validBounds;
+
+                        path.forEach((seg): void => {
+                            const x = seg[seg.length - 2];
+                            const y = seg[seg.length - 1];
+                            if (
+                                typeof x === 'number' &&
+                                typeof y === 'number'
+                            ) {
+                                x1 = Math.min(x1, x);
+                                x2 = Math.max(x2, x);
+                                y1 = Math.min(y1, y);
+                                y2 = Math.max(y2, y);
+                                validBounds = true;
+                            }
+                        });
+                        // Cache point bounding box for use to position data
+                        // labels, bubbles etc
+                        const midX = (
+                            x1 + (x2 - x1) * pick(
+                                point.options.middleX,
+                                properties && (properties as any)['hc-middle-x'],
+                                0.5
+                            )
+                        );
+                        const midY = (
+                            y1 + (y2 - y1) * pick(
+                                point.options.middleY,
+                                properties && (properties as any)['hc-middle-y'],
+                                0.5
+                            )
+                        );
+
+                        if (validBounds) {
+                            point.bounds = { midX, midY, x1, y1, x2, y2 };
+
+                            point.labelrank = pick(
+                                point.labelrank,
+                                (x2 - x1) * (y2 - y1)
+                            );
+                        }
+                    }
+
+                    if (point.bounds) {
+                        allBounds.push(point.bounds);
+                    }
+
                 }
+            });
 
-                if (point.bounds) {
-                    allBounds.push(point.bounds);
-                }
-
-            }
-        });
-
-        if (this.bounds) {
-            allBounds.push(this.bounds);
+            this.bounds = MapView.compositeBounds(allBounds);
         }
-        this.bounds = MapView.compositeBounds(allBounds);
-
-        // Set the box for the whole series
-        /*
-        if (hasBox) {
-            this.minY = Math.min(minY, pick(this.minY, MAX_VALUE));
-            this.maxY = Math.max(maxY, pick(this.maxY, -MAX_VALUE));
-            this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
-            this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
-
-            // If no minRange option is set, set the default minimum zooming
-            // range to 5 times the size of the smallest element
-            /*
-            if (xAxis && typeof xAxis.options.minRange === 'undefined') {
-                xAxis.minRange = Math.min(
-                    5 * minRange,
-                    (this.maxX - this.minX) / 5,
-                    xAxis.minRange || MAX_VALUE
-                );
-            }
-            if (yAxis && typeof yAxis.options.minRange === 'undefined') {
-                yAxis.minRange = Math.min(
-                    5 * minRange,
-                    (this.maxY - this.minY) / 5,
-                    yAxis.minRange || MAX_VALUE
-                );
-            }
-            * /
-        }
-
-        */
+        return this.bounds;
     }
 
     /**
@@ -1072,7 +1044,7 @@ class MapSeries extends ScatterSeries {
             });
         }
 
-        this.getBox(data as any);
+        // this.getBox(data as any);
 
         // Pick up transform definitions for chart
         this.chart.mapTransforms = mapTransforms =
@@ -1124,7 +1096,7 @@ class MapSeries extends ScatterSeries {
             }
 
             if (options.allAreas) {
-                this.getBox(mapData);
+                // this.getBox(mapData);
                 data = data || [];
 
                 // Registered the point codes that actually hold data
@@ -1155,10 +1127,11 @@ class MapSeries extends ScatterSeries {
                         updatePoints = false;
                     }
                 });
-            } else {
+            } /* else {
                 this.getBox(dataUsed); // Issue #4784
-            }
+            } */
         }
+
         Series.prototype.setData.call(
             this,
             data,
@@ -1166,6 +1139,9 @@ class MapSeries extends ScatterSeries {
             animation,
             updatePoints
         );
+
+        this.processData();
+        this.generatePoints();
     }
 
     /**
@@ -1201,13 +1177,13 @@ class MapSeries extends ScatterSeries {
 
         // Recalculate box on updated data
         if (this.chart.hasRendered && this.isDirtyData) {
-            this.getBox(this.options.data as any);
+            this.processData();
+            this.generatePoints();
+            delete this.bounds;
+            this.getBox();
         }
 
-        series.processData();
-        series.generatePoints();
-
-        series.data.forEach(function (
+        series.points.forEach(function (
             point: (MapPoint&MapPoint.CacheObject)
         ): void {
 

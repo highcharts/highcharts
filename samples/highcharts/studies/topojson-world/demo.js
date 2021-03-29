@@ -99,6 +99,11 @@ const drawMap = projection => {
             }
         });
     }
+
+    document.querySelectorAll('.buttons button').forEach(btn =>
+        btn.classList.remove('active')
+    );
+    document.querySelector(`.buttons #${projection}`).classList.add('active');
 };
 
 const enableButtons = () => {
