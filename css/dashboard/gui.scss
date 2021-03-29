@@ -85,16 +85,27 @@ body {
     width: 100%;
 }
 
-.highcharts-dashboard-edit-resize-handler {
-    cursor: col-resize;
+.highcharts-dashboard-edit-resize-snap {
     position: absolute;
-    width: 20px;
-    height: 100%;
     background: red;
     opacity: 0.5;
+    z-index: 10;
+}
+
+.highcharts-dashboard-edit-resize-snap-x {
+    cursor: col-resize;
+    width: 20px;
+    height: 100%;
     right: 0px;
     top: 0px;
-    z-index: 10;
+}
+
+.highcharts-dashboard-edit-resize-snap-y {
+    cursor: row-resize;
+    width: 100%;
+    height: 20px;
+    left: 0px;
+    bottom: 0px;
 }
 
 .highcharts-dashboard-cell > .highcharts-dashboard-component .title-wrapper {

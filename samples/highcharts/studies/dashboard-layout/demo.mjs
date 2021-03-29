@@ -54,7 +54,7 @@ let dashboard = new Dashboard('container', {
                 style: {
                     color: 'red'
                 },
-                cellcells: [{
+                cells: [{
                     id: 'dashboard-col-2'
                 }]
             }, {
@@ -137,6 +137,29 @@ let dashboard = new Dashboard('container', {
         }
     }, {
         cell: 'dashboard-col-3',
+        type: 'chart',
+        chartOptions: {
+            type: 'line',
+            series: [{
+                name: 'Series from options',
+                data: [1, 2, 3, 4]
+            }],
+            chart: {
+                animation: false
+            }
+        },
+        dimensions: {
+            width: '100%'
+            //height:  400
+        },
+        events: {
+            mount: function () {
+                // call action
+                console.log('dashboard-col-3 mount event');
+            }
+        }
+    },  {
+        cell: 'dashboard-col-add-component',
         type: 'chart',
         chartOptions: {
             type: 'line',

@@ -3,7 +3,9 @@ const PREFIX = 'highcharts-dashboard-edit-';
 const EditGlobals: EditGlobals = {
     prefix: PREFIX,
     classNames: {
-        resizeHandler: PREFIX + 'resize-handler',
+        resizeSnap: PREFIX + 'resize-snap',
+        resizeSnapX: PREFIX + 'resize-snap-x',
+        resizeSnapY: PREFIX + 'resize-snap-y',
         separator: PREFIX + 'separator',
         enableEditModeItem: PREFIX + 'item-enable',
         saveLocalItem: PREFIX + 'item-save-local',
@@ -26,7 +28,9 @@ interface EditGlobals {
 
 namespace EditGlobals {
     export interface ClassNamesOptions {
-        resizeHandler: string;
+        resizeSnap: string;
+        resizeSnapX: string;
+        resizeSnapY: string;
         separator: string;
         enableEditModeItem: string;
         saveLocalItem: string;
