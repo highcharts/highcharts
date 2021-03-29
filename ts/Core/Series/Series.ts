@@ -2675,7 +2675,10 @@ class Series {
             data,
             id: table.id,
             keys,
-            pointStart: table.getCellAsNumber(0, (keys && keys[0] || 'x'))
+            pointStart: (
+                table.getCellAsNumber((keys && keys[0] || 'x'), 0) ||
+                void 0
+            )
         };
     }
 
@@ -4164,7 +4167,7 @@ class Series {
                         );
 
                         if (i < rowCount) {
-                            x = table.getCellAsNumber(i, 'x');
+                            x = table.getCellAsNumber('x', i, true);
                             seriesData[i].x = x;
                             seriesData[i].index = i;
                             seriesTable.setCell(i, 'x', x);

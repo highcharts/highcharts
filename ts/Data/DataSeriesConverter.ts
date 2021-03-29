@@ -118,12 +118,12 @@ class DataSeriesConverter {
             for (let i = 0, iEnd = table.getRowCount(); i < iEnd; i++) {
                 isCellFound = false;
                 pointOptions = {
-                    x: table.getCellAsNumber(i, 'x')
+                    x: table.getCellAsNumber('x', i, true)
                 };
 
                 for (let j = 0, jEnd = pointArrayMap.length; j < jEnd; j++) {
                     cellName = pointArrayMap[j] + '_' + seriesId;
-                    cell = table.getCell(i, cellName);
+                    cell = table.getCell(cellName, i);
 
                     if (typeof cell !== 'undefined') {
                         isCellFound = true;

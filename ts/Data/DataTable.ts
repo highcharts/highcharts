@@ -532,18 +532,18 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Fetches a single cell value.
      *
-     * @param {number} rowIndex
-     * Row index of the cell to retrieve.
-     *
      * @param {string} columnNameOrAlias
      * Column name or alias of the cell to retrieve.
+     *
+     * @param {number} rowIndex
+     * Row index of the cell to retrieve.
      *
      * @return {DataTable.CellType}
      * Returns the cell value or `undefined`.
      */
     public getCell(
-        rowIndex: number,
-        columnNameOrAlias: string
+        columnNameOrAlias: string,
+        rowIndex: number
     ): DataTable.CellType {
         const table = this;
 
@@ -562,18 +562,18 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Fetches a cell value for the given row as a boolean.
      *
-     * @param {number} rowIndex
-     * Row index to fetch.
-     *
      * @param {string} columnNameOrAlias
      * Column name or alias to fetch.
+     *
+     * @param {number} rowIndex
+     * Row index to fetch.
      *
      * @return {boolean}
      * Returns the cell value of the row as a boolean.
      */
     public getCellAsBoolean(
-        rowIndex: number,
-        columnNameOrAlias: string
+        columnNameOrAlias: string,
+        rowIndex: number
     ): boolean {
         const table = this;
 
@@ -590,18 +590,18 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     /**
      * Fetches a cell value for the given row as a date.
      *
-     * @param {number} rowIndex
-     * Row index to fetch.
-     *
      * @param {string} columnNameOrAlias
      * Column name or alias to fetch.
+     *
+     * @param {number} rowIndex
+     * Row index to fetch.
      *
      * @return {Date}
      * Returns the cell value of the row as a date.
      */
     public getCellAsDate(
-        rowIndex: number,
-        columnNameOrAlias: string
+        columnNameOrAlias: string,
+        rowIndex: number
     ): Date {
         const table = this;
 
@@ -615,22 +615,36 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         return table.converter.asDate(column && column[rowIndex]);
     }
 
+    public getCellAsNumber(
+        columnNameOrAlias: string,
+        rowIndex: number,
+        useNaN: true
+    ): number;
+    public getCellAsNumber(
+        columnNameOrAlias: string,
+        rowIndex: number,
+        useNaN?: false
+    ): (number|null);
     /**
      * Fetches a cell value for the given row as a number.
-     *
-     * @param {number} rowIndex
-     * Row index to fetch.
      *
      * @param {string} columnNameOrAlias
      * Column name or alias to fetch.
      *
-     * @return {number}
+     * @param {number} rowIndex
+     * Row index to fetch.
+     *
+     * @param {boolean} [useNaN]
+     * Whether to return NaN instead of `null` and `undefined`.
+     *
+     * @return {number|null}
      * Returns the cell value of the row as a number.
      */
     public getCellAsNumber(
+        columnNameOrAlias: string,
         rowIndex: number,
-        columnNameOrAlias: string
-    ): number {
+        useNaN?: boolean
+    ): (number|null) {
         const table = this;
 
         columnNameOrAlias = (
@@ -638,26 +652,31 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             columnNameOrAlias
         );
 
-        const column = table.columns[columnNameOrAlias];
+        const column = table.columns[columnNameOrAlias],
+            cellValue = table.converter.asNumber(column && column[rowIndex]);
 
-        return table.converter.asNumber(column && column[rowIndex]);
+        if (!useNaN && isNaN(cellValue)) {
+            return null;
+        }
+
+        return cellValue;
     }
 
     /**
      * Fetches a cell value for the given row as a string.
      *
-     * @param {number} rowIndex
-     * Row index to fetch.
-     *
      * @param {string} columnNameOrAlias
      * Column name or alias to fetch.
+     *
+     * @param {number} rowIndex
+     * Row index to fetch.
      *
      * @return {string}
      * Returns the cell value of the row as a string.
      */
     public getCellAsString(
-        rowIndex: number,
-        columnNameOrAlias: string
+        columnNameOrAlias: string,
+        rowIndex: number
     ): string {
         const table = this;
 
@@ -672,8 +691,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Fetches the given column, either by the canonical column name, or by an
-     * alias.
+     * Fetches the given column by the canonical column name or by an alias.
      *
      * @param {string} columnNameOrAlias
      * Name or alias of the column to get, alias takes precedence.
@@ -719,6 +737,87 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         }
 
         return columnAliases;
+    }
+
+    public getColumnAsNumbers(
+        columnNameOrAlias: string,
+        useNaN: true
+    ): Array<number>;
+    public getColumnAsNumbers(
+        columnNameOrAlias: string,
+        useNaN?: false
+    ): Array<(number|null)>;
+    /**
+     * Fetches the given column by the canonical column name or by an alias, and
+     * validates the type of the first few cells. If the first defined cell is
+     * of type number, it assumes for performance reasons, that all cells are of
+     * type number or `null`. Otherwise it will convert all cells to number
+     * type, except `null`.
+     *
+     * @param {string} columnNameOrAlias
+     * Name or alias of the column to get, alias takes precedence.
+     *
+     * @param {boolean} [useNaN]
+     * Whether to use NaN instead of `null` and `undefined`.
+     *
+     * @return {Array<(number|null)>}
+     * A copy of the column, or an empty array if not found.
+     */
+    public getColumnAsNumbers(
+        columnNameOrAlias: string,
+        useNaN?: boolean
+    ): Array<(number|null)> {
+        const table = this,
+            columns = table.columns,
+            converter = table.converter;
+
+        columnNameOrAlias = (
+            table.aliasMap[columnNameOrAlias] ||
+            columnNameOrAlias
+        );
+
+        const column = columns[columnNameOrAlias],
+            columnAsNumber: Array<(number|null)> = [];
+
+        if (column) {
+            const columnLength = column.length;
+
+            if (!useNaN) {
+                for (
+                    let i = 0,
+                        iEnd = columnLength,
+                        cellValue: DataTable.CellType;
+                    i < iEnd;
+                    ++i
+                ) {
+                    cellValue = column[i];
+                    if (typeof cellValue === 'number') {
+                        // assume unmixed data
+                        return column.slice() as Array<(number|null)>;
+                    }
+                    if (cellValue !== null && typeof cellValue !== 'undefined') {
+                        break;
+                    }
+                }
+            }
+
+            for (
+                let i = 0,
+                    iEnd = columnLength,
+                    cellValue: number;
+                i < iEnd;
+                ++i
+            ) {
+                cellValue = converter.asNumber(column[i]);
+                if (!useNaN && isNaN(cellValue)) {
+                    columnAsNumber.push(null);
+                } else {
+                    columnAsNumber.push(cellValue);
+                }
+            }
+        }
+
+        return columnAsNumber;
     }
 
     /**

@@ -69,7 +69,7 @@ test('CSVStore from string, with decimalpoint option', function(assert){
         3
     );
     assert.strictEqual(
-        typeof store.table.getCell(2, 'Value'),
+        typeof store.table.getCell('Value', 2),
         'number',
         'The parser should be able to guess this decimalpoint'
     )
@@ -82,7 +82,7 @@ test('CSVStore from string, with decimalpoint option', function(assert){
     );
     store.load()
     assert.strictEqual(
-        typeof store.table.getCell(2, 'Value'),
+        typeof store.table.getCell('Value', 2),
         'string',
         'respects the given decimal point in options (result not a number because of the decimal point)'
     );
@@ -172,8 +172,8 @@ test('CSVStore from URL', function (assert) {
                 'Should have the same amount of rows'
             )
 
-            const currentValue = states[pollNumber].getCellAsNumber(2, 'X');
-            const previousValue = states[pollNumber - 1].getCellAsNumber(2, 'X')
+            const currentValue = states[pollNumber].getCellAsNumber('X', 1, true);
+            const previousValue = states[pollNumber - 1].getCellAsNumber('X', 1, true);
             assert.notStrictEqual(
                 currentValue,
                 previousValue,
