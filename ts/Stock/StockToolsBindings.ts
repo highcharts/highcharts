@@ -26,6 +26,7 @@ import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
+import palette from '../Core/Color/Palette.js';
 const {
     correctFloat,
     defined,
@@ -1390,7 +1391,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         },
                         labelOptions: {
                             style: {
-                                color: '#666666'
+                                color: palette.neutralColor60
                             }
                         }
                     },
@@ -1454,7 +1455,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         },
                         labelOptions: {
                             style: {
-                                color: '#666666'
+                                color: palette.neutralColor60
                             }
                         }
                     },
@@ -1513,23 +1514,23 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                             point: { x, y },
                             crosshairX: {
                                 strokeWidth: 1,
-                                stroke: '#000000'
+                                stroke: palette.neutralColor100
                             },
                             crosshairY: {
                                 enabled: false,
                                 strokeWidth: 0,
-                                stroke: '#000000'
+                                stroke: palette.neutralColor100
                             },
                             background: {
                                 width: 0,
                                 height: 0,
                                 strokeWidth: 0,
-                                stroke: '#ffffff'
+                                stroke: palette.backgroundColor
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: '#666666'
+                                color: palette.neutralColor60
                             }
                         }
                     },
@@ -1585,22 +1586,22 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                             crosshairX: {
                                 enabled: false,
                                 strokeWidth: 0,
-                                stroke: '#000000'
+                                stroke: palette.neutralColor100
                             },
                             crosshairY: {
                                 strokeWidth: 1,
-                                stroke: '#000000'
+                                stroke: palette.neutralColor100
                             },
                             background: {
                                 width: 0,
                                 height: 0,
                                 strokeWidth: 0,
-                                stroke: '#ffffff'
+                                stroke: palette.backgroundColor
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: '#666666'
+                                color: palette.neutralColor60
                             }
                         }
                     },
@@ -1660,16 +1661,16 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                             },
                             crosshairX: {
                                 strokeWidth: 1,
-                                stroke: '#000000'
+                                stroke: palette.neutralColor100
                             },
                             crosshairY: {
                                 strokeWidth: 1,
-                                stroke: '#000000'
+                                stroke: palette.neutralColor100
                             }
                         },
                         labelOptions: {
                             style: {
-                                color: '#666666'
+                                color: palette.neutralColor60
                             }
                         }
                     },
@@ -1728,7 +1729,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         },
                         labelOptions: {
                             style: {
-                                color: '#666666'
+                                color: palette.neutralColor60
                             }
                         }
                     },
@@ -1914,7 +1915,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                     },
                     labelOptions: {
                         style: {
-                            color: '#666666',
+                            color: palette.neutralColor60,
                             fontSize: '11px'
                         }
                     },
@@ -1979,7 +1980,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                     },
                     labelOptions: {
                         style: {
-                            color: '#666666',
+                            color: palette.neutralColor60,
                             fontSize: '11px'
                         }
                     },
