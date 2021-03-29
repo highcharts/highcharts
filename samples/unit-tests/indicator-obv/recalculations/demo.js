@@ -1,4 +1,4 @@
-QUnit.test('Test RSI calculations on data updates.', function (assert) {
+QUnit.test('Test OBV calculations on data updates.', function (assert) {
     const chart = Highcharts.stockChart('container', {
         yAxis: [{
             height: '60%'
