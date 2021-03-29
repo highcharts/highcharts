@@ -1,4 +1,4 @@
-QUnit.skip('Test Klinger calculations on data updates.', function (assert) {
+QUnit.test('Test Klinger calculations on data updates.', function (assert) {
     const ohlc = [
             [1552311000000, 43.87, 44.78, 43.84, 44.72],
             [1552397400000, 45.0, 45.67, 44.84, 45.23],
@@ -168,12 +168,10 @@ QUnit.skip('Test Klinger calculations on data updates.', function (assert) {
             yAxis: [
                 {
                     height: '60%'
-                },
-                {
+                }, {
                     height: '20%',
                     top: '60%'
-                },
-                {
+                }, {
                     height: '20%',
                     top: '80%'
                 }
@@ -187,15 +185,13 @@ QUnit.skip('Test Klinger calculations on data updates.', function (assert) {
                     tooltip: {
                         valueDecimals: 2
                     }
-                },
-                {
+                }, {
                     type: 'column',
                     id: 'vol',
                     name: 'Volume',
                     data: volume,
                     yAxis: 1
-                },
-                {
+                }, {
                     type: 'klinger',
                     linkedTo: 'main',
                     showInLegend: true,
@@ -205,8 +201,16 @@ QUnit.skip('Test Klinger calculations on data updates.', function (assert) {
                     yAxis: 2
                 }
             ]
+        }),
+        series = chart.series;
+
+    function toFastStochasticWithRound(arr, index) {
+        return Highcharts.map(arr, function (point) {
+            return point[index] ?
+                parseFloat(point[index].toFixed(0)) :
+                point[index];
         });
-    const series = chart.series;
+    }
 
     // Klinger Oscilator needs at least 56 points to calculate the default period: 55.
     assert.strictEqual(
@@ -227,7 +231,8 @@ QUnit.skip('Test Klinger calculations on data updates.', function (assert) {
         `The last x point should be on the last day of array.`
     );
 
-    chart.series[0].addPoint([1561987800000, 50.79, 51.12, 50.16, 50.39]);
+    chart.series[0]
+        .addPoint([1561987800000, 50.79, 51.12, 50.16, 50.39], false);
     chart.series[1].addPoint([1561987800000, 109012000]);
     assert.strictEqual(
         series[0].points.length,
@@ -236,33 +241,66 @@ QUnit.skip('Test Klinger calculations on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        chart.series[2].yData,
+        toFastStochasticWithRound(chart.series[2].yData, 0),
         [
-            [-4895496810, null],
-            [-4460879654, null],
-            [-4476536512, null],
-            [-4559868782, null],
-            [-4021678910, null],
-            [-3444312215, null],
-            [-2982582927, null],
-            [-2476362157, null],
-            [-2020654819, null],
-            [-1567932276, null],
-            [-1732124089, null],
-            [-1561320815, null],
-            [-1726810221, null],
-            [-1579257270, -2964701246.928571],
-            [-1329570690, -2709992238.357143],
-            [-1053258935, -2466590758.428571],
-            [-783634636, -2202812053],
-            [-1248050423, -1966253598.7857144],
-            [-1493471355, -1785667344.857143],
-            [-1720984220, -1662572488.0714285],
-            [-1457986132, -1553672717],
-            [-1165101829, -1460011265],
-            [-1418168557, -1416976532],
-            [-1223937743, -1392405493.9285715]
+            -4895496810,
+            -4460879653,
+            -4476536511,
+            -4559868781,
+            -4021678910,
+            -3444312215,
+            -2982582927,
+            -2476362156,
+            -2020654819,
+            -1567932276,
+            -1732124088,
+            -1561320815,
+            -1726810221,
+            -1579257269,
+            -1329570690,
+            -1053258935,
+            -783634636,
+            -1248050423,
+            -1493471355,
+            -1720984220,
+            -1457986131,
+            -1165101829,
+            -1418168557,
+            -1223937743,
+            -1461774972
         ],
-        'Correct values'
+        'Correct values for the main Klinger line.'
+    );
+
+    assert.deepEqual(
+        toFastStochasticWithRound(chart.series[2].yData, 1),
+        [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            -3071273860,
+            -2816178511,
+            -2575308591,
+            -2311979546,
+            -2021499997,
+            -1808143959,
+            -1658079278,
+            -1561033223,
+            -1482696606,
+            -1416884837,
+            -1405364551,
+            -1366273294,
+            -1358615921
+        ],
+        'Correct values for signal line.'
     );
 });
