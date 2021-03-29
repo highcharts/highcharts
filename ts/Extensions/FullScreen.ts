@@ -164,7 +164,7 @@ class Fullscreen {
     /** @private */
     public origWidth?: number;
     /** @private */
-    public origWidthOption?: (number|string|null);
+    public origWidthOption?: (number|null);
 
     /** @private */
     public unbindFullscreenEvent?: Function;
@@ -203,17 +203,16 @@ class Fullscreen {
 
         // Unbind event as it's necessary only before exiting from fullscreen.
         if (fullscreen.unbindFullscreenEvent) {
-            fullscreen.unbindFullscreenEvent();
+            fullscreen.unbindFullscreenEvent = fullscreen.unbindFullscreenEvent();
         }
 
         chart.setSize(fullscreen.origWidth, fullscreen.origHeight, false);
         fullscreen.origWidth = void 0;
         fullscreen.origHeight = void 0;
 
-        if (optionsChart) {
-            optionsChart.width = fullscreen.origWidthOption;
-            optionsChart.height = fullscreen.origHeightOption;
-        }
+        optionsChart.width = fullscreen.origWidthOption;
+        optionsChart.height = fullscreen.origHeightOption;
+
         fullscreen.origWidthOption = void 0;
         fullscreen.origHeightOption = void 0;
 
@@ -247,7 +246,7 @@ class Fullscreen {
 
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
-            fullscreen.unbindFullscreenEvent = addEvent(
+            const unbindChange = addEvent(
                 chart.container.ownerDocument, // chart's document
                 fullscreen.browserProps.fullscreenChange,
                 function (): void {
@@ -263,6 +262,13 @@ class Fullscreen {
                 }
             );
 
+            const unbindDestroy = addEvent(chart, 'destroy', unbindChange);
+
+            fullscreen.unbindFullscreenEvent = (): void => {
+                unbindChange();
+                unbindDestroy();
+            };
+
             const promise = chart.renderTo[
                 fullscreen.browserProps.requestFullscreen
             ]();
@@ -275,8 +281,6 @@ class Fullscreen {
                     );
                 });
             }
-
-            addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
         }
     }
     /**
@@ -294,12 +298,18 @@ class Fullscreen {
         const chart = this.chart,
             exportDivElements = chart.exportDivElements,
             exportingOptions = chart.options.exporting,
-            menuItems = exportingOptions?.buttons?.contextButton.menuItems,
+            menuItems = (
+                exportingOptions &&
+                exportingOptions.buttons &&
+                exportingOptions.buttons.contextButton.menuItems
+            ),
             lang = chart.options.lang;
 
         if (
-            exportingOptions?.menuItemDefinitions &&
-            lang?.exitFullscreen &&
+            exportingOptions &&
+            exportingOptions.menuItemDefinitions &&
+            lang &&
+            lang.exitFullscreen &&
             lang.viewFullscreen &&
             menuItems &&
             exportDivElements &&

@@ -470,7 +470,11 @@ const groupData = function (
         // for this specific group
         if (pointArrayMap) {
 
-            var index = series.options.dataGrouping?.groupAll ? i : (series.cropStart as any) + i,
+            var index = (
+                    series.options.dataGrouping &&
+                    series.options.dataGrouping.groupAll ?
+                        i : (series.cropStart as any) + i
+                ),
                 point = (data && data[index]) ||
                     series.pointClass.prototype.applyOptions.apply({
                         series: series
@@ -662,7 +666,7 @@ seriesProto.processData = function (): any {
         groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
             pick(dataGroupingOptions.enabled, chart.options.isStock),
         visible = (
-            series.visible || !(chart.options.chart as any).ignoreHiddenSeries
+            series.visible || !chart.options.chart.ignoreHiddenSeries
         ),
         hasGroupedData,
         skip,
@@ -828,6 +832,7 @@ seriesProto.processData = function (): any {
                 );
                 groupedXData = croppedData.xData;
                 groupedYData = croppedData.yData;
+                series.cropStart = croppedData.start; // #15005
             }
             // Set series props
             series.processedXData = groupedXData;
@@ -890,7 +895,7 @@ addEvent(Point, 'update', function (): (boolean|undefined) {
 // range.
 addEvent(Tooltip, 'headerFormatter', function (
     this: Highcharts.Tooltip,
-    e: Record<string, any>
+    e: AnyRecord
 ): void {
     var tooltip = this,
         chart = this.chart,

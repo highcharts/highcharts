@@ -30,6 +30,7 @@ const {
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         didBoost?: boolean;
+        isBoosting?: boolean;
         markerGroup?: Series['markerGroup'];
     }
 }
@@ -223,6 +224,10 @@ function init(): void {
                     low: number = false as any,
                     chartDestroyed = typeof chart.index === 'undefined',
                     isYInside = true;
+
+                if (typeof d === 'undefined') {
+                    return true;
+                }
 
                 if (!chartDestroyed) {
                     if (useRaw) {
@@ -457,6 +462,30 @@ function init(): void {
         //         shouldForceChartSeriesBoosting(chart);
         // });
 
+        let prevX = -1;
+        let prevY = -1;
+
+        addEvent(chart.pointer, 'afterGetHoverData', (): void => {
+            const series = chart.hoverSeries;
+
+            if (chart.markerGroup && series) {
+                const xAxis = chart.inverted ? series.yAxis : series.xAxis;
+                const yAxis = chart.inverted ? series.xAxis : series.yAxis;
+
+                if (
+                    (xAxis && xAxis.pos !== prevX) ||
+                    (yAxis && yAxis.pos !== prevY)
+                ) {
+                    // #10464: Keep the marker group position in sync with the
+                    // position of the hovered series axes since there is only
+                    // one shared marker group when boosting.
+                    chart.markerGroup.translate(xAxis.pos, yAxis.pos);
+
+                    prevX = xAxis.pos;
+                    prevY = yAxis.pos;
+                }
+            }
+        });
     });
 
     /* eslint-enable no-invalid-this */

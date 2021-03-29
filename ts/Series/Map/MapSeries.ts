@@ -33,11 +33,11 @@ const { colorMapSeriesMixin } = ColorMapMixin;
 import H from '../../Core/Globals.js';
 const { noop } = H;
 import LegendSymbolMixin from '../../Mixins/LegendSymbol.js';
-import mapModule from '../../Maps/Map.js';
+import MapChart from '../../Core/Chart/MapChart.js';
 const {
     maps,
     splitPath
-} = mapModule;
+} = MapChart;
 import MapPoint from './MapPoint.js';
 import palette from '../../Core/Color/Palette.js';
 import Series from '../../Core/Series/Series.js';
@@ -420,7 +420,7 @@ class MapSeries extends ScatterSeries {
 
     public mapData?: unknown;
 
-    public mapMap?: Record<string, any>;
+    public mapMap?: AnyRecord;
 
     public mapTitle?: string;
 
@@ -1029,7 +1029,7 @@ class MapSeries extends ScatterSeries {
             joinBy = this.joinBy,
             pointArrayMap = options.keys || this.pointArrayMap,
             dataUsed: Array<MapPointOptions> = [],
-            mapMap: Record<string, any> = {},
+            mapMap: AnyRecord = {},
             mapPoint,
             mapTransforms = this.chart.mapTransforms,
             props,
@@ -1092,7 +1092,7 @@ class MapSeries extends ScatterSeries {
 
         // Pick up transform definitions for chart
         this.chart.mapTransforms = mapTransforms =
-            chartOptions && chartOptions.mapTransforms ||
+            chartOptions.mapTransforms ||
             mapData && mapData['hc-transform'] ||
             mapTransforms;
 
@@ -1346,10 +1346,10 @@ extend(MapSeries.prototype, {
 
     // We need the points' bounding boxes in order to draw the data labels,
     // so we skip it now and call it from drawPoints instead.
-    drawDataLabels: noop as any,
+    drawDataLabels: noop,
 
     // No graph for the map series
-    drawGraph: noop as any,
+    drawGraph: noop,
 
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 

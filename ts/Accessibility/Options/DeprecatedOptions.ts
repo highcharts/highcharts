@@ -168,7 +168,7 @@ function deprecateFromOptionsMap(
  * @private
  */
 function copyDeprecatedChartOptions(chart: Chart): void {
-    var chartOptions = chart.options.chart || {},
+    var chartOptions = chart.options.chart,
         a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (
         prop: string

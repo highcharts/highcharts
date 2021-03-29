@@ -63,7 +63,7 @@ const {
  */
 
 addEvent(Axis, 'afterSetOptions', function (): void {
-    var chartOptions = this.chart.options && this.chart.options.chart;
+    var chartOptions = this.chart.options.chart;
     if (
         !this.horiz &&
         isNumber(this.options.staticScale) &&

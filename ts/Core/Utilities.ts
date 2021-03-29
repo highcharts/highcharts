@@ -55,12 +55,13 @@ declare global {
             new(...args: Array<any>): T;
         }
         interface ErrorMessageEventObject {
+            chart?: Chart;
             code: number;
-            message: string;
-            params: Record<string, string>;
+            message?: string;
+            params?: Record<string, string>;
         }
         interface EventCallbackFunction<T> {
-            (this: T, eventArguments: (Record<string, any>|Event)): (boolean|void);
+            (this: T, eventArguments: (AnyRecord|Event)): (boolean|void);
         }
         interface EventOptionsObject {
             order?: number;
@@ -286,7 +287,7 @@ declare global {
 
 /**
  * Generic dictionary in TypeScript notation.
- * Use the native `Record<string, any>` instead.
+ * Use the native `AnyRecord` instead.
  *
  * @deprecated
  * @interface Highcharts.Dictionary<T>
@@ -466,7 +467,8 @@ declare global {
  *        Reference to the chart that causes the error. Used in 'debugger'
  *        module to display errors directly on the chart.
  *        Important note: This argument is undefined for errors that lack
- *        access to the Chart instance.
+ *        access to the Chart instance. In such case, the error will be
+ *        displayed on the last created chart.
  *
  * @param {Highcharts.Dictionary<string>} [params]
  *        Additional parameters for the generated message.
@@ -515,16 +517,12 @@ function error(
         message += additionalMessages;
     }
 
-    if (chart) {
-        fireEvent(
-            chart,
-            'displayError',
-            { code, message, params } as Highcharts.ErrorMessageEventObject,
-            defaultHandler
-        );
-    } else {
-        defaultHandler();
-    }
+    fireEvent(
+        Highcharts,
+        'displayError',
+        { chart, code, message, params },
+        defaultHandler
+    );
 
     error.messages.push(message);
 }
@@ -532,11 +530,11 @@ namespace error {
     export const messages: Array<string> = [];
 }
 
-function merge<T1, T2 = object>(
-    extend: boolean,
-    a?: T1,
-    ...n: Array<T2|undefined>
-): (T1&T2);
+function merge<T = object>(
+    extend: true,
+    a?: T,
+    ...n: Array<DeepPartial<T>|undefined>
+): (T);
 function merge<
     T1 extends object = object,
     T2 = unknown,
@@ -558,6 +556,7 @@ function merge<
     h?: T8,
     i?: T9,
 ): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
+
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
@@ -668,11 +667,11 @@ function clamp(value: number, min: number, max: number): number {
  * computing (#9197).
  * @private
  */
-function cleanRecursively<TNew extends Record<string, any>, TOld extends Record<string, any>>(
+function cleanRecursively<TNew extends AnyRecord, TOld extends AnyRecord>(
     newer: TNew,
     older: TOld
 ): TNew & TOld {
-    var result: Record<string, any> = {};
+    var result: AnyRecord = {};
 
     objectEach(newer, function (_val: unknown, key: (number|string)): void {
         var ob;
@@ -1010,13 +1009,13 @@ function internalClearTimeout(id: number): void {
  * @param {T|undefined} a
  *        The object to be extended.
  *
- * @param {object} b
+ * @param {Partial<T>} b
  *        The object to add to the first one.
  *
  * @return {T}
  *         Object a, the original object.
  */
-function extend<T extends object>(a: (T|undefined), b: object): T {
+function extend<T extends object>(a: (T|undefined), b: Partial<T>): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1096,7 +1095,7 @@ function css(
                 'alpha(opacity=' + (styles.opacity as any * 100) + ')';
         }
     }
-    extend(el.style, styles);
+    extend(el.style, styles as any);
 }
 
 /**
@@ -1800,34 +1799,51 @@ Math.easeInOutSine = function (pos: number): number {
  * @return {unknown}
  * The unknown property value.
  */
-function getNestedProperty(path: string, obj: unknown): unknown {
+function getNestedProperty(path: string, parent: unknown): unknown {
 
-    if (!path) {
-        return obj;
+    const pathElements = path.split('.');
+
+    while (pathElements.length && defined(parent)) {
+        const pathElement = pathElements.shift();
+
+        // Filter on the key
+        if (
+            typeof pathElement === 'undefined' ||
+            pathElement === '__proto__'
+        ) {
+            return; // undefined
+        }
+
+        const child = (parent as Record<string, unknown>)[
+            pathElement
+        ] as Record<string, unknown>;
+
+        // Filter on the child
+        if (
+            !defined(child) ||
+            typeof child === 'function' ||
+            typeof child.nodeType === 'number' ||
+            child as unknown === win
+        ) {
+            return; // undefined
+        }
+
+        // Else, proceed
+        parent = child;
     }
-
-    const pathElements = path.split('.').reverse();
-
-    let subProperty = obj as Record<string, unknown>;
-
-    if (pathElements.length === 1) {
-        return subProperty[path];
-    }
-
-    let pathElement = pathElements.pop();
-
-    while (
-        typeof pathElement !== 'undefined' &&
-        typeof subProperty !== 'undefined' &&
-        subProperty !== null
-    ) {
-        subProperty = subProperty[pathElement] as Record<string, unknown>;
-        pathElement = pathElements.pop();
-    }
-
-    return subProperty;
+    return parent;
 }
 
+function getStyle(
+    el: HTMLDOMElement,
+    prop: string,
+    toInt: true
+): (number|undefined);
+function getStyle(
+    el: HTMLDOMElement,
+    prop: string,
+    toInt?: false
+): (number|string|undefined);
 /**
  * Get the computed CSS value for given element and property, only for numerical
  * properties. For width and height, the dimension of the inner box (excluding
@@ -1836,24 +1852,28 @@ function getNestedProperty(path: string, obj: unknown): unknown {
  * @function Highcharts.getStyle
  *
  * @param {Highcharts.HTMLDOMElement} el
- *        An HTML element.
+ * An HTML element.
  *
  * @param {string} prop
- *        The property name.
+ * The property name.
  *
  * @param {boolean} [toInt=true]
- *        Parse to integer.
+ * Parse to integer.
  *
- * @return {number|string}
- *         The numeric value.
+ * @return {number|string|undefined}
+ * The style value.
  */
 function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt?: boolean
-): (number|string) {
+): (number|string|undefined) {
+    const customGetStyle: typeof getStyle = (
+        (H as any).getStyle || // oldie getStyle
+        getStyle
+    );
 
-    var style;
+    let style: (number|string|undefined);
 
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -1878,8 +1898,8 @@ function getStyle(
             0, // #8377
             (
                 offsetWidth -
-                (H as any).getStyle(el, 'padding-left') -
-                (H as any).getStyle(el, 'padding-right')
+                (customGetStyle(el, 'padding-left', true) || 0) -
+                (customGetStyle(el, 'padding-right', true) || 0)
             )
         );
     }
@@ -1887,9 +1907,11 @@ function getStyle(
     if (prop === 'height') {
         return Math.max(
             0, // #8377
-            Math.min(el.offsetHeight, el.scrollHeight) -
-                (H as any).getStyle(el, 'padding-top') -
-                (H as any).getStyle(el, 'padding-bottom')
+            (
+                Math.min(el.offsetHeight, el.scrollHeight) -
+                (customGetStyle(el, 'padding-top', true) || 0) -
+                (customGetStyle(el, 'padding-bottom', true) || 0)
+            )
         );
     }
 
@@ -1899,13 +1921,14 @@ function getStyle(
     }
 
     // Otherwise, get the computed style
-    style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
-    if (style) {
-        style = style.getPropertyValue(prop);
+    const css = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
+    if (css) {
+        style = css.getPropertyValue(prop);
         if (pick(toInt, prop !== 'opacity')) {
             style = pInt(style);
         }
     }
+
     return style;
 }
 
@@ -2375,7 +2398,7 @@ function removeEvent<T>(
 function fireEvent<T>(
     el: T,
     type: string,
-    eventArguments?: (Record<string, any>|Event),
+    eventArguments?: (AnyRecord|Event),
     defaultFunction?: (Highcharts.EventCallbackFunction<T>|Function)
 ): void {
     /* eslint-enable valid-jsdoc */
@@ -2385,7 +2408,14 @@ function fireEvent<T>(
     eventArguments = eventArguments || {};
 
     if (doc.createEvent &&
-        ((el as any).dispatchEvent || (el as any).fireEvent)
+        (
+            (el as any).dispatchEvent ||
+            (
+                (el as any).fireEvent &&
+                // Enable firing events on Highcharts instance.
+                (el as any) !== H
+            )
+        )
     ) {
         e = doc.createEvent('Events');
         e.initEvent(type, true, true);
@@ -2553,7 +2583,7 @@ const getOptions = H.getOptions = function (): Highcharts.Options {
  *         Updated options.
  */
 const setOptions = H.setOptions = function (
-    options: Highcharts.Options
+    options: Partial<Highcharts.Options>
 ): Highcharts.Options {
 
     // Copy in the default options

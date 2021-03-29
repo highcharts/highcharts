@@ -17,7 +17,6 @@
 'use strict';
 
 import type Point from '../Core/Series/Point';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type {
     PointOptions,
     PointShortOptions
@@ -471,7 +470,7 @@ addEvent(Chart, 'render', function (): void {
         this.options &&
         this.options.exporting &&
         this.options.exporting.showTable &&
-        !(this.options.chart as any).forExport &&
+        !this.options.chart.forExport &&
         !this.dataTableDiv
     ) {
         this.viewData();
@@ -530,7 +529,7 @@ Chart.prototype.getDataRows = function (
         ),
         xAxis: Highcharts.Axis,
         xAxes = this.xAxis,
-        rows: Record<string, (Array<any>&Record<string, any>)> =
+        rows: Record<string, (Array<any>&AnyRecord)> =
             {},
         rowArr = [],
         dataRows,
@@ -808,8 +807,8 @@ Chart.prototype.getDataRows = function (
 
         // Sort it by X values
         rowArr.sort(function ( // eslint-disable-line no-loop-func
-            a: Record<string, any>,
-            b: Record<string, any>
+            a: AnyRecord,
+            b: AnyRecord
         ): number {
             return a.xValues[xAxisIndex] - b.xValues[xAxisIndex];
         });
@@ -825,7 +824,7 @@ Chart.prototype.getDataRows = function (
 
         // Add the category column
         rowArr.forEach(function ( // eslint-disable-line no-loop-func
-            row: Record<string, any>
+            row: AnyRecord
         ): void {
             var category = row.name;
 
@@ -1397,7 +1396,8 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
     if (
         exportingOptions &&
         exportingOptions.menuItemDefinitions &&
-        lang?.viewData &&
+        lang &&
+        lang.viewData &&
         lang.hideData &&
         menuItems &&
         exportDivElements &&

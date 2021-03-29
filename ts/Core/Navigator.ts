@@ -70,6 +70,7 @@ declare module './Series/SeriesLike' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
+        fillOpacity?: number;
         navigatorOptions?: SeriesOptions;
         showInNavigator?: boolean;
     }
@@ -105,8 +106,8 @@ declare global {
             outlineWidth?: number;
             series?: SeriesTypeOptions;
             top?: number;
-            xAxis?: XAxisOptions;
-            yAxis?: YAxisOptions;
+            xAxis?: DeepPartial<XAxisOptions>;
+            yAxis?: DeepPartial<YAxisOptions>;
         }
         interface Options {
             navigator?: NavigatorOptions;
@@ -534,7 +535,7 @@ extend(defaultOptions, {
             /**
              * @ignore-option
              */
-            compare: null,
+            compare: null as any,
 
             /**
              * Unless data is explicitly defined, the data is borrowed from the
@@ -596,7 +597,7 @@ extend(defaultOptions, {
              *
              * @type {Highcharts.ColorString|null}
              */
-            lineColor: null, // #4602
+            lineColor: null as any, // #4602
 
             marker: {
                 enabled: false
@@ -1884,7 +1885,7 @@ class Navigator {
 
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
-            navigator.xAxis = new Axis(chart, merge<Highcharts.XAxisOptions>({
+            navigator.xAxis = new Axis(chart, merge<DeepPartial<Highcharts.XAxisOptions>>({
                 // inherit base xAxis' break and ordinal options
                 breaks: baseXaxis.options.breaks,
                 ordinal: baseXaxis.options.ordinal
@@ -2184,7 +2185,7 @@ class Navigator {
                         opacity: 1
                     }
                 }
-            } as Record<string, any>,
+            } as AnyRecord,
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series =
                 (navigator.series || []).filter(function (navSeries): boolean {
@@ -2221,7 +2222,7 @@ class Navigator {
                         {
                             color: base.color,
                             visible: base.visible
-                        } as Record<string, any>,
+                        } as AnyRecord,
                         !isArray(chartNavigatorSeriesOptions) ?
                             chartNavigatorSeriesOptions :
                             (defaultOptions.navigator as any).series

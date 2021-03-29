@@ -216,7 +216,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 this.chart.highlightLegendItem(component.highlightedLegendItemIx);
             }
         });
-        this.addEvent(Legend, 'afterPositionItem', function (e: Record<string, any>): void {
+        this.addEvent(Legend, 'afterPositionItem', function (e: AnyRecord): void {
             if (this.chart === component.chart && this.chart.renderer) {
                 component.updateProxyPositionForItem(e.item);
             }
@@ -325,7 +325,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     updateLegendTitle: function (this: Highcharts.LegendComponent): void {
         const chart = this.chart;
         const legendTitle = stripHTMLTags(
-            (chart.legend?.options.title?.text || '').replace(/<br ?\/?>/g, ' ')
+            (
+                chart.legend &&
+                chart.legend.options.title &&
+                chart.legend.options.title.text ||
+                ''
+            ).replace(/<br ?\/?>/g, ' ')
         );
         const legendLabel = chart.langFormat(
             'accessibility.legend.legendLabel' + (legendTitle ? '' : 'NoTitle'), {

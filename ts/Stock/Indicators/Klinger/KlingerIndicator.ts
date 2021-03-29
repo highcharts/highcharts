@@ -25,7 +25,6 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-import { param } from 'jquery';
 const {
     correctFloat,
     extend,
@@ -75,7 +74,7 @@ class KlingerIndicator extends SMAIndicator {
             /**
              * The base period for signal calculations.
              */
-            signal: 13,
+            signalPeriod: 13,
             /**
              * The id of another series to use its data as volume data for the
              * indiator calculation.
@@ -341,9 +340,9 @@ class KlingerIndicator extends SMAIndicator {
                 calcSingal.push(KO);
 
                 // Calculate signal SMA
-                if (i >= params.signal + params.slowAvgPeriod) {
-                    signal = calcSingal.slice(-params.signal)
-                        .reduceRight((prev, curr): number => prev + curr) / params.signal;
+                if (i >= params.signalPeriod + params.slowAvgPeriod) {
+                    signal = calcSingal.slice(-params.signalPeriod)
+                        .reduceRight((prev, curr): number => prev + curr) / params.signalPeriod;
                 }
                 klingerPoint = [xVal[i], KO, signal];
 

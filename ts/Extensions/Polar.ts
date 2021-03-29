@@ -478,7 +478,7 @@ addEvent(Series, 'afterTranslate', function (): void {
                         }
 
                         this.group.clip(this.clipCircle);
-                        this.setClip = H.noop as any;
+                        this.setClip = H.noop;
                     }
                 })
             );

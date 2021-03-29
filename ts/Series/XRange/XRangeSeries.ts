@@ -326,7 +326,7 @@ class XRangeSeries extends ColumnSeries {
                 series.columnMetrics as any,
             options = series.options,
             minPointLength = options.minPointLength || 0,
-            oldColWidth = (point.shapeArgs?.width || 0) / 2,
+            oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
             seriesXOffset = series.pointXOffset = metrics.offset,
             plotX = point.plotX,
             posX = pick(point.x2, (point.x as any) + (point.len || 0)),
@@ -531,7 +531,7 @@ class XRangeSeries extends ColumnSeries {
                 'attr' : verb,
             pointAttr = series.pointAttribs(point, pointState),
             animation = pick(
-                (series.chart.options.chart as any).animation,
+                series.chart.options.chart.animation,
                 stateOpts.animation
             ),
             fill;
@@ -719,7 +719,7 @@ extend(XRangeSeries.prototype, {
     cropShoulder: 1,
     getExtremesFromAll: true,
     autoIncrement: H.noop as any,
-    buildKDTree: H.noop as any,
+    buildKDTree: H.noop,
     pointClass: XRangePoint
 });
 

@@ -383,29 +383,31 @@ Chart.prototype.applyFixed = function (): void {
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: (chartOptions.style?.zIndex || 0) + 2,
+                zIndex: (chartOptions.style && chartOptions.style.zIndex || 0) + 2,
                 top: 0
             },
             null as any,
             true
         );
-        this.scrollingContainer?.parentNode.insertBefore(
-            this.fixedDiv,
-            this.scrollingContainer
-        );
+        if (this.scrollingContainer) {
+            this.scrollingContainer.parentNode.insertBefore(
+                this.fixedDiv,
+                this.scrollingContainer
+            );
+        }
         this.renderTo.style.overflow = 'visible';
 
         this.fixedRenderer = fixedRenderer = new H.Renderer(
             this.fixedDiv,
             this.chartWidth,
             this.chartHeight,
-            this.options.chart?.style
+            this.options.chart.style
         );
         // Mask
         this.scrollableMask = fixedRenderer
             .path()
             .attr({
-                fill: (this.options.chart as any).backgroundColor || '#fff',
+                fill: this.options.chart.backgroundColor || '#fff',
                 'fill-opacity': pick(scrollableOptions.opacity, 0.85),
                 zIndex: -1
             })
@@ -415,12 +417,6 @@ Chart.prototype.applyFixed = function (): void {
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
         addEvent(this, 'afterDrilldown', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
-        addEvent(Axis, 'afterInit', (): void => {
-            this.scrollableDirty = true;
-        });
-        addEvent(Series, 'show', (): void => {
-            this.scrollableDirty = true;
-        });
 
     } else {
 
@@ -522,3 +518,11 @@ Chart.prototype.applyFixed = function (): void {
         (this.scrollableMask as any).attr({ d });
     }
 };
+
+addEvent(Axis, 'afterInit', function (): void {
+    this.chart.scrollableDirty = true;
+});
+
+addEvent(Series, 'show', function (): void {
+    this.chart.scrollableDirty = true;
+});

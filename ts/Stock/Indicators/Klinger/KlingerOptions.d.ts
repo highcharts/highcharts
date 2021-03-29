@@ -33,7 +33,7 @@ export interface KlingerParamsOptions extends SMAParamsOptions {
     // for inheritance
     fastAvgPeriod: number;
     slowAvgPeriod: number;
-    signal: number;
+    signalPeriod: number;
 }
 
 export default KlingerOptions;

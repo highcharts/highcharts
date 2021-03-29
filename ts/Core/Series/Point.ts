@@ -499,7 +499,7 @@ class Point {
         graphicalProps.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
                 if (item.element) {
-                    item.animate(extend(
+                    item.animate(extend<SVGAttributes>(
                         { x: point.startXPos },
                         (item.startYPos ? {
                             x: item.startXPos,
@@ -704,7 +704,7 @@ class Point {
      *
      * @fires Highcharts.Point#event:*
      */
-    public firePointEvent<T extends Record<string, any>|Event>(
+    public firePointEvent<T extends AnyRecord|Event>(
         eventType: string,
         eventArgs?: T,
         defaultFunction?: (
@@ -957,7 +957,7 @@ class Point {
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
     ): this['options'] {
-        var ret = {} as Record<string, any>,
+        var ret = {} as AnyRecord,
             series = this.series,
             keys = series.options.keys,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
@@ -1022,8 +1022,7 @@ class Point {
     public resolveColor(): void {
         var series = this.series,
             colors,
-            optionsChart =
-                series.chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = series.chart.options.chart,
             colorCount = optionsChart.colorCount,
             styledMode = series.chart.styledMode,
             colorIndex: number,
@@ -1577,13 +1576,13 @@ class Point {
             if (!chart.styledMode) {
                 pointAttribs = series.pointAttribs(point, state);
                 pointAttribsAnimation = pick(
-                    (chart.options.chart as any).animation,
+                    chart.options.chart.animation,
                     stateOptions.animation
                 );
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
+                if (series.options.inactiveOtherPoints && isNumber(pointAttribs.opacity)) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {
@@ -1618,7 +1617,7 @@ class Point {
                     markerAttribs,
                     pick(
                         // Turn off globally:
-                        (chart.options.chart as any).animation,
+                        chart.options.chart.animation,
                         (markerStateOptions as any).animation,
                         (markerOptions as any).animation
                     )

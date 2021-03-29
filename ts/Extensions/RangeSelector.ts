@@ -1876,6 +1876,7 @@ class RangeSelector {
         // the buttons
         const width = buttonTheme.width || 28;
         delete buttonTheme.width;
+        delete buttonTheme.states;
 
         this.buttonGroup = renderer.g('range-selector-buttons').add(this.group);
 
@@ -1941,7 +1942,7 @@ class RangeSelector {
                     rangeOptions.text,
                     0,
                     0,
-                    (e: (Event|Record<string, any>)): void => {
+                    (e: (Event|AnyRecord)): void => {
 
                         // extract events from button object and call
                         var buttonEvents = (
@@ -2446,7 +2447,7 @@ class RangeSelector {
             }
 
             buttons[0].show();
-            buttons[0].attr(getAttribs(this.zoomText?.textStr));
+            buttons[0].attr(getAttribs(this.zoomText && this.zoomText.textStr));
         }
 
         const { align } = options.buttonPosition;
@@ -2868,7 +2869,10 @@ if (!H.RangeSelector) {
             if (rangeSelector) {
                 extremes = chart.xAxis[0].getExtremes();
                 legend = chart.legend;
-                verticalAlign = rangeSelector?.options.verticalAlign;
+                verticalAlign = (
+                    rangeSelector &&
+                    rangeSelector.options.verticalAlign
+                );
 
                 if (isNumber(extremes.min)) {
                     rangeSelector.render(extremes.min, extremes.max);
@@ -2920,7 +2924,10 @@ if (!H.RangeSelector) {
 
     // Initialize rangeselector for stock charts
     addEvent(Chart, 'afterGetContainer', function (): void {
-        if (this.options.rangeSelector?.enabled) {
+        if (
+            this.options.rangeSelector &&
+            this.options.rangeSelector.enabled
+        ) {
             this.rangeSelector = new RangeSelector(this);
         }
     });
