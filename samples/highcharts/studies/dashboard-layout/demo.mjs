@@ -8,7 +8,21 @@ let dashboard = new Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            enabled: true
+            enabled: true,
+            menuItems: [{
+                type: 'saveLocal',
+                text: 'Save local test',
+                className: 'test-test-test',
+                events: {
+                    click: function () {
+                        console.log(this);
+                    }
+                }
+            }, {
+                type: 'separator'
+            }, {
+                type: 'editMode'
+            }]
         },
         lang: {
             editMode: 'Edit mode 1',

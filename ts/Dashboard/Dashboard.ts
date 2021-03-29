@@ -41,7 +41,13 @@ class Dashboard {
             enabled: true,
             contextMenu: {
                 enabled: true,
-                menuItems: ['saveLocal', 'separator', 'editMode']
+                menuItems: [{
+                    type: 'saveLocal'
+                }, {
+                    type: 'separator'
+                }, {
+                    type: 'editMode'
+                }]
             }
         },
         componentOptions: {

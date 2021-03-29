@@ -2,12 +2,11 @@ import U from '../../Core/Utilities.js';
 import Dashboard from './../Dashboard.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes.js';
-import CSSObject from '../../Core/Renderer/CSSObject.js';
+import type { CSSJSONObject } from './../../Data/DataCSSObject';
+import EditRenderer from './EditRenderer.js';
 
 const {
     merge,
-    createElement,
     css
 } = U;
 
@@ -31,8 +30,11 @@ class EditMode {
         this.dashboard = dashboard;
         this.lang = merge({}, EditGlobals.lang, options.lang);
 
+        // Init renderer.
+        this.renderer = new EditRenderer(this);
+
         if (this.options.contextMenu.enabled) {
-            this.renderContextButton();
+            this.contextButtonElement = this.renderer.renderContextButton();
         }
     }
 
@@ -48,38 +50,30 @@ class EditMode {
     public contextButtonElement?: HTMLDOMElement;
     public contextMenu?: EditMode.ContextMenu;
     public lang: EditGlobals.LangOptions;
+    public renderer: EditRenderer;
 
-    public menuItems: Record<EditGlobals.TLangKeys, EditMode.MenuItem> = {
+    public menuItems: Record<EditGlobals.TLangKeys, EditMode.MenuItemOptions> = {
         separator: {
-            element: 'div',
-            attribs: {
-                className: EditGlobals.classNames.separator,
-                textContent: ''
-            },
-            styles: {
-                backgroundColor: '#eee',
-                height: '1px',
-                margin: '5px 0px 5px 0px',
-                padding: '0px',
-                cursor: 'default'
-            }
+            type: 'separator',
+            text: '',
+            className: EditGlobals.classNames.separator
         },
         editMode: {
-            element: 'div',
-            attribs: {
-                className: EditGlobals.classNames.editModeEnabled,
-                textContent: 'Edit mode',
-                onclick: function (this: EditMode, e: any): void {
+            type: 'editMode',
+            className: EditGlobals.classNames.editModeEnabled,
+            text: 'Edit mode',
+            events: {
+                click: function (this: EditMode, e: any): void {
                     this.onEditModeToggle(e.target);
                 }
             }
         },
         saveLocal: {
-            element: 'div',
-            attribs: {
-                className: EditGlobals.classNames.saveLocalItem,
-                textContent: 'Save locally',
-                onclick: function (): void {}
+            type: 'saveLocal',
+            className: EditGlobals.classNames.saveLocalItem,
+            text: 'Save locally',
+            events: {
+                click: function (): void {}
             }
         }
     }
@@ -89,38 +83,6 @@ class EditMode {
     *  Functions
     *
     * */
-    private renderContextButton(): void {
-        const editMode = this;
-
-        editMode.contextButtonElement = createElement(
-            'div', {
-                className: EditGlobals.classNames.contextMenuBtn,
-                onclick: function (): void {
-                    editMode.onContextBtnClick(editMode);
-                }
-            }, {
-                width: '32px',
-                height: '32px',
-                border: '1px solid #555',
-                marginLeft: 'auto',
-                padding: '5px',
-                cursor: 'pointer',
-                borderRadius: '3px'
-            }, editMode.dashboard.container
-        );
-
-        for (let i = 0; i < 3; ++i) {
-            createElement(
-                'div', {
-                    className: 'edit-ctx-btn-bar'
-                }, {
-                    height: '4px',
-                    backgroundColor: '#555',
-                    margin: '0px 0px 4px 0px'
-                }, editMode.contextButtonElement
-            );
-        }
-    }
 
     public onContextBtnClick(
         editMode: EditMode
@@ -143,36 +105,17 @@ class EditMode {
         const editMode = this,
             contextButtonElement = editMode.contextButtonElement,
             menuItemsOptions = editMode.options.contextMenu.menuItems || [],
-            width = 150,
             menuItems = [];
 
         if (contextButtonElement) {
             // Render menu container.
-            const element = createElement(
-                'div', {
-                    className: EditGlobals.classNames.contextMenu
-                }, {
-                    width: width + 'px',
-                    border: '1px solid #555',
-                    backgroundColor: '#fff',
-                    marginLeft: 'auto',
-                    padding: '5px',
-                    borderRadius: '3px',
-                    position: 'absolute',
-                    display: 'none',
-                    top: contextButtonElement.offsetTop +
-                        contextButtonElement.offsetHeight + 'px',
-                    left: contextButtonElement.offsetLeft - width +
-                        contextButtonElement.offsetWidth + 'px',
-                    zIndex: 9999
-                }, editMode.dashboard.container
-            );
+            const element = editMode.renderer.renderContextMenu(contextButtonElement);
 
             // Render menu items.
             for (let i = 0, iEnd = menuItemsOptions.length; i < iEnd; ++i) {
                 menuItems.push(
-                    editMode.renderMenuItem(
-                        menuItemsOptions[i] as EditGlobals.TLangKeys,
+                    editMode.renderer.renderMenuItem(
+                        menuItemsOptions[i],
                         element
                     )
                 );
@@ -184,38 +127,6 @@ class EditMode {
                 menuItems: menuItems
             };
         }
-    }
-
-    public renderMenuItem(
-        item: EditGlobals.TLangKeys,
-        container: HTMLDOMElement
-    ): HTMLDOMElement {
-        const editMode = this,
-            itemSchema = editMode.menuItems[item];
-
-        const langItem = item === 'separator' ? {} : {
-            textContent: this.lang[item]
-        };
-
-        return createElement(
-            itemSchema.element,
-            merge(itemSchema.attribs || {}, {
-                onclick: function (): void {
-                    if (itemSchema.attribs && itemSchema.attribs.onclick) {
-                        itemSchema.attribs.onclick.apply(editMode, arguments);
-                    }
-                },
-                className: EditGlobals.classNames.contextMenuItem +
-                    (itemSchema.attribs || {}).className || ''
-            }, langItem),
-            merge({
-                height: '30px',
-                padding: '5px',
-                color: '#555',
-                cursor: 'pointer'
-            }, itemSchema.styles || {}),
-            container
-        );
     }
 
     public openContextMenu(): void {
@@ -244,7 +155,7 @@ class EditMode {
         const editMode = this;
 
         if (editMode.active) {
-            editMode.disactivateEditMode(btnElement);
+            editMode.deactivateEditMode(btnElement);
         } else {
             editMode.activateEditMode(btnElement);
         }
@@ -269,7 +180,7 @@ class EditMode {
             EditGlobals.classNames.editModeEnabled;
     }
 
-    public disactivateEditMode(
+    public deactivateEditMode(
         btnElement?: HTMLDOMElement
     ): void {
         const editMode = this,
@@ -310,7 +221,7 @@ namespace EditMode {
 
     export interface ContextMenuOptions {
         enabled: true;
-        menuItems: Array<string>;
+        menuItems: Array<MenuItemOptions>;
     }
 
     export interface ContextMenu {
@@ -319,10 +230,12 @@ namespace EditMode {
         menuItems: Array<HTMLDOMElement>;
     }
 
-    export interface MenuItem {
-        element: string;
-        attribs?: HTMLAttributes;
-        styles?: CSSObject;
+    export interface MenuItemOptions {
+        type?: EditGlobals.TLangKeys;
+        text?: string;
+        className?: string;
+        events?: Record<Event['type'], Function>;
+        style?: CSSJSONObject;
     }
 }
 

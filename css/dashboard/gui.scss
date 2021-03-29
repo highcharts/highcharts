@@ -27,7 +27,7 @@ body {
     border: 1px dashed rgba(0, 0, 0, 0);
 }
 
-.highcharts-dashboard-edit-mode-active {
+.highcharts-dashboard-edit-enabled {
     .highcharts-dashboard-row {
         border: 1px dashed #000;
         box-sizing: border-box;
@@ -240,6 +240,49 @@ ul.elem-menu li {
 
 ul.elem-menu li:first-child {
     margin-left: 0px;
+}
+
+// Edit Mode
+.highcharts-dashboard-edit-context-menu {
+    border: 1px solid #555;
+    background-color: #fff;
+    margin-left: auto;
+    padding: 5px;
+    border-radius: 3px;
+    position: absolute;
+    display: none;
+    z-index: 9999;
+}
+
+.highcharts-dashboard-edit-context-menu-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #555;
+    margin-left: auto;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+
+    div {
+        height: 4px;
+        background-color: #555;
+        margin: 0px 0px 4px 0px;
+    }
+}
+
+.highcharts-dashboard-edit-context-menu-item {
+    height: 30px;
+    padding: 5px;
+    color: #555;
+    cursor: pointer;
+}
+
+.highcharts-dashboard-edit-separator {
+    background-color: #eee;
+    height: 1px;
+    margin: 5px 0px 5px 0px;
+    padding: 0px;
+    cursor: default;
 }
 
 @media (max-width: 728px) {
