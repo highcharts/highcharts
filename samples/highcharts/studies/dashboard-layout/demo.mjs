@@ -9,6 +9,10 @@ let dashboard = new Dashboard('container', {
         enabled: true,
         contextMenu: {
             enabled: true
+        },
+        lang: {
+            editMode: 'Edit mode 1',
+            saveLocal: 'Save locally 1'
         }
     },
     gui: {
@@ -478,6 +482,11 @@ Highcharts.addEvent(
     document.getElementById('destroy-resizer'),
     'click',
     function () {
+        dashboard.layouts.forEach(layout => {
+            layout.resizer.destroy();
+            console.log(layout.resizer);
+        });
+
         dashboardLayout.layouts.forEach(layout => {
             layout.resizer.destroy();
             console.log(layout.resizer);

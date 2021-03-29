@@ -1,8 +1,7 @@
-import type {
-    CSSObject
-} from '../../Core/Renderer/CSSObject';
+import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type DataJSON from '../../Data/DataJSON';
 import type Component from './../Component/Component.js';
+import DashboardGlobals from './../DashboardGlobals.js';
 import Row from './Row.js';
 import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
@@ -39,7 +38,8 @@ class Column extends GUIElement {
                     id: id,
                     parentContainerId: row.container?.id ||
                         options.parentContainerId,
-                    mountedComponentJSON: options.mountedComponentJSON
+                    mountedComponentJSON: options.mountedComponentJSON,
+                    style: options.style
                 }
             );
         }
@@ -91,9 +91,7 @@ class Column extends GUIElement {
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
-                    className: columnClassName ?
-                        columnClassName + ' ' + Dashboard.prefix + 'column' :
-                        Dashboard.prefix + 'column'
+                    className: DashboardGlobals.column + ' ' + columnClassName
                 },
                 element: columnElement,
                 elementId: options.id,
@@ -213,7 +211,8 @@ class Column extends GUIElement {
             options: {
                 containerId: (column.container as HTMLElement).id,
                 parentContainerId: rowContainerId,
-                mountedComponentJSON: column.mountedComponent?.toJSON()
+                mountedComponentJSON: column.mountedComponent?.toJSON(),
+                style: column.options.style
             }
         };
     }
@@ -227,7 +226,7 @@ namespace Column {
     export interface Options {
         id: string;
         width?: number;
-        style?: CSSObject;
+        style?: CSSJSONObject;
         parentContainerId?: string;
         mountedComponentJSON?: Component.ClassJSON;
         layout?: Layout;
@@ -241,6 +240,7 @@ namespace Column {
         containerId: string;
         parentContainerId: string;
         mountedComponentJSON: Component.ClassJSON|undefined;
+        style?: CSSJSONObject;
     }
 }
 

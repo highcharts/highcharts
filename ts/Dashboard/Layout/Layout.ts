@@ -2,9 +2,8 @@ import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
 import GUIElement from './GUIElement.js';
 import type DataJSON from '../../Data/DataJSON';
-import type {
-    CSSObject
-} from '../../Core/Renderer/CSSObject';
+import type { CSSJSONObject } from './../../Data/DataCSSObject';
+import DashboardGlobals from './../DashboardGlobals.js';
 
 import U from '../../Core/Utilities.js';
 import Resizer from '../Actions/Resizer.js';
@@ -36,7 +35,8 @@ class Layout extends GUIElement {
                         parentContainerId: dashboard.container.id ||
                             options.parentContainerId,
                         rowsJSON: options.rows,
-                        resizerJSON: options.resizer
+                        resizerJSON: options.resizer,
+                        style: options.style
                     }
                 );
 
@@ -58,7 +58,7 @@ class Layout extends GUIElement {
         dashboard: Dashboard
     ): Layout|undefined {
         const layoutOptions = localStorage.getItem(
-            Dashboard.prefix + id
+            DashboardGlobals.prefix + id
         );
 
         let layout;
@@ -106,12 +106,15 @@ class Layout extends GUIElement {
                 this.copyId = options.copyId;
             }
 
+            const layoutOptions = (this.options || {}),
+                layoutClassName = layoutOptions.rowClassName || '';
+
             this.setElementContainer({
                 render: dashboard.guiEnabled,
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id + (options.copyId ? '_' + options.copyId : ''),
-                    className: Dashboard.prefix + 'layout'
+                    className: DashboardGlobals.layout + ' ' + layoutClassName
                 },
                 elementId: options.id,
                 style: this.options.style
@@ -252,7 +255,7 @@ class Layout extends GUIElement {
      */
     public exportLocal(): void {
         localStorage.setItem(
-            Dashboard.prefix + this.options.id,
+            DashboardGlobals.prefix + this.options.id,
             JSON.stringify(this.toJSON())
         );
     }
@@ -279,7 +282,8 @@ class Layout extends GUIElement {
                 containerId: (layout.container as HTMLElement).id,
                 parentContainerId: dashboardContainerId,
                 rows: rows,
-                resizer: this.resizer?.toJSON()
+                resizer: layout.resizer?.toJSON(),
+                style: layout.options.style
             }
         };
     }
@@ -293,10 +297,11 @@ namespace Layout {
         id?: string;
         parentContainerId?: string;
         copyId?: string;
+        layoutClassName?: string;
         rowClassName?: string;
         columnClassName?: string;
         rows?: Array<Row.Options>;
-        style?: CSSObject;
+        style?: CSSJSONObject;
         rowsJSON?: Array<Row.ClassJSON>;
         resize?: Resizer.Options;
         resizerJSON?: Resizer.ClassJSON;
@@ -311,6 +316,7 @@ namespace Layout {
         parentContainerId: string;
         rows: Array<Row.ClassJSON>;
         resizer?: Resizer.ClassJSON;
+        style?: CSSJSONObject;
     }
 }
 

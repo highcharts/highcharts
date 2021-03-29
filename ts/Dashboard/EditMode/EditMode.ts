@@ -1,5 +1,6 @@
 import U from '../../Core/Utilities.js';
 import Dashboard from './../Dashboard.js';
+import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import HTMLAttributes from '../../Core/Renderer/HTML/HTMLAttributes.js';
 import CSSObject from '../../Core/Renderer/CSSObject.js';
@@ -28,6 +29,7 @@ class EditMode {
     ) {
         this.options = options;
         this.dashboard = dashboard;
+        this.lang = merge({}, EditGlobals.lang, options.lang);
 
         if (this.options.contextMenu.enabled) {
             this.renderContextButton();
@@ -45,12 +47,13 @@ class EditMode {
     public dashboard: Dashboard;
     public contextButtonElement?: HTMLDOMElement;
     public contextMenu?: EditMode.ContextMenu;
+    public lang: EditGlobals.LangOptions;
 
-    public menuItems: Record<string, EditMode.MenuItem> = {
+    public menuItems: Record<EditGlobals.TLangKeys, EditMode.MenuItem> = {
         separator: {
             element: 'div',
             attribs: {
-                className: Dashboard.prefix + 'item-separator',
+                className: EditGlobals.classNames.separator,
                 textContent: ''
             },
             styles: {
@@ -64,7 +67,7 @@ class EditMode {
         editMode: {
             element: 'div',
             attribs: {
-                className: Dashboard.prefix + 'item-edit-mode',
+                className: EditGlobals.classNames.editModeEnabled,
                 textContent: 'Edit mode',
                 onclick: function (this: EditMode, e: any): void {
                     this.onEditModeToggle(e.target);
@@ -74,7 +77,7 @@ class EditMode {
         saveLocal: {
             element: 'div',
             attribs: {
-                className: Dashboard.prefix + 'item-save-local',
+                className: EditGlobals.classNames.saveLocalItem,
                 textContent: 'Save locally',
                 onclick: function (): void {}
             }
@@ -91,7 +94,7 @@ class EditMode {
 
         editMode.contextButtonElement = createElement(
             'div', {
-                className: Dashboard.prefix + 'edit-ctx-btn',
+                className: EditGlobals.classNames.contextMenuBtn,
                 onclick: function (): void {
                     editMode.onContextBtnClick(editMode);
                 }
@@ -109,7 +112,7 @@ class EditMode {
         for (let i = 0; i < 3; ++i) {
             createElement(
                 'div', {
-                    className: Dashboard.prefix + 'edit-ctx-btn-bar'
+                    className: 'edit-ctx-btn-bar'
                 }, {
                     height: '4px',
                     backgroundColor: '#555',
@@ -147,7 +150,7 @@ class EditMode {
             // Render menu container.
             const element = createElement(
                 'div', {
-                    className: Dashboard.prefix + 'edit-ctx-menu'
+                    className: EditGlobals.classNames.contextMenu
                 }, {
                     width: width + 'px',
                     border: '1px solid #555',
@@ -168,7 +171,10 @@ class EditMode {
             // Render menu items.
             for (let i = 0, iEnd = menuItemsOptions.length; i < iEnd; ++i) {
                 menuItems.push(
-                    editMode.renderMenuItem(menuItemsOptions[i], element)
+                    editMode.renderMenuItem(
+                        menuItemsOptions[i] as EditGlobals.TLangKeys,
+                        element
+                    )
                 );
             }
 
@@ -181,11 +187,15 @@ class EditMode {
     }
 
     public renderMenuItem(
-        item: string,
+        item: EditGlobals.TLangKeys,
         container: HTMLDOMElement
     ): HTMLDOMElement {
         const editMode = this,
             itemSchema = editMode.menuItems[item];
+
+        const langItem = item === 'separator' ? {} : {
+            textContent: this.lang[item]
+        };
 
         return createElement(
             itemSchema.element,
@@ -195,9 +205,9 @@ class EditMode {
                         itemSchema.attribs.onclick.apply(editMode, arguments);
                     }
                 },
-                className: Dashboard.prefix + 'edit-ctx-menu-item ' +
+                className: EditGlobals.classNames.contextMenuItem +
                     (itemSchema.attribs || {}).className || ''
-            }),
+            }, langItem),
             merge({
                 height: '30px',
                 padding: '5px',
@@ -255,7 +265,8 @@ class EditMode {
         }
 
         // Set edit mode active class to dashboard.
-        editMode.dashboard.container.className += Dashboard.prefix + 'edit-mode-active';
+        editMode.dashboard.container.className +=
+            EditGlobals.classNames.editModeEnabled;
     }
 
     public disactivateEditMode(
@@ -282,7 +293,7 @@ class EditMode {
         for (let i = 0, iEnd = dashboardCntClasses.length; i < iEnd; ++i) {
             oneClass = dashboardCntClasses[i];
 
-            if (oneClass !== Dashboard.prefix + 'edit-mode-active') {
+            if (oneClass !== EditGlobals.classNames.editModeEnabled) {
                 newClasses.push(oneClass);
             }
         }
@@ -294,6 +305,7 @@ namespace EditMode {
     export interface Options {
         enabled: boolean;
         contextMenu: ContextMenuOptions;
+        lang?: EditGlobals.LangOptions|string;
     }
 
     export interface ContextMenuOptions {

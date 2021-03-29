@@ -6,6 +6,7 @@ import type Column from '../Layout/Column.js';
 import type Row from '../Layout/Row.js';
 import type Layout from '../Layout/Layout.js';
 import Dashboard from '../Dashboard.js';
+import EditGlobals from '../EditMode/EditGlobals.js';
 
 import U from '../../Core/Utilities.js';
 
@@ -14,6 +15,7 @@ const {
     addEvent,
     createElement,
     getStyle,
+    removeEvent,
     pick,
     fireEvent
 } = U;
@@ -69,7 +71,6 @@ class Resizer {
 
         this.layout = layout;
         this.currentColumn = void 0; // consider naming for example currentColumn
-        this.eventsToUnbind = [];
 
         this.init();
     }
@@ -82,7 +83,6 @@ class Resizer {
     public resizeOptions: Resizer.Options;
     public layout: Layout;
     public currentColumn: Column|undefined;
-    public eventsToUnbind: Array<Function>
 
     /* *
      *
@@ -135,7 +135,7 @@ class Resizer {
             column.resizer.handler = createElement(
                 'div',
                 {
-                    className: Dashboard.prefix + 'resize-handler'
+                    className: EditGlobals.classNames.resizeHandler
                 },
                 {
                     width: snapWidth + 'px',
@@ -206,28 +206,20 @@ class Resizer {
         };
 
         // Add mouse events
-        resizer.eventsToUnbind.push(
-            addEvent(handler, 'mousedown', mouseDownHandler)
-        );
+        addEvent(handler, 'mousedown', mouseDownHandler);
 
         if (!rowContainer.hcEvents.mousemove) {
-            resizer.eventsToUnbind.push(
-                addEvent(rowContainer, 'mousemove', mouseMoveHandler),
-                addEvent(rowContainer, 'mouseup', mouseUpHandler)
-            );
+            addEvent(rowContainer, 'mousemove', mouseMoveHandler);
+            addEvent(rowContainer, 'mouseup', mouseUpHandler);
         }
 
         // Touch events
         if (hasTouch) {
-            resizer.eventsToUnbind.push(
-                addEvent(handler, 'touchstart', mouseDownHandler)
-            );
+            addEvent(handler, 'touchstart', mouseDownHandler);
 
             if (!rowContainer.hcEvents.mousemove) {
-                resizer.eventsToUnbind.push(
-                    addEvent(rowContainer, 'touchmove', mouseMoveHandler),
-                    addEvent(rowContainer, 'touchend', mouseUpHandler)
-                );
+                addEvent(rowContainer, 'touchmove', mouseMoveHandler);
+                addEvent(rowContainer, 'touchend', mouseUpHandler);
             }
         }
     }
@@ -366,32 +358,16 @@ class Resizer {
         return sum;
     }
     /**
-     * Destroy Resizer
-     */
-    public destroy(): void {
-
-        this.destroyHandler(this.layout.rows);
-
-        // unbind events
-        if (this.eventsToUnbind) {
-
-            for (let i = 0, iEnd = this.eventsToUnbind.length; i < iEnd; ++i) {
-                this.eventsToUnbind[i](); // unbind
-                delete this.eventsToUnbind[i];
-            }
-        }
-    }
-
-    /**
-     * Destroy HTML handlers elements
+     * Destroy resizer
      *
-     * @param {Array<Row>} rows
+     * @param {Array<Row>} nestedRows
      * Reference to rows in the layout
      *
      */
-    public destroyHandler(
-        rows: Array<Row>
+    public destroy(
+        nestedRows: Array<Row>
     ): void {
+        const rows = nestedRows || this.layout.rows;
         const resizer = this;
         let currentColumn: Resizer.ResizedColumn;
 
@@ -405,19 +381,48 @@ class Resizer {
 
                 // run reccurent if nested layouts
                 if (currentColumn.layout) {
-                    resizer.destroyHandler(
+                    resizer.destroy(
                         currentColumn.layout.rows
                     );
                 } else if (
                     currentColumn.resizer &&
                     currentColumn.resizer.handler
                 ) {
-                    currentColumn.resizer.handler.remove();
+                    this.destroyColumnHandler(currentColumn);
+                    // currentColumn.resizer.handler.remove();
                 }
             }
+
+            // unbind rows events
+            removeEvent(rows[i].container, 'mousemove');
+            removeEvent(rows[i].container, 'mousedown');
+            removeEvent(rows[i].container, 'touchmove');
+            removeEvent(rows[i].container, 'touchend');
         }
     }
 
+    public destroyColumnHandler(
+        column: Resizer.ResizedColumn
+    ): void {
+        const handler = column.resizer && column.resizer.handler;
+
+        if (!handler) {
+            return;
+        }
+
+        // unbind events
+        removeEvent(handler, 'mousedown');
+        removeEvent(handler, 'touchstart');
+
+        // destroy handler
+        handler.remove();
+    }
+    /**
+     * Converts the class instance to a class JSON.
+     *
+     * @return {Resizer.ClassJSON}
+     * Class JSON of this Resizer instance.
+     */
     public toJSON(): Resizer.ClassJSON {
         const resizeOptions = this.resizeOptions;
 
@@ -436,7 +441,7 @@ class Resizer {
                     width: resizeOptions.snap.width
                 }
             }
-        }
+        };
     }
 }
 interface Resizer {
@@ -474,7 +479,7 @@ namespace Resizer {
     }
 
     export interface HTMLDOMElementEvents extends HTMLDOMElement {
-        hcEvents: Record<string, Array<Highcharts.EventWrapperObject<HTMLDOMElement>>>;
+        hcEvents: Record<string, Array<Function>>;
     }
 
     export interface ClassJSON extends DataJSON.ClassJSON {

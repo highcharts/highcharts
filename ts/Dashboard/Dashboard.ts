@@ -2,6 +2,7 @@ import type DataJSON from '../Data/DataJSON';
 
 import Layout from './Layout/Layout.js';
 import Bindings from './Actions/Bindings.js';
+import DashboardGlobals from './DashboardGlobals.js';
 
 import U from '../Core/Utilities.js';
 import H from '../Core/Globals.js';
@@ -20,12 +21,6 @@ const {
 } = U;
 
 class Dashboard {
-    /**
-     *
-     * Prefix of a GUIElement HTML class name.
-     *
-     */
-    public static readonly prefix: string = 'highcharts-dashboard-';
 
     /* *
     *
@@ -76,7 +71,7 @@ class Dashboard {
     public static importLocal(): Dashboard|undefined {
         const dashboardJSON = localStorage.getItem(
             // Dashboard.prefix + this.id,
-            Dashboard.prefix + '1' // temporary for demo test
+            DashboardGlobals.prefix + '1' // temporary for demo test
         );
 
         let dashboard;
@@ -288,7 +283,7 @@ class Dashboard {
     public exportLocal(): void {
         localStorage.setItem(
             // Dashboard.prefix + this.id,
-            Dashboard.prefix + '1', // temporary for demo test
+            DashboardGlobals.prefix + '1', // temporary for demo test
             JSON.stringify(this.toJSON())
         );
     }
