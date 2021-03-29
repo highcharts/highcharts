@@ -313,7 +313,7 @@ test('ChartComponent constructors', function (assert) {
     const constructorMap = {
         '': Highcharts,
         'stock': Stock,
-        'maps': Maps,
+        'map': Maps,
         'gantt': Gantt
     }
 
