@@ -1,6 +1,5 @@
 import type ChartComponent from './ChartComponent';
 import type Chart from '../../Core/Chart/Chart';
-import type PointType from '../../Core/Series/PointType';
 import type Point from '../../Core/Series/Point';
 import type DataPresentationState from '../../Data/DataPresentationState';
 import U from '../../Core/Utilities.js';
@@ -65,7 +64,9 @@ export const tooltipEmitter = new ChartSyncEmitter(
     function (this: ChartComponent): void {
         const { chart, store, id } = this;
         if (chart && store) {
-            const setHoverPointWithDetail = (hoverPoint: Point | undefined): void => {
+            const setHoverPointWithDetail = (
+                hoverPoint: DataPresentationState.PresentationHoverPointType | undefined
+            ): void => {
                 requestAnimationFrame((): void => {
                     store.table.presentationState.setHoverPoint(hoverPoint, {
                         sender: id
@@ -75,7 +76,10 @@ export const tooltipEmitter = new ChartSyncEmitter(
 
             // Listen for the tooltip changes
             addEvent(chart.tooltip, 'refresh', (): void => {
-                const isSameishPoint = (pointA: any, pointB: any): boolean => {
+                const isSamePoint = (
+                    pointA?: DataPresentationState.PresentationHoverPointType,
+                    pointB?: DataPresentationState.PresentationHoverPointType
+                ): boolean => {
                     if (!pointA || !pointB) {
                         return false;
                     }
@@ -83,7 +87,7 @@ export const tooltipEmitter = new ChartSyncEmitter(
                     return pointA.x === pointB.x && pointA.y === pointB.y;
                 };
 
-                if (!isSameishPoint(store.table.presentationState.getHoverPoint(), true)) {
+                if (!isSamePoint(store.table.presentationState.getHoverPoint(), chart.hoverPoint)) {
                     setHoverPointWithDetail(chart.hoverPoint);
                 }
             });
@@ -120,15 +124,15 @@ export const seriesVisibilityEmitter = new ChartSyncEmitter(
                 chart?.hasRendered
             ) {
                 const { series } = chart;
-                const visibilityList: Array<[string, boolean]> = [];
+                const visibilityMap: Record<string, boolean> = {};
                 for (let i = 0; i < series.length; i++) {
                     const seriesID = series[i].options.id;
                     if (seriesID) {
-                        visibilityList.push([seriesID, series[i].visible]);
+                        visibilityMap[seriesID] = series[i].visible;
                     }
                 }
-                if (visibilityList?.length) {
-                    store.table.presentationState.setColumnVisibility(visibilityList, {
+                if (Object.keys(visibilityMap)?.length) {
+                    store.table.presentationState.setColumnVisibility(visibilityMap, {
                         sender: id
                     });
                 }
@@ -147,6 +151,7 @@ export const seriesVisibilityHandler =
         function (this: ChartComponent, e: DataPresentationState.ColumnVisibilityEventObject): void {
             const { visibilityMap } = e;
             const { chart } = this;
+
             chart.series.forEach((series): void => {
                 const seriesID = series.options.id;
                 if (seriesID && typeof visibilityMap[seriesID] === 'boolean') {
@@ -166,11 +171,14 @@ export const seriesVisibilityHandler =
  * @return {Point | undefined}
  * A point if found
  */
-function findMatchingPoint(chart: Chart, hoverPoint: Point): PointType | undefined {
+function findMatchingPoint(
+    chart: Chart,
+    hoverPoint: DataPresentationState.PresentationHoverPointType
+): Point | undefined {
     const { x, y, series } = hoverPoint;
 
     for (let i = 0; i < chart.series.length; i++) {
-        if (chart.series[i].options.id === series.options.id) {
+        if (series && chart.series[i].options.id === series.options.id) {
             const { points } = chart.series[i];
             for (let j = 0; j < points.length; j++) {
                 const point = points[j];
@@ -197,8 +205,8 @@ export const tooltipHandler =
             if (e.hoverPoint === void 0 && !chart.hoverPoint) {
                 chart.tooltip?.hide();
             }
-            if ((e as any).hoverPoint && chart.tooltip) {
-                const match = findMatchingPoint(chart, (e as any).hoverPoint);
+            if (e.hoverPoint && chart.tooltip) {
+                const match = findMatchingPoint(chart, e.hoverPoint);
                 if (match) {
                     chart.tooltip?.refresh(match);
                 }
@@ -220,12 +228,13 @@ export const selectionEmitter = new ChartSyncEmitter(
         if (store && chart) {
             addEvent(chart, 'selection', (e): void => {
                 if ((e as any).resetSelection) {
+                    const selection: DataPresentationState.selectionObjectType = {};
                     chart.axes.forEach((axis): void => {
-                        store.table.presentationState.setSelection(axis.coll, { min: void 0, max: void 0 }, {
-                            sender: id
-                        },
-                        true
-                        );
+                        selection[axis.coll] = {};
+                    });
+
+                    store.table.presentationState.setSelection(selection, true, {
+                        sender: id
                     });
 
                     if (chart.resetZoomButton) {
@@ -240,8 +249,8 @@ export const selectionEmitter = new ChartSyncEmitter(
                     minMaxes.forEach((minMax): void => {
                         const { coll, extremes } = minMax;
                         store.table.presentationState.setSelection(
-                            coll,
-                            extremes,
+                            { [coll]: extremes },
+                            false,
                             {
                                 sender: id
                             }
@@ -335,8 +344,8 @@ export const panEmitter = new ChartSyncEmitter(
                     minMaxes.forEach((minMax): void => {
                         const { coll, extremes } = minMax;
                         store.table.presentationState.setSelection(
-                            coll,
-                            extremes,
+                            { [coll]: extremes },
+                            false,
                             {
                                 sender: id
                             }

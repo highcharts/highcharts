@@ -17,12 +17,13 @@
  * */
 
 import type DataEventEmitter from './DataEventEmitter';
-import type Point from '../Core/Series/Point';
-import DataJSON from './DataJSON.js';
+import type DataJSON from './DataJSON.js';
+import type PointType from '../Core/Series/PointType';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
-    fireEvent
+    fireEvent,
+    merge
 } = U;
 
 /* *
@@ -51,8 +52,18 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
     ): DataPresentationState {
         const presentationState = new DataPresentationState();
 
-        if (json.columnOrder) {
-            presentationState.setColumnOrder(json.columnOrder);
+        const { columnOrder, visibilityMap, selection, hoverpoint } = json;
+        if (columnOrder) {
+            presentationState.setColumnOrder(columnOrder);
+        }
+        if (visibilityMap) {
+            presentationState.setColumnVisibility(visibilityMap);
+        }
+        if (selection) {
+            presentationState.setSelection(selection);
+        }
+        if (hoverpoint) {
+            presentationState.setHoverPoint(hoverpoint);
         }
 
         return presentationState;
@@ -71,7 +82,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
 
     private columnVisibilityMap: Record<string, boolean> = {};
 
-    private hoverPoint?: Point;
+    private hoverPoint?: DataPresentationState.PresentationHoverPointType;
 
     private selection: Record<string, { min?: number; max?: number }> = {};
 
@@ -207,11 +218,11 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         });
     }
 
-    public setColumnVisibility(columnVisibility: Array<[string, boolean]>, eventDetail: {}): void {
-        columnVisibility.forEach((entry): void => {
-            const [columnName, visibility] = entry;
-            this.columnVisibilityMap[columnName] = visibility;
-        });
+    public setColumnVisibility(columnVisibility: Record<string, boolean>, eventDetail?: {}): void {
+        this.columnVisibilityMap = merge(
+            this.columnVisibilityMap,
+            columnVisibility
+        );
         this.emit({
             type: 'afterColumnVisibilityChange',
             visibilityMap: this.columnVisibilityMap,
@@ -219,7 +230,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         });
     }
 
-    public setHoverPoint(point: Point | undefined, eventDetail: {}): void {
+    public setHoverPoint(point: DataPresentationState.PresentationHoverPointType | undefined, eventDetail?: {}): void {
         this.hoverPoint = point;
         this.emit({
             type: 'afterHoverPointChange',
@@ -228,17 +239,20 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         });
     }
 
-    public getHoverPoint(): Point | undefined {
+    public getHoverPoint(): DataPresentationState.PresentationHoverPointType | undefined {
         return this.hoverPoint;
     }
 
     public setSelection(
-        axisID: string,
-        minMax: { min?: number; max?: number },
-        eventDetail: {},
-        reset = false
+        selection: Record<string, { min?: number; max?: number }>,
+        reset = false,
+        eventDetail?: {}
     ): void {
-        this.selection[axisID] = minMax;
+        const axes = Object.keys(selection);
+
+        axes.forEach((axisID): void => {
+            this.selection[axisID] = selection[axisID];
+        });
 
         this.emit({
             type: 'afterSelectionChange',
@@ -261,6 +275,16 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
 
         if (this.columnOrder) {
             json.columnOrder = this.columnOrder.slice();
+        }
+        if (this.hoverPoint) {
+            const { x, y, id } = this.hoverPoint;
+            json.hoverPoint = { x, y, id };
+        }
+        if (this.selection) {
+            json.selection = this.selection;
+        }
+        if (this.columnVisibilityMap) {
+            json.columnVisibility = this.columnVisibilityMap;
         }
 
         return json;
@@ -290,6 +314,9 @@ namespace DataPresentationState {
      */
     export interface ClassJSON extends DataJSON.ClassJSON {
         columnOrder?: Array<string>;
+        visibilityMap?: columnVisibilityType;
+        hoverpoint?: { x: number; y: number; id: string };
+        selection?: selectionObjectType;
     }
 
     /**
@@ -342,10 +369,14 @@ namespace DataPresentationState {
 
     export interface PointHoverEventObject extends DataEventEmitter.EventObject {
         type: HoverPointEventType;
-        hoverPoint: Point | undefined;
+        hoverPoint: PresentationHoverPointType | undefined;
     }
 
-    export type selectionObjectType = Record<string, { min?: number; max?: number }>
+    export type columnVisibilityType = Record<string, boolean>;
+
+    export type selectionObjectType = Record<string, { min?: number; max?: number }>;
+
+    export type PresentationHoverPointType = Partial<PointType>;
 
     export interface SelectionEventObject extends DataEventEmitter.EventObject {
         type: selectionEventType;
