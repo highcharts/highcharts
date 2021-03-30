@@ -8,15 +8,9 @@ import DataParser from '../../Data/Parsers/DataParser.js';
 
 import Highcharts from '../../masters/highcharts.src.js';
 import {
-    selectionEmitter,
-    selectionHandler,
-    seriesVisibilityEmitter,
-    seriesVisibilityHandler,
-    tooltipEmitter,
-    tooltipHandler,
-    panEmitter,
     ChartSyncHandler,
-    ChartSyncEmitter
+    ChartSyncEmitter,
+    defaults as defaultHandlers
 } from './ChartSyncHandlers.js';
 
 import U from '../../Core/Utilities.js';
@@ -40,12 +34,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
      *
      * */
 
-    public static syncHandlers = {
-        'visibility': { emitter: seriesVisibilityEmitter, handler: seriesVisibilityHandler },
-        'tooltip': { emitter: tooltipEmitter, handler: tooltipHandler },
-        'selection': { emitter: selectionEmitter, handler: selectionHandler },
-        'panning': { emitter: panEmitter, handler: selectionHandler }
-    };
+    public static syncHandlers = defaultHandlers;
 
     public static defaultOptions = merge(
         Component.defaultOptions,
@@ -267,7 +256,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
                     // Probably should register this also
                     if (emitter instanceof ChartSyncEmitter) {
                         emitter.createEmitter(this)();
-                    } else {
+                    } else if (emitter instanceof Function) {
                         emitter(this);
                     }
                 }

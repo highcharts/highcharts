@@ -362,3 +362,10 @@ export const panEmitter = new ChartSyncEmitter(
         }
     }
 );
+
+export const defaults: Record<string, { emitter: ChartSyncEmitter; handler: ChartSyncHandler }> = {
+    panning: { emitter: panEmitter, handler: selectionHandler },
+    selection: { emitter: selectionEmitter, handler: selectionHandler },
+    tooltip: { emitter: tooltipEmitter, handler: tooltipHandler },
+    visibility: { emitter: seriesVisibilityEmitter, handler: seriesVisibilityHandler }
+};
