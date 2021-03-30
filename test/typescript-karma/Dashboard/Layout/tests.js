@@ -12,12 +12,12 @@ function setupContainer() {
 
 const rows = [{
     id: 'dashboard-row-0',
-    columns: [{
+    cells: [{
         id: 'dashboard-col-0',
     }]
 }, {
     id: 'dashboard-row-1',
-    columns: [{
+    cells: [{
         id: 'dashboard-col-1'
     }]
 }]
@@ -28,7 +28,7 @@ const layouts = [{
 }]
 
 const components = [{
-    column: 'dashboard-col-0',
+    cell: 'dashboard-col-0',
     isResizable: true,
     type: 'chart',
     chartOptions: {
@@ -42,7 +42,7 @@ const components = [{
         }
     }
 }, {
-    column: 'dashboard-col-1',
+    cell: 'dashboard-col-1',
     type: 'html',
     elements: [{
         tagName: 'img',
@@ -90,7 +90,7 @@ test('Components in rows with set height', function (assert) {
         components
     });
 
-    const columns = document.querySelectorAll('.highcharts-dashboard-column')
+    const columns = document.querySelectorAll('.highcharts-dashboard-cell')
     assert.strictEqual(columns.length, 2)
     for (const column of columns) {
         const components = column.querySelectorAll('.highcharts-dashboard-component')
@@ -118,7 +118,7 @@ test('Components in layout with set width', function (assert) {
         components
     });
 
-    const columns = document.querySelectorAll('.highcharts-dashboard-column')
+    const columns = document.querySelectorAll('.highcharts-dashboard-cell')
     assert.strictEqual(columns.length, 2)
     for (const column of columns) {
         const components = column.querySelectorAll('.highcharts-dashboard-component');

@@ -25,7 +25,7 @@ const dashboard = new Dashboard('container', {
             },
             rows: [{
                 // id: 'dashboard-row-0',
-                columns: [{
+                cells: [{
                     width: 0.7,
                     id: 'dashboard-col-0',
                     style: {
@@ -45,7 +45,7 @@ const dashboard = new Dashboard('container', {
                 style: {
                     color: 'red'
                 },
-                columns: [{
+                cells: [{
                     id: 'dashboard-col-2'
                 }]
             }]
@@ -53,14 +53,14 @@ const dashboard = new Dashboard('container', {
             id: 'layout-2', // mandatory
             rows: [{
                 id: 'dashboard-row-2',
-                columns: [{
+                cells: [{
                     id: 'dashboard-col-3'
                 }]
             }]
         }]
     },
     components: [{
-        column: 'dashboard-col-0',
+        cell: 'dashboard-col-0',
         isResizable: true,
         type: 'chart',
         chartOptions: {
@@ -77,7 +77,7 @@ const dashboard = new Dashboard('container', {
         store,
         syncEvents: ['visibility', 'tooltip']
     }, {
-        column: 'dashboard-col-1',
+        cell: 'dashboard-col-1',
         type: 'chart',
         chartOptions: {
             type: 'column',
