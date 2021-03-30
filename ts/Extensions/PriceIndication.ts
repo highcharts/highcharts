@@ -93,7 +93,7 @@ declare global {
  * horizontal axes.
  *
  * @type      {Highcharts.AlignValue}
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.align
  *
@@ -104,7 +104,7 @@ declare global {
  * color, or `#666666` if that is not available.
  *
  * @type      {Highcharts.ColorType}
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.backgroundColor
  */
@@ -113,7 +113,7 @@ declare global {
  * The border color for the crosshair label
  *
  * @type      {Highcharts.ColorType}
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.borderColor
  */
@@ -123,7 +123,7 @@ declare global {
  *
  * @type      {number}
  * @default   3
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.borderRadius
  */
@@ -133,7 +133,7 @@ declare global {
  *
  * @type      {number}
  * @default   0
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.borderWidth
  */
@@ -152,7 +152,7 @@ declare global {
  * numeric axes and `{value:%b %d, %Y}` for datetime axes.
  *
  * @type      {string}
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.format
  */
@@ -161,7 +161,7 @@ declare global {
  * Formatter function for the label text.
  *
  * @type      {Highcharts.XAxisCrosshairLabelFormatterCallbackFunction}
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.formatter
  */
@@ -171,7 +171,7 @@ declare global {
  *
  * @type      {number}
  * @default   8
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.padding
  */
@@ -181,7 +181,7 @@ declare global {
  *
  * @type      {string}
  * @default   callout
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.shape
  */
@@ -191,7 +191,7 @@ declare global {
  *
  * @type      {Highcharts.CSSObject}
  * @default   {"color": "white", "fontWeight": "normal", "fontSize": "11px", "textAlign": "center"}
- * @since     7.0
+ * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.style
  */
@@ -204,7 +204,7 @@ declare global {
  *
  * @declare   Highcharts.SeriesLastPriceOptionsObject
  * @product   highstock
- * @since     7.0
+ * @since     7.0.0
  * @requires  modules/price-indicator
  * @apioption plotOptions.series.lastPrice
  */
