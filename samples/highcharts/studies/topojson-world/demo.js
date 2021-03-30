@@ -3,6 +3,37 @@ function getRandomData(geojson) {
     return geojson.features.map(() => Math.round(Math.random() * 100));
 }
 
+function getGrid() {
+    const data = [];
+
+    // Meridians
+    for (let x = -180; x <= 180; x += 15) {
+        const path = [];
+        for (let y = -85, i = 0; y <= 85; y += 5, i++) {
+            path.push([
+                i === 0 ? 'M' : 'L',
+                x,
+                y
+            ]);
+        }
+        data.push({ path });
+    }
+
+    // Latitudes
+    for (let y = -85; y <= 85; y += 15) {
+        const path = [];
+        for (let x = -180, i = 0; x <= 180; x += 5, i++) {
+            path.push([
+                i === 0 ? 'M' : 'L',
+                x,
+                y
+            ]);
+        }
+        data.push({ path });
+    }
+    return data;
+}
+
 const static = {
     geojson: undefined,
     data: undefined
@@ -49,6 +80,10 @@ const drawMap = projection => {
                 text: 'Projected TopoJSON'
             },
 
+            legend: {
+                enabled: false
+            },
+
             mapNavigation: {
                 enabled: true,
                 buttonOptions: {
@@ -73,6 +108,11 @@ const drawMap = projection => {
             },
 
             series: [{
+                name: 'Grid',
+                type: 'mapline',
+                data: getGrid(),
+                nullColor: '#f0f0f0'
+            }, {
                 data: static.data,
                 joinBy: null,
                 name: 'Random data',
