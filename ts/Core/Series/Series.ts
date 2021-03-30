@@ -2650,10 +2650,10 @@ class Series {
      * @return {Highcharts.SeriesOptions}
      * Common series options.
      */
-    public static getSeriesOptionsFromTable(
+    public static getSeriesDataFromTable(
         table: DataTable,
         keys?: Array<string>
-    ): SeriesOptions {
+    ): Array<(PointOptions|null)> {
         const data: Array<(PointOptions|null)> = [];
 
         for (
@@ -2671,15 +2671,7 @@ class Series {
             );
         }
 
-        return {
-            data,
-            id: table.id,
-            keys,
-            pointStart: (
-                table.getCellAsNumber((keys && keys[0] || 'x'), 0) ||
-                void 0
-            )
-        };
+        return data;
     }
 
     /**
@@ -2687,26 +2679,35 @@ class Series {
      *
      * @private
      *
-     * @param {Partial<Highcharts.SeriesOptions>} options
+     * @param {Array<(PointOptions|PointShortOptions)>} data
      * Series data to convert.
      *
-     * @param {Highcharts.Series} [series]
-     * Series to convert.
+     * @param {Partial<Highcharts.SeriesOptions>} [options]
+     * Series options to use.
      *
      * @return {DataTable}
      * Table instance.
      */
-    public static getTableFromSeriesOptions(
-        options: Partial<SeriesOptions>,
-        series: Series = { options } as Series
+    public static getTableFromSeriesData(
+        data: Array<(PointOptions|PointShortOptions)>,
+        options: (Series|DeepPartial<SeriesOptions>) = {}
     ): DataTable {
-        const data = (options.data || []),
-            table = new DataTable(void 0, (series.id || options.id));
+        const table = new DataTable(void 0, (options.id || options.name));
+
+        let series: Series;
+
+        if (options instanceof Series) {
+            series = options;
+        } else {
+            series = { options } as Series;
+        }
+
+        options = series.options;
 
         for (
             let i = 0,
                 iEnd = data.length,
-                x = pick(series.xIncrement, options.pointStart, 0),
+                x = pick(options.pointStart, 0),
                 pointData: PointOptions;
             i < iEnd;
             ++i, x = Series.increment(x, options)
@@ -2723,7 +2724,7 @@ class Series {
     /** @private */
     public static increment(
         value: number,
-        options: SeriesOptions = {},
+        options: DeepPartial<SeriesOptions> = {},
         time: Time = H.time
     ): number {
         const intervalUnit = options.pointIntervalUnit;
@@ -3796,84 +3797,6 @@ class Series {
     }
 
     /**
-     * Adds and/or replaces rows in the series table.
-     *
-     * @param {DataTable} table
-     * Table rows to add and/or replace.
-     */
-    private updateTable(table: DataTable): void {
-        const series = this,
-            seriesTable = series.table,
-            seriesTableRowCount = seriesTable.getRowCount(),
-            presentationState = table.getPresentationState(),
-            tableRowCount = table.getRowCount();
-
-        if (seriesTable.getPresentationState() !== presentationState) {
-            seriesTable.setPresentationState(presentationState);
-        }
-
-        if (seriesTableRowCount) {
-            const matchBy = (
-                    seriesTable.hasColumn('id') && table.hasColumn('id') ?
-                        'id' :
-                        'x'
-                ),
-                rowIndexMap: Record<string, number> = {},
-                seriesColumn = (seriesTable.getColumn(matchBy) || []),
-                tableColumn = (table.getColumn(matchBy) || []);
-
-            let matchByIndex = false;
-
-            for (let i = 0, iEnd = seriesColumn.length; i < iEnd; ++i) {
-                if (typeof rowIndexMap[`${seriesColumn[i]}`] === 'undefined') {
-                    rowIndexMap[`${seriesColumn[i]}`] = i;
-                } else {
-                    matchByIndex = true;
-                    break;
-                }
-            }
-
-            if (matchByIndex) {
-                seriesTable.setColumns(table.getColumns());
-            } else {
-                for (
-                    let i = 0,
-                        iEnd = tableColumn.length,
-                        rowIndex: number,
-                        rowObject: (DataTable.RowObject|undefined);
-                    i < iEnd;
-                    ++i
-                ) {
-                    rowObject = table.getRowObject(i);
-                    if (rowObject) {
-                        rowIndex = rowIndexMap[`${tableColumn[i]}`];
-                        if (rowIndex === -1) {
-                            seriesTable.setRowObject(rowObject);
-                        } else {
-                            seriesTable.setRowObject(rowObject, rowIndex);
-                            delete rowIndexMap[`${tableColumn[i]}`];
-                        }
-                        series.addPoint(rowObject, false, void 0, void 0, false);
-                    }
-                }
-
-                const rowKeys = Object.keys(rowIndexMap).reverse();
-
-                for (let i = 0, iEnd = rowKeys.length; i < iEnd; ++i) {
-                    seriesTable.deleteRow(rowIndexMap[rowKeys[i]]);
-                }
-            }
-        } else {
-            seriesTable.setColumns(
-                table.getColumns(),
-                tableRowCount === seriesTableRowCount ?
-                    0 :
-                    seriesTableRowCount
-            );
-        }
-    }
-
-    /**
      * Apply a new set of data to the series and optionally redraw it. The
      * new data array is passed by reference (except in case of
      * `updatePoints`), and may later be mutated when updating the chart
@@ -3929,11 +3852,9 @@ class Series {
         var series = this,
             oldData = series.points,
             oldDataLength = (oldData && oldData.length) || 0,
-            dataLength,
             options = series.options,
             chart = series.chart,
             dataSorting = options.dataSorting,
-            dataTable: DataTable,
             firstPoint = null,
             xAxis = series.xAxis,
             i,
@@ -3951,28 +3872,22 @@ class Series {
         data = (data || []);
         redraw = pick(redraw, true);
 
-        if (data instanceof DataTable) {
-            dataTable = data.clone();
-        } else {
-            dataTable = Series.getTableFromSeriesOptions({ data }, series);
-        }
-
         if (dataSorting && dataSorting.enabled) {
-            series.sortData(dataTable);
-            data = dataTable;
+            if (data instanceof Array) {
+                data = Series.getTableFromSeriesData(data);
+            }
+            data = series.sortTable(data);
         }
 
         if (data instanceof DataTable) {
-            data = (Series.getSeriesOptionsFromTable(data).data || []);
+            data = series.setTable(data);
+            data = Series.getSeriesDataFromTable(data, (keys || pointArrayMap));
         }
-
-        dataLength = data.length;
 
         // First try to run Point.update which is cheaper, allows animation,
         // and keeps references to points.
         if (
             updatePoints !== false &&
-            dataLength &&
             oldDataLength &&
             !series.cropped &&
             !series.hasGroupedData &&
@@ -3985,6 +3900,8 @@ class Series {
         }
 
         if (!updatedData) {
+            const dataLength = data.length;
+
             // Reset properties
             series.xIncrement = null;
 
@@ -4094,10 +4011,27 @@ class Series {
     }
 
     /**
+     * Updates series table.
+     * @private
+     */
+    private setTable(table: DataTable): DataTable {
+        const series = this,
+            seriesTable = series.table;
+
+        if (seriesTable) {
+            seriesTable.clear();
+            seriesTable.setColumns(table.getColumns());
+            return seriesTable;
+        }
+
+        return table;
+    }
+
+    /**
      * Internal function to sort series data
      *
      * @private
-     * @function Highcharts.Series#sortData
+     * @function Highcharts.Series#sortTable
      *
      * @param {Highcharts.DataTable} table
      * Table to sort.
@@ -4105,7 +4039,7 @@ class Series {
      * @return {Highcharts.DataTable}
      * Sorted table a reference.
      */
-    public sortData(table: DataTable): DataTable {
+    public sortTable(table: DataTable): DataTable {
         var series = this,
             options = series.options,
             dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
@@ -4153,8 +4087,8 @@ class Series {
 
                     if (!seriesTable) { // @todo should always be set
                         seriesTable = (linkedSeries as any).table = (
-                            Series.getTableFromSeriesOptions(
-                                seriesOptions,
+                            Series.getTableFromSeriesData(
+                                seriesData,
                                 linkedSeries
                             )
                         );
