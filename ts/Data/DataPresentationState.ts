@@ -243,6 +243,10 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         return this.hoverPoint;
     }
 
+    public getSelection(): DataPresentationState.selectionObjectType {
+        return this.selection;
+    }
+
     public setSelection(
         selection: Record<string, { min?: number; max?: number }>,
         reset = false,

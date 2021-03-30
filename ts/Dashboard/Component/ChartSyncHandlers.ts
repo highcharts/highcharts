@@ -148,16 +148,19 @@ export const seriesVisibilityHandler =
     new ChartSyncHandler(
         'seriesVisibilityHandler',
         'afterColumnVisibilityChange',
-        function (this: ChartComponent, e: DataPresentationState.ColumnVisibilityEventObject): void {
-            const { visibilityMap } = e;
-            const { chart } = this;
+        function (this: ChartComponent, _e: DataPresentationState.ColumnVisibilityEventObject): void {
+            const { chart, store } = this;
+            if (store) {
+                const { presentationState } = store.table;
 
-            chart.series.forEach((series): void => {
-                const seriesID = series.options.id;
-                if (seriesID && typeof visibilityMap[seriesID] === 'boolean') {
-                    series.setVisible(visibilityMap[seriesID], false);
-                }
-            });
+                chart.series.forEach((series): void => {
+                    const seriesID = series.options.id;
+                    if (seriesID) {
+                        series.setVisible(presentationState.getColumnVisibility(seriesID), false);
+                    }
+                });
+
+            }
         }
     );
 
@@ -200,13 +203,14 @@ export const tooltipHandler =
     new ChartSyncHandler(
         'tooltipHandler',
         'afterHoverPointChange',
-        function (this: ChartComponent, e: DataPresentationState.PointHoverEventObject): void {
+        function (this: ChartComponent, _e: DataPresentationState.PointHoverEventObject): void {
             const { chart } = this;
-            if (e.hoverPoint === void 0 && !chart.hoverPoint) {
+            const hoverPoint = this.store?.table.presentationState.getHoverPoint();
+            if (hoverPoint === void 0 && !chart.hoverPoint) {
                 chart.tooltip?.hide();
             }
-            if (e.hoverPoint && chart.tooltip) {
-                const match = findMatchingPoint(chart, e.hoverPoint);
+            if (hoverPoint && chart.tooltip) {
+                const match = findMatchingPoint(chart, hoverPoint);
                 if (match) {
                     chart.tooltip?.refresh(match);
                 }
@@ -269,35 +273,37 @@ export const selectionHandler =
     new ChartSyncHandler(
         'selectionHandler',
         'afterSelectionChange',
-        function (this: ChartComponent, e: DataPresentationState.SelectionEventObject): void {
+        function (this: ChartComponent, e?: DataPresentationState.SelectionEventObject): void {
 
             const { chart } = this;
             // Reset the zoom if the source is the reset button
-            if (e.reset) {
+            if (e?.reset) {
                 chart.zoom({ resetSelection: true } as any); // Not allowed by TS, but works
                 return;
             }
 
-            const selectionAxes = e.selection;
-            Object.keys(selectionAxes).forEach((axisName: string): void => {
-                const selectionAxis = selectionAxes[axisName];
-                if (selectionAxis) {
-                    const { min, max } = selectionAxis;
-                    chart.axes.forEach((axis): void => {
-                        if (axis.coll === axisName && axis.zoomEnabled) {
-                            if (typeof min === 'number' && typeof max === 'number') {
-                                axis.zoom(min, max);
+            const selectionAxes = this.store?.table.presentationState.getSelection();
+            if (selectionAxes) {
+                Object.keys(selectionAxes).forEach((axisName: string): void => {
+                    const selectionAxis = selectionAxes[axisName];
+                    if (selectionAxis) {
+                        const { min, max } = selectionAxis;
+                        chart.axes.forEach((axis): void => {
+                            if (axis.coll === axisName && axis.zoomEnabled) {
+                                if (typeof min === 'number' && typeof max === 'number') {
+                                    axis.zoom(min, max);
 
-                                if (!chart.resetZoomButton) {
-                                    chart.showResetZoom();
+                                    if (!chart.resetZoomButton) {
+                                        chart.showResetZoom();
+                                    }
                                 }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
 
-                chart.redraw();
-            });
+                    chart.redraw();
+                });
+            }
         }
     );
 
