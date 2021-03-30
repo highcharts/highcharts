@@ -11,17 +11,16 @@ let dashboard = new Dashboard('container', {
             enabled: true,
             menuItems: [{
                 type: 'saveLocal',
-                text: 'Save local test',
+                text: 'Save local 22',
                 className: 'test-test-test',
                 events: {
                     click: function () {
                         console.log(this);
                     }
                 }
-            }, {
-                type: 'separator'
-            }, {
-                type: 'editMode'
+            }, 'separator', {
+                type: 'editMode',
+                text: 'Edit on/off'
             }]
         },
         lang: {
