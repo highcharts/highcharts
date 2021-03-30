@@ -16,43 +16,15 @@ class EditMode {
     *  Static Properties
     *
     * */
-
-    /* *
-    *
-    *  Constructor
-    *
-    * */
-    constructor(
-        dashboard: Dashboard,
-        options: EditMode.Options
-    ) {
-        this.options = options;
-        this.dashboard = dashboard;
-        this.lang = merge({}, EditGlobals.lang, options.lang);
-
-        // Init renderer.
-        this.renderer = new EditRenderer(this);
-
-        if (this.options.contextMenu.enabled) {
-            this.contextButtonElement = this.renderer.renderContextButton();
+    protected static readonly defaultOptions: EditMode.Options = {
+        enabled: true,
+        contextMenu: {
+            enabled: true,
+            menuItems: ['saveLocal', 'separator', 'editMode']
         }
     }
 
-    /* *
-    *
-    *  Properties
-    *
-    * */
-
-    private active: boolean = false;
-    public options: EditMode.Options;
-    public dashboard: Dashboard;
-    public contextButtonElement?: HTMLDOMElement;
-    public contextMenu?: EditMode.ContextMenu;
-    public lang: EditGlobals.LangOptions;
-    public renderer: EditRenderer;
-
-    public menuItems: Record<EditGlobals.TLangKeys, EditMode.MenuItemOptions> = {
+    public static menuItems: Record<EditGlobals.TLangKeys, EditMode.MenuItemOptions> = {
         separator: {
             type: 'separator',
             text: '',
@@ -80,6 +52,41 @@ class EditMode {
 
     /* *
     *
+    *  Constructor
+    *
+    * */
+    constructor(
+        dashboard: Dashboard,
+        options: EditMode.Options|undefined
+    ) {
+        this.options = merge(EditMode.defaultOptions, options || {});
+        this.dashboard = dashboard;
+        this.lang = merge({}, EditGlobals.lang, this.options.lang);
+
+        // Init renderer.
+        this.renderer = new EditRenderer(this);
+
+        if (this.options.contextMenu.enabled) {
+            this.contextButtonElement = this.renderer.renderContextButton();
+        }
+    }
+
+    /* *
+    *
+    *  Properties
+    *
+    * */
+
+    private active: boolean = false;
+    public options: EditMode.Options;
+    public dashboard: Dashboard;
+    public contextButtonElement?: HTMLDOMElement;
+    public contextMenu?: EditMode.ContextMenu;
+    public lang: EditGlobals.LangOptions;
+    public renderer: EditRenderer;
+
+    /* *
+    *
     *  Functions
     *
     * */
@@ -94,9 +101,9 @@ class EditMode {
 
         // Show context menu.
         if ((editMode.contextMenu || {}).isOpen) {
-            editMode.closeContextMenu();
+            editMode.setVisibleContextMenu(false);
         } else {
-            editMode.openContextMenu();
+            editMode.setVisibleContextMenu(true);
         }
 
     }
@@ -129,25 +136,17 @@ class EditMode {
         }
     }
 
-    public openContextMenu(): void {
+    public setVisibleContextMenu(visible: boolean): void {
         const editMode = this;
 
         if (editMode.contextMenu) {
-            css(editMode.contextMenu.element, {
-                display: 'block'
-            });
-            editMode.contextMenu.isOpen = true;
-        }
-    }
-
-    public closeContextMenu(): void {
-        const editMode = this;
-
-        if (editMode.contextMenu) {
-            css(editMode.contextMenu.element, {
-                display: 'none'
-            });
-            editMode.contextMenu.isOpen = false;
+            if (visible) {
+                editMode.contextMenu.element.style.display = 'block';
+                editMode.contextMenu.isOpen = true;
+            } else {
+                editMode.contextMenu.element.style.display = 'none';
+                editMode.contextMenu.isOpen = false;
+            }
         }
     }
 
@@ -170,45 +169,31 @@ class EditMode {
 
         // Temp solution.
         if (btnElement) {
-            css(btnElement, {
-                color: 'rgb(49 216 71)'
-            });
+            css(btnElement, { color: 'rgb(49 216 71)' });
         }
 
         // Set edit mode active class to dashboard.
-        editMode.dashboard.container.className +=
-            EditGlobals.classNames.editModeEnabled;
+        editMode.dashboard.container.classList.add(
+            EditGlobals.classNames.editModeEnabled
+        );
     }
 
     public deactivateEditMode(
         btnElement?: HTMLDOMElement
     ): void {
         const editMode = this,
-            dashboardCnt = editMode.dashboard.container,
-            dashboardCntClasses = dashboardCnt ?
-                dashboardCnt.className.split(' ') : [],
-            newClasses = [];
-
-        let oneClass;
+            dashboardCnt = editMode.dashboard.container;
 
         editMode.active = false;
 
         // Temp solution.
         if (btnElement) {
-            css(btnElement, {
-                color: '#555'
-            });
+            css(btnElement, { color: '#555' });
         }
 
-        // Remove edit mode active class in dashboard.
-        for (let i = 0, iEnd = dashboardCntClasses.length; i < iEnd; ++i) {
-            oneClass = dashboardCntClasses[i];
-
-            if (oneClass !== EditGlobals.classNames.editModeEnabled) {
-                newClasses.push(oneClass);
-            }
-        }
-        dashboardCnt.className = newClasses.join(' ');
+        dashboardCnt.classList.remove(
+            EditGlobals.classNames.editModeEnabled
+        );
     }
 }
 
@@ -221,7 +206,7 @@ namespace EditMode {
 
     export interface ContextMenuOptions {
         enabled: true;
-        menuItems: Array<MenuItemOptions>;
+        menuItems: Array<MenuItemOptions|EditGlobals.TLangKeys>;
     }
 
     export interface ContextMenu {

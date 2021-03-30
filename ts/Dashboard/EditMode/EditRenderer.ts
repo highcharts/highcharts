@@ -71,32 +71,32 @@ class EditRenderer {
     }
 
     public renderMenuItem(
-        item: EditMode.MenuItemOptions,
+        itemOrType: EditMode.MenuItemOptions|EditGlobals.TLangKeys,
         container: HTMLDOMElement
     ): HTMLDOMElement {
         const editMode = this.editMode,
-            itemSchema = item.type ? editMode.menuItems[item.type] : {};
-
-        let langTextContent;
+            itemSchema = typeof itemOrType === 'string' ? EditMode.menuItems[itemOrType] :
+                itemOrType.type ? EditMode.menuItems[itemOrType.type] : {};
 
         if (itemSchema.type && itemSchema.type !== 'separator') {
-            langTextContent = editMode.lang[itemSchema.type];
+            itemSchema.text = editMode.lang[itemSchema.type];
         }
+
+        const item: EditMode.MenuItemOptions = typeof itemOrType === 'string' ?
+            merge(itemSchema, { type: itemOrType }) : merge(itemSchema, itemOrType);
 
         return createElement(
             'div', {
-                textContent: item.text || langTextContent || itemSchema.text,
+                textContent: item.text,
                 onclick: function (): void {
                     if (item.events && item.events.click) {
                         item.events.click.apply(editMode, arguments);
-                    } else if (itemSchema.events && itemSchema.events.click) {
-                        itemSchema.events.click.apply(editMode, arguments);
                     }
                 },
                 className: EditGlobals.classNames.contextMenuItem + ' ' +
-                    (item.className || itemSchema.className || '')
+                    (item.className || '')
             },
-            item.style || itemSchema.style || {},
+            item.style || {},
             container
         );
     }

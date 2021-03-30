@@ -37,19 +37,6 @@ class Dashboard {
             },
             layouts: []
         },
-        editMode: {
-            enabled: true,
-            contextMenu: {
-                enabled: true,
-                menuItems: [{
-                    type: 'saveLocal'
-                }, {
-                    type: 'separator'
-                }, {
-                    type: 'editMode'
-                }]
-            }
-        },
         componentOptions: {
             isResizable: true
         },
@@ -115,8 +102,10 @@ class Dashboard {
 
         // Init edit mode.
         if (
-            this.options.editMode &&
-            this.options.editMode.enabled
+            EditMode && !(
+                this.options.editMode &&
+                !this.options.editMode.enabled
+            )
         ) {
             this.editMode = new EditMode(this, this.options.editMode);
         }
