@@ -1838,7 +1838,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                                 y: coordsY.value,
                                 controlPoint: {
                                     style: {
-                                        fill: 'red'
+                                        fill: palette.negativeColor
                                     }
                                 }
                             },
@@ -1998,8 +1998,10 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
     },
     /**
      * A vertical arrow annotation bindings. Includes `start` event. On click,
-     * finds the closest point and marks it with an arrow. Green arrow when
-     * pointing from above, red when pointing from below the point.
+     * finds the closest point and marks it with an arrow.
+     * palette.PositiveColor is the color of the arrow when
+     * pointing from above, palette.negativeColor
+     * when pointing from below the point.
      *
      * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
@@ -2041,7 +2043,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         },
                         connector: {
                             fill: 'none',
-                            stroke: closestPoint.below ? 'red' : 'green'
+                            stroke: closestPoint.below ? palette.negativeColor : palette.positiveColor
                         }
                     },
                     shapeOptions: {
