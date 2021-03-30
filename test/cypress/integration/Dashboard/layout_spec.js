@@ -19,15 +19,8 @@ describe('Components in layout', () => {
 
 });
 
-describe('Chart synchronized events', () => {
-
-    // reset before each of these
-    beforeEach(() => {
-        cy.reload()
-        cy.wait(250)
-    })
-
-    it('Should synchronize visible series between two charts sharing the same store', () => {
+describe('Chart synchronized series state', () => {
+    it('should synchronize visible series between two charts sharing the same store', () => {
         // There should be no hidden legend items
         cy.get('.highcharts-legend-item-hidden')
             .should('not.exist');
@@ -45,9 +38,19 @@ describe('Chart synchronized events', () => {
                 .should('exist');
         });
 
+        // Reset by click
+        cy.get('.highcharts-legend').first()
+            .get('.highcharts-legend-item').first()
+            .click({ scrollBehavior: false });
+
+        cy.get('.chart-container').last().within(() => {
+            cy.get('.highcharts-legend-item-hidden')
+                .should('not.exist');
+        });
+
     });
 
-    it('Should sync tooltip between two charts sharing the same store', () => {
+    it('should sync tooltip between two charts sharing the same store', () => {
         cy.get('.chart-container')
             .get('.highcharts-point').first()
             .as('firstPoint')
@@ -64,15 +67,20 @@ describe('Chart synchronized events', () => {
         cy.get('.chart-container').first().trigger('mouseleave', { scrollBehavior: false });
 
         // Second chart should now not have a tooltip
-        cy.get('.chart-container').last().within((chart => {
+        cy.get('.chart-container').last().within(() => {
             cy.get('.highcharts-tooltip-box')
                 .should('not.be.visible') // the container is there, but not visible
-        }));
+        });
     });
 
-    it('Should sync selection', () => {
+});
+
+describe('Chart sync selection and panning', () => {
+    it('should be able to visit', () => {
         cy.visit('/dashboard/chart-interaction-selection/')
-        cy.wait(1000)
+    })
+
+    it('should sync selection', () => {
         cy.get('.highcharts-container').first().as('firstchart')
 
         cy.zoom('@firstchart')
@@ -82,7 +90,7 @@ describe('Chart synchronized events', () => {
 
 
         // Click on reset in the first chart
-        cy.get('@firstchart').within(()=>{
+        cy.get('@firstchart').within(() => {
             cy.get('.highcharts-reset-zoom').click()
         })
 
@@ -92,13 +100,10 @@ describe('Chart synchronized events', () => {
     })
 
     // Todo: find a way to assert this
-    it('Should sync panning', () => {
-        cy.wait(1000)
+    it('should sync panning', () => {
         cy.get('.highcharts-container').first().as('firstchart')
-        // Do a zoom to make it "pannable"
         cy.zoom('@firstchart')
         // Do the pan
         cy.pan('@firstchart')
     })
-
 });
