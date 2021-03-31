@@ -39,7 +39,8 @@ import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     isArray,
-    merge
+    merge,
+    pick
 } = U;
 
 /* *
@@ -115,38 +116,28 @@ class DisparityIndexIndicator extends SMAIndicator {
 
     public init(this: DisparityIndexIndicator): void {
         const args = arguments,
-            options = arguments[1],
             ctx = this, // Disparity Index indicator
-            params = options.params as DisparityIndexParamsOptions,
-            period = params.period;
+            params = args[1].params, // options.params
+            averageType = params && params.average ? params.average : void 0;
 
-        let averageIndicator,
-            averageType = params.average;
+        let averageIndicator;
 
-        if (period) {
-            switch (averageType) {
-            // ctx.range = average indicator period minus 1
-            case 'ema':
-                averageIndicator = EMAIndicator;
-                ctx.range = period - 1;
-                break;
-            case 'dema':
-                averageIndicator = DEMAIndicator;
-                ctx.range = (2 * period - 1) - 1;
-                break;
-            case 'tema':
-                averageIndicator = TEMAIndicator;
-                ctx.range = (3 * period - 2) - 1;
-                break;
-            case 'wma':
-                averageIndicator = WMAIndicator;
-                ctx.range = period - 1;
-                break;
-            default: // use sma if any of the above strings do not match
-                averageType = 'sma';
-                averageIndicator = SMAIndicator;
-                ctx.range = period - 1;
-            }
+        switch (averageType) {
+        // ctx.range = average indicator period minus 1
+        case 'ema':
+            averageIndicator = EMAIndicator;
+            break;
+        case 'dema':
+            averageIndicator = DEMAIndicator;
+            break;
+        case 'tema':
+            averageIndicator = TEMAIndicator;
+            break;
+        case 'wma':
+            averageIndicator = WMAIndicator;
+            break;
+        default: // use sma if any of the above strings do not match
+            averageIndicator = SMAIndicator;
         }
 
         ctx.averageIndicator = averageIndicator;
@@ -154,7 +145,7 @@ class DisparityIndexIndicator extends SMAIndicator {
         // Check if the required average indicator modules is loaded
         RequiredIndicatorMixin.isParentLoaded(
             averageIndicator as any,
-            averageType,
+            pick(averageType || 'sma'),
             ctx.type,
             function (indicator: Highcharts.Indicator): undefined {
                 indicator.prototype.init.apply(ctx, args);
@@ -174,7 +165,9 @@ class DisparityIndexIndicator extends SMAIndicator {
         series: TLinkedSeries,
         params: DisparityIndexParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        const index: number = (params.index as any),
+        const averageType = params.average,
+            index = params.index,
+            period = params.period as any,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<number>|Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
@@ -182,11 +175,26 @@ class DisparityIndexIndicator extends SMAIndicator {
             xData: Array<number> = [],
             yData: Array<number> = [],
             averageIndicator: any = this.averageIndicator,
-            range = this.range,
             isOHLC = isArray(yVal[0]);
 
+        let range;
+
+        switch (averageType) {
+        // range = average indicator period minus 1
+        case 'dema':
+            range = (2 * period - 1) - 1;
+            break;
+        case 'tema':
+            range = (3 * period - 2) - 1;
+            break;
+        case 'ema':
+        case 'wma':
+        default: // use sma if any of the above strings do not match
+            range = period - 1;
+        }
+
         // Check period, if bigger than points length, skip
-        if (xVal.length <= range) {
+        if (!index || xVal.length <= range) {
             return;
         }
 
@@ -194,6 +202,7 @@ class DisparityIndexIndicator extends SMAIndicator {
         const values = averageIndicator.prototype
             .getValues(series, params).yData;
 
+        // Get the Disparity Index indicator's values
         for (let i = range; i < yValLen; i++) {
             const disparityIndexValue: number = this.calculateDisparityIndex(
                 isOHLC ? (yVal[i] as any)[index] : yVal[i],
@@ -225,7 +234,6 @@ interface DisparityIndexIndicator {
         typeof TEMAIndicator|
         typeof WMAIndicator;
     pointClass: typeof DisparityIndexPoint;
-    range: number;
 }
 
 /* *
