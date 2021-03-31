@@ -180,7 +180,7 @@ QUnit.test('Drilldown and reset zoom', function (assert) {
     );
 
     // Click reset zoom
-    chart.resetZoomButton.element.onclick();
+    Highcharts.fireEvent(chart.resetZoomButton.element, 'click');
     assert.strictEqual(
         typeof chart.resetZoomButton,
         'undefined',
