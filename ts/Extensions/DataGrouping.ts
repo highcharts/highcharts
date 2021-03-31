@@ -140,12 +140,15 @@ declare global {
             start?: number;
         }
         interface DataGroupingOptionsObject {
+            anchor?: string;
             approximation?: (DataGroupingApproximationValue|Function);
             dateTimeLabelFormats?: Record<string, Array<string>>;
             enabled?: boolean;
+            firstAnchor?: undefined|string;
             forced?: boolean;
             groupAll?: boolean;
             groupPixelWidth?: number;
+            lastAnchor?: undefined|string;
             smoothed?: boolean;
             units?: Array<[string, (Array<number>|null)]>;
         }
@@ -767,7 +770,7 @@ seriesProto.processData = function (): any {
                 gapSize = 0;
 
             // Prevent the smoothed data to spill out left and right, and make
-            // sure data is not shifted to the left
+            // sure data is not shifted to the left- deprecated.
             if ((dataGroupingOptions as any).smoothed && groupedXData.length) {
                 i = groupedXData.length - 1;
                 groupedXData[i] = Math.min(groupedXData[i], xMax);
@@ -775,6 +778,27 @@ seriesProto.processData = function (): any {
                     groupedXData[i] += interval / 2;
                 }
                 groupedXData[0] = Math.max(groupedXData[0], xMin);
+            }
+
+            // DataGrouping x-coordinates.
+            if (dataGroupingOptions) {
+                const gapSize = series.currentDataGrouping && series.currentDataGrouping.gapSize;
+
+                let shiftInterval: number = 0;
+
+                // Anchor points which are in the midle of the data set.
+                if (dataGroupingOptions.anchor && dataGroupingOptions.anchor !== 'start' && gapSize) {
+                    if (dataGroupingOptions.anchor === 'middle') {
+                        shiftInterval = gapSize / 2;
+                    } else { // end
+                        shiftInterval = gapSize;
+                    }
+
+                    i = groupedXData.length - 1;
+                    while (i-- && i > 0) {
+                        groupedXData[i] += shiftInterval;
+                    }
+                }
             }
 
             // Record what data grouping values were used
@@ -1298,6 +1322,7 @@ export default dataGrouping;
  *
  * @type      {boolean}
  * @default   false
+ * @deprecated
  * @apioption plotOptions.series.dataGrouping.smoothed
  */
 
