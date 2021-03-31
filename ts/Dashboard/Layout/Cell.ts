@@ -130,25 +130,25 @@ class Cell extends GUIElement {
                     this.container
                 );
             }
+
+            // nested layout
+            if (this.options.layout) {
+                const dashboard = this.row.layout.dashboard;
+
+                this.layout = new Layout(
+                    dashboard,
+                    merge(
+                        {},
+                        dashboard.options.gui?.layoutOptions,
+                        this.options.layout,
+                        {
+                            parentContainerId: options.id
+                        }
+                    )
+                );
+            }
         } else {
             // Error
-        }
-
-        // nested layout
-        if (this.options.layout) {
-            const dashboard = this.row.layout.dashboard;
-
-            this.layout = new Layout(
-                dashboard,
-                merge(
-                    {},
-                    dashboard.options.gui?.layoutOptions,
-                    this.options.layout,
-                    {
-                        parentContainerId: options.id
-                    }
-                )
-            );
         }
     }
 

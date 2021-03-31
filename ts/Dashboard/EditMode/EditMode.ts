@@ -4,6 +4,9 @@ import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import EditRenderer from './EditRenderer.js';
+import Resizer from './../Actions/Resizer.js';
+import type Layout from './../Layout/Layout.js';
+import EditToolbar from './EditToolbar.js';
 
 const {
     merge,
@@ -85,6 +88,7 @@ class EditMode {
     public contextMenu?: EditMode.ContextMenu;
     public lang: EditGlobals.LangOptions;
     public renderer: EditRenderer;
+    public cellToolbar?: EditToolbar;
 
     /* *
     *
@@ -164,9 +168,26 @@ class EditMode {
     public activateEditMode(
         btnElement?: HTMLDOMElement
     ): void {
-        const editMode = this;
+        const editMode = this,
+            dashboard = editMode.dashboard;
 
         editMode.active = true;
+
+        let layout;
+
+        // Init resizers.
+        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
+            layout = dashboard.layouts[i];
+
+            if (!layout.resizer) {
+                editMode.initLayoutResizer(layout);
+            }
+        }
+
+        // Init toolbar.
+        if (!editMode.cellToolbar) {
+            editMode.cellToolbar = new EditToolbar(editMode);
+        }
 
         // Temp solution.
         if (btnElement) {
@@ -195,6 +216,21 @@ class EditMode {
         dashboardCnt.classList.remove(
             EditGlobals.classNames.editModeEnabled
         );
+    }
+
+    private initLayoutResizer(layout: Layout): void {
+        const dashboard = this.dashboard,
+            guiOptions = dashboard.options.gui;
+
+        if (guiOptions) {
+            if (guiOptions.layoutOptions.resize) {
+                layout.resizer = new Resizer(layout);
+            } else if (guiOptions.layoutOptions.resizerJSON) {
+                layout.resizer = Resizer.fromJSON(
+                    layout, guiOptions.layoutOptions.resizerJSON
+                );
+            }
+        }
     }
 }
 
