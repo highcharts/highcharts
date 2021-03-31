@@ -2631,8 +2631,8 @@ SVGRenderer.prototype.symbols = {
         if (options) {
             var start = options.start || 0,
                 end = options.end || 0,
-                rx = options.r || w,
-                ry = options.r || h || w,
+                rx = pick(options.r, w),
+                ry = pick(options.r, h || w),
                 proximity = 0.001,
                 fullCircle =
                     Math.abs(end - start - 2 * Math.PI) <
