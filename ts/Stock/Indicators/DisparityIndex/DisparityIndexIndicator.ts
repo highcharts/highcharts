@@ -1,7 +1,7 @@
 /* *
  *  (c) 2010-2021 Rafal Sebestjanski
  *
- *  Disparity Index indicator for Highcharts Stock
+ *  Disparity Index indicator for highstock
  *
  *  License: www.highcharts.com/license
  *
@@ -68,7 +68,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * @extends      plotOptions.sma
      * @since        next
-     * @product      Highcharts Stock
+     * @product      highstock
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
@@ -257,7 +257,7 @@ export default DisparityIndexIndicator;
  *
  * @extends   series,plotOptions.disparityindex
  * @since     next
- * @product   Highcharts Stock
+ * @product   highstock
  * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
