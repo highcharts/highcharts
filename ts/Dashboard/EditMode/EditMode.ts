@@ -20,6 +20,7 @@ class EditMode {
         enabled: true,
         contextMenu: {
             enabled: true,
+            iconURL: 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/menu.svg',
             menuItems: ['saveLocal', 'separator', 'editMode']
         }
     }
@@ -206,6 +207,7 @@ namespace EditMode {
 
     export interface ContextMenuOptions {
         enabled: true;
+        iconURL: string;
         menuItems: Array<MenuItemOptions|EditGlobals.TLangKeys>;
     }
 

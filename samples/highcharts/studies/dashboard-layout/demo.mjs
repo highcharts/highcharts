@@ -8,6 +8,7 @@ let dashboard = new Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
+            iconURL: '/code/gfx/dashboard-icons/menu.svg',
             enabled: true,
             menuItems: [{
                 type: 'saveLocal',

@@ -43,9 +43,7 @@ class EditRenderer {
                 }, {}, editMode.dashboard.container
             );
 
-        for (let i = 0; i < 3; ++i) {
-            createElement('div', {}, {}, ctxBtnElement);
-        }
+        ctxBtnElement.style.background = 'url(' + editMode.options.contextMenu.iconURL + ') no-repeat 50% 50%';
 
         return ctxBtnElement;
     }
