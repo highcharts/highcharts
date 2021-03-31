@@ -53,8 +53,7 @@ let dashboard = new Dashboard('container', {
                     width: 0.7,
                     id: 'dashboard-col-0',
                     style: {
-                        color: 'yellow',
-                        flex: 2
+                        color: 'yellow'
                     }
                 }, {
                     id: 'dashboard-col-1',

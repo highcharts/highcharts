@@ -7,9 +7,11 @@ import GUIElement from './GUIElement.js';
 import Bindings from '../Actions/Bindings.js';
 import U from '../../Core/Utilities.js';
 import Layout from './Layout.js';
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 
 const {
-    merge
+    merge,
+    isNumber
 } = U;
 class Cell extends GUIElement {
     /* *
@@ -44,6 +46,26 @@ class Cell extends GUIElement {
         }
 
         return void 0;
+    }
+
+    public static setSize(
+        dimensions: { width?: number | string; height?: number | string },
+        cellContainer: HTMLDOMElement
+    ): void {
+        const width = dimensions.width;
+        const height = dimensions.width;
+
+        if (width) {
+            cellContainer.style.width = isNumber(width) ?
+                dimensions.width + 'px' : width;
+
+            cellContainer.style.flex = 'none';
+        }
+
+        if (height) {
+            cellContainer.style.height = isNumber(height) ?
+                dimensions.height + 'px' : height;
+        }
     }
 
     /* *
@@ -103,7 +125,10 @@ class Cell extends GUIElement {
 
             // Mount component from JSON.
             if (this.options.mountedComponentJSON) {
-                this.mountComponentFromJSON(this.options.mountedComponentJSON);
+                this.mountComponentFromJSON(
+                    this.options.mountedComponentJSON,
+                    this.container
+                );
             }
         } else {
             // Error
@@ -158,11 +183,15 @@ class Cell extends GUIElement {
      *
      * @param {Component.ClassJSON} [json]
      * Component JSON.
+     * 
+     * @param {HTMLDOMElement} cellContainer
+     * Cell container
      *
      * @return {boolean}
      */
     public mountComponentFromJSON(
-        json: Component.ClassJSON
+        json: Component.ClassJSON,
+        cellContainer: HTMLDOMElement|undefined
     ): boolean {
         const cell = this;
 
@@ -170,7 +199,7 @@ class Cell extends GUIElement {
             json.options.parentElement = cell.id;
         }
 
-        const component = Bindings.componentFromJSON(json);
+        const component = Bindings.componentFromJSON(json, cellContainer);
 
         if (component) {
             cell.mountedComponent = component;

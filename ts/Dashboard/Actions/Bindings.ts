@@ -89,6 +89,12 @@ class Bindings {
             }
 
             component?.render();
+
+            // update cell size (when component is wider, cell should adjust)
+            // this.updateSize();
+            if (options && options.dimensions) {
+                Cell.setSize(options.dimensions, compontentContainer);
+            }
         }
 
         // add events
@@ -108,9 +114,11 @@ class Bindings {
     }
 
     public static componentFromJSON(
-        json: HTMLComponent.ClassJSON|ChartComponent.ClassJSON
+        json: HTMLComponent.ClassJSON|ChartComponent.ClassJSON,
+        cellContainer: HTMLDOMElement|undefined 
     ): HTMLComponent|ChartComponent|GroupComponent|undefined {
 
+        const compontentContainer = cellContainer;
         let component: HTMLComponent|ChartComponent|GroupComponent|undefined;
 
         switch (json.$class) {
@@ -125,6 +133,13 @@ class Bindings {
         }
 
         component?.render();
+
+
+        // update cell size (when component is wider, cell should adjust)
+        // this.updateSize();
+        if (json.options.dimensions && cellContainer) {
+            Cell.setSize(json.options.dimensions, cellContainer);
+        }
 
         // TODO - events
 

@@ -194,7 +194,8 @@ class Row extends GUIElement {
         // Mount components.
         for (let i = 0, iEnd = componentsToMount.length; i < iEnd; ++i) {
             componentsToMount[i].cell.mountComponentFromJSON(
-                componentsToMount[i].mountedComponentJSON
+                componentsToMount[i].mountedComponentJSON,
+                (cell || {}).container
             );
         }
     }
