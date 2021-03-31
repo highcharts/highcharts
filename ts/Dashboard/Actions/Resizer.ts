@@ -70,7 +70,6 @@ class Resizer {
         this.isX = this.resizeOptions.type.indexOf('x') > -1;
         this.isY = this.resizeOptions.type.indexOf('y') > -1;
 
-
         this.init();
     }
 
@@ -82,6 +81,7 @@ class Resizer {
     public resizeOptions: Resizer.Options;
     public layout: Layout;
     public currentCell: Cell|undefined;
+    public currentDimension: string|undefined;
     public isX: boolean;
     public isY: boolean;
 
@@ -213,14 +213,23 @@ class Resizer {
         const rowContainer = element.row &&
         element.row.container as Resizer.HTMLDOMElementEvents;
 
-        let mouseDownSnap,
+        let mouseDownSnapX,
+            mouseDownSnapY,
             mouseMoveSnap,
             mouseUpSnap;
 
-        resizer.mouseDownSnap = mouseDownSnap = function (
+        resizer.mouseDownSnapX = mouseDownSnapX = function (
             e: PointerEvent
         ): void {
             resizer.currentCell = element;
+            resizer.currentDimension = 'x';
+        };
+
+        resizer.mouseDownSnapY = mouseDownSnapY = function (
+            e: PointerEvent
+        ): void {
+            resizer.currentCell = element;
+            resizer.currentDimension = 'y';
         };
 
         resizer.mouseMoveSnap = mouseMoveSnap = function (
@@ -236,11 +245,12 @@ class Resizer {
             e: PointerEvent
         ): void {
             resizer.currentCell = void 0;
+            resizer.currentDimension = void 0;
         };
 
         // Add mouse events
-        // addEvent(snapX, 'mousedown', mouseDownSnap);
-        addEvent(snapY, 'mousedown', mouseDownSnap);
+        addEvent(snapX, 'mousedown', mouseDownSnapX);
+        addEvent(snapY, 'mousedown', mouseDownSnapY);
 
         if (!rowContainer.hcEvents.mousemove) {
             addEvent(rowContainer, 'mousemove', mouseMoveSnap);
@@ -249,7 +259,8 @@ class Resizer {
 
         // Touch events
         if (hasTouch) {
-            addEvent(snapX, 'touchstart', mouseDownSnap);
+            addEvent(snapX, 'touchstart', mouseDownSnapX);
+            addEvent(snapY, 'touchstart', mouseDownSnapY);
 
             if (!rowContainer.hcEvents.mousemove) {
                 addEvent(rowContainer, 'touchmove', mouseMoveSnap);
@@ -275,38 +286,44 @@ class Resizer {
         e: PointerEvent
     ): void {
         const cellContainer = currentCell && currentCell.container;
+        const currentDimension = this.currentDimension;
 
         if (currentCell && cellContainer) {
             const parentRow = (cellContainer.parentNode as HTMLDOMElement);
             const parentRowWidth = parentRow.offsetWidth;
-            const parentRowHeight = parentRow.offsetHeight;
 
-            cellContainer.style.width =
-                (
-                    Math.min(
-                        // diff
-                        e.clientX - cellContainer.getBoundingClientRect().left,
-                        // maxSize
-                        parentRowWidth - (
-                            this.sumCellOuterWidth(
-                                currentCell.row,
-                                currentCell
-                            ) || 0
+            // resize width
+            if (currentDimension === 'x') {
+                cellContainer.style.width =
+                    (
+                        Math.min(
+                            // diff
+                            e.clientX - cellContainer.getBoundingClientRect().left,
+                            // maxSize
+                            parentRowWidth - (
+                                this.sumCellOuterWidth(
+                                    currentCell.row,
+                                    currentCell
+                                ) || 0
+                            )
+                        ) / parentRowWidth
+                    ) * 100 + '%';
+
+                cellContainer.style.flex = 'none';
+            }
+
+            // resize height
+            if (currentDimension === 'y') {
+                cellContainer.style.height =
+                    (
+                        Math.max(
+                            // diff
+                            e.clientY - cellContainer.getBoundingClientRect().top,
+                            // minSize
+                            (currentCell.styles || {}).minHeight || 0
                         )
-                    ) / parentRowWidth
-                ) * 100 + '%';
-
-            cellContainer.style.flex = 'none';
-
-            cellContainer.style.height =
-                (
-                    Math.max(
-                        // diff
-                        e.clientY - cellContainer.getBoundingClientRect().top,
-                        // minSize
-                        (currentCell.styles || {}).minHeight || 0
-                    )
-                ) + 'px';
+                    ) + 'px';
+            }
 
             // call component resize
             if (currentCell.mountedComponent) {
@@ -433,7 +450,7 @@ class Resizer {
                     currentCell.resizer &&
                     currentCell.resizer.snapX
                 ) {
-                    this.destroyCellSnapX(currentCell);
+                    this.destroyCellSnaps(currentCell);
                     // currentCell.resizer.snapX.remove();
                 }
             }
@@ -446,21 +463,30 @@ class Resizer {
         }
     }
 
-    public destroyCellSnapX(
+    public destroyCellSnaps(
         cell: Resizer.ResizedCell
     ): void {
-        const snapX = cell.resizer && cell.resizer.snapX;
+        const resizer = cell.resizer;
+        const snapX = resizer && resizer.snapX;
+        const snapY = resizer && resizer.snapY;
 
-        if (!snapX) {
-            return;
+        if (snapX) {
+            // unbind events
+            removeEvent(snapX, 'mousedown');
+            removeEvent(snapX, 'touchstart');
+
+            // destroy snapX
+            snapX.parentNode.removeChild(snapX);
         }
 
-        // unbind events
-        removeEvent(snapX, 'mousedown');
-        removeEvent(snapX, 'touchstart');
+        if (snapY) {
+            // unbind events
+            removeEvent(snapY, 'mousedown');
+            removeEvent(snapY, 'touchstart');
 
-        // destroy snapX
-        snapX.remove();
+            // destroy snapY
+            snapY.parentNode.removeChild(snapY);
+        }
     }
     /**
      * Converts the class instance to a class JSON.
@@ -489,7 +515,8 @@ class Resizer {
     }
 }
 interface Resizer {
-    mouseDownSnap?: Function;
+    mouseDownSnapX?: Function;
+    mouseDownSnapY?: Function;
     mouseMoveSnap?: Function;
     mouseUpSnap?: Function;
 }
@@ -502,20 +529,10 @@ namespace Resizer {
         snapX: SnapOptions;
         snapY: SnapOptions;
     }
-    /*export interface CellsRowsOptions {
-        enabled: boolean;
-        minWidth: number;
-    }*/
-
     export interface ResizedCell extends Cell {
         resizer?: Snap;
         styles?: ElementStyles;
     }
-
-    /*export interface ResizedRow extends Row {
-        resizer?: Snap;
-        styles?: ElementStyles;
-    }*/
 
     export interface ElementStyles {
         borderLeft?: number;
@@ -551,12 +568,6 @@ namespace Resizer {
         snapX: SnapJSON;
         snapY: SnapJSON;
     }
-
-    /*export interface CellsRowsOptionsJSON extends DataJSON.JSONObject {
-        enabled: boolean;
-        minWidth: number;
-    }*/
-
     export interface SnapJSON extends DataJSON.JSONObject {
         width?: number;
         height?: number;
