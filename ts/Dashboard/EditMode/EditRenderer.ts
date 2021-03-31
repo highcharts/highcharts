@@ -5,7 +5,8 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
 const {
     merge,
-    createElement
+    createElement,
+    addEvent
 } = U;
 
 class EditRenderer {
@@ -64,6 +65,17 @@ class EditRenderer {
                         contextButtonElement.offsetWidth + 'px'
                 }, editMode.dashboard.container
             );
+
+        // hide menu when click outside
+        addEvent(document, 'click', (event): void => {
+            if (
+                event.target !== element &&
+                event.target !== contextButtonElement &&
+                ((editMode.contextMenu || {}).isOpen)
+            ) {
+                editMode.setVisibleContextMenu(false);
+            }
+        });
 
         return element;
     }
