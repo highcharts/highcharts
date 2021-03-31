@@ -4014,15 +4014,21 @@ class Series {
      * Updates series table.
      * @private
      */
-    private setTable(table: DataTable): DataTable {
-        const series = this,
-            seriesTable = series.table;
+    private setTable(newTable: DataTable): DataTable {
+        const series = this;
 
-        if (seriesTable) {
-            seriesTable.clear();
-            seriesTable.setColumns(table.getColumns());
-            return seriesTable;
+        let table = series.table;
+
+        if (!table) {
+            table = (series as AnyRecord).table = new DataTable();
         }
+
+        fireEvent(series, 'setTable', { table: newTable });
+
+        table.clear();
+        table.setColumns(newTable.getColumns());
+
+        fireEvent(series, 'afterSetTable', { table: newTable });
 
         return table;
     }
@@ -4039,7 +4045,7 @@ class Series {
      * @return {Highcharts.DataTable}
      * Sorted table a reference.
      */
-    public sortTable(table: DataTable): DataTable {
+    private sortTable(table: DataTable): DataTable {
         var series = this,
             options = series.options,
             dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
@@ -4082,17 +4088,7 @@ class Series {
                     !seriesOptions.dataSorting.enabled) &&
                     seriesData
                 ) {
-                    let seriesTable = linkedSeries.table,
-                        x: number;
-
-                    if (!seriesTable) { // @todo should always be set
-                        seriesTable = (linkedSeries as any).table = (
-                            Series.getTableFromSeriesData(
-                                seriesData,
-                                linkedSeries
-                            )
-                        );
-                    }
+                    let x: number;
 
                     seriesData.forEach(function (pointOptions, i): void {
                         seriesData[i] = getPointOptionsObject(
@@ -4104,8 +4100,6 @@ class Series {
                             x = table.getCellAsNumber('x', i, true);
                             seriesData[i].x = x;
                             seriesData[i].index = i;
-                            seriesTable.setCell(i, 'x', x);
-                            seriesTable.setCell(i, 'index', i);
                         }
                     });
 
@@ -5492,10 +5486,11 @@ class Series {
 
         var series = this,
             chart = series.chart,
-            issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
-            destroy: ('hide'|'destroy'),
-            i,
             data = series.data || [],
+            table = series.table,
+            destroy: ('hide'|'destroy'),
+            issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
+            i,
             point,
             axis;
 
@@ -5528,6 +5523,9 @@ class Series {
             }
         }
         series.points = null as any;
+        if (table) {
+            table.clear();
+        }
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
@@ -5884,11 +5882,15 @@ class Series {
      * @function Highcharts.Series#removeEvents
      */
     public removeEvents(keepEventsForUpdate?: boolean): void {
-        const series = this;
+        const series = this,
+            table = series.table;
 
         if (!keepEventsForUpdate) {
             // remove all events
             removeEvent(series);
+            if (table) {
+                removeEvent(table);
+            }
         }
 
         if (series.eventsToUnbind.length) {
