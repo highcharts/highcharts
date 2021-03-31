@@ -1,7 +1,7 @@
 /* *
  *  (c) 2010-2021 Rafal Sebestjanski
  *
- *  Disparity Index indicator for Highstock
+ *  Disparity Index indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *
@@ -24,15 +24,21 @@ import type {
 import type DisparityIndexPoint from './DisparityIndexPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
+import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sma: SMAIndicator
+        ema: EMAIndicator,
+        dema: DEMAIndicator,
+        sma: SMAIndicator,
+        tema: TEMAIndicator,
+        wma: WMAIndicator
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
+    isArray,
     merge
 } = U;
 
@@ -62,7 +68,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * @extends      plotOptions.sma
      * @since        next
-     * @product      highstock
+     * @product      Highcharts Stock
      * @excluding    allAreas, colorAxis, joinBy, keys, navigatorOptions,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointRange, pointStart, showInNavigator, stacking
@@ -76,6 +82,8 @@ class DisparityIndexIndicator extends SMAIndicator {
              * The average used to calculate the Disparity Index indicator.
              * By default it uses SMA. To use other averages, e.g. EMA,
              * the stock/indicators/ema.js file needs to be loaded.
+             *
+             * If value is different than ema|dema|tema|wma, then sma is used.
              */
             average: 'sma',
             index: 3,
@@ -91,55 +99,106 @@ class DisparityIndexIndicator extends SMAIndicator {
 
     /* *
      *
+     *  Properties
+     *
+     * */
+
+    public data: Array<DisparityIndexPoint> = void 0 as any;
+    public options: DisparityIndexOptions = void 0 as any;
+    public points: Array<DisparityIndexPoint> = void 0 as any;
+
+    /* *
+     *
      *  Functions
      *
      * */
+
+    public init(this: DisparityIndexIndicator): void {
+        const args = arguments,
+            options = arguments[1],
+            ctx = this, // Disparity Index indicator
+            params = options.params as DisparityIndexParamsOptions,
+            period = params.period;
+
+        let averageIndicator,
+            averageType = params.average;
+
+        if (period) {
+            switch (averageType) {
+            // ctx.range = average indicator period minus 1
+            case 'ema':
+                averageIndicator = EMAIndicator;
+                ctx.range = period - 1;
+                break;
+            case 'dema':
+                averageIndicator = DEMAIndicator;
+                ctx.range = (2 * period - 1) - 1;
+                break;
+            case 'tema':
+                averageIndicator = TEMAIndicator;
+                ctx.range = (3 * period - 2) - 1;
+                break;
+            case 'wma':
+                averageIndicator = WMAIndicator;
+                ctx.range = period - 1;
+                break;
+            default: // use sma if any of the above strings do not match
+                averageType = 'sma';
+                averageIndicator = SMAIndicator;
+                ctx.range = period - 1;
+            }
+        }
+
+        ctx.averageIndicator = averageIndicator;
+
+        // Check if the required average indicator modules is loaded
+        RequiredIndicatorMixin.isParentLoaded(
+            averageIndicator as any,
+            averageType,
+            ctx.type,
+            function (indicator: Highcharts.Indicator): undefined {
+                indicator.prototype.init.apply(ctx, args);
+                return;
+            }
+        );
+    }
 
     public calculateDisparityIndex(
         close: number,
         periodAverage: number
     ): number {
-        return (close - periodAverage) / periodAverage * 100;
+        return correctFloat(close - periodAverage) / periodAverage * 100;
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: DisparityIndexParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        const average: string = params.average,
-            period: number = (params.period as any),
-            index: number = (params.index as any),
+        const index: number = (params.index as any),
             xVal: Array<number> = (series.xData as any),
-            yVal: Array<Array<number>> = (series.yData as any),
+            yVal: Array<number>|Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             disparityIndexPoint: Array<Array<number>> = [],
             xData: Array<number> = [],
-            yData: Array<number> = [];
+            yData: Array<number> = [],
+            averageIndicator: any = this.averageIndicator,
+            range = this.range,
+            isOHLC = isArray(yVal[0]);
 
         // Check period, if bigger than points length, skip
-        if (xVal.length <= period) {
+        if (xVal.length <= range) {
             return;
         }
 
-        let i: number,
-            sum = 0;
+        // Get the average indicator's values
+        const values = averageIndicator.prototype
+            .getValues(series, params).yData;
 
-        for (i = 0; i < period - 1; i++) {
-            sum += yVal[i][index];
-        }
-
-        for (i; i < yValLen; i++) {
-            let averageValue: number;
-
-            if (i >= period) {
-                sum -= yVal[i - period][index];
-            }
-
-            sum += yVal[i][index];
-
-            const SMA: number = sum / period,
-                disparityIndexValue: number =
-                    this.calculateDisparityIndex(yVal[i][index], SMA);
+        for (let i = range; i < yValLen; i++) {
+            const disparityIndexValue: number = this.calculateDisparityIndex(
+                isOHLC ? (yVal[i] as any)[index] : yVal[i],
+                values[i - range]
+            );
 
             disparityIndexPoint.push([
                 xVal[i],
@@ -159,7 +218,14 @@ class DisparityIndexIndicator extends SMAIndicator {
 }
 
 interface DisparityIndexIndicator {
+    averageIndicator?:
+        typeof EMAIndicator|
+        typeof DEMAIndicator|
+        typeof SMAIndicator|
+        typeof TEMAIndicator|
+        typeof WMAIndicator;
     pointClass: typeof DisparityIndexPoint;
+    range: number;
 }
 
 /* *
@@ -191,7 +257,7 @@ export default DisparityIndexIndicator;
  *
  * @extends   series,plotOptions.disparityindex
  * @since     next
- * @product   highstock
+ * @product   Highcharts Stock
  * @excluding allAreas, colorAxis,  dataParser, dataURL, joinBy, keys,
  *            navigatorOptions, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointRange, pointStart, showInNavigator, stacking
