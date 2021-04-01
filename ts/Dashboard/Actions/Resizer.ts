@@ -132,6 +132,11 @@ class Resizer {
         cell.resizer = {} as Resizer.Snap;
         cell.styles = {} as Resizer.ElementStyles;
 
+        // not created handlers when nested layouts, only in the child cells
+        if (cell.layout) {
+            return;
+        }
+
         if (cell.container) {
 
             // create HTML snapX
