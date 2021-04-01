@@ -12,7 +12,6 @@ let dashboard = new Dashboard('container', {
             enabled: true,
             menuItems: [{
                 type: 'saveLocal',
-                text: 'Save local 22',
                 className: 'test-test-test',
                 events: {
                     click: function () {
@@ -25,7 +24,7 @@ let dashboard = new Dashboard('container', {
             }]
         },
         lang: {
-            editMode: 'Edit mode 1',
+            editMode: 'Edit mode',
             saveLocal: 'Save locally 1'
         }
     },
@@ -342,6 +341,25 @@ console.log(dashboardBootstrap);
 console.log('========= Layout in layout =========');
 
 const dashboardLayout = new Dashboard('container-nested-layout', {
+    editMode: {
+        enabled: true,
+        contextMenu: {
+            iconURL: '/code/gfx/dashboard-icons/menu.svg',
+            enabled: true,
+            menuItems: [{
+                type: 'saveLocal',
+                className: 'test-test-test',
+                events: {
+                    click: function () {
+                        console.log(this);
+                    }
+                }
+            }, 'separator', {
+                type: 'editMode',
+                text: 'Edit on/off'
+            }]
+        }
+    },
     gui: {
         enabled: true,
         layoutOptions: {
