@@ -13,8 +13,8 @@ const EditGlobals: EditGlobals = {
         contextMenu: PREFIX + 'context-menu',
         contextMenuItem: PREFIX + 'context-menu-item',
         editModeEnabled: PREFIX + 'enabled',
-        editToolbar: PREFIX + 'edit-toolbar',
-        editToolbarItem: PREFIX + 'edit-toolbar-item'
+        editToolbar: PREFIX + 'toolbar',
+        editToolbarItem: PREFIX + 'toolbar-item'
     },
     lang: {
         editMode: 'Edit mode',

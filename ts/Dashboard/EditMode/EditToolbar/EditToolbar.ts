@@ -1,27 +1,21 @@
-import EditMode from './EditMode.js';
-import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import EditGlobals from './EditGlobals.js';
-import U from '../../Core/Utilities.js';
-import Cell from './../Layout/Cell.js';
-import type { CSSJSONObject } from './../../Data/DataCSSObject';
+import EditMode from '../EditMode.js';
+import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
+import EditGlobals from '../EditGlobals.js';
+import U from '../../../Core/Utilities.js';
+import type { CSSJSONObject } from '../../../Data/DataCSSObject';
 
 const {
-    addEvent,
     createElement,
     css,
     merge
 } = U;
 
-class EditToolbar {
+abstract class EditToolbar {
     /* *
     *
     *  Static Properties
     *
     * */
-    protected static readonly defaultOptions: EditToolbar.Options = {
-        enabled: true,
-        tools: ['drag', 'resize']
-    }
 
     public static tools: Record<string, EditToolbar.ToolOptions> = {
         separator: {
@@ -36,14 +30,6 @@ class EditToolbar {
             events: {
                 click: function (this: EditToolbar, e: any): void {}
             }
-        },
-        resize: {
-            type: 'resize',
-            // className: EditGlobals.classNames.editToolbarItem,
-            text: 't2',
-            events: {
-                click: function (): void {}
-            }
         }
     }
 
@@ -54,16 +40,15 @@ class EditToolbar {
     * */
     constructor(
         editMode: EditMode,
-        options?: EditToolbar.Options|undefined
+        options: EditToolbar.Options
     ) {
         this.editMode = editMode;
         this.isVisible = false;
         this.activeTools = [];
-        this.options = merge(EditToolbar.defaultOptions, options || {});
+        this.options = options;
+        this.tools = {};
 
         this.setContainer();
-        this.setEvents();
-        this.initTools();
     }
 
     /* *
@@ -74,8 +59,8 @@ class EditToolbar {
     public options: EditToolbar.Options;
     public editMode: EditMode;
     public container?: HTMLDOMElement;
-    public cell?: Cell;
     public isVisible: boolean;
+    public tools: Record<string, EditToolbar.Tool>;
     public activeTools: Array<EditToolbar.Tool>;
 
     /* *
@@ -102,21 +87,24 @@ class EditToolbar {
         );
     }
 
-    private initTools(): void {
+    protected initTools(
+        tools: Record<string, EditToolbar.ToolOptions>
+    ): void {
         const toolbar = this;
 
-        let toolOptions;
+        let toolOptions,
+            element;
 
         for (let i = 0, iEnd = toolbar.options.tools.length; i < iEnd; ++i) {
             toolOptions = toolbar.options.tools[i];
 
-            const toolSchema = typeof toolOptions === 'string' ? EditToolbar.tools[toolOptions] :
-                toolOptions.type ? EditToolbar.tools[toolOptions.type] : {};
+            const toolSchema = typeof toolOptions === 'string' ? tools[toolOptions] :
+                toolOptions.type ? tools[toolOptions.type] : {};
 
             const tool: EditToolbar.ToolOptions = typeof toolOptions === 'string' ?
                 merge(toolSchema, { type: toolOptions }) : merge(toolSchema, toolOptions);
 
-            createElement(
+            element = createElement(
                 'div', {
                     textContent: tool.text,
                     onclick: function (): void {
@@ -130,48 +118,62 @@ class EditToolbar {
                 tool.style || {},
                 toolbar.container
             );
+
+            // Save initialized tools.
+            toolbar.tools[tool.type] = {
+                type: tool.type,
+                element: element
+            };
         }
     }
 
-    private setEvents(): void {
-        const toolbar = this,
-            dashboard = toolbar.editMode.dashboard;
-
-        for (let i = 0, iEnd = dashboard.layouts.length; i < iEnd; ++i) {
-            const layout = dashboard.layouts[i];
-
-            for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
-                const row = layout.rows[j];
-
-                for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                    const cell = row.cells[k];
-
-                    if (cell.container) {
-                        addEvent(cell.container, 'mousemove', function (): void {
-                            toolbar.onMouseMove(cell);
-                        });
-                    }
-                }
-            }
-        }
-    }
-
-    private onMouseMove(
-        cell: Cell
+    public show(
+        x: number,
+        y: number,
+        tools: Array<string>
     ): void {
-        const toolbar = this,
-            cellCnt = cell.container;
+        const toolbar = this;
 
-        if (toolbar.container && cellCnt) {
+        let tool;
+
+        if (toolbar.editMode.isActive() && toolbar.container) {
             css(toolbar.container, {
-                left: ((cellCnt.parentElement || {}).offsetLeft || 0) +
-                  cellCnt.offsetLeft + cellCnt.offsetWidth - 30 + 'px',
-                top: ((cellCnt.parentElement || {}).offsetTop || 0) +
-                  cellCnt.offsetTop + 'px'
+                left: x + 'px',
+                top: y + 'px'
             });
 
+            for (let i = 0, iEnd = tools.length; i < iEnd; ++i) {
+                tool = toolbar.tools[tools[i]];
+
+                // Activate tool.
+                tool.element.style.display = 'block';
+                toolbar.activeTools.push(tool);
+            }
+
             toolbar.isVisible = true;
-            toolbar.cell = cell;
+        }
+    }
+
+    public hide(): void {
+        const toolbar = this;
+
+        let tool;
+
+        if (toolbar.container) {
+            css(toolbar.container, {
+                left: '-9999px',
+                top: '-9999px'
+            });
+
+            for (let i = 0, iEnd = toolbar.activeTools.length; i < iEnd; ++i) {
+                tool = toolbar.activeTools[i];
+
+                // Deactivate tool.
+                tool.element.style.display = 'none';
+            }
+
+            toolbar.activeTools.length = 0;
+            toolbar.isVisible = false;
         }
     }
 }
@@ -183,7 +185,7 @@ namespace EditToolbar {
     }
 
     export interface ToolOptions {
-        type?: string;
+        type: string;
         text?: string;
         className?: string;
         events?: Record<Event['type'], Function>;

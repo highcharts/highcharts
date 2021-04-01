@@ -183,7 +183,7 @@ class Cell extends GUIElement {
      *
      * @param {Component.ClassJSON} [json]
      * Component JSON.
-     * 
+     *
      * @param {HTMLDOMElement} cellContainer
      * Cell container
      *

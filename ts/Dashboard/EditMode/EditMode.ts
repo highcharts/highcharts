@@ -6,7 +6,8 @@ import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import EditRenderer from './EditRenderer.js';
 import Resizer from './../Actions/Resizer.js';
 import type Layout from './../Layout/Layout.js';
-import EditToolbar from './EditToolbar.js';
+import CellEditToolbar from './EditToolbar/CellEditToolbar.js';
+import RowEditToolbar from './EditToolbar/RowEditToolbar.js';
 
 const {
     merge,
@@ -88,7 +89,8 @@ class EditMode {
     public contextMenu?: EditMode.ContextMenu;
     public lang: EditGlobals.LangOptions;
     public renderer: EditRenderer;
-    public cellToolbar?: EditToolbar;
+    public cellToolbar?: CellEditToolbar;
+    public rowToolbar?: RowEditToolbar;
 
     /* *
     *
@@ -184,9 +186,14 @@ class EditMode {
             }
         }
 
-        // Init toolbar.
+        // Init cellToolbar.
         if (!editMode.cellToolbar) {
-            editMode.cellToolbar = new EditToolbar(editMode);
+            editMode.cellToolbar = new CellEditToolbar(editMode);
+        }
+
+        // Init rowToolbar.
+        if (!editMode.rowToolbar) {
+            editMode.rowToolbar = new RowEditToolbar(editMode);
         }
 
         // Temp solution.
@@ -216,6 +223,11 @@ class EditMode {
         dashboardCnt.classList.remove(
             EditGlobals.classNames.editModeEnabled
         );
+
+        // Hide toolbars.
+        if (editMode.cellToolbar) {
+            editMode.cellToolbar.hide();
+        }
     }
 
     private initLayoutResizer(layout: Layout): void {
@@ -231,6 +243,10 @@ class EditMode {
                 );
             }
         }
+    }
+
+    public isActive(): boolean {
+        return this.active;
     }
 }
 

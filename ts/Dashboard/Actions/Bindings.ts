@@ -115,7 +115,7 @@ class Bindings {
 
     public static componentFromJSON(
         json: HTMLComponent.ClassJSON|ChartComponent.ClassJSON,
-        cellContainer: HTMLDOMElement|undefined 
+        cellContainer: HTMLDOMElement|undefined
     ): HTMLComponent|ChartComponent|GroupComponent|undefined {
 
         const compontentContainer = cellContainer;

@@ -285,6 +285,10 @@ ul.elem-menu li:first-child {
     cursor: default;
 }
 
+.highcharts-dashboard-edit-toolbar-item {
+    display: none;
+}
+
 @media (max-width: 728px) {
 
     .w-1-2,
