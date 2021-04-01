@@ -781,13 +781,17 @@ seriesProto.processData = function (): any {
             }
 
             // DataGrouping x-coordinates.
-            if (dataGroupingOptions) {
-                const gapSize = series.currentDataGrouping && series.currentDataGrouping.gapSize;
-
-                let shiftInterval: number = 0;
+            if (dataGroupingOptions && series.xData) {
+                const gapSize = series.currentDataGrouping && series.currentDataGrouping.gapSize,
+                    groupedDataLength = groupedXData.length - 1,
+                    anchor = dataGroupingOptions.anchor,
+                    firstAnchor = pick(dataGroupingOptions.firstAnchor, anchor),
+                    lasttAnchor = pick(dataGroupingOptions.lastAnchor, anchor);
 
                 // Anchor points which are in the midle of the data set.
-                if (dataGroupingOptions.anchor && dataGroupingOptions.anchor !== 'start' && gapSize) {
+                if (anchor && anchor !== 'start' && gapSize) { // start set by default
+                    let shiftInterval: number = 0;
+
                     if (dataGroupingOptions.anchor === 'middle') {
                         shiftInterval = gapSize / 2;
                     } else { // end
@@ -797,6 +801,60 @@ seriesProto.processData = function (): any {
                     i = groupedXData.length - 1;
                     while (i-- && i > 0) {
                         groupedXData[i] += shiftInterval;
+                    }
+                }
+
+                // Change the first point position but only when it is
+                // the first point in the data set not in the current zoom.
+                if (
+                    series.xData[0] >= groupedXData[0] &&
+                    firstAnchor && gapSize &&
+                    series.groupMap
+                ) {
+                    if (firstAnchor === 'middle') {
+                        groupedXData[0] += gapSize / 2;
+                    } else if (firstAnchor === 'end') {
+                        groupedXData[0] += gapSize;
+                    } else if (firstAnchor === 'firstPoint') {
+                        const firstGroupStart = series.groupMap[0].start,
+                            firstGroupX = isNumber(firstGroupStart) && series.xData[firstGroupStart];
+
+                        firstGroupX ? groupedXData[0] = firstGroupX : void 0;
+
+                    } else if (firstAnchor === 'lastPoint' && series.groupMap[0]) {
+                        const firstGroupstEnd = (series.groupMap[0].start as number) +
+                            (series.groupMap[0].length as number - 1),
+                            firstGroupX = series.xData[firstGroupstEnd];
+
+                        firstGroupX ? groupedXData[0] = firstGroupX : void 0;
+                    }
+                }
+
+                // Change the last point position but only when it is
+                // the last point in the data set not in the current zoom.
+                if (
+                    groupedXData[groupedDataLength] >= xMax - (gapSize as any) &&
+                    lasttAnchor && gapSize &&
+                    series.groupMap
+                ) {
+                    const groupMapLength = series.groupMap.length - 1;
+
+                    if (firstAnchor === 'middle') {
+                        groupedXData[groupedDataLength] += gapSize / 2;
+                    } else if (firstAnchor === 'end') {
+                        groupedXData[groupedDataLength] += gapSize;
+                    } else if (firstAnchor === 'firstPoint') {
+                        const lastGroupStart = series.groupMap[groupMapLength].start,
+                            lastGroupX = isNumber(lastGroupStart) && series.xData[lastGroupStart];
+
+                        lastGroupX ? groupedXData[groupedDataLength] = lastGroupX : void 0;
+
+                    } else if (firstAnchor === 'lastPoint' && series.groupMap[0]) {
+                        const lastGroupstEnd = (series.groupMap[groupMapLength].start as number) +
+                            (series.groupMap[groupMapLength].length as number - 1),
+                            lastGroupX = series.xData[lastGroupstEnd];
+
+                        lastGroupX ? groupedXData[groupedDataLength] = lastGroupX : void 0;
                     }
                 }
             }
@@ -1191,6 +1249,27 @@ export default dataGrouping;
  */
 
 /**
+ * Specifies how the points which are not the first and the last should be
+ * located on the xAxis inside the group. Available options:
+ *
+ * 'start' places the point always at the beginning of the group
+ * (a.g.e. range 00:00:00 - 23:59:59 -> 00:00:00)
+ *
+ * 'middle' places the point always in the middle of the group
+ * (e.g. range 00:00:00 - 23:59:59 -> 12:00:00)
+ *
+ * 'end' places the point always at the end of the group
+ * (a.g.e. range 00:00:00 - 23:59:59 -> 23:59:59)
+ *
+ * @sample {highstock} stock/plotoptions/series-datagrouping-anchor
+ *         Changing the point x-coordinate inside the group.
+ *
+ * @type       {string}
+ * @since      next
+ * @apioption  plotOptions.series.dataGrouping.anchor
+ */
+
+/**
  * The method of approximation inside a group. When for example 30 days
  * are grouped into one month, this determines what value should represent
  * the group. Possible values are "average", "averages", "open", "high",
@@ -1269,6 +1348,35 @@ export default dataGrouping;
  */
 
 /**
+ * Specifies how the first grouped point should be positioned on the xAxis.
+ * If firstAnchor and/or lastAnchor are defined, then those options take
+ * precedence over anchor for the first and/or last grouped points.
+ * Available options:
+ *
+ * 'start' places the point always at the beginning of the group
+ * (a.g.e. range 00:00:00 - 23:59:59 -> 00:00:00)
+ *
+ * 'middle' places the point always in the middle of the group
+ * (e.g. range 00:00:00 - 23:59:59 -> 12:00:00)
+ *
+ * 'end' places the point always at the end of the group
+ * (a.g.e. range 00:00:00 - 23:59:59 -> 23:59:59)
+ *
+ * 'firstPoint' the first point in the group
+ * (e.g. points at 00:13, 00:35, 00:59 -> 00:13)
+ *
+ * 'lastPoint' the last point in the group
+ * (e.g. points at 00:13, 00:35, 00:59 -> 00:59)
+ *
+ * @sample {highstock} stock/plotoptions/series-datagrouping-first-anchor
+ *         Applying first and last anchor.
+ *
+ * @type       {string}
+ * @since      next
+ * @apioption  plotOptions.series.dataGrouping.firstAnchor
+ */
+
+/**
  * When data grouping is forced, it runs no matter how small the intervals
  * are. This can be handy for example when the sum should be calculated
  * for values appearing at random times within each hour.
@@ -1310,6 +1418,35 @@ export default dataGrouping;
  * @default   false
  * @since     6.1.0
  * @apioption plotOptions.series.dataGrouping.groupAll
+ */
+
+/**
+ * Specifies how the last grouped point should be positioned on the xAxis.
+ * If firstAnchor and/or lastAnchor are defined, then those options take
+ * precedence over anchor for the first and/or last grouped points.
+ * Available options:
+ *
+ * 'start' places the point always at the beginning of the group
+ * (a.g.e. range 00:00:00 - 23:59:59 -> 00:00:00)
+ *
+ * 'middle' places the point always in the middle of the group
+ * (e.g. range 00:00:00 - 23:59:59 -> 12:00:00)
+ *
+ * 'end' places the point always at the end of the group
+ * (a.g.e. range 00:00:00 - 23:59:59 -> 23:59:59)
+ *
+ * 'firstPoint' the first point in the group
+ * (e.g. points at 00:13, 00:35, 00:59 -> 00:13)
+ *
+ * 'lastPoint' the last point in the group
+ * (e.g. points at 00:13, 00:35, 00:59 -> 00:59)
+ *
+ * @sample {highstock} stock/plotoptions/series-datagrouping-first-anchor
+ *         Applying first and last anchor.
+ *
+ * @type       {string}
+ * @since      next
+ * @apioption  plotOptions.series.dataGrouping.lastAnchor
  */
 
 /**
