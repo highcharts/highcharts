@@ -248,6 +248,16 @@ h1 {
 
 .highcharts-dashboard-edit-toolbar-item {
     display: none;
+    width: 30px;
+    height: 30px;
+    padding: 2px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.highcharts-dashboard-edit-toolbar-item:hover {
+    cursor: pointer;
+    background-color: yellow;
 }
 
 @media (max-width: 728px) {

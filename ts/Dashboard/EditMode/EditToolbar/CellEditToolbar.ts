@@ -99,6 +99,10 @@ class CellEditToolbar extends EditToolbar {
 
             super.show(x, y, ['drag', 'resizeCell']);
             toolbar.cell = cell;
+
+            if (toolbar.editMode.rowToolbar) {
+                toolbar.editMode.rowToolbar.hide();
+            }
         }
     }
 

@@ -76,8 +76,8 @@ abstract class EditToolbar {
             'div', {
                 className: EditGlobals.classNames.editToolbar
             }, {
-                width: '30px',
-                height: '80px',
+                // width: '30px',
+                // height: '80px',
                 top: '-9999px',
                 left: '-9999px',
                 backgroundColor: 'red',
@@ -130,7 +130,8 @@ abstract class EditToolbar {
     public show(
         x: number,
         y: number,
-        tools: Array<string>
+        tools: Array<string>,
+        vertically: boolean = true
     ): void {
         const toolbar = this;
 
@@ -146,7 +147,7 @@ abstract class EditToolbar {
                 tool = toolbar.tools[tools[i]];
 
                 // Activate tool.
-                tool.element.style.display = 'block';
+                tool.element.style.display = vertically ? 'block' : 'inline-block';
                 toolbar.activeTools.push(tool);
             }
 

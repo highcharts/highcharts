@@ -2,10 +2,13 @@ import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Row from '../../Layout/Row.js';
 import EditToolbar from './EditToolbar.js';
+import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 
 const {
     addEvent,
-    merge
+    merge,
+    css,
+    createElement
 } = U;
 
 class RowEditToolbar extends EditToolbar {
@@ -44,7 +47,9 @@ class RowEditToolbar extends EditToolbar {
 
         // Temp.
         if (this.container) {
-            this.container.style.backgroundColor = 'blue';
+            css(this.container, {
+                backgroundColor: 'blue'
+            });
         }
 
         this.setEvents();
@@ -76,7 +81,19 @@ class RowEditToolbar extends EditToolbar {
                 const row = layout.rows[j];
 
                 if (row.container) {
-                    addEvent(row.container, 'mousemove', function (): void {
+                    // Render rowToolbar trigger.
+                    const trigger = createElement(
+                        'div', {}, {
+                            width: '30px',
+                            height: '30px',
+                            top: '0px',
+                            left: '0px',
+                            zIndex: 98,
+                            position: 'absolute'
+                        }, row.container
+                    );
+
+                    addEvent(trigger, 'mousemove', function (): void {
                         toolbar.onMouseMove(row);
                     });
                 }
@@ -96,8 +113,12 @@ class RowEditToolbar extends EditToolbar {
             x = rowCnt.offsetLeft;
             y = rowCnt.offsetTop;
 
-            super.show(x, y, ['drag', 'resizeRow']);
+            super.show(x, y, ['drag', 'resizeRow'], false);
             toolbar.row = row;
+
+            if (toolbar.editMode.cellToolbar) {
+                toolbar.editMode.cellToolbar.hide();
+            }
         }
     }
 
