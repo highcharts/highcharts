@@ -300,6 +300,10 @@ h1 {
     left: -200px;
 }
 
+.highcharts-dashboard-edit-hidden-cells .highcharts-dashboard-cell:not(.highcharts-dashboard-edit-current-cell) {
+    opacity: 0.3;
+}
+
 @media (max-width: 728px) {
 
     .w-1-2,

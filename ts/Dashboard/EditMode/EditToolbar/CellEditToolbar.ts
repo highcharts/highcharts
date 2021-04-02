@@ -2,6 +2,7 @@ import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Cell from '../../Layout/Cell.js';
 import EditToolbar from './EditToolbar.js';
+import EditGlobals from '../EditGlobals.js';
 
 const {
     addEvent,
@@ -115,6 +116,14 @@ class CellEditToolbar extends EditToolbar {
                 'title',
                 'option1'
             ]);
+
+            // temporary -> move to OptionsToolbar
+            // highcharts-dashboard-edit-hidden-cells
+            console.log('cell', this.cell);
+            this.cell?.container?.classList.add(EditGlobals.classNames.currentEditedCell);
+            this.cell?.row.layout.dashboard.container.classList.add(
+                EditGlobals.classNames.disabledNotEditedCells
+            );
         }
     }
 
