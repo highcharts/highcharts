@@ -81,19 +81,7 @@ class RowEditToolbar extends EditToolbar {
                 const row = layout.rows[j];
 
                 if (row.container) {
-                    // Render rowToolbar trigger.
-                    const trigger = createElement(
-                        'div', {}, {
-                            width: '30px',
-                            height: '30px',
-                            top: '0px',
-                            left: '0px',
-                            zIndex: 98,
-                            position: 'absolute'
-                        }, row.container
-                    );
-
-                    addEvent(trigger, 'mousemove', function (): void {
+                    addEvent(row.container, 'mousemove', function (): void {
                         toolbar.onMouseMove(row);
                     });
                 }
@@ -115,10 +103,6 @@ class RowEditToolbar extends EditToolbar {
 
             super.show(x, y, ['drag', 'resizeRow'], false);
             toolbar.row = row;
-
-            if (toolbar.editMode.cellToolbar) {
-                toolbar.editMode.cellToolbar.hide();
-            }
         }
     }
 

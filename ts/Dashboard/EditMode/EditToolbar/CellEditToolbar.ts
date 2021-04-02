@@ -16,17 +16,19 @@ class CellEditToolbar extends EditToolbar {
     * */
     protected static readonly defaultOptions: CellEditToolbar.Options = {
         enabled: true,
-        tools: ['drag', 'resizeCell']
+        tools: ['drag', 'cellOptions']
     }
 
     public static tools: Record<string, EditToolbar.ToolOptions> =
     merge(EditToolbar.tools, {
-        resizeCell: {
-            type: 'resizeCell',
+        cellOptions: {
+            type: 'cellOptions',
             // className: EditGlobals.classNames.editToolbarItem,
-            text: 't2',
+            text: 'opt',
             events: {
-                click: function (): void {}
+                click: function (this: CellEditToolbar, e: any): void {
+                    this.onCellOptions(e);
+                }
             }
         }
     })
@@ -97,12 +99,22 @@ class CellEditToolbar extends EditToolbar {
             y = ((cellCnt.parentElement || {}).offsetTop || 0) +
               cellCnt.offsetTop;
 
-            super.show(x, y, ['drag', 'resizeCell']);
+            super.show(x, y, ['drag', 'cellOptions']);
             toolbar.cell = cell;
+        }
+    }
 
-            if (toolbar.editMode.rowToolbar) {
-                toolbar.editMode.rowToolbar.hide();
-            }
+    public onCellOptions(
+        e: any
+    ): void {
+        const toolbar = this;
+
+        if (toolbar.editMode.optionsToolbar) {
+            // ['title', 'option1'] will be dynamic.
+            toolbar.editMode.optionsToolbar.showOptions([
+                'title',
+                'option1'
+            ]);
         }
     }
 

@@ -8,6 +8,7 @@ import Resizer from './../Actions/Resizer.js';
 import type Layout from './../Layout/Layout.js';
 import CellEditToolbar from './EditToolbar/CellEditToolbar.js';
 import RowEditToolbar from './EditToolbar/RowEditToolbar.js';
+import OptionsToolbar from './EditToolbar/OptionsToolbar.js';
 
 const {
     merge,
@@ -91,6 +92,7 @@ class EditMode {
     public renderer: EditRenderer;
     public cellToolbar?: CellEditToolbar;
     public rowToolbar?: RowEditToolbar;
+    public optionsToolbar?: OptionsToolbar;
 
     /* *
     *
@@ -194,6 +196,11 @@ class EditMode {
         // Init rowToolbar.
         if (!editMode.rowToolbar) {
             editMode.rowToolbar = new RowEditToolbar(editMode);
+        }
+
+        // Init optionsToolbar.
+        if (!editMode.optionsToolbar) {
+            editMode.optionsToolbar = new OptionsToolbar(editMode);
         }
 
         // Temp solution.
