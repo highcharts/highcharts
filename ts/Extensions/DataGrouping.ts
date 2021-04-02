@@ -771,13 +771,10 @@ seriesProto.processData = function (): any {
 
             // Prevent the smoothed data to spill out left and right, and make
             // sure data is not shifted to the left- deprecated.
-            if ((dataGroupingOptions as any).smoothed && groupedXData.length) {
-                i = groupedXData.length - 1;
-                groupedXData[i] = Math.min(groupedXData[i], xMax);
-                while (i-- && i > 0) {
-                    groupedXData[i] += interval / 2;
-                }
-                groupedXData[0] = Math.max(groupedXData[0], xMin);
+            if (dataGroupingOptions && dataGroupingOptions.smoothed) {
+                dataGroupingOptions.firstAnchor = 'firstPoint';
+                dataGroupingOptions.anchor = 'middle';
+                dataGroupingOptions.lastAnchor = 'lastPoint';
             }
 
             // DataGrouping x-coordinates.
@@ -786,7 +783,7 @@ seriesProto.processData = function (): any {
                     groupedDataLength = groupedXData.length - 1,
                     anchor = dataGroupingOptions.anchor,
                     firstAnchor = pick(dataGroupingOptions.firstAnchor, anchor),
-                    lasttAnchor = pick(dataGroupingOptions.lastAnchor, anchor);
+                    lastAnchor = pick(dataGroupingOptions.lastAnchor, anchor);
 
                 // Anchor points which are in the midle of the data set.
                 if (anchor && anchor !== 'start' && gapSize) { // start set by default
@@ -834,22 +831,22 @@ seriesProto.processData = function (): any {
                 // the last point in the data set not in the current zoom.
                 if (
                     groupedXData[groupedDataLength] >= xMax - (gapSize as any) &&
-                    lasttAnchor && gapSize &&
+                    lastAnchor && gapSize &&
                     series.groupMap
                 ) {
                     const groupMapLength = series.groupMap.length - 1;
 
-                    if (firstAnchor === 'middle') {
+                    if (lastAnchor === 'middle') {
                         groupedXData[groupedDataLength] += gapSize / 2;
-                    } else if (firstAnchor === 'end') {
+                    } else if (lastAnchor === 'end') {
                         groupedXData[groupedDataLength] += gapSize;
-                    } else if (firstAnchor === 'firstPoint') {
+                    } else if (lastAnchor === 'firstPoint') {
                         const lastGroupStart = series.groupMap[groupMapLength].start,
                             lastGroupX = isNumber(lastGroupStart) && series.xData[lastGroupStart];
 
                         lastGroupX ? groupedXData[groupedDataLength] = lastGroupX : void 0;
 
-                    } else if (firstAnchor === 'lastPoint' && series.groupMap[0]) {
+                    } else if (lastAnchor === 'lastPoint' && series.groupMap[0]) {
                         const lastGroupstEnd = (series.groupMap[groupMapLength].start as number) +
                             (series.groupMap[groupMapLength].length as number - 1),
                             lastGroupX = series.xData[lastGroupstEnd];
@@ -1252,13 +1249,13 @@ export default dataGrouping;
  * Specifies how the points which are not the first and the last should be
  * located on the xAxis inside the group. Available options:
  *
- * 'start' places the point always at the beginning of the group
+ * - `start` places the point always at the beginning of the group
  * (a.g.e. range 00:00:00 - 23:59:59 -> 00:00:00)
  *
- * 'middle' places the point always in the middle of the group
+ * - `middle` places the point always in the middle of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 12:00:00)
  *
- * 'end' places the point always at the end of the group
+ * - `end` places the point always at the end of the group
  * (a.g.e. range 00:00:00 - 23:59:59 -> 23:59:59)
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-anchor
@@ -1266,6 +1263,7 @@ export default dataGrouping;
  *
  * @type       {string}
  * @since      next
+ * @default    start
  * @apioption  plotOptions.series.dataGrouping.anchor
  */
 
@@ -1353,19 +1351,19 @@ export default dataGrouping;
  * precedence over anchor for the first and/or last grouped points.
  * Available options:
  *
- * 'start' places the point always at the beginning of the group
+ * -`start` places the point always at the beginning of the group
  * (a.g.e. range 00:00:00 - 23:59:59 -> 00:00:00)
  *
- * 'middle' places the point always in the middle of the group
+ * -`middle` places the point always in the middle of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 12:00:00)
  *
- * 'end' places the point always at the end of the group
+ * -`end` places the point always at the end of the group
  * (a.g.e. range 00:00:00 - 23:59:59 -> 23:59:59)
  *
- * 'firstPoint' the first point in the group
+ * -`firstPoint` the first point in the group
  * (e.g. points at 00:13, 00:35, 00:59 -> 00:13)
  *
- * 'lastPoint' the last point in the group
+ * -`lastPoint` the last point in the group
  * (e.g. points at 00:13, 00:35, 00:59 -> 00:59)
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-first-anchor
@@ -1426,19 +1424,19 @@ export default dataGrouping;
  * precedence over anchor for the first and/or last grouped points.
  * Available options:
  *
- * 'start' places the point always at the beginning of the group
+ * -`start` places the point always at the beginning of the group
  * (a.g.e. range 00:00:00 - 23:59:59 -> 00:00:00)
  *
- * 'middle' places the point always in the middle of the group
+ * -`middle` places the point always in the middle of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 12:00:00)
  *
- * 'end' places the point always at the end of the group
+ * -`end` places the point always at the end of the group
  * (a.g.e. range 00:00:00 - 23:59:59 -> 23:59:59)
  *
- * 'firstPoint' the first point in the group
+ * -`firstPoint` the first point in the group
  * (e.g. points at 00:13, 00:35, 00:59 -> 00:13)
  *
- * 'lastPoint' the last point in the group
+ * -`lastPoint` the last point in the group
  * (e.g. points at 00:13, 00:35, 00:59 -> 00:59)
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-first-anchor

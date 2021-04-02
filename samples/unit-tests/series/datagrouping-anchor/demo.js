@@ -220,3 +220,54 @@ QUnit.test('Data grouping anchor for the first and last points in the data set.'
     );
 
 });
+
+QUnit.test('Deprecated smoothed option.', function (assert) {
+    const hour = 3600 * 1000,
+        data = [
+            [0.2 * hour, 1],
+            [1 * hour, 2],
+            [1.3 * hour, 2],
+            [2 * hour, 3],
+            [3 * hour, 4],
+            [4 * hour, 1],
+            [5 * hour, 2],
+            [6 * hour, 3],
+            [7 * hour, 4],
+            [8 * hour, 1],
+            [9 * hour, 2],
+            [10.3 * hour, 3],
+            [11 * hour, 2],
+            [11.7 * hour, 4]
+        ],
+        chart = Highcharts.stockChart('container', {
+            series: [{
+                data: data,
+                dataGrouping: {
+                    smoothed: true,
+                    forced: true,
+                    units: [
+                        ['hour', [2]]
+                    ]
+                }
+            }]
+        });
+
+    assert.strictEqual(
+        chart.series[0].points[0].x,
+        0.2 * hour,
+        `When the smoothed enabled, the first point 
+        should be placed where the first group point is.`
+    );
+    assert.strictEqual(
+        chart.series[0].points[1].x,
+        3 * hour,
+        `When the smoothed enabled, the next point ,
+        should be placed at the center of the group.`
+    );
+    assert.strictEqual(
+        chart.series[0].points[chart.series[0].points.length - 1].x,
+        11.7 * hour,
+        `When the smoothed enabled, the last point 
+        should be placed where the last group point is.`
+    );
+});
