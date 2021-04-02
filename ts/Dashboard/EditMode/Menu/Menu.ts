@@ -2,6 +2,7 @@ import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import MenuItem from './MenuItem.js';
+import type { CSSJSONObject } from './../../../Data/DataCSSObject';
 
 const {
     createElement,
@@ -70,10 +71,9 @@ abstract class Menu {
         menu.container = createElement(
             'div', {
                 className: EditGlobals.classNames.editToolbar
-            }, {
-                top: '-9999px',
-                left: '-9999px'
-            }, menu.parentElement
+            },
+            this.options.style || {},
+            menu.parentElement
         );
     }
 
@@ -171,6 +171,7 @@ namespace Menu {
     export interface Options {
         enabled: boolean;
         items: Array<MenuItem.Options|string>;
+        style?: CSSJSONObject;
     }
 }
 

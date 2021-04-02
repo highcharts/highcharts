@@ -3,15 +3,16 @@ import U from '../../../Core/Utilities.js';
 import Cell from '../../Layout/Cell.js';
 import Row from '../../Layout/Row.js';
 import Layout from '../../Layout/Layout.js';
-import EditToolbar from './EditToolbar.js';
 import EditGlobals from '../EditGlobals.js';
+import Menu from '../Menu/Menu.js';
+import type MenuItem from '../Menu/MenuItem.js';
 
 const {
     merge,
     css
 } = U;
 
-class OptionsToolbar extends EditToolbar {
+class OptionsToolbar extends Menu {
     /* *
     *
     *  Static Properties
@@ -19,11 +20,11 @@ class OptionsToolbar extends EditToolbar {
     * */
     protected static readonly defaultOptions: OptionsToolbar.Options = {
         enabled: true,
-        tools: ['title']
+        items: ['title']
     }
 
-    public static tools: Record<string, EditToolbar.ToolOptions> =
-    merge(EditToolbar.tools, {
+    public static tools: Record<string, MenuItem.Options> =
+    merge(Menu.items, {
         title: {
             type: 'title',
             text: 'Options',
@@ -42,7 +43,10 @@ class OptionsToolbar extends EditToolbar {
         editMode: EditMode,
         options?: OptionsToolbar.Options|undefined
     ) {
-        super(editMode, merge(OptionsToolbar.defaultOptions, options || {}));
+        super(
+            editMode.dashboard.container,
+            merge(OptionsToolbar.defaultOptions, options || {})
+        );
 
         if (this.container) {
             this.container.classList.add(
@@ -50,7 +54,7 @@ class OptionsToolbar extends EditToolbar {
             );
         }
 
-        super.initTools(OptionsToolbar.tools);
+        super.initItems(OptionsToolbar.items);
     }
 
     /* *
@@ -89,7 +93,7 @@ class OptionsToolbar extends EditToolbar {
 }
 
 namespace OptionsToolbar {
-    export interface Options extends EditToolbar.Options {}
+    export interface Options extends Menu.Options {}
 }
 
 export default OptionsToolbar;

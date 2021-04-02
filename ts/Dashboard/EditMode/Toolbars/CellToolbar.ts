@@ -1,15 +1,16 @@
 import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Cell from '../../Layout/Cell.js';
-import EditToolbar from './EditToolbar.js';
 import EditGlobals from '../EditGlobals.js';
+import Menu from '../Menu/Menu.js';
+import MenuItem from '../Menu/MenuItem.js';
 
 const {
     addEvent,
     merge
 } = U;
 
-class CellEditToolbar extends EditToolbar {
+class CellEditToolbar extends Menu {
     /* *
     *
     *  Static Properties
@@ -17,11 +18,11 @@ class CellEditToolbar extends EditToolbar {
     * */
     protected static readonly defaultOptions: CellEditToolbar.Options = {
         enabled: true,
-        tools: ['drag', 'cellOptions']
+        items: ['drag', 'cellOptions']
     }
 
-    public static tools: Record<string, EditToolbar.ToolOptions> =
-    merge(EditToolbar.tools, {
+    public static items: Record<string, MenuItem.Options> =
+    merge(Menu.items, {
         cellOptions: {
             type: 'cellOptions',
             // className: EditGlobals.classNames.editToolbarItem,
@@ -43,10 +44,15 @@ class CellEditToolbar extends EditToolbar {
         editMode: EditMode,
         options?: CellEditToolbar.Options|undefined
     ) {
-        super(editMode, merge(CellEditToolbar.defaultOptions, options || {}));
-        this.setEvents();
+        super(
+            editMode.dashboard.container,
+            merge(CellEditToolbar.defaultOptions, options || {})
+        );
 
-        super.initTools(CellEditToolbar.tools);
+        this.editMode = editMode;
+
+        this.setEvents();
+        super.initItems(CellEditToolbar.items);
     }
 
     /* *
@@ -55,6 +61,7 @@ class CellEditToolbar extends EditToolbar {
     *
     * */
     public cell?: Cell;
+    public editMode: EditMode;
 
     /* *
     *
@@ -134,7 +141,7 @@ class CellEditToolbar extends EditToolbar {
 }
 
 namespace CellEditToolbar {
-    export interface Options extends EditToolbar.Options {}
+    export interface Options extends Menu.Options {}
 }
 
 export default CellEditToolbar;

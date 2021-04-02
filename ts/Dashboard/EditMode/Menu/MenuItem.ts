@@ -68,7 +68,7 @@ class MenuItem {
                     (options.className || '')
             },
             options.style || {},
-            item.container
+            item.menu.container
         );
     }
 

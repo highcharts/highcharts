@@ -1,17 +1,16 @@
 import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Row from '../../Layout/Row.js';
-import EditToolbar from './EditToolbar.js';
-import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
+import Menu from '../Menu/Menu.js';
+import MenuItem from '../Menu/MenuItem.js';
 
 const {
     addEvent,
     merge,
-    css,
-    createElement
+    css
 } = U;
 
-class RowEditToolbar extends EditToolbar {
+class RowEditToolbar extends Menu {
     /* *
     *
     *  Static Properties
@@ -19,11 +18,19 @@ class RowEditToolbar extends EditToolbar {
     * */
     protected static readonly defaultOptions: RowEditToolbar.Options = {
         enabled: true,
-        tools: ['drag', 'resizeRow']
+        items: ['drag', 'resizeRow']
     }
 
-    public static tools: Record<string, EditToolbar.ToolOptions> =
-    merge(EditToolbar.tools, {
+    public static items: Record<string, MenuItem.Options> =
+    merge(Menu.items, {
+        drag: {
+            type: 'drag',
+            // className: EditGlobals.classNames.editToolbarItem,
+            text: 't1',
+            events: {
+                click: function (): void {}
+            }
+        },
         resizeRow: {
             type: 'resizeRow',
             // className: EditGlobals.classNames.editToolbarItem,
@@ -43,7 +50,12 @@ class RowEditToolbar extends EditToolbar {
         editMode: EditMode,
         options?: RowEditToolbar.Options|undefined
     ) {
-        super(editMode, merge(RowEditToolbar.defaultOptions, options || {}));
+        super(
+            editMode.dashboard.container,
+            merge(RowEditToolbar.defaultOptions, options || {})
+        );
+
+        this.editMode = editMode;
 
         // Temp.
         if (this.container) {
@@ -54,7 +66,7 @@ class RowEditToolbar extends EditToolbar {
 
         this.setEvents();
 
-        super.initTools(RowEditToolbar.tools);
+        super.initItems(RowEditToolbar.items);
     }
 
     /* *
@@ -63,6 +75,7 @@ class RowEditToolbar extends EditToolbar {
     *
     * */
     public row?: Row;
+    public editMode: EditMode;
 
     /* *
     *
@@ -101,7 +114,7 @@ class RowEditToolbar extends EditToolbar {
             x = rowCnt.offsetLeft;
             y = rowCnt.offsetTop;
 
-            super.show(x, y, ['drag', 'resizeRow'], false);
+            super.show(x, y, ['drag', 'resizeRow']);
             toolbar.row = row;
         }
     }
@@ -113,7 +126,7 @@ class RowEditToolbar extends EditToolbar {
 }
 
 namespace RowEditToolbar {
-    export interface Options extends EditToolbar.Options {}
+    export interface Options extends Menu.Options {}
 }
 
 export default RowEditToolbar;

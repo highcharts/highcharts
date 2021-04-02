@@ -6,9 +6,9 @@ import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import EditRenderer from './EditRenderer.js';
 import Resizer from './../Actions/Resizer.js';
 import type Layout from './../Layout/Layout.js';
-import CellEditToolbar from './EditToolbar/CellEditToolbar.js';
-import RowEditToolbar from './EditToolbar/RowEditToolbar.js';
-import OptionsToolbar from './EditToolbar/OptionsToolbar.js';
+import CellEditToolbar from './Toolbars/CellToolbar.js';
+import RowEditToolbar from './Toolbars/RowToolbar.js';
+import OptionsToolbar from './Toolbars/OptionsToolbar.js';
 
 const {
     merge,
