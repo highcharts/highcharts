@@ -88,7 +88,7 @@ body {
 
 .highcharts-dashboard-edit-resize-snap {
     position: absolute;
-    background: red;
+    /*background: red;*/
     opacity: 0.5;
     z-index: 10;
 }
@@ -254,6 +254,14 @@ h1 {
     cursor: default;
 }
 
+.highcharts-dashboard-edit-toolbar {
+    background: #454545;
+    color:#aaa;
+    position: absolute;
+    z-index: 99;
+    border-radius: 3px;
+}
+
 .highcharts-dashboard-edit-toolbar-item {
     display: none;
     width: 30px;
@@ -261,11 +269,17 @@ h1 {
     padding: 2px;
     box-sizing: border-box;
     text-align: center;
+    border-top: 1px solid #333;
+}
+
+.highcharts-dashboard-edit-toolbar-item:first-child {
+    border: none;
 }
 
 .highcharts-dashboard-edit-toolbar-item:hover {
     cursor: pointer;
-    background-color: yellow;
+    color: #333;
+    background-color: #bbd1ed;
 }
 
 @media (max-width: 728px) {
