@@ -48,7 +48,7 @@ class RowEditToolbar extends EditToolbar {
         // Temp.
         if (this.container) {
             css(this.container, {
-                backgroundColor: 'blue'
+                backgroundColor: '#252526'
             });
         }
 

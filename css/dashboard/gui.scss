@@ -9,6 +9,8 @@ body {
 .highcharts-dashboard {
     background-color: #F1F4F6;
     padding: 20px 10px;
+    position: relative;
+    overflow: hidden;
 }
 
 .main-title {
@@ -255,8 +257,8 @@ h1 {
 }
 
 .highcharts-dashboard-edit-toolbar {
-    background: #454545;
-    color:#aaa;
+    background: #252526;
+    color:#a6a6a6;
     position: absolute;
     z-index: 99;
     border-radius: 3px;
@@ -269,17 +271,33 @@ h1 {
     padding: 2px;
     box-sizing: border-box;
     text-align: center;
-    border-top: 1px solid #333;
-}
-
-.highcharts-dashboard-edit-toolbar-item:first-child {
-    border: none;
 }
 
 .highcharts-dashboard-edit-toolbar-item:hover {
     cursor: pointer;
     color: #333;
     background-color: #bbd1ed;
+}
+
+.highcharts-dashboard-edit-toolbar-options {
+    top: 0px;
+    left: -200px;
+    background: #252526;
+    color:#a6a6a6;
+    position: absolute;
+    z-index: 1000;
+    height: 100%;
+    width: 200px;
+}
+
+.highcharts-dashboard-edit-toolbar-show {
+    transition: 1s;
+    left: 0;
+}
+
+.highcharts-dashboard-edit-toolbar-hide {
+    transition: 1s;
+    left: -200px;
 }
 
 @media (max-width: 728px) {

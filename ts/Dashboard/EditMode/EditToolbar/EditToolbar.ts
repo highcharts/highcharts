@@ -75,15 +75,7 @@ abstract class EditToolbar {
         toolbar.container = createElement(
             'div', {
                 className: EditGlobals.classNames.editToolbar
-            }, {
-                // width: '30px',
-                // height: '80px',
-                top: '-9999px',
-                left: '-9999px',
-                backgroundColor: 'red',
-                position: 'absolute',
-                zIndex: 99
-            }, dashboard.container
+            }, {}, dashboard.container
         );
     }
 

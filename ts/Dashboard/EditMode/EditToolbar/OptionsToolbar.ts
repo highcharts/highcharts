@@ -4,6 +4,7 @@ import Cell from '../../Layout/Cell.js';
 import Row from '../../Layout/Row.js';
 import Layout from '../../Layout/Layout.js';
 import EditToolbar from './EditToolbar.js';
+import EditGlobals from '../EditGlobals.js';
 
 const {
     merge,
@@ -43,16 +44,10 @@ class OptionsToolbar extends EditToolbar {
     ) {
         super(editMode, merge(OptionsToolbar.defaultOptions, options || {}));
 
-        // Temp.
         if (this.container) {
-            css(this.container, {
-                backgroundColor: '#efefef',
-                border: '1px solid #000',
-                position: 'absolute',
-                height: '100%',
-                width: '300px',
-                zIndex: 99999
-            });
+            this.container.classList.add(
+                EditGlobals.classNames.editToolbarOptions
+            );
         }
 
         super.initTools(OptionsToolbar.tools);
@@ -72,11 +67,21 @@ class OptionsToolbar extends EditToolbar {
     * */
 
     public showOptions(tools: Array<string>): void {
-        super.show(0, 0, tools);
+        if (this.container) {
+            this.container.classList.add(
+                EditGlobals.classNames.editToolbarOptionsShow
+            );
+        }
+
+        // TODO show Options
     }
 
     public hide(): void {
-        super.hide();
+        if (this.container) {
+            this.container.classList.add(
+                EditGlobals.classNames.editToolbarOptionsHide
+            );
+        }
         this.guiElement = void 0;
     }
 }

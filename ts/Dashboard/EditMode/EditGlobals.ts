@@ -14,7 +14,10 @@ const EditGlobals: EditGlobals = {
         contextMenuItem: PREFIX + 'context-menu-item',
         editModeEnabled: PREFIX + 'enabled',
         editToolbar: PREFIX + 'toolbar',
-        editToolbarItem: PREFIX + 'toolbar-item'
+        editToolbarItem: PREFIX + 'toolbar-item',
+        editToolbarOptions: PREFIX + 'toolbar-options',
+        editToolbarOptionsShow: PREFIX + 'toolbar-show',
+        editToolbarOptionsHide: PREFIX + 'toolbar-hide'
     },
     lang: {
         editMode: 'Edit mode',
@@ -42,6 +45,9 @@ namespace EditGlobals {
         editModeEnabled: string;
         editToolbar: string;
         editToolbarItem: string;
+        editToolbarOptions: string;
+        editToolbarOptionsShow: string;
+        editToolbarOptionsHide: string;
     }
 
     export interface LangOptions {
