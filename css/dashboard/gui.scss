@@ -231,11 +231,19 @@ h1 {
     }
 }
 
+.highcharts-dashboard-edit-context-menu-btn:hover {
+    border: 1px solid #4B4B4D;
+}
+
 .highcharts-dashboard-edit-context-menu-item {
     height: 30px;
     padding: 5px;
     color: #555;
     cursor: pointer;
+}
+
+.highcharts-dashboard-edit-context-menu-item:hover {
+    color: #000;
 }
 
 .highcharts-dashboard-edit-separator {
