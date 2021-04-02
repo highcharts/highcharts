@@ -18,7 +18,7 @@ class CellEditToolbar extends Menu {
     * */
     protected static readonly defaultOptions: CellEditToolbar.Options = {
         enabled: true,
-        items: ['drag', 'cellOptions']
+        items: ['drag', 'settings', 'destroy']
     }
 
     public static items: Record<string, MenuItem.Options> =
@@ -125,8 +125,6 @@ class CellEditToolbar extends Menu {
             ]);
 
             // temporary -> move to OptionsToolbar
-            // highcharts-dashboard-edit-hidden-cells
-            console.log('cell', this.cell);
             this.cell?.container?.classList.add(EditGlobals.classNames.currentEditedCell);
             this.cell?.row.layout.dashboard.container.classList.add(
                 EditGlobals.classNames.disabledNotEditedCells

@@ -58,7 +58,7 @@ class MenuItem {
 
         item.container = createElement(
             'div', {
-                textContent: options.text,
+                // textContent: options.text,
                 onclick: function (): void {
                     if (options.events && options.events.click) {
                         options.events.click.apply(item.menu, arguments);
@@ -70,6 +70,10 @@ class MenuItem {
             options.style || {},
             item.menu.container
         );
+
+        console.log('setMenuContinaer', item, options);
+        // item.container.style.background = 'url(' + editMode.options.contextMenu.contextMenuIcon + ') no-repeat 50% 50%';
+
     }
 
     public activate(): void {

@@ -43,8 +43,10 @@ class EditRenderer {
                     }
                 }, {}, editMode.dashboard.container
             );
+        ctxBtnElement.style.background = 'url(' +
+            editMode.options.contextMenu.contextMenuIcon +
+        ') no-repeat 50% 50%';
 
-        ctxBtnElement.style.background = 'url(' + editMode.options.contextMenu.iconURL + ') no-repeat 50% 50%';
 
         return ctxBtnElement;
     }

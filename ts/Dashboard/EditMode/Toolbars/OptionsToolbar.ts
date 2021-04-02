@@ -77,8 +77,6 @@ class OptionsToolbar extends Menu {
             );
         }
 
-        console.log('gui element', this.guiElement);
-
         // TODO show Options
     }
 

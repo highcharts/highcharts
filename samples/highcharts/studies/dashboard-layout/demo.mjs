@@ -8,7 +8,7 @@ let dashboard = new Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            iconURL: '/code/gfx/dashboard-icons/menu.svg',
+            contextMenuIcon: '/code/gfx/dashboard-icons/menu.svg',
             enabled: true,
             menuItems: [{
                 type: 'saveLocal',
@@ -344,7 +344,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
-            iconURL: '/code/gfx/dashboard-icons/menu.svg',
+            contextMenuIcon: '/code/gfx/dashboard-icons/menu.svg',
             enabled: true,
             menuItems: [{
                 type: 'saveLocal',
@@ -358,7 +358,20 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
                 type: 'editMode',
                 text: 'Edit on/off'
             }]
+        },
+        /*
+        * TODO consider use toolbarEdit
+        */
+        toolbar: {
+            dragIcon: '/code/gfx/dashboard-icons/drag.svg',
+            settingsIcon: '/code/gfx/dashboard-icons/edit.svg',
+            trashIcon: '/code/gfx/dashboard-icons/destroy.svg'
         }
+        /* TODO add when needed
+        toolbarOptions: {
+
+        }
+        */
     },
     gui: {
         enabled: true,
