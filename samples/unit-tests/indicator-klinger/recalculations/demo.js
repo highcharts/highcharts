@@ -204,7 +204,7 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
         }),
         series = chart.series;
 
-    function toFastStochasticWithRound(arr, index) {
+    function klingerWithRound(arr, index) {
         return Highcharts.map(arr, function (point) {
             return point[index] ?
                 parseFloat(point[index].toFixed(0)) :
@@ -241,7 +241,7 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        toFastStochasticWithRound(chart.series[2].yData, 0),
+        klingerWithRound(chart.series[2].yData, 0),
         [
             -4895496810,
             -4460879653,
@@ -273,7 +273,7 @@ QUnit.test('Test Klinger calculations on data updates.', function (assert) {
     );
 
     assert.deepEqual(
-        toFastStochasticWithRound(chart.series[2].yData, 1),
+        klingerWithRound(chart.series[2].yData, 1),
         [
             null,
             null,

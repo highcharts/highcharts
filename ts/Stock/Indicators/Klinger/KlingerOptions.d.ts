@@ -26,11 +26,10 @@ import type {
 
 export interface KlingerOptions extends SMAOptions {
     params?: KlingerParamsOptions;
-    signal?: Record<string, CSSObject>;
+    signalLine?: Record<string, CSSObject>;
 }
 
 export interface KlingerParamsOptions extends SMAParamsOptions {
-    // for inheritance
     fastAvgPeriod: number;
     slowAvgPeriod: number;
     signalPeriod: number;

@@ -18,7 +18,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-ohlcv.json', func
 
     Highcharts.stockChart('container', {
         title: {
-            text: 'Klinger Oscilator'
+            text: 'Klinger Oscillator'
         },
         legend: {
             enabled: true
