@@ -163,9 +163,9 @@ class StockChart extends Chart {
         userOptions: Partial<Highcharts.Options>,
         callback?: Chart.CallbackFunction
     ): void {
-        // to increase performance, don't merge the data
-        var seriesOptions = userOptions.series,
-            defaultOptions = getOptions(),
+        const defaultOptions = getOptions(),
+            xAxisOptions = userOptions.xAxis,
+            yAxisOptions = userOptions.yAxis,
             // Always disable startOnTick:true on the main axis when the
             // navigator is enabled (#1090)
             navigatorEnabled = pick(
@@ -174,36 +174,10 @@ class StockChart extends Chart {
                 true
             );
 
-        // apply X axis options to both single and multi y axes
-        userOptions.xAxis = splat(userOptions.xAxis || {}).map(function (
-            xAxisOptions: Highcharts.XAxisOptions,
-            i: number
-        ): Highcharts.XAxisOptions {
-            return merge(
-                getDefaultAxisOptions('xAxis', xAxisOptions),
-                defaultOptions.xAxis, // #3802
-                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
-                xAxisOptions, // user options
-                getForcedAxisOptions('xAxis', userOptions)
-            );
-        });
+        // Avoid doing these twice
+        userOptions.xAxis = userOptions.yAxis = void 0;
 
-        // apply Y axis options to both single and multi y axes
-        userOptions.yAxis = splat(userOptions.yAxis || {}).map(function (
-            yAxisOptions: Highcharts.YAxisOptions,
-            i: number
-        ): Highcharts.YAxisOptions {
-            return merge(
-                getDefaultAxisOptions('yAxis', yAxisOptions),
-                defaultOptions.yAxis, // #3802
-                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
-                yAxisOptions // user options
-            );
-        });
-
-        userOptions.series = void 0;
-
-        userOptions = merge(
+        const options = merge(
             {
                 chart: {
                     panning: {
@@ -246,9 +220,37 @@ class StockChart extends Chart {
             }
         );
 
-        userOptions.series = seriesOptions;
+        userOptions.xAxis = xAxisOptions;
+        userOptions.yAxis = yAxisOptions;
 
-        super.init(userOptions, callback);
+        // apply X axis options to both single and multi y axes
+        options.xAxis = splat(userOptions.xAxis || {}).map(function (
+            xAxisOptions: Highcharts.XAxisOptions,
+            i: number
+        ): Highcharts.XAxisOptions {
+            return merge(
+                getDefaultAxisOptions('xAxis', xAxisOptions),
+                defaultOptions.xAxis, // #3802
+                defaultOptions.xAxis && (defaultOptions.xAxis as any)[i], // #7690
+                xAxisOptions, // user options
+                getForcedAxisOptions('xAxis', userOptions)
+            );
+        });
+
+        // apply Y axis options to both single and multi y axes
+        options.yAxis = splat(userOptions.yAxis || {}).map(function (
+            yAxisOptions: Highcharts.YAxisOptions,
+            i: number
+        ): Highcharts.YAxisOptions {
+            return merge(
+                getDefaultAxisOptions('yAxis', yAxisOptions),
+                defaultOptions.yAxis, // #3802
+                defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
+                yAxisOptions // user options
+            );
+        });
+
+        super.init(options, callback);
     }
 
     /**
