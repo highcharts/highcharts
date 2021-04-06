@@ -38,6 +38,7 @@ const {
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
+    extend,
     isArray,
     merge
 } = U;
@@ -235,6 +236,10 @@ interface DisparityIndexIndicator {
         typeof WMAIndicator;
     pointClass: typeof DisparityIndexPoint;
 }
+
+extend(DisparityIndexIndicator.prototype, {
+    nameBase: 'Disparity Index'
+});
 
 /* *
  *
