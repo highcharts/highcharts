@@ -227,7 +227,6 @@ export function testStockIndicators() {
         'bb',
         'cci',
         'cmf',
-        'disparityindex',
         'dmi',
         'dpo',
         'ema',
@@ -262,7 +261,8 @@ export function testStockIndicators() {
         'linearRegressionIntercept',
         'linearRegressionAngle',
         'abands',
-        'trendline'
+        'trendline',
+        'disparityindex'
     ];
 
     deepStrictEqual(

@@ -12,7 +12,6 @@
  *
  * */
 
-import type CSSObject from '../../../Core/Renderer/CSSObject';
 import type {
     SMAOptions,
     SMAParamsOptions
@@ -26,10 +25,6 @@ import type {
 
 export interface DisparityIndexOptions extends SMAOptions {
     params?: DisparityIndexParamsOptions;
-}
-
-export interface DisparityIndexLineOptions {
-    styles?: CSSObject;
 }
 
 export interface DisparityIndexParamsOptions extends SMAParamsOptions {

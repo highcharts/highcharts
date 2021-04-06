@@ -39,8 +39,7 @@ import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
     isArray,
-    merge,
-    pick
+    merge
 } = U;
 
 /* *
@@ -123,7 +122,6 @@ class DisparityIndexIndicator extends SMAIndicator {
         let averageIndicator;
 
         switch (averageType) {
-        // ctx.range = average indicator period minus 1
         case 'ema':
             averageIndicator = EMAIndicator;
             break;
@@ -142,16 +140,18 @@ class DisparityIndexIndicator extends SMAIndicator {
 
         ctx.averageIndicator = averageIndicator;
 
-        // Check if the required average indicator modules is loaded
-        RequiredIndicatorMixin.isParentLoaded(
-            averageIndicator as any,
-            pick(averageType || 'sma'),
-            ctx.type,
-            function (indicator: Highcharts.Indicator): undefined {
-                indicator.prototype.init.apply(ctx, args);
-                return;
-            }
-        );
+        if (averageType !== 'sma') { // no need to check whether sma is loaded
+            // Check if the required average indicator modules is loaded
+            RequiredIndicatorMixin.isParentLoaded(
+                averageIndicator as any,
+                averageType,
+                ctx.type,
+                function (indicator: Highcharts.Indicator): undefined {
+                    indicator.prototype.init.apply(ctx, args);
+                    return;
+                }
+            );
+        }
     }
 
     public calculateDisparityIndex(
@@ -177,10 +177,10 @@ class DisparityIndexIndicator extends SMAIndicator {
             averageIndicator: any = this.averageIndicator,
             isOHLC = isArray(yVal[0]);
 
+        // average indicator period minus 1
         let range;
 
         switch (averageType) {
-        // range = average indicator period minus 1
         case 'dema':
             range = (2 * period - 1) - 1;
             break;
@@ -194,7 +194,7 @@ class DisparityIndexIndicator extends SMAIndicator {
         }
 
         // Check period, if bigger than points length, skip
-        if (!index || xVal.length <= range) {
+        if (!index || yVal.length <= range) {
             return;
         }
 

@@ -21,7 +21,6 @@ import '../../Stock/Indicators/ATR/ATRIndicator.js';
 import '../../Stock/Indicators/BB/BBIndicator.js';
 import '../../Stock/Indicators/CCI/CCIIndicator.js';
 import '../../Stock/Indicators/CMF/CMFIndicator.js';
-import '../../Stock/Indicators/DisparityIndex/DisparityIndexIndicator.js';
 import '../../Stock/Indicators/DMI/DMIIndicator.js';
 import '../../Stock/Indicators/DPO/DPOIndicator.js';
 import '../../Stock/Indicators/EMA/EMAIndicator.js';
@@ -59,3 +58,4 @@ import '../../Stock/Indicators/LinearRegressionIntercept/LinearRegressionInterce
 import '../../Stock/Indicators/LinearRegressionAngle/LinearRegressionAngle.js';
 import '../../Stock/Indicators/ABands/ABandsIndicator.js';
 import '../../Stock/Indicators/TrendLine/TrendLineIndicator.js';
+import '../../Stock/Indicators/DisparityIndex/DisparityIndexIndicator.js';
