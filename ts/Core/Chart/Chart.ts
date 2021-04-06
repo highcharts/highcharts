@@ -347,17 +347,13 @@ class Chart {
     ): void {
 
         // Handle regular options
-        var options: Highcharts.Options,
-            // skip merging data points to increase performance
-            seriesOptions = userOptions.series,
-            userPlotOptions =
-                userOptions.plotOptions || {} as SeriesTypePlotOptions;
+        const userPlotOptions =
+            userOptions.plotOptions || {} as SeriesTypePlotOptions;
 
         // Fire the event with a default function
         fireEvent(this, 'init', { args: arguments }, function (): void {
 
-            userOptions.series = null as any;
-            options = merge(defaultOptions, userOptions); // do the merge
+            const options = merge(defaultOptions, userOptions); // do the merge
 
             const optionsChart = options.chart;
 
@@ -382,9 +378,6 @@ class Chart {
                 userOptions.chart.forExport &&
                 (userOptions.tooltip as any).userOptions
             ) || userOptions.tooltip;
-
-            // set back the series data
-            options.series = userOptions.series = seriesOptions;
 
             /**
              * The original options given to the constructor or a chart factory
