@@ -152,13 +152,13 @@ QUnit.test(
 
         assert.strictEqual(
             DMIIndicator.graphplusDILine.element.getAttribute('stroke'),
-            Highcharts.defaultOptions.colors[2],
+            Highcharts.defaultOptions.positiveColor,
             'The +DI line color should be green-ish by default.'
         );
 
         assert.strictEqual(
             DMIIndicator.graphminusDILine.element.getAttribute('stroke'),
-            Highcharts.defaultOptions.colors[5],
+            Highcharts.defaultOptions.negativeColor,
             'The -DI line color should be red-ish by default.'
         );
 
