@@ -302,8 +302,7 @@ seriesProto.toXY = function (
     this: Highcharts.PolarSeries,
     point: Highcharts.PolarPoint
 ): void {
-    var xy,
-        chart = this.chart,
+    var chart = this.chart,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
         plotX = point.plotX,
@@ -328,14 +327,12 @@ seriesProto.toXY = function (
         radius += yAxis.center[3] / 2;
     }
 
-    // Find the polar plotX and plotY
-    xy = inverted ? yAxis.postTranslate(plotY, radius) :
-        xAxis.postTranslate(plotX, radius);
+    // Find the polar plotX and plotY. Avoid setting plotX and plotY to NaN when
+    // plotY is undefined (#15438)
+    if (isNumber(plotY)) {
+        const xy = inverted ? yAxis.postTranslate(plotY, radius) :
+            xAxis.postTranslate(plotX, radius);
 
-    // #15438: Avoid setting plotX and plotY to NaN, we only need to check x
-    // since both x and y will be NaN if any of the postTranslate arguments are
-    // undefined or NaN
-    if (isNumber(xy.x)) {
         point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
         point.plotY = point.polarPlotY = xy.y - chart.plotTop;
     }
