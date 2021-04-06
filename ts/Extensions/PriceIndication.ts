@@ -74,43 +74,12 @@ declare global {
 
 /**
  * @declare   Highcharts.SeriesLastVisiblePriceLabelOptionsObject
+ * @extends   yAxis.crosshair.label
  * @apioption plotOptions.series.lastVisiblePrice.label
  */
 
 /**
- * Enable or disable the label.
- *
- * @type      {boolean}
- * @product   highstock
- * @default   false
- * @apioption plotOptions.series.lastVisiblePrice.label.enabled
- *
- */
-
-/**
- * Alignment of the label compared to the axis. Defaults to `"left"` for
- * right-side axes, `"right"` for left-side axes and `"center"` for
- * horizontal axes.
- *
- * @type      {Highcharts.AlignValue}
- * @since     7.0.0
- * @product   highstock
- * @apioption plotOptions.series.lastVisiblePrice.label.align
- *
- */
-
-/**
- * The background color for the label. Defaults to the related series
- * color, or `#666666` if that is not available.
- *
- * @type      {Highcharts.ColorType}
- * @since     7.0.0
- * @product   highstock
- * @apioption plotOptions.series.lastVisiblePrice.label.backgroundColor
- */
-
-/**
- * The border color for the crosshair label
+ * The border color for the lastVisiblePrice label.
  *
  * @type      {Highcharts.ColorType}
  * @since     7.0.0
@@ -119,81 +88,63 @@ declare global {
  */
 
 /**
- * The border corner radius of the crosshair label.
+ * The border corner radius of the lastVisiblePrice label.
  *
  * @type      {number}
  * @default   3
  * @since     7.0.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.borderRadius
- */
+*/
 
 /**
- * The border width for the crosshair label.
+ * Flag to enable lastVisiblePrice label.
  *
- * @type      {number}
- * @default   0
- * @since     7.0.0
- * @product   highstock
- * @apioption plotOptions.series.lastVisiblePrice.label.borderWidth
- */
-
-/**
- * Enable or disable the indicator.
  *
  * @type      {boolean}
- * @product   highstock
  * @default   false
- * @apioption plotOptions.series.lastPrice.enabled
+ * @since     7.0
+ * @product   highstock
  */
 
 /**
- * A format string for the crosshair label. Defaults to `{value}` for
+ * A format string for the lastVisiblePrice label. Defaults to `{value}` for
  * numeric axes and `{value:%b %d, %Y}` for datetime axes.
  *
  * @type      {string}
- * @since     7.0.0
+ * @since     7.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.format
- */
+*/
 
 /**
- * Formatter function for the label text.
- *
- * @type      {Highcharts.XAxisCrosshairLabelFormatterCallbackFunction}
- * @since     7.0.0
- * @product   highstock
- * @apioption plotOptions.series.lastVisiblePrice.label.formatter
- */
-
-/**
- * Padding inside the crosshair label.
- *
- * @type      {number}
- * @default   8
- * @since     7.0.0
- * @product   highstock
- * @apioption plotOptions.series.lastVisiblePrice.label.padding
- */
-
-/**
- * The shape to use for the label box.
- *
- * @type      {string}
- * @default   callout
- * @since     7.0.0
- * @product   highstock
- * @apioption plotOptions.series.lastVisiblePrice.label.shape
- */
-
-/**
- * Text styles for the crosshair label.
+ * Text styles for the lastVisiblePrice label.
  *
  * @type      {Highcharts.CSSObject}
  * @default   {"color": "white", "fontWeight": "normal", "fontSize": "11px", "textAlign": "center"}
- * @since     7.0.0
+ * @since     7.0
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.style
+ */
+
+/**
+ * The border width for the lastVisiblePrice label.
+ *
+ * @type      {number}
+ * @default   0
+ * @since     7.0
+ * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.borderWidth
+*/
+
+/**
+ * Padding inside the lastVisiblePrice label.
+ *
+ * @type      {number}
+ * @default   8
+ * @since     2.1
+ * @product   highstock
+ * @apioption xAxis.crosshair.label.padding
  */
 
 /**
@@ -204,9 +155,17 @@ declare global {
  *
  * @declare   Highcharts.SeriesLastPriceOptionsObject
  * @product   highstock
- * @since     7.0.0
  * @requires  modules/price-indicator
  * @apioption plotOptions.series.lastPrice
+ */
+
+/**
+ * Enable or disable the indicator.
+ *
+ * @type      {boolean}
+ * @product   highstock
+ * @default   false
+ * @apioption plotOptions.series.lastPrice.enabled
  */
 
 /**
