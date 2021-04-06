@@ -142,9 +142,9 @@ declare global {
  *
  * @type      {number}
  * @default   8
- * @since     2.1
+ * @since     7.0
  * @product   highstock
- * @apioption xAxis.crosshair.label.padding
+ * @apioption plotOptions.series.lastVisiblePrice.label.padding.
  */
 
 /**
