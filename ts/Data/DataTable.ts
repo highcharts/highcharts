@@ -782,12 +782,15 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         if (column) {
             const columnLength = column.length;
 
-            if (!useNaN) {
+            if (useNaN) {
+                for (let i = 0; i < columnLength; ++i) {
+                    columnAsNumber.push(converter.asNumber(column[i]));
+                }
+            } else {
                 for (
                     let i = 0,
-                        iEnd = columnLength,
                         cellValue: DataTable.CellType;
-                    i < iEnd;
+                    i < columnLength;
                     ++i
                 ) {
                     cellValue = column[i];
@@ -795,24 +798,21 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                         // assume unmixed data
                         return column.slice() as Array<(number|null)>;
                     }
-                    if (cellValue !== null && typeof cellValue !== 'undefined') {
+                    if (
+                        cellValue !== null &&
+                        typeof cellValue !== 'undefined'
+                    ) {
                         break;
                     }
                 }
-            }
-
-            for (
-                let i = 0,
-                    iEnd = columnLength,
-                    cellValue: number;
-                i < iEnd;
-                ++i
-            ) {
-                cellValue = converter.asNumber(column[i]);
-                if (!useNaN && isNaN(cellValue)) {
-                    columnAsNumber.push(null);
-                } else {
-                    columnAsNumber.push(cellValue);
+                for (
+                    let i = 0,
+                        cellValue: number;
+                    i < columnLength;
+                    ++i
+                ) {
+                    cellValue = converter.asNumber(column[i]);
+                    columnAsNumber.push(isNaN(cellValue) ? null : cellValue);
                 }
             }
         }
@@ -921,6 +921,56 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
 
         for (let i = 0; i < columnNamesLength; ++i) {
             row[i] = columns[columnNames[i]][rowIndex];
+        }
+
+        return row;
+    }
+
+    public getRowAsNumbers(
+        rowIndex: number,
+        useNaN: true,
+    ): (Array<number>|undefined);
+    public getRowAsNumbers(
+        rowIndex: number,
+        useNaN?: false,
+    ): (Array<(number|null)>|undefined);
+    /**
+     * Retrieves the row at a given index and converts values as numbers, `null`
+     * and/or `undefined`.
+     *
+     * @param {number} rowIndex
+     * Row index.
+     *
+     * @param {boolean} [useNaN]
+     * Whether to use NaN instead of `null` and `undefined`.
+     *
+     * @param {boolean} [usePresentationOrder]
+     * Whether to use the column order of the presentation state.
+     *
+     * @return {Array<(number|null)>|undefined}
+     * Returns the row values, or `undefined`, if row was not found.
+     */
+    public getRowAsNumbers(
+        rowIndex: number,
+        useNaN?: boolean,
+        usePresentationOrder?: boolean
+    ): (Array<(number|null)>|undefined) {
+        const table = this,
+            columnNames = table.getColumnNames(usePresentationOrder),
+            columnNamesLength = columnNames.length,
+            columns = table.columns,
+            converter = table.converter,
+            row = new Array(columnNamesLength);
+
+        if (useNaN) {
+            for (let i = 0; i < columnNamesLength; ++i) {
+                row[i] = converter.asNumber(columns[columnNames[i]][rowIndex]);
+            }
+        } else {
+            for (let i = 0, cellValue: number; i < columnNamesLength; ++i) {
+                cellValue = converter.asNumber(columns[columnNames[i]][rowIndex]);
+                row[i] = (isNaN(cellValue) ? null : cellValue);
+            }
         }
 
         return row;
