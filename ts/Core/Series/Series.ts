@@ -79,7 +79,6 @@ const {
     find,
     fireEvent,
     flat,
-    getNestedProperty,
     isArray,
     isFunction,
     isNumber,
@@ -2877,6 +2876,8 @@ class Series {
 
     public readonly table: DataTable = new DataTable();
 
+    private tableSyncTimeout?: number;
+
     public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
 
     public touched?: boolean;
@@ -3882,6 +3883,8 @@ class Series {
         if (data instanceof DataTable) {
             data = series.setTable(data);
             data = Series.getSeriesDataFromTable(data, (keys || pointArrayMap));
+        } else {
+            series.setTable(Series.getTableFromSeriesData(data, series));
         }
 
         // First try to run Point.update which is cheaper, allows animation,
@@ -4015,7 +4018,8 @@ class Series {
      * @private
      */
     private setTable(newTable: DataTable): DataTable {
-        const series = this;
+        const series = this,
+            syncTable = series.syncTable.bind(series);
 
         let table = series.table;
 
@@ -4027,6 +4031,17 @@ class Series {
 
         table.clear();
         table.setColumns(newTable.getColumns());
+
+        if (!table.hcEvents) {
+            // table.on('afterClearColumn', syncTable);
+            // table.on('afterClearRows', syncTable);
+            // table.on('afterClearTable', syncTable);
+            // table.on('afterDeleteColumn', syncTable);
+            table.on('afterDeleteRow', syncTable);
+            table.on('afterSetCell', syncTable);
+            // table.on('afterSetColumn', syncTable);
+            table.on('afterSetRow', syncTable);
+        }
 
         fireEvent(series, 'afterSetTable', { table: newTable });
 
@@ -4109,6 +4124,84 @@ class Series {
         }
 
         return table;
+    }
+
+    /**
+     * Synchronize series data and table.
+     * @private
+     */
+    private syncTable(e: DataTable.EventObject): void {
+        const series = this,
+            options = series.options,
+            data = (options.data || []),
+            keys = (options.keys || series.pointArrayMap || ['y']),
+            points = series.data,
+            table = series.table;
+
+        let dataPoint: (PointOptions|PointShortOptions),
+            index: number,
+            point: Point,
+            row: DataTable.Row;
+
+        if (
+            e.type === 'afterDeleteRow' ||
+            e.type === 'afterSetCell' ||
+            e.type === 'afterSetRow'
+        ) {
+            index = e.rowIndex;
+
+            dataPoint = data[index];
+            point = points[index];
+            row = (table.getRow(index, keys) || []);
+
+            if (e.type === 'afterDeleteRow') {
+                data.splice(index, 1);
+            } else if (point) {
+                point.update(
+                    e.type === 'afterSetCell' ?
+                        { [e.columnName]: e.cellValue } :
+                        table.getRowObject(index) as any
+                );
+            } else if (DataTable.isNull(row)) {
+                data[table.getCellAsNumber('x', index) || index] = dataPoint = null;
+            } else if (
+                dataPoint &&
+                typeof dataPoint === 'object'
+            ) {
+                if (dataPoint instanceof Array) {
+                    if (e.type === 'afterSetCell') {
+                        const keyIndex = keys.indexOf(e.columnName);
+                        if (keyIndex === -1) {
+                            dataPoint.length = 0;
+                            dataPoint.push(...row as any);
+                        } else {
+                            dataPoint[keyIndex] = e.cellValue as any;
+                        }
+                    } else {
+                        dataPoint.length = 0;
+                        dataPoint.push(...row as any);
+                    }
+                } else {
+                    merge(true, dataPoint, table.getRowObject(index, keys));
+                }
+            } else if (e.type === 'afterSetCell') {
+                data[index] = dataPoint = e.cellValue as any;
+            } else if (row.length) {
+                data[index] = dataPoint = (
+                    row.length === 1 ?
+                        row[0] :
+                        row as any
+                );
+            }
+
+            if (!point) {
+                clearTimeout(series.tableSyncTimeout);
+                series.tableSyncTimeout = syncTimeout(
+                    (): void => series.setData(data),
+                    1
+                );
+            }
+        }
     }
 
     /**

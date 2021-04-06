@@ -1,6 +1,7 @@
+import Highcharts from '/base/js/masters/highcharts.src.js';
 import Series from '/base/js/Core/Series/Series.js';
 
-QUnit.test('DataParser.getTableFromSeriesOptions', function (assert) {
+QUnit.test('Series.getTableFromSeriesData', function (assert) {
 
     const series1Data = [
             1,
@@ -41,5 +42,36 @@ QUnit.test('DataParser.getTableFromSeriesOptions', function (assert) {
         }],
         'SeriesOptions should contain three points.'
     );
+
+});
+
+QUnit.test('Series.syncTable', function (assert) {
+
+    const done = assert.async(),
+        chart = new Highcharts.Chart(document.createElement('div'), {
+            series: [{
+                name: 'Test',
+                data: [1, 2, 3]
+            }]
+        }),
+        series = chart.series[0],
+        table = series.table;
+
+    assert.strictEqual(
+        table.getRowCount(),
+        series.data.length,
+        'Number of series points should be equal to number of table rows.'
+    );
+
+    table.setRow([4]);
+
+    setTimeout(function () {
+        assert.strictEqual(
+            series.data.length,
+            table.getRowCount(),
+            'Number of series points should be equal to number of table rows.'
+        );
+        done();
+    }, 10);
 
 });
