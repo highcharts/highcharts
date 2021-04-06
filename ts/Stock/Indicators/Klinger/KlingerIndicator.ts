@@ -388,7 +388,7 @@ interface KlingerIndicator {
 }
 
 extend(KlingerIndicator.prototype, {
-    linesApiNames: ['signal'],
+    linesApiNames: ['signalLine'],
     nameBase: 'Klinger',
     nameComponents: ['fastAvgPeriod', 'slowAvgPeriod'],
     pointArrayMap: ['y', 'signal'],
