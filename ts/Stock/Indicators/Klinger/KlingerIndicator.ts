@@ -93,8 +93,8 @@ class KlingerIndicator extends SMAIndicator {
                 lineWidth: 1,
                 /**
                  * Color of the line. If not set, it's inherited from
-                 * [plotOptions.sma.color
-                 * ](#plotOptions.sma.color).
+                 * [plotOptions.klinger.color
+                 * ](#plotOptions.klinger.color).
                  *
                  * @type {Highcharts.ColorString}
                  */

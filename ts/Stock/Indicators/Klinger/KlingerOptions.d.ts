@@ -26,7 +26,11 @@ import type {
 
 export interface KlingerOptions extends SMAOptions {
     params?: KlingerParamsOptions;
-    signalLine?: Record<string, CSSObject>;
+    signalLine?: KlingerSignalOptions;
+}
+
+export interface KlingerSignalOptions {
+    styles?: CSSObject;
 }
 
 export interface KlingerParamsOptions extends SMAParamsOptions {
