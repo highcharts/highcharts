@@ -28,8 +28,8 @@ class CellEditToolbar extends Menu {
             // className: EditGlobals.classNames.editToolbarItem,
             text: 'opt',
             events: {
-                click: function (this: CellEditToolbar, e: any): void {
-                    this.onCellOptions(e);
+                click: function (this: MenuItem, e: any): void {
+                    (this.menu as CellEditToolbar).onCellOptions(e);
                 }
             }
         }
@@ -100,7 +100,7 @@ class CellEditToolbar extends Menu {
 
         let x, y;
 
-        if (cellCnt) {
+        if (cellCnt && toolbar.editMode.isActive()) {
             x = ((cellCnt.parentElement || {}).offsetLeft || 0) +
               cellCnt.offsetLeft + cellCnt.offsetWidth - 30;
 

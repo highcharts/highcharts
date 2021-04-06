@@ -110,7 +110,7 @@ class RowEditToolbar extends Menu {
 
         let x, y;
 
-        if (rowCnt) {
+        if (rowCnt && toolbar.editMode.isActive()) {
             x = rowCnt.offsetLeft;
             y = rowCnt.offsetTop;
 

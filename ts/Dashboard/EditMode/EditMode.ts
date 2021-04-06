@@ -2,13 +2,13 @@ import U from '../../Core/Utilities.js';
 import Dashboard from './../Dashboard.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import EditRenderer from './EditRenderer.js';
 import Resizer from './../Actions/Resizer.js';
 import type Layout from './../Layout/Layout.js';
 import CellEditToolbar from './Toolbars/CellToolbar.js';
 import RowEditToolbar from './Toolbars/RowToolbar.js';
 import OptionsToolbar from './Toolbars/OptionsToolbar.js';
+import EditContextMenu from './EditContextMenu.js';
 
 const {
     merge,
@@ -22,38 +22,7 @@ class EditMode {
     *
     * */
     protected static readonly defaultOptions: EditMode.Options = {
-        enabled: true,
-        contextMenu: {
-            enabled: true,
-            contextMenuIcon: 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/menu.svg',
-            menuItems: ['saveLocal', 'separator', 'editMode']
-        }
-    }
-
-    public static menuItems: Record<EditGlobals.TLangKeys, EditMode.MenuItemOptions> = {
-        separator: {
-            type: 'separator',
-            text: '',
-            className: EditGlobals.classNames.separator
-        },
-        editMode: {
-            type: 'editMode',
-            className: EditGlobals.classNames.editModeEnabled,
-            text: 'Edit mode',
-            events: {
-                click: function (this: EditMode, e: any): void {
-                    this.onEditModeToggle(e.target);
-                }
-            }
-        },
-        saveLocal: {
-            type: 'saveLocal',
-            className: EditGlobals.classNames.saveLocalItem,
-            text: 'Save locally',
-            events: {
-                click: function (): void {}
-            }
-        }
+        enabled: true
     }
 
     /* *
@@ -72,7 +41,10 @@ class EditMode {
         // Init renderer.
         this.renderer = new EditRenderer(this);
 
-        if (this.options.contextMenu.enabled) {
+        if (
+            this.options.contextMenu &&
+            this.options.contextMenu.enabled
+        ) {
             this.contextButtonElement = this.renderer.renderContextButton();
         }
     }
@@ -87,7 +59,7 @@ class EditMode {
     public options: EditMode.Options;
     public dashboard: Dashboard;
     public contextButtonElement?: HTMLDOMElement;
-    public contextMenu?: EditMode.ContextMenu;
+    public contextMenu?: EditContextMenu;
     public lang: EditGlobals.LangOptions;
     public renderer: EditRenderer;
     public cellToolbar?: CellEditToolbar;
@@ -109,53 +81,28 @@ class EditMode {
         }
 
         // Show context menu.
-        if ((editMode.contextMenu || {}).isOpen) {
-            editMode.setVisibleContextMenu(false);
-        } else {
-            editMode.setVisibleContextMenu(true);
+        if (editMode.contextMenu) {
+            editMode.contextMenu.setVisible(
+                !editMode.contextMenu.isVisible
+            );
         }
-
     }
 
     public initContextMenu(): void {
         const editMode = this,
             contextButtonElement = editMode.contextButtonElement,
-            menuItemsOptions = editMode.options.contextMenu.menuItems || [],
-            menuItems = [];
+            width = 150;
 
         if (contextButtonElement) {
-            // Render menu container.
-            const element = editMode.renderer.renderContextMenu(contextButtonElement);
-
-            // Render menu items.
-            for (let i = 0, iEnd = menuItemsOptions.length; i < iEnd; ++i) {
-                menuItems.push(
-                    editMode.renderer.renderMenuItem(
-                        menuItemsOptions[i],
-                        element
-                    )
-                );
-            }
-
-            editMode.contextMenu = {
-                element: element,
-                isOpen: false,
-                menuItems: menuItems
-            };
-        }
-    }
-
-    public setVisibleContextMenu(visible: boolean): void {
-        const editMode = this;
-
-        if (editMode.contextMenu) {
-            if (visible) {
-                editMode.contextMenu.element.style.display = 'block';
-                editMode.contextMenu.isOpen = true;
-            } else {
-                editMode.contextMenu.element.style.display = 'none';
-                editMode.contextMenu.isOpen = false;
-            }
+            editMode.contextMenu = new EditContextMenu(editMode, {
+                style: {
+                    width: width + 'px',
+                    top: contextButtonElement.offsetTop +
+                        contextButtonElement.offsetHeight + 'px',
+                    left: contextButtonElement.offsetLeft - width +
+                        contextButtonElement.offsetWidth + 'px'
+                }
+            });
         }
     }
 
@@ -235,6 +182,9 @@ class EditMode {
         if (editMode.cellToolbar) {
             editMode.cellToolbar.hide();
         }
+        if (editMode.rowToolbar) {
+            editMode.rowToolbar.hide();
+        }
     }
 
     private initLayoutResizer(layout: Layout): void {
@@ -260,28 +210,8 @@ class EditMode {
 namespace EditMode {
     export interface Options {
         enabled: boolean;
-        contextMenu: ContextMenuOptions;
+        contextMenu?: EditContextMenu.Options;
         lang?: EditGlobals.LangOptions|string;
-    }
-
-    export interface ContextMenuOptions {
-        enabled: true;
-        contextMenuIcon: string;
-        menuItems: Array<MenuItemOptions|EditGlobals.TLangKeys>;
-    }
-
-    export interface ContextMenu {
-        element: HTMLDOMElement;
-        isOpen: boolean;
-        menuItems: Array<HTMLDOMElement>;
-    }
-
-    export interface MenuItemOptions {
-        type?: EditGlobals.TLangKeys;
-        text?: string;
-        className?: string;
-        events?: Record<Event['type'], Function>;
-        style?: CSSJSONObject;
     }
 }
 

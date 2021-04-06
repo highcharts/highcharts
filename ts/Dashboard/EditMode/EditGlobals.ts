@@ -7,8 +7,6 @@ const EditGlobals: EditGlobals = {
         resizeSnapX: PREFIX + 'resize-snap-x',
         resizeSnapY: PREFIX + 'resize-snap-y',
         separator: PREFIX + 'separator',
-        enableEditModeItem: PREFIX + 'item-enable',
-        saveLocalItem: PREFIX + 'item-save-local',
         contextMenuBtn: PREFIX + 'context-menu-btn',
         contextMenu: PREFIX + 'context-menu',
         contextMenuItem: PREFIX + 'context-menu-item',
@@ -18,6 +16,8 @@ const EditGlobals: EditGlobals = {
         editToolbarOptions: PREFIX + 'toolbar-options',
         editToolbarOptionsShow: PREFIX + 'toolbar-show',
         editToolbarOptionsHide: PREFIX + 'toolbar-hide',
+        editToolbarVerticalSeparator: PREFIX + 'toolbar-vertical-separator',
+        editToolbarHorizontalSeparator: PREFIX + 'toolbar-horizontal-separator',
         disabledNotEditedCells: PREFIX + 'hidden-cells',
         currentEditedCell: PREFIX + 'current-cell',
         menuItem: PREFIX + 'menu-item'
@@ -40,8 +40,6 @@ namespace EditGlobals {
         resizeSnapX: string;
         resizeSnapY: string;
         separator: string;
-        enableEditModeItem: string;
-        saveLocalItem: string;
         contextMenuBtn: string;
         contextMenu: string;
         contextMenuItem: string;
@@ -51,6 +49,8 @@ namespace EditGlobals {
         editToolbarOptions: string;
         editToolbarOptionsShow: string;
         editToolbarOptionsHide: string;
+        editToolbarVerticalSeparator: string;
+        editToolbarHorizontalSeparator: string;
         disabledNotEditedCells: string;
         currentEditedCell: string;
         menuItem: string;

@@ -18,15 +18,15 @@ abstract class Menu {
     * */
 
     public static items: Record<string, MenuItem.Options> = {
-        separatorX: {
-            type: 'separatorX',
+        horizontalSeparator: {
+            type: 'horizontalSeparator',
             text: '',
-            className: EditGlobals.classNames.separator
+            className: EditGlobals.classNames.editToolbarHorizontalSeparator
         },
-        separatorY: {
-            type: 'separatorY',
+        verticalSeparator: {
+            type: 'verticalSeparator',
             text: '',
-            className: EditGlobals.classNames.separator
+            className: EditGlobals.classNames.editToolbarVerticalSeparator
         }
     }
 
@@ -70,7 +70,8 @@ abstract class Menu {
 
         menu.container = createElement(
             'div', {
-                className: EditGlobals.classNames.editToolbar
+                className: EditGlobals.classNames.editToolbar +
+                  ' ' + menu.options.className
             },
             this.options.style || {},
             menu.parentElement
@@ -80,14 +81,15 @@ abstract class Menu {
     protected initItems(
         items: Record<string, MenuItem.Options>
     ): void {
-        const menu = this;
+        const menu = this,
+            optionsItems = menu.options.items || [];
 
         let itemSchema,
             itemOptions,
             item;
 
-        for (let i = 0, iEnd = menu.options.items.length; i < iEnd; ++i) {
-            itemOptions = menu.options.items[i];
+        for (let i = 0, iEnd = optionsItems.length; i < iEnd; ++i) {
+            itemOptions = optionsItems[i];
             itemSchema = typeof itemOptions === 'string' ? items[itemOptions] :
                 itemOptions.type ? items[itemOptions.type] : {};
 
@@ -141,11 +143,13 @@ abstract class Menu {
     public show(
         x: number,
         y: number,
-        items: Array<string>
+        items?: Array<string>
     ): void {
         const menu = this;
 
-        menu.updateActiveItems(items);
+        if (items) {
+            menu.updateActiveItems(items);
+        }
 
         if (menu.container) {
             css(menu.container, {
@@ -153,6 +157,8 @@ abstract class Menu {
                 top: y + 'px'
             });
         }
+
+        menu.isVisible = true;
     }
 
     public hide(): void {
@@ -164,14 +170,17 @@ abstract class Menu {
                 top: '-9999px'
             });
         }
+
+        menu.isVisible = false;
     }
 }
 
 namespace Menu {
     export interface Options {
-        enabled: boolean;
-        items: Array<MenuItem.Options|string>;
+        items?: Array<MenuItem.Options|string>;
+        enabled?: boolean;
         style?: CSSJSONObject;
+        className?: string;
     }
 }
 

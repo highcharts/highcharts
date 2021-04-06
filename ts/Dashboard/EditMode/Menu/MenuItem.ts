@@ -17,8 +17,7 @@ class MenuItem {
     * */
 
     public static defaultOptions: MenuItem.Options = {
-        type: '',
-        className: EditGlobals.classNames.menuItem
+        type: ''
     }
 
     /* *
@@ -61,7 +60,7 @@ class MenuItem {
                 // textContent: options.text,
                 onclick: function (): void {
                     if (options.events && options.events.click) {
-                        options.events.click.apply(item.menu, arguments);
+                        options.events.click.apply(item, arguments);
                     }
                 },
                 className: EditGlobals.classNames.editToolbarItem + ' ' +
