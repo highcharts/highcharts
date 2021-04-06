@@ -130,12 +130,46 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         return table;
     }
 
+    /**
+     * Tests whether a row contains only null values.
+     *
+     * @param {DataTable.Row|DataTable.RowObject} row
+     * Row to test.
+     *
+     * @return {boolean}
+     * Returns `true`, if the row contains only null, otherwise `false`.
+     */
+    public static isNull(
+        row: (DataTable.Row|DataTable.RowObject)
+    ): boolean {
+        if (row instanceof Array) {
+            if (!row.length) {
+                return false;
+            }
+            for (let i = 0, iEnd = row.length; i < iEnd; ++i) {
+                if (row[i] !== null) {
+                    return false;
+                }
+            }
+        } else {
+            const columnNames = Object.keys(row);
+            if (!columnNames.length) {
+                return false;
+            }
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                if (row[columnNames[i]] !== null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /* *
      *
      *  Constructors
      *
      * */
-
 
     /**
      * Constructs an instance of the DataTable class.
@@ -538,13 +572,13 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {number} rowIndex
      * Row index of the cell to retrieve.
      *
-     * @return {DataTable.CellType}
+     * @return {DataTable.CellType|undefined}
      * Returns the cell value or `undefined`.
      */
     public getCell(
         columnNameOrAlias: string,
         rowIndex: number
-    ): DataTable.CellType {
+    ): (DataTable.CellType|undefined) {
         const table = this;
 
         columnNameOrAlias = (
@@ -856,11 +890,12 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         columnNamesOrAliases?: Array<string>
     ): DataTable.ColumnCollection {
         const table = this,
-            tableAliases = table.aliasMap,
             tableColumns = table.columns,
             columns: DataTable.ColumnCollection = {};
 
-        if (!columnNamesOrAliases) {
+        if (columnNamesOrAliases) {
+            columnNamesOrAliases = table.getNormalizedColumnNames(columnNamesOrAliases);
+        } else {
             columnNamesOrAliases = Object.keys(tableColumns);
         }
 
@@ -868,23 +903,44 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             let i = 0,
                 iEnd = columnNamesOrAliases.length,
                 column: DataTable.Column,
-                columnNameOrAlias: string;
+                columnName: string;
             i < iEnd;
             ++i
         ) {
-            columnNameOrAlias = columnNamesOrAliases[i];
-            columnNameOrAlias = (
-                tableAliases[columnNameOrAlias] ||
-                columnNameOrAlias
-            );
-            column = tableColumns[columnNameOrAlias];
+            columnName = columnNamesOrAliases[i];
+            column = tableColumns[columnName];
 
             if (column) {
-                columns[columnNameOrAlias] = column.slice();
+                columns[columnName] = column.slice();
             }
         }
 
         return columns;
+    }
+
+    /**
+     * Normalize column names and aliases.
+     *
+     * @param {Array<string>} columnNamesOrAliases
+     * Column names or aliases to normalize. Aliases taking precedence.
+     *
+     * @return {Array<string>}
+     * Returns normalized column names.
+     */
+    private getNormalizedColumnNames(
+        columnNamesOrAliases: Array<string>
+    ): Array<string> {
+        const table = this,
+            aliasMap = table.aliasMap,
+            columnNamesLength = columnNamesOrAliases.length,
+            columnNames: Array<string> = [];
+
+        for (let i = 0, columnName: string; i < columnNamesLength; ++i) {
+            columnName = columnNamesOrAliases[i];
+            columnNames[i] = (aliasMap[columnName] || columnName);
+        }
+
+        return columnNames;
     }
 
     /**
@@ -903,74 +959,30 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {number} rowIndex
      * Row index.
      *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
+     * @param {Array<string>} [columnNamesOrAliases]
+     * Column names or aliases in order to retrieve.
      *
      * @return {DataTable.Row}
      * Returns the row values, or `undefined` if not found.
      */
     public getRow(
         rowIndex: number,
-        usePresentationOrder?: boolean
+        columnNamesOrAliases?: Array<string>
     ): (DataTable.Row|undefined) {
         const table = this,
-            columnNames = table.getColumnNames(usePresentationOrder),
-            columnNamesLength = columnNames.length,
-            columns = table.columns,
+            columns = table.columns;
+
+        if (columnNamesOrAliases) {
+            columnNamesOrAliases = table.getNormalizedColumnNames(columnNamesOrAliases);
+        } else {
+            columnNamesOrAliases = Object.keys(columns);
+        }
+
+        const columnNamesLength = columnNamesOrAliases.length,
             row = new Array(columnNamesLength);
 
         for (let i = 0; i < columnNamesLength; ++i) {
-            row[i] = columns[columnNames[i]][rowIndex];
-        }
-
-        return row;
-    }
-
-    public getRowAsNumbers(
-        rowIndex: number,
-        useNaN: true,
-    ): (Array<number>|undefined);
-    public getRowAsNumbers(
-        rowIndex: number,
-        useNaN?: false,
-    ): (Array<(number|null)>|undefined);
-    /**
-     * Retrieves the row at a given index and converts values as numbers, `null`
-     * and/or `undefined`.
-     *
-     * @param {number} rowIndex
-     * Row index.
-     *
-     * @param {boolean} [useNaN]
-     * Whether to use NaN instead of `null` and `undefined`.
-     *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
-     *
-     * @return {Array<(number|null)>|undefined}
-     * Returns the row values, or `undefined`, if row was not found.
-     */
-    public getRowAsNumbers(
-        rowIndex: number,
-        useNaN?: boolean,
-        usePresentationOrder?: boolean
-    ): (Array<(number|null)>|undefined) {
-        const table = this,
-            columnNames = table.getColumnNames(usePresentationOrder),
-            columnNamesLength = columnNames.length,
-            columns = table.columns,
-            converter = table.converter,
-            row = new Array(columnNamesLength);
-
-        if (useNaN) {
-            for (let i = 0; i < columnNamesLength; ++i) {
-                row[i] = converter.asNumber(columns[columnNames[i]][rowIndex]);
-            }
-        } else {
-            for (let i = 0, cellValue: number; i < columnNamesLength; ++i) {
-                cellValue = converter.asNumber(columns[columnNames[i]][rowIndex]);
-                row[i] = (isNaN(cellValue) ? null : cellValue);
-            }
+            row[i] = columns[columnNamesOrAliases[i]][rowIndex];
         }
 
         return row;
@@ -1033,8 +1045,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {number} rowIndex
      * Row index.
      *
-     * @param {Arra<string>} [columnNamesOrAliases]
-     * Column names or aliases to retrieve.
+     * @param {Array<string>} [columnNamesOrAliases]
+     * Column names or aliases and their order to retrieve.
      *
      * @return {DataTable.RowObject}
      * Returns the row values, or `undefined` if not found.
@@ -1044,11 +1056,12 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         columnNamesOrAliases?: Array<string>
     ): (DataTable.RowObject|undefined) {
         const table = this,
-            tableAliases = table.aliasMap,
             tableColumns = table.columns,
             row: DataTable.RowObject = {};
 
-        if (!columnNamesOrAliases) {
+        if (columnNamesOrAliases) {
+            columnNamesOrAliases = table.getNormalizedColumnNames(columnNamesOrAliases);
+        } else {
             columnNamesOrAliases = Object.keys(tableColumns);
         }
 
@@ -1063,7 +1076,6 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             ++i
         ) {
             columnName = columnNamesOrAliases[i];
-            columnName = (tableAliases[columnName] || columnName);
             cell = tableColumns[columnName][rowIndex];
             allNull = (allNull && cell === null);
             row[columnName] = cell;
@@ -1085,18 +1097,28 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {number} [rowCount]
      * Number of rows to fetch. Defaults to maximal number of rows.
      *
+     * @param {Array<string>} [columnNamesOrAliases]
+     * Column names or aliases and their order to retrieve.
+     *
      * @return {DataTable.RowObject}
      * Returns retrieved rows.
      */
     public getRowObjects(
         rowIndex: number = 0,
-        rowCount: number = (this.rowCount - rowIndex)
+        rowCount: number = (this.rowCount - rowIndex),
+        columnNamesOrAliases?: Array<string>
     ): (Array<DataTable.RowObject>) {
         const table = this,
-            tableColumns = table.columns,
-            columnNames = Object.keys(tableColumns),
-            columnNamesLength = columnNames.length,
+            columns = table.columns,
             rows: Array<DataTable.RowObject> = new Array(rowCount);
+
+        if (columnNamesOrAliases) {
+            columnNamesOrAliases = table.getNormalizedColumnNames(columnNamesOrAliases);
+        } else {
+            columnNamesOrAliases = Object.keys(columns);
+        }
+
+        const columnNamesLength = columnNamesOrAliases.length;
 
         for (
             let i = rowIndex,
@@ -1118,8 +1140,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
                 j < jEnd;
                 ++j
             ) {
-                columnName = columnNames[j];
-                row[columnName] = tableColumns[columnName][i];
+                columnName = columnNamesOrAliases[j];
+                row[columnName] = columns[columnName][i];
             }
         }
 
@@ -1135,8 +1157,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * @param {number} [rowCount]
      * Number of rows to fetch. Defaults to maximal number of rows.
      *
-     * @param {boolean} [usePresentationOrder]
-     * Whether to use the column order of the presentation state.
+     * @param {Array<string>} [columnNamesOrAliases]
+     * Column names or aliases and their order to retrieve.
      *
      * @return {DataTable.Row}
      * Returns retrieved rows.
@@ -1144,13 +1166,19 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     public getRows(
         rowIndex: number = 0,
         rowCount: number = (this.rowCount - rowIndex),
-        usePresentationOrder?: boolean
+        columnNamesOrAliases?: Array<string>
     ): (Array<DataTable.Row>) {
         const table = this,
-            tableColumns = table.columns,
-            columnNames = table.getColumnNames(usePresentationOrder),
-            columnNamesLength = columnNames.length,
+            columns = table.columns,
             rows: Array<DataTable.Row> = new Array(rowCount);
+
+        if (columnNamesOrAliases) {
+            columnNamesOrAliases = table.getNormalizedColumnNames(columnNamesOrAliases);
+        } else {
+            columnNamesOrAliases = Object.keys(columns);
+        }
+
+        const columnNamesLength = columnNamesOrAliases.length;
 
         for (
             let i = rowIndex,
@@ -1165,7 +1193,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
         ) {
             row = rows[i2] = new Array(columnNamesLength);
             for (let j = 0; j < columnNamesLength; ++j) {
-                row[j] = tableColumns[columnNames[j]][i];
+                row[j] = columns[columnNamesOrAliases[j]][i];
             }
         }
 
