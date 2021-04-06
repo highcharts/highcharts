@@ -123,12 +123,14 @@ abstract class Menu {
         for (let j = 0, jEnd = items.length; j < jEnd; ++j) {
             item = menu.items[items[j]];
 
-            // Activate item.
-            if (!item.isActive) {
-                item.activate();
-            }
+            if (item) {
+                // Activate item.
+                if (!item.isActive) {
+                    item.activate();
+                }
 
-            menu.activeItems.push(item);
+                menu.activeItems.push(item);
+            }
         }
     }
 

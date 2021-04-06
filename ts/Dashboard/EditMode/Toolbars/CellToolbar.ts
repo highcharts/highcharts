@@ -107,7 +107,7 @@ class CellEditToolbar extends Menu {
             y = ((cellCnt.parentElement || {}).offsetTop || 0) +
               cellCnt.offsetTop;
 
-            super.show(x, y, ['drag', 'cellOptions']);
+            super.show(x, y, ['drag', 'settings', 'destroy']);
             toolbar.cell = cell;
         }
     }
