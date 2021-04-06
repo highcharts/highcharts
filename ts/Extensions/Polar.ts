@@ -332,8 +332,13 @@ seriesProto.toXY = function (
     xy = inverted ? yAxis.postTranslate(plotY, radius) :
         xAxis.postTranslate(plotX, radius);
 
-    point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
-    point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+    // #15438: Avoid setting plotX and plotY to NaN, we only need to check x
+    // since both x and y will be NaN if any of the postTranslate arguments are
+    // undefined or NaN
+    if (isNumber(xy.x)) {
+        point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
+        point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+    }
 
     // If shared tooltip, record the angle in degrees in order to align X
     // points. Otherwise, use a standard k-d tree to get the nearest point
