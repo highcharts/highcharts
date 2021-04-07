@@ -21,12 +21,12 @@ abstract class Menu {
         horizontalSeparator: {
             type: 'horizontalSeparator',
             text: '',
-            className: EditGlobals.classNames.editToolbarHorizontalSeparator
+            className: EditGlobals.classNames.menuHorizontalSeparator
         },
         verticalSeparator: {
             type: 'verticalSeparator',
             text: '',
-            className: EditGlobals.classNames.editToolbarVerticalSeparator
+            className: EditGlobals.classNames.menuVerticalSeparator
         }
     }
 
@@ -70,8 +70,8 @@ abstract class Menu {
 
         menu.container = createElement(
             'div', {
-                className: EditGlobals.classNames.editToolbar +
-                  ' ' + menu.options.className
+                className: EditGlobals.classNames.menu +
+                    ' ' + (menu.options.className || '')
             },
             this.options.style || {},
             menu.parentElement

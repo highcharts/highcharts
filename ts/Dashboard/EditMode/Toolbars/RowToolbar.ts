@@ -1,6 +1,7 @@
 import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Row from '../../Layout/Row.js';
+import EditGlobals from '../EditGlobals.js';
 import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
 
@@ -18,6 +19,7 @@ class RowEditToolbar extends Menu {
     * */
     protected static readonly defaultOptions: RowEditToolbar.Options = {
         enabled: true,
+        className: EditGlobals.classNames.editToolbar,
         items: ['drag', 'resizeRow']
     }
 
@@ -25,7 +27,7 @@ class RowEditToolbar extends Menu {
     merge(Menu.items, {
         drag: {
             type: 'drag',
-            // className: EditGlobals.classNames.editToolbarItem,
+            className: EditGlobals.classNames.editToolbarItem,
             text: 't1',
             events: {
                 click: function (): void {}
@@ -33,7 +35,7 @@ class RowEditToolbar extends Menu {
         },
         resizeRow: {
             type: 'resizeRow',
-            // className: EditGlobals.classNames.editToolbarItem,
+            className: EditGlobals.classNames.editToolbarItem,
             text: 't2',
             events: {
                 click: function (): void {}

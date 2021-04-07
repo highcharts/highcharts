@@ -266,6 +266,11 @@ h1 {
 
 .highcharts-dashboard-edit-toolbar-item {
     display: none;
+    width: 30px;
+    height: 30px;
+    padding: 2px;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 .highcharts-dashboard-edit-toolbar-item:hover {
@@ -274,16 +279,11 @@ h1 {
     background-color: #bbd1ed;
 }
 
-.highcharts-dashboard-edit-toolbar-vertical-separator {
+.highcharts-dashboard-edit-menu-vertical-separator {
     height: 1px;
     background-color: #a6a6a6;
     margin-top: 2px;
     margin-bottom: 2px;
-
-    &:hover {
-        cursor: default;
-        background-color: #a6a6a6;
-    }
 }
 
 .highcharts-dashboard-edit-toolbar-options {

@@ -18,19 +18,36 @@ class CellEditToolbar extends Menu {
     * */
     protected static readonly defaultOptions: CellEditToolbar.Options = {
         enabled: true,
+        className: EditGlobals.classNames.editToolbar,
         items: ['drag', 'settings', 'destroy']
     }
 
     public static items: Record<string, MenuItem.Options> =
     merge(Menu.items, {
-        cellOptions: {
-            type: 'cellOptions',
-            // className: EditGlobals.classNames.editToolbarItem,
+        drag: {
+            type: 'drag',
+            className: EditGlobals.classNames.editToolbarItem,
+            text: 'd',
+            events: {
+                click: function (this: MenuItem, e: any): void {}
+            }
+        },
+        settings: {
+            type: 'settings',
+            className: EditGlobals.classNames.editToolbarItem,
             text: 'opt',
             events: {
                 click: function (this: MenuItem, e: any): void {
                     (this.menu as CellEditToolbar).onCellOptions(e);
                 }
+            }
+        },
+        destroy: {
+            type: 'destroy',
+            className: EditGlobals.classNames.editToolbarItem,
+            text: 'de',
+            events: {
+                click: function (this: MenuItem, e: any): void {}
             }
         }
     })

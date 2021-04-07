@@ -16,11 +16,12 @@ const EditGlobals: EditGlobals = {
         editToolbarOptions: PREFIX + 'toolbar-options',
         editToolbarOptionsShow: PREFIX + 'toolbar-show',
         editToolbarOptionsHide: PREFIX + 'toolbar-hide',
-        editToolbarVerticalSeparator: PREFIX + 'toolbar-vertical-separator',
-        editToolbarHorizontalSeparator: PREFIX + 'toolbar-horizontal-separator',
         disabledNotEditedCells: PREFIX + 'hidden-cells',
         currentEditedCell: PREFIX + 'current-cell',
-        menuItem: PREFIX + 'menu-item'
+        menuItem: PREFIX + 'menu-item',
+        menu: PREFIX + 'menu',
+        menuVerticalSeparator: PREFIX + 'menu-vertical-separator',
+        menuHorizontalSeparator: PREFIX + 'menu-horizontal-separator'
     },
     lang: {
         editMode: 'Edit mode',
@@ -49,11 +50,12 @@ namespace EditGlobals {
         editToolbarOptions: string;
         editToolbarOptionsShow: string;
         editToolbarOptionsHide: string;
-        editToolbarVerticalSeparator: string;
-        editToolbarHorizontalSeparator: string;
         disabledNotEditedCells: string;
         currentEditedCell: string;
         menuItem: string;
+        menu: string;
+        menuVerticalSeparator: string;
+        menuHorizontalSeparator: string;
     }
 
     export interface LangOptions {

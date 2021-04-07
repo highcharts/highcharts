@@ -57,13 +57,13 @@ class MenuItem {
 
         item.container = createElement(
             'div', {
-                // textContent: options.text,
+                textContent: options.text,
                 onclick: function (): void {
                     if (options.events && options.events.click) {
                         options.events.click.apply(item, arguments);
                     }
                 },
-                className: EditGlobals.classNames.editToolbarItem + ' ' +
+                className: EditGlobals.classNames.menuItem + ' ' +
                     (options.className || '')
             },
             options.style || {},
