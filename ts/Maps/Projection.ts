@@ -110,12 +110,16 @@ export default class Projection {
         const path: SVGPath = [];
 
         const addToPath = (polygon: LonLatArray[]): void => {
+            let movedTo: boolean;
             polygon.forEach((lonLat, i): void => {
                 const point = this.forward(lonLat);
-                if (i === 0) {
-                    path.push(['M', point[0], -point[1]]);
-                } else {
-                    path.push(['L', point[0], -point[1]]);
+                if (!isNaN(point[0]) && !isNaN(point[1])) {
+                    if (!movedTo) {
+                        path.push(['M', point[0], -point[1]]);
+                        movedTo = true;
+                    } else {
+                        path.push(['L', point[0], -point[1]]);
+                    }
                 }
             });
         };
@@ -128,13 +132,17 @@ export default class Projection {
 
         } else if (geometry.type === 'Polygon') {
             geometry.coordinates.forEach(addToPath);
-            path.push(['Z']);
+            if (path.length) {
+                path.push(['Z']);
+            }
 
         } else if (geometry.type === 'MultiPolygon') {
             geometry.coordinates.forEach((polygons): void => {
                 polygons.forEach(addToPath);
             });
-            path.push(['Z']);
+            if (path.length) {
+                path.push(['Z']);
+            }
 
         }
         return path;
