@@ -1,6 +1,10 @@
 
 <script src="https://unpkg.com/topojson-client@3"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.5.0/proj4.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.7.2/proj4-src.min.js"></script>
+
+<script src="https://d3js.org/d3-array.v2.min.js"></script>
+<script src="https://d3js.org/d3-geo.v2.min.js"></script>
+<script src="https://d3js.org/d3-geo-projection.v3.min.js"></script>
 
 <script src="https://code.highcharts.com/maps/highmaps.js"></script>
 <script src="https://code.highcharts.com/maps/modules/data.js"></script>
@@ -11,8 +15,18 @@
 
 <div id="container"></div>
 
-<div class="buttons">
-    <h4>Flat projections</h4>
+<hr>
+
+<div id="library-buttons">
+    <h4>Library</h4>
+    <div class="btn-group">
+        <button id="btn-proj4" class="btn btn-outline-secondary active">Proj4</button>
+        <button id="btn-d3" class="btn btn-outline-secondary">d3-geo</button>
+    </div>
+</div>
+
+<div id="projection-buttons" class="buttons">
+    <h4 class="mt-4">Flat projections</h4>
     <div class="btn-group">
         <button id="robin" class="btn btn-outline-secondary">Robinson</button>
         <button id="miller" class="btn btn-outline-secondary">Miller</button>

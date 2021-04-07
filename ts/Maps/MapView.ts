@@ -8,6 +8,7 @@
  *
  * */
 import type PositionObject from '../Core/Renderer/PositionObject';
+import type ProjectionOptions from './ProjectionOptions';
 
 import AnimationOptionsObject from '../Core/Animation/AnimationOptions';
 import Chart from '../Core/Chart/Chart.js';
@@ -15,8 +16,10 @@ import H from '../Core/Globals.js';
 const {
     win
 } = H;
+import Projection from 'Projection.js';
 import U from '../Core/Utilities.js';
 const {
+    extend,
     isNumber,
     merge
 } = U;
@@ -38,13 +41,9 @@ declare global {
         };
 
         interface MapViewOptions {
-            center: ProjectedXY; // @todo: LatLon object
+            center: ProjectedXY; // @todo: LonLatArray
             zoom: number;
-            projection?: MapViewProjectionOptions;
-        }
-
-        interface MapViewProjectionOptions {
-            crs?: string;
+            projection?: ProjectionOptions;
         }
 
         interface Options {
@@ -90,26 +89,26 @@ class MapView {
     ) {
         const options = merge(true, {
             center: { x: 0, y: 0 },
+            projection: {
+                d3: win.d3,
+                proj4: chart.options.chart.proj4 || win.proj4
+            },
             zoom: 0
         }, userOptions);
 
         this.chart = chart;
         this.center = options.center;
         this.options = options;
+        this.projection = new Projection(options.projection);
         this.userOptions = userOptions || {};
         this.zoom = options.zoom;
-
-        const proj = this.chart.options.chart.proj4 || win.proj4;
-        if (proj && options.projection && options.projection.crs) {
-            this.projection = proj(options.projection.crs);
-        }
     }
 
     public center: Highcharts.ProjectedXY;
     public enabled?: boolean;
     public minZoom?: number;
     public options: Highcharts.MapViewOptions;
-    public projection?: any;
+    public projection: Projection;
     public userOptions: DeepPartial<Highcharts.MapViewOptions>;
     public zoom: number;
 
@@ -131,7 +130,7 @@ class MapView {
 
         this.setView(
             { y: (bounds.y2 + bounds.y1) / 2, x: (bounds.x2 + bounds.x1) / 2 },
-            (Math.log(worldSize / scaleToPlotArea) / Math.log(2)),
+            Math.log(worldSize / scaleToPlotArea) / Math.log(2),
             redraw,
             animation
         );
@@ -240,9 +239,16 @@ class MapView {
         userOptions: DeepPartial<Highcharts.MapViewOptions>,
         redraw: boolean = true
     ): void {
-        const isDirtyProjection =
-            (userOptions.projection && userOptions.projection.crs) !==
-            (this.options.projection && this.options.projection.crs);
+        const newProjection = userOptions.projection;
+        const isDirtyProjection = newProjection && (
+            (
+                Projection.toString(newProjection) !==
+                Projection.toString(this.options.projection)
+            ) ||
+            'd3' in newProjection ||
+            'proj4' in newProjection
+        );
+
         merge(true, this.userOptions, userOptions);
         merge(true, this.options, userOptions);
 
@@ -255,15 +261,7 @@ class MapView {
                 series.isDirtyData = true;
             });
 
-            // @todo: This is repetetive, also happens in constructor
-            const proj = this.chart.options.chart.proj4 || win.proj4;
-            if (proj) {
-                if (this.options.projection && this.options.projection.crs) {
-                    this.projection = proj(this.options.projection.crs);
-                } else {
-                    this.projection = void 0;
-                }
-            }
+            this.projection = new Projection(this.options.projection);
 
             // Fit to bounds if center/zoom are not explicitly given
             if (!userOptions.center && !isNumber(userOptions.zoom)) {

@@ -630,9 +630,7 @@ class MapSeries extends ScatterSeries {
 
             // Individual point actions.
             if (chart.hasRendered && !chart.styledMode) {
-                series.points.forEach(function (
-                    point: MapPoint
-                ): void {
+                series.points.forEach(function (point): void {
 
                     // Restore state color on update/redraw (#3529)
                     if (point.shapeArgs) {
@@ -650,9 +648,7 @@ class MapSeries extends ScatterSeries {
             series.group = group; // Reset
 
             // Add class names
-            series.points.forEach(function (
-                point: MapPoint
-            ): void {
+            series.points.forEach(function (point): void {
                 if (point.graphic) {
                     var className = '';
                     if (point.name) {
@@ -809,12 +805,8 @@ class MapSeries extends ScatterSeries {
     /**
      * Get the bounding box of all paths in the map combined.
      *
-     * @todo Consistent naming of MapView.getDataBounds and Series.getBox and
-     * Point.getProjectedPath.
-     *
      */
     public getProjectedBounds(): Highcharts.MapBounds|undefined {
-
         if (!this.bounds) {
 
             const MAX_VALUE = Number.MAX_VALUE;
@@ -825,7 +817,7 @@ class MapSeries extends ScatterSeries {
             // Find the bounding box of each point
             (this.points || []).forEach(function (point): void {
 
-                if (point.path) {
+                if (point.path || (point as any).coordinates) {
 
                     // @todo Try to puth these two conversions in
                     // MapPoint.applyOptions
@@ -833,7 +825,10 @@ class MapSeries extends ScatterSeries {
                         point.path = splitPath(point.path);
 
                     // Legacy one-dimensional array
-                    } else if (point.path[0] as any === 'M') {
+                    } else if (
+                        isArray(point.path) &&
+                        point.path[0] as any === 'M'
+                    ) {
                         point.path = SVGRenderer.prototype.pathToSegments(
                             point.path as any
                         );
@@ -903,6 +898,7 @@ class MapSeries extends ScatterSeries {
 
             this.bounds = MapView.compositeBounds(allBounds);
         }
+
         return this.bounds;
     }
 

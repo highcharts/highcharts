@@ -25,8 +25,11 @@ import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
  *
  * */
 
+type LonLatArray = [number, number];
+
 export interface MapPointOptions extends ScatterPointOptions {
     color?: ColorType;
+    coordinates?: LonLatArray[]|LonLatArray[][]|LonLatArray[][][];
     dataLabels?: DataLabelOptions;
     drilldown?: string;
     id?: string;
@@ -35,6 +38,8 @@ export interface MapPointOptions extends ScatterPointOptions {
     middleY?: number;
     name?: string;
     path?: (string|SVGPath);
+    properties?: AnyRecord;
+    type?: 'LineString'|'Polygon'|'MultiLineString'|'MultiPolygon';
     value?: (number|null);
 }
 

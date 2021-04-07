@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type MapPointOptions from '../Series/Map/MapPointOptions';
+import type MapPointPointOptions from '../Series/MapPoint/MapPointPointOptions';
 import type Series from '../Core/Series/Series';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import Chart from '../Core/Chart/Chart.js';
@@ -68,7 +70,7 @@ declare global {
         }
         interface MapPathObject {
             name?: string;
-            path: SVGPath;
+            path?: SVGPath;
             properties?: object;
         }
         interface MapLatLonObject {
@@ -113,6 +115,7 @@ declare global {
         ): Array<any>;
     }
     interface Window {
+        d3: any;
         proj4: any;
     }
 }
@@ -562,76 +565,51 @@ Chart.prototype.fromLatLonToPoint = function (
  */
 H.geojson = function (
     geojson: Highcharts.GeoJSON,
-    hType?: string,
+    hType: string = 'map',
     series?: Series
 ): Array<any> {
     var mapData = [] as Array<any>,
-        path = [] as SVGPath,
-        polygonToPath = function (polygon: Array<Array<number>>): void {
-            polygon.forEach((point, i): void => {
-                if (i === 0) {
-                    path.push(['M', point[0], -point[1]]);
-                } else {
-                    path.push(['L', point[0], -point[1]]);
-                }
-            });
-        };
+        path = [] as SVGPath;
 
-    hType = hType || 'map';
-
-    geojson.features.forEach(function (feature: any): void {
+    geojson.features.forEach(function (feature): void {
 
         var geometry = feature.geometry || {},
             type = geometry.type,
             coordinates = geometry.coordinates,
             properties = feature.properties,
-            point: (
-                Highcharts.MapCoordinateObject|
-                Highcharts.MapPathObject|
-                undefined
-            );
+            pointOptions: (MapPointOptions|MapPointPointOptions|undefined);
 
         path = [];
 
-        if (hType === 'map' || hType === 'mapbubble') {
-            if (type === 'Polygon') {
-                coordinates.forEach(polygonToPath);
-                path.push(['Z']);
-
-            } else if (type === 'MultiPolygon') {
-                coordinates.forEach(function (
-                    items: Array<Array<Array<number>>>
-                ): void {
-                    items.forEach(polygonToPath);
-                });
-                path.push(['Z']);
+        if (
+            (hType === 'map' || hType === 'mapbubble') &&
+            (type === 'Polygon' || type === 'MultiPolygon')
+        ) {
+            if (coordinates.length) {
+                pointOptions = { coordinates, type };
             }
 
-            if (path.length) {
-                point = { path: path };
-            }
-
-        } else if (hType === 'mapline') {
-            if (type === 'LineString') {
-                polygonToPath(coordinates);
-            } else if (type === 'MultiLineString') {
-                coordinates.forEach(polygonToPath);
-            }
-
-            if (path.length) {
-                point = { path: path };
+        } else if (
+            hType === 'mapline' &&
+            (
+                type === 'LineString' ||
+                type === 'MultiLineString'
+            )
+        ) {
+            if (coordinates.length) {
+                pointOptions = { coordinates, type };
             }
 
         } else if (hType === 'mappoint') {
             if (type === 'Point') {
-                point = {
+                pointOptions = {
                     x: coordinates[0],
                     y: -coordinates[1]
                 };
             }
         }
-        if (point) {
-            mapData.push(extend(point, {
+        if (pointOptions) {
+            mapData.push(extend(pointOptions, {
                 name: properties.name || properties.NAME,
 
                 /**

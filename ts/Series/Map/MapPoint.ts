@@ -73,12 +73,38 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 
     /* eslint-disable valid-jsdoc */
 
+    /* @todo: Doesn't need to be static, it is always used with instance. And
+    consider not returning the path, and not calling it get* */
     public static getProjectedPath(
         point: MapPoint,
         projection: any
     ): SVGPath {
-        if (!point.projectedPath && isArray(point.path)) {
-            if (projection) {
+        if (!point.projectedPath) {
+            if (isArray((point as any).coordinates)) {
+                point.projectedPath = projection.path({
+                    type: (point as any).type,
+                    coordinates: (point as any).coordinates
+                });
+
+                /*
+            // Experimental! d3 projections
+            if (
+                isArray((point as any).coordinates) &&
+                (win as any).geoPath
+            ) {
+                const path = (win as any).geoPath({
+                    type: 'Feature',
+                    geometry: {
+                        type: (point as any).type,
+                        coordinates: (point as any).coordinates
+                    }
+                });
+
+                if (path) {
+                    point.projectedPath = splitPath(path);
+                }
+
+            } else if (isArray(point.path) && projection) {
                 point.projectedPath = point.path.map((seg): SVGPath.Segment => {
                     if (seg[0] === 'M' || seg[0] === 'L') {
                         const p = projection.forward({ x: seg[1], y: seg[2] });
@@ -86,6 +112,9 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
                     }
                     return seg;
                 });
+            */
+
+            // SVG path given directly in point options
             } else {
                 point.projectedPath = point.path;
             }
