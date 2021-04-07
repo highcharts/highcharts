@@ -33,10 +33,8 @@ let dashboard = new Dashboard('container', {
         },
         toolbars: {
             cell: {
-                // className: 'my-class',
                 items: [{
                     type: 'drag',
-                    // text: 'drag'
                     icon: '/code/gfx/dashboard-icons/drag.svg'
                 }, {
                     type: 'settings',
@@ -44,7 +42,6 @@ let dashboard = new Dashboard('container', {
                 }, {
                     type: 'my-option-1',
                     text: 'o1',
-                    // icon: '/code/gfx/dashboard-icons/my-icon.svg',
                     events: {
                         click: function () {
                             console.log('hello world!');
@@ -64,7 +61,16 @@ let dashboard = new Dashboard('container', {
                 }]
             },
             row: {
-
+                items: [{
+                    type: 'drag',
+                    icon: '/code/gfx/dashboard-icons/drag.svg'
+                }, {
+                    type: 'settings',
+                    icon: '/code/gfx/dashboard-icons/settings.svg'
+                }, {
+                    type: 'destroy',
+                    icon: '/code/gfx/dashboard-icons/destroy.svg'
+                }]
             },
             settings: {
 

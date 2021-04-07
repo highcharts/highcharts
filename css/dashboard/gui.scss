@@ -42,6 +42,10 @@ body {
     }
 }
 
+.highcharts-dashboard-edit-toolbar.highcharts-dashboard-edit-toolbar-row .highcharts-dashboard-edit-toolbar-item {
+    float: left;
+}
+
 // .highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row :hover .highcharts-dashboard-cell  {
 //     border: 1px dashed #bdbdbd;
 //     cursor: pointer;
