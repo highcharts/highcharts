@@ -925,19 +925,23 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Column names or aliases to normalize. Aliases taking precedence.
      *
      * @return {Array<string>}
-     * Returns normalized column names.
+     * Returns available column names.
      */
-    private getNormalizedColumnNames(
+    public getNormalizedColumnNames(
         columnNamesOrAliases: Array<string>
     ): Array<string> {
         const table = this,
             aliasMap = table.aliasMap,
             columnNamesLength = columnNamesOrAliases.length,
-            columnNames: Array<string> = [];
+            columnNames: Array<string> = [],
+            columns = table.columns;
 
         for (let i = 0, columnName: string; i < columnNamesLength; ++i) {
             columnName = columnNamesOrAliases[i];
-            columnNames[i] = (aliasMap[columnName] || columnName);
+            columnName = (aliasMap[columnName] || columnName);
+            if (columns[columnName]) {
+                columnNames.push(columnName);
+            }
         }
 
         return columnNames;
