@@ -162,9 +162,9 @@ class RowEditToolbar extends Menu {
             ]);
 
             // temporary -> move to OptionsToolbar
-            this.row?.container?.classList.add(EditGlobals.classNames.currentEditedCell);
+            this.row?.container?.classList.add(EditGlobals.classNames.currentEditedRow);
             this.row?.layout.dashboard.container.classList.add(
-                EditGlobals.classNames.disabledNotEditedCells
+                EditGlobals.classNames.disabledNotEditedRows
             );
         }
     }
