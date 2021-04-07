@@ -3875,7 +3875,7 @@ class Series {
 
         if (dataSorting && dataSorting.enabled) {
             if (data instanceof Array) {
-                data = Series.getTableFromSeriesData(data);
+                data = Series.getTableFromSeriesData(data, series);
             }
             data = series.sortTable(data);
         }
