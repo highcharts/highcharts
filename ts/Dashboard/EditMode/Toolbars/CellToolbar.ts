@@ -62,11 +62,13 @@ class CellEditToolbar extends Menu {
     constructor(
         editMode: EditMode
     ) {
+        const toolbarCellOptions = (editMode.options.toolbars || {}).cell;
+
         super(
             editMode.dashboard.container,
             merge(
                 CellEditToolbar.defaultOptions,
-                editMode.options.toolbars && editMode.options.toolbars.cell
+                toolbarCellOptions
             )
         );
 
