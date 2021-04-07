@@ -28,16 +28,16 @@ class CellEditToolbar extends Menu {
     merge(Menu.items, {
         drag: {
             type: 'drag',
-            text: 'd',
-            icon: '',
+            // text: 'drag',
+            icon: EditGlobals.iconsURL + 'drag.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {}
             }
         },
         settings: {
             type: 'settings',
-            text: 'opt',
-            icon: '',
+            // text: 'settings',
+            icon: EditGlobals.iconsURL + 'settings.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
                     (this.menu as CellEditToolbar).onCellOptions(e);
@@ -46,8 +46,8 @@ class CellEditToolbar extends Menu {
         },
         destroy: {
             type: 'destroy',
-            text: 'de',
-            icon: '',
+            // text: 'destroy',
+            icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {}
             }

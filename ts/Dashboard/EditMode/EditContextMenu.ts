@@ -19,7 +19,7 @@ class EditContextMenu extends Menu {
         enabled: true,
         className: EditGlobals.classNames.contextMenu,
         itemsClassName: EditGlobals.classNames.contextMenuItem,
-        contextMenuIcon: 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/menu.svg',
+        icon: EditGlobals.iconsURL + 'menu.svg',
         items: ['saveLocal', 'verticalSeparator', 'editMode']
     }
 
@@ -118,7 +118,7 @@ class EditContextMenu extends Menu {
 namespace EditContextMenu {
     export interface Options extends Menu.Options {
         enabled?: true;
-        contextMenuIcon?: string;
+        icon?: string;
     }
 }
 

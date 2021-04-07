@@ -8,7 +8,7 @@ let dashboard = new Dashboard('container', {
     editMode: {
         enabled: true,
         contextMenu: {
-            contextMenuIcon: '/code/gfx/dashboard-icons/menu.svg',
+            icon: '/code/gfx/dashboard-icons/menu.svg',
             enabled: true,
             items: [{
                 type: 'saveLocal',
@@ -36,30 +36,31 @@ let dashboard = new Dashboard('container', {
                 // className: 'my-class',
                 items: [{
                     type: 'drag',
-                    text: 'drag'
-                    // icon: '/code/gfx/dashboard-icons/drag.svg'
+                    // text: 'drag'
+                    icon: '/code/gfx/dashboard-icons/drag.svg'
                 }, {
                     type: 'settings',
                     icon: '/code/gfx/dashboard-icons/settings.svg'
                 }, {
-                    type: 'destroy',
-                    icon: '/code/gfx/dashboard-icons/destroy.svg'
-                }, {
                     type: 'my-option-1',
                     text: 'o1',
-                    icon: '/code/gfx/dashboard-icons/my-icon.svg',
+                    // icon: '/code/gfx/dashboard-icons/my-icon.svg',
                     events: {
                         click: function () {
                             console.log('hello world!');
                         }
                     }
                 }, {
+                    type: 'my-button',
                     text: 'pl',
                     events: {
                         click: function () {
                             console.log('hello world!');
                         }
                     }
+                }, {
+                    type: 'destroy',
+                    icon: '/code/gfx/dashboard-icons/destroy.svg'
                 }]
             },
             row: {
@@ -390,7 +391,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
     editMode: {
         enabled: true,
         contextMenu: {
-            contextMenuIcon: '/code/gfx/dashboard-icons/menu.svg',
+            icon: '/code/gfx/dashboard-icons/menu.svg',
             enabled: true,
             menuItems: [{
                 type: 'saveLocal',

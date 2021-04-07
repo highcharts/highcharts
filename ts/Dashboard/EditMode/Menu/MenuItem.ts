@@ -67,7 +67,7 @@ class MenuItem {
 
         item.container = createElement(
             'div', {
-                textContent: options.text,
+                textContent: options.icon ? '' : options.text,
                 onclick: function (): void {
                     if (options.events && options.events.click) {
                         options.events.click.apply(item, arguments);
@@ -78,6 +78,15 @@ class MenuItem {
             options.style || {},
             item.menu.container
         );
+
+        if (options.icon) {
+            (item.container.style as any)['background-image'] = 'url(' +
+                options.icon + ')';
+
+            if (options.type === 'destroy') {
+                item.container.classList.add(EditGlobals.classNames.menuDestroy)
+            }
+        }
     }
 
     public activate(): void {
@@ -108,6 +117,7 @@ namespace MenuItem {
         className?: string;
         events?: Record<Event['type'], Function>;
         style?: CSSJSONObject;
+        icon?: string;
     }
 }
 
