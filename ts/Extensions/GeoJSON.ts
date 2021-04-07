@@ -600,12 +600,9 @@ H.geojson = function (
                 pointOptions = { coordinates, type };
             }
 
-        } else if (hType === 'mappoint') {
-            if (type === 'Point') {
-                pointOptions = {
-                    x: coordinates[0],
-                    y: -coordinates[1]
-                };
+        } else if (hType === 'mappoint' && type === 'Point') {
+            if (coordinates.length) {
+                pointOptions = { coordinates, type };
             }
         }
         if (pointOptions) {

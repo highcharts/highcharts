@@ -25,7 +25,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../Core/Utilities.js';
-const { merge } = U;
+const { isNumber, merge } = U;
 
 /* *
  *
@@ -68,6 +68,13 @@ class MapPointPoint extends ScatterSeries.prototype.pointClass {
 
         return (
             super.applyOptions.call(this, mergedOptions, x) as any
+        );
+    }
+
+    public isValid(): boolean {
+        return Boolean(
+            this.options.coordinates ||
+            (isNumber(this.x) && isNumber(this.y))
         );
     }
 

@@ -50,9 +50,25 @@ export default class Projection {
         }
     }
 
+    private d3Projection: any;
+
+    // Override for this.path when d3 is enabled
+    private d3Path(geometry: GeoJSONGeometry): SVGPath {
+
+        const path = this.d3Projection({
+            type: 'Feature',
+            geometry
+        });
+
+        // @todo: Why can't I imp\ort splitPath directly from MapChart?
+        return path ? (H as any).MapChart.splitPath(path) : [];
+    }
+
     public constructor(options?: ProjectionOptions) {
         this.options = options || {};
-        const { proj4 } = options || {};
+        const { d3, proj4 } = options || {};
+
+        // Set up proj4 based projection
         if (proj4) {
             const projString = Projection.toString(options);
 
@@ -62,6 +78,33 @@ export default class Projection {
                 this.forward = projection.forward;
                 this.inverse = projection.inverse;
             }
+
+        // Set up d3-geo based projection
+        } else if (d3) {
+            const { lat0 = 0, lon0 = 0, projectionName } = this.options;
+
+            let projection = d3.geoEquirectangular();
+            if (projectionName === 'mill') {
+                projection = d3.geoMiller();
+            } else if (projectionName === 'ortho') {
+                projection = d3.geoOrthographic().rotate([-lon0, -lat0]);
+            } else if (projectionName === 'robin') {
+                projection = d3.geoRobinson();
+            } else if (projectionName === 'webmerc') {
+                projection = d3.geoMercator();
+            } else {
+                error('Projection unknown to d3 adapter, falling back to equirectangular', false);
+            }
+
+            this.forward = (lonLat: LonLatArray): [number, number] => {
+                const p = projection(lonLat);
+                return [p[0], -p[1]];
+            };
+            this.inverse = projection.invert;
+
+            this.d3Projection = d3.geoPath(projection);
+            this.path = this.d3Path;
+
         }
     }
 
@@ -77,35 +120,8 @@ export default class Projection {
         return xy;
     }
 
-    public d3Path(geometry: GeoJSONGeometry): SVGPath {
-        const { d3, lat0 = 0, lon0 = 0, projectionName } = this.options;
-        let projection = d3.geoEquirectangular();
-        if (projectionName === 'mill') {
-            projection = d3.geoMiller();
-        } else if (projectionName === 'ortho') {
-            projection = d3.geoOrthographic().rotate([-lon0, -lat0]);
-        } else if (projectionName === 'robin') {
-            projection = d3.geoRobinson();
-        } else if (projectionName === 'webmerc') {
-            projection = d3.geoMercator();
-        } else {
-            error('Projection unknown to d3 adapter, falling back to equirectangular', false);
-        }
-        const path = d3.geoPath(projection)({
-            type: 'Feature',
-            geometry
-        });
-
-        // @todo: Why can't I imp\ort splitPath directly from MapChart?
-        return path ? (H as any).MapChart.splitPath(path) : [];
-    }
-
     // Take a GeoJSON geometry and return a translated SVGPath
     public path(geometry: GeoJSONGeometry): SVGPath {
-
-        if (this.options.d3) {
-            return this.d3Path(geometry);
-        }
 
         const path: SVGPath = [];
 

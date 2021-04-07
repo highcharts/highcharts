@@ -171,12 +171,24 @@ const drawMap = projectionKey => {
                 data: [{
                     type: 'LineString',
                     coordinates: [
-                        [6.5, 61],
-                        [-118, 35]
+                        [4.90, 53.38], // Amsterdam
+                        [-118.24, 34.05] // Los Angeles
                     ],
-                    color: 'blue'
+                    color: '#3030d0'
                 }],
                 lineWidth: 2
+            }, {
+                type: 'mappoint',
+                data: [{
+                    type: 'Point',
+                    name: 'Amsterdam',
+                    coordinates: [4.90, 53.38]
+                }, {
+                    type: 'Point',
+                    name: 'LA',
+                    coordinates: [-118.24, 34.05]
+                }],
+                color: '#3030d0'
             }]
         });
         console.timeEnd('@mapChart');
