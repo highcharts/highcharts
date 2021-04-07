@@ -768,7 +768,6 @@ $('document').ready(function () {
 
         $('#' + thingToChange).val(value);
 
-
         const functionName = thingToChange + 'Change';
         window[functionName](value);
 

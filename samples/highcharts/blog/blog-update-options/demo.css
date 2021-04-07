@@ -45,7 +45,7 @@ label{
   background-color: #fff !important;
 }
 .badge-secondary label{
-  padding:4px 4px !important;
+   padding:4px 4px !important;
 
 }
 .badge-secondary.active {
