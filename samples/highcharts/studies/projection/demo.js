@@ -152,7 +152,7 @@ const drawMap = projectionKey => {
                 name: 'Grid',
                 type: 'mapline',
                 data: getGrid(),
-                nullColor: '#f0f0f0'
+                nullColor: '#e8e8e8'
             }, {
                 data: static.data,
                 joinBy: null,
