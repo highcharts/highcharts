@@ -262,21 +262,28 @@ h1 {
     position: absolute;
     z-index: 99;
     border-radius: 3px;
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
 }
 
 .highcharts-dashboard-edit-toolbar-item {
     display: none;
-    width: 30px;
-    height: 30px;
-    padding: 2px;
+    min-width: 40px;
+    min-height: 40px;
     box-sizing: border-box;
     text-align: center;
+    padding: 10px 5px;
+    background-size: 28px 28px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+
+.highcharts-dashboard-edit-toolbar-item.highcharts-dashboard-edit-menu-destroy {
+    background-color: #e01d5a;
 }
 
 .highcharts-dashboard-edit-toolbar-item:hover {
     cursor: pointer;
-    color: #333;
-    background-color: #bbd1ed;
+    background-color: #4B4B4D;
 }
 
 .highcharts-dashboard-edit-menu-vertical-separator {
