@@ -18,6 +18,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
     public static defaultOptions = merge(
         Component.defaultOptions,
         {
+            scaleElements: true,
             elements: []
         }
     );
@@ -51,6 +52,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
 
     private innerElements: HTMLElement[];
     private elements: Highcharts.ASTNode[];
+    private scaleElements: boolean;
     public options: HTMLComponent.HTMLComponentOptions;
 
     /* *
@@ -71,6 +73,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
         this.type = 'HTML';
         this.innerElements = [];
         this.elements = [];
+        this.scaleElements = this.options.scaleElements;
 
         this.on('tableChanged', (e: Component.TableChangedEvent): void => {
             if (e.detail?.sender !== this.id) {
@@ -95,8 +98,35 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
             this.element.appendChild(element);
         });
         this.parentElement.appendChild(this.element);
+        if (this.scaleElements) {
+            this.autoScale();
+        }
         this.emit({ type: 'afterLoad' });
         return this;
+    }
+
+    // WIP handle scaling inner elements
+    // Could probably also implement responsive config
+    public autoScale(): void {
+        this.element.style.display = 'flex';
+        this.element.style.flexDirection = 'column';
+
+        this.innerElements.forEach((element): void => {
+            element.style.width = 'auto';
+            element.style.maxWidth = '100%';
+            element.style.maxHeight = '100%';
+            element.style.flexBasis = 'auto'; // (100 / this.innerElements.length) + '%';
+            element.style.overflow = 'auto';
+        });
+        this.scaleText();
+    }
+
+    // WIP basic font size scaling
+    // Should also take height into account
+    public scaleText(): void {
+        this.innerElements.forEach((element): void => {
+            element.style.fontSize = Math.max(Math.min(element.clientWidth / (1 * 10), 200), 20) + 'px';
+        });
     }
 
     public render(): this {
@@ -121,6 +151,17 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
 
         this.render();
         this.emit({ type: 'afterRedraw', component: this });
+        return this;
+    }
+
+    public resize(
+        width?: number | string | null,
+        height?: number | string | null
+    ): this {
+        if (this.scaleElements) {
+            this.scaleText();
+        }
+        super.resize(width, height);
         return this;
     }
 
@@ -172,10 +213,12 @@ namespace HTMLComponent {
     export type ComponentType = HTMLComponent;
     export interface HTMLComponentOptions extends Component.ComponentOptions {
         elements?: Highcharts.ASTNode[];
+        scaleElements: boolean;
     }
 
     export interface HTMLComponentJSONOptions extends Component.ComponentJSONOptions {
         elements: DataJSON.JSONObject[];
+        scaleElements: boolean;
     }
 
     export interface HTMLComponentEventObject extends Component.Event {
