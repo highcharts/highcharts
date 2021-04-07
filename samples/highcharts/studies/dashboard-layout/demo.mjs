@@ -30,7 +30,8 @@ let dashboard = new Dashboard('container', {
                 className: 'my-class',
                 items: [{
                     type: 'drag',
-                    icon: '/code/gfx/dashboard-icons/drag.svg'
+                    text: 'drag'
+                    // icon: '/code/gfx/dashboard-icons/drag.svg'
                 }, {
                     type: 'settings',
                     icon: '/code/gfx/dashboard-icons/settings.svg'
@@ -39,6 +40,13 @@ let dashboard = new Dashboard('container', {
                     icon: '/code/gfx/dashboard-icons/destroy.svg'
                 }, {
                     icon: '/code/gfx/dashboard-icons/my-icon.svg',
+                    events: {
+                        click: function () {
+                            console.log('hello world!');
+                        }
+                    }
+                }, {
+                    text: 'pl',
                     events: {
                         click: function () {
                             console.log('hello world!');

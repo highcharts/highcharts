@@ -20,7 +20,9 @@ class OptionsToolbar extends Menu {
     * */
     protected static readonly defaultOptions: OptionsToolbar.Options = {
         enabled: true,
-        items: ['title']
+        items: [{
+            type: 'title'
+        }]
     }
 
     public static tools: Record<string, MenuItem.Options> =
@@ -48,6 +50,8 @@ class OptionsToolbar extends Menu {
             merge(OptionsToolbar.defaultOptions, options || {})
         );
 
+        this.editMode = editMode;
+
         if (this.container) {
             this.container.classList.add(
                 EditGlobals.classNames.editToolbarOptions
@@ -63,6 +67,7 @@ class OptionsToolbar extends Menu {
     *
     * */
     public guiElement?: Cell|Row|Layout;
+    public editMode: EditMode;
 
     /* *
     *

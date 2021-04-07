@@ -28,6 +28,7 @@ class CellEditToolbar extends Menu {
             type: 'drag',
             className: EditGlobals.classNames.editToolbarItem,
             text: 'd',
+            icon: '',
             events: {
                 click: function (this: MenuItem, e: any): void {}
             }
@@ -36,6 +37,7 @@ class CellEditToolbar extends Menu {
             type: 'settings',
             className: EditGlobals.classNames.editToolbarItem,
             text: 'opt',
+            icon: '',
             events: {
                 click: function (this: MenuItem, e: any): void {
                     (this.menu as CellEditToolbar).onCellOptions(e);
@@ -46,6 +48,7 @@ class CellEditToolbar extends Menu {
             type: 'destroy',
             className: EditGlobals.classNames.editToolbarItem,
             text: 'de',
+            icon: '',
             events: {
                 click: function (this: MenuItem, e: any): void {}
             }
@@ -63,7 +66,11 @@ class CellEditToolbar extends Menu {
     ) {
         super(
             editMode.dashboard.container,
-            merge(CellEditToolbar.defaultOptions, options || {})
+            merge(
+                CellEditToolbar.defaultOptions,
+                options || {},
+                // editMode.options.toolbars && editMode.options.toolbars.cell
+            )
         );
 
         this.editMode = editMode;

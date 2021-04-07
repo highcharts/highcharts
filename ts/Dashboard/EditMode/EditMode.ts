@@ -9,6 +9,8 @@ import CellEditToolbar from './Toolbars/CellToolbar.js';
 import RowEditToolbar from './Toolbars/RowToolbar.js';
 import OptionsToolbar from './Toolbars/OptionsToolbar.js';
 import EditContextMenu from './EditContextMenu.js';
+import Menu from './Menu/Menu.js';
+import defaultOptions from '../../Maps/MapNavigationOptionsDefault.js';
 
 const {
     merge,
@@ -206,12 +208,18 @@ class EditMode {
         return this.active;
     }
 }
-
 namespace EditMode {
     export interface Options {
         enabled: boolean;
         contextMenu?: EditContextMenu.Options;
         lang?: EditGlobals.LangOptions|string;
+        toolbars?: EditMode.Toolbars;
+    }
+
+    export interface Toolbars {
+        cell?: Menu.Options;
+        row?: Menu.Options;
+        settings?: Menu.Options;
     }
 }
 

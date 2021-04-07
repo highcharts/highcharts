@@ -69,10 +69,6 @@ class MenuItem {
             options.style || {},
             item.menu.container
         );
-
-        console.log('setMenuContinaer', item, options);
-        // item.container.style.background = 'url(' + editMode.options.contextMenu.contextMenuIcon + ') no-repeat 50% 50%';
-
     }
 
     public activate(): void {
