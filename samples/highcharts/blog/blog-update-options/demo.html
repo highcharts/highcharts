@@ -1,0 +1,98 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-more.js"></script>
+<script src="https://code.highcharts.com/modules/item-series.js"></script>
+<script src="https://kit.fontawesome.com/0cc87dc065.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+<div id="container" class="Ccontainer"></div>
+<div class="container pt-3 pb-0" style="height:auto">
+	<div class="row pb-1 ">
+		<div class="col-12 series-types text-center">
+		
+			<button id="item" type="button" class="btn btn-primary active">item</button>
+			<button type="button" class="btn btn-primary ">pie</button>
+			<button type="button" class="btn btn-primary">column</button>
+			<button type="button" class="btn btn-primary">line</button>
+		</div>
+	</div> 
+</div>
+
+<div class="container controls px-0 pt-2">
+	<div class="row">
+		<div class="pl-0 pr-1 flex-fill">
+			<div class="form-check form-check-inline badge badge-secondary active">
+			  <input class="form-check-input" type="radio" checked id="controlType1" name="controlType" value="0">
+			  <label class="form-check-label" for="controlType1">start angle: <span>-100 deg</span></label>
+			</div>
+    </div>
+    <div class="pl-0 pr-1 flex-fill">
+			<div class="form-check form-check-inline badge badge-secondary ">
+			  <input class="form-check-input" type="radio" id="controlType2" name="controlType" value="1">
+			  <label class="form-check-label" for="controlType2">end angle</label>
+			</div>
+    </div>
+    <div class="pl-0 pr-1 flex-fill">
+			<div class="form-check form-check-inline badge badge-secondary " >
+			  <input class="form-check-input" type="radio" id="controlType3" name="controlType" value="2">
+			  <label class="form-check-label for="controlType3">inner size</label>
+			</div>
+    </div>
+    <div class="pl-0 pr-1 flex-fill">
+			<div class="form-check form-check-inline badge badge-secondary ">
+					<input class="form-check-input" type="radio" id="controlType4" name="controlType"  value="3">
+					<label class="form-check-label" for="controlType4">size  </label> 
+			</div>
+		</div>
+	</div>
+	<div class="row align-items-center">
+    <div id="min" class="slide col-2 text-right align-self-start">
+				<i class="fas fa-minus"></i>
+		</div>
+		<div class="col-8 text-center px-0">
+			<div class="row">
+				<div class="col-12">
+						<!-- innerSize -->
+						<input type="range" id="innerSize" class="form-control d-none slider" value="30" min="0" max="100" step="1">
+						<!-- end angle -->
+						<input type="range" id="endAngle" class="form-control d-none slider" value="100" min="-100" max="100" step="1">
+						<!-- start angle -->
+						<input type="range" id="startAngle" class="form-control slider" value="-100" min="-100" max="100" step="1">
+						<!-- size -->
+						<input type="range" id="size" class="form-control d-none slider" value="100" min="0" max="100" step="1">
+						<!-- number of slices -->
+						<input type="range" id="slices" class="form-control d-none slider" value="6" min="0" max="10" step="1">
+						<!-- width -->
+						<input type="range" id="width" class="form-control d-none slider" value="20" min="1" max="100" step="1">
+						<!-- radius -->
+						<input type="range" id="radius" class="form-control d-none slider" value="0" min="0" max="100" step="1">
+						<!-- line width -->
+						<input type="range" id="lineWidth" class="form-control d-none slider" value="10" min="1" max="100" step="1">
+						<!-- marker -->
+						<input type="range" id="marker" class="form-control d-none slider" value="16" min="1" max="30" step="1">
+						<!-- radial-->
+						<input type="range" id="radial" class="form-control d-none slider" value="50" min="0" max="100" step="1">
+						<!-- xAxis -->
+						<input type="range" id="xAxis" class="form-control d-none slider"  value="6" min="0" max="20" step="1">
+						<!-- yAxis -->
+						<input type="range" id="yAxis" class="form-control d-none slider" value="50" min="0" max="100" step="1">
+						<!-- animation -->
+						<input type="range" min="-25" max="-2" value="-1"  class="form-control d-none slider" id="animation">
+						
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12 text-center ">
+					<span id="thing" style="font-size:14px">Adjust the start angle</span>
+					<a href="#" class="d-none btn-sm btn-secondary" id="play">spin</a>
+				</div>
+			</div>
+		</div>
+		<div id="max" class="slide col-2  align-self-start">
+			<i class="fas fa-plus"></i>
+		</div>
+ 	</div>
+</div>
+	
