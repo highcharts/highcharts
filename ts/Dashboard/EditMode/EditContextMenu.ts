@@ -18,6 +18,7 @@ class EditContextMenu extends Menu {
     protected static readonly defaultOptions: EditContextMenu.Options = {
         enabled: true,
         className: EditGlobals.classNames.contextMenu,
+        itemsClassName: EditGlobals.classNames.contextMenuItem,
         contextMenuIcon: 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/menu.svg',
         items: ['saveLocal', 'verticalSeparator', 'editMode']
     }
@@ -26,7 +27,6 @@ class EditContextMenu extends Menu {
     merge(Menu.items, {
         editMode: {
             type: 'editMode',
-            className: EditGlobals.classNames.contextMenuItem,
             text: 'Edit mode',
             events: {
                 click: function (this: MenuItem, e: any): void {
@@ -36,7 +36,6 @@ class EditContextMenu extends Menu {
         },
         saveLocal: {
             type: 'saveLocal',
-            className: EditGlobals.classNames.contextMenuItem,
             text: 'Save locally',
             events: {
                 click: function (): void {}

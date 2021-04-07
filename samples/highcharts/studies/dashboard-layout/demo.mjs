@@ -10,7 +10,7 @@ let dashboard = new Dashboard('container', {
         contextMenu: {
             contextMenuIcon: '/code/gfx/dashboard-icons/menu.svg',
             enabled: true,
-            menuItems: [{
+            items: [{
                 type: 'saveLocal',
                 className: 'test-test-test',
                 events: {
@@ -18,16 +18,22 @@ let dashboard = new Dashboard('container', {
                         console.log(this);
                     }
                 }
-            }, 'separator', {
+            }, 'verticalSeparator', {
                 type: 'editMode',
                 text: 'Edit on/off'
             }, {
-                text: 'My export'
+                type: 'my-export',
+                text: 'My export',
+                events: {
+                    click: function () {
+                        console.log('my export!');
+                    }
+                }
             }]
         },
         toolbars: {
             cell: {
-                className: 'my-class',
+                // className: 'my-class',
                 items: [{
                     type: 'drag',
                     text: 'drag'
@@ -39,6 +45,8 @@ let dashboard = new Dashboard('container', {
                     type: 'destroy',
                     icon: '/code/gfx/dashboard-icons/destroy.svg'
                 }, {
+                    type: 'my-option-1',
+                    text: 'o1',
                     icon: '/code/gfx/dashboard-icons/my-icon.svg',
                     events: {
                         click: function () {

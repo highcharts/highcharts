@@ -78,30 +78,35 @@ abstract class Menu {
         );
     }
 
+    // itemsSchemas - default items definitions.
     protected initItems(
-        items: Record<string, MenuItem.Options>
+        itemsSchemas: Record<string, MenuItem.Options>
     ): void {
         const menu = this,
             optionsItems = menu.options.items || [];
 
         let itemSchema,
-            itemOptions,
-            item;
+            itemConfig,
+            item,
+            options;
 
         for (let i = 0, iEnd = optionsItems.length; i < iEnd; ++i) {
-            itemOptions = optionsItems[i];
-            itemSchema = typeof itemOptions === 'string' ? items[itemOptions] :
-                itemOptions.type ? items[itemOptions.type] : {};
+            itemConfig = optionsItems[i];
+            itemSchema = typeof itemConfig === 'string' ? itemsSchemas[itemConfig] :
+                itemConfig.type ? itemsSchemas[itemConfig.type] : {};
 
-            item = new MenuItem(
-                menu,
-                typeof itemOptions === 'string' ?
-                    merge(itemSchema, { type: itemOptions }) :
-                    merge(itemSchema, itemOptions)
-            );
+            options = typeof itemConfig === 'string' ?
+                merge(itemSchema, { type: itemConfig }) :
+                merge(itemSchema, itemConfig);
 
-            // Save initialized item.
-            menu.items[item.options.type] = item;
+            if (options.type) {
+                item = new MenuItem(menu, options);
+
+                // Save initialized item.
+                menu.items[item.options.type] = item;
+            } else {
+                // Error - defined item needs a type.
+            }
         }
     }
 
@@ -183,6 +188,7 @@ namespace Menu {
         enabled?: boolean;
         style?: CSSJSONObject;
         className?: string;
+        itemsClassName?: string;
     }
 }
 

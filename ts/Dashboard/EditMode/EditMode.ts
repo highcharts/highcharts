@@ -96,7 +96,7 @@ class EditMode {
             width = 150;
 
         if (contextButtonElement) {
-            editMode.contextMenu = new EditContextMenu(editMode, {
+            editMode.contextMenu = new EditContextMenu(editMode, merge({
                 style: {
                     width: width + 'px',
                     top: contextButtonElement.offsetTop +
@@ -104,7 +104,7 @@ class EditMode {
                     left: contextButtonElement.offsetLeft - width +
                         contextButtonElement.offsetWidth + 'px'
                 }
-            });
+            }, editMode.options.contextMenu || {}));
         }
     }
 

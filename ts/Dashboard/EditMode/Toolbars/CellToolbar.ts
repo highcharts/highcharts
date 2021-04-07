@@ -7,7 +7,8 @@ import MenuItem from '../Menu/MenuItem.js';
 
 const {
     addEvent,
-    merge
+    merge,
+    objectEach
 } = U;
 
 class CellEditToolbar extends Menu {
@@ -19,6 +20,7 @@ class CellEditToolbar extends Menu {
     protected static readonly defaultOptions: CellEditToolbar.Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
+        itemsClassName: EditGlobals.classNames.editToolbarItem,
         items: ['drag', 'settings', 'destroy']
     }
 
@@ -26,7 +28,6 @@ class CellEditToolbar extends Menu {
     merge(Menu.items, {
         drag: {
             type: 'drag',
-            className: EditGlobals.classNames.editToolbarItem,
             text: 'd',
             icon: '',
             events: {
@@ -35,7 +36,6 @@ class CellEditToolbar extends Menu {
         },
         settings: {
             type: 'settings',
-            className: EditGlobals.classNames.editToolbarItem,
             text: 'opt',
             icon: '',
             events: {
@@ -46,7 +46,6 @@ class CellEditToolbar extends Menu {
         },
         destroy: {
             type: 'destroy',
-            className: EditGlobals.classNames.editToolbarItem,
             text: 'de',
             icon: '',
             events: {
@@ -61,15 +60,13 @@ class CellEditToolbar extends Menu {
     *
     * */
     constructor(
-        editMode: EditMode,
-        options?: CellEditToolbar.Options|undefined
+        editMode: EditMode
     ) {
         super(
             editMode.dashboard.container,
             merge(
                 CellEditToolbar.defaultOptions,
-                options || {},
-                // editMode.options.toolbars && editMode.options.toolbars.cell
+                editMode.options.toolbars && editMode.options.toolbars.cell
             )
         );
 
@@ -131,7 +128,12 @@ class CellEditToolbar extends Menu {
             y = ((cellCnt.parentElement || {}).offsetTop || 0) +
               cellCnt.offsetTop;
 
-            super.show(x, y, ['drag', 'settings', 'destroy']);
+            // Temp - activate all items.
+            objectEach(toolbar.items, (item): void => {
+                item.activate();
+            });
+            super.show(x, y);
+
             toolbar.cell = cell;
         }
     }

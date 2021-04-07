@@ -63,7 +63,7 @@ namespace EditGlobals {
         saveLocal?: string;
     }
 
-    export type TLangKeys = 'editMode'|'saveLocal'|'separator';
+    export type TLangKeys = 'editMode'|'saveLocal'|'verticalSeparator';
 }
 
 export default EditGlobals;

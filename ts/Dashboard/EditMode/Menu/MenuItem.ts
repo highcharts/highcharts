@@ -55,6 +55,16 @@ class MenuItem {
         const item = this,
             options = item.options;
 
+        let className = EditGlobals.classNames.menuItem;
+
+        if (item.menu.options.itemsClassName) {
+            className += ' ' + item.menu.options.itemsClassName;
+        }
+
+        if (options.className) {
+            className += ' ' + options.className;
+        }
+
         item.container = createElement(
             'div', {
                 textContent: options.text,
@@ -63,8 +73,7 @@ class MenuItem {
                         options.events.click.apply(item, arguments);
                     }
                 },
-                className: EditGlobals.classNames.menuItem + ' ' +
-                    (options.className || '')
+                className: className
             },
             options.style || {},
             item.menu.container

@@ -8,7 +8,8 @@ import MenuItem from '../Menu/MenuItem.js';
 const {
     addEvent,
     merge,
-    css
+    css,
+    objectEach
 } = U;
 
 class RowEditToolbar extends Menu {
@@ -20,6 +21,7 @@ class RowEditToolbar extends Menu {
     protected static readonly defaultOptions: RowEditToolbar.Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
+        itemsClassName: EditGlobals.classNames.editToolbarItem,
         items: ['drag', 'resizeRow']
     }
 
@@ -27,7 +29,6 @@ class RowEditToolbar extends Menu {
     merge(Menu.items, {
         drag: {
             type: 'drag',
-            className: EditGlobals.classNames.editToolbarItem,
             text: 't1',
             events: {
                 click: function (): void {}
@@ -35,7 +36,6 @@ class RowEditToolbar extends Menu {
         },
         resizeRow: {
             type: 'resizeRow',
-            className: EditGlobals.classNames.editToolbarItem,
             text: 't2',
             events: {
                 click: function (): void {}
@@ -116,7 +116,12 @@ class RowEditToolbar extends Menu {
             x = rowCnt.offsetLeft;
             y = rowCnt.offsetTop;
 
-            super.show(x, y, ['drag', 'resizeRow']);
+            // Temp - activate all items.
+            objectEach(toolbar.items, (item): void => {
+                item.activate();
+            });
+            super.show(x, y);
+
             toolbar.row = row;
         }
     }
