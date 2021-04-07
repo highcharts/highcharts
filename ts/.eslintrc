@@ -26,6 +26,7 @@
             "never"
         ],
         "consistent-return": 0,
+        "default-case": 0,
         "function-paren-newline": 0,
         "func-style": 0,
         "indent": 0,

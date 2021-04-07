@@ -3850,34 +3850,31 @@ class Series {
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
-        var series = this,
+        const series = this,
             oldData = series.points,
             oldDataLength = (oldData && oldData.length) || 0,
             options = series.options,
             chart = series.chart,
-            dataSorting = options.dataSorting,
-            firstPoint = null,
             xAxis = series.xAxis,
-            i,
             turboThreshold = options.turboThreshold,
-            pt,
             xData = series.xData,
             yData = series.yData,
             pointArrayMap = series.pointArrayMap,
             valueCount = pointArrayMap && pointArrayMap.length,
-            keys = options.keys,
+            keys = options.keys;
+
+        let firstPoint = null,
+            i,
             indexOfX = 0,
             indexOfY = 1,
+            pt,
             updatedData;
 
         data = (data || []);
         redraw = pick(redraw, true);
 
-        if (dataSorting && dataSorting.enabled) {
-            if (data instanceof Array) {
-                data = Series.getTableFromSeriesData(data, series);
-            }
-            data = series.sortTable(data);
+        if (options.dataSorting && options.dataSorting.enabled) {
+            data = series.sortData(data);
         }
 
         if (data instanceof DataTable) {
@@ -4052,44 +4049,46 @@ class Series {
      * Internal function to sort series data
      *
      * @private
-     * @function Highcharts.Series#sortTable
+     * @function Highcharts.Series#sortData
      *
-     * @param {Highcharts.DataTable} table
+     * @param {Highcharts.DataTable|Array<(PointOptions|PointShortOptions)>} table
      * Table to sort.
      *
-     * @return {Highcharts.DataTable}
+     * @return {Highcharts.DataTable|Array<(PointOptions|PointShortOptions)>}
      * Sorted table a reference.
      */
-    private sortTable(table: DataTable): DataTable {
-        var series = this,
+    private sortData<T extends(DataTable|Array<(PointOptions|PointShortOptions)>)>(
+        data: T
+    ): T {
+        const series = this,
             options = series.options,
             dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
-            sortModify = (new SortModifier({
+            sortModifier = (new SortModifier({
                 orderByColumn: (dataSorting.sortKey || 'y'),
                 orderInColumn: 'x'
             })),
-            rowCount = table.getRowCount(),
-            getPointOptionsObject = function (
-                series: Series,
-                pointOptions: (PointOptions|PointShortOptions)
-            ): PointOptions {
-                return (defined(pointOptions) &&
-                    series.pointClass.prototype.optionsToObject.call({
-                        series: series
-                    }, pointOptions)) || {};
-            };
-
-        // Save original index
-        if (!table.hasColumn('index')) {
-            const indexColumn: DataTable.Column = [];
-            for (let i = 0, iEnd = rowCount; i < iEnd; ++i) {
-                indexColumn[i] = i;
-            }
-            table.setColumn('index', indexColumn);
-        }
+            table = (
+                data instanceof DataTable ?
+                    data :
+                    Series.getTableFromSeriesData(
+                        data as Array<(PointOptions|PointShortOptions)>,
+                        series
+                    )
+            ),
+            rowCount = table.getRowCount();
 
         // Sorting
-        sortModify.modify(table);
+        sortModifier.modify(table);
+
+        // Apply sorted x on data references
+        if (data instanceof Array) {
+            const xColumn = table.getColumnAsNumbers('x', true);
+            for (let i = 0, pointOptions: PointOptions; i < rowCount; ++i) {
+                data[i] = pointOptions = Point.optionsToObject(data[i], series);
+                pointOptions.index = i;
+                pointOptions.x = xColumn[i];
+            }
+        }
 
         // Set the same x for linked series points if they don't have their
         // own sorting
@@ -4106,10 +4105,7 @@ class Series {
                     let x: number;
 
                     seriesData.forEach(function (pointOptions, i): void {
-                        seriesData[i] = getPointOptionsObject(
-                            linkedSeries,
-                            pointOptions
-                        );
+                        seriesData[i] = Point.optionsToObject(pointOptions, linkedSeries);
 
                         if (i < rowCount) {
                             x = table.getCellAsNumber('x', i, true);
@@ -4123,7 +4119,7 @@ class Series {
             });
         }
 
-        return table;
+        return data;
     }
 
     /**
@@ -4143,65 +4139,70 @@ class Series {
             point: Point,
             row: DataTable.Row;
 
-        if (
-            e.type === 'afterDeleteRow' ||
-            e.type === 'afterSetCell' ||
-            e.type === 'afterSetRow'
-        ) {
-            index = e.rowIndex;
+        switch (e.type) {
+            case 'afterDeleteRow':
+                data.splice(e.rowIndex, 1);
+                break;
 
-            dataPoint = data[index];
-            point = points[index];
-            row = (table.getRow(index, keys) || []);
+            case 'afterSetCell':
+            case 'afterSetRow':
+                index = e.rowIndex;
+                point = points[index];
 
-            if (e.type === 'afterDeleteRow') {
-                data.splice(index, 1);
-            } else if (point) {
-                point.update(
-                    e.type === 'afterSetCell' ?
-                        { [e.columnName]: e.cellValue } :
-                        table.getRowObject(index) as any
-                );
-            } else if (DataTable.isNull(row)) {
-                data[table.getCellAsNumber('x', index) || index] = dataPoint = null;
-            } else if (
-                dataPoint &&
-                typeof dataPoint === 'object'
-            ) {
-                if (dataPoint instanceof Array) {
-                    if (e.type === 'afterSetCell') {
-                        const keyIndex = keys.indexOf(e.columnName);
-                        if (keyIndex === -1) {
+                if (point) {
+                    point.update(
+                        e.type === 'afterSetCell' ?
+                            { [e.columnName]: e.cellValue } :
+                            table.getRowObject(index) as any
+                    );
+                    return;
+                }
+
+                dataPoint = data[index];
+                row = (table.getRow(index, keys) || []);
+
+                if (DataTable.isNull(row)) {
+                    data[table.getCellAsNumber('x', index) || index] = dataPoint = null;
+                } else if (
+                    dataPoint &&
+                    typeof dataPoint === 'object'
+                ) {
+                    if (dataPoint instanceof Array) {
+                        if (e.type === 'afterSetCell') {
+                            const keyIndex = keys.indexOf(e.columnName);
+                            if (keyIndex === -1) {
+                                dataPoint.length = 0;
+                                dataPoint.push(...row as any);
+                            } else {
+                                dataPoint[keyIndex] = e.cellValue as any;
+                            }
+                        } else {
                             dataPoint.length = 0;
                             dataPoint.push(...row as any);
-                        } else {
-                            dataPoint[keyIndex] = e.cellValue as any;
                         }
                     } else {
-                        dataPoint.length = 0;
-                        dataPoint.push(...row as any);
+                        merge(true, dataPoint, table.getRowObject(index, keys));
                     }
-                } else {
-                    merge(true, dataPoint, table.getRowObject(index, keys));
+                } else if (e.type === 'afterSetCell') {
+                    data[index] = dataPoint = e.cellValue as any;
+                } else if (row.length) {
+                    data[index] = dataPoint = (
+                        row.length === 1 ?
+                            row[0] :
+                            row as any
+                    );
                 }
-            } else if (e.type === 'afterSetCell') {
-                data[index] = dataPoint = e.cellValue as any;
-            } else if (row.length) {
-                data[index] = dataPoint = (
-                    row.length === 1 ?
-                        row[0] :
-                        row as any
-                );
-            }
+                break;
 
-            if (!point) {
-                clearTimeout(series.tableSyncTimeout);
-                series.tableSyncTimeout = syncTimeout(
-                    (): void => series.setData(data),
-                    1
-                );
-            }
+            default:
+                return;
         }
+
+        clearTimeout(series.tableSyncTimeout);
+        series.tableSyncTimeout = syncTimeout(
+            (): void => series.setData(data),
+            1
+        );
     }
 
     /**
