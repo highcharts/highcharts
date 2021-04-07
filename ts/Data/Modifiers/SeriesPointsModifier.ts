@@ -19,14 +19,12 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+
 import DataModifier from './DataModifier.js';
 import DataJSON from './../DataJSON.js';
 import DataTable from './../DataTable.js';
 import U from './../../Core/Utilities.js';
-const {
-    merge
-} = U;
-import DataTableRow from './../DataTableRow.js';
+const { merge } = U;
 
 /* *
  *
@@ -104,8 +102,8 @@ class SeriesPointsModifier extends DataModifier {
      * */
 
     /**
-     * Create new DataTable with the same rows and add alternative
-     * column names (alias) depending on mapping option.
+     * Renames columns to alternative column names (alias) depending on mapping
+     * option.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -114,57 +112,26 @@ class SeriesPointsModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table as a reference.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const modifier = this,
             aliasMap = modifier.options.aliasMap || {},
-            aliasKeys = Object.keys(aliasMap),
-            aliasValues = [],
-            newTable = new DataTable();
-
-        let row: (DataTableRow|undefined),
-            newCells: Record<string, DataTableRow.CellType>,
-            cellName: string,
-            cellAliasOrName: string,
-            cellNames: Array<string>,
-            aliasIndex: number;
+            aliases = Object.keys(aliasMap);
 
         this.emit({ type: 'execute', detail: eventDetail, table });
 
-        for (let k = 0, kEnd = aliasKeys.length; k < kEnd; ++k) {
-            aliasValues.push(aliasMap[aliasKeys[k]]);
+        for (let i = 0, iEnd = aliases.length, alias: string; i < iEnd; ++i) {
+            alias = aliases[i];
+            table.renameColumn(aliasMap[alias], alias);
         }
 
-        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
-            row = table.getRow(i);
+        this.emit({ type: 'afterExecute', detail: eventDetail, table });
 
-            if (row) {
-                newCells = {};
-                cellNames = row.getCellNames();
-
-                for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
-                    cellName = cellNames[j];
-                    aliasIndex = aliasValues.indexOf(cellName);
-                    cellAliasOrName = (
-                        aliasIndex >= 0 ?
-                            aliasKeys[aliasIndex] :
-                            cellName
-                    );
-
-                    newCells[cellAliasOrName] = row.getCell(cellName);
-                }
-
-                newTable.insertRow(new DataTableRow(newCells));
-            }
-        }
-
-        this.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });
-
-        return newTable;
+        return table;
     }
 
     /**

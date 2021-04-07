@@ -19,7 +19,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
+
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -51,13 +51,7 @@ class RangeModifier extends DataModifier {
     public static readonly defaultOptions: RangeModifier.Options = {
         modifier: 'Range',
         strict: false,
-        ranges: [
-            {
-                column: '',
-                maxValue: (Number.POSITIVE_INFINITY - 1),
-                minValue: (Number.NEGATIVE_INFINITY + 1)
-            }
-        ]
+        ranges: []
     };
 
     /* *
@@ -106,7 +100,7 @@ class RangeModifier extends DataModifier {
     /**
      * Options of the range modifier.
      */
-    public options: RangeModifier.Options;
+    public readonly options: Readonly<RangeModifier.Options>;
 
     /* *
      *
@@ -115,8 +109,7 @@ class RangeModifier extends DataModifier {
      * */
 
     /**
-     * Applies modifications to the table rows and returns a new table with
-     * subtable, containing only the filtered rows.
+     * Replaces table rows with filtered rows.
      *
      * @param {DataTable} table
      * Table to modify.
@@ -125,9 +118,9 @@ class RangeModifier extends DataModifier {
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table as a reference.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
@@ -135,68 +128,83 @@ class RangeModifier extends DataModifier {
             {
                 ranges,
                 strict
-            } = modifier.options,
-            rows = table.getAllRows(),
-            result = new DataTable();
-
-        let column: DataTableRow.CellType,
-            range: RangeModifier.RangeOptions,
-            rangeColumn: string,
-            row: DataTableRow;
+            } = modifier.options;
 
         this.emit({ type: 'execute', detail: eventDetail, table });
 
-        for (let i = 0, iEnd = ranges.length; i < iEnd; ++i) {
-            range = ranges[i];
+        if (ranges.length) {
+            const columns = table.getColumns(),
+                rows: Array<DataTable.Row> = [];
 
-            if (
-                strict &&
-                typeof range.minValue !== typeof range.maxValue
+            for (
+                let i = 0,
+                    iEnd = ranges.length,
+                    range: RangeModifier.RangeOptions,
+                    rangeColumn: DataTable.Column;
+                i < iEnd;
+                ++i
             ) {
-                continue;
-            }
-
-            rangeColumn = range.column;
-
-            for (let j = 0, jEnd = rows.length; j < jEnd; ++j) {
-                row = rows[j];
-
-                if (!rangeColumn) {
-                    rangeColumn = row.getCellNames()[0];
-                }
-
-                column = row.getCell(rangeColumn);
-
-                /* eslint-disable @typescript-eslint/indent */
-                switch (typeof column) {
-                    default:
-                        continue;
-                    case 'boolean':
-                    case 'number':
-                    case 'string':
-                        break;
-                }
-                /* eslint-enable @typescript-eslint/indent */
+                range = ranges[i];
 
                 if (
                     strict &&
-                    typeof column !== typeof range.minValue
+                    typeof range.minValue !== typeof range.maxValue
                 ) {
                     continue;
                 }
 
-                if (
-                    column >= range.minValue &&
-                    column <= range.maxValue
+                rangeColumn = (columns[range.column] || []);
+
+                for (
+                    let j = 0,
+                        jEnd = rangeColumn.length,
+                        cell: DataTable.CellType,
+                        row: (DataTable.Row|undefined);
+                    j < jEnd;
+                    ++j
                 ) {
-                    result.insertRow(row);
+                    cell = rangeColumn[j];
+
+                    switch (typeof cell) {
+                        default:
+                            continue;
+                        case 'boolean':
+                        case 'number':
+                        case 'string':
+                            break;
+                    }
+
+                    if (
+                        strict &&
+                        typeof cell !== typeof range.minValue
+                    ) {
+                        continue;
+                    }
+
+                    if (
+                        cell >= range.minValue &&
+                        cell <= range.maxValue
+                    ) {
+                        row = table.getRow(j);
+
+                        if (row) {
+                            rows.push(row);
+                        }
+                    }
                 }
             }
+
+            table.clearRows();
+            table.setRows(rows);
         }
 
-        this.emit({ type: 'afterExecute', detail: eventDetail, table: result });
+        this.emit({
+            type: 'afterExecute',
+            detail: eventDetail,
+            table
+        });
 
-        return result;
+        return table;
     }
 
     /**

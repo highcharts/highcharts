@@ -748,7 +748,7 @@ class Tooltip {
         if (!this.label) {
 
             if (this.outside) {
-                const chartStyle = this.chart.options.chart?.style;
+                const chartStyle = this.chart.options.chart.style;
 
                 /**
                  * Reference to the tooltip's container, when
@@ -1328,8 +1328,7 @@ class Tooltip {
         U.clearTimeout(this.hideTimer as any);
 
         // get the reference point coordinates (pie charts use tooltipPos)
-        tooltip.followPointer = splat(point)[0].series.tooltipOptions
-            .followPointer;
+        tooltip.followPointer = !tooltip.split && splat(point)[0].series.tooltipOptions.followPointer;
         anchor = tooltip.getAnchor(point as any, mouseEvent);
         x = anchor[0];
         y = anchor[1];
@@ -1453,7 +1452,6 @@ class Tooltip {
                 plotLeft,
                 plotTop,
                 pointer,
-                renderer: ren,
                 scrollablePixelsY = 0,
                 scrollingContainer: {
                     scrollLeft,
@@ -1478,6 +1476,7 @@ class Tooltip {
         };
 
         const tooltipLabel = tooltip.getLabel();
+        const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
 
         let distributionBoxTop = plotTop + scrollTop;
@@ -1647,10 +1646,10 @@ class Tooltip {
         }
         // Create the individual labels for header and points, ignore footer
         let boxes = labels.slice(0, points.length + 1).reduce(function (
-            boxes: Array<Record<string, any>>,
+            boxes: Array<AnyRecord>,
             str: (boolean|string),
             i: number
-        ): Array<Record<string, any>> {
+        ): Array<AnyRecord> {
             if (str !== false && str !== '') {
                 const point: (Point|Highcharts.TooltipPositionerPointObject) = (
                     points[i - 1] ||
@@ -1726,7 +1725,7 @@ class Tooltip {
 
         // If overflow left then align all labels to the right
         if (!positioner && boxes.some((box): boolean => box.x < bounds.left)) {
-            boxes = boxes.map((box): Record<string, any> => {
+            boxes = boxes.map((box): AnyRecord => {
                 const { x, y } = defaultPositioner(
                     box.anchorX,
                     box.anchorY,
@@ -1746,7 +1745,7 @@ class Tooltip {
 
         // Distribute and put in place
         H.distribute(boxes as any, adjustedPlotHeight);
-        boxes.forEach(function (box: Record<string, any>): void {
+        boxes.forEach(function (box: AnyRecord): void {
             const { anchorX, anchorY, pos, x } = box;
             // Put the label in place
             box.tt.attr({
@@ -1901,11 +1900,11 @@ class Tooltip {
             e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
-            } as Record<string, any>;
+            } as AnyRecord;
 
         fireEvent(this, 'headerFormatter', e, function (
             this: Highcharts.Tooltip,
-            e: Record<string, any>
+            e: AnyRecord
         ): void {
 
             // Guess the best date format based on the closest point distance

@@ -461,7 +461,7 @@ extend(WindbarbSeries.prototype, {
     trackerGroups: ['markerGroup'],
     getPlotBox: OnSeriesMixin.getPlotBox,
     // Don't invert the marker group (#4960)
-    invertGroups: noop as any
+    invertGroups: noop
 });
 
 WindbarbSeries.prototype.pointClass = WindbarbPoint;

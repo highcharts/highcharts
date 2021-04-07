@@ -34,7 +34,7 @@ const {
 
 /**
  * Contains presentation information like column order, usually in relation to a
- * DataTable instance.
+ * table instance.
  */
 class DataPresentationState implements DataEventEmitter<DataPresentationState.EventObject>, DataJSON.Class {
 
@@ -184,7 +184,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
     }
 
     /**
-     * Sets the order of the columns.
+     * Sets the order of the columns in place.
      *
      * @param {Array<string>} columnOrder
      * Array of column names in order.

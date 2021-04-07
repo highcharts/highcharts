@@ -121,7 +121,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         this.syncEvents = this.options.syncEvents;
         this.syncHandlers = this.options.syncHandlers;
         this.syncHandlerRegistry = {};
-        this.chartOptions = this.options.chartOptions || {};
+        this.chartOptions = this.options.chartOptions || { chart: {} };
         this.chart = this.constructChart();
         // Extend via event.
         this.on('resize', (e: Component.ResizeEvent): void => {
@@ -206,7 +206,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         const seriesFromStore: any = [];
         if (this.store?.table) {
             const data = DataParser.getColumnsFromTable(this.store?.table, false).slice(1);
-            const keys = this.store.table.getFirstNonNullRow()?.getCellNames();
+            const keys = this.store.table.getColumnNames();
             data.forEach((datum, i): void => {
                 let id, name;
                 if (keys && keys[i]) {
@@ -237,7 +237,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
     }
 
     private setupSync(): void {
-        if (this.store?.table.presentationState) {
+        if (this.store?.table.getPresentationState()) {
             Object.keys(this.syncHandlers).forEach((id: string): void => {
                 if (this.syncEvents.indexOf(id as ChartComponent.syncEventsType) > -1) {
                     const { emitter, handler } = this.syncHandlers[id];

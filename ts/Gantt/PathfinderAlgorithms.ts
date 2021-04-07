@@ -243,7 +243,7 @@ function straight(
  *         renderer, as well as an array of new obstacles making up this
  *         path.
  */
-const simpleConnect = extend(function (
+const simpleConnect = function (
     start: PositionObject,
     end: PositionObject,
     options: any
@@ -384,9 +384,8 @@ const simpleConnect = extend(function (
         path: pathFromSegments(segments),
         obstacles: segments
     };
-}, {
-    requiresObstacles: true
-});
+};
+simpleConnect.requiresObstacles = true;
 
 /**
  * Find a path from a starting coordinate to an ending coordinate, taking
@@ -418,7 +417,7 @@ const simpleConnect = extend(function (
  *         renderer, as well as an array of new obstacles making up this
  *         path.
  */
-const fastAvoid = extend(function (
+const fastAvoid = function (
     start: PositionObject,
     end: PositionObject,
     options: any
@@ -898,9 +897,8 @@ const fastAvoid = extend(function (
         path: pathFromSegments(segments),
         obstacles: segments
     };
-}, {
-    requiresObstacles: true
-});
+};
+fastAvoid.requiresObstacles = true;
 
 // Define the available pathfinding algorithms.
 // Algorithms take up to 3 arguments: starting point, ending point, and an

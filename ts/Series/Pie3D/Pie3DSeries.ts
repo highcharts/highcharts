@@ -151,7 +151,7 @@ class Pie3DSeries extends PieSeries {
         if (this.chart.is3d()) {
             var series = this,
                 chart = series.chart,
-                options3d = (chart.options.chart as any).options3d;
+                options3d = chart.options.chart.options3d as any;
 
             series.data.forEach(function (point): void {
                 var shapeArgs = point.shapeArgs,
@@ -209,7 +209,7 @@ class Pie3DSeries extends PieSeries {
         var series = this,
             seriesOptions = series.options,
             depth = seriesOptions.depth || 0,
-            options3d = (series.chart.options.chart as any).options3d,
+            options3d = series.chart.options.chart.options3d as any,
             alpha = options3d.alpha,
             beta = options3d.beta,
             z: number = seriesOptions.stacking ?
@@ -265,7 +265,7 @@ class Pie3DSeries extends PieSeries {
 interface Pie3DSeries {
     pointClass: typeof Pie3DPoint;
 }
-extend(Pie3DSeries, {
+extend(Pie3DSeries.prototype, {
     pointClass: Pie3DPoint
 });
 

@@ -111,11 +111,14 @@ declare global {
             total: number;
             x: number;
         }
+        interface XAxisOptions {
+            stackLabels?: YAxisStackLabelsOptions;
+        }
         interface YAxisOptions {
             stackLabels?: YAxisStackLabelsOptions;
         }
         interface YAxisStackLabelsOptions {
-            animation?: (boolean|Partial<AnimationOptions>);
+            animation?: (false|Partial<AnimationOptions>);
             align?: AlignValue;
             allowOverlap?: boolean;
             backgroundColor?: ColorType;
@@ -584,7 +587,7 @@ Chart.prototype.getStacks = function (this: Chart): void {
             series.options.stacking &&
             (
                 series.visible === true ||
-                (chart.options.chart as any).ignoreHiddenSeries === false
+                chart.options.chart.ignoreHiddenSeries === false
             )
         ) {
             series.stackKey = [
@@ -651,10 +654,10 @@ Series.prototype.setStackedPoints = function (stackingParam?: string): void {
 
     const stacking = stackingParam || this.options.stacking;
 
-    if (!stacking ||
-        (this.visible !== true &&
-        (this.chart.options.chart as any).ignoreHiddenSeries !== false)
-    ) {
+    if (!stacking || (
+        this.visible !== true &&
+        this.chart.options.chart.ignoreHiddenSeries !== false
+    )) {
         return;
     }
 

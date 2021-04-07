@@ -15,10 +15,11 @@
  *  Imports
  *
  * */
+
 import type DataTable from './DataTable.js';
 import type DataJSON from './DataJSON';
-import U from './../Core/Utilities.js';
 
+import U from './../Core/Utilities.js';
 const {
     merge,
     isNumber
@@ -316,10 +317,12 @@ class DataConverter {
      *
      * @param {string} value
      * The string to examine
-     * @return {string}
+     * @return {'number'|'string'|'Date'}
      * `string`, `Date` or `number`
      */
-    public guessType(value: string): ('string' | 'Date' | 'number') {
+    public guessType(
+        value: string
+    ): ('number'|'string'|'Date') {
         const converter = this,
             trimVal = converter.trim(value),
             trimInsideVal = converter.trim(value, true),
@@ -363,12 +366,12 @@ class DataConverter {
      * @param {string} value
      * The string to examine
      *
-     * @return {number|Date|string}
+     * @return {number|string|Date}
      * The converted value
      */
-    public asGuessedType(value: string): (number | Date | string) {
+    public asGuessedType(value: string): (number|string|Date) {
         const converter = this,
-            typeMap: Record<('string' | 'Date' | 'number'), Function> = {
+            typeMap: Record<ReturnType<DataConverter['guessType']>, Function> = {
                 'number': converter.asNumber,
                 'Date': converter.asDate,
                 'string': converter.asString
@@ -611,7 +614,7 @@ namespace DataConverter {
      * Contains supported types to convert values from and to.
      */
     export type Type = (
-        boolean|null|number|string|Date|DataTable|undefined
+        boolean|null|number|string|DataTable|Date|undefined
     );
 
     /**

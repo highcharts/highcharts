@@ -31,6 +31,10 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import type WaterfallPoint from '../Series/Waterfall/WaterfallPoint';
 import type XRangePoint from '../Series/XRange/XRangePoint';
+import A from '../Core/Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import Point from '../Core/Series/Point.js';
@@ -1954,18 +1958,16 @@ function getNewPoints(
  * @function updatePoints
  * @param {Highcharts.Chart} chart
  *        A chart with dragDropData.newPoints.
- * @param {boolean} [animate=true]
+ * @param {boolean} [animation=true]
  *        Animate updating points?
  */
 function updatePoints(
     chart: Chart,
-    animate?: (boolean|Partial<AnimationOptions>)
+    animation?: (boolean|Partial<AnimationOptions>)
 ): void {
     var newPoints: Record<string, Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,
-        animOptions = animate === false ? false : merge({
-            duration: 400 // 400 is the default in animate
-        }, (chart.options.chart as any).animation);
+        animOptions = animObject(animation);
 
     chart.isDragDropAnimating = true;
 

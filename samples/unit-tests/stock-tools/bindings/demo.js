@@ -399,6 +399,140 @@ QUnit.test('Bindings general tests', function (assert) {
     }
 });
 
+QUnit.test(
+    'Bindings on multiple axes. Checks whether a pointer action returns a proper axis (#12268).',
+    assert => {
+        const chart = Highcharts.stockChart('container', {
+                yAxis: [{
+                    height: '40%',
+                    top: '10%',
+                    id: 'topYAxis'
+                }, {
+                    height: '20%',
+                    top: '20%',
+                    id: 'bottomYAxis'
+                }],
+                series: [{
+                    data: [2, 4, 3]
+                }, {
+                    type: 'column',
+                    data: [2, 4, 3],
+                    yAxis: 1
+                }]
+            }),
+            getCoordinates = chart.pointer.getCoordinates.bind(chart.pointer),
+            getAssignedAxis = chart.navigationBindings.utils.getAssignedAxis,
+            offset = 3;
+
+        // The yAxes overlap - y coord on both of them
+        let coords = getCoordinates({
+                chartX: chart.yAxis[1].left + offset,
+                chartY: chart.yAxis[1].top + offset
+            }),
+            coordsX = getAssignedAxis(coords.xAxis),
+            coordsY = getAssignedAxis(coords.yAxis);
+
+        assert.strictEqual(
+            coordsY.axis.options.id,
+            'topYAxis',
+            'Y coord on both yAxes (they overlap) - the top yAxis should be found.'
+        );
+
+        chart.yAxis[1].update({
+            top: '70%'
+        });
+
+        // Outside the plot area
+        coords = getCoordinates({
+            chartX: chart.plotLeft - offset,
+            chartY: chart.plotTop - offset
+        });
+
+        coordsX = getAssignedAxis(coords.xAxis);
+        coordsY = getAssignedAxis(coords.yAxis);
+
+        assert.notOk(
+            coordsX,
+            'No xAxis should be found.'
+        );
+
+        assert.notOk(
+            coordsY,
+            'No yAxis should be found.'
+        );
+
+        // Inside the plot area and the xAxis but outside the yAxes
+        coords = getCoordinates({
+            chartX: chart.plotLeft + offset,
+            chartY: chart.plotTop + offset
+        });
+
+        coordsX = getAssignedAxis(coords.xAxis);
+        coordsY = getAssignedAxis(coords.yAxis);
+
+        assert.ok(
+            coordsX,
+            'The xAxis should be found.'
+        );
+
+        assert.notOk(
+            coordsY,
+            'Y coord above the top yAxis - no yAxis should be found.'
+        );
+
+        // Inside the xAxis and the first yAxis
+        coords = getCoordinates({
+            chartX: chart.xAxis[0].left + offset,
+            chartY: chart.yAxis[0].top + offset
+        });
+
+        coordsX = getAssignedAxis(coords.xAxis);
+        coordsY = getAssignedAxis(coords.yAxis);
+
+        assert.ok(
+            coordsX,
+            'The xAxis should be found.'
+        );
+
+        assert.strictEqual(
+            coordsY.axis.options.id,
+            'topYAxis',
+            'Y coord on the top yAxis - the top yAxis should be found.'
+        );
+
+        // Inside the xAxis and between yAxes
+        coords = getCoordinates({
+            chartX: chart.xAxis[0].left + chart.xAxis[0].len - offset,
+            chartY: chart.yAxis[0].top + chart.yAxis[0].len + offset
+        });
+
+        coordsX = getAssignedAxis(coords.xAxis);
+        coordsY = getAssignedAxis(coords.yAxis);
+
+        assert.ok(
+            coordsX,
+            'The xAxis should be found.'
+        );
+
+        assert.notOk(
+            coordsY,
+            'Y coord between top and bottom yAxes - no yAxis should be found.'
+        );
+
+        // Inside the xAxis and the second yAxis
+        coords = getCoordinates({
+            chartY: chart.yAxis[1].top + offset
+        });
+
+        coordsY = getAssignedAxis(coords.yAxis);
+
+        assert.strictEqual(
+            coordsY.axis.options.id,
+            'bottomYAxis',
+            'Y coord on the bottom yAxis - the bottom yAxis should be found.'
+        );
+    });
+
 QUnit.test('Stock Tools: drawing line annotations (#15155)', assert => {
     const chart = Highcharts.stockChart('container', {
             chart: {

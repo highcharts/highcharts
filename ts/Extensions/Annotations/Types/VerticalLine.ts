@@ -7,6 +7,7 @@
 'use strict';
 
 import Annotation from '../Annotations.js';
+import type { AxisType } from '../../../Core/Axis/Types';
 import MockPoint from '../MockPoint.js';
 import U from '../../../Core/Utilities.js';
 const {

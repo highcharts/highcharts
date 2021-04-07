@@ -85,6 +85,8 @@ class PiePoint extends Point {
 
     public slicedTranslation?: PiePoint.TranslationAttributes;
 
+    public startR?: number;
+
     /* *
      *
      *  Functions
@@ -164,7 +166,7 @@ class PiePoint extends Point {
 
         // add event listener for select
         toggleSlice = function (
-            e: (Record<string, any>|Event)
+            e: (AnyRecord|Event)
         ): void {
             point.slice(e.type === 'select');
         };

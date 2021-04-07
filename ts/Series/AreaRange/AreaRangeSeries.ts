@@ -307,7 +307,7 @@ class AreaRangeSeries extends AreaSeries {
      * path to both lower and higher values of the range.
      * @private
      */
-    public getGraphPath(points: Array<AreaRangePoint>): SVGPath {
+    public getGraphPath(points: Array<AreaPoint>): SVGPath {
 
         var highPoints = [],
             highAreaPoints: Array<AreaPoint> = [],
@@ -315,8 +315,8 @@ class AreaRangeSeries extends AreaSeries {
             getGraphPath = areaProto.getGraphPath,
             point: any,
             pointShim: any,
-            linePath: SVGPath & Record<string, any>,
-            lowerPath: SVGPath & Record<string, any>,
+            linePath: SVGPath & AnyRecord,
+            lowerPath: SVGPath & AnyRecord,
             options = this.options,
             polar = this.chart.polar,
             connectEnds = polar && options.connectEnds !== false,
@@ -638,8 +638,6 @@ class AreaRangeSeries extends AreaSeries {
         }
     }
 
-    public setStackedPoints = noop;
-
     /* eslint-enable valid-jsdoc */
 }
 
@@ -659,7 +657,8 @@ extend(AreaRangeSeries.prototype, {
     pointArrayMap: ['low', 'high'],
     pointValKey: 'low',
     deferTranslatePolar: true,
-    pointClass: AreaRangePoint
+    pointClass: AreaRangePoint,
+    setStackedPoints: noop
 });
 
 

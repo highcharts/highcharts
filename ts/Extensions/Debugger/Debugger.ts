@@ -23,7 +23,11 @@ import ErrorMessages from './ErrorMessages.js';
 import H from '../../Core/Globals.js';
 import U from '../../Core/Utilities.js';
 const {
+    charts
+} = H;
+const {
     addEvent,
+    find,
     isNumber,
     setOptions
 } = U;
@@ -80,11 +84,17 @@ setOptions({
 
 /* eslint-disable no-invalid-this */
 
-addEvent(Chart, 'displayError', function (
+addEvent(Highcharts, 'displayError', function (
     e: Highcharts.ErrorMessageEventObject
 ): void {
-    var chart = this,
-        code = e.code,
+    // Display error on the chart causing the error or the last created chart.
+    const chart = e.chart ||
+            find(charts.slice().reverse(), (c?: Chart): boolean => !!c);
+    if (!chart) {
+        return;
+    }
+
+    var code = e.code,
         msg,
         options = chart.options.chart,
         renderer = chart.renderer,
@@ -92,7 +102,7 @@ addEvent(Chart, 'displayError', function (
         chartHeight;
 
     if (chart.errorElements) {
-        (chart.errorElements).forEach(function (el: SVGElement): void {
+        chart.errorElements.forEach(function (el: SVGElement): void {
             if (el) {
                 el.destroy();
             }
@@ -104,7 +114,7 @@ addEvent(Chart, 'displayError', function (
         msg = isNumber(code) ?
             (
                 'Highcharts error #' + code + ': ' +
-                (H.errorMessages as any)[code].text
+                ErrorMessages[code].text
             ) :
             code;
         chartWidth = chart.chartWidth;
@@ -154,7 +164,7 @@ addEvent(Chart, 'displayError', function (
         }).add();
 
         chart.errorElements[1].attr({
-            y: chartHeight - (this.errorElements as any)[1].getBBox().height
+            y: chartHeight - chart.errorElements[1].getBBox().height
         });
     }
 });
@@ -167,7 +177,7 @@ addEvent(Chart, 'beforeRedraw', function (): void {
             el.destroy();
         });
     }
-    this.errorElements = null as any;
+    delete this.errorElements;
 });
 
 /* eslint-enable no-invalid-this */

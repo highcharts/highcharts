@@ -408,7 +408,7 @@ addEvent(ColumnSeries, 'afterInit', function (): void {
             seriesOptions: ColumnSeriesOptions = this.options,
             grouping = seriesOptions.grouping,
             stacking = seriesOptions.stacking,
-            reversedStacks = pick(this.yAxis.options.reversedStacks, true),
+            reversedStacks = this.yAxis.options.reversedStacks,
             z = 0;
 
         // @todo grouping === true ?
@@ -539,7 +539,7 @@ wrap(Series.prototype, 'alignDataLabel', function (
         const series = this as ColumnSeries,
             seriesOptions: ColumnSeriesOptions = series.options,
             inside = pick(options.inside, !!series.options.stacking),
-            options3d = (chart.options.chart as any).options3d,
+            options3d = chart.options.chart.options3d as any,
             xOffset = point.pointWidth / 2 || 0;
 
         let dLPosition = {
@@ -591,7 +591,7 @@ wrap(StackItem.prototype, 'getStackBox', function (
         // First element of stackItem.base is an index of base series.
         const baseSeriesInd = +(stackItem.base).split(',')[0];
         const columnSeries = chart.series[baseSeriesInd];
-        const options3d = (chart.options.chart as any).options3d;
+        const options3d = chart.options.chart.options3d as any;
 
 
         // Only do this if base series is a column or inherited type,

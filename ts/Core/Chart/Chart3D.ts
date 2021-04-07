@@ -15,6 +15,7 @@
 import type ColorType from '../Color/ColorType';
 import type Position3DObject from '../Renderer/Position3DObject';
 import type SeriesOptions from '../Series/SeriesOptions';
+import type SVGElement from '../Renderer/SVG/SVGElement';
 import Axis from '../Axis/Axis.js';
 import Axis3D from '../Axis/Axis3D.js';
 import Chart from './Chart.js';
@@ -48,6 +49,7 @@ declare module '../Animation/FxLike' {
 declare module '../Chart/ChartLike'{
     interface ChartLike {
         chart3d?: Chart3D['chart3d'];
+        frameShapes?: Record<string, SVGElement>;
         is3d(): boolean;
     }
 }
@@ -170,7 +172,7 @@ namespace Chart3D {
 
         public get3dFrame(): Chart3D.FrameObject {
             var chart = this.chart,
-                options3d = (chart.options.chart as any).options3d,
+                options3d = chart.options.chart.options3d as any,
                 frameOptions = options3d.frame,
                 xm = chart.plotLeft,
                 xp = chart.plotLeft + chart.plotWidth,
@@ -897,9 +899,9 @@ namespace Chart3D {
          * Whether it is a 3D chart.
          */
         chartProto.is3d = function (): boolean {
-            return (
-                (this.options.chart as any).options3d &&
-                (this.options.chart as any).options3d.enabled
+            return Boolean(
+                this.options.chart.options3d &&
+                this.options.chart.options3d.enabled
             ); // #4280
         };
 
@@ -981,7 +983,7 @@ namespace Chart3D {
         ) {
             var chart = this,
                 renderer = chart.renderer,
-                options3d = (this.options.chart as any).options3d,
+                options3d = this.options.chart.options3d as any,
                 frame = this.chart3d.get3dFrame(),
                 xm = this.plotLeft,
                 xp = this.plotLeft + this.plotWidth,
@@ -1861,8 +1863,8 @@ namespace Chart3D {
         if (this.is3d()) {
             (options.series || []).forEach(function (s): void {
                 var type = s.type ||
-                    (options.chart as any).type ||
-                    (options.chart as any).defaultSeriesType;
+                    options.chart.type ||
+                    options.chart.defaultSeriesType;
 
                 if (type === 'scatter') {
                     s.type = 'scatter3d';
@@ -1876,7 +1878,7 @@ namespace Chart3D {
      */
     function onAfterSetChartSize(this: Chart): void {
         var chart = this,
-            options3d = (chart.options.chart as any).options3d;
+            options3d = chart.options.chart.options3d as any;
 
         if (
             chart.chart3d &&

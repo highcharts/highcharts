@@ -59,6 +59,12 @@ declare module '../Core/Chart/ChartLike'{
     }
 }
 
+declare module '../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        scrollablePlotBox?: BBoxObject;
+    }
+}
+
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
  * the plot area of the chart. If the size gets smaller than this, typically
@@ -156,7 +162,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinWidth - this.chartWidth
             );
             if (scrollablePixelsX) {
-                this.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
                 this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
                     this.clipBox.height += scrollablePixelsX;
@@ -177,7 +183,7 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinHeight - this.chartHeight
             );
             if (scrollablePixelsY) {
-                this.scrollablePlotBox = merge(this.plotBox);
+                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
                 this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
                     this.clipBox.width += scrollablePixelsY;
@@ -393,13 +399,13 @@ Chart.prototype.applyFixed = function (): void {
             this.fixedDiv,
             this.chartWidth,
             this.chartHeight,
-            this.options.chart?.style
+            this.options.chart.style
         );
         // Mask
         this.scrollableMask = fixedRenderer
             .path()
             .attr({
-                fill: (this.options.chart as any).backgroundColor || '#fff',
+                fill: this.options.chart.backgroundColor || '#fff',
                 'fill-opacity': pick(scrollableOptions.opacity, 0.85),
                 zIndex: -1
             })
@@ -409,12 +415,6 @@ Chart.prototype.applyFixed = function (): void {
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
         addEvent(this, 'afterDrilldown', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
-        addEvent(Axis, 'afterInit', (): void => {
-            this.scrollableDirty = true;
-        });
-        addEvent(Series, 'show', (): void => {
-            this.scrollableDirty = true;
-        });
 
     } else {
 
@@ -516,3 +516,11 @@ Chart.prototype.applyFixed = function (): void {
         (this.scrollableMask as any).attr({ d });
     }
 };
+
+addEvent(Axis, 'afterInit', function (): void {
+    this.chart.scrollableDirty = true;
+});
+
+addEvent(Series, 'show', function (): void {
+    this.chart.scrollableDirty = true;
+});

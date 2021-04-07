@@ -531,7 +531,7 @@ class XRangeSeries extends ColumnSeries {
                 'attr' : verb,
             pointAttr = series.pointAttribs(point, pointState),
             animation = pick(
-                (series.chart.options.chart as any).animation,
+                series.chart.options.chart.animation,
                 stateOpts.animation
             ),
             fill;
@@ -719,7 +719,7 @@ extend(XRangeSeries.prototype, {
     cropShoulder: 1,
     getExtremesFromAll: true,
     autoIncrement: H.noop as any,
-    buildKDTree: H.noop as any,
+    buildKDTree: H.noop,
     pointClass: XRangePoint
 });
 

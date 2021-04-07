@@ -17,7 +17,6 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
 
 import DataJSON from '../DataJSON.js';
 import DataParser from './DataParser.js';
@@ -33,7 +32,7 @@ const { merge } = U;
  * */
 
 /**
- * Handles parsing and transformation of an HTML table to a DataTable
+ * Handles parsing and transformation of an HTML table to a table.
  */
 class HTMLTableParser extends DataParser<DataParser.EventObject> {
 
@@ -117,7 +116,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private columns: DataTableRow.CellType[][];
+    private columns: DataTable.CellType[][];
     private headers: string[];
     public converter: DataConverter;
     public options: HTMLTableParser.ClassJSONOptions;
@@ -149,7 +148,7 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     ): void {
         const parser = this,
             converter = this.converter,
-            columns: DataTableRow.CellType[][] = [],
+            columns: Array<DataTable.Column> = [],
             headers: string[] = [],
             parseOptions = merge(parser.options, options),
             {
@@ -236,7 +235,10 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
                             columns[relativeColumnIndex] = [];
                         }
 
-                        const cellValue = converter.asGuessedType(item.innerHTML);
+                        let cellValue = converter.asGuessedType(item.innerHTML);
+                        if (cellValue instanceof Date) {
+                            cellValue = cellValue.getTime();
+                        }
                         columns[relativeColumnIndex][
                             rowIndex - startRow
                         ] = cellValue;
@@ -271,10 +273,10 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
     }
 
     /**
-     * Handles converting the parsed data to a DataTable
+     * Handles converting the parsed data to a table.
      *
      * @return {DataTable}
-     * A DataTable from the parsed HTML table
+     * Table from the parsed HTML table
      */
     public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);

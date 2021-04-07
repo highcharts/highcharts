@@ -36,7 +36,6 @@ import type SVGPath from '../Renderer/SVG/SVGPath';
 import AST from '../Renderer/HTML/AST.js';
 import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
-import DataTableRow from '../../Data/DataTableRow.js';
 import H from '../Globals.js';
 import O from '../Options.js';
 const { defaultOptions } = O;
@@ -47,7 +46,6 @@ const {
     erase,
     extend,
     fireEvent,
-    flat,
     format,
     getNestedProperty,
     isArray,
@@ -59,7 +57,6 @@ const {
     pick,
     syncTimeout,
     removeEvent,
-    unflat,
     uniqueKey
 } = U;
 
@@ -342,130 +339,79 @@ class Point {
      * */
 
     /**
-     * Converts the DataTableRow instance to common series options.
+     * Implementation of Point.optionsToObject.
      *
-     * @param {DataTableRow} tableRow
-     * Table row to convert.
+     * @private
+     * @function Highcharts.Point.optionsToObject
      *
-     * @param {Array<string>} [keys]
-     * Data keys to extract from the table row.
+     * @param {Highcharts.PointOptionsType} options
+     * Series data options.
      *
-     * @return {Highcharts.PointOptions}
-     * Common point options.
+     * @param {Highcharts.Series} series
+     * Series to synchronize flags on.
+     *
+     * @return {Highcharts.Dictionary<*>}
+     * Transformed point options.
      */
-    public static getPointOptionsFromTableRow(
-        tableRow: DataTableRow,
-        keys?: Array<string>
-    ): (PointOptions|null) {
-        if (tableRow === DataTableRow.NULL) {
-            return null;
-        }
+    public static optionsToObject(
+        options: (PointOptions|PointShortOptions),
+        series: Series
+    ): PointOptions {
+        const keys = series.options.keys,
+            pointArrayMap = keys || series.pointArrayMap || ['y'],
+            valueCount = pointArrayMap.length;
 
-        const pointOptions: (PointOptions&Record<string, any>) = {},
-            cellNames = tableRow.getCellNames();
+        let firstItemType,
+            i = 0,
+            j = 0,
+            ret = {} as AnyRecord;
 
-        if (!keys || keys.indexOf('id') >= 0) {
-            pointOptions.id = tableRow.id;
-        }
+        if (isNumber(options) || options === null) {
+            ret[pointArrayMap[0]] = options;
 
-        let cellName: string;
-
-        for (let j = 0, jEnd = cellNames.length; j < jEnd; ++j) {
-            cellName = cellNames[j];
-            if (keys && keys.indexOf(cellName) === -1) {
-                continue;
+        } else if (isArray(options)) {
+            // with leading x value
+            if (!keys && options.length > valueCount) {
+                firstItemType = typeof options[0];
+                if (firstItemType === 'string') {
+                    ret.name = options[0];
+                } else if (firstItemType === 'number') {
+                    ret.x = options[0];
+                }
+                i++;
             }
-            pointOptions[cellName] = tableRow.getCell(cellName);
-        }
-
-        return unflat(pointOptions);
-    }
-
-    /**
-     * Converts series options to a DataTable instance.
-     *
-     * @param {Highcharts.PointOptions} pointOptions
-     * Point options to convert.
-     *
-     * @param {Array<string>} [keys]
-     * Data keys to convert options.
-     *
-     * @param {number} [x]
-     * Point index for x value.
-     *
-     * @return {DataTable}
-     * DataTable instance.
-     */
-    public static getTableRowFromPointOptions(
-        pointOptions: (
-            (PointOptions&Record<string, any>)|
-            PointShortOptions
-        ),
-        keys: Array<string> = ['y'],
-        x: number = 0
-    ): DataTableRow {
-        let tableRow: DataTableRow;
-
-        keys = keys.slice();
-
-        // Array
-        if (pointOptions instanceof Array) {
-            const tableRowOptions: (PointOptions&Record<string, any>) = {};
-            if (pointOptions.length > keys.length) {
-                keys.unshift(
-                    typeof pointOptions[0] === 'string' ?
-                        'name' :
-                        'x'
-                );
+            while (j < valueCount) {
+                // Skip undefined positions for keys
+                if (!keys || typeof options[i] !== 'undefined') {
+                    if (pointArrayMap[j].indexOf('.') > 0) {
+                        // Handle nested keys, e.g. ['color.pattern.image']
+                        // Avoid function call unless necessary.
+                        Point.prototype.setNestedProperty(
+                            ret, options[i], pointArrayMap[j]
+                        );
+                    } else {
+                        ret[pointArrayMap[j]] = options[i];
+                    }
+                }
+                i++;
+                j++;
             }
-            for (let i = 0, iEnd = pointOptions.length; i < iEnd; ++i) {
-                tableRowOptions[keys[i] || `${i}`] = pointOptions[i];
-            }
-            tableRow = new DataTableRow(tableRowOptions);
+        } else if (typeof options === 'object') {
+            ret = options;
 
-        // Object
-        } else if (
-            typeof pointOptions === 'object'
-        ) {
-            if (pointOptions === null) {
-                tableRow = DataTableRow.NULL;
-            } else {
-                tableRow = new DataTableRow(flat(pointOptions));
+            // This is the fastest way to detect if there are individual point
+            // dataLabels that need to be considered in drawDataLabels. These
+            // can only occur in object configs.
+            if (options.dataLabels) {
+                series._hasPointLabels = true;
             }
 
-        // Primitive
-        } else {
-            tableRow = new DataTableRow({
-                x,
-                [keys[0] || 'y']: pointOptions
-            });
+            // Same approach as above for markers
+            if (options.marker) {
+                series._hasPointMarkers = true;
+            }
         }
-
-        return tableRow;
-    }
-
-    /* *
-     *
-     *  Constructor
-     *
-     * */
-
-    public constructor(series?: Series, tableRow?: DataTableRow) {
-        if (series) {
-            this.series = series;
-        }
-
-        if (series && tableRow) {
-            this.applyOptions(Point.getPointOptionsFromTableRow(tableRow));
-            this.attachTableRow(tableRow);
-
-            // Add a unique ID to the point if none is assigned
-            this.id = tableRow.id;
-
-            this.resolveColor();
-
-            series.chart.pointCount++;
-        }
+        return ret;
     }
 
     /* *
@@ -577,10 +523,6 @@ class Point {
 
     public state?: StatesOptionsKey;
 
-    public tableRow?: DataTableRow;
-
-    public tableRowEventRemover?: Function;
-
     /**
      * The total of values in either a stack for stacked series, or a pie in a
      * pie series.
@@ -639,7 +581,7 @@ class Point {
         graphicalProps.plural.forEach(function (plural: any): void {
             (point as any)[plural].forEach(function (item: any): void {
                 if (item.element) {
-                    item.animate(extend(
+                    item.animate(extend<SVGAttributes>(
                         { x: point.startXPos },
                         (item.startYPos ? {
                             x: item.startXPos,
@@ -740,39 +682,6 @@ class Point {
         return point;
     }
 
-    public attachTableRow(tableRow: DataTableRow): this {
-        const point = this,
-            series = point.series;
-
-        if (point.tableRow) {
-            point.detachTableRow();
-        }
-
-        let keys: (Array<string>|undefined);
-
-        if (series.options.keys) {
-            keys = series.options.keys.slice();
-        } else if (series.pointArrayMap) {
-            keys = ['x', ...series.pointArrayMap];
-        }
-
-        point.tableRow = tableRow;
-        point.tableRowEventRemover = tableRow.on(
-            'afterChangeRow',
-            function (e): void {
-                const detail = (e.detail || {});
-                point.update(
-                    this,
-                    detail.redraw === 'true',
-                    detail.animation === 'true',
-                    false
-                );
-            }
-        );
-
-        return point;
-    }
-
     /**
      * Destroy a point to clear memory. Its reference still stays in
      * `series.data`.
@@ -860,22 +769,6 @@ class Point {
         });
     }
 
-    public detachTableRow(): (DataTableRow|undefined) {
-        const point = this,
-            tableRow = point.tableRow,
-            tableRowEventRemover = point.tableRowEventRemover;
-
-        if (tableRow) {
-            point.tableRow = void 0;
-        }
-
-        if (tableRowEventRemover) {
-            tableRowEventRemover();
-        }
-
-        return tableRow;
-    }
-
     /**
      * Fire an event on the Point object.
      *
@@ -893,7 +786,7 @@ class Point {
      *
      * @fires Highcharts.Point#event:*
      */
-    public firePointEvent<T extends Record<string, any>|Event>(
+    public firePointEvent<T extends AnyRecord|Event>(
         eventType: string,
         eventArgs?: T,
         defaultFunction?: (
@@ -1135,72 +1028,19 @@ class Point {
      * transformed to `{ y: 10 }`, and an array config like `[1, 10]` in a
      * scatter series will be transformed to `{ x: 1, y: 10 }`.
      *
+     * @deprecated
      * @function Highcharts.Point#optionsToObject
      *
      * @param {Highcharts.PointOptionsType} options
-     *        The input option.
+     * Series data options.
      *
      * @return {Highcharts.Dictionary<*>}
-     *         Transformed options.
+     * Transformed point options.
      */
     public optionsToObject(
         options: (PointOptions|PointShortOptions)
     ): this['options'] {
-        var ret = {} as Record<string, any>,
-            series = this.series,
-            keys = series.options.keys,
-            pointArrayMap = keys || series.pointArrayMap || ['y'],
-            valueCount = pointArrayMap.length,
-            firstItemType,
-            i = 0,
-            j = 0;
-
-        if (isNumber(options) || options === null) {
-            ret[pointArrayMap[0]] = options;
-
-        } else if (isArray(options)) {
-            // with leading x value
-            if (!keys && (options as any).length > valueCount) {
-                firstItemType = typeof (options as any)[0];
-                if (firstItemType === 'string') {
-                    ret.name = (options as any)[0];
-                } else if (firstItemType === 'number') {
-                    ret.x = (options as any)[0];
-                }
-                i++;
-            }
-            while (j < valueCount) {
-                // Skip undefined positions for keys
-                if (!keys || typeof (options as any)[i] !== 'undefined') {
-                    if (pointArrayMap[j].indexOf('.') > 0) {
-                        // Handle nested keys, e.g. ['color.pattern.image']
-                        // Avoid function call unless necessary.
-                        Point.prototype.setNestedProperty(
-                            ret, (options as any)[i], pointArrayMap[j]
-                        );
-                    } else {
-                        ret[pointArrayMap[j]] = (options as any)[i];
-                    }
-                }
-                i++;
-                j++;
-            }
-        } else if (typeof options === 'object') {
-            ret = options;
-
-            // This is the fastest way to detect if there are individual point
-            // dataLabels that need to be considered in drawDataLabels. These
-            // can only occur in object configs.
-            if ((options as any).dataLabels) {
-                series._hasPointLabels = true;
-            }
-
-            // Same approach as above for markers
-            if ((options as any).marker) {
-                series._hasPointMarkers = true;
-            }
-        }
-        return ret;
+        return Point.optionsToObject(options, this.series);
     }
 
     /**
@@ -1211,8 +1051,7 @@ class Point {
     public resolveColor(): void {
         var series = this.series,
             colors,
-            optionsChart =
-                series.chart.options.chart as Highcharts.ChartOptions,
+            optionsChart = series.chart.options.chart,
             colorCount = optionsChart.colorCount,
             styledMode = series.chart.styledMode,
             colorIndex: number,
@@ -1378,8 +1217,8 @@ class Point {
      * @fires Highcharts.Point#event:update
      */
     public update(
-        options: (DataTableRow|PointOptions|PointShortOptions),
-        redraw: boolean = true,
+        options: (PointOptions|PointShortOptions),
+        redraw?: boolean,
         animation?: (boolean|Partial<AnimationOptions>),
         runEvent?: boolean
     ): void {
@@ -1388,19 +1227,16 @@ class Point {
             graphic = point.graphic,
             i: number,
             chart = series.chart,
-            pointOptions = (
-                options instanceof DataTableRow ?
-                    Point.getPointOptionsFromTableRow(options) :
-                    options
-            ),
             seriesOptions = series.options;
+
+        redraw = pick(redraw, true);
 
         /**
          * @private
          */
         function update(): void {
 
-            point.applyOptions(pointOptions);
+            point.applyOptions(options);
 
             // Update visuals, #4146
             // Handle dummy graphic elements for a11y, #12718
@@ -1411,23 +1247,19 @@ class Point {
                 delete point.hasDummyGraphic;
             }
 
-            if (isObject(pointOptions, true)) {
+            if (isObject(options, true)) {
                 // Destroy so we can get new elements
                 if (graphic && graphic.element) {
                     // "null" is also a valid symbol
                     if (
-                        pointOptions &&
-                        pointOptions.marker &&
-                        typeof pointOptions.marker.symbol !== 'undefined'
+                        options &&
+                        (options as any).marker &&
+                        typeof (options as any).marker.symbol !== 'undefined'
                     ) {
                         point.graphic = graphic.destroy();
                     }
                 }
-                if (
-                    pointOptions &&
-                    pointOptions.dataLabels &&
-                    point.dataLabel
-                ) {
+                if (options && (options as any).dataLabels && point.dataLabel) {
                     point.dataLabel = point.dataLabel.destroy(); // #2468
                 }
                 if (point.connector) {
@@ -1444,10 +1276,10 @@ class Point {
             // (#4701, #4916).
             (seriesOptions.data as any)[i] = (
                 isObject((seriesOptions.data as any)[i], true) ||
-                    isObject(pointOptions, true)
+                    isObject(options, true)
             ) ?
                 point.options :
-                pick(pointOptions, (seriesOptions.data as any)[i]);
+                pick(options, (seriesOptions.data as any)[i]);
 
             // redraw
             series.isDirty = series.isDirtyData = true;
@@ -1467,7 +1299,7 @@ class Point {
         if (runEvent === false) { // When called from setData
             update();
         } else {
-            point.firePointEvent('update', { options: pointOptions }, update);
+            point.firePointEvent('update', { options: options }, update);
         }
     }
 
@@ -1773,13 +1605,13 @@ class Point {
             if (!chart.styledMode) {
                 pointAttribs = series.pointAttribs(point, state);
                 pointAttribsAnimation = pick(
-                    (chart.options.chart as any).animation,
+                    chart.options.chart.animation,
                     stateOptions.animation
                 );
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
+                if (series.options.inactiveOtherPoints && isNumber(pointAttribs.opacity)) {
                     (point.dataLabels || []).forEach(function (
                         label: SVGElement
                     ): void {
@@ -1814,7 +1646,7 @@ class Point {
                     markerAttribs,
                     pick(
                         // Turn off globally:
-                        (chart.options.chart as any).animation,
+                        chart.options.chart.animation,
                         (markerStateOptions as any).animation,
                         (markerOptions as any).animation
                     )

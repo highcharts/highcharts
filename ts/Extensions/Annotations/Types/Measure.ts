@@ -523,13 +523,13 @@ class Measure extends Annotation {
                         Measure.calculations.defaultFormatter.call(this);
 
         } else {
-            (this.initLabel as any)(extend({
+            this.initLabel(extend<Partial<Highcharts.AnnotationsLabelsOptions>>({
                 shape: 'rect',
                 backgroundColor: 'none',
                 color: 'black',
                 borderWidth: 0,
-                dashStyle: 'dash',
-                overflow: 'none',
+                dashStyle: 'Dash',
+                overflow: 'allow',
                 align: 'left',
                 vertical: 'top',
                 crop: true,
@@ -548,10 +548,10 @@ class Measure extends Annotation {
                         y: (inverted ? -left + 10 : top) +
                             yAxis.toPixels(annotation.yAxisMin)
                     };
-                },
+                } as any,
                 text: (formatter && formatter.call(this)) ||
                     Measure.calculations.defaultFormatter.call(this)
-            }, typeOptions.label));
+            }, typeOptions.label as any), void 0 as any);
         }
     }
 
@@ -575,7 +575,7 @@ class Measure extends Annotation {
             return;
         }
 
-        this.initShape(extend({
+        this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
             type: 'path',
             points: this.shapePointsOptions()
         }, this.options.typeOptions.background), false as any);
@@ -653,11 +653,11 @@ class Measure extends Annotation {
             crosshairOptionsX = merge(defaultOptions, options.crosshairX);
             crosshairOptionsY = merge(defaultOptions, options.crosshairY);
 
-            this.initShape(extend({
+            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
                 d: pathH
             }, crosshairOptionsX), false as any);
 
-            this.initShape(extend({
+            this.initShape(extend<Partial<Highcharts.AnnotationsShapeOptions>>({
                 d: pathV
             }, crosshairOptionsY), false as any);
 

@@ -49,13 +49,13 @@ addEvent(Series, 'afterBindAxes', function (): void {
                 gridLineWidth: 0,
                 lineWidth: 0,
                 min: 0,
-                dataMin: 0,
+                // dataMin: 0,
                 minPadding: 0,
                 max: TreemapUtilities.AXIS_MAX,
-                dataMax: TreemapUtilities.AXIS_MAX,
+                // dataMax: TreemapUtilities.AXIS_MAX,
                 maxPadding: 0,
                 startOnTick: false,
-                title: null,
+                title: void 0,
                 tickPositions: []
             };
 

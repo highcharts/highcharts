@@ -25,22 +25,19 @@ const {
     ajax
 } = Ajax;
 import Chart from '../Core/Chart/Chart.js';
-import H from '../Core/Globals.js';
-const {
-    doc
-} = H;
-import Point from '../Core/Series/Point.js';
-import DataTable from '../Data/DataTable.js';
-import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
-import GoogleSheetsParser from '../Data/Parsers/GoogleSheetsParser.js';
-import CSVStore from '../Data/Stores/CSVStore.js';
-import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
 import CSVParser from '../Data/Parsers/CSVParser.js';
+import CSVStore from '../Data/Stores/CSVStore.js';
+import DataConverter from '../Data/DataConverter.js';
+import DataTable from '../Data/DataTable.js';
+import H from '../Core/Globals.js';
+import GoogleSheetsParser from '../Data/Parsers/GoogleSheetsParser.js';
+import GoogleSheetsStore from '../Data/Stores/GoogleSheetsStore.js';
 import HTMLTableParser from '../Data/Parsers/HTMLTableParser.js';
+import HTMLTableStore from '../Data/Stores/HTMLTableStore.js';
+import Point from '../Core/Series/Point.js';
 import SeriesRegistry from '../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
 import U from '../Core/Utilities.js';
-import DataConverter from '../Data/DataConverter.js';
 const {
     addEvent,
     defined,
@@ -76,13 +73,13 @@ declare global {
     namespace Highcharts {
         type DataValueType = (number|string|null);
         interface DataAfterCompleteCallbackFunction {
-            (dataOptions?: Options): void;
+            (dataOptions?: Partial<Options>): void;
         }
         interface DataBeforeParseCallbackFunction {
             (csv: string): string;
         }
         interface DataCompleteCallbackFunction {
-            (chartOptions: Options): void;
+            (chartOptions: Partial<Options>): void;
         }
         interface DataDateFormatCallbackFunction {
             (match: ReturnType<string['match']>): number;
@@ -123,7 +120,7 @@ declare global {
             startColumn?: number;
             startRow?: number;
             switchRowsAndColumns?: boolean;
-            table?: (string|GlobalHTMLElement);
+            table?: (string|HTMLElement);
         }
         interface DataParseDateCallbackFunction {
             (dateValue: string): number;
@@ -148,7 +145,7 @@ declare global {
         class Data {
             public constructor(
                 dataOptions: DataOptions,
-                chartOptions?: Options,
+                chartOptions?: Partial<Options>,
                 chart?: Chart
             );
             public alternativeFormat?: string;
@@ -1680,7 +1677,9 @@ class Data {
      *
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
-    public getDataColumnsFromDataTable(table: DataTable): Array<Array<Highcharts.DataValueType>> {
+    public getDataColumnsFromDataTable(
+        table: DataTable
+    ): Array<Array<Highcharts.DataValueType>> {
         const columns: Array<Array<Highcharts.DataValueType>> = [];
 
         let column: Array<Highcharts.DataValueType>,
@@ -2243,7 +2242,7 @@ class Data {
             j: number,
             r: number,
             seriesIndex,
-            chartOptions: Highcharts.Options,
+            chartOptions: Partial<Highcharts.Options>,
             allSeriesBuilders = [],
             builder,
             freeIndexes,
@@ -2390,7 +2389,7 @@ class Data {
             // The afterComplete hook is used internally to avoid conflict with
             // the externally available complete option.
             if (options.afterComplete) {
-                options.afterComplete(chartOptions as any);
+                options.afterComplete(chartOptions);
             }
         }
 
@@ -2414,7 +2413,7 @@ class Data {
         if (options) {
             // Set the complete handler
             options.afterComplete = function (
-                dataOptions?: Highcharts.Options
+                dataOptions?: Partial<Highcharts.Options>
             ): void {
                 // Avoid setting axis options unless the type changes. Running
                 // Axis.update will cause the whole structure to be destroyed
@@ -2472,13 +2471,13 @@ addEvent(
     function (
         e: Event & {
             args: [
-                (Highcharts.Options|undefined),
+                (Partial<Highcharts.Options>|undefined),
                 (Chart.CallbackFunction|undefined)
             ];
         }
     ): void {
         var chart = this, // eslint-disable-line no-invalid-this
-            userOptions = (e.args[0] || {}),
+            userOptions: Partial<Highcharts.Options> = (e.args[0] || {}),
             callback = e.args[1];
 
         if (userOptions && userOptions.data && !chart.hasDataDef) {
@@ -2492,7 +2491,7 @@ addEvent(
             chart.data = new H.Data(extend(userOptions.data, {
 
                 afterComplete: function (
-                    dataOptions: Highcharts.Options
+                    dataOptions?: Partial<Highcharts.Options>
                 ): void {
                     var i, series;
 

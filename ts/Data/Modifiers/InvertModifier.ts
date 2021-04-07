@@ -23,12 +23,8 @@ import type DataEventEmitter from '../DataEventEmitter';
 import DataModifier from './DataModifier.js';
 import DataJSON from '../DataJSON.js';
 import DataTable from '../DataTable.js';
-import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
-const {
-    merge,
-    defined
-} = U;
+const { merge } = U;
 
 /* *
  *
@@ -109,57 +105,73 @@ class InvertModifier extends DataModifier {
      * */
 
     /**
-     * Create new DataTable with inverted rows and columns.
+     * Inverts rows and columns in the table.
      *
      * @param {DataTable} table
-     * Table to modify.
+     * Table to invert.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {DataTable}
-     * New modified table.
+     * Inverted table as a reference.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
-        const modifier = this,
-            newTable = new DataTable(),
-            columns = table.getColumns(),
-            newRowIds = Object.keys(columns),
-            oldRowsLength = table.getRowCount();
-
-        let oldRow: (DataTableRow|undefined),
-            newCells: Record<string, DataTableRow.CellType>,
-            newRow: (DataTableRow|undefined),
-            rowCell: (DataTableRow.CellType|undefined);
+        const modifier = this;
 
         modifier.emit({ type: 'execute', detail: eventDetail, table });
 
-        for (let i = 0, iEnd = newRowIds.length; i < iEnd; i++) {
-            if (newRowIds[i] !== 'id') {
-                newCells = {
-                    id: newRowIds[i]
-                };
+        if (table.hasColumn('columnNames')) { // inverted table
+            const columnNames: Array<string> = (
+                    table.deleteColumn('columnNames') || []
+                ).map(
+                    (column): string => `${column}`
+                ),
+                columns: DataTable.ColumnCollection = {};
 
-                for (let j = 0; j < oldRowsLength; j++) {
-                    oldRow = table.getRow(j);
-                    rowCell = oldRow && oldRow.getCell(newRowIds[i]);
-
-                    if (defined(rowCell) && oldRow && oldRow.id) {
-                        newCells[oldRow.id] = rowCell;
-                    }
+            for (
+                let i = 0,
+                    iEnd = table.getRowCount(),
+                    row: (DataTable.Row|undefined);
+                i < iEnd;
+                ++i
+            ) {
+                row = table.getRow(i);
+                if (row) {
+                    columns[columnNames[i]] = row;
                 }
-
-                newRow = new DataTableRow(newCells);
-                newTable.insertRow(newRow);
             }
+
+            table.clear();
+            table.setColumns(columns);
+
+        } else { // regular table
+            const columns: DataTable.ColumnCollection = {};
+
+            for (
+                let i = 0,
+                    iEnd = table.getRowCount(),
+                    row: (DataTable.Row|undefined);
+                i < iEnd;
+                ++i
+            ) {
+                row = table.getRow(i);
+                if (row) {
+                    columns[`${i}`] = row;
+                }
+            }
+            columns.columnNames = table.getColumnNames();
+
+            table.clear();
+            table.setColumns(columns);
         }
 
-        modifier.emit({ type: 'afterExecute', detail: eventDetail, table: newTable });
+        modifier.emit({ type: 'afterExecute', detail: eventDetail, table });
 
-        return newTable;
+        return table;
     }
 
     /**

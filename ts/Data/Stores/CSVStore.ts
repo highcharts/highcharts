@@ -11,6 +11,7 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
+
 import Ajax from '../../Extensions/Ajax.js';
 import CSVParser from '../Parsers/CSVParser.js';
 import DataJSON from '../DataJSON.js';
@@ -20,7 +21,6 @@ const {
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
 import U from '../../Core/Utilities.js';
-import DataTableRow from '../DataTableRow';
 const {
     merge,
     pick,
@@ -49,8 +49,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
     static readonly defaultExportOptions: CSVStore.ExportOptions = {
         decimalPoint: null,
         itemDelimiter: null,
-        lineDelimiter: '\n',
-        exportIDColumn: false
+        lineDelimiter: '\n'
     }
 
     /* *
@@ -86,16 +85,16 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
     * */
 
     /**
-     * Constructs an instance of CSVDataStore
+     * Constructs an instance of CSVDataStore.
      *
      * @param {DataTable} table
-     * Optional DataTable to create the store from
+     * Optional table to create the store from.
      *
      * @param {CSVStore.OptionsType} options
-     * Options for the store and parser
+     * Options for the store and parser.
      *
      * @param {DataParser} parser
-     * Optional parser to replace the default parser
+     * Optional parser to replace the default parser.
      */
     public constructor(
         table: DataTable = new DataTable(),
@@ -197,7 +196,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
                 if (store.liveDataURL) {
                     store.poll();
                 }
-                store.table.insertRows(store.parser.getTable().getAllRows());
+                store.table.setRows(store.parser.getTable().getRows());
                 store.emit({
                     type: 'afterLoad',
                     csv,
@@ -231,24 +230,29 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
      */
     public load(eventDetail?: DataEventEmitter.EventDetail): void {
         const store = this,
-            { csv, csvURL } = store.options;
+            parser = store.parser,
+            table = store.table,
+            {
+                csv,
+                csvURL
+            } = store.options;
 
         if (csv) {
             // If already loaded, clear the current rows
-            store.table.clear();
+            table.clearRows();
             store.emit({
                 type: 'load',
                 csv,
                 detail: eventDetail,
-                table: store.table
+                table
             });
-            store.parser.parse({ csv });
-            store.table.insertRows(store.parser.getTable().getAllRows());
+            parser.parse({ csv });
+            table.setColumns(parser.getTable().getColumns());
             store.emit({
                 type: 'afterLoad',
                 csv,
                 detail: eventDetail,
-                table: store.table
+                table
             });
         } else if (csvURL) {
             store.fetchCSV(true, eventDetail);
@@ -256,9 +260,9 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             store.emit(
                 {
                     type: 'loadError',
-                    table: store.table,
+                    detail: eventDetail,
                     error: 'Unable to load: no CSV string or URL was provided',
-                    detail: eventDetail
+                    table
                 }
             );
         }
@@ -271,7 +275,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
      * The options used for the export.
      *
      * @return {string}
-     * A CSV string from the DataTable.
+     * A CSV string from the table.
      */
     public getCSVForExport(exportOptions: CSVStore.ExportOptions): string {
         const { useLocalDecimalPoint, lineDelimiter } = exportOptions,
@@ -290,13 +294,12 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
         }
 
         const { columnNames, columnValues } = this.getColumnsForExport(
-            exportOptions.exportIDColumn,
             exportOptions.usePresentationOrder
         );
         const csvRows: Array<string> = [],
             columnsCount = columnNames.length;
 
-        const rowArray: Array<Array<DataTableRow.CellType>> = [];
+        const rowArray: Array<DataTable.Row> = [];
 
         // Add the names as the first row if they should be exported
         if (exportNames) {
@@ -364,7 +367,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
      * Options to use instead of those used on import.
      *
      * @return {string}
-     * CSV from the store's current DataTable.
+     * CSV from the store's current table.
      *
      */
     public save(csvExportOptions?: Partial<CSVStore.ExportOptions>): string {
@@ -467,7 +470,6 @@ namespace CSVStore {
      */
     export interface ExportOptions extends DataJSON.JSONObject {
         decimalPoint: string | null;
-        exportIDColumn: boolean;
         itemDelimiter: string | null;
         lineDelimiter: string;
         useLocalDecimalPoint?: boolean;

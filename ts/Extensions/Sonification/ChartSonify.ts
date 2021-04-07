@@ -1126,11 +1126,11 @@ function getSeriesInstrumentOptions(
         return options.instruments;
     }
 
-    const defaultInstrOpts: Record<string, any> =
+    const defaultInstrOpts: AnyRecord =
         series.chart.options.sonification?.defaultInstrumentOptions || {};
-    const seriesInstrOpts: Array<Record<string, any>> =
+    const seriesInstrOpts: Array<AnyRecord> =
         series.options.sonification?.instruments || [{}];
-    const removeNullsFromObject = (obj: Record<string, any>): void => {
+    const removeNullsFromObject = (obj: AnyRecord): void => {
         objectEach(obj, (val: any, key: string): void => {
             if (val === null) {
                 delete obj[key];
@@ -1222,7 +1222,7 @@ function getChartSonifyOptions(
     chart: Highcharts.SonifyableChart,
     options?: Highcharts.SonifyChartOptionsObject
 ): Highcharts.SonifyChartOptionsObject {
-    const chartOpts: Record<string, any> = chart.options.sonification || {};
+    const chartOpts: AnyRecord = chart.options.sonification || {};
 
     return merge(
         {

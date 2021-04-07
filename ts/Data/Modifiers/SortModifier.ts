@@ -17,7 +17,6 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -57,8 +56,8 @@ class SortModifier extends DataModifier {
      * */
 
     private static ascending(
-        a: DataTableRow.CellType,
-        b: DataTableRow.CellType
+        a: DataTable.CellType,
+        b: DataTable.CellType
     ): number {
         return (
             !a || !b ? 0 :
@@ -69,8 +68,8 @@ class SortModifier extends DataModifier {
     }
 
     private static descending(
-        a: DataTableRow.CellType,
-        b: DataTableRow.CellType
+        a: DataTable.CellType,
+        b: DataTable.CellType
     ): number {
         return (
             !a || !b ? 0 :
@@ -112,9 +111,21 @@ class SortModifier extends DataModifier {
      *
      * */
 
-    public execute<T extends DataEventEmitter.EventDetail>(
+    /**
+     * Sorts rows in the table.
+     *
+     * @param {DataTable} table
+     * Table to sort in.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataTable}
+     * Sorted table as a reference.
+     */
+    public modify(
         table: DataTable,
-        eventDetail?: T
+        eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const modifier = this,
             {
@@ -134,20 +145,31 @@ class SortModifier extends DataModifier {
             table
         });
 
-        const tableRows = table.getAllRows().sort((
-            a: DataTableRow,
-            b: DataTableRow
-        ): number => compare(
-            a.getCell(orderByColumn),
-            b.getCell(orderByColumn)
-        ));
+        const columnNames = table.getColumnNames(),
+            orderByColumnIndex = columnNames.indexOf(orderByColumn),
+            rowReferences = table
+                .getRows()
+                .map((row, index): SortModifier.RowReference => ({
+                    index,
+                    row
+                })),
+            rowsLength = rowReferences.length;
+
+        if (orderByColumnIndex !== -1) {
+            rowReferences.sort((a, b): number => compare(
+                a.row[orderByColumnIndex],
+                b.row[orderByColumnIndex]
+            ));
+        }
 
         if (orderInColumn) {
-            for (let i = 0, iEnd = tableRows.length; i < iEnd; ++i) {
-                tableRows[i].setCell(orderInColumn, i);
+            for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
+                table.setCell(rowReferences[i].index, orderInColumn, i);
             }
         } else {
-            table = new DataTable(tableRows);
+            for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
+                table.setRow(rowReferences[i].row, i);
+            }
         }
 
         modifier.emit({
@@ -213,11 +235,16 @@ namespace SortModifier {
         orderByColumn: string;
 
         /**
-         * If set, the order of rows in the table will not change, just the
-         * index values of the given column.
+         * Column to update with order index instead of change order of rows.
          */
         orderInColumn?: string;
 
+    }
+
+    /** @private */
+    export interface RowReference {
+        index: number;
+        row: DataTable.Row;
     }
 
 }

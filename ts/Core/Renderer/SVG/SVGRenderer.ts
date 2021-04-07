@@ -128,7 +128,7 @@ declare global {
             public draw: Function;
             public escapes: Record<string, string>;
             public forExport?: boolean;
-            public globalAnimation: Partial<AnimationOptions>;
+            public globalAnimation: boolean|Partial<AnimationOptions>;
             public gradients: Record<string, SVGElement>;
             public height: number;
             public imgCount: number;
@@ -139,6 +139,7 @@ declare global {
             public unSubPixelFix?: Function;
             public url: string;
             public width: number;
+            public alignElements(): void;
             public arc(attribs: SVGAttributes): SVGElement;
             public arc(
                 x?: number,
@@ -865,7 +866,7 @@ class SVGRenderer {
      * The style settings mixed with defaults.
      */
     public getStyle(style: CSSObject): CSSObject {
-        this.style = extend({
+        this.style = extend<CSSObject>({
 
             fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
                 'Arial, Helvetica, sans-serif',
@@ -1559,9 +1560,7 @@ class SVGRenderer {
         height: number,
         animate?: (boolean|Partial<AnimationOptions>)
     ): void {
-        var renderer = this,
-            alignedObjects = renderer.alignedObjects,
-            i = alignedObjects.length;
+        var renderer = this;
 
         renderer.width = width;
         renderer.height = height;
@@ -1579,9 +1578,7 @@ class SVGRenderer {
             duration: pick(animate, true) ? void 0 : 0
         });
 
-        while (i--) {
-            alignedObjects[i].align();
-        }
+        renderer.alignElements();
     }
 
     /**
@@ -2475,6 +2472,17 @@ class SVGRenderer {
         );
 
     }
+
+    /**
+     * Re-align all aligned elements.
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#alignElements
+     * @return {void}
+     */
+    public alignElements(): void {
+        this.alignedObjects.forEach((el): SVGElement => el.align());
+    }
 }
 
 /**
@@ -2532,6 +2540,19 @@ SVGRenderer.prototype.escapes = {
     '"': '&quot;'
 };
 
+// #15291
+const rect = (
+    x: number,
+    y: number,
+    w: number,
+    h: number): SVGPath => [
+    ['M', x, y],
+    ['L', x + w, y],
+    ['L', x + w, y + h],
+    ['L', x, y + h],
+    ['Z']
+];
+
 /**
  * An extendable collection of functions for defining symbol paths.
  *
@@ -2553,20 +2574,9 @@ SVGRenderer.prototype.symbols = {
         });
     },
 
-    square: function (
-        x: number,
-        y: number,
-        w: number,
-        h: number
-    ): SVGPath {
-        return [
-            ['M', x, y],
-            ['L', x + w, y],
-            ['L', x + w, y + h],
-            ['L', x, y + h],
-            ['Z']
-        ];
-    },
+    rect,
+
+    square: rect, // #15291
 
     triangle: function (
         x: number,
@@ -2621,8 +2631,8 @@ SVGRenderer.prototype.symbols = {
         if (options) {
             var start = options.start || 0,
                 end = options.end || 0,
-                rx = options.r || w,
-                ry = options.r || h || w,
+                rx = pick(options.r, w),
+                ry = pick(options.r, h || w),
                 proximity = 0.001,
                 fullCircle =
                     Math.abs(end - start - 2 * Math.PI) <

@@ -78,8 +78,11 @@ declare global {
             funnel3dPath(shapeArgs: SVGAttributes): Funnel3dPathsObject;
         }
         interface Funnel3dPathsObject extends SVGPath3D {
-            frontUpper: SVGPath;
+            backLower: SVGPath;
             backUpper: SVGPath;
+            frontLower: SVGPath;
+            frontUpper: SVGPath;
+            rightLower: SVGPath;
             rightUpper: SVGPath;
         }
     }
@@ -241,13 +244,13 @@ Elements3D.funnel3d = merge(Elements3D.cuboid, {
             });
         } else {
             merge(true, partsWithColor, {
-                frontUpper: fillColor,
-                backUpper: fillColor,
-                rightUpper: fillColor,
+                frontUpper: fillColor as any,
+                backUpper: fillColor as any,
+                rightUpper: fillColor as any,
 
-                frontLower: fillColor,
-                backLower: fillColor,
-                rightLower: fillColor
+                frontLower: fillColor as any,
+                backLower: fillColor as any,
+                rightLower: fillColor as any
             });
 
             if ((fillColor as any).radialGradient) {
@@ -429,7 +432,7 @@ extend(H.Renderer.prototype, {
             // adjust angles for visible edges
             // based on alpha, selected through visual tests
             alphaCorrection = shapeArgs.alphaCorrection = 90 -
-                Math.abs(((chart.options.chart as any).options3d.alpha % 180) - 90),
+                Math.abs(((chart.options.chart.options3d as any).alpha % 180) - 90),
 
             // set zIndexes of parts based on cubiod logic, for consistency
             cuboidData = cuboidPath.call(renderer, merge(shapeArgs, {

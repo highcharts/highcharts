@@ -633,10 +633,9 @@ class ColumnSeries extends Series {
                     columnIndex;
 
                 if (otherSeries.type === series.type &&
-                    (otherSeries.visible ||
-                    !(
-                        series.chart.options.chart as any)
-                        .ignoreHiddenSeries
+                    (
+                        otherSeries.visible ||
+                        !series.chart.options.chart.ignoreHiddenSeries
                     ) &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos
@@ -1317,7 +1316,7 @@ extend(ColumnSeries.prototype, {
      */
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
-    getSymbol: noop as any,
+    getSymbol: noop,
 
     // use separate negative stacks, unlike area stacks where a negative
     // point is substracted from previous (#1910)

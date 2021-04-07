@@ -22,7 +22,6 @@ import type DataEventEmitter from '../DataEventEmitter';
 import DataJSON from '../DataJSON.js';
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
-import DataTableRow from '../DataTableRow.js';
 import U from '../../Core/Utilities.js';
 const {
     merge
@@ -124,7 +123,7 @@ class GroupModifier extends DataModifier {
      * @return {DataTable}
      * New modified table.
      */
-    public execute(
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
@@ -136,27 +135,26 @@ class GroupModifier extends DataModifier {
                 invalidValues,
                 validValues
             } = modifier.options,
-            columnGroups: Array<string> = [],
+            byGroups: Array<string> = [],
             tableGroups: Array<DataTable> = [],
-            valueGroups: Array<DataJSON.JSONPrimitive> = [];
+            valueGroups: Array<DataJSON.JSONPrimitive> = [],
+            groupColumn = (
+                modifier.options.groupColumn ||
+                table.getColumnNames()[0]
+            ),
+            valueColumn = (
+                table.getColumn(groupColumn) ||
+                []
+            );
 
-        let groupColumn = modifier.options.groupColumn,
-            row: (DataTableRow|undefined),
-            value: DataTableRow.CellType,
+        let value: DataTable.CellType,
             valueIndex: number;
 
-        for (let i = 0, iEnd = table.getRowCount(); i < iEnd; ++i) {
-            row = table.getRow(i);
-            if (row) {
-                if (!groupColumn) {
-                    groupColumn = row.getCellNames()[0];
-                }
-
-                value = row.getCell(groupColumn);
-
+        for (let i = 0, iEnd = valueColumn.length; i < iEnd; ++i) {
+            value = valueColumn[i];
+            if (typeof value !== 'undefined') {
                 if (
                     value instanceof DataTable ||
-                    value instanceof Date ||
                     (
                         invalidValues &&
                         invalidValues.indexOf(value) >= 0
@@ -171,25 +169,25 @@ class GroupModifier extends DataModifier {
                 valueIndex = valueGroups.indexOf(value);
 
                 if (valueIndex === -1) {
-                    columnGroups.push(groupColumn);
-                    tableGroups.push(new DataTable([row]));
+                    const newTable = new DataTable();
+
+                    newTable.setRowObject(table.getRowObject(i) || {});
+
+                    byGroups.push(groupColumn);
+                    tableGroups.push(newTable);
                     valueGroups.push(value);
                 } else {
-                    tableGroups[valueIndex].insertRow(row);
+                    tableGroups[valueIndex].setRow(table.getRow(i) || []);
                 }
             }
         }
 
-        table = new DataTable();
-
-        for (let i = 0, iEnd = tableGroups.length; i < iEnd; ++i) {
-            table.insertRow(new DataTableRow({
-                id: `${i}`,
-                groupBy: columnGroups[i],
-                table: tableGroups[i],
-                value: valueGroups[i]
-            }));
-        }
+        table.clear();
+        table.setColumns({
+            groupBy: byGroups,
+            table: tableGroups,
+            value: valueGroups
+        });
 
         this.emit({ type: 'afterExecute', detail: eventDetail, table });
 

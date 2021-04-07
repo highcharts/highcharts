@@ -205,6 +205,7 @@ class Bindings {
                 }),
                 new ChartComponent({
                     chartOptions: {
+                        chart: {},
                         series: [{
                             type: 'pie',
                             data: [1, 2, 3]

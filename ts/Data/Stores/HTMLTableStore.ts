@@ -10,8 +10,14 @@
  *
  * */
 
+/* *
+ *
+ *  Imports
+ *
+ * */
+
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
+
 import DataJSON from '../DataJSON.js';
 import DataStore from './DataStore.js';
 import DataTable from '../DataTable.js';
@@ -80,7 +86,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
      * Constructs an instance of HTMLTableDataStore
      *
      * @param {DataTable} table
-     * Optional DataTable to create the store from
+     * Optional table to create the store from
      *
      * @param {HTMLTableStore.OptionsType} options
      * Options for the store and parser
@@ -193,7 +199,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             eventDetail
         );
 
-        store.table.insertRows(store.parser.getTable().getAllRows());
+        store.table.setColumns(store.parser.getTable().getColumns());
 
         store.emit({
             type: 'afterLoad',
@@ -350,13 +356,12 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         };
 
         const { columnNames, columnValues } = this.getColumnsForExport(
-                options.exportIDColumn,
                 options.usePresentationOrder
             ),
             htmlRows: Array<string> = [],
             columnsCount = columnNames.length;
 
-        const rowArray: Array<Array<DataTableRow.CellType>> = [];
+        const rowArray: Array<DataTable.Row> = [];
 
         let tableHead = '';
 

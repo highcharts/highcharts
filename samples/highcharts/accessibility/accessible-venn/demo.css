@@ -12,7 +12,8 @@
 
 .btn {
   background-color: #25386f;
-  border: 1 px solid #25386f;
+  border: 1px solid #25386f;
+  cursor: pointer;
   color: #fff;
   min-height: 40px;
   width: 100%;
@@ -25,6 +26,13 @@
   margin-top: .25rem;
   margin-left: 35%;
   margin-right: 35%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+  transition: font-size 0.15s;
+}
+
+.btn:hover, .btn:focus {
+  background-color: #324683;
+  font-size: 1.12rem;
 }
 
 #outer {

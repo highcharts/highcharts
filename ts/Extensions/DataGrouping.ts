@@ -662,7 +662,7 @@ seriesProto.processData = function (): any {
         groupingEnabled = series.allowDG !== false && dataGroupingOptions &&
             pick(dataGroupingOptions.enabled, chart.options.isStock),
         visible = (
-            series.visible || !(chart.options.chart as any).ignoreHiddenSeries
+            series.visible || !chart.options.chart.ignoreHiddenSeries
         ),
         hasGroupedData,
         skip,
@@ -890,7 +890,7 @@ addEvent(Point, 'update', function (): (boolean|undefined) {
 // range.
 addEvent(Tooltip, 'headerFormatter', function (
     this: Highcharts.Tooltip,
-    e: Record<string, any>
+    e: AnyRecord
 ): void {
     var tooltip = this,
         chart = this.chart,

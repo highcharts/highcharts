@@ -30,6 +30,7 @@ const {
 declare module '../../Core/Chart/ChartLike'{
     interface ChartLike {
         didBoost?: boolean;
+        isBoosting?: boolean;
         markerGroup?: Series['markerGroup'];
     }
 }
@@ -223,6 +224,10 @@ function init(): void {
                     low: number = false as any,
                     chartDestroyed = typeof chart.index === 'undefined',
                     isYInside = true;
+
+                if (typeof d === 'undefined') {
+                    return true;
+                }
 
                 if (!chartDestroyed) {
                     if (useRaw) {

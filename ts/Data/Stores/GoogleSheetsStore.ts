@@ -71,10 +71,10 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
      * Constructs an instance of GoogleSheetsStore
      *
      * @param {DataTable} table
-     * Optional DataTable to create the store from
+     * Optional table to create the store from.
      *
      * @param {CSVStore.OptionsType} options
-     * Options for the store and parser
+     * Options for the store and parser.
      *
      * @param {DataParser} parser
      * Optional parser to replace the default parser
@@ -145,7 +145,8 @@ class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> impleme
             dataType: 'json',
             success: function (json: Highcharts.JSONType): void {
                 store.parser.parse(json);
-                store.table.insertRows(store.parser.getTable().getAllRows());
+                store.table.setColumns(store.parser.getTable().getColumns());
+
                 // Polling
                 if (enablePolling) {
                     setTimeout(
