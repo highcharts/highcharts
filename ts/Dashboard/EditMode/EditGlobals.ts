@@ -19,6 +19,7 @@ const EditGlobals: EditGlobals = {
         editToolbarOptionsHide: PREFIX + 'toolbar-hide',
         disabledNotEditedCells: PREFIX + 'hidden-cells',
         currentEditedCell: PREFIX + 'current-cell',
+        editRow: PREFIX + 'toolbar-row',
         menuItem: PREFIX + 'menu-item',
         menu: PREFIX + 'menu',
         menuVerticalSeparator: PREFIX + 'menu-vertical-separator',
@@ -55,6 +56,7 @@ namespace EditGlobals {
         editToolbarOptionsHide: string;
         disabledNotEditedCells: string;
         currentEditedCell: string;
+        editRow: string;
         menuItem: string;
         menu: string;
         menuVerticalSeparator: string;

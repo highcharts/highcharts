@@ -22,23 +22,41 @@ class RowEditToolbar extends Menu {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
         itemsClassName: EditGlobals.classNames.editToolbarItem,
-        items: ['drag', 'resizeRow']
+        items: ['drag', 'resizeRow', 'settings', 'destroy']
     }
 
     public static items: Record<string, MenuItem.Options> =
     merge(Menu.items, {
         drag: {
             type: 'drag',
-            text: 't1',
+            icon: EditGlobals.iconsURL + 'drag.svg',
             events: {
                 click: function (): void {}
             }
         },
         resizeRow: {
             type: 'resizeRow',
-            text: 't2',
+            icon: EditGlobals.iconsURL + 'resize.svg',
             events: {
                 click: function (): void {}
+            }
+        },
+        settings: {
+            type: 'settings',
+            // text: 'settings',
+            icon: EditGlobals.iconsURL + 'settings.svg',
+            events: {
+                click: function (this: MenuItem, e: any): void {
+                    (this.menu as RowEditToolbar).onRowOptions(e);
+                }
+            }
+        },
+        destroy: {
+            type: 'destroy',
+            // text: 'destroy',
+            icon: EditGlobals.iconsURL + 'destroy.svg',
+            events: {
+                click: function (this: MenuItem, e: any): void {}
             }
         }
     })
@@ -68,6 +86,8 @@ class RowEditToolbar extends Menu {
             css(this.container, {
                 backgroundColor: '#252526'
             });
+
+            this.container.classList.add(EditGlobals.classNames.editRow);
         }
 
         this.setEvents();
@@ -127,6 +147,25 @@ class RowEditToolbar extends Menu {
             super.show(x, y);
 
             toolbar.row = row;
+        }
+    }
+
+    public onRowOptions(
+        e: any
+    ): void {
+        const toolbar = this;
+
+        if (toolbar.editMode.optionsToolbar) {
+            toolbar.editMode.optionsToolbar.showOptions([
+                'title',
+                'option1'
+            ]);
+
+            // temporary -> move to OptionsToolbar
+            this.row?.container?.classList.add(EditGlobals.classNames.currentEditedCell);
+            this.row?.layout.dashboard.container.classList.add(
+                EditGlobals.classNames.disabledNotEditedCells
+            );
         }
     }
 

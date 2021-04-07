@@ -84,7 +84,7 @@ class MenuItem {
                 options.icon + ')';
 
             if (options.type === 'destroy') {
-                item.container.classList.add(EditGlobals.classNames.menuDestroy)
+                item.container.classList.add(EditGlobals.classNames.menuDestroy);
             }
         }
     }
