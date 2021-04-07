@@ -49,12 +49,16 @@ class RowEditToolbar extends Menu {
     *
     * */
     constructor(
-        editMode: EditMode,
-        options?: RowEditToolbar.Options|undefined
+        editMode: EditMode
     ) {
+        const toolbarRowOptions = (editMode.options.toolbars || {}).row;
+
         super(
             editMode.dashboard.container,
-            merge(RowEditToolbar.defaultOptions, options || {})
+            merge(
+                RowEditToolbar.defaultOptions,
+                toolbarRowOptions
+            )
         );
 
         this.editMode = editMode;

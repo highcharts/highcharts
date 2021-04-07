@@ -46,7 +46,7 @@ class EditRenderer {
                 }, {}, editMode.dashboard.container
             );
             ctxBtnElement.style.background = 'url(' +
-                editMode.options.contextMenu.contextMenuIcon +
+                editMode.options.contextMenu.icon +
             ') no-repeat 50% 50%';
         }
 

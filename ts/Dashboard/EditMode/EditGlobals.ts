@@ -2,6 +2,7 @@ const PREFIX = 'highcharts-dashboard-edit-';
 
 const EditGlobals: EditGlobals = {
     prefix: PREFIX,
+    iconsURL: 'https://code.highcharts.com/@product.version@/gfx/dashboard-icons/',
     classNames: {
         resizeSnap: PREFIX + 'resize-snap',
         resizeSnapX: PREFIX + 'resize-snap-x',
@@ -21,7 +22,8 @@ const EditGlobals: EditGlobals = {
         menuItem: PREFIX + 'menu-item',
         menu: PREFIX + 'menu',
         menuVerticalSeparator: PREFIX + 'menu-vertical-separator',
-        menuHorizontalSeparator: PREFIX + 'menu-horizontal-separator'
+        menuHorizontalSeparator: PREFIX + 'menu-horizontal-separator',
+        menuDestroy: PREFIX + 'menu-destroy'
     },
     lang: {
         editMode: 'Edit mode',
@@ -31,6 +33,7 @@ const EditGlobals: EditGlobals = {
 
 interface EditGlobals {
     prefix: string;
+    iconsURL: string;
     classNames: EditGlobals.ClassNamesOptions;
     lang: EditGlobals.LangOptions;
 }
@@ -56,6 +59,7 @@ namespace EditGlobals {
         menu: string;
         menuVerticalSeparator: string;
         menuHorizontalSeparator: string;
+        menuDestroy: string;
     }
 
     export interface LangOptions {

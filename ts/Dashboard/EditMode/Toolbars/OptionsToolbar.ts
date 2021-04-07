@@ -42,12 +42,17 @@ class OptionsToolbar extends Menu {
     *
     * */
     constructor(
-        editMode: EditMode,
-        options?: OptionsToolbar.Options|undefined
+        editMode: EditMode
     ) {
+        const toolbarSettingsOptions =
+            (editMode.options.toolbars || {}).settings;
+
         super(
             editMode.dashboard.container,
-            merge(OptionsToolbar.defaultOptions, options || {})
+            merge(
+                OptionsToolbar.defaultOptions,
+                toolbarSettingsOptions
+            )
         );
 
         this.editMode = editMode;
