@@ -141,6 +141,10 @@ class DisparityIndexIndicator extends SMAIndicator {
 
         ctx.averageIndicator = averageIndicator;
 
+        extend(DisparityIndexIndicator.prototype, {
+            nameBase: 'Disparity Index (' + averageType + ')'
+        });
+
         if (averageType !== 'sma') { // no need to check whether sma is loaded
             // Check if the required average indicator modules is loaded
             RequiredIndicatorMixin.isParentLoaded(
