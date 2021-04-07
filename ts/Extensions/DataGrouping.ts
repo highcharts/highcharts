@@ -771,10 +771,20 @@ seriesProto.processData = function (): any {
 
             // Prevent the smoothed data to spill out left and right, and make
             // sure data is not shifted to the left- deprecated.
-            if (dataGroupingOptions && dataGroupingOptions.smoothed) {
-                dataGroupingOptions.firstAnchor = 'firstPoint';
-                dataGroupingOptions.anchor = 'middle';
-                dataGroupingOptions.lastAnchor = 'lastPoint';
+            // For navigator
+            if (dataGroupingOptions && dataGroupingOptions.smoothed && groupedXData.length) {
+                if (series.options.className === 'highcharts-navigator-series') {
+                    i = groupedXData.length - 1;
+                    groupedXData[i] = Math.min(groupedXData[i], xMax);
+                    while (i-- && i > 0) {
+                        groupedXData[i] += interval / 2;
+                    }
+                    groupedXData[0] = Math.max(groupedXData[0], xMin);
+                } else {
+                    dataGroupingOptions.firstAnchor = 'firstPoint';
+                    dataGroupingOptions.anchor = 'middle';
+                    dataGroupingOptions.lastAnchor = 'lastPoint';
+                }
             }
 
             // DataGrouping x-coordinates.
