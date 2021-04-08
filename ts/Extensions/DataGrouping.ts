@@ -141,15 +141,15 @@ declare global {
             start?: number;
         }
         interface DataGroupingOptionsObject {
-            anchor?: undefined|string;
+            anchor?: string;
             approximation?: (DataGroupingApproximationValue|Function);
             dateTimeLabelFormats?: Record<string, Array<string>>;
             enabled?: boolean;
-            firstAnchor?: undefined|string;
+            firstAnchor?: string;
             forced?: boolean;
             groupAll?: boolean;
             groupPixelWidth?: number;
-            lastAnchor?: undefined|string;
+            lastAnchor?: string;
             smoothed?: boolean;
             units?: Array<[string, (Array<number>|null)]>;
         }
@@ -168,11 +168,28 @@ declare global {
             'average'|'averages'|'ohlc'|'open'|'high'|'low'|'close'|'sum'|
             'windbarb'|'ichimoku-averages'
         );
+        type DataGroupingAnchor = ('start'|'middle'|'end');
+        type DataGroupingAnchorExtremes = ('start'|'middle'|'end'|'firstPoint'|'lastPoint');
+        type anchorChoiceType = {
+            [key: string]: number;
+        }
     }
 }
 
 /**
  * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
+ */
+
+/**
+ * The position of the point inside the group.
+ *
+ * @typedef    {"start"|"middle"|"end"} Highcharts.DataGroupingAnchor
+ */
+
+/**
+ * The position of the first or last point on the chart inside the group.
+ *
+ * @typedef    {"start"|"middle"|"end"|"firstPoint"|"lastPoint"} Highcharts.DataGroupingAnchorExtremes
  */
 
 /**
@@ -677,7 +694,8 @@ seriesProto.processData = function (): any {
         lastDataGrouping = this.currentDataGrouping,
         currentDataGrouping,
         croppedData,
-        revertRequireSorting = false;
+        revertRequireSorting = false,
+        totalRange = series.currentDataGrouping && series.currentDataGrouping.gapSize;
 
     // Run base method
     series.forceCrop = groupingEnabled; // #334
@@ -770,26 +788,27 @@ seriesProto.processData = function (): any {
                 groupedYData = groupedData.groupedYData,
                 gapSize = 0;
 
-            // Prevent the smoothed data to spill out left and right, and make
-            // sure data is not shifted to the left- deprecated #12455.
+            // The smoothed option is deprecated, instead,
+            // there is a fallback to the new anchoring mechanism. #12455.
             if (dataGroupingOptions && dataGroupingOptions.smoothed && groupedXData.length) {
                 dataGroupingOptions.firstAnchor = 'firstPoint';
                 dataGroupingOptions.anchor = 'middle';
                 dataGroupingOptions.lastAnchor = 'lastPoint';
+
+                error(32, false, chart, { 'dataGrouping.smoothed': 'use dataGrouping.anchor' });
             }
 
             // DataGrouping x-coordinates.
-            if (dataGroupingOptions && series.xData) {
-                const totalRange = series.currentDataGrouping && series.currentDataGrouping.gapSize,
-                    groupedDataLength = groupedXData.length - 1,
+            if (dataGroupingOptions && series.xData && totalRange && series.groupMap) {
+                const groupedDataLength = groupedXData.length - 1,
                     anchor = dataGroupingOptions.anchor,
                     firstAnchor = pick(dataGroupingOptions.firstAnchor, anchor),
                     lastAnchor = pick(dataGroupingOptions.lastAnchor, anchor);
 
                 // Anchor points that are not extremes.
-                if (anchor && totalRange) {
-                    const shiftInterval: number =
-                        totalRange * ({ start: 0, middle: 0.5, end: 1 } as any)[anchor];
+                if (anchor && anchor !== 'start') {
+                    const shiftInterval: number = totalRange *
+                        ({ middle: 0.5, end: 1 } as Highcharts.anchorChoiceType)[anchor];
 
                     i = groupedXData.length - 1;
                     while (i-- && i > 0) {
@@ -797,40 +816,39 @@ seriesProto.processData = function (): any {
                     }
                 }
 
-                // Anchor points that are extremes.
-                if (totalRange && series.groupMap) {
-                    // Change the first point position, but only when it is
-                    // the first point in the data set not in the current zoom.
-                    if (firstAnchor && series.xData[0] >= groupedXData[0]) {
-                        if (firstAnchor === 'firstPoint') {
-                            groupedXData[0] = series.xData[0];
-                        } else if (firstAnchor === 'lastPoint') {
-                            const firstGroupstEnd = (series.groupMap[0].start as number) +
-                                (series.groupMap[0].length as number - 1),
-                                firstGroupX = series.xData[firstGroupstEnd];
+                // Change the first point position, but only when it is
+                // the first point in the data set not in the current zoom.
+                if (
+                    firstAnchor &&
+                    firstAnchor !== 'start' &&
+                    series.xData[0] >= groupedXData[0]
+                ) {
+                    const firstGroupstEnd = (series.groupMap[0].start as number) +
+                        (series.groupMap[0].length as number - 1);
 
-                            firstGroupX ? groupedXData[0] = firstGroupX : void 0;
-                        } else {
-                            groupedXData[0] +=
-                                totalRange * ({ start: 0, middle: 0.5, end: 1 } as any)[firstAnchor];
-                        }
-                    }
+                    groupedXData[0] = ({
+                        middle: groupedXData[0] + 0.5 * totalRange,
+                        end: groupedXData[0] + totalRange,
+                        firstPoint: series.xData[0],
+                        lastPoint: series.xData[firstGroupstEnd]
+                    } as Highcharts.anchorChoiceType)[firstAnchor];
+                }
 
-                    // Change the last point position but only when it is
-                    // the last point in the data set not in the current zoom.
-                    if (lastAnchor && groupedXData[groupedDataLength] >= xMax - (totalRange as number)) {
-                        if (lastAnchor === 'firstPoint') {
-                            const lastGroupStart = series.groupMap[series.groupMap.length - 1].start,
-                                lastGroupX = isNumber(lastGroupStart) && series.xData[lastGroupStart];
+                // Change the last point position but only when it is
+                // the last point in the data set not in the current zoom.
+                if (
+                    lastAnchor &&
+                    lastAnchor !== 'start' &&
+                    groupedXData[groupedDataLength] >= xMax - (totalRange as number)
+                ) {
+                    const lastGroupStart = series.groupMap[series.groupMap.length - 1].start;
 
-                            lastGroupX ? groupedXData[groupedDataLength] = lastGroupX : void 0;
-                        } else if (lastAnchor === 'lastPoint') {
-                            groupedXData[groupedDataLength] = series.xData[series.xData.length - 1];
-                        } else {
-                            groupedXData[groupedDataLength] +=
-                                totalRange * ({ start: 0, middle: 0.5, end: 1 } as any)[lastAnchor];
-                        }
-                    }
+                    groupedXData[groupedDataLength] = ({
+                        middle: groupedXData[groupedDataLength] + 0.5 * totalRange,
+                        end: groupedXData[groupedDataLength] + totalRange,
+                        firstPoint: lastGroupStart && series.xData[lastGroupStart],
+                        lastPoint: series.xData[series.xData.length - 1]
+                    } as Highcharts.anchorChoiceType)[lastAnchor];
                 }
             }
 
@@ -1239,7 +1257,7 @@ export default dataGrouping;
  * @sample {highstock} stock/plotoptions/series-datagrouping-anchor
  *         Changing the point x-coordinate inside the group.
  *
- * @type       {string}
+ * @type       {Highcharts.DataGroupingAnchor}
  * @since      next
  * @default    start
  * @apioption  plotOptions.series.dataGrouping.anchor
@@ -1347,8 +1365,9 @@ export default dataGrouping;
  * @sample {highstock} stock/plotoptions/series-datagrouping-first-anchor
  *         Applying first and last anchor.
  *
- * @type       {string}
+ * @type       {Highcharts.DataGroupingAnchorExtremes}
  * @since      next
+ * @default    start
  * @apioption  plotOptions.series.dataGrouping.firstAnchor
  */
 
@@ -1423,8 +1442,9 @@ export default dataGrouping;
  * @sample {highstock} stock/plotoptions/series-datagrouping-last-anchor
  *         Applying the last anchor in the chart with live data.
  *
- * @type       {string}
+ * @type       {Highcharts.DataGroupingAnchorExtremes}
  * @since      next
+ * @default    start
  * @apioption  plotOptions.series.dataGrouping.lastAnchor
  */
 
