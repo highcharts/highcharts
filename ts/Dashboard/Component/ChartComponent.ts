@@ -1,4 +1,3 @@
-import type CSSObject from '../../Core/Renderer/CSSObject';
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
@@ -329,27 +328,28 @@ namespace ChartComponent {
     export interface UpdateEvent extends Component.UpdateEvent {
         options?: ComponentOptions;
     }
-    export interface ComponentOptions extends Component.ComponentOptions {
-        chartOptions?: Highcharts.Options;
-        chartClassName?: string;
-        chartID?: string;
-        style?: CSSObject;
+    export interface ComponentOptions extends Component.ComponentOptions, EditableOptions {
         Highcharts: typeof Highcharts;
         chartConstructor: ChartComponent.constructorType;
         syncEvents: syncEventsType[];
         syncHandlers: Record<syncEventsType, syncHandlersType>;
     }
 
+    export interface EditableOptions extends Component.EditableOptions {
+        chartOptions?: Highcharts.Options;
+        chartClassName?: string;
+        chartID?: string;
+    }
 
     export interface ComponentJSONOptions extends Component.ComponentJSONOptions {
         chartOptions?: string;
         chartClassName?: string;
         chartID?: string;
-        style?: {};
         Highcharts: string; // reference?
         chartConstructor: ChartComponent.constructorType;
         syncEvents: syncEventsType[];
     }
+
 
     export interface ClassJSON extends Component.ClassJSON {
         options: ChartComponent.ComponentJSONOptions;

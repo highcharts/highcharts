@@ -2,6 +2,7 @@ import type ComponentType from './ComponentType';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
 import type DataJSON from '../../Data/DataJSON';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -12,8 +13,7 @@ const {
     isFunction,
     uniqueKey,
     getStyle,
-    relativeLength,
-    defined
+    relativeLength
 } = U;
 
 abstract class Component<TEventObject extends Component.Event = Component.Event> {
@@ -491,22 +491,27 @@ namespace Component {
         component?: Component<any>;
     }
 
-    export interface ComponentOptions {
+    export interface ComponentOptions extends EditableOptions {
         parentElement: HTMLElement | string;
-        store?: DataStore<any>;
-        dimensions?: { width?: number | string; height?: number | string };
         className?: string;
         type: string;
         // allow overwriting gui elements
         navigationBindings?: Highcharts.NavigationBindingsOptionsObject[];
         events?: Record<Event['type'], Function>;
+    }
+
+    export interface EditableOptions {
+        dimensions?: { width?: number | string; height?: number | string };
+        store?: DataStore<any>;
         id?: string;
+        style?: CSSObject;
     }
 
     // JSON compatible options for exprot
     export interface ComponentJSONOptions extends DataJSON.JSONObject {
         store?: DataStore.ClassJSON; // store id
         parentElement: string; // ID?
+        style?: {};
         dimensions?: { width: number; height: number };
         className?: string;
         type: string;

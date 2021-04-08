@@ -211,8 +211,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
 namespace HTMLComponent {
 
     export type ComponentType = HTMLComponent;
-    export interface HTMLComponentOptions extends Component.ComponentOptions {
+    export interface HTMLComponentOptions extends Component.ComponentOptions, EditableOptions {
         elements?: Highcharts.ASTNode[];
+    }
+
+    export interface EditableOptions extends Component.EditableOptions {
         scaleElements: boolean;
     }
 
