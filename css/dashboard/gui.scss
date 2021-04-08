@@ -315,6 +315,11 @@ h1 {
     left: 0;
 }
 
+.highcharts-dashboard-edit-layout-toolbar-space {
+    transition: 1s;
+    margin-left: 200px;  
+}
+
 .highcharts-dashboard-edit-toolbar-hide {
     transition: 1s;
     left: -200px;

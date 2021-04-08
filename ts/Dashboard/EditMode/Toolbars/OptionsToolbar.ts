@@ -6,6 +6,7 @@ import Layout from '../../Layout/Layout.js';
 import EditGlobals from '../EditGlobals.js';
 import Menu from '../Menu/Menu.js';
 import type MenuItem from '../Menu/MenuItem.js';
+import DashboardGlobals from '../../DashboardGlobals.js';
 
 const {
     merge,
@@ -85,9 +86,12 @@ class OptionsToolbar extends Menu {
             this.container.classList.add(
                 EditGlobals.classNames.editToolbarOptionsShow
             );
+
+            // set margin on all layouts in dashboard to avoid overlap
+            this.reserveToolbarSpace();
         }
 
-        // TODO show Options
+        // set margin on layouts
     }
 
     public hide(): void {
@@ -95,8 +99,34 @@ class OptionsToolbar extends Menu {
             this.container.classList.add(
                 EditGlobals.classNames.editToolbarOptionsHide
             );
+
+            this.removeToolbarSpace();
         }
         this.guiElement = void 0;
+    }
+
+    private reserveToolbarSpace(): void {
+        const layouts = this.editMode.dashboard.container.querySelectorAll(
+            '.' + DashboardGlobals.layout
+        );
+
+        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
+            layouts[i].classList.add(
+                EditGlobals.classNames.layoutToolbarSpace
+            );
+        }
+    }
+
+    private removeToolbarSpace(): void {
+        const layouts = this.editMode.dashboard.container.querySelectorAll(
+            DashboardGlobals.layout
+        );
+
+        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
+            layouts[i].classList.remove(
+                EditGlobals.classNames.layoutToolbarSpace
+            );
+        }
     }
 }
 
