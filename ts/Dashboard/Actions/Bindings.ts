@@ -181,10 +181,14 @@ class Bindings {
         compontentContainer: HTMLDOMElement,
         options: Bindings.ComponentOptions
     ): HTMLComponent {
-        return new HTMLComponent({
-            parentElement: compontentContainer as HTMLDOMElement,
-            elements: options.elements
-        });
+        return new HTMLComponent(
+            merge(
+                options,
+                {
+                    parentElement: compontentContainer as HTMLDOMElement,
+                    elements: options.elements
+                })
+        );
     }
 
     public static groupComponent(

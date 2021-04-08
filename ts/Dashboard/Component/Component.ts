@@ -152,6 +152,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         parentElement: document.body,
         type: '',
         id: '',
+        title: false,
+        caption: false,
         editableOptions: [
             'dimensions',
             'id',
@@ -164,6 +166,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     public store?: DataStore<any>; // the attached store
     public dimensions: { width: number | null; height: number | null };
     public element: HTMLElement;
+    public titleElement?: HTMLElement;
+    public captionElement?: HTMLElement;
     public options: Component.ComponentOptions;
     public type: string;
     public id: string;
@@ -512,6 +516,8 @@ namespace Component {
         store?: DataStore<any>;
         id?: string;
         style?: CSSObject;
+        title: string | false | undefined;
+        caption: string | false | undefined;
     }
 
     // JSON compatible options for exprot

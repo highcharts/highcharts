@@ -99,7 +99,25 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
         this.emit({ type: 'load' });
         super.load();
         this.elements = this.options.elements || [];
+
         this.constructTree();
+
+        if (this.options.title) {
+            const titleElement = createElement('h1', {
+                className: 'component-title',
+                textContent: this.options.title
+            });
+            this.innerElements = [titleElement, ...this.innerElements];
+        }
+
+        if (this.options.caption) {
+            const captionElement = createElement('p', {
+                className: 'component-caption',
+                textContent: this.options.caption
+            });
+            this.innerElements.push(captionElement);
+        }
+
         this.innerElements.forEach((element): void => {
             this.element.appendChild(element);
         });
