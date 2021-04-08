@@ -880,7 +880,10 @@ class Legend {
                     options.symbolHeight || legend.fontMetrics.f;
 
                 if (options.squareSymbol) {
-                    legend.symbolWidth = pick(options.symbolWidth, legend.symbolHeight);
+                    legend.symbolWidth = pick(
+                        options.symbolWidth,
+                        Math.max(legend.symbolHeight, 16)
+                    );
 
                     itemExtraWidth = legend.symbolWidth + symbolPadding +
                         itemDistance + (showCheckbox ? 20 : 0);
