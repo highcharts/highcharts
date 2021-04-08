@@ -4132,16 +4132,56 @@ class Series {
             data = (options.data || []),
             keys = (options.keys || series.pointArrayMap || ['y']),
             points = series.data,
+            pointValKey = options.pointValKey || 'y',
             table = series.table;
 
-        let dataPoint: (PointOptions|PointShortOptions),
+        let column: DataTable.Column,
+            columnName: string,
+            dataPoint: (PointOptions|PointShortOptions),
             index: number,
             point: Point,
-            row: DataTable.Row;
+            row: (DataTable.Row|undefined);
 
         switch (e.type) {
+            case 'afterClearColumn':
+                column = e.column;
+                columnName = e.columnName;
+                index = keys.indexOf(columnName);
+                for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+                    dataPoint = data[i];
+                    if (dataPoint && typeof dataPoint === 'object') {
+                        if (dataPoint instanceof Array) {
+                            dataPoint.splice(index, 1);
+                        } else {
+                            merge(true, dataPoint, { [columnName]: void 0 });
+                        }
+                    } else if (columnName === pointValKey) {
+                        data[i] = column[i] as any;
+                    } else {
+                        row = table.getRow(i);
+                        if (!row || DataTable.isNull(row)) {
+                            data[i] = null;
+                        } else {
+                            data[i] = row as any;
+                        }
+                    }
+                }
+                break;
+
+            case 'afterClearRows':
+            case 'afterClearTable':
+                data.length = 0;
+                return;
+
             case 'afterDeleteRow':
-                data.splice(e.rowIndex, 1);
+                index = e.rowIndex;
+                point = points[index];
+                data.splice(index, 1);
+                if (point) {
+                    points.splice(index, 1);
+                    point.destroy();
+                    return;
+                }
                 break;
 
             case 'afterSetCell':
@@ -4159,14 +4199,11 @@ class Series {
                 }
 
                 dataPoint = data[index];
-                row = (table.getRow(index, keys) || []);
+                row = table.getRow(index, keys);
 
-                if (DataTable.isNull(row)) {
+                if (!row || DataTable.isNull(row)) {
                     data[table.getCellAsNumber('x', index) || index] = dataPoint = null;
-                } else if (
-                    dataPoint &&
-                    typeof dataPoint === 'object'
-                ) {
+                } else if (dataPoint && typeof dataPoint === 'object') {
                     if (dataPoint instanceof Array) {
                         if (e.type === 'afterSetCell') {
                             const keyIndex = keys.indexOf(e.columnName);
@@ -4184,13 +4221,38 @@ class Series {
                         merge(true, dataPoint, table.getRowObject(index, keys));
                     }
                 } else if (e.type === 'afterSetCell') {
-                    data[index] = dataPoint = e.cellValue as any;
-                } else if (row.length) {
-                    data[index] = dataPoint = (
+                    data[index] = e.cellValue as any;
+                } else {
+                    data[index] = (
                         row.length === 1 ?
                             row[0] :
                             row as any
                     );
+                }
+                break;
+
+            case 'afterSetColumn':
+                column = e.column;
+                columnName = e.columnName;
+                index = keys.indexOf(columnName);
+                for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+                    dataPoint = data[i];
+                    if (dataPoint && typeof dataPoint === 'object') {
+                        if (dataPoint instanceof Array) {
+                            dataPoint[index] = column[i] as any;
+                        } else {
+                            merge(true, dataPoint, { [columnName]: column[i] });
+                        }
+                    } else if (index === 0) {
+                        data[i] = column[i] as any;
+                    } else {
+                        row = table.getRow(i);
+                        if (!row || DataTable.isNull(row)) {
+                            data[i] = null;
+                        } else {
+                            data[i] = row as any;
+                        }
+                    }
                 }
                 break;
 
