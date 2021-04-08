@@ -11,9 +11,7 @@ const gulp = require('gulp');
  * */
 
 const WATCH_GLOBS = [
-    'js/**/*.js',
-    'ts/**/*.json',
-    'ts/**/*.ts'
+    'js/**/*.js'
 ];
 
 /* *
@@ -43,50 +41,37 @@ function task() {
         }
     }
 
-    return new Promise(resolve => {
+    let jsHash;
 
-        require('./scripts-js.js');
-        require('./scripts-ts.js');
+    gulp
+        .watch(WATCH_GLOBS, done => {
 
-        let jsHash,
-            tsHash;
+            const buildTasks = [];
+            const newJsHash = fsLib.getDirectoryHash('js', true);
 
-        gulp
-            .watch(WATCH_GLOBS, done => {
+            if (newJsHash !== jsHash) {
+                jsHash = newJsHash;
+                buildTasks.push('scripts-js');
+            }
 
-                const buildTasks = [];
-                const newJsHash = fsLib.getDirectoryHash('js', true);
-                const newTsHash = fsLib.getDirectoryHash('ts', true);
+            if (buildTasks.length === 0) {
+                logLib.success('No significant changes found.');
+                done();
+                return;
+            }
 
-                if (newTsHash !== tsHash) {
-                    tsHash = newTsHash;
-                    buildTasks.push('scripts-ts');
-                }
+            gulp.series(...buildTasks)(done);
+        })
+        .on('add', filePath => logLib.warn('Modified', filePath))
+        .on('change', filePath => logLib.warn('Modified', filePath))
+        .on('unlink', filePath => logLib.warn('Modified', filePath))
+        .on('error', logLib.failure);
 
-                if (newJsHash !== jsHash) {
-                    jsHash = newJsHash;
-                    buildTasks.push('scripts-js');
-                }
+    logLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
 
-                if (buildTasks.length === 0) {
-                    logLib.success('No significant changes found.');
-                    done();
-                    return;
-                }
+    processLib.isRunning('scripts-watch', true);
 
-                gulp.series(...buildTasks)(done);
-            })
-            .on('add', filePath => logLib.warn('Modified', filePath))
-            .on('change', filePath => logLib.warn('Modified', filePath))
-            .on('unlink', filePath => logLib.warn('Modified', filePath))
-            .on('error', logLib.failure);
-
-        logLib.warn('Watching [', WATCH_GLOBS.join(', '), '] ...');
-
-        processLib.isRunning('scripts-watch', true);
-
-        resolve();
-    });
+    return processLib.exec('npx tsc --build ts --watch');
 }
 
 require('./scripts-js.js');
