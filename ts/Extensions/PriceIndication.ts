@@ -75,7 +75,18 @@ declare global {
 /**
  * @declare   Highcharts.SeriesLastVisiblePriceLabelOptionsObject
  * @extends   yAxis.crosshair.label
+ * @since     7.0.0
  * @apioption plotOptions.series.lastVisiblePrice.label
+ */
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastVisiblePrice.label.align
+ */
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastVisiblePrice.label.backgroundColor
  */
 
 /**
@@ -105,6 +116,7 @@ declare global {
  * @default   false
  * @since     7.0
  * @product   highstock
+ * @apioption plotOptions.series.lastVisiblePrice.label.enabled
  */
 
 /**
@@ -116,6 +128,21 @@ declare global {
  * @product   highstock
  * @apioption plotOptions.series.lastVisiblePrice.label.format
 */
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastVisiblePrice.label.formatter
+ */
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastVisiblePrice.label.padding
+ */
+
+/**
+ * @since     7.0.0
+ * @apioption plotOptions.series.lastVisiblePrice.label.shape
+ */
 
 /**
  * Text styles for the lastVisiblePrice label.
