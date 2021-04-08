@@ -16,7 +16,7 @@ import H from '../Core/Globals.js';
 const {
     win
 } = H;
-import Projection from 'Projection.js';
+import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
     extend,
@@ -114,26 +114,42 @@ class MapView {
 
     private chart: Chart;
 
+    /*
+     * Fit the view to given bounds
+     * @param bounds If not set, fit to the bounds of the current data set
+     * @param redraw
+     * @param animation
+     */
     public fitToBounds(
-        bounds: Highcharts.MapBounds,
+        bounds?: Highcharts.MapBounds,
         redraw = true,
         animation?: boolean|Partial<AnimationOptionsObject>
     ): void {
 
-        const { tileSize, worldSize } = MapView;
-        const { plotWidth, plotHeight } = this.chart;
+        const b = bounds || this.getProjectedBounds();
 
-        const scaleToPlotArea = Math.max(
-            (bounds.x2 - bounds.x1) / (plotWidth / tileSize),
-            (bounds.y2 - bounds.y1) / (plotHeight / tileSize)
-        );
+        if (b) {
+            const { tileSize, worldSize } = MapView;
+            const { plotWidth, plotHeight } = this.chart;
 
-        this.setView(
-            { y: (bounds.y2 + bounds.y1) / 2, x: (bounds.x2 + bounds.x1) / 2 },
-            Math.log(worldSize / scaleToPlotArea) / Math.log(2),
-            redraw,
-            animation
-        );
+            const scaleToPlotArea = Math.max(
+                (b.x2 - b.x1) / (plotWidth / tileSize),
+                (b.y2 - b.y1) / (plotHeight / tileSize)
+            );
+            const zoom = Math.log(worldSize / scaleToPlotArea) / Math.log(2);
+
+            // Reset minZoom when fitting to natural bounds
+            if (!bounds) {
+                this.minZoom = zoom;
+            }
+
+            this.setView(
+                { y: (b.y2 + b.y1) / 2, x: (b.x2 + b.x1) / 2 },
+                zoom,
+                redraw,
+                animation
+            );
+        }
     }
 
     public getProjectedBounds(): Highcharts.MapBounds|undefined {
@@ -263,14 +279,9 @@ class MapView {
 
             this.projection = new Projection(this.options.projection);
 
-            // Fit to bounds if center/zoom are not explicitly given
+            // Fit to natural bounds if center/zoom are not explicitly given
             if (!userOptions.center && !isNumber(userOptions.zoom)) {
-                const bounds = this.getProjectedBounds();
-                if (bounds) {
-                    delete this.minZoom;
-                    this.fitToBounds(bounds);
-                    this.minZoom = this.zoom;
-                }
+                this.fitToBounds();
             }
         }
 
@@ -321,10 +332,7 @@ class MapView {
 
         // Undefined howMuch => reset zoom
         } else {
-            const bounds = this.getProjectedBounds();
-            if (bounds) {
-                this.fitToBounds(bounds);
-            }
+            this.fitToBounds();
         }
 
     }

@@ -232,23 +232,18 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
     const mapView = this.mapView;
 
     if (mapView && mapView.enabled === void 0) {
-        // Apply the bounds inferred from the maps
-        const bounds = mapView.getProjectedBounds();
 
-        if (bounds) {
+        mapView.fitToBounds(void 0, false);
 
+        if (isNumber(mapView.minZoom)) { // Bounds found, view successfully set
             mapView.enabled = true;
+        }
 
-            mapView.fitToBounds(bounds, false);
-
-            mapView.minZoom = mapView.zoom;
-
-            if (isNumber(mapView.userOptions.zoom)) {
-                mapView.zoom = mapView.userOptions.zoom;
-            }
-            if (mapView.userOptions.center) {
-                merge(true, mapView.center, mapView.userOptions.center);
-            }
+        if (isNumber(mapView.userOptions.zoom)) {
+            mapView.zoom = mapView.userOptions.zoom;
+        }
+        if (mapView.userOptions.center) {
+            merge(true, mapView.center, mapView.userOptions.center);
         }
     }
 });
