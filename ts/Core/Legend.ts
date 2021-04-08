@@ -799,7 +799,7 @@ class Legend {
             options = legend.options,
             horizontal = options.layout === 'horizontal',
             symbolWidth = legend.symbolWidth,
-            symbolPadding = options.symbolPadding,
+            symbolPadding = options.symbolPadding || 0,
             itemStyle = legend.itemStyle,
             itemHiddenStyle = legend.itemHiddenStyle,
             itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
@@ -815,7 +815,7 @@ class Legend {
                 seriesOptions &&
                 seriesOptions.showCheckbox,
             // full width minus text width
-            itemExtraWidth = symbolWidth + (symbolPadding as any) +
+            itemExtraWidth = symbolWidth + symbolPadding +
                 itemDistance + (showCheckbox ? 20 : 0),
             useHTML = options.useHTML,
             itemClassName = item.options.className;
@@ -843,8 +843,8 @@ class Legend {
             item.legendItem = li = renderer.text(
                 '',
                 ltr ?
-                    symbolWidth + (symbolPadding as any) :
-                    -(symbolPadding as any),
+                    symbolWidth + symbolPadding :
+                    -symbolPadding,
                 legend.baseline || 0,
                 useHTML
             );
@@ -852,9 +852,9 @@ class Legend {
             if (!chart.styledMode) {
                 // merge to prevent modifying original (#1021)
                 li.css(merge(
-                    (item as any).visible ?
-                        (itemStyle as any) :
-                        (itemHiddenStyle as any)
+                    item.visible ?
+                        itemStyle :
+                        itemHiddenStyle
                 ));
             }
 
@@ -869,17 +869,29 @@ class Legend {
             // all
             if (!legend.baseline) {
                 legend.fontMetrics = renderer.fontMetrics(
-                    chart.styledMode ? 12 : (itemStyle as any).fontSize as any,
+                    chart.styledMode ? 12 : (itemStyle as any).fontSize,
                     li
                 );
                 legend.baseline =
                     legend.fontMetrics.f + 3 + legend.itemMarginTop;
-                li.attr('y', (legend.baseline as any));
+                li.attr('y', legend.baseline);
+
+                legend.symbolHeight =
+                    options.symbolHeight || legend.fontMetrics.f;
+
+                if (options.squareSymbol) {
+                    legend.symbolWidth = pick(options.symbolWidth, legend.symbolHeight);
+
+                    itemExtraWidth = legend.symbolWidth + symbolPadding +
+                        itemDistance + (showCheckbox ? 20 : 0);
+
+                    if (ltr) {
+                        li.attr('x', legend.symbolWidth + symbolPadding);
+                    }
+                }
             }
 
             // Draw the legend symbol inside the group box
-            legend.symbolHeight =
-                options.symbolHeight || (legend.fontMetrics as any).f;
             series.drawLegendSymbol(legend, item);
 
             if (legend.setItemEvents) {
@@ -902,7 +914,7 @@ class Legend {
                 width: ((
                     options.itemWidth ||
                     legend.widthOption ||
-                    (chart.spacingBox as any).width
+                    chart.spacingBox.width
                 ) - itemExtraWidth) + 'px'
             });
         }
