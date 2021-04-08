@@ -60,10 +60,9 @@ class SortModifier extends DataModifier {
         b: DataTable.CellType
     ): number {
         return (
-            !a || !b ? 0 :
-                a < b ? -1 :
-                    a > b ? 1 :
-                        0
+            (a || 0) < (b || 0) ? -1 :
+                (a || 0) > (b || 0) ? 1 :
+                    0
         );
     }
 
@@ -72,10 +71,9 @@ class SortModifier extends DataModifier {
         b: DataTable.CellType
     ): number {
         return (
-            !a || !b ? 0 :
-                b < a ? -1 :
-                    b > a ? 1 :
-                        0
+            (b || 0) < (a || 0) ? -1 :
+                (b || 0) > (a || 0) ? 1 :
+                    0
         );
     }
 
