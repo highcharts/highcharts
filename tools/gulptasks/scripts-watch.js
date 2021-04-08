@@ -71,7 +71,9 @@ function task() {
 
     processLib.isRunning('scripts-watch', true);
 
-    return processLib.exec('npx tsc --build ts --watch');
+    processLib.exec('npx tsc --build ts --watch');
+
+    return Promise.resolve();
 }
 
 require('./scripts-js.js');
