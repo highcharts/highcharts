@@ -7259,6 +7259,7 @@ interface Series extends SeriesLike {
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
+    hasTooltipBounds: boolean;
     hcEvents?: Record<string, Array<Highcharts.EventWrapperObject<Series>>>;
     isCartesian: boolean;
     kdAxisArray: Array<string>;
@@ -7274,6 +7275,7 @@ extend(Series.prototype, {
     cropShoulder: 1,
     directTouch: false,
     drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
+    hasTooltipBounds: true,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // each point's x and y values are stored in this.xData and this.yData:
