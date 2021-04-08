@@ -267,7 +267,9 @@ class MapView {
             if (!userOptions.center && !isNumber(userOptions.zoom)) {
                 const bounds = this.getProjectedBounds();
                 if (bounds) {
+                    delete this.minZoom;
                     this.fitToBounds(bounds);
+                    this.minZoom = this.zoom;
                 }
             }
         }
