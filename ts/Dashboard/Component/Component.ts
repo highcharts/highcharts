@@ -151,7 +151,13 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         className: 'highcharts-dashboard-component',
         parentElement: document.body,
         type: '',
-        id: ''
+        id: '',
+        editableOptions: [
+            'dimensions',
+            'id',
+            'store',
+            'style'
+        ]
     }
 
     public parentElement: HTMLElement;
@@ -498,6 +504,7 @@ namespace Component {
         // allow overwriting gui elements
         navigationBindings?: Highcharts.NavigationBindingsOptionsObject[];
         events?: Record<Event['type'], Function>;
+        editableOptions: Array<keyof EditableOptions>;
     }
 
     export interface EditableOptions {

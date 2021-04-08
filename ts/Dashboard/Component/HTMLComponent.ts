@@ -19,7 +19,11 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
         Component.defaultOptions,
         {
             scaleElements: true,
-            elements: []
+            elements: [],
+            editableOptions: [
+                ...Component.defaultOptions.editableOptions,
+                'scaleElements'
+            ]
         }
     );
 
@@ -54,6 +58,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
     private elements: Highcharts.ASTNode[];
     private scaleElements: boolean;
     public options: HTMLComponent.HTMLComponentOptions;
+    public editableOptions: Array<keyof HTMLComponent.EditableOptions>;
 
     /* *
      *
@@ -74,6 +79,7 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
         this.innerElements = [];
         this.elements = [];
         this.scaleElements = this.options.scaleElements;
+        this.editableOptions = this.options.editableOptions;
 
         this.on('tableChanged', (e: Component.TableChangedEvent): void => {
             if (e.detail?.sender !== this.id) {

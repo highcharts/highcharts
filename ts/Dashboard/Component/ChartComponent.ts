@@ -46,7 +46,13 @@ class ChartComponent extends Component<ChartComponent.Event> {
             Highcharts,
             chartConstructor: '',
             syncEvents: [],
-            syncHandlers: ChartComponent.syncHandlers
+            syncHandlers: ChartComponent.syncHandlers,
+            editableOptions: [
+                ...Component.defaultOptions.editableOptions,
+                'chartOptions',
+                'chartClassName',
+                'chartID'
+            ]
         });
 
     public static fromJSON(json: ChartComponent.ClassJSON): ChartComponent {
@@ -83,6 +89,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
     public chartConstructor: ChartComponent.constructorType;
     public syncEvents: ChartComponent.syncEventsType[];
     public syncHandlers: Record<string, ChartComponent.syncHandlersType>;
+    public editableOptions: Array<keyof ChartComponent.EditableOptions>;
 
     private syncHandlerRegistry: Record<string, ChartSyncHandler>
     /* *
@@ -102,6 +109,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         this.charter = this.options.Highcharts;
         this.chartConstructor = this.options.chartConstructor;
         this.type = 'chart';
+        this.editableOptions = this.options.editableOptions;
 
         this.chartContainer = createElement(
             'figure',
