@@ -392,7 +392,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
             let columnDataType;
 
             if (columnMeta) {
-                columnDataType = columnMeta?.dataType;
+                columnDataType = columnMeta.dataType;
             }
 
             for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
@@ -437,7 +437,7 @@ class HTMLTableStore extends DataStore<HTMLTableStore.EventObjects> implements D
         // Add table caption
         // Current exportdata falls back to chart title
         // but that should probably be handled elsewhere?
-        if (options?.tableCaption) {
+        if (options.tableCaption) {
             caption = '<caption class="highcharts-table-caption">' +
                 options.tableCaption +
                 '</caption>';

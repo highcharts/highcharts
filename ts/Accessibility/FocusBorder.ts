@@ -79,7 +79,9 @@ function addDestroyFocusBorderHook(el: SVGElement): void {
     const origDestroy = el.destroy;
 
     el.destroy = function (): undefined {
-        el.focusBorder?.destroy?.();
+        if (el.focusBorder && el.focusBorder.destroy) {
+            el.focusBorder.destroy();
+        }
         return origDestroy.apply(el, arguments);
     };
 
@@ -312,7 +314,7 @@ H.Chart.prototype.renderFocusBorder = function (this: Highcharts.AccessibilityCh
         if (focusBorderOptions.enabled) {
             focusElement.addFocusBorder(focusBorderOptions.margin, {
                 stroke: focusBorderOptions.style.color,
-                'stroke-width': focusBorderOptions.style.lineWidth,
+                strokeWidth: focusBorderOptions.style.lineWidth,
                 r: focusBorderOptions.style.borderRadius
             });
         }

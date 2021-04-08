@@ -170,6 +170,7 @@ addEvent(Series, 'afterRender', function (): void {
             // Save price
             if (series.yAxis.cross) {
                 series.lastPrice = series.yAxis.cross;
+                series.lastPrice.addClass('highcharts-color-' + series.colorIndex); // #15222
                 series.lastPrice.y = yValue;
             }
         }
@@ -209,7 +210,6 @@ addEvent(Series, 'afterRender', function (): void {
         yAxis.crosshair = yAxis.options.crosshair = origOptions;
         yAxis.cross = origGraphic;
         yAxis.crossLabel = origLabel;
-
     }
 });
 

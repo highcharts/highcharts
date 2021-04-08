@@ -188,7 +188,6 @@ QUnit.test('Test RSI calculations on data updates.', function (assert) {
             426628,
             431314
         ],
-        id: 'line-series',
         type: 'line'
     });
 
@@ -220,7 +219,8 @@ QUnit.test('Test RSI calculations on data updates.', function (assert) {
             41.868916,
             45.463212,
             37.304042,
-            33.079523
+            33.079523,
+            37.772952
         ],
         'RSI Indicator should have correct values for line series'
     );

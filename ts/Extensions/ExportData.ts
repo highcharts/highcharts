@@ -17,7 +17,6 @@
 'use strict';
 
 import type Point from '../Core/Series/Point';
-import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type {
     PointOptions,
     PointShortOptions
@@ -1397,7 +1396,8 @@ Chart.prototype.toggleDataTable = function (show?: boolean): void {
     if (
         exportingOptions &&
         exportingOptions.menuItemDefinitions &&
-        lang?.viewData &&
+        lang &&
+        lang.viewData &&
         lang.hideData &&
         menuItems &&
         exportDivElements &&

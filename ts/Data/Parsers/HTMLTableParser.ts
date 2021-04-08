@@ -104,9 +104,9 @@ class HTMLTableParser extends DataParser<DataParser.EventObject> {
         if (tableElement) {
             this.tableElement = tableElement;
             this.tableElementID = tableElement.id;
-        } else if (options?.tableHTML) {
+        } else if (options && options.tableHTML) {
             this.tableElement = options.tableHTML;
-            this.tableElementID = options?.tableHTML.id;
+            this.tableElementID = options.tableHTML.id;
         }
     }
 

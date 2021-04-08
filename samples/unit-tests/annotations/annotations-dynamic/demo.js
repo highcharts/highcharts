@@ -174,6 +174,31 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
         2,
         'Annotation with id=number, should be removed without errors (#10648)'
     );
+
+    const fib = chart.addAnnotation({
+        type: 'fibonacci',
+        typeOptions: {
+            lineColor: 'blue',
+            lineColors: ['blue', 'green', 'red'],
+            points: [{}, {}]
+        }
+    });
+
+    assert.strictEqual(
+        fib.shapes[0].graphic.stroke,
+        'blue',
+        '#15424: First line should be blue (lineColors[0])'
+    );
+    assert.strictEqual(
+        fib.shapes[3].graphic.stroke,
+        'red',
+        '#15424: Third line should be red (lineColors[2])'
+    );
+    assert.strictEqual(
+        fib.shapes[5].graphic.stroke,
+        'blue',
+        '#15424: Fourth line should be blue (lineColor)'
+    );
 });
 
 QUnit.test(

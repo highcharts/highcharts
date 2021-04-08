@@ -246,8 +246,8 @@ KeyboardNavigation.prototype = {
         );
 
         // Init keyboard nav if tabbing into chart
-        if (!this.isClickingChart && !focusComesFromChart) {
-            this.modules[0]?.init(1);
+        if (!this.isClickingChart && !focusComesFromChart && this.modules[0]) {
+            this.modules[0].init(1);
         }
     },
 

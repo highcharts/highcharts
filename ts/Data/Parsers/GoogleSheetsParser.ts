@@ -251,7 +251,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
         parser.columns = parser.getSheetColumns(json);
 
         for (let i = 0, iEnd = parser.columns.length; i < iEnd; i++) {
-            headers.push(parser.columns[i][0]?.toString() || uniqueKey());
+            headers.push(`${(parser.columns[i][0] || uniqueKey())}`);
 
             column = parser.columns[i];
             for (let j = 0, jEnd = column.length; j < jEnd; ++j) {

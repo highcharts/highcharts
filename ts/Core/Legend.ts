@@ -1454,7 +1454,10 @@ class Legend {
 
         // Reset the legend height and adjust the clipping rectangle
         pages.length = 0;
-        if (legendHeight > spaceHeight &&
+        if (
+            legendHeight &&
+            spaceHeight > 0 &&
+            legendHeight > spaceHeight &&
             (navOptions as any).enabled !== false
         ) {
 

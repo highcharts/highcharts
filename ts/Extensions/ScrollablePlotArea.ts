@@ -383,16 +383,18 @@ Chart.prototype.applyFixed = function (): void {
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: (chartOptions.style?.zIndex || 0) + 2,
+                zIndex: (chartOptions.style && chartOptions.style.zIndex || 0) + 2,
                 top: 0
             },
             null as any,
             true
         );
-        this.scrollingContainer?.parentNode.insertBefore(
-            this.fixedDiv,
-            this.scrollingContainer
-        );
+        if (this.scrollingContainer) {
+            this.scrollingContainer.parentNode.insertBefore(
+                this.fixedDiv,
+                this.scrollingContainer
+            );
+        }
         this.renderTo.style.overflow = 'visible';
 
         this.fixedRenderer = fixedRenderer = new H.Renderer(

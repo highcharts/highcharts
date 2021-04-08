@@ -1869,6 +1869,16 @@ function getNestedProperty(path: string, parent: unknown): unknown {
     return parent;
 }
 
+function getStyle(
+    el: HTMLDOMElement,
+    prop: string,
+    toInt: true
+): (number|undefined);
+function getStyle(
+    el: HTMLDOMElement,
+    prop: string,
+    toInt?: false
+): (number|string|undefined);
 /**
  * Get the computed CSS value for given element and property, only for numerical
  * properties. For width and height, the dimension of the inner box (excluding
@@ -1877,24 +1887,28 @@ function getNestedProperty(path: string, parent: unknown): unknown {
  * @function Highcharts.getStyle
  *
  * @param {Highcharts.HTMLDOMElement} el
- *        An HTML element.
+ * An HTML element.
  *
  * @param {string} prop
- *        The property name.
+ * The property name.
  *
  * @param {boolean} [toInt=true]
- *        Parse to integer.
+ * Parse to integer.
  *
- * @return {number|string}
- *         The numeric value.
+ * @return {number|string|undefined}
+ * The style value.
  */
 function getStyle(
     el: HTMLDOMElement,
     prop: string,
     toInt?: boolean
-): (number|string) {
+): (number|string|undefined) {
+    const customGetStyle: typeof getStyle = (
+        (H as any).getStyle || // oldie getStyle
+        getStyle
+    );
 
-    var style;
+    let style: (number|string|undefined);
 
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -1919,8 +1933,8 @@ function getStyle(
             0, // #8377
             (
                 offsetWidth -
-                (H as any).getStyle(el, 'padding-left') -
-                (H as any).getStyle(el, 'padding-right')
+                (customGetStyle(el, 'padding-left', true) || 0) -
+                (customGetStyle(el, 'padding-right', true) || 0)
             )
         );
     }
@@ -1928,9 +1942,11 @@ function getStyle(
     if (prop === 'height') {
         return Math.max(
             0, // #8377
-            Math.min(el.offsetHeight, el.scrollHeight) -
-                (H as any).getStyle(el, 'padding-top') -
-                (H as any).getStyle(el, 'padding-bottom')
+            (
+                Math.min(el.offsetHeight, el.scrollHeight) -
+                (customGetStyle(el, 'padding-top', true) || 0) -
+                (customGetStyle(el, 'padding-bottom', true) || 0)
+            )
         );
     }
 
@@ -1940,13 +1956,14 @@ function getStyle(
     }
 
     // Otherwise, get the computed style
-    style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
-    if (style) {
-        style = style.getPropertyValue(prop);
+    const css = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
+    if (css) {
+        style = css.getPropertyValue(prop);
         if (pick(toInt, prop !== 'opacity')) {
             style = pInt(style);
         }
     }
+
     return style;
 }
 

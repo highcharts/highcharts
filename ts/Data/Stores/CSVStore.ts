@@ -319,7 +319,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             let columnDataType;
 
             if (columnMeta) {
-                columnDataType = columnMeta?.dataType;
+                columnDataType = columnMeta.dataType;
             }
 
             for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
