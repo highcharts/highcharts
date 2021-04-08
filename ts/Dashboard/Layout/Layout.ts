@@ -114,7 +114,8 @@ class Layout extends GUIElement {
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id + (options.copyId ? '_' + options.copyId : ''),
-                    className: DashboardGlobals.layout + ' ' + layoutClassName
+                    className: DashboardGlobals.classNames.layout + ' ' +
+                        layoutClassName
                 },
                 elementId: options.id,
                 style: this.options.style

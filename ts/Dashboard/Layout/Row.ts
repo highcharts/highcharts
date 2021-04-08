@@ -86,7 +86,8 @@ class Row extends GUIElement {
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
-                    className: DashboardGlobals.row + ' ' + rowClassName
+                    className: DashboardGlobals.classNames.row + ' ' +
+                        rowClassName
                 },
                 element: rowElement,
                 elementId: options.id,

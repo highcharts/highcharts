@@ -112,7 +112,8 @@ class Cell extends GUIElement {
                 parentContainer: parentContainer,
                 attribs: {
                     id: options.id,
-                    className: DashboardGlobals.cell + ' ' + cellClassName
+                    className: DashboardGlobals.classNames.cell + ' ' +
+                        cellClassName
                 },
                 element: cellElement,
                 elementId: options.id,

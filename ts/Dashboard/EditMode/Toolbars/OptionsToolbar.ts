@@ -107,7 +107,7 @@ class OptionsToolbar extends Menu {
 
     private reserveToolbarSpace(): void {
         const layouts = this.editMode.dashboard.container.querySelectorAll(
-            '.' + DashboardGlobals.layout
+            '.' + DashboardGlobals.classNames.layout
         );
 
         for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
@@ -119,7 +119,7 @@ class OptionsToolbar extends Menu {
 
     private removeToolbarSpace(): void {
         const layouts = this.editMode.dashboard.container.querySelectorAll(
-            DashboardGlobals.layout
+            DashboardGlobals.classNames.layout
         );
 
         for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
