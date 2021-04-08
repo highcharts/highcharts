@@ -1420,6 +1420,9 @@ export default dataGrouping;
  * @sample {highstock} stock/plotoptions/series-datagrouping-first-anchor
  *         Applying first and last anchor.
  *
+ * @sample {highstock} stock/plotoptions/series-datagrouping-last-anchor
+ *         Applying the last anchor in the chart with live data.
+ *
  * @type       {string}
  * @since      next
  * @apioption  plotOptions.series.dataGrouping.lastAnchor
