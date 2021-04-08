@@ -320,7 +320,8 @@ h1 {
     left: -200px;
 }
 
-.highcharts-dashboard-edit-hidden-cells .highcharts-dashboard-cell:not(.highcharts-dashboard-edit-current-cell) {
+.highcharts-dashboard-edit-hidden-cells .highcharts-dashboard-cell:not(.highcharts-dashboard-edit-current-cell),
+.highcharts-dashboard-edit-hidden-rows .highcharts-dashboard-row:not(.highcharts-dashboard-edit-current-row) {
     opacity: 0.3;
 }
 
