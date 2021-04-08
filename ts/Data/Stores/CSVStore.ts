@@ -196,7 +196,11 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
                 if (store.liveDataURL) {
                     store.poll();
                 }
-                store.table.setRows(store.parser.getTable().getRows());
+
+                // On inital fetch we need to set the columns
+                initialFetch ? store.table.setColumns(store.parser.getTable().getColumns()) :
+                    store.table.setRows(store.parser.getTable().getRows());
+
                 store.emit({
                     type: 'afterLoad',
                     csv,
