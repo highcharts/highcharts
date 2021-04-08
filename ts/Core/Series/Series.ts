@@ -5390,7 +5390,10 @@ class Series {
                 point.destroy();
             }
         }
-        series.points = null as any;
+
+        if (series.clips) {
+            series.clips.forEach((clip): void => clip.destroy());
+        }
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
@@ -5412,7 +5415,7 @@ class Series {
 
         // remove from hoverSeries
         if (chart.hoverSeries === series) {
-            chart.hoverSeries = null as any;
+            chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
         chart.orderSeries();
@@ -6654,6 +6657,7 @@ class Series {
                 'cropped',
                 '_hasPointMarkers',
                 '_hasPointLabels',
+                'clips', // #15420
 
                 // Networkgraph (#14397)
                 'nodes',

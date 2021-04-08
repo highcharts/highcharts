@@ -112,6 +112,7 @@ Some of the technical indicators require two series for calculations. Here is a 
 *   Chaikin Oscillator
 *   CMF
 *   MFI
+*   OBV (On Balance Volume)
 *   Volume by Price
 *   Volume Weighted Average Price
 

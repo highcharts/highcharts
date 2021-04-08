@@ -384,7 +384,7 @@ export default CandlestickSeries;
  *
  * @type      {*}
  * @extends   series,plotOptions.candlestick
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, marker
  * @product   highstock
  * @apioption series.candlestick
  */

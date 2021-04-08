@@ -250,6 +250,7 @@ bindingsUtils.manageIndicators = function (
             'ad',
             'cmf',
             'mfi',
+            'obv',
             'vbp',
             'vwap'
         ],
@@ -272,6 +273,7 @@ bindingsUtils.manageIndicators = function (
             'dpo',
             'ppo',
             'natr',
+            'obv',
             'williamsr',
             'stochastic',
             'slowstochastic',

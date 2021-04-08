@@ -277,10 +277,10 @@ extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.p
                                 }(htmlGroup as any)),
                                 on: function (): HTMLElement {
                                     if (parents[0].div) { // #6418
-                                        wrapper.on.apply(
-                                            { element: parents[0].div },
-                                            arguments as any
-                                        );
+                                        wrapper.on.apply({
+                                            element: parents[0].div,
+                                            onEvents: wrapper.onEvents
+                                        }, arguments);
                                     }
                                     return parentGroup;
                                 },
