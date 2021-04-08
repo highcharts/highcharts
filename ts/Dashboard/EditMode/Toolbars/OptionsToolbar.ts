@@ -7,9 +7,11 @@ import EditGlobals from '../EditGlobals.js';
 import Menu from '../Menu/Menu.js';
 import type MenuItem from '../Menu/MenuItem.js';
 import DashboardGlobals from '../../DashboardGlobals.js';
+import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 
 const {
     merge,
+    createElement,
     css
 } = U;
 
@@ -21,16 +23,35 @@ class OptionsToolbar extends Menu {
     * */
     protected static readonly defaultOptions: OptionsToolbar.Options = {
         enabled: true,
-        items: [{
-            type: 'title'
-        }]
+        items: ['t1', 't2']
     }
 
-    public static tools: Record<string, MenuItem.Options> =
+    public static tabs: Array<OptionsToolbar.TabOptions> = [{
+        type: 'design',
+        icon: '',
+        items: ['t1']
+    }, {
+        type: 'data',
+        icon: '',
+        items: ['t2']
+    }, {
+        type: 'component',
+        icon: '',
+        items: ['t1', 't2']
+    }]
+
+    public static items: Record<string, MenuItem.Options> =
     merge(Menu.items, {
-        title: {
-            type: 'title',
-            text: 'Options',
+        t1: {
+            type: 't1',
+            text: 'tool1',
+            events: {
+                click: function (): void {}
+            }
+        },
+        t2: {
+            type: 't2',
+            text: 'tool2',
             events: {
                 click: function (): void {}
             }
@@ -56,6 +77,7 @@ class OptionsToolbar extends Menu {
             )
         );
 
+        this.tabs = {};
         this.editMode = editMode;
 
         if (this.container) {
@@ -63,6 +85,9 @@ class OptionsToolbar extends Menu {
                 EditGlobals.classNames.editToolbarOptions
             );
         }
+
+        this.renderTitle();
+        this.initTabs();
 
         super.initItems(OptionsToolbar.items);
     }
@@ -74,6 +99,8 @@ class OptionsToolbar extends Menu {
     * */
     public guiElement?: Cell|Row|Layout;
     public editMode: EditMode;
+    public tabs: Record<string, OptionsToolbar.Tab>;
+    public activeTab?: OptionsToolbar.Tab;
 
     /* *
     *
@@ -81,7 +108,75 @@ class OptionsToolbar extends Menu {
     *
     * */
 
+    private renderTitle(): void {
+        const toolbar = this;
+
+        createElement(
+            'div', {
+                className: EditGlobals.classNames.editToolbarOptionsTitle,
+                textContent: 'Cell Options' // shoudl be dynamic
+            }, {}, toolbar.container
+        );
+    }
+
+    private initTabs(): void {
+        const toolbar = this,
+            tabs = OptionsToolbar.tabs;
+
+        const container = createElement(
+            'div', {
+                className: EditGlobals.classNames.editToolbarOptionsTabsContainer
+            }, {}, toolbar.container
+        );
+
+
+        let tabElement;
+
+        for (let i = 0, iEnd = tabs.length; i < iEnd; ++i) {
+            tabElement = createElement(
+                'div', {
+                    className: EditGlobals.classNames.editToolbarOptionsTab,
+                    textContent: tabs[i].type,
+                    onclick: function (): void {
+                        toolbar.onTabClick(toolbar.tabs[tabs[i].type]);
+                    }
+                }, {}, container
+            );
+
+            toolbar.tabs[tabs[i].type] = {
+                element: tabElement,
+                options: tabs[i],
+                isActive: false
+            };
+        }
+    }
+
+    public onTabClick(
+        tab: OptionsToolbar.Tab
+    ): void {
+        const toolbar = this;
+
+        if (toolbar.activeTab) {
+            toolbar.activeTab.isActive = false;
+            toolbar.activeTab.element.classList.remove(
+                EditGlobals.classNames.editToolbarOptionsTabActive
+            );
+        }
+
+        tab.element.classList.add(
+            EditGlobals.classNames.editToolbarOptionsTabActive
+        );
+
+        toolbar.activeTab = tab;
+        tab.isActive = true;
+
+        toolbar.updateActiveItems(tab.options.items);
+    }
+
     public showOptions(tools: Array<string>): void {
+        // activate first tab.
+        this.onTabClick(this.tabs[OptionsToolbar.tabs[0].type]);
+
         if (this.container) {
             this.container.classList.add(
                 EditGlobals.classNames.editToolbarOptionsShow
@@ -132,6 +227,18 @@ class OptionsToolbar extends Menu {
 
 namespace OptionsToolbar {
     export interface Options extends Menu.Options {}
+
+    export interface TabOptions {
+        type: string;
+        icon: string;
+        items: Array<string>;
+    }
+
+    export interface Tab {
+        element: HTMLDOMElement;
+        options: TabOptions;
+        isActive: boolean;
+    }
 }
 
 export default OptionsToolbar;

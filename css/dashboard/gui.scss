@@ -241,6 +241,10 @@ h1 {
     border: 1px solid #4B4B4D;
 }
 
+.highcharts-dashboard-edit-menu-item {
+    display: none;
+}
+
 .highcharts-dashboard-edit-context-menu-item {
     height: 30px;
     padding: 5px;
@@ -323,6 +327,35 @@ h1 {
 .highcharts-dashboard-edit-toolbar-hide {
     transition: 1s;
     left: -200px;
+}
+
+.highcharts-dashboard-edit-toolbar-options-title {
+    width: 100%;
+    text-align: center;
+    padding: 5px;
+    border-bottom: 1px solid #a6a6a6;
+}
+
+.highcharts-dashboard-edit-toolbar-options-tabs {
+    display: flex;
+    justify-content: center;
+}
+
+.highcharts-dashboard-edit-toolbar-options-tab {
+    text-align: center;
+    padding: 2px;
+    background-color: #555;
+    margin: 2px;
+    transition: 0.3s;
+}
+
+.highcharts-dashboard-edit-toolbar-options-tab:hover {
+    cursor: pointer;
+    background-color: red;
+}
+
+.highcharts-dashboard-edit-toolbar-tab-active {
+    background-color: red;
 }
 
 .highcharts-dashboard-edit-hidden-cells .highcharts-dashboard-cell:not(.highcharts-dashboard-edit-current-cell),
