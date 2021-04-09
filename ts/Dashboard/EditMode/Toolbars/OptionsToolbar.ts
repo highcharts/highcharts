@@ -8,11 +8,12 @@ import Menu from '../Menu/Menu.js';
 import type MenuItem from '../Menu/MenuItem.js';
 import DashboardGlobals from '../../DashboardGlobals.js';
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
+import WindbarbPoint from '../../../Series/Windbarb/WindbarbPoint.js';
 
 const {
     merge,
     createElement,
-    css
+    addEvent
 } = U;
 
 class OptionsToolbar extends Menu {
@@ -111,12 +112,32 @@ class OptionsToolbar extends Menu {
     private renderTitle(): void {
         const toolbar = this;
 
-        createElement(
+        const titleElement = createElement(
             'div', {
                 className: EditGlobals.classNames.editToolbarOptionsTitle,
                 textContent: 'Cell Options' // shoudl be dynamic
             }, {}, toolbar.container
         );
+
+        // set default offset top, when cell or row is lower
+        const offsetTop = titleElement.getBoundingClientRect().top;
+
+        if (window.pageYOffset > offsetTop) {
+            titleElement.style.marginTop = window.pageYOffset - offsetTop + 'px';
+        } else {
+            titleElement.style.marginTop = '0px';
+        }
+
+        // add sticky position
+        addEvent(window, 'scroll', function ():void  {
+            const containerOffsetTop = window.pageYOffset - offsetTop;
+
+            if (window.pageYOffset >= offsetTop) {
+                titleElement.style.marginTop = containerOffsetTop + 'px';
+            } else {
+                titleElement.style.marginTop = '0px';
+            }
+        });
     }
 
     private initTabs(): void {

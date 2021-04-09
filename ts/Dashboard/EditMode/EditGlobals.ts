@@ -31,7 +31,8 @@ const EditGlobals: EditGlobals = {
         menuVerticalSeparator: PREFIX + 'menu-vertical-separator',
         menuHorizontalSeparator: PREFIX + 'menu-horizontal-separator',
         menuDestroy: PREFIX + 'menu-destroy',
-        layoutToolbarSpace: PREFIX + 'layout-toolbar-space'
+        layoutToolbarSpace: PREFIX + 'layout-toolbar-space',
+        editToolbarOptionsWrapper: PREFIX + 'toolbar-options-wrapper'
     },
     lang: {
         editMode: 'Edit mode',
@@ -76,6 +77,7 @@ namespace EditGlobals {
         menuHorizontalSeparator: string;
         menuDestroy: string;
         layoutToolbarSpace: string;
+        editToolbarOptionsWrapper: string;
     }
 
     export interface LangOptions {
