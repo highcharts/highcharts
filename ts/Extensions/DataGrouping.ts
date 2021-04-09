@@ -528,6 +528,71 @@ const groupData = function (
     };
 };
 
+const anchorPoints = function (
+    series: Series,
+    groupedXData: Array<number>,
+    xMax: number
+): any {
+    var options = series.options,
+        dataGroupingOptions = options.dataGrouping,
+        totalRange = series.currentDataGrouping && series.currentDataGrouping.gapSize,
+        i;
+
+    // DataGrouping x-coordinates.
+    if (dataGroupingOptions && series.xData && totalRange && series.groupMap) {
+        const groupedDataLength = groupedXData.length - 1,
+            anchor = dataGroupingOptions.anchor,
+            firstAnchor = pick(dataGroupingOptions.firstAnchor, anchor),
+            lastAnchor = pick(dataGroupingOptions.lastAnchor, anchor);
+
+        // Anchor points that are not extremes.
+        if (anchor && anchor !== 'start') {
+            const shiftInterval: number = totalRange *
+                ({ middle: 0.5, end: 1 } as Highcharts.anchorChoiceType)[anchor];
+
+            i = groupedXData.length - 1;
+            while (i-- && i > 0) {
+                groupedXData[i] += shiftInterval;
+            }
+        }
+
+        // Change the first point position, but only when it is
+        // the first point in the data set not in the current zoom.
+        if (
+            firstAnchor &&
+            firstAnchor !== 'start' &&
+            series.xData[0] >= groupedXData[0]
+        ) {
+            const firstGroupstEnd = (series.groupMap[0].start as number) +
+                (series.groupMap[0].length as number - 1);
+
+            groupedXData[0] = ({
+                middle: groupedXData[0] + 0.5 * totalRange,
+                end: groupedXData[0] + totalRange,
+                firstPoint: series.xData[0],
+                lastPoint: series.xData[firstGroupstEnd]
+            } as Highcharts.anchorChoiceType)[firstAnchor];
+        }
+
+        // Change the last point position but only when it is
+        // the last point in the data set not in the current zoom.
+        if (
+            lastAnchor &&
+            lastAnchor !== 'start' &&
+            groupedXData[groupedDataLength] >= xMax - (totalRange as number)
+        ) {
+            const lastGroupStart = series.groupMap[series.groupMap.length - 1].start;
+
+            groupedXData[groupedDataLength] = ({
+                middle: groupedXData[groupedDataLength] + 0.5 * totalRange,
+                end: groupedXData[groupedDataLength] + totalRange,
+                firstPoint: lastGroupStart && series.xData[lastGroupStart],
+                lastPoint: series.xData[series.xData.length - 1]
+            } as Highcharts.anchorChoiceType)[lastAnchor];
+        }
+    }
+};
+
 var dataGrouping = {
     approximations: approximations,
     groupData: groupData
@@ -693,8 +758,7 @@ seriesProto.processData = function (): any {
         lastDataGrouping = this.currentDataGrouping,
         currentDataGrouping,
         croppedData,
-        revertRequireSorting = false,
-        totalRange = series.currentDataGrouping && series.currentDataGrouping.gapSize;
+        revertRequireSorting = false;
 
     // Run base method
     series.forceCrop = groupingEnabled; // #334
@@ -797,59 +861,7 @@ seriesProto.processData = function (): any {
                 error(32, false, chart, { 'dataGrouping.smoothed': 'use dataGrouping.anchor' });
             }
 
-            // DataGrouping x-coordinates.
-            if (dataGroupingOptions && series.xData && totalRange && series.groupMap) {
-                const groupedDataLength = groupedXData.length - 1,
-                    anchor = dataGroupingOptions.anchor,
-                    firstAnchor = pick(dataGroupingOptions.firstAnchor, anchor),
-                    lastAnchor = pick(dataGroupingOptions.lastAnchor, anchor);
-
-                // Anchor points that are not extremes.
-                if (anchor && anchor !== 'start') {
-                    const shiftInterval: number = totalRange *
-                        ({ middle: 0.5, end: 1 } as Highcharts.anchorChoiceType)[anchor];
-
-                    i = groupedXData.length - 1;
-                    while (i-- && i > 0) {
-                        groupedXData[i] += shiftInterval;
-                    }
-                }
-
-                // Change the first point position, but only when it is
-                // the first point in the data set not in the current zoom.
-                if (
-                    firstAnchor &&
-                    firstAnchor !== 'start' &&
-                    series.xData[0] >= groupedXData[0]
-                ) {
-                    const firstGroupstEnd = (series.groupMap[0].start as number) +
-                        (series.groupMap[0].length as number - 1);
-
-                    groupedXData[0] = ({
-                        middle: groupedXData[0] + 0.5 * totalRange,
-                        end: groupedXData[0] + totalRange,
-                        firstPoint: series.xData[0],
-                        lastPoint: series.xData[firstGroupstEnd]
-                    } as Highcharts.anchorChoiceType)[firstAnchor];
-                }
-
-                // Change the last point position but only when it is
-                // the last point in the data set not in the current zoom.
-                if (
-                    lastAnchor &&
-                    lastAnchor !== 'start' &&
-                    groupedXData[groupedDataLength] >= xMax - (totalRange as number)
-                ) {
-                    const lastGroupStart = series.groupMap[series.groupMap.length - 1].start;
-
-                    groupedXData[groupedDataLength] = ({
-                        middle: groupedXData[groupedDataLength] + 0.5 * totalRange,
-                        end: groupedXData[groupedDataLength] + totalRange,
-                        firstPoint: lastGroupStart && series.xData[lastGroupStart],
-                        lastPoint: series.xData[series.xData.length - 1]
-                    } as Highcharts.anchorChoiceType)[lastAnchor];
-                }
-            }
+            anchorPoints(series, groupedXData, xMax);
 
             // Record what data grouping values were used
             for (i = 1; i < groupPositions.length; i++) {
