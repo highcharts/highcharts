@@ -18,7 +18,6 @@ import type Series from '../Series/Series';
 import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import Fx from './Fx.js';
-import H from '../Globals.js';
 import U from '../Utilities.js';
 const {
     defined,
@@ -30,33 +29,6 @@ const {
     objectEach,
     pick
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        function animate(
-            el: (HTMLDOMElement|SVGElement),
-            params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptions>
-        ): void;
-        function animObject(
-            animation?: (boolean|AnimationOptions)
-        ): AnimationOptions;
-        function getDeferredAnimation(
-            chart: Chart,
-            animation: Partial<AnimationOptions>,
-            series?: Series
-        ): Partial<AnimationOptions>;
-        function setAnimation(
-            animation: (boolean|Partial<AnimationOptions>|undefined),
-            chart: Chart
-        ): void
-        function stop(el: SVGElement, prop?: string): void;
-    }
-}
 
 /**
  * Set the global animation to either a given value, or fall back to the given
@@ -74,7 +46,7 @@ declare global {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-const setAnimation = H.setAnimation = function setAnimation(
+const setAnimation = function setAnimation(
     animation: (boolean|Partial<AnimationOptions>|undefined),
     chart: Chart
 ): void {
@@ -98,7 +70,7 @@ const setAnimation = H.setAnimation = function setAnimation(
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-const animObject = H.animObject = function animObject(
+const animObject = function animObject(
     animation?: (boolean|DeepPartial<AnimationOptions>)
 ): AnimationOptions {
     return isObject(animation) ?
@@ -127,7 +99,7 @@ const animObject = H.animObject = function animObject(
  * @return {number}
  *        The numeric value.
  */
-const getDeferredAnimation = H.getDeferredAnimation = function (
+const getDeferredAnimation = function (
     chart: Chart,
     animation: (false|Partial<AnimationOptions>),
     series?: Series
@@ -263,7 +235,7 @@ const animate = function (
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-const stop = H.stop = function (el: SVGElement, prop?: string): void {
+const stop = function (el: SVGElement, prop?: string): void {
 
     var i = Fx.timers.length;
 
