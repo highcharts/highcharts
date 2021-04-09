@@ -121,7 +121,7 @@ function checkDemosConsistency() {
                 logLib.failure('no categories found:', detailsFile);
                 errors++;
             } else {
-                if (!demoCategories.every(category => categories.includes(category))) {
+                if (!demoCategories.every(category => categories.includes(typeof category === 'object' ? Object.keys(category)[0] : category))) {
                     logLib.failure('one or more categories are missing from demo-config:', detailsFile);
                     errors++;
                 }
