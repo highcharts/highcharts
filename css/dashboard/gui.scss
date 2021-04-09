@@ -4,6 +4,7 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    font-family:  Arial, sans-serif;
 }
 
 .highcharts-dashboard {
@@ -243,6 +244,7 @@ h1 {
 
 .highcharts-dashboard-edit-menu-item {
     display: none;
+    padding: 10px;
 }
 
 .highcharts-dashboard-edit-context-menu-item {
@@ -296,7 +298,7 @@ h1 {
 
 .highcharts-dashboard-edit-menu-vertical-separator {
     height: 1px;
-    background-color: #a6a6a6;
+    background-color: #ccc;
     margin-top: 2px;
     margin-bottom: 2px;
     padding: 0px;
@@ -333,30 +335,35 @@ h1 {
     width: 100%;
     text-align: center;
     padding: 5px;
-    border-bottom: 1px solid #a6a6a6;
+    text-transform: uppercase;
+    background: #141414;
+    border-bottom: 1px solid #444;
 }
 
 .highcharts-dashboard-edit-toolbar-options-tabs {
     display: flex;
     justify-content: center;
+    font-size: 0.876em;
+    text-transform: uppercase;
+    background: #141414;
 }
 
 .highcharts-dashboard-edit-toolbar-options-tab {
     text-align: center;
-    padding: 2px;
-    background-color: #555;
-    margin: 2px;
+    padding: 5px;
+    border-bottom: 3px solid transparent;
     transition: 0.3s;
+    opacity: 0.5;
+    font-size: 0.876em;
 }
 
-.highcharts-dashboard-edit-toolbar-options-tab:hover {
-    cursor: pointer;
-    background-color: red;
-}
-
+.highcharts-dashboard-edit-toolbar-options-tab:hover,
 .highcharts-dashboard-edit-toolbar-tab-active {
-    background-color: red;
+    cursor: pointer;
+    opacity: 1;
+    border-color: #aac6ff;
 }
+
 
 .highcharts-dashboard-edit-hidden-cells .highcharts-dashboard-cell:not(.highcharts-dashboard-edit-current-cell),
 .highcharts-dashboard-edit-hidden-rows .highcharts-dashboard-row:not(.highcharts-dashboard-edit-current-row) {

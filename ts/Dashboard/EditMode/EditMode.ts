@@ -154,7 +154,7 @@ class EditMode {
 
         // Temp solution.
         if (btnElement) {
-            css(btnElement, { color: 'rgb(49 216 71)' });
+            css(btnElement, { color: '#aac6ff' });
         }
 
         // Set edit mode active class to dashboard.
