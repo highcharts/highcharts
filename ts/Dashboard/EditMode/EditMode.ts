@@ -187,6 +187,9 @@ class EditMode {
         if (editMode.rowToolbar) {
             editMode.rowToolbar.hide();
         }
+        if (editMode.optionsToolbar) {
+            editMode.optionsToolbar.hide();
+        }
     }
 
     private initLayoutResizer(layout: Layout): void {

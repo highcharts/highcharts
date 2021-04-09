@@ -185,8 +185,6 @@ class OptionsToolbar extends Menu {
             // set margin on all layouts in dashboard to avoid overlap
             this.reserveToolbarSpace();
         }
-
-        // set margin on layouts
     }
 
     public hide(): void {
@@ -214,7 +212,7 @@ class OptionsToolbar extends Menu {
 
     private removeToolbarSpace(): void {
         const layouts = this.editMode.dashboard.container.querySelectorAll(
-            DashboardGlobals.classNames.layout
+            '.' + DashboardGlobals.classNames.layout
         );
 
         for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
