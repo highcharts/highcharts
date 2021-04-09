@@ -149,10 +149,8 @@ class RowEditToolbar extends Menu {
         const toolbar = this;
 
         if (toolbar.editMode.optionsToolbar) {
-            toolbar.editMode.optionsToolbar.showOptions([
-                'title',
-                'option1'
-            ]);
+            toolbar.editMode.optionsToolbar.show();
+            toolbar.editMode.optionsToolbar.updateTitle('ROW OPTIONS');
 
             // temporary -> move to OptionsToolbar
             this.row?.container?.classList.add(EditGlobals.classNames.currentEditedRow);

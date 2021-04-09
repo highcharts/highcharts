@@ -100,6 +100,7 @@ class OptionsToolbar extends Menu {
     * */
     public guiElement?: Cell|Row|Layout;
     public editMode: EditMode;
+    public title?: HTMLDOMElement;
     public tabs: Record<string, OptionsToolbar.Tab>;
     public activeTab?: OptionsToolbar.Tab;
 
@@ -112,7 +113,7 @@ class OptionsToolbar extends Menu {
     private renderTitle(): void {
         const toolbar = this;
 
-        const titleElement = createElement(
+        const titleElement = toolbar.title = createElement(
             'div', {
                 className: EditGlobals.classNames.editToolbarOptionsTitle,
                 textContent: 'Cell Options' // shoudl be dynamic
@@ -129,7 +130,7 @@ class OptionsToolbar extends Menu {
         }
 
         // add sticky position
-        addEvent(window, 'scroll', function ():void  {
+        addEvent(window, 'scroll', function (): void {
             const containerOffsetTop = window.pageYOffset - offsetTop;
 
             if (window.pageYOffset >= offsetTop) {
@@ -172,6 +173,16 @@ class OptionsToolbar extends Menu {
         }
     }
 
+    public updateTitle(
+        text: string
+    ): void {
+        const toolbar = this;
+
+        if (toolbar.title) {
+            toolbar.title.textContent = text;
+        }
+    }
+
     public onTabClick(
         tab: OptionsToolbar.Tab
     ): void {
@@ -194,29 +205,36 @@ class OptionsToolbar extends Menu {
         toolbar.updateActiveItems(tab.options.items);
     }
 
-    public showOptions(tools: Array<string>): void {
-        // activate first tab.
-        this.onTabClick(this.tabs[OptionsToolbar.tabs[0].type]);
-
+    public show(): void {
         if (this.container) {
-            this.container.classList.add(
-                EditGlobals.classNames.editToolbarOptionsShow
-            );
+            // activate first tab.
+            this.onTabClick(this.tabs[OptionsToolbar.tabs[0].type]);
 
-            // set margin on all layouts in dashboard to avoid overlap
-            this.reserveToolbarSpace();
+            if (!this.isVisible) {
+                this.container.classList.add(
+                    EditGlobals.classNames.editToolbarOptionsShow
+                );
+                this.isVisible = true;
+
+                // set margin on all layouts in dashboard to avoid overlap
+                this.reserveToolbarSpace();
+
+                // Hide row and cell toolbars.
+                this.editMode.hideToolbars(['cell', 'row']);
+            }
         }
     }
 
     public hide(): void {
         if (this.container) {
-            this.container.classList.add(
-                EditGlobals.classNames.editToolbarOptionsHide
+            this.container.classList.remove(
+                EditGlobals.classNames.editToolbarOptionsShow
             );
 
+            this.isVisible = false;
             this.removeToolbarSpace();
+            this.guiElement = void 0;
         }
-        this.guiElement = void 0;
     }
 
     private reserveToolbarSpace(): void {

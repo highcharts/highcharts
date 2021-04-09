@@ -145,11 +145,8 @@ class CellEditToolbar extends Menu {
         const toolbar = this;
 
         if (toolbar.editMode.optionsToolbar) {
-            // ['title', 'option1'] will be dynamic.
-            toolbar.editMode.optionsToolbar.showOptions([
-                'title',
-                'option1'
-            ]);
+            toolbar.editMode.optionsToolbar.show();
+            toolbar.editMode.optionsToolbar.updateTitle('CELL OPTIONS');
 
             // temporary -> move to OptionsToolbar
             this.cell?.container?.classList.add(EditGlobals.classNames.currentEditedCell);
