@@ -76,6 +76,7 @@ function task() {
     return Promise.resolve();
 }
 
+require('./scripts-css.js');
 require('./scripts-js.js');
 require('./scripts-ts.js');
 
