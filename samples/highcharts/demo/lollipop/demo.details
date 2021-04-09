@@ -1,10 +1,11 @@
 ---
-name: Highcharts Demo
+name: Lollipop series
 authors:
   - Rafal Sebestjanski
 js_wrap: b
 new_until: 2020-03-11
 tags:
   - Highcharts demo
-categories: []
+categories:
+  - More chart types
 ...

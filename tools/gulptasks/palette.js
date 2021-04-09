@@ -58,13 +58,13 @@ async function task() {
  * the 'gulp palette' task. Palette colors are defined in highcharts.scss.
  */
 /* eslint comma-dangle: 0, max-len: 0 */
-import type ColorString from './Color/ColorString';
+import type ColorString from './ColorString';
 const palette = {
 ${ts}
 };
 export default palette;
 `;
-    const tsFilePath = path.join(__dirname, '../../ts/core/Palette.ts');
+    const tsFilePath = path.join(__dirname, '../../ts/core/Color/Palette.ts');
     fs.writeFileSync(tsFilePath, tpl, 'utf8');
 
     log.success(`Wrote palette colors to ${tsFilePath}`);
