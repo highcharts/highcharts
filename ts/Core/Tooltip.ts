@@ -121,11 +121,6 @@ declare global {
             ): string;
             public hide(delay?: number): void;
             public init(chart: Chart, options: TooltipOptions): void;
-            public isInside(
-                plotX: (number|true),
-                plotY: number,
-                series?: Series
-            ): boolean;
             public isStickyOnContact(): boolean;
             public move(
                 x: number,
@@ -1389,11 +1384,11 @@ class Tooltip {
                     checkY = mouseEvent.chartY - chart.plotTop;
                 }
 
+                // #11493, #13095
                 if (
                     chart.polar ||
                     currentSeries.options.clip === false ||
-                    !currentSeries.hasTooltipBounds ||
-                    this.isInside(checkX, checkY, currentSeries)
+                    currentSeries.shouldShowTooltip(checkX, checkY)
                 ) {
                     const label = tooltip.getLabel();
 
@@ -1536,7 +1531,7 @@ class Tooltip {
                 anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
 
                 // Set anchorY, limit to the scrollable plot area
-                if (tooltip.isInside(true, yAxis.pos - plotTop + plotY, series)) {
+                if (series.shouldShowTooltip(true, yAxis.pos - plotTop + plotY)) {
                     anchorY = yAxis.pos + plotY;
                 }
             }
@@ -1811,78 +1806,6 @@ class Tooltip {
             container.style.left = chartPosition.left + 'px';
             container.style.top = chartPosition.top + 'px';
         }
-    }
-
-    /**
-     * Checks if a point is within visible plot and axis bounds.
-     *
-     * @private
-     * @param {number|true} plotX
-     * @param {number} plotY
-     * @param {Highcharts.Series} series
-     * @return {boolean}
-     */
-    public isInside(
-        plotX: (number|true),
-        plotY: number,
-        series?: Series
-    ): boolean {
-        const {
-            inverted,
-            plotBox,
-            plotLeft,
-            plotTop,
-            scrollablePlotBox,
-            scrollingContainer: {
-                scrollLeft,
-                scrollTop
-            } = {
-                scrollLeft: 0,
-                scrollTop: 0
-            }
-        } = this.chart;
-
-        const box = scrollablePlotBox || plotBox;
-
-        if (plotX !== true) {
-            const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
-                pos: plotLeft,
-                len: Infinity
-            };
-
-            const x = plotLeft + plotX;
-
-            if (!(
-                x >= Math.max(
-                    scrollLeft + plotLeft,
-                    xAxis.pos
-                ) &&
-                x <= Math.min(
-                    scrollLeft + plotLeft + box.width,
-                    xAxis.pos + xAxis.len
-                )
-            )) {
-                return false;
-            }
-        }
-
-        const yAxis = (series && (inverted ? series.xAxis : series.yAxis)) || {
-            pos: plotTop,
-            len: Infinity
-        };
-
-        const y = plotTop + plotY;
-
-        return (
-            y >= Math.max(
-                scrollTop + plotTop,
-                yAxis.pos
-            ) &&
-            y <= Math.min(
-                scrollTop + plotTop + box.height,
-                yAxis.pos + yAxis.len
-            )
-        );
     }
 
     /**

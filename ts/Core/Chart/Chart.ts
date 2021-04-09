@@ -655,6 +655,84 @@ class Chart {
     }
 
     /**
+     * Checks if a point is within visible plot and axis bounds.
+     *
+     * @private
+     * @param {number|true} plotX
+     * @param {number|true} plotY
+     * @param {Highcharts.Series} series
+     * @return {boolean}
+     */
+    public isInside(
+        plotX: (number|true),
+        plotY: (number|true),
+        series?: Series
+    ): boolean {
+        const {
+            inverted,
+            plotBox,
+            plotLeft,
+            plotTop,
+            scrollablePlotBox,
+            scrollingContainer: {
+                scrollLeft,
+                scrollTop
+            } = {
+                scrollLeft: 0,
+                scrollTop: 0
+            }
+        } = this;
+
+        const box = scrollablePlotBox || plotBox;
+
+        if (plotX !== true) {
+            const xAxis = (series && (inverted ? series.yAxis : series.xAxis)) || {
+                pos: plotLeft,
+                len: Infinity
+            };
+
+            const x = plotLeft + plotX;
+
+            if (!(
+                x >= Math.max(
+                    scrollLeft + plotLeft,
+                    xAxis.pos
+                ) &&
+                x <= Math.min(
+                    scrollLeft + plotLeft + box.width,
+                    xAxis.pos + xAxis.len
+                )
+            )) {
+                return false;
+            }
+        }
+
+        if (plotY !== true) {
+            const yAxis = (series && (inverted ? series.xAxis : series.yAxis)) || {
+                pos: plotTop,
+                len: Infinity
+            };
+
+            const y = plotTop + plotY;
+
+            if (!(
+                y >= Math.max(
+                    scrollTop + plotTop,
+                    yAxis.pos
+                ) &&
+                y <= Math.min(
+                    scrollTop + plotTop + box.height,
+                    yAxis.pos + yAxis.len
+                )
+            )) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Redraw the chart after changes have been done to the data, axis extremes
      * chart size or chart elements. All methods for updating axes, series or
      * points have a parameter for redrawing the chart. This is `true` by

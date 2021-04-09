@@ -7239,6 +7239,21 @@ class Series {
         fireEvent(series, selected ? 'select' : 'unselect');
     }
 
+    /**
+     * Checks if a tooltip should be shown for a given point.
+     *
+     * @private
+     * @param {number|true} plotX
+     * @param {number|true} plotY
+     * @return {boolean}
+     */
+    public shouldShowTooltip(
+        plotX: (number|true),
+        plotY: (number|true)
+    ): boolean {
+        return this.chart.isInside(plotX, plotY, this);
+    }
+
     /** eslint-enable valid-jsdoc */
 
 }
@@ -7259,7 +7274,6 @@ interface Series extends SeriesLike {
         Highcharts.LegendSymbolMixin['drawLineMarker']|
         Highcharts.LegendSymbolMixin['drawRectangle']
     );
-    hasTooltipBounds: boolean;
     hcEvents?: Record<string, Array<Highcharts.EventWrapperObject<Series>>>;
     isCartesian: boolean;
     kdAxisArray: Array<string>;
@@ -7275,7 +7289,6 @@ extend(Series.prototype, {
     cropShoulder: 1,
     directTouch: false,
     drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
-    hasTooltipBounds: true,
     isCartesian: true,
     kdAxisArray: ['clientX', 'plotY'],
     // each point's x and y values are stored in this.xData and this.yData:

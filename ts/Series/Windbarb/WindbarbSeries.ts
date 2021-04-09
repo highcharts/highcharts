@@ -435,6 +435,16 @@ class WindbarbSeries extends ColumnSeries {
     public getExtremes(): DataExtremesObject {
         return {};
     }
+
+    public shouldShowTooltip(
+        plotX: (number|true),
+        plotY: (number|true)
+    ): boolean {
+        if (this.chart.inverted) {
+            return super.shouldShowTooltip(true, plotY);
+        }
+        return super.shouldShowTooltip(plotX, true);
+    }
 }
 
 interface WindbarbSeries {
@@ -460,7 +470,6 @@ extend(WindbarbSeries.prototype, {
         24.5, 28.5, 32.7], // @todo dictionary with names?
     trackerGroups: ['markerGroup'],
     getPlotBox: OnSeriesMixin.getPlotBox,
-    hasTooltipBounds: false,
     // Don't invert the marker group (#4960)
     invertGroups: noop
 });

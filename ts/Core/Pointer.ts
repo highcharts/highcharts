@@ -1976,7 +1976,7 @@ class Pointer {
         // Update positions (regardless of kdpoint or hoverPoint)
         } else if (followPointer && tooltip && !tooltip.isHidden) {
             const anchor = tooltip.getAnchor([{} as any], e);
-            if (tooltip.isInside(anchor[0], anchor[1])) {
+            if (chart.isInside(anchor[0], anchor[1])) {
                 tooltip.updatePosition(
                     { plotX: anchor[0], plotY: anchor[1] } as any
                 );
