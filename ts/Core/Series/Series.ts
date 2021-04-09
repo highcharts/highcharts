@@ -5390,7 +5390,10 @@ class Series {
                 point.destroy();
             }
         }
-        series.points = null as any;
+
+        if (series.clips) {
+            series.clips.forEach((clip): void => clip.destroy());
+        }
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
@@ -5412,7 +5415,7 @@ class Series {
 
         // remove from hoverSeries
         if (chart.hoverSeries === series) {
-            chart.hoverSeries = null as any;
+            chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
         chart.orderSeries();
@@ -6641,6 +6644,8 @@ class Series {
             animation = series.finishedAnimating && { animation: false },
             kinds = {} as Record<string, number>;
 
+        newType = newType || initialType;
+
         if (keepPoints) {
             preserve.push(
                 'data',
@@ -6652,6 +6657,7 @@ class Series {
                 'cropped',
                 '_hasPointMarkers',
                 '_hasPointLabels',
+                'clips', // #15420
 
                 // Networkgraph (#14397)
                 'nodes',
@@ -6711,9 +6717,11 @@ class Series {
             delete (series as any)[prop];
         });
 
-        if (seriesTypes[newType || initialType]) {
+        let casting = false;
 
-            const casting = newType !== series.type;
+        if (seriesTypes[newType]) {
+
+            casting = newType !== series.type;
 
             // Destroy the series and delete all properties, it will be
             // reinserted within the `init` call below
@@ -6726,7 +6734,7 @@ class Series {
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,
-                        seriesTypes[newType || initialType].prototype
+                        seriesTypes[newType].prototype
                     );
 
                 // Legacy (IE < 11)
@@ -6742,7 +6750,7 @@ class Series {
                     // prototype (#2270, #3719).
                     extend<Series>(
                         series,
-                        seriesTypes[newType || initialType].prototype
+                        seriesTypes[newType].prototype
                     );
 
                     // The events are tied to the prototype chain, don't copy if
@@ -6759,7 +6767,7 @@ class Series {
                 17,
                 true,
                 chart,
-                { missingModuleFor: (newType || initialType) }
+                { missingModuleFor: newType }
             );
         }
 
@@ -6769,7 +6777,6 @@ class Series {
         });
 
         series.init(chart, options);
-
 
         // Remove particular elements of the points. Check `series.options`
         // because we need to consider the options being set on plotOptions as
@@ -6817,6 +6824,12 @@ class Series {
 
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
+
+        // #15383: Fire updatedData if the type has changed to keep linked
+        // series such as indicators updated
+        if (casting && series.linkedSeries.length) {
+            series.isDirtyData = true;
+        }
 
         fireEvent(this, 'afterUpdate');
 

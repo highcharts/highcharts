@@ -43,6 +43,7 @@ import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
+import palette from '../../Core/Color/Palette.js';
 const {
     addEvent,
     defined,
@@ -1106,7 +1107,7 @@ merge<Annotation>(
                      *
                      * @type {Highcharts.ColorString}
                      */
-                    borderColor: 'black',
+                    borderColor: palette.neutralColor100,
 
                     /**
                      * The border radius in pixels for the annotaiton's label.
@@ -1570,9 +1571,9 @@ merge<Annotation>(
                     width: 10,
                     height: 10,
                     style: {
-                        stroke: 'black',
+                        stroke: palette.neutralColor100,
                         'stroke-width': 2,
-                        fill: 'white'
+                        fill: palette.backgroundColor
                     },
                     visible: false,
                     events: {}

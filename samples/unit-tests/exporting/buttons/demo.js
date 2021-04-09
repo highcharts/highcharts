@@ -132,7 +132,7 @@ QUnit.test('Export buttons', function (assert) {
         };
 
         // Click it
-        $(button).click();
+        Highcharts.fireEvent(button, 'click');
         assert.strictEqual(postData.type, 'image/png', 'Posting for PNG');
         assert.strictEqual(typeof postData.svg, 'string', 'SVG is posted');
     } finally {
