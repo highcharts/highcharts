@@ -67,6 +67,9 @@ class ZigzagIndicator extends SMAIndicator {
          * @excluding index, period
          */
         params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0,
             /**
              * The point index which indicator calculations will base - low
              * value.

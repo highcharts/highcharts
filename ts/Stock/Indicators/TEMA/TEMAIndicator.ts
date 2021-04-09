@@ -296,10 +296,10 @@ export default TEMAIndicator;
 
 
 /**
- * A `TEMA` series. If the [type](#series.ema.type) option is not
+ * A `TEMA` series. If the [type](#series.tema.type) option is not
  * specified, it is inherited from [chart.type](#chart.type).
  *
- * @extends   series,plotOptions.ema
+ * @extends   series,plotOptions.tema
  * @since     7.0.0
  * @product   highstock
  * @excluding allAreas, colorAxis, compare, compareBase, dataParser, dataURL,

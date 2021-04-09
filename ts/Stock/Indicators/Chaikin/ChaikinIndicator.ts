@@ -73,9 +73,10 @@ class ChaikinIndicator extends EMAIndicator {
          * Paramters used in calculation of Chaikin Oscillator
          * series points.
          *
-         * @excluding index, period
+         * @excluding index
          */
         params: {
+            index: void 0, // unused index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means
