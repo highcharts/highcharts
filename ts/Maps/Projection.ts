@@ -169,25 +169,30 @@ export default class Projection {
 
         const path: SVGPath = [];
 
+        const isPreProjected = !this.options.projectionName;
+
         const addToPath = (polygon: LonLatArray[]): void => {
 
             const poly = polygon.slice();
-            let i = poly.length - 1;
-            while (i--) {
 
-                // Distance in degrees, either in lon or lat. Avoid heavy
-                // calculation of true distance.
-                const roughDistance = Math.max(
-                    Math.abs(poly[i][0] - poly[i + 1][0]),
-                    Math.abs(poly[i][1] - poly[i + 1][1])
-                );
-                if (roughDistance > 10) {
-                    const greatCircle = Projection.greatCircle(
-                        poly[i],
-                        poly[i + 1]
+            if (!isPreProjected) {
+                let i = poly.length - 1;
+                while (i--) {
+
+                    // Distance in degrees, either in lon or lat. Avoid heavy
+                    // calculation of true distance.
+                    const roughDistance = Math.max(
+                        Math.abs(poly[i][0] - poly[i + 1][0]),
+                        Math.abs(poly[i][1] - poly[i + 1][1])
                     );
-                    if (greatCircle) {
-                        poly.splice(i + 1, 0, ...greatCircle);
+                    if (roughDistance > 10) {
+                        const greatCircle = Projection.greatCircle(
+                            poly[i],
+                            poly[i + 1]
+                        );
+                        if (greatCircle) {
+                            poly.splice(i + 1, 0, ...greatCircle);
+                        }
                     }
                 }
             }
