@@ -19,7 +19,6 @@ const {
 import Projection from './Projection.js';
 import U from '../Core/Utilities.js';
 const {
-    extend,
     isNumber,
     merge
 } = U;
@@ -105,7 +104,6 @@ class MapView {
     }
 
     public center: Highcharts.ProjectedXY;
-    public enabled?: boolean;
     public minZoom?: number;
     public options: Highcharts.MapViewOptions;
     public projection: Projection;

@@ -460,10 +460,7 @@ class Pointer {
 
             // make a selection
             if (
-                (
-                    chart.hasCartesianSeries ||
-                    (chart.mapView && chart.mapView.enabled)
-                ) &&
+                (chart.hasCartesianSeries || chart.mapView) &&
                 (this.zoomX || this.zoomY) &&
                 clickedInside &&
                 !panKey
@@ -572,7 +569,7 @@ class Pointer {
                 },
                 // Start by false runZoom, unless when we have a mapView, in
                 // which case the zoom will be handled in the selection event.
-                runZoom = Boolean(chart.mapView && chart.mapView.enabled);
+                runZoom = Boolean(chart.mapView);
 
             // a selection has been made
             if (this.hasDragged || hasPinched) {
@@ -2030,7 +2027,7 @@ class Pointer {
                 series.group &&
                 (
                     (series.xAxis && series.xAxis.zoomEnabled) ||
-                    (chart.mapView && chart.mapView.enabled)
+                    chart.mapView
                 )
             ) {
                 series.group.attr(seriesAttribs);

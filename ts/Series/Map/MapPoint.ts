@@ -19,6 +19,8 @@
 import type MapPointOptions from './MapPointOptions';
 import type MapSeries from './MapSeries';
 import type PointerEvent from '../../Core/PointerEvent';
+
+import Projection from '../../Maps/Projection.js';
 import type { PointShortOptions } from '../../Core/Series/PointOptions';
 import type ScatterPoint from '../Scatter/ScatterPoint';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
@@ -77,10 +79,10 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
     consider not returning the path, and not calling it get* */
     public static getProjectedPath(
         point: MapPoint,
-        projection: any
+        projection?: Projection
     ): SVGPath {
         if (!point.projectedPath) {
-            if (isArray((point as any).coordinates)) {
+            if (projection && isArray((point as any).coordinates)) {
                 point.projectedPath = projection.path({
                     type: (point as any).type,
                     coordinates: (point as any).coordinates

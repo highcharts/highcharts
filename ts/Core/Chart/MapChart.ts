@@ -109,6 +109,7 @@ class MapChart extends Chart {
                         '{geojson.copyright}'
                     )
                 },
+                mapView: {}, // Required to enable Chart.mapView
                 tooltip: {
                     followTouchMove: false
                 },
@@ -225,19 +226,17 @@ namespace MapChart {
 
 /* eslint-disable no-invalid-this */
 addEvent(Chart, 'afterInit', function (): void {
-    this.mapView = new MapView(this, this.options.mapView);
+    if (this.options.mapView) {
+        this.mapView = new MapView(this, this.options.mapView);
+    }
 });
 
 addEvent(Chart, 'afterSetChartSize', function (): void {
     const mapView = this.mapView;
 
-    if (mapView && mapView.enabled === void 0) {
+    if (mapView && mapView.minZoom === void 0) {
 
         mapView.fitToBounds(void 0, false);
-
-        if (isNumber(mapView.minZoom)) { // Bounds found, view successfully set
-            mapView.enabled = true;
-        }
 
         if (isNumber(mapView.userOptions.zoom)) {
             mapView.zoom = mapView.userOptions.zoom;
@@ -259,7 +258,6 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
 
     if (
         mapView &&
-        mapView.enabled &&
         typeof mouseDownX === 'number' &&
         typeof mouseDownY === 'number'
     ) {
@@ -288,7 +286,7 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
 // Perform the map zoom by selection
 addEvent(Chart, 'selection', function (evt: PointerEvent): void {
     const mapView = this.mapView;
-    if (mapView && mapView.enabled) {
+    if (mapView) {
 
         // Zoom in
         if (!(evt as any).resetSelection) {
