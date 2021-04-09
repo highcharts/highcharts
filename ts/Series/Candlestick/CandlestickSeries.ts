@@ -44,19 +44,6 @@ const {
  * */
 
 /**
- * A candlestick chart is a style of financial chart used to describe price
- * movements over time.
- *
- * @sample stock/demo/candlestick/
- *         Candlestick chart
- *
- * @extends      plotOptions.ohlc
- * @excluding    borderColor,borderRadius,borderWidth
- * @product      highstock
- * @optionparent plotOptions.candlestick
- */
-
-/**
  * The candlestick series type.
  *
  * @private
@@ -72,6 +59,19 @@ class CandlestickSeries extends OHLCSeries {
      * Static properties
      *
      * */
+
+    /**
+     * A candlestick chart is a style of financial chart used to describe price
+     * movements over time.
+     *
+     * @sample stock/demo/candlestick/
+     *         Candlestick chart
+     *
+     * @extends      plotOptions.ohlc
+     * @excluding    borderColor,borderRadius,borderWidth
+     * @product      highstock
+     * @optionparent plotOptions.candlestick
+     */
     public static defaultOptions: CandlestickSeriesOptions =
     merge(OHLCSeries.defaultOptions, defaultOptions.plotOptions, {
         /**
