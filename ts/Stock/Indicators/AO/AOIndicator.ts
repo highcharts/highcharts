@@ -67,6 +67,11 @@ class AOIndicator extends SMAIndicator {
      */
     public static defaultOptions: AOOptions =
     merge(SMAIndicator.defaultOptions, {
+        params: {
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0
+        },
         /**
          * Color of the Awesome oscillator series bar that is greater than the
          * previous one. Note that if a `color` is defined, the `color`

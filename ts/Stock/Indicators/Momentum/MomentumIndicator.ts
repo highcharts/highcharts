@@ -67,11 +67,8 @@ class MomentumIndicator extends SMAIndicator {
      * @requires     stock/indicators/momentum
      * @optionparent plotOptions.momentum
      */
-    public static defaultOptions: MomentumOptions = merge(SMAIndicator.defaultOptions, {
-        params: {
-            period: 14
-        }
-    } as MomentumOptions);
+    public static defaultOptions: MomentumOptions =
+    merge(SMAIndicator.defaultOptions, {} as MomentumOptions);
 
     public data: Array<MomentumPoint> = void 0 as any;
     public options: MomentumOptions = void 0 as any;

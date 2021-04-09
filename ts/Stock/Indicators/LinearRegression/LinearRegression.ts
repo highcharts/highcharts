@@ -108,7 +108,7 @@ class LinearRegressionIndicator extends SMAIndicator {
                  * @type    {number}
                  * @product highstock
                  */
-                xAxisUnit: void 0
+                xAxisUnit: null
             },
             tooltip: {
                 valueDecimals: 4
