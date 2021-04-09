@@ -1732,7 +1732,7 @@ class Point {
             );
         }
 
-        fireEvent(point, 'afterSetState');
+        fireEvent(point, 'afterSetState', { state });
     }
 
     /**
