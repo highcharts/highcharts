@@ -36,23 +36,6 @@ declare global {
     type FxClass = typeof Fx;
     namespace Highcharts {
         let Fx: FxClass;
-        function animate(
-            el: (HTMLDOMElement|SVGElement),
-            params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptions>
-        ): void;
-        function animObject(
-            animation?: (boolean|AnimationOptions)
-        ): AnimationOptions;
-        function getDeferredAnimation(
-            chart: Chart,
-            animation: Partial<AnimationOptions>,
-            series?: Series
-        ): Partial<AnimationOptions>;
-        function setAnimation(
-            animation: (boolean|Partial<AnimationOptions>|undefined),
-            chart: Chart
-        ): void
     }
 }
 
@@ -542,15 +525,6 @@ class Fx {
 interface Fx extends FxLike {
     // Nothing here yet
 }
-
-/* *
- *
- *  Compatibility
- *
- * */
-
-H.Fx = Fx;
-(H as any).timers = Fx.timers;
 
 /* *
  *
