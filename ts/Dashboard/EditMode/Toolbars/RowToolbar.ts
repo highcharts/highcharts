@@ -22,7 +22,7 @@ class RowEditToolbar extends Menu {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
         itemsClassName: EditGlobals.classNames.editToolbarItem,
-        items: ['drag', 'resizeRow', 'settings', 'destroy']
+        items: ['drag', 'settings', 'destroy']
     }
 
     public static items: Record<string, MenuItem.Options> =
@@ -34,16 +34,8 @@ class RowEditToolbar extends Menu {
                 click: function (): void {}
             }
         },
-        resizeRow: {
-            type: 'resizeRow',
-            icon: EditGlobals.iconsURL + 'resize.svg',
-            events: {
-                click: function (): void {}
-            }
-        },
         settings: {
             type: 'settings',
-            // text: 'settings',
             icon: EditGlobals.iconsURL + 'settings.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
@@ -53,10 +45,11 @@ class RowEditToolbar extends Menu {
         },
         destroy: {
             type: 'destroy',
-            // text: 'destroy',
             icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
-                click: function (this: MenuItem, e: any): void {}
+                click: function (this: MenuItem, e: any): void {
+                    (this.menu as RowEditToolbar).onRowDestroy(e);
+                }
             }
         }
     })
@@ -166,6 +159,18 @@ class RowEditToolbar extends Menu {
             this.row?.layout.dashboard.container.classList.add(
                 EditGlobals.classNames.disabledNotEditedRows
             );
+        }
+    }
+
+    public onRowDestroy(e: any): void {
+        const toolbar = this;
+
+        if (toolbar.row) {
+            toolbar.row.destroy();
+            toolbar.row = void 0;
+
+            // Hide row and cell toolbars.
+            toolbar.editMode.hideToolbars(['cell', 'row']);
         }
     }
 

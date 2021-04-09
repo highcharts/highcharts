@@ -181,15 +181,7 @@ class EditMode {
         );
 
         // Hide toolbars.
-        if (editMode.cellToolbar) {
-            editMode.cellToolbar.hide();
-        }
-        if (editMode.rowToolbar) {
-            editMode.rowToolbar.hide();
-        }
-        if (editMode.optionsToolbar) {
-            editMode.optionsToolbar.hide();
-        }
+        editMode.hideToolbars();
     }
 
     private initLayoutResizer(layout: Layout): void {
@@ -209,6 +201,45 @@ class EditMode {
 
     public isActive(): boolean {
         return this.active;
+    }
+
+    /**
+     * Method for hiding edit toolbars.
+     *
+     * @param {Array<string>} toolbarTypes
+     * The array of toolbar names to hide ('cell', 'row', 'options').
+     */
+    public hideToolbars(
+        toolbarTypes?: Array<string>
+    ): void {
+        const editMode = this,
+            toolbarsToHide = toolbarTypes || ['cell', 'row', 'options'];
+
+        for (let i = 0, iEnd = toolbarsToHide.length; i < iEnd; ++i) {
+            switch (toolbarsToHide[i]) {
+                case 'cell': {
+                    if (editMode.cellToolbar && editMode.cellToolbar.isVisible) {
+                        editMode.cellToolbar.hide();
+                    }
+                    break;
+                }
+                case 'row': {
+                    if (editMode.rowToolbar && editMode.rowToolbar.isVisible) {
+                        editMode.rowToolbar.hide();
+                    }
+                    break;
+                }
+                case 'options': {
+                    if (editMode.optionsToolbar && editMode.optionsToolbar.isVisible) {
+                        editMode.optionsToolbar.hide();
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
     }
 }
 namespace EditMode {

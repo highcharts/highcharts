@@ -28,7 +28,6 @@ class CellEditToolbar extends Menu {
     merge(Menu.items, {
         drag: {
             type: 'drag',
-            // text: 'drag',
             icon: EditGlobals.iconsURL + 'drag.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {}
@@ -36,7 +35,6 @@ class CellEditToolbar extends Menu {
         },
         settings: {
             type: 'settings',
-            // text: 'settings',
             icon: EditGlobals.iconsURL + 'settings.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
@@ -46,10 +44,11 @@ class CellEditToolbar extends Menu {
         },
         destroy: {
             type: 'destroy',
-            // text: 'destroy',
             icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
-                click: function (this: MenuItem, e: any): void {}
+                click: function (this: MenuItem, e: any): void {
+                    (this.menu as CellEditToolbar).onCellDestroy(e);
+                }
             }
         }
     })
@@ -157,6 +156,18 @@ class CellEditToolbar extends Menu {
             this.cell?.row.layout.dashboard.container.classList.add(
                 EditGlobals.classNames.disabledNotEditedCells
             );
+        }
+    }
+
+    public onCellDestroy(e: any): void {
+        const toolbar = this;
+
+        if (toolbar.cell) {
+            toolbar.cell.destroy();
+            toolbar.cell = void 0;
+
+            // Hide row and cell toolbars.
+            toolbar.editMode.hideToolbars(['cell', 'row']);
         }
     }
 
