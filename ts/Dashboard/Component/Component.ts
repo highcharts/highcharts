@@ -148,7 +148,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     }
 
     public static defaultOptions: Component.ComponentOptions = {
-        className: 'highcharts-dashboard-component',
+        className: 'hcd-component',
         parentElement: document.body,
         type: '',
         id: '',

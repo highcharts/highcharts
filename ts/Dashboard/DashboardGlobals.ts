@@ -3,7 +3,7 @@
  * Prefix of a GUIElement HTML class name.
  *
  */
-const PREFIX = 'highcharts-dashboard-';
+const PREFIX = 'hcd-';
 
 const DashboardGlobals: DashboardGlobals = {
     prefix: PREFIX,

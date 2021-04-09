@@ -7,6 +7,7 @@ body {
     font-family:  Arial, sans-serif;
 }
 
+.hcd,
 .highcharts-dashboard {
     background-color: #F1F4F6;
     padding: 20px 10px;
@@ -18,42 +19,42 @@ body {
     margin-top: 50px;
 }
 
-.highcharts-dashboard-row {
+.hcd-row {
     display: flex;
     position: relative;
 }
 
-.highcharts-dashboard-cell {
+.hcd-cell {
     position: relative;
     flex-shrink: 1;
     flex-basis: auto;
     flex: 1;
 }
 
-.highcharts-dashboard-layout .highcharts-dashboard-row,
-.highcharts-dashboard-layout .highcharts-dashboard-row .highcharts-dashboard-cell {
+.hcd-layout .hcd-row,
+.hcd-layout .hcd-row .hcd-cell {
     box-sizing: border-box;
     border: 1px dashed rgba(0, 0, 0, 0);
 }
 
-.highcharts-dashboard-edit-enabled {
-    .highcharts-dashboard-row,
-    .highcharts-dashboard-cell {
+.hcd-edit-enabled {
+    .hcd-row,
+    .hcd-cell {
         border-color: #4B4B4D;
     }
 }
 
-.highcharts-dashboard-edit-toolbar.highcharts-dashboard-edit-toolbar-row .highcharts-dashboard-edit-toolbar-item {
+.hcd-edit-toolbar.hcd-edit-toolbar-row .hcd-edit-toolbar-item {
     float: left;
 }
 
-// .highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row :hover .highcharts-dashboard-cell  {
+// .hcd-layout.edit-mode .hcd-row :hover .hcd-cell  {
 //     border: 1px dashed #bdbdbd;
 //     cursor: pointer;
 // }
 
-// .highcharts-dashboard-layout.edit-mode .highcharts-dashboard-row:hover .highcharts-dashboard-cell .toolbar,
-// .highcharts-dashboard-layout.edit-mode .add-item {
+// .hcd-layout.edit-mode .hcd-row:hover .hcd-cell .toolbar,
+// .hcd-layout.edit-mode .add-item {
 //     display: block;
 // }
 
@@ -77,7 +78,7 @@ body {
     width: 100%;
 }
 
-.highcharts-dashboard-cell > .highcharts-dashboard-component {
+.hcd-cell > .hcd-component {
     position: relative;
     margin: 5px;
     padding: 5px;
@@ -89,18 +90,18 @@ body {
     border-radius: .25rem;*/
 }
 
-.highcharts-dashboard-component img {
+.hcd-component img {
     width: 100%;
 }
 
-.highcharts-dashboard-edit-resize-snap {
+.hcd-edit-resize-snap {
     position: absolute;
     /*background: red;*/
     opacity: 0.5;
     z-index: 10;
 }
 
-.highcharts-dashboard-edit-resize-snap-x {
+.hcd-edit-resize-snap-x {
     cursor: col-resize;
     width: 20px;
     height: 100%;
@@ -108,7 +109,7 @@ body {
     top: 0px;
 }
 
-.highcharts-dashboard-edit-resize-snap-y {
+.hcd-edit-resize-snap-y {
     cursor: row-resize;
     width: 100%;
     height: 20px;
@@ -116,13 +117,13 @@ body {
     bottom: 0px;
 }
 
-.highcharts-dashboard-cell > .highcharts-dashboard-component .title-wrapper {
+.hcd-cell > .hcd-component .title-wrapper {
     margin: 0px;
     padding-bottom: 15px;
     border-bottom: 1px solid rgba(26, 54, 126, 0.125);
 }
 
-.highcharts-dashboard-toolbar {
+.hcd-toolbar {
     position: absolute;
     z-index: 10;
     top: 0px;
@@ -131,20 +132,20 @@ body {
     font-weight: bold;
 }
 
-.highcharts-dashboard-toolbar .tools-row {
+.hcd-toolbar .tools-row {
     display: inline-block;
     float: left;
     background-color: #839bc4;
     padding: 0px 10px;
 }
 
-.highcharts-dashboard-toolbar .tools-cell {
+.hcd-toolbar .tools-cell {
     display: inline-block;
     background-color: #c3cad8;
     padding: 0px 10px;
 }
 
-.highcharts-dashboard-toolbar .drag-drop {
+.hcd-toolbar .drag-drop {
     display: inline-block;
     cursor: move;
     text-indent: -9999px;
@@ -154,8 +155,8 @@ body {
     margin-right: 10px;
 }
 
-.highcharts-dashboard-toolbar .edit-col,
-.highcharts-dashboard-toolbar .edit-row {
+.hcd-toolbar .edit-col,
+.hcd-toolbar .edit-row {
     background: url("https://code.highcharts.com/8.2.2/gfx/stock-icons/edit.svg") no-repeat 50% 50%;
     background-size: cover;
     font-size: 0px;
@@ -211,7 +212,7 @@ h1 {
 
 
 // Edit Mode
-.highcharts-dashboard-edit-context-menu {
+.hcd-edit-context-menu {
     /*border: 1px solid #555;*/
     background-color: #fff;
     margin-left: auto;
@@ -223,7 +224,7 @@ h1 {
     box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
 }
 
-.highcharts-dashboard-edit-context-menu-btn {
+.hcd-edit-context-menu-btn {
     width: 32px;
     height: 32px;
     margin-left: auto;
@@ -238,27 +239,27 @@ h1 {
     }
 }
 
-.highcharts-dashboard-edit-context-menu-btn:hover {
+.hcd-edit-context-menu-btn:hover {
     border: 1px solid #4B4B4D;
 }
 
-.highcharts-dashboard-edit-menu-item {
+.hcd-edit-menu-item {
     display: none;
     padding: 10px;
 }
 
-.highcharts-dashboard-edit-context-menu-item {
+.hcd-edit-context-menu-item {
     height: 30px;
     padding: 5px;
     color: #555;
     cursor: pointer;
 }
 
-.highcharts-dashboard-edit-context-menu-item:hover {
+.hcd-edit-context-menu-item:hover {
     color: #000;
 }
 
-.highcharts-dashboard-edit-separator {
+.hcd-edit-separator {
     background-color: #eee;
     height: 1px;
     margin: 5px 0px 5px 0px;
@@ -266,7 +267,7 @@ h1 {
     cursor: default;
 }
 
-.highcharts-dashboard-edit-toolbar {
+.hcd-edit-toolbar {
     background: #252526;
     color:#a6a6a6;
     position: absolute;
@@ -275,7 +276,7 @@ h1 {
     box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
 }
 
-.highcharts-dashboard-edit-toolbar-item {
+.hcd-edit-toolbar-item {
     display: none;
     min-width: 40px;
     min-height: 40px;
@@ -287,16 +288,16 @@ h1 {
     background-position: 50% 50%;
 }
 
-.highcharts-dashboard-edit-toolbar-item.highcharts-dashboard-edit-menu-destroy {
+.hcd-edit-toolbar-item.hcd-edit-menu-destroy {
     background-color: #e01d5a;
 }
 
-.highcharts-dashboard-edit-toolbar-item:hover {
+.hcd-edit-toolbar-item:hover {
     cursor: pointer;
     background-color: #4B4B4D;
 }
 
-.highcharts-dashboard-edit-menu-vertical-separator {
+.hcd-edit-menu-vertical-separator {
     height: 1px;
     background-color: #ccc;
     margin-top: 2px;
@@ -305,7 +306,7 @@ h1 {
     cursor: default;
 }
 
-.highcharts-dashboard-edit-toolbar-options {
+.hcd-edit-toolbar-options {
     top: 0px;
     left: -200px;
     background: #252526;
@@ -316,22 +317,22 @@ h1 {
     width: 200px;
 }
 
-.highcharts-dashboard-edit-toolbar-show {
+.hcd-edit-toolbar-show {
     transition: 1s;
     left: 0;
 }
 
-.highcharts-dashboard-edit-layout-toolbar-space {
+.hcd-edit-layout-toolbar-space {
     transition: 1s;
     margin-left: 200px;  
 }
 
-.highcharts-dashboard-edit-toolbar-hide {
+.hcd-edit-toolbar-hide {
     transition: 1s;
     left: -200px;
 }
 
-.highcharts-dashboard-edit-toolbar-options-title {
+.hcd-edit-toolbar-options-title {
     width: 100%;
     text-align: center;
     padding: 5px;
@@ -340,7 +341,7 @@ h1 {
     border-bottom: 1px solid #444;
 }
 
-.highcharts-dashboard-edit-toolbar-options-tabs {
+.hcd-edit-toolbar-options-tabs {
     display: flex;
     justify-content: center;
     font-size: 0.876em;
@@ -348,7 +349,7 @@ h1 {
     background: #141414;
 }
 
-.highcharts-dashboard-edit-toolbar-options-tab {
+.hcd-edit-toolbar-options-tab {
     text-align: center;
     padding: 5px;
     border-bottom: 3px solid transparent;
@@ -357,16 +358,16 @@ h1 {
     font-size: 0.876em;
 }
 
-.highcharts-dashboard-edit-toolbar-options-tab:hover,
-.highcharts-dashboard-edit-toolbar-tab-active {
+.hcd-edit-toolbar-options-tab:hover,
+.hcd-edit-toolbar-tab-active {
     cursor: pointer;
     opacity: 1;
     border-color: #aac6ff;
 }
 
 
-.highcharts-dashboard-edit-hidden-cells .highcharts-dashboard-cell:not(.highcharts-dashboard-edit-current-cell),
-.highcharts-dashboard-edit-hidden-rows .highcharts-dashboard-row:not(.highcharts-dashboard-edit-current-row) {
+.hcd-edit-hidden-cells .hcd-cell:not(.hcd-edit-current-cell),
+.hcd-edit-hidden-rows .hcd-row:not(.hcd-edit-current-row) {
     opacity: 0.3;
 }
 
@@ -379,15 +380,15 @@ h1 {
         width: 100%;
     }
 
-    .highcharts-dashboard-row {
+    .hcd-row {
         flex-direction: cell;
     }
 
-    .highcharts-dashboard-cell {
+    .hcd-cell {
         flex: 1;
     }
 
-    .highcharts-dashboard-component {
+    .hcd-component {
         flex: 1;
     }
 

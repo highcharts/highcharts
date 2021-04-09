@@ -1,4 +1,4 @@
-const PREFIX = 'highcharts-dashboard-edit-';
+const PREFIX = 'hcd-edit-';
 
 const EditGlobals: EditGlobals = {
     prefix: PREFIX,
