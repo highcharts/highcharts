@@ -90,7 +90,7 @@ declare global {
  */
 
 /**
- * The border color for the lastVisiblePrice label.
+ * The border color for the `lastVisiblePrice` label.
  *
  * @type      {Highcharts.ColorType}
  * @since     7.0.0
@@ -99,7 +99,7 @@ declare global {
  */
 
 /**
- * The border corner radius of the lastVisiblePrice label.
+ * The border corner radius of the `lastVisiblePrice` label.
  *
  * @type      {number}
  * @default   3
@@ -109,7 +109,7 @@ declare global {
 */
 
 /**
- * Flag to enable lastVisiblePrice label.
+ * Flag to enable `lastVisiblePrice` label.
  *
  *
  * @type      {boolean}
@@ -120,7 +120,7 @@ declare global {
  */
 
 /**
- * A format string for the lastVisiblePrice label. Defaults to `{value}` for
+ * A format string for the `lastVisiblePrice` label. Defaults to `{value}` for
  * numeric axes and `{value:%b %d, %Y}` for datetime axes.
  *
  * @type      {string}
@@ -145,7 +145,7 @@ declare global {
  */
 
 /**
- * Text styles for the lastVisiblePrice label.
+ * Text styles for the `lastVisiblePrice` label.
  *
  * @type      {Highcharts.CSSObject}
  * @default   {"color": "white", "fontWeight": "normal", "fontSize": "11px", "textAlign": "center"}
@@ -155,7 +155,7 @@ declare global {
  */
 
 /**
- * The border width for the lastVisiblePrice label.
+ * The border width for the `lastVisiblePrice` label.
  *
  * @type      {number}
  * @default   0
@@ -165,13 +165,13 @@ declare global {
 */
 
 /**
- * Padding inside the lastVisiblePrice label.
+ * Padding inside the `lastVisiblePrice` label.
  *
  * @type      {number}
  * @default   8
  * @since     7.0
  * @product   highstock
- * @apioption plotOptions.series.lastVisiblePrice.label.padding.
+ * @apioption plotOptions.series.lastVisiblePrice.label.padding
  */
 
 /**
