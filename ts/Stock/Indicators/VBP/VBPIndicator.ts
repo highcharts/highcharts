@@ -782,6 +782,7 @@ namespace VBPIndicator {
 
 interface VBPIndicator {
     nameBase: string;
+    nameComponents: Array<string>;
     calculateOn: string;
     pointClass: typeof VBPPoint;
 
@@ -791,6 +792,7 @@ interface VBPIndicator {
 
 extend(VBPIndicator.prototype, {
     nameBase: 'Volume by Price',
+    nameComponents: ['ranges'],
     bindTo: {
         series: false,
         eventName: 'afterSetExtremes'
