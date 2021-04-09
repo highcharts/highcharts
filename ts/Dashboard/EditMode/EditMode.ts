@@ -5,12 +5,10 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
 import Resizer from './../Actions/Resizer.js';
 import type Layout from './../Layout/Layout.js';
-import CellEditToolbar from './Toolbars/CellToolbar.js';
-import RowEditToolbar from './Toolbars/RowToolbar.js';
-import OptionsToolbar from './Toolbars/OptionsToolbar.js';
+import CellEditToolbar from './Toolbar/CellToolbar.js';
+import RowEditToolbar from './Toolbar/RowToolbar.js';
+import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
-import Menu from './Menu/Menu.js';
-import defaultOptions from '../../Maps/MapNavigationOptionsDefault.js';
 
 const {
     merge,
@@ -66,7 +64,7 @@ class EditMode {
     public renderer: EditRenderer;
     public cellToolbar?: CellEditToolbar;
     public rowToolbar?: RowEditToolbar;
-    public optionsToolbar?: OptionsToolbar;
+    public sidebar?: Sidebar;
 
     /* *
     *
@@ -148,8 +146,8 @@ class EditMode {
         }
 
         // Init optionsToolbar.
-        if (!editMode.optionsToolbar) {
-            editMode.optionsToolbar = new OptionsToolbar(editMode);
+        if (!editMode.sidebar) {
+            editMode.sidebar = new Sidebar(editMode);
         }
 
         // Temp solution.
@@ -230,8 +228,8 @@ class EditMode {
                     break;
                 }
                 case 'options': {
-                    if (editMode.optionsToolbar && editMode.optionsToolbar.isVisible) {
-                        editMode.optionsToolbar.hide();
+                    if (editMode.sidebar && editMode.sidebar.isVisible) {
+                        editMode.sidebar.hide();
                     }
                     break;
                 }
@@ -251,9 +249,9 @@ namespace EditMode {
     }
 
     export interface Toolbars {
-        cell?: Menu.Options;
-        row?: Menu.Options;
-        settings?: Menu.Options;
+        cell?: CellEditToolbar.Options;
+        row?: RowEditToolbar.Options;
+        settings?: Sidebar.Options;
     }
 }
 

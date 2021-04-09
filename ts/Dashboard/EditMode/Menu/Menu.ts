@@ -10,7 +10,7 @@ const {
     merge
 } = U;
 
-abstract class Menu {
+class Menu {
     /* *
     *
     *  Static Properties
@@ -79,7 +79,7 @@ abstract class Menu {
     }
 
     // itemsSchemas - default items definitions.
-    protected initItems(
+    public initItems(
         itemsSchemas: Record<string, MenuItem.Options>
     ): void {
         const menu = this,

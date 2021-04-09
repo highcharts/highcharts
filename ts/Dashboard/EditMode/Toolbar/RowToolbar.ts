@@ -1,6 +1,6 @@
 import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
-import Cell from '../../Layout/Cell.js';
+import Row from '../../Layout/Row.js';
 import EditGlobals from '../EditGlobals.js';
 import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
@@ -8,16 +8,17 @@ import MenuItem from '../Menu/MenuItem.js';
 const {
     addEvent,
     merge,
+    css,
     objectEach
 } = U;
 
-class CellEditToolbar extends Menu {
+class RowEditToolbar extends Menu {
     /* *
     *
     *  Static Properties
     *
     * */
-    protected static readonly defaultOptions: CellEditToolbar.Options = {
+    protected static readonly defaultOptions: RowEditToolbar.Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
         itemsClassName: EditGlobals.classNames.editToolbarItem,
@@ -30,7 +31,7 @@ class CellEditToolbar extends Menu {
             type: 'drag',
             icon: EditGlobals.iconsURL + 'drag.svg',
             events: {
-                click: function (this: MenuItem, e: any): void {}
+                click: function (): void {}
             }
         },
         settings: {
@@ -38,7 +39,7 @@ class CellEditToolbar extends Menu {
             icon: EditGlobals.iconsURL + 'settings.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
-                    (this.menu as CellEditToolbar).onCellOptions(e);
+                    (this.menu as RowEditToolbar).onRowOptions(e);
                 }
             }
         },
@@ -47,7 +48,7 @@ class CellEditToolbar extends Menu {
             icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
-                    (this.menu as CellEditToolbar).onCellDestroy(e);
+                    (this.menu as RowEditToolbar).onRowDestroy(e);
                 }
             }
         }
@@ -61,20 +62,30 @@ class CellEditToolbar extends Menu {
     constructor(
         editMode: EditMode
     ) {
-        const toolbarCellOptions = (editMode.options.toolbars || {}).cell;
+        const toolbarRowOptions = (editMode.options.toolbars || {}).row;
 
         super(
             editMode.dashboard.container,
             merge(
-                CellEditToolbar.defaultOptions,
-                toolbarCellOptions
+                RowEditToolbar.defaultOptions,
+                toolbarRowOptions
             )
         );
 
         this.editMode = editMode;
 
+        // Temp.
+        if (this.container) {
+            css(this.container, {
+                backgroundColor: '#252526'
+            });
+
+            this.container.classList.add(EditGlobals.classNames.editRow);
+        }
+
         this.setEvents();
-        super.initItems(CellEditToolbar.items);
+
+        super.initItems(RowEditToolbar.items);
     }
 
     /* *
@@ -82,7 +93,7 @@ class CellEditToolbar extends Menu {
     *  Properties
     *
     * */
-    public cell?: Cell;
+    public row?: Row;
     public editMode: EditMode;
 
     /* *
@@ -101,33 +112,26 @@ class CellEditToolbar extends Menu {
             for (let j = 0, jEnd = layout.rows.length; j < jEnd; ++j) {
                 const row = layout.rows[j];
 
-                for (let k = 0, kEnd = row.cells.length; k < kEnd; ++k) {
-                    const cell = row.cells[k];
-
-                    if (cell.container) {
-                        addEvent(cell.container, 'mousemove', function (): void {
-                            toolbar.onMouseMove(cell);
-                        });
-                    }
+                if (row.container) {
+                    addEvent(row.container, 'mousemove', function (): void {
+                        toolbar.onMouseMove(row);
+                    });
                 }
             }
         }
     }
 
     private onMouseMove(
-        cell: Cell
+        row: Row
     ): void {
         const toolbar = this,
-            cellCnt = cell.container;
+            rowCnt = row.container;
 
         let x, y;
 
-        if (cellCnt && toolbar.editMode.isActive()) {
-            x = ((cellCnt.parentElement || {}).offsetLeft || 0) +
-              cellCnt.offsetLeft + cellCnt.offsetWidth - 30;
-
-            y = ((cellCnt.parentElement || {}).offsetTop || 0) +
-              cellCnt.offsetTop;
+        if (rowCnt && toolbar.editMode.isActive()) {
+            x = rowCnt.offsetLeft;
+            y = rowCnt.offsetTop;
 
             // Temp - activate all items.
             objectEach(toolbar.items, (item): void => {
@@ -135,33 +139,33 @@ class CellEditToolbar extends Menu {
             });
             super.show(x, y);
 
-            toolbar.cell = cell;
+            toolbar.row = row;
         }
     }
 
-    public onCellOptions(
+    public onRowOptions(
         e: any
     ): void {
         const toolbar = this;
 
-        if (toolbar.editMode.optionsToolbar) {
-            toolbar.editMode.optionsToolbar.show();
-            toolbar.editMode.optionsToolbar.updateTitle('CELL OPTIONS');
+        if (toolbar.editMode.sidebar) {
+            toolbar.editMode.sidebar.show();
+            toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
 
             // temporary -> move to OptionsToolbar
-            this.cell?.container?.classList.add(EditGlobals.classNames.currentEditedCell);
-            this.cell?.row.layout.dashboard.container.classList.add(
-                EditGlobals.classNames.disabledNotEditedCells
+            this.row?.container?.classList.add(EditGlobals.classNames.currentEditedRow);
+            this.row?.layout.dashboard.container.classList.add(
+                EditGlobals.classNames.disabledNotEditedRows
             );
         }
     }
 
-    public onCellDestroy(e: any): void {
+    public onRowDestroy(e: any): void {
         const toolbar = this;
 
-        if (toolbar.cell) {
-            toolbar.cell.destroy();
-            toolbar.cell = void 0;
+        if (toolbar.row) {
+            toolbar.row.destroy();
+            toolbar.row = void 0;
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
@@ -170,12 +174,12 @@ class CellEditToolbar extends Menu {
 
     public hide(): void {
         super.hide();
-        this.cell = void 0;
+        this.row = void 0;
     }
 }
 
-namespace CellEditToolbar {
+namespace RowEditToolbar {
     export interface Options extends Menu.Options {}
 }
 
-export default CellEditToolbar;
+export default RowEditToolbar;

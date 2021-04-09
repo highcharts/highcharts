@@ -1,14 +1,14 @@
-import EditMode from '../EditMode.js';
-import U from '../../../Core/Utilities.js';
-import Cell from '../../Layout/Cell.js';
-import Row from '../../Layout/Row.js';
-import Layout from '../../Layout/Layout.js';
-import EditGlobals from '../EditGlobals.js';
-import Menu from '../Menu/Menu.js';
-import type MenuItem from '../Menu/MenuItem.js';
-import DashboardGlobals from '../../DashboardGlobals.js';
-import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
-import WindbarbPoint from '../../../Series/Windbarb/WindbarbPoint.js';
+import EditMode from './EditMode.js';
+import U from '../../Core/Utilities.js';
+import Cell from '../Layout/Cell.js';
+import Row from '../Layout/Row.js';
+import Layout from '../Layout/Layout.js';
+import EditGlobals from './EditGlobals.js';
+import Menu from './Menu/Menu.js';
+import type MenuItem from './Menu/MenuItem.js';
+import DashboardGlobals from '../DashboardGlobals.js';
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import WindbarbPoint from '../../Series/Windbarb/WindbarbPoint.js';
 
 const {
     merge,
@@ -16,18 +16,21 @@ const {
     addEvent
 } = U;
 
-class OptionsToolbar extends Menu {
+class Sidebar {
     /* *
     *
     *  Static Properties
     *
     * */
-    protected static readonly defaultOptions: OptionsToolbar.Options = {
+    protected static readonly defaultOptions: Sidebar.Options = {
         enabled: true,
-        items: ['t1', 't2']
+        className: 'test',
+        menu: {
+            items: ['t1', 't2']
+        }
     }
 
-    public static tabs: Array<OptionsToolbar.TabOptions> = [{
+    public static tabs: Array<Sidebar.TabOptions> = [{
         type: 'design',
         icon: '',
         items: ['t1']
@@ -67,30 +70,25 @@ class OptionsToolbar extends Menu {
     constructor(
         editMode: EditMode
     ) {
-        const toolbarSettingsOptions =
-            (editMode.options.toolbars || {}).settings;
-
-        super(
-            editMode.dashboard.container,
-            merge(
-                OptionsToolbar.defaultOptions,
-                toolbarSettingsOptions
-            )
-        );
-
         this.tabs = {};
+        this.isVisible = false;
+        this.options = (editMode.options.toolbars || {}).settings;
         this.editMode = editMode;
 
-        if (this.container) {
-            this.container.classList.add(
-                EditGlobals.classNames.editToolbarOptions
-            );
-        }
+        this.container = this.renderContainer();
 
         this.renderTitle();
         this.initTabs();
 
-        super.initItems(OptionsToolbar.items);
+        this.menu = new Menu(
+            this.container,
+            merge(
+                Sidebar.defaultOptions.menu,
+                (this.options || {}).menu
+            )
+        );
+
+        this.menu.initItems(Sidebar.items);
     }
 
     /* *
@@ -99,10 +97,14 @@ class OptionsToolbar extends Menu {
     *
     * */
     public guiElement?: Cell|Row|Layout;
+    public container: HTMLDOMElement;
+    public options?: Sidebar.Options;
+    public isVisible: boolean;
     public editMode: EditMode;
     public title?: HTMLDOMElement;
-    public tabs: Record<string, OptionsToolbar.Tab>;
-    public activeTab?: OptionsToolbar.Tab;
+    public tabs: Record<string, Sidebar.Tab>;
+    public activeTab?: Sidebar.Tab;
+    public menu: Menu;
 
     /* *
     *
@@ -110,14 +112,27 @@ class OptionsToolbar extends Menu {
     *
     * */
 
-    private renderTitle(): void {
-        const toolbar = this;
+    private renderContainer(): HTMLDOMElement {
+        const sidebar = this;
 
-        const titleElement = toolbar.title = createElement(
+        return createElement(
             'div', {
-                className: EditGlobals.classNames.editToolbarOptionsTitle,
+                className: EditGlobals.classNames.editSidebar +
+                    ' ' + ((sidebar.options || {}).className || '')
+            },
+            {},
+            sidebar.editMode.dashboard.container
+        );
+    }
+
+    private renderTitle(): void {
+        const sidebar = this;
+
+        const titleElement = sidebar.title = createElement(
+            'div', {
+                className: EditGlobals.classNames.editSidebarTitle,
                 textContent: 'Cell Options' // shoudl be dynamic
-            }, {}, toolbar.container
+            }, {}, sidebar.container
         );
 
         // set default offset top, when cell or row is lower
@@ -142,13 +157,13 @@ class OptionsToolbar extends Menu {
     }
 
     private initTabs(): void {
-        const toolbar = this,
-            tabs = OptionsToolbar.tabs;
+        const sidebar = this,
+            tabs = Sidebar.tabs;
 
         const container = createElement(
             'div', {
-                className: EditGlobals.classNames.editToolbarOptionsTabsContainer
-            }, {}, toolbar.container
+                className: EditGlobals.classNames.editSidebarTabsContainer
+            }, {}, sidebar.container
         );
 
 
@@ -157,15 +172,15 @@ class OptionsToolbar extends Menu {
         for (let i = 0, iEnd = tabs.length; i < iEnd; ++i) {
             tabElement = createElement(
                 'div', {
-                    className: EditGlobals.classNames.editToolbarOptionsTab,
+                    className: EditGlobals.classNames.editSidebarTab,
                     textContent: tabs[i].type,
                     onclick: function (): void {
-                        toolbar.onTabClick(toolbar.tabs[tabs[i].type]);
+                        sidebar.onTabClick(sidebar.tabs[tabs[i].type]);
                     }
                 }, {}, container
             );
 
-            toolbar.tabs[tabs[i].type] = {
+            sidebar.tabs[tabs[i].type] = {
                 element: tabElement,
                 options: tabs[i],
                 isActive: false
@@ -176,43 +191,43 @@ class OptionsToolbar extends Menu {
     public updateTitle(
         text: string
     ): void {
-        const toolbar = this;
+        const sidebar = this;
 
-        if (toolbar.title) {
-            toolbar.title.textContent = text;
+        if (sidebar.title) {
+            sidebar.title.textContent = text;
         }
     }
 
     public onTabClick(
-        tab: OptionsToolbar.Tab
+        tab: Sidebar.Tab
     ): void {
-        const toolbar = this;
+        const sidebar = this;
 
-        if (toolbar.activeTab) {
-            toolbar.activeTab.isActive = false;
-            toolbar.activeTab.element.classList.remove(
-                EditGlobals.classNames.editToolbarOptionsTabActive
+        if (sidebar.activeTab) {
+            sidebar.activeTab.isActive = false;
+            sidebar.activeTab.element.classList.remove(
+                EditGlobals.classNames.editSidebarTabActive
             );
         }
 
         tab.element.classList.add(
-            EditGlobals.classNames.editToolbarOptionsTabActive
+            EditGlobals.classNames.editSidebarTabActive
         );
 
-        toolbar.activeTab = tab;
+        sidebar.activeTab = tab;
         tab.isActive = true;
 
-        toolbar.updateActiveItems(tab.options.items);
+        sidebar.menu.updateActiveItems(tab.options.items);
     }
 
     public show(): void {
         if (this.container) {
             // activate first tab.
-            this.onTabClick(this.tabs[OptionsToolbar.tabs[0].type]);
+            this.onTabClick(this.tabs[Sidebar.tabs[0].type]);
 
             if (!this.isVisible) {
                 this.container.classList.add(
-                    EditGlobals.classNames.editToolbarOptionsShow
+                    EditGlobals.classNames.editSidebarShow
                 );
                 this.isVisible = true;
 
@@ -228,7 +243,7 @@ class OptionsToolbar extends Menu {
     public hide(): void {
         if (this.container) {
             this.container.classList.remove(
-                EditGlobals.classNames.editToolbarOptionsShow
+                EditGlobals.classNames.editSidebarShow
             );
 
             this.isVisible = false;
@@ -262,8 +277,12 @@ class OptionsToolbar extends Menu {
     }
 }
 
-namespace OptionsToolbar {
-    export interface Options extends Menu.Options {}
+namespace Sidebar {
+    export interface Options {
+        enabled: boolean;
+        className: string;
+        menu: Menu.Options;
+    }
 
     export interface TabOptions {
         type: string;
@@ -278,4 +297,4 @@ namespace OptionsToolbar {
     }
 }
 
-export default OptionsToolbar;
+export default Sidebar;

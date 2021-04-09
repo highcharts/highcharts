@@ -14,13 +14,13 @@ const EditGlobals: EditGlobals = {
         editModeEnabled: PREFIX + 'enabled',
         editToolbar: PREFIX + 'toolbar',
         editToolbarItem: PREFIX + 'toolbar-item',
-        editToolbarOptions: PREFIX + 'toolbar-options',
-        editToolbarOptionsShow: PREFIX + 'toolbar-show',
-        editToolbarOptionsHide: PREFIX + 'toolbar-hide',
-        editToolbarOptionsTitle: PREFIX + 'toolbar-options-title',
-        editToolbarOptionsTab: PREFIX + 'toolbar-options-tab',
-        editToolbarOptionsTabsContainer: PREFIX + 'toolbar-options-tabs',
-        editToolbarOptionsTabActive: PREFIX + 'toolbar-tab-active',
+        editSidebar: PREFIX + 'sidebar',
+        editSidebarShow: PREFIX + 'sidebar-show',
+        editSidebarHide: PREFIX + 'sidebar-hide',
+        editSidebarTitle: PREFIX + 'sidebar-title',
+        editSidebarTab: PREFIX + 'sidebar-tab',
+        editSidebarTabsContainer: PREFIX + 'sidebar-tabs',
+        editSidebarTabActive: PREFIX + 'toolbar-tab-active',
         disabledNotEditedCells: PREFIX + 'hidden-cells',
         disabledNotEditedRows: PREFIX + 'hidden-rows',
         currentEditedCell: PREFIX + 'current-cell',
@@ -32,7 +32,7 @@ const EditGlobals: EditGlobals = {
         menuHorizontalSeparator: PREFIX + 'menu-horizontal-separator',
         menuDestroy: PREFIX + 'menu-destroy',
         layoutToolbarSpace: PREFIX + 'layout-toolbar-space',
-        editToolbarOptionsWrapper: PREFIX + 'toolbar-options-wrapper'
+        editSidebarWrapper: PREFIX + 'sidebar-wrapper'
     },
     lang: {
         editMode: 'Edit mode',
@@ -59,13 +59,13 @@ namespace EditGlobals {
         editModeEnabled: string;
         editToolbar: string;
         editToolbarItem: string;
-        editToolbarOptions: string;
-        editToolbarOptionsShow: string;
-        editToolbarOptionsHide: string;
-        editToolbarOptionsTitle: string;
-        editToolbarOptionsTab: string;
-        editToolbarOptionsTabsContainer: string;
-        editToolbarOptionsTabActive: string;
+        editSidebar: string;
+        editSidebarShow: string;
+        editSidebarHide: string;
+        editSidebarTitle: string;
+        editSidebarTab: string;
+        editSidebarTabsContainer: string;
+        editSidebarTabActive: string;
         disabledNotEditedCells: string;
         disabledNotEditedRows: string;
         currentEditedCell: string;
@@ -77,7 +77,7 @@ namespace EditGlobals {
         menuHorizontalSeparator: string;
         menuDestroy: string;
         layoutToolbarSpace: string;
-        editToolbarOptionsWrapper: string;
+        editSidebarWrapper: string;
     }
 
     export interface LangOptions {
