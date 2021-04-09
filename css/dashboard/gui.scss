@@ -216,7 +216,6 @@ h1 {
     /*border: 1px solid #555;*/
     background-color: #fff;
     margin-left: auto;
-    padding: 10px;
     border-radius: 3px;
     position: absolute;
     display: none;
@@ -249,9 +248,10 @@ h1 {
 }
 
 .hcd-edit-context-menu-item {
-    height: 30px;
-    padding: 5px;
+    padding: 10px 15px;
     color: #555;
+    font-size: 0.876em;
+    line-height: 1em;
     cursor: pointer;
 }
 
@@ -299,7 +299,7 @@ h1 {
 
 .hcd-edit-menu-vertical-separator {
     height: 1px;
-    background-color: #ccc;
+    background-color: #E2E4E8;
     margin-top: 2px;
     margin-bottom: 2px;
     padding: 0px;
