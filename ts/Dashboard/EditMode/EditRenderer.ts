@@ -52,6 +52,122 @@ class EditRenderer {
 
         return ctxBtnElement;
     }
+
+    public renderSelect(
+        options: Array<string>,
+        parentElement: HTMLDOMElement
+    ): HTMLDOMElement|undefined {
+        let customSelect;
+
+        if (parentElement) {
+            customSelect = createElement(
+                'select',
+                {
+                    className: 'select' // EditGlobals.classNames.customSelect
+                },
+                {},
+                parentElement
+            );
+
+            for (let i = 0, iEnd = options.length; i < iEnd; ++i) {
+                createElement(
+                    'option',
+                    {},
+                    {},
+                    customSelect
+                );
+            }
+        }
+
+        return customSelect;
+    }
+
+    public renderSwitcher(
+        parentElement: HTMLDOMElement
+    ): HTMLDOMElement|undefined {
+        let switcher;
+
+        if (parentElement) {
+            switcher = createElement(
+                'label',
+                {
+                    className: 'switch'
+                },
+                {},
+                parentElement
+            );
+
+            this.renderCheckbox(switcher);
+
+            createElement(
+                'span',
+                {
+                    className: 'slider'
+                },
+                {},
+                parentElement
+            );
+        }
+
+        return switcher;
+    }
+
+    public renderInput(
+        parentElement: HTMLDOMElement
+    ): HTMLDOMElement|undefined {
+        let input;
+
+        if (parentElement) {
+            input = createElement(
+                'input', {
+                    type: 'text'
+                }, {
+
+                },
+                parentElement
+            );
+        }
+
+        return input;
+    }
+
+    public renderTextarea(
+        parentElement: HTMLDOMElement
+    ): HTMLDOMElement|undefined {
+        let textarea;
+
+        if (parentElement) {
+            textarea = createElement(
+                'textarea', {
+
+                }, {
+
+                },
+                parentElement
+            );
+        }
+
+        return textarea;
+    }
+
+    public renderCheckbox(
+        parentElement: HTMLDOMElement
+    ): HTMLDOMElement|undefined {
+        let input;
+
+        if (parentElement) {
+            input = createElement(
+                'input', {
+                    type: 'checkbox'
+                }, {
+
+                },
+                parentElement
+            );
+        }
+
+        return input;
+    }
 }
 
 namespace EditRenderer {}
