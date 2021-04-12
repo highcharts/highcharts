@@ -63,7 +63,7 @@ class EditRenderer {
             customSelect = createElement(
                 'select',
                 {
-                    className: 'select' // EditGlobals.classNames.customSelect
+                    className: EditGlobals.classNames.customSelect
                 },
                 {},
                 parentElement
@@ -91,7 +91,7 @@ class EditRenderer {
             switcher = createElement(
                 'label',
                 {
-                    className: 'switch'
+                    className: EditGlobals.classNames.switchWrapper
                 },
                 {},
                 parentElement
@@ -102,7 +102,7 @@ class EditRenderer {
             createElement(
                 'span',
                 {
-                    className: 'slider'
+                    className: EditGlobals.classNames.switchSlider
                 },
                 {},
                 parentElement
