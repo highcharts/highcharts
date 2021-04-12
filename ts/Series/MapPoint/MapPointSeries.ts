@@ -126,20 +126,19 @@ class MapPointSeries extends ScatterSeries {
         // Create map based translation
         if (mapView) {
             this.points.forEach((p): void => {
-                if (p.options.coordinates && p.y === void 0) {
-                    const xy = mapView.projection
-                        .forward(p.options.coordinates);
-                    p.x = xy[0];
-                    p.y = xy[1];
+                let { x, y } = p;
+                if (p.options.coordinates) {
+                    const xy = mapView.projection.forward(
+                        p.options.coordinates
+                    );
+                    x = xy[0];
+                    y = xy[1];
                 }
 
-                if (isNumber(p.x) && isNumber(p.y)) {
-                    const { x, y } = mapView.projectedUnitsToPixels({
-                        x: p.x,
-                        y: p.y
-                    });
-                    p.plotX = x;
-                    p.plotY = y;
+                if (isNumber(x) && isNumber(y)) {
+                    const plotCoords = mapView.projectedUnitsToPixels({ x, y });
+                    p.plotX = plotCoords.x;
+                    p.plotY = plotCoords.y;
                 } else {
                     p.plotX = void 0;
                     p.plotY = void 0;
