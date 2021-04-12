@@ -26,7 +26,8 @@ class EditContextMenu extends Menu {
     public static items: Record<string, MenuItem.Options> =
     merge(Menu.items, {
         editMode: {
-            type: 'editMode',
+            id: 'editMode',
+            type: 'text',
             text: 'Edit mode',
             events: {
                 click: function (this: MenuItem, e: any): void {
@@ -35,7 +36,8 @@ class EditContextMenu extends Menu {
             }
         },
         saveLocal: {
-            type: 'saveLocal',
+            id: 'saveLocal',
+            type: 'text',
             text: 'Save locally',
             events: {
                 click: function (): void {}
@@ -67,8 +69,8 @@ class EditContextMenu extends Menu {
             for (let i = 0, iEnd = this.options.items.length; i < iEnd; ++i) {
                 if (typeof this.options.items[i] === 'string') {
                     items.push(this.options.items[i] as string);
-                } else if ((this.options.items[i] as MenuItem.Options).type) {
-                    items.push((this.options.items[i] as MenuItem.Options).type);
+                } else if ((this.options.items[i] as MenuItem.Options).id) {
+                    items.push((this.options.items[i] as MenuItem.Options).id);
                 }
             }
 

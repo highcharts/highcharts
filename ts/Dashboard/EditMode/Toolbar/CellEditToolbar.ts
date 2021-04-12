@@ -30,14 +30,16 @@ class CellEditToolbar extends EditToolbar {
     public static items: Record<string, MenuItem.Options> =
     merge(Menu.items, {
         drag: {
-            type: 'drag',
+            id: 'drag',
+            type: 'icon',
             icon: EditGlobals.iconsURL + 'drag.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {}
             }
         },
         settings: {
-            type: 'settings',
+            id: 'settings',
+            type: 'icon',
             icon: EditGlobals.iconsURL + 'settings.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
@@ -46,7 +48,8 @@ class CellEditToolbar extends EditToolbar {
             }
         },
         destroy: {
-            type: 'destroy',
+            id: 'destroy',
+            type: 'icon',
             icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {

@@ -18,11 +18,13 @@ class Menu {
 
     public static items: Record<string, MenuItem.Options> = {
         horizontalSeparator: {
+            id: 'horizontalSeparator',
             type: 'horizontalSeparator',
             text: '',
             className: EditGlobals.classNames.menuHorizontalSeparator
         },
         verticalSeparator: {
+            id: 'verticalSeparator',
             type: 'verticalSeparator',
             text: '',
             className: EditGlobals.classNames.menuVerticalSeparator
@@ -98,19 +100,19 @@ class Menu {
         for (let i = 0, iEnd = optionsItems.length; i < iEnd; ++i) {
             itemConfig = optionsItems[i];
             itemSchema = typeof itemConfig === 'string' ? itemsSchemas[itemConfig] :
-                itemConfig.type ? itemsSchemas[itemConfig.type] : {};
+                itemConfig.id ? itemsSchemas[itemConfig.id] : {};
 
             options = typeof itemConfig === 'string' ?
-                merge(itemSchema, { type: itemConfig }) :
+                merge(itemSchema, { id: itemConfig }) :
                 merge(itemSchema, itemConfig);
 
-            if (options.type) {
+            if (options.id) {
                 item = new MenuItem(menu, options);
 
                 // Save initialized item.
-                menu.items[item.options.type] = item;
+                menu.items[item.options.id] = item;
             } else {
-                // Error - defined item needs a type.
+                // Error - defined item needs an id.
             }
         }
     }
@@ -124,7 +126,7 @@ class Menu {
 
         // Deactivate items.
         for (let i = 0, iEnd = menu.activeItems.length; i < iEnd; ++i) {
-            if (items.indexOf(menu.activeItems[i].options.type) === -1) {
+            if (items.indexOf(menu.activeItems[i].options.id) === -1) {
                 menu.activeItems[i].deactivate();
             }
         }

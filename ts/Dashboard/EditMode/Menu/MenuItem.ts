@@ -17,7 +17,8 @@ class MenuItem {
     * */
 
     public static defaultOptions: MenuItem.Options = {
-        type: ''
+        id: '',
+        type: 'text'
     }
 
     /* *
@@ -112,7 +113,8 @@ class MenuItem {
 
 namespace MenuItem {
     export interface Options {
-        type: string;
+        id: string;
+        type?: string;
         text?: string;
         className?: string;
         events?: Record<Event['type'], Function>;
