@@ -62,6 +62,9 @@ const drawMap = projectionKey => {
         x0: undefined,
         y0: undefined
     }, {
+        eqc: {
+            projectionName: 'eqc'
+        },
         miller: {
             projectionName: 'mill',
             over: true

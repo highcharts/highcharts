@@ -22,6 +22,7 @@ const {
 export default class Projection {
 
     public options: ProjectionOptions;
+    public isGeographicCoordinateSystem: boolean = false;
 
     // Calculate the great circle between two given coordinates
     public static greatCircle(
@@ -121,6 +122,8 @@ export default class Projection {
 
                 this.forward = projection.forward;
                 this.inverse = projection.inverse;
+
+                this.isGeographicCoordinateSystem = true;
             }
 
         // Set up d3-geo based projection
@@ -149,19 +152,27 @@ export default class Projection {
             this.d3Projection = d3.geoPath(projection);
             this.path = this.d3Path;
 
+            this.isGeographicCoordinateSystem = true;
+
         }
     }
 
     // Project a lonlat coordinate position to xy. Dynamically overridden when
     // projection is set
-    public forward(lonlat: [number, number]): [number, number] {
-        return lonlat;
+    public forward(lonLat: [number, number]): [number, number] {
+        return lonLat;
+        // Flips y because the path option uses the SVG coordinate system with
+        // origin in top left, while geo coordinates use origin in bottom left.
+        // return [lonLat[0], -lonLat[1]];
     }
 
     // Project an xy chart coordinate position to lonlat. Dynamically overridden
     // when projection is set
     public inverse(xy: [number, number]): [number, number] {
         return xy;
+        // Flips y because the path option uses the SVG coordinate system with
+        // origin in top left, while geo coordinates use origin in bottom left.
+        // return [xy[0], -xy[1]];
     }
 
     // Take a GeoJSON geometry and return a translated SVGPath
@@ -169,14 +180,11 @@ export default class Projection {
 
         const path: SVGPath = [];
 
-        // @todo: Better check
-        const isPreProjected = !this.options.projectionName;
-
         const addToPath = (polygon: LonLatArray[]): void => {
 
             const poly = polygon.slice();
 
-            if (!isPreProjected) {
+            if (this.isGeographicCoordinateSystem) {
                 let i = poly.length - 1;
                 while (i--) {
 
