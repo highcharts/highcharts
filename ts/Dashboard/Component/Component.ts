@@ -3,6 +3,7 @@ import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
 import type DataJSON from '../../Data/DataJSON';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type TextOptions from './TextOptions';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -516,9 +517,11 @@ namespace Component {
         store?: DataStore<any>;
         id?: string;
         style?: CSSObject;
-        title: string | false | undefined;
-        caption: string | false | undefined;
+        title: textOptionsType;
+        caption: textOptionsType;
     }
+
+    export type textOptionsType = string | false | TextOptions | undefined;
 
     // JSON compatible options for exprot
     export interface ComponentJSONOptions extends DataJSON.JSONObject {

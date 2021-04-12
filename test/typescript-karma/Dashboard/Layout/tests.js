@@ -65,7 +65,7 @@ test('Components in layout with no row style', function (assert) {
         components
     });
 
-    const comps = document.querySelectorAll('.highcharts-dashboard-component')
+    const comps = document.querySelectorAll('.hcd-component')
     for (const component of comps) {
         assert.strictEqual(component.style.height, '', 'Height should be unset')
         assert.strictEqual(component.style.width, '', 'Width should be unset')
@@ -90,10 +90,10 @@ test('Components in rows with set height', function (assert) {
         components
     });
 
-    const columns = document.querySelectorAll('.highcharts-dashboard-cell')
+    const columns = document.querySelectorAll('.hcd-cell')
     assert.strictEqual(columns.length, 2)
     for (const column of columns) {
-        const components = column.querySelectorAll('.highcharts-dashboard-component')
+        const components = column.querySelectorAll('.hcd-component')
         for (const component of components) {
             assert.strictEqual(component.style.height, column.style.height, 'Height should be set to the row')
             assert.strictEqual(component.style.width, '', 'Width should be unset')
@@ -118,10 +118,10 @@ test('Components in layout with set width', function (assert) {
         components
     });
 
-    const columns = document.querySelectorAll('.highcharts-dashboard-cell')
+    const columns = document.querySelectorAll('.hcd-cell')
     assert.strictEqual(columns.length, 2)
     for (const column of columns) {
-        const components = column.querySelectorAll('.highcharts-dashboard-component');
+        const components = column.querySelectorAll('.hcd-component');
         assert.strictEqual(column.style.width, '800px');
         for (const component of components) {
             assert.strictEqual(component.style.height, '', 'Height should be unset')
@@ -147,7 +147,7 @@ test('Components and rows in layout with set height', function (assert) {
         components
     });
 
-    const rows = document.querySelectorAll('.highcharts-dashboard-row')
+    const rows = document.querySelectorAll('.hcd-row')
     assert.strictEqual(rows.length, 2)
 
     // This is on the todo list :)

@@ -95,6 +95,43 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
      *
      * */
 
+    public createTextElement(
+        tagName: string,
+        elementName: string,
+        textOptions: Component.textOptionsType
+    ): HTMLElement | undefined {
+        const classBase = 'hcd';
+
+        if (typeof textOptions === 'object') {
+            const { className, text, style } = textOptions;
+            return createElement(tagName, {
+                className: className || `${classBase}-component-${elementName}`,
+                textContent: text
+            }, style);
+        }
+
+        if (typeof textOptions === 'string') {
+            return createElement(tagName, {
+                className: `${classBase}-component-${elementName}`,
+                textContent: textOptions
+            });
+        }
+    }
+
+    public setTitle(titleOptions: Component.textOptionsType): void {
+        const titleElement = this.createTextElement('h1', 'title', titleOptions);
+        if (titleElement) {
+            this.innerElements = [titleElement, ...this.innerElements];
+        }
+    }
+
+    public setCaption(captionOptions: Component.textOptionsType): void {
+        const captionElement = this.createTextElement('div', 'caption', captionOptions);
+        if (captionElement) {
+            this.innerElements = [captionElement, ...this.innerElements];
+        }
+    }
+
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
@@ -102,21 +139,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
 
         this.constructTree();
 
-        if (this.options.title) {
-            const titleElement = createElement('h1', {
-                className: 'component-title',
-                textContent: this.options.title
-            });
-            this.innerElements = [titleElement, ...this.innerElements];
-        }
-
-        if (this.options.caption) {
-            const captionElement = createElement('p', {
-                className: 'component-caption',
-                textContent: this.options.caption
-            });
-            this.innerElements.push(captionElement);
-        }
+        this.setTitle(this.options.title);
+        this.setCaption(this.options.caption);
 
         this.innerElements.forEach((element): void => {
             this.element.appendChild(element);
