@@ -73,7 +73,7 @@ class MenuItem {
             'div', {
                 textContent: options.icon ? '' : options.text,
                 onclick: function (): void {
-                    if (options.events && options.events.click) {
+                    if (!options.type && options.events && options.events.click) {
                         options.events.click.apply(item, arguments);
                     }
                 },
@@ -96,13 +96,16 @@ class MenuItem {
     }
 
     public setChildComponent(): void {
-        const item = this;
+        const item = this,
+            options = item.options;
 
         if (item.options.type === 'switcher') {
             EditRenderer.renderSwitcher(
                 item.container,
-                function (e: any): void {
-                    (item.menu as EditContextMenu).editMode.onEditModeToggle(e.target);
+                function (): void {
+                    if (options.events && options.events.click) {
+                        options.events.click.apply(item, arguments);
+                    }
                 }
             );
         }

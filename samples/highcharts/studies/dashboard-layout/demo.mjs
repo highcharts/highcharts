@@ -32,13 +32,13 @@ let dashboard = new Dashboard('container', {
             cell: {
                 menu: {
                     items: [{
-                        type: 'drag',
+                        id: 'drag',
                         icon: '/code/gfx/dashboard-icons/drag.svg'
                     }, {
-                        type: 'settings',
+                        id: 'settings',
                         icon: '/code/gfx/dashboard-icons/settings.svg'
                     }, {
-                        type: 'my-option-1',
+                        id: 'my-option-1',
                         text: 'o1',
                         events: {
                             click: function () {
@@ -46,7 +46,7 @@ let dashboard = new Dashboard('container', {
                             }
                         }
                     }, {
-                        type: 'my-button',
+                        id: 'my-button',
                         text: 'pl',
                         events: {
                             click: function () {
@@ -54,7 +54,7 @@ let dashboard = new Dashboard('container', {
                             }
                         }
                     }, {
-                        type: 'destroy',
+                        id: 'destroy',
                         icon: '/code/gfx/dashboard-icons/destroy.svg'
                     }]
                 }
@@ -62,13 +62,13 @@ let dashboard = new Dashboard('container', {
             row: {
                 menu: {
                     items: [{
-                        type: 'drag',
+                        id: 'drag',
                         icon: '/code/gfx/dashboard-icons/drag.svg'
                     }, {
-                        type: 'settings',
+                        id: 'settings',
                         icon: '/code/gfx/dashboard-icons/settings.svg'
                     }, {
-                        type: 'destroy',
+                        id: 'destroy',
                         icon: '/code/gfx/dashboard-icons/destroy.svg'
                     }]
                 }

@@ -106,19 +106,17 @@ class EditMode {
         }
     }
 
-    public onEditModeToggle(btnElement: HTMLDOMElement): void {
+    public onEditModeToggle(): void {
         const editMode = this;
 
         if (editMode.active) {
-            editMode.deactivateEditMode(btnElement);
+            editMode.deactivateEditMode();
         } else {
-            editMode.activateEditMode(btnElement);
+            editMode.activateEditMode();
         }
     }
 
-    public activateEditMode(
-        btnElement?: HTMLDOMElement
-    ): void {
+    public activateEditMode(): void {
         const editMode = this,
             dashboard = editMode.dashboard;
 
@@ -150,29 +148,17 @@ class EditMode {
             editMode.sidebar = new Sidebar(editMode);
         }
 
-        // Temp solution.
-        if (btnElement) {
-            css(btnElement, { color: '#aac6ff' });
-        }
-
         // Set edit mode active class to dashboard.
         editMode.dashboard.container.classList.add(
             EditGlobals.classNames.editModeEnabled
         );
     }
 
-    public deactivateEditMode(
-        btnElement?: HTMLDOMElement
-    ): void {
+    public deactivateEditMode(): void {
         const editMode = this,
             dashboardCnt = editMode.dashboard.container;
 
         editMode.active = false;
-
-        // Temp solution.
-        if (btnElement) {
-            css(btnElement, { color: '#555' });
-        }
 
         dashboardCnt.classList.remove(
             EditGlobals.classNames.editModeEnabled

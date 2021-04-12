@@ -28,7 +28,12 @@ class EditContextMenu extends Menu {
         editMode: {
             id: 'editMode',
             type: 'switcher',
-            text: 'Edit mode'
+            text: 'Edit mode',
+            events: {
+                click: function (this: MenuItem, e: any): void {
+                    (this.menu as EditContextMenu).editMode.onEditModeToggle();
+                }
+            }
         },
         saveLocal: {
             id: 'saveLocal',
@@ -73,7 +78,7 @@ class EditContextMenu extends Menu {
         }
 
         // need refactor
-        /*addEvent(document, 'click', (event): void => {
+        addEvent(document, 'click', (event): void => {
             if (
                 event.target !== this.container &&
                 event.target !== editMode.contextButtonElement &&
@@ -81,8 +86,7 @@ class EditContextMenu extends Menu {
             ) {
                 this.setVisible(false);
             }
-        });*/
-
+        });
     }
 
     /* *

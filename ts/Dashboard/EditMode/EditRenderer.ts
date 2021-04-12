@@ -92,8 +92,7 @@ class EditRenderer {
             switcher = createElement(
                 'label',
                 {
-                    className: EditGlobals.classNames.switchWrapper,
-                    // onclick: callback
+                    className: EditGlobals.classNames.switchWrapper
                 },
                 {},
                 parentElement
@@ -104,7 +103,8 @@ class EditRenderer {
             createElement(
                 'span',
                 {
-                    className: EditGlobals.classNames.switchSlider
+                    className: EditGlobals.classNames.switchSlider,
+                    onclick: callback
                 },
                 {},
                 switcher
