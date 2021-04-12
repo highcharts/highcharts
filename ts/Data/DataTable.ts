@@ -1232,6 +1232,32 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
+     * Checks for given column names or aliases.
+     *
+     * @param {Array<string>} columnNamesOrAliases
+     * Column names of aliases to check.
+     *
+     * @return {boolean}
+     * Returns `true` if all have been found, otherwise `false`.
+     */
+    public hasColumns(columnNamesOrAliases: Array<string>): boolean {
+        const table = this,
+            aliasMap = table.aliasMap,
+            columns = table.columns;
+
+        for (let i = 0, iEnd = columnNamesOrAliases.length; i < iEnd; ++i) {
+            if (
+                !columns[columnNamesOrAliases[i]] &&
+                !aliasMap[columnNamesOrAliases[i]]
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Searches for a specific cell value.
      *
      * @param {string} columnNameOrAlias
