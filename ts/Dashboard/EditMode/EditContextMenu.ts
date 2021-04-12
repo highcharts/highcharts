@@ -77,11 +77,12 @@ class EditContextMenu extends Menu {
             this.updateActiveItems(items);
         }
 
-        // need refactor
         addEvent(document, 'click', (event): void => {
             if (
                 event.target !== this.container &&
                 event.target !== editMode.contextButtonElement &&
+                !event.target.classList.contains(EditGlobals.classNames.switchSlider) &&
+                event.target.tagName !== 'INPUT' &&
                 this.isVisible
             ) {
                 this.setVisible(false);
