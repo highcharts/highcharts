@@ -4,6 +4,7 @@ import U from '../../../Core/Utilities.js';
 import type { CSSJSONObject } from '../../../Data/DataCSSObject';
 import Menu from './Menu.js';
 import EditRenderer from './../EditRenderer.js';
+import type EditContextMenu from '../EditContextMenu.js';
 
 const {
     createElement,
@@ -98,7 +99,12 @@ class MenuItem {
         const item = this;
 
         if (item.options.type === 'switcher') {
-            EditRenderer.renderSwitcher(item.container);
+            EditRenderer.renderSwitcher(
+                item.container,
+                function (e: any): void {
+                    (item.menu as EditContextMenu).editMode.onEditModeToggle(e.target);
+                }
+            );
         }
     }
 

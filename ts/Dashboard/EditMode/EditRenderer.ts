@@ -83,7 +83,8 @@ class EditRenderer {
     }
 
     public static renderSwitcher(
-        parentElement: HTMLDOMElement
+        parentElement: HTMLDOMElement,
+        callback?: Function
     ): HTMLDOMElement|undefined {
         let switcher;
 
@@ -91,7 +92,8 @@ class EditRenderer {
             switcher = createElement(
                 'label',
                 {
-                    className: EditGlobals.classNames.switchWrapper
+                    className: EditGlobals.classNames.switchWrapper,
+                    // onclick: callback
                 },
                 {},
                 parentElement
@@ -105,7 +107,7 @@ class EditRenderer {
                     className: EditGlobals.classNames.switchSlider
                 },
                 {},
-                parentElement
+                switcher
             );
         }
 

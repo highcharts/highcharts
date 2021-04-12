@@ -168,24 +168,26 @@ body {
     margin-left: 10px;
 }
 
-.hcd-custom-select {
+.hcd-edit-custom-select {
 
 }
 
-.hcd-switch-wrapper {
+.hcd-edit-switch-wrapper {
     position: relative;
     display: inline-block;
     width: 43px;
     height: 22px;
+    float: right;
+    margin-top: -4px;
 }
 
-.hcd-switch-wrapper input {
+.hcd-edit-switch-wrapper input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.hcd-switch-slider {
+.hcd-edit-switch-slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -198,7 +200,7 @@ body {
     border-radius: 34px;
 }
 
-.hcd-switch-slider:before {
+.hcd-edit-switch-slider:before {
     position: absolute;
     content: "";
     height: 16px;
@@ -211,20 +213,19 @@ body {
     border-radius: 50%;
 }
 
-.hcd-switch-wrapper input:checked + .slider {
+.hcd-edit-switch-wrapper input:checked + .hcd-edit-switch-slider {
     background-color: #2196F3;
 }
 
-.hcd-switch-wrapper input:focus + .slider {
+.hcd-edit-switch-wrapper input:focus + .hcd-edit-switch-slider {
     box-shadow: 0 0 1px #2196F3;
 }
 
-.hcd-switch-wrapper input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+.hcd-edit-switch-wrapper input:checked + .hcd-edit-switch-slider:before {
+    -webkit-transform: translateX(18px);
+    -ms-transform: translateX(18px);
+    transform: translateX(18px);
 }
-
 
 .add-item {
     text-align: center;
