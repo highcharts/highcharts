@@ -181,6 +181,7 @@ class MapView {
         redraw = true,
         animation?: boolean|Partial<AnimationOptionsObject>
     ): void {
+        let zoomingIn = false;
         if (center) {
             this.center = center;
         }
@@ -188,12 +189,19 @@ class MapView {
             if (typeof this.minZoom === 'number') {
                 zoom = Math.max(zoom, this.minZoom);
             }
+            zoomingIn = zoom > this.zoom;
             this.zoom = zoom;
         }
 
         // Stay within the data bounds
         const bounds = this.getProjectedBounds();
-        if (bounds) {
+        if (
+            bounds &&
+            // When zooming in, we don't need to adjust to the bounds, as it may
+            // shift the locatoin under the mouse, and we are quite sure the
+            // bounds are within
+            !zoomingIn
+        ) {
             const projectedCenter = this.projection.forward(this.center);
             const { plotWidth, plotHeight } = this.chart;
             const scale = (MapView.tileSize / MapView.worldSize) *
