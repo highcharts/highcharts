@@ -33,44 +33,48 @@ let dashboard = new Dashboard('container', {
         },
         toolbars: {
             cell: {
-                items: [{
-                    type: 'drag',
-                    icon: '/code/gfx/dashboard-icons/drag.svg'
-                }, {
-                    type: 'settings',
-                    icon: '/code/gfx/dashboard-icons/settings.svg'
-                }, {
-                    type: 'my-option-1',
-                    text: 'o1',
-                    events: {
-                        click: function () {
-                            console.log('hello world!');
+                menu: {
+                    items: [{
+                        type: 'drag',
+                        icon: '/code/gfx/dashboard-icons/drag.svg'
+                    }, {
+                        type: 'settings',
+                        icon: '/code/gfx/dashboard-icons/settings.svg'
+                    }, {
+                        type: 'my-option-1',
+                        text: 'o1',
+                        events: {
+                            click: function () {
+                                console.log('hello world!');
+                            }
                         }
-                    }
-                }, {
-                    type: 'my-button',
-                    text: 'pl',
-                    events: {
-                        click: function () {
-                            console.log('hello world!');
+                    }, {
+                        type: 'my-button',
+                        text: 'pl',
+                        events: {
+                            click: function () {
+                                console.log('hello world!');
+                            }
                         }
-                    }
-                }, {
-                    type: 'destroy',
-                    icon: '/code/gfx/dashboard-icons/destroy.svg'
-                }]
+                    }, {
+                        type: 'destroy',
+                        icon: '/code/gfx/dashboard-icons/destroy.svg'
+                    }]
+                }
             },
             row: {
-                items: [{
-                    type: 'drag',
-                    icon: '/code/gfx/dashboard-icons/drag.svg'
-                }, {
-                    type: 'settings',
-                    icon: '/code/gfx/dashboard-icons/settings.svg'
-                }, {
-                    type: 'destroy',
-                    icon: '/code/gfx/dashboard-icons/destroy.svg'
-                }]
+                menu: {
+                    items: [{
+                        type: 'drag',
+                        icon: '/code/gfx/dashboard-icons/drag.svg'
+                    }, {
+                        type: 'settings',
+                        icon: '/code/gfx/dashboard-icons/settings.svg'
+                    }, {
+                        type: 'destroy',
+                        icon: '/code/gfx/dashboard-icons/destroy.svg'
+                    }]
+                }
             },
             settings: {
 

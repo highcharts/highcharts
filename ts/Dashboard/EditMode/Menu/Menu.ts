@@ -6,7 +6,6 @@ import type { CSSJSONObject } from './../../../Data/DataCSSObject';
 
 const {
     createElement,
-    css,
     merge
 } = U;
 
@@ -37,13 +36,18 @@ class Menu {
     * */
     constructor(
         parentElement: HTMLDOMElement,
-        options: Menu.Options
+        options: Menu.Options,
+        parent?: any
     ) {
         this.parentElement = parentElement;
         this.isVisible = false;
         this.activeItems = [];
         this.options = options;
         this.items = {};
+
+        if (parent) {
+            this.parent = parent;
+        }
 
         this.setContainer();
     }
@@ -59,6 +63,7 @@ class Menu {
     public isVisible: boolean;
     public items: Record<string, MenuItem>;
     public activeItems: Array<MenuItem>;
+    public parent: any;
 
     /* *
     *
@@ -145,40 +150,6 @@ class Menu {
         for (let i = 0, iEnd = menu.activeItems.length; i < iEnd; ++i) {
             menu.activeItems[i].deactivate();
         }
-    }
-
-    public show(
-        x: number,
-        y: number,
-        items?: Array<string>
-    ): void {
-        const menu = this;
-
-        if (items) {
-            menu.updateActiveItems(items);
-        }
-
-        if (menu.container) {
-            css(menu.container, {
-                left: x + 'px',
-                top: y + 'px'
-            });
-        }
-
-        menu.isVisible = true;
-    }
-
-    public hide(): void {
-        const menu = this;
-
-        if (menu.container) {
-            css(menu.container, {
-                left: '-9999px',
-                top: '-9999px'
-            });
-        }
-
-        menu.isVisible = false;
     }
 }
 

@@ -5,8 +5,8 @@ import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 import EditRenderer from './EditRenderer.js';
 import Resizer from './../Actions/Resizer.js';
 import type Layout from './../Layout/Layout.js';
-import CellEditToolbar from './Toolbar/CellToolbar.js';
-import RowEditToolbar from './Toolbar/RowToolbar.js';
+import CellEditToolbar from './Toolbar/CellEditToolbar.js';
+import RowEditToolbar from './Toolbar/RowEditToolbar.js';
 import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
 

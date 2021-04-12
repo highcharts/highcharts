@@ -4,15 +4,15 @@ import Row from '../../Layout/Row.js';
 import EditGlobals from '../EditGlobals.js';
 import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
+import EditToolbar from './EditToolbar.js';
 
 const {
     addEvent,
     merge,
-    css,
     objectEach
 } = U;
 
-class RowEditToolbar extends Menu {
+class RowEditToolbar extends EditToolbar {
     /* *
     *
     *  Static Properties
@@ -20,9 +20,12 @@ class RowEditToolbar extends Menu {
     * */
     protected static readonly defaultOptions: RowEditToolbar.Options = {
         enabled: true,
-        className: EditGlobals.classNames.editToolbar,
-        itemsClassName: EditGlobals.classNames.editToolbarItem,
-        items: ['drag', 'settings', 'destroy']
+        className: EditGlobals.classNames.editToolbar + ' ' +
+            EditGlobals.classNames.editToolbarRow,
+        menu: {
+            itemsClassName: EditGlobals.classNames.editToolbarItem,
+            items: ['drag', 'settings', 'destroy']
+        }
     }
 
     public static items: Record<string, MenuItem.Options> =
@@ -39,7 +42,7 @@ class RowEditToolbar extends Menu {
             icon: EditGlobals.iconsURL + 'settings.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
-                    (this.menu as RowEditToolbar).onRowOptions(e);
+                    (this.menu.parent as RowEditToolbar).onRowOptions(e);
                 }
             }
         },
@@ -48,7 +51,7 @@ class RowEditToolbar extends Menu {
             icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {
-                    (this.menu as RowEditToolbar).onRowDestroy(e);
+                    (this.menu.parent as RowEditToolbar).onRowDestroy(e);
                 }
             }
         }
@@ -62,30 +65,16 @@ class RowEditToolbar extends Menu {
     constructor(
         editMode: EditMode
     ) {
-        const toolbarRowOptions = (editMode.options.toolbars || {}).row;
-
         super(
-            editMode.dashboard.container,
+            editMode,
             merge(
                 RowEditToolbar.defaultOptions,
-                toolbarRowOptions
+                (editMode.options.toolbars || {}).row
             )
         );
 
-        this.editMode = editMode;
-
-        // Temp.
-        if (this.container) {
-            css(this.container, {
-                backgroundColor: '#252526'
-            });
-
-            this.container.classList.add(EditGlobals.classNames.editRow);
-        }
-
         this.setEvents();
-
-        super.initItems(RowEditToolbar.items);
+        this.menu.initItems(RowEditToolbar.items);
     }
 
     /* *
@@ -94,7 +83,6 @@ class RowEditToolbar extends Menu {
     *
     * */
     public row?: Row;
-    public editMode: EditMode;
 
     /* *
     *
@@ -134,11 +122,10 @@ class RowEditToolbar extends Menu {
             y = rowCnt.offsetTop;
 
             // Temp - activate all items.
-            objectEach(toolbar.items, (item): void => {
+            objectEach(toolbar.menu.items, (item): void => {
                 item.activate();
             });
-            super.show(x, y);
-
+            toolbar.setPosition(x, y);
             toolbar.row = row;
         }
     }
@@ -171,15 +158,10 @@ class RowEditToolbar extends Menu {
             toolbar.editMode.hideToolbars(['cell', 'row']);
         }
     }
-
-    public hide(): void {
-        super.hide();
-        this.row = void 0;
-    }
 }
 
 namespace RowEditToolbar {
-    export interface Options extends Menu.Options {}
+    export interface Options extends EditToolbar.Options {}
 }
 
 export default RowEditToolbar;

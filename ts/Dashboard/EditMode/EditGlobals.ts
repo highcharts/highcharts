@@ -14,6 +14,7 @@ const EditGlobals: EditGlobals = {
         editModeEnabled: PREFIX + 'enabled',
         editToolbar: PREFIX + 'toolbar',
         editToolbarItem: PREFIX + 'toolbar-item',
+        editToolbarRow: PREFIX + 'toolbar-row',
         editSidebar: PREFIX + 'sidebar',
         editSidebarShow: PREFIX + 'sidebar-show',
         editSidebarHide: PREFIX + 'sidebar-hide',
@@ -25,7 +26,6 @@ const EditGlobals: EditGlobals = {
         disabledNotEditedRows: PREFIX + 'hidden-rows',
         currentEditedCell: PREFIX + 'current-cell',
         currentEditedRow: PREFIX + 'current-row',
-        editRow: PREFIX + 'toolbar-row',
         menuItem: PREFIX + 'menu-item',
         menu: PREFIX + 'menu',
         menuVerticalSeparator: PREFIX + 'menu-vertical-separator',
@@ -59,6 +59,7 @@ namespace EditGlobals {
         editModeEnabled: string;
         editToolbar: string;
         editToolbarItem: string;
+        editToolbarRow: string;
         editSidebar: string;
         editSidebarShow: string;
         editSidebarHide: string;
@@ -70,7 +71,6 @@ namespace EditGlobals {
         disabledNotEditedRows: string;
         currentEditedCell: string;
         currentEditedRow: string;
-        editRow: string;
         menuItem: string;
         menu: string;
         menuVerticalSeparator: string;
