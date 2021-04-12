@@ -27,8 +27,8 @@ class EditContextMenu extends Menu {
     merge(Menu.items, {
         editMode: {
             id: 'editMode',
-            type: 'text',
-            text: 'Edit mode',
+            type: 'switcher',
+            text: '',
             events: {
                 click: function (this: MenuItem, e: any): void {
                     (this.menu as EditContextMenu).editMode.onEditModeToggle(e.target);

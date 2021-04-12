@@ -53,7 +53,7 @@ class EditRenderer {
         return ctxBtnElement;
     }
 
-    public renderSelect(
+    public static renderSelect(
         options: Array<string>,
         parentElement: HTMLDOMElement
     ): HTMLDOMElement|undefined {
@@ -82,7 +82,7 @@ class EditRenderer {
         return customSelect;
     }
 
-    public renderSwitcher(
+    public static renderSwitcher(
         parentElement: HTMLDOMElement
     ): HTMLDOMElement|undefined {
         let switcher;
@@ -97,7 +97,7 @@ class EditRenderer {
                 parentElement
             );
 
-            this.renderCheckbox(switcher);
+            EditRenderer.renderCheckbox(switcher);
 
             createElement(
                 'span',
@@ -112,7 +112,7 @@ class EditRenderer {
         return switcher;
     }
 
-    public renderInput(
+    public static renderInput(
         parentElement: HTMLDOMElement
     ): HTMLDOMElement|undefined {
         let input;
@@ -131,7 +131,7 @@ class EditRenderer {
         return input;
     }
 
-    public renderTextarea(
+    public static renderTextarea(
         parentElement: HTMLDOMElement
     ): HTMLDOMElement|undefined {
         let textarea;
@@ -150,7 +150,7 @@ class EditRenderer {
         return textarea;
     }
 
-    public renderCheckbox(
+    public static renderCheckbox(
         parentElement: HTMLDOMElement
     ): HTMLDOMElement|undefined {
         let input;

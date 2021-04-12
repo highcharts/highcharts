@@ -51,7 +51,7 @@ class Menu {
             this.parent = parent;
         }
 
-        this.setContainer();
+        this.container = this.setContainer();
     }
 
     /* *
@@ -61,7 +61,7 @@ class Menu {
     * */
     public parentElement: HTMLDOMElement;
     public options: Menu.Options;
-    public container?: HTMLDOMElement;
+    public container: HTMLDOMElement;
     public isVisible: boolean;
     public items: Record<string, MenuItem>;
     public activeItems: Array<MenuItem>;
@@ -72,16 +72,14 @@ class Menu {
     *  Functions
     *
     * */
-    private setContainer(): void {
-        const menu = this;
-
-        menu.container = createElement(
+    private setContainer(): HTMLDOMElement {
+        return createElement(
             'div', {
                 className: EditGlobals.classNames.menu +
-                    ' ' + (menu.options.className || '')
+                    ' ' + (this.options.className || '')
             },
             this.options.style || {},
-            menu.parentElement
+            this.parentElement
         );
     }
 

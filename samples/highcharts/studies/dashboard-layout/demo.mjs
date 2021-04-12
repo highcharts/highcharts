@@ -11,18 +11,15 @@ let dashboard = new Dashboard('container', {
             icon: '/code/gfx/dashboard-icons/menu.svg',
             enabled: true,
             items: [{
-                type: 'saveLocal',
+                id: 'saveLocal',
                 className: 'test-test-test',
                 events: {
                     click: function () {
                         console.log(this);
                     }
                 }
-            }, 'verticalSeparator', {
-                type: 'editMode',
-                text: 'Edit on/off'
-            }, {
-                type: 'my-export',
+            }, 'verticalSeparator', 'editMode', {
+                id: 'my-export',
                 text: 'My export',
                 events: {
                     click: function () {

@@ -3,6 +3,7 @@ import EditGlobals from '../EditGlobals.js';
 import U from '../../../Core/Utilities.js';
 import type { CSSJSONObject } from '../../../Data/DataCSSObject';
 import Menu from './Menu.js';
+import EditRenderer from './../EditRenderer.js';
 
 const {
     createElement,
@@ -34,7 +35,8 @@ class MenuItem {
         this.isActive = false;
         this.options = merge(MenuItem.defaultOptions, options || {});
 
-        this.setContainer();
+        this.container = this.setContainer();
+        this.setChildComponent();
     }
 
     /* *
@@ -44,7 +46,7 @@ class MenuItem {
     * */
     public menu: Menu;
     public options: MenuItem.Options;
-    public container?: HTMLDOMElement;
+    public container: HTMLDOMElement;
     public isActive: boolean;
 
     /* *
@@ -52,7 +54,7 @@ class MenuItem {
     *  Functions
     *
     * */
-    private setContainer(): void {
+    private setContainer(): HTMLDOMElement {
         const item = this,
             options = item.options;
 
@@ -66,7 +68,7 @@ class MenuItem {
             className += ' ' + options.className;
         }
 
-        item.container = createElement(
+        const container = createElement(
             'div', {
                 textContent: options.icon ? '' : options.text,
                 onclick: function (): void {
@@ -81,12 +83,22 @@ class MenuItem {
         );
 
         if (options.icon) {
-            (item.container.style as any)['background-image'] = 'url(' +
+            (container.style as any)['background-image'] = 'url(' +
                 options.icon + ')';
 
             if (options.type === 'destroy') {
-                item.container.classList.add(EditGlobals.classNames.menuDestroy);
+                container.classList.add(EditGlobals.classNames.menuDestroy);
             }
+        }
+
+        return container;
+    }
+
+    public setChildComponent(): void {
+        const item = this;
+
+        if (item.options.type === 'switcher') {
+            EditRenderer.renderSwitcher(item.container);
         }
     }
 
