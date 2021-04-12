@@ -247,7 +247,7 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
     }
 });
 
-let mouseDownCenter: Highcharts.ProjectedXY;
+let mouseDownCenterProjected: [number, number];
 let mouseDownKey: string;
 addEvent(Chart, 'pan', function (e: PointerEvent): void {
     const {
@@ -268,16 +268,17 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
 
         // Reset starting position
         if (key !== mouseDownKey) {
-            mouseDownCenter = merge(mapView.center);
+            mouseDownCenterProjected = mapView.projection
+                .forward(mapView.center);
             mouseDownKey = key;
         }
 
-        const center: Highcharts.ProjectedXY = {
-            y: mouseDownCenter.y + (mouseDownY - chartY) / scale,
-            x: mouseDownCenter.x + (mouseDownX - chartX) / scale
-        };
+        const newCenter = mapView.projection.inverse([
+            mouseDownCenterProjected[0] + (mouseDownX - chartX) / scale,
+            mouseDownCenterProjected[1] - (mouseDownY - chartY) / scale
+        ]);
 
-        mapView.setView(center, void 0, true, false);
+        mapView.setView(newCenter, void 0, true, false);
 
         e.preventDefault();
     }
@@ -292,8 +293,8 @@ addEvent(Chart, 'selection', function (evt: PointerEvent): void {
         if (!(evt as any).resetSelection) {
             const x = evt.x - this.plotLeft;
             const y = evt.y - this.plotTop;
-            const { y: y1, x: x1 } = mapView.toValues({ x, y });
-            const { y: y2, x: x2 } = mapView.toValues(
+            const { y: y1, x: x1 } = mapView.pixelsToProjectedUnits({ x, y });
+            const { y: y2, x: x2 } = mapView.pixelsToProjectedUnits(
                 { x: x + evt.width, y: y + evt.height }
             );
             mapView.fitToBounds(

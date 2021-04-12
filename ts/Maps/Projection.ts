@@ -169,6 +169,7 @@ export default class Projection {
 
         const path: SVGPath = [];
 
+        // @todo: Better check
         const isPreProjected = !this.options.projectionName;
 
         const addToPath = (polygon: LonLatArray[]): void => {

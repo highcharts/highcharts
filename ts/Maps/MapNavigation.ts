@@ -411,7 +411,7 @@ extend<Chart|Highcharts.MapNavigationChart>(Chart.prototype, /** @lends Chart.pr
             this.mapView.zoomBy(
                 howMuch,
                 typeof xProjected === 'number' && typeof yProjected === 'number' ?
-                    { x: xProjected, y: yProjected } :
+                    this.mapView.projection.inverse([xProjected, yProjected]) :
                     void 0,
                 typeof chartX === 'number' && typeof chartY === 'number' ?
                     [chartX, chartY] :

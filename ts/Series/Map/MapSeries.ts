@@ -408,7 +408,7 @@ class MapSeries extends ScatterSeries {
      *
      * */
 
-    public baseView?: { center: Highcharts.ProjectedXY; zoom: number };
+    public baseView?: { center: Highcharts.LonLatArray; zoom: number };
 
     public bounds?: Highcharts.MapBounds;
 
@@ -686,7 +686,7 @@ class MapSeries extends ScatterSeries {
             // corner.
             if (mapView) {
                 this.baseView = {
-                    center: { x: mapView.center.x, y: mapView.center.y },
+                    center: [mapView.center[0], mapView.center[1]],
                     zoom: mapView.zoom
                 };
             }
@@ -702,6 +702,12 @@ class MapSeries extends ScatterSeries {
 
         // Just update the scale and transform for better performance
         } else if (mapView && baseView) {
+
+            const baseViewCenterProjected = mapView.projection
+                .forward(baseView.center);
+            const mapViewCenterProjected = mapView.projection
+                .forward(mapView.center);
+
             scale = Math.pow(2, mapView.zoom) / Math.pow(2, baseView.zoom);
 
             const oldTransA = (MapView.tileSize / MapView.worldSize) *
@@ -709,15 +715,15 @@ class MapSeries extends ScatterSeries {
             const newTransA = (MapView.tileSize / MapView.worldSize) *
                 Math.pow(2, mapView.zoom);
 
-            const oldLeft = baseView.center.x - (chart.plotWidth / 2) /
+            const oldLeft = baseViewCenterProjected[0] - (chart.plotWidth / 2) /
                 oldTransA;
-            const newLeft = mapView.center.x - (chart.plotWidth / 2) /
+            const newLeft = mapViewCenterProjected[0] - (chart.plotWidth / 2) /
                 newTransA;
             translateX = (oldLeft - newLeft) * newTransA;
 
-            const oldTop = baseView.center.y - (chart.plotHeight / 2) /
+            const oldTop = -baseViewCenterProjected[1] - (chart.plotHeight / 2) /
                 oldTransA;
-            const newTop = mapView.center.y - (chart.plotHeight / 2) /
+            const newTop = -mapViewCenterProjected[1] - (chart.plotHeight / 2) /
                 newTransA;
             translateY = (oldTop - newTop) * newTransA;
 
@@ -1225,7 +1231,16 @@ class MapSeries extends ScatterSeries {
             // 256x256 px tile
             const transA = (MapView.tileSize / MapView.worldSize) *
                 Math.pow(2, mapView.zoom);
-            const { x, y } = mapView.center;
+            const projectedCenter = mapView.projection.forward(mapView.center);
+            const x = projectedCenter[0];
+            let y = projectedCenter[1];
+
+            // @todo: Better check
+            if (mapView.projection.options.projectionName) {
+                y = -y;
+            }
+
+
             const xOffset = this.chart.plotWidth / 2;
             const yOffset = this.chart.plotHeight / 2;
             path.forEach((seg): void => {

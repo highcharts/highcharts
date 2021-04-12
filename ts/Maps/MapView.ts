@@ -29,6 +29,7 @@ const {
  */
 declare global {
     namespace Highcharts {
+        type LonLatArray = [number, number];
         type ProjectedXY = { x: number; y: number };
         type MapBounds = {
             midX?: number;
@@ -40,7 +41,7 @@ declare global {
         };
 
         interface MapViewOptions {
-            center: ProjectedXY; // @todo: LonLatArray
+            center: LonLatArray;
             zoom: number;
             projection?: ProjectionOptions;
         }
@@ -87,7 +88,7 @@ class MapView {
         userOptions?: DeepPartial<Highcharts.MapViewOptions>
     ) {
         const options = merge(true, {
-            center: { x: 0, y: 0 },
+            center: [0, 0],
             projection: {
                 d3: win.d3,
                 proj4: chart.options.chart.proj4 || win.proj4
@@ -103,7 +104,7 @@ class MapView {
         this.zoom = options.zoom;
     }
 
-    public center: Highcharts.ProjectedXY;
+    public center: Highcharts.LonLatArray;
     public minZoom?: number;
     public options: Highcharts.MapViewOptions;
     public projection: Projection;
@@ -141,12 +142,12 @@ class MapView {
                 this.minZoom = zoom;
             }
 
-            this.setView(
-                { y: (b.y2 + b.y1) / 2, x: (b.x2 + b.x1) / 2 },
-                zoom,
-                redraw,
-                animation
-            );
+            const center = this.projection.inverse([
+                (b.x2 + b.x1) / 2,
+                (b.y2 + b.y1) / 2
+            ]);
+
+            this.setView(center, zoom, redraw, animation);
         }
     }
 
@@ -175,7 +176,7 @@ class MapView {
     }
 
     public setView(
-        center?: Highcharts.ProjectedXY,
+        center?: Highcharts.LonLatArray,
         zoom?: number,
         redraw = true,
         animation?: boolean|Partial<AnimationOptionsObject>
@@ -193,33 +194,46 @@ class MapView {
         // Stay within the data bounds
         const bounds = this.getProjectedBounds();
         if (bounds) {
-            const cntr = this.center;
+            const projectedCenter = this.projection.forward(this.center);
             const { plotWidth, plotHeight } = this.chart;
             const scale = (MapView.tileSize / MapView.worldSize) *
                 Math.pow(2, this.zoom);
-            const topLeft = this.toPixels({ y: bounds.y1, x: bounds.x1 });
-            const bottomRight = this.toPixels({ y: bounds.y2, x: bounds.x2 });
+            const bottomLeft = this.projectedUnitsToPixels({
+                x: bounds.x1,
+                y: bounds.y1
+            });
+            const topRight = this.projectedUnitsToPixels({
+                x: bounds.x2,
+                y: bounds.y2
+            });
+            // Pixel coordinate system is reversed vs projected
+            const x1 = bottomLeft.x;
+            const y1 = topRight.y;
+            const x2 = topRight.x;
+            const y2 = bottomLeft.y;
 
             // Off west
-            if (topLeft.x < 0 && bottomRight.x < plotWidth) {
+            if (x1 < 0 && x2 < plotWidth) {
                 // Adjust eastwards
-                cntr.x += Math.max(topLeft.x, bottomRight.x - plotWidth) / scale;
+                projectedCenter[0] += Math.max(x1, x2 - plotWidth) / scale;
             }
             // Off east
-            if (bottomRight.x > plotWidth && topLeft.x > 0) {
+            if (x2 > plotWidth && x1 > 0) {
                 // Adjust westwards
-                cntr.x += Math.min(bottomRight.x - plotWidth, topLeft.x) / scale;
+                projectedCenter[0] += Math.min(x2 - plotWidth, x1) / scale;
             }
             // Off north
-            if (topLeft.y < 0 && bottomRight.y < plotHeight) {
+            if (y1 < 0 && y2 < plotHeight) {
                 // Adjust southwards
-                cntr.y += Math.max(topLeft.y, bottomRight.y - plotHeight) / scale;
+                projectedCenter[1] -= Math.max(y1, y2 - plotHeight) / scale;
             }
             // Off south
-            if (bottomRight.y > plotHeight && topLeft.y > 0) {
+            if (y2 > plotHeight && y1 > 0) {
                 // Adjust northwards
-                cntr.y += Math.min(bottomRight.y - plotHeight, topLeft.y) / scale;
+                projectedCenter[1] -= Math.min(y2 - plotHeight, y1) / scale;
             }
+
+            this.center = this.projection.inverse(projectedCenter);
         }
 
         if (redraw) {
@@ -227,26 +241,28 @@ class MapView {
         }
     }
 
-    public toPixels(pos: Highcharts.ProjectedXY): PositionObject {
+    public projectedUnitsToPixels(pos: Highcharts.ProjectedXY): PositionObject {
         const scale = (MapView.tileSize / MapView.worldSize) *
             Math.pow(2, this.zoom);
+        const projectedCenter = this.projection.forward(this.center);
         const centerPxX = this.chart.plotWidth / 2;
         const centerPxY = this.chart.plotHeight / 2;
-        const x = centerPxX - scale * (this.center.x - pos.x);
-        const y = centerPxY - scale * (this.center.y - pos.y);
+        const x = centerPxX - scale * (projectedCenter[0] - pos.x);
+        const y = centerPxY + scale * (projectedCenter[1] - pos.y);
         return { x, y };
     }
 
-    public toValues(pos: PositionObject): Highcharts.ProjectedXY {
+    public pixelsToProjectedUnits(pos: PositionObject): Highcharts.ProjectedXY {
         const { x, y } = pos;
         const scale = (MapView.tileSize / MapView.worldSize) *
             Math.pow(2, this.zoom);
         const centerPxX = this.chart.plotWidth / 2;
         const centerPxY = this.chart.plotHeight / 2;
 
-        const projectedY = this.center.x - ((centerPxX - x) / scale);
-        const projectedX = this.center.y - ((centerPxY - y) / scale);
-        return { y: projectedY, x: projectedX };
+        const projectedCenter = this.projection.forward(this.center);
+        const projectedX = projectedCenter[0] - ((centerPxY - y) / scale);
+        const projectedY = projectedCenter[1] - ((centerPxX - x) / scale);
+        return { x: projectedX, y: projectedY };
     }
 
     public update(
@@ -291,16 +307,20 @@ class MapView {
 
     public zoomBy(
         howMuch?: number,
-        coords?: Highcharts.ProjectedXY,
+        coords?: Highcharts.LonLatArray,
         chartCoords?: [number, number]
     ): void {
         const chart = this.chart;
-        let { x, y } = coords || {};
+        const projectedCenter = this.projection.forward(this.center);
+
+        // let { x, y } = coords || {};
+        let [x, y] = coords ? this.projection.forward(coords) : [];
+
 
         if (typeof howMuch === 'number') {
             const zoom = this.zoom + howMuch;
 
-            let center: Highcharts.ProjectedXY|undefined;
+            let center: Highcharts.LonLatArray|undefined;
 
             // Keep chartX and chartY stationary - convert to lat and lng
             if (chartCoords) {
@@ -310,20 +330,23 @@ class MapView {
 
                 const offsetX = chartX - chart.plotLeft - chart.plotWidth / 2;
                 const offsetY = chartY - chart.plotTop - chart.plotHeight / 2;
-                y = this.center.y + offsetY / transA;
-                x = this.center.x + offsetX / transA;
+                x = projectedCenter[0] + offsetX / transA;
+                y = projectedCenter[1] + offsetY / transA;
             }
 
-            // Keep lat and lng stationary by adjusting the center
+            // Keep lon and lat stationary by adjusting the center
             if (typeof x === 'number' && typeof y === 'number') {
                 const scale = 1 - Math.pow(2, this.zoom) / Math.pow(2, zoom);
 
-                center = this.center;
-                const offsetY = center.y - y;
-                const offsetX = center.x - x;
+                // const projectedCenter = this.projection.forward(this.center);
 
-                center.y -= offsetY * scale;
-                center.x -= offsetX * scale;
+                const offsetX = projectedCenter[0] - x;
+                const offsetY = projectedCenter[1] - y;
+
+                projectedCenter[0] -= offsetX * scale;
+                projectedCenter[1] += offsetY * scale;
+
+                center = this.projection.inverse(projectedCenter);
             }
 
             this.setView(center, zoom);

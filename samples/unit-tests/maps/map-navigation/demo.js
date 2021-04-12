@@ -78,7 +78,7 @@ QUnit.test(
         chart.mapZoom(0.2);
 
 
-        const { x, y } = chart.mapView.center;
+        const [lon, lat] = chart.mapView.center;
 
         controller.pan(
             [plotLeft + 50, plotTop + 50],
@@ -86,14 +86,14 @@ QUnit.test(
         );
 
         assert.notEqual(
-            chart.mapView.center.x,
-            x,
+            chart.mapView.center[0],
+            lon,
             'The chart should pan horizontally'
         );
 
         assert.notEqual(
-            chart.mapView.center.y,
-            y,
+            chart.mapView.center[1],
+            lat,
             'The chart should pan vertically'
         );
     }

@@ -136,6 +136,14 @@ const drawMap = projectionKey => {
 
             mapView: {
                 projection
+                /*
+                center: [4.90, 53.38],
+                zoom: 4,
+                projection: {
+                    projectionName: 'robin',
+                    proj4: libs.proj4
+                }
+                */
             },
 
             colorAxis: {
@@ -193,6 +201,12 @@ const drawMap = projectionKey => {
         });
         console.timeEnd('@mapChart');
 
+        /*
+        setTimeout(function () {
+            chart.mapView.setView([4.90, 53.38], 4);
+            console.log(chart.mapView.center, chart.mapView.zoom)
+        }, 1200);
+        */
 
     } else {
         chart.update({
