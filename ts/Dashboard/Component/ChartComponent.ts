@@ -4,6 +4,7 @@ import DataSeriesConverter from '../../Data/DataSeriesConverter.js';
 import DataStore from '../../Data/Stores/DataStore.js';
 import DataJSON from '../../Data/DataJSON.js';
 import DataParser from '../../Data/Parsers/DataParser.js';
+import Series from '../../Core/Series/Series.js';
 
 import Highcharts from '../../masters/highcharts.src.js';
 import {
@@ -213,7 +214,7 @@ class ChartComponent extends Component<ChartComponent.Event> {
         const seriesFromStore: any = [];
         if (this.store?.table) {
             const data = DataParser.getColumnsFromTable(this.store?.table, false).slice(1);
-            const keys = this.store.table.getColumnNames();
+            const keys = this.store.table.getColumnNames(true).slice(1);
             data.forEach((datum, i): void => {
                 let id, name;
                 if (keys && keys[i]) {
