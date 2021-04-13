@@ -4030,6 +4030,7 @@ class Series {
         series.tableReset = true;
 
         table.clear();
+        table.setColumn('x');
         table.setColumns(newTable.getColumns());
 
         if (!table.hcEvents) {
@@ -4141,15 +4142,12 @@ class Series {
             data = (options.data || []),
             pointValKey = (options.pointValKey || 'y'),
             keys = (options.keys || series.pointArrayMap || [pointValKey]),
-            points = series.data,
-            table = series.table;
+            points = series.data;
 
         let column: DataTable.Column,
             columnName: string,
-            dataPoint: (PointOptions|PointShortOptions),
             index: number,
-            point: Point,
-            row: (DataTable.Row|undefined);
+            point: Point;
 
         switch (e.type) {
             case 'afterClearRows':
@@ -4159,9 +4157,10 @@ class Series {
 
             case 'afterClearColumn':
             case 'afterDeleteColumn':
+            case 'afterSetColumn':
                 column = e.column;
                 columnName = e.columnName;
-                if (keys.indexOf(columnName) !== -1) {
+                if (columnName === 'x' || keys.indexOf(columnName) !== -1) {
                     for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
                         series.syncTableRow(i);
                     }
@@ -4183,24 +4182,10 @@ class Series {
             case 'afterSetRow':
                 index = e.rowIndex;
                 point = points[index];
-                if (point) {
-                    point.update(
-                        e.type === 'afterSetCell' ?
-                            { [e.columnName]: e.cellValue } :
-                            table.getRowObject(index) as any
-                    );
-                    return;
-                }
                 series.syncTableRow(index);
-                break;
-
-            case 'afterSetColumn':
-                column = e.column;
-                columnName = e.columnName;
-                if (keys.indexOf(columnName) !== -1) {
-                    for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
-                        series.syncTableRow(i);
-                    }
+                if (point) {
+                    point.update(data[index]);
+                    return;
                 }
                 break;
 
@@ -4230,15 +4215,18 @@ class Series {
             dataOptions[index] = null;
         } else if (rowOptions && typeof rowOptions === 'object') {
             if (rowOptions instanceof Array) {
-                dataOptions[index] = row as Array<(number|string|null)>;
+                rowOptions.splice(
+                    (row.length < rowOptions.length ? 1 : 0),
+                    row.length,
+                    ...row as Array<(number|string|null)>
+                );
             } else {
-                const row = table.getRowObject(index, keys);
-                merge(true, rowOptions, row);
+                merge(true, rowOptions, table.getRowObject(index, keys));
             }
         } else if (rowOptions === null) {
             dataOptions[index] = row as Array<(number|string|null)>;
         } else {
-            dataOptions[index] = row[0] as (number|string|null);
+            dataOptions[index] = table.getCellAsNumber(pointValKey, index);
         }
     }
 

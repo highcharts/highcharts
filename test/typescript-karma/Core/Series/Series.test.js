@@ -47,7 +47,7 @@ QUnit.test('Series.getTableFromSeriesData', function (assert) {
 
 QUnit.test('Series.syncTable', function (assert) {
 
-    const done = assert.async(),
+    const done = assert.async(5),
         chart = new Highcharts.Chart(document.createElement('div'), {
             series: [{
                 name: 'Test',
@@ -57,21 +57,77 @@ QUnit.test('Series.syncTable', function (assert) {
         series = chart.series[0],
         table = series.table;
 
-    assert.strictEqual(
-        table.getRowCount(),
-        series.data.length,
-        'Number of series points should be equal to number of table rows.'
-    );
+    test1();
 
-    table.setRow([4]);
-
-    setTimeout(function () {
+    function test1() {
         assert.strictEqual(
-            series.data.length,
             table.getRowCount(),
+            series.data.length,
             'Number of series points should be equal to number of table rows.'
         );
         done();
-    }, 10);
+        test2();
+    }
+
+    function test2() {
+        table.setRowObject({ y: 4 });
+        window.setTimeout(function () {
+            assert.strictEqual(
+                series.data.length,
+                table.getRowCount(),
+                'Number of series points should be equal to number of table rows.'
+            );
+            assert.deepEqual(
+                series.options.data,
+                [1, 2, 3, 4],
+                'Series data points should have equal data structure.'
+            );
+            done();
+            test3();
+        }, 10);
+    }
+
+    function test3() {
+        table.setRow([1, 5], 1);
+        window.setTimeout(function () {
+            assert.deepEqual(
+                series.options.data,
+                [1, 5, 3, 4],
+                'Series data points should have changed accordingly.'
+            );
+            done();
+            test4();
+        }, 10);
+    }
+
+    function test4() {
+        table.deleteRow(2);
+        window.setTimeout(function () {
+            assert.strictEqual(
+                series.data.length,
+                table.getRowCount(),
+                'Number of series points should be equal to number of table rows.'
+            );
+            assert.deepEqual(
+                series.options.data,
+                [1, 5, 4],
+                'Series data points should be changed at expected index.'
+            );
+            done();
+            test5();
+        }, 10);
+    }
+
+    function test5() {
+        table.setColumn('y', [3, 2, 1]);
+        window.setTimeout(function () {
+            assert.deepEqual(
+                series.options.data,
+                [3, 2, 1],
+                'Series data points should be replaced.'
+            );
+            done();
+        }, 10);
+    }
 
 });

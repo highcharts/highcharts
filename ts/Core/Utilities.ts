@@ -517,12 +517,7 @@ function error(
         message += additionalMessages;
     }
 
-    fireEvent(
-        Highcharts,
-        'displayError',
-        { chart, code, message, params },
-        defaultHandler
-    );
+    fireEvent(H, 'displayError', { chart, code, message, params }, defaultHandler);
 
     error.messages.push(message);
 }
