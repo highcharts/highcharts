@@ -2540,19 +2540,6 @@ SVGRenderer.prototype.escapes = {
     '"': '&quot;'
 };
 
-// #15291
-const rect = (
-    x: number,
-    y: number,
-    w: number,
-    h: number): SVGPath => [
-    ['M', x, y],
-    ['L', x + w, y],
-    ['L', x + w, y + h],
-    ['L', x, y + h],
-    ['Z']
-];
-
 /**
  * An extendable collection of functions for defining symbol paths.
  *
@@ -2574,9 +2561,20 @@ SVGRenderer.prototype.symbols = {
         });
     },
 
-    rect,
-
-    square: rect, // #15291
+    square: function (
+        x: number,
+        y: number,
+        w: number,
+        h: number
+    ): SVGPath {
+        return [
+            ['M', x, y],
+            ['L', x + w, y],
+            ['L', x + w, y + h],
+            ['L', x, y + h],
+            ['Z']
+        ];
+    },
 
     triangle: function (
         x: number,
