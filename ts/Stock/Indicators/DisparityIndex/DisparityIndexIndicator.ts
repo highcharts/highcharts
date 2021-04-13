@@ -25,19 +25,17 @@ import type DisparityIndexPoint from './DisparityIndexPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
 import type LineSeries from '../../../Series/Line/LineSeries';
 import RequiredIndicatorMixin from '../../../Mixins/IndicatorRequired.js';
+import Series from '../../../Core/Series/Series';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        ema: EMAIndicator,
-        dema: DEMAIndicator,
-        sma: SMAIndicator,
-        tema: TEMAIndicator,
-        wma: WMAIndicator
+        sma: SMAIndicator
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
     correctFloat,
+    defined,
     extend,
     isArray,
     merge
@@ -77,7 +75,8 @@ class DisparityIndexIndicator extends SMAIndicator {
      * @requires     stock/indicators/disparity-index
      * @optionparent plotOptions.disparityindex
      */
-    public static defaultOptions: DisparityIndexOptions = merge(SMAIndicator.defaultOptions, {
+    public static defaultOptions: DisparityIndexOptions =
+    merge(SMAIndicator.defaultOptions, {
         params: {
             /**
              * The average used to calculate the Disparity Index indicator.
@@ -87,8 +86,7 @@ class DisparityIndexIndicator extends SMAIndicator {
              * If value is different than ema|dema|tema|wma, then sma is used.
              */
             average: 'sma',
-            index: 3,
-            period: 14
+            index: 3
         },
         marker: {
             enabled: false
@@ -104,6 +102,7 @@ class DisparityIndexIndicator extends SMAIndicator {
      *
      * */
 
+    public averageIndicator: typeof Series = void 0 as any;
     public data: Array<DisparityIndexPoint> = void 0 as any;
     public options: DisparityIndexOptions = void 0 as any;
     public points: Array<DisparityIndexPoint> = void 0 as any;
@@ -120,98 +119,61 @@ class DisparityIndexIndicator extends SMAIndicator {
             params = args[1].params, // options.params
             averageType = params && params.average ? params.average : void 0;
 
-        let averageIndicator;
+        ctx.averageIndicator =
+            SeriesRegistry.seriesTypes[averageType] || SMAIndicator;
 
-        switch (averageType) {
-        case 'ema':
-            averageIndicator = EMAIndicator;
-            break;
-        case 'dema':
-            averageIndicator = DEMAIndicator;
-            break;
-        case 'tema':
-            averageIndicator = TEMAIndicator;
-            break;
-        case 'wma':
-            averageIndicator = WMAIndicator;
-            break;
-        default: // use sma if any of the above strings do not match
-            averageIndicator = SMAIndicator;
-        }
-
-        ctx.averageIndicator = averageIndicator;
-
-        extend(DisparityIndexIndicator.prototype, {
-            nameBase: 'Disparity Index (' + averageType + ')'
-        });
-
-        if (averageType !== 'sma') { // no need to check whether sma is loaded
-            // Check if the required average indicator modules is loaded
-            RequiredIndicatorMixin.isParentLoaded(
-                averageIndicator as any,
-                averageType,
-                ctx.type,
-                function (indicator: Highcharts.Indicator): undefined {
-                    indicator.prototype.init.apply(ctx, args);
-                    return;
-                }
-            );
-        }
+        // Check if the required average indicator modules is loaded
+        RequiredIndicatorMixin.isParentLoaded(
+            ctx.averageIndicator as any,
+            averageType,
+            ctx.type,
+            function (indicator: Highcharts.Indicator): undefined {
+                indicator.prototype.init.apply(ctx, args);
+                return;
+            }
+        );
     }
 
     public calculateDisparityIndex(
-        close: number,
+        curPrice: number,
         periodAverage: number
     ): number {
-        return correctFloat(close - periodAverage) / periodAverage * 100;
+        return correctFloat(curPrice - periodAverage) / periodAverage * 100;
     }
 
     public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: DisparityIndexParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        const averageType = params.average,
-            index = params.index,
-            period = params.period as any,
+        const index = params.index,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<number>|Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
             disparityIndexPoint: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            averageIndicator: any = this.averageIndicator,
-            isOHLC = isArray(yVal[0]);
-
-        // average indicator period minus 1
-        let range;
-
-        switch (averageType) {
-        case 'dema':
-            range = (2 * period - 1) - 1;
-            break;
-        case 'tema':
-            range = (3 * period - 2) - 1;
-            break;
-        case 'ema':
-        case 'wma':
-        default: // use sma if any of the above strings do not match
-            range = period - 1;
-        }
+            // "as any" because getValues doesn't exist on typeof Series
+            averageIndicator = this.averageIndicator as any,
+            isOHLC = isArray(yVal[0]),
+            // Get the average indicator's values
+            values = averageIndicator.prototype.getValues(series, params),
+            yValues = values.yData,
+            start = xVal.indexOf(values.xData[0]);
 
         // Check period, if bigger than points length, skip
-        if (!index || yVal.length <= range) {
+        if (
+            !yValues || yValues.length === 0 ||
+            !defined(index) ||
+            yVal.length <= start
+        ) {
             return;
         }
 
-        // Get the average indicator's values
-        const values = averageIndicator.prototype
-            .getValues(series, params).yData;
-
         // Get the Disparity Index indicator's values
-        for (let i = range; i < yValLen; i++) {
+        for (let i = start; i < yValLen; i++) {
             const disparityIndexValue: number = this.calculateDisparityIndex(
                 isOHLC ? (yVal[i] as any)[index] : yVal[i],
-                values[i - range]
+                yValues[i - start]
             );
 
             disparityIndexPoint.push([
@@ -232,17 +194,15 @@ class DisparityIndexIndicator extends SMAIndicator {
 }
 
 interface DisparityIndexIndicator {
-    averageIndicator?:
-        typeof EMAIndicator|
-        typeof DEMAIndicator|
-        typeof SMAIndicator|
-        typeof TEMAIndicator|
-        typeof WMAIndicator;
+    nameBase: string;
+    nameComponents: Array<string>;
+
     pointClass: typeof DisparityIndexPoint;
 }
 
 extend(DisparityIndexIndicator.prototype, {
-    nameBase: 'Disparity Index'
+    nameBase: 'Disparity Index',
+    nameComponents: ['period', 'average']
 });
 
 /* *
