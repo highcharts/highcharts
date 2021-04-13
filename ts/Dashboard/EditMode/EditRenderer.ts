@@ -234,7 +234,8 @@ class EditRenderer {
 
     public static renderButton(
         parentElement: HTMLDOMElement,
-        callback?: Function
+        callback?: Function,
+        value?: string
     ): HTMLDOMElement|undefined {
         let button;
 
@@ -242,7 +243,8 @@ class EditRenderer {
             button = createElement(
                 'button', {
                     className: EditGlobals.classNames.button,
-                    onclick: callback
+                    onclick: callback,
+                    value: value
                 }, {
 
                 },
