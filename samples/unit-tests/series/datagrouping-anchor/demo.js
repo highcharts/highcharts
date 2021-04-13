@@ -60,6 +60,12 @@ QUnit.test('Data grouping anchor for points in the middle of the data set.', fun
         `When the anchor set to end,
         the point should be placed at the end of the group.`
     );
+    assert.ok(
+        chart.xAxis[0].max >=
+            chart.series[2].points[chart.series[2].points.length - 1].x,
+        `When the last anchor set, the extremes should be changed
+        and the last point should be visible.`
+    );
 });
 
 QUnit.test('Data grouping anchor for the first and last points in the data set.', function (assert) {

@@ -593,6 +593,63 @@ const anchorPoints = function (
     }
 };
 
+const adjustExtremes = function (
+    xAxis: Axis,
+    series: Series,
+    groupedXData: Array<number>
+): any {
+    const options = series.options,
+        dataGroupingOptions = options.dataGrouping,
+        visible = series.visible;
+
+    // Make sure the X axis extends to show the first group (#2533)
+    // But only for visible series (#5493, #6393)
+    if (
+        defined(groupedXData[0]) &&
+        groupedXData[0] < (xAxis.min as any) &&
+        visible
+    ) {
+        if (
+            (
+                !defined(xAxis.options.min) &&
+                (xAxis.min as any) <= (xAxis.dataMin as any)
+            ) ||
+            xAxis.min === xAxis.dataMin
+        ) {
+            xAxis.min = Math.min(groupedXData[0], (xAxis.min as any));
+        }
+
+        xAxis.dataMin = Math.min(
+            groupedXData[0],
+            (xAxis.dataMin as any)
+        );
+    }
+
+    // When the last anchor set, change the extremes that
+    // the last point is visible (#12455).
+    if (
+        defined(groupedXData[groupedXData.length - 1]) &&
+        groupedXData[groupedXData.length - 1] > (xAxis.max as any) &&
+        visible &&
+        dataGroupingOptions &&
+        dataGroupingOptions.lastAnchor !== 'start'
+    ) {
+
+        if (
+            (
+                !defined(xAxis.options.max) &&
+                (xAxis.max as any) >= (xAxis.dataMax as any)
+            ) || xAxis.min === xAxis.dataMax
+        ) {
+            xAxis.max = Math.max(groupedXData[groupedXData.length - 1], (xAxis.max as any));
+        }
+        xAxis.dataMax = Math.max(
+            groupedXData[groupedXData.length - 1],
+            (xAxis.dataMax as any)
+        );
+    }
+};
+
 var dataGrouping = {
     approximations: approximations,
     groupData: groupData
@@ -883,28 +940,7 @@ seriesProto.processData = function (): any {
             series.closestPointRange = (groupPositions.info as any).totalRange;
             series.groupMap = groupedData.groupMap;
 
-            // Make sure the X axis extends to show the first group (#2533)
-            // But only for visible series (#5493, #6393)
-            if (
-                defined(groupedXData[0]) &&
-                groupedXData[0] < (xAxis.min as any) &&
-                visible
-            ) {
-                if (
-                    (
-                        !defined(xAxis.options.min) &&
-                        (xAxis.min as any) <= (xAxis.dataMin as any)
-                    ) ||
-                    xAxis.min === xAxis.dataMin
-                ) {
-                    xAxis.min = Math.min(groupedXData[0], (xAxis.min as any));
-                }
-
-                xAxis.dataMin = Math.min(
-                    groupedXData[0],
-                    (xAxis.dataMin as any)
-                );
-            }
+            adjustExtremes(xAxis, series, groupedXData);
 
             // We calculated all group positions but we should render
             // only the ones within the visible range
