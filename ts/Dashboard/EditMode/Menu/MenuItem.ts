@@ -55,9 +55,22 @@ class MenuItem {
     *
     * */
     private setContainer(): HTMLDOMElement {
+        const item = this,
+            options = item.options;
+
+        let className = EditGlobals.classNames.menuItem;
+
+        if (item.menu.options.itemsClassName) {
+            className += ' ' + item.menu.options.itemsClassName;
+        }
+
+        if (options.className) {
+            className += ' ' + options.className;
+        }
+
         return createElement(
             'div',
-            { className: EditGlobals.classNames.menuItem },
+            { className: className },
             this.options.style || {},
             this.menu.container
         );
@@ -85,22 +98,18 @@ class MenuItem {
                 options.icon,
                 callback
             );
+        } else if (item.options.type === 'input') {
+            element = EditRenderer.renderInput(
+                item.container,
+                callback,
+                options.text
+            );
         } else {
             element = EditRenderer.renderText(
                 item.container,
                 options.text || '',
                 callback
             );
-        }
-
-        if (element) {
-            if (item.menu.options.itemsClassName) {
-                element.classList.add(item.menu.options.itemsClassName);
-            }
-
-            if (options.className) {
-                element.classList.add(options.className);
-            }
         }
     }
 

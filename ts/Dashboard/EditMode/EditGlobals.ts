@@ -22,6 +22,7 @@ const EditGlobals: EditGlobals = {
         editSidebarTab: PREFIX + 'sidebar-tab',
         editSidebarTabsContainer: PREFIX + 'sidebar-tabs',
         editSidebarTabActive: PREFIX + 'toolbar-tab-active',
+        editSidebarMenuItem: PREFIX + 'sidebar-item',
         disabledNotEditedCells: PREFIX + 'hidden-cells',
         disabledNotEditedRows: PREFIX + 'hidden-rows',
         currentEditedCell: PREFIX + 'current-cell',
@@ -72,6 +73,7 @@ namespace EditGlobals {
         editSidebarTab: string;
         editSidebarTabsContainer: string;
         editSidebarTabActive: string;
+        editSidebarMenuItem: string;
         disabledNotEditedCells: string;
         disabledNotEditedRows: string;
         currentEditedCell: string;

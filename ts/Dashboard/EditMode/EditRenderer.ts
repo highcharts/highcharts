@@ -119,10 +119,10 @@ class EditRenderer {
         text: string,
         callback?: Function
     ): HTMLDOMElement|undefined {
-        let input;
+        let textElem;
 
         if (parentElement) {
-            input = createElement(
+            textElem = createElement(
                 'div', {
                     textContent: text,
                     onclick: callback
@@ -131,7 +131,7 @@ class EditRenderer {
             );
         }
 
-        return input;
+        return textElem;
     }
 
     public static renderIcon(
@@ -156,14 +156,24 @@ class EditRenderer {
     }
 
     public static renderInput(
-        parentElement: HTMLDOMElement
+        parentElement: HTMLDOMElement,
+        callback?: Function,
+        title?: string
     ): HTMLDOMElement|undefined {
         let input;
 
         if (parentElement) {
+            if (title) {
+                EditRenderer.renderText(
+                    parentElement,
+                    title
+                );
+            }
+
             input = createElement(
                 'input', {
-                    type: 'text'
+                    type: 'text',
+                    onclick: callback
                 }, {
 
                 },

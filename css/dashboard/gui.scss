@@ -334,7 +334,7 @@ h1 {
     box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
 }
 
-.hcd-edit-toolbar-item {
+.hcd-edit-toolbar-item div {
     min-width: 40px;
     min-height: 40px;
     box-sizing: border-box;
@@ -345,11 +345,11 @@ h1 {
     background-position: 50% 50%;
 }
 
-.hcd-edit-toolbar-item.hcd-edit-menu-destroy {
+.hcd-edit-toolbar-item.hcd-edit-menu-destroy div {
     background-color: #e01d5a;
 }
 
-.hcd-edit-toolbar-item:hover {
+.hcd-edit-toolbar-item:hover div {
     cursor: pointer;
     background-color: #4B4B4D;
 }
@@ -372,6 +372,10 @@ h1 {
     z-index: 1000;
     height: 100%;
     width: 200px;
+}
+
+.hcd-edit-sidebar-item {
+    padding: 10px;
 }
 
 .hcd-edit-sidebar-show {

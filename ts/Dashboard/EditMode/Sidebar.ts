@@ -26,14 +26,15 @@ class Sidebar {
         enabled: true,
         className: 'test',
         menu: {
-            items: ['t1', 't2']
+            itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
+            items: ['cellWidth', 't1', 't2']
         }
     }
 
     public static tabs: Array<Sidebar.TabOptions> = [{
         type: 'design',
         icon: '',
-        items: ['t1']
+        items: ['cellWidth']
     }, {
         type: 'data',
         icon: '',
@@ -58,6 +59,16 @@ class Sidebar {
             text: 'tool2',
             events: {
                 click: function (): void {}
+            }
+        },
+        cellWidth: {
+            id: 'cellWidth',
+            type: 'input',
+            text: 'Cell width',
+            events: {
+                click: function (this: MenuItem, e: any): void {
+                    console.log('cell width: ', e);
+                }
             }
         }
     })
