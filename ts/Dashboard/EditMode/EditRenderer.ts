@@ -211,6 +211,25 @@ class EditRenderer {
 
         return input;
     }
+
+    public static renderButton(
+        parentElement: HTMLDOMElement
+    ): HTMLDOMElement|undefined {
+        let button;
+
+        if (parentElement) {
+            button = createElement(
+                'button', {
+                    className: EditGlobals.classNames.button
+                }, {
+
+                },
+                parentElement
+            );
+        }
+
+        return button;
+    }
 }
 
 namespace EditRenderer {}
