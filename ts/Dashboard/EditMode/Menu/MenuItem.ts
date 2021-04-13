@@ -90,7 +90,8 @@ class MenuItem {
         if (item.options.type === 'switcher') {
             element = EditRenderer.renderSwitcher(
                 item.container,
-                callback
+                callback,
+                options.text || ''
             );
         } else if (item.options.type === 'icon' && options.icon) {
             element = EditRenderer.renderIcon(

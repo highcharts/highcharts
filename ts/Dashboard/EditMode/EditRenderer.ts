@@ -84,11 +84,20 @@ class EditRenderer {
 
     public static renderSwitcher(
         parentElement: HTMLDOMElement,
-        callback?: Function
+        callback?: Function,
+        title?: string
     ): HTMLDOMElement|undefined {
         let switcher;
 
         if (parentElement) {
+
+            if (title) {
+                EditRenderer.renderText(
+                    parentElement,
+                    title
+                );
+            }
+
             switcher = createElement(
                 'label',
                 {
@@ -124,6 +133,7 @@ class EditRenderer {
         if (parentElement) {
             textElem = createElement(
                 'div', {
+                    className: EditGlobals.classNames.labelText,
                     textContent: text,
                     onclick: callback
                 }, {},
@@ -234,7 +244,8 @@ class EditRenderer {
 
     public static renderButton(
         parentElement: HTMLDOMElement,
-        callback?: Function
+        callback?: Function,
+        value?: string
     ): HTMLDOMElement|undefined {
         let button;
 
@@ -242,7 +253,8 @@ class EditRenderer {
             button = createElement(
                 'button', {
                     className: EditGlobals.classNames.button,
-                    onclick: callback
+                    onclick: callback,
+                    textContent: value || 'Save'
                 }, {
 
                 },

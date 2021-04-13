@@ -376,11 +376,31 @@ h1 {
 
 .hcd-edit-sidebar-item {
     padding: 10px;
+    font-size: 0.876em;
+}
+
+.hcd-edit-sidebar-item input {
+    border: none;
+    background: #4f4f51;
+    width: 100%;
+    color: #fff ;
+}
+
+.hcd-edit-sidebar-item button {
+    padding: 5px 10px;
+    float: right;
+    margin-top: 20px;
+    border: none;
+    background: #aac6ff;
 }
 
 .hcd-edit-sidebar-show {
     transition: 1s;
     left: 0;
+}
+
+.hcd-edit-label-text {
+    display: inline-block;
 }
 
 .hcd-edit-layout-toolbar-space {

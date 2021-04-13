@@ -37,8 +37,8 @@ const EditGlobals: EditGlobals = {
         customSelect: PREFIX + 'custom-select',
         switchWrapper: PREFIX + 'switch-wrapper',
         switchSlider: PREFIX + 'switch-slider',
-        button: PREFIX + 'button'
-
+        button: PREFIX + 'button',
+        labelText: PREFIX + 'label-text'
     },
     lang: {
         editMode: 'Edit mode',
@@ -89,6 +89,7 @@ namespace EditGlobals {
         switchWrapper: string;
         switchSlider: string;
         button: string;
+        labelText: string;
     }
 
     export interface LangOptions {
