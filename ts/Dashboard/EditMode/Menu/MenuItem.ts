@@ -4,7 +4,6 @@ import U from '../../../Core/Utilities.js';
 import type { CSSJSONObject } from '../../../Data/DataCSSObject';
 import Menu from './Menu.js';
 import EditRenderer from './../EditRenderer.js';
-import type EditContextMenu from '../EditContextMenu.js';
 
 const {
     createElement,
@@ -37,7 +36,7 @@ class MenuItem {
         this.options = merge(MenuItem.defaultOptions, options || {});
 
         this.container = this.setContainer();
-        this.setChildComponent();
+        this.setInnerElement();
     }
 
     /* *
@@ -56,58 +55,52 @@ class MenuItem {
     *
     * */
     private setContainer(): HTMLDOMElement {
-        const item = this,
-            options = item.options;
-
-        let className = EditGlobals.classNames.menuItem;
-
-        if (item.menu.options.itemsClassName) {
-            className += ' ' + item.menu.options.itemsClassName;
-        }
-
-        if (options.className) {
-            className += ' ' + options.className;
-        }
-
-        const container = createElement(
-            'div', {
-                textContent: options.icon ? '' : options.text,
-                onclick: function (): void {
-                    if (!options.type && options.events && options.events.click) {
-                        options.events.click.apply(item, arguments);
-                    }
-                },
-                className: className
-            },
-            options.style || {},
-            item.menu.container
+        return createElement(
+            'div',
+            { className: EditGlobals.classNames.menuItem },
+            this.options.style || {},
+            this.menu.container
         );
-
-        if (options.icon) {
-            (container.style as any)['background-image'] = 'url(' +
-                options.icon + ')';
-
-            if (options.type === 'destroy') {
-                container.classList.add(EditGlobals.classNames.menuDestroy);
-            }
-        }
-
-        return container;
     }
 
-    public setChildComponent(): void {
+    public setInnerElement(): void {
         const item = this,
-            options = item.options;
+            options = item.options,
+            callback = function (): void {
+                if (options.events && options.events.click) {
+                    options.events.click.apply(item, arguments);
+                }
+            };
+
+        let element;
 
         if (item.options.type === 'switcher') {
-            EditRenderer.renderSwitcher(
+            element = EditRenderer.renderSwitcher(
                 item.container,
-                function (): void {
-                    if (options.events && options.events.click) {
-                        options.events.click.apply(item, arguments);
-                    }
-                }
+                callback
             );
+        } else if (item.options.type === 'icon' && options.icon) {
+            element = EditRenderer.renderIcon(
+                item.container,
+                options.icon,
+                callback
+            );
+        } else {
+            element = EditRenderer.renderText(
+                item.container,
+                options.text || '',
+                callback
+            );
+        }
+
+        if (element) {
+            if (item.menu.options.itemsClassName) {
+                element.classList.add(item.menu.options.itemsClassName);
+            }
+
+            if (options.className) {
+                element.classList.add(options.className);
+            }
         }
     }
 

@@ -44,7 +44,7 @@ body {
     }
 }
 
-.hcd-edit-toolbar.hcd-edit-toolbar-row .hcd-edit-toolbar-item {
+.hcd-edit-menu.hcd-edit-toolbar-row .hcd-edit-menu-item {
     float: left;
 }
 
@@ -303,7 +303,6 @@ h1 {
 
 .hcd-edit-menu-item {
     display: none;
-    padding: 10px;
 }
 
 .hcd-edit-context-menu-item {
@@ -336,7 +335,6 @@ h1 {
 }
 
 .hcd-edit-toolbar-item {
-    display: none;
     min-width: 40px;
     min-height: 40px;
     box-sizing: border-box;

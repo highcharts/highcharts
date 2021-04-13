@@ -20,9 +20,9 @@ class RowEditToolbar extends EditToolbar {
     * */
     protected static readonly defaultOptions: RowEditToolbar.Options = {
         enabled: true,
-        className: EditGlobals.classNames.editToolbar + ' ' +
-            EditGlobals.classNames.editToolbarRow,
+        className: EditGlobals.classNames.editToolbar,
         menu: {
+            className: EditGlobals.classNames.editToolbarRow,
             itemsClassName: EditGlobals.classNames.editToolbarItem,
             items: ['drag', 'settings', 'destroy']
         }
@@ -51,6 +51,7 @@ class RowEditToolbar extends EditToolbar {
         destroy: {
             id: 'destroy',
             type: 'icon',
+            className: EditGlobals.classNames.menuDestroy,
             icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {

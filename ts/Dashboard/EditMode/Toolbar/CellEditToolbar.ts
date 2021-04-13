@@ -50,6 +50,7 @@ class CellEditToolbar extends EditToolbar {
         destroy: {
             id: 'destroy',
             type: 'icon',
+            className: EditGlobals.classNames.menuDestroy,
             icon: EditGlobals.iconsURL + 'destroy.svg',
             events: {
                 click: function (this: MenuItem, e: any): void {

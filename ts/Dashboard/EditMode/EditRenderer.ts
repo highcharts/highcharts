@@ -114,6 +114,47 @@ class EditRenderer {
         return switcher;
     }
 
+    public static renderText(
+        parentElement: HTMLDOMElement,
+        text: string,
+        callback?: Function
+    ): HTMLDOMElement|undefined {
+        let input;
+
+        if (parentElement) {
+            input = createElement(
+                'div', {
+                    textContent: text,
+                    onclick: callback
+                }, {},
+                parentElement
+            );
+        }
+
+        return input;
+    }
+
+    public static renderIcon(
+        parentElement: HTMLDOMElement,
+        icon: string,
+        callback?: Function
+    ): HTMLDOMElement|undefined {
+        let iconElem;
+
+        if (parentElement) {
+            iconElem = createElement(
+                'div', {
+                    onclick: callback
+                }, {},
+                parentElement
+            );
+
+            (iconElem.style as any)['background-image'] = 'url(' + icon + ')';
+        }
+
+        return iconElem;
+    }
+
     public static renderInput(
         parentElement: HTMLDOMElement
     ): HTMLDOMElement|undefined {
