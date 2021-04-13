@@ -197,9 +197,8 @@ class MapView {
         const bounds = this.getProjectedBounds();
         if (
             bounds &&
-            // When zooming in, we don't need to adjust to the bounds, as it may
-            // shift the locatoin under the mouse, and we are quite sure the
-            // bounds are within
+            // When zooming in, we don't need to adjust to the bounds, as that
+            // could shift the location under the mouse
             !zoomingIn
         ) {
             const projectedCenter = this.projection.forward(this.center);
@@ -214,29 +213,43 @@ class MapView {
                 x: bounds.x2,
                 y: bounds.y2
             });
+            const boundsCenterProjected = [
+                (bounds.x1 + bounds.x2) / 2,
+                (bounds.y1 + bounds.y2) / 2
+            ];
+
             // Pixel coordinate system is reversed vs projected
             const x1 = bottomLeft.x;
             const y1 = topRight.y;
             const x2 = topRight.x;
             const y2 = bottomLeft.y;
 
+            // Map smaller than plot area, center it
+            if (x2 - x1 < plotWidth) {
+                projectedCenter[0] = boundsCenterProjected[0];
+
             // Off west
-            if (x1 < 0 && x2 < plotWidth) {
+            } else if (x1 < 0 && x2 < plotWidth) {
                 // Adjust eastwards
                 projectedCenter[0] += Math.max(x1, x2 - plotWidth) / scale;
-            }
+
             // Off east
-            if (x2 > plotWidth && x1 > 0) {
+            } else if (x2 > plotWidth && x1 > 0) {
                 // Adjust westwards
                 projectedCenter[0] += Math.min(x2 - plotWidth, x1) / scale;
             }
+
+            // Map smaller than plot area, center it
+            if (y2 - y1 < plotHeight) {
+                projectedCenter[1] = boundsCenterProjected[1];
+
             // Off north
-            if (y1 < 0 && y2 < plotHeight) {
+            } else if (y1 < 0 && y2 < plotHeight) {
                 // Adjust southwards
                 projectedCenter[1] -= Math.max(y1, y2 - plotHeight) / scale;
-            }
+
             // Off south
-            if (y2 > plotHeight && y1 > 0) {
+            } else if (y2 > plotHeight && y1 > 0) {
                 // Adjust northwards
                 projectedCenter[1] -= Math.min(y2 - plotHeight, y1) / scale;
             }

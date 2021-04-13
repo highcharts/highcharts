@@ -3,7 +3,12 @@ QUnit.test(
     function (assert) {
         var chart = Highcharts.mapChart('container', {
             chart: {
-                plotBorderWidth: 1
+                plotBorderWidth: 1,
+
+                // Square plot area
+                width: 400,
+                height: 400,
+                margin: 40
             },
 
             mapNavigation: {
