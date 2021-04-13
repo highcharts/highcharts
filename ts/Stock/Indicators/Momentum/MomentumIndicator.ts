@@ -28,16 +28,14 @@ const {
 /* eslint-disable require-jsdoc */
 
 function populateAverage(
-    points: Array<number>,
     xVal: Array<number>,
     yVal: Array<Array<number>>,
     i: number,
-    period: number
+    period: number,
+    index: number
 ): [number, number] {
-    var mmY: number = yVal[i - 1][3] - yVal[i - period - 1][3],
+    var mmY: number = yVal[i - 1][index] - yVal[i - period - 1][index],
         mmX: number = xVal[i - 1];
-
-    points.shift(); // remove point until range < period
 
     return [mmX, mmY];
 }
@@ -68,7 +66,11 @@ class MomentumIndicator extends SMAIndicator {
      * @optionparent plotOptions.momentum
      */
     public static defaultOptions: MomentumOptions =
-    merge(SMAIndicator.defaultOptions, {} as MomentumOptions);
+    merge(SMAIndicator.defaultOptions, {
+        params: {
+            index: 3
+        }
+    } as MomentumOptions);
 
     public data: Array<MomentumPoint> = void 0 as any;
     public options: MomentumOptions = void 0 as any;
@@ -79,17 +81,15 @@ class MomentumIndicator extends SMAIndicator {
         params: MomentumOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
         var period: number = params.period,
+            index: number = params.index as any,
             xVal: Array<number> = (series.xData as any),
             yVal: Array<Array<number>> = (series.yData as any),
             yValLen: number = yVal ? yVal.length : 0,
-            xValue: number = xVal[0],
             yValue: (Array<number>|number) = yVal[0],
             MM: Array<Array<number>> = [],
             xData: Array<number> = [],
             yData: Array<number> = [],
-            index: any,
             i: number,
-            points: Array<Array<number>>,
             MMPoint: [number, number];
 
         if (xVal.length <= period) {
@@ -98,29 +98,20 @@ class MomentumIndicator extends SMAIndicator {
 
         // Switch index for OHLC / Candlestick / Arearange
         if (isArray(yVal[0])) {
-            yValue = (yVal[0][3] as any);
+            yValue = (yVal[0][index] as any);
         } else {
             return;
         }
-        // Starting point
-        points = [
-            [xValue, (yValue as any)]
-        ];
-
 
         // Calculate value one-by-one for each period in visible data
         for (i = (period + 1); i < yValLen; i++) {
-            MMPoint = (populateAverage as any)(
-                points, xVal, yVal, i, period, index
-            );
+            MMPoint = populateAverage(xVal, yVal, i, period, index);
             MM.push(MMPoint);
             xData.push(MMPoint[0]);
             yData.push(MMPoint[1]);
         }
 
-        MMPoint = (populateAverage as any)(
-            points, xVal, yVal, i, period, index
-        );
+        MMPoint = populateAverage(xVal, yVal, i, period, index);
         MM.push(MMPoint);
         xData.push(MMPoint[0]);
         yData.push(MMPoint[1]);

@@ -84,6 +84,12 @@ class ChaikinIndicator extends EMAIndicator {
              */
             volumeSeriesID: 'volume',
             /**
+             * Parameter used indirectly for calculating the `AD` indicator.
+             * Decides about the number of data points that are taken
+             * into account for the indicator calculations.
+             */
+            period: 9,
+            /**
              * Periods for Chaikin Oscillator calculations.
              *
              * @type    {Array<number>}
