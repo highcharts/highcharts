@@ -17,11 +17,13 @@
  * */
 
 import type AnimationOptions from '../../Core/Animation/AnimationOptions';
+import type Chart from '../../Core/Chart/Chart';
 import type ColorAxis from '../../Core/Axis/ColorAxis';
 import type DataExtremesObject from '../../Core/Series/DataExtremesObject';
 import type HeatmapSeriesOptions from './HeatmapSeriesOptions';
 import type Point from '../../Core/Series/Point.js';
 import type { PointStateHoverOptions } from '../../Core/Series/PointOptions';
+import type { SeriesTypeOptions } from '../../Core/Series/SeriesType';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import ColorMapMixin from '../../Mixins/ColorMapSeries.js';
@@ -388,6 +390,8 @@ class HeatmapSeries extends ScatterSeries {
 
     public data: Array<HeatmapPoint> = void 0 as any;
 
+    public hasSquareShape: boolean = false;
+
     public options: HeatmapSeriesOptions = void 0 as any;
 
     public points: Array<HeatmapPoint> = void 0 as any;
@@ -475,12 +479,25 @@ class HeatmapSeries extends ScatterSeries {
      * Override the init method to add point ranges on both axes.
      * @private
      */
-    public init(): void {
-        var options;
+    public init(
+        chart: Chart,
+        userOptions: DeepPartial<SeriesTypeOptions>
+    ): void {
+        let symbol = userOptions.marker && userOptions.marker.symbol || 'rect';
 
-        Series.prototype.init.apply(this, arguments as any);
+        if (symbol === 'rect') {
+            symbol = 'square';
+        } else {
+            this.hasSquareShape = ['circle', 'square'].indexOf(symbol) !== -1;
+        }
 
-        options = this.options;
+        Series.prototype.init.call(this, chart, merge(userOptions, {
+            marker: {
+                symbol
+            }
+        }));
+
+        const options = this.options;
         // #3758, prevent resetting in setData
         options.pointRange = pick(options.pointRange, options.colsize || 1);
         // general point range
@@ -628,12 +645,11 @@ class HeatmapSeries extends ScatterSeries {
         var series = this,
             options = series.options,
             symbol = options.marker && options.marker.symbol || '',
-            shape = symbols[symbol] ? symbol : 'rect',
-            options = series.options,
-            hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
+            shape = symbols[symbol] ? symbol : 'square',
+            options = series.options;
 
         series.generatePoints();
-        series.points.forEach(function (point): void {
+        series.points.forEach((point): void => {
             var pointAttr,
                 sizeDiff,
                 hasImage,
@@ -651,7 +667,7 @@ class HeatmapSeries extends ScatterSeries {
 
             // If marker shape is regular (symetric), find shorter
             // cell's side.
-            if (hasRegularShape) {
+            if (this.hasSquareShape) {
                 sizeDiff = Math.abs(shapeArgs.width - shapeArgs.height);
                 shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2) +
                     (shapeArgs.width < shapeArgs.height ? 0 : sizeDiff / 2);

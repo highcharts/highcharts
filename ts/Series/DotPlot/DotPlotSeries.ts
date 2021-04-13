@@ -174,7 +174,8 @@ class DotPlotSeries extends ColumnSeries {
                     if (graphics[itemY as any]) {
                         graphics[itemY as any].animate(attr);
                     } else {
-                        graphics[itemY as any] = renderer.symbol(symbol)
+                        graphics[itemY as any] = renderer
+                            .symbol(symbol === 'rect' ? 'callout' : symbol)
                             .attr(extend(attr, pointAttr))
                             .add(point.graphic);
                     }
