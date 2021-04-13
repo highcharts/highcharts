@@ -158,9 +158,10 @@ class EditRenderer {
     public static renderInput(
         parentElement: HTMLDOMElement,
         callback?: Function,
-        title?: string
+        title?: string,
+        applyButtonFn?: Function
     ): HTMLDOMElement|undefined {
-        let input;
+        let input: HTMLDOMElement|undefined;
 
         if (parentElement) {
             if (title) {
@@ -179,6 +180,15 @@ class EditRenderer {
                 },
                 parentElement
             );
+
+            if (applyButtonFn) {
+                EditRenderer.renderButton(
+                    parentElement,
+                    function (): void {
+                        applyButtonFn(input);
+                    }
+                );
+            }
         }
 
         return input;
@@ -223,14 +233,16 @@ class EditRenderer {
     }
 
     public static renderButton(
-        parentElement: HTMLDOMElement
+        parentElement: HTMLDOMElement,
+        callback?: Function
     ): HTMLDOMElement|undefined {
         let button;
 
         if (parentElement) {
             button = createElement(
                 'button', {
-                    className: EditGlobals.classNames.button
+                    className: EditGlobals.classNames.button,
+                    onclick: callback
                 }, {
 
                 },

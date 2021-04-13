@@ -8,7 +8,6 @@ import Menu from './Menu/Menu.js';
 import type MenuItem from './Menu/MenuItem.js';
 import DashboardGlobals from '../DashboardGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
-import WindbarbPoint from '../../Series/Windbarb/WindbarbPoint.js';
 
 const {
     merge,
@@ -66,8 +65,15 @@ class Sidebar {
             type: 'input',
             text: 'Cell width',
             events: {
-                click: function (this: MenuItem, e: any): void {
-                    console.log('cell width: ', e);
+                click: function (this: MenuItem, input: HTMLDOMElement, e: any): void {
+                    const inputValue = +(input as any).value;
+                    const cellCnt = this.menu.parent.editMode.cellToolbar.cell.container;
+
+                    if (cellCnt) {
+                        console.log('Input value: ', inputValue);
+
+                        Cell.setSize({ width: inputValue }, cellCnt);
+                    }
                 }
             }
         }
@@ -96,7 +102,8 @@ class Sidebar {
             merge(
                 Sidebar.defaultOptions.menu,
                 (this.options || {}).menu
-            )
+            ),
+            this
         );
 
         this.menu.initItems(Sidebar.items);

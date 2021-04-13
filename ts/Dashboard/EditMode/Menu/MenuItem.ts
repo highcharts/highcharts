@@ -101,8 +101,13 @@ class MenuItem {
         } else if (item.options.type === 'input') {
             element = EditRenderer.renderInput(
                 item.container,
-                callback,
-                options.text
+                void 0,
+                options.text,
+                function (input: HTMLDOMElement, e: any): void {
+                    if (options.events && options.events.click) {
+                        options.events.click.apply(item, [input, e]);
+                    }
+                }
             );
         } else {
             element = EditRenderer.renderText(
