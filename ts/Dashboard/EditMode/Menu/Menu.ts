@@ -137,6 +137,8 @@ class Menu {
                 // Activate item.
                 if (!item.isActive) {
                     item.activate();
+                } else {
+                    item.update();
                 }
 
                 menu.activeItems.push(item);

@@ -72,6 +72,18 @@ class Sidebar {
                     if (cell) {
                         cell.setSize({ width: inputValue });
                     }
+                },
+                update: function (this: MenuItem, e: any): void {
+                    const item = this,
+                        cell = this.menu.parent.editMode.cellToolbar.cell;
+
+                    if (
+                        cell &&
+                        item.innerElement &&
+                        item.innerElement.tagName === 'INPUT'
+                    ) {
+                        (item.innerElement as any).value = cell.container.offsetWidth;
+                    }
                 }
             }
         }

@@ -36,7 +36,7 @@ class MenuItem {
         this.options = merge(MenuItem.defaultOptions, options || {});
 
         this.container = this.setContainer();
-        this.setInnerElement();
+        this.innerElement = this.setInnerElement();
     }
 
     /* *
@@ -47,6 +47,7 @@ class MenuItem {
     public menu: Menu;
     public options: MenuItem.Options;
     public container: HTMLDOMElement;
+    public innerElement?: HTMLDOMElement;
     public isActive: boolean;
 
     /* *
@@ -76,7 +77,7 @@ class MenuItem {
         );
     }
 
-    public setInnerElement(): void {
+    public setInnerElement(): HTMLDOMElement|undefined {
         const item = this,
             options = item.options,
             callback = function (): void {
@@ -87,19 +88,19 @@ class MenuItem {
 
         let element;
 
-        if (item.options.type === 'switcher') {
+        if (options.type === 'switcher') {
             element = EditRenderer.renderSwitcher(
                 item.container,
                 callback,
                 options.text || ''
             );
-        } else if (item.options.type === 'icon' && options.icon) {
+        } else if (options.type === 'icon' && options.icon) {
             element = EditRenderer.renderIcon(
                 item.container,
                 options.icon,
                 callback
             );
-        } else if (item.options.type === 'input') {
+        } else if (options.type === 'input') {
             element = EditRenderer.renderInput(
                 item.container,
                 void 0,
@@ -117,10 +118,23 @@ class MenuItem {
                 callback
             );
         }
+
+        return element;
+    }
+
+    public update(): void {
+        const item = this,
+            options = item.options;
+
+        if (options.events && options.events.update) {
+            options.events.update.apply(item, arguments);
+        }
     }
 
     public activate(): void {
         const item = this;
+
+        item.update();
 
         // Temp.
         if (item.container) {
