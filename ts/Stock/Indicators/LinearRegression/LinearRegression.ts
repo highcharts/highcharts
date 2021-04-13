@@ -82,8 +82,8 @@ class LinearRegressionIndicator extends SMAIndicator {
                  * computing the slope and the intercept. This may enchance the
                  * legiblitity of the indicator's values.
                  *
-                 * Default value is the closest distance between two data
-                 * points.
+                 * In `v9.0.2`, the default value has been changed
+                 * from `undefined` to `null`.
                  *
                  * @sample {highstock} stock/plotoptions/linear-regression-xaxisunit
                  *         xAxisUnit set to 1 minute
@@ -105,7 +105,7 @@ class LinearRegressionIndicator extends SMAIndicator {
                  * // indicator's point will be `2.3148148148148148e-8` which is
                  * // harder to interpert for a human.
                  *
-                 * @type    {number}
+                 * @type    {null|number}
                  * @product highstock
                  */
                 xAxisUnit: null
