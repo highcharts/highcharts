@@ -93,7 +93,7 @@ class Bindings {
             // update cell size (when component is wider, cell should adjust)
             // this.updateSize();
             if (options && options.dimensions) {
-                Cell.setSize(options.dimensions, compontentContainer);
+                Cell.setContainerSize(options.dimensions, compontentContainer);
             }
         }
 
@@ -138,7 +138,7 @@ class Bindings {
         // update cell size (when component is wider, cell should adjust)
         // this.updateSize();
         if (json.options.dimensions && cellContainer) {
-            Cell.setSize(json.options.dimensions, cellContainer);
+            Cell.setContainerSize(json.options.dimensions, cellContainer);
         }
 
         // TODO - events

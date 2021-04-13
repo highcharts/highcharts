@@ -67,12 +67,10 @@ class Sidebar {
             events: {
                 click: function (this: MenuItem, input: HTMLDOMElement, e: any): void {
                     const inputValue = +(input as any).value;
-                    const cellCnt = this.menu.parent.editMode.cellToolbar.cell.container;
+                    const cell = this.menu.parent.editMode.cellToolbar.cell;
 
-                    if (cellCnt) {
-                        console.log('Input value: ', inputValue);
-
-                        Cell.setSize({ width: inputValue }, cellCnt);
+                    if (cell) {
+                        cell.setSize({ width: inputValue });
                     }
                 }
             }

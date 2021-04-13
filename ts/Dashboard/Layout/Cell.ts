@@ -48,7 +48,7 @@ class Cell extends GUIElement {
         return void 0;
     }
 
-    public static setSize(
+    public static setContainerSize(
         dimensions: { width?: number | string; height?: number | string },
         cellContainer: HTMLDOMElement
     ): void {
@@ -244,6 +244,20 @@ class Cell extends GUIElement {
                 style: cell.options.style
             }
         };
+    }
+
+    public setSize(
+        dimensions: { width?: number | string; height?: number | string }
+    ): void {
+        Cell.setContainerSize(
+            dimensions,
+            this.container as HTMLDOMElement
+        );
+
+        // redraw component inside the cell
+        if (this.mountedComponent) {
+            this.mountedComponent.resize(null);
+        }
     }
 }
 

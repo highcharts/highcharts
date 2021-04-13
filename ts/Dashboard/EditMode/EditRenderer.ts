@@ -244,7 +244,7 @@ class EditRenderer {
                 'button', {
                     className: EditGlobals.classNames.button,
                     onclick: callback,
-                    value: value
+                    textContent: value || 'Save'
                 }, {
 
                 },
