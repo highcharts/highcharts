@@ -1,7 +1,7 @@
 /* *
  *  (c) 2010-2021 Rafal Sebestjanski
  *
- *  Disparity Index indicator for highstock
+ *  Disparity Index technical indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *
@@ -81,7 +81,7 @@ class DisparityIndexIndicator extends SMAIndicator {
             /**
              * The average used to calculate the Disparity Index indicator.
              * By default it uses SMA. To use other averages, e.g. EMA,
-             * the stock/indicators/ema.js file needs to be loaded.
+             * the `stock/indicators/ema.js` file needs to be loaded.
              *
              * If value is different than ema|dema|tema|wma, then sma is used.
              */
