@@ -1236,7 +1236,7 @@ setOptions({
          *
          * @type         {Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject>|*}
          * @sample       stock/stocktools/stocktools-thresholds
-         *               Custom bindings in Highstock
+         *               Custom bindings in Highcharts Stock
          * @since        7.0.0
          * @product      highcharts highstock
          */

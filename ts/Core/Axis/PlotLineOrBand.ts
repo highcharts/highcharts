@@ -1188,7 +1188,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 plus = 0;
             }
 
-            // Go over each subpath - for panes in Highstock
+            // Go over each subpath - for panes in Highcharts Stock
             for (i = 0; i < path.length; i += 2) {
                 const pathStart = path[i],
                     pathEnd = path[i + 1],

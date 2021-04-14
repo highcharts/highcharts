@@ -1,5 +1,5 @@
 QUnit.test(
-    'Column with xAxis lineWidth in Highstock (#8031).',
+    'Column with xAxis lineWidth in Highcharts Stock (#8031).',
     function (assert) {
         var chart = Highcharts.chart('container', {
             chart: {

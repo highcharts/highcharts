@@ -4,7 +4,7 @@
  * @requires highcharts
  * @requires highcharts/modules/stock
  *
- * Slow Stochastic series type for Highstock
+ * Slow Stochastic series type for Highcharts Stock
  *
  * (c) 2010-2021 Pawel Fus
  *
