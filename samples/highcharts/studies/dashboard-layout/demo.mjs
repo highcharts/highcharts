@@ -463,7 +463,7 @@ Highcharts.addEvent(
 	}
 );
 
-
+/*
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
 	gui: {
 		enabled: false,
@@ -493,10 +493,6 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
 				animation: false
 			}
 		},
-		/*dimensions: {
-			width: 400,
-			height: 400
-		},*/
 		events: {
 			mount: function () {
 				// call action
@@ -506,10 +502,6 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
 	}, {
 		cell: 'chart-2',
 		type: 'html',
-		/*config: {
-			title: 'Sample layout 1',
-			description: 'Lorem ipsum'
-		}*/
 		elements: [{
 			tagName: 'img',
 			attributes: {
@@ -518,12 +510,12 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
 			}
 		}]
 	}]
-});
+});*/
 
 console.log(dashboardBootstrap);
 
 console.log('========= Layout in layout =========');
-
+/*
 const dashboardLayout = new Dashboard('container-nested-layout', {
 	editMode: {
 		enabled: true,
@@ -543,19 +535,6 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
 				text: 'Edit on/off'
 			}]
 		},
-		/*
-		* TODO consider use toolbarEdit
-		*/
-		toolbar: {
-			dragIcon: '/code/gfx/dashboard-icons/drag.svg',
-			settingsIcon: '/code/gfx/dashboard-icons/edit.svg',
-			trashIcon: '/code/gfx/dashboard-icons/destroy.svg'
-		}
-		/* TODO add when needed
-		toolbarOptions: {
-
-		}
-		*/
 	},
 	gui: {
 		enabled: true,
@@ -611,26 +590,8 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
 				data: [1, 2, 3, 4]
 			}]
 		}
-		/*type: 'html',
-		elements: [{
-			tagName: 'img',
-			attributes: {
-				src: 'https://i.ytimg.com/vi/qlO4M6MfDFY/hqdefault.jpg',
-				title: 'I heard you like components'
-			}
-		}, {
-			textContent: 'Loreum ipsum'
-		}]*/
 	}, {
 		cell: 'dashboard-col-layout-1',
-		/*type: 'chart',
-		chartOptions: {
-			type: 'cell',
-			series: [{
-				name: 'Series from options',
-				data: [1, 2, 3, 4]
-			}]
-		}*/
 		type: 'html',
 		elements: [{
 			tagName: 'img',
@@ -643,14 +604,6 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
 		}]
 	}, {
 		cell: 'dashboard-col-layout-2',
-		/*type: 'chart',
-		chartOptions: {
-			type: 'cell',
-			series: [{
-				name: 'Series from options',
-				data: [1, 2, 3, 4]
-			}]
-		}*/
 		type: 'html',
 		elements: [{
 			tagName: 'img',
@@ -673,14 +626,6 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
 		}, {
 			textContent: 'Loreum ipsum'
 		}]
-		/*type: 'chart',
-		chartOptions: {
-			type: 'line',
-			series: [{
-				name: 'Series from options',
-				data: [1, 2, 3, 4]
-			}]
-		}*/
 	}, {
 		cell: 'dashboard-col-layout-4',
 		type: 'html',
@@ -693,14 +638,6 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
 		}, {
 			textContent: 'Loreum ipsum'
 		}]
-		/*type: 'chart',
-		chartOptions: {
-			type: 'line',
-			series: [{
-				name: 'Series from options',
-				data: [1, 2, 3, 4]
-			}]
-		}*/
 	}, {
 		cell: 'dashboard-col-layout-5',
 		type: 'html',
@@ -713,16 +650,8 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
 		}, {
 			textContent: 'Loreum ipsum'
 		}]
-		/*type: 'chart',
-		chartOptions: {
-			type: 'line',
-			series: [{
-				name: 'Series from options',
-				data: [1, 2, 3, 4]
-			}]
-		}*/
 	}]
-});
+});*/
 
 console.log(dashboardLayout);
 
