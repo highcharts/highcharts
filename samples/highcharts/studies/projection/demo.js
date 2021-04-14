@@ -34,7 +34,7 @@ function getGrid() {
         data.push({
             type: 'LineString',
             coordinates,
-            lineWidth: y === 0 ? 2 : 1
+            lineWidth: y === 0 ? 2 : undefined
         });
     }
 
@@ -123,7 +123,12 @@ const drawMap = projectionKey => {
             },
 
             title: {
-                text: 'Projected TopoJSON'
+                text: 'Highcharts projection study',
+                floating: true,
+                align: 'left',
+                style: {
+                    textOutline: '2px white'
+                }
             },
 
             legend: {
@@ -170,13 +175,15 @@ const drawMap = projectionKey => {
                 name: 'Random data',
                 states: {
                     hover: {
-                        color: '#a4edba'
+                        color: '#a4edba',
+                        borderColor: '#333333'
                     }
                 },
                 dataLabels: {
                     enabled: false,
                     format: '{point.name}'
-                }
+                },
+                clip: false
             }, {
                 type: 'mapline',
                 data: [{
