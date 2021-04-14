@@ -161,11 +161,12 @@ class ChartComponent extends Component<ChartComponent.Event> {
     public load(): this {
         this.emit({ type: 'load' });
         super.load();
-        this.initChart();
         this.parentElement.appendChild(this.element);
         this.element.appendChild(this.chartContainer);
+        this.initChart();
         this.hasLoaded = true;
         this.emit({ type: 'afterLoad' });
+
         return this;
     }
 
