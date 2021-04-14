@@ -428,7 +428,7 @@ console.groupEnd();
   Bind export layout btn
 */
 let exportedLayoutId;
-
+/*
 Highcharts.addEvent(
 	document.getElementById('export-layout'),
 	'click',
@@ -437,11 +437,12 @@ Highcharts.addEvent(
 		exportedLayoutId = dashboard.layouts[0].options.id;
 		dashboard.layouts[0].exportLocal();
 	}
-);
+);*/
 
 /*
   Bind delete layout btn
 */
+/*
 Highcharts.addEvent(
 	document.getElementById('delete-layout'),
 	'click',
@@ -449,11 +450,12 @@ Highcharts.addEvent(
 		console.log('Delete layout');
 		dashboard.layouts[0].destroy();
 	}
-);
+);*/
 
 /*
   Bind import layout btn
 */
+/*
 Highcharts.addEvent(
 	document.getElementById('import-layout'),
 	'click',
@@ -461,7 +463,7 @@ Highcharts.addEvent(
 		const layout = dashboard.importLayoutLocal(exportedLayoutId);
 		console.log('Imported layout: ', layout);
 	}
-);
+);*/
 
 /*
 const dashboardBootstrap = new Dashboard('container-bootstrap', {
@@ -512,7 +514,7 @@ const dashboardBootstrap = new Dashboard('container-bootstrap', {
 	}]
 });*/
 
-console.log(dashboardBootstrap);
+// console.log(dashboardBootstrap);
 
 console.log('========= Layout in layout =========');
 /*
@@ -653,7 +655,7 @@ const dashboardLayout = new Dashboard('container-nested-layout', {
 	}]
 });*/
 
-console.log(dashboardLayout);
+// console.log(dashboardLayout);
 
 /*
  * Destroy resizer
