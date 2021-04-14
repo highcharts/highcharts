@@ -1,4 +1,4 @@
-const data = [
+var data = [
     1, // first group
     2, // first group ---> (1 + 2) / 2 = 1,5
     3, // second group
@@ -18,21 +18,21 @@ Highcharts.stockChart('container', {
         height: 800
     },
     yAxis: [{
-        height: '33,33%',
+        height: '33.33%',
         offset: 0,
         title: {
             text: 'Anchor start- default'
         }
     }, {
-        height: '33,33%',
-        top: '33,33%',
+        height: '33.33%',
+        top: '33.33%',
         offset: 0,
         title: {
             text: 'Anchor middle'
         }
     }, {
-        height: '33,33%',
-        top: '66,66%',
+        height: '33.33%',
+        top: '66.66%',
         offset: 0,
         title: {
             text: 'Anchor end'

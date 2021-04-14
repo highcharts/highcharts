@@ -1,5 +1,5 @@
-const hour = 3600 * 1000;
-const data = [
+var hour = 3600 * 1000;
+var data = [
     [0.2 * hour, 1], // first group
     [1 * hour, 2], // first group
     [1.3 * hour, 2], // first group
@@ -82,21 +82,21 @@ Highcharts.stockChart('container', {
             text: 'middle'
         }
     }, {
-        height: '20%',
+        height: '18%',
         top: '46%',
         offset: 0,
         title: {
             text: 'end'
         }
     }, {
-        height: '20%',
+        height: '18%',
         top: '64%',
         offset: 0,
         title: {
             text: 'firstPoint'
         }
     }, {
-        height: '20%',
+        height: '18%',
         top: '82%',
         offset: 0,
         title: {

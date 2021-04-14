@@ -141,15 +141,15 @@ declare global {
             start?: number;
         }
         interface DataGroupingOptionsObject {
-            anchor?: string;
+            anchor?: DataGroupingAnchor;
             approximation?: (DataGroupingApproximationValue|Function);
             dateTimeLabelFormats?: Record<string, Array<string>>;
             enabled?: boolean;
-            firstAnchor?: string;
+            firstAnchor?: DataGroupingAnchorExtremes;
             forced?: boolean;
             groupAll?: boolean;
             groupPixelWidth?: number;
-            lastAnchor?: string;
+            lastAnchor?: DataGroupingAnchorExtremes;
             smoothed?: boolean;
             units?: Array<[string, (Array<number>|null)]>;
         }
@@ -534,10 +534,10 @@ const anchorPoints = function (
     groupedXData: Array<number>,
     xMax: number
 ): any {
-    var options = series.options,
+    const options = series.options,
         dataGroupingOptions = options.dataGrouping,
-        totalRange = series.currentDataGrouping && series.currentDataGrouping.gapSize,
-        i;
+        totalRange = series.currentDataGrouping && series.currentDataGrouping.gapSize;
+    let i;
 
     // DataGrouping x-coordinates.
     if (dataGroupingOptions && series.xData && totalRange && series.groupMap) {
@@ -564,14 +564,19 @@ const anchorPoints = function (
             firstAnchor !== 'start' &&
             series.xData[0] >= groupedXData[0]
         ) {
-            const firstGroupstEnd = (series.groupMap[0].start as number) +
-                (series.groupMap[0].length as number - 1);
+            const groupStart = series.groupMap[0].start,
+                groupLength = series.groupMap[0].length;
+            let firstGroupstEnd;
+
+            if (isNumber(groupStart) && isNumber(groupLength)) {
+                firstGroupstEnd = groupStart + (groupLength - 1);
+            }
 
             groupedXData[0] = ({
                 middle: groupedXData[0] + 0.5 * totalRange,
                 end: groupedXData[0] + totalRange,
                 firstPoint: series.xData[0],
-                lastPoint: series.xData[firstGroupstEnd]
+                lastPoint: firstGroupstEnd && series.xData[firstGroupstEnd]
             } as Highcharts.anchorChoiceType)[firstAnchor];
         }
 
@@ -580,7 +585,8 @@ const anchorPoints = function (
         if (
             lastAnchor &&
             lastAnchor !== 'start' &&
-            groupedXData[groupedDataLength] >= xMax - (totalRange as number)
+            totalRange &&
+            groupedXData[groupedDataLength] >= xMax - totalRange
         ) {
             const lastGroupStart = series.groupMap[series.groupMap.length - 1].start;
 
@@ -598,17 +604,12 @@ const adjustExtremes = function (
     xAxis: Axis,
     series: Series,
     groupedXData: Array<number>
-): any {
-    const options = series.options,
-        dataGroupingOptions = options.dataGrouping,
-        visible = series.visible;
-
+): void {
     // Make sure the X axis extends to show the first group (#2533)
     // But only for visible series (#5493, #6393)
     if (
         defined(groupedXData[0]) &&
-        groupedXData[0] < (xAxis.min as any) &&
-        visible
+        groupedXData[0] < (xAxis.min as any)
     ) {
         if (
             (
@@ -630,17 +631,14 @@ const adjustExtremes = function (
     // the last point is visible (#12455).
     if (
         defined(groupedXData[groupedXData.length - 1]) &&
-        groupedXData[groupedXData.length - 1] > (xAxis.max as any) &&
-        visible &&
-        dataGroupingOptions &&
-        dataGroupingOptions.lastAnchor !== 'start'
+        groupedXData[groupedXData.length - 1] > (xAxis.max as any)
     ) {
 
         if (
             (
                 !defined(xAxis.options.max) &&
                 (xAxis.max as any) >= (xAxis.dataMax as any)
-            ) || xAxis.min === xAxis.dataMax
+            ) || xAxis.max === xAxis.dataMax
         ) {
             xAxis.max = Math.max(groupedXData[groupedXData.length - 1], (xAxis.max as any));
         }
@@ -941,7 +939,9 @@ seriesProto.processData = function (): any {
             series.closestPointRange = (groupPositions.info as any).totalRange;
             series.groupMap = groupedData.groupMap;
 
-            adjustExtremes(xAxis, series, groupedXData);
+            if (visible) {
+                adjustExtremes(xAxis, series, groupedXData);
+            }
 
             // We calculated all group positions but we should render
             // only the ones within the visible range
@@ -1290,8 +1290,8 @@ export default dataGrouping;
  */
 
 /**
- * Specifies how the points which are not the first and the last should be
- * located on the xAxis inside the group. Available options:
+ * Specifies how the points should be located on the x Axis inside the group.
+ * Points that are extremes can be set separately. Available options:
  *
  * - `start` places the point always at the beginning of the group
  * (e.g. range 00:00:00 - 23:59:59 -> 00:00:00)
@@ -1304,6 +1304,9 @@ export default dataGrouping;
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-anchor
  *         Changing the point x-coordinate inside the group.
+ *
+ * @see [dataGrouping.firstAnchor](#plotOptions.series.dataGrouping.firstAnchor)
+ * @see [dataGrouping.lastAnchor](#plotOptions.series.dataGrouping.lastAnchor)
  *
  * @type       {Highcharts.DataGroupingAnchor}
  * @since      next
@@ -1413,6 +1416,8 @@ export default dataGrouping;
  * @sample {highstock} stock/plotoptions/series-datagrouping-first-anchor
  *         Applying first and last anchor.
  *
+ * @see [dataGrouping.anchor](#plotOptions.series.dataGrouping.anchor)
+ *
  * @type       {Highcharts.DataGroupingAnchorExtremes}
  * @since      next
  * @default    start
@@ -1489,6 +1494,8 @@ export default dataGrouping;
  *
  * @sample {highstock} stock/plotoptions/series-datagrouping-last-anchor
  *         Applying the last anchor in the chart with live data.
+ *
+ * @see [dataGrouping.anchor](#plotOptions.series.dataGrouping.anchor)
  *
  * @type       {Highcharts.DataGroupingAnchorExtremes}
  * @since      next
