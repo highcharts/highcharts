@@ -1,15 +1,15 @@
 QUnit.test('Data grouping anchor for points in the middle of the data set.', function (assert) {
     const chart = Highcharts.stockChart('container', {
             yAxis: [{
-                height: '33,33%',
+                height: '33.33%',
                 offset: 0
             }, {
-                height: '33,33%',
-                top: '33,33%',
+                height: '33.33%',
+                top: '33.33%',
                 offset: 0
             }, {
-                height: '33,33%',
-                top: '66,66%',
+                height: '33.33%',
+                top: '66.66%',
                 offset: 0
             }],
             plotOptions: {
