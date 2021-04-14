@@ -3747,7 +3747,7 @@ H.defaultOptions = {
 
         /**
          * The name of a symbol to use for the border around the tooltip. Can
-         * be one of: `"callout"`, `"circle"`, `"square"` or `"rect"`. When
+         * be one of: `"callout"`, `"circle"` or `"rect"`. When
          * [tooltip.split](#tooltip.split)
          * option is enabled, shape is applied to all boxes except header, which
          * is controlled by
