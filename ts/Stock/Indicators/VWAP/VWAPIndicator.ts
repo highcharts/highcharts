@@ -2,7 +2,7 @@
  *
  *  (c) 2010-2021 Paweł Dalek
  *
- *  Volume Weighted Average Price (VWAP) indicator for Highstock
+ *  Volume Weighted Average Price (VWAP) indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *

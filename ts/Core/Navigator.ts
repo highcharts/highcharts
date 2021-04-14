@@ -337,7 +337,7 @@ extend(defaultOptions, {
 
         /**
          * Whether the mask should be inside the range marking the zoomed
-         * range, or outside. In Highstock 1.x it was always `false`.
+         * range, or outside. In Highcharts Stock 1.x it was always `false`.
          *
          * @sample {highstock} stock/navigator/maskinside-false/
          *         False, mask outside
@@ -604,11 +604,11 @@ extend(defaultOptions, {
             },
 
             /**
-             * Since Highstock v8, default value is the same as default
+             * Since Highcharts Stock v8, default value is the same as default
              * `pointRange` defined for a specific type (e.g. `null` for
              * column type).
              *
-             * In Highstock version < 8, defaults to 0.
+             * In Highcharts Stock version < 8, defaults to 0.
              *
              * @extends plotOptions.series.pointRange
              * @type {number|null}

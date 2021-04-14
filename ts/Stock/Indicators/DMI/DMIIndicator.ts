@@ -1,7 +1,7 @@
 /* *
  *  (c) 2010-2021 Rafal Sebestjanski
  *
- *  Directional Movement Index (DMI) indicator for Highstock
+ *  Directional Movement Index (DMI) indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *

@@ -547,7 +547,7 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
 });
 
 QUnit.test(
-    'Pan in vertical direction, and both directions. (Highstock only)',
+    'Pan in vertical direction, and both directions. (Highcharts Stock only)',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
             chart: {

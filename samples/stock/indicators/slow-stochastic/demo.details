@@ -1,5 +1,5 @@
 ---
- name: Highstock Demo
+ name: Highcharts Stock Demo
  authors:
    - Pawel fus
  js_wrap: b
