@@ -91,6 +91,7 @@ class Layout extends GUIElement {
     ) {
         super();
 
+        this.type = DashboardGlobals.guiElementType.layout;
         this.dashboard = dashboard;
         this.rows = [];
         this.options = options;

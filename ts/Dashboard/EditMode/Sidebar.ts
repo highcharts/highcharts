@@ -33,15 +33,24 @@ class Sidebar {
     public static tabs: Array<Sidebar.TabOptions> = [{
         type: 'design',
         icon: '',
-        items: ['cellWidth']
+        items: {
+            cell: ['cellWidth'],
+            row: ['t1']
+        }
     }, {
         type: 'data',
         icon: '',
-        items: ['t2']
+        items: {
+            cell: ['t2'],
+            row: ['t1']
+        }
     }, {
         type: 'component',
         icon: '',
-        items: ['t1', 't2']
+        items: {
+            cell: ['t1', 't2'],
+            row: ['t2']
+        }
     }]
 
     public static items: Record<string, MenuItem.Options> =
@@ -69,7 +78,7 @@ class Sidebar {
                     const inputValue = +(input as any).value,
                         cell = this.menu.parent.context;
 
-                    if (cell instanceof Cell) {
+                    if (cell.getType() === DashboardGlobals.guiElementType.cell) {
                         cell.setSize({ width: inputValue });
                     }
                 },
@@ -78,7 +87,7 @@ class Sidebar {
                         cell = this.menu.parent.context;
 
                     if (
-                        cell instanceof Cell &&
+                        cell.getType() === DashboardGlobals.guiElementType.cell &&
                         cell.container &&
                         item.innerElement &&
                         item.innerElement.tagName === 'INPUT'
@@ -243,45 +252,56 @@ class Sidebar {
     public onTabClick(
         tab: Sidebar.Tab
     ): void {
-        const sidebar = this;
+        const sidebar = this,
+            contextType = sidebar.context && sidebar.context.getType();
 
-        if (sidebar.activeTab) {
-            sidebar.activeTab.isActive = false;
-            sidebar.activeTab.element.classList.remove(
+        if (contextType) {
+            if (sidebar.activeTab) {
+                sidebar.activeTab.isActive = false;
+                sidebar.activeTab.element.classList.remove(
+                    EditGlobals.classNames.editSidebarTabActive
+                );
+            }
+
+            tab.element.classList.add(
                 EditGlobals.classNames.editSidebarTabActive
             );
+
+            sidebar.activeTab = tab;
+            tab.isActive = true;
+
+            sidebar.menu.updateActiveItems(tab.options.items[contextType]);
         }
-
-        tab.element.classList.add(
-            EditGlobals.classNames.editSidebarTabActive
-        );
-
-        sidebar.activeTab = tab;
-        tab.isActive = true;
-
-        sidebar.menu.updateActiveItems(tab.options.items);
     }
 
     public show(
-        context: any
+        context?: Cell|Row
+    ): void {
+        if (context) {
+            this.update(context);
+
+            if (!this.isVisible) {
+                this.container.classList.add(
+                    EditGlobals.classNames.editSidebarShow
+                );
+                this.isVisible = true;
+
+                // set margin on all layouts in dashboard to avoid overlap
+                this.reserveToolbarSpace();
+
+                // Hide row and cell toolbars.
+                this.editMode.hideToolbars(['cell', 'row']);
+            }
+        }
+    }
+
+    public update(
+        context: Cell|Row
     ): void {
         this.context = context;
 
         // activate first tab.
         this.onTabClick(this.tabs[Sidebar.tabs[0].type]);
-
-        if (!this.isVisible) {
-            this.container.classList.add(
-                EditGlobals.classNames.editSidebarShow
-            );
-            this.isVisible = true;
-
-            // set margin on all layouts in dashboard to avoid overlap
-            this.reserveToolbarSpace();
-
-            // Hide row and cell toolbars.
-            this.editMode.hideToolbars(['cell', 'row']);
-        }
     }
 
     public hide(): void {
@@ -331,7 +351,7 @@ namespace Sidebar {
     export interface TabOptions {
         type: string;
         icon: string;
-        items: Array<string>;
+        items: Record<string, Array<string>>;
     }
 
     export interface Tab {

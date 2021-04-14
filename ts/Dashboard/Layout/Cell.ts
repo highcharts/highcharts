@@ -93,6 +93,7 @@ class Cell extends GUIElement {
     ) {
         super();
 
+        this.type = DashboardGlobals.guiElementType.cell;
         this.id = options.id;
         this.options = options;
         this.row = row;

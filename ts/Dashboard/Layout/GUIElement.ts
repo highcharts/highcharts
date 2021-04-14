@@ -26,6 +26,11 @@ abstract class GUIElement {
     public container?: HTMLDOMElement;
 
     /**
+     * The type of a GUIElement instance.
+     */
+    protected type?: GUIElement.GUIElementType;
+
+    /**
      * The function to remove bindedGUIElement
      * event on GUIElement container.
      */
@@ -114,6 +119,13 @@ abstract class GUIElement {
         });
     }
 
+    /**
+     * Return the GUIElement instance type.
+     * @return {GUIElement.GUIElementType|undefined}
+     */
+    public getType(): GUIElement.GUIElementType|undefined {
+        return this.type;
+    }
 }
 
 namespace GUIElement {
@@ -129,6 +141,8 @@ namespace GUIElement {
     export interface BindedGUIElementEvent extends Event {
         guiElement: GUIElement;
     }
+
+    export type GUIElementType = 'row'|'cell'|'layout';
 }
 
 export default GUIElement;

@@ -78,6 +78,7 @@ class Row extends GUIElement {
     ) {
         super();
 
+        this.type = DashboardGlobals.guiElementType.row;
         this.layout = layout;
         this.cells = [];
         this.options = options;
