@@ -5588,7 +5588,8 @@ class Axis {
         if (isXAxis && !secondPass) {
             axis.series.forEach(function (series): void {
                 series.processData(
-                    axis.min !== axis.old?.min || axis.max !== axis.old?.max
+                    axis.min !== (axis.old && axis.old.min) ||
+                    axis.max !== (axis.old && axis.old.max)
                 );
             });
         }
@@ -6059,12 +6060,16 @@ class Axis {
 
             // When x axis is dirty, we need new data extremes for y as
             // well:
-            isXAxisDirty = isXAxisDirty || series.xAxis?.isDirty || false;
+            isXAxisDirty = (
+                isXAxisDirty ||
+                (series.xAxis && series.xAxis.isDirty) ||
+                false
+            );
         });
 
         // set the new axisLength
         axis.setAxisSize();
-        isDirtyAxisLength = axis.len !== axis.old?.len;
+        isDirtyAxisLength = axis.len !== (axis.old && axis.old.len);
 
         // do we really need to go through all this?
         if (
@@ -6073,8 +6078,8 @@ class Axis {
             isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
-            axis.userMin !== axis.old?.userMin ||
-            axis.userMax !== axis.old?.userMax ||
+            axis.userMin !== (axis.old && axis.old.userMin) ||
+            axis.userMax !== (axis.old && axis.old.userMax) ||
             axis.alignToOthers()
         ) {
 
@@ -6095,8 +6100,8 @@ class Axis {
             if (!axis.isDirty) {
                 axis.isDirty =
                     isDirtyAxisLength ||
-                    axis.min !== axis.old?.min ||
-                    axis.max !== axis.old?.max;
+                    axis.min !== (axis.old && axis.old.min) ||
+                    axis.max !== (axis.old && axis.old.max);
             }
         } else if (axis.stacking) {
             axis.stacking.cleanStacks();
@@ -7318,9 +7323,10 @@ class Axis {
         const slideInTicks = axis.chart.hasRendered && axis.old;
 
         // Linked axes need an extra check to find out if
-        if (!isLinked ||
+        if (
+            !isLinked ||
             (pos >= (axis.min as any) && pos <= (axis.max as any)) ||
-             axis.grid?.isColumn
+            (axis.grid && axis.grid.isColumn)
         ) {
 
             if (!ticks[pos]) {

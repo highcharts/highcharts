@@ -20,9 +20,9 @@ QUnit.test('Item width after update. #6646', function (assert) {
                 itemStyle: {
                     width: '85px',
                     color: '#707070',
-                    'font-family': 'Arial',
-                    'font-weight': 'normal',
-                    'font-size': '14px'
+                    fontFamily: 'Arial',
+                    fontWeight: 'normal',
+                    fontSize: '18px'
                 },
                 labelFormatter: function () {
                     return '<span class="label-text">' + this.name + '</span>';
@@ -156,5 +156,11 @@ QUnit.test('Item width after update. #6646', function (assert) {
         chart.legend.itemStyle.width,
         '85px',
         'Width is applied.'
+    );
+
+    assert.strictEqual(
+        chart.legend.symbolWidth,
+        18,
+        '#15463: symbolWidth should default to symbolHeight which defaults to fontSize'
     );
 });

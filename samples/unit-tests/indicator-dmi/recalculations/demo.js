@@ -1,6 +1,7 @@
 QUnit.test(
     'Testing DMI indicator (values, period and updates), #15140.',
     assert => {
+
         const chart = Highcharts.stockChart('container', {
                 yAxis: [{
                     height: '60%'
@@ -152,13 +153,13 @@ QUnit.test(
 
         assert.strictEqual(
             DMIIndicator.graphplusDILine.element.getAttribute('stroke'),
-            Highcharts.defaultOptions.colors[2],
+            DMIIndicator.options.plusDILine.styles.lineColor,
             'The +DI line color should be green-ish by default.'
         );
 
         assert.strictEqual(
             DMIIndicator.graphminusDILine.element.getAttribute('stroke'),
-            Highcharts.defaultOptions.colors[5],
+            DMIIndicator.options.minusDILine.styles.lineColor,
             'The -DI line color should be red-ish by default.'
         );
 

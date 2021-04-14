@@ -52,6 +52,7 @@ const {
 import palette from '../../Color/Palette.js';
 import U from '../../Utilities.js';
 const {
+    addEvent,
     attr,
     createElement,
     css,
@@ -457,6 +458,7 @@ class SVGElement {
     public matrix?: Array<number>;
     public oldShadowOptions?: ShadowOptionsObject;
     public onAdd?: Function;
+    public onEvents: Record<string, Function> = {};
     public opacity = 1; // Default base for animation
     public options?: AnyRecord;
     public parentInverted?: boolean;
@@ -2087,37 +2089,32 @@ class SVGElement {
         eventType: string,
         handler: Function
     ): SVGElement {
-        var svgElement = this,
-            element = svgElement.element,
-            touchStartPos: Record<string, number>,
-            touchEventFired: boolean;
+        const {
+            element,
+            onEvents
+        } = this;
 
         // touch
         if (hasTouch && eventType === 'click') {
-            element.ontouchstart = function (e: TouchEvent): void {
+            let touchStartX: number,
+                touchStartY: number,
+                touchEventFired = false;
+
+            const unbindStart = addEvent(element, 'touchstart', (e: TouchEvent): void => {
                 // save touch position for later calculation
-                touchStartPos = {
-                    clientX: e.touches[0].clientX,
-                    clientY: e.touches[0].clientY
-                };
-            };
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            });
 
             // Instead of ontouchstart, event handlers should be called
             // on touchend - similar to how current mouseup events are called
-            element.ontouchend = function (e: TouchEvent): void {
-
+            const unbindEnd = addEvent(element, 'touchend', (e: TouchEvent): void => {
                 // hasMoved is a boolean variable containing logic if page
                 // was scrolled, so if touch position changed more than
                 // ~4px (value borrowed from general touch handler)
-                const hasMoved = touchStartPos.clientX ? Math.sqrt(
-                    Math.pow(
-                        touchStartPos.clientX - e.changedTouches[0].clientX,
-                        2
-                    ) +
-                    Math.pow(
-                        touchStartPos.clientY - e.changedTouches[0].clientY,
-                        2
-                    )
+                const hasMoved = touchStartX ? Math.sqrt(
+                    Math.pow(touchStartX - e.changedTouches[0].clientX, 2) +
+                    Math.pow(touchStartY - e.changedTouches[0].clientY, 2)
                 ) >= 4 : false;
 
                 if (!hasMoved) { // only call handlers if page was not scrolled
@@ -2125,17 +2122,30 @@ class SVGElement {
                 }
 
                 touchEventFired = true;
-            };
+            });
 
-            element.onclick = function (e: Event): void {
+            const unbindClick = addEvent(element, 'click', (e: Event): void => {
                 // Do not call onclick handler if touch event was fired already.
                 if (!touchEventFired) {
                     handler.call(element, e);
                 }
+            });
+
+            if (onEvents.click) {
+                onEvents.click();
+            }
+
+            onEvents.click = (): void => {
+                unbindStart();
+                unbindEnd();
+                onEvents.click = unbindClick();
             };
         } else {
-            // simplest possible event model for internal use
-            (element as AnyRecord)['on' + eventType] = handler;
+            if (onEvents[eventType]) {
+                // Unbind existing event
+                onEvents[eventType]();
+            }
+            onEvents[eventType] = addEvent(element, eventType, handler);
         }
         return this;
     }

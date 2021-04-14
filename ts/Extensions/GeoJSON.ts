@@ -328,7 +328,12 @@ Chart.prototype.transformFromLatLon = function (
      * @apioption  chart.proj4
      */
 
-    const proj4 = (this.userOptions.chart?.proj4 || win.proj4);
+    const proj4 = (
+        this.userOptions.chart &&
+        this.userOptions.chart.proj4 ||
+        win.proj4
+    );
+
     if (!proj4) {
         error(21, false, this);
         return {

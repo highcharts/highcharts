@@ -414,6 +414,7 @@ class WordcloudSeries extends ColumnSeries {
                 field = WordcloudUtils.updateFieldBoundaries(field, rectangle);
                 placed.push(point);
                 point.isNull = false;
+                point.isInside = true; // #15447
             } else {
                 point.isNull = true;
             }

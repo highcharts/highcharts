@@ -318,6 +318,13 @@ QUnit.test('The lastPrice color, #15074.', function (assert) {
         '#00ff00',
         'The lastPrice color should remain the same after toggle.'
     );
+
+    assert.ok(
+        chart.series[0].lastPrice.element.classList
+            .contains('highcharts-color-0'),
+        'CSS class of highcharts-color-{x} ' +
+            'should be added to lastPrice (#15222)'
+    );
 });
 
 QUnit.test('The currentPriceIndicator for multiple series, #14888.', function (assert) {

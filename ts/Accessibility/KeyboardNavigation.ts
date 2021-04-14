@@ -246,9 +246,11 @@ KeyboardNavigation.prototype = {
         );
 
         // Init keyboard nav if tabbing into chart
-        if (!this.isClickingChart && !focusComesFromChart) {
-            this.modules[0]?.init(1);
+        if (!this.exiting && !this.isClickingChart && !focusComesFromChart && this.modules[0]) {
+            this.modules[0].init(1);
         }
+
+        this.exiting = false;
     },
 
 
@@ -293,6 +295,9 @@ KeyboardNavigation.prototype = {
 
         // Used for resetting nav state when clicking outside chart
         this.keyboardReset = false;
+
+        // Used for sending focus out of the chart by the modules.
+        this.exiting = false;
 
         // If there is a nav module for the current index, run it.
         // Otherwise, we are outside of the chart in some direction.
@@ -369,8 +374,8 @@ KeyboardNavigation.prototype = {
         this.currentModuleIx = 0; // Reset counter
 
         // Set focus to chart or exit anchor depending on direction
+        this.exiting = true;
         if (direction > 0) {
-            this.exiting = true;
             this.exitAnchor.focus();
         } else {
             this.tabindexContainer.focus();
