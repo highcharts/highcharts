@@ -140,7 +140,7 @@ class RowEditToolbar extends EditToolbar {
         const toolbar = this;
 
         if (toolbar.editMode.sidebar) {
-            toolbar.editMode.sidebar.show();
+            toolbar.editMode.sidebar.show(toolbar.row);
             toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
 
             if (this.row) {

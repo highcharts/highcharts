@@ -66,19 +66,20 @@ class Sidebar {
             text: 'Cell width',
             events: {
                 click: function (this: MenuItem, input: HTMLDOMElement, e: any): void {
-                    const inputValue = +(input as any).value;
-                    const cell = this.menu.parent.editMode.cellToolbar.cell;
+                    const inputValue = +(input as any).value,
+                        cell = this.menu.parent.context;
 
-                    if (cell) {
+                    if (cell instanceof Cell) {
                         cell.setSize({ width: inputValue });
                     }
                 },
                 update: function (this: MenuItem, e: any): void {
                     const item = this,
-                        cell = this.menu.parent.editMode.cellToolbar.cell;
+                        cell = this.menu.parent.context;
 
                     if (
-                        cell &&
+                        cell instanceof Cell &&
+                        cell.container &&
                         item.innerElement &&
                         item.innerElement.tagName === 'INPUT'
                     ) {
@@ -134,6 +135,7 @@ class Sidebar {
     public tabs: Record<string, Sidebar.Tab>;
     public activeTab?: Sidebar.Tab;
     public menu: Menu;
+    public context?: Cell|Row;
 
     /* *
     *
@@ -260,36 +262,38 @@ class Sidebar {
         sidebar.menu.updateActiveItems(tab.options.items);
     }
 
-    public show(): void {
-        if (this.container) {
-            // activate first tab.
-            this.onTabClick(this.tabs[Sidebar.tabs[0].type]);
+    public show(
+        context: any
+    ): void {
+        this.context = context;
 
-            if (!this.isVisible) {
-                this.container.classList.add(
-                    EditGlobals.classNames.editSidebarShow
-                );
-                this.isVisible = true;
+        // activate first tab.
+        this.onTabClick(this.tabs[Sidebar.tabs[0].type]);
 
-                // set margin on all layouts in dashboard to avoid overlap
-                this.reserveToolbarSpace();
+        if (!this.isVisible) {
+            this.container.classList.add(
+                EditGlobals.classNames.editSidebarShow
+            );
+            this.isVisible = true;
 
-                // Hide row and cell toolbars.
-                this.editMode.hideToolbars(['cell', 'row']);
-            }
+            // set margin on all layouts in dashboard to avoid overlap
+            this.reserveToolbarSpace();
+
+            // Hide row and cell toolbars.
+            this.editMode.hideToolbars(['cell', 'row']);
         }
     }
 
     public hide(): void {
-        if (this.container) {
-            this.container.classList.remove(
-                EditGlobals.classNames.editSidebarShow
-            );
+        this.context = void 0;
 
-            this.isVisible = false;
-            this.removeToolbarSpace();
-            this.guiElement = void 0;
-        }
+        this.container.classList.remove(
+            EditGlobals.classNames.editSidebarShow
+        );
+
+        this.isVisible = false;
+        this.removeToolbarSpace();
+        this.guiElement = void 0;
     }
 
     private reserveToolbarSpace(): void {
