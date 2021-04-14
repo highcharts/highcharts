@@ -40,6 +40,7 @@
         ],
         "no-dupe-class-members": 0,
         "no-inner-declarations": 0, // deprecated with ES6
+        "no-invalid-this": 0, // covered by TypeScript
         "no-shadow": 0, // @todo
         "no-undef": 0,
         "no-underscore-dangle": 0, // @todo
@@ -88,9 +89,12 @@
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/unbound-method": 0, // @todo
-        "highcharts/no-optional-chaining": 2,
+        "highcharts/no-highcharts-namespace": 1, // @todo
         "highcharts/no-highcharts-object": 2,
+        "highcharts/no-mixin": 1, // @todo
+        "highcharts/no-optional-chaining": 2,
         "highcharts/no-private-constructor-doclet": 0,
+        "highcharts/no-wrap": 1, // @todo
         "highcharts/doclet-apioption-last": 2,
         "node/no-missing-import": 0, // @todo
         "node/no-unsupported-features/es-syntax": 0, // @todo

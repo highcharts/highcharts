@@ -382,12 +382,20 @@ if (seriesTypes.spline) {
                         true,
                         this.connectEnds
                     );
+
+                    const rightContX = connectors.prevPointCont && connectors.prevPointCont.rightContX;
+                    const rightContY = connectors.prevPointCont && connectors.prevPointCont.rightContY;
+
                     ret = [
                         'C',
-                        (connectors.prevPointCont as any).rightContX,
-                        (connectors.prevPointCont as any).rightContY,
-                        connectors.leftContX,
-                        connectors.leftContY,
+                        isNumber(rightContX) ? rightContX : connectors.plotX,
+                        isNumber(rightContY) ? rightContY : connectors.plotY,
+                        isNumber(connectors.leftContX) ?
+                            connectors.leftContX :
+                            connectors.plotX,
+                        isNumber(connectors.leftContY) ?
+                            connectors.leftContY :
+                            connectors.plotY,
                         connectors.plotX,
                         connectors.plotY
                     ];
