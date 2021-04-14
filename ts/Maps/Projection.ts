@@ -22,7 +22,7 @@ const {
 export default class Projection {
 
     public options: ProjectionOptions;
-    public isGeographicCoordinateSystem: boolean = false;
+    public isNorthPositive: boolean = false;
 
     // Calculate the great circle between two given coordinates
     public static greatCircle(
@@ -123,12 +123,17 @@ export default class Projection {
                 this.forward = projection.forward;
                 this.inverse = projection.inverse;
 
-                this.isGeographicCoordinateSystem = true;
+                this.isNorthPositive = true;
             }
 
         // Set up d3-geo based projection
         } else if (d3) {
-            const { lat0 = 0, lon0 = 0, projectionName } = this.options;
+            const {
+                lat0 = 0,
+                lon0 = 0,
+                projectionName,
+                projString
+            } = this.options;
 
             let projection = d3.geoEquirectangular();
             if (projectionName === 'mill') {
@@ -137,22 +142,24 @@ export default class Projection {
                 projection = d3.geoOrthographic().rotate([-lon0, -lat0]);
             } else if (projectionName === 'robin') {
                 projection = d3.geoRobinson();
-            } else if (projectionName === 'webmerc') {
+            } else if (
+                projectionName === 'webmerc' ||
+                projString === 'EPSG:3857'
+            ) {
                 projection = d3.geoMercator();
             } else {
                 error('Projection unknown to d3 adapter, falling back to equirectangular', false);
             }
 
-            this.forward = (lonLat: LonLatArray): [number, number] => {
-                const p = projection(lonLat);
-                return [p[0], -p[1]];
-            };
-            this.inverse = projection.invert;
+            this.forward = (lonLat: LonLatArray): [number, number] =>
+                projection(lonLat);
+            this.inverse = (p: [number, number]): LonLatArray =>
+                projection.invert(p);
 
             this.d3Projection = d3.geoPath(projection);
             this.path = this.d3Path;
 
-            this.isGeographicCoordinateSystem = true;
+            this.isNorthPositive = false;
 
         }
     }
@@ -184,7 +191,7 @@ export default class Projection {
 
             const poly = polygon.slice();
 
-            if (this.isGeographicCoordinateSystem) {
+            if (this.isNorthPositive) {
                 let i = poly.length - 1;
                 while (i--) {
 

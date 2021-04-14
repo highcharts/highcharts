@@ -224,6 +224,21 @@ const drawMap = projectionKey => {
                 projection
             }
         });
+
+        /*
+        if (projectionKey === 'ortho-europe') {
+            let lon0 = projection.lon0;
+            setInterval(() => {
+                lon0 += 0.5;
+                projection.lon0 = lon0;
+                chart.update({
+                    mapView: {
+                        projection
+                    }
+                });
+            }, 25);
+        }
+        */
     }
 
     document.querySelectorAll('#projection-buttons button').forEach(btn =>

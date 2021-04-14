@@ -1236,7 +1236,7 @@ class MapSeries extends ScatterSeries {
             let y = projectedCenter[1];
 
             // When dealing with unprojected coordinates, y axis is flipped.
-            if (mapView.projection.isGeographicCoordinateSystem) {
+            if (mapView.projection.isNorthPositive) {
                 y = -y;
             }
 

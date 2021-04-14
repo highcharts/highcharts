@@ -517,12 +517,14 @@ function error(
         message += additionalMessages;
     }
 
-    fireEvent(
-        Highcharts,
-        'displayError',
-        { chart, code, message, params },
-        defaultHandler
-    );
+    if (typeof Highcharts !== 'undefined') {
+        fireEvent(
+            Highcharts,
+            'displayError',
+            { chart, code, message, params },
+            defaultHandler
+        );
+    }
 
     error.messages.push(message);
 }
