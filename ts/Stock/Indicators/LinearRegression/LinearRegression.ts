@@ -82,6 +82,9 @@ class LinearRegressionIndicator extends SMAIndicator {
                  * computing the slope and the intercept. This may enchance the
                  * legiblitity of the indicator's values.
                  *
+                 * Default value is the closest distance between two data
+                 * points.
+                 *
                  * In `v9.0.2`, the default value has been changed
                  * from `undefined` to `null`.
                  *
