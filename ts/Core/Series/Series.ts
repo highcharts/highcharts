@@ -2874,7 +2874,7 @@ class Series {
 
     public symbol?: string;
 
-    public readonly table: DataTable = new DataTable();
+    public table?: DataTable;
 
     private tableReset?: boolean;
 
@@ -4020,18 +4020,18 @@ class Series {
         const series = this,
             syncTable = series.syncTable.bind(series);
 
-        let table = series.table;
-
-        if (!table) {
-            table = (series as AnyRecord).table = new DataTable();
-        }
-
         fireEvent(series, 'setTable', { table: newTable });
         series.tableReset = true;
 
-        table.clear();
-        table.setColumn('x');
-        table.setColumns(newTable.getColumns());
+        let table = series.table;
+
+        if (table) {
+            table.clear();
+            table.setColumn('x');
+            table.setColumns(newTable.getColumns());
+        } else {
+            table = series.table = newTable.clone();
+        }
 
         if (!table.hcEvents) {
             table.on('afterClearColumn', syncTable);
@@ -4203,12 +4203,25 @@ class Series {
     /** @private */
     private syncTableRow(index: number): void {
         const series = this,
-            options = series.options,
+            table = series.table;
+
+        if (!table) {
+            return;
+        }
+
+        const options = series.options,
             dataOptions = options.data = (options.data || []),
             rowOptions = dataOptions[index],
-            pointValKey = (options.pointValKey || 'y'),
-            keys = (options.keys || series.pointArrayMap || [pointValKey]),
-            table = series.table,
+            pointValKey = pick(
+                options.pointValKey,
+                options.keys && options.keys[0],
+                'y'
+            ),
+            keys = pick(
+                options.keys,
+                series.pointArrayMap,
+                [pointValKey]
+            ),
             row = table.getRow(index, keys);
 
         if (!row || DataTable.isNull(row)) {
