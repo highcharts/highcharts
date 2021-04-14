@@ -2,6 +2,9 @@ import EditMode from '../EditMode.js';
 import U from '../../../Core/Utilities.js';
 import Menu from '../Menu/Menu.js';
 import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
+import EditGlobals from '../EditGlobals.js';
+import Row from '../../Layout/Row.js';
+import Cell from '../../Layout/Cell.js';
 
 const {
     defined,
@@ -70,6 +73,57 @@ abstract class EditToolbar {
         }
 
         toolbar.isVisible = defined(x) && defined(y);
+    }
+
+    public maskNotEditedElements(
+        element: Cell|Row,
+        isRow?: boolean
+    ): void {
+        // reset current elements
+        this.resetCurrentElements();
+
+        // set current element
+        (element.container as HTMLDOMElement).classList.add(
+            isRow ? EditGlobals.classNames.currentEditedRow :
+                EditGlobals.classNames.currentEditedCell
+        );
+
+        if (!isRow) {
+            (element as Cell).row.layout.dashboard.container.classList.add(
+                EditGlobals.classNames.disabledNotEditedCells
+            );
+        } else {
+            (element as Row).layout.dashboard.container.classList.add(
+                EditGlobals.classNames.disabledNotEditedRows
+            );
+
+            // add border
+
+        }
+    }
+
+    public resetCurrentElements(): void {
+        // reset current cells
+        const currentCells = document.getElementsByClassName(
+            EditGlobals.classNames.currentEditedCell
+        );
+
+        if (currentCells && currentCells.length) {
+            currentCells[0].classList.remove(
+                EditGlobals.classNames.currentEditedCell
+            );
+        }
+
+        // reset current rows
+        const currentRows = document.getElementsByClassName(
+            EditGlobals.classNames.currentEditedRow
+        );
+
+        if (currentRows && currentRows.length) {
+            currentRows[0].classList.remove(
+                EditGlobals.classNames.currentEditedRow
+            );
+        }
     }
 }
 

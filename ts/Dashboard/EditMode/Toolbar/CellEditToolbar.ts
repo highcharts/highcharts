@@ -150,11 +150,11 @@ class CellEditToolbar extends EditToolbar {
             toolbar.editMode.sidebar.show();
             toolbar.editMode.sidebar.updateTitle('CELL OPTIONS');
 
-            // temporary -> move to OptionsToolbar
-            this.cell?.container?.classList.add(EditGlobals.classNames.currentEditedCell);
-            this.cell?.row.layout.dashboard.container.classList.add(
-                EditGlobals.classNames.disabledNotEditedCells
-            );
+            if (this.cell) {
+                super.maskNotEditedElements(
+                    this.cell
+                );
+            }
         }
     }
 

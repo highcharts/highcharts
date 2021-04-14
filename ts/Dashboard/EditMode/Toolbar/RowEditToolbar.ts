@@ -143,11 +143,12 @@ class RowEditToolbar extends EditToolbar {
             toolbar.editMode.sidebar.show();
             toolbar.editMode.sidebar.updateTitle('ROW OPTIONS');
 
-            // temporary -> move to OptionsToolbar
-            this.row?.container?.classList.add(EditGlobals.classNames.currentEditedRow);
-            this.row?.layout.dashboard.container.classList.add(
-                EditGlobals.classNames.disabledNotEditedRows
-            );
+            if (this.row) {
+                super.maskNotEditedElements(
+                    this.row,
+                    true
+                );
+            }
         }
     }
 
