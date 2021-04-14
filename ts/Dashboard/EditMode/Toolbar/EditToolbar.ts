@@ -96,33 +96,27 @@ abstract class EditToolbar {
             (element as Row).layout.dashboard.container.classList.add(
                 EditGlobals.classNames.disabledNotEditedRows
             );
-
-            // add border
-
         }
     }
 
     public resetCurrentElements(): void {
-        // reset current cells
-        const currentCells = document.getElementsByClassName(
-            EditGlobals.classNames.currentEditedCell
-        );
-
-        if (currentCells && currentCells.length) {
-            currentCells[0].classList.remove(
-                EditGlobals.classNames.currentEditedCell
-            );
-        }
-
-        // reset current rows
-        const currentRows = document.getElementsByClassName(
+        const classesToRemove = [
+            EditGlobals.classNames.disabledNotEditedCells,
+            EditGlobals.classNames.disabledNotEditedRows,
+            EditGlobals.classNames.currentEditedCell,
             EditGlobals.classNames.currentEditedRow
-        );
+        ];
 
-        if (currentRows && currentRows.length) {
-            currentRows[0].classList.remove(
-                EditGlobals.classNames.currentEditedRow
-            );
+        let currentClass;
+
+        for (let i = 0, iEnd = classesToRemove.length; i < iEnd; ++i) {
+            currentClass = document.getElementsByClassName(classesToRemove[i]);
+
+            if (currentClass && currentClass.length) {
+                currentClass[0].classList.remove(
+                    classesToRemove[i]
+                );
+            }
         }
     }
 }
