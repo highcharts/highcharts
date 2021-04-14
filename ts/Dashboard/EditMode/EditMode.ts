@@ -191,13 +191,13 @@ class EditMode {
      * Method for hiding edit toolbars.
      *
      * @param {Array<string>} toolbarTypes
-     * The array of toolbar names to hide ('cell', 'row', 'options').
+     * The array of toolbar names to hide ('cell', 'row', 'sidebar').
      */
     public hideToolbars(
         toolbarTypes?: Array<string>
     ): void {
         const editMode = this,
-            toolbarsToHide = toolbarTypes || ['cell', 'row', 'options'];
+            toolbarsToHide = toolbarTypes || ['cell', 'row', 'sidebar'];
 
         for (let i = 0, iEnd = toolbarsToHide.length; i < iEnd; ++i) {
             switch (toolbarsToHide[i]) {
@@ -213,7 +213,7 @@ class EditMode {
                     }
                     break;
                 }
-                case 'options': {
+                case 'sidebar': {
                     if (editMode.sidebar && editMode.sidebar.isVisible) {
                         editMode.sidebar.hide();
                     }

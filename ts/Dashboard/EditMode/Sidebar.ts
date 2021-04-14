@@ -117,6 +117,7 @@ class Sidebar {
         );
 
         this.menu.initItems(Sidebar.items);
+        this.initEvents();
     }
 
     /* *
@@ -214,6 +215,17 @@ class Sidebar {
                 isActive: false
             };
         }
+    }
+
+    private initEvents(): void {
+        const sidebar = this;
+
+        // Hide row and cell toolbars when mouse on sidebar.
+        addEvent(sidebar.container, 'mouseenter', (event): void => {
+            if (sidebar.isVisible) {
+                sidebar.editMode.hideToolbars(['row', 'cell']);
+            }
+        });
     }
 
     public updateTitle(
