@@ -114,6 +114,11 @@ class CellEditToolbar extends EditToolbar {
                 }
             }
         }
+
+        // Hide row toolbar when mouse on cell toolbar.
+        addEvent(toolbar.container, 'mouseenter', function (): void {
+            toolbar.editMode.hideToolbars(['row']);
+        });
     }
 
     private onMouseMove(

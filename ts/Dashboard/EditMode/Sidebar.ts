@@ -26,7 +26,7 @@ class Sidebar {
         className: 'test',
         menu: {
             itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
-            items: ['cellWidth', 't1', 't2']
+            items: ['cellWidth', 'rowHeight', 't1', 't2']
         }
     }
 
@@ -35,7 +35,7 @@ class Sidebar {
         icon: '',
         items: {
             cell: ['cellWidth'],
-            row: ['t1']
+            row: ['rowHeight']
         }
     }, {
         type: 'data',
@@ -93,6 +93,34 @@ class Sidebar {
                         item.innerElement.tagName === 'INPUT'
                     ) {
                         (item.innerElement as any).value = cell.container.offsetWidth;
+                    }
+                }
+            }
+        },
+        rowHeight: {
+            id: 'rowHeight',
+            type: 'input',
+            text: 'Row height',
+            events: {
+                click: function (this: MenuItem, input: HTMLDOMElement, e: any): void {
+                    const inputValue = +(input as any).value,
+                        row = this.menu.parent.context;
+
+                    if (row.getType() === DashboardGlobals.guiElementType.row) {
+                        row.setSize(inputValue);
+                    }
+                },
+                update: function (this: MenuItem, e: any): void {
+                    const item = this,
+                        row = this.menu.parent.context;
+
+                    if (
+                        row.getType() === DashboardGlobals.guiElementType.row &&
+                        row.container &&
+                        item.innerElement &&
+                        item.innerElement.tagName === 'INPUT'
+                    ) {
+                        (item.innerElement as any).value = row.container.offsetHeight;
                     }
                 }
             }
