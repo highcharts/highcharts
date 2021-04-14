@@ -50,6 +50,7 @@ declare global {
         interface StockToolsNavigationBindings extends NavigationBindings {
             toggledAnnotations?: boolean;
             utils: StockToolsNavigationBindingsUtilsObject;
+            verticalCounter?: number;
             /** @requires modules/stock-tools */
             getYAxisPositions(
                 yAxes: Array<AxisType>,
@@ -1882,13 +1883,11 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         start: function (
-            this: NavigationBindings,
+            this: Highcharts.StockToolsNavigationBindings,
             e: PointerEvent
         ): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
-                verticalCounter = !defined((this as any).verticalCounter) ? 0 :
-                    (this as any).verticalCounter,
                 options,
                 annotation;
 
@@ -1896,6 +1895,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
             if (!closestPoint) {
                 return;
             }
+
+            this.verticalCounter = this.verticalCounter || 0;
 
             options = merge(
                 {
@@ -1910,7 +1911,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         },
                         label: {
                             offset: closestPoint.below ? 40 : -40,
-                            text: verticalCounter.toString()
+                            text: this.verticalCounter.toString()
                         }
                     },
                     labelOptions: {
@@ -1930,7 +1931,7 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
 
             annotation = this.chart.addAnnotation(options);
 
-            verticalCounter++;
+            this.verticalCounter++;
 
             (annotation.options.events.click as any).call(annotation, {});
         }
