@@ -254,6 +254,13 @@ QUnit.test('Deprecated smoothed option.', function (assert) {
                     units: [
                         ['hour', [2]]
                     ]
+                },
+                navigatorOptions: {
+                    dataGrouping: {
+                        units: [
+                            ['hour', [2]]
+                        ]
+                    }
                 }
             }]
         });
@@ -265,15 +272,33 @@ QUnit.test('Deprecated smoothed option.', function (assert) {
         should be placed where the first group point is.`
     );
     assert.strictEqual(
+        chart.series[0].points[0].x,
+        chart.series[1].points[0].x,
+        `When navigator anchors options are not declared,
+        the point from the main series should match the navigator series.`
+    );
+    assert.strictEqual(
         chart.series[0].points[1].x,
         3 * hour,
         `When the smoothed enabled, the next point ,
         should be placed at the center of the group.`
     );
     assert.strictEqual(
+        chart.series[0].points[1].x,
+        chart.series[1].points[1].x,
+        `When navigator anchors options are not declared,
+        the point from the main series should match the navigator series.`
+    );
+    assert.strictEqual(
         chart.series[0].points[chart.series[0].points.length - 1].x,
         11.7 * hour,
         `When the smoothed enabled, the last point 
         should be placed where the last group point is.`
+    );
+    assert.strictEqual(
+        chart.series[0].points[chart.series[0].points.length - 1].x,
+        chart.series[1].points[chart.series[0].points.length - 1].x,
+        `When navigator anchors options are not declared,
+        the point from the main series should match the navigator series.`
     );
 });

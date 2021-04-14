@@ -555,7 +555,10 @@ extend(defaultOptions, {
                 approximation: 'average',
                 enabled: true,
                 groupPixelWidth: 2,
-                smoothed: true,
+                // Replace smoothed property by anchors, #12455.
+                firstAnchor: 'firstPoint',
+                anchor: 'middle',
+                lastAnchor: 'lastPoint',
                 // Day and week differs from plotOptions.series.dataGrouping
                 units: [
                     ['millisecond', [1, 2, 5, 10, 20, 25, 50, 100, 200, 500]],
