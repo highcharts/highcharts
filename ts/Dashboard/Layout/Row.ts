@@ -5,6 +5,7 @@ import Layout from './Layout.js';
 import Cell from './Cell.js';
 import GUIElement from './GUIElement.js';
 import U from '../../Core/Utilities.js';
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 const {
     pick,
     merge
@@ -42,6 +43,15 @@ class Row extends GUIElement {
         }
 
         return void 0;
+    }
+
+    public static setContainerHeight(
+        rowContainer: HTMLDOMElement,
+        height?: number | string
+    ): void {
+        if (height) {
+            rowContainer.style.height = height + 'px';
+        }
     }
     /* *
     *
@@ -263,6 +273,28 @@ class Row extends GUIElement {
                 style: row.options.style
             }
         };
+    }
+
+    public setSize(
+        height?: number | string
+    ): void {
+        const cells = this.cells;
+
+        Row.setContainerHeight(
+            this.container as HTMLDOMElement,
+            height
+        );
+
+        // redraw component inside the cell
+        if (cells) {
+            for (let i = 0, iEnd = cells.length; i < iEnd; ++i) {
+                if (cells[i] && cells[i].mountedComponent) {
+                    (cells[i] as any).mountedComponent.resize(null);
+                }
+            }
+        } else {
+            // nested layouts
+        }
     }
 }
 
