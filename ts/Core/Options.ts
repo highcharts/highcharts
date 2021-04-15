@@ -3969,7 +3969,7 @@ H.defaultOptions = {
          * header will by default be guessed based on the closest data points.
          * This member gives the default string representations used for
          * each unit. For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#dateFormat).
+         * [dateFormat](/class-reference/Highcharts#.dateFormat).
          *
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
          *

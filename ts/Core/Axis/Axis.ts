@@ -1265,7 +1265,7 @@ class Axis {
          * same axis.
          *
          * For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#dateFormat).
+         * [dateFormat](/class-reference/Highcharts#.dateFormat).
          *
          * Defaults to:
          * ```js
