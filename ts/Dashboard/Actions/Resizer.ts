@@ -299,6 +299,18 @@ class Resizer {
 
             // resize width
             if (currentDimension === 'x') {
+                console.log('current dimensions', Math.min(
+                    // diff 
+                    e.clientX - cellContainer.getBoundingClientRect().left//,
+                    // maxSize
+                    /*parentRowWidth - (
+                        this.sumCellOuterWidth(
+                            currentCell.row,
+                            currentCell
+                        ) || 0
+                    )*/
+                ) / parentRowWidth);
+
                 cellContainer.style.width =
                     (
                         Math.min(
@@ -395,12 +407,17 @@ class Resizer {
                         );
                     }
                 } else {
-                    const cellStylesWidth = (
+                    const cellWidth = rowCellContainer.style.getPropertyValue('width');
+
+                    const cellStylesWidth = (/px$/).test(cellWidth) ?
+                        // value in px
+                        parseFloat(cellWidth) :
                         // convert % to px
-                        parseFloat(
-                            rowCellContainer.style.getPropertyValue('width')
-                        ) / 100
-                    ) * (parentRowWidth || 1);
+                        (
+                            parseFloat(
+                                cellWidth
+                            ) / 100
+                        ) * (parentRowWidth || 1);
 
                     // add borders width
                     if (rowCell.styles) {
