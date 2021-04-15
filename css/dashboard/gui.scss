@@ -369,7 +369,8 @@ h1 {
     color:#a6a6a6;
     position: absolute;
     z-index: 1000;
-    height: 100%;
+    min-height: 500px;
+    height: auto;
     width: 200px;
 }
 
@@ -401,16 +402,6 @@ h1 {
 .hcd-edit-label-text {
     display: inline-block;
 }
-
-.hcd-edit-layout-toolbar-space {
-    transition: 1s;
-    margin-left: 200px;  
-}
-
-// .hcd-edit-sidebar-hide {
-//     transition: 1s;
-//     left: -200px;
-// }
 
 .hcd-edit-sidebar-title {
     width: 100%;

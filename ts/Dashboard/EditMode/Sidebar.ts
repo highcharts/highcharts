@@ -308,28 +308,14 @@ class Sidebar {
         const sidebar = this;
 
         if (context) {
-            const element = context.type === 'cell' &&
-                (context as Cell).row.layout.container;
 
-            if (element) {
-                sidebar.afterCSSAnimate(
-                    element,
-                    function (): void {
-                        if (context) {
-                            sidebar.update(context);
-                        }
-                    }
-                );
-            }
+            this.update(context);
 
             if (!this.isVisible) {
                 this.container.classList.add(
                     EditGlobals.classNames.editSidebarShow
                 );
                 this.isVisible = true;
-
-                // set margin on all layouts in dashboard to avoid overlap
-                this.reserveToolbarSpace();
 
                 // Hide row and cell toolbars.
                 this.editMode.hideToolbars(['cell', 'row']);
@@ -354,32 +340,7 @@ class Sidebar {
         );
 
         this.isVisible = false;
-        this.removeToolbarSpace();
         this.guiElement = void 0;
-    }
-
-    private reserveToolbarSpace(): void {
-        const layouts = this.editMode.dashboard.container.querySelectorAll(
-            '.' + DashboardGlobals.classNames.layout
-        );
-
-        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
-            layouts[i].classList.add(
-                EditGlobals.classNames.layoutToolbarSpace
-            );
-        }
-    }
-
-    private removeToolbarSpace(): void {
-        const layouts = this.editMode.dashboard.container.querySelectorAll(
-            '.' + DashboardGlobals.classNames.layout
-        );
-
-        for (let i = 0, iEnd = layouts.length; i < iEnd; ++i) {
-            layouts[i].classList.remove(
-                EditGlobals.classNames.layoutToolbarSpace
-            );
-        }
     }
 
     public afterCSSAnimate(
