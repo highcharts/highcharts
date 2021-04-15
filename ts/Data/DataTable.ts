@@ -37,7 +37,7 @@ const {
 /**
  * Class to manage columns and rows in a table structure.
  */
-class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Class {
+class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     /* *
      *
@@ -354,17 +354,32 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     ): void {
         const table = this,
             columns = table.columns,
-            columnNames = Object.keys(columns);
+            columnNames = Object.keys(columns),
+            rowCount = Math.max(table.rowCount - rowIndex, 0);
 
-        table.emit({ type: 'clearRows', detail: eventDetail, rowIndex });
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columns[columnNames[i]].length = rowIndex;
+        if (!rowCount) {
+            return;
         }
 
-        table.rowCount = rowIndex;
+        table.emit({
+            type: 'clearRows',
+            detail: eventDetail,
+            rowCount,
+            rowIndex
+        });
 
-        table.emit({ type: 'afterClearRows', detail: eventDetail, rowIndex });
+        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+            columns[columnNames[i]].length = 0;
+        }
+
+        table.rowCount = 0;
+
+        table.emit({
+            type: 'afterClearRows',
+            detail: eventDetail,
+            rowCount,
+            rowIndex
+        });
     }
 
     /**
@@ -483,67 +498,81 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
     }
 
     /**
-     * Deletes a row in this table.
+     * Deletes rows in this table.
      *
      * @param {number} rowIndex
-     * Row index to delete.
+     * Index to start delete of rows.
+     *
+     * @param {number} [rowCount=1]
+     * Number of rows to delete.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {DataTable.Row|undefined}
-     * Returns the deleted row, if found.
+     * @return {Array<DataTable.Row>}
+     * Returns the deleted rows, if found.
      *
-     * @emits DataTable#deleteRow
-     * @emits DataTable#afterDeleteRow
+     * @emits DataTable#deleteRows
+     * @emits DataTable#afterDeleteRows
      */
-    public deleteRow(
+    public deleteRows(
         rowIndex: number,
+        rowCount: number = 1,
         eventDetail?: DataEventEmitter.EventDetail
-    ): (DataTable.Row|undefined) {
-        const table = this;
+    ): Array<DataTable.Row> {
+        const table = this,
+            deletedRows: Array<DataTable.Row> = [];
 
-        if (rowIndex < table.rowCount) {
+        if (rowCount > 0 && rowIndex < table.rowCount) {
             const columns = table.columns,
-                columnNames = Object.keys(columns),
-                row: DataTable.Row = [];
-
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                row.push(columns[columnNames[i]][rowIndex]);
-            }
+                columnNames = Object.keys(columns);
 
             table.emit({
-                type: 'deleteRow',
+                type: 'deleteRows',
                 detail: eventDetail,
-                row,
+                rowCount,
                 rowIndex
             });
 
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                columns[columnNames[i]].splice(rowIndex, 1);
+            for (
+                let i = 0,
+                    iEnd = columnNames.length,
+                    column: DataTable.Column,
+                    deletedCells: Array<DataTable.CellType>;
+                i < iEnd;
+                ++i
+            ) {
+                column = columns[columnNames[i]];
+                deletedCells = column.splice(rowIndex, rowCount);
+                if (!i) {
+                    table.rowCount = column.length;
+                }
+                for (let j = 0, jEnd = deletedCells.length; j < jEnd; ++j) {
+                    deletedRows[j] = (deletedRows[j] || []);
+                    deletedRows[j][i] = deletedCells[j];
+                }
             }
 
-            --table.rowCount;
-
             table.emit({
-                type: 'afterDeleteRow',
+                type: 'afterDeleteRows',
                 detail: eventDetail,
-                row,
+                rowCount,
                 rowIndex
             });
 
-            return row;
         }
+
+        return deletedRows;
     }
 
     /**
      * Emits an event on this table to all registered callbacks of the given
      * event.
      *
-     * @param {DataTable.EventObject} e
+     * @param {DataTable.Event} e
      * Event object with event information.
      */
-    public emit(e: DataTable.EventObject): void {
+    public emit(e: DataTable.Event): void {
         const frame = this;
 
         switch (e.type) {
@@ -551,7 +580,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
             case 'afterClearRows':
             case 'afterClearTable':
             case 'afterDeleteColumn':
-            case 'afterDeleteRow':
+            case 'afterDeleteRows':
             case 'afterSetCell':
             case 'afterSetColumn':
             case 'afterSetRow':
@@ -1302,8 +1331,8 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataTable.EventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, DataTable.EventObject>
+        type: DataTable.Event['type'],
+        callback: DataEventEmitter.EventCallback<this, DataTable.Event>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -1888,7 +1917,7 @@ class DataTable implements DataEventEmitter<DataTable.EventObject>, DataJSON.Cla
  *
  * */
 
-interface DataTable extends DataEventEmitter<DataTable.EventObject> {
+interface DataTable extends DataEventEmitter<DataTable.Event> {
     // nothing here yet
 }
 
@@ -1904,24 +1933,9 @@ interface DataTable extends DataEventEmitter<DataTable.EventObject> {
 namespace DataTable {
 
     /**
-     * Possible value types for a cell.
-     */
-    export type CellType = (DataTable|DataJSON.JSONPrimitive);
-
-    /**
-     * All information objects of DataTable events.
-     */
-    export type EventObject = (
-        CellEventObject|
-        ColumnEventObject|
-        TableEventObject|
-        RowEventObject
-    );
-
-    /**
      * Event object for cell-related events.
      */
-    export interface CellEventObject extends DataEventEmitter.EventObject {
+    export interface CellEvent extends DataEventEmitter.Event {
         readonly type: (
             'setCell'|'afterSetCell'
         );
@@ -1929,6 +1943,11 @@ namespace DataTable {
         readonly columnName: string;
         readonly rowIndex: number;
     }
+
+    /**
+     * Possible value types for a cell.
+     */
+    export type CellType = (DataTable|DataJSON.JSONPrimitive);
 
     /**
      * Class JSON of a DataTable.
@@ -1973,7 +1992,7 @@ namespace DataTable {
     /**
      * Event object for column-related events.
      */
-    export interface ColumnEventObject extends DataEventEmitter.EventObject {
+    export interface ColumnEvent extends DataEventEmitter.Event {
         readonly type: (
             'clearColumn'|'afterClearColumn'|
             'deleteColumn'|'afterDeleteColumn'|
@@ -1985,15 +2004,15 @@ namespace DataTable {
     }
 
     /**
-     * Event object for table-related events.
+     * All information objects of DataTable events.
      */
-    export interface TableEventObject extends DataEventEmitter.EventObject {
-        readonly type: (
-            'clearTable'|'afterClearTable'|
-            'cloneTable'|'afterCloneTable'
-        );
-        readonly tableClone?: DataTable;
-    }
+    export type Event = (
+        CellEvent|
+        ColumnEvent|
+        TableEvent|
+        RowDeleteEvent|
+        RowEvent
+    );
 
     /**
      * Array of row values. Index of the array is the index of the column names.
@@ -2002,13 +2021,20 @@ namespace DataTable {
         [index: number]: CellType;
     }
 
+    export interface RowDeleteEvent extends DataEventEmitter.Event {
+        readonly type: (
+            'clearRows'|'afterClearRows'|
+            'deleteRows'|'afterDeleteRows'
+        );
+        readonly rowCount: number;
+        readonly rowIndex: number;
+    }
+
     /**
      * Event object for row-related events.
      */
-    export interface RowEventObject extends DataEventEmitter.EventObject {
+    export interface RowEvent extends DataEventEmitter.Event {
         readonly type: (
-            'clearRows'|'afterClearRows'|
-            'deleteRow'|'afterDeleteRow'|
             'setRow'|'afterSetRow'
         );
         readonly row?: Readonly<Row>;
@@ -2021,6 +2047,17 @@ namespace DataTable {
      */
     export interface RowObject extends Record<string, CellType> {
         [column: string]: CellType;
+    }
+
+    /**
+     * Event object for table-related events.
+     */
+    export interface TableEvent extends DataEventEmitter.Event {
+        readonly type: (
+            'clearTable'|'afterClearTable'|
+            'cloneTable'|'afterCloneTable'
+        );
+        readonly tableClone?: DataTable;
     }
 
 }

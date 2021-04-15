@@ -4038,7 +4038,7 @@ class Series {
             table.on('afterClearRows', syncTable);
             table.on('afterClearTable', syncTable);
             table.on('afterDeleteColumn', syncTable);
-            table.on('afterDeleteRow', syncTable);
+            table.on('afterDeleteRows', syncTable);
             table.on('afterSetCell', syncTable);
             table.on('afterSetColumn', syncTable);
             table.on('afterSetRow', syncTable);
@@ -4131,7 +4131,7 @@ class Series {
      * Synchronize series data and table.
      * @private
      */
-    private syncTable(e: DataTable.EventObject): void {
+    private syncTable(e: DataTable.Event): void {
         const series = this;
 
         if (series.tableReset) {
@@ -4167,13 +4167,14 @@ class Series {
                 }
                 break;
 
-            case 'afterDeleteRow':
+            case 'afterDeleteRows':
                 index = e.rowIndex;
-                point = points[index];
-                data.splice(index, 1);
-                if (point) {
-                    points.splice(index, 1);
-                    point.destroy();
+                data.splice(index, e.rowCount);
+                if (points[index]) {
+                    const deletedPoints = points.splice(index, e.rowCount);
+                    for (let i = 0, iEnd = deletedPoints.length; i < iEnd; ++i) {
+                        deletedPoints[i].destroy();
+                    }
                     return;
                 }
                 break;

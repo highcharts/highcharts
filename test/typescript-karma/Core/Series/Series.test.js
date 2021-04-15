@@ -101,7 +101,7 @@ QUnit.test('Series.syncTable', function (assert) {
     }
 
     function test4() {
-        table.deleteRow(2);
+        table.deleteRows(2);
         window.setTimeout(function () {
             assert.strictEqual(
                 series.data.length,

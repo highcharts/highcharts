@@ -276,8 +276,8 @@ QUnit.test('DataTable Events', function (assert) {
         table.on('afterClearColumn', registerEvent);
         table.on('deleteColumn', registerEvent);
         table.on('afterDeleteColumn', registerEvent);
-        table.on('deleteRow', registerEvent);
-        table.on('afterDeleteRow', registerEvent);
+        table.on('deleteRows', registerEvent);
+        table.on('afterDeleteRows', registerEvent);
         table.on('setCell', registerEvent);
         table.on('afterSetCell', registerEvent);
         table.on('setColumn', registerEvent);
@@ -327,7 +327,7 @@ QUnit.test('DataTable Events', function (assert) {
         3,
         'Frame should contain three rows.'
     );
-    table.deleteRow(0);
+    table.deleteRows(0);
     assert.strictEqual(
         table.getRowCount(),
         2,
@@ -336,10 +336,10 @@ QUnit.test('DataTable Events', function (assert) {
     assert.deepEqual(
         registeredEvents,
         [
-            'deleteRow',
-            'afterDeleteRow'
+            'deleteRows',
+            'afterDeleteRows'
         ],
-        'Events for DataTable.deleteRow should be in expected order.'
+        'Events for DataTable.deleteRows should be in expected order.'
     );
 
     registeredEvents.length = 0;
