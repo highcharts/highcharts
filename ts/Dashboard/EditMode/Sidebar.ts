@@ -195,6 +195,7 @@ class Sidebar {
 
     private renderTitle(): void {
         const sidebar = this;
+        const sidebarContainer = this.container;
 
         const titleElement = sidebar.title = createElement(
             'div', {
@@ -204,12 +205,12 @@ class Sidebar {
         );
 
         // set default offset top, when cell or row is lower
-        const offsetTop = titleElement.getBoundingClientRect().top;
+        const offsetTop = sidebarContainer.getBoundingClientRect().top;
 
         if (window.pageYOffset > offsetTop) {
-            titleElement.style.marginTop = window.pageYOffset - offsetTop + 'px';
+            sidebarContainer.style.marginTop = window.pageYOffset - offsetTop + 'px';
         } else {
-            titleElement.style.marginTop = '0px';
+            sidebarContainer.style.marginTop = '0px';
         }
 
         // add sticky position
@@ -217,9 +218,9 @@ class Sidebar {
             const containerOffsetTop = window.pageYOffset - offsetTop;
 
             if (window.pageYOffset >= offsetTop) {
-                titleElement.style.marginTop = containerOffsetTop + 'px';
+                sidebarContainer.style.marginTop = containerOffsetTop + 'px';
             } else {
-                titleElement.style.marginTop = '0px';
+                sidebarContainer.style.marginTop = '0px';
             }
         });
     }
