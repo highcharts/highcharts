@@ -1,30 +1,31 @@
-.container {
+.highcharts-demo .container {
   margin: 0 auto;
 }
 .highcharts-spline-series{
   transition:all 100ms;
 }
-h5{
+.highcharts-demo h5{
   font-size: 16px;
   font-weight: bold;
   display: block;
   color:#333;
   margin-bottom: 5px;
 }
-.cContainer{
+.highcharts-demo.c-container{
   height:300px;
 }
-.container.controls{
+
+.highcharts-demo .container.controls{
   max-width:450px;
   border-radius:4px;
 }
-.form-group{
+.highcharts-demo .form-group{
   margin-bottom:0px;
 }
-.form-check-inline{
+.highcharts-demo .form-check-inline{
   margin-right:4px !important;
 }
-label{
+.highcharts-demo label{
   text-align: left;
   line-height: 12px;
   white-space: normal;
@@ -33,95 +34,96 @@ label{
   font-size: 12px;
   font-weight:normal
 }
-.badge{
+.highcharts-demo .badge{
   display: block;
   width:fit-content;
 }
-.badge-secondary{
+.highcharts-demo .badge-secondary{
   color:#000 !important;
   display: block;
   font-size: 13px !important;
   border:0px solid #424bcd !important;
   background-color: #fff !important;
 }
-.badge-secondary label{
+.highcharts-demo .badge-secondary label{
    padding:4px 4px !important;
 
 }
-.badge-secondary.active {
+.highcharts-demo .highcharts-demo .badge-secondary.active {
   max-width:95px;
   width:85px;
 }
-.badge-secondary.active label{
+.highcharts-demo .badge-secondary.active label{
   font-weight:normal;
   border-radius:4px;
   color:#fff;
   white-space: pre-wrap;
   background-color: #424bcd !important;
 }
-.badge-secondary.active label span{
+.highcharts-demo .badge-secondary.active label span{
   font-weight:bold;
   font-size: 11px;
   display: block;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
-input[type="range"]{
+.highcharts-demo input[type="range"]{
   margin-right:2px;
   padding:0px;
 }
-.form-control {
+.highcharts-demo .form-control {
   height: calc(.8em + .75rem + 2px) !important;
 }
-.fas, .fa{
+.highcharts-demo .fas, .highcharts-demo .fa{
   font-size:18px !important;
   color:#424bcd !important;
 }
-.fas.disabled, .fa.disabled{
+.highcharts-demo .fas.disabled, .highcharts-demo .fa.disabled{
   font-size:18px !important;
   color:#ccc !important;
 }
-.fas.disabled:hover, .fa.disabled:hover{
+.highcharts-demo .fas.disabled:hover, .highcharts-demo .fa.disabled:hover{
   font-size:18px !important;
   color:#ccc !important;
 }
-.fas:hover, .fa:hover{
+.highcharts-demo .fas:hover, 
+.highcharts-demo .fa:hover{
   font-size:18px !important;
   font-weight: bold;
   color:#6a73f1 !important;
 }
-.btn-primary{
+.highcharts-demo .btn-primary{
   color:#424bcd !important;
   border-color:#424bcd !important;
   background-color: #fff !important;
   height:30px !important;
   padding-top:2px !important;
 }
-.btn-primary:not(:disabled):not(.disabled).active, 
-.btn-primary:not(:disabled):not(.disabled):active,
-.show >.btn-primary.dropdown-toggle{
+.highcharts-demo .btn-primary:not(:disabled):not(.disabled).active, 
+.highcharts-demo .btn-primary:not(:disabled):not(.disabled):active,
+.highcharts-demo .show >.btn-primary.dropdown-toggle{
   color:#fff !important;
   font-weight: bold;
   border-color:#424bcd !important;
   background-color: #424bcd !important;
 }
-.btn-secondary{
+.highcharts-demo .btn-secondary{
   color:#fff !important;
   border-color:#424bcd !important;
   background-color: #424bcd !important;
 }
-.btn-secondary:hover {
+.highcharts-demo .btn-secondary:hover {
   color: #fff;
   background-color: #5a6268;
   border-color: #545b62;
 }
-.max,.min{
+.highcharts-demo .max,.min{
   font-size: 12px;
 }
 
-#thing{
+.highcharts-demo #thing{
   font-weight:bold;
 }
-#play:hover,
-#play:active{
+.highcharts-demo #play:hover,
+.highcharts-demo #play:active{
   text-decoration: none;
 }
