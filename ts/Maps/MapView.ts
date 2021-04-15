@@ -316,7 +316,7 @@ class MapView {
 
             // Fit to natural bounds if center/zoom are not explicitly given
             if (!userOptions.center && !isNumber(userOptions.zoom)) {
-                this.fitToBounds();
+                this.fitToBounds(void 0, false);
             }
         }
 
