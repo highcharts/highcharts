@@ -4853,6 +4853,32 @@ class Series {
     }
 
     /**
+     * Get the shared clip key, creating it if it doesnt exist.
+     *
+     * @private
+     * @function Highcharts.Series#getSharedClipKey
+     */
+    public getSharedClipKey(): string {
+        if (this.sharedClipKey) {
+            return this.sharedClipKey;
+        }
+
+        const animation = animObject(this.options.animation);
+
+        this.sharedClipKey = [
+            '_sharedClip',
+            animation.duration,
+            animation.easing,
+            animation.defer,
+            this.getClipBox(animation).height,
+            this.options.xAxis,
+            this.options.yAxis
+        ].join(',');
+
+        return this.sharedClipKey;
+    }
+
+    /**
      * Set the clipping for the series. For animated series it is called
      * twice, first to initiate animating the clip then the second time
      * without the animation to set the final clip.
@@ -4867,17 +4893,7 @@ class Series {
             inverted = chart.inverted,
             seriesClipBox = this.clipBox,
             clipBox = this.getClipBox(animation),
-            sharedClipKey =
-                this.sharedClipKey ||
-                [
-                    '_sharedClip',
-                    animation && (animation as any).duration,
-                    animation && (animation as any).easing,
-                    animation && (animation as any).defer,
-                    clipBox.height,
-                    options.xAxis,
-                    options.yAxis
-                ].join(','), // #4526
+            sharedClipKey = this.getSharedClipKey(), // #4526
             clipRect = (chart as any)[sharedClipKey],
             markerClipRect = (chart as any)[sharedClipKey + 'm'];
 
