@@ -82,15 +82,7 @@ let dashboard = new Dashboard('container', {
 			icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
 		  }, {
 			id: 'my-option-1',
-			text: 'o1',
-			events: {
-			  click: function() {
-				console.log('hello world!');
-			  }
-			}
-		  }, {
-			id: 'my-button',
-			text: 'pl',
+			text: 't1',
 			events: {
 			  click: function() {
 				console.log('hello world!');

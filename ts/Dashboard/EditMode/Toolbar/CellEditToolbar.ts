@@ -5,6 +5,7 @@ import EditGlobals from '../EditGlobals.js';
 import Menu from '../Menu/Menu.js';
 import MenuItem from '../Menu/MenuItem.js';
 import EditToolbar from './EditToolbar.js';
+import type Resizer from './../../Actions/Resizer';
 
 const {
     addEvent,
@@ -110,6 +111,15 @@ class CellEditToolbar extends EditToolbar {
                         addEvent(cell.container, 'mousemove', function (): void {
                             toolbar.onMouseMove(cell);
                         });
+
+                        // Hide cell toolbar when mouse on cell resizer.
+                        const resizedCell = (cell as Resizer.ResizedCell).resizer;
+                        if (resizedCell) {
+                            addEvent(resizedCell.snapX, 'mousemove', function (e): void {
+                                toolbar.hide();
+                                e.stopImmediatePropagation();
+                            });
+                        }
                     }
                 }
             }
@@ -125,13 +135,14 @@ class CellEditToolbar extends EditToolbar {
         cell: Cell
     ): void {
         const toolbar = this,
-            cellCnt = cell.container;
+            cellCnt = cell.container,
+            width = toolbar.container.clientWidth;
 
         let x, y;
 
         if (cellCnt && toolbar.editMode.isActive()) {
             x = ((cellCnt.parentElement || {}).offsetLeft || 0) +
-              cellCnt.offsetLeft + cellCnt.offsetWidth - 30;
+              cellCnt.offsetLeft + cellCnt.offsetWidth - width;
 
             y = ((cellCnt.parentElement || {}).offsetTop || 0) +
               cellCnt.offsetTop;
