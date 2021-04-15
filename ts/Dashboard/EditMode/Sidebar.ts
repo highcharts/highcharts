@@ -8,6 +8,7 @@ import Menu from './Menu/Menu.js';
 import type MenuItem from './Menu/MenuItem.js';
 import DashboardGlobals from '../DashboardGlobals.js';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
+import EditRenderer from './EditRenderer.js';
 
 const {
     merge,
@@ -142,6 +143,8 @@ class Sidebar {
 
         this.container = this.renderContainer();
 
+        this.renderCloseButton();
+        this.renderDragDropButton();
         this.renderTitle();
         this.initTabs();
 
@@ -197,7 +200,7 @@ class Sidebar {
         const sidebar = this;
         const sidebarContainer = this.container;
 
-        const titleElement = sidebar.title = createElement(
+        sidebar.title = createElement(
             'div', {
                 className: EditGlobals.classNames.editSidebarTitle,
                 textContent: 'Cell Options' // shoudl be dynamic
@@ -344,6 +347,30 @@ class Sidebar {
         this.guiElement = void 0;
     }
 
+
+    public renderCloseButton(): void {
+        const sidebar = this;
+
+        sidebar.closeButton = EditRenderer.renderButton(
+            sidebar.container,
+            (): void => {
+                sidebar.hide();
+            },
+            'X'
+        );
+    }
+    public renderDragDropButton(): void {
+        const sidebar = this;
+
+        this.dragDropButton = EditRenderer.renderButton(
+            sidebar.container,
+            (): void => {
+                console.log('drag and drop');
+            },
+            'DD'
+        );
+    }
+
     public afterCSSAnimate(
         element: HTMLDOMElement,
         callback: Function
@@ -354,6 +381,10 @@ class Sidebar {
     }
 }
 
+interface Sidebar {
+    dragDropButton?: HTMLDOMElement;
+    closeButton?: HTMLDOMElement;
+}
 namespace Sidebar {
     export interface Options {
         enabled: boolean;

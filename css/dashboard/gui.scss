@@ -386,12 +386,18 @@ h1 {
     color: #fff ;
 }
 
+.hcd-edit-sidebar .hcd-edit-button,
 .hcd-edit-sidebar-item button {
     padding: 5px 10px;
     float: right;
     margin-top: 20px;
     border: none;
     background: #aac6ff;
+}
+
+.hcd-edit-sidebar .hcd-edit-button {
+    float: right;
+    margin-top: 0px;
 }
 
 .hcd-edit-sidebar-show {
@@ -404,8 +410,6 @@ h1 {
 }
 
 .hcd-edit-sidebar-title {
-    width: 100%;
-    text-align: center;
     padding: 5px;
     text-transform: uppercase;
     background: #141414;
