@@ -40,8 +40,8 @@ const {
 /**
  * Abstract class to provide an interface for modifying a table.
  */
-abstract class DataModifier<TEventObject extends DataEventEmitter.EventObject = DataModifier.EventObject>
-implements DataEventEmitter<TEventObject>, DataJSON.Class {
+abstract class DataModifier<TEvent extends DataEventEmitter.Event = DataModifier.Event>
+implements DataEventEmitter<TEvent>, DataJSON.Class {
 
     /* *
      *
@@ -193,7 +193,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         options?: DataModifier.BenchmarkOptions
     ): Array<number> {
         const results: Array<number> = [];
-        const modifier = this as DataModifier<DataModifier.BenchmarkEventObject|DataModifier.EventObject>;
+        const modifier = this as DataModifier<DataModifier.BenchmarkEvent|DataModifier.Event>;
         const execute = (): void => {
             modifier.modify(dataTable);
             modifier.emit({ type: 'afterBenchmarkIteration' });
@@ -245,10 +245,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Emits an event on the modifier to all registered callbacks of this event.
      *
-     * @param {DataEventEmitter.EventObject} [e]
+     * @param {DataEventEmitter.Event} [e]
      * Event object containing additonal event information.
      */
-    public emit(e: TEventObject): void {
+    public emit(e: TEvent): void {
         fireEvent(this, e.type, e);
     }
 
@@ -265,8 +265,8 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Function to unregister callback from the modifier event.
      */
     public on(
-        type: TEventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, TEventObject>
+        type: TEvent['type'],
+        callback: DataEventEmitter.EventCallback<this, TEvent>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -314,24 +314,35 @@ namespace DataModifier {
     }
 
     /**
-     * Event object with additional event information.
+     * Benchmark event with additional event information.
      */
-    export interface EventObject extends DataEventEmitter.EventObject {
-        readonly type: (
-            'execute'|'afterExecute'
-        );
-        readonly table: DataTable;
-    }
-
-    export interface BenchmarkEventObject extends DataEventEmitter.EventObject {
+    export interface BenchmarkEvent extends DataEventEmitter.Event {
         readonly type: (
             'afterBenchmark'|'afterBenchmarkIteration'
         );
         readonly results?: Array<number>;
     }
 
+    /**
+     * Benchmark options.
+     */
     export interface BenchmarkOptions {
         iterations: number;
+    }
+
+    /**
+     * Event information.
+     */
+    export type Event = (BenchmarkEvent|ExecuteEvent);
+
+    /**
+     * Execute event with additional event information.
+     */
+    export interface ExecuteEvent extends DataEventEmitter.Event {
+        readonly type: (
+            'execute'|'afterExecute'
+        );
+        readonly table: DataTable;
     }
 
     /**

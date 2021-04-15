@@ -40,7 +40,7 @@ const {
 /**
  * Handles parsing and transformation of an Google Sheets to a table.
  */
-class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
+class GoogleSheetsParser extends DataParser<DataParser.Event> {
 
     /* *
      *
@@ -241,7 +241,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
             return false;
         }
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -265,7 +265,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
             }
         }
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,

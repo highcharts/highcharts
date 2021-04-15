@@ -34,7 +34,7 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class DataPresentationState implements DataEventEmitter<DataPresentationState.EventObject>, DataJSON.Class {
+class DataPresentationState implements DataEventEmitter<DataPresentationState.Event>, DataJSON.Class {
 
     /**
      * Converts a supported class JSON to a DataPresentationState instance.
@@ -83,10 +83,10 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * Emits an event on this table to all registered callbacks of the given
      * event.
      *
-     * @param {DataPresentationState.EventObject} e
+     * @param {DataPresentationState.Event} e
      * Event object with event information.
      */
-    public emit(e: DataPresentationState.EventObject): void {
+    public emit(e: DataPresentationState.Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -155,8 +155,8 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataPresentationState.EventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, DataPresentationState.EventObject>
+        type: DataPresentationState.Event['type'],
+        callback: DataEventEmitter.EventCallback<this, DataPresentationState.Event>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -257,12 +257,12 @@ namespace DataPresentationState {
     /**
      * All information objects of DataPrsentationState events.
      */
-    export type EventObject = (ColumnOrderEventObject);
+    export type Event = (ColumnOrderEvent);
 
     /**
      * Describes the information object for order-related events.
      */
-    export interface ColumnOrderEventObject extends DataEventEmitter.EventObject {
+    export interface ColumnOrderEvent extends DataEventEmitter.Event {
         type: ColumnOrderEventType;
         newColumnOrder: Array<string>;
         oldColumnOrder: Array<string>;
