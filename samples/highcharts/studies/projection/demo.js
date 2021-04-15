@@ -10,17 +10,20 @@ function getRandomData(geojson) {
     return geojson.features.map(() => Math.round(Math.random() * 100));
 }
 
-function getGrid() {
+function getGraticule() {
     const data = [];
 
     // Meridians
     for (let x = -180; x <= 180; x += 15) {
         data.push({
             type: 'LineString',
-            coordinates: [
-                [x, x % 90 === 0 ? -90 : -80],
+            coordinates: x % 90 === 0 ? [
+                [x, -90],
                 [x, 0],
-                [x, x % 90 === 0 ? 90 : 80]
+                [x, 90]
+            ] : [
+                [x, -80],
+                [x, 80]
             ]
         });
     }
@@ -167,9 +170,42 @@ const drawMap = projectionKey => {
             series: [{
                 name: 'Grid',
                 type: 'mapline',
-                data: getGrid(),
+                data: getGraticule(),
                 nullColor: '#e8e8e8'
+            },
+            /*
+            {
+                type: 'map',
+                data: [{
+                    type: 'Polygon',
+                    coordinates: [[
+                        [-45, 30],
+                        [45, 30],
+                        [180, 70],
+                        [-45, 30]
+                    ]]
+                }],
+                color: 'rgba(0, 0, 0, 0.3)'
+
             }, {
+                type: 'mapline',
+                data: [{
+                    type: 'LineString',
+                    coordinates: [
+                        [-45, 30],
+                        [45, 30],
+                        [180, 70],
+                        [-45, 30]
+                    ]
+                }],
+                color: 'red',
+                lineWidth: 2
+
+            }
+            // */
+
+            //*
+            {
                 data: static.data,
                 joinBy: null,
                 name: 'Random data',
@@ -207,7 +243,9 @@ const drawMap = projectionKey => {
                     coordinates: [-118.24, 34.05]
                 }],
                 color: '#3030d0'
-            }]
+            }
+            //*/
+            ]
         });
         console.timeEnd('@mapChart');
 

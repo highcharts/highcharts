@@ -24,6 +24,7 @@ import SVGRenderer from '../Renderer/SVG/SVGRenderer.js';
 import U from '../Utilities.js';
 const {
     addEvent,
+    clamp,
     getOptions,
     isNumber,
     merge,
@@ -249,6 +250,8 @@ addEvent(Chart, 'afterSetChartSize', function (): void {
 
 let mouseDownCenterProjected: [number, number];
 let mouseDownKey: string;
+let mouseDownLon0: number;
+let mouseDownLat0: number;
 addEvent(Chart, 'pan', function (e: PointerEvent): void {
     const {
         mapView,
@@ -263,22 +266,51 @@ addEvent(Chart, 'pan', function (e: PointerEvent): void {
     ) {
         const key = `${mouseDownX},${mouseDownY}`;
         const { chartX, chartY } = (e as any).originalEvent;
-        const scale = (MapView.tileSize / MapView.worldSize) *
-            Math.pow(2, mapView.zoom);
 
         // Reset starting position
         if (key !== mouseDownKey) {
             mouseDownCenterProjected = mapView.projection
                 .forward(mapView.center);
             mouseDownKey = key;
+            mouseDownLon0 = mapView.projection.options.lon0 || 0;
+            mouseDownLat0 = mapView.projection.options.lat0 || 0;
         }
 
-        const newCenter = mapView.projection.inverse([
-            mouseDownCenterProjected[0] + (mouseDownX - chartX) / scale,
-            mouseDownCenterProjected[1] - (mouseDownY - chartY) / scale
-        ]);
+        /*
+        @todo
+        - Fix zooming (don't jump back to fit bounds)
+        */
+        if (mapView.projection.options.projectionName === 'ortho') {
 
-        mapView.setView(newCenter, void 0, true, false);
+            // Empirical ratio where the globe rotates roughly the same speed
+            // as moving the pointer across the center of the projection
+            const ratio = 120 / Math.min(this.plotWidth, this.plotHeight);
+
+            mapView.update({
+                projection: {
+                    lon0: mouseDownLon0 + (mouseDownX - chartX) * ratio,
+                    lat0: clamp(
+                        mouseDownLat0 - (mouseDownY - chartY) * ratio,
+                        -80,
+                        80
+                    )
+                }
+            }, true, false);
+
+
+        } else {
+
+            const scale = (MapView.tileSize / MapView.worldSize) *
+                Math.pow(2, mapView.zoom);
+
+            const newCenter = mapView.projection.inverse([
+                mouseDownCenterProjected[0] + (mouseDownX - chartX) / scale,
+                mouseDownCenterProjected[1] - (mouseDownY - chartY) / scale
+            ]);
+
+            mapView.setView(newCenter, void 0, true, false);
+
+        }
 
         e.preventDefault();
     }

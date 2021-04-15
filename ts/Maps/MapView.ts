@@ -7,10 +7,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import type AnimationOptions from '../Core/Animation/AnimationOptions';
 import type PositionObject from '../Core/Renderer/PositionObject';
 import type ProjectionOptions from './ProjectionOptions';
 
-import AnimationOptionsObject from '../Core/Animation/AnimationOptions';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 const {
@@ -122,7 +122,7 @@ class MapView {
     public fitToBounds(
         bounds?: Highcharts.MapBounds,
         redraw = true,
-        animation?: boolean|Partial<AnimationOptionsObject>
+        animation?: boolean|Partial<AnimationOptions>
     ): void {
 
         const b = bounds || this.getProjectedBounds();
@@ -165,7 +165,7 @@ class MapView {
         return MapView.compositeBounds(allBounds);
     }
 
-    public redraw(animation?: boolean|Partial<AnimationOptionsObject>): void {
+    public redraw(animation?: boolean|Partial<AnimationOptions>): void {
         this.chart.series.forEach((s): void => {
             if (s.useMapGeometry) {
                 s.isDirty = true;
@@ -179,7 +179,7 @@ class MapView {
         center?: Highcharts.LonLatArray,
         zoom?: number,
         redraw = true,
-        animation?: boolean|Partial<AnimationOptionsObject>
+        animation?: boolean|Partial<AnimationOptions>
     ): void {
         let zoomingIn = false;
         if (center) {
@@ -288,7 +288,8 @@ class MapView {
 
     public update(
         userOptions: DeepPartial<Highcharts.MapViewOptions>,
-        redraw: boolean = true
+        redraw: boolean = true,
+        animation?: (boolean|Partial<AnimationOptions>)
     ): void {
         const newProjection = userOptions.projection;
         const isDirtyProjection = newProjection && (
@@ -321,7 +322,7 @@ class MapView {
         }
 
         if (redraw) {
-            this.chart.redraw();
+            this.chart.redraw(animation);
         }
 
     }
