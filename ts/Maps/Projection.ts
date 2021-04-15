@@ -186,12 +186,19 @@ export default class Projection {
     public path(geometry: GeoJSONGeometry): SVGPath {
 
         const path: SVGPath = [];
+        const isPolygon = geometry.type === 'Polygon' ||
+            geometry.type === 'MultiPolygon';
+        // @todo: It doesn't really have to do with whether north is
+        // positive. It depends on whether the coordinates are
+        // pre-projected.
+        const isGeographicCoordinates = this.isNorthPositive;
+
 
         const addToPath = (polygon: LonLatArray[]): void => {
 
             const poly = polygon.slice();
 
-            if (this.isNorthPositive) {
+            if (isGeographicCoordinates) {
                 let i = poly.length - 1;
                 while (i--) {
 
@@ -214,17 +221,69 @@ export default class Projection {
             }
 
             let movedTo = false;
-            poly.forEach((lonLat): void => {
+            let lastValidLonLat: LonLatArray|undefined;
+            let firstValidLonLatAppended = false;
+            let gap = false;
+            const pushToPath = (point: [number, number]): void => {
+                if (!movedTo) {
+                    path.push(['M', point[0], -point[1]]);
+                    movedTo = true;
+                } else {
+                    path.push(['L', point[0], -point[1]]);
+                }
+            };
+
+            for (let i = 0; i < poly.length; i++) {
+                const lonLat = poly[i];
                 const point = this.forward(lonLat);
                 if (!isNaN(point[0]) && !isNaN(point[1])) {
-                    if (!movedTo) {
-                        path.push(['M', point[0], -point[1]]);
-                        movedTo = true;
-                    } else {
-                        path.push(['L', point[0], -point[1]]);
+
+                    // In order to be able to interpolate if the first or last
+                    // point is invalid (on the far side of the globe in an
+                    // orthographic projection), we need to push the first valid
+                    // point.
+                    if (isPolygon && !firstValidLonLatAppended) {
+                        poly.push(lonLat);
+                        firstValidLonLatAppended = true;
                     }
+
+                    // When entering the first valid point after a gap of
+                    // invalid points, typically on the far side of the globe
+                    // in an orthographic projection.
+                    if (gap && lastValidLonLat) {
+
+                        // For areas, in an orthographic projection, the great
+                        // circle between two visible points will be close to
+                        // the horizon. A possible exception may be when the two
+                        // points are on opposite sides of the globe. It that
+                        // poses a problem, we may have to rewrite this to use
+                        // the small circle related to the current lon0 and
+                        // lat0.
+                        if (isPolygon && isGeographicCoordinates) {
+                            const greatCircle = Projection.greatCircle(
+                                lastValidLonLat,
+                                lonLat
+                            );
+                            if (greatCircle) {
+                                greatCircle.forEach((lonLat): void =>
+                                    pushToPath(this.forward(lonLat)));
+                            }
+
+                        // For lines, just jump over the gap
+                        } else {
+                            movedTo = false;
+                        }
+                    }
+
+                    pushToPath(point);
+
+
+                    lastValidLonLat = lonLat;
+                    gap = false;
+                } else {
+                    gap = true;
                 }
-            });
+            }
         };
 
         if (geometry.type === 'LineString') {
