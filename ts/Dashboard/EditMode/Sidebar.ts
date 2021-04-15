@@ -305,8 +305,22 @@ class Sidebar {
     public show(
         context?: Cell|Row
     ): void {
+        const sidebar = this;
+
         if (context) {
-            this.update(context);
+            const element = context.type === 'cell' &&
+                (context as Cell).row.layout.container;
+
+            if (element) {
+                sidebar.afterCSSAnimate(
+                    element,
+                    function (): void {
+                        if (context) {
+                            sidebar.update(context);
+                        }
+                    }
+                );
+            }
 
             if (!this.isVisible) {
                 this.container.classList.add(
@@ -366,6 +380,15 @@ class Sidebar {
                 EditGlobals.classNames.layoutToolbarSpace
             );
         }
+    }
+
+    public afterCSSAnimate(
+        element: HTMLDOMElement,
+        callback: Function
+    ): void {
+        addEvent(element, 'transitionend', callback);
+        addEvent(element, 'oTransitionEnd', callback);
+        addEvent(element, 'webkitTransitionEnd', callback);
     }
 }
 

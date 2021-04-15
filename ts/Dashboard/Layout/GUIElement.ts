@@ -28,7 +28,7 @@ abstract class GUIElement {
     /**
      * The type of a GUIElement instance.
      */
-    protected type?: GUIElement.GUIElementType;
+    public type?: GUIElement.GUIElementType;
 
     /**
      * The function to remove bindedGUIElement
