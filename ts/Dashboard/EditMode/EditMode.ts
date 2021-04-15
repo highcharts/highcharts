@@ -11,8 +11,7 @@ import Sidebar from './Sidebar.js';
 import EditContextMenu from './EditContextMenu.js';
 
 const {
-    merge,
-    css
+    merge
 } = U;
 
 class EditMode {
@@ -75,34 +74,22 @@ class EditMode {
     public onContextBtnClick(
         editMode: EditMode
     ): void {
-        // Init dropdown if doesn't exist.
+        // Init contextMenu if doesn't exist.
         if (!editMode.contextMenu) {
-            editMode.initContextMenu();
+            editMode.contextMenu = new EditContextMenu(
+                editMode, editMode.options.contextMenu || {}
+            );
         }
 
         // Show context menu.
         if (editMode.contextMenu) {
+            if (!editMode.contextMenu.isVisible) {
+                editMode.contextMenu.updatePosition(editMode.contextButtonElement);
+            }
+
             editMode.contextMenu.setVisible(
                 !editMode.contextMenu.isVisible
             );
-        }
-    }
-
-    public initContextMenu(): void {
-        const editMode = this,
-            contextButtonElement = editMode.contextButtonElement,
-            width = 150;
-
-        if (contextButtonElement) {
-            editMode.contextMenu = new EditContextMenu(editMode, merge({
-                style: {
-                    width: width + 'px',
-                    top: contextButtonElement.offsetTop +
-                        contextButtonElement.offsetHeight + 'px',
-                    left: contextButtonElement.offsetLeft - width +
-                        contextButtonElement.offsetWidth + 'px'
-                }
-            }, editMode.options.contextMenu || {}));
         }
     }
 

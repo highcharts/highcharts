@@ -3,6 +3,7 @@ import U from '../../Core/Utilities.js';
 import MenuItem from './Menu/MenuItem.js';
 import Menu from './Menu/Menu.js';
 import EditMode from './EditMode.js';
+import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
 const {
     addEvent,
@@ -17,6 +18,7 @@ class EditContextMenu extends Menu {
     * */
     protected static readonly defaultOptions: EditContextMenu.Options = {
         enabled: true,
+        width: 150,
         className: EditGlobals.classNames.contextMenu,
         itemsClassName: EditGlobals.classNames.contextMenuItem,
         icon: EditGlobals.iconsURL + 'menu.svg',
@@ -60,7 +62,10 @@ class EditContextMenu extends Menu {
         );
 
         this.editMode = editMode;
+        this.options = merge(EditContextMenu.defaultOptions, options || {});
 
+        // Set the context menu container width.
+        this.container.style.width = this.options.width + 'px';
         super.initItems(EditContextMenu.items);
 
         if (this.options.items) {
@@ -77,17 +82,7 @@ class EditContextMenu extends Menu {
             this.updateActiveItems(items);
         }
 
-        addEvent(document, 'click', (event): void => {
-            if (
-                event.target !== this.container &&
-                event.target !== editMode.contextButtonElement &&
-                !event.target.classList.contains(EditGlobals.classNames.switchSlider) &&
-                event.target.tagName !== 'INPUT' &&
-                this.isVisible
-            ) {
-                this.setVisible(false);
-            }
-        });
+        this.initEvents();
     }
 
     /* *
@@ -96,12 +91,36 @@ class EditContextMenu extends Menu {
     *
     * */
     public editMode: EditMode;
+    public options: EditContextMenu.Options;
 
     /* *
     *
     *  Functions
     *
     * */
+
+    public initEvents(): void {
+        const contextMenu = this;
+
+        // Click on document close the context menu.
+        addEvent(document, 'click', (event): void => {
+            if (
+                event.target !== this.container &&
+                event.target !== contextMenu.editMode.contextButtonElement &&
+                !event.target.classList.contains(EditGlobals.classNames.switchSlider) &&
+                event.target.tagName !== 'INPUT' &&
+                this.isVisible
+            ) {
+                this.setVisible(false);
+            }
+        });
+
+        // Hide the context menu on window resize.
+        addEvent(window, 'resize', (event): void => {
+            contextMenu.setVisible(false);
+        });
+    }
+
     public setVisible(visible: boolean): void {
         const contextMenu = this;
 
@@ -117,10 +136,27 @@ class EditContextMenu extends Menu {
             }
         }
     }
+
+    public updatePosition(
+        ctxButton?: HTMLDOMElement,
+        x?: number,
+        y?: number
+    ): void {
+        const contextMenu = this,
+            width = contextMenu.options.width || 0,
+            left = ctxButton ? ctxButton.offsetLeft - width + ctxButton.offsetWidth : x,
+            top = ctxButton ? ctxButton.offsetTop + ctxButton.offsetHeight : y;
+
+        if (left && top) {
+            contextMenu.container.style.left = left + 'px';
+            contextMenu.container.style.top = top + 'px';
+        }
+    }
 }
 
 namespace EditContextMenu {
     export interface Options extends Menu.Options {
+        width?: number;
         enabled?: true;
         icon?: string;
     }
