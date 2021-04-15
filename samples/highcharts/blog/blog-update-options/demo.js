@@ -872,16 +872,13 @@ $('document').ready(function () {
                     label: {
                         useHTML: true,
                         formatter: function () {
-                            return '<div><img height=15 style="border:1px solid #ccc" src="/samples/graphics/homepage-hero/p' + (ii + 1) + '.png"> Zone' + (ii) + '</div>';
+                            return '<div><img height=15 style="border:1px solid #ccc" src="https://cdn.rawgit.com/highcharts/highcharts/b87bb2d3714aadff87ec6e128c9a4ee814222d13/samples/graphics/homepage-hero/p' + (ii + 1) + '.png"> Zone' + (ii) + '</div>';
                         }
                     },
                     align: 'left'
 
                 });
             }
-            // } else {
-            //     zonesArray.pop();
-            // }
             demoChart.series[0].update({
                 zones: zonesArray
             });
