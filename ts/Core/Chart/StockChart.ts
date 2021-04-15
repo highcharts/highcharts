@@ -1165,19 +1165,28 @@ addEvent(Series, 'render', function (): void {
             this.clipBox = this.clipBox || merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
+        }
 
-        // On redrawing, resizing etc, update the clip rectangle
-        } else if ((chart as any)[this.sharedClipKey as any]) {
+        // #15435: this.sharedClipKey might not have been set yet, for example
+        // when updating the series, so we need to use this function instead
+        const sharedClipKey = this.getSharedClipKey();
+
+        // On redrawing, resizing etc, update the clip rectangle.
+        //
+        // #15435: Update it even when we are creating/updating clipBox, since
+        // there could be series updating and pane size changes happening at
+        // the same time and we dont destroy shared clips in stock.
+        if ((chart as any)[sharedClipKey]) {
             // animate in case resize is done during initial animation
-            (chart as any)[this.sharedClipKey as any].animate({
+            (chart as any)[sharedClipKey].animate({
                 width: this.xAxis.len,
                 height: clipHeight
             });
 
             // also change markers clip animation for consistency
             // (marker clip rects should exist only on chart init)
-            if ((chart as any)[this.sharedClipKey + 'm']) {
-                (chart as any)[this.sharedClipKey + 'm'].animate({
+            if ((chart as any)[sharedClipKey + 'm']) {
+                (chart as any)[sharedClipKey + 'm'].animate({
                     width: this.xAxis.len
                 });
             }
