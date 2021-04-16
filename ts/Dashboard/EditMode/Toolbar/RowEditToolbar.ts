@@ -87,6 +87,7 @@ class RowEditToolbar extends EditToolbar {
     *
     * */
     public row?: Row;
+    public editedRow?: Row;
 
     /* *
     *
@@ -153,6 +154,7 @@ class RowEditToolbar extends EditToolbar {
                     this.row,
                     true
                 );
+                this.editedRow = this.row;
             }
         }
     }
@@ -166,7 +168,13 @@ class RowEditToolbar extends EditToolbar {
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
+            this.resetEditedRow();
         }
+    }
+
+    public resetEditedRow(): void {
+        super.resetCurrentElements();
+        this.editedRow = void 0;
     }
 }
 

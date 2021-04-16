@@ -376,6 +376,14 @@ class Sidebar {
             EditGlobals.classNames.editSidebarShow
         );
 
+        if (this.editMode.cellToolbar) {
+            this.editMode.cellToolbar.resetEditedCell();
+        }
+
+        if (this.editMode.rowToolbar) {
+            this.editMode.rowToolbar.resetEditedRow();
+        }
+
         this.isVisible = false;
         this.guiElement = void 0;
     }

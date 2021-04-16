@@ -76,47 +76,61 @@ abstract class EditToolbar {
     }
 
     public maskNotEditedElements(
-        element: Cell|Row,
+        currentElement: Cell|Row,
         isRow?: boolean
     ): void {
         // reset current elements
         this.resetCurrentElements();
 
         // set current element
-        (element.container as HTMLDOMElement).classList.add(
+        (currentElement.container as HTMLDOMElement).classList.add(
             isRow ? EditGlobals.classNames.currentEditedRow :
                 EditGlobals.classNames.currentEditedCell
         );
 
         if (!isRow) {
-            (element as Cell).row.layout.dashboard.container.classList.add(
+            (currentElement as Cell).row.layout.dashboard.container.classList.add(
                 EditGlobals.classNames.disabledNotEditedCells
             );
         } else {
-            (element as Row).layout.dashboard.container.classList.add(
+            (currentElement as Row).layout.dashboard.container.classList.add(
                 EditGlobals.classNames.disabledNotEditedRows
             );
         }
     }
 
     public resetCurrentElements(): void {
-        const classesToRemove = [
-            EditGlobals.classNames.disabledNotEditedCells,
-            EditGlobals.classNames.disabledNotEditedRows,
-            EditGlobals.classNames.currentEditedCell,
-            EditGlobals.classNames.currentEditedRow
-        ];
 
-        let currentClass;
+        const editMode = this.editMode;
+        const editedCell = editMode.cellToolbar && editMode.cellToolbar.editedCell;
+        const editedRow = editMode.rowToolbar && editMode.rowToolbar.editedRow;
 
-        for (let i = 0, iEnd = classesToRemove.length; i < iEnd; ++i) {
-            currentClass = document.getElementsByClassName(classesToRemove[i]);
+        if (editedCell) {
+            const cellContainer = editedCell.container;
 
-            if (currentClass && currentClass.length) {
-                currentClass[0].classList.remove(
-                    classesToRemove[i]
+            if (cellContainer) {
+                cellContainer.classList.remove(
+                    EditGlobals.classNames.currentEditedCell
                 );
             }
+
+            editedCell.row.layout.dashboard.container.classList.remove(
+                EditGlobals.classNames.disabledNotEditedCells
+            );
+        }
+
+        if (editedRow) {
+            const rowContainer = editedRow.container;
+
+            if (rowContainer) {
+                rowContainer.classList.remove(
+                    EditGlobals.classNames.currentEditedRow
+                );
+            }
+
+            editedRow.layout.dashboard.container.classList.remove(
+                EditGlobals.classNames.disabledNotEditedRows
+            );
         }
     }
 }

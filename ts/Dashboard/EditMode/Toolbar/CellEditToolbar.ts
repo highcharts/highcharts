@@ -87,6 +87,7 @@ class CellEditToolbar extends EditToolbar {
     *
     * */
     public cell?: Cell;
+    public editedCell?: Cell;
 
     /* *
     *
@@ -171,6 +172,7 @@ class CellEditToolbar extends EditToolbar {
                 super.maskNotEditedElements(
                     this.cell
                 );
+                this.editedCell = this.cell;
             }
         }
     }
@@ -184,7 +186,13 @@ class CellEditToolbar extends EditToolbar {
 
             // Hide row and cell toolbars.
             toolbar.editMode.hideToolbars(['cell', 'row']);
+            this.resetEditedCell();
         }
+    }
+
+    public resetEditedCell(): void {
+        super.resetCurrentElements();
+        this.editedCell = void 0;
     }
 }
 
