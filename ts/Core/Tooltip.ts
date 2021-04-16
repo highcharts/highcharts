@@ -1556,7 +1556,7 @@ class Tooltip {
                 x = clamp(
                     anchorX - (boxWidth / 2),
                     bounds.left,
-                    bounds.right - boxWidth
+                    bounds.right - boxWidth - (tooltip.outside ? chartLeft : 0)
                 );
             } else {
                 y = anchorY - distributionBoxTop;
@@ -1678,7 +1678,7 @@ class Tooltip {
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
                 const bBox = tt.getBBox();
-                const boxWidth = bBox.width + tt.strokeWidth();
+                const boxWidth = bBox.width + (tt.strokeWidth() * 2);
                 if (isHeader) {
                     headerHeight = bBox.height;
                     adjustedPlotHeight += headerHeight;
@@ -1732,14 +1732,16 @@ class Tooltip {
         // space to the left and there is space to to the right
         if (!positioner && boxes.some((box): boolean => {
             // Always realign if the beginning of a label is outside bounds
-            if (bounds.left + chartLeft + box.x < bounds.left) {
+            const { outside } = tooltip;
+            const boxStart = (outside ? chartLeft : 0) + box.anchorX;
+
+            if (boxStart < bounds.left && boxStart + box.boxWidth < bounds.right) {
                 return true;
             }
 
             // Otherwise, check if there is more space available to the right
-            const availableSpaceLeft = (chartLeft - bounds.left) + box.x + box.boxWidth;
-            return availableSpaceLeft < (chartLeft - bounds.left) + box.boxWidth &&
-                bounds.right - availableSpaceLeft > availableSpaceLeft;
+            return boxStart < (chartLeft - bounds.left) + box.boxWidth &&
+                bounds.right - boxStart > boxStart;
         })) {
             boxes = boxes.map((box): AnyRecord => {
                 const { x, y } = defaultPositioner(
@@ -1761,7 +1763,24 @@ class Tooltip {
 
         // Distribute and put in place
         H.distribute(boxes as any, adjustedPlotHeight);
-        let leftMostBoxX = chartLeft;
+        const boxExtremes = {
+            left: chartLeft,
+            right: chartLeft
+        };
+
+        // Get the extremes from series tooltips
+        boxes.forEach(function (box: AnyRecord): void {
+            const { x, boxWidth, isHeader } = box;
+            if (!isHeader) {
+                if (tooltip.outside && chartLeft + x < boxExtremes.left) {
+                    boxExtremes.left = chartLeft + x;
+                }
+                if (!isHeader && tooltip.outside && boxExtremes.left + boxWidth > boxExtremes.right) {
+                    boxExtremes.right = chartLeft + x;
+                }
+            }
+        });
+
         boxes.forEach(function (box: AnyRecord): void {
             const {
                 x,
@@ -1772,11 +1791,6 @@ class Tooltip {
                     isHeader
                 }
             } = box;
-
-            if (chartLeft + x < leftMostBoxX) {
-                leftMostBoxX = chartLeft + x;
-            }
-
             const attributes = {
                 visibility: typeof pos === 'undefined' ? 'hidden' : 'inherit',
                 x,
@@ -1791,15 +1805,18 @@ class Tooltip {
             };
 
             // Handle left-aligned tooltips overflowing the chart area
-            if (tooltip.outside) {
-                const offset = chartLeft - leftMostBoxX;
-                if (!isHeader && chartLeft + x < chartLeft) {
-                    attributes.x = x + offset;
-                    attributes.anchorX = anchorX + offset;
-                }
-                if (isHeader && leftMostBoxX < chartLeft) {
-                    attributes.x = offset;
-                    attributes.anchorX = anchorX + offset;
+            if (tooltip.outside && x < anchorX) {
+                const offset = chartLeft - boxExtremes.left;
+                // Skip this if there is no overflow
+                if (offset > 0) {
+                    if (!isHeader) {
+                        attributes.x = x + offset;
+                        attributes.anchorX = anchorX + offset;
+                    }
+                    if (isHeader) {
+                        attributes.x = (boxExtremes.right - boxExtremes.left) / 2;
+                        attributes.anchorX = anchorX + offset;
+                    }
                 }
             }
 
@@ -1828,7 +1845,7 @@ class Tooltip {
             );
 
             // Position the tooltip container to the chart container
-            container.style.left = leftMostBoxX + 'px';
+            container.style.left = boxExtremes.left + 'px';
             container.style.top = chartTop + 'px';
         }
     }
