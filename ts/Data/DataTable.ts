@@ -1331,23 +1331,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     }
 
     /**
-     * Checks for a column name or alias.
-     *
-     * @param {string} columnNameOrAlias
-     * Column name of alias to check.
-     *
-     * @return {boolean}
-     * Returns `true` if found, otherwise `false`.
-     */
-    public hasColumn(columnNameOrAlias: string): boolean {
-        const table = this;
-        return !!table.columns[
-            table.aliasMap[columnNameOrAlias] ||
-            columnNameOrAlias
-        ];
-    }
-
-    /**
      * Checks for given column names or aliases.
      *
      * @function Highcharts.DataTable#hasColumn

@@ -124,7 +124,7 @@ class InvertModifier extends DataModifier {
 
         modifier.emit({ type: 'execute', detail: eventDetail, table });
 
-        if (table.hasColumn('columnNames')) { // inverted table
+        if (table.hasColumns(['columnNames'])) { // inverted table
             const columnNames: Array<string> = (
                     table.deleteColumn('columnNames') || []
                 ).map(
