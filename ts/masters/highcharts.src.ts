@@ -26,6 +26,7 @@ import '../Core/Legend.js';
 import '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
 import '../Extensions/Stacking.js';
+import DataTable from '../Data/DataTable.js';
 import Series from '../Core/Series/Series.js';
 import '../Series/Line/LineSeries.js';
 import '../Series/Area/AreaSeries.js';
@@ -49,6 +50,7 @@ import '../Core/Responsive.js';
 
 // Classes
 (Highcharts as any).AST = AST;
+(Highcharts as any).DataTable = DataTable;
 (Highcharts as any).Fx = Fx;
 (Highcharts as any).Series = Series;
 

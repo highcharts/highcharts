@@ -36,6 +36,15 @@ const {
 
 /**
  * Class to manage columns and rows in a table structure.
+ *
+ * @class
+ * @name Highcharts.DataTable
+ *
+ * @param {Highcharts.DataTableColumnCollection} [columns]
+ * Collection of columns.
+ *
+ * @param {string} [id]
+ * DataTable identifier.
  */
 class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
@@ -45,6 +54,17 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * */
 
+    /**
+     * Null state for a row record.
+     *
+     * @name Highcharts.DataTable.NULL
+     * @type {Highcharts.DataTableRowObject}
+     *
+     * @see {@link Highcharts.DataTable.isNull} for a null test.
+     *
+     * @example
+     * table.setRows([DataTable.NULL, DataTable.NULL], 10);
+     */
     public static readonly NULL: Readonly<DataTable.RowObject> = {};
 
     /* *
@@ -133,15 +153,25 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Tests whether a row contains only null values.
      *
+     * @function Highcharts.DataTable.isNull
+     *
      * @param {DataTable.Row|DataTable.RowObject} row
      * Row to test.
      *
      * @return {boolean}
      * Returns `true`, if the row contains only null, otherwise `false`.
+     *
+     * @example
+     * if (DataTable.isNull(row)) {
+     *   // handle null
+     * }
      */
     public static isNull(
         row: (DataTable.Row|DataTable.RowObject)
     ): boolean {
+        if (row === DataTable.NULL) {
+            return true;
+        }
         if (row instanceof Array) {
             if (!row.length) {
                 return false;
@@ -192,10 +222,22 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
         presentationState: DataPresentationState = new DataPresentationState(),
         converter: DataConverter = new DataConverter()
     ) {
+        /**
+         * Whether the ID was automatic generated or given.
+         *
+         * @name Highcharts.DataTable#autoId
+         * @type {boolean}
+         */
         this.autoId = !id;
         this.columns = {};
         this.converter = converter;
-        this.id = id || uniqueKey();
+        /**
+         * ID of the table.
+         *
+         * @name Highcharts.DataTable#id
+         * @type {string}
+         */
+        this.id = (id || uniqueKey());
         this.presentationState = presentationState;
         this.rowCount = 0;
         this.versionTag = uniqueKey();
@@ -234,16 +276,15 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     /**
      * Mapping aliases to column names.
+     * @private
      */
     private readonly aliasMap: Record<string, string> = {};
 
-    /**
-     * Whether id was generated in constructor or not.
-     */
     public readonly autoId: boolean;
 
     /**
      * Converter for type conversions of cell values.
+     * @private
      */
     public readonly converter: DataConverter;
 
@@ -264,13 +305,15 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * */
 
     /**
-     * Removes all columns and rows from this table.
+     * Removes all columns and rows from the table.
+     *
+     * @function Highcharts.DataTable#clear
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits DataTable#clearTable
-     * @emits DataTable#afterClearTable
+     * @emits #clearTable
+     * @emits #afterClearTable
      */
     public clear(eventDetail?: DataEventEmitter.EventDetail): void {
         const table = this;
@@ -287,6 +330,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Removes all cell values from a column.
      *
+     * @function Highcharts.DataTable#clearColumn
+     *
      * @param {string} columnNameOrAlias
      * Column name or alias to clear.
      *
@@ -296,8 +341,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits DataTable#clearColumn
-     * @emits DataTable#afterClearColumn
+     * @emits #clearColumn
+     * @emits #afterClearColumn
      */
     public clearColumn(
         columnNameOrAlias: string,
@@ -339,14 +384,16 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Removes all rows from this data table.
      *
+     * @function Highcharts.DataTable#clearRows
+     *
      * @param {number} [rowIndex=0]
      * Row index to start removing.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @emits DataTable#clearRows
-     * @emits DataTable#afterClearRows
+     * @emits #clearRows
+     * @emits #afterClearRows
      */
     public clearRows(
         rowIndex: number = 0,
@@ -385,17 +432,19 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Returns a clone of this data table.
      *
+     * @function Highcharts.DataTable#clone
+     *
      * @param {boolean} [skipColumns]
      * Whether to clone columns or not.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {DataTable}
+     * @return {Highcharts.DataTable}
      * Clone of this data table.
      *
-     * @emits DataTable#cloneTable
-     * @emits DataTable#afterCloneTable
+     * @emits #cloneTable
+     * @emits #afterCloneTable
      */
     public clone(
         skipColumns?: boolean,
@@ -436,17 +485,19 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Deletes a column from the table.
      *
+     * @function Highcharts.DataTable#deleteColumn
+     *
      * @param {string} columnName
      * Name (no alias) of column that shall be deleted.
      *
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {DataTable.Column|undefined}
+     * @return {Highcharts.DataTableColumn|undefined}
      * Returns the deleted column, if found.
      *
-     * @emits DataTable#deleteColumn
-     * @emits DataTable#afterDeleteColumn
+     * @emits #deleteColumn
+     * @emits #afterDeleteColumn
      */
     public deleteColumn(
         columnName: string,
@@ -480,6 +531,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Deletes a column alias and returns the original column name.
      *
+     * @function Highcharts.DataTable#deleteColumnAlias
+     *
      * @param {string} alias
      * The alias to delete.
      *
@@ -500,6 +553,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Deletes rows in this table.
      *
+     * @function Highcharts.DataTable#deleteRows
+     *
      * @param {number} rowIndex
      * Index to start delete of rows.
      *
@@ -509,11 +564,11 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {DataEventEmitter.EventDetail} [eventDetail]
      * Custom information for pending events.
      *
-     * @return {Array<DataTable.Row>}
+     * @return {Array<Highcharts.DataTableRow>}
      * Returns the deleted rows, if found.
      *
-     * @emits DataTable#deleteRows
-     * @emits DataTable#afterDeleteRows
+     * @emits #deleteRows
+     * @emits #afterDeleteRows
      */
     public deleteRows(
         rowIndex: number,
@@ -568,6 +623,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Emits an event on this table to all registered callbacks of the given
      * event.
+     * @private
      *
      * @param {DataTable.Event} e
      * Event object with event information.
@@ -594,6 +650,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     /**
      * Fetches a single cell value.
+     *
+     * @function Highcharts.DataTable#getCell
      *
      * @param {string} columnNameOrAlias
      * Column name or alias of the cell to retrieve.
@@ -625,6 +683,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Fetches a cell value for the given row as a boolean.
      *
+     * @function Highcharts.DataTable#getCellAsBoolean
+     *
      * @param {string} columnNameOrAlias
      * Column name or alias to fetch.
      *
@@ -652,6 +712,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     /**
      * Fetches a cell value for the given row as a date.
+     *
+     * @function Highcharts.DataTable#getCellAsDate
      *
      * @param {string} columnNameOrAlias
      * Column name or alias to fetch.
@@ -691,6 +753,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Fetches a cell value for the given row as a number.
      *
+     * @function Highcharts.DataTable#getCellAsNumber
+     *
      * @param {string} columnNameOrAlias
      * Column name or alias to fetch.
      *
@@ -728,6 +792,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Fetches a cell value for the given row as a string.
      *
+     * @function Highcharts.DataTable#getCellAsString
+     *
      * @param {string} columnNameOrAlias
      * Column name or alias to fetch.
      *
@@ -756,10 +822,12 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Fetches the given column by the canonical column name or by an alias.
      *
+     * @function Highcharts.DataTable#getColumn
+     *
      * @param {string} columnNameOrAlias
      * Name or alias of the column to get, alias takes precedence.
      *
-     * @return {DataTable.Column|undefined}
+     * @return {Highcharts.DataTableColumn|undefined}
      * A copy of the column, or `undefined` if not found.
      */
     public getColumn(
@@ -782,6 +850,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     /**
      * Fetches all column aliases.
+     *
+     * @function Highcharts.DataTable#getColumnAliases
      *
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state.
@@ -816,6 +886,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * of type number, it assumes for performance reasons, that all cells are of
      * type number or `null`. Otherwise it will convert all cells to number
      * type, except `null`.
+     *
+     * @function Highcharts.DataTable#getColumnAsNumbers
      *
      * @param {string} columnNameOrAlias
      * Name or alias of the column to get, alias takes precedence.
@@ -886,6 +958,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Fetches all column names.
      *
+     * @function Highcharts.DataTable#getColumnNames
+     *
      * @param {boolean} [usePresentationOrder]
      * Whether to use the column order of the presentation state.
      *
@@ -908,10 +982,11 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Retrieves all or the given columns.
      *
+     * @function Highcharts.DataTable#getColumns
      * @param {Array<string>} [columnNamesOrAliases]
      * Column names or aliases to retrieve. Aliases taking precedence.
      *
-     * @return {DataTable.ColumnCollection}
+     * @return {Highcharts.DataTableColumnCollection}
      * Collection of columns. If a requested column was not found, it is
      * `undefined`.
      */
@@ -956,7 +1031,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @return {Array<string>}
      * Returns all column names available in the table.
      */
-    public getNormalizedColumnNames(
+    private getNormalizedColumnNames(
         columnNamesOrAliases: Array<string>
     ): Array<string> {
         const table = this,
@@ -989,13 +1064,15 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Retrieves the row at a given index.
      *
+     * @function Highcharts.DataTable#getRow
+     *
      * @param {number} rowIndex
      * Row index.
      *
      * @param {Array<string>} [columnNamesOrAliases]
      * Column names or aliases in order to retrieve.
      *
-     * @return {DataTable.Row}
+     * @return {Highcharts.DataTableRow}
      * Returns the row values, or `undefined` if not found.
      */
     public getRow(
@@ -1024,23 +1101,25 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Returns the number of rows in this table.
      *
+     * @function Highcharts.DataTable#getRowCount
+     *
      * @return {number}
      * Number of rows in this table.
-     *
-     * @todo Consider implementation via property getter `.length` depending on
-     *       browser support.
      */
     public getRowCount(): number {
+        // @todo Implement via property getter `.length` browsers supported
         return this.rowCount;
     }
 
     /**
      * Retrieves the index of the first row matching a specific cell value.
      *
+     * @function Highcharts.DataTable#getRowIndexBy
+     *
      * @param {string} columnNameOrAlias
      * Column to search in.
      *
-     * @param {DataTable.CellType} cellValue
+     * @param {Highcharts.DataTableCellType} cellValue
      * Cell value to search for. `NaN` and `undefined` are not supported.
      *
      * @param {number} [rowIndexOffset]
@@ -1075,13 +1154,15 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Retrieves the row at a given index.
      *
+     * @function Highcharts.DataTable#getRowObject
+     *
      * @param {number} rowIndex
      * Row index.
      *
      * @param {Array<string>} [columnNamesOrAliases]
      * Column names or aliases and their order to retrieve.
      *
-     * @return {DataTable.RowObject}
+     * @return {Highcharts.DataTableRowObject}
      * Returns the row values, or `undefined` if not found.
      */
     public getRowObject(
@@ -1124,6 +1205,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Fetches all or a number of rows.
      *
+     * @function Highcharts.DataTable#getRowObjects
+     *
      * @param {number} [rowIndex]
      * Index of the first row to fetch. Defaults to first row at index `0`.
      *
@@ -1133,7 +1216,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Array<string>} [columnNamesOrAliases]
      * Column names or aliases and their order to retrieve.
      *
-     * @return {DataTable.RowObject}
+     * @return {Highcharts.DataTableRowObject}
      * Returns retrieved rows.
      */
     public getRowObjects(
@@ -1184,6 +1267,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Fetches all or a number of rows.
      *
+     * @function Highcharts.DataTable#getRows
+     *
      * @param {number} [rowIndex]
      * Index of the first row to fetch. Defaults to first row at index `0`.
      *
@@ -1193,7 +1278,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {Array<string>} [columnNamesOrAliases]
      * Column names or aliases and their order to retrieve.
      *
-     * @return {DataTable.Row}
+     * @return {Highcharts.DataTableRow}
      * Returns retrieved rows.
      */
     public getRows(
@@ -1236,6 +1321,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Returns the unique version tag of the current state of the table.
      *
+     * @function Highcharts.DataTable#getVersionTag
+     *
      * @return {string}
      * Unique version tag.
      */
@@ -1263,11 +1350,13 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Checks for given column names or aliases.
      *
+     * @function Highcharts.DataTable#hasColumn
+     *
      * @param {Array<string>} columnNamesOrAliases
      * Column names of aliases to check.
      *
      * @return {boolean}
-     * Returns `true` if all have been found, otherwise `false`.
+     * Returns `true` if all columns have been found, otherwise `false`.
      */
     public hasColumns(columnNamesOrAliases: Array<string>): boolean {
         const table = this,
@@ -1288,6 +1377,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     /**
      * Searches for a specific cell value.
+     *
+     * @function Highcharts.DataTable#hasRowWith
      *
      * @param {string} columnNameOrAlias
      * Column to search in.
@@ -1321,10 +1412,12 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Registers a callback for a specific event.
      *
+     * @function Highcharts.DataTable#on
+     *
      * @param {string} type
      * Event type as a string.
      *
-     * @param {DataEventEmitter.EventCallback} callback
+     * @param {Highcharts.EventCallbackFunction} callback
      * Function to register for an event callback.
      *
      * @return {Function}
@@ -1339,6 +1432,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     /**
      * Renames a column of cell values.
+     *
+     * @function Highcharts.DataTable#renameColumn
      *
      * @param {string} columnName
      * Name of the column to be renamed.
@@ -1379,23 +1474,25 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Sets a cell value based on the row index and column name or alias.  Will
      * insert a new column, if not found.
      *
+     * @function Highcharts.DataTable#setCell
+     *
      * @param {number|undefined} rowIndex
      * Row index to set.
      *
      * @param {string} columnNameOrAlias
      * Column name or alias to set.
      *
-     * @param {DataTable.CellType} cellValue
+     * @param {Highcharts.DataTableCellType} cellValue
      * Cell value to set.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
      * Returns `true` if successful, `false` if not.
      *
-     * @emits DataTable#setCell
-     * @emits DataTable#afterSetCell
+     * @emits #setCell
+     * @emits #afterSetCell
      */
     public setCell(
         rowIndex: number,
@@ -1445,23 +1542,25 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Sets cell values for a column. Will insert a new column, if not found.
      *
+     * @function Highcharts.DataTable#setColumn
+     *
      * @param {string} columnNameOrAlias
      * Column name or alias to set.
      *
-     * @param {DataTable.Column} [column]
+     * @param {Highcharts.DataTableColumn} [column]
      * Values to set in the column.
      *
      * @param {number} [rowIndex]
      * Index of the first row to change. Leave `undefind` to set as new column.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
      * Returns `true` if successful, `false` if not.
      *
-     * @emits DataTable#setColumn
-     * @emits DataTable#afterSetColumn
+     * @emits #setColumn
+     * @emits #afterSetColumn
      */
     public setColumn(
         columnNameOrAlias: string,
@@ -1529,6 +1628,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     /**
      * Defines an alias for a column.
      *
+     * @function Highcharts.DataTable#setColumnAlias
+     *
      * @param {string} columnAlias
      * Column alias to create.
      *
@@ -1556,20 +1657,22 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Sets cell values for multiple columns. Will insert new columns, if not
      * found.
      *
+     * @function Highcharts.DataTable#setColumns
+     *
      * @param {DataTable.ColumnCollection} columns
      * Columns as a collection, where the keys are the column names or aliases.
      *
      * @param {number} [rowIndex]
      * Index of the first row to change. Leave `undefind` to set as new columns.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
      * Returns `true` if successful, `false` if not.
      *
-     * @emits DataTable#setColumn
-     * @emits DataTable#afterSetColumn
+     * @emits #setColumn
+     * @emits #afterSetColumn
      */
     public setColumns(
         columns: DataTable.ColumnCollection,
@@ -1605,6 +1708,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     /**
      * Sets a new presentation state for the table.
+     * @private
      *
      * @param {DataPresentationState} presentationState
      * The new presentation state to use.
@@ -1620,6 +1724,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * index was provided, or if the index is higher than the total number of
      * rows.
      *
+     * @function Highcharts.DataTable#setRows
+     *
      * @param {Array<DataTable.Row>} rows
      * Row values to insert.
      *
@@ -1632,8 +1738,8 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @return {boolean}
      * Returns `true` if successful, otherwise `false`.
      *
-     * @emits DataTable#setRow
-     * @emits DataTable#afterSetRow
+     * @emits #setRow
+     * @emits #afterSetRow
      */
     public setRows(
         rows: Array<(DataTable.Row|DataTable.RowObject)>,
@@ -1710,6 +1816,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
 
     /**
      * Converts the table to a class JSON.
+     * @private
      *
      * @return {DataJSON.ClassJSON}
      * Class JSON of this table.
@@ -1817,7 +1924,7 @@ namespace DataTable {
     }
 
     /**
-     * Possible value types for a cell.
+     * Possible value types for a table cell.
      */
     export type CellType = (DataTable|DataJSON.JSONPrimitive);
 
@@ -1832,7 +1939,7 @@ namespace DataTable {
     }
 
     /**
-     * Array of column values.
+     * Array of table cells in vertical expansion.
      */
     export interface Column extends Array<DataTable.CellType> {
         [index: number]: CellType;
@@ -1886,7 +1993,8 @@ namespace DataTable {
     );
 
     /**
-     * Array of row values. Index of the array is the index of the column names.
+     * Array of table cells in horizontal expansion. Index of the array is the
+     * index of the column names.
      */
     export interface Row extends Array<CellType> {
         [index: number]: CellType;
@@ -1941,3 +2049,48 @@ DataJSON.addClass(DataTable);
  * */
 
 export default DataTable;
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
+
+/**
+ * Possible value types for a table cell.
+ * @typedef {boolean|null|number|string|Highcharts.DataTable|undefined} Highcharts.DataTableCellType
+ */
+
+/**
+ * Array of table cells in vertical expansion.
+ * @typedef {Array<Highcharts.DataTableCellType>} Highcharts.DataTableColumn
+ */
+
+/**
+ * Collection of columns, where the key is the column name (or alias) and
+ * the value is an array of column values.
+ * @interface Highcharts.DataTableColumnCollection
+ *//**
+ * @name Highcharts.DataTableColumnCollection#[key:string]
+ * @type {Highcharts.DataTableColumn}
+ */
+
+/**
+ * Custom information for an event.
+ * @typedef Highcharts.DataTableEventDetail
+ * @type {Record<string,(boolean|number|string|null|undefined)>}
+ */
+
+/**
+ * Array of table cells in horizontal expansion. Index of the array is the index
+ * of the column names.
+ * @typedef {Array<Highcharts.DataTableCellType>} Highcharts.DataTableRow
+ */
+
+/**
+ * Record of table cells in horizontal expansion. Keys of the record are the
+ * column names (or aliases).
+ * @typedef {Record<string,Highcharts.DataTableCellType>} Highcharts.DataTableRowObject
+ */
+
+(''); // keeps doclets above in transpiled file
