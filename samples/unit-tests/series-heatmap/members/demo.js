@@ -191,51 +191,19 @@ QUnit.test('Point range after setData(#3758)', function (assert) {
 });
 
 QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
-    var series = Highcharts.seriesTypes.heatmap,
-        setState = series.prototype.pointClass.prototype.setState,
-        pointAttribs = series.prototype.pointAttribs,
-        noop = Highcharts.noop,
-        point = {
-            graphic: {
-                attr: function (obj) {
-                    var graphic = this,
-                        keys = Object.keys(obj);
-                    keys.forEach(function (key) {
-                        var value = obj[key];
-                        graphic[key] = value;
-                    });
-                },
-                animate: noop,
-                addClass: noop,
-                removeClass: noop
+    const chart = new Highcharts.Chart('container', {
+            chart: {
+                type: 'heatmap'
             },
-            series: {
-                type: 'heatmap',
-                options: {
-                    marker: {
-                        states: {
-                            normal: {},
-                            hover: {},
-                            select: {}
-                        }
-                    },
-                    states: {
-                        hover: {},
-                        select: {}
-                    }
-                },
-                pointAttribs: pointAttribs,
-                zones: [],
-                chart: {
-                    options: {
-                        chart: {
-                            animation: false
-                        }
-                    }
-                }
-            },
-            options: {}
-        };
+
+            series: [{
+                data: [[0, 0, 1]]
+            }]
+        }),
+        point = chart.series[0].points[0],
+        setState = Highcharts.seriesTypes.heatmap.prototype
+            .pointClass.prototype.setState;
+
     setState.call(point, '');
     assert.strictEqual(
         point.graphic.zIndex,

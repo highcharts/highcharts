@@ -17,6 +17,10 @@ import Point from '../../../Core/Series/Point.js';
 import Series from '../../../Core/Series/Series.js';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const { seriesTypes } = SeriesRegistry;
+import H from '../../../Core/Globals.js';
+const {
+    doc
+} = H;
 import U from '../../../Core/Utilities.js';
 const {
     defined,
@@ -662,6 +666,21 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             setTimeout(function (): void {
                 keyboardNavigation.onDrillupAll();
             }, 10);
+        });
+
+        // Heatmaps et al. alter z-index in setState, causing elements
+        // to lose focus
+        e.addEvent(Point, 'afterSetState', function (): void {
+            const point = this;
+            const pointEl = point.graphic && point.graphic.element;
+            if (
+                chart.highlightedPoint === point &&
+                doc.activeElement !== pointEl &&
+                pointEl &&
+                pointEl.focus
+            ) {
+                pointEl.focus();
+            }
         });
     },
 

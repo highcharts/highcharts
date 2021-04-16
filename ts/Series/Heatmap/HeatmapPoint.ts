@@ -239,11 +239,11 @@ class HeatmapPoint extends ScatterPoint {
 
 interface HeatmapPoint {
     dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
-    setState: typeof colorMapPointMixin.setState;
+    moveToTopOnHover: typeof colorMapPointMixin.moveToTopOnHover;
 }
 extend(HeatmapPoint.prototype, {
     dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
-    setState: colorMapPointMixin.setState
+    moveToTopOnHover: colorMapPointMixin.moveToTopOnHover
 });
 
 /* *
