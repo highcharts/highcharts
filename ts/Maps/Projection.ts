@@ -16,13 +16,16 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
-    error
+    error,
+    isNumber
 } = U;
 
 export default class Projection {
 
     public options: ProjectionOptions;
     public isNorthPositive: boolean = false;
+
+    private antimeridian?: number;
 
     // Calculate the great circle between two given coordinates
     public static greatCircle(
@@ -95,23 +98,14 @@ export default class Projection {
         }
     }
 
-    private d3Projection: any;
-
-    // Override for this.path when d3 is enabled
-    private d3Path(geometry: GeoJSONGeometry): SVGPath {
-
-        const path = this.d3Projection({
-            type: 'Feature',
-            geometry
-        });
-
-        // @todo: Why can't I imp\ort splitPath directly from MapChart?
-        return path ? (H as any).MapChart.splitPath(path) : [];
-    }
-
     public constructor(options?: ProjectionOptions) {
         this.options = options || {};
         const { d3, proj4 } = options || {};
+
+        // @todo: Better filter for when to handle antimeridian
+        if (this.options.lon0 && this.options.projectionName !== 'ortho') {
+            this.antimeridian = (this.options.lon0 + 360) % 360 - 180;
+        }
 
         // Set up proj4 based projection
         if (proj4) {
@@ -139,7 +133,7 @@ export default class Projection {
             if (projectionName === 'mill') {
                 projection = d3.geoMiller();
             } else if (projectionName === 'ortho') {
-                projection = d3.geoOrthographic().rotate([-lon0, -lat0]);
+                projection = d3.geoOrthographic();
             } else if (projectionName === 'robin') {
                 projection = d3.geoRobinson();
             } else if (
@@ -150,16 +144,27 @@ export default class Projection {
             } else {
                 error('Projection unknown to d3 adapter, falling back to equirectangular', false);
             }
+            projection.rotate([-lon0, -lat0]);
 
+            this.isNorthPositive = false;
+
+            // Overrides
             this.forward = (lonLat: LonLatArray): [number, number] =>
                 projection(lonLat);
             this.inverse = (p: [number, number]): LonLatArray =>
                 projection.invert(p);
 
-            this.d3Projection = d3.geoPath(projection);
-            this.path = this.d3Path;
+            const geoPath = d3.geoPath(projection);
+            this.path = (geometry: GeoJSONGeometry): SVGPath => {
 
-            this.isNorthPositive = false;
+                const path = geoPath({
+                    type: 'Feature',
+                    geometry
+                });
+
+                // @todo: Why can't I imp\ort splitPath directly from MapChart?
+                return path ? (H as any).MapChart.splitPath(path) : [];
+            };
 
         }
     }
@@ -188,17 +193,27 @@ export default class Projection {
         const path: SVGPath = [];
         const isPolygon = geometry.type === 'Polygon' ||
             geometry.type === 'MultiPolygon';
+
+
         // @todo: It doesn't really have to do with whether north is
         // positive. It depends on whether the coordinates are
         // pre-projected.
         const isGeographicCoordinates = this.isNorthPositive;
 
+        const addToPath = (
+            polygon: LonLatArray[],
 
-        const addToPath = (polygon: LonLatArray[]): void => {
+            // Whether this is the part of the polygon that is across the
+            // antimeridian
+            isAntiPolygon?: boolean
+        ): void => {
 
             const poly = polygon.slice();
+            const antiPoly: LonLatArray[] = [];
 
             if (isGeographicCoordinates) {
+
+                // Insert great circles into long straight lines
                 let i = poly.length - 1;
                 while (i--) {
 
@@ -221,8 +236,8 @@ export default class Projection {
             }
 
             let movedTo = false;
+            let firstValidLonLat: LonLatArray|undefined;
             let lastValidLonLat: LonLatArray|undefined;
-            let firstValidLonLatAppended = false;
             let gap = false;
             const pushToPath = (point: [number, number]): void => {
                 if (!movedTo) {
@@ -236,15 +251,36 @@ export default class Projection {
             for (let i = 0; i < poly.length; i++) {
                 const lonLat = poly[i];
                 const point = this.forward(lonLat);
-                if (!isNaN(point[0]) && !isNaN(point[1])) {
+
+                const valid = !isNaN(point[0]) && !isNaN(point[1]);
+
+                // If antimeridian cutting is enabled, pull out the points that
+                // lie across the antimeridian and handle them after in a
+                // separate call to `addToPath`.
+                if (
+                    valid &&
+                    !isAntiPolygon &&
+                    isNumber(this.antimeridian) &&
+                    lonLat[0] > this.antimeridian
+                ) {
+
+                    // Compensate for roundoff error in proj4, causing stripes
+                    // across the map. @todo Check if this is fixed when we
+                    // implement our own projection math.
+                    lonLat[0] = Math.max(lonLat[0], this.antimeridian + 0.0001);
+
+                    antiPoly.push(lonLat);
+                    gap = true;
+
+                } else if (valid) {
 
                     // In order to be able to interpolate if the first or last
                     // point is invalid (on the far side of the globe in an
                     // orthographic projection), we need to push the first valid
                     // point.
-                    if (isPolygon && !firstValidLonLatAppended) {
+                    if (isPolygon && !firstValidLonLat) {
+                        firstValidLonLat = lonLat;
                         poly.push(lonLat);
-                        firstValidLonLatAppended = true;
                     }
 
                     // When entering the first valid point after a gap of
@@ -277,12 +313,16 @@ export default class Projection {
 
                     pushToPath(point);
 
-
                     lastValidLonLat = lonLat;
                     gap = false;
                 } else {
                     gap = true;
                 }
+            }
+
+            // Add the part of the polygon that's across the antimeridian
+            if (antiPoly.length) {
+                addToPath(antiPoly, true);
             }
         };
 
@@ -290,17 +330,17 @@ export default class Projection {
             addToPath(geometry.coordinates);
 
         } else if (geometry.type === 'MultiLineString') {
-            geometry.coordinates.forEach(addToPath);
+            geometry.coordinates.forEach((c): void => addToPath(c));
 
         } else if (geometry.type === 'Polygon') {
-            geometry.coordinates.forEach(addToPath);
+            geometry.coordinates.forEach((c): void => addToPath(c));
             if (path.length) {
                 path.push(['Z']);
             }
 
         } else if (geometry.type === 'MultiPolygon') {
             geometry.coordinates.forEach((polygons): void => {
-                polygons.forEach(addToPath);
+                polygons.forEach((c): void => addToPath(c));
             });
             if (path.length) {
                 path.push(['Z']);

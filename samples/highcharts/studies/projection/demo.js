@@ -60,7 +60,7 @@ const drawMap = projectionKey => {
         projectionName: undefined,
         projString: undefined,
         lat0: undefined,
-        lon0: undefined,
+        lon0: parseInt(document.getElementById('lon0').value, 10),
         over: undefined,
         x0: undefined,
         y0: undefined
@@ -73,7 +73,8 @@ const drawMap = projectionKey => {
             over: true
         },
         'ortho-africa': {
-            projectionName: 'ortho'
+            projectionName: 'ortho',
+            lon0: 15
         },
         'ortho-antarctica': {
             projectionName: 'ortho',
@@ -92,7 +93,7 @@ const drawMap = projectionKey => {
         'ortho-europe': {
             projectionName: 'ortho',
             lat0: 40,
-            lon0: 10
+            lon0: 15
         },
         'ortho-north-america': {
             projectionName: 'ortho',
@@ -179,27 +180,13 @@ const drawMap = projectionKey => {
                 data: [{
                     type: 'Polygon',
                     coordinates: [[
-                        [-45, 30],
-                        [45, 30],
-                        [180, 70],
-                        [-45, 30]
+                        [0, 30],
+                        [90, 0],
+                        [0, -30],
+                        [0, 30]
                     ]]
                 }],
                 color: 'rgba(0, 0, 0, 0.3)'
-
-            }, {
-                type: 'mapline',
-                data: [{
-                    type: 'LineString',
-                    coordinates: [
-                        [-45, 30],
-                        [45, 30],
-                        [180, 70],
-                        [-45, 30]
-                    ]
-                }],
-                color: 'red',
-                lineWidth: 2
 
             }
             // */
@@ -256,6 +243,35 @@ const drawMap = projectionKey => {
         }, 1200);
         */
 
+    /* else if (
+        projection.projectionName === 'ortho' &&
+        chart.mapView.projection.options.projectionName === 'ortho'
+    ) {
+        let lon0 = chart.mapView.projection.options.lon0,
+            lat0 = chart.mapView.projection.options.lat0;
+        const toLon0 = projection.lon0,
+            toLat0 = projection.lat0;
+
+        const steps = 10;
+        const stepLon = (lon0 - toLon0) / steps;
+        const stepLat = (lat0 - toLat0) / steps;
+
+        for (let i = 0; i < steps; i++) {
+            setTimeout(() => {
+                lon0 -= stepLon;
+                lat0 -= stepLat;
+                chart.update({
+                    mapView: {
+                        projection: {
+                            lon0,
+                            lat0
+                        }
+                    }
+                }, undefined, undefined, false);
+            }, i * 25);
+        }
+
+    } */
     } else {
         chart.update({
             mapView: {
@@ -308,13 +324,21 @@ function setLibrary(btnId) {
     document.querySelector(`#library-buttons #${btnId}`).classList.add('active');
 }
 
-const enableButtons = () => {
+const enableInputs = () => {
     document.querySelectorAll('#projection-buttons button').forEach(btn =>
         btn.addEventListener('click', e => drawMap(e.target.id))
     );
     document.querySelectorAll('#library-buttons button').forEach(btn =>
         btn.addEventListener('click', e => setLibrary(e.target.id))
     );
+    document.querySelector('#lon0').addEventListener('input', e => {
+        document.getElementById('lon0-output').innerText = e.target.value;
+        chart.mapView.update({
+            projection: {
+                lon0: parseInt(e.target.value, 10)
+            }
+        }, true, false);
+    });
 };
 
 Highcharts.getJSON(
@@ -337,7 +361,7 @@ Highcharts.getJSON(
 
         drawMap('robin');
 
-        enableButtons();
+        enableInputs();
 
     }
 );
