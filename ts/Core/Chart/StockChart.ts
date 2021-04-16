@@ -24,6 +24,10 @@ import type PointerEvent from '../PointerEvent';
 import type { SeriesTypePlotOptions } from '../Series/SeriesType';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import A from '../Animation/AnimationUtilities.js';
+const {
+    animObject
+} = A;
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
 import palette from '../../Core/Color/Palette.js';
@@ -1168,10 +1172,12 @@ addEvent(Series, 'render', function (): void {
         }
 
         if (chart.hasRendered) {
+            const animation = animObject(this.options.animation);
+
             // #15435: this.sharedClipKey might not have been set yet, for
             // example when updating the series, so we need to use this
             // function instead
-            const sharedClipKey = this.getSharedClipKey();
+            const sharedClipKey = this.getSharedClipKey(animation);
 
             // On redrawing, resizing etc, update the clip rectangle.
             //
