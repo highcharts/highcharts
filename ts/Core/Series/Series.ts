@@ -4032,6 +4032,14 @@ class Series {
         series.tableReset = true;
 
         if (!table) {
+            /**
+             * Table with data rows to synchronize with series points. The table
+             * is filled automatically only during init. Afterwards series data
+             * must always be updated with {@link Highcharts.DataTable#setRows}.
+             *
+             * @name Highcharts.Series#table
+             * @type {Highcharts.DataTable}
+             */
             table = series.table = new DataTable();
         }
 

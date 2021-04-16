@@ -155,7 +155,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * @function Highcharts.DataTable.isNull
      *
-     * @param {DataTable.Row|DataTable.RowObject} row
+     * @param {Highcharts.DataTableRow|Highcharts.DataTableRowObject} row
      * Row to test.
      *
      * @return {boolean}
@@ -309,7 +309,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * @function Highcharts.DataTable#clear
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits #clearTable
@@ -338,7 +338,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {number} [rowIndex=0]
      * Row index to start removing.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits #clearColumn
@@ -389,7 +389,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {number} [rowIndex=0]
      * Row index to start removing.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @emits #clearRows
@@ -437,7 +437,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {boolean} [skipColumns]
      * Whether to clone columns or not.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTable}
@@ -490,7 +490,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {string} columnName
      * Name (no alias) of column that shall be deleted.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Highcharts.DataTableColumn|undefined}
@@ -561,7 +561,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {number} [rowCount=1]
      * Number of rows to delete.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {Array<Highcharts.DataTableRow>}
@@ -659,7 +659,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {number} rowIndex
      * Row index of the cell to retrieve.
      *
-     * @return {DataTable.CellType|undefined}
+     * @return {Highcharts.DataTableCellType|undefined}
      * Returns the cell value or `undefined`.
      */
     public getCell(
@@ -1366,7 +1366,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {string} columnNameOrAlias
      * Column to search in.
      *
-     * @param {DataTable.CellType} cellValue
+     * @param {Highcharts.DataTableCellType} cellValue
      * Cell value to search for. `NaN` and `undefined` are not supported.
      *
      * @return {boolean}
@@ -1400,7 +1400,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @param {string} type
      * Event type as a string.
      *
-     * @param {Highcharts.EventCallbackFunction} callback
+     * @param {Highcharts.EventCallbackFunction<Highcharts.DataTable>} callback
      * Function to register for an event callback.
      *
      * @return {Function}
@@ -1642,7 +1642,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * @function Highcharts.DataTable#setColumns
      *
-     * @param {DataTable.ColumnCollection} columns
+     * @param {Highcharts.DataTableColumnCollection} columns
      * Columns as a collection, where the keys are the column names or aliases.
      *
      * @param {number} [rowIndex]
@@ -1709,13 +1709,13 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      *
      * @function Highcharts.DataTable#setRows
      *
-     * @param {Array<DataTable.Row>} rows
+     * @param {Array<Highcharts.DataTableRow>} rows
      * Row values to insert.
      *
      * @param {number} [rowIndex]
      * Index of the first row to change. Leave `undefind` to add as new rows.
      *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.
      *
      * @return {boolean}
