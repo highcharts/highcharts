@@ -4858,24 +4858,26 @@ class Series {
      * @private
      * @function Highcharts.Series#getSharedClipKey
      */
-    public getSharedClipKey(): string {
+    public getSharedClipKey(animation?: AnimationOptions): string {
         if (this.sharedClipKey) {
             return this.sharedClipKey;
         }
 
-        const animation = animObject(this.options.animation);
-
-        this.sharedClipKey = [
+        const sharedClipKey = [
             '_sharedClip',
-            animation.duration,
-            animation.easing,
-            animation.defer,
+            animation && animation.duration,
+            animation && animation.easing,
+            animation && animation.defer,
             this.getClipBox(animation).height,
             this.options.xAxis,
             this.options.yAxis
         ].join(',');
 
-        return this.sharedClipKey;
+        if (this.options.clip !== false || animation) {
+            this.sharedClipKey = sharedClipKey;
+        }
+
+        return sharedClipKey;
     }
 
     /**
@@ -4886,14 +4888,14 @@ class Series {
      * @private
      * @function Highcharts.Series#setClip
      */
-    public setClip(animation?: (boolean|AnimationOptions)): void {
+    public setClip(animation?: AnimationOptions): void {
         var chart = this.chart,
             options = this.options,
             renderer = chart.renderer,
             inverted = chart.inverted,
             seriesClipBox = this.clipBox,
             clipBox = this.getClipBox(animation),
-            sharedClipKey = this.getSharedClipKey(), // #4526
+            sharedClipKey = this.getSharedClipKey(animation), // #4526
             clipRect = (chart as any)[sharedClipKey],
             markerClipRect = (chart as any)[sharedClipKey + 'm'];
 
@@ -4946,7 +4948,6 @@ class Series {
                 animation || seriesClipBox ? clipRect : chart.clipRect
             );
             (this.markerGroup as any).clip(markerClipRect);
-            this.sharedClipKey = sharedClipKey;
         }
 
         // Remove the shared clipping rectangle when all series are shown
