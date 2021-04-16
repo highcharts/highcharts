@@ -91,9 +91,15 @@ class Sidebar {
                         cell.getType() === DashboardGlobals.guiElementType.cell &&
                         cell.container &&
                         item.innerElement &&
-                        item.innerElement.tagName === 'INPUT'
+                        item.innerElement.tagName === 'INPUT' &&
+                        (item.innerElement as any).value !== cell.container.offsetWidth
                     ) {
                         (item.innerElement as any).value = cell.container.offsetWidth;
+                    }
+                },
+                onCellResize: function (this: MenuItem, e: any): void {
+                    if (this.options.events && this.options.events.update) {
+                        this.options.events.update.apply(this, arguments);
                     }
                 }
             }
@@ -119,9 +125,15 @@ class Sidebar {
                         row.getType() === DashboardGlobals.guiElementType.row &&
                         row.container &&
                         item.innerElement &&
-                        item.innerElement.tagName === 'INPUT'
+                        item.innerElement.tagName === 'INPUT' &&
+                        (item.innerElement as any).value !== row.container.offsetHeight
                     ) {
                         (item.innerElement as any).value = row.container.offsetHeight;
+                    }
+                },
+                onCellResize: function (this: MenuItem, e: any): void {
+                    if (this.options.events && this.options.events.update) {
+                        this.options.events.update.apply(this, arguments);
                     }
                 }
             }
@@ -267,6 +279,19 @@ class Sidebar {
         addEvent(sidebar.container, 'mouseenter', (event): void => {
             if (sidebar.isVisible) {
                 sidebar.editMode.hideToolbars(['row', 'cell']);
+            }
+        });
+
+        // Call onCellResize events in active sidebar items.
+        addEvent(sidebar.editMode.dashboard, 'cellResize', function (): void {
+            let item;
+
+            for (let i = 0, iEnd = sidebar.menu.activeItems.length; i < iEnd; ++i) {
+                item = sidebar.menu.activeItems[i];
+
+                if (item.options.events && item.options.events.onCellResize) {
+                    item.options.events.onCellResize.apply(item, arguments);
+                }
             }
         });
     }

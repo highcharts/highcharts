@@ -136,11 +136,12 @@ class CellEditToolbar extends EditToolbar {
     ): void {
         const toolbar = this,
             cellCnt = cell.container,
-            width = toolbar.container.clientWidth;
+            width = toolbar.container.clientWidth,
+            isCellResizing = (cell.row.layout.resizer || {}).currentCell;
 
         let x, y;
 
-        if (cellCnt && toolbar.editMode.isActive()) {
+        if (cellCnt && toolbar.editMode.isActive() && !isCellResizing) {
             x = ((cellCnt.parentElement || {}).offsetLeft || 0) +
               cellCnt.offsetLeft + cellCnt.offsetWidth - width;
 

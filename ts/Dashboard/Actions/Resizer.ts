@@ -14,6 +14,7 @@ const {
     addEvent,
     createElement,
     getStyle,
+    fireEvent,
     removeEvent
 } = U;
 
@@ -346,6 +347,9 @@ class Resizer {
             if (currentCell.mountedComponent) {
                 currentCell.mountedComponent.resize(null);
             }
+
+            // Call cellResize dashboard event.
+            fireEvent(this.layout.dashboard, 'cellResize', { cell: currentCell });
         }
     }
     /**
