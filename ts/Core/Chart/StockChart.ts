@@ -1161,7 +1161,7 @@ addEvent(Series, 'render', function (): void {
         // First render, initial clip box. clipBox also needs to be updated if
         // the series is rendered again before starting animating, in
         // compliance with a responsive rule (#13858).
-        if (!chart.hasLoaded || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
+        if (!chart.hasRendered || (!this.clipBox && this.isDirty && !this.isDirtyData)) {
             this.clipBox = this.clipBox || merge(chart.clipBox);
             this.clipBox.width = this.xAxis.len;
             this.clipBox.height = clipHeight;
@@ -1176,7 +1176,7 @@ addEvent(Series, 'render', function (): void {
         // #15435: Update it even when we are creating/updating clipBox, since
         // there could be series updating and pane size changes happening at
         // the same time and we dont destroy shared clips in stock.
-        if ((chart as any)[sharedClipKey]) {
+        if (chart.hasRendered && (chart as any)[sharedClipKey]) {
             // animate in case resize is done during initial animation
             (chart as any)[sharedClipKey].animate({
                 width: this.xAxis.len,
