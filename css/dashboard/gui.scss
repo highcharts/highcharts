@@ -372,6 +372,7 @@ h1 {
     min-height: 500px;
     height: auto;
     width: 200px;
+    display: none;
 }
 
 .hcd-edit-sidebar-item {
@@ -402,6 +403,7 @@ h1 {
 
 .hcd-edit-sidebar-show {
     /* transition: 1s;*/
+    display: block;
     left: 0;
 }
 

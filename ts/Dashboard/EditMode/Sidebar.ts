@@ -150,6 +150,7 @@ class Sidebar {
     ) {
         this.tabs = {};
         this.isVisible = false;
+        this.isDragged = false;
         this.options = (editMode.options.toolbars || {}).settings;
         this.editMode = editMode;
 
@@ -188,6 +189,7 @@ class Sidebar {
     public activeTab?: Sidebar.Tab;
     public menu: Menu;
     public context?: Cell|Row;
+    public isDragged: boolean;
 
     /* *
     *
@@ -294,6 +296,10 @@ class Sidebar {
                 }
             }
         });
+
+        // Add sidebar drag drop events.
+        addEvent(document, 'mousemove', sidebar.onDrag.bind(sidebar));
+        addEvent(document, 'mouseup', sidebar.onDragEnd.bind(sidebar));
     }
 
     public updateTitle(
@@ -341,6 +347,8 @@ class Sidebar {
             this.update(context);
 
             if (!this.isVisible) {
+                this.container.style.left = '0px';
+                this.container.style.top = '0px';
                 this.container.classList.add(
                     EditGlobals.classNames.editSidebarShow
                 );
@@ -384,16 +392,54 @@ class Sidebar {
             'X'
         );
     }
+
     public renderDragDropButton(): void {
         const sidebar = this;
 
-        this.dragDropButton = EditRenderer.renderButton(
-            sidebar.container,
-            (): void => {
-                console.log('drag and drop');
+        sidebar.dragDropButton = createElement(
+            'button', {
+                className: EditGlobals.classNames.button
+            }, {
+                cursor: 'grab'
             },
-            'DD'
+            sidebar.container
         );
+
+        // Set drag icon.
+        (sidebar.dragDropButton.style as any)['background-image'] =
+            'url(' + EditGlobals.iconsURL + 'drag.svg)';
+
+        sidebar.dragDropButton.onmousedown = sidebar.onDragStart.bind(sidebar);
+        sidebar.dragDropButton.onmouseup = sidebar.onDragEnd.bind(sidebar);
+    }
+
+    public onDragStart(): void {
+        this.isDragged = true;
+
+        if (this.dragDropButton) {
+            this.dragDropButton.style.cursor = 'grabbing';
+        }
+    }
+
+    public onDrag(e: any): void {
+        if (this.isDragged) {
+            const cntStyle = this.container.style;
+
+            this.container.style.left = +cntStyle.left.substring(0, cntStyle.left.length - 2) +
+                e.movementX + 'px';
+            this.container.style.top = +cntStyle.top.substring(0, cntStyle.top.length - 2) +
+                e.movementY + 'px';
+        }
+    }
+
+    public onDragEnd(): void {
+        if (this.isDragged) {
+            this.isDragged = false;
+
+            if (this.dragDropButton) {
+                this.dragDropButton.style.cursor = 'grab';
+            }
+        }
     }
 
     public afterCSSAnimate(

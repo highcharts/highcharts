@@ -248,9 +248,8 @@ class EditRenderer {
         value?: string
     ): HTMLDOMElement|undefined {
         let button;
-console.log('button')
+
         if (parentElement) {
-            console.log('create btto');
             button = createElement(
                 'button', {
                     className: EditGlobals.classNames.button,

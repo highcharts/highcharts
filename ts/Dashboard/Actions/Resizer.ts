@@ -301,15 +301,15 @@ class Resizer {
             // resize width
             if (currentDimension === 'x') {
                 console.log('current dimensions', Math.min(
-                    // diff 
-                    e.clientX - cellContainer.getBoundingClientRect().left//,
+                    // diff
+                    e.clientX - cellContainer.getBoundingClientRect().left
                     // maxSize
-                    /*parentRowWidth - (
-                        this.sumCellOuterWidth(
-                            currentCell.row,
-                            currentCell
-                        ) || 0
-                    )*/
+                    // parentRowWidth - (
+                    //     this.sumCellOuterWidth(
+                    //         currentCell.row,
+                    //         currentCell
+                    //     ) || 0
+                    // )
                 ) / parentRowWidth);
 
                 cellContainer.style.width =
