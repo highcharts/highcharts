@@ -2691,7 +2691,9 @@ class Series {
         data: Array<(PointOptions|PointShortOptions)>,
         options: (Series|DeepPartial<SeriesOptions>) = {}
     ): DataTable {
-        const table = new DataTable(void 0, (options.id || options.name));
+        const dataLength = data.length,
+            table = new DataTable(void 0, (options.id || options.name)),
+            rows: Array<DataTable.RowObject> = new Array(dataLength);
 
         let series: Series;
 
@@ -2705,16 +2707,17 @@ class Series {
 
         for (
             let i = 0,
-                iEnd = data.length,
                 x = pick(options.pointStart, 0),
                 pointData: PointOptions;
-            i < iEnd;
+            i < dataLength;
             ++i, x = Series.increment(x, options)
         ) {
             pointData = flat(Point.optionsToObject(data[i], series));
             pointData.x = (pointData.x || x);
-            table.setRowObject(pointData as DataTable.RowObject);
+            rows[i] = pointData as DataTable.RowObject;
         }
+
+        table.setRows(rows);
 
         return table;
     }
@@ -3064,7 +3067,7 @@ class Series {
             series.setDataSortingOptions();
 
         } else if (!series.points && !series.data) {
-            series.setData(options.data as any, false);
+            series.setData(options.data || [], false);
         }
 
         fireEvent(this, 'afterInit');
@@ -3882,7 +3885,7 @@ class Series {
         if (data instanceof DataTable) {
             data = series.setTable(data);
             data = Series.getSeriesDataFromTable(data, (keys || pointArrayMap));
-        } else {
+        } else if (!series.table) {
             series.setTable(Series.getTableFromSeriesData(data, series));
         }
 
@@ -4017,23 +4020,27 @@ class Series {
      * @private
      */
     private setTable(newTable: DataTable): DataTable {
-        const series = this,
-            syncTable = series.syncTable.bind(series);
+        const series = this;
+
+        let table = series.table;
+
+        if (newTable === table) {
+            return table;
+        }
 
         fireEvent(series, 'setTable', { table: newTable });
         series.tableReset = true;
 
-        let table = series.table;
-
-        if (table) {
-            table.clear();
-            table.setColumn('x');
-            table.setColumns(newTable.getColumns());
-        } else {
-            table = series.table = newTable.clone();
+        if (!table) {
+            table = series.table = new DataTable();
         }
 
+        table.clear();
+        table.setColumn('x');
+        table.setColumns(newTable.getColumns());
+
         if (!table.hcEvents) {
+            const syncTable = series.syncTable.bind(series);
             table.on('afterClearColumn', syncTable);
             table.on('afterClearRows', syncTable);
             table.on('afterClearTable', syncTable);
@@ -4041,7 +4048,7 @@ class Series {
             table.on('afterDeleteRows', syncTable);
             table.on('afterSetCell', syncTable);
             table.on('afterSetColumn', syncTable);
-            table.on('afterSetRow', syncTable);
+            table.on('afterSetRows', syncTable);
         }
 
         series.tableReset = false;
@@ -4146,6 +4153,7 @@ class Series {
 
         let column: DataTable.Column,
             columnName: string,
+            count: number,
             index: number,
             point: Point;
 
@@ -4168,10 +4176,11 @@ class Series {
                 break;
 
             case 'afterDeleteRows':
+                count = e.rowCount;
                 index = e.rowIndex;
-                data.splice(index, e.rowCount);
+                data.splice(index, count);
                 if (points[index]) {
-                    const deletedPoints = points.splice(index, e.rowCount);
+                    const deletedPoints = points.splice(index, count);
                     for (let i = 0, iEnd = deletedPoints.length; i < iEnd; ++i) {
                         deletedPoints[i].destroy();
                     }
@@ -4180,12 +4189,26 @@ class Series {
                 break;
 
             case 'afterSetCell':
-            case 'afterSetRow':
                 index = e.rowIndex;
                 point = points[index];
                 series.syncTableRow(index);
                 if (point) {
                     point.update(data[index]);
+                    return;
+                }
+                break;
+
+            case 'afterSetRows':
+                count = e.rowCount;
+                index = e.rowIndex;
+                for (let i = index, iEnd = (i + count); i < iEnd; ++i) {
+                    point = points[i];
+                    series.syncTableRow(i);
+                    if (point) {
+                        point.update(data[i]);
+                    }
+                }
+                if (points[index + count]) {
                     return;
                 }
                 break;
@@ -4196,7 +4219,10 @@ class Series {
 
         clearTimeout(series.tableSyncTimeout);
         series.tableSyncTimeout = syncTimeout(
-            (): void => series.setData(data),
+            (): void => {
+                series.setData(data);
+                delete series.tableSyncTimeout;
+            },
             1
         );
     }

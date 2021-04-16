@@ -76,7 +76,7 @@ QUnit.test('benchmark', function (assert) {
             })
         );
     
-    table.setRowObjects([{
+    table.setRows([{
         x: 1,
         y: 'a'
     }, {

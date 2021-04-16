@@ -583,7 +583,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
             case 'afterDeleteRows':
             case 'afterSetCell':
             case 'afterSetColumn':
-            case 'afterSetRow':
+            case 'afterSetRows':
                 frame.versionTag = uniqueKey();
                 break;
             default:
@@ -954,7 +954,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Column names or aliases to normalize. Aliases taking precedence.
      *
      * @return {Array<string>}
-     * Returns available column names.
+     * Returns all column names available in the table.
      */
     public getNormalizedColumnNames(
         columnNamesOrAliases: Array<string>
@@ -1616,182 +1616,6 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     }
 
     /**
-     * Sets cell values for a specifix row index. Will insert a new row, if no
-     * index was provided, or if the index is higher than the total number of
-     * rows.
-     *
-     * @param {DataTable.Row} row
-     * Cell values of the row.
-     *
-     * @param {number} [rowIndex]
-     * Index of the row to set. Leave `undefind` to add as a new row.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {boolean}
-     * Returns `true` if successful, otherwise `false`.
-     *
-     * @emits DataTable#setRow
-     * @emits DataTable#afterSetRow
-     */
-    public setRow(
-        row: DataTable.Row,
-        rowIndex: number = this.rowCount,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): boolean {
-        const table = this,
-            columns = table.columns,
-            columnNames = Object.keys(columns);
-
-        table.emit({
-            type: 'setRow',
-            detail: eventDetail,
-            row,
-            rowIndex
-        });
-
-        if (rowIndex >= table.rowCount) {
-            table.rowCount = (rowIndex + 1);
-        }
-
-        for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-            columns[columnNames[i]][rowIndex] = row[i];
-        }
-
-        table.emit({
-            type: 'afterSetRow',
-            detail: eventDetail,
-            row,
-            rowIndex
-        });
-
-        return true;
-    }
-
-
-    /**
-     * Sets cell values for a specifix row index. Will insert a new row, if no
-     * index was provided, or if the index is higher than the total number of
-     * rows. Will create new columns, if not found.
-     *
-     * @param {DataTable.RowObject} rowObject
-     * Cell values of the row.
-     *
-     * @param {number} [rowIndex]
-     * Index of the row to set. Leave `undefind` to add as a new row.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {boolean}
-     * Returns `true` if successful, otherwise `false`.
-     *
-     * @emits DataTable#setRow
-     * @emits DataTable#afterSetRow
-     */
-    public setRowObject(
-        rowObject: DataTable.RowObject,
-        rowIndex: number = this.rowCount,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): boolean {
-        const table = this,
-            columns = table.columns;
-
-        table.emit({
-            type: 'setRow',
-            detail: eventDetail,
-            rowIndex,
-            rowObject
-        });
-
-        if (rowIndex >= table.rowCount) {
-            table.rowCount = (rowIndex + 1);
-        }
-
-        if (rowObject === DataTable.NULL) {
-            const columnNames = Object.keys(columns);
-
-            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
-                columns[columnNames[i]][rowIndex] = null;
-            }
-
-        } else {
-            const columnNames = Object.keys(rowObject);
-
-            for (
-                let i = 0,
-                    iEnd = columnNames.length,
-                    column: DataTable.Column,
-                    columnName: string;
-                i < iEnd;
-                ++i
-            ) {
-                columnName = columnNames[i];
-                column = columns[columnName];
-                if (!column) {
-                    column = columns[columnName] = [];
-                }
-                column[rowIndex] = rowObject[columnName];
-            }
-        }
-
-        table.emit({
-            type: 'afterSetRow',
-            detail: eventDetail,
-            rowIndex,
-            rowObject
-        });
-
-        return true;
-    }
-
-    /**
-     * Sets cell values for multiple rows. Will insert new rows, if no
-     * index was provided, or if the index is higher than the total number of
-     * rows.
-     *
-     * @param {Array<DataTable.RowObject>} rowObjects
-     * Row values to insert.
-     *
-     * @param {number} [rowIndex]
-     * Index of the first row to change. Leave `undefind` to add as new rows.
-     *
-     * @param {DataEventEmitter.EventDetail} [eventDetail]
-     * Custom information for pending events.
-     *
-     * @return {boolean}
-     * Returns `true` if successful, otherwise `false`.
-     *
-     * @emits DataTable#setRow
-     * @emits DataTable#afterSetRow
-     */
-    public setRowObjects(
-        rowObjects: Array<DataTable.RowObject>,
-        rowIndex: number = this.rowCount,
-        eventDetail?: DataEventEmitter.EventDetail
-    ): boolean {
-        const table = this;
-
-        let failed = false;
-
-        for (
-            let i = 0,
-                i2 = rowIndex,
-                iEnd = rowObjects.length;
-            i < iEnd;
-            ++i, ++i2
-        ) {
-            failed = (
-                !table.setRowObject(rowObjects[i], i2, eventDetail) ||
-                failed
-            );
-        }
-
-        return !failed;
-    }
-
-    /**
      * Sets cell values for multiple rows. Will insert new rows, if no
      * index was provided, or if the index is higher than the total number of
      * rows.
@@ -1812,28 +1636,76 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * @emits DataTable#afterSetRow
      */
     public setRows(
-        rows: Array<DataTable.Row>,
+        rows: Array<(DataTable.Row|DataTable.RowObject)>,
         rowIndex: number = this.rowCount,
         eventDetail?: DataEventEmitter.EventDetail
     ): boolean {
-        const table = this;
+        const table = this,
+            aliasMap = table.aliasMap,
+            columns = table.columns,
+            columnNames = Object.keys(columns),
+            rowCount = rows.length;
 
-        let failed = false;
+        table.emit({
+            type: 'setRows',
+            detail: eventDetail,
+            rowCount,
+            rowIndex,
+            rows
+        });
 
         for (
             let i = 0,
                 i2 = rowIndex,
-                iEnd = rows.length;
-            i < iEnd;
+                row: (DataTable.Row|DataTable.RowObject);
+            i < rowCount;
             ++i, ++i2
         ) {
-            failed = (
-                !table.setRow(rows[i], rowIndex++, eventDetail) ||
-                failed
-            );
+            row = rows[i];
+            if (row === DataTable.NULL) {
+                for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
+                    columns[columnNames[j]][i2] = null;
+                }
+            } else if (row instanceof Array) {
+                for (let j = 0, jEnd = columnNames.length; j < jEnd; ++j) {
+                    columns[columnNames[j]][i2] = row[j];
+                }
+            } else {
+                const rowColumnNames = Object.keys(row);
+                for (
+                    let j = 0,
+                        jEnd = rowColumnNames.length,
+                        rowColumnName: string;
+                    j < jEnd;
+                    ++j
+                ) {
+                    rowColumnName = rowColumnNames[j];
+                    rowColumnName = (aliasMap[rowColumnName] || rowColumnName);
+                    if (!columns[rowColumnName]) {
+                        columns[rowColumnName] = new Array(i2 + 1);
+                    }
+                    columns[rowColumnName][i2] = row[rowColumnName];
+                }
+            }
         }
 
-        return !failed;
+        const indexRowCount = (rowIndex + rowCount);
+        if (indexRowCount > table.rowCount) {
+            table.rowCount = indexRowCount;
+            for (let i = 0, iEnd = columnNames.length; i < iEnd; ++i) {
+                columns[columnNames[i]].length = indexRowCount;
+            }
+        }
+
+        table.emit({
+            type: 'afterSetRows',
+            detail: eventDetail,
+            rowCount,
+            rowIndex,
+            rows
+        });
+
+        return true;
     }
 
     /**
@@ -2010,7 +1882,6 @@ namespace DataTable {
         CellEvent|
         ColumnEvent|
         TableEvent|
-        RowDeleteEvent|
         RowEvent
     );
 
@@ -2021,25 +1892,18 @@ namespace DataTable {
         [index: number]: CellType;
     }
 
-    export interface RowDeleteEvent extends DataEventEmitter.Event {
-        readonly type: (
-            'clearRows'|'afterClearRows'|
-            'deleteRows'|'afterDeleteRows'
-        );
-        readonly rowCount: number;
-        readonly rowIndex: number;
-    }
-
     /**
      * Event object for row-related events.
      */
     export interface RowEvent extends DataEventEmitter.Event {
         readonly type: (
-            'setRow'|'afterSetRow'
+            'clearRows'|'afterClearRows'|
+            'deleteRows'|'afterDeleteRows'|
+            'setRows'|'afterSetRows'
         );
-        readonly row?: Readonly<Row>;
+        readonly rowCount: number;
         readonly rowIndex: number;
-        readonly rowObject?: Readonly<RowObject>;
+        readonly rows?: ReadonlyArray<(Readonly<Row>|Readonly<RowObject>)>;
     }
 
     /**

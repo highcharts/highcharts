@@ -166,7 +166,7 @@ class SortModifier extends DataModifier {
             }
         } else {
             for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
-                table.setRow(rowReferences[i].row, i);
+                table.setRows([rowReferences[i].row], i);
             }
         }
 

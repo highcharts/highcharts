@@ -5,7 +5,7 @@ QUnit.test('DataParser.getColumnsFromTable with missing cells', function (assert
 
     const table = new DataTable();
 
-    table.setRowObjects([{
+    table.setRows([{
         id: 'Row1',
         column1: 'value',
         column3: 'value'
