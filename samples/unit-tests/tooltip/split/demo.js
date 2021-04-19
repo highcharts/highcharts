@@ -237,13 +237,16 @@ QUnit.test('Split tooltip in floated container (#13943),', function (assert) {
         }
     });
 
+    // Hover over the final point
     const { points } = chart.series[0];
     points[points.length - 1].onMouseOver();
 
     // Check both the series tooltip, and the header tooltip
     [chart.tooltip.tt, chart.series[0].tt].forEach(tt => {
-    // Get the absolute position of right side of the tooltip element
-        const ttRight = tt.element.getBoundingClientRect().right;
+        // Get the absolute position of right side of the tooltip element
+        // Test fails on firefox if we use getBoundingClientRect().right
+        const ttRight = tt.element.getBoundingClientRect().left +
+            tt.getBBox().width;
 
         assert.strictEqual(
             tt.x < tt.anchorX,
