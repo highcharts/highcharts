@@ -1,7 +1,7 @@
 /* *
  *  (c) 2010-2021 Rafal Sebestjanski
  *
- *  Directional Movement Index (DMI) indicator for Highstock
+ *  Directional Movement Index (DMI) indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *
@@ -110,7 +110,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.colors[2] // green-ish
+                lineColor: palette.positiveColor // green-ish
             }
         },
         /**
@@ -130,7 +130,7 @@ class DMIIndicator extends SMAIndicator {
                  *
                  * @type {Highcharts.ColorString}
                  */
-                lineColor: palette.colors[5] // red-ish
+                lineColor: palette.negativeColor // red-ish
             }
         },
         dataGrouping: {

@@ -1,6 +1,6 @@
 /* *
  *
- *  Parabolic SAR indicator for Highstock
+ *  Parabolic SAR indicator for Highcharts Stock
  *
  *  (c) 2010-2021 Grzegorz Blachliński
  *

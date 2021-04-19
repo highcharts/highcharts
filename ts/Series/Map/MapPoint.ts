@@ -156,12 +156,12 @@ class MapPoint extends ScatterSeries.prototype.pointClass {
 interface MapPoint extends ScatterPoint, Highcharts.ColorMapPoint {
     dataLabelOnNull: typeof colorMapPointMixin.dataLabelOnNull;
     isValid: typeof colorMapPointMixin.isValid;
-    setState: typeof colorMapPointMixin.setState;
+    moveToTopOnHover: typeof colorMapPointMixin.moveToTopOnHover;
 }
 extend(MapPoint.prototype, {
     dataLabelOnNull: colorMapPointMixin.dataLabelOnNull,
     isValid: colorMapPointMixin.isValid,
-    setState: colorMapPointMixin.setState
+    moveToTopOnHover: colorMapPointMixin.moveToTopOnHover
 });
 
 /* *

@@ -1,4 +1,4 @@
-QUnit.test('Pie in Highstock, StockChart constructor', function (assert) {
+QUnit.test('Pie in Highcharts Stock, StockChart constructor', function (assert) {
     var chart;
 
     chart = new Highcharts.StockChart({

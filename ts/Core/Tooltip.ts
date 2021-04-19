@@ -177,7 +177,7 @@ declare global {
             plotX: number;
             plotY: number;
         }
-        type TooltipShapeValue = ('callout'|'circle'|'square');
+        type TooltipShapeValue = ('callout'|'circle'|'square'|'rect');
     }
 }
 

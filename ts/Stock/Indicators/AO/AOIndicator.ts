@@ -23,6 +23,7 @@ const {
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
+import palette from '../../../Core/Color/Palette.js';
 const {
     extend,
     merge,
@@ -77,7 +78,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        greaterBarColor: '#06B535',
+        greaterBarColor: palette.positiveColor,
         /**
          * Color of the Awesome oscillator series bar that is lower than the
          * previous one. Note that if a `color` is defined, the `color`
@@ -89,7 +90,7 @@ class AOIndicator extends SMAIndicator {
          * @type  {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          * @since 7.0.0
          */
-        lowerBarColor: '#F21313',
+        lowerBarColor: palette.negativeColor,
         threshold: 0,
         groupPadding: 0.2,
         pointPadding: 0.2,
