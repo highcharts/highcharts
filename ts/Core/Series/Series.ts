@@ -2735,8 +2735,6 @@ class Series {
 
     public symbol?: string;
 
-    public setTemporaryClip?: boolean;
-
     public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
 
     public touched?: boolean;
@@ -4874,10 +4872,9 @@ class Series {
                 this.sharedClipKey.split(',')[0] !== '_sharedClip'
             ) ? this.sharedClipKey : void 0,
             sharedClipKey =
-                (this.setTemporaryClip ? this.sharedClipKey : void 0) ||
+                (chart.hasRendered ? this.sharedClipKey : void 0) ||
                 [
-                    this.setTemporaryClip ?
-                        '_temporaryClip_' + this._i : '_sharedClip',
+                    chart.hasRendered ? '_temporaryClip_' : '_sharedClip',
                     animation && (animation as any).duration,
                     animation && (animation as any).easing,
                     animation && (animation as any).defer,
