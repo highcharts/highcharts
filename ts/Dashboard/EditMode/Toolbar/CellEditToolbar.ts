@@ -22,6 +22,7 @@ class CellEditToolbar extends EditToolbar {
     protected static readonly defaultOptions: CellEditToolbar.Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
+        outline: true,
         menu: {
             itemsClassName: EditGlobals.classNames.editToolbarItem,
             items: ['drag', 'settings', 'destroy']
@@ -156,6 +157,19 @@ class CellEditToolbar extends EditToolbar {
 
             toolbar.setPosition(x, y);
             toolbar.cell = cell;
+            toolbar.refreshOutline();
+        }
+    }
+
+    public refreshOutline(): void {
+        const toolbar = this;
+
+        if (toolbar.cell && toolbar.cell.container) {
+            super.refreshOutline(
+                toolbar.container.offsetWidth - toolbar.cell.container.offsetWidth,
+                0,
+                this.cell
+            );
         }
     }
 

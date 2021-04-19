@@ -5,6 +5,7 @@ import { HTMLDOMElement } from '../../../Core/Renderer/DOMElementType.js';
 import EditGlobals from '../EditGlobals.js';
 import Row from '../../Layout/Row.js';
 import Cell from '../../Layout/Cell.js';
+import GUIElement from '../../Layout/GUIElement.js';
 
 const {
     defined,
@@ -28,6 +29,7 @@ abstract class EditToolbar {
             }, {},
             editMode.dashboard.container
         );
+
         this.editMode = editMode;
         this.menu = new Menu(
             this.container,
@@ -37,6 +39,15 @@ abstract class EditToolbar {
 
         this.options = options;
         this.isVisible = false;
+
+        if (this.options.outline) {
+            this.outline = createElement(
+                'div', {
+                    className: EditGlobals.classNames.editToolbarOutline
+                }, {},
+                this.container
+            );
+        }
     }
 
     /* *
@@ -49,6 +60,7 @@ abstract class EditToolbar {
     public menu: Menu;
     public isVisible: boolean;
     public options: EditToolbar.Options;
+    public outline?: HTMLDOMElement;
 
     /* *
     *
@@ -57,6 +69,31 @@ abstract class EditToolbar {
     * */
     public hide(): void {
         this.setPosition(void 0, void 0);
+    }
+
+    public refreshOutline(
+        x: number,
+        y: number,
+        guiElement?: GUIElement
+    ): void {
+        const toolbar = this,
+            guiElemCnt = (guiElement || {}).container;
+
+        if (toolbar.outline && guiElemCnt) {
+            css(toolbar.outline, {
+                display: 'block',
+                left: x + 'px',
+                top: y + 'px',
+                width: guiElemCnt.offsetWidth + 'px',
+                height: guiElemCnt.offsetHeight + 'px'
+            });
+        }
+    }
+
+    public hideOutline(): void {
+        if (this.outline) {
+            this.outline.style.display = 'none';
+        }
     }
 
     public setPosition(
@@ -139,6 +176,7 @@ namespace EditToolbar {
     export interface Options {
         enabled: boolean;
         className: string;
+        outline: boolean;
         menu: Menu.Options;
     }
 }

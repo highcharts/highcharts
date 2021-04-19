@@ -333,6 +333,15 @@ h1 {
     box-shadow: 0 0.46875rem 2.1875rem rgba(4, 9, 20, 0.03), 0 0.9375rem 1.40625rem rgba(4, 9, 20, 0.03), 0 0.25rem 0.53125rem rgba(4, 9, 20, 0.05), 0 0.125rem 0.1875rem rgba(4, 9, 20, 0.03);
 }
 
+.hcd-edit-toolbar-outline {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    border: 3px solid rgb(224, 29, 90);
+    opacity: 0.3;
+    transition: 0.1s;
+}
+
 .hcd-edit-toolbar-item div {
     min-width: 32px;
     min-height: 32px;

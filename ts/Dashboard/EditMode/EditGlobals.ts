@@ -13,6 +13,7 @@ const EditGlobals: EditGlobals = {
         contextMenuItem: PREFIX + 'context-menu-item',
         editModeEnabled: PREFIX + 'enabled',
         editToolbar: PREFIX + 'toolbar',
+        editToolbarOutline: PREFIX + 'toolbar-outline',
         editToolbarItem: PREFIX + 'toolbar-item',
         editToolbarRow: PREFIX + 'toolbar-row',
         editSidebar: PREFIX + 'sidebar',
@@ -63,6 +64,7 @@ namespace EditGlobals {
         contextMenuItem: string;
         editModeEnabled: string;
         editToolbar: string;
+        editToolbarOutline: string;
         editToolbarItem: string;
         editToolbarRow: string;
         editSidebar: string;

@@ -21,6 +21,7 @@ class RowEditToolbar extends EditToolbar {
     protected static readonly defaultOptions: RowEditToolbar.Options = {
         enabled: true,
         className: EditGlobals.classNames.editToolbar,
+        outline: true,
         menu: {
             className: EditGlobals.classNames.editToolbarRow,
             itemsClassName: EditGlobals.classNames.editToolbarItem,
@@ -116,7 +117,20 @@ class RowEditToolbar extends EditToolbar {
         // Hide cell toolbar when mouse on row toolbar.
         addEvent(toolbar.container, 'mouseenter', function (): void {
             toolbar.editMode.hideToolbars(['cell']);
+            toolbar.refreshOutline();
         });
+
+        addEvent(toolbar.container, 'mouseleave', function (): void {
+            toolbar.hideOutline();
+        });
+    }
+
+    public refreshOutline(): void {
+        const toolbar = this;
+
+        if (toolbar.row && toolbar.row.container) {
+            super.refreshOutline(0, 0, this.row);
+        }
     }
 
     private onMouseMove(
