@@ -25,7 +25,8 @@ class Sidebar {
     protected static readonly defaultOptions: Sidebar.Options = {
         enabled: true,
         className: 'test',
-        dragIcon: EditGlobals.iconsURL,
+        dragIcon: EditGlobals.iconsURL + '/drag.svg',
+        closeIcon: EditGlobals.iconsURL + '/close.svg',
         menu: {
             itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
             items: ['cellWidth', 'rowHeight', 't1', 't2']
@@ -392,14 +393,21 @@ class Sidebar {
 
     public renderCloseButton(): void {
         const sidebar = this;
+        const closeIcon = sidebar.options && sidebar.options.closeIcon;
 
-        sidebar.closeButton = EditRenderer.renderButton(
-            sidebar.container,
-            (): void => {
-                sidebar.hide();
-            },
-            'X'
+        sidebar.closeButton = createElement(
+            'button', {
+                className: EditGlobals.classNames.button + ' ' + EditGlobals.classNames.sidebarNavButton,
+                onclick: (): void => {
+                    sidebar.hide();
+                }
+            }, {},
+            sidebar.container
         );
+
+        // Set close icon.
+        (sidebar.closeButton.style as any)['background-image'] =
+            'url(' + closeIcon + ')';
     }
 
     public renderDragDropButton(): void {
@@ -408,7 +416,7 @@ class Sidebar {
 
         sidebar.dragDropButton = createElement(
             'button', {
-                className: EditGlobals.classNames.button
+                className: EditGlobals.classNames.button + ' ' + EditGlobals.classNames.sidebarNavButton
             }, {
                 cursor: 'grab'
             },
@@ -472,6 +480,7 @@ namespace Sidebar {
         className: string;
         menu: Menu.Options;
         dragIcon: string;
+        closeIcon: string;
     }
 
     export interface TabOptions {

@@ -73,43 +73,44 @@ let dashboard = new Dashboard('container', {
         },
         toolbars: {
             cell: {
-            menu: {
-                items: [{
-                id: 'drag',
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
-                }, {
-                id: 'settings',
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
-                }, {
-                id: 'my-option-1',
-                text: 't1',
-                events: {
-                    click: function() {
-                    console.log('hello world!');
-                    }
+                menu: {
+                    items: [{
+                        id: 'drag',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                    }, {
+                        id: 'settings',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                    }, {
+                        id: 'my-option-1',
+                        text: 't1',
+                        events: {
+                            click: function() {
+                                console.log('hello world!');
+                            }
+                        }
+                    }, {
+                        id: 'destroy',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                    }]
                 }
-                }, {
-                id: 'destroy',
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
-                }]
-            }
             },
             row: {
-            menu: {
-                items: [{
-                id: 'drag',
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
-                }, {
-                id: 'settings',
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
-                }, {
-                id: 'destroy',
-                icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
-                }]
-            }
+                menu: {
+                    items: [{
+                        id: 'drag',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                    }, {
+                        id: 'settings',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/settings.svg'
+                    }, {
+                        id: 'destroy',
+                        icon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/destroy.svg'
+                    }]
+                }
             },
             settings: {
-            dragIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
+                closeIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/close.svg',
+                dragIcon: 'https://raw.githubusercontent.com/highcharts/highcharts/enhancement/layout-layer/gfx/dashboard-icons/drag.svg'
             }
         },
         lang: {
