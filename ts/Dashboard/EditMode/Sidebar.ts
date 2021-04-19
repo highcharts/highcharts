@@ -25,6 +25,7 @@ class Sidebar {
     protected static readonly defaultOptions: Sidebar.Options = {
         enabled: true,
         className: 'test',
+        dragIcon: EditGlobals.iconsURL,
         menu: {
             itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
             items: ['cellWidth', 'rowHeight', 't1', 't2']
@@ -151,7 +152,10 @@ class Sidebar {
         this.tabs = {};
         this.isVisible = false;
         this.isDragged = false;
-        this.options = (editMode.options.toolbars || {}).settings;
+        this.options = merge(
+            Sidebar.defaultOptions,
+            (editMode.options.toolbars || {}).settings
+        );
         this.editMode = editMode;
 
         this.container = this.renderContainer();
@@ -163,10 +167,7 @@ class Sidebar {
 
         this.menu = new Menu(
             this.container,
-            merge(
-                Sidebar.defaultOptions.menu,
-                (this.options || {}).menu
-            ),
+            this.options.menu,
             this
         );
 
@@ -403,6 +404,7 @@ class Sidebar {
 
     public renderDragDropButton(): void {
         const sidebar = this;
+        const dragIcon = sidebar.options && sidebar.options.dragIcon;
 
         sidebar.dragDropButton = createElement(
             'button', {
@@ -415,7 +417,7 @@ class Sidebar {
 
         // Set drag icon.
         (sidebar.dragDropButton.style as any)['background-image'] =
-            'url(' + EditGlobals.iconsURL + 'drag.svg)';
+            'url(' + dragIcon + ')';
 
         sidebar.dragDropButton.onmousedown = sidebar.onDragStart.bind(sidebar);
         sidebar.dragDropButton.onmouseup = sidebar.onDragEnd.bind(sidebar);
@@ -469,6 +471,7 @@ namespace Sidebar {
         enabled: boolean;
         className: string;
         menu: Menu.Options;
+        dragIcon: string;
     }
 
     export interface TabOptions {
