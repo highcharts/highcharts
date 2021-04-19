@@ -1678,7 +1678,7 @@ class Tooltip {
                 // Get X position now, so we can move all to the other side in
                 // case of overflow
                 const bBox = tt.getBBox();
-                const boxWidth = bBox.width + (tt.strokeWidth() * 2);
+                const boxWidth = bBox.width + tt.strokeWidth();
                 if (isHeader) {
                     headerHeight = bBox.height;
                     adjustedPlotHeight += headerHeight;
