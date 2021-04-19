@@ -60,6 +60,11 @@ QUnit.test("Annotation's dynamic methods", function (assert) {
         'Annotation options are correctly added to chart options'
     );
 
+    chart.annotations[0].labels[0].update({});
+    chart.annotations[0].labels[0].translate(0, 0);
+
+    assert.ok('#15524: Translating updated label should not throw');
+
     chart.removeAnnotation('1');
 
     assert.strictEqual(
