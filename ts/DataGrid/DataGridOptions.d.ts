@@ -11,7 +11,6 @@
  * */
 
 import type DataTable from '../Data/DataTable';
-import type DataTableRow from '../Data/DataTableRow';
 
 /* *
  *
@@ -21,7 +20,6 @@ import type DataTableRow from '../Data/DataTableRow';
 
 export interface DataGridOptions {
     dataTable?: DataTable;
-    json?: Array<DataTableRow.ClassJSON>;
 }
 
 export default DataGridOptions;

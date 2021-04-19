@@ -234,7 +234,7 @@ function shouldDescribeSeriesElement(
     series: Highcharts.AccessibilitySeries
 ): boolean {
     var chart = series.chart,
-        chartOptions = chart.options.chart || {},
+        chartOptions = chart.options.chart,
         chartHas3d = chartOptions.options3d && chartOptions.options3d.enabled,
         hasMultipleSeries = chart.series.length > 1,
         describeSingleSeriesOption =
@@ -558,8 +558,13 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
         series.points.forEach(function (
             point: Highcharts.AccessibilityPoint
         ): void {
-            var pointEl = point.graphic && point.graphic.element ||
+            const pointEl = point.graphic && point.graphic.element ||
                     shouldAddDummyPoint(point) && addDummyPointElement(point);
+            const pointA11yDisabled = (
+                point.options &&
+                point.options.accessibility &&
+                point.options.accessibility.enabled === false
+            );
 
             if (pointEl) {
                 // We always set tabindex, as long as we are setting props.
@@ -568,7 +573,7 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
                 pointEl.setAttribute('tabindex', '-1');
                 pointEl.style.outline = '0';
 
-                if (setScreenReaderProps) {
+                if (setScreenReaderProps && !pointA11yDisabled) {
                     setPointScreenReaderAttribs(point, pointEl);
                 } else {
                     pointEl.setAttribute('aria-hidden', true);

@@ -3,6 +3,9 @@ QUnit.test('General series clip tests', assert => {
 
     try {
         const chart = Highcharts.chart('container', {
+                series: [{
+                    data: [10, 20]
+                }],
                 yAxis: {
                     labels: {
                         format: '{value}'
@@ -12,9 +15,27 @@ QUnit.test('General series clip tests', assert => {
                     series: {
                         animation: false
                     }
+                },
+                responsive: {
+                    rules: [{
+                        chartOptions: {
+                            title: {
+                                text: null
+                            }
+                        },
+                        condition: {
+                            callback: () => true
+                        }
+                    }]
                 }
             }),
             done = assert.async();
+
+        assert.strictEqual(
+            chart.series[0].clipBox.height,
+            chart.yAxis[0].len,
+            '#13858: clipBox should have been updated in compliance with responsive rule'
+        );
 
         chart.update(
             {
@@ -24,6 +45,10 @@ QUnit.test('General series clip tests', assert => {
                     },
                     {
                         data: [400000000, 600000000]
+                    },
+                    {
+                        clip: false,
+                        data: [1, 2, 3]
                     }
                 ]
             },
@@ -32,6 +57,11 @@ QUnit.test('General series clip tests', assert => {
             {
                 duration: 15
             }
+        );
+
+        assert.notOk(
+            chart.series[2].clipBox,
+            '#15128: Series with clip=false should not have stock clipping applied'
         );
 
         setTimeout(() => {

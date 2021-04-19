@@ -177,7 +177,7 @@ declare global {
             plotX: number;
             plotY: number;
         }
-        type TooltipShapeValue = ('callout'|'circle'|'square');
+        type TooltipShapeValue = ('callout'|'circle'|'square'|'rect');
     }
 }
 
@@ -725,7 +725,7 @@ class Tooltip {
                 )
             ),
             pointerEvents = (
-                options.style?.pointerEvents ||
+                (options.style && options.style.pointerEvents) ||
                 (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
             ),
             container: globalThis.HTMLElement,
@@ -748,7 +748,7 @@ class Tooltip {
         if (!this.label) {
 
             if (this.outside) {
-                const chartStyle = this.chart.options.chart?.style;
+                const chartStyle = this.chart.options.chart.style;
 
                 /**
                  * Reference to the tooltip's container, when
@@ -766,8 +766,8 @@ class Tooltip {
                     top: '1px',
                     pointerEvents,
                     zIndex: Math.max(
-                        (this.options.style?.zIndex || 0) as number,
-                        (chartStyle?.zIndex || 0) as number + 3
+                        (this.options.style && this.options.style.zIndex || 0),
+                        (chartStyle && chartStyle.zIndex || 0) + 3
                     )
                 });
 
@@ -958,8 +958,9 @@ class Tooltip {
                 min: number,
                 max: number
             ): (boolean|undefined) {
-                const scaledDist = dim === 'y' ?
-                        scaleY(distance) : scaleX(distance),
+                const scaledDist = outside ?
+                        (dim === 'y' ? scaleY(distance) : scaleX(distance)) :
+                        distance,
                     scaleDiff = (innerSize - scaledInnerSize) / 2,
                     roomLeft = scaledInnerSize < point - distance,
                     roomRight = point + distance + scaledInnerSize < outerSize,
@@ -1327,8 +1328,7 @@ class Tooltip {
         U.clearTimeout(this.hideTimer as any);
 
         // get the reference point coordinates (pie charts use tooltipPos)
-        tooltip.followPointer = splat(point)[0].series.tooltipOptions
-            .followPointer;
+        tooltip.followPointer = !tooltip.split && splat(point)[0].series.tooltipOptions.followPointer;
         anchor = tooltip.getAnchor(point as any, mouseEvent);
         x = anchor[0];
         y = anchor[1];
@@ -1452,7 +1452,6 @@ class Tooltip {
                 plotLeft,
                 plotTop,
                 pointer,
-                renderer: ren,
                 scrollablePixelsY = 0,
                 scrollingContainer: {
                     scrollLeft,
@@ -1477,6 +1476,7 @@ class Tooltip {
         };
 
         const tooltipLabel = tooltip.getLabel();
+        const ren = this.renderer || chart.renderer;
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
 
         let distributionBoxTop = plotTop + scrollTop;
@@ -1582,7 +1582,7 @@ class Tooltip {
         function updatePartialTooltip(
             partialTooltip: (SVGElement|undefined),
             point: (Point & { isHeader?: boolean }),
-            str: (boolean|string)
+            str: string
         ): SVGElement {
             let tt = partialTooltip;
             const { isHeader, series } = point;
@@ -1646,10 +1646,10 @@ class Tooltip {
         }
         // Create the individual labels for header and points, ignore footer
         let boxes = labels.slice(0, points.length + 1).reduce(function (
-            boxes: Array<Record<string, any>>,
+            boxes: Array<AnyRecord>,
             str: (boolean|string),
             i: number
-        ): Array<Record<string, any>> {
+        ): Array<AnyRecord> {
             if (str !== false && str !== '') {
                 const point: (Point|Highcharts.TooltipPositionerPointObject) = (
                     points[i - 1] ||
@@ -1667,7 +1667,7 @@ class Tooltip {
                 // Store the tooltip label referance on the series
                 const owner = isHeader ? tooltip : point.series;
                 const tt = owner.tt = updatePartialTooltip(
-                    owner.tt, point, str
+                    owner.tt, point, str.toString()
                 );
 
                 // Get X position now, so we can move all to the other side in
@@ -1725,7 +1725,7 @@ class Tooltip {
 
         // If overflow left then align all labels to the right
         if (!positioner && boxes.some((box): boolean => box.x < bounds.left)) {
-            boxes = boxes.map((box): Record<string, any> => {
+            boxes = boxes.map((box): AnyRecord => {
                 const { x, y } = defaultPositioner(
                     box.anchorX,
                     box.anchorY,
@@ -1745,7 +1745,7 @@ class Tooltip {
 
         // Distribute and put in place
         H.distribute(boxes as any, adjustedPlotHeight);
-        boxes.forEach(function (box: Record<string, any>): void {
+        boxes.forEach(function (box: AnyRecord): void {
             const { anchorX, anchorY, pos, x } = box;
             // Put the label in place
             box.tt.attr({
@@ -1900,11 +1900,11 @@ class Tooltip {
             e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
-            } as Record<string, any>;
+            } as AnyRecord;
 
         fireEvent(this, 'headerFormatter', e, function (
             this: Highcharts.Tooltip,
-            e: Record<string, any>
+            e: AnyRecord
         ): void {
 
             // Guess the best date format based on the closest point distance

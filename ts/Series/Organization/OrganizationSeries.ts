@@ -190,7 +190,7 @@ class OrganizationSeries extends SankeySeries {
                         str: string,
                         key: string
                     ): string {
-                        return str + key + ':' + style[key] + ';';
+                        return str + key + ':' + (style as any)[key] + ';';
                     }, 'style="') + '"';
                 }
 

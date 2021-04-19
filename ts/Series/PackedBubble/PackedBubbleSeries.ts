@@ -461,7 +461,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             if (
                 series.is('packedbubble') && // #13574
                 series.visible ||
-                !(chart.options.chart as any).ignoreHiddenSeries
+                !chart.options.chart.ignoreHiddenSeries
             ) {
 
                 // add data to array only if series is visible
@@ -506,9 +506,9 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
 
         if (!layout) {
             (layoutOptions as any).enableSimulation =
-                !defined((chartOptions as any).forExport) ?
+                !defined(chartOptions.forExport) ?
                     (layoutOptions as any).enableSimulation :
-                    !(chartOptions as any).forExport;
+                    !chartOptions.forExport;
 
             graphLayoutsStorage[(layoutOptions as any).type] = layout =
                 new (H.layouts[(layoutOptions as any).type] as any)();
@@ -816,15 +816,14 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 opacity: nodeMarker.fillOpacity,
                 stroke: nodeMarker.lineColor || series.color,
                 'stroke-width': nodeMarker.lineWidth
-            },
-            visibility = series.visible ? 'inherit' : 'hidden';
+            };
 
         // create the group for parent Nodes if doesn't exist
         if (!this.parentNodesGroup) {
             series.parentNodesGroup = series.plotGroup(
                 'parentNodesGroup',
                 'parentNode',
-                visibility,
+                series.visible ? 'inherit' : 'hidden',
                 0.1, chart.seriesGroup
             );
             (series.group as any).attr({
@@ -843,7 +842,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
         }, parentOptions);
         if (!(series.parentNode as any).graphic) {
             series.graph = (series.parentNode as any).graphic =
-                chart.renderer.symbol(parentOptions.symbol)
+                chart.renderer.symbol((parentOptions as any).symbol)
                     .add(series.parentNodesGroup);
         }
         (series.parentNode as any).graphic.attr(parentAttribs);
@@ -1400,7 +1399,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
             data = series.data,
             index = series.index,
             point,
-            radius,
+            radius: number|undefined,
             positions,
             i,
             useSimulation = series.options.useSimulation;
@@ -1432,7 +1431,7 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                 // update the series points with the val from positions
                 // array
                 point = data[positions[i][4] as any];
-                radius = positions[i][2];
+                radius = pick(positions[i][2], void 0);
 
                 if (!useSimulation) {
                     point.plotX = (
@@ -1444,12 +1443,14 @@ class PackedBubbleSeries extends BubbleSeries implements Highcharts.DragNodesSer
                         chart.diffY
                     );
                 }
-                point.marker = extend(point.marker, {
-                    radius: radius,
-                    width: 2 * (radius as any),
-                    height: 2 * (radius as any)
-                });
-                point.radius = radius as any;
+                if (isNumber(radius)) {
+                    point.marker = extend(point.marker, {
+                        radius,
+                        width: 2 * radius,
+                        height: 2 * radius
+                    });
+                    point.radius = radius;
+                }
             }
         }
 

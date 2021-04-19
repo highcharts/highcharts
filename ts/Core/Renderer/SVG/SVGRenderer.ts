@@ -50,10 +50,8 @@ const {
     isObject,
     isString,
     merge,
-    objectEach,
     pick,
     pInt,
-    splat,
     uniqueKey
 } = U;
 
@@ -130,7 +128,7 @@ declare global {
             public draw: Function;
             public escapes: Record<string, string>;
             public forExport?: boolean;
-            public globalAnimation: Partial<AnimationOptions>;
+            public globalAnimation: boolean|Partial<AnimationOptions>;
             public gradients: Record<string, SVGElement>;
             public height: number;
             public imgCount: number;
@@ -141,6 +139,7 @@ declare global {
             public unSubPixelFix?: Function;
             public url: string;
             public width: number;
+            public alignElements(): void;
             public arc(attribs: SVGAttributes): SVGElement;
             public arc(
                 x?: number,
@@ -479,10 +478,10 @@ var charts = H.charts,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
     noop = H.noop,
-    svg = H.svg,
     SVG_NS = H.SVG_NS,
     symbolSizes = H.symbolSizes,
-    win = H.win;
+    win = H.win,
+    hasInternalReferenceBug: boolean|undefined;
 
 /**
  * Allows direct access to the Highcharts rendering layer in order to draw
@@ -689,19 +688,8 @@ class SVGRenderer {
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
 
-        // #24, #672, #1070
-        this.url = (
-            (isFirefox || isWebKit) &&
-            doc.getElementsByTagName('base').length
-        ) ?
-            win.location.href
-                .split('#')[0] // remove the hash
-                .replace(/<[^>]*>/g, '') // wing cut HTML
-                // escape parantheses and quotes
-                .replace(/([\('\)])/g, '\\$1')
-                // replace spaces (needed for Safari only)
-                .replace(/ /g, '%20') :
-            '';
+        this.url = this.getReferenceURL();
+
 
         // Add description
         desc = this.createElement('desc').add();
@@ -771,6 +759,101 @@ class SVGRenderer {
     }
 
     /**
+     * Get the prefix needed for internal URL references to work in certain
+     * cases. Some older browser versions had a bug where internal url
+     * references in SVG attributes, on the form `url(#some-id)`, would fail if
+     * a base tag was present in the page. There were also issues with
+     * `history.pushState` related to this prefix.
+     *
+     * Related issues: #24, #672, #1070, #5244.
+     *
+     * The affected browsers are:
+     * - Chrome <= 53 (May 2018)
+     * - Firefox <= 51 (January 2017)
+     * - Safari/Mac <= 12.1 (2018 or 2019)
+     * - Safari/iOS <= 13
+     *
+     * @todo Remove this hack when time has passed. All the affected browsers
+     * are evergreens, so it is increasingly unlikely that users are affected by
+     * the bug.
+     *
+     * @return {string}
+     * The prefix to use. An empty string for modern browsers.
+     */
+    public getReferenceURL(): string {
+
+        if (
+            (isFirefox || isWebKit) &&
+            doc.getElementsByTagName('base').length
+        ) {
+
+            // Detect if a clip path is taking effect by performing a hit test
+            // outside the clipped area. If the hit element is the rectangle
+            // that was supposed to be clipped, the bug is present. This only
+            // has to be performed once per page load, so we store the result
+            // locally in the module.
+            if (!defined(hasInternalReferenceBug)) {
+                const id = uniqueKey();
+                const ast = new AST([{
+                    tagName: 'svg',
+                    attributes: {
+                        width: 8,
+                        height: 8
+                    },
+                    children: [{
+                        tagName: 'defs',
+                        children: [{
+                            tagName: 'clipPath',
+                            attributes: {
+                                id
+                            },
+                            children: [{
+                                tagName: 'rect',
+                                attributes: {
+                                    width: 4,
+                                    height: 4
+                                }
+                            }]
+                        }]
+                    }, {
+                        tagName: 'rect',
+                        attributes: {
+                            id: 'hitme',
+                            width: 8,
+                            height: 8,
+                            'clip-path': `url(#${id})`,
+                            fill: 'rgba(0,0,0,0.001)'
+                        }
+                    }]
+                }]);
+                const svg = ast.addToDOM(doc.body);
+                css(svg, {
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    zIndex: 9e5
+                });
+
+                const hitElement = doc.elementFromPoint(6, 6);
+                hasInternalReferenceBug =
+                    (hitElement && hitElement.id) === 'hitme';
+                doc.body.removeChild(svg);
+            }
+
+            if (hasInternalReferenceBug) {
+                return win.location.href
+                    .split('#')[0] // remove the hash
+                    .replace(/<[^>]*>/g, '') // wing cut HTML
+                    // escape parantheses and quotes
+                    .replace(/([\('\)])/g, '\\$1')
+                    // replace spaces (needed for Safari only)
+                    .replace(/ /g, '%20');
+            }
+        }
+        return '';
+    }
+
+    /**
      * Get the global style setting for the renderer.
      *
      * @private
@@ -783,7 +866,7 @@ class SVGRenderer {
      * The style settings mixed with defaults.
      */
     public getStyle(style: CSSObject): CSSObject {
-        this.style = extend({
+        this.style = extend<CSSObject>({
 
             fontFamily: '"Lucida Grande", "Lucida Sans Unicode", ' +
                 'Arial, Helvetica, sans-serif',
@@ -889,10 +972,10 @@ class SVGRenderer {
     ): SVGAttributes {
         return {
             cx: (radialReference[0] - radialReference[2] / 2) +
-                gradAttr.cx * radialReference[2],
+                (gradAttr.cx || 0) * radialReference[2],
             cy: (radialReference[1] - radialReference[2] / 2) +
-                gradAttr.cy * radialReference[2],
-            r: gradAttr.r * radialReference[2]
+                (gradAttr.cy || 0) * radialReference[2],
+            r: (gradAttr.r || 0) * radialReference[2]
         };
     }
 
@@ -1426,7 +1509,7 @@ class SVGRenderer {
 
         if (!this.styledMode) {
             if (typeof strokeWidth !== 'undefined') {
-                attribs.strokeWidth = strokeWidth;
+                attribs['stroke-width'] = strokeWidth;
                 attribs = wrapper.crisp(attribs as any);
             }
             attribs.fill = 'none';
@@ -1448,10 +1531,10 @@ class SVGRenderer {
             });
         };
         wrapper.rGetter = function (): number {
-            return wrapper.r as any;
+            return wrapper.r || 0;
         };
 
-        return wrapper.attr(attribs as any) as any;
+        return wrapper.attr(attribs);
     }
 
     /**
@@ -1477,9 +1560,7 @@ class SVGRenderer {
         height: number,
         animate?: (boolean|Partial<AnimationOptions>)
     ): void {
-        var renderer = this,
-            alignedObjects = renderer.alignedObjects,
-            i = alignedObjects.length;
+        var renderer = this;
 
         renderer.width = width;
         renderer.height = height;
@@ -1497,9 +1578,7 @@ class SVGRenderer {
             duration: pick(animate, true) ? void 0 : 0
         });
 
-        while (i--) {
-            alignedObjects[i].align();
-        }
+        renderer.alignElements();
     }
 
     /**
@@ -1739,9 +1818,7 @@ class SVGRenderer {
              */
             ['width', 'height'].forEach(function (key: string): void {
                 obj[key + 'Setter'] = function (value: any, key: string): void {
-                    var attribs: SVGAttributes = {},
-                        imgSize = this['img' + key],
-                        trans = key === 'width' ? 'translateX' : 'translateY';
+                    var imgSize = this['img' + key];
 
                     this[key] = value;
                     if (defined(imgSize)) {
@@ -1767,7 +1844,10 @@ class SVGRenderer {
                             this.element.setAttribute(key, imgSize);
                         }
                         if (!this.alignByTranslate) {
-                            attribs[trans] = ((this[key] || 0) - imgSize) / 2;
+                            const translate = ((this[key] || 0) - imgSize) / 2;
+                            const attribs = key === 'width' ?
+                                { translateX: translate } :
+                                { translateY: translate };
                             this.attr(attribs);
                         }
                     }
@@ -1962,7 +2042,7 @@ class SVGRenderer {
                 element: SVGDOMElement
             ): void {
                 var tspans = element.getElementsByTagName('tspan'),
-                    tspan,
+                    tspan: SVGTSpanElement,
                     parentVal = element.getAttribute(key),
                     i;
 
@@ -2392,6 +2472,17 @@ class SVGRenderer {
         );
 
     }
+
+    /**
+     * Re-align all aligned elements.
+     *
+     * @private
+     * @function Highcharts.SVGRenderer#alignElements
+     * @return {void}
+     */
+    public alignElements(): void {
+        this.alignedObjects.forEach((el): SVGElement => el.align());
+    }
 }
 
 /**
@@ -2449,6 +2540,41 @@ SVGRenderer.prototype.escapes = {
     '"': '&quot;'
 };
 
+const roundedRect: Highcharts.SymbolFunction = (
+    x,
+    y,
+    w,
+    h,
+    options
+): SVGPath => {
+    const r = (options && options.r) || 0;
+    return [
+        ['M', x + r, y],
+        ['L', x + w - r, y], // top side
+        ['C', x + w, y, x + w, y, x + w, y + r], // top-right corner
+        ['L', x + w, y + h - r], // right side
+        ['C', x + w, y + h, x + w, y + h, x + w - r, y + h], // bottom-rgt
+        ['L', x + r, y + h], // bottom side
+        ['C', x, y + h, x, y + h, x, y + h - r], // bottom-left corner
+        ['L', x, y + r], // left side
+        ['C', x, y, x, y, x + r, y] // top-left corner
+    ];
+};
+
+// #15291
+const rect: Highcharts.SymbolFunction = function (x, y, w, h, options): SVGPath {
+    if (options && options.r) {
+        return roundedRect(x, y, w, h, options);
+    }
+    return [
+        ['M', x, y],
+        ['L', x + w, y],
+        ['L', x + w, y + h],
+        ['L', x, y + h],
+        ['Z']
+    ];
+};
+
 /**
  * An extendable collection of functions for defining symbol paths.
  *
@@ -2470,20 +2596,9 @@ SVGRenderer.prototype.symbols = {
         });
     },
 
-    square: function (
-        x: number,
-        y: number,
-        w: number,
-        h: number
-    ): SVGPath {
-        return [
-            ['M', x, y],
-            ['L', x + w, y],
-            ['L', x + w, y + h],
-            ['L', x, y + h],
-            ['Z']
-        ];
-    },
+    rect,
+
+    square: rect, // #15291
 
     triangle: function (
         x: number,
@@ -2538,8 +2653,8 @@ SVGRenderer.prototype.symbols = {
         if (options) {
             var start = options.start || 0,
                 end = options.end || 0,
-                rx = options.r || w,
-                ry = options.r || h || w,
+                rx = pick(options.r, w),
+                ry = pick(options.r, h || w),
                 proximity = 0.001,
                 fullCircle =
                     Math.abs(end - start - 2 * Math.PI) <
@@ -2621,25 +2736,14 @@ SVGRenderer.prototype.symbols = {
         h: number,
         options?: Highcharts.SymbolOptionsObject
     ): SVGPath {
-        var arrowLength = 6,
+        const arrowLength = 6,
             halfDistance = 6,
             r = Math.min((options && options.r) || 0, w, h),
             safeDistance = r + halfDistance,
             anchorX = options && options.anchorX,
-            anchorY = options && options.anchorY || 0,
-            path: SVGPath;
+            anchorY = options && options.anchorY || 0;
 
-        path = [
-            ['M', x + r, y],
-            ['L', x + w - r, y], // top side
-            ['C', x + w, y, x + w, y, x + w, y + r], // top-right corner
-            ['L', x + w, y + h - r], // right side
-            ['C', x + w, y + h, x + w, y + h, x + w - r, y + h], // bottom-rgt
-            ['L', x + r, y + h], // bottom side
-            ['C', x, y + h, x, y + h, x, y + h - r], // bottom-left corner
-            ['L', x, y + r], // left side
-            ['C', x, y, x, y, x + r, y] // top-left corner
-        ];
+        const path = roundedRect(x, y, w, h, { r });
 
         if (!isNumber(anchorX)) {
             return path;

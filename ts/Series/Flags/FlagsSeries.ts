@@ -198,7 +198,7 @@ class FlagsSeries extends ColumnSeries {
          * @product   highstock
          */
         tooltip: {
-            pointFormat: '{point.text}<br/>'
+            pointFormat: '{point.text}'
         },
 
         threshold: null as any,
@@ -419,6 +419,10 @@ class FlagsSeries extends ColumnSeries {
                 (plotX as any) >= 0 &&
                 !outsideRight
             ) {
+                // #15384
+                if (graphic && point.hasNewShapeType()) {
+                    graphic = graphic.destroy();
+                }
 
                 // Create the flag
                 if (!graphic) {
@@ -576,7 +580,10 @@ class FlagsSeries extends ColumnSeries {
             var graphic = point.graphic;
 
             if (graphic) {
-                addEvent(graphic.element, 'mouseover', function (): void {
+                if (point.unbindMouseOver) {
+                    point.unbindMouseOver();
+                }
+                point.unbindMouseOver = addEvent(graphic.element, 'mouseover', function (): void {
 
                     // Raise this point
                     if ((point.stackIndex as any) > 0 &&
@@ -671,7 +678,7 @@ extend(FlagsSeries.prototype, {
      * @private
      * @function Highcharts.seriesTypes.flags#buildKDTree
      */
-    buildKDTree: noop as any,
+    buildKDTree: noop,
 
     forceCrop: true,
 
@@ -691,7 +698,10 @@ extend(FlagsSeries.prototype, {
      * @private
      * @function Highcharts.seriesTypes.flags#invertGroups
      */
-    invertGroups: noop as any,
+    invertGroups: noop,
+
+    // Flags series group should not be invertible (#14063).
+    invertible: false,
 
     noSharedTooltip: true,
 

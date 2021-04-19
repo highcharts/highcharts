@@ -39,7 +39,10 @@ const draw = function draw(
         onComplete = params.onComplete,
         css = params.css,
         renderer = params.renderer,
-        animation = component.series?.options.animation;
+        animation = (
+            component.series &&
+            component.series.options.animation
+        );
 
     if (component.shouldDraw()) {
         if (!graphic) {

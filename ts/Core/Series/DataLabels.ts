@@ -796,8 +796,11 @@ Series.prototype.alignDataLabel = function (
                 (
                     // If the data label is inside the align box, it is enough
                     // that parts of the align box is inside the plot area
-                    // (#12370)
-                    options.inside && alignTo && chart.isInsidePlot(
+                    // (#12370). When stacking, it is always inside regardless
+                    // of the option (#15148).
+                    pick(options.inside, !!this.options.stacking) &&
+                    alignTo &&
+                    chart.isInsidePlot(
                         plotX,
                         inverted ?
                             alignTo.x + 1 :
@@ -834,7 +837,7 @@ Series.prototype.alignDataLabel = function (
         }, alignTo);
 
         // Add the text size for alignment calculation
-        extend(options, {
+        extend<DataLabelOptions|BBoxObject>(options, {
             width: bBox.width,
             height: bBox.height
         });
@@ -884,7 +887,7 @@ Series.prototype.alignDataLabel = function (
 
         } else {
             setStartPos(alignTo); // data sorting
-            dataLabel.align(options as any, null as any, alignTo);
+            dataLabel.align(options, void 0, alignTo);
             alignAttr = dataLabel.alignAttr;
         }
 
@@ -1042,7 +1045,7 @@ Series.prototype.justifyDataLabel = function (
     let { x = 0, y = 0 } = options;
 
     // Off left
-    off = alignAttr.x + padding;
+    off = (alignAttr.x || 0) + padding;
     if (off < 0) {
         if (align === 'right' && x >= 0) {
             options.align = 'left';
@@ -1054,7 +1057,7 @@ Series.prototype.justifyDataLabel = function (
     }
 
     // Off right
-    off = alignAttr.x + bBox.width - padding;
+    off = (alignAttr.x || 0) + bBox.width - padding;
     if (off > chart.plotWidth) {
         if (align === 'left' && x <= 0) {
             options.align = 'right';
@@ -1078,7 +1081,7 @@ Series.prototype.justifyDataLabel = function (
     }
 
     // Off bottom
-    off = alignAttr.y + bBox.height - padding;
+    off = (alignAttr.y || 0) + bBox.height - padding;
     if (off > chart.plotHeight) {
         if (verticalAlign === 'top' && y <= 0) {
             options.verticalAlign = 'bottom';
@@ -1231,7 +1234,7 @@ if (seriesTypes.pie) {
                 point.dataLabel
                     .attr({
                         width: 'auto'
-                    }).css({
+                    } as unknown as SVGAttributes).css({
                         width: 'auto',
                         textOverflow: 'clip'
                     });
@@ -1389,29 +1392,29 @@ if (seriesTypes.pie) {
                     );
                 } else {
                     switch ((options as any).alignTo) {
-                    case 'connectors':
-                        x = (dataLabelPositioners as any).alignToConnectors(
-                            points,
-                            i as any,
-                            plotWidth,
-                            plotLeft
-                        );
-                        break;
-                    case 'plotEdges':
-                        x = (dataLabelPositioners as any).alignToPlotEdges(
-                            dataLabel as any,
-                            i as any,
-                            plotWidth,
-                            plotLeft
-                        );
-                        break;
-                    default:
-                        x = (dataLabelPositioners as any).radialDistributionX(
-                            series,
-                            point,
-                            y,
-                            naturalY
-                        );
+                        case 'connectors':
+                            x = (dataLabelPositioners as any).alignToConnectors(
+                                points,
+                                i as any,
+                                plotWidth,
+                                plotLeft
+                            );
+                            break;
+                        case 'plotEdges':
+                            x = (dataLabelPositioners as any).alignToPlotEdges(
+                                dataLabel as any,
+                                i as any,
+                                plotWidth,
+                                plotLeft
+                            );
+                            break;
+                        default:
+                            x = (dataLabelPositioners as any).radialDistributionX(
+                                series,
+                                point,
+                                y,
+                                naturalY
+                            );
                     }
                 }
 
@@ -1650,7 +1653,7 @@ if (seriesTypes.pie) {
         }, this);
     };
 
-    seriesTypes.pie.prototype.alignDataLabel = noop as any;
+    seriesTypes.pie.prototype.alignDataLabel = noop;
 
     /**
      * Verify whether the data labels are allowed to draw, or we should run more

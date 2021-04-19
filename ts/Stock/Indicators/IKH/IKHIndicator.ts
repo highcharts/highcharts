@@ -24,8 +24,8 @@ import type {
 } from './IKHOptions';
 import type IKHPoint from './IKHPoint';
 import type IndicatorValuesObject from '../IndicatorValuesObject';
-import type Point from '../../../Core/Series/Point';
-import type Series from '../../../Core/Series/Series';
+import type LinePoint from '../../../Series/Line/LinePoint';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import Color from '../../../Core/Color/Color.js';
@@ -36,7 +36,7 @@ const {
     seriesTypes: { sma: SMAIndicator }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
-const { defined, extend, isArray, merge, objectEach } = U;
+const { defined, extend, isArray, isNumber, merge, objectEach } = U;
 
 declare module '../../../Core/Series/SeriesLike' {
     interface SeriesLike {
@@ -440,20 +440,21 @@ class IKHIndicator extends SMAIndicator {
             point: IKHPoint
         ): void {
             indicator.pointArrayMap.forEach(function (
-                value: keyof IKHPoint
+                key: keyof IKHPoint
             ): void {
-                if (defined(point[value])) {
-                    (point as any)['plot' + value] = indicator.yAxis.toPixels(
-                        point[value],
+                const pointValue = point[key];
+                if (isNumber(pointValue)) {
+                    (point as any)['plot' + key] = indicator.yAxis.toPixels(
+                        pointValue,
                         true
                     );
 
                     // Add extra parameters for support tooltip in moved
                     // lines
-                    point.plotY = (point as any)['plot' + value];
+                    point.plotY = (point as any)['plot' + key];
                     point.tooltipPos = [
                         point.plotX,
-                        (point as any)['plot' + value]
+                        (point as any)['plot' + key]
                     ];
                     point.isNull = false;
                 }
@@ -746,9 +747,10 @@ class IKHIndicator extends SMAIndicator {
         indicator.points = mainLinePoints;
         indicator.options = mainLineOptions;
         indicator.graph = mainLinePath;
+        indicator.color = mainColor;
     }
 
-    public getGraphPath(points: Array<Point>): SVGPath {
+    public getGraphPath(points: Array<LinePoint>): SVGPath {
         var indicator = this,
             path: SVGPath = [],
             spanA: SVGPath,
@@ -782,7 +784,7 @@ class IKHIndicator extends SMAIndicator {
         return path;
     }
 
-    public getValues <TLinkedSeries extends Series>(
+    public getValues <TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: IKHParamsOptions
     ): IndicatorValuesObject<TLinkedSeries> | undefined {

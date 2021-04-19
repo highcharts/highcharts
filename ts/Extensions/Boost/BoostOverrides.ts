@@ -383,8 +383,7 @@ wrap(Series.prototype, 'processData', function (
 ): void {
 
     var series = this,
-        dataToMeasure = this.options.data,
-        firstPoint: (PointOptions|PointShortOptions);
+        dataToMeasure = this.options.data;
 
     /**
      * Used twice in this function, first on this.options.data, the second
@@ -425,9 +424,12 @@ wrap(Series.prototype, 'processData', function (
         // Enter or exit boost mode
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
-            firstPoint = this.getFirstValidPoint(this.options.data as any);
-            if (!isNumber(firstPoint) && !isArray(firstPoint)) {
-                error(12, false, this.chart);
+            let firstPoint;
+            if (this.options.data && this.options.data.length) {
+                firstPoint = this.getFirstValidPoint(this.options.data);
+                if (!isNumber(firstPoint) && !isArray(firstPoint)) {
+                    error(12, false, this.chart);
+                }
             }
             this.enterBoost();
         } else if (this.exitBoost) {
@@ -567,6 +569,16 @@ Series.prototype.destroyGraphics = function (): void {
             (series as any)[prop] = (series as any)[prop].destroy();
         }
     });
+
+    if ((this as any).getZonesGraphs) {
+        const props: string[][] = (this as any).getZonesGraphs([['graph', 'highcharts-graph']]);
+        props.forEach((prop): void => {
+            const zoneGraph: Highcharts.SVGElement = (this as any)[prop[0]];
+            if (zoneGraph) {
+                (this as any)[prop[0]] = zoneGraph.destroy();
+            }
+        });
+    }
 };
 
 // Set default options

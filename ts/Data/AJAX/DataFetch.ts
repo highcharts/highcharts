@@ -36,7 +36,7 @@ const {
  *
  * */
 
-class DataFetch implements DataEventEmitter<DataFetch.EventObject>, DataJSON.Class {
+class DataFetch implements DataEventEmitter<DataFetch.Event>, DataJSON.Class {
 
     /* *
      *
@@ -92,7 +92,7 @@ class DataFetch implements DataEventEmitter<DataFetch.EventObject>, DataJSON.Cla
         this.emit({ type: 'afterAbortFetch', detail: eventDetail, xhr });
     }
 
-    public emit(e: DataFetch.EventObject): void {
+    public emit(e: DataFetch.Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -143,8 +143,8 @@ class DataFetch implements DataEventEmitter<DataFetch.EventObject>, DataJSON.Cla
     }
 
     public on(
-        type: DataFetch.EventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, DataFetch.EventObject>
+        type: DataFetch.Event['type'],
+        callback: DataEventEmitter.EventCallback<this, DataFetch.Event>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -177,7 +177,7 @@ namespace DataFetch {
         options: Options;
     }
 
-    export interface EventObject extends DataEventEmitter.EventObject {
+    export interface Event extends DataEventEmitter.Event {
         type: (
             'abortFetch'|'afterAbortFetch'|
             'error'|

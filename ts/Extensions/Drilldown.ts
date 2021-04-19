@@ -169,7 +169,7 @@ declare global {
             target: Chart;
             type: 'drilldown';
         }
-        interface DrilldownOptions extends Options {
+        interface DrilldownOptions {
             activeAxisLabelStyle?: CSSObject;
             activeDataLabelStyle?: (
                 CSSObject|DrilldownActiveDataLabelStyleOptions
@@ -809,7 +809,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
 
     // Run fancy cross-animation on supported and equal types
     if (oldSeries.type === newSeries.type) {
-        newSeries.animate = newSeries.animateDrilldown || (noop as any);
+        newSeries.animate = (newSeries.animateDrilldown || noop);
         newSeries.options.animation = true;
     }
 };
@@ -867,34 +867,37 @@ Chart.prototype.showDrillUpButton = function (): void {
         backText = this.getDrilldownBackText(),
         buttonOptions = (chart.options.drilldown as any).drillUpButton,
         attr,
-        states;
+        states,
+        alignTo = (
+            buttonOptions.relativeTo === 'chart' ||
+            buttonOptions.relativeTo === 'spacingBox' ?
+                null :
+                'scrollablePlotBox'
+        );
 
     if (!this.drillUpButton) {
         attr = buttonOptions.theme;
         states = attr && attr.states;
 
-        this.drillUpButton = this.renderer.button(
-            backText as any,
-            null as any,
-            null as any,
-            function (): void {
-                chart.drillUp();
-            },
-            attr,
-            states && states.hover,
-            states && states.select
-        )
+        this.drillUpButton = this.renderer
+            .button(
+                backText as any,
+                null as any,
+                null as any,
+                function (): void {
+                    chart.drillUp();
+                },
+                attr,
+                states && states.hover,
+                states && states.select
+            )
             .addClass('highcharts-drillup-button')
             .attr({
                 align: buttonOptions.position.align,
                 zIndex: 7
             })
             .add()
-            .align(
-                buttonOptions.position,
-                false,
-                buttonOptions.relativeTo || 'plotBox'
-            );
+            .align(buttonOptions.position, false, alignTo as any);
     } else {
         this.drillUpButton.attr({
             text: backText

@@ -20,6 +20,8 @@ WIP on vertical scrollable plot area (#9378). To do:
 
 'use strict';
 
+import type BBoxObject from '../Core/Renderer/BBoxObject';
+import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     DOMElementType,
     HTMLDOMElement
@@ -27,12 +29,15 @@ import type {
 import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { stop } = A;
+import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
+import Series from '../Core/Series/Series.js';
 import H from '../Core/Globals.js';
 import U from '../Core/Utilities.js';
 const {
     addEvent,
     createElement,
+    merge,
     pick
 } = U;
 
@@ -43,12 +48,20 @@ declare module '../Core/Chart/ChartLike'{
         innerContainer?: HTMLDOMElement;
         scrollingContainer?: HTMLDOMElement;
         scrollingParent?: HTMLDOMElement;
+        scrollableDirty?: boolean;
         scrollableMask?: Highcharts.SVGElement;
         scrollablePixelsX?: number;
         scrollablePixelsY?: number;
+        scrollablePlotBox?: BBoxObject;
         applyFixed(): void;
         moveFixedElements(): void;
         setUpScrolling(): void;
+    }
+}
+
+declare module '../Core/Renderer/SVG/SVGRendererLike' {
+    interface SVGRendererLike {
+        scrollablePlotBox?: BBoxObject;
     }
 }
 
@@ -149,13 +162,12 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinWidth - this.chartWidth
             );
             if (scrollablePixelsX) {
-                this.plotWidth += scrollablePixelsX;
+                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+                this.plotBox.width = this.plotWidth += scrollablePixelsX;
                 if (this.inverted) {
-                    (this.clipBox as any).height += scrollablePixelsX;
-                    this.plotBox.height += scrollablePixelsX;
+                    this.clipBox.height += scrollablePixelsX;
                 } else {
-                    (this.clipBox as any).width += scrollablePixelsX;
-                    this.plotBox.width += scrollablePixelsX;
+                    this.clipBox.width += scrollablePixelsX;
                 }
 
                 corrections = {
@@ -171,13 +183,12 @@ addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
                 scrollableMinHeight - this.chartHeight
             );
             if (scrollablePixelsY) {
-                this.plotHeight += scrollablePixelsY;
+                this.scrollablePlotBox = this.renderer.scrollablePlotBox = merge(this.plotBox);
+                this.plotBox.height = this.plotHeight += scrollablePixelsY;
                 if (this.inverted) {
-                    (this.clipBox as any).width += scrollablePixelsY;
-                    this.plotBox.width += scrollablePixelsY;
+                    this.clipBox.width += scrollablePixelsY;
                 } else {
-                    (this.clipBox as any).height += scrollablePixelsY;
-                    this.plotBox.height += scrollablePixelsY;
+                    this.clipBox.height += scrollablePixelsY;
                 }
                 corrections = {
                     2: { name: 'bottom', value: scrollablePixelsY }
@@ -241,17 +252,17 @@ addEvent(Chart, 'render', function (): void {
  */
 Chart.prototype.setUpScrolling = function (): void {
 
-    var attribs = {
+    const css: CSSObject = {
         WebkitOverflowScrolling: 'touch',
         overflowX: 'hidden',
         overflowY: 'hidden'
     };
 
     if (this.scrollablePixelsX) {
-        attribs.overflowX = 'auto';
+        css.overflowX = 'auto';
     }
     if (this.scrollablePixelsY) {
-        attribs.overflowY = 'auto';
+        css.overflowY = 'auto';
     }
 
     // Insert a container with position relative
@@ -270,7 +281,7 @@ Chart.prototype.setUpScrolling = function (): void {
     // Add the necessary divs to provide scrolling
     this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
-    }, attribs, this.scrollingParent);
+    }, css, this.scrollingParent);
 
     // On scroll, reset the chart position because it applies to the scrolled
     // container
@@ -309,6 +320,7 @@ Chart.prototype.moveFixedElements = function (): void {
             '.highcharts-navigator-yaxis',
             '.highcharts-navigator',
             '.highcharts-reset-zoom',
+            '.highcharts-drillup-button',
             '.highcharts-scrollbar',
             '.highcharts-subtitle',
             '.highcharts-title'
@@ -371,38 +383,39 @@ Chart.prototype.applyFixed = function (): void {
                 position: 'absolute',
                 overflow: 'hidden',
                 pointerEvents: 'none',
-                zIndex: (chartOptions.style?.zIndex || 0) + 2,
+                zIndex: (chartOptions.style && chartOptions.style.zIndex || 0) + 2,
                 top: 0
             },
             null as any,
             true
         );
-        this.scrollingContainer?.parentNode.insertBefore(
-            this.fixedDiv,
-            this.scrollingContainer
-        );
+        if (this.scrollingContainer) {
+            this.scrollingContainer.parentNode.insertBefore(
+                this.fixedDiv,
+                this.scrollingContainer
+            );
+        }
         this.renderTo.style.overflow = 'visible';
 
         this.fixedRenderer = fixedRenderer = new H.Renderer(
             this.fixedDiv,
             this.chartWidth,
             this.chartHeight,
-            this.options.chart?.style
+            this.options.chart.style
         );
         // Mask
         this.scrollableMask = fixedRenderer
             .path()
             .attr({
-                fill: (this.options.chart as any).backgroundColor || '#fff',
+                fill: this.options.chart.backgroundColor || '#fff',
                 'fill-opacity': pick(scrollableOptions.opacity, 0.85),
                 zIndex: -1
             })
             .addClass('highcharts-scrollable-mask')
             .add();
 
-        this.moveFixedElements();
-
         addEvent(this, 'afterShowResetZoom', this.moveFixedElements);
+        addEvent(this, 'afterDrilldown', this.moveFixedElements);
         addEvent(this, 'afterLayOutTitles', this.moveFixedElements);
 
     } else {
@@ -412,6 +425,11 @@ Chart.prototype.applyFixed = function (): void {
             this.chartWidth,
             this.chartHeight
         );
+    }
+
+    if (this.scrollableDirty || firstTime) {
+        this.scrollableDirty = false;
+        this.moveFixedElements();
     }
 
     // Increase the size of the scrollable renderer and background
@@ -500,3 +518,11 @@ Chart.prototype.applyFixed = function (): void {
         (this.scrollableMask as any).attr({ d });
     }
 };
+
+addEvent(Axis, 'afterInit', function (): void {
+    this.chart.scrollableDirty = true;
+});
+
+addEvent(Series, 'show', function (): void {
+    this.chart.scrollableDirty = true;
+});

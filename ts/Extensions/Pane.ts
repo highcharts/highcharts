@@ -13,6 +13,7 @@
 import type ColorType from '../Core/Color/ColorType';
 import type RadialAxis from '../Core/Axis/RadialAxis';
 import type Series from '../Core/Series/Series';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
@@ -238,7 +239,7 @@ class Pane {
         i: number
     ): void {
         var method = 'animate',
-            attribs = {
+            attribs: SVGAttributes = {
                 'class':
                     'highcharts-pane ' + (backgroundOptions.className || '')
             };

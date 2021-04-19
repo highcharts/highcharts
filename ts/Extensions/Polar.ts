@@ -302,8 +302,7 @@ seriesProto.toXY = function (
     this: Highcharts.PolarSeries,
     point: Highcharts.PolarPoint
 ): void {
-    var xy,
-        chart = this.chart,
+    var chart = this.chart,
         xAxis = this.xAxis,
         yAxis = this.yAxis,
         plotX = point.plotX,
@@ -328,12 +327,15 @@ seriesProto.toXY = function (
         radius += yAxis.center[3] / 2;
     }
 
-    // Find the polar plotX and plotY
-    xy = inverted ? yAxis.postTranslate(plotY, radius) :
-        xAxis.postTranslate(plotX, radius);
+    // Find the polar plotX and plotY. Avoid setting plotX and plotY to NaN when
+    // plotY is undefined (#15438)
+    if (isNumber(plotY)) {
+        const xy = inverted ? yAxis.postTranslate(plotY, radius) :
+            xAxis.postTranslate(plotX, radius);
 
-    point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
-    point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+        point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
+        point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+    }
 
     // If shared tooltip, record the angle in degrees in order to align X
     // points. Otherwise, use a standard k-d tree to get the nearest point
@@ -380,12 +382,20 @@ if (seriesTypes.spline) {
                         true,
                         this.connectEnds
                     );
+
+                    const rightContX = connectors.prevPointCont && connectors.prevPointCont.rightContX;
+                    const rightContY = connectors.prevPointCont && connectors.prevPointCont.rightContY;
+
                     ret = [
                         'C',
-                        (connectors.prevPointCont as any).rightContX,
-                        (connectors.prevPointCont as any).rightContY,
-                        connectors.leftContX,
-                        connectors.leftContY,
+                        isNumber(rightContX) ? rightContX : connectors.plotX,
+                        isNumber(rightContY) ? rightContY : connectors.plotY,
+                        isNumber(connectors.leftContX) ?
+                            connectors.leftContX :
+                            connectors.plotX,
+                        isNumber(connectors.leftContY) ?
+                            connectors.leftContY :
+                            connectors.plotY,
                         connectors.plotX,
                         connectors.plotY
                     ];
@@ -478,7 +488,7 @@ addEvent(Series, 'afterTranslate', function (): void {
                         }
 
                         this.group.clip(this.clipCircle);
-                        this.setClip = H.noop as any;
+                        this.setClip = H.noop;
                     }
                 })
             );
@@ -491,7 +501,7 @@ addEvent(Series, 'afterTranslate', function (): void {
  * closed circle in line-like series.
  * @private
  */
-wrap(seriesProto, 'getGraphPath', function (
+wrap(seriesTypes.line.prototype, 'getGraphPath', function (
     this: Highcharts.PolarSeries,
     proceed: Function,
     points: Array<Highcharts.PolarPoint>
@@ -998,7 +1008,7 @@ if (seriesTypes.column) {
                     labelPos =
                         (this as Highcharts.PolarSeries).yAxis.postTranslate(
                         // angle
-                            (shapeArgs.start + shapeArgs.end) / 2 -
+                            ((shapeArgs.start || 0) + (shapeArgs.end || 0)) / 2 -
                             (this as Highcharts.PolarSeries)
                                 .xAxis.startAngleRad,
                             // radius
@@ -1160,7 +1170,7 @@ wrap(Chart.prototype, 'get', function (
     proceed: Function,
     id: string
 ): boolean {
-    return find(this.pane as any, function (pane: Highcharts.Pane): boolean {
+    return find(this.pane || [], function (pane: Highcharts.Pane): boolean {
         return (pane.options as any).id === id;
     }) || proceed.call(this, id);
 });

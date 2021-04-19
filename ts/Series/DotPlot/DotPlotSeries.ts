@@ -31,7 +31,6 @@ import type DotPlotSeriesOptions from './DotPlotSeriesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import ColumnSeries from '../Column/ColumnSeries.js';
-import './DotPlotSymbols.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -127,7 +126,7 @@ class DotPlotSeries extends ColumnSeries {
             point.graphics = graphics = point.graphics || {};
             pointAttr = point.pointAttr ?
                 (
-                    point.pointAttr[point.selected ? 'selected' : ''] ||
+                    (point.pointAttr as any)[point.selected ? 'selected' : ''] ||
                     (series.pointAttr as any)['']
                 ) :
                 series.pointAttribs(point, (point.selected as any) && 'select');

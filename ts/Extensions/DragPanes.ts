@@ -18,6 +18,7 @@ import type ColorType from '../Core/Color/ColorType';
 import type {
     CursorValue
 } from '../Core/Renderer/CSSObject';
+import type DashStyleValue from '../Core/Renderer/DashStyleValue';
 import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import H from '../Core/Globals.js';
@@ -67,7 +68,7 @@ declare global {
             cursor?: CursorValue;
             enabled?: boolean;
             lineColor?: ColorType;
-            lineDashStyle?: string;
+            lineDashStyle?: DashStyleValue;
             lineWidth?: number;
             x?: number;
             y?: number;
@@ -111,7 +112,7 @@ declare global {
 class AxisResizer {
 
     // Default options for AxisResizer.
-    public static resizerOptions: Highcharts.YAxisOptions = {
+    public static resizerOptions: DeepPartial<Highcharts.YAxisOptions> = {
         /**
          * Minimal size of a resizable axis. Could be set as a percent
          * of plot area or pixel size.
@@ -501,7 +502,7 @@ class AxisResizer {
             prevAxes: Array<(number|string)> =
                 [resizer.axis as any].concat((axes as any).prev),
             // prev and next configs
-            axesConfigs: Array<Record<string, any>> = [],
+            axesConfigs: Array<AnyRecord> = [],
             stopDrag = false,
             plotTop = chart.plotTop,
             plotHeight = chart.plotHeight,
@@ -550,7 +551,7 @@ class AxisResizer {
                                 chart.get(axisInfo)
                         ),
                     axisOptions = axis && axis.options,
-                    optionsToUpdate: Highcharts.YAxisOptions = {},
+                    optionsToUpdate: DeepPartial<Highcharts.YAxisOptions> = {},
                     hDelta = 0,
                     height, top,
                     minLength, maxLength;
@@ -643,7 +644,7 @@ class AxisResizer {
         if (!stopDrag) {
             // Now update axes:
             axesConfigs.forEach(function (
-                config: Record<string, any>
+                config: AnyRecord
             ): void {
                 config.axis.update(config.options, false);
             });

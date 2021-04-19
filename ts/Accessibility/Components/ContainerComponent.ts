@@ -14,6 +14,7 @@ import type {
     SVGDOMElement
 } from '../../Core/Renderer/DOMElementType';
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import ChartUtilities from '../Utils/ChartUtilities.js';
 const {
     unhideChartElementFromAT,
@@ -180,7 +181,8 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
             if (credits.textStr) {
                 credits.element.setAttribute(
                     'aria-label', chart.langFormat(
-                        'accessibility.credits', { creditsStr: credits.textStr }
+                        'accessibility.credits',
+                        { creditsStr: stripHTMLTags(credits.textStr) }
                     )
                 );
             }
@@ -188,6 +190,29 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
         }
     },
 
+    /**
+     * Empty handler to just set focus on chart
+     * @return {Highcharts.KeyboardNavigationHandler}
+     */
+    getKeyboardNavigation: function (
+        this: Highcharts.ContainerComponent
+    ): Highcharts.KeyboardNavigationHandler {
+        const chart = this.chart;
+        return new (KeyboardNavigationHandler as any)(chart, {
+            keyCodeMap: [],
+
+            validate: function (): (boolean) {
+                return true;
+            },
+
+            init: function (): void {
+                const a11y = chart.accessibility;
+                if (a11y) {
+                    a11y.keyboardNavigation.tabindexContainer.focus();
+                }
+            }
+        });
+    },
 
     /**
      * Accessibility disabled/chart destroyed.

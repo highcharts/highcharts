@@ -33,7 +33,10 @@ declare module '../Chart/ChartLike'{
 declare global {
     namespace Highcharts {
         interface Options {
-            zAxis?: (Highcharts.AxisOptions|Array<Highcharts.AxisOptions>);
+            zAxis?: (
+                DeepPartial<Highcharts.AxisOptions>|
+                Array<DeepPartial<Highcharts.AxisOptions>>
+            );
         }
     }
 }
@@ -175,10 +178,7 @@ class ZAxis extends Axis implements AxisLike {
 
             if (
                 series.visible ||
-                !(
-                    chart.options.chart &&
-                    chart.options.chart.ignoreHiddenSeries
-                )
+                !chart.options.chart.ignoreHiddenSeries
             ) {
 
                 var seriesOptions = series.options,
@@ -217,7 +217,6 @@ class ZAxis extends Axis implements AxisLike {
         super.setAxisSize();
 
         axis.width = axis.len = (
-            chart.options.chart &&
             chart.options.chart.options3d &&
             chart.options.chart.options3d.depth
         ) || 0;
@@ -229,9 +228,9 @@ class ZAxis extends Axis implements AxisLike {
      */
     public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
 
-        userOptions = merge<Highcharts.AxisOptions>({
-            offset: 0 as any,
-            lineWidth: 0 as any
+        userOptions = merge<DeepPartial<Highcharts.AxisOptions>>({
+            offset: 0,
+            lineWidth: 0
         }, userOptions);
 
         // #14793, this used to be set on the prototype

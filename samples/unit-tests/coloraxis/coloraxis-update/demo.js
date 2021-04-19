@@ -62,7 +62,7 @@ QUnit.test('Color axis updates', function (assert) {
 QUnit.test('Color axis update with responsive rules', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
-            type: 'heatmap',
+            type: 'pie', // #14395
             width: 600,
             height: 400
         },
@@ -151,6 +151,11 @@ QUnit.test('Adding color axis', function (assert) {
         chart.series[1].points[0].color,
         chart.series[1].points[1].color,
         'Colors should be the same for the second series.'
+    );
+
+    assert.notOk(
+        chart.series[0].legendItem,
+        '#15436: Series legendItem should have been destroyed'
     );
 
     chart.addColorAxis({});

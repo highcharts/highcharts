@@ -171,7 +171,7 @@ QUnit.test('Split tooltip with empty formats (#8105)', function (assert) {
     );
 });
 
-QUnit.test('Split tooltip with useHTML (#7238)', function (assert) {
+QUnit.test('Split tooltip with useHTML and outside', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             width: 600
@@ -183,16 +183,29 @@ QUnit.test('Split tooltip with useHTML (#7238)', function (assert) {
         ],
         tooltip: {
             split: true,
-            useHTML: true
+            useHTML: true,
+            outside: true,
+            followPointer: true
         }
     });
 
     chart.series[0].points[0].onMouseOver();
 
     assert.strictEqual(
+        chart.tooltip.tt.renderer,
+        chart.tooltip.renderer,
+        '#15018: Split tooltip should use outside renderer'
+    );
+
+    assert.notOk(
+        chart.tooltip.followPointer,
+        '#14906: followPointer should be false with split tooltip'
+    );
+
+    assert.strictEqual(
         chart.series[0].tt.text.element.tagName,
         'SPAN',
-        'The label is a span'
+        '#7238: The label is a span'
     );
 });
 
@@ -359,6 +372,8 @@ QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
             ]
         });
         let bBox;
+
+        delete chart.pointer.chartPosition;
 
         // Open tooltip
         chart.series[0].points[8].onMouseOver();

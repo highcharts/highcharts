@@ -383,10 +383,10 @@ QUnit.test('Axis title multiline', function (assert) {
         }
     });
 
-    assert.ok(
-        chart.yAxis[0].axisTitle.element.getElementsByTagName('tspan')
-            .length === 1,
-        'Title is single line'
+    assert.strictEqual(
+        chart.yAxis[0].axisTitle.element.getElementsByTagName('tspan').length,
+        0,
+        'The title should be on a single line'
     );
     assert.ok(chart.plotWidth > crammedPlotWidth, 'Plot width increased');
 });

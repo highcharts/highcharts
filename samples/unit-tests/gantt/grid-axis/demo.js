@@ -1599,7 +1599,11 @@ QUnit.test('defaultOptions.borderWidth', function (assert) {
     // Set side to top
     axis.side = 0;
     // Several cases where there is no check if chart exists
-    axis.chart = {};
+    axis.chart = {
+        options: {
+            chart: {}
+        }
+    };
 
     /**
      * grid.borderWidth should default to 1
@@ -1744,9 +1748,9 @@ QUnit.test('Chart.update', assert => {
     } = chart;
     const getYAxisLabels = () =>
         Array.from(
-            document.querySelectorAll('.highcharts-yaxis-labels > text > tspan')
+            document.querySelectorAll('.highcharts-yaxis-labels > text')
         )
-            .map(text => text.innerHTML)
+            .map(text => text.textContent)
             .reverse();
 
     assert.strictEqual(chart.yAxis.length, 1, 'should have only one yAxis');

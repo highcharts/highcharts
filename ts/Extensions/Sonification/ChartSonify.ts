@@ -304,7 +304,10 @@ function getExtremesForInstrumentProps(
     dataExtremes?: Record<string, Highcharts.RangeObject>
 ): Record<string, Highcharts.RangeObject> {
     let allInstrumentDefinitions = (instruments || []).slice(0);
-    const defaultInstrumentDef = chart.options.sonification?.defaultInstrumentOptions;
+    const defaultInstrumentDef = (
+        chart.options.sonification &&
+        chart.options.sonification.defaultInstrumentOptions
+    );
     const optionDefToInstrDef = (
         optionDef: Highcharts.SonificationInstrumentOptions|Highcharts.DefaultSonificationInstrumentOptions
     ): Highcharts.PointInstrumentObject => ({
@@ -316,7 +319,10 @@ function getExtremesForInstrumentProps(
     }
 
     chart.series.forEach((series): void => {
-        const instrOptions = series.options.sonification?.instruments;
+        const instrOptions = (
+            series.options.sonification &&
+            series.options.sonification.instruments
+        );
         if (instrOptions) {
             allInstrumentDefinitions = allInstrumentDefinitions.concat(instrOptions.map(optionDefToInstrDef));
         }
@@ -668,8 +674,13 @@ function buildChartSonifySeriesOptions(
         Partial<Highcharts.SonifySeriesOptionsObject>|
         Array<Partial<Highcharts.SonifySeriesOptionsObject>>
     ) = chartSonifyOptions.seriesOptions || {};
-    const pointPlayTime = series.chart.options.sonification?.
-        defaultInstrumentOptions?.mapping?.pointPlayTime || 'x';
+    const pointPlayTime = (
+        series.chart.options.sonification &&
+        series.chart.options.sonification.defaultInstrumentOptions &&
+        series.chart.options.sonification.defaultInstrumentOptions.mapping &&
+        series.chart.options.sonification.defaultInstrumentOptions.mapping.pointPlayTime ||
+        'x'
+    );
     const configOptions = chartOptionsToSonifySeriesOptions(series);
 
     return merge(
@@ -740,7 +751,13 @@ function buildPathOrder(
             seriesList: Array<Highcharts.SonifySeriesOrderObject>,
             series: Highcharts.SonifyableSeries
         ): Array<Highcharts.SonifySeriesOrderObject> {
-            if (series.visible && series.options.sonification?.enabled !== false) {
+            if (
+                series.visible &&
+                (
+                    series.options.sonification &&
+                    series.options.sonification.enabled
+                ) !== false
+            ) {
                 seriesList.push({
                     series: series,
                     seriesOptions: seriesOptionsCallback(series)
@@ -1122,15 +1139,21 @@ function getSeriesInstrumentOptions(
     series: Highcharts.SonifyableSeries,
     options?: Highcharts.SonifySeriesOptionsObject
 ): (Array<Highcharts.PointInstrumentObject>|undefined) {
-    if (options?.instruments) {
+    if (options && options.instruments) {
         return options.instruments;
     }
 
-    const defaultInstrOpts: Record<string, any> =
-        series.chart.options.sonification?.defaultInstrumentOptions || {};
-    const seriesInstrOpts: Array<Record<string, any>> =
-        series.options.sonification?.instruments || [{}];
-    const removeNullsFromObject = (obj: Record<string, any>): void => {
+    const defaultInstrOpts: AnyRecord = (
+        series.chart.options.sonification &&
+        series.chart.options.sonification.defaultInstrumentOptions ||
+        {}
+    );
+    const seriesInstrOpts: Array<AnyRecord> = (
+        series.options.sonification &&
+        series.options.sonification.instruments ||
+        [{}]
+    );
+    const removeNullsFromObject = (obj: AnyRecord): void => {
         objectEach(obj, (val: any, key: string): void => {
             if (val === null) {
                 delete obj[key];
@@ -1180,7 +1203,11 @@ function chartOptionsToSonifySeriesOptions(
         onStart: seriesEvents.onSeriesStart || chartEvents.onSeriesStart,
         onPointEnd: seriesEvents.onPointEnd || chartEvents.onPointEnd,
         onPointStart: seriesEvents.onPointStart || chartEvents.onPointStart,
-        pointPlayTime: chartOpts.defaultInstrumentOptions?.mapping?.pointPlayTime,
+        pointPlayTime: (
+            chartOpts.defaultInstrumentOptions &&
+            chartOpts.defaultInstrumentOptions.mapping &&
+            chartOpts.defaultInstrumentOptions.mapping.pointPlayTime
+        ),
         masterVolume: chartOpts.masterVolume,
         instruments: getSeriesInstrumentOptions(series), // Deals with chart-level defaults
         earcons: seriesOpts.earcons || chartOpts.earcons
@@ -1203,7 +1230,10 @@ function getSeriesSonifyOptions(
     const seriesOpts = series.options.sonification;
     return merge(
         {
-            duration: seriesOpts?.duration || chartOpts?.duration
+            duration: (
+                (seriesOpts && seriesOpts.duration) ||
+                (chartOpts && chartOpts.duration)
+            )
         },
         chartOptionsToSonifySeriesOptions(series),
         options
@@ -1222,17 +1252,21 @@ function getChartSonifyOptions(
     chart: Highcharts.SonifyableChart,
     options?: Highcharts.SonifyChartOptionsObject
 ): Highcharts.SonifyChartOptionsObject {
-    const chartOpts: Record<string, any> = chart.options.sonification || {};
+    const chartOpts: AnyRecord = chart.options.sonification || {};
 
     return merge(
         {
             duration: chartOpts.duration,
             afterSeriesWait: chartOpts.afterSeriesWait,
-            pointPlayTime: chartOpts.defaultInstrumentOptions?.mapping?.pointPlayTime,
+            pointPlayTime: (
+                chartOpts.defaultInstrumentOptions &&
+                chartOpts.defaultInstrumentOptions.mapping &&
+                chartOpts.defaultInstrumentOptions.mapping.pointPlayTime
+            ),
             order: chartOpts.order,
-            onSeriesStart: chartOpts.events?.onSeriesStart,
-            onSeriesEnd: chartOpts.events?.onSeriesEnd,
-            onEnd: chartOpts.events?.onEnd
+            onSeriesStart: (chartOpts.events && chartOpts.events.onSeriesStart),
+            onSeriesEnd: (chartOpts.events && chartOpts.events.onSeriesEnd),
+            onEnd: (chartOpts.events && chartOpts.events.onEnd)
         },
         options
     );

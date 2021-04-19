@@ -13,11 +13,11 @@
 'use strict';
 
 import type Chart from '../../Core/Chart/Chart';
-import type CSSObject from '../../Core/Renderer/CSSObject';
 import type { HTMLDOMElement } from '../../Core/Renderer/DOMElementType';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
 import palette from '../../Core/Color/Palette.js';
+import ColorType from '../../Core/Color/ColorType';
 
 declare module '../../Core/Series/PointOptions' {
     interface PointOptions {
@@ -60,7 +60,7 @@ declare global {
             enabled: boolean;
             hideBrowserFocusOutline: boolean;
             margin: number;
-            style: CSSObject;
+            style: FocusBorderStyleObject;
         }
         interface AccessibilityKeyboardNavigationOptions {
             enabled: boolean;
@@ -78,10 +78,10 @@ declare global {
         }
         interface AccessibilityOptions {
             announceNewData: AccessibilityAnnounceNewDataOptions;
-            customComponents?: Record<string, any>;
+            customComponents?: AnyRecord;
             description?: string;
             enabled: boolean;
-            highContrastTheme: Record<string, any>;
+            highContrastTheme: AnyRecord;
             keyboardNavigation: AccessibilityKeyboardNavigationOptions;
             landmarkVerbosity: string;
             linkedDescription: (string|HTMLDOMElement);
@@ -121,6 +121,11 @@ declare global {
         interface ExportingOptions {
             accessibility?: ExportingAccessibilityOptions;
         }
+        interface FocusBorderStyleObject {
+            borderRadius?: number;
+            color?: ColorType;
+            lineWidth?: number;
+        }
         interface LegendAccessibilityKeyboardNavigationOptions {
             enabled: boolean;
         }
@@ -136,6 +141,7 @@ declare global {
         }
         interface PointAccessibilityOptionsObject {
             description?: string;
+            enabled?: boolean;
         }
         interface ScreenReaderClickCallbackFunction {
             (evt: MouseEvent, chart?: AccessibilityChart): void;
@@ -199,6 +205,12 @@ declare global {
  * @type {string|undefined}
  * @requires modules/accessibility
  * @since 7.1.0
+ *//**
+ * Enable or disable exposing the point to assistive technology
+ * @name Highcharts.PointAccessibilityOptionsObject#enabled
+ * @type {boolean|undefined}
+ * @requires modules/accessibility
+ * @since 9.0.1
  */
 
 /* *
@@ -297,17 +309,21 @@ var options: DeepPartial<Highcharts.Options> = {
 
             /**
              * Format for the screen reader information region before the chart.
-             * Supported HTML tags are `<h1-7>`, `<p>`, `<div>`, `<a>`, `<ul>`,
+             * Supported HTML tags are `<h1-6>`, `<p>`, `<div>`, `<a>`, `<ul>`,
              * `<ol>`, `<li>`, and `<button>`. Attributes are not supported,
              * except for id on `<div>`, `<a>`, and `<button>`. Id is required
              * on `<a>` and `<button>` in the format `<tag id="abcd">`. Numbers,
              * lower- and uppercase letters, "-" and "#" are valid characters in
              * IDs.
              *
+             * The headingTagName is an auto-detected heading (h1-h6) that
+             * corresponds to the heading level below the previous heading in
+             * the DOM.
+             *
              * @since 8.0.0
              */
             beforeChartFormat:
-                '<h5>{chartTitle}</h5>' +
+                '<{headingTagName}>{chartTitle}</{headingTagName}>' +
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
                 '<div>{chartLongdesc}</div>' +
@@ -691,8 +707,11 @@ var options: DeepPartial<Highcharts.Options> = {
             /**
              * Order of tab navigation in the chart. Determines which elements
              * are tabbed to first. Available elements are: `series`, `zoom`,
-             * `rangeSelector`, `chartMenu`, `legend`. In addition, any custom
-             * components can be added here.
+             * `rangeSelector`, `chartMenu`, `legend` and `container`. In
+             * addition, any custom components can be added here. Adding
+             * `container` first in order will make the keyboard focus stop on
+             * the chart container first, requiring the user to tab again to
+             * enter the chart.
              *
              * @type  {Array<string>}
              * @since 7.1.0
@@ -834,6 +853,16 @@ var options: DeepPartial<Highcharts.Options> = {
      * @type      {string}
      * @since     7.1.0
      * @apioption series.line.data.accessibility.description
+     */
+
+    /**
+     * Set to false to disable accessibility functionality for a specific point.
+     * The point will not be included in keyboard navigation, and will not be
+     * exposed to assistive technology.
+     *
+     * @type      {boolean}
+     * @since 9.0.1
+     * @apioption series.line.data.accessibility.enabled
      */
 
     /**

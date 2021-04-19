@@ -31,6 +31,7 @@ const {
     addEvent,
     error,
     extend,
+    fireEvent,
     getOptions,
     merge
 } = U;
@@ -40,11 +41,11 @@ declare module '../Core/Chart/ChartLike' {
         unbindGetSVG?: Function;
         exportChartLocal(
             exportingOptions?: Highcharts.ExportingOptions,
-            chartOptions?: Highcharts.Options
+            chartOptions?: Partial<Highcharts.Options>
         ): void;
         getSVGForLocalExport(
             options: Highcharts.ExportingOptions,
-            chartOptions: Highcharts.Options,
+            chartOptions: Partial<Highcharts.Options>,
             failCallback: Function,
             successCallback: Function
         ): void;
@@ -394,6 +395,19 @@ function downloadSVGLocal(
             }
         }
 
+        // Workaround for #15135, zero width spaces, which Highcharts uses to
+        // break lines, are not correctly rendered in PDF. Replace it with a
+        // regular space and offset by some pixels to compensate.
+        [].forEach.call(
+            svgElement.querySelectorAll('tspan'),
+            (tspan: SVGDOMElement): void => {
+                if (tspan.textContent === '\u200B') {
+                    tspan.textContent = ' ';
+                    tspan.setAttribute('dx', -5);
+                }
+            }
+        );
+
         win.svg2pdf(svgElement, pdf, { removeInvalid: true });
         return pdf.output('datauristring');
     }
@@ -604,7 +618,7 @@ function downloadSVGLocal(
  */
 Chart.prototype.getSVGForLocalExport = function (
     options: Highcharts.ExportingOptions,
-    chartOptions: Highcharts.Options,
+    chartOptions: Partial<Highcharts.Options>,
     failCallback: Function,
     successCallback: Function
 ): void {
@@ -732,7 +746,7 @@ Chart.prototype.getSVGForLocalExport = function (
  */
 Chart.prototype.exportChartLocal = function (
     exportingOptions?: Highcharts.ExportingOptions,
-    chartOptions?: Highcharts.Options
+    chartOptions?: Partial<Highcharts.Options>
 ): void {
     var chart = this,
         options = merge(chart.options.exporting, exportingOptions),
@@ -765,7 +779,8 @@ Chart.prototype.exportChartLocal = function (
                         { filename: chart.getFilename() },
                         options
                     ),
-                    fallbackToExportServer
+                    fallbackToExportServer,
+                    (): void => fireEvent(chart, 'exportChartLocalSuccess')
                 );
             }
         },
@@ -843,7 +858,7 @@ Chart.prototype.exportChartLocal = function (
 
     chart.getSVGForLocalExport(
         options,
-        chartOptions as any,
+        chartOptions || {},
         fallbackToExportServer,
         svgSuccess
     );

@@ -30,7 +30,11 @@ const {
  *
  * */
 
-class DataPresentationState implements DataEventEmitter<DataPresentationState.EventObject>, DataJSON.Class {
+/**
+ * Contains presentation information like column order, usually in relation to a
+ * table instance.
+ */
+class DataPresentationState implements DataEventEmitter<DataPresentationState.Event>, DataJSON.Class {
 
     /**
      * Converts a supported class JSON to a DataPresentationState instance.
@@ -59,8 +63,14 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      *
      * */
 
-    public columnOrder?: Array<string>;
+    /**
+     * Sorted array of column names.
+     */
+    private columnOrder?: Array<string>;
 
+    /**
+     * Whether the state has been changed since initialization.
+     */
     protected isModified?: boolean;
 
     /* *
@@ -73,17 +83,30 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * Emits an event on this table to all registered callbacks of the given
      * event.
      *
-     * @param {DataPresentationState.EventObject} e
+     * @param {DataPresentationState.Event} e
      * Event object with event information.
      */
-    public emit(e: DataPresentationState.EventObject): void {
+    public emit(e: DataPresentationState.Event): void {
         fireEvent(this, e.type, e);
     }
 
+    /**
+     * Returns an ordered array of column names.
+     *
+     * @return {Array<string>}
+     * Array of column names in order.
+     */
     public getColumnOrder(): Array<string> {
         return (this.columnOrder || []).slice();
     }
 
+    /**
+     * Returns a function for `Array.sort` to change the order of an array of
+     * column names. Unknown column names come last.
+     *
+     * @return {DataPresentationState.ColumnOrderCallback}
+     * Sort function to change the order.
+     */
     public getColumnSorter(): DataPresentationState.ColumnOrderCallback {
         const columnOrder = (this.columnOrder || []).slice();
 
@@ -111,6 +134,10 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
         };
     }
 
+    /**
+     * @return {boolean}
+     * Returns true, if the state was changed since initialization.
+     */
     public isSet(): boolean {
         return this.isModified === true;
     }
@@ -128,12 +155,21 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataPresentationState.EventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, DataPresentationState.EventObject>
+        type: DataPresentationState.Event['type'],
+        callback: DataEventEmitter.EventCallback<this, DataPresentationState.Event>
     ): Function {
         return addEvent(this, type, callback);
     }
 
+    /**
+     * Sets the order of the columns in place.
+     *
+     * @param {Array<string>} columnOrder
+     * Array of column names in order.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     */
     public setColumnOrder(
         columnOrder: Array<string>,
         eventDetail?: DataEventEmitter.EventDetail
@@ -161,7 +197,7 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
     }
 
     /**
-     * Converts the table to a class JSON.
+     * Converts the presentation state to a class JSON.
      *
      * @return {DataJSON.ClassJSON}
      * Class JSON of this table.
@@ -211,6 +247,9 @@ namespace DataPresentationState {
         'columnOrderChange'|'afterColumnOrderChange'
     );
 
+    /**
+     * Function to sort an array of column names.
+     */
     export interface ColumnOrderCallback {
         (a: string, b: string): number;
     }
@@ -218,12 +257,12 @@ namespace DataPresentationState {
     /**
      * All information objects of DataPrsentationState events.
      */
-    export type EventObject = (ColumnOrderEventObject);
+    export type Event = (ColumnOrderEvent);
 
     /**
      * Describes the information object for order-related events.
      */
-    export interface ColumnOrderEventObject extends DataEventEmitter.EventObject {
+    export interface ColumnOrderEvent extends DataEventEmitter.Event {
         type: ColumnOrderEventType;
         newColumnOrder: Array<string>;
         oldColumnOrder: Array<string>;

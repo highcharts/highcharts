@@ -43,10 +43,11 @@ const {
 import HTMLUtilities from '../Utils/HTMLUtilities.js';
 const {
     addClass,
-    setElAttrs,
     escapeStringForHTML,
-    stripHTMLTagsFromString,
     getElement,
+    getHeadingTagNameForElement,
+    setElAttrs,
+    stripHTMLTagsFromString,
     visuallyHideElement
 } = HTMLUtilities;
 
@@ -482,7 +483,11 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             format = chart.options.accessibility
                 .screenReaderSection.beforeChartFormat,
             axesDesc = this.getAxesDescription(),
-            shouldHaveSonifyBtn = chart.sonify && chart.options.sonification?.enabled,
+            shouldHaveSonifyBtn = (
+                chart.sonify &&
+                chart.options.sonification &&
+                chart.options.sonification.enabled
+            ),
             sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
                 chart.index,
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
@@ -493,6 +498,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 { chart: chart }
             ),
             context = {
+                headingTagName: getHeadingTagNameForElement(chart.renderTo),
                 chartTitle: getChartTitle(chart),
                 typeDescription: this.getTypeDescriptionText(),
                 chartSubtitle: this.getSubtitleText(),
@@ -613,7 +619,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     ): string {
         const chart = this.chart;
 
-        if (chart.options.sonification?.enabled === false) {
+        if (
+            chart.options.sonification &&
+            chart.options.sonification.enabled === false
+        ) {
             return '';
         }
 
@@ -707,8 +716,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         const el = this.sonifyButton = getElement(sonifyButtonId);
         const chart = this.chart as Highcharts.SonifyableChart;
         const defaultHandler = (e: Event): void => {
-            el?.setAttribute('aria-hidden', 'true');
-            el?.setAttribute('aria-label', '');
+            if (el) {
+                el.setAttribute('aria-hidden', 'true');
+                el.setAttribute('aria-label', '');
+            }
             e.preventDefault();
             e.stopPropagation();
 
@@ -719,8 +730,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             this.announcer.announce(announceMsg);
 
             setTimeout((): void => {
-                el?.removeAttribute('aria-hidden');
-                el?.removeAttribute('aria-label');
+                if (el) {
+                    el.removeAttribute('aria-hidden');
+                    el.removeAttribute('aria-label');
+                }
 
                 if (chart.sonify) {
                     chart.sonify();
@@ -730,12 +743,14 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
         if (el && chart) {
             setElAttrs(el, {
-                tabindex: '-1'
+                tabindex: -1
             });
 
             el.onclick = function (e): void {
-                const onPlayAsSoundClick = chart.options.accessibility?.screenReaderSection
-                    .onPlayAsSoundClick;
+                const onPlayAsSoundClick = (
+                    chart.options.accessibility &&
+                    chart.options.accessibility.screenReaderSection.onPlayAsSoundClick
+                );
 
                 (onPlayAsSoundClick || defaultHandler).call(
                     this, e, chart as Highcharts.AccessibilityChart
@@ -760,7 +775,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
         if (el) {
             setElAttrs(el, {
-                tabindex: '-1',
+                tabindex: -1,
                 'aria-expanded': !!getElement(tableId)
             });
 
@@ -850,7 +865,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * Remove component traces
      */
     destroy: function (this: Highcharts.InfoRegionsComponent): void {
-        this.announcer?.destroy();
+        if (this.announcer) {
+            this.announcer.destroy();
+        }
     }
 });
 

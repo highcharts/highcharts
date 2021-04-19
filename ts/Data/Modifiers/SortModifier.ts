@@ -17,7 +17,6 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
 
 import DataModifier from './DataModifier.js';
 import DataTable from '../DataTable.js';
@@ -57,26 +56,24 @@ class SortModifier extends DataModifier {
      * */
 
     private static ascending(
-        a: DataTableRow.CellType,
-        b: DataTableRow.CellType
+        a: DataTable.CellType,
+        b: DataTable.CellType
     ): number {
         return (
-            !a || !b ? 0 :
-                a < b ? -1 :
-                    a > b ? 1 :
-                        0
+            (a || 0) < (b || 0) ? -1 :
+                (a || 0) > (b || 0) ? 1 :
+                    0
         );
     }
 
     private static descending(
-        a: DataTableRow.CellType,
-        b: DataTableRow.CellType
+        a: DataTable.CellType,
+        b: DataTable.CellType
     ): number {
         return (
-            !a || !b ? 0 :
-                b < a ? -1 :
-                    b > a ? 1 :
-                        0
+            (b || 0) < (a || 0) ? -1 :
+                (b || 0) > (a || 0) ? 1 :
+                    0
         );
     }
 
@@ -112,14 +109,27 @@ class SortModifier extends DataModifier {
      *
      * */
 
-    public execute(
+    /**
+     * Sorts rows in the table.
+     *
+     * @param {DataTable} table
+     * Table to sort in.
+     *
+     * @param {DataEventEmitter.EventDetail} [eventDetail]
+     * Custom information for pending events.
+     *
+     * @return {DataTable}
+     * Sorted table as a reference.
+     */
+    public modify(
         table: DataTable,
         eventDetail?: DataEventEmitter.EventDetail
     ): DataTable {
         const modifier = this,
             {
                 direction,
-                orderByColumn
+                orderByColumn,
+                orderInColumn
             } = modifier.options,
             compare = (
                 direction === 'asc' ?
@@ -127,23 +137,46 @@ class SortModifier extends DataModifier {
                     SortModifier.descending
             );
 
-        modifier.emit({ type: 'execute', detail: eventDetail, table });
-
-        const result = new DataTable(
+        modifier.emit({
+            type: 'execute',
+            detail: eventDetail,
             table
-                .getAllRows()
-                .sort((
-                    a: DataTableRow,
-                    b: DataTableRow
-                ): number => compare(
-                    a.getCell(orderByColumn),
-                    b.getCell(orderByColumn)
-                ))
-        );
+        });
 
-        modifier.emit({ type: 'afterExecute', detail: eventDetail, table: result });
+        const columnNames = table.getColumnNames(),
+            orderByColumnIndex = columnNames.indexOf(orderByColumn),
+            rowReferences = table
+                .getRows()
+                .map((row, index): SortModifier.RowReference => ({
+                    index,
+                    row
+                })),
+            rowsLength = rowReferences.length;
 
-        return result;
+        if (orderByColumnIndex !== -1) {
+            rowReferences.sort((a, b): number => compare(
+                a.row[orderByColumnIndex],
+                b.row[orderByColumnIndex]
+            ));
+        }
+
+        if (orderInColumn) {
+            for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
+                table.setCell(rowReferences[i].index, orderInColumn, i);
+            }
+        } else {
+            for (let i = 0, iEnd = rowsLength; i < iEnd; ++i) {
+                table.setRows([rowReferences[i].row], i);
+            }
+        }
+
+        modifier.emit({
+            type: 'afterExecute',
+            detail: eventDetail,
+            table
+        });
+
+        return table;
     }
 
     /**
@@ -184,8 +217,32 @@ namespace SortModifier {
      * Options to configure the modifier.
      */
     export interface Options extends DataModifier.Options {
+
+        /**
+         * Direction of sorting.
+         *
+         * @default "desc"
+         */
         direction: ('asc'|'desc');
+
+        /**
+         * Column with values to order.
+         *
+         * @default "y"
+         */
         orderByColumn: string;
+
+        /**
+         * Column to update with order index instead of change order of rows.
+         */
+        orderInColumn?: string;
+
+    }
+
+    /** @private */
+    export interface RowReference {
+        index: number;
+        row: DataTable.Row;
     }
 
 }

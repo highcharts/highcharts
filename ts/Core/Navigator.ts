@@ -70,6 +70,7 @@ declare module './Series/SeriesLike' {
 
 declare module './Series/SeriesOptions' {
     interface SeriesOptions {
+        fillOpacity?: number;
         navigatorOptions?: SeriesOptions;
         showInNavigator?: boolean;
     }
@@ -105,8 +106,8 @@ declare global {
             outlineWidth?: number;
             series?: SeriesTypeOptions;
             top?: number;
-            xAxis?: XAxisOptions;
-            yAxis?: YAxisOptions;
+            xAxis?: DeepPartial<XAxisOptions>;
+            yAxis?: DeepPartial<YAxisOptions>;
         }
         interface Options {
             navigator?: NavigatorOptions;
@@ -534,7 +535,7 @@ extend(defaultOptions, {
             /**
              * @ignore-option
              */
-            compare: null,
+            compare: null as any,
 
             /**
              * Unless data is explicitly defined, the data is borrowed from the
@@ -596,7 +597,7 @@ extend(defaultOptions, {
              *
              * @type {Highcharts.ColorString|null}
              */
-            lineColor: null, // #4602
+            lineColor: null as any, // #4602
 
             marker: {
                 enabled: false
@@ -1884,7 +1885,7 @@ class Navigator {
 
         if (navigator.navigatorEnabled) {
             // an x axis is required for scrollbar also
-            navigator.xAxis = new Axis(chart, merge<Highcharts.XAxisOptions>({
+            navigator.xAxis = new Axis(chart, merge<DeepPartial<Highcharts.XAxisOptions>>({
                 // inherit base xAxis' break and ordinal options
                 breaks: baseXaxis.options.breaks,
                 ordinal: baseXaxis.options.ordinal
@@ -2030,10 +2031,7 @@ class Navigator {
                 navigator.hasDragged = (navigator.scrollbar as any).hasDragged;
                 navigator.render(0, 0, from, to);
 
-                if ((chart.options.scrollbar as any).liveRedraw ||
-                    ((e as any).DOMType !== 'mousemove' &&
-                    (e as any).DOMType !== 'touchmove')
-                ) {
+                if (this.shouldUpdateExtremes((e as any).DOMType)) {
                     setTimeout(function (): void {
                         navigator.onMouseUp(e);
                     });
@@ -2187,7 +2185,7 @@ class Navigator {
                         opacity: 1
                     }
                 }
-            } as Record<string, any>,
+            } as AnyRecord,
             // Remove navigator series that are no longer in the baseSeries
             navigatorSeries = navigator.series =
                 (navigator.series || []).filter(function (navSeries): boolean {
@@ -2224,7 +2222,7 @@ class Navigator {
                         {
                             color: base.color,
                             visible: base.visible
-                        } as Record<string, any>,
+                        } as AnyRecord,
                         !isArray(chartNavigatorSeriesOptions) ?
                             chartNavigatorSeriesOptions :
                             (defaultOptions.navigator as any).series
@@ -2352,36 +2350,36 @@ class Navigator {
         // Adding this multiple times to the same axis is no problem, as
         // duplicates should be discarded by the browser.
         if (baseSeries[0] && baseSeries[0].xAxis) {
-            addEvent(
+            baseSeries[0].eventsToUnbind.push(addEvent(
                 baseSeries[0].xAxis,
                 'foundExtremes',
                 this.modifyBaseAxisExtremes
-            );
+            ));
         }
 
         baseSeries.forEach(function (base): void {
             // Link base series show/hide to navigator series visibility
-            addEvent(base, 'show', function (): void {
+            base.eventsToUnbind.push(addEvent(base, 'show', function (): void {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(true, false);
                 }
-            });
-            addEvent(base, 'hide', function (): void {
+            }));
+            base.eventsToUnbind.push(addEvent(base, 'hide', function (): void {
                 if (this.navigatorSeries) {
                     this.navigatorSeries.setVisible(false, false);
                 }
-            });
+            }));
 
             // Respond to updated data in the base series, unless explicitily
             // not adapting to data changes.
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
                 if (base.xAxis) {
-                    addEvent(base, 'updatedData', this.updatedDataHandler);
+                    base.eventsToUnbind.push(addEvent(base, 'updatedData', this.updatedDataHandler));
                 }
             }
 
             // Handle series removal
-            addEvent(base, 'remove', function (): void {
+            base.eventsToUnbind.push(addEvent(base, 'remove', function (): void {
                 if (this.navigatorSeries) {
                     erase(navigator.series as any, this.navigatorSeries);
                     if (defined(this.navigatorSeries.options)) {
@@ -2389,7 +2387,7 @@ class Navigator {
                     }
                     delete this.navigatorSeries;
                 }
-            });
+            }));
         }, this);
     }
 

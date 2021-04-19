@@ -12,10 +12,10 @@
 
 'use strict';
 
-import type CSSObject from '../Core/Renderer/CSSObject';
 import type {
     DOMElementType
 } from '../Core/Renderer/DOMElementType';
+import type SVGAttributes from '../Core/Renderer/SVG/SVGAttributes';
 import H from '../Core/Globals.js';
 import SVGElement from '../Core/Renderer/SVG/SVGElement.js';
 import SVGLabel from '../Core/Renderer/SVG/SVGLabel.js';
@@ -44,7 +44,7 @@ declare global {
         interface SVGElement {
             focusBorder?: SVGElement;
             /** @requires modules/accessibility */
-            addFocusBorder(margin: number, style: CSSObject): void;
+            addFocusBorder(margin: number, attribs: SVGAttributes): void;
             /** @requires modules/accessibility */
             removeFocusBorder(): void;
         }
@@ -79,7 +79,9 @@ function addDestroyFocusBorderHook(el: SVGElement): void {
     const origDestroy = el.destroy;
 
     el.destroy = function (): undefined {
-        el.focusBorder?.destroy?.();
+        if (el.focusBorder && el.focusBorder.destroy) {
+            el.focusBorder.destroy();
+        }
         return origDestroy.apply(el, arguments);
     };
 
@@ -172,12 +174,12 @@ extend(SVGElement.prototype, {
      *
      * @param {number} margin
      *
-     * @param {Highcharts.CSSObject} style
+     * @param {SVGAttributes} attribs
      */
     addFocusBorder: function (
         this: SVGElement,
         margin: number,
-        style: CSSObject
+        attribs: SVGAttributes
     ): void {
         // Allow updating by just adding new border
         if (this.focusBorder) {
@@ -259,7 +261,7 @@ extend(SVGElement.prototype, {
             borderPosY,
             borderWidth,
             borderHeight,
-            parseInt((style && style.borderRadius || 0).toString(), 10)
+            parseInt((attribs && attribs.r || 0).toString(), 10)
         )
             .addClass('highcharts-focus-border')
             .attr({
@@ -269,12 +271,12 @@ extend(SVGElement.prototype, {
 
         if (!this.renderer.styledMode) {
             this.focusBorder.attr({
-                stroke: style && style.stroke,
-                'stroke-width': style && style.strokeWidth
+                stroke: attribs && attribs.stroke,
+                'stroke-width': attribs && attribs.strokeWidth
             });
         }
 
-        addUpdateFocusBorderHooks(this, margin, style);
+        addUpdateFocusBorderHooks(this, margin, attribs);
         addDestroyFocusBorderHook(this);
     },
 
@@ -313,7 +315,7 @@ H.Chart.prototype.renderFocusBorder = function (this: Highcharts.AccessibilityCh
             focusElement.addFocusBorder(focusBorderOptions.margin, {
                 stroke: focusBorderOptions.style.color,
                 strokeWidth: focusBorderOptions.style.lineWidth,
-                borderRadius: focusBorderOptions.style.borderRadius
+                r: focusBorderOptions.style.borderRadius
             });
         }
     }

@@ -43,6 +43,7 @@ require('./jsdoc-websearch');
 gulp.task(
     'jsdoc',
     gulp.series(
+        'scripts',
         'jsdoc-clean',
         'jsdoc-classes',
         'jsdoc-namespace',

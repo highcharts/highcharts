@@ -125,7 +125,7 @@ class SVGLabel extends SVGElement {
      * @name Highcharts.SVGLabel#textProps
      * @type {Array<string>}
      */
-    public static textProps: Array<string> = [
+    public static textProps: Array<keyof CSSObject> = [
         'color', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
         'textOutline', 'textOverflow', 'width'
@@ -142,7 +142,7 @@ class SVGLabel extends SVGElement {
             left: 0,
             center: 0.5,
             right: 1
-        } as SVGAttributes)[value];
+        })[value];
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
@@ -189,9 +189,9 @@ class SVGLabel extends SVGElement {
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
-            SVGLabel.textProps.forEach((prop: string): void => {
+            SVGLabel.textProps.forEach((prop): void => {
                 if (typeof styles[prop] !== 'undefined') {
-                    textStyles[prop] = styles[prop];
+                    (textStyles as any)[prop] = styles[prop];
                     delete styles[prop];
                 }
             });
@@ -246,14 +246,19 @@ class SVGLabel extends SVGElement {
      * Return the bounding box of the box, not the group.
      */
     public getBBox(): BBoxObject {
-        const bBox = this.bBox;
+        // If we have a text string and the DOM bBox was 0, it typically means
+        // that the label was first rendered hidden, so we need to update the
+        // bBox (#15246)
+        if (this.textStr && this.bBox.width === 0 && this.bBox.height === 0) {
+            this.updateBoxSize();
+        }
         const padding = this.padding;
         const paddingLeft = pick(this.paddingLeft, padding);
         return {
             width: this.width,
             height: this.height,
-            x: bBox.x - paddingLeft,
-            y: bBox.y - padding
+            x: this.bBox.x - paddingLeft,
+            y: this.bBox.y - padding
         };
     }
 
@@ -291,8 +296,9 @@ class SVGLabel extends SVGElement {
                     ) &&
                     e.relatedTarget instanceof Element &&
                     (
-                        label.element.contains(e.relatedTarget) ||
-                        span.element.contains(e.relatedTarget)
+                        // #14110
+                        label.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY ||
+                        span.element.compareDocumentPosition(e.relatedTarget) & Node.DOCUMENT_POSITION_CONTAINED_BY
                     )
                 ) {
                     return;

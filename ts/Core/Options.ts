@@ -141,7 +141,7 @@ declare global {
             style?: CSSObject;
             styledMode?: boolean;
             type?: string;
-            width?: (null|number|string);
+            width?: (null|number);
             zoomBySingleTouch?: boolean;
             zoomType?: ('x'|'xy'|'y');
         }
@@ -300,7 +300,7 @@ declare global {
             ): string;
         }
         interface Options {
-            chart?: ChartOptions;
+            chart: ChartOptions;
             credits?: CreditsOptions;
             colors?: Array<ColorString>;
             caption?: CaptionOptions;
@@ -1434,32 +1434,31 @@ H.defaultOptions = {
          *
          * @sample  {highcharts} highcharts/chart/pankey/ Zooming and panning
          * @sample  {highstock} stock/chart/panning/ Zooming and xy panning
-         *
-         * @product highcharts highstock gantt
-         * @apioption chart.panning
          */
+        panning: {
+            /**
+             * Enable or disable chart panning.
+             *
+             * @type      {boolean}
+             * @default   {highcharts} false
+             * @default   {highstock|highmaps} true
+             */
+            enabled: false,
 
-        /**
-         * Enable or disable chart panning.
-         *
-         * @type      {boolean}
-         * @default   {highcharts} false
-         * @default   {highstock} true
-         * @apioption chart.panning.enabled
-         */
-
-        /**
-         * Decides in what dimensions the user can pan the chart. Can be
-         * one of `x`, `y`, or `xy`.
-         *
-         * @sample {highcharts} highcharts/chart/panning-type
-         *         Zooming and xy panning
-         *
-         * @type    {string}
-         * @validvalue ["x", "y", "xy"]
-         * @default x
-         * @apioption chart.panning.type
-         */
+            /**
+             * Decides in what dimensions the user can pan the chart. Can be
+             * one of `x`, `y`, or `xy`.
+             *
+             * @sample {highcharts} highcharts/chart/panning-type
+             *         Zooming and xy panning
+             *
+             * @type       {string}
+             * @validvalue ["x", "y", "xy"]
+             * @default    {highcharts|highstock} x
+             * @default    {highmaps} xy
+             */
+            type: 'x'
+        },
 
         /**
          * Equivalent to [zoomType](#chart.zoomType), but for multitouch
@@ -1970,10 +1969,10 @@ H.defaultOptions = {
          * However, `zoomBySingleTouch` will interfere with touch-dragging the
          * chart to read the tooltip. And especially when vertical zooming is
          * enabled, it will make it hard to scroll vertically on the page.
-         * @since      next
+         * @since 9.0.0
          * @sample     highcharts/chart/zoombysingletouch
          *             Zoom by single touch enabled, with buttons to toggle
-         * @product    highcharts higstock gantt
+         * @product    highcharts highstock gantt
          */
         zoomBySingleTouch: false,
 
@@ -3559,6 +3558,8 @@ H.defaultOptions = {
          * and wordcloud series by override in the `plotOptions`
          * for those series types.
          *
+         * Does not apply if [split](#tooltip.split) is `true`.
+         *
          * For touch moves to behave the same way, [followTouchMove](
          * #tooltip.followTouchMove) must be `true` also.
          *
@@ -3746,7 +3747,7 @@ H.defaultOptions = {
 
         /**
          * The name of a symbol to use for the border around the tooltip. Can
-         * be one of: `"callout"`, `"circle"`, or `"square"`. When
+         * be one of: `"callout"`, `"circle"` or `"rect"`. When
          * [tooltip.split](#tooltip.split)
          * option is enabled, shape is applied to all boxes except header, which
          * is controlled by
@@ -3964,7 +3965,7 @@ H.defaultOptions = {
         borderRadius: 3,
 
         /**
-         * For series on a datetime axes, the date format in the tooltip's
+         * For series on datetime axes, the date format in the tooltip's
          * header will by default be guessed based on the closest data points.
          * This member gives the default string representations used for
          * each unit. For an overview of the replacement codes, see

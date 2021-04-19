@@ -47,8 +47,8 @@ export type SeriesType = SeriesTypeRegistry[keyof SeriesTypeRegistry]['prototype
 /**
  * Helper interface to add series types to `SeriesOptionsType` and `SeriesType`.
  *
- * Use the `declare module 'Types'` pattern to overload the interface in this
- * definition file.
+ * Use the `declare module 'SeriesType'` pattern to overload the interface in
+ * this definition file.
  */
 export interface SeriesTypeRegistry {
     [key: string]: typeof Series;

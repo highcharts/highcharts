@@ -85,7 +85,7 @@ QUnit.test('getSVG', function (assert) {
 
     assert.strictEqual(
         output.querySelector(
-            '.highcharts-legend .highcharts-series-0 text tspan'
+            '.highcharts-legend .highcharts-series-0 text'
         ).textContent,
         'New Series Name',
         'No reference, series name ok'
@@ -105,11 +105,15 @@ QUnit.test('getSVG', function (assert) {
 
     assert.strictEqual(
         output.querySelector(
-            '.highcharts-legend .highcharts-series-1 text tspan'
+            '.highcharts-legend .highcharts-series-1 text'
         ).textContent,
         'Second Series Name',
         'Reference by id, series name ok'
     );
+
+    // #14954
+    const remove = Element.prototype.remove;
+    Element.prototype.remove = void 0;
 
     chart.getSVG({
         chart: {
@@ -131,6 +135,8 @@ QUnit.test('getSVG', function (assert) {
         false,
         'Iframe should be destroyed in DOM after getSVG().'
     );
+
+    Element.prototype.remove = remove;
 });
 
 QUnit.test('Hide label with useHTML', function (assert) {

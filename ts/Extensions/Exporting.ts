@@ -17,6 +17,7 @@ import type {
     VerticalAlignValue
 } from '../Core/Renderer/AlignObject';
 import type AnimationOptions from '../Core/Animation/AnimationOptions';
+import type ButtonThemeObject from '../Core/Renderer/SVG/ButtonThemeObject';
 import type ColorString from '../Core/Color/ColorString';
 import type CSSObject from '../Core/Renderer/CSSObject';
 import type HTMLAttributes from '../Core/Renderer/HTML/HTMLAttributes';
@@ -105,7 +106,7 @@ declare module '../Core/Chart/ChartLike' {
         /** @requires modules/exporting */
         getSVGForExport(
             options: Highcharts.ExportingOptions,
-            chartOptions: Highcharts.Options
+            chartOptions: Partial<Highcharts.Options>
         ): string;
         /** @requires modules/exporting */
         inlineStyles(): void;
@@ -157,7 +158,7 @@ declare global {
             symbolX?: number;
             symbolY?: number;
             text?: string;
-            theme?: SVGAttributes;
+            theme?: ButtonThemeObject;
             titleKey?: string;
             verticalAlign?: VerticalAlignValue;
             width?: number;
@@ -561,14 +562,16 @@ merge(true, defaultOptions.navigation, {
 });
 
 // Presentational attributes
-merge(true, defaultOptions.navigation
+merge(
+    true,
+    defaultOptions.navigation,
     /**
      * A collection of options for buttons and menus appearing in the exporting
      * module.
      *
      * @optionparent navigation
      */
-    , {
+    {
 
         /**
          * CSS styles for the popup menu appearing by default when the export
@@ -1330,8 +1333,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (options && options.exporting && options.exporting.allowHTML) {
             if (html) {
                 html = '<foreignObject x="0" y="0" ' +
-                            'width="' + (options.chart as any).width + '" ' +
-                            'height="' + (options.chart as any).height + '">' +
+                            'width="' + options.chart.width + '" ' +
+                            'height="' + options.chart.height + '">' +
                     '<body xmlns="http://www.w3.org/1999/xhtml">' +
                     // Some tags needs to be closed in xhtml (#13726)
                     html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
@@ -1454,11 +1457,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         cssWidth = chart.renderTo.style.width as any;
         cssHeight = chart.renderTo.style.height as any;
         sourceWidth = (options.exporting as any).sourceWidth ||
-            (options.chart as any).width ||
+            options.chart.width ||
             (/px$/.test(cssWidth) && parseInt(cssWidth, 10)) ||
             (options.isGantt ? 800 : 600);
         sourceHeight = (options.exporting as any).sourceHeight ||
-            (options.chart as any).height ||
+            options.chart.height ||
             (/px$/.test(cssHeight) && parseInt(cssHeight, 10)) ||
             400;
 
@@ -1490,10 +1493,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
         });
 
-        // Assign an internal key to ensure a one-to-one mapping (#5924)
+        const colls: Record<string, boolean> = {};
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
+            // Assign an internal key to ensure a one-to-one mapping (#5924)
             if (!axis.userOptions.internalKey) { // #6444
                 axis.userOptions.internalKey = uniqueKey();
+            }
+
+            if (!axis.options.isInternal) {
+                if (!colls[axis.coll]) {
+                    colls[axis.coll] = true;
+                    (options as any)[axis.coll] = [];
+                }
+
+                (options as any)[axis.coll].push(merge(axis.userOptions, {
+                    visible: axis.visible
+                }));
             }
         });
 
@@ -1503,7 +1518,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Axis options and series options  (#2022, #3900, #5982)
         if (chartOptions) {
             ['xAxis', 'yAxis', 'series'].forEach(function (coll: string): void {
-                var collOptions: Highcharts.Options = {};
+                var collOptions: Partial<Highcharts.Options> = {};
 
                 if ((chartOptions as any)[coll]) {
                     (collOptions as any)[coll] = (chartOptions as any)[coll];
@@ -1562,7 +1577,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     getSVGForExport: function (
         this: Chart,
         options: Highcharts.ExportingOptions,
-        chartOptions: Highcharts.Options
+        chartOptions: Partial<Highcharts.Options>
     ): string {
         var chartExportingOptions: Highcharts.ExportingOptions =
             this.options.exporting as any;
@@ -1729,7 +1744,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
         if (handleMaxWidth) {
             printReverseInfo.resetParams = [
-                (chart.options.chart as any).width,
+                chart.options.chart.width,
                 void 0,
                 false
             ];
@@ -1936,7 +1951,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     button.setState(0);
                 }
                 chart.openMenu = false;
-                css(chart.renderTo, { overflow: 'hidden' }); // #10361
+                // #10361, #9998
+                css(chart.renderTo, { overflow: 'hidden' });
+                css(chart.container, { overflow: 'hidden' });
                 U.clearTimeout(menu.hideTimer as any);
                 fireEvent(chart, 'exportMenuHidden');
             };
@@ -2063,7 +2080,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         css(menu, menuStyle);
-        css(chart.renderTo, { overflow: '' }); // #10361
+        // #10361, #9998
+        css(chart.renderTo, { overflow: '' });
+        css(chart.container, { overflow: '' });
         chart.openMenu = true;
         fireEvent(chart, 'exportMenuShown');
     },
@@ -2103,12 +2122,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.exportSVGElements = [];
         }
 
-        if (btnOptions.enabled === false) {
+        if (btnOptions.enabled === false || !btnOptions.theme) {
             return;
         }
 
 
-        var attr: SVGAttributes = btnOptions.theme as any,
+        var attr = btnOptions.theme,
             states = attr.states,
             hover = states && states.hover,
             select = states && states.select,
@@ -2127,7 +2146,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (onclick) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Record<string, any>)
+                e: (Event|AnyRecord)
             ): void {
                 if (e) {
                     e.stopPropagation();
@@ -2138,7 +2157,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else if (menuItems) {
             callback = function (
                 this: SVGElement,
-                e: (Event|Record<string, any>)
+                e: (Event|AnyRecord)
             ): void {
                 // consistent with onclick call (#3495)
                 if (e) {
@@ -2471,8 +2490,11 @@ Chart.prototype.inlineStyles = function (): void {
                 // to inline it. Top-level props should be diffed against parent
                 // (#7687).
                 if (
-                    (parentStyles[prop] !== val || node.nodeName === 'svg') &&
-                    defaultStyles[node.nodeName][prop] !== val
+                    (
+                        (parentStyles as any)[prop] !== val ||
+                        node.nodeName === 'svg'
+                    ) &&
+                    (defaultStyles[node.nodeName] as any)[prop] !== val
                 ) {
                     // Attributes
                     if (
@@ -2530,10 +2552,10 @@ Chart.prototype.inlineStyles = function (): void {
             if (H.isFirefox || H.isMS) {
                 // Some browsers put lots of styles on the prototype
                 for (var p in styles) { // eslint-disable-line guard-for-in
-                    filterStyles(styles[p] as any, p);
+                    filterStyles((styles as any)[p], p);
                 }
             } else {
-                objectEach(styles, filterStyles);
+                objectEach(styles, filterStyles as any);
             }
 
             // Apply styles
@@ -2565,9 +2587,9 @@ Chart.prototype.inlineStyles = function (): void {
      * @return {void}
      */
     function tearDown(): void {
-        (dummySVG.parentNode as any).remove();
+        dummySVG.parentNode.removeChild(dummySVG);
         // Remove trash from DOM that stayed after each exporting
-        iframe.remove();
+        iframe.parentNode.removeChild(iframe);
     }
 
     recurse(this.container.querySelector('svg') as any);

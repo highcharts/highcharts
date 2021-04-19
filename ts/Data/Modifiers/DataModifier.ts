@@ -38,10 +38,10 @@ const {
  * */
 
 /**
- * Abstract class to provide an interface for modifying DataTable.
+ * Abstract class to provide an interface for modifying a table.
  */
-abstract class DataModifier<TEventObject extends DataEventEmitter.EventObject = DataModifier.EventObject>
-implements DataEventEmitter<TEventObject>, DataJSON.Class {
+abstract class DataModifier<TEvent extends DataEventEmitter.Event = DataModifier.Event>
+implements DataEventEmitter<TEvent>, DataJSON.Class {
 
     /* *
      *
@@ -53,7 +53,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Regular expression to extract the modifier name (group 1) from the
      * stringified class type.
      */
-    private static readonly nameRegExp = /^function\s+(\w*?)(?:DataModifier)?\s*\(/;
+    private static readonly nameRegExp = /^function\s+(\w*?)(?:Data)?(?:Modifier)?\s*\(/;
 
     /**
      * Registry as a record object with modifier names and their class.
@@ -69,7 +69,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Adds a modifier class to the registry. The modifier has to provide the
      * `DataModifier.options` property and the `DataModifier.execute` method to
-     * modify the DataTable.
+     * modify the table.
      *
      * @param {DataModifier} modifier
      * Modifier class (aka class constructor) to register.
@@ -164,16 +164,15 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * */
 
     /**
-     * Applies modifications to the table rows and returns a new table with the
-     * modified rows.
+     * Applies modifications to the given table.
      *
      * @param {DataTable} table
      * Table to modify.
      *
      * @return {DataTable}
-     * New modified table.
+     * Table as a reference.
      */
-    public abstract execute(table: DataTable): DataTable;
+    public abstract modify(table: DataTable): DataTable;
 
     /**
      * Runs a timed execution of the modifier on the given datatable.
@@ -194,9 +193,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
         options?: DataModifier.BenchmarkOptions
     ): Array<number> {
         const results: Array<number> = [];
-        const modifier = this as DataModifier<DataModifier.BenchmarkEventObject|DataModifier.EventObject>;
+        const modifier = this as DataModifier<DataModifier.BenchmarkEvent|DataModifier.Event>;
         const execute = (): void => {
-            modifier.execute(dataTable);
+            modifier.modify(dataTable);
             modifier.emit({ type: 'afterBenchmarkIteration' });
         };
 
@@ -246,10 +245,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Emits an event on the modifier to all registered callbacks of this event.
      *
-     * @param {DataEventEmitter.EventObject} [e]
+     * @param {DataEventEmitter.Event} [e]
      * Event object containing additonal event information.
      */
-    public emit(e: TEventObject): void {
+    public emit(e: TEvent): void {
         fireEvent(this, e.type, e);
     }
 
@@ -266,8 +265,8 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * Function to unregister callback from the modifier event.
      */
     public on(
-        type: TEventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, TEventObject>
+        type: TEvent['type'],
+        callback: DataEventEmitter.EventCallback<this, TEvent>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -315,24 +314,35 @@ namespace DataModifier {
     }
 
     /**
-     * Event object with additional event information.
+     * Benchmark event with additional event information.
      */
-    export interface EventObject extends DataEventEmitter.EventObject {
-        readonly type: (
-            'execute'|'afterExecute'
-        );
-        readonly table: DataTable;
-    }
-
-    export interface BenchmarkEventObject extends DataEventEmitter.EventObject {
+    export interface BenchmarkEvent extends DataEventEmitter.Event {
         readonly type: (
             'afterBenchmark'|'afterBenchmarkIteration'
         );
         readonly results?: Array<number>;
     }
 
+    /**
+     * Benchmark options.
+     */
     export interface BenchmarkOptions {
         iterations: number;
+    }
+
+    /**
+     * Event information.
+     */
+    export type Event = (BenchmarkEvent|ExecuteEvent);
+
+    /**
+     * Execute event with additional event information.
+     */
+    export interface ExecuteEvent extends DataEventEmitter.Event {
+        readonly type: (
+            'execute'|'afterExecute'
+        );
+        readonly table: DataTable;
     }
 
     /**

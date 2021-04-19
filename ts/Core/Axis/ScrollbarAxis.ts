@@ -51,6 +51,34 @@ class ScrollbarAxis {
      * Scrollbar class to use.
      */
     public static compose(AxisClass: typeof Axis, ScrollbarClass: typeof Scrollbar): void {
+        const getExtremes = (axis: ScrollbarAxis): Record<string, number> => {
+            const axisMin = pick(
+                axis.options && axis.options.min,
+                axis.min as any
+            );
+            const axisMax = pick(
+                axis.options && axis.options.max,
+                axis.max as any
+            );
+            return {
+                axisMin,
+                axisMax,
+                scrollMin: defined(axis.dataMin) ?
+                    Math.min(
+                        axisMin,
+                        axis.min as any,
+                        axis.dataMin,
+                        pick(axis.threshold, Infinity)
+                    ) : axisMin,
+                scrollMax: defined(axis.dataMax) ?
+                    Math.max(
+                        axisMax,
+                        axis.max as any,
+                        axis.dataMax,
+                        pick(axis.threshold, -Infinity)
+                    ) : axisMax
+            };
+        };
 
         // Wrap axis initialization and create scrollbar if enabled:
         addEvent(AxisClass, 'afterInit', function (): void {
@@ -75,26 +103,12 @@ class ScrollbarAxis {
                     this: Highcharts.Scrollbar,
                     e: Highcharts.ScrollbarChangedEventObject
                 ): void {
-                    var axisMin = pick(
-                            axis.options && axis.options.min,
-                            axis.min as any
-                        ),
-                        axisMax = pick(
-                            axis.options && axis.options.max,
-                            axis.max as any
-                        ),
-                        unitedMin = defined(axis.dataMin as any) ?
-                            Math.min(
-                                axisMin,
-                                axis.min as any,
-                                axis.dataMin as any
-                            ) : axisMin,
-                        unitedMax = defined(axis.dataMax as any) ?
-                            Math.max(
-                                axisMax,
-                                axis.max as any,
-                                axis.dataMax as any
-                            ) : axisMax,
+                    var {
+                            axisMin,
+                            axisMax,
+                            scrollMin: unitedMin,
+                            scrollMax: unitedMax
+                        } = getExtremes(axis),
                         range = unitedMax - unitedMin,
                         to,
                         from;
@@ -117,17 +131,7 @@ class ScrollbarAxis {
                         from = unitedMin + range * (1 - (this.to as any));
                     }
 
-                    if (
-                        pick(
-                            this.options.liveRedraw,
-                            H.svg && !H.isTouchDevice && !this.chart.isBoosting
-                        ) ||
-                        // Mouseup always should change extremes
-                        e.DOMType === 'mouseup' ||
-                        e.DOMType === 'touchend' ||
-                        // Internal events
-                        !defined(e.DOMType)
-                    ) {
+                    if (this.shouldUpdateExtremes(e.DOMType)) {
                         axis.setExtremes(
                             from,
                             to,
@@ -147,16 +151,10 @@ class ScrollbarAxis {
         // Wrap rendering axis, and update scrollbar if one is created:
         addEvent(AxisClass, 'afterRender', function (): void {
             var axis = this as ScrollbarAxis,
-                scrollMin = Math.min(
-                    pick(axis.options.min, axis.min as any),
-                    axis.min as any,
-                    pick(axis.dataMin, axis.min as any) // #6930
-                ),
-                scrollMax = Math.max(
-                    pick(axis.options.max, axis.max as any),
-                    axis.max as any,
-                    pick(axis.dataMax, axis.max as any) // #6930
-                ),
+                {
+                    scrollMin,
+                    scrollMax
+                } = getExtremes(axis),
                 scrollbar = axis.scrollbar,
                 offset = (axis.axisTitleMargin as any) + (axis.titleOffset || 0),
                 scrollbarsOffsets = axis.chart.scrollbarsOffsets,

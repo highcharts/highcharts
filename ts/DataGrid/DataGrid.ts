@@ -121,12 +121,7 @@ class DataGrid {
         if (this.options.dataTable) {
             return this.options.dataTable;
         }
-        if (this.options.json) {
-            return DataTable.fromJSON({
-                $class: 'DataTable',
-                rows: this.options.json
-            });
-        }
+
         return new DataTable();
     }
 
@@ -182,7 +177,7 @@ class DataGrid {
             for (const tableRow of this.rowElements) {
                 const dataTableRow = this.dataTable.getRow(i);
                 if (dataTableRow) {
-                    const row = (Object as any).values(dataTableRow.getAllCells());
+                    const row: any = []; // (Object as any).values(dataTableRow.getAllCells());
                     const cellElements = tableRow.querySelectorAll('div');
                     row.forEach((columnValue: string, j: number): void => {
                         const cell = cellElements[j];
@@ -216,7 +211,7 @@ class DataGrid {
     private onDocumentClick(e: MouseEvent): void {
         if (this.cellInputEl && e.target) {
             const cellEl = this.cellInputEl.parentNode;
-            const isClickInInput = cellEl?.contains(e.target as Node);
+            const isClickInInput = cellEl && cellEl.contains(e.target as Node);
             if (!isClickInInput) {
                 this.removeCellInputElement();
             }
@@ -265,7 +260,7 @@ class DataGrid {
 
             const dataTableRow = this.dataTable.getRow(i);
             if (dataTableRow) {
-                const row = (Object as any).values(dataTableRow.getAllCells());
+                const row: any = []; // (Object as any).values(dataTableRow.getAllCells());
 
                 row.forEach((columnValue: string): void => {
                     const cellEl = makeDiv('hc-dg-cell');

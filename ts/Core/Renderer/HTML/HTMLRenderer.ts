@@ -11,13 +11,6 @@
 import type CSSObject from '../CSSObject';
 import type HTMLElement from './HTMLElement';
 import type { HTMLDOMElement } from '../DOMElementType';
-import H from '../../Globals.js';
-const {
-    isFirefox,
-    isMS,
-    isWebKit,
-    win
-} = H;
 import AST from './AST.js';
 import SVGElement from '../SVG/SVGElement.js';
 import SVGRenderer from '../SVG/SVGRenderer.js';
@@ -35,8 +28,6 @@ const {
 declare module '../SVG/SVGRendererLike' {
     interface SVGElementLike {
         /** @requires Core/Renderer/HTML/HTMLRenderer */
-        getTransformKey(): string;
-        /** @requires Core/Renderer/HTML/HTMLRenderer */
         html(str: string, x: number, y: number): HTMLElement;
     }
 }
@@ -48,33 +39,13 @@ declare module '../SVG/SVGRendererLike' {
 const HTMLRenderer = SVGRenderer;
 interface HTMLRenderer extends SVGRenderer {
     /** @requires Core/Renderer/HTML/HTMLRenderer */
-    getTransformKey(): string;
-    /** @requires Core/Renderer/HTML/HTMLRenderer */
     html(str: string, x: number, y: number): HTMLElement;
 }
 
 /* eslint-disable valid-jsdoc */
 
 // Extend SvgRenderer for useHTML option.
-extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
-
-    /**
-     * @private
-     * @function Highcharts.SVGRenderer#getTransformKey
-     *
-     * @return {string}
-     */
-    getTransformKey: function (this: HTMLRenderer): string {
-        return isMS && !/Edge/.test(win.navigator.userAgent) ?
-            '-ms-transform' :
-            isWebKit ?
-                '-webkit-transform' :
-                isFirefox ?
-                    'MozTransform' :
-                    win.opera ?
-                        '-o-transform' :
-                        '';
-    },
+extend<SVGRenderer|HTMLRenderer>(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
 
     /**
      * Create HTML text node. This is used by the VML renderer as well as the
@@ -306,10 +277,10 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                                 }(htmlGroup as any)),
                                 on: function (): HTMLElement {
                                     if (parents[0].div) { // #6418
-                                        wrapper.on.apply(
-                                            { element: parents[0].div },
-                                            arguments as any
-                                        );
+                                        wrapper.on.apply({
+                                            element: parents[0].div,
+                                            onEvents: wrapper.onEvents
+                                        }, arguments);
                                     }
                                     return parentGroup;
                                 },

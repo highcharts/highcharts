@@ -21,6 +21,7 @@ const {
     addEvent,
     destroyObjectProperties,
     fireEvent,
+    isNumber,
     objectEach,
     pick
 } = U;
@@ -83,7 +84,7 @@ class StackingAxisAdditions {
         const stacking = this;
         const axis = stacking.axis;
         const axisSeries = axis.series;
-        const reversedStacks = pick(axis.options.reversedStacks, true);
+        const reversedStacks = axis.options.reversedStacks;
         const len = axisSeries.length;
 
         let actualSeries: Series,
@@ -136,22 +137,19 @@ class StackingAxisAdditions {
      * @private
      */
     public resetStacks(): void {
-        const stacking = this;
-        const axis = stacking.axis;
-        const stacks = stacking.stacks;
+        const { axis, stacks } = this;
 
         if (!axis.isXAxis) {
-            objectEach(stacks, function (
-                type: Record<string, Highcharts.StackItem>
-            ): void {
-                objectEach(type, function (
-                    stack: Highcharts.StackItem,
-                    key: string
-                ): void {
+
+            objectEach(stacks, (type): void => {
+                objectEach(type, (stack, x): void => {
                     // Clean up memory after point deletion (#1044, #4320)
-                    if ((stack.touched as any) < stacking.stacksTouched) {
+                    if (
+                        isNumber(stack.touched) &&
+                        stack.touched < this.stacksTouched
+                    ) {
                         stack.destroy();
-                        delete type[key];
+                        delete type[x];
 
                     // Reset stacks
                     } else {
@@ -172,8 +170,8 @@ class StackingAxisAdditions {
         const chart = axis.chart;
         const renderer = chart.renderer;
         const stacks = stacking.stacks;
-        const stackLabelsAnim = axis.options.stackLabels.animation;
-        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim);
+        const stackLabelsAnim = axis.options.stackLabels && axis.options.stackLabels.animation;
+        const animationConfig = getDeferredAnimation(chart, stackLabelsAnim || false);
         const stackTotalGroup = stacking.stackTotalGroup = (
             stacking.stackTotalGroup ||
             renderer

@@ -20,6 +20,7 @@ import type BBoxObject from '../../Core/Renderer/BBoxObject';
 import type ColorString from '../../Core/Color/ColorString';
 import type ColorType from '../../Core/Color/ColorType';
 import type CSSObject from '../../Core/Renderer/CSSObject';
+import type DashStyleValue from '../../Core/Renderer/DashStyleValue';
 import type { DataLabelOverflowValue } from '../../Core/Series/DataLabelOptions';
 import type Point from '../../Core/Series/Point';
 import type Series from '../../Core/Series/Series';
@@ -42,6 +43,7 @@ import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
+import palette from '../../Core/Color/Palette.js';
 const {
     addEvent,
     defined,
@@ -99,9 +101,9 @@ declare global {
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
-            xAxis?: (number|string|AxisType|null);
+            xAxis?: (number|AxisType|null);
             y: number;
-            yAxis?: (number|string|AxisType|null);
+            yAxis?: (number|AxisType|null);
         }
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
@@ -142,8 +144,12 @@ declare global {
             y: number;
         }
         interface AnnotationsLabelsOptions extends AnnotationsLabelOptions {
+            color?: ColorType;
+            dashStyle?: DashStyleValue;
+            // formatter: FormatterCallbackFunction<T>;
             point?: (string|AnnotationMockPointOptionsObject);
             itemType?: string;
+            vertical?: VerticalAlignValue;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
             animation: Partial<AnimationOptions>;
@@ -1101,7 +1107,7 @@ merge<Annotation>(
                      *
                      * @type {Highcharts.ColorString}
                      */
-                    borderColor: 'black',
+                    borderColor: palette.neutralColor100,
 
                     /**
                      * The border radius in pixels for the annotaiton's label.
@@ -1565,9 +1571,9 @@ merge<Annotation>(
                     width: 10,
                     height: 10,
                     style: {
-                        stroke: 'black',
+                        stroke: palette.neutralColor100,
                         'stroke-width': 2,
-                        fill: 'white'
+                        fill: palette.backgroundColor
                     },
                     visible: false,
                     events: {}
@@ -1623,11 +1629,12 @@ H.extendAnnotation = function <T extends typeof Annotation> (
 ): void {
     BaseConstructor = BaseConstructor || Annotation;
 
-    merge(
-        true,
+    extend(
         Constructor.prototype,
-        BaseConstructor.prototype,
-        prototype
+        merge(
+            BaseConstructor.prototype,
+            prototype
+        )
     );
 
     Constructor.prototype.defaultOptions = merge(
@@ -1729,15 +1736,24 @@ chartProto.collectionsWithUpdate.push('annotations');
 // Let chart.update() create annoations on demand
 chartProto.collectionsWithInit.annotations = [chartProto.addAnnotation];
 
+// Create lookups initially
+addEvent(
+    Chart as unknown as Highcharts.AnnotationChart,
+    'afterInit',
+    function (this): void {
+        this.annotations = [];
+
+        if (!this.options.annotations) {
+            this.options.annotations = [];
+        }
+
+    }
+);
+
 chartProto.callbacks.push(function (
     this: Highcharts.AnnotationChart,
     chart: Highcharts.AnnotationChart
 ): void {
-    chart.annotations = [];
-
-    if (!chart.options.annotations) {
-        chart.options.annotations = [];
-    }
 
     chart.plotBoxClip = this.renderer.clipRect(this.plotBox);
 
@@ -1747,13 +1763,17 @@ chartProto.callbacks.push(function (
         .clip(chart.plotBoxClip)
         .add();
 
-    chart.options.annotations.forEach(function (
-        annotationOptions: Highcharts.AnnotationsOptions,
-        i: number
-    ): void {
-        var annotation = chart.initAnnotation(annotationOptions);
+    chart.options.annotations.forEach(function (annotationOptions, i): void {
+        if (
+            // Verify that it has not been previously added in a responsive rule
+            !chart.annotations.some((annotation): boolean =>
+                annotation.options === annotationOptions
+            )
+        ) {
+            const annotation = chart.initAnnotation(annotationOptions);
 
-        chart.options.annotations[i] = annotation.options;
+            chart.options.annotations[i] = annotation.options;
+        }
     });
 
     chart.drawAnnotations();
@@ -1762,7 +1782,7 @@ chartProto.callbacks.push(function (
         chart.plotBoxClip.destroy();
         chart.controlPointsGroup.destroy();
     });
-    addEvent(chart, 'exportData', function (this: Highcharts.AnnotationChart, event: any): void {
+    addEvent(chart, 'exportData', function (this, event: any): void {
         const annotations = chart.annotations,
             csvColumnHeaderFormatter = ((
                 this.options.exporting &&
@@ -1771,7 +1791,11 @@ chartProto.callbacks.push(function (
             // If second row doesn't have xValues
             // then it is a title row thus multiple level header is in use.
             multiLevelHeaders = !event.dataRows[1].xValues,
-            annotationHeader = chart.options.lang?.exportData?.annotationHeader,
+            annotationHeader = (
+                chart.options.lang &&
+                chart.options.lang.exportData &&
+                chart.options.lang.exportData.annotationHeader
+            ),
             columnHeaderFormatter = function (index: any): any {
                 let s;
                 if (csvColumnHeaderFormatter) {
@@ -1793,8 +1817,18 @@ chartProto.callbacks.push(function (
                 return s;
             },
             startRowLength = event.dataRows[0].length,
-            annotationSeparator = chart.options.exporting?.csv?.annotations?.itemDelimiter,
-            joinAnnotations = chart.options.exporting?.csv?.annotations?.join;
+            annotationSeparator = (
+                chart.options.exporting &&
+                chart.options.exporting.csv &&
+                chart.options.exporting.csv.annotations &&
+                chart.options.exporting.csv.annotations.itemDelimiter
+            ),
+            joinAnnotations = (
+                chart.options.exporting &&
+                chart.options.exporting.csv &&
+                chart.options.exporting.csv.annotations &&
+                chart.options.exporting.csv.annotations.join
+            );
 
         annotations.forEach((annotation): void => {
 

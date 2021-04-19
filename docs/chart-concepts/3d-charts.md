@@ -5,10 +5,10 @@ Highcharts 3D is a Highcharts module providing limited 3D support to charts. It 
 
 ### Load the required files.
 
-To be able to use Highcharts 3D you first have to load Highcharts as usual and load the additional 3D plugin module:
+To be able to use Highcharts 3D you first have to load Highcharts as usual and load the additional [3D plugin module](https:/code.highcharts.com/highcharts-3d.js):
 
 ```html
-<script src="[https://code.highcharts.com/highcharts-3d.js](\"https:/code.highcharts.com/highcharts-3d.js\")"><script>
+<script src="https://code.highcharts.com/highcharts-3d.js"><script>
 ````
 
 (This should be included after highcharts.js)
@@ -138,4 +138,4 @@ Just like in normal area charts, the Highcharts 3D plugin does allow to display 
 
 Stacking is still available in 3D charts and works in exactly the same way by setting _stacking_ to **true**.
 
-<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-area-stacking allow="fullscreen"></iframe>
+<iframe style="width: 100%; height: 475px;" src=https://www.highcharts.com/samples/embed/highcharts/demo/3d-area-multiple allow="fullscreen"></iframe>

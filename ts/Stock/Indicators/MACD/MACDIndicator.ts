@@ -9,6 +9,7 @@
 'use strict';
 
 import type IndicatorValuesObject from '../IndicatorValuesObject';
+import type LineSeries from '../../../Series/Line/LineSeries';
 import type {
     MACDOptions,
     MACDGappedExtensionObject,
@@ -16,7 +17,6 @@ import type {
     MACDParamsOptions
 } from './MACDOptions';
 import type MACDPoint from './MACDPoint';
-import type Series from '../../../Core/Series/Series';
 import type {
     SeriesZonesOptions
 } from '../../../Core/Series/SeriesOptions';
@@ -189,9 +189,7 @@ class MACDIndicator extends SMAIndicator {
      *
      */
 
-    public init(
-        this: MACDIndicator
-    ): void {
+    public init(): void {
         SeriesRegistry.seriesTypes.sma.prototype.init.apply(this, arguments);
 
         // Check whether series is initialized. It may be not initialized,
@@ -233,7 +231,7 @@ class MACDIndicator extends SMAIndicator {
         return [point.y, point.signal, point.MACD];
     }
 
-    public translate(this: MACDIndicator): void {
+    public translate(): void {
         var indicator = this,
             plotNames: Array<string> = ['plotSignal', 'plotMACD'];
 
@@ -256,7 +254,7 @@ class MACDIndicator extends SMAIndicator {
         );
     }
 
-    public destroy(this: MACDIndicator): void {
+    public destroy(): void {
         // this.graph is null due to removing two times the same SVG element
         this.graph = (null as any);
         this.graphmacd = this.graphmacd && this.graphmacd.destroy();
@@ -265,7 +263,7 @@ class MACDIndicator extends SMAIndicator {
         SeriesRegistry.seriesTypes.sma.prototype.destroy.apply(this, arguments);
     }
 
-    public drawGraph(this: MACDIndicator): void {
+    public drawGraph(): void {
         var indicator = this,
             mainLinePoints: Array<(
                 MACDPoint
@@ -332,11 +330,10 @@ class MACDIndicator extends SMAIndicator {
     }
 
     public getZonesGraphs(
-        this: MACDIndicator,
         props: Array<Array<string>>
     ): Array<Array<string>> {
         var allZones: Array<Array<string>> =
-        SeriesRegistry.seriesTypes.sma.prototype.getZonesGraphs.call(this, props),
+        super.getZonesGraphs(props),
             currentZones: Array<Array<string>> = allZones;
 
         if (this.currentLineZone) {
@@ -356,9 +353,7 @@ class MACDIndicator extends SMAIndicator {
         return currentZones;
     }
 
-    public applyZones(
-        this: MACDIndicator
-    ): void {
+    public applyZones(): void {
         // Histogram zones are handled by drawPoints method
         // Here we need to apply zones for all lines
         var histogramZones = this.zones;
@@ -375,11 +370,12 @@ class MACDIndicator extends SMAIndicator {
         this.zones = histogramZones;
     }
 
-    public getValues<TLinkedSeries extends Series>(
+    public getValues<TLinkedSeries extends LineSeries>(
         series: TLinkedSeries,
         params: MACDParamsOptions
     ): (IndicatorValuesObject<TLinkedSeries>|undefined) {
-        var j = 0,
+        var indexToShift: number = (params.longPeriod as any) - (params.shortPeriod as any), // #14197
+            j = 0,
             MACD: Array<Array<(number|null)>> = [],
             xMACD: Array<(number|null)> = [],
             yMACD: Array<Array<(number|null)>> = [],
@@ -398,14 +394,16 @@ class MACDIndicator extends SMAIndicator {
         shortEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
             series,
             {
-                period: params.shortPeriod
+                period: params.shortPeriod,
+                index: params.index
             }
         ) as any);
 
         longEMA = (SeriesRegistry.seriesTypes.ema.prototype.getValues(
             series,
             {
-                period: params.longPeriod
+                period: params.longPeriod,
+                index: params.index
             }
         ) as any);
 
@@ -415,19 +413,19 @@ class MACDIndicator extends SMAIndicator {
 
         // Subtract each Y value from the EMA's and create the new dataset
         // (MACD)
-        for (i = 1; i <= shortEMA.length; i++) {
+        for (i = 0; i <= shortEMA.length; i++) {
             if (
-                defined(longEMA[i - 1]) &&
-                defined(longEMA[i - 1][1]) &&
-                defined(shortEMA[i + (params.shortPeriod as any) + 1]) &&
-                defined(shortEMA[i + (params.shortPeriod as any) + 1][0])
+                defined(longEMA[i]) &&
+                defined(longEMA[i][1]) &&
+                defined(shortEMA[i + indexToShift]) &&
+                defined(shortEMA[i + indexToShift][0])
             ) {
                 MACD.push([
-                    shortEMA[i + (params.shortPeriod as any) + 1][0],
+                    shortEMA[i + indexToShift][0],
                     0,
                     null,
-                    shortEMA[i + (params.shortPeriod as any) + 1][1] -
-                        longEMA[i - 1][1]
+                    shortEMA[i + indexToShift][1] -
+                        longEMA[i][1]
                 ]);
             }
         }
@@ -503,7 +501,7 @@ extend(MACDIndicator.prototype, {
     parallelArrays: ['x', 'y', 'signal', 'MACD'],
     pointValKey: 'y',
     // Columns support:
-    markerAttribs: (noop as any),
+    markerAttribs: noop as any,
     getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
     crispCol: H.seriesTypes.column.prototype.crispCol,
     drawPoints: H.seriesTypes.column.prototype.drawPoints

@@ -13,7 +13,7 @@ Highcharts.chart('container', {
     },
     yAxis: {
         title: {
-            text: 'Height Above See Level',
+            text: 'Height Above Sea Level',
             x: -40
         },
         labels: {

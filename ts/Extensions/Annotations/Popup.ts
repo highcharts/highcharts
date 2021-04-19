@@ -18,6 +18,7 @@ import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SMAIndicator from '../../Stock/Indicators/SMA/SMAIndicator';
 import H from '../../Core/Globals.js';
 const {
+    doc,
     isFirefox
 } = H;
 import NavigationBindings from './NavigationBindings.js';
@@ -27,6 +28,7 @@ const {
     addEvent,
     createElement,
     defined,
+    fireEvent,
     getOptions,
     isArray,
     isObject,
@@ -44,7 +46,7 @@ const {
 declare global {
     namespace Highcharts {
         class Popup {
-            public constructor(parentDiv: HTMLDOMElement, iconsURL: string);
+            public constructor(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart);
             public annotations: PopupAnnotationsObject;
             public container: HTMLDOMElement;
             public iconsURL: string;
@@ -66,7 +68,7 @@ declare global {
             public deselectAll(): void;
             public getFields(parentDiv: HTMLDOMElement, type: string): PopupFieldsObject;
             public getLangpack(): Record<string, string>;
-            public init(parentDiv: HTMLDOMElement, iconsURL: string): void;
+            public init(parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart): void;
             public showForm(
                 type: string,
                 chart: AnnotationChart,
@@ -180,8 +182,8 @@ wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed
     }
 });
 
-H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string): void {
-    this.init(parentDiv, iconsURL);
+H.Popup = function (this: Highcharts.Popup, parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart): void {
+    this.init(parentDiv, iconsURL, chart);
 } as any;
 
 H.Popup.prototype = {
@@ -193,7 +195,8 @@ H.Popup.prototype = {
      * @param {string} iconsURL
      * Icon URL
      */
-    init: function (parentDiv: HTMLDOMElement, iconsURL: string): void {
+    init: function (parentDiv: HTMLDOMElement, iconsURL: string, chart: Chart): void {
+        this.chart = chart;
 
         // create popup div
         this.container = createElement(DIV, {
@@ -224,7 +227,8 @@ H.Popup.prototype = {
 
         ['click', 'touchstart'].forEach(function (eventName: string): void {
             addEvent(closeBtn, eventName, function (): void {
-                _self.closePopup();
+
+                fireEvent(_self.chart.navigationBindings, 'closePopup');
             });
         });
     },
@@ -285,11 +289,12 @@ H.Popup.prototype = {
             // add label
             createElement(
                 LABEL, {
-                    innerHTML: lang[optionName] || optionName,
                     htmlFor: inputName
                 },
-                null as any,
+                void 0,
                 parentDiv
+            ).appendChild(
+                doc.createTextNode(lang[optionName] || optionName)
             );
         }
 
@@ -302,7 +307,7 @@ H.Popup.prototype = {
                 type: value[1],
                 className: PREFIX + 'popup-field'
             },
-            null as any,
+            void 0,
             parentDiv
         ).setAttribute(PREFIX + 'data-name', option);
     },
@@ -334,9 +339,8 @@ H.Popup.prototype = {
             getFields = this.getFields,
             button: HTMLDOMElement;
 
-        button = createElement(BUTTON, {
-            innerHTML: label
-        }, null as any, parentDiv);
+        button = createElement(BUTTON, void 0, void 0, parentDiv);
+        button.appendChild(doc.createTextNode(label));
 
         ['click', 'touchstart'].forEach(function (eventName: string): void {
             addEvent(button, eventName, function (): void {
@@ -510,14 +514,14 @@ H.Popup.prototype = {
             popupDiv.style.top = chart.plotTop + 10 + 'px';
 
             // create label
-            createElement(SPAN, {
-                innerHTML: pick(
+            createElement(SPAN, void 0, void 0, popupDiv).appendChild(
+                doc.createTextNode(pick(
                     // Advanced annotations:
                     lang[options.langKey as any] || options.langKey,
                     // Basic shapes:
                     options.shapes && options.shapes[0].type
-                )
-            }, null as any, popupDiv);
+                ))
+            );
 
             // add buttons
             button = this.addButton(
@@ -580,9 +584,13 @@ H.Popup.prototype = {
 
             // create title of annotations
             lhsCol = createElement('h2', {
-                innerHTML: lang[options.langKey as any] || options.langKey,
                 className: PREFIX + 'popup-main-title'
-            }, null as any, popupDiv);
+            }, void 0, popupDiv);
+            lhsCol.appendChild(
+                doc.createTextNode(
+                    lang[options.langKey as any] || options.langKey || ''
+                )
+            );
 
             // left column
             lhsCol = createElement(DIV, {
@@ -700,10 +708,16 @@ H.Popup.prototype = {
 
                 storage.forEach(function (genInput): void {
                     if ((genInput as any)[0] === true) {
-                        createElement(SPAN, {
-                            className: PREFIX + 'annotation-title',
-                            innerHTML: (genInput as any)[1]
-                        }, null as any, (genInput as any)[2]);
+                        createElement(
+                            SPAN, {
+                                className: PREFIX + 'annotation-title'
+                            },
+                            void 0,
+                            (genInput as any)[2]
+                        ).appendChild(doc.createTextNode(
+                            (genInput as any)[1]
+                        ));
+
                     } else {
                         addInput.apply((genInput as any)[0], (genInput as any).splice(1));
                     }
@@ -831,9 +845,11 @@ H.Popup.prototype = {
                         indicatorType = indicatorNameType.type;
 
                     item = createElement(LI, {
-                        className: PREFIX + 'indicator-list',
-                        innerHTML: indicatorNameType.name
-                    }, null as any, indicatorList);
+                        className: PREFIX + 'indicator-list'
+                    }, void 0, indicatorList);
+                    item.appendChild(doc.createTextNode(
+                        indicatorNameType.name
+                    ));
 
                     ['click', 'touchstart'].forEach(function (eventName: string): void {
                         addEvent(item, eventName, function (): void {
@@ -929,12 +945,13 @@ H.Popup.prototype = {
 
             createElement(
                 LABEL, {
-                    innerHTML: lang[optionName] || optionName,
                     htmlFor: selectName
                 },
                 null as any,
                 parentDiv
-            );
+            ).appendChild(doc.createTextNode(
+                lang[optionName] || optionName
+            ));
 
             // select type
             selectBox = createElement(
@@ -962,12 +979,13 @@ H.Popup.prototype = {
                     createElement(
                         OPTION,
                         {
-                            innerHTML: seriesOptions.name || seriesOptions.id,
                             value: seriesOptions.id
                         },
                         null as any,
                         selectBox
-                    );
+                    ).appendChild(doc.createTextNode(
+                        seriesOptions.name || seriesOptions.id
+                    ));
                 }
             });
 
@@ -1008,11 +1026,12 @@ H.Popup.prototype = {
             createElement(
                 H3,
                 {
-                    className: PREFIX + 'indicator-title',
-                    innerHTML: getNameType(series, seriesType).name
+                    className: PREFIX + 'indicator-title'
                 },
-                null as any,
+                void 0,
                 rhsColWrapper
+            ).appendChild(
+                doc.createTextNode(getNameType(series, seriesType).name)
             );
 
             // input type
@@ -1190,11 +1209,13 @@ H.Popup.prototype = {
             menuItem = createElement(
                 SPAN,
                 {
-                    innerHTML: lang[tabName + 'Button'] || tabName,
-                    className: className
+                    className
                 },
-                null as any,
+                void 0,
                 popupDiv
+            );
+            menuItem.appendChild(
+                doc.createTextNode(lang[tabName + 'Button'] || tabName)
             );
 
             menuItem.setAttribute(PREFIX + 'data-tab-type', tabName);
@@ -1212,7 +1233,7 @@ H.Popup.prototype = {
             return createElement(
                 DIV,
                 {
-                    className: PREFIX + 'tab-item-content'
+                    className: PREFIX + 'tab-item-content ' + PREFIX + 'no-mousewheel'// #12100
                 },
                 null as any,
                 popupDiv
@@ -1295,7 +1316,7 @@ addEvent(NavigationBindings, 'showPopup', function (
                     this.chart.options.stockTools.gui.iconsURL
                 ) ||
                 'https://code.highcharts.com/@product.version@/gfx/stock-icons/'
-            )
+            ), this.chart
         );
     }
 

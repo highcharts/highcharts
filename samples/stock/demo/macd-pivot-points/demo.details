@@ -1,10 +1,10 @@
 ---
-name: MACD pivot points
+name: MACD and Pivot points
 authors:
   - Pawel fus
 js_wrap: b
 tags:
   - Highcharts Stock demo
 categories:
-  - Flags and Indicators
+  - Flags and Technical indicators
 ...

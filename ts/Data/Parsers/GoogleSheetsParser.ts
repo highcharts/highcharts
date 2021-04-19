@@ -17,7 +17,6 @@
  * */
 
 import type DataEventEmitter from '../DataEventEmitter';
-import type DataTableRow from '../DataTableRow';
 import type DataValueType from '../DataValueType';
 
 import DataJSON from '../DataJSON.js';
@@ -39,9 +38,9 @@ const {
  * */
 
 /**
- * Handles parsing and transformation of an Google Sheets to a DataTable
+ * Handles parsing and transformation of an Google Sheets to a table.
  */
-class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
+class GoogleSheetsParser extends DataParser<DataParser.Event> {
 
     /* *
      *
@@ -110,7 +109,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
      *
      * */
 
-    private columns: DataTableRow.CellType[][];
+    private columns: DataTable.CellType[][];
     private headers: string[];
     public converter: DataConverter;
     public options: GoogleSheetsParser.ClassJSONOptions;
@@ -242,7 +241,7 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
             return false;
         }
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -252,17 +251,21 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
         parser.columns = parser.getSheetColumns(json);
 
         for (let i = 0, iEnd = parser.columns.length; i < iEnd; i++) {
-            headers.push(parser.columns[i][0]?.toString() || uniqueKey());
+            headers.push(`${(parser.columns[i][0] || uniqueKey())}`);
 
             column = parser.columns[i];
             for (let j = 0, jEnd = column.length; j < jEnd; ++j) {
                 if (column[j] && typeof column[j] === 'string') {
-                    parser.columns[i][j] = converter.asGuessedType(column[j] as string);
+                    let cellValue = converter.asGuessedType(column[j] as string);
+                    if (cellValue instanceof Date) {
+                        cellValue = cellValue.getTime();
+                    }
+                    parser.columns[i][j] = cellValue;
                 }
             }
         }
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,
@@ -271,10 +274,10 @@ class GoogleSheetsParser extends DataParser<DataParser.EventObject> {
     }
 
     /**
-     * Handles converting the parsed data to a DataTable
+     * Handles converting the parsed data to a table.
      *
      * @return {DataTable}
-     * A DataTable from the parsed Google Sheet
+     * Table from the parsed Google Sheet
      */
     public getTable(): DataTable {
         return DataParser.getTableFromColumns(this.columns, this.headers);

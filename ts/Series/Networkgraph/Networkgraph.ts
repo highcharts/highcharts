@@ -25,15 +25,19 @@ import type {
     DataLabelOptions,
     DataLabelTextPathOptions
 } from '../../Core/Series/DataLabelOptions';
-import type LinePoint from '../Line/LinePoint';
-import type LinePointOptions from '../Line/LinePointOptions';
-import type LineSeriesOptions from '../Line/LineSeriesOptions';
-import type { PointShortOptions } from '../../Core/Series/PointOptions';
-import type { SeriesStatesOptions } from '../../Core/Series/SeriesOptions';
+import type {
+    PointOptions,
+    PointShortOptions
+} from '../../Core/Series/PointOptions';
+import type {
+    SeriesOptions,
+    SeriesStatesOptions
+} from '../../Core/Series/SeriesOptions';
 import type { StatesOptionsKey } from '../../Core/Series/StatesOptions';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGElement from '../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
+
 import H from '../../Core/Globals.js';
 import NodesMixin from '../../Mixins/Nodes.js';
 import Point from '../../Core/Series/Point.js';
@@ -113,7 +117,7 @@ declare global {
             linkFormatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
             linkTextPath?: DataLabelTextPathOptions;
         }
-        interface NetworkgraphPointOptions extends LinePointOptions, NodesPointOptions {
+        interface NetworkgraphPointOptions extends PointOptions, NodesPointOptions {
             color?: ColorType;
             colorIndex?: number;
             dashStyle?: string;
@@ -122,7 +126,7 @@ declare global {
             opacity?: number;
             width?: number;
         }
-        interface NetworkgraphSeriesOptions extends LineSeriesOptions, NodesSeriesOptions {
+        interface NetworkgraphSeriesOptions extends SeriesOptions, NodesSeriesOptions {
             dataLabels?: NetworkgraphDataLabelsOptionsObject;
             draggable?: boolean;
             inactiveOtherPoints?: boolean;
@@ -131,7 +135,7 @@ declare global {
             nodes?: Array<NetworkgraphPointOptions>;
             states?: SeriesStatesOptions<NetworkgraphSeries>;
         }
-        class NetworkgraphPoint extends LinePoint implements DragNodesPoint, NodesPoint {
+        class NetworkgraphPoint extends Point implements DragNodesPoint, NodesPoint {
             public className: NodesPoint['className'];
             public degree: number;
             public fixedPosition: DragNodesPoint['fixedPosition'];
@@ -659,6 +663,7 @@ interface NetworkgraphSeries {
     data: Array<NetworkgraphPoint>;
     destroy(): void;
     directTouch: boolean;
+    drawGraph: void;
     forces: Array<string>;
     hasDraggableNodes: boolean;
     isCartesian: boolean;
@@ -702,7 +707,7 @@ extend(NetworkgraphSeries.prototype, {
      */
     forces: ['barycenter', 'repulsive', 'attractive'],
     hasDraggableNodes: true,
-    drawGraph: null as any,
+    drawGraph: void 0,
     isCartesian: false,
     requireSorting: false,
     directTouch: true,
@@ -711,8 +716,8 @@ extend(NetworkgraphSeries.prototype, {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     drawTracker: seriesTypes.column.prototype.drawTracker,
     // Animation is run in `series.simulation`.
-    animate: null as any,
-    buildKDTree: H.noop as any,
+    animate: void 0,
+    buildKDTree: H.noop,
     /**
      * Create a single node that holds information on incoming and outgoing
      * links.
@@ -742,10 +747,18 @@ extend(NetworkgraphSeries.prototype, {
 
         Series.prototype.init.apply(this, arguments as any);
 
-        addEvent<NetworkgraphSeries>(this, 'updatedData', function (): void {
+        addEvent(this, 'updatedData', (): void => {
             if (this.layout) {
                 this.layout.stop();
             }
+        });
+
+        addEvent(this, 'afterUpdate', (): void => {
+            this.nodes.forEach((node): void => {
+                if (node && node.series) {
+                    node.resolveColor();
+                }
+            });
         });
 
         return this;
@@ -846,7 +859,7 @@ extend(NetworkgraphSeries.prototype, {
             attribs.y = 0;
         }
 
-        attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
+        attribs.x = (point.plotX || 0) - (attribs.width || 0) / 2;
 
         return attribs;
     },
@@ -908,9 +921,9 @@ extend(NetworkgraphSeries.prototype, {
 
         if (!layout) {
             (layoutOptions as any).enableSimulation =
-                !defined((chartOptions as any).forExport) ?
+                !defined(chartOptions.forExport) ?
                     (layoutOptions as any).enableSimulation :
-                    !(chartOptions as any).forExport;
+                    !chartOptions.forExport;
 
             graphLayoutsStorage[(layoutOptions as any).type] = layout =
                 new H.layouts[(layoutOptions as any).type]();
@@ -1230,6 +1243,7 @@ extend(NetworkgraphPoint.prototype, {
                 .path(
                     this.getLinkPath()
                 )
+                .addClass(this.getClassName(), true)
                 .add(this.series.group);
 
             if (!this.series.chart.styledMode) {

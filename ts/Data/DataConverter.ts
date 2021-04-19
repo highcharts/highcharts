@@ -15,10 +15,11 @@
  *  Imports
  *
  * */
-import DataTable from './DataTable.js';
-import type DataJSON from './DataJSON';
-import U from './../Core/Utilities.js';
 
+import type DataTable from './DataTable.js';
+import type DataJSON from './DataJSON';
+
+import U from './../Core/Utilities.js';
 const {
     merge,
     isNumber
@@ -200,42 +201,7 @@ class DataConverter {
         if (typeof value === 'string') {
             return value !== '' && value !== '0' && value !== 'false';
         }
-        return this.asNumber(value) !== 0;
-    }
-
-    /**
-     * Converts a value to a DataTable.
-     *
-     * @param {DataConverter.Type} value
-     * Value to convert.
-     *
-     * @return {DataTable}
-     * Converted value as a DataTable.
-     */
-    public asDataTable(value: DataConverter.Type): DataTable {
-        if (value instanceof DataTable) {
-            return value;
-        }
-
-        if (!this.asBoolean(value)) {
-            return new DataTable();
-        }
-
-        if (typeof value === 'string') {
-            try {
-                return DataTable.fromJSON(JSON.parse(value));
-            } catch (error) {
-                return new DataTable();
-            }
-        }
-
-        return DataTable.fromJSON({
-            $class: 'DataTable',
-            rows: [{
-                $class: 'DataTableRow',
-                cells: [JSON.parse(JSON.stringify(value))]
-            }]
-        });
+        return !!this.asNumber(value);
     }
 
     /**
@@ -280,18 +246,22 @@ class DataConverter {
             return value ? 1 : 0;
         }
         if (typeof value === 'string') {
-            const trimVal = this.trim(value),
-                cast = parseFloat(trimVal);
-
-            return !isNaN(cast) ? cast : 0;
-        }
-        if (value instanceof DataTable) {
-            return value.getRowCount();
+            if (value.indexOf(' ') > -1) {
+                value = value.replace(/\s+/g, '');
+            }
+            if (this.decimalRegex) {
+                value = value.replace(this.decimalRegex, '$1.$2');
+            }
+            return parseFloat(value);
         }
         if (value instanceof Date) {
             return value.getDate();
         }
-        return 0;
+        if (value) {
+            return value.getRowCount();
+        }
+
+        return NaN;
     }
 
     /**
@@ -347,10 +317,12 @@ class DataConverter {
      *
      * @param {string} value
      * The string to examine
-     * @return {string}
+     * @return {'number'|'string'|'Date'}
      * `string`, `Date` or `number`
      */
-    public guessType(value: string): ('string' | 'Date' | 'number') {
+    public guessType(
+        value: string
+    ): ('number'|'string'|'Date') {
         const converter = this,
             trimVal = converter.trim(value),
             trimInsideVal = converter.trim(value, true),
@@ -394,12 +366,12 @@ class DataConverter {
      * @param {string} value
      * The string to examine
      *
-     * @return {number|Date|string}
+     * @return {number|string|Date}
      * The converted value
      */
-    public asGuessedType(value: string): (number | Date | string) {
+    public asGuessedType(value: string): (number|string|Date) {
         const converter = this,
-            typeMap: Record<('string' | 'Date' | 'number'), Function> = {
+            typeMap: Record<ReturnType<DataConverter['guessType']>, Function> = {
                 'number': converter.asNumber,
                 'Date': converter.asDate,
                 'string': converter.asString
@@ -642,7 +614,7 @@ namespace DataConverter {
      * Contains supported types to convert values from and to.
      */
     export type Type = (
-        boolean|null|number|string|Date|DataTable|undefined
+        boolean|null|number|string|DataTable|Date|undefined
     );
 
     /**

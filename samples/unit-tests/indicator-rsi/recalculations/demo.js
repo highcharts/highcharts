@@ -85,6 +85,7 @@ QUnit.test('Test RSI calculations on data updates.', function (assert) {
         ],
         false
     );
+
     chart.series[1].update({
         color: 'red',
         params: {
@@ -150,4 +151,78 @@ QUnit.test('Test RSI calculations on data updates.', function (assert) {
         ],
         'Correct values after point.remove()'
     );
+    // Enhancement #14930, RSI works with line series type.
+    chart.series[0].update({
+        data: [
+            443389,
+            440902,
+            441497,
+            436124,
+            443278,
+            448264,
+            450955,
+            454245,
+            458433,
+            460826,
+            458931,
+            460328,
+            456140,
+            462820,
+            462820,
+            460028,
+            460328,
+            464116,
+            462222,
+            456439,
+            462122,
+            462521,
+            457137,
+            464515,
+            457835,
+            453548,
+            440288,
+            441783,
+            442181,
+            445672,
+            434205,
+            426628,
+            431314
+        ],
+        type: 'line'
+    });
+
+    chart.series[1].update({
+        color: 'red',
+        params: {
+            period: 14,
+            decimals: 6
+        }
+    });
+
+    assert.deepEqual(
+        chart.series[1].yData,
+        [
+            70.532789,
+            66.318562,
+            66.54983,
+            69.406305,
+            66.355169,
+            57.974856,
+            62.929607,
+            63.257148,
+            56.059299,
+            62.377071,
+            54.707573,
+            50.422774,
+            39.989823,
+            41.460482,
+            41.868916,
+            45.463212,
+            37.304042,
+            33.079523,
+            37.772952
+        ],
+        'RSI Indicator should have correct values for line series'
+    );
+
 });

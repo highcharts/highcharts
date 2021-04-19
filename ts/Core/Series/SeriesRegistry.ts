@@ -75,7 +75,11 @@ namespace SeriesRegistry {
     /** @internal */
     export let series: typeof Series;
 
-    export const seriesTypes = {} as SeriesTypeRegistry;
+    /**
+     * @internal
+     * @todo Move `Globals.seriesTypes` code to her.
+     */
+    export const seriesTypes = H.seriesTypes;
 
     /* *
      *
@@ -93,7 +97,7 @@ namespace SeriesRegistry {
         chart: Chart,
         options: DeepPartial<SeriesTypeOptions> = {}
     ): Series {
-        const optionsChart = chart.options.chart as Highcharts.ChartOptions,
+        const optionsChart = chart.options.chart,
             type = (
                 options.type ||
                 optionsChart.type ||
@@ -194,8 +198,7 @@ namespace SeriesRegistry {
 
         // Create the point class if needed
         if (pointProto) {
-            seriesTypes[type].prototype.pointClass =
-                extendClass(Point, pointProto);
+            seriesTypes[type].prototype.pointClass = extendClass(Point, pointProto) as any;
         }
 
         return seriesTypes[type] as unknown as T;
@@ -212,7 +215,6 @@ namespace SeriesRegistry {
  * */
 
 H.seriesType = SeriesRegistry.seriesType;
-H.seriesTypes = SeriesRegistry.seriesTypes;
 
 /* *
  *
