@@ -171,13 +171,13 @@ class GroupModifier extends DataModifier {
                 if (valueIndex === -1) {
                     const newTable = new DataTable();
 
-                    newTable.setRowObject(table.getRowObject(i) || {});
+                    newTable.setRows([table.getRowObject(i) || {}]);
 
                     byGroups.push(groupColumn);
                     tableGroups.push(newTable);
                     valueGroups.push(value);
                 } else {
-                    tableGroups[valueIndex].setRow(table.getRow(i) || []);
+                    tableGroups[valueIndex].setRows([table.getRow(i) || []]);
                 }
             }
         }

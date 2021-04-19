@@ -753,6 +753,13 @@ QUnit.test('Dynamically added plotbands', function (assert) {
         2,
         '#14053: plotBands from before update with redraw=false should also be added'
     );
+
+    chart.series[0].hide();
+
+    assert.ok(
+        chart.xAxis[0].plotLinesAndBands[0].svgElem.pathArray.isFlat,
+        '#15434: plotBand should be hidden series is hidden'
+    );
 });
 
 QUnit.test('#14254: plotBands.acrossPanes', function (assert) {

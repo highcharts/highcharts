@@ -30,7 +30,7 @@ const { merge } = U;
 /**
  * Handles parsing and transforming CSV to a table.
  */
-class CSVParser extends DataParser<DataParser.EventObject> {
+class CSVParser extends DataParser<DataParser.Event> {
 
     /* *
      *
@@ -143,7 +143,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
 
         parser.columns = [];
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'parse',
             columns: parser.columns,
             detail: eventDetail,
@@ -224,7 +224,7 @@ class CSVParser extends DataParser<DataParser.EventObject> {
             }
         }
 
-        parser.emit<DataParser.EventObject>({
+        parser.emit<DataParser.Event>({
             type: 'afterParse',
             columns: parser.columns,
             detail: eventDetail,

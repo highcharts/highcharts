@@ -177,7 +177,7 @@ declare global {
             plotX: number;
             plotY: number;
         }
-        type TooltipShapeValue = ('callout'|'circle'|'square');
+        type TooltipShapeValue = ('callout'|'circle'|'square'|'rect');
     }
 }
 
@@ -725,7 +725,7 @@ class Tooltip {
                 )
             ),
             pointerEvents = (
-                options.style?.pointerEvents ||
+                (options.style && options.style.pointerEvents) ||
                 (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
             ),
             container: globalThis.HTMLElement,
@@ -766,8 +766,8 @@ class Tooltip {
                     top: '1px',
                     pointerEvents,
                     zIndex: Math.max(
-                        (this.options.style?.zIndex || 0) as number,
-                        (chartStyle?.zIndex || 0) as number + 3
+                        (this.options.style && this.options.style.zIndex || 0),
+                        (chartStyle && chartStyle.zIndex || 0) + 3
                     )
                 });
 

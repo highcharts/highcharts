@@ -4,7 +4,7 @@ QUnit.test('DataTable Clone', function (assert) {
 
     const table = new DataTable({}, 'table');
 
-    table.setRow([ 'row1', 1 ]);
+    table.setRows([[ 'row1', 1 ]]);
     table.setCell(0, '1', 100);
     table.setColumnAlias('x', 'x-alias');
 
@@ -55,7 +55,7 @@ QUnit.test('DataTable Column Aliases', function (assert) {
     table.setColumnAlias('z', 'id');
     table.setColumnAlias('f', 'population');
 
-    table.setRowObjects([{
+    table.setRows([{
         id: 'My Land',
         population: 41251,
         gdp: 150
@@ -112,11 +112,11 @@ QUnit.test('DataTable Column Aliases', function (assert) {
     );
 
     assert.ok(
-        table.setRowObject(
-            {
+        table.setRows(
+            [{
                 id: 'All Land',
                 population: 4
-            },
+            }],
             table.getRowIndexBy('id', 'All Land')
         ),
         'Table should insert a new row with cell values.'
@@ -276,14 +276,14 @@ QUnit.test('DataTable Events', function (assert) {
         table.on('afterClearColumn', registerEvent);
         table.on('deleteColumn', registerEvent);
         table.on('afterDeleteColumn', registerEvent);
-        table.on('deleteRow', registerEvent);
-        table.on('afterDeleteRow', registerEvent);
+        table.on('deleteRows', registerEvent);
+        table.on('afterDeleteRows', registerEvent);
         table.on('setCell', registerEvent);
         table.on('afterSetCell', registerEvent);
         table.on('setColumn', registerEvent);
         table.on('afterSetColumn', registerEvent);
-        table.on('setRow', registerEvent);
-        table.on('afterSetRow', registerEvent);
+        table.on('setRows', registerEvent);
+        table.on('afterSetRows', registerEvent);
     }
 
     const table = new DataTable({
@@ -294,20 +294,20 @@ QUnit.test('DataTable Events', function (assert) {
     registerTable(table);
 
     registeredEvents.length = 0;
-    table.setRow(['b', 'text']);
-    table.setRowObject({
-        id: 'c',
-        text: 'text'
-    });
+    table.setRows([
+        ['b', 'text'],
+        {
+            id: 'c',
+            text: 'text'
+        }
+    ]);
     assert.deepEqual(
         registeredEvents,
         [
-            'setRow',
-            'afterSetRow',
-            'setRow',
-            'afterSetRow',
+            'setRows',
+            'afterSetRows'
         ],
-        'Events for DataTable.setRow and DataTable.setRowObject should be in expected order.'
+        'Events for DataTable.setRows should be in expected order.'
     );
 
     registeredEvents.length = 0;
@@ -327,7 +327,7 @@ QUnit.test('DataTable Events', function (assert) {
         3,
         'Frame should contain three rows.'
     );
-    table.deleteRow(0);
+    table.deleteRows(0);
     assert.strictEqual(
         table.getRowCount(),
         2,
@@ -336,10 +336,10 @@ QUnit.test('DataTable Events', function (assert) {
     assert.deepEqual(
         registeredEvents,
         [
-            'deleteRow',
-            'afterDeleteRow'
+            'deleteRows',
+            'afterDeleteRows'
         ],
-        'Events for DataTable.deleteRow should be in expected order.'
+        'Events for DataTable.deleteRows should be in expected order.'
     );
 
     registeredEvents.length = 0;

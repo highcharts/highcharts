@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type ComponentType from './ComponentType';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
@@ -497,7 +498,7 @@ namespace Component {
     /**
      * The default event object for a component
      */
-    export interface Event extends DataEventEmitter.EventObject {
+    export interface Event extends DataEventEmitter.Event {
         readonly type: eventTypes;
         component?: Component<any>;
     }

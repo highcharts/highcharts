@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type DataJSON from '../../Data/DataJSON';
 import DashboardGlobals from './../DashboardGlobals.js';

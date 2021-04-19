@@ -36,7 +36,7 @@ const {
 /**
  * Abstract class providing an interface and basic methods for a DataParser
  */
-abstract class DataParser<TEventObject extends DataParser.EventObject>
+abstract class DataParser<TEventObject extends DataParser.Event>
 implements DataEventEmitter<TEventObject>, DataJSON.Class {
 
     /* *
@@ -140,10 +140,10 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Emits an event on the DataParser instance.
      *
-     * @param {DataParser.EventObject} [e]
+     * @param {DataParser.Event} [e]
      * Event object containing additional event data
      */
-    public emit<T extends DataEventEmitter.EventObject>(e: T): void {
+    public emit<T extends DataEventEmitter.Event>(e: T): void {
         fireEvent(this, e.type, e);
     }
 
@@ -159,9 +159,9 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * @return {Function}
      * Function to unregister callback from the modifier event.
      */
-    public on<T extends DataEventEmitter.EventObject>(
-        type: T['type'],
-        callback: DataEventEmitter.EventCallback<this, T>
+    public on<TEvent extends DataEventEmitter.Event>(
+        type: TEvent['type'],
+        callback: DataEventEmitter.EventCallback<this, TEvent>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -202,7 +202,7 @@ namespace DataParser {
      * The basic event object for a DataParser instance.
      * Valid types are `parse`, `afterParse`, and `parseError`
      */
-    export interface EventObject extends DataEventEmitter.EventObject {
+    export interface Event extends DataEventEmitter.Event {
         readonly type: ('parse' | 'afterParse' | 'parseError');
         readonly columns: Array<DataTable.Column>;
         readonly error?: (string | Error);

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Component from './Component.js';
 import U from '../../Core/Utilities.js';
 const {

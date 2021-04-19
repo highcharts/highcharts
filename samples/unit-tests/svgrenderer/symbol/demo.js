@@ -170,3 +170,29 @@ QUnit.test('Arc', assert => {
         '#15382: Y radius should be 0'
     );
 });
+
+QUnit.test('Square/rect', assert => {
+    ['square', 'rect'].forEach(shape => {
+        const fn = Highcharts.SVGRenderer.prototype.symbols[shape];
+
+        let path = fn(0, 0, 10, 10);
+        assert.strictEqual(
+            path.length,
+            5,
+            `${shape}, no options: Path should have no curves`
+        );
+
+        path = fn(0, 0, 10, 10, { r: 0 });
+        assert.strictEqual(
+            path.length,
+            5,
+            `${shape}, r=0: Path should have no curves`
+        );
+
+        path = fn(0, 0, 10, 10, { r: 5 });
+        assert.ok(
+            path.length > 5,
+            `${shape}, r=5: Path should have curves`
+        );
+    });
+});

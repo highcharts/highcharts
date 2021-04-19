@@ -36,7 +36,7 @@ const {
 /**
  * Modifies a table with the help of modifiers in an ordered chain.
  */
-class ChainModifier extends DataModifier<ChainModifier.EventObject> {
+class ChainModifier extends DataModifier<ChainModifier.Event> {
 
     /* *
      *
@@ -309,10 +309,10 @@ namespace ChainModifier {
     /**
      * Event object
      */
-    export interface ChainEventObject extends DataEventEmitter.EventObject {
+    export interface ChainEvent extends DataEventEmitter.Event {
         readonly type: (
             'clearChain'|'afterClearChain'|
-            DataModifier.EventObject['type']
+            DataModifier.Event['type']
         );
         readonly table?: DataTable;
     }
@@ -330,12 +330,12 @@ namespace ChainModifier {
     /**
      * Event information.
      */
-    export type EventObject = (ChainEventObject|ModifierEventObject);
+    export type Event = (ChainEvent|ModifierEvent);
 
     /**
      * Event information for modifier operations.
      */
-    export interface ModifierEventObject extends DataEventEmitter.EventObject {
+    export interface ModifierEvent extends DataEventEmitter.Event {
         readonly type: (
             'addModifier'|'afterAddModifier'|
             'executeModifier'|'afterExecuteModifier'|

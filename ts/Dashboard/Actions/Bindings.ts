@@ -1,3 +1,4 @@
+/* eslint-disable */
 import ChartComponent from './../Component/ChartComponent.js';
 import HTMLComponent from './../Component/HTMLComponent.js';
 import GroupComponent from './../Component/GroupComponent.js';

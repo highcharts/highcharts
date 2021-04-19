@@ -5,24 +5,21 @@ QUnit.test('DataParser.getColumnsFromTable with missing cells', function (assert
 
     const table = new DataTable();
 
-    table.setRowObject({
+    table.setRows([{
         id: 'Row1',
         column1: 'value',
         column3: 'value'
-    });
-    table.setRowObject({
+    }, {
         id: 'Row2',
         column3: 'value'
-    });
-    table.setRowObject({
+    }, {
         id: 'Row3',
         column4: 'value'
-    });
-    table.setRowObject({
+    }, {
         id: 'Row4',
         column1: 'value',
         column3: 'value'
-    });
+    }]);
 
     const columns = DataParser.getColumnsFromTable(table);
 

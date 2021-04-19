@@ -22,6 +22,7 @@ Gulp.registry(new GulpForwardReference());
         gulpTask => require('./tools/gulptasks/' + gulpTask)
     );
 }([
+    'default',
     'dist',
     'dist-ant',
     'dist-api',
@@ -76,7 +77,6 @@ Gulp.registry(new GulpForwardReference());
     'update',
     'unsorted/build-modules',
     'unsorted/compare-filesize',
-    'unsorted/default',
     'unsorted/filesize',
     'unsorted/get-filesizes',
     'unsorted/nightly',

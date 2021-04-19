@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Chart from '../../Core/Chart/Chart.js';
 import Component from './Component.js';
 import DataSeriesConverter from '../../Data/DataSeriesConverter.js';

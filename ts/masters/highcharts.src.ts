@@ -9,6 +9,8 @@
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import Utilities from '../Core/Utilities.js';
+import Fx from '../Core/Animation/Fx.js';
+import Animation from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';
 import '../Core/Renderer/SVG/SVGRenderer.js';
 import '../Core/Renderer/HTML/HTMLElement.js';
@@ -24,6 +26,7 @@ import '../Core/Legend.js';
 import '../Core/Chart/Chart.js';
 import '../Extensions/ScrollablePlotArea.js';
 import '../Extensions/Stacking.js';
+import DataTable from '../Data/DataTable.js';
 import Series from '../Core/Series/Series.js';
 import '../Series/Line/LineSeries.js';
 import '../Series/Area/AreaSeries.js';
@@ -36,6 +39,20 @@ import '../Series/Pie/PieSeries.js';
 import '../Core/Series/DataLabels.js';
 import '../Extensions/OverlappingDataLabels.js';
 import '../Core/Responsive.js';
+
+// Animation
+(Highcharts as any).animate = Animation.animate;
+(Highcharts as any).animObject = Animation.animObject;
+(Highcharts as any).getDeferredAnimation = Animation.getDeferredAnimation;
+(Highcharts as any).setAnimation = Animation.setAnimation;
+(Highcharts as any).stop = Animation.stop;
+(Highcharts as any).timers = Fx.timers;
+
+// Classes
+(Highcharts as any).AST = AST;
+(Highcharts as any).DataTable = DataTable;
+(Highcharts as any).Fx = Fx;
+(Highcharts as any).Series = Series;
 
 // Utilities
 (Highcharts as any).addEvent = Utilities.addEvent;
@@ -84,9 +101,5 @@ import '../Core/Responsive.js';
 (Highcharts as any).uniqueKey = Utilities.uniqueKey;
 (Highcharts as any).useSerialIds = Utilities.useSerialIds;
 (Highcharts as any).wrap = Utilities.wrap;
-
-// Classes
-(Highcharts as any).AST = AST;
-(Highcharts as any).Series = Series;
 
 export default Highcharts;

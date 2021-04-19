@@ -1061,6 +1061,8 @@ class TreemapSeries extends ScatterSeries {
 
             // Don't bother with calculate styling if the point is not drawn
             if (point.shouldDraw()) {
+                point.isInside = true;
+
                 if (borderRadius) {
                     attribs.r = borderRadius;
                 }

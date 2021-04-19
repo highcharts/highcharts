@@ -32,7 +32,7 @@ const {
 /**
  * Class that handles creating a datastore from CSV
  */
-class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Class {
+class CSVStore extends DataStore<CSVStore.Event> implements DataJSON.Class {
 
     /* *
      *
@@ -196,7 +196,11 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
                 if (store.liveDataURL) {
                     store.poll();
                 }
-                store.table.setRows(store.parser.getTable().getRows());
+
+                // On inital fetch we need to set the columns
+                initialFetch ? store.table.setColumns(store.parser.getTable().getColumns()) :
+                    store.table.setRows(store.parser.getTable().getRows());
+
                 store.emit({
                     type: 'afterLoad',
                     csv,
@@ -315,7 +319,7 @@ class CSVStore extends DataStore<CSVStore.EventObjects> implements DataJSON.Clas
             let columnDataType;
 
             if (columnMeta) {
-                columnDataType = columnMeta?.dataType;
+                columnDataType = columnMeta.dataType;
             }
 
             for (let rowIndex = 0; rowIndex < columnLength; rowIndex++) {
@@ -416,7 +420,7 @@ namespace CSVStore {
     /**
      * Event objects fired from CSVDataStore events
      */
-    export type EventObjects = (ErrorEventObject | LoadEventObject);
+    export type Event = (ErrorEvent | LoadEvent);
 
     /**
      * Options for the CSVDataStore class constructor
@@ -441,7 +445,7 @@ namespace CSVStore {
     /**
      * The event object that is provided on errors within CSVDataStore
      */
-    export interface ErrorEventObject extends DataStore.EventObject {
+    export interface ErrorEvent extends DataStore.Event {
         type: ('loadError');
         error: (string | Error);
         xhr?: XMLHttpRequest;
@@ -450,7 +454,7 @@ namespace CSVStore {
     /**
      * The event object that is provided on load events within CSVDataStore
      */
-    export interface LoadEventObject extends DataStore.EventObject {
+    export interface LoadEvent extends DataStore.Event {
         type: ('load' | 'afterLoad');
         csv?: string;
     }

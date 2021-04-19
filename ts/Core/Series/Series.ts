@@ -2691,7 +2691,9 @@ class Series {
         data: Array<(PointOptions|PointShortOptions)>,
         options: (Series|DeepPartial<SeriesOptions>) = {}
     ): DataTable {
-        const table = new DataTable(void 0, (options.id || options.name));
+        const dataLength = data.length,
+            table = new DataTable(void 0, (options.id || options.name)),
+            rows: Array<DataTable.RowObject> = new Array(dataLength);
 
         let series: Series;
 
@@ -2705,16 +2707,17 @@ class Series {
 
         for (
             let i = 0,
-                iEnd = data.length,
                 x = pick(options.pointStart, 0),
                 pointData: PointOptions;
-            i < iEnd;
+            i < dataLength;
             ++i, x = Series.increment(x, options)
         ) {
             pointData = flat(Point.optionsToObject(data[i], series));
             pointData.x = (pointData.x || x);
-            table.setRowObject(pointData as DataTable.RowObject);
+            rows[i] = pointData as DataTable.RowObject;
         }
+
+        table.setRows(rows);
 
         return table;
     }
@@ -2874,7 +2877,9 @@ class Series {
 
     public symbol?: string;
 
-    public readonly table: DataTable = new DataTable();
+    public table?: DataTable;
+
+    private tableReset?: boolean;
 
     private tableSyncTimeout?: number;
 
@@ -3062,7 +3067,7 @@ class Series {
             series.setDataSortingOptions();
 
         } else if (!series.points && !series.data) {
-            series.setData(options.data as any, false);
+            series.setData(options.data || [], false);
         }
 
         fireEvent(this, 'afterInit');
@@ -3850,40 +3855,37 @@ class Series {
         animation?: (boolean|Partial<AnimationOptions>),
         updatePoints?: boolean
     ): void {
-        var series = this,
+        const series = this,
             oldData = series.points,
             oldDataLength = (oldData && oldData.length) || 0,
             options = series.options,
             chart = series.chart,
-            dataSorting = options.dataSorting,
-            firstPoint = null,
             xAxis = series.xAxis,
-            i,
             turboThreshold = options.turboThreshold,
-            pt,
             xData = series.xData,
             yData = series.yData,
             pointArrayMap = series.pointArrayMap,
             valueCount = pointArrayMap && pointArrayMap.length,
-            keys = options.keys,
+            keys = options.keys;
+
+        let firstPoint = null,
+            i,
             indexOfX = 0,
             indexOfY = 1,
+            pt,
             updatedData;
 
         data = (data || []);
         redraw = pick(redraw, true);
 
-        if (dataSorting && dataSorting.enabled) {
-            if (data instanceof Array) {
-                data = Series.getTableFromSeriesData(data, series);
-            }
-            data = series.sortTable(data);
+        if (options.dataSorting && options.dataSorting.enabled) {
+            data = series.sortData(data);
         }
 
         if (data instanceof DataTable) {
             data = series.setTable(data);
             data = Series.getSeriesDataFromTable(data, (keys || pointArrayMap));
-        } else {
+        } else if (!series.table) {
             series.setTable(Series.getTableFromSeriesData(data, series));
         }
 
@@ -4018,31 +4020,46 @@ class Series {
      * @private
      */
     private setTable(newTable: DataTable): DataTable {
-        const series = this,
-            syncTable = series.syncTable.bind(series);
+        const series = this;
 
         let table = series.table;
 
-        if (!table) {
-            table = (series as AnyRecord).table = new DataTable();
+        if (newTable === table) {
+            return table;
         }
 
         fireEvent(series, 'setTable', { table: newTable });
+        series.tableReset = true;
+
+        if (!table) {
+            /**
+             * Table with data rows to synchronize with series points. The table
+             * is filled automatically only during init. Afterwards series data
+             * must always be updated with {@link Highcharts.DataTable#setRows}.
+             *
+             * @name Highcharts.Series#table
+             * @type {Highcharts.DataTable}
+             */
+            table = series.table = new DataTable();
+        }
 
         table.clear();
+        table.setColumn('x');
         table.setColumns(newTable.getColumns());
 
         if (!table.hcEvents) {
-            // table.on('afterClearColumn', syncTable);
-            // table.on('afterClearRows', syncTable);
-            // table.on('afterClearTable', syncTable);
-            // table.on('afterDeleteColumn', syncTable);
-            table.on('afterDeleteRow', syncTable);
+            const syncTable = series.syncTable.bind(series);
+            table.on('afterClearColumn', syncTable);
+            table.on('afterClearRows', syncTable);
+            table.on('afterClearTable', syncTable);
+            table.on('afterDeleteColumn', syncTable);
+            table.on('afterDeleteRows', syncTable);
             table.on('afterSetCell', syncTable);
-            // table.on('afterSetColumn', syncTable);
-            table.on('afterSetRow', syncTable);
+            table.on('afterSetColumn', syncTable);
+            table.on('afterSetRows', syncTable);
         }
 
+        series.tableReset = false;
         fireEvent(series, 'afterSetTable', { table: newTable });
 
         return table;
@@ -4052,44 +4069,46 @@ class Series {
      * Internal function to sort series data
      *
      * @private
-     * @function Highcharts.Series#sortTable
+     * @function Highcharts.Series#sortData
      *
-     * @param {Highcharts.DataTable} table
+     * @param {Highcharts.DataTable|Array<(PointOptions|PointShortOptions)>} table
      * Table to sort.
      *
-     * @return {Highcharts.DataTable}
+     * @return {Highcharts.DataTable|Array<(PointOptions|PointShortOptions)>}
      * Sorted table a reference.
      */
-    private sortTable(table: DataTable): DataTable {
-        var series = this,
+    private sortData<T extends(DataTable|Array<(PointOptions|PointShortOptions)>)>(
+        data: T
+    ): T {
+        const series = this,
             options = series.options,
             dataSorting: SeriesDataSortingOptions = options.dataSorting as any,
-            sortModify = (new SortModifier({
+            sortModifier = (new SortModifier({
                 orderByColumn: (dataSorting.sortKey || 'y'),
                 orderInColumn: 'x'
             })),
-            rowCount = table.getRowCount(),
-            getPointOptionsObject = function (
-                series: Series,
-                pointOptions: (PointOptions|PointShortOptions)
-            ): PointOptions {
-                return (defined(pointOptions) &&
-                    series.pointClass.prototype.optionsToObject.call({
-                        series: series
-                    }, pointOptions)) || {};
-            };
-
-        // Save original index
-        if (!table.hasColumn('index')) {
-            const indexColumn: DataTable.Column = [];
-            for (let i = 0, iEnd = rowCount; i < iEnd; ++i) {
-                indexColumn[i] = i;
-            }
-            table.setColumn('index', indexColumn);
-        }
+            table = (
+                data instanceof DataTable ?
+                    data :
+                    Series.getTableFromSeriesData(
+                        data as Array<(PointOptions|PointShortOptions)>,
+                        series
+                    )
+            ),
+            rowCount = table.getRowCount();
 
         // Sorting
-        sortModify.modify(table);
+        sortModifier.modify(table);
+
+        // Apply sorted x on data references
+        if (data instanceof Array) {
+            const xColumn = table.getColumnAsNumbers('x', true);
+            for (let i = 0, pointOptions: PointOptions; i < rowCount; ++i) {
+                data[i] = pointOptions = Point.optionsToObject(data[i], series);
+                pointOptions.index = i;
+                pointOptions.x = xColumn[i];
+            }
+        }
 
         // Set the same x for linked series points if they don't have their
         // own sorting
@@ -4106,10 +4125,7 @@ class Series {
                     let x: number;
 
                     seriesData.forEach(function (pointOptions, i): void {
-                        seriesData[i] = getPointOptionsObject(
-                            linkedSeries,
-                            pointOptions
-                        );
+                        seriesData[i] = Point.optionsToObject(pointOptions, linkedSeries);
 
                         if (i < rowCount) {
                             x = table.getCellAsNumber('x', i, true);
@@ -4123,84 +4139,142 @@ class Series {
             });
         }
 
-        return table;
+        return data;
     }
 
     /**
      * Synchronize series data and table.
      * @private
      */
-    private syncTable(e: DataTable.EventObject): void {
-        const series = this,
-            options = series.options,
+    private syncTable(e: DataTable.Event): void {
+        const series = this;
+
+        if (series.tableReset) {
+            return;
+        }
+
+        const options = series.options,
             data = (options.data || []),
-            keys = (options.keys || series.pointArrayMap || ['y']),
-            points = series.data,
+            pointValKey = (options.pointValKey || 'y'),
+            keys = (options.keys || series.pointArrayMap || [pointValKey]),
+            points = series.data;
+
+        let column: DataTable.Column,
+            columnName: string,
+            count: number,
+            index: number,
+            point: Point;
+
+        switch (e.type) {
+            case 'afterClearRows':
+            case 'afterClearTable':
+                data.length = 0;
+                return;
+
+            case 'afterClearColumn':
+            case 'afterDeleteColumn':
+            case 'afterSetColumn':
+                column = e.column;
+                columnName = e.columnName;
+                if (columnName === 'x' || keys.indexOf(columnName) !== -1) {
+                    for (let i = 0, iEnd = column.length; i < iEnd; ++i) {
+                        series.syncTableRow(i);
+                    }
+                }
+                break;
+
+            case 'afterDeleteRows':
+                count = e.rowCount;
+                index = e.rowIndex;
+                data.splice(index, count);
+                if (points[index]) {
+                    const deletedPoints = points.splice(index, count);
+                    for (let i = 0, iEnd = deletedPoints.length; i < iEnd; ++i) {
+                        deletedPoints[i].destroy();
+                    }
+                    return;
+                }
+                break;
+
+            case 'afterSetCell':
+                index = e.rowIndex;
+                point = points[index];
+                series.syncTableRow(index);
+                if (point) {
+                    point.update(data[index]);
+                    return;
+                }
+                break;
+
+            case 'afterSetRows':
+                count = e.rowCount;
+                index = e.rowIndex;
+                for (let i = index, iEnd = (i + count); i < iEnd; ++i) {
+                    point = points[i];
+                    series.syncTableRow(i);
+                    if (point) {
+                        point.update(data[i]);
+                    }
+                }
+                if (points[index + count]) {
+                    return;
+                }
+                break;
+
+            default:
+                return;
+        }
+
+        clearTimeout(series.tableSyncTimeout);
+        series.tableSyncTimeout = syncTimeout(
+            (): void => {
+                series.setData(data);
+                delete series.tableSyncTimeout;
+            },
+            1
+        );
+    }
+
+    /** @private */
+    private syncTableRow(index: number): void {
+        const series = this,
             table = series.table;
 
-        let dataPoint: (PointOptions|PointShortOptions),
-            index: number,
-            point: Point,
-            row: DataTable.Row;
+        if (!table) {
+            return;
+        }
 
-        if (
-            e.type === 'afterDeleteRow' ||
-            e.type === 'afterSetCell' ||
-            e.type === 'afterSetRow'
-        ) {
-            index = e.rowIndex;
+        const options = series.options,
+            dataOptions = options.data = (options.data || []),
+            rowOptions = dataOptions[index],
+            pointValKey = pick(
+                options.pointValKey,
+                options.keys && options.keys[0],
+                'y'
+            ),
+            keys = pick(
+                options.keys,
+                series.pointArrayMap,
+                [pointValKey]
+            ),
+            row = table.getRow(index, keys);
 
-            dataPoint = data[index];
-            point = points[index];
-            row = (table.getRow(index, keys) || []);
-
-            if (e.type === 'afterDeleteRow') {
-                data.splice(index, 1);
-            } else if (point) {
-                point.update(
-                    e.type === 'afterSetCell' ?
-                        { [e.columnName]: e.cellValue } :
-                        table.getRowObject(index) as any
+        if (!row || DataTable.isNull(row)) {
+            dataOptions[index] = null;
+        } else if (rowOptions && typeof rowOptions === 'object') {
+            if (rowOptions instanceof Array) {
+                rowOptions.splice(
+                    (row.length < rowOptions.length ? 1 : 0),
+                    row.length,
+                    ...row as Array<(number|string|null)>
                 );
-            } else if (DataTable.isNull(row)) {
-                data[table.getCellAsNumber('x', index) || index] = dataPoint = null;
-            } else if (
-                dataPoint &&
-                typeof dataPoint === 'object'
-            ) {
-                if (dataPoint instanceof Array) {
-                    if (e.type === 'afterSetCell') {
-                        const keyIndex = keys.indexOf(e.columnName);
-                        if (keyIndex === -1) {
-                            dataPoint.length = 0;
-                            dataPoint.push(...row as any);
-                        } else {
-                            dataPoint[keyIndex] = e.cellValue as any;
-                        }
-                    } else {
-                        dataPoint.length = 0;
-                        dataPoint.push(...row as any);
-                    }
-                } else {
-                    merge(true, dataPoint, table.getRowObject(index, keys));
-                }
-            } else if (e.type === 'afterSetCell') {
-                data[index] = dataPoint = e.cellValue as any;
-            } else if (row.length) {
-                data[index] = dataPoint = (
-                    row.length === 1 ?
-                        row[0] :
-                        row as any
-                );
+            } else {
+                merge(true, rowOptions, table.getRowObject(index, keys));
             }
-
-            if (!point) {
-                clearTimeout(series.tableSyncTimeout);
-                series.tableSyncTimeout = syncTimeout(
-                    (): void => series.setData(data),
-                    1
-                );
-            }
+        } else if (rowOptions === null) {
+            dataOptions[index] = row as Array<(number|string|null)>;
+        } else {
+            dataOptions[index] = table.getCellAsNumber(pointValKey, index);
         }
     }
 
@@ -4443,7 +4517,13 @@ class Series {
             keys = options.keys,
             point,
             points = [],
-            i;
+            i,
+            groupCropStartIndex: number = (
+                options.dataGrouping &&
+                options.dataGrouping.groupAll ?
+                    cropStart :
+                    0
+            );
 
         if (!data && !hasGroupedData) {
             var arr = [] as Array<Point>;
@@ -4498,7 +4578,7 @@ class Series {
                  * @name Highcharts.Point#dataGroup
                  * @type {Highcharts.DataGroupingInfoObject|undefined}
                  */
-                point.dataGroup = (series.groupMap as any)[i];
+                point.dataGroup = (series.groupMap as any)[groupCropStartIndex + i];
                 if ((point.dataGroup as any).options) {
                     point.options = (point.dataGroup as any).options;
                     extend(point, (point.dataGroup as any).options);
@@ -4514,7 +4594,8 @@ class Series {
                  * @type {number}
                  * @readonly
                  */
-                point.index = cursor; // For faster access in Point.update
+                // For faster access in Point.update
+                point.index = hasGroupedData ? (groupCropStartIndex + i) : cursor;
                 points[i] = point;
             }
         }
@@ -5617,7 +5698,12 @@ class Series {
         }
         series.points = null as any;
         if (table) {
+            series.tableReset = true;
             table.clear();
+            series.tableReset = false;
+        }
+        if (series.clips) {
+            series.clips.forEach((clip): void => clip.destroy());
         }
 
         // Clear the animation timeout if we are destroying the series
@@ -5640,7 +5726,7 @@ class Series {
 
         // remove from hoverSeries
         if (chart.hoverSeries === series) {
-            chart.hoverSeries = null as any;
+            chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
         chart.orderSeries();
@@ -6873,6 +6959,8 @@ class Series {
             animation = series.finishedAnimating && { animation: false },
             kinds = {} as Record<string, number>;
 
+        newType = newType || initialType;
+
         if (keepPoints) {
             preserve.push(
                 'data',
@@ -6884,6 +6972,7 @@ class Series {
                 'cropped',
                 '_hasPointMarkers',
                 '_hasPointLabels',
+                'clips', // #15420
 
                 // Networkgraph (#14397)
                 'nodes',
@@ -6943,9 +7032,11 @@ class Series {
             delete (series as any)[prop];
         });
 
-        if (seriesTypes[newType || initialType]) {
+        let casting = false;
 
-            const casting = newType !== series.type;
+        if (seriesTypes[newType]) {
+
+            casting = newType !== series.type;
 
             // Destroy the series and delete all properties, it will be
             // reinserted within the `init` call below
@@ -6958,7 +7049,7 @@ class Series {
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,
-                        seriesTypes[newType || initialType].prototype
+                        seriesTypes[newType].prototype
                     );
 
                 // Legacy (IE < 11)
@@ -6974,7 +7065,7 @@ class Series {
                     // prototype (#2270, #3719).
                     extend<Series>(
                         series,
-                        seriesTypes[newType || initialType].prototype
+                        seriesTypes[newType].prototype
                     );
 
                     // The events are tied to the prototype chain, don't copy if
@@ -6991,7 +7082,7 @@ class Series {
                 17,
                 true,
                 chart,
-                { missingModuleFor: (newType || initialType) }
+                { missingModuleFor: newType }
             );
         }
 
@@ -7001,7 +7092,6 @@ class Series {
         });
 
         series.init(chart, options);
-
 
         // Remove particular elements of the points. Check `series.options`
         // because we need to consider the options being set on plotOptions as
@@ -7049,6 +7139,12 @@ class Series {
 
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
+
+        // #15383: Fire updatedData if the type has changed to keep linked
+        // series such as indicators updated
+        if (casting && series.linkedSeries.length) {
+            series.isDirtyData = true;
+        }
 
         fireEvent(this, 'afterUpdate');
 

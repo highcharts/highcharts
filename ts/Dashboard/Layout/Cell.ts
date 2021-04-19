@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type { CSSJSONObject } from './../../Data/DataCSSObject';
 import type DataJSON from '../../Data/DataJSON';
 import type Component from './../Component/Component.js';

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type {
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';

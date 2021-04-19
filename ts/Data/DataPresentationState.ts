@@ -36,7 +36,7 @@ const {
  * Contains presentation information like column order, usually in relation to a
  * table instance.
  */
-class DataPresentationState implements DataEventEmitter<DataPresentationState.EventObject>, DataJSON.Class {
+class DataPresentationState implements DataEventEmitter<DataPresentationState.Event>, DataJSON.Class {
 
     /**
      * Converts a supported class JSON to a DataPresentationState instance.
@@ -101,10 +101,10 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * Emits an event on this table to all registered callbacks of the given
      * event.
      *
-     * @param {DataPresentationState.EventObject} e
+     * @param {DataPresentationState.Event} e
      * Event object with event information.
      */
-    public emit(e: DataPresentationState.EventObject): void {
+    public emit(e: DataPresentationState.Event): void {
         fireEvent(this, e.type, e);
     }
 
@@ -177,8 +177,8 @@ class DataPresentationState implements DataEventEmitter<DataPresentationState.Ev
      * Function to unregister callback from the event.
      */
     public on(
-        type: DataPresentationState.EventObject['type'],
-        callback: DataEventEmitter.EventCallback<this, DataPresentationState.EventObject>
+        type: DataPresentationState.Event['type'],
+        callback: DataEventEmitter.EventCallback<this, DataPresentationState.Event>
     ): Function {
         return addEvent(this, type, callback);
     }
@@ -353,25 +353,25 @@ namespace DataPresentationState {
     /**
      * All information objects of DataPrsentationState events.
      */
-    export type EventObject = (
-        ColumnOrderEventObject | ColumnVisibilityEventObject |
-        PointHoverEventObject | SelectionEventObject
+    export type Event = (
+        ColumnOrderEvent | ColumnVisibilityEvent |
+        PointHoverEvent | SelectionEvent
     );
 
     /**
      * Describes the information object for order-related events.
      */
-    export interface ColumnOrderEventObject extends DataEventEmitter.EventObject {
+    export interface ColumnOrderEvent extends DataEventEmitter.Event {
         type: ColumnOrderEventType;
         newColumnOrder: Array<string>;
         oldColumnOrder: Array<string>;
     }
-    export interface ColumnVisibilityEventObject extends DataEventEmitter.EventObject {
+    export interface ColumnVisibilityEvent extends DataEventEmitter.Event {
         type: ColumnVisibilityEventType;
         visibilityMap: Record<string, boolean>;
     }
 
-    export interface PointHoverEventObject extends DataEventEmitter.EventObject {
+    export interface PointHoverEvent extends DataEventEmitter.Event {
         type: HoverPointEventType;
         hoverPoint: PresentationHoverPointType | undefined;
     }
@@ -382,7 +382,7 @@ namespace DataPresentationState {
 
     export type PresentationHoverPointType = Partial<PointType>;
 
-    export interface SelectionEventObject extends DataEventEmitter.EventObject {
+    export interface SelectionEvent extends DataEventEmitter.Event {
         type: selectionEventType;
         selection: Record<string, {min?: number | undefined; max?: number | undefined}>;
         reset: boolean;

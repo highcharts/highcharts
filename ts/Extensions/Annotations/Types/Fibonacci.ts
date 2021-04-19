@@ -13,6 +13,7 @@ import Annotation from '../Annotations.js';
 import MockPoint from '../MockPoint.js';
 import Tunnel from './Tunnel.js';
 import U from '../../../Core/Utilities.js';
+import palette from '../../../Core/Color/Palette.js';
 const { merge } = U;
 
 /**
@@ -190,15 +191,22 @@ class Fibonacci extends Tunnel {
 
     public addShapes(): void {
         Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, _level: number, i: number): void {
+            const {
+                backgroundColors,
+                lineColor,
+                lineColors
+            } = this.options.typeOptions;
+
             this.initShape({
                 type: 'path',
-                d: createPathDGenerator(i)
+                d: createPathDGenerator(i),
+                stroke: lineColors[i] || lineColor
             }, false as any);
 
             if (i > 0) {
                 (this.initShape as any)({
                     type: 'path',
-                    fill: this.options.typeOptions.backgroundColors[i - 1],
+                    fill: backgroundColors[i - 1],
                     strokeWidth: 0,
                     d: createPathDGenerator(i, true)
                 });
@@ -276,7 +284,7 @@ Fibonacci.prototype.defaultOptions = merge(
             /**
              * The color of line.
              */
-            lineColor: 'grey',
+            lineColor: palette.neutralColor40,
 
             /**
              * An array of colors for the lines.

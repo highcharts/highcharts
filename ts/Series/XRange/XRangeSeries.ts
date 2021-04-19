@@ -326,7 +326,7 @@ class XRangeSeries extends ColumnSeries {
                 series.columnMetrics as any,
             options = series.options,
             minPointLength = options.minPointLength || 0,
-            oldColWidth = (point.shapeArgs?.width || 0) / 2,
+            oldColWidth = (point.shapeArgs && point.shapeArgs.width || 0) / 2,
             seriesXOffset = series.pointXOffset = metrics.offset,
             plotX = point.plotX,
             posX = pick(point.x2, (point.x as any) + (point.len || 0)),

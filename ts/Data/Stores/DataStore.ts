@@ -41,7 +41,7 @@ const {
 /**
  * Abstract class providing an interface for managing a DataStore
  */
-abstract class DataStore<TEventObject extends DataStore.EventObject>
+abstract class DataStore<TEventObject extends DataStore.Event>
 implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /* *
      *
@@ -179,7 +179,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
      * The DataParser responsible for handling converting the provided data to
      * a DataStore.
      */
-    public abstract readonly parser: DataParser<DataParser.EventObject>;
+    public abstract readonly parser: DataParser<DataParser.Event>;
 
     /**
      * Metadata to describe the store and the content of columns.
@@ -236,7 +236,7 @@ implements DataEventEmitter<TEventObject>, DataJSON.Class {
     /**
      * Emits an event on the store to all registered callbacks of this event.
      *
-     * @param {DataStore.EventObject} [e]
+     * @param {DataStore.Event} [e]
      * Event object containing additional event information.
      */
     public emit(e: TEventObject): void {
@@ -397,7 +397,7 @@ namespace DataStore {
     /**
      * The default event object for a datastore
      */
-    export interface EventObject extends DataEventEmitter.EventObject {
+    export interface Event extends DataEventEmitter.Event {
         readonly table: DataTable;
     }
 

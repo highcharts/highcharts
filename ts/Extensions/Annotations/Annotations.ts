@@ -43,6 +43,7 @@ import H from '../../Core/Globals.js';
 import MockPoint from './MockPoint.js';
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
+import palette from '../../Core/Color/Palette.js';
 const {
     addEvent,
     defined,
@@ -1106,7 +1107,7 @@ merge<Annotation>(
                      *
                      * @type {Highcharts.ColorString}
                      */
-                    borderColor: 'black',
+                    borderColor: palette.neutralColor100,
 
                     /**
                      * The border radius in pixels for the annotaiton's label.
@@ -1570,9 +1571,9 @@ merge<Annotation>(
                     width: 10,
                     height: 10,
                     style: {
-                        stroke: 'black',
+                        stroke: palette.neutralColor100,
                         'stroke-width': 2,
-                        fill: 'white'
+                        fill: palette.backgroundColor
                     },
                     visible: false,
                     events: {}
@@ -1790,7 +1791,11 @@ chartProto.callbacks.push(function (
             // If second row doesn't have xValues
             // then it is a title row thus multiple level header is in use.
             multiLevelHeaders = !event.dataRows[1].xValues,
-            annotationHeader = chart.options.lang?.exportData?.annotationHeader,
+            annotationHeader = (
+                chart.options.lang &&
+                chart.options.lang.exportData &&
+                chart.options.lang.exportData.annotationHeader
+            ),
             columnHeaderFormatter = function (index: any): any {
                 let s;
                 if (csvColumnHeaderFormatter) {
@@ -1812,8 +1817,18 @@ chartProto.callbacks.push(function (
                 return s;
             },
             startRowLength = event.dataRows[0].length,
-            annotationSeparator = chart.options.exporting?.csv?.annotations?.itemDelimiter,
-            joinAnnotations = chart.options.exporting?.csv?.annotations?.join;
+            annotationSeparator = (
+                chart.options.exporting &&
+                chart.options.exporting.csv &&
+                chart.options.exporting.csv.annotations &&
+                chart.options.exporting.csv.annotations.itemDelimiter
+            ),
+            joinAnnotations = (
+                chart.options.exporting &&
+                chart.options.exporting.csv &&
+                chart.options.exporting.csv.annotations &&
+                chart.options.exporting.csv.annotations.join
+            );
 
         annotations.forEach((annotation): void => {
 

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import type ChartComponent from './ChartComponent';
 import type Chart from '../../Core/Chart/Chart';
 import type Point from '../../Core/Series/Point';
@@ -148,7 +149,7 @@ export const seriesVisibilityHandler =
     new ChartSyncHandler(
         'seriesVisibilityHandler',
         'afterColumnVisibilityChange',
-        function (this: ChartComponent, _e: DataPresentationState.ColumnVisibilityEventObject): void {
+        function (this: ChartComponent, _e: DataPresentationState.ColumnVisibilityEvent): void {
             const { chart, store } = this;
             if (store) {
                 const presentationState = store.table.getPresentationState();
@@ -203,7 +204,7 @@ export const tooltipHandler =
     new ChartSyncHandler(
         'tooltipHandler',
         'afterHoverPointChange',
-        function (this: ChartComponent, _e: DataPresentationState.PointHoverEventObject): void {
+        function (this: ChartComponent, _e: DataPresentationState.PointHoverEvent): void {
             const { chart } = this;
             const hoverPoint = this.store?.table.getPresentationState().getHoverPoint();
             if (hoverPoint === void 0 && !chart.hoverPoint) {
@@ -273,7 +274,7 @@ export const selectionHandler =
     new ChartSyncHandler(
         'selectionHandler',
         'afterSelectionChange',
-        function (this: ChartComponent, e?: DataPresentationState.SelectionEventObject): void {
+        function (this: ChartComponent, e?: DataPresentationState.SelectionEvent): void {
 
             const { chart } = this;
             // Reset the zoom if the source is the reset button

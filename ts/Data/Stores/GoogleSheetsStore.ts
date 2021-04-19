@@ -30,7 +30,7 @@ const {
  * @private
  */
 
-class GoogleSheetsStore extends DataStore<GoogleSheetsStore.EventObject> implements DataJSON.Class {
+class GoogleSheetsStore extends DataStore<GoogleSheetsStore.Event> implements DataJSON.Class {
 
     /* *
      *
@@ -230,15 +230,15 @@ namespace GoogleSheetsStore {
         options: Options;
     }
 
-    export type EventObject = (ErrorEventObject|LoadEventObject);
+    export type Event = (ErrorEvent|LoadEvent);
 
-    export interface ErrorEventObject extends DataStore.EventObject {
+    export interface ErrorEvent extends DataStore.Event {
         readonly type: 'loadError';
         readonly error: (string|Error);
         readonly xhr: XMLHttpRequest;
     }
 
-    export interface LoadEventObject extends DataStore.EventObject {
+    export interface LoadEvent extends DataStore.Event {
         readonly type: ('load'|'afterLoad');
         readonly url: string;
     }

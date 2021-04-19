@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Row from './Row.js';
 import Dashboard from '../Dashboard.js';
 import GUIElement from './GUIElement.js';
