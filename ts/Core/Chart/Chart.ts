@@ -2711,7 +2711,9 @@ class Chart {
                     fireEvent(chart, 'afterAddSeries', { series: series });
 
                     if (redraw) {
+                        series.setTemporaryClip = true;
                         chart.redraw(animation);
+                        delete series.setTemporaryClip;
                     }
                 }
             );

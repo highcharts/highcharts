@@ -2735,6 +2735,8 @@ class Series {
 
     public symbol?: string;
 
+    public setTemporaryClip?: boolean;
+
     public tooltipOptions: Highcharts.TooltipOptions = void 0 as any;
 
     public touched?: boolean;
@@ -4867,10 +4869,15 @@ class Series {
             inverted = chart.inverted,
             seriesClipBox = this.clipBox,
             clipBox = this.getClipBox(animation),
+            tempSharedClipKey = (
+                this.sharedClipKey &&
+                this.sharedClipKey.split(',')[0] !== '_sharedClip'
+            ) ? this.sharedClipKey : void 0,
             sharedClipKey =
-                this.sharedClipKey ||
+                (this.setTemporaryClip ? this.sharedClipKey : void 0) ||
                 [
-                    '_sharedClip',
+                    this.setTemporaryClip ?
+                        '_temporaryClip_' + this._i : '_sharedClip',
                     animation && (animation as any).duration,
                     animation && (animation as any).easing,
                     animation && (animation as any).defer,
@@ -4953,6 +4960,11 @@ class Series {
                     (chart as any)[sharedClipKey + 'm'] =
                         (chart as any)[sharedClipKey + 'm'].destroy();
                 }
+            }
+
+            if (tempSharedClipKey && (chart as any)[tempSharedClipKey]) {
+                (chart as any)[tempSharedClipKey] =
+                    (chart as any)[tempSharedClipKey].destroy();
             }
         }
     }
