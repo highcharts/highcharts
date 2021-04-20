@@ -3,7 +3,8 @@ QUnit.test('Updating series stacked property', assert => {
         chart: {
             type: 'area',
             width: 600,
-            height: 350
+            height: 350,
+            animation: true
         },
         xAxis: {
             categories: [
@@ -79,5 +80,14 @@ QUnit.test('Updating series stacked property', assert => {
         chart.series[0].areaPath.length,
         0,
         'Path should be empty when there is no data'
+    );
+
+    chart.series[1].update({
+        data: []
+    });
+
+    assert.ok(
+        true,
+        '#15534: Updating from data containing nulls to no data should not throw'
     );
 });
