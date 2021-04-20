@@ -3049,7 +3049,7 @@ H.defaultOptions = {
 
         /**
          * Whether to show the symbol on the right side of the text rather than
-         * the left side. This is common in Arabic and Hebraic.
+         * the left side. This is common in Arabic and Hebrew.
          *
          * @sample {highcharts} highcharts/legend/rtl/
          *         Symbol to the right
