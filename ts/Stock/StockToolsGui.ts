@@ -320,7 +320,10 @@ setOptions({
                 lowIndex: 'Low index',
                 deviation: 'Deviation',
                 xAxisUnit: 'x-axis unit',
-                factor: 'Factor'
+                factor: 'Factor',
+                fastAvgPeriod: 'Fast average period',
+                slowAvgPeriod: 'Slow average period',
+                average: 'Average'
             }
         }
     },

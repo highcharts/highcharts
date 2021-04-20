@@ -251,6 +251,7 @@ bindingsUtils.manageIndicators = function (
         indicatorsWithVolume = [
             'ad',
             'cmf',
+            'klinger',
             'mfi',
             'obv',
             'vbp',
@@ -261,6 +262,7 @@ bindingsUtils.manageIndicators = function (
             'atr',
             'cci',
             'cmf',
+            'disparityindex',
             'cmo',
             'dmi',
             'macd',
@@ -282,7 +284,8 @@ bindingsUtils.manageIndicators = function (
             'linearRegression',
             'linearRegressionSlope',
             'linearRegressionIntercept',
-            'linearRegressionAngle'
+            'linearRegressionAngle',
+            'klinger'
         ],
         yAxis,
         parentSeries,
@@ -2046,7 +2049,8 @@ var stockToolsBindings: Record<string, Highcharts.NavigationBindingsOptionsObjec
                         },
                         connector: {
                             fill: 'none',
-                            stroke: closestPoint.below ? palette.negativeColor : palette.positiveColor
+                            stroke: closestPoint.below ?
+                                palette.negativeColor : palette.positiveColor
                         }
                     },
                     shapeOptions: {

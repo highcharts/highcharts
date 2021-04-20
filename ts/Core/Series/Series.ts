@@ -4853,7 +4853,7 @@ class Series {
     }
 
     /**
-     * Get the shared clip key, creating it if it doesnt exist.
+     * Get the shared clip key, creating it if it doesn't exist.
      *
      * @private
      * @function Highcharts.Series#getSharedClipKey
@@ -4864,7 +4864,6 @@ class Series {
         }
 
         const sharedClipKey = [
-            '_sharedClip',
             animation && animation.duration,
             animation && animation.easing,
             animation && animation.defer,
@@ -4896,8 +4895,8 @@ class Series {
             seriesClipBox = this.clipBox,
             clipBox = this.getClipBox(animation),
             sharedClipKey = this.getSharedClipKey(animation), // #4526
-            clipRect = (chart as any)[sharedClipKey],
-            markerClipRect = (chart as any)[sharedClipKey + 'm'];
+            clipRect = chart.sharedClips[sharedClipKey],
+            markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
 
         if (animation) {
             clipBox.width = 0;
@@ -4913,10 +4912,10 @@ class Series {
 
             // When animation is set, prepare the initial positions
             if (animation) {
-                (chart as any)[sharedClipKey + 'm'] = markerClipRect =
+                chart.sharedClips[sharedClipKey + 'm'] = markerClipRect =
                     renderer.clipRect(
                         // include the width of the first marker
-                        inverted ? (chart.plotSizeX as any) + 99 : -99,
+                        inverted ? (chart.plotSizeX || 0) + 99 : -99,
                         inverted ? -chart.plotLeft : -chart.plotTop,
                         99,
                         inverted ? chart.chartWidth : chart.chartHeight
@@ -4924,7 +4923,7 @@ class Series {
 
 
             }
-            (chart as any)[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+            chart.sharedClips[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
 
             // Create hashmap for series indexes
             clipRect.count = { length: 0 };
@@ -4936,8 +4935,8 @@ class Series {
         }
 
         if (animation) {
-            if (!clipRect.count[this.index as any]) {
-                clipRect.count[this.index as any] = true;
+            if (!clipRect.count[this.index]) {
+                clipRect.count[this.index] = true;
                 clipRect.count.length += 1;
             }
         }
@@ -4952,23 +4951,17 @@ class Series {
 
         // Remove the shared clipping rectangle when all series are shown
         if (!animation) {
-            if (clipRect.count[this.index as any]) {
-                delete clipRect.count[this.index as any];
+            if (clipRect.count[this.index]) {
+                delete clipRect.count[this.index];
                 clipRect.count.length -= 1;
             }
 
-            if (
-                clipRect.count.length === 0 &&
-                sharedClipKey &&
-                (chart as any)[sharedClipKey]
-            ) {
+            if (clipRect.count.length === 0) {
                 if (!seriesClipBox) {
-                    (chart as any)[sharedClipKey] =
-                        (chart as any)[sharedClipKey].destroy();
+                    chart.sharedClips[sharedClipKey] = clipRect.destroy();
                 }
-                if ((chart as any)[sharedClipKey + 'm']) {
-                    (chart as any)[sharedClipKey + 'm'] =
-                        (chart as any)[sharedClipKey + 'm'].destroy();
+                if (markerClipRect) {
+                    chart.sharedClips[sharedClipKey + 'm'] = markerClipRect.destroy();
                 }
             }
         }
@@ -4990,9 +4983,7 @@ class Series {
         var series = this,
             chart = series.chart,
             animation = animObject(series.options.animation),
-            clipRect,
-            sharedClipKey,
-            finalBox;
+            sharedClipKey = this.sharedClipKey;
 
         // Initialize the animation. Set up the clipping rectangle.
         if (init) {
@@ -5000,17 +4991,17 @@ class Series {
             series.setClip(animation);
 
         // Run the animation
-        } else {
-            sharedClipKey = this.sharedClipKey;
-            clipRect = (chart as any)[sharedClipKey as any];
+        } else if (sharedClipKey) {
+            const clipRect = chart.sharedClips[sharedClipKey];
+            const markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
 
-            finalBox = series.getClipBox(animation, true);
+            const finalBox = series.getClipBox(animation, true);
 
             if (clipRect) {
                 clipRect.animate(finalBox, animation);
             }
-            if ((chart as any)[sharedClipKey + 'm']) {
-                (chart as any)[sharedClipKey + 'm'].animate({
+            if (markerClipRect) {
+                markerClipRect.animate({
                     width: finalBox.width + 99,
                     x: finalBox.x - (chart.inverted ? 0 : 99)
                 }, animation);

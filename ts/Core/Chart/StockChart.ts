@@ -1178,6 +1178,7 @@ addEvent(Series, 'render', function (): void {
             // example when updating the series, so we need to use this
             // function instead
             const sharedClipKey = this.getSharedClipKey(animation);
+            const clipRect = chart.sharedClips[sharedClipKey];
 
             // On redrawing, resizing etc, update the clip rectangle.
             //
@@ -1185,17 +1186,19 @@ addEvent(Series, 'render', function (): void {
             // since there could be series updating and pane size changes
             // happening at the same time and we dont destroy shared clips in
             // stock.
-            if ((chart as any)[sharedClipKey]) {
+            if (clipRect) {
                 // animate in case resize is done during initial animation
-                (chart as any)[sharedClipKey].animate({
+                clipRect.animate({
                     width: this.xAxis.len,
                     height: clipHeight
                 });
 
+                const markerClipRect = chart.sharedClips[sharedClipKey + 'm'];
+
                 // also change markers clip animation for consistency
                 // (marker clip rects should exist only on chart init)
-                if ((chart as any)[sharedClipKey + 'm']) {
-                    (chart as any)[sharedClipKey + 'm'].animate({
+                if (markerClipRect) {
+                    markerClipRect.animate({
                         width: this.xAxis.len
                     });
                 }

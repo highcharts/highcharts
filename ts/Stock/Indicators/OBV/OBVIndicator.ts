@@ -73,8 +73,9 @@ class OBVIndicator extends SMAIndicator {
          * @excluding index, period
          */
         params: {
-            index: void 0 as any,
-            period: void 0 as any,
+            // Index and period are unchangeable, do not inherit (#15362)
+            index: void 0,
+            period: void 0,
             /**
              * The id of another series to use its data as volume data for the
              * indiator calculation.

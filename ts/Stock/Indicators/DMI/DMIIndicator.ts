@@ -79,8 +79,7 @@ class DMIIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
-            index: void 0, // DMI has unchangeable index
-            period: 14
+            index: void 0 // unused index, do not inherit (#15362)
         },
         marker: {
             enabled: false

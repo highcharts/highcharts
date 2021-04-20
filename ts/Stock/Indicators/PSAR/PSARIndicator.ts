@@ -189,6 +189,7 @@ class PSARIndicator extends SMAIndicator {
          * @excluding period
          */
         params: {
+            period: void 0, // unchangeable period, do not inherit (#15362)
             /**
              * The initial value for acceleration factor.
              * Acceleration factor is starting with this value

@@ -19,13 +19,11 @@ import type LinearRegressionSlopesPoint from './LinearRegressionSlopesPoint';
 import SeriesRegistry from '../../../Core/Series/SeriesRegistry.js';
 const {
     seriesTypes: {
-        sma: SMAIndicator,
         linearRegression: LinearRegressionIndicator
     }
 } = SeriesRegistry;
 import U from '../../../Core/Utilities.js';
 const {
-    isArray,
     extend,
     merge
 } = U;

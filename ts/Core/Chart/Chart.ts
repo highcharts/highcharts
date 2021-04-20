@@ -277,6 +277,7 @@ class Chart {
     public renderTo: globalThis.HTMLElement = void 0 as any;
     public series: Array<Series> = void 0 as any;
     public seriesGroup?: SVGElement;
+    public sharedClips: Record<string, (SVGElement|undefined)> = {};
     public spacing: Array<number> = void 0 as any;
     public spacingBox: BBoxObject = void 0 as any;
     public styledMode?: boolean;

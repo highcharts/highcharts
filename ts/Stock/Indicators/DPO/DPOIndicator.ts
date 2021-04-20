@@ -92,6 +92,7 @@ class DPOIndicator extends SMAIndicator {
          * points.
          */
         params: {
+            index: 0,
             /**
              * Period for Detrended Price Oscillator
              */
