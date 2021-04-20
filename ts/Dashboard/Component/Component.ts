@@ -4,6 +4,7 @@ import type DataStore from '../../Data/Stores/DataStore';
 import type DataJSON from '../../Data/DataJSON';
 import type CSSObject from '../../Core/Renderer/CSSObject';
 import type TextOptions from './TextOptions';
+import EditableOptions from './EditableOptions.js';
 import U from '../../Core/Utilities.js';
 const {
     createElement,
@@ -162,7 +163,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             'style',
             'title',
             'caption'
-        ]
+        ],
+        editableOptionsBindings: void 0
     }
 
     public parentElement: HTMLElement;
@@ -174,6 +176,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
     public options: Component.ComponentOptions;
     public type: string;
     public id: string;
+    public editableOptions: EditableOptions;
     private tableEventTimeout?: number;
     private tableEvents: Function[] = [];
     protected hasLoaded: boolean;
@@ -198,6 +201,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         this.type = this.options.type;
         this.store = this.options.store;
         this.hasLoaded = false;
+        this.editableOptions = new EditableOptions(this, options.editableOptionsBindings);
         // Initial dimensions
         this.dimensions = {
             width: null,
@@ -512,6 +516,7 @@ namespace Component {
         navigationBindings?: Highcharts.NavigationBindingsOptionsObject[];
         events?: Record<Event['type'], Function>;
         editableOptions: Array<keyof EditableOptions>;
+        editableOptionsBindings?: EditableOptions.BindingsType;
     }
 
     export interface EditableOptions {
