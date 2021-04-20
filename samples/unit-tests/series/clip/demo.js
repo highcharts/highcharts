@@ -70,7 +70,7 @@ QUnit.test('General series clip tests', assert => {
             '#15128: Series with clip=false should not have stock clipping applied'
         );
 
-        const widthBefore = chart[chart.series[3].sharedClipKey].attr('width');
+        const widthBefore = chart.sharedClips[chart.series[3].sharedClipKey].attr('width');
 
         chart.update({
             yAxis: [{}, {
@@ -80,7 +80,7 @@ QUnit.test('General series clip tests', assert => {
         }, true, true);
 
         assert.ok(
-            chart[chart.series[3].sharedClipKey].attr('width') > widthBefore,
+            chart.sharedClips[chart.series[3].sharedClipKey].attr('width') > widthBefore,
             '#15435: Shared clip should have been updated'
         );
 

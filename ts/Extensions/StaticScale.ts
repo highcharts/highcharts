@@ -111,8 +111,8 @@ Chart.prototype.adjustHeight = function (): void {
                 // Make sure clip rects have the right height before initial
                 // animation.
                 axis.series.forEach(function (series: Series): void {
-                    var clipRect = series.sharedClipKey &&
-                        (chart as any)[series.sharedClipKey];
+                    const clipRect = series.sharedClipKey &&
+                        chart.sharedClips[series.sharedClipKey];
 
                     if (clipRect) {
                         clipRect.attr(chart.inverted ? {
