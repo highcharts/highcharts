@@ -4035,7 +4035,8 @@ class Series {
             /**
              * Table with data rows to synchronize with series points. The table
              * is filled automatically only during init. Afterwards series data
-             * must always be updated with {@link Highcharts.DataTable#setRows}.
+             * must always be updated with {@link Highcharts.DataTable#setRows}
+             * or it becomes out of sync.
              *
              * @name Highcharts.Series#table
              * @type {Highcharts.DataTable}
