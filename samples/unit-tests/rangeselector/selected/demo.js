@@ -187,7 +187,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'JS error on range selector in non-Highstock (#5330)',
+    'JS error on range selector in non-Highcharts Stock (#5330)',
     function (assert) {
         assert.expect(0); // We just expect it to not throw
 
@@ -253,7 +253,7 @@ QUnit.test('1Y button should be selected. (#7467)', function (assert) {
     );
 });
 
-QUnit.test('Highstock with empty data', assert => {
+QUnit.test('Highcharts Stock with empty data', assert => {
     var chart = Highcharts.stockChart('container', {
         xAxis: {
             min: 1378449361033,

@@ -5,7 +5,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', data => 
         },
 
         title: {
-            text: 'Highstock Responsive Chart'
+            text: 'Highcharts Stock Responsive Chart'
         },
 
         subtitle: {

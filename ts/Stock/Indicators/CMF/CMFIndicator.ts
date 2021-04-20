@@ -4,7 +4,7 @@
  *
  *  Author: Sebastian Domas
  *
- *  Chaikin Money Flow indicator for Highstock
+ *  Chaikin Money Flow indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *

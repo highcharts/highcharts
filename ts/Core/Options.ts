@@ -914,7 +914,7 @@ H.defaultOptions = {
      * settings affect how `datetime` axes are laid out, how tooltips are
      * formatted, how series
      * [pointIntervalUnit](#plotOptions.series.pointIntervalUnit) works and how
-     * the Highstock range selector handles time.
+     * the Highcharts Stock range selector handles time.
      *
      * The common use case is that all charts in the same Highcharts object
      * share the same time settings, in which case the global settings are set
@@ -3817,9 +3817,10 @@ H.defaultOptions = {
          * tooltips for charts with multiple line series, generally making them
          * easier to read. This option takes precedence over `tooltip.shared`.
          *
-         * @productdesc {highstock} In Highstock, tooltips are split by default
-         * since v6.0.0. Stock charts typically contain multi-dimension points
-         * and multiple panes, making split tooltips the preferred layout over
+         * @productdesc {highstock} In Highcharts Stock, tooltips are split
+         * by default since v6.0.0. Stock charts typically contain
+         * multi-dimension points and multiple panes, making split tooltips
+         * the preferred layout over
          * the previous `shared` tooltip.
          *
          * @sample highcharts/tooltip/split/
@@ -3969,7 +3970,7 @@ H.defaultOptions = {
          * header will by default be guessed based on the closest data points.
          * This member gives the default string representations used for
          * each unit. For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#dateFormat).
+         * [dateFormat](/class-reference/Highcharts#.dateFormat).
          *
          * @see [xAxis.dateTimeLabelFormats](#xAxis.dateTimeLabelFormats)
          *

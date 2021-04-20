@@ -4,7 +4,7 @@
  * @requires highcharts
  * @requires highcharts/modules/stock
  *
- * All technical indicators for Highstock
+ * All technical indicators for Highcharts Stock
  *
  * (c) 2010-2021 Pawel Fus
  *

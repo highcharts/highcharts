@@ -1649,7 +1649,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @sample highcharts/members/chart-exportchart-custom-background/
      *         Different chart background in export
      * @sample stock/members/chart-exportchart/
-     *         Export with Highstock
+     *         Export with Highcharts Stock
      *
      * @function Highcharts.Chart#exportChart
      *

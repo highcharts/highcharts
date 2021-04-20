@@ -70,4 +70,14 @@ QUnit.test('Updating series stacked property', assert => {
         chart.series[0].areaPath.slice(-1)[0].includes("Z"),
         'The last index of the path array contains the closure'
     );
+
+    chart.series[0].update({
+        data: []
+    });
+
+    assert.strictEqual(
+        chart.series[0].areaPath.length,
+        0,
+        'Path should be empty when there is no data'
+    );
 });

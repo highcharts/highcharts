@@ -67,11 +67,11 @@ class LinearRegressionIndicator extends SMAIndicator {
                 /**
                  * Unit (in milliseconds) for the x axis distances used to
                  * compute the regression line paramters (slope & intercept) for
-                 * every range. In Highstock the x axis values are always
+                 * every range. In Highcharts Stock the x axis values are always
                  * represented in milliseconds which may cause that distances
                  * between points are "big" integer numbers.
                  *
-                 * Highstock's linear regression algorithm (least squares
+                 * Highcharts Stock's linear regression algorithm (least squares
                  * method) will utilize these "big" integers for finding the
                  * slope and the intercept of the regression line for each
                  * period. In consequence, this value may be a very "small"

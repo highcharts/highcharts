@@ -1,6 +1,6 @@
 // Test both, ordinal and non-ordinal axes:
 Highcharts.each([true, false], function (ordinal) {
-    // Highstock modifies "series" property, so use separate object each time:
+    // Highcharts Stock modifies "series" property, so use separate object each time:
     function getOptions() {
         return {
             chart: {

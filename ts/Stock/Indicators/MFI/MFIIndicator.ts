@@ -1,6 +1,6 @@
 /* *
  *
- *  Money Flow Index indicator for Highstock
+ *  Money Flow Index indicator for Highcharts Stock
  *
  *  (c) 2010-2021 Grzegorz Blachliński
  *

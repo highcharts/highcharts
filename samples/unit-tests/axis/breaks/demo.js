@@ -530,7 +530,7 @@ QUnit.test('PointBreak with different thresholds(#4356)', function (assert) {
 });
 
 QUnit.test(
-    'Axis breaks and column width in Highstock (#5979)',
+    'Axis breaks and column width in Highcharts Stock (#5979)',
     function (assert) {
         var data = [];
         for (
