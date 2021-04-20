@@ -5,10 +5,10 @@ Technical Indicators, like annotations, are powerful tools that help to understa
 
 Technical indicators require the [indicators/indicators.js](https://code.highcharts.com/stock/indicators/indicators.js) main module. The main module includes SMA (Simple Moving Average). Each technical indicator, except the SMA, is a separate module and should be loaded after the main module. 
 
-A full list of supported technical indicators could be divided into two main groups.  Overlays use the same scale and are plotted on the same xAxis and yAxis as the main series. The oscillator requires additional yAxis because they oscillate between different extremes.
+A full list of supported technical indicators could be divided into two main groups. Overlays use the same scale and are plotted on the same xAxis and yAxis as the main series. The second group (oscillators and other technical indicators) requires additional yAxis because of the different extremes.
 
 
-| Overlays  |Oscillators |
+| Overlays  | Oscillators and others |
 | ------------- | ------------- |
 | [Acceleration Bands](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/acceleration-bands/) | [Absolute Price Oscillator](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/apo/) |
 | [Bollinger Bands](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/bollinger-bands/) | [A/D (Accumulation/Distribution)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/accumulation-distribution/) |
@@ -19,15 +19,19 @@ A full list of supported technical indicators could be divided into two main gro
 | [Linear Regression](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/linear-regression/) | [CCI (Commodity Channel Index)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/cci/) |
 | [Pivot Points](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/pivot-points/) | [Chaikin](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/chaikin/) |
 | [Price Channel](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/price-channel/) | [CMF (Chaikin Money Flow)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/cmf/) |
-| [Price Envelopes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/price-envelopes/) | [Detrended price](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/dpo/) |
-| [PSAR (Parabolic SAR)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/psar/) | [DMI (Directional Movement Index)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/dmi/) |
-| [SMA (Simple Moving Average)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/sma/) | [Linear Regression Angle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/linear-regression-angle/) |
-| [Super Trend](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/supertrend/) | [Linear Regression Intercept](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/linear-regression-intercept/) |
-| [TEMA (Triple Exponential Moving Average)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/tema/) | [Linear Regression Slope](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/linear-regression-slope/) |
-| [VbP (Volume by Price)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/volume-by-price/) | [MACD (Moving Average Convergence Divergence)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/macd/) |
-| [VWAP (Volume Weighted Average Price)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/vwap/) | [MFI (Money Flow Index)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/mfi/) |
-| [WMA (Weighted Moving Average)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/wma/) | [Momentum](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/momentum/)  |
-| [Zig Zag](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/zigzag/) | [NATR (Normalized Average True Range)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/natr/) |
+| [Price Envelopes](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/price-envelopes/) | [CMO (Chande Momentum Oscillator)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/cmo/) |
+| [PSAR (Parabolic SAR)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/psar/) | [Detrended price](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/dpo/) |
+| [SMA (Simple Moving Average)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/sma/) | [Disparity Index](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/disparity-index/) |
+| [Super Trend](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/supertrend/) | [DMI (Directional Movement Index)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/dmi/) |
+| [TEMA (Triple Exponential Moving Average)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/tema/) | [Klinger Oscillator](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/klinger/) |
+| [VbP (Volume by Price)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/volume-by-price/) | [Linear Regression Angle](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/linear-regression-angle/) |
+| [VWAP (Volume Weighted Average Price)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/vwap/) | [Linear Regression Intercept](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/linear-regression-intercept/) |
+| [WMA (Weighted Moving Average)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/wma/) | [Linear Regression Slope](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/linear-regression-slope/)  |
+| [Zig Zag](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/zigzag/) | [MACD (Moving Average Convergence Divergence)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/macd/) |
+| | [MFI (Money Flow Index)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/mfi/) |
+| | [Momentum](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/momentum/) |
+| | [NATR (Normalized Average True Range)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/natr/) |
+| | [OBV (On-Balance Volume)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/obv/) |
 | | [Percentage Price oscillator](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/ppo/) |
 | | [RoC (Rate of Change)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/roc/) |
 | | [RSI (Relative Strength Index)](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/stock/indicators/rsi/) |
@@ -75,7 +79,7 @@ Click [here](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree
 yAxis bindings
 -------------
 
-Some technical indicators (Bollinger Bands, EMA, Ichimoku Kinko Hyo, Pivot Points, Price Envelopes, PSAR, SMA, VbP, VWAP, WMA, Zig Zag) can be placed on the same yAxis as the main series. However, other indicators (A/D, ATR, CCI, CMF, Disparity Index, DMI, MACD, MFI, Momentum, RoC, RSI, Stochastic) should use a separate yAxis. This is caused by values calculated by algorithms: yAxis extremes for the main series can be <250, 255> but for the Stochastic technical indicator, values are within <0, 100> extremes. A technical indicator can be placed on a separate yAxis as any other series:
+All Overlay type technical indicators (the ones listed in the left column of the above table, e.g. SMA, EMA, etc.) can be placed on the same yAxis as the main series. However, other technical indicators (right column, e.g. Oscillators: MACD, RSI, etc.), should use a separate yAxis. This is caused by values calculated by algorithms: yAxis extremes for the main series can be <250, 255> but for the Stochastic technical indicator, values are within <0, 100> extremes. A technical indicator can be placed on a separate yAxis as any other series:
 
 1. Create required yAxis:
 
