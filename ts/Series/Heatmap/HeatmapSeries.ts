@@ -615,7 +615,7 @@ class HeatmapSeries extends ScatterSeries {
             (series.markerGroup as any)
                 .clip(
                     (animation || series.clipBox) && series.sharedClipKey ?
-                        (chart as any)[series.sharedClipKey] :
+                        chart.sharedClips[series.sharedClipKey] :
                         chart.clipRect
                 );
         }
