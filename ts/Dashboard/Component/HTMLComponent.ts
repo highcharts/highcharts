@@ -23,7 +23,8 @@ class HTMLComponent extends Component<HTMLComponent.HTMLComponentEventObject> {
             elements: [],
             editableOptions: [
                 ...Component.defaultOptions.editableOptions,
-                'scaleElements'
+                'scaleElements',
+                'chartOptions'
             ]
         }
     );

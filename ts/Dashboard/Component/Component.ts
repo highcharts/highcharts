@@ -1,4 +1,3 @@
-/* eslint-disable */
 import type ComponentType from './ComponentType';
 import type DataEventEmitter from '../../Data/DataEventEmitter';
 import type DataStore from '../../Data/Stores/DataStore';
@@ -160,7 +159,9 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             'dimensions',
             'id',
             'store',
-            'style'
+            'style',
+            'title',
+            'caption'
         ]
     }
 
@@ -356,7 +357,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         }
 
         this.on('message', (e: Component.MessageEvent): void => {
-            if (typeof e.message?.callback === 'function') {
+            if (e.message && typeof e.message.callback === 'function') {
                 e.message.callback.apply(this);
             }
         });
@@ -376,8 +377,8 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
             this.load();
             // Call resize to set the sizes
             this.resize(
-                this.options.dimensions?.width,
-                this.options.dimensions?.height
+                this.options.dimensions ? this.options.dimensions.width : void 0,
+                this.options.dimensions ? this.options.dimensions.height : void 0
             );
         }
 
@@ -451,7 +452,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         });
         return {
             $class: Component.getName(this.constructor),
-            store: this.store?.toJSON(),
+            store: this.store ? this.store.toJSON() : void 0,
             options: {
                 parentElement: this.parentElement.id,
                 dimensions,
