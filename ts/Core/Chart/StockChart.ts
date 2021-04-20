@@ -30,6 +30,12 @@ const {
 } = A;
 import Axis from '../Axis/Axis.js';
 import Chart from '../Chart/Chart.js';
+import O from '../../Core/Options.js';
+const {
+    format,
+    getOptions,
+    setOptions
+} = O;
 import palette from '../../Core/Color/Palette.js';
 import Point from '../Series/Point.js';
 const {
@@ -54,8 +60,6 @@ const {
     defined,
     extend,
     find,
-    format,
-    getOptions,
     isNumber,
     isString,
     merge,

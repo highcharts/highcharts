@@ -21,6 +21,7 @@ import H from '../Globals.js';
 const {
     deg2rad
 } = H;
+import O from '../Options.js';
 import U from '../Utilities.js';
 const {
     clamp,
@@ -397,7 +398,7 @@ class Tick {
         ): string => {
             if (labelOptions.format) {
                 ctx.text = axis.defaultLabelFormatter.call(ctx);
-                return U.format(labelOptions.format, ctx, chart);
+                return O.format(labelOptions.format, ctx, chart);
             }
             return (labelOptions.formatter || axis.defaultLabelFormatter)
                 .call(ctx, ctx);

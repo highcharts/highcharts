@@ -24,6 +24,10 @@ import type SVGElement from '../Core/Renderer/SVG/SVGElement';
 import Axis from '../Core/Axis/Axis.js';
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
+import O from '../Core/Options.js';
+const {
+    format
+} = O;
 import Series from '../Core/Series/Series.js';
 import StackingAxis from '../Core/Axis/StackingAxis.js';
 import U from '../Core/Utilities.js';
@@ -31,7 +35,6 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
-    format,
     isArray,
     isNumber,
     objectEach,

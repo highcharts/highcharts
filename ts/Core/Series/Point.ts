@@ -38,7 +38,10 @@ import A from '../Animation/AnimationUtilities.js';
 const { animObject } = A;
 import H from '../Globals.js';
 import O from '../Options.js';
-const { defaultOptions } = O;
+const {
+    defaultOptions,
+    format
+} = O;
 import U from '../Utilities.js';
 const {
     addEvent,
@@ -46,7 +49,6 @@ const {
     erase,
     extend,
     fireEvent,
-    format,
     getNestedProperty,
     isArray,
     isFunction,

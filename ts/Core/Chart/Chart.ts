@@ -54,7 +54,8 @@ import MSPointer from '../MSPointer.js';
 import O from '../Options.js';
 const {
     defaultOptions,
-    time
+    numberFormat,
+    defaultTime
 } = O;
 import palette from '../../Core/Color/Palette.js';
 import Pointer from '../Pointer.js';
@@ -84,7 +85,6 @@ const {
     isObject,
     isString,
     merge,
-    numberFormat,
     objectEach,
     pick,
     pInt,
@@ -3135,7 +3135,7 @@ class Chart {
             // first with global time, then updated with time options, we need
             // to create a new Time instance to avoid mutating the global time
             // (#10536).
-            if (this.time === time) {
+            if (this.time === defaultTime) {
                 this.time = new Time(options.time);
             }
 

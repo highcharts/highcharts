@@ -24,6 +24,10 @@ import H from './Globals.js';
 const {
     doc
 } = H;
+import O from './Options.js';
+const {
+    format
+} = O;
 import palette from './Color/Palette.js';
 import U from './Utilities.js';
 const {
@@ -33,7 +37,6 @@ const {
     discardElement,
     extend,
     fireEvent,
-    format,
     isNumber,
     isString,
     merge,

@@ -33,13 +33,16 @@ const {
     reverseChildNodes,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
+import O from '../../../Core/Options.js';
+const {
+    format,
+    numberFormat
+} = O;
 import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     find,
-    format,
     isNumber,
-    numberFormat,
     pick,
     defined
 } = U;

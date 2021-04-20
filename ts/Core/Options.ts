@@ -40,13 +40,30 @@ import palette from './Color/Palette.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
-    merge
+    getNestedProperty,
+    isNumber,
+    merge,
+    pick,
+    pInt
 } = U;
+
+/* *
+ *
+ *  Declarations
+ *
+ * */
 
 declare module './Chart/ChartLike'{
     interface ChartLike {
         marginRight: Highcharts.ChartOptions['marginRight'];
         polar: Highcharts.ChartOptions['polar'];
+    }
+}
+
+declare module './GlobalsLike' {
+    interface GlobalsLike {
+        defaultOptions: Highcharts.Options;
+        time: Time;
     }
 }
 
@@ -384,13 +401,18 @@ declare global {
             xDateFormat?: string;
         }
         let defaultOptions: Options;
-        let time: Time;
         type DescriptionOptionsType =
             (TitleOptions|SubtitleOptions|CaptionOptions);
         type OptionsOverflowValue = ('allow'|'justify');
         type OptionsPosition3dValue = ('chart'|'flap'|'offset'|'ortho');
     }
 }
+
+/* *
+ *
+ *  API Declarations
+ *
+ * */
 
 /**
  * @typedef {"plotBox"|"spacingBox"} Highcharts.ButtonRelativeToValue
@@ -570,11 +592,13 @@ declare global {
  * @type {number}
  */
 
-''; // detach doclets above
+(''); // detach doclets above
 
-/* ************************************************************************** *
- * Handle the options                                                         *
- * ************************************************************************** */
+/* *
+ *
+ *  API Options
+ *
+ * */
 
 /**
  * Global default settings.
@@ -584,7 +608,7 @@ declare global {
  *//**
  * @optionparent
  */
-H.defaultOptions = {
+const defaultOptions: Highcharts.Options = {
 
     /**
      * An array containing the default colors for the chart's series. When
@@ -4302,26 +4326,17 @@ H.defaultOptions = {
 /* eslint-disable spaced-comment */
 /*= if (!build.classic) { =*/
 // Legacy build for styled mode, set the styledMode option to true by default.
-(H.defaultOptions.chart as any).styledMode = true;
+(defaultOptions.chart as any).styledMode = true;
 /*= } else { =*/
-(H.defaultOptions.chart as any).styledMode = false;
+(defaultOptions.chart as any).styledMode = false;
 /*= } =*/
 '';
 
-/**
- * Global `Time` object with default options. Since v6.0.5, time settings can be
- * applied individually for each chart. If no individual settings apply, this
- * `Time` object is shared by all instances.
- *
- * @name Highcharts.time
- * @type {Highcharts.Time}
- */
-H.time = new Time(
-    merge<Highcharts.TimeOptions>(
-        H.defaultOptions.global as any,
-        H.defaultOptions.time as any
-    )
-);
+
+const defaultTime = new Time(merge(
+    defaultOptions.global,
+    defaultOptions.time
+));
 
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
@@ -4370,18 +4385,289 @@ H.time = new Time(
  * @return {string}
  *         The formatted date.
  */
-H.dateFormat = function (
+function dateFormat(
     format: string,
     timestamp: number,
     capitalize?: boolean
 ): string {
-    return H.time.dateFormat(format, timestamp, capitalize);
-};
+    return defaultTime.dateFormat(format, timestamp, capitalize);
+}
+
+/**
+ * Format a string according to a subset of the rules of Python's String.format
+ * method.
+ *
+ * @example
+ * var s = Highcharts.format(
+ *     'The {color} fox was {len:.2f} feet long',
+ *     { color: 'red', len: Math.PI }
+ * );
+ * // => The red fox was 3.14 feet long
+ *
+ * @function Highcharts.format
+ *
+ * @param {string} str
+ *        The string to format.
+ *
+ * @param {Record<string, *>} ctx
+ *        The context, a collection of key-value pairs where each key is
+ *        replaced by its value.
+ *
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
+ *
+ * @return {string}
+ *         The formatted string.
+ */
+function format(str: string, ctx: any, chart?: Chart): string {
+    let splitter = '{',
+        isInside = false,
+        segment,
+        valueAndFormat: Array<string>,
+        val,
+        index;
+    const floatRegex = /f$/;
+    const decRegex = /\.([0-9])/;
+    const lang = defaultOptions.lang;
+    const time = chart && chart.time || defaultTime;
+    const numberFormatter = chart && chart.numberFormatter || numberFormat;
+    const ret = [];
+
+    while (str) {
+        index = str.indexOf(splitter);
+        if (index === -1) {
+            break;
+        }
+
+        segment = str.slice(0, index);
+        if (isInside) { // we're on the closing bracket looking back
+
+            valueAndFormat = segment.split(':');
+            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
+
+            // Format the replacement
+            if (valueAndFormat.length && typeof val === 'number') {
+
+                segment = valueAndFormat.join(':');
+
+                if (floatRegex.test(segment)) { // float
+                    const decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                    if (val !== null) {
+                        val = numberFormatter(
+                            val,
+                            decimals,
+                            (lang as any).decimalPoint,
+                            segment.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
+                        );
+                    }
+                } else {
+                    val = time.dateFormat(segment, val);
+                }
+            }
+
+            // Push the result and advance the cursor
+            ret.push(val);
+        } else {
+            ret.push(segment);
+
+        }
+        str = str.slice(index + 1); // the rest
+        isInside = !isInside; // toggle
+        splitter = isInside ? '}' : '{'; // now look for next matching bracket
+    }
+    ret.push(str);
+    return ret.join('');
+}
+
+/**
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
+ * for outside modules wasn't enough because the setOptions method created a new
+ * object.
+ *
+ * @function Highcharts.getOptions
+ *
+ * @return {Highcharts.Options}
+ */
+function getOptions(): Highcharts.Options {
+    return defaultOptions;
+}
+H.getOptions = getOptions; // @todo move to master
+
+/**
+ * Format a number and return a string based on input settings.
+ *
+ * @sample highcharts/members/highcharts-numberformat/
+ *         Custom number format
+ *
+ * @function Highcharts.numberFormat
+ *
+ * @param {number} number
+ *        The input number to format.
+ *
+ * @param {number} decimals
+ *        The amount of decimals. A value of -1 preserves the amount in the
+ *        input number.
+ *
+ * @param {string} [decimalPoint]
+ *        The decimal point, defaults to the one given in the lang options, or
+ *        a dot.
+ *
+ * @param {string} [thousandsSep]
+ *        The thousands separator, defaults to the one given in the lang
+ *        options, or a space character.
+ *
+ * @return {string}
+ *         The formatted number.
+ */
+function numberFormat(
+    number: number,
+    decimals: number,
+    decimalPoint?: string,
+    thousandsSep?: string
+): string {
+    number = +number || 0;
+    decimals = +decimals;
+
+    let ret,
+        fractionDigits;
+
+    const lang = defaultOptions.lang,
+        origDec = (number.toString().split('.')[1] || '').split('e')[0].length,
+        exponent = number.toString().split('e'),
+        firstDecimals = decimals;
+
+    if (decimals === -1) {
+        // Preserve decimals. Not huge numbers (#3793).
+        decimals = Math.min(origDec, 20);
+    } else if (!isNumber(decimals)) {
+        decimals = 2;
+    } else if (decimals && exponent[1] && exponent[1] as any < 0) {
+        // Expose decimals from exponential notation (#7042)
+        fractionDigits = decimals + +exponent[1];
+        if (fractionDigits >= 0) {
+            // remove too small part of the number while keeping the notation
+            exponent[0] = (+exponent[0]).toExponential(fractionDigits)
+                .split('e')[0];
+            decimals = fractionDigits;
+        } else {
+            // fractionDigits < 0
+            exponent[0] = exponent[0].split('.')[0] || 0 as any;
+
+            if (decimals < 20) {
+                // use number instead of exponential notation (#7405)
+                number = (exponent[0] as any * Math.pow(10, exponent[1] as any))
+                    .toFixed(decimals) as any;
+            } else {
+                // or zero
+                number = 0;
+            }
+            exponent[1] = 0 as any;
+        }
+    }
+
+    // Add another decimal to avoid rounding errors of float numbers. (#4573)
+    // Then use toFixed to handle rounding.
+    const roundedNumber = (
+        Math.abs(exponent[1] ? exponent[0] as any : number) +
+        Math.pow(10, -Math.max(decimals, origDec) - 1)
+    ).toFixed(decimals);
+
+    // A string containing the positive integer component of the number
+    const strinteger = String(pInt(roundedNumber));
+
+    // Leftover after grouping into thousands. Can be 0, 1 or 2.
+    const thousands = strinteger.length > 3 ? strinteger.length % 3 : 0;
+
+    // Language
+    decimalPoint = pick(decimalPoint, (lang as any).decimalPoint);
+    thousandsSep = pick(thousandsSep, (lang as any).thousandsSep);
+
+    // Start building the return
+    ret = number < 0 ? '-' : '';
+
+    // Add the leftover after grouping into thousands. For example, in the
+    // number 42 000 000, this line adds 42.
+    ret += thousands ? strinteger.substr(0, thousands) + thousandsSep : '';
+
+    if (+exponent[1] < 0 && !firstDecimals) {
+        ret = '0';
+    } else {
+        // Add the remaining thousands groups, joined by the thousands separator
+        ret += strinteger
+            .substr(thousands)
+            .replace(/(\d{3})(?=\d)/g, '$1' + thousandsSep);
+    }
+
+    // Add the decimal point and the decimal component
+    if (decimals) {
+        // Get the decimal component
+        ret += decimalPoint + roundedNumber.slice(-decimals);
+    }
+
+    if (exponent[1] && +ret !== 0) {
+        ret += 'e' + exponent[1];
+    }
+
+    return ret;
+}
+
+/**
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ *
+ * @function Highcharts.setOptions
+ *
+ * @param {Highcharts.Options} options
+ *        The new custom chart options.
+ *
+ * @return {Highcharts.Options}
+ *         Updated options.
+ */
+function setOptions(
+    options: Partial<Highcharts.Options>
+): Highcharts.Options {
+
+    // Copy in the default options
+    merge(true, defaultOptions, options);
+
+    // Update the time object
+    if (options.time || options.global) {
+        if (H.time) {
+            H.time.update(merge(
+                defaultOptions.global,
+                defaultOptions.time,
+                options.global,
+                options.time
+            ));
+        } else {
+            /**
+             * Global `Time` object with default options. Since v6.0.5, time
+             * settings can be applied individually for each chart. If no
+             * individual settings apply, this `Time` object is shared by all
+             * instances.
+             *
+             * @name Highcharts.time
+             * @type {Highcharts.Time}
+             */
+            H.time = defaultTime;
+        }
+    }
+
+    return defaultOptions;
+}
+H.setOptions = setOptions; // @todo move to master
 
 const optionsModule = {
-    dateFormat: H.dateFormat,
-    defaultOptions: H.defaultOptions,
-    time: H.time
+    dateFormat,
+    defaultOptions,
+    defaultTime,
+    format,
+    getOptions,
+    numberFormat,
+    setOptions
 };
 
 export default optionsModule;
