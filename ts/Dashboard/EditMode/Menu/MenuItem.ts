@@ -32,7 +32,7 @@ class MenuItem {
         options: MenuItem.Options
     ) {
         this.menu = menu;
-        this.isActive = false;
+        this.isActive = options.isActive || false;
         this.options = merge(MenuItem.defaultOptions, options || {});
 
         this.container = this.setContainer();
@@ -72,7 +72,10 @@ class MenuItem {
         return createElement(
             'div',
             { className: className },
-            this.options.style || {},
+            merge(
+                this.options.style || {},
+                this.isActive ? { display: 'block' }: {}
+            ),
             this.menu.container
         );
     }
@@ -103,11 +106,13 @@ class MenuItem {
         } else if (options.type === 'input') {
             element = EditRenderer.renderInput(
                 item.container,
-                void 0,
-                options.text,
-                function (input: HTMLDOMElement, e: any): void {
-                    if (options.events && options.events.click) {
-                        options.events.click.apply(item, [input, e]);
+                {
+                    callback: void 0,
+                    title: options.text,
+                    applyButtonFn: function (input: HTMLDOMElement, e: any): void {
+                        if (options.events && options.events.click) {
+                            options.events.click.apply(item, [input, e]);
+                        }
                     }
                 }
             );
@@ -163,6 +168,7 @@ namespace MenuItem {
         events?: Record<Event['type'], Function>;
         style?: CSSJSONObject;
         icon?: string;
+        isActive?: boolean;
     }
 }
 

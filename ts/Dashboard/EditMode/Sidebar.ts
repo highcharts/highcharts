@@ -29,7 +29,7 @@ class Sidebar {
         closeIcon: EditGlobals.iconsURL + '/close.svg',
         menu: {
             itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
-            items: ['cellWidth', 'rowHeight', 't1', 't2']
+            items: ['cellWidth', 'rowHeight', 't1', 't2', 'componentSettings']
         }
     }
 
@@ -51,7 +51,7 @@ class Sidebar {
         type: 'component',
         icon: '',
         items: {
-            cell: ['t1', 't2'],
+            cell: ['componentSettings'],
             row: ['t2']
         }
     }]
@@ -62,6 +62,9 @@ class Sidebar {
             type: 't1',
             text: 'tool1',
             events: {
+                load: function (): void {
+                    console.log('aaa');
+                },
                 click: function (): void {}
             }
         },
@@ -70,6 +73,15 @@ class Sidebar {
             text: 'tool2',
             events: {
                 click: function (): void {}
+            }
+        },
+        componentSettings: {
+            type: 'componentSettings',
+            text: 'Component settings',
+            events: {
+                update: function (): void {
+                    ((this as MenuItem).menu.parent as Sidebar).getComponentEditableOptions();
+                }
             }
         },
         cellWidth: {
@@ -455,6 +467,9 @@ class Sidebar {
         }
     }
 
+    /**
+     * currently for the future, remove when not use, 
+     */
     public afterCSSAnimate(
         element: HTMLDOMElement,
         callback: Function
@@ -463,11 +478,89 @@ class Sidebar {
         addEvent(element, 'oTransitionEnd', callback);
         addEvent(element, 'webkitTransitionEnd', callback);
     }
+
+    public getComponentEditableOptions(): void {
+        const sidebar = this;
+        const currentComponent = (sidebar.context as Cell).mountedComponent;
+        const componentSettings = currentComponent && currentComponent.editableOptions.getEditableOptions();
+
+        if (componentSettings) {
+            let menuItems = {};
+            let items = [];
+            let type, key;
+
+            // temp parser
+            for (let i = 0, iEnd = componentSettings.length; i < iEnd; ++i) {
+                key = Object.getOwnPropertyNames(componentSettings[i])[0];
+                type = (componentSettings[i] as any)[key];
+
+                console.log(componentSettings[i], (componentSettings[i] as any)[key]);
+
+                (menuItems as any)[key] = {
+                    id: key,
+                    type: type === 'text' ? 'input' : type,
+                    text: key,
+                    isActive: true
+                }
+
+                items.push(
+                    key
+                )
+            }
+
+            sidebar.componentEditableOptions = new Menu(
+                sidebar.container,
+                {
+                    items: items
+                },
+                sidebar
+            );
+            
+
+            sidebar.componentEditableOptions.initItems(
+                menuItems
+            );
+
+        }
+        // list editable options
+        /*if (componentSettings) {
+            for (var key in componentSettings) {
+                switch((componentSettings[key] || {}).type) {
+                    case 'text':
+                        EditRenderer.renderInput(
+                            sidebar.container,
+                            {
+                                title: Object.getOwnPropertyNames(componentSettings[key])[0]
+                            }
+                        );
+                        break;
+                    case 'textarea':
+                        EditRenderer.renderTextarea(
+                            sidebar.container
+                        );
+                        break;
+                    case 'toggle':
+                        EditRenderer.renderSwitcher(
+                            sidebar.container
+                        );
+                        break;
+                    default:
+                        EditRenderer.renderInput(
+                            sidebar.container,
+                            {
+                                title: Object.getOwnPropertyNames(componentSettings[key])[0]
+                            }
+                        );
+                }
+            }
+        }*/
+    }
 }
 
 interface Sidebar {
     dragDropButton?: HTMLDOMElement;
     closeButton?: HTMLDOMElement;
+    componentEditableOptions?: any;
 }
 namespace Sidebar {
     export interface Options {

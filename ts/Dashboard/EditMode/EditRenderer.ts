@@ -168,37 +168,36 @@ class EditRenderer {
 
     public static renderInput(
         parentElement: HTMLDOMElement,
-        callback?: Function,
-        title?: string,
-        applyButtonFn?: Function
+        options: InputOptions
     ): HTMLDOMElement|undefined {
         let input: HTMLDOMElement|undefined;
 
         if (parentElement) {
-            if (title) {
+            if (options.title) {
                 EditRenderer.renderText(
                     parentElement,
-                    title
+                    options.title
                 );
             }
 
             input = createElement(
                 'input', {
                     type: 'text',
-                    onclick: callback
+                    onclick: options.callback
                 }, {
 
                 },
                 parentElement
             );
 
-            if (applyButtonFn) {
+            if (options.applyButtonFn) {
                 EditRenderer.renderButton(
                     parentElement,
                     {
                         callback: function (): void {
-                            applyButtonFn(input);
-                        }
+                            options.applyButtonFn && options.applyButtonFn(input);
+                        },
+                        value: 'Save'
                     }
                 );
             }
@@ -279,6 +278,12 @@ export interface ButtonOptions {
     icon?: string;
     isDisabled?: boolean;
     style?: CSSObject
+}
+
+export interface InputOptions {
+    callback?: Function;
+    title?: string;
+    applyButtonFn?: Function;
 }
 
 export default EditRenderer;
