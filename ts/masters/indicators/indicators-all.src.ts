@@ -60,3 +60,4 @@ import '../../Stock/Indicators/LinearRegressionIntercept/LinearRegressionInterce
 import '../../Stock/Indicators/LinearRegressionAngle/LinearRegressionAngle.js';
 import '../../Stock/Indicators/ABands/ABandsIndicator.js';
 import '../../Stock/Indicators/TrendLine/TrendLineIndicator.js';
+import '../../Stock/Indicators/DisparityIndex/DisparityIndexIndicator.js';
