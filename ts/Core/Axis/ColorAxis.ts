@@ -1429,13 +1429,22 @@ addEvent(Series, 'bindAxes', function (): void {
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: {
-        allItems: Array<(ColorAxis|ColorAxis.LegendItemObject)>;
+        allItems: Array<(Series|Point|ColorAxis|ColorAxis.LegendItemObject)>;
     }
 ): void {
     var colorAxisItems = [] as Array<(ColorAxis|ColorAxis.LegendItemObject)>,
         colorAxes = this.chart.colorAxis || [],
         options: ColorAxis.Options,
         i;
+
+    const destroyItem = (item: (Series|Point)): void => {
+        const i = e.allItems.indexOf(item);
+        if (i !== -1) {
+            // #15436
+            this.destroyItem(e.allItems[i]);
+            e.allItems.splice(i, 1);
+        }
+    };
 
     colorAxes.forEach(function (colorAxis: ColorAxis): void {
         options = colorAxis.options;
@@ -1459,11 +1468,11 @@ addEvent(Legend, 'afterGetAllItems', function (
                         series.points.forEach(function (
                             point: Point
                         ): void {
-                            erase(e.allItems, point);
+                            destroyItem(point);
                         });
 
                     } else {
-                        erase(e.allItems, series);
+                        destroyItem(series);
                     }
                 }
             });

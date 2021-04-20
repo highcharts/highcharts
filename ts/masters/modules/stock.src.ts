@@ -3,7 +3,7 @@
  * @module highcharts/modules/stock
  * @requires highcharts
  *
- * Highstock as a plugin for Highcharts
+ * Highcharts Stock as a plugin for Highcharts
  *
  * (c) 2010-2021 Torstein Honsi
  *

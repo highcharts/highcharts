@@ -8,7 +8,7 @@ Highcharts.getJSON('https://demo-live-data.highcharts.com/aapl-c.json', function
         },
 
         title: {
-            text: 'Chart.pan failed in Highstock 1.3.8'
+            text: 'Chart.pan failed in Highcharts Stock 1.3.8'
         },
 
         series: [{

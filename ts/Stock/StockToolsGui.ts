@@ -322,7 +322,8 @@ setOptions({
                 xAxisUnit: 'x-axis unit',
                 factor: 'Factor',
                 fastAvgPeriod: 'Fast average period',
-                slowAvgPeriod: 'Slow average period'
+                slowAvgPeriod: 'Slow average period',
+                average: 'Average'
             }
         }
     },

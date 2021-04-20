@@ -243,6 +243,7 @@ export function testStockIndicators() {
         'mfi',
         'momentum',
         'natr',
+        'obv',
         'pivotpoints',
         'ppo',
         'pc',
@@ -263,7 +264,8 @@ export function testStockIndicators() {
         'linearRegressionIntercept',
         'linearRegressionAngle',
         'abands',
-        'trendline'
+        'trendline',
+        'disparityindex'
     ];
 
     deepStrictEqual(

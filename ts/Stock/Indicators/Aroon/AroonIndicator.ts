@@ -96,12 +96,10 @@ class AroonIndicator extends SMAIndicator implements Highcharts.MultipleLinesInd
         /**
          * Paramters used in calculation of aroon series points.
          *
-         * @excluding periods, index
+         * @excluding index
          */
         params: {
-            /**
-             * Period for Aroon indicator
-             */
+            index: void 0, // unchangeable index, do not inherit (#15362)
             period: 25
         },
         marker: {

@@ -49,7 +49,12 @@ function fibonacciRetracements(x1, y1, x2, y2) {
             // defining colored backgrounds
             backgrounds.push({
                 type: 'path',
-                points: [lines[i - 1].points[0], lines[i - 1].points[1], lines[i].points[1], lines[i].points[0]],
+                points: [
+                    lines[i - 1].points[0],
+                    lines[i - 1].points[1],
+                    lines[i].points[1],
+                    lines[i].points[0]
+                ],
                 strokeWidth: 0,
                 fill: colors[i - 1]
             });
@@ -94,7 +99,7 @@ Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', fun
         },
 
         title: {
-            text: 'Highstock Annotations'
+            text: 'Highcharts Stock Annotations'
         },
 
         subtitle: {
@@ -108,7 +113,11 @@ Highcharts.getJSON('https://www.highcharts.com/samples/data/aapl-ohlc.json', fun
         },
 
         annotations: [
-            fibonacciRetracements(Date.UTC(2016, 10, 14), 105, Date.UTC(2017, 8, 4), 170)
+            fibonacciRetracements(
+                Date.UTC(2016, 10, 14),
+                105,
+                Date.UTC(2017, 8, 4), 170
+            )
         ],
 
         series: [{

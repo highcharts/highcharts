@@ -66,7 +66,11 @@ class ADIndicator extends SMAIndicator {
      * @optionparent plotOptions.ad
      */
     public static defaultOptions: ADOptions = merge(SMAIndicator.defaultOptions, {
+        /**
+         * @excluding index
+         */
         params: {
+            index: void 0, // unused index, do not inherit (#15362)
             /**
              * The id of volume series which is mandatory.
              * For example using OHLC data, volumeSeriesID='volume' means

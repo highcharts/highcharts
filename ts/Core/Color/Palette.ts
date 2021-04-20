@@ -78,11 +78,11 @@ const palette = {
     /**
      * Positive indicator color
      */
-    indicatorPositiveLine: '#06b535' as ColorString,
+    positiveColor: '#06b535' as ColorString,
     /**
      * Negative indicator color
      */
-    indicatorNegativeLine: '#f21313' as ColorString,
+    negativeColor: '#f21313' as ColorString,
 
 };
 export default palette;

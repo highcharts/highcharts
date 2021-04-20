@@ -862,6 +862,7 @@ class SunburstSeries extends TreemapSeries {
                 plotX: (shape as any).plotX, // used for data label position
                 plotY: (shape as any).plotY, // used for data label position
                 value: node.val,
+                isInside: visible,
                 isNull: !visible // used for dataLabels & point.draw
             });
             point.dlOptions = getDlOptions({

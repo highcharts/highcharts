@@ -248,7 +248,7 @@ export default KeltnerChannelsIndicator;
  * A Keltner Channels indicator. If the [type](#series.keltnerchannels.type)
  * option is not specified, it is inherited from[chart.type](#chart.type).
  *
- * @extends      series,plotOptions.sma
+ * @extends      series,plotOptions.keltnerchannels
  * @since        7.0.0
  * @product      highstock
  * @excluding    allAreas, colorAxis, compare, compareBase, dataParser, dataURL,

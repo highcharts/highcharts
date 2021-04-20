@@ -3703,7 +3703,7 @@ class Series {
      * @sample highcharts/members/series-setdata-pie/
      *         Set data in a pie
      * @sample stock/members/series-setdata/
-     *         Set new data in Highstock
+     *         Set new data in Highcharts Stock
      * @sample maps/members/series-setdata/
      *         Set new data in Highmaps
      *
@@ -4100,7 +4100,7 @@ class Series {
 
     /**
      * Internal function to apply processed data.
-     * In Highstock, this function is extended to provide data grouping.
+     * In Highcharts Stock, this function is extended to provide data grouping.
      *
      * @private
      * @function Highcharts.Series#processData
@@ -4257,7 +4257,7 @@ class Series {
                 );
 
                 /**
-                 * Highstock only. If a point object is created by data
+                 * Highcharts Stock only. If a point object is created by data
                  * grouping, it doesn't reflect actual points in the raw
                  * data. In this case, the `dataGroup` property holds
                  * information that points back to the raw data.
@@ -4680,7 +4680,7 @@ class Series {
                 ) as any) :
                 null as any;
 
-            // general hook, used for Highstock compare mode
+            // general hook, used for Highcharts Stock compare mode
             if (hasModifyValue) {
                 yValue = (series.modifyValue as any)(yValue, point);
             }
@@ -4853,6 +4853,34 @@ class Series {
     }
 
     /**
+     * Get the shared clip key, creating it if it doesnt exist.
+     *
+     * @private
+     * @function Highcharts.Series#getSharedClipKey
+     */
+    public getSharedClipKey(animation?: AnimationOptions): string {
+        if (this.sharedClipKey) {
+            return this.sharedClipKey;
+        }
+
+        const sharedClipKey = [
+            '_sharedClip',
+            animation && animation.duration,
+            animation && animation.easing,
+            animation && animation.defer,
+            this.getClipBox(animation).height,
+            this.options.xAxis,
+            this.options.yAxis
+        ].join(',');
+
+        if (this.options.clip !== false || animation) {
+            this.sharedClipKey = sharedClipKey;
+        }
+
+        return sharedClipKey;
+    }
+
+    /**
      * Set the clipping for the series. For animated series it is called
      * twice, first to initiate animating the clip then the second time
      * without the animation to set the final clip.
@@ -4860,24 +4888,14 @@ class Series {
      * @private
      * @function Highcharts.Series#setClip
      */
-    public setClip(animation?: (boolean|AnimationOptions)): void {
+    public setClip(animation?: AnimationOptions): void {
         var chart = this.chart,
             options = this.options,
             renderer = chart.renderer,
             inverted = chart.inverted,
             seriesClipBox = this.clipBox,
             clipBox = this.getClipBox(animation),
-            sharedClipKey =
-                this.sharedClipKey ||
-                [
-                    '_sharedClip',
-                    animation && (animation as any).duration,
-                    animation && (animation as any).easing,
-                    animation && (animation as any).defer,
-                    clipBox.height,
-                    options.xAxis,
-                    options.yAxis
-                ].join(','), // #4526
+            sharedClipKey = this.getSharedClipKey(animation), // #4526
             clipRect = (chart as any)[sharedClipKey],
             markerClipRect = (chart as any)[sharedClipKey + 'm'];
 
@@ -4930,7 +4948,6 @@ class Series {
                 animation || seriesClipBox ? clipRect : chart.clipRect
             );
             (this.markerGroup as any).clip(markerClipRect);
-            this.sharedClipKey = sharedClipKey;
         }
 
         // Remove the shared clipping rectangle when all series are shown
@@ -5390,7 +5407,10 @@ class Series {
                 point.destroy();
             }
         }
-        series.points = null as any;
+
+        if (series.clips) {
+            series.clips.forEach((clip): void => clip.destroy());
+        }
 
         // Clear the animation timeout if we are destroying the series
         // during initial animation
@@ -5412,7 +5432,7 @@ class Series {
 
         // remove from hoverSeries
         if (chart.hoverSeries === series) {
-            chart.hoverSeries = null as any;
+            chart.hoverSeries = void 0;
         }
         erase(chart.series, series);
         chart.orderSeries();
@@ -6305,9 +6325,9 @@ class Series {
      * @sample highcharts/members/series-addpoint-pie/
      *         Append pie slice
      * @sample stock/members/series-addpoint/
-     *         Append 100 points in Highstock
+     *         Append 100 points in Highcharts Stock
      * @sample stock/members/series-addpoint-shift/
-     *         Append and shift in Highstock
+     *         Append and shift in Highcharts Stock
      * @sample maps/members/series-addpoint/
      *         Add a point in Highmaps
      *
@@ -6429,7 +6449,7 @@ class Series {
      * Remove a point from the series. Unlike the
      * {@link Highcharts.Point#remove} method, this can also be done on a point
      * that is not instanciated because it is outside the view or subject to
-     * Highstock data grouping.
+     * Highcharts Stock data grouping.
      *
      * @sample highcharts/members/series-removepoint/
      *         Remove cropped point
@@ -6641,6 +6661,8 @@ class Series {
             animation = series.finishedAnimating && { animation: false },
             kinds = {} as Record<string, number>;
 
+        newType = newType || initialType;
+
         if (keepPoints) {
             preserve.push(
                 'data',
@@ -6652,6 +6674,7 @@ class Series {
                 'cropped',
                 '_hasPointMarkers',
                 '_hasPointLabels',
+                'clips', // #15420
 
                 // Networkgraph (#14397)
                 'nodes',
@@ -6711,9 +6734,11 @@ class Series {
             delete (series as any)[prop];
         });
 
-        if (seriesTypes[newType || initialType]) {
+        let casting = false;
 
-            const casting = newType !== series.type;
+        if (seriesTypes[newType]) {
+
+            casting = newType !== series.type;
 
             // Destroy the series and delete all properties, it will be
             // reinserted within the `init` call below
@@ -6726,7 +6751,7 @@ class Series {
                 if (Object.setPrototypeOf) {
                     Object.setPrototypeOf(
                         series,
-                        seriesTypes[newType || initialType].prototype
+                        seriesTypes[newType].prototype
                     );
 
                 // Legacy (IE < 11)
@@ -6742,7 +6767,7 @@ class Series {
                     // prototype (#2270, #3719).
                     extend<Series>(
                         series,
-                        seriesTypes[newType || initialType].prototype
+                        seriesTypes[newType].prototype
                     );
 
                     // The events are tied to the prototype chain, don't copy if
@@ -6759,7 +6784,7 @@ class Series {
                 17,
                 true,
                 chart,
-                { missingModuleFor: (newType || initialType) }
+                { missingModuleFor: newType }
             );
         }
 
@@ -6769,7 +6794,6 @@ class Series {
         });
 
         series.init(chart, options);
-
 
         // Remove particular elements of the points. Check `series.options`
         // because we need to consider the options being set on plotOptions as
@@ -6817,6 +6841,12 @@ class Series {
 
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
+
+        // #15383: Fire updatedData if the type has changed to keep linked
+        // series such as indicators updated
+        if (casting && series.linkedSeries.length) {
+            series.isDirtyData = true;
+        }
 
         fireEvent(this, 'afterUpdate');
 
@@ -7317,7 +7347,7 @@ export default Series;
 
 /**
  * This is a placeholder type of the possible series options for
- * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
+ * [Highcharts](../highcharts/series), [Highcharts Stock](../highstock/series),
  * [Highmaps](../highmaps/series), and [Gantt](../gantt/series).
  *
  * In TypeScript is this dynamically generated to reference all possible types

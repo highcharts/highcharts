@@ -110,7 +110,7 @@ Chart.prototype.collectionsWithUpdate.push('pane');
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  *
- * In the future, this can be extended to basic Highcharts and Highstock.
+ * In the future, this can be extended to basic Highcharts and Highcharts Stock.
  *
  * @private
  * @class

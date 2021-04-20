@@ -4,7 +4,7 @@
  * @requires highcharts
  * @requires highcharts/modules/stock
  *
- * All technical indicators for Highstock
+ * All technical indicators for Highcharts Stock
  *
  * (c) 2010-2021 Pawel Fus
  *
@@ -37,6 +37,7 @@ import '../../Stock/Indicators/MACD/MACDIndicator.js';
 import '../../Stock/Indicators/MFI/MFIIndicator.js';
 import '../../Stock/Indicators/Momentum/MomentumIndicator.js';
 import '../../Stock/Indicators/NATR/NATRIndicator.js';
+import '../../Stock/Indicators/OBV/OBVIndicator.js';
 import '../../Stock/Indicators/PivotPoints/PivotPointsIndicator.js';
 import '../../Stock/Indicators/PPO/PPOIndicator.js';
 import '../../Stock/Indicators/PC/PCIndicator.js';
@@ -60,3 +61,4 @@ import '../../Stock/Indicators/LinearRegressionIntercept/LinearRegressionInterce
 import '../../Stock/Indicators/LinearRegressionAngle/LinearRegressionAngle.js';
 import '../../Stock/Indicators/ABands/ABandsIndicator.js';
 import '../../Stock/Indicators/TrendLine/TrendLineIndicator.js';
+import '../../Stock/Indicators/DisparityIndex/DisparityIndexIndicator.js';

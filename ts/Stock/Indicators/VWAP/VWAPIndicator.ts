@@ -2,7 +2,7 @@
  *
  *  (c) 2010-2021 Paweł Dalek
  *
- *  Volume Weighted Average Price (VWAP) indicator for Highstock
+ *  Volume Weighted Average Price (VWAP) indicator for Highcharts Stock
  *
  *  License: www.highcharts.com/license
  *
@@ -71,6 +71,7 @@ class VWAPIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
+            index: void 0, // unchangeable index, do not inherit (#15362)
             period: 30,
             /**
              * The id of volume series which is mandatory. For example using

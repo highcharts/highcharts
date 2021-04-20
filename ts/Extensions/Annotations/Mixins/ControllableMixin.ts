@@ -601,7 +601,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
             parentGroup = this.graphic.parentGroup;
 
         this.destroy();
-        (this as any).constructor(annotation, options);
+        this.constructor(annotation, options, this.index);
         this.render(parentGroup);
         this.redraw();
     }

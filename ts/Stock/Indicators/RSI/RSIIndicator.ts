@@ -63,7 +63,6 @@ class RSIIndicator extends SMAIndicator {
      */
     public static defaultOptions: RSIOptions = merge(SMAIndicator.defaultOptions, {
         params: {
-            period: 14,
             decimals: 4,
             index: 3
         }

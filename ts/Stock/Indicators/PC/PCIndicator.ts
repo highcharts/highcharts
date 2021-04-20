@@ -71,6 +71,7 @@ class PCIndicator extends SMAIndicator implements Highcharts.MultipleLinesIndica
          * @excluding index
          */
         params: {
+            index: void 0, // unchangeable index, do not inherit (#15362)
             period: 20
         },
         lineWidth: 1,

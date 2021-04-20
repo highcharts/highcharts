@@ -472,14 +472,13 @@ QUnit.test(
                 ]
             }),
             points = chart.series[0].points,
-            offset = Highcharts.offset(chart.container),
-            event = $.Event('mouseover', {
-                which: 1,
-                pageX: offset.left + points[0].labelPosition.natural.x,
-                pageY: offset.top + points[0].labelPosition.natural.y
-            });
+            offset = Highcharts.offset(chart.container);
 
-        $(points[0].dataLabel.div).trigger(event);
+        Highcharts.fireEvent(points[0].dataLabel.div, 'mouseover', {
+            which: 1,
+            pageX: offset.left + points[0].labelPosition.natural.x,
+            pageY: offset.top + points[0].labelPosition.natural.y
+        });
 
         assert.strictEqual(
             points[0] === chart.hoverPoint,
@@ -487,13 +486,11 @@ QUnit.test(
             'First point hovered.'
         );
 
-        event = $.Event('mouseover', {
+        Highcharts.fireEvent(points[4].dataLabel.div, 'mouseover', {
             which: 1,
             pageX: offset.left + points[4].labelPosition.natural.x,
             pageY: offset.top + points[4].labelPosition.natural.y
         });
-
-        $(points[4].dataLabel.div).trigger(event);
 
         assert.strictEqual(
             points[4] === chart.hoverPoint,

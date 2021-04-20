@@ -66,6 +66,7 @@ class WilliamsRIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
+            index: void 0, // unchangeable index, do not inherit (#15362)
             /**
              * Period for Williams %R oscillator
              */

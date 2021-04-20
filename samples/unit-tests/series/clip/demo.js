@@ -5,12 +5,17 @@ QUnit.test('General series clip tests', assert => {
         const chart = Highcharts.chart('container', {
                 series: [{
                     data: [10, 20]
+                }, {
+                    data: [1, 2, 3],
+                    yAxis: 1
                 }],
-                yAxis: {
+                yAxis: [{
                     labels: {
                         format: '{value}'
                     }
-                },
+                }, {
+                    opposite: true
+                }],
                 plotOptions: {
                     series: {
                         animation: false
@@ -49,7 +54,8 @@ QUnit.test('General series clip tests', assert => {
                     {
                         clip: false,
                         data: [1, 2, 3]
-                    }
+                    },
+                    {}
                 ]
             },
             true,
@@ -62,6 +68,20 @@ QUnit.test('General series clip tests', assert => {
         assert.notOk(
             chart.series[2].clipBox,
             '#15128: Series with clip=false should not have stock clipping applied'
+        );
+
+        const widthBefore = chart[chart.series[3].sharedClipKey].attr('width');
+
+        chart.update({
+            yAxis: [{}, {
+                visible: false
+            }],
+            series: [{}, {}, {}, {}]
+        }, true, true);
+
+        assert.ok(
+            chart[chart.series[3].sharedClipKey].attr('width') > widthBefore,
+            '#15435: Shared clip should have been updated'
         );
 
         setTimeout(() => {

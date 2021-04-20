@@ -68,6 +68,7 @@ class PivotPointsIndicator extends SMAIndicator {
          * @excluding index
          */
         params: {
+            index: void 0, // unchangeable index, do not inherit (#15362)
             period: 28,
             /**
              * Algorithm used to calculate ressistance and support lines based
