@@ -251,6 +251,7 @@ bindingsUtils.manageIndicators = function (
         indicatorsWithVolume = [
             'ad',
             'cmf',
+            'klinger',
             'mfi',
             'obv',
             'vbp',
@@ -283,7 +284,8 @@ bindingsUtils.manageIndicators = function (
             'linearRegression',
             'linearRegressionSlope',
             'linearRegressionIntercept',
-            'linearRegressionAngle'
+            'linearRegressionAngle',
+            'klinger'
         ],
         yAxis,
         parentSeries,
