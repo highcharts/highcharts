@@ -395,37 +395,32 @@ class Sidebar {
         const sidebar = this;
         const closeIcon = sidebar.options && sidebar.options.closeIcon;
 
-        sidebar.closeButton = createElement(
-            'button', {
-                className: EditGlobals.classNames.button + ' ' + EditGlobals.classNames.sidebarNavButton,
-                onclick: (): void => {
+        sidebar.closeButton = EditRenderer.renderButton(
+            sidebar.container,
+            {
+                className: EditGlobals.classNames.sidebarNavButton,
+                callback: (): void => {
                     sidebar.hide();
-                }
-            }, {},
-            sidebar.container
+                },
+                icon: closeIcon
+            }
         );
-
-        // Set close icon.
-        (sidebar.closeButton.style as any)['background-image'] =
-            'url(' + closeIcon + ')';
     }
 
     public renderDragDropButton(): void {
         const sidebar = this;
         const dragIcon = sidebar.options && sidebar.options.dragIcon;
 
-        sidebar.dragDropButton = createElement(
-            'button', {
-                className: EditGlobals.classNames.button + ' ' + EditGlobals.classNames.sidebarNavButton
-            }, {
-                cursor: 'grab'
-            },
-            sidebar.container
-        );
-
-        // Set drag icon.
-        (sidebar.dragDropButton.style as any)['background-image'] =
-            'url(' + dragIcon + ')';
+        sidebar.dragDropButton = EditRenderer.renderButton(
+            sidebar.container,
+            {
+                className: EditGlobals.classNames.sidebarNavButton,
+                style: {
+                    cursor: 'grab'
+                },
+                icon: dragIcon
+            }
+        ) as HTMLDOMElement;
 
         sidebar.dragDropButton.onmousedown = sidebar.onDragStart.bind(sidebar);
         sidebar.dragDropButton.onmouseup = sidebar.onDragEnd.bind(sidebar);

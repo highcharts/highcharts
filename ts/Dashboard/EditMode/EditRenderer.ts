@@ -1,6 +1,7 @@
 import EditMode from './EditMode.js';
 import EditGlobals from '../EditMode/EditGlobals.js';
 import U from '../../Core/Utilities.js';
+import type CSSObject from '../../Core/Renderer/CSSObject';
 import { HTMLDOMElement } from '../../Core/Renderer/DOMElementType.js';
 
 const {
@@ -194,8 +195,10 @@ class EditRenderer {
             if (applyButtonFn) {
                 EditRenderer.renderButton(
                     parentElement,
-                    function (): void {
-                        applyButtonFn(input);
+                    {
+                        callback: function (): void {
+                            applyButtonFn(input);
+                        }
                     }
                 );
             }
@@ -244,22 +247,23 @@ class EditRenderer {
 
     public static renderButton(
         parentElement: HTMLDOMElement,
-        callback?: Function,
-        value?: string
+        options: ButtonOptions
     ): HTMLDOMElement|undefined {
         let button;
 
         if (parentElement) {
             button = createElement(
                 'button', {
-                    className: EditGlobals.classNames.button,
-                    onclick: callback,
-                    textContent: value || 'Save'
-                }, {
-
-                },
+                    className: EditGlobals.classNames.button + ' ' + (options.className || ''),
+                    onclick: options.callback,
+                    textContent: options.value
+                }, options.style || {},
                 parentElement
             );
+
+            if (options.icon) {
+                (button.style as any)['background-image'] = 'url(' + options.icon + ')';
+            }
         }
 
         return button;
@@ -267,5 +271,14 @@ class EditRenderer {
 }
 
 namespace EditRenderer {}
+
+export interface ButtonOptions {
+    callback?: Function;
+    value?: string;
+    className?: string;
+    icon?: string;
+    isDisabled?: boolean;
+    style?: CSSObject
+}
 
 export default EditRenderer;
