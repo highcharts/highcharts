@@ -42,7 +42,7 @@ class EditableOptions {
         }
     }
 
-    public getEditableOptions(): (Record<string, string | Record<string, string>> | undefined)[] {
+    public getEditableOptions(): (Record<string, string | Record<string, string>> | undefined) {
         const { options } = this.component;
         const { keyMap, typeMap } = merge(EditableOptions.defaultBindings, this.bindings);
 
@@ -50,32 +50,41 @@ class EditableOptions {
             const node = branch[nodeName];
 
             if (keyMap[nodeName]) {
-                return { [nodeName]: keyMap[nodeName] };
+                return { type: keyMap[nodeName] };
             }
 
             const type = typeof node;
             if (typeMap[type]) {
-                return { [nodeName]: typeMap[type] };
+                return { type: typeMap[type] };
             }
 
             if (type === 'object') {
                 if (Array.isArray(node)) {
-                    return { [nodeName]: 'array' };
+                    return { type: 'array' };
                 }
                 // dive deeper
-                return {
-                    [nodeName]: Object.keys(node)
-                        .map(childNodeName => getType(childNodeName, node))
-                };
+                const childNodes = Object.keys(node).reduce((obj: Record<string, any>, childNodeName: string): Record<string, any> => {
+                    obj[childNodeName] = getType(childNodeName, node)
+                    return obj;
+                }, {});
+
+                return { children: childNodes };
             }
         }
 
-        return [
+        const record: Record<string, any> = {};
+
+        [
             ...Object.keys(Component.defaultOptions.editableOptions),
             ...options.editableOptions
-        ]
-            .map((optionName: string) => getType(optionName, options))
-            .filter(option => option);
+        ].forEach((optionName: string) => {
+            const type = getType(optionName, options)
+            if(type){
+                record[optionName] = getType(optionName, options)
+            }
+        })
+
+        return record;
     }
 }
 
