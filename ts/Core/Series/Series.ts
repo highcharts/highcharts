@@ -4853,7 +4853,7 @@ class Series {
     }
 
     /**
-     * Get the shared clip key, creating it if it doesnt exist.
+     * Get the shared clip key, creating it if it doesn't exist.
      *
      * @private
      * @function Highcharts.Series#getSharedClipKey
@@ -4864,7 +4864,6 @@ class Series {
         }
 
         const sharedClipKey = [
-            '_sharedClip',
             animation && animation.duration,
             animation && animation.easing,
             animation && animation.defer,
