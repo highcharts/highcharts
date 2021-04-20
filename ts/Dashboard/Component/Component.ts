@@ -156,6 +156,7 @@ abstract class Component<TEventObject extends Component.Event = Component.Event>
         id: '',
         title: false,
         caption: false,
+        style: {},
         editableOptions: [
             'dimensions',
             'id',

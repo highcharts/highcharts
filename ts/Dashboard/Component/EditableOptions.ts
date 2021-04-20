@@ -15,7 +15,8 @@ class EditableOptions {
             color: 'colorPicker',
             chartOptions: 'textarea',
             title: 'text',
-            caption: 'text'
+            caption: 'text',
+            style: 'textarea'
         },
         typeMap: {
             'string': 'text',
