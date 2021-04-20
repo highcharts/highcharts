@@ -42,7 +42,10 @@ import ColumnSeries from '../Series/Column/ColumnSeries.js';
 import H from '../Core/Globals.js';
 const { noop } = H;
 import O from '../Core/Options.js';
-const { defaultOptions } = O;
+const {
+    defaultOptions,
+    format
+} = O;
 import palette from '../Core/Color/Palette.js';
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
@@ -56,7 +59,6 @@ const {
     removeEvent,
     extend,
     fireEvent,
-    format,
     merge,
     objectEach,
     pick,

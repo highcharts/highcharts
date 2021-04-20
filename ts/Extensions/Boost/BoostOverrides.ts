@@ -22,6 +22,8 @@ import type { SeriesTypePlotOptions } from '../../Core/Series/SeriesType';
 import type SVGAttributes from '../../Core/Renderer/SVG/SVGAttributes';
 import type SVGPath from '../../Core/Renderer/SVG/SVGPath';
 import Chart from '../../Core/Chart/Chart.js';
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import Point from '../../Core/Series/Point.js';
 import Series from '../../Core/Series/Series.js';
 import SeriesRegistry from '../../Core/Series/SeriesRegistry.js';
@@ -30,7 +32,6 @@ import U from '../../Core/Utilities.js';
 const {
     addEvent,
     error,
-    getOptions,
     isArray,
     isNumber,
     pick,

@@ -16,11 +16,15 @@ import Annotation from './Annotations.js';
 import Chart from '../../Core/Chart/Chart.js';
 import chartNavigationMixin from '../../Mixins/Navigation.js';
 import H from '../../Core/Globals.js';
+import O from '../../Core/Options.js';
+const {
+    format,
+    setOptions
+} = O;
 import U from '../../Core/Utilities.js';
 const {
     addEvent,
     attr,
-    format,
     fireEvent,
     isArray,
     isFunction,
@@ -28,8 +32,7 @@ const {
     isObject,
     merge,
     objectEach,
-    pick,
-    setOptions
+    pick
 } = U;
 
 declare module '../../Core/Chart/ChartLike'{

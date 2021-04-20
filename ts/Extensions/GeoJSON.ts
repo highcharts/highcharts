@@ -17,12 +17,14 @@ import H from '../Core/Globals.js';
 const {
     win
 } = H;
-import '../Core/Options.js';
+import O from '../Core/Options.js';
+const {
+    format
+} = O;
 import U from '../Core/Utilities.js';
 const {
     error,
     extend,
-    format,
     merge,
     wrap
 } = U;

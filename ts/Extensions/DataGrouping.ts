@@ -24,6 +24,9 @@ import Axis from '../Core/Axis/Axis.js';
 import DateTimeAxis from '../Core/Axis/DateTimeAxis.js';
 import H from '../Core/Globals.js';
 import O from '../Core/Options.js';
+const {
+    format
+} = O;
 import Point from '../Core/Series/Point.js';
 import Series from '../Core/Series/Series.js';
 const { prototype: seriesProto } = Series;
@@ -37,7 +40,6 @@ const {
     defined,
     error,
     extend,
-    format,
     isNumber,
     merge,
     pick

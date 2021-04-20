@@ -22,6 +22,8 @@ const {
     isFirefox
 } = H;
 import NavigationBindings from './NavigationBindings.js';
+import O from '../../Core/Options.js';
+const { getOptions } = O;
 import Pointer from '../../Core/Pointer.js';
 import U from '../../Core/Utilities.js';
 const {
@@ -29,7 +31,6 @@ const {
     createElement,
     defined,
     fireEvent,
-    getOptions,
     isArray,
     isObject,
     isString,

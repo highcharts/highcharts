@@ -32,6 +32,11 @@ const {
     seriesTypes,
     win
 } = H;
+import O from '../Core/Options.js';
+const {
+    getOptions,
+    setOptions
+} = O;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -39,10 +44,8 @@ const {
     extend,
     find,
     fireEvent,
-    getOptions,
     isNumber,
-    pick,
-    setOptions
+    pick
 } = U;
 
 declare module '../Core/Chart/ChartLike'{

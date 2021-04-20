@@ -16,6 +16,8 @@ import type {
 import Chart from '../Core/Chart/Chart.js';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import O from '../Core/Options.js';
+const { setOptions } = O;
 import U from '../Core/Utilities.js';
 const {
     addEvent,
@@ -26,8 +28,7 @@ const {
     getStyle,
     isArray,
     merge,
-    pick,
-    setOptions
+    pick
 } = U;
 
 declare module '../Core/Chart/ChartLike'{

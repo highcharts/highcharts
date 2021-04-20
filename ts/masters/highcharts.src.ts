@@ -9,6 +9,7 @@
 'use strict';
 import Highcharts from '../Core/Globals.js';
 import Utilities from '../Core/Utilities.js';
+import Options from '../Core/Options.js';
 import Fx from '../Core/Animation/Fx.js';
 import Animation from '../Core/Animation/AnimationUtilities.js';
 import AST from '../Core/Renderer/HTML/AST.js';
@@ -52,6 +53,13 @@ import '../Core/Responsive.js';
 (Highcharts as any).Fx = Fx;
 (Highcharts as any).Series = Series;
 
+// Options
+(Highcharts as any).dateFormat = Options.dateFormat;
+(Highcharts as any).defaultOptions = Options.defaultOptions;
+(Highcharts as any).format = Options.format;
+(Highcharts as any).numberFormat = Options.numberFormat;
+(Highcharts as any).time = Options.defaultTime;
+
 // Utilities
 (Highcharts as any).addEvent = Utilities.addEvent;
 (Highcharts as any).arrayMax = Utilities.arrayMax;
@@ -70,7 +78,6 @@ import '../Core/Responsive.js';
 (Highcharts as any).extendClass = Utilities.extendClass;
 (Highcharts as any).find = Utilities.find;
 (Highcharts as any).fireEvent = Utilities.fireEvent;
-(Highcharts as any).format = Utilities.format;
 (Highcharts as any).getMagnitude = Utilities.getMagnitude;
 (Highcharts as any).getStyle = Utilities.getStyle;
 (Highcharts as any).inArray = Utilities.inArray;
@@ -84,7 +91,6 @@ import '../Core/Responsive.js';
 (Highcharts as any).keys = Utilities.keys;
 (Highcharts as any).merge = Utilities.merge;
 (Highcharts as any).normalizeTickInterval = Utilities.normalizeTickInterval;
-(Highcharts as any).numberFormat = Utilities.numberFormat;
 (Highcharts as any).objectEach = Utilities.objectEach;
 (Highcharts as any).offset = Utilities.offset;
 (Highcharts as any).pad = Utilities.pad;

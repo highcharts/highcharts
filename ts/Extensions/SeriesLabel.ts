@@ -22,6 +22,11 @@ import type SVGPath from '../Core/Renderer/SVG/SVGPath';
 import A from '../Core/Animation/AnimationUtilities.js';
 const { animObject } = A;
 import Chart from '../Core/Chart/Chart.js';
+import O from '../Core/Options.js';
+const {
+    format,
+    setOptions
+} = O;
 import Series from '../Core/Series/Series.js';
 import SVGRenderer from '../Core/Renderer/SVG/SVGRenderer.js';
 import U from '../Core/Utilities.js';
@@ -29,10 +34,8 @@ const {
     addEvent,
     extend,
     fireEvent,
-    format,
     isNumber,
     pick,
-    setOptions,
     syncTimeout
 } = U;
 

@@ -30,6 +30,10 @@ const {
     marginNames,
     win
 } = H;
+import O from './Options.js';
+const {
+    format
+} = O;
 import Point from './Series/Point.js';
 import U from './Utilities.js';
 const {
@@ -40,7 +44,6 @@ const {
     discardElement,
     find,
     fireEvent,
-    format,
     isNumber,
     merge,
     pick,

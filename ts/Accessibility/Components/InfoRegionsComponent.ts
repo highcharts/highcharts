@@ -15,15 +15,16 @@ import type {
     DOMElementType,
     HTMLDOMElement
 } from '../../Core/Renderer/DOMElementType';
+import AST from '../../Core/Renderer/HTML/AST.js';
 import H from '../../Core/Globals.js';
 const {
     doc
 } = H;
-import AST from '../../Core/Renderer/HTML/AST.js';
+import O from '../../Core/Options.js';
+const { format } = O;
 import U from '../../Core/Utilities.js';
 const {
     extend,
-    format,
     pick
 } = U;
 

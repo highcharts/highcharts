@@ -25,6 +25,10 @@ import A from '../Animation/AnimationUtilities.js';
 const { getDeferredAnimation } = A;
 import H from '../Globals.js';
 const { noop } = H;
+import O from '../Options.js';
+const {
+    format
+} = O;
 import palette from '../Color/Palette.js';
 import Series from '../Series/Series.js';
 import SeriesRegistry from './SeriesRegistry.js';
@@ -36,7 +40,6 @@ const {
     defined,
     extend,
     fireEvent,
-    format,
     isArray,
     merge,
     objectEach,

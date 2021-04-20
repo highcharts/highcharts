@@ -15,12 +15,15 @@ import type SVGElement from '../../../Core/Renderer/SVG/SVGElement';
 import type SVGPath from '../../../Core/Renderer/SVG/SVGPath';
 import ControllableMixin from '../Mixins/ControllableMixin.js';
 import MockPoint from '../MockPoint.js';
+import O from '../../../Core/Options.js';
+const {
+    format
+} = O;
 import SVGRenderer from '../../../Core/Renderer/SVG/SVGRenderer.js';
 import Tooltip from '../../../Core/Tooltip.js';
 import U from '../../../Core/Utilities.js';
 const {
     extend,
-    format,
     isNumber,
     pick
 } = U;

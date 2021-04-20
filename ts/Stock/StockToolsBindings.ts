@@ -24,6 +24,11 @@ import type PointerEvent from '../Core/PointerEvent';
 import type { SeriesTypeOptions } from '../Core/Series/SeriesType';
 import H from '../Core/Globals.js';
 import NavigationBindings from '../Extensions/Annotations/NavigationBindings.js';
+import O from '../Core/Options.js';
+const {
+    getOptions,
+    setOptions
+} = O;
 import Series from '../Core/Series/Series.js';
 import U from '../Core/Utilities.js';
 import palette from '../Core/Color/Palette.js';
@@ -32,11 +37,9 @@ const {
     defined,
     extend,
     fireEvent,
-    getOptions,
     isNumber,
     merge,
     pick,
-    setOptions,
     uniqueKey
 } = U;
 
