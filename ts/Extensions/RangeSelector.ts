@@ -870,6 +870,8 @@ class RangeSelector {
         // Set the fixed range before range is altered
         chart.fixedRange = range;
 
+        rangeSelector.setSelected(i);
+
         // Apply dataGrouping associated to button
         if (dataGrouping) {
             this.forcedDataGrouping = true;
@@ -959,7 +961,6 @@ class RangeSelector {
             newMax += rangeOptions._offsetMax as any;
         }
 
-        rangeSelector.setSelected(i);
         if (this.dropdown) {
             this.dropdown.selectedIndex = i + 1;
         }
