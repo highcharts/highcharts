@@ -7,6 +7,10 @@ const {
 
 namespace EditableOptions {
    export type BindingsType = Record<'keyMap' | 'typeMap', Record<string, string>>;
+   export type recursive<T> = Record<string, T>;
+
+    export type getTypesType = { type?: string; children?: recursive<getTypesType>; }
+    export type getOptionsType = recursive<getTypesType>;
 }
 
 class EditableOptions {
@@ -42,11 +46,11 @@ class EditableOptions {
         }
     }
 
-    public getEditableOptions(): (Record<string, string | Record<string, string>> | undefined) {
+    public getEditableOptions(): (EditableOptions.getOptionsType | undefined) {
         const { options } = this.component;
         const { keyMap, typeMap } = merge(EditableOptions.defaultBindings, this.bindings);
 
-        function getType(nodeName: string, branch: Record<string, any>): Record<string, any> | undefined {
+        function getType(nodeName: string, branch: Record<string, any>): EditableOptions.getTypesType | undefined {
             const node = branch[nodeName];
 
             if (keyMap[nodeName]) {
@@ -63,8 +67,11 @@ class EditableOptions {
                     return { type: 'array' };
                 }
                 // dive deeper
-                const childNodes = Object.keys(node).reduce((obj: Record<string, any>, childNodeName: string): Record<string, any> => {
-                    obj[childNodeName] = getType(childNodeName, node)
+                const childNodes = Object.keys(node).reduce((obj: Record<string, EditableOptions.getTypesType>, childNodeName: string): Record<string, any> => {
+                    const type = getType(childNodeName, node)
+                    if(type){
+                        obj[childNodeName] = type
+                    }
                     return obj;
                 }, {});
 
@@ -72,7 +79,7 @@ class EditableOptions {
             }
         }
 
-        const record: Record<string, any> = {};
+        const record: EditableOptions.getOptionsType = {};
 
         [
             ...Object.keys(Component.defaultOptions.editableOptions),
@@ -80,7 +87,7 @@ class EditableOptions {
         ].forEach((optionName: string) => {
             const type = getType(optionName, options)
             if(type){
-                record[optionName] = getType(optionName, options)
+                record[optionName] = type
             }
         })
 
