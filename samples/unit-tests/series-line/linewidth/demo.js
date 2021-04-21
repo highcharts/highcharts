@@ -36,7 +36,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Highstock hover:lineWidth and hover:lineWidthPlus',
+    'Highcharts Stock hover:lineWidth and hover:lineWidthPlus',
     function (assert) {
         var chart = new Highcharts.StockChart({
             chart: {

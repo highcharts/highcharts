@@ -560,7 +560,8 @@ declare global {
  * @name Highcharts.AxisPlotLinePathOptionsObject#force
  * @type {string|boolean|undefined}
  *//**
- * Used in Highstock. When `true`, plot paths (crosshair, plotLines, gridLines)
+ * Used in Highcharts Stock. When `true`, plot paths
+ * (crosshair, plotLines, gridLines)
  * will be rendered on all axes when defined on the first axis.
  * @name Highcharts.AxisPlotLinePathOptionsObject#acrossPanes
  * @type {boolean|undefined}
@@ -1016,8 +1017,8 @@ class Axis {
          * `.highcharts-xaxis-category` classes.
          *
          * @productdesc {highstock}
-         * In Highstock, by default, the crosshair is enabled on the X axis and
-         * disabled on the Y axis.
+         * In Highcharts stock, by default, the crosshair is enabled on the
+         * X axis and disabled on the Y axis.
          *
          * @sample {highcharts} highcharts/xaxis/crosshair-both/
          *         Crosshair on both axes
@@ -1265,7 +1266,7 @@ class Axis {
          * same axis.
          *
          * For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#dateFormat).
+         * [dateFormat](/class-reference/Highcharts#.dateFormat).
          *
          * Defaults to:
          * ```js
@@ -1357,7 +1358,7 @@ class Axis {
          * the `maxPadding` option to control the axis end.
          *
          * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always `false` when the navigator
+         * In Highcharts Stock, `endOnTick` is always `false` when the navigator
          * is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/chart/reflow-true/
@@ -2373,8 +2374,8 @@ class Axis {
          * the `minPadding` option to control the axis start.
          *
          * @productdesc {highstock}
-         * In Highstock, `startOnTick` is always `false` when the navigator
-         * is enabled, to prevent jumpy scrolling.
+         * In Highcharts Stock, `startOnTick` is always `false` when
+         * the navigator is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/xaxis/startontick-false/
          *         False by default
@@ -3224,7 +3225,8 @@ class Axis {
 
         /**
          * @productdesc {highstock}
-         * In Highstock 1.x, the Y axis was placed on the left side by default.
+         * In Highcharts Stock 1.x, the Y axis was placed
+         * on the left side by default.
          *
          * @sample {highcharts} highcharts/yaxis/opposite/
          *         Secondary Y axis opposite
@@ -5447,7 +5449,8 @@ class Axis {
             axis.range = null; // don't use it when running setExtremes
         }
 
-        // Hook for Highstock Scroller. Consider combining with beforePadding.
+        // Hook for Highcharts Stock Scroller.
+        // Consider combining with beforePadding.
         fireEvent(axis, 'foundExtremes');
 
         // Hook for adjusting this.min and this.max. Used by bubble series.
@@ -6131,7 +6134,7 @@ class Axis {
      * @sample highcharts/members/axis-setextremes-off-ticks/
      *         Set extremes off ticks
      * @sample stock/members/axis-setextremes/
-     *         Set extremes in Highstock
+     *         Set extremes in Highcharts Stock
      * @sample maps/members/axis-setextremes/
      *         Set extremes in Highmaps
      *

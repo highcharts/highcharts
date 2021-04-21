@@ -1077,7 +1077,7 @@ Axis.prototype.getGroupPixelWidth = function (this: Highcharts.Axis): number {
 };
 
 /**
- * Highstock only. Force data grouping on all the axis' series.
+ * Highcharts Stock only. Force data grouping on all the axis' series.
  *
  * @product highstock
  *
@@ -1147,7 +1147,7 @@ export default dataGrouping;
 /**
  * Data grouping is the concept of sampling the data values into larger
  * blocks in order to ease readability and increase performance of the
- * JavaScript charts. Highstock by default applies data grouping when
+ * JavaScript charts. Highcharts Stock by default applies data grouping when
  * the points become closer than a certain pixel value, determined by
  * the `groupPixelWidth` option.
  *

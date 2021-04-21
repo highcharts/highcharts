@@ -92,7 +92,7 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
                 assert.strictEqual(
                     // Highcharts - tested in browser
                     chart[chart.series[0].sharedClipKey] === undefined ||
-                        // Highstock - tested in headless
+                        // Highcharts Stock - tested in headless
                         chart[chart.series[0].sharedClipKey].element.width
                             .baseVal.value === chart.chartWidth,
                     true,
@@ -171,7 +171,7 @@ QUnit.test(
                     assert.strictEqual(
                         // Highcharts - tested in browser
                         chart[chart.series[0].sharedClipKey] === undefined ||
-                            // Highstock - tested in headless
+                            // Highcharts Stock - tested in headless
                             chart[chart.series[0].sharedClipKey].element.width
                                 .baseVal.value === chart.chartWidth,
                         true,

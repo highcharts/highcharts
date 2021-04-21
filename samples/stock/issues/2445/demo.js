@@ -35,7 +35,7 @@ Highcharts.stockChart('container', {
         type: 'column'
     },
     title: {
-        text: 'In Highstock 1.3.6-1.3.9, stacking percent failed with data grouping'
+        text: 'In Highcharts Stock 1.3.6-1.3.9, stacking percent failed with data grouping'
     },
     rangeSelector: {
         enabled: false

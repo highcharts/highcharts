@@ -11,15 +11,14 @@
 'use strict';
 
 import type AnimationOptions from './AnimationOptions';
-import type Chart from '../Chart/Chart';
-import type CSSObject from '../Renderer/CSSObject';
 import type FxLike from './FxLike';
-import type { HTMLDOMElement } from '../Renderer/DOMElementType';
 import type HTMLElement from '../Renderer/HTML/HTMLElement';
-import type Series from '../Series/Series';
-import type SVGAttributes from '../Renderer/SVG/SVGAttributes';
 import type SVGElement from '../Renderer/SVG/SVGElement';
 import type SVGPath from '../Renderer/SVG/SVGPath';
+import Color from '../Color/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../Globals.js';
 const { win } = H;
 import U from '../Utilities.js';
@@ -27,34 +26,6 @@ const {
     isNumber,
     objectEach
 } = U;
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    type FxClass = typeof Fx;
-    namespace Highcharts {
-        let Fx: FxClass;
-        function animate(
-            el: (HTMLDOMElement|SVGElement),
-            params: (CSSObject|SVGAttributes),
-            opt?: Partial<AnimationOptions>
-        ): void;
-        function animObject(
-            animation?: (boolean|AnimationOptions)
-        ): AnimationOptions;
-        function getDeferredAnimation(
-            chart: Chart,
-            animation: Partial<AnimationOptions>,
-            series?: Series
-        ): Partial<AnimationOptions>;
-        function setAnimation(
-            animation: (boolean|Partial<AnimationOptions>|undefined),
-            chart: Chart
-        ): void
-    }
-}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -140,11 +111,11 @@ class Fx {
      * @return {void}
      */
     public dSetter(): void {
-        var paths = this.paths,
+        const paths = this.paths,
             start = paths && paths[0],
             end = paths && paths[1],
-            path: SVGPath = [],
             now = this.now || 0;
+        let path: SVGPath = [];
 
         // Land on the final path without adjustment points appended in the ends
         if (now === 1 || !start || !end) {
@@ -198,7 +169,7 @@ class Fx {
      * @return {void}
      */
     public update(): void {
-        var elem = this.elem,
+        const elem = this.elem,
             prop = this.prop, // if destroyed, it is null
             now: number = this.now as any,
             step = this.options.step;
@@ -241,7 +212,7 @@ class Fx {
      * @return {void}
      */
     public run(from: number, to: number, unit: string): void {
-        var self = this,
+        const self = this,
             options = self.options,
             timer: Highcharts.Timer = function (gotoEnd?: boolean): boolean {
                 return timer.stopped ? false : self.step(gotoEnd);
@@ -252,7 +223,7 @@ class Fx {
                     setTimeout(step, 13);
                 },
             step = function (): void {
-                for (var i = 0; i < Fx.timers.length; i++) {
+                for (let i = 0; i < Fx.timers.length; i++) {
                     if (!Fx.timers[i]()) {
                         Fx.timers.splice(i--, 1);
                     }
@@ -297,14 +268,14 @@ class Fx {
      *         Returns `true` if animation continues.
      */
     public step(gotoEnd?: boolean): boolean {
-        var t = +new Date(),
-            ret,
-            done,
+        const t = +new Date(),
             options = this.options,
             elem = this.elem,
             complete = options.complete,
             duration: number = options.duration as any,
             curAnim: Record<string, boolean> = options.curAnim as any;
+        let ret,
+            done;
 
         if (elem.attr && !elem.element) { // #2616, element is destroyed
             ret = false;
@@ -363,16 +334,17 @@ class Fx {
         fromD: SVGPath|undefined,
         toD: SVGPath
     ): [SVGPath, SVGPath] {
-        var shift,
-            startX = elem.startX,
+        const startX = elem.startX,
             endX = elem.endX,
-            fullLength: number,
-            i: number,
-            start = fromD && fromD.slice(), // copy
             end = toD.slice(), // copy
             isArea = elem.isArea,
-            positionFactor = isArea ? 2 : 1,
-            reverse;
+            positionFactor = isArea ? 2 : 1;
+
+        let shift,
+            fullLength: number,
+            i: number,
+            reverse,
+            start = fromD && fromD.slice(); // copy
 
         if (!start) {
             return [end, end];
@@ -532,7 +504,7 @@ class Fx {
     public strokeSetter(): void {
         this.elem.attr(
             this.prop,
-            H.color(this.start as any).tweenTo(H.color(this.end as any), this.pos as any),
+            color(this.start as any).tweenTo(color(this.end as any), this.pos as any),
             null as any,
             true
         );
@@ -542,15 +514,6 @@ class Fx {
 interface Fx extends FxLike {
     // Nothing here yet
 }
-
-/* *
- *
- *  Compatibility
- *
- * */
-
-H.Fx = Fx;
-(H as any).timers = Fx.timers;
 
 /* *
  *

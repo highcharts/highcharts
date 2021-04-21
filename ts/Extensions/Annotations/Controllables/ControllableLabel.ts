@@ -184,7 +184,7 @@ class ControllableLabel implements ControllableMixin.Type {
             if (align === 'right') {
                 options.align = 'left';
             } else {
-                options.x = -off;
+                options.x = (options.x || 0) - off;
             }
         }
 
@@ -194,7 +194,7 @@ class ControllableLabel implements ControllableMixin.Type {
             if (align === 'left') {
                 options.align = 'right';
             } else {
-                options.x = chart.plotWidth - off;
+                options.x = (options.x || 0) + chart.plotWidth - off;
             }
         }
 
@@ -204,7 +204,7 @@ class ControllableLabel implements ControllableMixin.Type {
             if (verticalAlign === 'bottom') {
                 options.verticalAlign = 'top';
             } else {
-                options.y = -off;
+                options.y = (options.y || 0) - off;
             }
         }
 
@@ -214,7 +214,7 @@ class ControllableLabel implements ControllableMixin.Type {
             if (verticalAlign === 'top') {
                 options.verticalAlign = 'bottom';
             } else {
-                options.y = chart.plotHeight - off;
+                options.y = (options.y || 0) + chart.plotHeight - off;
             }
         }
 

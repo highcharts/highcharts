@@ -5,12 +5,17 @@ QUnit.test('General series clip tests', assert => {
         const chart = Highcharts.chart('container', {
                 series: [{
                     data: [10, 20]
+                }, {
+                    data: [1, 2, 3],
+                    yAxis: 1
                 }],
-                yAxis: {
+                yAxis: [{
                     labels: {
                         format: '{value}'
                     }
-                },
+                }, {
+                    opposite: true
+                }],
                 plotOptions: {
                     series: {
                         animation: false
@@ -49,7 +54,8 @@ QUnit.test('General series clip tests', assert => {
                     {
                         clip: false,
                         data: [1, 2, 3]
-                    }
+                    },
+                    {}
                 ]
             },
             true,
@@ -63,6 +69,46 @@ QUnit.test('General series clip tests', assert => {
             chart.series[2].clipBox,
             '#15128: Series with clip=false should not have stock clipping applied'
         );
+
+        const widthBefore = chart[chart.series[3].sharedClipKey].attr('width');
+
+        chart.update({
+            yAxis: [{}, {
+                visible: false
+            }],
+            series: [{}, {}, {}, {}]
+        }, true, true);
+
+        assert.ok(
+            chart[chart.series[3].sharedClipKey].attr('width') > widthBefore,
+            '#15435: Shared clip should have been updated'
+        );
+
+        chart.addSeries({
+            data: [3, 3, 3],
+            animation: true
+        });
+
+        assert.ok(
+            chart.series[4].sharedClipKey.includes('temporary'),
+            `Clippath should only exist until the animation is finished
+            (#4406).`
+        );
+
+        assert.strictEqual(
+            chart[chart.series[4].sharedClipKey].attr('width'),
+            0,
+            `Clippath's width immediately after addSeries should be 0
+            (series hasn't started animation yet) (#4406).`
+        );
+
+        setTimeout(() => {
+            assert.ok(
+                chart[chart.series[4].sharedClipKey].attr('width') > 0,
+                `Clippath's width after addSeries should increase
+                (series is being animated) (#4406).`
+            );
+        }, 20);
 
         setTimeout(() => {
             chart.update(

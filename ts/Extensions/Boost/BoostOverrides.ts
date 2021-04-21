@@ -130,7 +130,7 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
 /**
  * Get the clip rectangle for a target, either a series or the chart. For the
  * chart, we need to consider the maximum extent of its Y axes, in case of
- * Highstock panes and navigator.
+ * Highcharts Stock panes and navigator.
  *
  * @private
  * @function Highcharts.Chart#getBoostClipRect

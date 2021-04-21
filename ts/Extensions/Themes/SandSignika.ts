@@ -99,7 +99,7 @@ Highcharts.theme = {
         }
     },
 
-    // Highstock specific
+    // Highcharts Stock specific
     navigator: {
         xAxis: {
             gridLineColor: '#D0D0D8'
