@@ -1703,10 +1703,11 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
     }
 
     /**
-     * Sets cell values of rows. Will insert a new row, if no index was
+     * Sets cell values of a row. Will insert a new row, if no index was
      * provided, or if the index is higher than the total number of table rows.
      *
-     * Note: This is just a wrapper for {@link Highcharts.DataTable#setRows}.
+     * Note: This function is just a simplified wrap of
+     * {@link Highcharts.DataTable#setRows}.
      *
      * @function Highcharts.DataTable#setRows
      *
@@ -1714,7 +1715,7 @@ class DataTable implements DataEventEmitter<DataTable.Event>, DataJSON.Class {
      * Cell values to set.
      *
      * @param {number} [rowIndex]
-     * Index of the first row to change. Leave `undefind` to add as new rows.
+     * Index of the row to change. Leave `undefind` to add as a new row.
      *
      * @param {Highcharts.DataTableEventDetail} [eventDetail]
      * Custom information for pending events.

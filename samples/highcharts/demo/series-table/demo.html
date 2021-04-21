@@ -1,4 +1,7 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
 <div id="container"></div>
+
 <table>
     <tbody id="table-body"></tbody>
     <tfoot>
@@ -10,63 +13,3 @@
         </tr>
     </tfoot>
 </table>
-<script type="module">
-    import Highcharts from 'https://code.highcharts.com/es-modules/masters/highcharts.src.js';
-
-    const chart = Highcharts.chart('container', {
-        title: {
-            text: 'Series table'
-        },
-        tooltip: {
-            formatter
-        }
-    });
-    const series = chart.addSeries({ type: 'column' });
-    const table = series.table;
-    const htmlTableBody = document.getElementById('table-body');
-    const htmlButtonAdd = document.getElementById('button-add');
-
-    htmlButtonAdd.addEventListener('click', add.bind(htmlButtonAdd.parentNode.parentNode));
-
-    function add() {
-        const [ inputName, inputX, inputY ] = this.getElementsByTagName('input');
-        const name = inputName.value;
-        const x = parseFloat(inputX.value);
-        const y = parseFloat(inputY.value);
-        const htmlTableRow = document.createElement('tr');
-
-        htmlTableRow.setAttribute('data-index', table.getRowCount());
-        htmlTableRow.innerHTML = [
-            `<td><input type="text" value="${name}"" /></td>`,
-            `<td><input type="number" value="${x}"" /></td>`,
-            `<td><input type="number" value="${y}"" /></td>`,
-            `<td><button type="button">Change</button></td>`
-        ].join('');
-        htmlTableRow.childNodes[3].addEventListener('click', change.bind(htmlTableRow));
-        htmlTableBody.appendChild(htmlTableRow);
-        
-        table.setRow({ name, x, y });
-    }
-
-    function change() {
-        const [ inputName, inputX, inputY ] = this.getElementsByTagName('input');
-        const index = parseInt(this.getAttribute('data-index'));
-        const name = inputName.value;
-        const x = parseFloat(inputX.value);
-        const y = parseFloat(inputY.value);
-
-        table.setRow({ name, x, y }, index);
-    }
-
-    function formatter() {
-        const point = this.point;
-        const row = point.series.table.getRowObject(point.index);
-        console.log(point, row);
-        return Object
-            .keys(row)
-            .sort()
-            .map((key) => `${key}: ${row[key]}`)
-            .join('<br />');
-    }
-
-</script>
