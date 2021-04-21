@@ -125,10 +125,12 @@ class DependencyWheelSeries extends SankeySeries {
                 if (graphic) {
                     graphic.attr({ opacity: 0 });
                     setTimeout(function (): void {
-                        (graphic as any).animate(
-                            { opacity: 1 },
-                            { duration: step }
-                        );
+                        if (point.graphic) {
+                            point.graphic.animate(
+                                { opacity: 1 },
+                                { duration: step }
+                            );
+                        }
                     }, step * i);
                 }
             }, this);
