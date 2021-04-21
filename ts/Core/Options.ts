@@ -4491,7 +4491,6 @@ function format(str: string, ctx: any, chart?: Chart): string {
 function getOptions(): Highcharts.Options {
     return defaultOptions;
 }
-H.getOptions = getOptions; // @todo move to master
 
 /**
  * Format a number and return a string based on input settings.
@@ -4658,7 +4657,6 @@ function setOptions(
 
     return defaultOptions;
 }
-H.setOptions = setOptions; // @todo move to master
 
 const optionsModule = {
     dateFormat,
