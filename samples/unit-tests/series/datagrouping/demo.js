@@ -435,6 +435,12 @@ QUnit.test('Switch from grouped to non-grouped', function (assert) {
         'Monthly columns'
     );
 
+    const dataGrouping = chart.addSeries({}).options.dataGrouping;
+    assert.ok(
+        dataGrouping.forced && dataGrouping.units,
+        '#15512: Datagrouping from range selector should be used'
+    );
+
     chart.rangeSelector.clickButton(0);
     assert.strictEqual(
         chart.container.querySelectorAll('.highcharts-series-0 rect').length,
