@@ -57,8 +57,10 @@ import '../Core/Responsive.js';
 (Highcharts as any).dateFormat = Options.dateFormat;
 (Highcharts as any).defaultOptions = Options.defaultOptions;
 (Highcharts as any).format = Options.format;
+(Highcharts as any).getOptions = Options.getOptions;
 (Highcharts as any).numberFormat = Options.numberFormat;
 (Highcharts as any).time = Options.defaultTime;
+(Highcharts as any).setOptions = Options.setOptions;
 
 // Utilities
 (Highcharts as any).addEvent = Utilities.addEvent;
