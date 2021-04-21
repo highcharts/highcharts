@@ -1013,7 +1013,8 @@ addEvent(Series, 'afterSetOptions', function (
             // Set by the StockChart constructor:
             (plotOptions[type] as any).dataGrouping,
             this.userOptions.dataGrouping,
-            rangeSelector &&
+            !options.isInternal &&
+                rangeSelector &&
                 isNumber(rangeSelector.selected) &&
                 rangeSelector.buttonOptions[rangeSelector.selected].dataGrouping
         );
