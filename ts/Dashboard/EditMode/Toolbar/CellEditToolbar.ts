@@ -79,7 +79,6 @@ class CellEditToolbar extends EditToolbar {
         );
 
         this.setEvents();
-        console.log('cell items', CellEditToolbar.items);
         this.menu.initItems(CellEditToolbar.items);
     }
 

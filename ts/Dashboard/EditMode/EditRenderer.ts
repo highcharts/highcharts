@@ -190,17 +190,17 @@ class EditRenderer {
                 parentElement
             );
 
-            if (options.applyButtonFn) {
-                EditRenderer.renderButton(
-                    parentElement,
-                    {
-                        callback: function (): void {
-                            options.applyButtonFn && options.applyButtonFn(input);
-                        },
-                        value: 'Save'
-                    }
-                );
-            }
+            // if (options.applyButtonFn) {
+            //     EditRenderer.renderButton(
+            //         parentElement,
+            //         {
+            //             callback: function (): void {
+            //                 options.applyButtonFn && options.applyButtonFn(input);
+            //             },
+            //             value: 'Save'
+            //         }
+            //     );
+            // }
         }
 
         return input;

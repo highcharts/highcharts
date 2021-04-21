@@ -77,7 +77,7 @@ class Sidebar {
         },
         componentSettings: {
             type: 'componentSettings',
-            text: 'Component settings',
+            text: 'Settings',
             events: {
                 update: function (): void {
                     ((this as MenuItem).menu.parent as Sidebar).getComponentEditableOptions();
@@ -482,19 +482,16 @@ class Sidebar {
     public getComponentEditableOptions(): void {
         const sidebar = this;
         const currentComponent = (sidebar.context as Cell).mountedComponent;
-        const componentSettings = currentComponent && currentComponent.editableOptions.getEditableOptions();
+        const componentSettings = currentComponent &&
+            currentComponent.editableOptions.getEditableOptions();
 
         if (componentSettings) {
             let menuItems = {};
             let items = [];
-            let type, key;
+            let type;
 
-            // temp parser
-            for (let i = 0, iEnd = componentSettings.length; i < iEnd; ++i) {
-                key = Object.getOwnPropertyNames(componentSettings[i])[0];
-                type = (componentSettings[i] as any)[key];
-
-                console.log(componentSettings[i], (componentSettings[i] as any)[key]);
+            for (const key in componentSettings) {
+                type = (componentSettings[key] as Record<string, string>).type;
 
                 (menuItems as any)[key] = {
                     id: key,
@@ -511,49 +508,16 @@ class Sidebar {
             sidebar.componentEditableOptions = new Menu(
                 sidebar.container,
                 {
+                    itemsClassName: EditGlobals.classNames.editSidebarMenuItem,
                     items: items
                 },
                 sidebar
             );
-            
 
             sidebar.componentEditableOptions.initItems(
                 menuItems
             );
-
         }
-        // list editable options
-        /*if (componentSettings) {
-            for (var key in componentSettings) {
-                switch((componentSettings[key] || {}).type) {
-                    case 'text':
-                        EditRenderer.renderInput(
-                            sidebar.container,
-                            {
-                                title: Object.getOwnPropertyNames(componentSettings[key])[0]
-                            }
-                        );
-                        break;
-                    case 'textarea':
-                        EditRenderer.renderTextarea(
-                            sidebar.container
-                        );
-                        break;
-                    case 'toggle':
-                        EditRenderer.renderSwitcher(
-                            sidebar.container
-                        );
-                        break;
-                    default:
-                        EditRenderer.renderInput(
-                            sidebar.container,
-                            {
-                                title: Object.getOwnPropertyNames(componentSettings[key])[0]
-                            }
-                        );
-                }
-            }
-        }*/
     }
 }
 

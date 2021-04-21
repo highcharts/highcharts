@@ -108,12 +108,12 @@ class MenuItem {
                 item.container,
                 {
                     callback: void 0,
-                    title: options.text,
-                    applyButtonFn: function (input: HTMLDOMElement, e: any): void {
-                        if (options.events && options.events.click) {
-                            options.events.click.apply(item, [input, e]);
-                        }
-                    }
+                    title: options.text
+                    // applyButtonFn: function (input: HTMLDOMElement, e: any): void {
+                    //     if (options.events && options.events.click) {
+                    //         options.events.click.apply(item, [input, e]);
+                    //     }
+                    // }
                 }
             );
         } else {
