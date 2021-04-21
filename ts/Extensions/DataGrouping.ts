@@ -1131,13 +1131,18 @@ addEvent(Series, 'afterSetOptions', function (
             defaultOptions = merge(commonOptions, specificOptions[type]);
         }
 
+        const rangeSelector = this.chart.rangeSelector;
+
         options.dataGrouping = merge(
             baseOptions as any,
             defaultOptions,
             plotOptions.series && plotOptions.series.dataGrouping, // #1228
             // Set by the StockChart constructor:
             (plotOptions[type] as any).dataGrouping,
-            this.userOptions.dataGrouping
+            this.userOptions.dataGrouping,
+            rangeSelector &&
+                isNumber(rangeSelector.selected) &&
+                rangeSelector.buttonOptions[rangeSelector.selected].dataGrouping
         );
     }
 });
