@@ -491,7 +491,7 @@ class Sidebar {
             let type;
 
             for (const key in componentSettings) {
-                type = (componentSettings[key] as Record<string, string>).type;
+                type = componentSettings[key].type;
 
                 (menuItems as any)[key] = {
                     id: key,
