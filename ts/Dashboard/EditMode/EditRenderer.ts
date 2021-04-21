@@ -83,12 +83,12 @@ class EditRenderer {
         return customSelect;
     }
 
-    public static renderSwitcher(
+    public static renderToggle(
         parentElement: HTMLDOMElement,
         callback?: Function,
         title?: string
     ): HTMLDOMElement|undefined {
-        let switcher;
+        let toggle;
 
         if (parentElement) {
 
@@ -99,29 +99,29 @@ class EditRenderer {
                 );
             }
 
-            switcher = createElement(
+            toggle = createElement(
                 'label',
                 {
-                    className: EditGlobals.classNames.switchWrapper
+                    className: EditGlobals.classNames.toggleWrapper
                 },
                 {},
                 parentElement
             );
 
-            EditRenderer.renderCheckbox(switcher);
+            EditRenderer.renderCheckbox(toggle);
 
             createElement(
                 'span',
                 {
-                    className: EditGlobals.classNames.switchSlider,
+                    className: EditGlobals.classNames.toggleSlider,
                     onclick: callback
                 },
                 {},
-                switcher
+                toggle
             );
         }
 
-        return switcher;
+        return toggle;
     }
 
     public static renderText(
@@ -207,11 +207,20 @@ class EditRenderer {
     }
 
     public static renderTextarea(
-        parentElement: HTMLDOMElement
+        parentElement: HTMLDOMElement,
+        title: string
     ): HTMLDOMElement|undefined {
         let textarea;
 
         if (parentElement) {
+
+            if (title) {
+                EditRenderer.renderText(
+                    parentElement,
+                    title
+                );
+            }
+
             textarea = createElement(
                 'textarea', {
 

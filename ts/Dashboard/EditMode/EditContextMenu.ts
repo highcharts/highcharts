@@ -29,7 +29,7 @@ class EditContextMenu extends Menu {
     merge(Menu.items, {
         editMode: {
             id: 'editMode',
-            type: 'switcher',
+            type: 'toggle',
             text: 'Edit mode',
             events: {
                 click: function (this: MenuItem, e: any): void {
@@ -102,12 +102,13 @@ class EditContextMenu extends Menu {
     public initEvents(): void {
         const contextMenu = this;
 
-        // Click on document close the context menu.
+        // Click on document close the context menu
+        // TODO refactor
         addEvent(document, 'click', (event): void => {
             if (
                 event.target !== this.container &&
                 event.target !== contextMenu.editMode.contextButtonElement &&
-                !event.target.classList.contains(EditGlobals.classNames.switchSlider) &&
+                !event.target.classList.contains(EditGlobals.classNames.toggleSlider) &&
                 event.target.tagName !== 'INPUT' &&
                 this.isVisible
             ) {

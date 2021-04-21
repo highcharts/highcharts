@@ -91,8 +91,8 @@ class MenuItem {
 
         let element;
 
-        if (options.type === 'switcher') {
-            element = EditRenderer.renderSwitcher(
+        if (options.type === 'toggle') {
+            element = EditRenderer.renderToggle(
                 item.container,
                 callback,
                 options.text || ''
@@ -102,6 +102,11 @@ class MenuItem {
                 item.container,
                 options.icon,
                 callback
+            );
+        } else if (options.type === 'textarea' ) {
+            element = EditRenderer.renderTextarea(
+                item.container,
+                options.text || ''
             );
         } else if (options.type === 'input') {
             element = EditRenderer.renderInput(

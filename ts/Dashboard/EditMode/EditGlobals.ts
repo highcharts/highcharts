@@ -35,8 +35,8 @@ const EditGlobals: EditGlobals = {
         menuDestroy: PREFIX + 'menu-destroy',
         editSidebarWrapper: PREFIX + 'sidebar-wrapper',
         customSelect: PREFIX + 'custom-select',
-        switchWrapper: PREFIX + 'switch-wrapper',
-        switchSlider: PREFIX + 'switch-slider',
+        toggleWrapper: PREFIX + 'toggle-wrapper',
+        toggleSlider: PREFIX + 'toggle-slider',
         button: PREFIX + 'button',
         sidebarNavButton: PREFIX + 'sidebar-button-nav',
         labelText: PREFIX + 'label-text'
@@ -87,8 +87,8 @@ namespace EditGlobals {
         menuDestroy: string;
         editSidebarWrapper: string;
         customSelect: string;
-        switchWrapper: string;
-        switchSlider: string;
+        toggleWrapper: string;
+        toggleSlider: string;
         button: string;
         labelText: string;
         sidebarNavButton: string;
